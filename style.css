@@ -198,6 +198,13 @@ h2 {
     color: #c6d2de;
 }
 
+.board-closing-note {
+    text-align: center;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* ===== OPERATIONAL SUMMARY ===== */
 /* Keep this simple; don’t re-animate separately (section already animates) */
 
