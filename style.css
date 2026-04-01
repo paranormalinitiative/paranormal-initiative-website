@@ -727,7 +727,7 @@ footer {
 .repository-hero {
     position: relative;
     overflow: hidden;
-    padding: 28px 24px;
+    padding: 34px 28px 30px;
     border-radius: 22px;
     border: 1px solid rgba(73, 178, 255, 0.22);
     background:
@@ -758,15 +758,15 @@ footer {
 
 .repository-title {
     margin: 0;
-    max-width: 760px;
-    font-size: clamp(2rem, 4vw, 3.25rem);
-    line-height: 1.02;
+    max-width: 1040px;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    line-height: 1.08;
     font-weight: 700;
     letter-spacing: -0.03em;
 }
 
 .repository-title span {
-    display: block;
+    display: inline;
 }
 
 .repository-lead {
@@ -941,6 +941,15 @@ footer {
     .repository-hero {
         padding: 22px 18px;
         border-radius: 18px;
+    }
+
+    .repository-title {
+        max-width: 760px;
+        line-height: 1.02;
+    }
+
+    .repository-title span {
+        display: block;
     }
 
     .repository-lead {
