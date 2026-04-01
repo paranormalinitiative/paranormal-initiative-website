@@ -727,7 +727,6 @@ footer {
 .repository-hero {
     position: relative;
     overflow: hidden;
-    padding: 18px 20px;
     border-radius: 22px;
     border: 1px solid rgba(73, 178, 255, 0.22);
     background:
@@ -785,6 +784,12 @@ footer {
 
 .repository-hero-tags {
     margin-top: 18px;
+}
+
+.repository-hero-icon,
+.repository-hero-arrow {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .repository-group-label {
@@ -910,7 +915,6 @@ footer {
     }
 
     .repository-hero {
-        padding: 16px;
         border-radius: 18px;
     }
 
