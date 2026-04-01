@@ -727,7 +727,7 @@ footer {
 .repository-hero {
     position: relative;
     overflow: hidden;
-    padding: 34px 28px 30px;
+    padding: 48px 28px 40px;
     border-radius: 22px;
     border: 1px solid rgba(73, 178, 255, 0.22);
     background:
@@ -763,7 +763,7 @@ footer {
 
 .repository-lead {
     max-width: 820px;
-    margin: 18px auto 0;
+    margin: 24px auto 0;
     text-align: center;
     color: #b4c5d4;
     font-size: 17px;
@@ -774,7 +774,7 @@ footer {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 26px;
     justify-content: center;
 }
 
@@ -937,7 +937,7 @@ footer {
     }
 
     .repository-hero {
-        padding: 22px 18px;
+        padding: 28px 18px 30px;
         border-radius: 18px;
     }
 
