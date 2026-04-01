@@ -759,8 +759,8 @@ footer {
 .repository-title {
     margin: 0;
     max-width: 980px;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.02;
+    font-size: clamp(1.6rem, 2.3vw, 2rem);
+    line-height: 1.12;
     font-weight: 700;
     letter-spacing: -0.03em;
 }
@@ -949,7 +949,7 @@ footer {
 
     .repository-title {
         max-width: 760px;
-        line-height: 1.02;
+        line-height: 1.12;
     }
 
     .repository-title-line-secondary {
