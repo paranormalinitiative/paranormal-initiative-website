@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidence Compendium | The Paranormal Initiative</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c; --gold-light: #e8c97a; --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a; --teal-light: #5ecfb7; --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4; --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6; --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840; --orange-dim: rgba(224,120,64,0.1);
+  --green: #4a9e6a; --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a; --red-dim: rgba(196,90,90,0.1);
+  --text-primary: #ede9e2; --text-secondary: #a8a098; --text-muted: #6a6460;
+  --bg: #090c10; --surface: rgba(255,255,255,0.04); --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08); --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary); font-family: 'Raleway', sans-serif;
+  font-weight: 400; line-height: 1.8; min-height: 100vh;
+}
+/* HEADER */
+.brand-header {
+  position: sticky; top: 0; z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass); border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.brand-left { display: flex; align-items: center; gap: 13px; }
+.brand-emblem {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.brand-emblem svg { width: 17px; height: 17px; }
+.brand-name { font-family:'Cinzel',serif; font-size:10.5px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; color:var(--gold); line-height:1.35; }
+.brand-series { font-family:'Raleway',sans-serif; font-size:9.5px; font-weight:300; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-secondary); margin-top:1px; }
+.doc-badge { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--teal-light); border:0.5px solid rgba(58,158,138,0.3); padding:3px 10px; border-radius:20px; background:var(--teal-dim); white-space:nowrap; }
+.search-wrap { position:relative; flex:1; max-width:320px; }
+.search-wrap input { width:100%; background:rgba(255,255,255,0.05); border:0.5px solid var(--border); border-radius:8px; padding:0.55rem 1rem 0.55rem 2.25rem; color:var(--text-primary); font-family:'Raleway',sans-serif; font-size:12px; outline:none; transition:border-color 0.2s; }
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+.search-icon { position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:12px; pointer-events:none; }
+#search-count { position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); font-size:10px; color:var(--text-muted); }
+/* PAGE */
+.page { max-width: 960px; margin: 0 auto; padding: 0 1.75rem 5rem; }
+/* HERO */
+.hero { padding:3.5rem 0 2.5rem; border-bottom:0.5px solid var(--border); margin-bottom:2rem; }
+.hero-eyebrow { font-size:9.5px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--teal); margin-bottom:1rem; }
+.hero-title { font-family:'Cinzel',serif; font-size:clamp(1.7rem,4.5vw,2.6rem); font-weight:700; line-height:1.15; color:var(--text-primary); margin-bottom:1rem; }
+.hero-title em { color:var(--gold); font-style:normal; }
+.hero-desc { font-family:'Crimson Pro',serif; font-size:16px; font-weight:300; color:var(--text-secondary); line-height:1.85; max-width:620px; margin-bottom:1.5rem; }
+.hero-meta { display:flex; gap:1.5rem; flex-wrap:wrap; }
+.hero-meta-item { font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); }
+.hero-meta-item span { color:var(--gold); margin-right:5px; }
+/* SECTION NAV */
+.sec-nav { display:flex; gap:0; background:var(--surface); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:2.5rem; }
+.sec-nav a { flex:1; text-align:center; padding:0.65rem 0.5rem; font-family:'Cinzel',serif; font-size:9.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; border-right:0.5px solid var(--border); transition:all 0.15s; }
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover, .sec-nav a.active { color:var(--gold); background:var(--gold-dim); }
+/* SECTION BLOCK */
+.sec-block { margin-bottom:4rem; }
+.sec-header {
+  display:flex; align-items:center; gap:1.25rem; padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2); border-radius:14px; margin-bottom:1.75rem;
+}
+.sec-number { font-family:'Cinzel',serif; font-size:28px; font-weight:700; color:rgba(201,168,76,0.25); line-height:1; min-width:48px; }
+.sec-title-block { flex:1; }
+.sec-eyebrow { font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--teal); margin-bottom:3px; }
+.sec-title { font-family:'Cinzel',serif; font-size:1.45rem; font-weight:700; color:var(--text-primary); line-height:1.2; }
+.sec-tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); border:0.5px solid rgba(201,168,76,0.3); padding:4px 12px; border-radius:20px; background:var(--gold-dim); white-space:nowrap; }
+.sec-intro { font-family:'Crimson Pro',serif; font-size:15.5px; font-weight:300; color:var(--text-secondary); line-height:1.85; margin-bottom:1.75rem; padding:0 0.25rem; }
+/* ENTRY */
+.entry { background:var(--surface); border:0.5px solid var(--border); border-radius:12px; padding:1.4rem 1.5rem; margin-bottom:1.25rem; transition:border-color 0.2s; }
+.entry:hover { border-color:var(--border-hover); }
+.entry-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:0.85rem; flex-wrap:wrap; }
+.entry-term { font-family:'Cinzel',serif; font-size:1.05rem; font-weight:600; color:var(--gold-light); line-height:1.3; }
+.entry-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+.tag-photo { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-video { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-audio { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-science { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-debunk { color:var(--red); background:var(--red-dim); border:0.5px solid rgba(196,90,90,0.2); }
+.tag-protocol { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-environment { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+.entry-body { font-family:'Crimson Pro',serif; font-size:15px; font-weight:300; color:var(--text-secondary); line-height:1.85; margin-bottom:1rem; }
+.entry-body:last-child { margin-bottom:0; }
+/* DOC LIST */
+.doc-list { background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dim); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.doc-list-label { font-size:9.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+.doc-list ul { list-style:none; padding:0; }
+.doc-list li { font-size:13.5px; color:var(--text-secondary); padding:0.3rem 0; padding-left:1.25rem; position:relative; line-height:1.65; }
+.doc-list li::before { content:'·'; position:absolute; left:0.25rem; color:var(--gold); font-size:16px; line-height:1.2; }
+/* FIELD NOTE */
+.field-note { background:rgba(201,168,76,0.06); border:0.5px solid rgba(201,168,76,0.18); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.field-note-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem; }
+.field-note p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
+/* PRO TIP */
+.pro-tip { background:rgba(139,92,246,0.07); border:0.5px solid rgba(139,92,246,0.2); border-left:3px solid var(--purple); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.pro-tip-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--purple); margin-bottom:0.4rem; }
+.pro-tip p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
+/* COMPARE WRAP */
+.compare-wrap { display:flex; align-items:stretch; border:0.5px solid var(--border); border-radius:12px; overflow:hidden; margin:1.1rem 0; }
+.compare-col { flex:1; padding:1.1rem 1.2rem 1.3rem; }
+.compare-claim { background:rgba(196,90,90,0.07); border-right:0.5px solid rgba(196,90,90,0.15); }
+.compare-actual { background:rgba(58,158,138,0.07); }
+.compare-vs { display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:8px; font-weight:700; letter-spacing:0.2em; color:var(--text-muted); padding:0 0.5rem; background:var(--surface); border-right:0.5px solid var(--border); writing-mode:vertical-lr; }
+.compare-label { font-size:8.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:0.6rem; }
+.compare-claim .compare-label { color:var(--red); }
+.compare-actual .compare-label { color:var(--teal); }
+.compare-text { font-family:'Crimson Pro',serif; font-size:13.5px; color:var(--text-secondary); line-height:1.7; }
+/* ARTIFACT SCENE */
+.artifact-scene {
+  width:100%; height:110px; background:#050810;
+  border-radius:8px; margin:0.65rem 0 0.85rem; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  border:0.5px solid rgba(255,255,255,0.06);
+}
+.artifact-scene-label { position:absolute; bottom:6px; right:8px; font-size:8.5px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.2); }
+/* IDENTIFY BOX */
+.identify-box { background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); border-radius:10px; padding:0.9rem 1.1rem; margin-top:0.85rem; }
+.identify-label { font-family:'Cinzel',serif; font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue); margin-bottom:0.55rem; }
+.identify-box ul { list-style:none; padding:0; }
+.identify-box li { font-size:13px; color:var(--text-secondary); padding:0.25rem 0; padding-left:1.2rem; position:relative; line-height:1.6; }
+.identify-box li::before { content:'→'; position:absolute; left:0; color:var(--blue); font-size:10px; top:0.35rem; }
+/* STEP LIST */
+.step-list { display:flex; flex-direction:column; gap:0.6rem; margin:0.85rem 0; }
+.step-item { display:flex; gap:0.85rem; align-items:flex-start; }
+.step-num { font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:var(--gold); min-width:28px; padding-top:2px; }
+.step-text { font-size:13.5px; color:var(--text-secondary); line-height:1.65; flex:1; }
+/* ORB GRID (reused from compendium) */
+.orb-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1rem; margin:1rem 0; }
+.orb-card { background:rgba(0,0,0,0.25); border:0.5px solid var(--border); border-radius:10px; padding:1rem; }
+.orb-demo { width:64px; height:64px; border-radius:50%; margin:0 auto 0.75rem; }
+.orb-dust { background:radial-gradient(circle at 50% 42%, rgba(220,210,195,0.95) 0%, rgba(200,190,175,0.6) 35%, rgba(180,170,155,0.2) 65%, transparent 80%); box-shadow:0 0 12px rgba(200,190,175,0.25); border:1px solid rgba(220,210,195,0.15); }
+.orb-moisture { background:radial-gradient(circle at 38% 35%, rgba(255,255,255,1) 0%, rgba(200,230,255,0.9) 20%, rgba(160,210,245,0.5) 55%, transparent 75%); box-shadow:0 0 18px rgba(180,220,255,0.4); }
+.orb-insect { background:radial-gradient(ellipse at 48% 42%, rgba(240,230,200,0.9) 0%, rgba(210,200,160,0.55) 40%, transparent 72%); box-shadow:0 0 10px rgba(220,210,160,0.2); border:1px dashed rgba(220,210,160,0.2); }
+.orb-pollen { background:radial-gradient(circle at 50% 45%, rgba(255,230,120,0.85) 0%, rgba(230,200,80,0.45) 45%, transparent 70%); box-shadow:0 0 14px rgba(230,200,80,0.2); }
+.orb-dander { background:radial-gradient(ellipse at 52% 48%, rgba(230,220,215,0.7) 0%, rgba(210,200,195,0.35) 50%, transparent 75%); box-shadow:0 0 8px rgba(220,210,200,0.15); }
+.orb-genuine { background:radial-gradient(circle at 50% 50%, rgba(100,220,255,0.9) 0%, rgba(60,180,230,0.5) 40%, transparent 70%); box-shadow:0 0 22px rgba(80,200,255,0.5), 0 0 8px rgba(255,255,255,0.3); }
+.orb-name { font-family:'Cinzel',serif; font-size:10.5px; font-weight:600; color:var(--text-primary); text-align:center; margin-bottom:3px; }
+.orb-type { font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-align:center; margin-bottom:0.6rem; }
+.orb-desc { font-size:12.5px; color:var(--text-secondary); line-height:1.6; }
+.orb-indicators { font-size:11.5px; color:var(--text-muted); line-height:1.55; margin-top:0.5rem; }
+/* ORB VISUAL EXTRAS */
+.orb-dust { background:radial-gradient(circle at 45% 42%, rgba(215,205,190,0.92) 0%, rgba(195,185,168,0.55) 32%, rgba(175,165,148,0.18) 60%, transparent 78%); box-shadow:0 0 10px rgba(195,185,168,0.2), inset 0 0 12px rgba(0,0,0,0.3); border:1px solid rgba(215,205,185,0.12); }
+/* CHECKLIST */
+.checklist { display:flex; flex-direction:column; gap:0.45rem; margin:0.85rem 0; }
+.check-item { display:flex; gap:0.75rem; align-items:flex-start; }
+.check-box { font-size:12px; color:var(--teal); min-width:16px; padding-top:2px; }
+.check-text { font-size:13px; color:var(--text-secondary); line-height:1.6; }
+/* SECTION LABEL */
+.section-label { font-family:'Cinzel',serif; font-size:9.5px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin:1.2rem 0 0.75rem; }
+/* BACK TOP */
+.back-top { text-align:right; margin:1.5rem 0; }
+.back-top a { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; padding:5px 12px; border:0.5px solid var(--border); border-radius:20px; transition:all 0.15s; }
+.back-top a:hover { color:var(--gold); border-color:rgba(201,168,76,0.3); }
+/* REFERENCE GRID */
+.ref-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:0.85rem; margin:0.85rem 0; }
+.ref-card { background:rgba(0,0,0,0.2); border:0.5px solid var(--border); border-radius:9px; padding:0.85rem; }
+.ref-name { font-family:'Cinzel',serif; font-size:11px; font-weight:600; color:var(--text-primary); margin-bottom:4px; }
+.ref-type { font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.45rem; }
+.ref-desc { font-size:12.5px; color:var(--text-secondary); line-height:1.55; }
+/* WEATHER TABLE */
+.weather-table { overflow-x:auto; margin:0.85rem 0; }
+.weather-table table { width:100%; border-collapse:collapse; font-size:13px; }
+.weather-table th { font-family:'Cinzel',serif; font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); padding:0.6rem 0.85rem; background:rgba(201,168,76,0.06); border-bottom:0.5px solid rgba(201,168,76,0.15); text-align:left; }
+.weather-table td { padding:0.55rem 0.85rem; border-bottom:0.5px solid var(--border); color:var(--text-secondary); line-height:1.55; vertical-align:top; }
+.weather-table tr:last-child td { border-bottom:none; }
+.weather-table tr:hover td { background:var(--surface-hover); }
+/* DEBUNK BOX */
+.debunk-box { background:rgba(196,90,90,0.06); border:0.5px solid rgba(196,90,90,0.18); border-left:3px solid var(--red); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.debunk-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--red); margin-bottom:0.4rem; }
+.debunk-box p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
+/* ARTIFACT VISUAL STYLES */
+/* Vortex/camera strap */
+.av-vortex { position:absolute; width:60px; height:60px; border:8px solid rgba(255,255,255,0.7); border-radius:50%; filter:blur(5px); box-shadow:0 0 25px rgba(255,255,255,0.4),0 0 50px rgba(255,255,255,0.15); transform:rotate(-15deg) scale(1.1); }
+/* Hair strand */
+.av-hair { position:absolute; width:78%; height:2.5px; background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.9) 20%,rgba(255,255,255,0.75) 55%,rgba(255,255,255,0.5) 80%,transparent 100%); filter:blur(2px); transform:rotate(-12deg) translateY(8px); box-shadow:0 0 10px rgba(255,255,255,0.5); border-radius:50%; }
+/* Spider web strand */
+.av-spiderweb { position:absolute; width:72%; height:1.5px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.85),rgba(255,255,255,0.9),rgba(255,255,255,0.85),transparent); filter:blur(1px); box-shadow:0 0 12px rgba(200,230,255,0.6),0 0 4px rgba(255,255,255,0.8); transform:rotate(5deg); }
+/* Breath vapor/ectoplasm */
+.av-vapor { position:absolute; width:90px; height:60px; background:radial-gradient(ellipse at 50% 60%, rgba(220,230,255,0.35) 0%, rgba(200,215,255,0.15) 40%, transparent 70%); filter:blur(8px); border-radius:50% 50% 60% 60%; }
+/* Lens flare elements */
+.av-flare-main { position:absolute; width:36px; height:36px; right:18%; top:25%; background:radial-gradient(circle,rgba(255,215,100,0.9) 0%,rgba(255,180,50,0.4) 45%,transparent 70%); border-radius:50%; filter:blur(2px); box-shadow:0 0 20px rgba(255,200,80,0.5); }
+.av-flare-hex1 { position:absolute; left:22%; top:35%; width:20px; height:20px; background:radial-gradient(circle,rgba(80,160,255,0.8) 0%,transparent 70%); clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); }
+.av-flare-hex2 { position:absolute; left:50%; top:55%; width:12px; height:12px; background:radial-gradient(circle,rgba(255,80,80,0.7) 0%,transparent 70%); clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); }
+.av-flare-streak { position:absolute; width:88%; height:1.5px; top:50%; background:linear-gradient(90deg,transparent,rgba(255,210,100,0.5),rgba(255,240,180,0.7),rgba(255,210,100,0.5),transparent); filter:blur(1px); }
+/* Long exposure ghost */
+.av-ghost { position:absolute; width:26px; height:55px; background:linear-gradient(180deg,rgba(200,220,255,0.1) 0%,rgba(180,200,255,0.07) 100%); filter:blur(5px); border-radius:50% 50% 0 0; left:38%; top:12%; }
+.av-ghost2 { position:absolute; width:22px; height:48px; background:linear-gradient(180deg,rgba(200,220,255,0.08) 0%,rgba(180,200,255,0.05) 100%); filter:blur(4px); border-radius:50% 50% 0 0; left:46%; top:18%; }
+/* Lightning streak */
+.av-lightning { position:absolute; width:3px; height:82%; background:linear-gradient(180deg,transparent 0%,rgba(180,220,255,0.9) 15%,rgba(255,255,255,0.95) 45%,rgba(180,220,255,0.8) 75%,transparent 100%); filter:blur(3px); box-shadow:0 0 14px rgba(160,210,255,0.7),0 0 4px rgba(255,255,255,0.9); left:35%; }
+.av-lightning2 { position:absolute; width:2px; height:60%; background:linear-gradient(180deg,transparent 0%,rgba(160,200,255,0.7) 20%,rgba(200,230,255,0.8) 50%,transparent 100%); filter:blur(2px); box-shadow:0 0 8px rgba(160,210,255,0.5); left:55%; top:15%; }
+/* Rod/skyfish */
+.av-rod { position:absolute; width:88px; height:10px; background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.75) 15%,rgba(255,255,255,0.9) 50%,rgba(255,255,255,0.75) 85%,transparent 100%); filter:blur(1.5px); border-radius:50%; }
+.av-rod::before,.av-rod::after { content:''; position:absolute; left:8%; right:8%; height:3px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent); filter:blur(1px); border-radius:50%; }
+.av-rod::before { top:-7px; }
+.av-rod::after { bottom:-7px; }
+/* Rain orbs */
+.av-rain-orb { position:absolute; border-radius:50%; background:radial-gradient(circle at 38% 35%,rgba(255,255,255,0.95) 0%,rgba(200,225,255,0.75) 25%,rgba(160,205,245,0.3) 55%,transparent 75%); box-shadow:0 0 12px rgba(180,220,255,0.3); }
+/* Snow flake/orb */
+.av-snow-orb { position:absolute; border-radius:50%; background:radial-gradient(circle at 50% 45%,rgba(255,255,255,0.95) 0%,rgba(235,245,255,0.7) 30%,rgba(215,235,255,0.25) 60%,transparent 80%); box-shadow:0 0 16px rgba(220,240,255,0.4),0 0 4px rgba(255,255,255,0.6); }
+/* Pareidolia dark face in texture */
+.av-texture { position:absolute; width:100%; height:100%; background:repeating-linear-gradient(23deg,rgba(30,25,20,0.7) 0px,rgba(25,20,15,0.5) 3px,rgba(35,30,22,0.8) 6px,rgba(28,23,17,0.6) 9px); }
+.av-pareidolia-eye1 { position:absolute; width:8px; height:5px; background:rgba(0,0,0,0.9); border-radius:50%; left:35%; top:38%; }
+.av-pareidolia-eye2 { position:absolute; width:8px; height:5px; background:rgba(0,0,0,0.9); border-radius:50%; left:52%; top:38%; }
+.av-pareidolia-mouth { position:absolute; width:18px; height:4px; background:rgba(0,0,0,0.8); border-radius:0 0 50% 50%; left:37%; top:57%; }
+/* Finger over lens */
+.av-finger { position:absolute; right:0; top:0; width:38%; height:100%; background:linear-gradient(270deg,rgba(180,120,90,0.85) 0%,rgba(160,100,70,0.5) 50%,transparent 100%); filter:blur(4px); }
+/* IR bloom */
+.av-irbloom { position:absolute; width:50px; height:50px; background:radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(220,240,255,0.7) 30%,rgba(180,220,255,0.2) 60%,transparent 80%); border-radius:50%; filter:blur(3px); box-shadow:0 0 30px rgba(200,230,255,0.5),0 0 60px rgba(180,220,255,0.2); }
+/* Footer */
+.doc-footer { border-top:0.5px solid var(--border); margin-top:3rem; padding:2rem 1.75rem; }
+.footer-inner { max-width:960px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:0.5rem; text-align:center; }
+.footer-emblem svg { width:22px; height:22px; color:var(--gold); opacity:0.5; }
+.footer-name { font-family:'Cinzel',serif; font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); opacity:0.7; }
+.footer-doc { font-size:11px; color:var(--text-muted); letter-spacing:0.08em; }
+.footer-note { font-size:11px; color:var(--text-muted); max-width:520px; line-height:1.6; margin-top:0.25rem; }
+</style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<header class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(201,168,76,0.85)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Evidence Compendium</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search-input" placeholder="Search all evidence topics…">
+    <span id="search-count"></span>
+  </div>
+  <div class="doc-badge">Complete Evidence Guide</div>
+</header>
+
+<div class="page">
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">The Paranormal Initiative · Evidence &amp; Analysis Reference</div>
+  <div class="hero-title">The <em>Evidence Compendium</em></div>
+  <div class="hero-desc">The complete TPI reference for understanding, identifying, and correctly classifying photographic, video, audio, and environmental evidence. For every artifact that looks paranormal, this guide shows you exactly what it is, why it happens, and how to tell the difference.</div>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><span>Sections</span>4 Major Disciplines</div>
+    <div class="hero-meta-item"><span>Coverage</span>60+ Artifact Types</div>
+    <div class="hero-meta-item"><span>Format</span>Claim vs. Cause Analysis</div>
+    <div class="hero-meta-item"><span>Searchable</span>Live Search Enabled</div>
+  </div>
+</div>
+
+<!-- SECTION NAV -->
+<nav class="sec-nav" id="sec-nav">
+  <a href="#sec-photos" id="nav-photos">📷 Photo Analysis</a>
+  <a href="#sec-video" id="nav-video">🎥 Video Analysis</a>
+  <a href="#sec-audio" id="nav-audio">🎙 Audio &amp; EVP</a>
+  <a href="#sec-environment" id="nav-environment">🌡 Environmental</a>
+  <a href="#sec-framework" id="nav-framework">⚖ Framework</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════ PHOTO SECTION -->
+<div class="sec-block" id="sec-photos">
+  <div class="sec-header">
+    <div class="sec-number">01</div>
+    <div class="sec-title-block">
+      <div class="sec-eyebrow">Section One</div>
+      <div class="sec-title">Photographic Evidence Analysis</div>
+    </div>
+    <div class="sec-tag">Photos &amp; Images</div>
+  </div>
+  <div class="sec-intro">Photography is both the most widely used and the most commonly misinterpreted evidence type in paranormal investigation. The physics of digital cameras — how sensors capture light, how lenses focus, how flash and infrared illuminators interact with the environment — create a rich catalog of artifacts that can appear genuinely inexplicable to the untrained eye. This section documents every major photographic artifact type with a visual guide, a paranormal claim comparison, and a systematic identification protocol.</div>
+
+  <!-- CAMERA PHYSICS PRIMER -->
+  <div class="entry" id="entry-camera-physics">
+    <div class="entry-header"><div class="entry-term">How Cameras Create Artifacts — The Physics</div><div class="entry-tags"><span class="tag tag-science">Science</span><span class="tag tag-photo">Photo</span></div></div>
+    <div class="entry-body">Understanding why camera artifacts occur requires a basic grasp of how a digital camera sensor works. Most "paranormal" photographs are not evidence of something unexplained — they are evidence of something the photographer did not know their camera was capable of producing. This primer establishes the physical foundation for everything that follows.</div>
+    <div class="doc-list"><div class="doc-list-label">Core Camera Physics Every Investigator Must Know</div><ul>
+      <li><strong>Depth of Field (DoF):</strong> When a camera focuses at a specific distance, objects closer or farther than that focus point are rendered out of focus — as blurry, spreading forms whose size on the sensor is determined by the lens aperture. This is the primary mechanism behind orbs, vortexes, and many other artifacts. Objects extremely close to the lens are so far out of focus that they render as large, soft, well-defined circles regardless of their actual shape.</li>
+      <li><strong>Flash and Backscatter:</strong> A camera's built-in flash fires from a position millimeters from the lens axis. Any small particle — dust, moisture, pollen, fiber — that is close to the lens and within the flash illumination path reflects light directly back toward the lens at very high intensity. Combined with depth-of-field blur, this is the complete mechanism for orbs.</li>
+      <li><strong>Infrared Illuminators:</strong> Night-vision and full-spectrum cameras use IR LED arrays mounted adjacent to the lens to illuminate the scene. These arrays produce intense near-infrared light. Any particle close to the lens reflects this IR light with great intensity directly into the sensor — creating far more dramatic orb artifacts than a standard camera flash.</li>
+      <li><strong>Shutter Speed:</strong> The longer the shutter is open, the more a moving object "smears" across the frame. A fast-moving insect at 1/30s shutter speed may streak into a rod shape. A person walking through a 2-second exposure may render as a transparent ghost. A handheld camera on a 1-second exposure may record light sources as lightning-like scribbles.</li>
+      <li><strong>ISO and Noise:</strong> High ISO settings boost sensor sensitivity in low light but also amplify random electronic noise — tiny random fluctuations in pixel brightness that can appear as grain, blotches, or shifting patterns in shadow areas, sometimes interpreted as partial faces or figures.</li>
+      <li><strong>Lens Reflections:</strong> Multiple glass elements inside a camera lens create potential internal reflection paths. Any bright light source in or near the frame can create internal reflections — geometric shapes (hexagons, circles, streaks) that appear anywhere in the image, often on the opposite side of the frame from the light source.</li>
+    </ul></div>
+    <div class="field-note"><div class="field-note-label">The Single Most Important Rule</div><p>Always check the EXIF data embedded in every photograph before analyzing its content. EXIF data records shutter speed, aperture, ISO, whether a flash fired, focal length, and timestamp. A photo taken at 1/10s with ISO 6400 and no flash in a dark room tells you an enormous amount about what artifacts to expect before you look at a single pixel. Free tools: ExifTool (command line), ExifPurge (Mac), Jeffrey's Exif Viewer (web).</p></div>
+  </div>
+
+  <!-- COMPLETE ORB GUIDE -->
+  <div class="entry" id="entry-orbs-complete">
+    <div class="entry-header"><div class="entry-term">Orbs — The Complete Classification Guide</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">Orbs are the single most frequently photographed and most frequently misidentified anomaly in paranormal investigation. The vast majority are caused by a simple optical physics phenomenon called <strong>backscatter</strong> — a particle close to the camera lens reflects the flash or illuminator light back into the lens, and because the particle is out of focus, it renders as a smooth, circular shape. The particle's actual appearance is completely lost. Understanding orbs requires knowing what type of particle caused each specific orb's appearance.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">A glowing spherical ball of energy, spirit energy, or entity manifestation. Often described as moving with "intelligence" or appearing in response to activity. Believers note they appear in places of reported paranormal activity and seem to react to investigators.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">Actual Mechanism</div>
+        <div class="compare-text">An airborne particle (dust, moisture droplet, pollen grain, fiber, skin cell, insect) within 6–18 inches of the lens, illuminated by the flash or IR illuminator, rendered as an out-of-focus disc by the camera's depth of field. The particle's proximity to the lens — not its size or nature — determines the orb's diameter on screen.</div>
+      </div>
+    </div>
+
+    <div class="section-label">Orb Type Identification — Visual Guide</div>
+    <div class="orb-grid">
+      <div class="orb-card">
+        <div class="orb-demo orb-dust"></div>
+        <div class="orb-name">Dust Orb</div>
+        <div class="orb-type">Most Common Contamination</div>
+        <div class="orb-desc">Appears as a soft, semi-translucent circle with a subtle textured or "cell-like" appearance. Look for a faint concentric ring or grainy internal structure at full image resolution — this is diffraction from the particle's irregular surface. Color is off-white to pale warm gray. Often appears in clusters when visible dust is disturbed.</div>
+        <div class="orb-indicators"><strong>Conditions:</strong> Post-movement (investigators walking, doors opening), older/dusty buildings, dry air (below 40% RH), carpeted rooms, aged furnishings, construction nearby.</div>
+      </div>
+      <div class="orb-card">
+        <div class="orb-demo orb-moisture"></div>
+        <div class="orb-name">Moisture / Water Droplet Orb</div>
+        <div class="orb-type">High Humidity / Rain / Fog</div>
+        <div class="orb-desc">Distinctly more reflective and brighter than dust orbs. Often shows a strong specular highlight (a pinpoint of intense brightness at the center or edge) where the illuminator reflects off the curved water surface. May appear blue-white. Clusters in extremely humid conditions or near water sources. Outdoor fog produces hundreds per frame.</div>
+        <div class="orb-indicators"><strong>Conditions:</strong> Humidity above 70%, rain, fog, basements near water intrusion, near fish tanks or fountains, cold air meeting warm air (condensation). The most common explanation for "cemetery orb" photography at night.</div>
+      </div>
+      <div class="orb-card">
+        <div class="orb-demo orb-insect"></div>
+        <div class="orb-name">Insect Orb</div>
+        <div class="orb-type">Warm Weather / IR Environments</div>
+        <div class="orb-desc">Generally larger in diameter than dust orbs. Zoom to full resolution — insect orbs often show an irregular or jagged outer edge, or internal structure suggesting wing geometry. May appear with a motion streak (partial rod) if the insect was moving during the exposure. Typically appears singly rather than in clusters. More prevalent in IR illuminated footage (insects are attracted to some IR wavelengths).</div>
+        <div class="orb-indicators"><strong>Conditions:</strong> Summer months, buildings with open windows or insect access points, near light sources that attract insects, strong IR illuminators (940nm attracts fewer insects than 850nm).</div>
+      </div>
+      <div class="orb-card">
+        <div class="orb-demo orb-pollen"></div>
+        <div class="orb-name">Pollen Orb</div>
+        <div class="orb-type">Seasonal — Spring / Early Summer</div>
+        <div class="orb-desc">Pollen grains are often slightly irregular in shape and produce orbs with a subtle surface texture or non-uniform luminosity — slightly "rougher" at the edge compared to smooth water droplet orbs. Appear yellow-gold to pale white. Highly seasonal — spring outdoor investigations near vegetation produce vastly more orbs than winter investigations in the same location. PurpleAir.com pollen data for your location will confirm this.</div>
+        <div class="orb-indicators"><strong>Conditions:</strong> Spring/early summer, outdoor investigations, near trees or flowering plants, open windows. Cross-reference with local pollen count — a high-pollen day makes orb dismissal even more certain for outdoor and near-window captures.</div>
+      </div>
+      <div class="orb-card">
+        <div class="orb-demo orb-dander"></div>
+        <div class="orb-name">Fiber / Dander / Hair</div>
+        <div class="orb-type">Pet-Occupied Environments</div>
+        <div class="orb-desc">Skin cells (dander) and fine fibers produce small to medium orbs with slightly soft, irregular edges. At full resolution these may appear elongated or asymmetric rather than perfectly circular. Pet dander is one of the most constant orb sources in homes with cats or dogs — unlike dust, it is continuously shed regardless of recent movement. A very high quantity of small orbs across an entire image series suggests constant dander or fiber shedding.</div>
+        <div class="orb-indicators"><strong>Conditions:</strong> Homes with pets, older upholstered furniture (fiber shedding), carpet-heavy environments, investigators with long hair. Present throughout entire image series, not just after movement.</div>
+      </div>
+      <div class="orb-card">
+        <div class="orb-demo orb-genuine"></div>
+        <div class="orb-name">Anomalous Form — Investigate Further</div>
+        <div class="orb-type">Criteria-Based Classification Only</div>
+        <div class="orb-desc">No orb is classified as anomalous based on appearance alone. An anomalous orb candidate must survive systematic elimination of all contamination sources. The strongest criteria: appears self-luminous (not reflecting the illuminator), present in confirmed low-particulate environment, documented at a specific location across multiple frames, corroborated simultaneously by another evidence type, absent from walkthrough baseline photos of the same area.</div>
+        <div class="orb-indicators"><strong>Note:</strong> Do not apply this classification to any single orb no matter how compelling it appears. Apply the Three-Shot Test and full contamination elimination first.</div>
+      </div>
+    </div>
+
+    <div class="identify-box">
+      <div class="identify-label">The Three-Shot Test for Orb Classification</div>
+      <ul>
+        <li>Take three photographs in rapid succession (within 3 seconds) from the same position without moving.</li>
+        <li>If the "orb" appears in different positions in each frame — it is a drifting particle in moving air. Not anomalous.</li>
+        <li>If the "orb" disappears entirely in subsequent frames — it was a transient particle. Not anomalous.</li>
+        <li>If the "orb" maintains the same position, same appearance, and same brightness across all three frames — it warrants further investigation. This is rare for environmental orbs.</li>
+        <li>For IR video: pause on individual frames and examine the orb's movement path. Environmental particles drift and fall gradually. They do not accelerate, reverse direction, or move against observable air currents without explanation.</li>
+      </ul>
+    </div>
+
+    <div class="debunk-box"><div class="debunk-label">The Skeptical Inquirer Standard</div><p>The July 2020 issue of <em>Skeptical Inquirer</em> devoted a full analysis to photographic orbs, summarizing the consensus: "Photographic backscatter from particles near the lens is the sole known cause of the orb artifact. No experimental protocol has produced an orb by any other mechanism. Until an alternative physical mechanism is demonstrated under controlled conditions, orbs cannot constitute evidence of any non-physical phenomenon." This is the scientific standard TPI applies to all orb evidence.</p></div>
+  </div>
+
+  <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+</div>
+
+  <!-- ════════════════════════════════ RODS / SKYFISH -->
+  <div class="entry" id="entry-rods">
+    <div class="entry-header"><div class="entry-term">Rods &amp; Skyfish — Insects in Motion</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">"Rods" or "skyfish" were once among the most debated anomalies in paranormal photography — elongated, tubular shapes with what appeared to be undulating fins or membranes along their length, flying at extraordinary speed. They appeared primarily in video footage and in photographs taken outdoors or near open doorways. They are now one of the most thoroughly debunked phenomena in investigative photography.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">The Original Paranormal Claim</div>
+        <div class="compare-text">A previously unknown species of high-speed airborne creature — or non-physical entity — too fast for the naked eye to see. Witnesses reported seeing the rod-shaped forms only on camera review, never visually during filming. Some investigators proposed they were inter-dimensional beings that only exist on camera.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What They Actually Are</div>
+        <div class="compare-text">Flying insects — moths, flies, bees, dragonflies, gnats — photographed or filmed with a shutter speed or frame rate too slow to freeze their motion. The insect's body blurs into an elongated streak. Its rapidly beating wings, captured in multiple positions during a single exposure, create the "fins" or "undulating membranes." This is 100% confirmed by controlled high-speed camera experiments.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Rod artifact -->
+    <div class="artifact-scene">
+      <div class="av-rod"></div>
+      <div class="artifact-scene-label">Simulated Rod Artifact — Insect Motion Blur</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">How the Rod Artifact Forms — Step by Step</div><ul>
+      <li><strong>Step 1 — Slow shutter speed or interlaced video:</strong> The camera is set to 1/30s, 1/60s, or slower (common in low-light settings). Some older video formats (interlaced) record even and odd scan lines at slightly different moments — 1/60s apart. This doubles the distortion of fast-moving objects.</li>
+      <li><strong>Step 2 — Fast-moving insect enters the frame:</strong> An insect flying at 5–20 mph crosses the camera's field of view during the open shutter window. Its body does not register as a distinct shape — it smears across multiple pixels as it moves.</li>
+      <li><strong>Step 3 — Wingbeats create the "fins":</strong> While the body streaks horizontally, the insect's wings beat at 200–800 times per second. Each wingbeat position is captured at slightly different horizontal positions during the exposure. The result: a central streaked body flanked by multiple overlapping wing images — appearing as symmetrical fins or membranes along the rod shape.</li>
+      <li><strong>Step 4 — Interlaced video doubles the effect:</strong> In older interlaced video (NTSC, PAL), alternating scan lines are captured at different moments. A fast insect appears in different positions in the even lines vs. the odd lines, creating a characteristic wavy or spiraling distortion along the rod that perfectly mimics the appearance of an undulating creature.</li>
+    </ul></div>
+
+    <div class="debunk-box"><div class="debunk-label">The Definitive Debunking — China 2005</div><p>In 2005, a Chinese documentary team investigating "rod sightings" on surveillance footage at a nature reserve erected fine-mesh nets across the areas where rods were regularly captured. They then filmed the same area with normal cameras. The surveillance footage showed rods. The nets caught: ordinary moths. High-speed cameras filming simultaneously showed the moths moving at normal speed with their wings creating the identical rod pattern visible on the standard camera. This experiment, replicated independently by multiple skeptic organizations, permanently closed the rod question.</p></div>
+
+    <div class="identify-box">
+      <div class="identify-label">How to Identify a Rod Artifact in Your Footage</div>
+      <ul>
+        <li>The shape has a clear directional motion vector — it enters from one side and exits toward the other. It is not stationary or hovering.</li>
+        <li>Zoom in at full resolution: the "fins" show overlapping semi-transparent wing shapes, not solid membranes. Each fin position is slightly offset from the others.</li>
+        <li>The rod appears for only 1–5 frames of video. A genuine animal or entity would appear for much longer as it traverses the frame.</li>
+        <li>Rods appear far more frequently in footage taken near vegetation, lights, open doors, or at dusk — all insect-active conditions.</li>
+        <li>Check your other footage from the same session. If rods appear repeatedly, you have insects. A single isolated rod in dozens of hours of footage is worth more scrutiny.</li>
+        <li>Use a high-speed camera setting (240fps or higher on modern phones). If the "rods" resolve into identifiable insects at high speed, they were insects all along.</li>
+      </ul>
+    </div>
+
+    <div class="pro-tip"><div class="pro-tip-label">Modern Camera Note</div><p>As digital cameras advanced to faster frame rates and global shutters (which expose the entire sensor simultaneously rather than line by line), rod sightings largely disappeared from photography and video. This is not because the creatures vanished — it is because modern cameras are fast enough to clearly capture what the "rods" always were. If your investigation camera still produces rods regularly, its frame rate and shutter speed need review.</p></div>
+  </div>
+
+  <!-- ════════════════════════════════ CAMERA STRAP VORTEX -->
+  <div class="entry" id="entry-vortex">
+    <div class="entry-header"><div class="entry-term">Camera Strap Vortex &amp; Tethered Object Artifacts</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">The "vortex" is one of the most visually dramatic paranormal photograph artifacts — a large, spiraling or looping luminous form that appears in the image as if a tornado of energy was photographed. It is almost always a camera strap, lanyard, or tethered cord that swung in front of the lens as the photo was taken.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">A "vortex of energy," "spirit portal," or "dimensional gateway." Appears as a large, bright, looping or spiraling white shape — often covering a significant portion of the frame. Sometimes interpreted as a tunnel or wormhole through which entities travel. Very frequently submitted as paranormal evidence.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">A camera wrist strap, neck strap, lanyard, or equipment cord that hung, swung, or bounced in front of the lens as the shutter fired. Because the strap is only inches from the lens, it is completely out of focus — rendering as a large, soft, glowing form. The flash illuminates the strap material at high intensity, creating the bright "energy" appearance.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Vortex -->
+    <div class="artifact-scene">
+      <div class="av-vortex"></div>
+      <div class="artifact-scene-label">Simulated Vortex Artifact — Camera Strap</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">Vortex Identification Checklist</div><ul>
+      <li><strong>Examine the texture at full resolution:</strong> At 100% zoom, most camera strap vortexes show the woven or braided texture of the strap fabric. Individual fibers, weave patterns, and stitching are often clearly visible despite the blur. This is the single most reliable identification method.</li>
+      <li><strong>Looping or circular shape:</strong> A hanging strap forms a natural U or loop when it swings. This produces the characteristic looping or spiraling path seen in vortex photographs. True energy vortexes (if they existed) would have no reason to mimic the exact shape of a hanging lanyard.</li>
+      <li><strong>Always in the foreground:</strong> Vortex artifacts are always rendered extremely large in the frame because they are extremely close to the lens. They never appear at a distance within the scene.</li>
+      <li><strong>Check the image immediately before and after:</strong> In a photo series, the frame before and after a vortex photo will often show the strap in its normal position, or show the photographer moving. The vortex frame occurs when the camera motion causes the strap to swing into the lens path.</li>
+      <li><strong>Confirm the camera had a strap attached:</strong> Ask the photographer. In the vast majority of confirmed vortex photos, the camera had a wrist or neck strap at the time.</li>
+    </ul></div>
+
+    <div class="field-note"><div class="field-note-label">Prevention Protocol</div><p>All TPI investigation cameras should have straps removed or secured before photography begins. If a strap must remain attached, tape it flat to the camera body. Wrist straps should be removed entirely for investigation use. Equipment lanyards should never hang freely near an active camera. These simple steps eliminate the vortex artifact entirely.</p></div>
+  </div>
+
+  <!-- ════════════════════════════════ HAIR AND FIBER STRANDS -->
+  <div class="entry" id="entry-hair-fibers">
+    <div class="entry-header"><div class="entry-term">Hair, Fiber &amp; Spider Web "Spirit Strands"</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">Thin strands of material — a single human hair, a fiber from clothing, a gossamer spider web thread — can appear in photographs and video as luminous, ethereal tendrils of white or pale light when they fall in front of the camera lens and are illuminated by the flash or IR array. These are among the most convincingly "paranormal-looking" artifacts because their natural appearance is ghostly to begin with.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">A "spirit tendril," "energy strand," "ectoplasmic thread," or "ghost fiber." Appears as a thin, curving, luminous white or pale line that extends across part of the frame — often appearing to move or drift in video. Some investigators interpret these as the visible form of spirit energy or partial manifestations.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">A single human hair (from the photographer or nearby person), a stray clothing fiber, or a spider web thread that fell or drifted into the plane immediately in front of the lens. At distances of 1–3 inches from the lens, even a hair thinner than 0.1mm appears as a luminous, glowing ribbon many times its actual width due to out-of-focus expansion and flash reflection.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Hair strand -->
+    <div class="artifact-scene">
+      <div class="av-hair"></div>
+      <div class="artifact-scene-label">Simulated Hair/Fiber Strand Artifact</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">Types of Strand Artifacts &amp; Their Characteristics</div><ul>
+      <li><strong>Human hair — single strand:</strong> Appears as a smooth, uniformly glowing curved or straight line with consistent width throughout its visible length. Often shows a natural curve or S-shape following the hair's natural curl. Glow is brightest where the flash illuminates it most directly. Length visible in frame depends on how much of the hair was within close lens range.</li>
+      <li><strong>Clothing fiber — lint or thread:</strong> May be shorter and fuzzier in appearance than a hair, with slight texture along its edges visible at full zoom. Often appears at odd angles as it drifts slowly through the air. More likely to appear in clothing-dense environments (closets, bedroom investigations).</li>
+      <li><strong>Spider web strand — most dramatic:</strong> Spider silk is the thinnest natural fiber (2–8 micrometers diameter) but reflects light intensely due to its surface properties. On night-vision and IR cameras, a spider web strand crossing the IR illuminator's field produces a brilliant, glowing, undulating line that can span the entire camera frame. It appears to move in air currents. This is the single most dramatic of the strand artifact types and is responsible for many "spirit manifestation" video captures. Buildings that have been unoccupied for any period almost always have spider silk throughout.</li>
+      <li><strong>Multiple parallel strands:</strong> When several hairs or fibers are visible simultaneously, they can create a pattern that suggests structure — a grid, a curtain, or even a face-like form. Combined with pareidolia, multi-strand artifacts are particularly prone to misidentification.</li>
+    </ul></div>
+
+    <!-- VISUAL DEMO: Spider web on IR -->
+    <div class="artifact-scene">
+      <div class="av-spiderweb"></div>
+      <div class="artifact-scene-label">Simulated Spider Silk on IR Camera — Bright Filament Artifact</div>
+    </div>
+
+    <div class="identify-box">
+      <div class="identify-label">How to Identify Strand Artifacts</div>
+      <ul>
+        <li>Uniform width: Natural strands maintain a consistent (if very thin) width along their length. Energy phenomena with a claimed physical manifestation do not have a reason to appear as a single uniform-width line.</li>
+        <li>Out-of-focus indicator: The strand appears luminous and glowing precisely because it is out of focus. If you can identify any texture or detail along its length at full zoom, you are seeing the strand material itself.</li>
+        <li>Movement in video: Strand artifacts drift and sway in a manner perfectly consistent with a lightweight material moving in air currents from HVAC or investigator breathing. They do not move with directional intent — they respond to air movement.</li>
+        <li>Spider web test: Before deploying night-vision or IR cameras in any room, walk the room with a bright flashlight and examine every area near the camera placement for spider webs. A single pass with a flashlight will reveal silk you cannot otherwise see.</li>
+        <li>Check the photographer: If the photographer has long hair, check whether they were facing the camera location with hair loose. A stray hair from the photographer almost always explains the strand artifact.</li>
+      </ul>
+    </div>
+
+    <div class="pro-tip"><div class="pro-tip-label">Prevention Protocol</div><p>Before placing any IR or night-vision camera: (1) clear spider silk from all areas within 3 feet of the camera using a long-handled brush, (2) ensure no investigators with loose long hair approach the camera from the front during operation, (3) check for stray lint or fiber on the lens housing itself. A single web-clearing pass before deployment eliminates this artifact class entirely from your footage.</p></div>
+  </div>
+
+  <!-- ════════════════════════════════ ECTOPLASM / VAPOR / MIST -->
+  <div class="entry" id="entry-ectoplasm">
+    <div class="entry-header"><div class="entry-term">Ectoplasm, Spirit Mist &amp; Vapor Artifacts</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">Wispy, cloud-like, or misty shapes in photographs — often appearing as swirling white or grey fog — are among the most emotionally compelling paranormal photographs. They tap directly into our culturally established image of ghosts as ethereal, vaporous presences. In practice, every photographic "mist" or "ectoplasm" has a specific, identifiable physical source. The most common is the one most investigators fail to control for: their own breath.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">"Ectoplasm," "spirit mist," "ghostly fog," "energy manifestation," or "apparition forming." Typically a wispy, semi-transparent white or grey cloud shape that appears in one area of the frame. Cemetery photographs taken in autumn and winter are particularly full of these submissions.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">In the overwhelming majority of cases: the photographer's own breath exhaled immediately before or during the shot, illuminated by the camera flash. In cold conditions, breath condenses into a visible vapor cloud within 12–18 inches of the face — directly in front of the camera. Other sources: cigarette or vape smoke, steam from a nearby heat source, morning fog, condensation clouds from air conditioning, and dry ice.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Vapor artifact -->
+    <div class="artifact-scene">
+      <div class="av-vapor"></div>
+      <div class="artifact-scene-label">Simulated Breath Vapor / "Ectoplasm" Artifact</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">Vapor Artifact Sources — Complete Catalog</div><ul>
+      <li><strong>Breath condensation — the primary cause:</strong> Human breath is approximately 98°F (37°C) and 100% relative humidity when exhaled. When this breath meets air below approximately 45°F (7°C), it condenses into a visible vapor cloud. The flash illuminates this cloud brilliantly from the front, creating the characteristic bright, wispy mist shape in the photo. In cemetery investigations below 50°F, every photographer produces this artifact with every breath. The solution: exhale away from the camera before shooting, hold breath briefly during the shot, or use a remote shutter release.</li>
+      <li><strong>Cigarette and vape smoke:</strong> An investigator who smoked within 10–15 minutes before shooting may still exhale visible smoke particles. Vape exhaust is particularly persistent and dense. TPI protocol prohibits smoking within 2 hours of investigation — this applies to photography contamination as well as EVP contamination.</li>
+      <li><strong>Ground fog and atmospheric mist:</strong> Low-lying fog in cemetery settings, riverside locations, or low-lying topography is a natural atmospheric phenomenon that has nothing to do with paranormal activity. Fog appears in photos exactly as it appears to the eye — as an amorphous mist that has no specific source within the scene.</li>
+      <li><strong>HVAC and heating exhaust:</strong> Indoor investigations with active heating systems can produce visible vapor from vents during the heat cycle in cold weather. This vapor drifts across rooms and may appear in photographs taken near vent locations.</li>
+      <li><strong>Lens condensation:</strong> When a cold camera is brought into a warm, humid environment (or vice versa), moisture condenses on the outer lens element. Photographs taken during this condensation period show a milky, foggy layer across the entire image. This is not an artifact within the scene — it is on the lens itself. The image will appear uniformly foggy rather than having a localized mist shape.</li>
+    </ul></div>
+
+    <div class="identify-box">
+      <div class="identify-label">How to Distinguish Vapor Artifacts from Scene Content</div>
+      <ul>
+        <li>Temperature check: Was the ambient temperature below 50°F when the photo was taken? If yes, breath condensation is the primary working hypothesis until disproven.</li>
+        <li>Location in frame: Breath condensation typically appears in the lower-center to center of the frame — directly in front of the photographer's face at camera height. If the mist appears at the edge of the frame or at an unusual height, that is slightly more unusual.</li>
+        <li>Shape: Breath vapor has an irregular, diffuse, wispy shape consistent with a gas cloud dispersing in air. It does not have defined edges or internal structure. A claimed "mist with a face in it" is breath vapor with pareidolia layered on top.</li>
+        <li>Subsequent frames: Take three photos in rapid succession. If the mist is present in one frame and gone in the next, it was a transient vapor. A persistent mist that appears in multiple frames from the same position is more unusual — and more likely to be ground fog, smoke, or lens condensation.</li>
+        <li>Reproduce it: In cold conditions, consciously exhale in front of the camera and take a photo. Compare the result to the suspect image. They will look identical.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════ LENS FLARE -->
+  <div class="entry" id="entry-lens-flare">
+    <div class="entry-header"><div class="entry-term">Lens Flare &amp; Internal Reflections</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">Lens flare occurs when a strong light source — the sun, a flashlight, a streetlamp, a gravestone reflecting sunlight, a candle — strikes the camera lens at an angle that creates internal reflections between the lens elements. These reflections produce geometric shapes — circles, hexagons, streaks, and halos — that appear in the image but do not exist in the physical scene. They are a property of the camera, not the location.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">Glowing orbs of energy that are clearly distinct from dust orbs — they are bright, often colored (blue, green, amber), and appear geometrically shaped. Also interpreted as "spirit lights," "energy portals," or bright apparitions. Sometimes appear as streaks or halos around a light source. Frequently submitted from outdoor cemetery or graveside photography.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">Internal reflections between the multiple glass elements inside the camera lens. Each lens element reflects a small percentage of incoming light. When a bright source hits the lens at the right angle, these reflections bounce between elements and create ghost images — geometric shapes whose size, color, and position are determined entirely by the lens design, aperture shape, and light source angle.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Lens flare -->
+    <div class="artifact-scene">
+      <div class="av-flare-main"></div>
+      <div class="av-flare-hex1"></div>
+      <div class="av-flare-hex2"></div>
+      <div class="av-flare-streak"></div>
+      <div class="artifact-scene-label">Simulated Lens Flare — Geometric Orbs &amp; Streaks</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">Types of Lens Flare Artifacts</div><ul>
+      <li><strong>Geometric "orbs" (aperture ghosts):</strong> Circular, hexagonal, or polygonal shapes appearing in a line across the frame. Their shape matches the camera's aperture shape — a lens with a 7-blade aperture produces 7-sided flare polygons. These are distinctly different from backscatter orbs: they have sharp, geometric edges rather than soft, diffuse edges, and they are often brightly colored (blue, green, amber) rather than white.</li>
+      <li><strong>Streak flare:</strong> A single bright light source in or near the frame creates a bright streak or line radiating from the source. This is caused by light diffracting around the aperture blades. Common with the sun, distant streetlights, and flashlights aimed near the lens.</li>
+      <li><strong>Halo or starburst:</strong> A bright light source photographed directly produces a starburst or halo pattern — radiating spikes or a ring around the light. Number of spikes equals double the aperture blades.</li>
+      <li><strong>Reflection from polished surfaces:</strong> Gravestones, windows, chrome fixtures, wet pavement, and water all reflect strong directional light. When this reflection enters the lens at the right angle, it creates flare identical to a direct light source flare but without a visible source in the frame.</li>
+    </ul></div>
+
+    <div class="identify-box">
+      <div class="identify-label">The Three Tests for Lens Flare</div>
+      <ul>
+        <li><strong>The opposite-side test:</strong> In virtually all lens flare, if you draw a line from the flare shape through the center of the image, the light source causing it will be on the exact opposite side of the frame (or outside the frame in that direction). This is a fundamental optical property of internal reflection.</li>
+        <li><strong>The camera-movement test:</strong> In video, move the camera slightly. Lens flare moves in direct, predictable opposition to the camera movement — when you pan right, the flare moves left. A genuine light or physical anomaly in the scene moves with the camera's pan, not against it.</li>
+        <li><strong>The blocking test:</strong> Identify the suspected light source causing the flare. Shield the lens from that light source with your hand or a lens hood. The flare will disappear immediately. If blocking the suspected source eliminates the "anomaly," it was lens flare.</li>
+      </ul>
+    </div>
+    <div class="pro-tip"><div class="pro-tip-label">Prevention</div><p>Use a lens hood on all investigation cameras to reduce off-axis light entering the lens. Avoid shooting toward any visible light source — the sun, streetlights, lit windows — unless the scene requires it. Always verify the light environment before submitting any photo with bright geometric shapes as evidence. A single lens blocking test eliminates the question entirely.</p></div>
+  </div>
+
+  <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+
+  <!-- ════════════════════════════════ LONG EXPOSURE -->
+  <div class="entry" id="entry-long-exposure">
+    <div class="entry-header"><div class="entry-term">Long Exposure Artifacts — Ghost People, Lightning Streaks &amp; Light Painting</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">Long exposure photography — where the camera's shutter remains open for multiple seconds — is the source of some of the most convincing and most misunderstood paranormal images ever submitted. In a single long-exposure photograph, a figure can appear semi-transparent and ghostly, streaks of light can surround a person like crackling energy, and light sources can draw glowing patterns through the air. Every one of these effects has a precise, reproducible mechanical explanation.</div>
+
+    <!-- TRANSPARENT PEOPLE -->
+    <div class="section-label">Transparent / Semi-Visible "Ghost" People</div>
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">A semi-transparent person or figure visible in the photograph — a "ghost" that appears to be present but see-through. The figure may appear standing in a doorway, at the end of a hallway, or in the background of a group photo. Sometimes the face or features appear partially defined. Considered among the most powerful "full-body apparition" evidence.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">A person who walked through the scene during a long (1–30 second) exposure. Because the shutter was open for the entire duration, the stationary background received full exposure while the moving person was only present for a fraction of the total time — appearing faint and transparent proportional to how long they were in that position. The background "shows through" them because it accumulated more light.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Ghost person -->
+    <div class="artifact-scene">
+      <div class="av-ghost"></div>
+      <div class="av-ghost2"></div>
+      <div class="artifact-scene-label">Simulated Long Exposure "Ghost" — Person in Motion During Extended Shutter</div>
+    </div>
+
+    <!-- LIGHTNING/ENERGY STREAKS -->
+    <div class="section-label">Lightning Streaks &amp; "Energy" Around People — Cemetery Photography</div>
+    <div class="entry-body">Some of the most dramatic paranormal photographs show what appears to be crackling energy, lightning, or a "spirit aura" surrounding a person standing in a cemetery or dark outdoor location. This effect, while visually stunning, is one of the most technically straightforward artifacts in photography.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">Paranormal energy, spirit lightning, aura manifestation, or a "spirit interacting" with the person. The effect typically shows glowing streaks of light — white, blue, or gold — emanating from around a person standing in a cemetery or dark environment. Submitters often note the person did not see the light and it only appeared in the photo.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">One of three things: (1) Camera movement during a long exposure causes fixed point light sources (distant streetlights, stars, lights on buildings) to "draw" streaks across the frame as the camera moves — these streaks pass through the person in the foreground because the flash freezes the person but the light sources continue to streak. (2) Flying insects near a flash produce rod-shaped streaks (see Rods entry). (3) Deliberate or accidental "light painting" where someone moves a light source during the exposure.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Lightning streaks -->
+    <div class="artifact-scene">
+      <div class="av-lightning"></div>
+      <div class="av-lightning2"></div>
+      <div class="artifact-scene-label">Simulated "Energy Streak" — Moving Point Light Sources During Long Exposure</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">The Mechanics of Cemetery "Lightning" Photography</div><ul>
+      <li><strong>The flash + long shutter combination:</strong> Many cameras in "night scene" modes use a flash to illuminate the foreground subject (the person) and a long shutter (2–10 seconds) to allow the dark background to expose. The flash fires and freezes the person sharply. The shutter then stays open for several more seconds. During those seconds, any light source in the scene — no matter how distant — draws a streak wherever the camera moves.</li>
+      <li><strong>Every distant light becomes a streak:</strong> Streetlights 200 meters away, a lit window across the cemetery, a car's headlights passing on a road — all of these become streaks of light when the camera moves. These streaks pass through the position where the person is standing because the person occupies that area of the frame.</li>
+      <li><strong>Why the person didn't see it:</strong> The person saw nothing because the streaks are caused by real, mundane light sources that are too distant and too diffuse to be noticed as dramatic light — but the camera, with a long open shutter, accumulates their light into visible trails.</li>
+      <li><strong>Check the EXIF:</strong> The single most reliable method. If the shutter speed in the EXIF data is longer than 1/60s and any light sources were present in the scene, long-exposure light streaks are the working explanation for any energy-like streaks in that photograph.</li>
+      <li><strong>Light painting (intentional or accidental):</strong> In some cases, an investigator carrying a flashlight, phone, or other light source moved during the exposure without realizing the shutter was still open. This "paints" a trail of light through the scene that can take any shape, including shapes that appear to encircle or reach toward the person in the foreground.</li>
+    </ul></div>
+
+    <div class="identify-box">
+      <div class="identify-label">How to Identify Long-Exposure Artifacts</div>
+      <ul>
+        <li>Check EXIF shutter speed: any value slower than 1/60s should trigger immediate long-exposure artifact review for any streaks, transparency, or unusual light shapes.</li>
+        <li>Identify all light sources in or near the scene. Streetlights, building windows, passing vehicles, stars, lit gravestones — map them all. Any streak of light in the photo should trace back to one of these sources.</li>
+        <li>Look for the "frozen flash" subject: long-exposure + flash photos typically show a sharp, well-exposed foreground subject (the person) surrounded by blurry or streaked background — a clear visual signature of the flash-plus-long-exposure technique.</li>
+        <li>Check for camera shake: zoom into small stationary details in the background (lettering on a stone, a fence post). If these appear blurred or doubled, the camera moved during the exposure, confirming the streak mechanism.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════ PAREIDOLIA / MATRIXING -->
+  <div class="entry" id="entry-pareidolia">
+    <div class="entry-header"><div class="entry-term">Pareidolia &amp; Matrixing — Faces &amp; Figures in Random Patterns</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-video">Video</span><span class="tag tag-science">Science</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">Pareidolia is a neurological phenomenon in which the human brain perceives familiar patterns — particularly faces and figures — in random or ambiguous visual data. In paranormal investigation, this is sometimes called "matrixing." It is not a camera artifact but a <em>perceptual artifact</em> — the anomaly exists in the observer's visual system, not in the photograph or scene. It is the most universal source of false-positive paranormal evidence across all cultures and all investigation styles.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">A face in a window, a figure in the shadows, a child's face in the texture of a curtain, a spirit watching from the corner of a room. Often discovered during photo review, not visible in person. Frequently found in wood grain, stone textures, shadow gradients, old wallpaper patterns, foliage, and reflective surfaces.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">The brain's facial recognition system (fusiform face area of the temporal lobe) is wired to find face-like patterns in any configuration of two roughly symmetrical dark areas above a curved lighter area — eyes above a mouth. This system is so powerful and automatic that it operates below conscious control, finding "faces" in clouds, toast, stone, wood, and shadows. This is evolution — detecting faces quickly in natural environments was survival-critical.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Pareidolia face in texture -->
+    <div class="artifact-scene">
+      <div class="av-texture"></div>
+      <div class="av-pareidolia-eye1"></div>
+      <div class="av-pareidolia-eye2"></div>
+      <div class="av-pareidolia-mouth"></div>
+      <div class="artifact-scene-label">Simulated Pareidolia — "Face" in Shadow/Texture Pattern</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">Common Pareidolia Sources in Investigation Photography</div><ul>
+      <li><strong>Wood grain and knots:</strong> Natural wood contains elliptical knots surrounded by curved grain lines — a shape that closely mimics eyes, eyebrows, and a nose. Wood-paneled walls, hardwood floors, and old furniture are among the most common pareidolia sources in home investigations.</li>
+      <li><strong>Shadow gradients on walls and ceilings:</strong> When a point light source (lamp, candle, IR illuminator) casts shadows of objects in the room, the overlapping shadow gradients create areas of relative dark and light that the visual system interprets as facial features, especially in low-resolution or compressed images.</li>
+      <li><strong>Curtains and fabric folds:</strong> The draped folds of a curtain, tablecloth, or bedsheet create shadow patterns with bilateral symmetry — the eye reads this symmetry as face-like. Investigators frequently report a "child's face" in flowing white curtains.</li>
+      <li><strong>Old wallpaper and peeling paint:</strong> Deteriorating surfaces with complex patterns of color and texture provide rich material for pareidolia. Peeling paint, stained plaster, and aged wallpaper are among the most fertile sources of false-positive face findings.</li>
+      <li><strong>Window reflections:</strong> A window at night reflects the interior of the room. These reflections, combined with what is visible outside through the glass, create complex layered imagery. The human face recognition system reliably finds faces in these layered reflections.</li>
+      <li><strong>High-noise / high-ISO images:</strong> In very dark conditions, cameras boost ISO sensitivity — introducing pixel noise (grain). This noise creates a constantly shifting fine texture across the image, providing abundant material for pareidolia. Low-resolution or heavily compressed images compound this effect by creating artifact patterns at the pixel block level.</li>
+    </ul></div>
+
+    <div class="identify-box">
+      <div class="identify-label">How to Evaluate a Pareidolia Claim</div>
+      <ul>
+        <li><strong>The blind description test:</strong> Show the image to someone who has not been told where to look or what to look for. Ask them to describe everything they see. If they spontaneously identify the same face or figure without prompting, it is more compelling than a guided identification. If they do not see it without being shown, the "face" is likely pareidolia in the original observer.</li>
+        <li><strong>The walkthrough comparison:</strong> Compare the area to your walkthrough photographs. Did the pattern of shadow and texture that creates the "face" exist before the investigation? In many cases the answer is yes — it is a static feature of the environment, not something that appeared during the investigation.</li>
+        <li><strong>The rotation test:</strong> Rotate the image 90° and view it again. True pareidolia faces typically lose their face-like quality when rotated — the brain's face detector relies heavily on vertical bilateral symmetry. A genuine face is a face at any angle.</li>
+        <li><strong>The source illumination test:</strong> Identify the shadow-casting light source. Does moving or blocking that source eliminate the "face" pattern? If yes, it is a shadow artifact. If no, investigate further.</li>
+      </ul>
+    </div>
+    <div class="field-note"><div class="field-note-label">Field Note</div><p>Pareidolia is universal — it affects every investigator, every skeptic, and every scientist equally. No one is immune. The discipline is not to stop seeing faces in patterns — that is neurologically impossible — but to recognize when you are experiencing pareidolia rather than observing evidence. When you find a "face" in a photograph, your emotional response is real. Your perception is real. The face is not real.</p></div>
+  </div>
+
+  <!-- ════════════════════════════════ SNOW / RAIN / ENVIRONMENTAL PARTICLES -->
+  <div class="entry" id="entry-precipitation">
+    <div class="entry-header"><div class="entry-term">Snow, Rain &amp; Environmental Precipitation Artifacts</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-video">Video</span><span class="tag tag-environment">Environment</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">Rain, snow, sleet, and other precipitation create specific and highly characteristic artifacts in both photography and video that are reliably mistaken for paranormal phenomena. These artifacts are almost entirely preventable through environmental awareness — an investigator who photographs outdoors in rain or snow and then submits the resulting images as evidence has failed at the most basic level of contamination control.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Rain — Often Reported As</div>
+        <div class="compare-text">Orbs — often dozens or hundreds of them across the frame. Rain orbs are among the brightest and most distinctive-looking, which makes them among the most frequently submitted as "powerful spirit activity." The volume and brightness of rain orbs can be genuinely startling if the photographer is unaware of the mechanism.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">Rain — What It Actually Is</div>
+        <div class="compare-text">Each raindrop in the air near the lens reflects the camera flash with extreme brilliance. Water droplets are more reflective than dust and have a distinct specular highlight (bright central pinpoint). Photographing in rain with a flash produces a near-certain orb field with dozens to hundreds of bright moisture orbs per frame. The tell: orbs will be numerous, similarly sized, very bright, and will show the characteristic water-droplet specular highlight.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Rain orbs -->
+    <div class="artifact-scene">
+      <div class="av-rain-orb" style="width:28px;height:28px;top:15%;left:12%;"></div>
+      <div class="av-rain-orb" style="width:22px;height:22px;top:45%;left:30%;"></div>
+      <div class="av-rain-orb" style="width:34px;height:34px;top:20%;left:55%;"></div>
+      <div class="av-rain-orb" style="width:18px;height:18px;top:60%;left:70%;"></div>
+      <div class="av-rain-orb" style="width:26px;height:26px;top:35%;left:82%;"></div>
+      <div class="av-rain-orb" style="width:20px;height:20px;top:72%;left:22%;"></div>
+      <div class="av-rain-orb" style="width:30px;height:30px;top:50%;left:50%;"></div>
+      <div class="artifact-scene-label">Simulated Rain Orb Field — Flash Photography in Precipitation</div>
+    </div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Snow — Often Reported As</div>
+        <div class="compare-text">Orbs, spirit lights, or in video — small rapidly moving lights that dance through the frame. Falling snowflakes caught in IR illumination appear as bright, moving circular forms. Slow-falling snow with a flash produces hundreds of out-of-focus white orbs. Some investigators interpret individual large snowflakes as "intelligent light forms" because their movement through the frame appears purposeful.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">Snow — What It Actually Is</div>
+        <div class="compare-text">Snowflakes near the camera lens are rendered as extremely bright, white orbs by the flash or IR illuminator. Snowflakes are highly reflective. Their natural falling motion creates the appearance of moving orbs in video — orbs that drift downward or sideways with the wind, exactly as snow would move. The presence of snow during an outdoor nighttime investigation should immediately invalidate any orb or moving-light evidence captured during that session.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Snow orbs -->
+    <div class="artifact-scene">
+      <div class="av-snow-orb" style="width:32px;height:32px;top:10%;left:8%;"></div>
+      <div class="av-snow-orb" style="width:22px;height:22px;top:35%;left:25%;"></div>
+      <div class="av-snow-orb" style="width:28px;height:28px;top:18%;left:58%;"></div>
+      <div class="av-snow-orb" style="width:18px;height:18px;top:65%;left:42%;"></div>
+      <div class="av-snow-orb" style="width:24px;height:24px;top:55%;left:75%;"></div>
+      <div class="av-snow-orb" style="width:36px;height:36px;top:28%;left:42%;"></div>
+      <div class="artifact-scene-label">Simulated Snow Orb Field — Snowflakes in IR/Flash Illumination</div>
+    </div>
+
+    <div class="doc-list"><div class="doc-list-label">Other Environmental Particle Sources</div><ul>
+      <li><strong>Falling leaves and debris:</strong> Outdoor investigations near trees in autumn produce falling leaf fragments, seed pods, and organic debris. These render as irregular orbs or streaks depending on size and motion speed. Larger pieces may appear as distinctive non-spherical forms. Check the investigation log — if wind was present and leaves were in the environment, leaf debris is the working hypothesis for any airborne anomaly.</li>
+      <li><strong>Ash from fires and incense:</strong> If a candle, fire, or incense was burning at or near the investigation site, airborne ash particles are an extremely prolific orb source. Ash particles are highly irregular in shape and produce orbs with visible internal texture. Never burn candles or incense during an active photography session.</li>
+      <li><strong>Grass seed and aerial seeds (summer):</strong> Dandelion seeds, grass seeds, and tree seeds (maple samaras, cottonwood fluff) are airborne in summer and produce large, distinctive orb forms — cottonwood fluff in particular appears as bright, complex orbs with internal structure visible at full resolution.</li>
+      <li><strong>Smoke from distant wildfires or industrial sources:</strong> Regional smoke from fires can introduce particulate matter that remains suspended in air for days. During high air quality index (AQI) days, outdoor photography produces dramatically elevated orb counts from the background particulate even in the absence of visible smoke.</li>
+    </ul></div>
+
+    <div class="debunk-box"><div class="debunk-label">Protocol Rule</div><p>No photographic or video evidence of orbs, lights, or airborne anomalies captured during precipitation, fog, or smoke conditions — regardless of how compelling the individual image appears — can be submitted as paranormal evidence. This is an absolute standard. Environmental contamination at this level of saturation makes orb dismissal certain for the session as a whole.</p></div>
+  </div>
+
+  <!-- ════════════════════════════════ FINGER / LENS OBSTRUCTION -->
+  <div class="entry" id="entry-finger-obstruction">
+    <div class="entry-header"><div class="entry-term">Finger, Object &amp; Lens Obstruction Artifacts</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">When any opaque or semi-opaque object partially covers the camera lens — a finger, thumb, equipment case, lens cap partially in place, hood of a jacket — it produces a large, soft-edged dark or flesh-toned mass in the corner or edge of the frame. This artifact is almost always instantly recognizable, yet it is surprisingly commonly submitted as evidence of "shadow masses," "dark entities," or "figures in the foreground."</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">A "black mass," "shadow entity," "dark figure," or "large dark form" in the foreground or edge of the image. The form is often described as large, featureless, and ominous. Because it partially obscures the rest of the scene, it appears to be a large entity or presence blocking the view. Investigators note it was not visible when looking at the scene.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">A finger or thumb partially covering the lens. Because the finger is inches from the lens, it is rendered as a large, blurry, out-of-focus form. Flesh tones render as warm amber to brown in flash photography. In IR photography, flesh reflects IR light brightly — a finger in IR footage appears as a bright white mass. The form was not visible to the photographer because they were focused on the scene through the viewfinder or screen, not the lens housing.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: Finger artifact -->
+    <div class="artifact-scene">
+      <div class="av-finger"></div>
+      <div class="artifact-scene-label">Simulated Finger/Obstruction Artifact — Partial Lens Coverage</div>
+    </div>
+
+    <div class="identify-box">
+      <div class="identify-label">How to Identify Obstruction Artifacts</div>
+      <ul>
+        <li>The form always touches the edge of the frame — never appears as a free-floating shape in the center of the image. It enters from a corner or side, consistent with a hand position on the camera body.</li>
+        <li>The soft, completely out-of-focus edge quality is characteristic — nothing in the actual scene would appear at such a large scale with such uniform out-of-focus blur.</li>
+        <li>Check subsequent photos from the same sequence. A finger obstruction typically appears in only one or two frames when the grip shifted, then disappears when the grip is corrected.</li>
+        <li>In flash photography, flesh tones often cause the obstruction to appear with a warm amber or orange color gradient. In IR photography, it appears very bright white (flesh reflects IR strongly).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════ SLS CAMERA ARTIFACTS -->
+  <div class="entry" id="entry-sls-artifacts">
+    <div class="entry-header"><div class="entry-term">SLS / Kinect Camera Artifacts &amp; Stick Figure Misidentification</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">Structured Light Sensor (SLS) cameras — popularized in paranormal investigation through shows like <em>Ghost Adventures</em> — use Microsoft Kinect depth-sensing technology to detect and render human body-shaped skeletal forms as overlaid stick figures on video. The technology was designed to map human body positions for gaming. In paranormal investigation, its fundamental limitation is that it was never designed to distinguish between a human body and anything else that matches its geometric detection algorithm.</div>
+
+    <div class="doc-list"><div class="doc-list-label">What Triggers SLS Stick Figures</div><ul>
+      <li><strong>Furniture geometry:</strong> A chair with a vertical back and legs maps closely to the algorithm's detection criteria for a lower body and legs. A chair plus a lampshade above it can map to a seated figure with a head.</li>
+      <li><strong>Door frames and architectural features:</strong> Corner intersections, door frame geometry, and wall recesses create right-angle shapes that the algorithm interprets as limb junctions. This is the most common false positive in residential SLS use.</li>
+      <li><strong>Hanging objects:</strong> Coat hangers, hanging decorations, light fixtures, and curtain rods at appropriate heights produce arm and body shapes in the depth map.</li>
+      <li><strong>Investigator limb detection at range:</strong> An investigator standing at the far edge of the SLS detection range may have only part of their body resolved — typically just arms or a head — while their torso falls below detection threshold. This creates a "partial figure" that appears to be a floating body part.</li>
+      <li><strong>IR interference:</strong> Other IR sources in the room (security cameras, motion sensors, some IR illuminators) interfere with the SLS depth-mapping laser and produce corrupted depth maps that the algorithm misreads as body shapes.</li>
+    </ul></div>
+
+    <div class="identify-box">
+      <div class="identify-label">SLS Evidence Standards</div>
+      <ul>
+        <li>An SLS stick figure appearing on a detected human investigator in the room is a control — it confirms the camera is working. It is not evidence.</li>
+        <li>An SLS figure in a room with no investigators is significant only if all possible furniture, architectural, and hanging-object false-positive sources have been systematically tested and eliminated by physically occupying each position and confirming the camera does not trigger on known objects.</li>
+        <li>SLS figures that demonstrate joint movement (the limb markers move independently and consistently with actual movement) are more significant than a static figure detection.</li>
+        <li>Any SLS finding should be corroborated by at least one additional simultaneous evidence type to carry evidential weight. An SLS stick figure alone — no matter how dramatic — cannot support a paranormal conclusion.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+
+  <!-- ════════════════════════════════ DOUBLE EXPOSURE / DIGITAL GLITCH -->
+  <div class="entry" id="entry-digital-glitch">
+    <div class="entry-header"><div class="entry-term">Double Exposure, Digital Glitches &amp; Computational Photography Artifacts</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">Modern smartphone cameras use "computational photography" — the phone captures multiple frames simultaneously and uses software algorithms to merge them into a single image with optimal exposure, noise reduction, and sharpness. These algorithms can produce artifacts when the scene contains movement, low light, or complex lighting. These artifacts are entirely digital in origin and often appear as ghostly double images, floating shapes, or misplaced objects.</div>
+
+    <div class="doc-list"><div class="doc-list-label">Digital Artifact Sources in Modern Cameras</div><ul>
+      <li><strong>HDR merging artifacts:</strong> HDR (High Dynamic Range) mode captures 2–3 frames at different exposures and merges them. If anything moved between frames (a person, an animal, blowing curtains), the merged image shows ghost copies — translucent duplicates of the moving subject from each frame merged at different positions. These appear genuinely ghost-like because they are translucent and appear in unexpected positions.</li>
+      <li><strong>Night mode multi-frame merging:</strong> Night mode on modern phones (iPhone Night Mode, Google Night Sight) captures 4–30+ frames over several seconds and stacks them for noise reduction. Any motion during capture produces ghostly trails, floating faces, or doubled people. The phone shows no indication that ghosting occurred — the final image looks like a single photo. This is one of the fastest-growing sources of genuine-looking digital "ghost" photographs.</li>
+      <li><strong>Live Photo artifacts (Apple):</strong> Apple Live Photos capture 1.5 seconds of video before and after the still image. When viewed as a still, the "key frame" may contain information blended from adjacent frames — objects that were moving appear slightly blurred or ghosted at their edges.</li>
+      <li><strong>Compression artifacts:</strong> JPEG compression creates "blocking" — visible rectangular areas of pixelation, especially at transitions between dark and light areas. Heavily compressed images (low-quality JPEG settings, screenshots of screenshots) produce block patterns in shadow areas that can appear face-like or figure-like through pareidolia.</li>
+      <li><strong>Old film double exposures:</strong> In film photography (and some older digital cameras), accidental double exposures produce an image that superimposes two scenes. A gravestone photograph accidentally double-exposed with a portrait creates a ghostly face appearing in the stone. These have been the basis of some of the most famous historical "ghost photographs."</li>
+    </ul></div>
+
+    <div class="identify-box">
+      <div class="identify-label">Diagnosing Digital Camera Artifacts</div>
+      <ul>
+        <li>Check whether the camera was in Night Mode, HDR mode, or any multi-frame mode. On iPhones, Night Mode is indicated by a moon icon with a number (seconds) — this confirms multi-frame capture.</li>
+        <li>Look for the characteristic "double edge" of HDR ghosting — a translucent copy of a moving object with soft edges, appearing slightly offset from the primary object.</li>
+        <li>JPEG blocking appears as visible square patterns at roughly 8×8 or 16×16 pixel intervals in uniform areas. This is digital compression, not visual phenomena in the scene.</li>
+        <li>For suspected film double-exposures, examine the image for two distinct overlapping scenes — different focal distances, different lighting quality, or clearly different locations visible simultaneously in the same frame.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════ IR CAMERA ARTIFACTS -->
+  <div class="entry" id="entry-ir-bloom">
+    <div class="entry-header"><div class="entry-term">IR Camera Overexposure &amp; Bloom Artifacts</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">Infrared cameras — including full-spectrum cameras with IR illuminators — produce a specific category of artifacts caused by highly reflective surfaces in the IR spectrum. Materials that appear ordinary to the human eye can reflect near-infrared light with extraordinary intensity, causing overexposure (bloom) effects that appear as bright, glowing anomalies in footage.</div>
+
+    <div class="compare-wrap">
+      <div class="compare-col compare-claim">
+        <div class="compare-label">Often Reported As</div>
+        <div class="compare-text">A glowing mass, orb of light, bright entity form, or "spirit light" that appears in a specific location on IR footage. Often appears to pulse or breathe — growing brighter or dimmer over time. More commonly seen near windows, mirrors, and certain types of furniture. Investigators note it was not visible with the naked eye.</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-col compare-actual">
+        <div class="compare-label">What It Actually Is</div>
+        <div class="compare-text">A surface that strongly reflects near-infrared light from the camera's IR illuminator. Glass, certain types of paint, polyester fabrics, glossy surfaces, and retro-reflective materials (road signs, safety tape) all reflect IR light far more intensely than visible light. The resulting bloom — overexposure around the reflective point — appears as a glowing, pulsing form that has no visible equivalent to the naked eye.</div>
+      </div>
+    </div>
+
+    <!-- VISUAL DEMO: IR bloom -->
+    <div class="artifact-scene">
+      <div class="av-irbloom"></div>
+      <div class="artifact-scene-label">Simulated IR Bloom — Reflective Surface Overexposure</div>
+    </div>
+
+    <div class="identify-box">
+      <div class="identify-label">IR Bloom Identification Protocol</div>
+      <ul>
+        <li>Physically examine every surface in the camera's field of view with a bright flashlight. Any surface that shows a strong specular reflection in visible light will likely produce IR bloom.</li>
+        <li>Test specific suspect surfaces: shine the IR illuminator directly at each surface and observe the camera monitor. IR-reflective surfaces will bloom immediately when the illuminator is aimed at them.</li>
+        <li>Move the IR illuminator position slightly. If the bright area in the footage moves or changes intensity in direct response to illuminator angle, it is a reflection artifact.</li>
+        <li>Common IR-reflective materials: mirrors, glass (especially window glass from outside), certain types of latex and gloss paint, polyester and nylon fabrics, adhesive tape, traffic signs and safety markings, some brand-new wooden floor finishes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════ VIDEO ANALYSIS SECTION -->
+  <div class="sec-block" id="sec-video">
+    <div class="sec-header">
+      <div class="sec-number">02</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">Section Two</div>
+        <div class="sec-title">Video Evidence Analysis</div>
+      </div>
+      <div class="sec-tag">Video &amp; Footage</div>
+    </div>
+    <div class="sec-intro">Video evidence is the most temporally rich form of evidence — it captures continuous motion, audio, and lighting change over time rather than a single frozen moment. This richness is also its greatest analytical challenge. Video artifacts — compression blocks, IR bloom, rolling shutter, AGC darkening, spider web reflections — occur continuously throughout footage and require patient, methodical frame-level review to identify correctly.</div>
+
+    <div class="entry" id="entry-video-rods">
+      <div class="entry-header"><div class="entry-term">Rods in Video — Interlaced Scan Artifacts</div><div class="entry-tags"><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+      <div class="entry-body">While rods appear in still photography from slow shutter speeds, their most dramatic and frequently misidentified form occurs in older interlaced video formats. Understanding why requires knowing how interlaced video captures frames — and why it was uniquely susceptible to producing the rod artifact.</div>
+      <div class="doc-list"><div class="doc-list-label">Interlaced Video &amp; Rod Formation</div><ul>
+        <li><strong>What interlaced video is:</strong> NTSC (North American broadcast standard) and PAL (European standard) video formats capture each frame in two passes — first all the odd-numbered scan lines, then all the even-numbered lines, 1/60th of a second apart. This is called interlacing. The two "fields" are then combined into one displayed frame.</li>
+        <li><strong>What happens when a fast insect crosses the frame:</strong> The insect is in a different position when the odd lines are captured vs. when the even lines are captured (1/60s later). The combined interlaced frame shows the insect in two slightly different positions simultaneously — one in the odd lines and one in the even lines. The resulting image shows a characteristic "comb" or "herringbone" distortion along the insect's movement path.</li>
+        <li><strong>The rod's characteristic shape:</strong> The insect's body streaks horizontally. Its wing position in the odd-line field differs from its wing position in the even-line field. The interleaved result shows a central streak with overlapping wing patterns from two moments — exactly producing the rod with undulating fins that became famous in paranormal video.</li>
+        <li><strong>Why modern video doesn't show rods:</strong> Modern digital video cameras use progressive scan (all lines captured simultaneously) rather than interlaced scanning. A progressive 60fps camera captures both fields at the same instant — no position offset, no rod artifact. The disappearance of rod sightings in modern footage is direct evidence that they were always an interlaced-scan artifact.</li>
+      </ul></div>
+    </div>
+
+    <div class="entry" id="entry-video-agc">
+      <div class="entry-header"><div class="entry-term">Automatic Gain Control (AGC) — The Sudden Darkening Effect</div><div class="entry-tags"><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+      <div class="entry-body">One of the most frequently misinterpreted events in night-vision investigation footage is a sudden, dramatic darkening of the entire frame — sometimes appearing as if the "energy in the room changed" or the "lights went out" or something "absorbed all the light." This is almost always Automatic Gain Control (AGC) responding to a bright object entering the frame.</div>
+      <div class="compare-wrap">
+        <div class="compare-col compare-claim">
+          <div class="compare-label">Often Reported As</div>
+          <div class="compare-text">The room "goes dark" suddenly on camera even though no lights changed. An energy presence is felt to "drain" the environment. The camera appears to detect something that overwhelms it. Sometimes appears as a flash of near-white followed by a sudden darkening — interpreted as a burst of spirit energy followed by the energy draining the space.</div>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-col compare-actual">
+          <div class="compare-label">What It Actually Is</div>
+          <div class="compare-text">The camera's automatic gain control (AGC) circuit detected a bright object entering the IR illuminator's field — an investigator moving toward the camera, a reflective object turned toward the lens, or a light source coming on — and instantly reduced the sensor's amplification to prevent overexposure. The overall frame darkens because the camera "turned itself down" in response to the bright stimulus.</div>
+        </div>
+      </div>
+      <div class="identify-box">
+        <div class="identify-label">How to Identify AGC Darkening Events</div>
+        <ul>
+          <li>Review the footage for 2–5 seconds before the darkening event. There will almost always be a bright object, person, or light source that enters or increases in the frame just before the darkening occurs.</li>
+          <li>AGC darkening affects the entire frame uniformly — the whole image gets darker simultaneously. A genuine environmental darkening (power failure, light bulb dying) would affect only the lit areas of the scene.</li>
+          <li>After AGC darkens, the image gradually brightens again as the camera's gain adjusts back up — typically over 1–5 seconds. This gradual recovery is characteristic of AGC behavior.</li>
+          <li>Disable AGC if your camera allows it (many investigation-grade cameras offer manual gain control). A fixed gain setting eliminates this artifact class entirely.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry" id="entry-video-compression">
+      <div class="entry-header"><div class="entry-term">Video Compression Artifacts &amp; Pixel Block Ghosting</div><div class="entry-tags"><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+      <div class="entry-body">All digital video uses compression — mathematical algorithms that reduce file size by storing only the changes between frames rather than each complete frame independently. When something moves quickly across the frame, or when the video is heavily compressed at a low bit rate (common in older DVR security cameras and cheap investigation recorders), the compression algorithm produces visible artifacts that can look like shapes, figures, or trails.</div>
+      <div class="doc-list"><div class="doc-list-label">Compression Artifacts That Resemble Paranormal Evidence</div><ul>
+        <li><strong>Blocking:</strong> The image breaks into visible square tiles (8×8 or 16×16 pixels) in areas of rapid change or complex detail. In dark, low-resolution footage, blocking produces a tiled pattern in shadow areas that can appear face-like through pareidolia. The giveaway: the shapes appear at perfectly regular intervals matching the compression block size.</li>
+        <li><strong>Mosquito noise:</strong> High-frequency detail (text, edges, fine patterns) produces "ringing" artifacts — a shimmering halo around edges that pulses as the compression algorithm struggles to render fine detail. This can make letters or edges appear to glow or pulse.</li>
+        <li><strong>Motion smear / "ghost trail":</strong> When a person or object moves quickly across the frame in heavily compressed footage, the compression algorithm leaves a trail of pixel blocks from previous frames that did not update fast enough. This creates a visible "shadow" or trail behind moving subjects — often described as a "dark shadow entity following a person" in lower-quality security camera footage.</li>
+        <li><strong>Frame-skip ghosting:</strong> Some DVR systems skip frames under heavy processing load, creating a jump in the footage. A person who was in one position suddenly appears in a different position with no transition — appearing to "teleport." This is a recording system limitation, not a physical event.</li>
+      </ul></div>
+    </div>
+
+    <div class="entry" id="entry-rolling-shutter">
+      <div class="entry-header"><div class="entry-term">Rolling Shutter Distortion</div><div class="entry-tags"><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+      <div class="entry-body">Most digital video camera sensors use a "rolling shutter" readout — the sensor scans and reads pixel data from top to bottom sequentially rather than all at once. This sequential readout takes a finite amount of time (typically 1/30s to 1/100s). When the camera or subject moves rapidly during this readout window, the result is a characteristic distortion.</div>
+      <div class="doc-list"><div class="doc-list-label">Rolling Shutter Effects</div><ul>
+        <li><strong>"Jello" effect:</strong> When the camera is vibrated or moved quickly, the rolling shutter creates a wave-like undulation of the entire image — objects appear to wobble as if made of gelatin. Building vibration from vehicles, footfall, or wind can produce this effect in stationary cameras. Described by some investigators as "the room moving" or "the camera reacting to presence."</li>
+        <li><strong>Leaning and skewed verticals:</strong> A fast horizontal pan causes vertical lines (door frames, walls, people) to appear tilted or skewed — leaning in the direction opposite the camera movement. A straight doorway appears diagonal. Investigators unfamiliar with rolling shutter interpret this as distortion of the physical environment.</li>
+        <li><strong>Partial frame freeze:</strong> In very fast motion (camera knocked, sudden lurch), only part of the frame is captured before the motion begins — the top of the frame appears normal while the bottom appears blurred or shifted. This creates a split image that looks like two different scenes.</li>
+      </ul></div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+  </div>
+
+    <!-- ════════════════════════════════ VIDEO SHADOW ARTIFACTS -->
+    <div class="entry" id="entry-video-shadows">
+      <div class="entry-header"><div class="entry-term">Shadow Figures &amp; Dark Masses in Video</div><div class="entry-tags"><span class="tag tag-video">Video</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-science">Science</span></div></div>
+      <div class="entry-body">Shadow figures — dark, human-shaped masses moving in video footage — are among the most compelling and most sought-after forms of paranormal video evidence. When a genuine, unexplained shadow figure is captured on video, it is significant. But the vast majority of dark figure sightings in video have specific, identifiable technical and environmental causes.</div>
+      <div class="doc-list"><div class="doc-list-label">Common Shadow Figure Sources in Video</div><ul>
+        <li><strong>Investigator shadow:</strong> The single most common source. An investigator outside the camera frame casts a shadow from a nearby IR illuminator or light source that passes through the field of view. Because the investigator is not visible in the frame, the shadow appears sourceless and figure-shaped. Test by having all investigators remain stationary and confirming their positions against the shadow event timestamp.</li>
+        <li><strong>Vehicle headlight shadows through windows:</strong> A passing vehicle casts rapidly moving shadows of window frames, furniture, and structural elements across walls and floors. These moving shadows follow the arc of the headlight beam and can produce a moving dark form that appears to cross a room in a few seconds. Review audio simultaneously — vehicle noise will almost always be present.</li>
+        <li><strong>Animals:</strong> A cat, dog, or rodent moving in or near the camera's field of view. Animal movement is often faster and more erratic than human movement, causing the shadow to appear non-human in shape. Cats sitting just outside IR range produce distinctive crouching shadow shapes that investigators consistently misidentify as shadow entities.</li>
+        <li><strong>IR illuminator range edge:</strong> At the outer range of an IR illuminator's effective distance, objects cast strong, high-contrast IR shadows because the illumination intensity falls off sharply. Objects that are visible but dimly lit appear much darker relative to their surroundings at IR range edge than they would under normal lighting — creating the visual signature of "shadow" entities.</li>
+        <li><strong>Compression shadow ghosting:</strong> In heavily compressed or low-bitrate video (older DVR systems, cheap SD card recording), motion compensation algorithms leave "shadow copies" of recently moved objects — a dark smear or ghost in the previous position. This is the mechanism behind many "shadow following a person" submissions from security camera footage.</li>
+      </ul></div>
+      <div class="identify-box">
+        <div class="identify-label">Shadow Figure Evaluation Protocol</div>
+        <ul>
+          <li>Timestamp the event precisely and compare against the investigation log: where was every investigator at that exact moment?</li>
+          <li>Review the audio track simultaneously with the video: vehicle noise, footfall from adjacent rooms, animal sounds, or HVAC cycling may correspond to the shadow event.</li>
+          <li>Map all light sources (including IR illuminators) relative to the camera position and field of view. Determine whether any of these sources could project a shadow in the direction and shape observed.</li>
+          <li>Check multiple cameras simultaneously. A genuine physical shadow figure would affect cameras from multiple angles. A single-camera shadow without corresponding evidence from other angles requires additional scrutiny.</li>
+          <li>A shadow figure that responds to verbal questions by stopping, changing direction, or appearing at specific requested moments — captured simultaneously with audio or EMF responses — carries the highest evidential weight of any shadow category.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry" id="entry-video-review-tools">
+      <div class="entry-header"><div class="entry-term">Video Analysis Tools &amp; Review Standards</div><div class="entry-tags"><span class="tag tag-video">Video</span><span class="tag tag-protocol">Protocol</span></div></div>
+      <div class="entry-body">Effective video analysis requires the right software tools and a disciplined review methodology. Reviewing footage on a phone screen at real speed is not analysis — it is cursory scanning. True analysis requires full-resolution playback, variable speed control, frame-by-frame stepping, and audio synchronization.</div>
+      <div class="ref-grid">
+        <div class="ref-card"><div class="ref-name">VLC Media Player</div><div class="ref-type">Free · All Platforms</div><div class="ref-desc">Frame-by-frame advance with the E key, variable speed from 0.25× to 4×, zoom into any part of the frame, and audio waveform display. The baseline tool for all video evidence review.</div></div>
+        <div class="ref-card"><div class="ref-name">DaVinci Resolve</div><div class="ref-type">Free (Pro Version) · Mac/Win/Linux</div><div class="ref-desc">Professional video editing and color analysis. Color channel isolation (view only red, green, or blue channel independently) can reveal artifacts invisible in the normal composite view. Frame timeline for precise event marking.</div></div>
+        <div class="ref-card"><div class="ref-name">Handbrake</div><div class="ref-type">Free · All Platforms</div><div class="ref-desc">Convert video to high-quality formats for analysis. Export specific time segments as lossless files. Useful for extracting short clips of anomalous events for detailed frame-by-frame review.</div></div>
+        <div class="ref-card"><div class="ref-name">FFMPEG</div><div class="ref-type">Free · Command Line</div><div class="ref-desc">Extract individual frames as full-resolution images, analyze video metadata, convert between formats, and create slow-motion sequences. The power-user tool for frame-level investigation evidence analysis.</div></div>
+      </div>
+      <div class="doc-list"><div class="doc-list-label">Video Review Protocol — Step by Step</div><ul>
+        <li><strong>Initial pass at 1× speed:</strong> Watch all footage in real time. Do not stop to analyze — mark timestamps of anything worth revisiting. This pass establishes the overall context and catches major events.</li>
+        <li><strong>Flagged section review at 0.25×:</strong> Review every flagged section at quarter speed. This reveals artifacts invisible at real-time speed: single-frame events, rapid insects, subtle movement at frame edges.</li>
+        <li><strong>Frame-by-frame for specific anomalies:</strong> Step through frame by frame for any significant potential finding. In 30fps footage, a 1-second event spans 30 individual frames — enough to see the entire lifecycle of most artifacts.</li>
+        <li><strong>Audio synchronization:</strong> Review significant video events with the audio track playing simultaneously. Many video anomalies have corresponding audio explanation (vehicle noise, footstep, HVAC) that is only apparent when audio and video are reviewed together.</li>
+        <li><strong>Multi-camera timeline alignment:</strong> If multiple cameras were deployed, align their timestamps and review any event across all camera angles simultaneously. A genuine physical event will be visible from multiple perspectives. A camera artifact will only appear on the specific camera producing it.</li>
+      </ul></div>
+    </div>
+
+<!-- ═══════════════════════════════════════════════════════════════ AUDIO SECTION -->
+  <div class="sec-block" id="sec-audio">
+    <div class="sec-header">
+      <div class="sec-number">03</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">Section Three</div>
+        <div class="sec-title">Audio &amp; EVP Analysis</div>
+      </div>
+      <div class="sec-tag">Electronic Voice Phenomena</div>
+    </div>
+    <div class="sec-intro">Audio evidence — particularly Electronic Voice Phenomena (EVP) — carries enormous evidential weight when properly captured and analyzed, and enormous false-positive risk when it is not. The human auditory system is even more susceptible to pattern-completion than the visual system — we hear speech in noise, voices in wind, and words in static with remarkable facility. This section documents audio artifacts, EVP analysis standards, and the specific contamination sources that produce the most convincing false EVP captures.</div>
+
+    <div class="entry" id="entry-audio-pareidolia">
+      <div class="entry-header"><div class="entry-term">Auditory Pareidolia — Hearing Voices in Noise</div><div class="entry-tags"><span class="tag tag-audio">Audio</span><span class="tag tag-science">Science</span><span class="tag tag-debunk">Debunk</span></div></div>
+      <div class="entry-body">Just as the visual system finds faces in random patterns, the auditory system finds speech in random or ambiguous sound — a phenomenon called auditory pareidolia. This is not a failure of perception; it is a feature of a brain that evolved to extract meaning from noisy, imperfect acoustic environments. In EVP analysis, it is the primary mechanism through which noise becomes "voices."</div>
+      <div class="doc-list"><div class="doc-list-label">How Auditory Pareidolia Works</div><ul>
+        <li><strong>The phonemic restoration effect:</strong> The brain automatically "fills in" missing or degraded phonemes (individual speech sounds) based on context and expectation. If you are told you are about to hear someone say "hello," you will perceive "hello" in audio that contains only noise at the relevant frequency range. This is well-documented in psychoacoustic research.</li>
+        <li><strong>Expectation bias:</strong> Knowing what the investigator asked during an EVP session ("What is your name?") primes the listener to hear a name in the response window. The question acts as a suggestive context that shapes how the brain interprets ambiguous sounds. This is why blind review — where the reviewer does not know what question was asked — is the gold standard for EVP classification.</li>
+        <li><strong>The "backwards speech" effect:</strong> Random audio played in reverse often appears to contain intelligible speech. This demonstrates that speech perception does not require actual speech — only sounds in the frequency range of voice, with sufficient acoustic complexity, will trigger the brain's speech recognition system regardless of direction.</li>
+        <li><strong>Confirmation loop:</strong> Once a listener hears a specific word in an EVP clip, subsequent listeners who are told what to hear confirm it at very high rates — even if the same clip played without suggestion produces completely different interpretations. This is why the initial interpretation of an EVP should never be shared with subsequent reviewers before blind review.</li>
+      </ul></div>
+      <div class="pro-tip"><div class="pro-tip-label">The Critical Test</div><p>Before labeling any audio as an EVP, play the raw clip (with no EQ or noise reduction applied) to five people who were NOT present at the investigation. Do not tell them what question was asked, what session it came from, or what you hear in it. Ask each to write down exactly what they hear. If four of five write the same word or phrase without prompting, and that word or phrase responds directly to the investigative context — you have meaningful EVP evidence. If interpretations scatter widely, you have auditory pareidolia.</p></div>
+    </div>
+
+    <div class="entry" id="entry-audio-contamination-detail">
+      <div class="entry-header"><div class="entry-term">EVP Contamination Sources — Detailed Audio Signatures</div><div class="entry-tags"><span class="tag tag-audio">Audio</span><span class="tag tag-science">Science</span><span class="tag tag-debunk">Debunk</span></div></div>
+      <div class="entry-body">Understanding the specific audio signature of each contamination source allows investigators to rapidly identify and dismiss false candidates. Each source has a characteristic frequency profile, rhythmic pattern, and contextual correlation that distinguishes it from genuine EVP.</div>
+      <div class="weather-table">
+        <table>
+          <thead><tr><th>Source</th><th>Audio Signature</th><th>Frequency Profile</th><th>Contextual Test</th></tr></thead>
+          <tbody>
+            <tr><td><strong>HVAC / Furnace</strong></td><td>Broadband noise burst at start; sustained low-frequency hum; mechanical click at end of cycle</td><td>Dominant energy below 300 Hz; broadband during startup</td><td>Correlate to thermostat cycle; match against basement/furnace room audio simultaneously</td></tr>
+            <tr><td><strong>Whisper (investigator)</strong></td><td>Breathy, sibilant quality; strong "s," "sh," "f" sounds; directional from near the mic</td><td>200 Hz–8 kHz with heavy sibilant peak at 4–8 kHz</td><td>Compare with recorded voices of team members; test proximity to recorder at whisper volume</td></tr>
+            <tr><td><strong>Stomach / Digestive Sounds</strong></td><td>Low gurgling, rumbling, or bubbling; short duration (0.5–2 sec); organic "wet" timbre</td><td>30–200 Hz primarily</td><td>Ask team member if they recall stomach sounds; body audio has characteristic low-frequency roundness</td></tr>
+            <tr><td><strong>RF / Electronic Interference</strong></td><td>Sharp repetitive clicking at 1–2 second intervals (cellular check-in); buzzing tones (radio interference); sudden pops</td><td>Narrow spikes across spectrum; periodic timing</td><td>Confirm phones in airplane mode; visible as vertical spikes at regular intervals in spectrogram</td></tr>
+            <tr><td><strong>Distant TV / Radio</strong></td><td>Speech-like; contains identifiable words; band-limited (muffled, lacking high frequency above 3 kHz)</td><td>300 Hz–3 kHz (telephone-quality bandwidth)</td><td>Present in all recorders at same intensity regardless of room; step outside and listen for source</td></tr>
+            <tr><td><strong>Rodent Movement</strong></td><td>Rapid scratching (10–20 bursts/second); scrabbling; directional from walls/ceiling; higher pitched than human footfall</td><td>800 Hz–5 kHz; rapid irregular rhythm</td><td>Directional — strongest on recorder nearest the wall; rhythm is too rapid for human footstep</td></tr>
+            <tr><td><strong>Structural Settling</strong></td><td>Single sharp crack or pop; very brief (under 0.1 sec); no sustained period; often directional</td><td>100–2,000 Hz; impulsive, no harmonic series</td><td>Correlate with temperature log; isolated single transient with no patterning</td></tr>
+            <tr><td><strong>Plumbing</strong></td><td>Gurgling (water movement), clunking (water hammer), hissing (pressure release); duration matches water usage pattern</td><td>Low to mid frequency (60–800 Hz); irregular</td><td>Correlate with occupant water usage; test by running water and recording the resulting sounds</td></tr>
+            <tr><td><strong>Wind / Building Pressure</strong></td><td>Low moaning through gaps and chimneys; irregular, varies with gust pattern; can sound like extended vowels or sighing</td><td>Below 200 Hz primarily; band varies with opening geometry</td><td>Correlate with wind speed log; sounds vary with gusts and may form "words" through resonance</td></tr>
+            <tr><td><strong>Investigator Clothing / Equipment</strong></td><td>Fabric rustling; keychain jingling; equipment clanking; zipper sounds; shoe squeaking</td><td>Broadband; impulsive to short burst</td><td>Reproduce by having the investigator recreate their movement at the timestamped moment; match by timbre</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="entry" id="entry-audio-spirit-box-detail">
+      <div class="entry-header"><div class="entry-term">Spirit Box — Artifact Sources &amp; Analysis Standards</div><div class="entry-tags"><span class="tag tag-audio">Audio</span><span class="tag tag-debunk">Debunk</span><span class="tag tag-protocol">Protocol</span></div></div>
+      <div class="entry-body">Spirit box devices sweep AM/FM radio frequencies continuously, producing a stream of audio fragments from broadcast stations. The paranormal claim is that entities can manipulate this audio stream. The scientific reality is that this design generates a continuous stream of speech-containing noise — the ideal environment for auditory pareidolia — and requires extremely strict protocols to produce evidence with any analytical integrity.</div>
+      <div class="doc-list"><div class="doc-list-label">Why Spirit Box Evidence Requires Extra Scrutiny</div><ul>
+        <li><strong>Continuous speech input:</strong> Unlike standard EVP where a voice must appear in relative silence, spirit box sessions provide a continuous, second-by-second stream of voice-containing radio fragments. The brain does not need to create speech from silence — it only needs to select which fragment sounds like a meaningful response. The base rate of "apparent responses" is therefore very high regardless of any paranormal influence.</li>
+        <li><strong>Sweep speed and response duration:</strong> Most spirit box devices sweep at 100ms per station. This means each audio fragment is approximately 0.1 seconds long. A single intelligible word requires at minimum 200–300ms. Words that span sweep intervals are assembled by the brain from fragments of different stations — the word is not present in any single broadcast, it is constructed from pieces. This is pure auditory pareidolia at a mechanical level.</li>
+        <li><strong>Strong radio reception = more false positives:</strong> In areas with strong broadcast reception, more complete words and phrases are present in the sweep. More complete audio fragments increase the probability of coincidental apparent responses. Urban investigations with strong radio signals produce dramatically more "responses" than rural investigations with sparse signals.</li>
+        <li><strong>Confirmation bias amplification:</strong> Spirit box sessions are often conducted in real time with investigators listening and immediately interpreting responses. This environment maximizes confirmation bias — investigators who expect meaningful responses will perceive meaningful responses from fragments that are acoustically ambiguous.</li>
+      </ul></div>
+      <div class="identify-box">
+        <div class="identify-label">Spirit Box Evidence Standards — What Carries Weight</div>
+        <ul>
+          <li>A response that spans multiple sweep intervals (multi-syllabic, over 300ms duration) and maintains consistent vocal quality throughout — suggesting a single voice source rather than assembled fragments.</li>
+          <li>A response that occurs immediately (within 1 second) after a specific question and directly addresses the question's content — not a generic word that could apply to any context.</li>
+          <li>A response heard simultaneously by multiple investigators in real time and captured clearly on recording — consistent real-time perception + recording confirmation is the strongest standard.</li>
+          <li>A response that passes blind review: play the relevant clip to people who don't know the question. If they write the same response without prompting, and that response answers the question, this is meaningful.</li>
+          <li>A response that provides verifiable information subsequently confirmed by research — a name, date, or cause of death that was unknown to all investigators and is later confirmed by historical records. This is the highest tier of spirit box evidence.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry" id="entry-audio-tools">
+      <div class="entry-header"><div class="entry-term">Audio Analysis Tools &amp; Audacity Workflow</div><div class="entry-tags"><span class="tag tag-audio">Audio</span><span class="tag tag-protocol">Protocol</span></div></div>
+      <div class="entry-body">Proper audio analysis requires dedicated software that allows waveform visualization, frequency analysis, noise reduction, and precise timeline navigation. The most widely accessible professional-grade tool for EVP analysis is Audacity — free, open source, and available for all platforms.</div>
+      <div class="ref-grid">
+        <div class="ref-card"><div class="ref-name">Audacity</div><div class="ref-type">Free · All Platforms</div><div class="ref-desc">Waveform view, spectrogram view, noise reduction, amplify, EQ, label tracks for timestamping candidates, and WAV export. The primary EVP analysis tool. Always work on a copy — never modify the original file.</div></div>
+        <div class="ref-card"><div class="ref-name">Adobe Audition</div><div class="ref-type">Paid · Mac/Win</div><div class="ref-desc">Professional spectral repair tools, multitrack alignment for comparing multiple recorder captures simultaneously, and advanced noise reduction. Ideal for complex EVP analysis in challenging acoustic environments.</div></div>
+        <div class="ref-card"><div class="ref-name">Sonic Visualiser</div><div class="ref-type">Free · All Platforms</div><div class="ref-desc">Advanced spectrogram visualization with multiple simultaneous views. Excellent for frequency analysis of EVP candidates — shows exactly which frequency bands contain energy, helping distinguish voice-band content from noise.</div></div>
+        <div class="ref-card"><div class="ref-name">iZotope RX</div><div class="ref-type">Paid · Mac/Win</div><div class="ref-desc">Professional audio repair and noise reduction. The spectral editor allows surgical removal of specific noise sources (HVAC hum, electrical interference) while preserving adjacent audio content. Industry standard for audio forensics.</div></div>
+      </div>
+      <div class="doc-list"><div class="doc-list-label">Audacity Quick-Reference — EVP Analysis Workflow</div><ul>
+        <li><strong>Import:</strong> File → Import → Audio. Always import a <em>copy</em> of the file, never the original. Rename the copy "CASE###_RoomName_ANALYSIS.wav"</li>
+        <li><strong>Switch to Spectrogram view:</strong> Click the track name dropdown → Spectrogram. Set frequency range to 20–8,000 Hz. Speech appears as horizontal bands of energy in the 300–3,400 Hz range during voice segments.</li>
+        <li><strong>Add Label Track:</strong> Tracks → Add New → Label Track. Press Ctrl+B (Cmd+B on Mac) at any timestamp to add a candidate marker. Label with: room, time, description.</li>
+        <li><strong>Noise Profile:</strong> Select 0.5–1 second of clean room noise (no events, no speech). Effect → Noise Reduction → Get Noise Profile. Then select the full track. Effect → Noise Reduction → set Reduction to 12 dB, Sensitivity 6.00, Smoothing 3. Click OK. This is conservative — do not go above 18 dB.</li>
+        <li><strong>Amplify candidates:</strong> Select just the candidate region. Effect → Amplify. Boost by 6–10 dB. Never allow clipping on evidence output files.</li>
+        <li><strong>High-Pass Filter:</strong> Effect → Filter Curve EQ. Draw a curve that reduces frequencies below 200 Hz to attenuate HVAC rumble. This reveals speech-band content previously masked by low-frequency noise.</li>
+        <li><strong>Export evidence clip:</strong> Select the candidate region. File → Export → Export Selected Audio. Format: WAV (16-bit or 32-bit). Name: "EVP_ClassB_MasterBedroom_11-42pm_NR12dB_Amp8dB.wav" — include all processing steps in the filename.</li>
+      </ul></div>
+    </div>
+
+  <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+  </div>
+
+<!-- ═══════════════════════════════════════════════════════════════ ENVIRONMENT SECTION -->
+<div class="sec-block" id="sec-environment">
+  <div class="sec-header">
+    <div class="sec-number">04</div>
+    <div class="sec-title-block">
+      <div class="sec-eyebrow">Section Four</div>
+      <div class="sec-title">Environmental Evidence Analysis</div>
+    </div>
+    <div class="sec-tag">EMF · Thermal · Motion</div>
+  </div>
+  <div class="sec-intro">Environmental sensors — EMF meters, thermometers, motion detectors, and geomagnetic monitors — measure the physical characteristics of the investigation environment rather than capturing audio or images. The natural sources of environmental readings are numerous and often produce measurements that are genuinely anomalous-seeming without any paranormal explanation. Understanding these sources, their signatures, and their measurement artifacts is fundamental to interpreting environmental evidence correctly.</div>
+
+  <div class="entry" id="entry-emf-artifacts">
+    <div class="entry-header"><div class="entry-term">EMF Artifact Sources — What Produces False Readings</div><div class="entry-tags"><span class="tag tag-science">Science</span><span class="tag tag-environment">Environment</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">Electromagnetic field meters are among the most sensitive instruments commonly used in paranormal investigation — and therefore among the most susceptible to false readings from natural sources. Every EMF anomaly captured during an investigation must be evaluated against the documented baseline EMF map before it can be considered significant.</div>
+    <div class="weather-table">
+      <table>
+        <thead><tr><th>EMF Source</th><th>Typical Reading</th><th>Signature / How to Identify</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Main electrical panel</strong></td><td>5–100+ mG at 6 inches</td><td>Drops sharply with distance (inverse square law). Consistent, non-fluctuating. Verified by proximity to panel.</td></tr>
+          <tr><td><strong>Wiring in walls</strong></td><td>0.5–5 mG adjacent to wall</td><td>Linear along wall; correlates with outlet and switch positions. More pronounced with older or unshielded wiring.</td></tr>
+          <tr><td><strong>Refrigerator / major appliances</strong></td><td>2–25 mG at 6 inches</td><td>Drops to near-ambient at 3–4 feet. Consistent with appliance operating cycle. Document appliance location.</td></tr>
+          <tr><td><strong>Fluorescent lights / dimmer switches</strong></td><td>1–10 mG at 12 inches</td><td>Disappears when light is switched off. Dimmers produce complex harmonic fields. Verify by switching off.</td></tr>
+          <tr><td><strong>Cell phones (cellular signal check-in)</strong></td><td>1–20 mG pulse every 1–2 min</td><td>Brief spike every 1–2 minutes (phone checks in with cell tower even when not in active use). Confirm all phones in airplane mode before investigation and re-test.</td></tr>
+          <tr><td><strong>Wireless routers / smart home devices</strong></td><td>0.5–5 mG at 12 inches</td><td>Consistent background; higher during data transfer. Verify by identifying device location relative to reading.</td></tr>
+          <tr><td><strong>Geomagnetic storm (Kp 5+)</strong></td><td>Fluctuating +0.5–3 mG above baseline across entire property</td><td>All meters in all rooms elevated simultaneously. Check swpc.noaa.gov Kp index at investigation time.</td></tr>
+          <tr><td><strong>Power lines / transformers (exterior)</strong></td><td>1–50+ mG at property boundary; 0.5–5 mG inside structure</td><td>Consistent, non-fluctuating at any given location. Entire rooms may have elevated baseline if within 100ft of high-tension lines.</td></tr>
+          <tr><td><strong>Investigator's own equipment</strong></td><td>0.5–5 mG within 12 inches</td><td>Recording devices, battery packs, walkie-talkies, and flashlights with LED ballasts all produce measurable EMF. The meter itself should never be held adjacent to other electronic equipment.</td></tr>
+          <tr><td><strong>K-II triggered by RF (text message)</strong></td><td>Full 5-LED response</td><td>A cellular text message or data burst produces a strong RF spike that maxes the K-II instantly. Characteristic: instantaneous full response, brief duration (under 1 second), not repeatable on demand. Always use airplane mode.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="field-note"><div class="field-note-label">Field Note</div><p>Any EMF reading that occurs in a room during an investigation that was not present during the Phase 1/Phase 2 baseline survey of that same room — with no corresponding natural source identified — qualifies as an anomalous reading worthy of further investigation. The baseline is the control. Without it, no EMF reading has scientific meaning.</p></div>
+  </div>
+
+  <div class="entry" id="entry-thermal-artifacts">
+    <div class="entry-header"><div class="entry-term">Thermal &amp; Temperature Artifact Sources</div><div class="entry-tags"><span class="tag tag-science">Science</span><span class="tag tag-environment">Environment</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">Temperature anomalies — cold spots and warm spots — are among the most commonly reported paranormal phenomena and among the most reliably produced by completely natural environmental mechanisms. A thorough thermal baseline eliminates the vast majority of temperature claims before the investigation even begins.</div>
+    <div class="doc-list"><div class="doc-list-label">Natural Cold Spot Sources</div><ul>
+      <li><strong>HVAC vents and cold air returns:</strong> Air conditioning vents produce localized cold airflow (typically 15–25°F below ambient) detectable as a "cold spot" up to several feet from the vent in the direction of airflow. Map all vents during baseline.</li>
+      <li><strong>Exterior walls in cold weather:</strong> Uninsulated or poorly insulated exterior walls may be 10–20°F cooler than interior ambient air on their surface. An investigator walking near an exterior wall will feel a cold sensation with no apparent source.</li>
+      <li><strong>Single-pane windows:</strong> Old single-pane windows in winter may be 25–40°F below interior ambient temperature at their surface. Cold air settles from the window onto the floor, creating a cold-air pool at floor level in rooms with old windows.</li>
+      <li><strong>Concrete and stone floors/walls:</strong> These materials have high thermal mass and maintain temperatures far below ambient air. A basement with a concrete floor in winter may feel dramatically colder at floor level than 3 feet above it — with no air movement explanation.</li>
+      <li><strong>Investigator body cooling:</strong> A stationary investigator in a cool room will experience the perception of cold areas that are simply slightly below average ambient — the investigator's skin cools in static air, and the sensation intensifies. Any air movement (breath, HVAC microflow) creates a localized cooling sensation that can be perceived as a "cold breath" presence.</li>
+    </ul></div>
+    <div class="doc-list"><div class="doc-list-label">IR Camera False Positive Sources</div><ul>
+      <li><strong>Exterior wall thermal signatures:</strong> An IR camera aimed at an exterior wall will reveal the insulation pattern — areas of poor insulation appear as cold patches. These cold patches have nothing to do with paranormal activity; they are structural heat loss. They appear dramatically on IR cameras and look exactly like the "cold spot" photographs in paranormal media.</li>
+      <li><strong>Vent proximity shadows:</strong> Air from an HVAC vent that hits a wall produces a characteristic fan-shaped cold pattern on the wall surface visible in IR — the "splash" of cold air spreading from the vent impact point. This can appear as a large, dramatic cold form on the wall.</li>
+      <li><strong>Investigator body heat impressions:</strong> Where an investigator sat, stood, or placed their hand — a chair, a table surface, a doorknob — retains a thermal impression visible in IR for several minutes after the contact. These can appear as human-shaped or hand-shaped warm impressions that seem to appear mysteriously when no one is currently there.</li>
+      <li><strong>Reflective surfaces in IR:</strong> Mirrors and glass surfaces appear as cold in IR imaging because they reflect the camera's own cold temperature back at the sensor. An IR camera aimed at a mirror shows the camera appearing as a cold object in the reflection — creating confusing and anomaly-seeming images.</li>
+    </ul></div>
+  </div>
+
+  <div class="entry" id="entry-motion-false-positives">
+    <div class="entry-header"><div class="entry-term">Motion Sensor False Positive Reference Guide</div><div class="entry-tags"><span class="tag tag-science">Science</span><span class="tag tag-environment">Environment</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">PIR (Passive Infrared) motion sensors detect changes in infrared radiation in their field of view — the thermal signature of a moving warm body. Virtually every environment that paranormal investigators work in contains natural sources of infrared change that can trigger these sensors without any living body present.</div>
+    <div class="weather-table">
+      <table>
+        <thead><tr><th>False Positive Source</th><th>Mechanism</th><th>How to Eliminate</th></tr></thead>
+        <tbody>
+          <tr><td><strong>HVAC airflow</strong></td><td>Warm air from heating vents or cold air from A/C passes across the PIR detection zone, changing the thermal field exactly as a moving body would</td><td>Test before deployment: allow HVAC to cycle and observe sensor. Reposition if triggered. Use a tissue to confirm airflow in the detection zone.</td></tr>
+          <tr><td><strong>Sunlight through windows</strong></td><td>As the sun moves, sunlight patches cross the detection zone, creating rapid thermal change. Relevant in afternoon/evening outdoor light.</td><td>Document window positions and solar angle at investigation time. Block direct sunlight from detection zones.</td></tr>
+          <tr><td><strong>Small animals</strong></td><td>Mice, rats, cats, and large insects produce thermal signatures within the PIR detection threshold at close range</td><td>Inspect for animal access points before deployment. Note if investigation site has evidence of rodent activity.</td></tr>
+          <tr><td><strong>Building vibration</strong></td><td>Vibration from traffic, trains, or heavy footfall causes the PIR sensor itself to move slightly in its field of view, creating an apparent change in the detected thermal field</td><td>Mount sensors rigidly rather than placing on unstable surfaces. Document all vibration sources relative to sensor placement.</td></tr>
+          <tr><td><strong>Fluorescent light thermal cycling</strong></td><td>Fluorescent tubes produce significant heat and cycle in intensity as they warm up or cool down, creating thermal change detectable by sensitive PIR sensors</td><td>Ensure all fluorescent lights are either fully warmed up or fully off before deployment. LED lighting does not have this problem.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /sec-environment -->
+
+<!-- ═══════════════════════════════════════════════════════════════ FRAMEWORK SECTION -->
+<div class="sec-block" id="sec-framework">
+  <div class="sec-header">
+    <div class="sec-number">05</div>
+    <div class="sec-title-block">
+      <div class="sec-eyebrow">Section Five</div>
+      <div class="sec-title">Evidence Evaluation Framework</div>
+    </div>
+    <div class="sec-tag">Analysis Standards</div>
+  </div>
+  <div class="sec-intro">Understanding artifacts is necessary but not sufficient for rigorous evidence analysis. The framework below provides a systematic, reproducible process for evaluating any piece of evidence — regardless of type — against a consistent standard. This framework applies equally to a single orb in a photograph and to a Class A EVP with simultaneous EMF response.</div>
+
+  <div class="entry" id="entry-burden-of-proof">
+    <div class="entry-header"><div class="entry-term">The Burden of Proof Principle</div><div class="entry-tags"><span class="tag tag-protocol">Protocol</span><span class="tag tag-science">Science</span></div></div>
+    <div class="entry-body">The burden of proof in paranormal investigation rests with the claim of paranormal activity — not with the skeptical position. This is not because paranormal phenomena are presumed impossible, but because every investigation occurs in a physical environment that is thoroughly saturated with natural, explainable phenomena. The starting assumption for every piece of evidence is: this has a natural explanation. The investigator's task is to test that assumption rigorously.</div>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num">01</div><div class="step-text"><strong>Document first, interpret later:</strong> Every piece of evidence should be logged and archived exactly as captured before any interpretation is applied. An interpretation is a hypothesis — it must be separable from the evidence itself.</div></div>
+      <div class="step-item"><div class="step-num">02</div><div class="step-text"><strong>Natural explanation first:</strong> For any piece of evidence, systematically apply every applicable natural explanation from this compendium. Do not stop after finding one possible natural explanation — test all of them. Multiple natural explanations that all fit the evidence make the paranormal hypothesis far less necessary.</div></div>
+      <div class="step-item"><div class="step-num">03</div><div class="step-text"><strong>The "can I reproduce this naturally?" test:</strong> For any claimed anomaly, attempt to reproduce the effect using known natural causes. Can you produce the same orb pattern by disturbing dust? Can you produce the same sound by recreating the investigator's movement? Successful reproduction is powerful evidence for the natural explanation.</div></div>
+      <div class="step-item"><div class="step-num">04</div><div class="step-text"><strong>Independent corroboration requirement:</strong> Evidence of a single type is insufficient for a paranormal conclusion. At minimum, two independent evidence types (from different instruments, different investigators, or different recording media) pointing to the same event in the same location elevate a finding from interesting to significant.</div></div>
+      <div class="step-item"><div class="step-num">05</div><div class="step-text"><strong>Consistency across blind review:</strong> Any subjective evidence (EVP interpretation, visual identification of a figure, identification of a "face" in an image) must be consistent across multiple independent blind reviewers who have not been primed with the investigator's interpretation.</div></div>
+    </div>
+  </div>
+
+  <div class="entry" id="entry-evidence-tiers">
+    <div class="entry-header"><div class="entry-term">Evidence Tier Classification</div><div class="entry-tags"><span class="tag tag-protocol">Protocol</span></div></div>
+    <div class="entry-body">Not all surviving evidence (evidence that has passed the natural explanation elimination process) is equal. Evidence is further classified by the conditions under which it was captured, its corroboration level, and its blind review consistency.</div>
+    <div class="weather-table">
+      <table>
+        <thead><tr><th>Tier</th><th>Criteria</th><th>Weight in Assessment</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Tier 1 — Strongest</strong></td><td>Class A EVP or high-quality visual/physical evidence; captured in confirmed clean zone; corroborated by 2+ simultaneous independent evidence types; consistent blind review; low environmental risk conditions; research corroboration</td><td>Primary basis for Plausible or Paranormal assessment classification. Can stand independently in a multi-evidence case.</td></tr>
+          <tr><td><strong>Tier 2 — Significant</strong></td><td>Class B EVP or clear visual anomaly; captured in low-contamination environment; corroborated by at least one additional evidence type; consistent blind review; moderate environmental conditions</td><td>Strong supporting evidence. Two or more Tier 2 findings together may support a Plausible classification.</td></tr>
+          <tr><td><strong>Tier 3 — Supporting</strong></td><td>Class C EVP, minor equipment response, or personal investigator experience; limited corroboration; captured in moderate-contamination environment; variable blind review</td><td>Context and pattern evidence only. Does not support a classification on its own. Use to show patterns or as supporting context for higher-tier findings.</td></tr>
+          <tr><td><strong>Tier 4 — Documented Only</strong></td><td>Any evidence captured in high-contamination environment, with ambiguous natural explanation, inconsistent blind review, or single-source with no corroboration</td><td>Logged and preserved but not used as active evidence in the assessment. Documenting the investigation process, not the findings.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="entry" id="entry-quick-reference">
+    <div class="entry-header"><div class="entry-term">Quick Reference — Paranormal Claim vs. Most Likely Explanation</div><div class="entry-tags"><span class="tag tag-protocol">Protocol</span><span class="tag tag-debunk">Debunk</span></div></div>
+    <div class="entry-body">A rapid-reference guide for the most commonly submitted "paranormal" evidence types and the most likely natural explanation for each, based on investigative field experience and the documented cases in this compendium.</div>
+    <div class="weather-table">
+      <table>
+        <thead><tr><th>Submitted As</th><th>Most Common Natural Cause</th><th>Primary Diagnostic Test</th></tr></thead>
+        <tbody>
+          <tr><td>Floating orbs in photo</td><td>Dust, moisture, pollen, or insect in front of lens</td><td>Three-shot test; check humidity and ambient particulate; examine orb edge texture at full resolution</td></tr>
+          <tr><td>Rod / skyfish in video</td><td>Flying insect at slow shutter speed or interlaced frame rate</td><td>Film same location at 240fps; check for insects in the scene; examine wingbeat pattern in artifact</td></tr>
+          <tr><td>Vortex spiral in photo</td><td>Camera strap or lanyard in front of lens</td><td>Zoom to 100% — look for woven fabric texture; check if strap was attached to camera</td></tr>
+          <tr><td>Glowing white strand</td><td>Single hair, fiber, or spider web thread near lens</td><td>Check photographer for loose hair; sweep area for spider webs before deployment</td></tr>
+          <tr><td>Misty ectoplasm cloud</td><td>Photographer's breath in cold air</td><td>Temperature check; consciously exhale and photograph to reproduce; check for nearby smoke source</td></tr>
+          <tr><td>Geometric lens orbs</td><td>Lens flare from bright light source</td><td>Opposite-side test; block suspected light source — flare disappears; camera movement test in video</td></tr>
+          <tr><td>Semi-transparent person</td><td>Long exposure with person walking through frame</td><td>Check EXIF shutter speed; identify the light conditions; was flash + long shutter mode in use?</td></tr>
+          <tr><td>Lightning/energy streaks</td><td>Camera movement during long exposure; light sources drawing streaks across frame</td><td>Check EXIF for slow shutter; identify all light sources in scene; look for camera shake in background detail</td></tr>
+          <tr><td>Face in wall / shadow</td><td>Pareidolia — brain finding face in random pattern</td><td>Blind description test (no prompting); rotation test; compare against walkthrough baseline photo</td></tr>
+          <tr><td>Hundreds of orbs in cemetery</td><td>Rain, fog, or ambient moisture</td><td>Check weather log for precipitation or humidity above 70%; look for specular highlights in orbs</td></tr>
+          <tr><td>SLS stick figure</td><td>Furniture geometry, door frame, or hanging object triggering depth algorithm</td><td>Test each nearby object in the SLS field; does any known object produce a similar reading?</td></tr>
+          <tr><td>K-II full response</td><td>Cell phone text/data burst; dimmer switch; nearby appliance; RF interference</td><td>Confirm airplane mode; identify all electronic devices in room; test dimmer switches on and off</td></tr>
+          <tr><td>Cold spot in room</td><td>HVAC draft, exterior wall, single-pane window</td><td>Map all vents and exterior walls; use IR camera to confirm thermal source; test with and without HVAC running</td></tr>
+          <tr><td>Voice in EVP</td><td>Investigator whisper, HVAC, distant audio, electronic interference, auditory pareidolia</td><td>Blind review (no priming); spectrogram frequency analysis; confirm all team annotation for that window</td></tr>
+          <tr><td>Dark shadow figure in video</td><td>Investigator shadow, vehicle headlights, compression artifact</td><td>Confirm all investigator positions; review audio for vehicle noise; check video bitrate for compression artifacts</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="field-note"><div class="field-note-label">Final Note</div><p>This compendium is a tool for elimination, not a tool for dismissal. The goal of identifying and applying every natural explanation is not to prove that nothing paranormal exists — it is to ensure that when something survives rigorous scrutiny, it genuinely deserves the weight you give it. The investigators who do this work most honestly are also the ones whose paranormal findings, when they occur, are most credible. Integrity in elimination is the foundation of integrity in conclusion.</p></div>
+  </div>
+
+</div><!-- /sec-framework -->
+
+</div><!-- /page -->
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  <div class="footer-inner">
+    <div class="footer-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="footer-name">The Paranormal Initiative</div>
+    <div class="footer-doc">Evidence Compendium — Complete Artifact &amp; Analysis Reference</div>
+    <div class="footer-note">For use by all TPI investigators during evidence review. This document is a living reference — update it as new artifact types are identified, new tools become available, or new research refines the identification standards described herein.</div>
+  </div>
+</footer>
+
+</body>
+</html>
+
+<script>
+// ─── SEARCH ───────────────────────────────────────────────────────
+const searchInput = document.getElementById('search-input');
+const searchCount = document.getElementById('search-count');
+const entries = document.querySelectorAll('.entry');
+
+function runSearch() {
+  const q = searchInput.value.trim().toLowerCase();
+  let visible = 0;
+  entries.forEach(el => {
+    const text = el.textContent.toLowerCase();
+    const show = !q || text.includes(q);
+    el.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  if (q) {
+    searchCount.textContent = visible + ' result' + (visible !== 1 ? 's' : '');
+  } else {
+    searchCount.textContent = '';
+  }
+  document.querySelectorAll('.sec-block').forEach(block => {
+    const vis = block.querySelectorAll('.entry:not([style*="display: none"])');
+    block.style.display = (vis.length === 0 && q) ? 'none' : '';
+  });
+}
+
+if (searchInput) {
+  searchInput.addEventListener('input', runSearch);
+}
+
+// ─── SECTION NAV ACTIVE STATE ──────────────────────────────────
+const secLinks = document.querySelectorAll('.sec-nav a');
+const secBlocks = document.querySelectorAll('.sec-block[id]');
+
+function updateSecNav() {
+  let current = '';
+  secBlocks.forEach(block => {
+    const rect = block.getBoundingClientRect();
+    if (rect.top <= 120) current = block.id;
+  });
+  secLinks.forEach(link => {
+    const href = link.getAttribute('href').replace('#', '');
+    link.classList.toggle('active', href === current);
+  });
+}
+
+window.addEventListener('scroll', updateSecNav, { passive: true });
+updateSecNav();
+
+// ─── CROSS-REFERENCE JUMP ─────────────────────────────────────
+function jumpTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (searchInput && searchInput.value) {
+    searchInput.value = '';
+    runSearch();
+  }
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.style.outline = '1.5px solid rgba(201,168,76,0.5)';
+    el.style.borderRadius = '12px';
+    setTimeout(() => { el.style.outline = ''; el.style.borderRadius = ''; }, 1800);
+  }, 80);
+}
+</script>

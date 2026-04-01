@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paranormal Terminology Reference Guide | The Paranormal Initiative</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* ── STICKY HEADER ── */
+.brand-header {
+  position: sticky; top: 0; z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+
+.brand-left { display: flex; align-items: center; gap: 13px; }
+
+.brand-emblem {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--gold); line-height: 1.35;
+}
+.brand-series {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9.5px; font-weight: 300;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-secondary); margin-top: 1px;
+}
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+
+.doc-badge {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--teal-light);
+  border: 0.5px solid rgba(58,158,138,0.3);
+  padding: 3px 10px; border-radius: 20px;
+  background: var(--teal-dim); white-space: nowrap;
+}
+
+/* ── PAGE LAYOUT ── */
+.page {
+  max-width: 900px; margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 3.5rem 0 2.5rem;
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.hero-eyebrow {
+  font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+  font-weight: 700; line-height: 1.15;
+  color: var(--text-primary); margin-bottom: 1rem;
+}
+.hero-title em { color: var(--gold); font-style: normal; }
+
+.hero-desc {
+  font-family: 'Crimson Pro', serif;
+  font-size: 16px; font-weight: 300;
+  color: var(--text-secondary); line-height: 1.85;
+  max-width: 580px; margin-bottom: 1.5rem;
+}
+
+.hero-meta {
+  display: flex; gap: 1.5rem; flex-wrap: wrap;
+}
+.hero-meta-item {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.hero-meta-item span { color: var(--gold); margin-right: 5px; }
+
+/* ── SEARCH ── */
+.search-wrap {
+  position: relative; margin-bottom: 1.75rem;
+}
+.search-wrap input {
+  width: 100%;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px; outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.search-wrap input::placeholder { color: var(--text-muted); }
+.search-wrap input:focus {
+  border-color: rgba(58,158,138,0.4);
+  background: rgba(58,158,138,0.04);
+}
+.search-icon {
+  position: absolute; left: 1rem; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted); font-size: 13px; pointer-events: none;
+}
+#search-count {
+  position: absolute; right: 1rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px; color: var(--text-muted);
+}
+
+/* ── ALPHA NAV ── */
+.alpha-nav {
+  display: flex; flex-wrap: wrap; gap: 3px;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px; margin-bottom: 2.5rem;
+}
+.alpha-nav a {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 4px 8px; border-radius: 5px;
+  transition: all 0.15s;
+}
+.alpha-nav a:hover, .alpha-nav a.active {
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+/* ── LETTER SECTION ── */
+.letter-section { margin-bottom: 2.5rem; }
+
+.letter-anchor {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.25rem; padding-bottom: 0.6rem;
+  border-bottom: 0.5px solid rgba(201,168,76,0.18);
+}
+.letter-glyph {
+  font-family: 'Cinzel', serif;
+  font-size: 2.2rem; font-weight: 700;
+  color: var(--gold); line-height: 1; min-width: 44px;
+}
+.letter-rule {
+  flex: 1; height: 0.5px;
+  background: linear-gradient(to right, rgba(201,168,76,0.25), transparent);
+}
+.letter-count {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── ENTRY CARD ── */
+.entry {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 0.6rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.entry:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.entry-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.entry-term {
+  font-family: 'Cinzel', serif;
+  font-size: 13px; font-weight: 600;
+  color: var(--gold-light);
+  letter-spacing: 0.07em;
+  line-height: 1.4;
+}
+
+.entry-tags {
+  display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0;
+}
+.tag {
+  font-size: 8.5px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 20px;
+  white-space: nowrap;
+}
+.tag-visual { color: #7bbfdc; background: rgba(74,143,196,0.12); border: 0.5px solid rgba(74,143,196,0.25); }
+.tag-auditory { color: #8ecfb0; background: rgba(58,158,138,0.12); border: 0.5px solid rgba(58,158,138,0.25); }
+.tag-physical { color: #d4a96a; background: rgba(201,168,76,0.1); border: 0.5px solid rgba(201,168,76,0.2); }
+.tag-method { color: #b8a0d4; background: rgba(150,120,200,0.1); border: 0.5px solid rgba(150,120,200,0.2); }
+.tag-entity { color: #d48080; background: rgba(180,80,80,0.1); border: 0.5px solid rgba(180,80,80,0.2); }
+.tag-case { color: #a0c0a0; background: rgba(100,160,100,0.1); border: 0.5px solid rgba(100,160,100,0.2); }
+.tag-analysis { color: #c0b080; background: rgba(180,160,80,0.1); border: 0.5px solid rgba(180,160,80,0.2); }
+.tag-psych { color: #c0a0c0; background: rgba(160,100,160,0.1); border: 0.5px solid rgba(160,100,160,0.2); }
+.tag-env { color: #80c0b0; background: rgba(80,160,140,0.1); border: 0.5px solid rgba(80,160,140,0.2); }
+.tag-witness { color: #b0c0d0; background: rgba(100,140,180,0.1); border: 0.5px solid rgba(100,140,180,0.2); }
+.tag-caution { color: #e09070; background: rgba(200,100,60,0.1); border: 0.5px solid rgba(200,100,60,0.25); }
+
+.entry-body {
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px; font-weight: 400;
+  color: var(--text-secondary); line-height: 1.8;
+}
+
+/* ── SUBTYPES PANEL ── */
+.subtypes {
+  margin-top: 0.9rem;
+  background: rgba(0,0,0,0.2);
+  border: 0.5px solid rgba(255,255,255,0.07);
+  border-radius: 8px; overflow: hidden;
+}
+.subtypes-label {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--teal); padding: 0.6rem 1rem 0.5rem;
+  border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  background: rgba(58,158,138,0.05);
+}
+.subtype-row {
+  display: flex; gap: 0;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  font-size: 13px;
+}
+.subtype-row:last-child { border-bottom: none; }
+.subtype-name {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; font-weight: 600;
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  min-width: 200px; flex-shrink: 0;
+  border-right: 0.5px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02);
+  line-height: 1.5;
+}
+.subtype-desc {
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px; font-weight: 400;
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem; line-height: 1.6;
+}
+
+/* ── FIELD NOTES ── */
+.field-note {
+  margin-top: 0.85rem;
+  padding: 0.7rem 1rem;
+  background: rgba(201,168,76,0.05);
+  border-left: 2px solid rgba(201,168,76,0.35);
+  border-radius: 0 6px 6px 0;
+}
+.field-note-label {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.3rem;
+}
+.field-note p {
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px; font-style: italic;
+  color: var(--text-secondary); line-height: 1.7;
+}
+
+/* ── CAUTION PANEL ── */
+.caution-panel {
+  margin-top: 0.85rem;
+  padding: 0.7rem 1rem;
+  background: rgba(200,100,60,0.06);
+  border-left: 2px solid rgba(200,100,60,0.4);
+  border-radius: 0 6px 6px 0;
+}
+.caution-label {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: #e09070; margin-bottom: 0.3rem;
+}
+.caution-panel p {
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px; font-style: italic;
+  color: var(--text-secondary); line-height: 1.7;
+}
+
+/* ── REVIEW QUESTIONS ── */
+.review-qs {
+  margin-top: 0.85rem;
+  padding: 0.7rem 1rem;
+  background: var(--blue-dim);
+  border: 0.5px solid rgba(74,143,196,0.2);
+  border-radius: 6px;
+}
+.review-qs-label {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 0.5rem;
+}
+.review-qs ul { list-style: none; }
+.review-qs li {
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px; color: var(--text-secondary);
+  padding: 0.2rem 0; line-height: 1.6;
+  display: flex; gap: 0.6rem;
+}
+.review-qs li::before {
+  content: '→'; color: var(--blue);
+  flex-shrink: 0; font-style: normal;
+}
+
+/* ── CROSS REFERENCES ── */
+.see-also {
+  margin-top: 0.75rem;
+  display: flex; align-items: flex-start; gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.see-also-label {
+  font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); flex-shrink: 0;
+  padding-top: 2px;
+}
+.see-also-links { display: flex; flex-wrap: wrap; gap: 5px; }
+.xref {
+  font-size: 11px; font-weight: 500;
+  color: var(--teal-light);
+  background: var(--teal-dim);
+  border: 0.5px solid rgba(58,158,138,0.3);
+  padding: 2px 9px; border-radius: 20px;
+  text-decoration: none; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.xref:hover {
+  background: rgba(58,158,138,0.22);
+  border-color: rgba(58,158,138,0.5);
+  color: #fff;
+}
+
+/* ── HIGHLIGHT ON JUMP ── */
+.entry.highlighted {
+  border-color: rgba(201,168,76,0.6);
+  background: rgba(201,168,76,0.08);
+  animation: pulse-highlight 1.5s ease-out forwards;
+}
+@keyframes pulse-highlight {
+  0% { box-shadow: 0 0 0 3px rgba(201,168,76,0.3); }
+  100% { box-shadow: none; border-color: var(--border-hover); background: var(--surface-hover); }
+}
+
+/* ── BACK TO TOP ── */
+.back-top { text-align: center; padding: 1.25rem 0 0.5rem; }
+.back-top a {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); text-decoration: none;
+  transition: color 0.2s;
+}
+.back-top a:hover { color: var(--gold); }
+
+/* ── NO RESULTS ── */
+#no-results {
+  display: none; text-align: center;
+  padding: 3rem 0; color: var(--text-muted);
+  font-family: 'Crimson Pro', serif; font-size: 16px;
+}
+
+/* ── FOOTER ── */
+.doc-footer {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 0.5px solid var(--border);
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.footer-brand {
+  font-family: 'Cinzel', serif;
+  font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold);
+}
+.footer-note { font-size: 10px; color: var(--text-muted); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .page { padding: 0 1rem 4rem; }
+  .subtype-name { min-width: 130px; }
+  .entry-header { flex-direction: column; gap: 0.4rem; }
+  .brand-header { padding: 0.75rem 1rem; }
+}
+</style>
+</head>
+<body>
+<div id="top"></div>
+
+<!-- HEADER -->
+<header class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="9" stroke="#3a9e8a" stroke-width="1.1"/>
+        <line x1="12" y1="3" x2="12" y2="21" stroke="#3a9e8a" stroke-width="1.1"/>
+        <line x1="3" y1="12" x2="21" y2="12" stroke="#3a9e8a" stroke-width="1.1"/>
+        <ellipse cx="12" cy="12" rx="4" ry="9" stroke="#3a9e8a" stroke-width="0.7"/>
+        <circle cx="12" cy="12" r="2" fill="rgba(201,168,76,0.5)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Investigation Development Series</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="doc-badge">Unified Reference</div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Complete A–Z Glossary · Unified Master Reference</div>
+    <h1 class="hero-title">Paranormal Terminology<br><em>Reference Guide</em></h1>
+    <p class="hero-desc">A complete A–Z glossary of investigative language, evidence classification, field terminology, and analysis concepts used in professional paranormal research. Cross-references are clickable — tap any linked term to jump directly to its entry.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>◈</span> Clickable cross-references</div>
+      <div class="hero-meta-item"><span>◈</span> Classification tags</div>
+      <div class="hero-meta-item"><span>◈</span> Field notes & review questions</div>
+      <div class="hero-meta-item"><span>◈</span> Investigative caution flags</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search-input" placeholder="Search terms, tags, definitions…" autocomplete="off">
+    <span id="search-count"></span>
+  </div>
+
+  <!-- ALPHA NAV -->
+  <nav class="alpha-nav" id="alpha-nav">
+    <a href="#A">A</a><a href="#B">B</a><a href="#C">C</a><a href="#D">D</a>
+    <a href="#E">E</a><a href="#F">F</a><a href="#G">G</a><a href="#H">H</a>
+    <a href="#I">I</a><a href="#J">J</a><a href="#K">K</a><a href="#L">L</a>
+    <a href="#M">M</a><a href="#N">N</a><a href="#O">O</a><a href="#P">P</a>
+    <a href="#Q">Q</a><a href="#R">R</a><a href="#S">S</a><a href="#T">T</a>
+    <a href="#U">U</a><a href="#V">V</a><a href="#W">W</a><a href="#X">X</a>
+    <a href="#Y">Y</a><a href="#Z">Z</a>
+  </nav>
+
+  <div id="no-results">No entries match your search.</div>
+
+  <!-- ═══════════ A ═══════════ -->
+  <div class="letter-section" id="A" data-letter="A">
+    <div class="letter-anchor">
+      <div class="letter-glyph">A</div>
+      <div class="letter-rule"></div>
+      <div class="letter-count">12 entries</div>
+    </div>
+
+    <div class="entry" id="entry-active-haunting">
+      <div class="entry-header">
+        <div class="entry-term">Active Haunting</div>
+        <div class="entry-tags"><span class="tag tag-case">Case Status</span></div>
+      </div>
+      <div class="entry-body">A case in which reports are current, recurring, or ongoing rather than historical.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-haunting')">Haunting</a><a class="xref" onclick="jumpTo('entry-occurrence-cluster')">Occurrence Cluster</a><a class="xref" onclick="jumpTo('entry-patterning')">Patterning</a><a class="xref" onclick="jumpTo('entry-trigger-session')">Trigger Session</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-afterlife">
+      <div class="entry-header"><div class="entry-term">Afterlife</div></div>
+      <div class="entry-body">A broad term for any belief that consciousness, identity, soul, or spirit continues after physical death. In paranormal investigation this term typically appears in discussions of survival, spirit communication, hauntings, and mediumship.</div>
+    </div>
+
+    <div class="entry" id="entry-akashic-records">
+      <div class="entry-header"><div class="entry-term">Akashic Records</div></div>
+      <div class="entry-body">A concept in esoteric traditions referring to a universal record of all events, thoughts, and experiences.</div>
+    </div>
+
+    <div class="entry" id="entry-ambient-conditions">
+      <div class="entry-header">
+        <div class="entry-term">Ambient Conditions</div>
+        <div class="entry-tags"><span class="tag tag-env">Environmental</span></div>
+      </div>
+      <div class="entry-body">The normal environmental conditions in a space, including temperature, humidity, sound, airflow, light, vibration, and EMF background.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-baseline-drift')">Baseline Drift</a><a class="xref" onclick="jumpTo('entry-environmental-mapping')">Environmental Mapping</a><a class="xref" onclick="jumpTo('entry-environmental-trigger')">Environmental Trigger</a><a class="xref" onclick="jumpTo('entry-noise-floor')">Noise Floor</a><a class="xref" onclick="jumpTo('entry-objective-data')">Objective Data</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-analytical-bias">
+      <div class="entry-header">
+        <div class="entry-term">Analytical Bias</div>
+        <div class="entry-tags"><span class="tag tag-method">Methodology</span></div>
+      </div>
+      <div class="entry-body">A tendency to interpret evidence in a way that confirms expectations rather than evaluating it objectively.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-blind-review')">Blind Review</a><a class="xref" onclick="jumpTo('entry-review-blindness')">Review Blindness</a><a class="xref" onclick="jumpTo('entry-suggestibility')">Suggestibility</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-anomalous-audio">
+      <div class="entry-header">
+        <div class="entry-term">Anomalous Audio</div>
+        <div class="entry-tags"><span class="tag tag-auditory">Auditory</span></div>
+      </div>
+      <div class="entry-body">Recorded sound that appears unusual, unexpected, or not immediately explained by known environmental or equipment sources.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-audio-pareidolia')">Audio Pareidolia</a><a class="xref" onclick="jumpTo('entry-burst-noise')">Burst Noise</a><a class="xref" onclick="jumpTo('entry-evp')">EVP</a><a class="xref" onclick="jumpTo('entry-noise-floor')">Noise Floor</a><a class="xref" onclick="jumpTo('entry-signal-vs-noise')">Signal vs Noise</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-anomalous-light">
+      <div class="entry-header">
+        <div class="entry-term">Anomalous Light</div>
+        <div class="entry-tags"><span class="tag tag-visual">Visual</span></div>
+      </div>
+      <div class="entry-body">An unexpected light event seen directly or captured on camera without an immediately confirmed source.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-light-anomaly')">Light Anomaly</a><a class="xref" onclick="jumpTo('entry-objective-data')">Objective Data</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-anomalous-movement">
+      <div class="entry-header">
+        <div class="entry-term">Anomalous Movement</div>
+        <div class="entry-tags"><span class="tag tag-physical">Physical</span></div>
+      </div>
+      <div class="entry-body">Motion lacking an immediately obvious or confirmable cause.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-kinetic-disturbance')">Kinetic Disturbance</a><a class="xref" onclick="jumpTo('entry-poltergeist')">Poltergeist</a><a class="xref" onclick="jumpTo('entry-uncontrolled-variable')">Uncontrolled Variable</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-anomaly">
+      <div class="entry-header"><div class="entry-term">Anomaly</div></div>
+      <div class="entry-body">Any event, reading, image, sound, sensation, or pattern that appears unusual, inconsistent, or unexplained within the known conditions of a case.</div>
+    </div>
+
+    <div class="entry" id="entry-apparition">
+      <div class="entry-header">
+        <div class="entry-term">Apparition</div>
+        <div class="entry-tags"><span class="tag tag-visual">Visual</span><span class="tag tag-psych">Experiential</span></div>
+      </div>
+      <div class="entry-body">A perceived visual, auditory, or sensory manifestation believed to represent a person, presence, figure, or scene not explained by an obvious normal source.</div>
+      <div class="subtypes">
+        <div class="subtypes-label">Types of Apparitions</div>
+        <div class="subtype-row"><div class="subtype-name">Crisis Apparition</div><div class="subtype-desc">Seen around a death, trauma, or emergency.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Full-Bodied Apparition</div><div class="subtype-desc">Appears as a complete visible form.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Partial Apparition</div><div class="subtype-desc">Only part of the figure is visible.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Shadow Apparition</div><div class="subtype-desc">Dark, human-like, or silhouette-like form.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Luminous Apparition</div><div class="subtype-desc">Appears glowing or self-illuminated.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Mist Apparition</div><div class="subtype-desc">Fog-like, vapor-like, or cloud-like form.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Collective Apparition</div><div class="subtype-desc">Seen by more than one witness simultaneously.</div></div>
+      </div>
+      <div class="field-note">
+        <div class="field-note-label">Field Note</div>
+        <p>Apparition reports should be reviewed alongside lighting conditions, witness angle, fatigue, distance, reflection sources, expectation, and environmental visibility before any paranormal conclusion is considered.</p>
+      </div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-ghost')">Ghost</a><a class="xref" onclick="jumpTo('entry-light-anomaly')">Light Anomaly</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a><a class="xref" onclick="jumpTo('entry-shadow-figure')">Shadow Figure</a><a class="xref" onclick="jumpTo('entry-subjective-experience')">Subjective Experience</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-attachment">
+      <div class="entry-header">
+        <div class="entry-term">Attachment</div>
+        <div class="entry-tags"><span class="tag tag-entity">Entity Theory</span><span class="tag tag-case">Case Theory</span></div>
+      </div>
+      <div class="entry-body">A claimed connection between an entity, spirit, or presence and a person, object, or location.</div>
+      <div class="subtypes">
+        <div class="subtypes-label">Common Attachment Frameworks</div>
+        <div class="subtype-row"><div class="subtype-name">Person Attachment</div><div class="subtype-desc">Believed linked to an individual.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Object Attachment</div><div class="subtype-desc">Believed linked to a specific item.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Location Attachment</div><div class="subtype-desc">Believed centered in a property or space.</div></div>
+      </div>
+      <div class="caution-panel">
+        <div class="caution-label">Investigative Caution</div>
+        <p>This term should not be assigned casually. Reports should first be examined for stress, suggestion, fear reinforcement, sleep disruption, grief response, and environmental triggers.</p>
+      </div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-spirit-attachment-theory')">Spirit Attachment Theory</a><a class="xref" onclick="jumpTo('entry-haunting')">Haunting</a><a class="xref" onclick="jumpTo('entry-unverified-claim')">Unverified Claim</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-audio-pareidolia">
+      <div class="entry-header">
+        <div class="entry-term">Audio Pareidolia</div>
+        <div class="entry-tags"><span class="tag tag-auditory">Auditory</span><span class="tag tag-psych">Psychological</span></div>
+      </div>
+      <div class="entry-body">The tendency to perceive voices, words, or recognizable speech in random or ambiguous sound. A critical concept in EVP review.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-evp')">EVP</a><a class="xref" onclick="jumpTo('entry-pareidolia')">Pareidolia</a><a class="xref" onclick="jumpTo('entry-signal-vs-noise')">Signal vs Noise</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-audit-trail">
+      <div class="entry-header">
+        <div class="entry-term">Audit Trail</div>
+        <div class="entry-tags"><span class="tag tag-method">Methodology</span></div>
+      </div>
+      <div class="entry-body">A documented chain showing when data, media, readings, or notes were captured and by whom. Essential for evidence integrity.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-data-integrity')">Data Integrity</a><a class="xref" onclick="jumpTo('entry-evidence-chain')">Evidence Chain</a><a class="xref" onclick="jumpTo('entry-log-entry')">Log Entry</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-astral-body">
+      <div class="entry-header"><div class="entry-term">Astral Body</div><div class="entry-tags"><span class="tag tag-psych">Experiential</span></div></div>
+      <div class="entry-body">The perceived non-physical body associated with out-of-body and astral projection experiences. Described in esoteric traditions as a subtle duplicate of the physical form capable of independent travel.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-astral-projection')">Astral Projection</a><a class="xref" onclick="jumpTo('entry-subjective-experience')">Subjective Experience</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-astral-projection">
+      <div class="entry-header"><div class="entry-term">Astral Projection</div><div class="entry-tags"><span class="tag tag-psych">Experiential</span></div></div>
+      <div class="entry-body">A reported experience in which consciousness appears to leave the physical body and travel independently. Common in esoteric, near-death, and OBE literature. Should be treated as a subjective report in case documentation.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-astral-body')">Astral Body</a><a class="xref" onclick="jumpTo('entry-akashic-records')">Akashic Records</a><a class="xref" onclick="jumpTo('entry-subjective-experience')">Subjective Experience</a></div></div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ B ═══════════ -->
+  <div class="letter-section" id="B" data-letter="B">
+    <div class="letter-anchor"><div class="letter-glyph">B</div><div class="letter-rule"></div><div class="letter-count">5 entries</div></div>
+
+    <div class="entry" id="entry-baseline">
+      <div class="entry-header"><div class="entry-term">Baseline</div><div class="entry-tags"><span class="tag tag-env">Environmental</span><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">A controlled starting set of normal environmental, structural, psychological, and equipment conditions documented before investigation begins, used for comparison throughout the session.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-baseline-drift')">Baseline Drift</a><a class="xref" onclick="jumpTo('entry-baseline-integrity')">Baseline Integrity</a><a class="xref" onclick="jumpTo('entry-ambient-conditions')">Ambient Conditions</a><a class="xref" onclick="jumpTo('entry-spike')">Spike</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-baseline-drift">
+      <div class="entry-header"><div class="entry-term">Baseline Drift</div><div class="entry-tags"><span class="tag tag-env">Environmental</span></div></div>
+      <div class="entry-body">A gradual change in environmental conditions over time. Important when reviewing whether an anomaly was actually outside normal range or simply part of a shifting baseline.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-ambient-conditions')">Ambient Conditions</a><a class="xref" onclick="jumpTo('entry-baseline-integrity')">Baseline Integrity</a><a class="xref" onclick="jumpTo('entry-spike')">Spike</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-baseline-integrity">
+      <div class="entry-header"><div class="entry-term">Baseline Integrity</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">Confidence in the accuracy, consistency, and reliability of baseline measurements. Baseline integrity is compromised when readings are inconsistent, equipment is uncalibrated, or sweeps are incomplete.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-baseline-drift')">Baseline Drift</a><a class="xref" onclick="jumpTo('entry-instrument-validation')">Instrument Validation</a><a class="xref" onclick="jumpTo('entry-objective-data')">Objective Data</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-bias">
+      <div class="entry-header"><div class="entry-term">Bias</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div>
+      <div class="entry-body">A tendency to interpret data, reports, or evidence based on expectation, belief, or prior experience rather than objective evaluation.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-analytical-bias')">Analytical Bias</a><a class="xref" onclick="jumpTo('entry-response-bias')">Response Bias</a><a class="xref" onclick="jumpTo('entry-suggestibility')">Suggestibility</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-blind-review">
+      <div class="entry-header"><div class="entry-term">Blind Review</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">Review of evidence without prior case context so that expectation, narrative framing, and emotional investment do not influence interpretation.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-analytical-bias')">Analytical Bias</a><a class="xref" onclick="jumpTo('entry-evidence-review')">Evidence Review</a><a class="xref" onclick="jumpTo('entry-review-blindness')">Review Blindness</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-burst-noise">
+      <div class="entry-header"><div class="entry-term">Burst Noise</div><div class="entry-tags"><span class="tag tag-auditory">Auditory</span></div></div>
+      <div class="entry-body">A sudden cluster of sound or static. Often an equipment or interference artifact; should be ruled out before treatment as anomalous audio.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-anomalous-audio')">Anomalous Audio</a><a class="xref" onclick="jumpTo('entry-instrument-artifact')">Instrument Artifact</a><a class="xref" onclick="jumpTo('entry-noise-floor')">Noise Floor</a></div></div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ C ═══════════ -->
+  <div class="letter-section" id="C" data-letter="C">
+    <div class="letter-anchor"><div class="letter-glyph">C</div><div class="letter-rule"></div><div class="letter-count">8 entries</div></div>
+
+    <div class="entry" id="entry-claim">
+      <div class="entry-header"><div class="entry-term">Claim</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div>
+      <div class="entry-body">A reported event, sensation, experience, or pattern described by a witness.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-claim-area')">Claim Area</a><a class="xref" onclick="jumpTo('entry-witness-statement')">Witness Statement</a><a class="xref" onclick="jumpTo('entry-unverified-claim')">Unverified Claim</a><a class="xref" onclick="jumpTo('entry-zone-of-claim')">Zone of Claim</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-claim-area">
+      <div class="entry-header"><div class="entry-term">Claim Area</div><div class="entry-tags"><span class="tag tag-case">Location Analysis</span></div></div>
+      <div class="entry-body">The specific location associated with a reported experience or event.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-hotspot')">Hotspot</a><a class="xref" onclick="jumpTo('entry-zone-of-claim')">Zone of Claim</a><a class="xref" onclick="jumpTo('entry-zone-disturbance')">Zone Disturbance</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-contamination">
+      <div class="entry-header"><div class="entry-term">Contamination</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">Any factor that may alter, confuse, compromise, or falsely create evidence during investigation or review.</div>
+      <div class="subtypes">
+        <div class="subtypes-label">Common Sources</div>
+        <div class="subtype-row"><div class="subtype-name">Environmental sounds</div><div class="subtype-desc">HVAC, traffic, wildlife, neighboring units.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Investigator movement</div><div class="subtype-desc">Footsteps, clothing, handling equipment.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Device interference</div><div class="subtype-desc">Cross-device EMF, radio bleed, power fluctuation.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Suggestive questioning</div><div class="subtype-desc">Leading questions that bias witness response.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Compression artifacts</div><div class="subtype-desc">File processing that introduces audio or visual anomalies.</div></div>
+      </div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-cross-contamination')">Cross-Contamination</a><a class="xref" onclick="jumpTo('entry-field-contamination')">Field Contamination</a><a class="xref" onclick="jumpTo('entry-interview-contamination')">Interview Contamination</a><a class="xref" onclick="jumpTo('entry-prompt-contamination')">Prompt Contamination</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-correlation">
+      <div class="entry-header"><div class="entry-term">Correlation</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div>
+      <div class="entry-body">Comparing reported events with environmental, temporal, structural, human, or equipment variables to identify patterns or connections.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-multi-source-correlation')">Multi-Source Correlation</a><a class="xref" onclick="jumpTo('entry-pattern-confirmation')">Pattern Confirmation</a><a class="xref" onclick="jumpTo('entry-temporal-correlation')">Temporal Correlation</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-cross-contamination">
+      <div class="entry-header"><div class="entry-term">Cross-Contamination</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">Interference between multiple sources — investigators, devices, or witnesses — that compromises the integrity of evidence.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a><a class="xref" onclick="jumpTo('entry-instrument-artifact')">Instrument Artifact</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-data-integrity">
+      <div class="entry-header"><div class="entry-term">Data Integrity</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">The reliability, consistency, and trustworthiness of collected evidence throughout the investigation and review process.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-audit-trail')">Audit Trail</a><a class="xref" onclick="jumpTo('entry-evidence-chain')">Evidence Chain</a><a class="xref" onclick="jumpTo('entry-workflow-integrity')">Workflow Integrity</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-differential-assessment">
+      <div class="entry-header"><div class="entry-term">Differential Assessment</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div>
+      <div class="entry-body">Evaluating multiple explanations — environmental, psychological, structural, equipment-based, and anomalous — before drawing any conclusion about a report or reading.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-false-positive')">False Positive</a><a class="xref" onclick="jumpTo('entry-natural-explanation')">Natural Explanation</a><a class="xref" onclick="jumpTo('entry-unresolved-case')">Unresolved Case</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-disembodied-voice">
+      <div class="entry-header"><div class="entry-term">Disembodied Voice</div><div class="entry-tags"><span class="tag tag-auditory">Auditory</span></div></div>
+      <div class="entry-body">A voice heard directly — not on a recording — without an identifiable source or visible speaker.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-evp')">EVP</a><a class="xref" onclick="jumpTo('entry-anomalous-audio')">Anomalous Audio</a><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a></div></div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ D ═══════════ -->
+  <div class="letter-section" id="D" data-letter="D">
+    <div class="letter-anchor"><div class="letter-glyph">D</div><div class="letter-rule"></div><div class="letter-count">1 entry</div></div>
+
+    <div class="entry" id="entry-debunk">
+      <div class="entry-header"><div class="entry-term">Debunk</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div>
+      <div class="entry-body">The process of identifying a normal, non-paranormal explanation for a reported event, reading, or piece of evidence. Debunking is a core investigative responsibility — not a dismissal of the witness, but a necessary step in credible case analysis.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-differential-assessment')">Differential Assessment</a><a class="xref" onclick="jumpTo('entry-natural-explanation')">Natural Explanation</a><a class="xref" onclick="jumpTo('entry-false-positive')">False Positive</a><a class="xref" onclick="jumpTo('entry-environmental-trigger')">Environmental Trigger</a></div></div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ E ═══════════ -->
+  <div class="letter-section" id="E" data-letter="E">
+    <div class="letter-anchor"><div class="letter-glyph">E</div><div class="letter-rule"></div><div class="letter-count">8 entries</div></div>
+
+    <div class="entry" id="entry-emf">
+      <div class="entry-header"><div class="entry-term">Electromagnetic Field (EMF)</div><div class="entry-tags"><span class="tag tag-env">Environmental</span><span class="tag tag-method">Instrument-Based</span></div></div>
+      <div class="entry-body">A measurable field produced by electricity, wiring, devices, and electrical systems. In paranormal work, EMF is logged because unusual field exposure can affect perception and because anomalous readings may coincide with reported claims.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-baseline')">Baseline</a><a class="xref" onclick="jumpTo('entry-spike')">Spike</a><a class="xref" onclick="jumpTo('entry-ambient-conditions')">Ambient Conditions</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-energy-imprint">
+      <div class="entry-header"><div class="entry-term">Energy Imprint</div></div>
+      <div class="entry-body">A lasting energetic trace of past events believed to be embedded in a location or object. The conceptual basis of imprint theory and residual haunting.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-imprint-theory')">Imprint Theory</a><a class="xref" onclick="jumpTo('entry-residual-loop')">Residual Loop</a><a class="xref" onclick="jumpTo('entry-replay-phenomenon')">Replay Phenomenon</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-environmental-mapping">
+      <div class="entry-header"><div class="entry-term">Environmental Mapping</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">The systematic recording of environmental conditions — EMF, temperature, sound, airflow, lighting — throughout a location before and during investigation.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-baseline')">Baseline</a><a class="xref" onclick="jumpTo('entry-ambient-conditions')">Ambient Conditions</a><a class="xref" onclick="jumpTo('entry-hotspot')">Hotspot</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-environmental-trigger">
+      <div class="entry-header"><div class="entry-term">Environmental Trigger</div><div class="entry-tags"><span class="tag tag-env">Environmental</span></div></div>
+      <div class="entry-body">A normal, identifiable environmental cause for a reported phenomenon — such as infrasound, drafts, settling, pests, or wiring.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-false-positive')">False Positive</a><a class="xref" onclick="jumpTo('entry-natural-explanation')">Natural Explanation</a><a class="xref" onclick="jumpTo('entry-differential-assessment')">Differential Assessment</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-event-marker">
+      <div class="entry-header"><div class="entry-term">Event Marker</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">A timestamp logged in real time for a significant observation, sound, equipment response, or team experience during a session.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-tagging')">Tagging</a><a class="xref" onclick="jumpTo('entry-time-sync')">Time Sync</a><a class="xref" onclick="jumpTo('entry-log-entry')">Log Entry</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-evidence-chain">
+      <div class="entry-header"><div class="entry-term">Evidence Chain</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">The documented handling path of collected data — who collected it, when, how it was stored, and how it was reviewed.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-audit-trail')">Audit Trail</a><a class="xref" onclick="jumpTo('entry-data-integrity')">Data Integrity</a><a class="xref" onclick="jumpTo('entry-evidence-review')">Evidence Review</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-evidence-review">
+      <div class="entry-header"><div class="entry-term">Evidence Review</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div>
+      <div class="entry-body">Structured examination of investigation material with attention to context, contamination, witness reliability, environmental factors, timing, equipment behavior, and alternative explanations.</div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-audit-trail')">Audit Trail</a><a class="xref" onclick="jumpTo('entry-blind-review')">Blind Review</a><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a><a class="xref" onclick="jumpTo('entry-review-protocol')">Review Protocol</a><a class="xref" onclick="jumpTo('entry-validation-pass')">Validation Pass</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-evp">
+      <div class="entry-header">
+        <div class="entry-term">Electronic Voice Phenomenon (EVP)</div>
+        <div class="entry-tags"><span class="tag tag-auditory">Auditory</span><span class="tag tag-method">Instrument-Based</span></div>
+      </div>
+      <div class="entry-body">An anomalous voice, word, phrase, or vocal-like sound reportedly captured on an audio recording without a clearly identified speaker present at the time of recording. Every suspected EVP should be reviewed for contamination, radio interference, ambient sound, audio compression artifacts, pareidolia, microphone handling noise, and environmental sources.</div>
+      <div class="subtypes">
+        <div class="subtypes-label">EVP Classifications</div>
+        <div class="subtype-row"><div class="subtype-name">Class A</div><div class="subtype-desc">Clear enough that most listeners agree on what is being heard.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Class B</div><div class="subtype-desc">Moderately clear but still open to interpretation.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Class C</div><div class="subtype-desc">Faint, fragmented, or highly subjective.</div></div>
+      </div>
+      <div class="review-qs">
+        <div class="review-qs-label">Review Questions</div>
+        <ul>
+          <li>Was a living speaker present nearby?</li>
+          <li>Was the recorder handling or rubbing against fabric?</li>
+          <li>Could HVAC, traffic, plumbing, radios, or distant voices explain it?</li>
+          <li>Does replay at different speeds change the interpretation?</li>
+          <li>Do multiple reviewers hear the same wording independently?</li>
+        </ul>
+      </div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-audio-pareidolia')">Audio Pareidolia</a><a class="xref" onclick="jumpTo('entry-burst-noise')">Burst Noise</a><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a><a class="xref" onclick="jumpTo('entry-disembodied-voice')">Disembodied Voice</a><a class="xref" onclick="jumpTo('entry-instrument-artifact')">Instrument Artifact</a><a class="xref" onclick="jumpTo('entry-noise-floor')">Noise Floor</a><a class="xref" onclick="jumpTo('entry-signal-vs-noise')">Signal vs Noise</a></div></div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ F ═══════════ -->
+  <div class="letter-section" id="F" data-letter="F">
+    <div class="letter-anchor"><div class="letter-glyph">F</div><div class="letter-rule"></div><div class="letter-count">5 entries</div></div>
+    <div class="entry" id="entry-false-positive"><div class="entry-header"><div class="entry-term">False Positive</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">A result, reading, or report incorrectly interpreted as paranormal when a normal explanation exists.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-instrument-artifact')">Instrument Artifact</a><a class="xref" onclick="jumpTo('entry-environmental-trigger')">Environmental Trigger</a><a class="xref" onclick="jumpTo('entry-pareidolia')">Pareidolia</a></div></div></div>
+    <div class="entry" id="entry-field-contamination"><div class="entry-header"><div class="entry-term">Field Contamination</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">External interference introduced into an investigation environment by investigators, equipment, or outside conditions.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a><a class="xref" onclick="jumpTo('entry-cross-contamination')">Cross-Contamination</a></div></div></div>
+    <div class="entry" id="entry-field-note"><div class="entry-header"><div class="entry-term">Field Note</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A real-time observation recorded during the investigation — separate from instrument logs. Captures investigator perception, timing, and environmental context.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-log-entry')">Log Entry</a><a class="xref" onclick="jumpTo('entry-tagging')">Tagging</a><a class="xref" onclick="jumpTo('entry-event-marker')">Event Marker</a></div></div></div>
+    <div class="entry" id="entry-follow-up-question"><div class="entry-header"><div class="entry-term">Follow-Up Question</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">A clarifying question posed without introducing suggestion or bias into the witness account.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-interview-contamination')">Interview Contamination</a><a class="xref" onclick="jumpTo('entry-lead-question')">Lead Question</a><a class="xref" onclick="jumpTo('entry-structured-interview')">Structured Interview</a></div></div></div>
+    <div class="entry" id="entry-false-positive2" style="display:none"></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ G ═══════════ -->
+  <div class="letter-section" id="G" data-letter="G">
+    <div class="letter-anchor"><div class="letter-glyph">G</div><div class="letter-rule"></div><div class="letter-count">5 entries</div></div>
+
+    <div class="entry" id="entry-ghost">
+      <div class="entry-header"><div class="entry-term">Ghost</div><div class="entry-tags"><span class="tag tag-entity">Entity</span><span class="tag tag-visual">Visual</span><span class="tag tag-psych">Experiential</span></div></div>
+      <div class="entry-body">A perceived manifestation, presence, or appearance believed to be associated with a deceased individual. The label ghost should be treated as a working description rather than a conclusion.</div>
+      <div class="subtypes">
+        <div class="subtypes-label">Types of Ghosts</div>
+        <div class="subtype-row"><div class="subtype-name">Residual Ghost</div><div class="subtype-desc">Replay-like, non-responsive, repetitive manifestation.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Intelligent Ghost</div><div class="subtype-desc">Reportedly aware presence that appears responsive or interactive.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Crisis Ghost</div><div class="subtype-desc">Appears in connection with death, danger, or trauma.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Anniversary Ghost</div><div class="subtype-desc">Linked to a recurring date, time, or seasonal pattern.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Messenger Ghost</div><div class="subtype-desc">Appears to warn, inform, or deliver meaning.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Place-Bound Ghost</div><div class="subtype-desc">Believed tied to a building, room, or land.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Person-Bound Ghost</div><div class="subtype-desc">Believed tied to a witness or individual.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Shadow Ghost</div><div class="subtype-desc">A dark figure interpreted as a ghostly form.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Animal Ghost</div><div class="subtype-desc">Apparitional animal presence.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Child Ghost</div><div class="subtype-desc">Figure interpreted as childlike by voice, form, or behavior.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Phantom Procession</div><div class="subtype-desc">A repeating group apparition scene.</div></div>
+      </div>
+      <div class="field-note"><div class="field-note-label">Field Note</div><p>Review should include environmental explanations, witness contamination, suggestion, folklore influence, and perceptual error before assigning this label.</p></div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-apparition')">Apparition</a><a class="xref" onclick="jumpTo('entry-haunting')">Haunting</a><a class="xref" onclick="jumpTo('entry-imprint-theory')">Imprint Theory</a><a class="xref" onclick="jumpTo('entry-shadow-figure')">Shadow Figure</a><a class="xref" onclick="jumpTo('entry-spirit')">Spirit</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-grid-search"><div class="entry-header"><div class="entry-term">Grid Search</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A methodical, overlapping search pattern used to systematically cover a location area by area.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-hotspot')">Hotspot</a><a class="xref" onclick="jumpTo('entry-environmental-mapping')">Environmental Mapping</a></div></div></div>
+    <div class="entry" id="entry-ground-truth"><div class="entry-header"><div class="entry-term">Ground Truth</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">Verified, independently confirmed factual information used as a reliable reference point in a case.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-data-integrity')">Data Integrity</a><a class="xref" onclick="jumpTo('entry-veridical-information')">Veridical Information</a></div></div></div>
+    <div class="entry" id="entry-guardian-spirit"><div class="entry-header"><div class="entry-term">Guardian Spirit</div><div class="entry-tags"><span class="tag tag-entity">Entity</span></div></div><div class="entry-body">A protective or guiding spiritual presence in some belief traditions.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-spirit')">Spirit</a></div></div></div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ H ═══════════ -->
+  <div class="letter-section" id="H" data-letter="H">
+    <div class="letter-anchor"><div class="letter-glyph">H</div><div class="letter-rule"></div><div class="letter-count">5 entries</div></div>
+
+    <div class="entry" id="entry-haunting">
+      <div class="entry-header"><div class="entry-term">Haunting</div><div class="entry-tags"><span class="tag tag-case">Case Type</span></div></div>
+      <div class="entry-body">Repeated reported phenomena tied to a location, person, object, or environment. Haunting is a broad case label and should not imply proof of ghosts.</div>
+      <div class="subtypes">
+        <div class="subtypes-label">Types of Hauntings</div>
+        <div class="subtype-row"><div class="subtype-name">Residual Haunting</div><div class="subtype-desc">Repetitive, replay-like, non-responsive activity.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Intelligent Haunting</div><div class="subtype-desc">Activity that appears aware, interactive, or responsive.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Poltergeist Haunting</div><div class="subtype-desc">Disturbances involving movement, knocks, displacement, or force-like activity.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Attachment Haunting</div><div class="subtype-desc">Reports believed linked to a person or object rather than a place.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Oppressive Haunting</div><div class="subtype-desc">Reports emphasizing dread, pressure, sleep disruption, or intimidation.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Transient Haunting</div><div class="subtype-desc">Short-lived or non-recurring period of activity.</div></div>
+      </div>
+      <div class="field-note"><div class="field-note-label">Field Note</div><p>Cases should be sorted through differential assessment, environmental review, witness interviewing, and timeline correlation before classification.</p></div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-active-haunting')">Active Haunting</a><a class="xref" onclick="jumpTo('entry-ghost')">Ghost</a><a class="xref" onclick="jumpTo('entry-imprint-theory')">Imprint Theory</a><a class="xref" onclick="jumpTo('entry-occurrence-cluster')">Occurrence Cluster</a><a class="xref" onclick="jumpTo('entry-poltergeist')">Poltergeist</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-hotspot"><div class="entry-header"><div class="entry-term">Hotspot</div><div class="entry-tags"><span class="tag tag-case">Location Analysis</span></div></div><div class="entry-body">A location repeatedly associated with reports, elevated readings, or witness experiences during investigation.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-claim-area')">Claim Area</a><a class="xref" onclick="jumpTo('entry-grid-search')">Grid Search</a><a class="xref" onclick="jumpTo('entry-occurrence-cluster')">Occurrence Cluster</a><a class="xref" onclick="jumpTo('entry-zone-disturbance')">Zone Disturbance</a></div></div></div>
+    <div class="entry" id="entry-human-factor"><div class="entry-header"><div class="entry-term">Human Factor</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">The role of psychology, perception, expectation, stress, fatigue, and suggestion in reported paranormal experiences.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-bias')">Bias</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a><a class="xref" onclick="jumpTo('entry-suggestibility')">Suggestibility</a></div></div></div>
+    <div class="entry" id="entry-hypnagogic"><div class="entry-header"><div class="entry-term">Hypnopompic / Hypnagogic State</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">Sleep-transition states occurring when falling asleep or waking, associated with vivid hallucinations, sensed presences, and paralysis. Extremely important in differential case analysis.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-human-factor')">Human Factor</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a></div></div></div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ I ═══════════ -->
+  <div class="letter-section" id="I" data-letter="I">
+    <div class="letter-anchor"><div class="letter-glyph">I</div><div class="letter-rule"></div><div class="letter-count">5 entries</div></div>
+    <div class="entry" id="entry-imprint-theory"><div class="entry-header"><div class="entry-term">Imprint Theory</div></div><div class="entry-body">The concept that emotionally or traumatically charged events become imprinted into a location or material and later replay under certain conditions. The theoretical basis of residual haunting.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-energy-imprint')">Energy Imprint</a><a class="xref" onclick="jumpTo('entry-replay-phenomenon')">Replay Phenomenon</a><a class="xref" onclick="jumpTo('entry-residual-loop')">Residual Loop</a></div></div></div>
+    <div class="entry" id="entry-instrument-artifact"><div class="entry-header"><div class="entry-term">Instrument Artifact</div><div class="entry-tags"><span class="tag tag-method">Instrument-Based</span></div></div><div class="entry-body">A false reading, anomaly, or apparent event caused by device behavior — calibration issues, low battery, interference, or mechanical noise — rather than an external source.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-false-positive')">False Positive</a><a class="xref" onclick="jumpTo('entry-instrument-validation')">Instrument Validation</a><a class="xref" onclick="jumpTo('entry-noise-floor')">Noise Floor</a><a class="xref" onclick="jumpTo('entry-signal-vs-noise')">Signal vs Noise</a></div></div></div>
+    <div class="entry" id="entry-instrument-validation"><div class="entry-header"><div class="entry-term">Instrument Validation</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">Confirming that a device is functioning accurately and consistently before and during use.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-baseline-integrity')">Baseline Integrity</a><a class="xref" onclick="jumpTo('entry-instrument-artifact')">Instrument Artifact</a></div></div></div>
+    <div class="entry" id="entry-interview-contamination"><div class="entry-header"><div class="entry-term">Interview Contamination</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">Distortion of witness testimony through leading questions, suggestion, group influence, retelling, or emotional reinforcement.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a><a class="xref" onclick="jumpTo('entry-lead-question')">Lead Question</a><a class="xref" onclick="jumpTo('entry-structured-interview')">Structured Interview</a></div></div></div>
+    <div class="entry" id="entry-interdimensional"><div class="entry-header"><div class="entry-term">Interdimensional Theory</div></div><div class="entry-body">The speculative hypothesis that paranormal phenomena originate from alternate dimensions or parallel realities.</div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ J–K ═══════════ -->
+  <div class="letter-section" id="J" data-letter="J">
+    <div class="letter-anchor"><div class="letter-glyph">J</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-judgment-call"><div class="entry-header"><div class="entry-term">Judgment Call</div></div><div class="entry-body">A decision made based on available data and investigator experience in the absence of certainty.</div></div>
+    <div class="entry" id="entry-jump-event"><div class="entry-header"><div class="entry-term">Jump Event</div></div><div class="entry-body">A sudden, unexpected occurrence during investigation — often used informally to describe startling anomalies.</div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <div class="letter-section" id="K" data-letter="K">
+    <div class="letter-anchor"><div class="letter-glyph">K</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-kinetic-disturbance"><div class="entry-header"><div class="entry-term">Kinetic Disturbance</div><div class="entry-tags"><span class="tag tag-physical">Physical</span></div></div><div class="entry-body">Unexplained object movement or displacement during an investigation.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-anomalous-movement')">Anomalous Movement</a><a class="xref" onclick="jumpTo('entry-poltergeist')">Poltergeist</a></div></div></div>
+    <div class="entry" id="entry-known-source"><div class="entry-header"><div class="entry-term">Known Source</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">An identified, confirmed normal cause for a reading, sound, or reported event.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-environmental-trigger')">Environmental Trigger</a><a class="xref" onclick="jumpTo('entry-natural-explanation')">Natural Explanation</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ L ═══════════ -->
+  <div class="letter-section" id="L" data-letter="L">
+    <div class="letter-anchor"><div class="letter-glyph">L</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-lead-question"><div class="entry-header"><div class="entry-term">Lead Question</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">A suggestive interview question that implies a specific answer or introduces detail the witness did not volunteer, compromising testimony reliability.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-interview-contamination')">Interview Contamination</a><a class="xref" onclick="jumpTo('entry-follow-up-question')">Follow-Up Question</a><a class="xref" onclick="jumpTo('entry-structured-interview')">Structured Interview</a></div></div></div>
+    <div class="entry" id="entry-light-anomaly"><div class="entry-header"><div class="entry-term">Light Anomaly</div><div class="entry-tags"><span class="tag tag-visual">Visual</span></div></div><div class="entry-body">An unexpected light captured or observed without an immediately confirmed source. Requires thorough environmental evaluation — reflections, dust, insects, and lens artifacts are common causes.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-anomalous-light')">Anomalous Light</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a><a class="xref" onclick="jumpTo('entry-false-positive')">False Positive</a></div></div></div>
+    <div class="entry" id="entry-log-entry"><div class="entry-header"><div class="entry-term">Log Entry</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A timestamped record of observations, readings, or events captured during the investigation.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-audit-trail')">Audit Trail</a><a class="xref" onclick="jumpTo('entry-event-marker')">Event Marker</a><a class="xref" onclick="jumpTo('entry-tagging')">Tagging</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ M ═══════════ -->
+  <div class="letter-section" id="M" data-letter="M">
+    <div class="letter-anchor"><div class="letter-glyph">M</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-manifestation-event"><div class="entry-header"><div class="entry-term">Manifestation Event</div><div class="entry-tags"><span class="tag tag-case">Case Event</span></div></div><div class="entry-body">A specific reported moment in which a sound, movement, figure, sensation, voice, or other anomaly is experienced or captured.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-event-marker')">Event Marker</a><a class="xref" onclick="jumpTo('entry-multi-witness-event')">Multi-Witness Event</a><a class="xref" onclick="jumpTo('entry-tagging')">Tagging</a><a class="xref" onclick="jumpTo('entry-temporal-correlation')">Temporal Correlation</a></div></div></div>
+    <div class="entry" id="entry-matrixing"><div class="entry-header"><div class="entry-term">Matrixing</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">The tendency to perceive familiar patterns — faces, figures, words — in random or ambiguous stimuli due to expectation. Related to pareidolia.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-pareidolia')">Pareidolia</a><a class="xref" onclick="jumpTo('entry-audio-pareidolia')">Audio Pareidolia</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a></div></div></div>
+    <div class="entry" id="entry-multi-source-correlation"><div class="entry-header"><div class="entry-term">Multi-Source Correlation</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Linking evidence, reports, or measurements across multiple devices, witnesses, locations, or timelines. The most credible anomalies are those confirmed across multiple independent sources simultaneously.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-correlation')">Correlation</a><a class="xref" onclick="jumpTo('entry-event-marker')">Event Marker</a><a class="xref" onclick="jumpTo('entry-time-sync')">Time Sync</a></div></div></div>
+    <div class="entry" id="entry-multi-witness-event"><div class="entry-header"><div class="entry-term">Multi-Witness Event</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">An event reported or experienced simultaneously by more than one person. Carries more investigative weight than single-witness reports when witness accounts are gathered independently.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-interview-contamination')">Interview Contamination</a><a class="xref" onclick="jumpTo('entry-manifestation-event')">Manifestation Event</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ N ═══════════ -->
+  <div class="letter-section" id="N" data-letter="N">
+    <div class="letter-anchor"><div class="letter-glyph">N</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-natural-explanation"><div class="entry-header"><div class="entry-term">Natural Explanation</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">A confirmed non-paranormal cause for a reported event, reading, or experience.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-environmental-trigger')">Environmental Trigger</a><a class="xref" onclick="jumpTo('entry-false-positive')">False Positive</a><a class="xref" onclick="jumpTo('entry-differential-assessment')">Differential Assessment</a></div></div></div>
+    <div class="entry" id="entry-noise-floor"><div class="entry-header"><div class="entry-term">Noise Floor</div><div class="entry-tags"><span class="tag tag-auditory">Auditory</span><span class="tag tag-env">Environmental</span></div></div><div class="entry-body">The ambient background signal level in a measurement system or environment. Anomalies are only meaningful when they exceed the noise floor with sufficient margin.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-signal-vs-noise')">Signal vs Noise</a><a class="xref" onclick="jumpTo('entry-ambient-conditions')">Ambient Conditions</a><a class="xref" onclick="jumpTo('entry-baseline')">Baseline</a></div></div></div>
+    <div class="entry" id="entry-null-result"><div class="entry-header"><div class="entry-term">Null Result</div><div class="entry-tags"><span class="tag tag-case">Case Status</span></div></div><div class="entry-body">An investigation in which no anomalous evidence was detected. A null result is a valid and documentable outcome — not a failed investigation.</div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ O ═══════════ -->
+  <div class="letter-section" id="O" data-letter="O">
+    <div class="letter-anchor"><div class="letter-glyph">O</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-objective-data"><div class="entry-header"><div class="entry-term">Objective Data</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">Measurable, instrument-captured information independent of witness interpretation or investigator perception.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-data-integrity')">Data Integrity</a><a class="xref" onclick="jumpTo('entry-subjective-experience')">Subjective Experience</a></div></div></div>
+    <div class="entry" id="entry-occurrence-cluster"><div class="entry-header"><div class="entry-term">Occurrence Cluster</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Grouped reports occurring within a defined time frame, location, or set of conditions.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-active-haunting')">Active Haunting</a><a class="xref" onclick="jumpTo('entry-patterning')">Patterning</a><a class="xref" onclick="jumpTo('entry-temporal-correlation')">Temporal Correlation</a></div></div></div>
+    <div class="entry" id="entry-observer-effect"><div class="entry-header"><div class="entry-term">Observer Effect</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">The influence that the act of observation — or the presence of investigators — may have on the phenomena being studied or the people reporting it. Awareness of being observed can alter witness behavior, affect instrument readings through handling, and introduce suggestion into the environment.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-human-factor')">Human Factor</a><a class="xref" onclick="jumpTo('entry-suggestibility')">Suggestibility</a><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a></div></div></div>
+
+    <div class="entry" id="entry-operational-protocol"><div class="entry-header"><div class="entry-term">Operational Protocol</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">The standard investigation procedure followed by the team — documenting how each phase of the investigation is conducted consistently across cases.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-session-control')">Session Control</a><a class="xref" onclick="jumpTo('entry-workflow-integrity')">Workflow Integrity</a><a class="xref" onclick="jumpTo('entry-workflow-gate')">Workflow Gate</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ P ═══════════ -->
+  <div class="letter-section" id="P" data-letter="P">
+    <div class="letter-anchor"><div class="letter-glyph">P</div><div class="letter-rule"></div><div class="letter-count">9 entries</div></div>
+
+    <div class="entry" id="entry-pareidolia"><div class="entry-header"><div class="entry-term">Pareidolia</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">The human tendency to perceive meaningful patterns, faces, voices, or figures in random stimuli. A critical concept in reviewing images, video, and audio evidence.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-audio-pareidolia')">Audio Pareidolia</a><a class="xref" onclick="jumpTo('entry-matrixing')">Matrixing</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a></div></div></div>
+
+    <div class="entry" id="entry-pattern-confirmation"><div class="entry-header"><div class="entry-term">Pattern Confirmation</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Verifying recurring activity across multiple data points, sessions, or witnesses to confirm a legitimate pattern rather than coincidence.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-patterning')">Patterning</a><a class="xref" onclick="jumpTo('entry-temporal-correlation')">Temporal Correlation</a><a class="xref" onclick="jumpTo('entry-occurrence-cluster')">Occurrence Cluster</a></div></div></div>
+
+    <div class="entry" id="entry-patterning"><div class="entry-header"><div class="entry-term">Patterning</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">The emergence of recurring timing, triggers, witness groups, locations, or conditions across reports. A key indicator in active case analysis.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-active-haunting')">Active Haunting</a><a class="xref" onclick="jumpTo('entry-occurrence-cluster')">Occurrence Cluster</a><a class="xref" onclick="jumpTo('entry-pattern-confirmation')">Pattern Confirmation</a><a class="xref" onclick="jumpTo('entry-replay-phenomenon')">Replay Phenomenon</a><a class="xref" onclick="jumpTo('entry-temporal-correlation')">Temporal Correlation</a></div></div></div>
+
+    <div class="entry" id="entry-perceptual-error"><div class="entry-header"><div class="entry-term">Perceptual Error</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">A mistake in perception that leads to misinterpretation of a stimulus. Common causes include fatigue, fear, expectation, darkness, and peripheral vision limits.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-pareidolia')">Pareidolia</a><a class="xref" onclick="jumpTo('entry-human-factor')">Human Factor</a><a class="xref" onclick="jumpTo('entry-suggestibility')">Suggestibility</a></div></div></div>
+
+    <div class="entry" id="entry-poltergeist">
+      <div class="entry-header"><div class="entry-term">Poltergeist</div><div class="entry-tags"><span class="tag tag-case">Case Type</span><span class="tag tag-physical">Physical</span><span class="tag tag-auditory">Auditory</span></div></div>
+      <div class="entry-body">A type of case centered on movement, impacts, knocks, displacement, thrown objects, or other disruptive physical effects.</div>
+      <div class="subtypes">
+        <div class="subtypes-label">Common Features</div>
+        <div class="subtype-row"><div class="subtype-name">Object movement</div><div class="subtype-desc">Items displaced, moved, or thrown.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Knocks and raps</div><div class="subtype-desc">Percussive sounds without identified source.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Electrical interference</div><div class="subtype-desc">Devices behaving erratically without mechanical cause.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Furniture/bed disturbance</div><div class="subtype-desc">Shaking, movement, or displacement of large objects.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Items appearing displaced</div><div class="subtype-desc">Objects found in unexpected locations.</div></div>
+      </div>
+      <div class="subtypes" style="margin-top:0.5rem">
+        <div class="subtypes-label">Common Interpretive Frameworks</div>
+        <div class="subtype-row"><div class="subtype-name">Spirit-Based</div><div class="subtype-desc">Activity believed to originate from a discarnate presence.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Living Agent Psi</div><div class="subtype-desc">Activity associated with unconscious psychokinetic influence of a living person.</div></div>
+        <div class="subtype-row"><div class="subtype-name">Environmental Misinterpretation</div><div class="subtype-desc">Vibrations, settling, plumbing, wiring, or pests misread as paranormal.</div></div>
+      </div>
+      <div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-anomalous-movement')">Anomalous Movement</a><a class="xref" onclick="jumpTo('entry-kinetic-disturbance')">Kinetic Disturbance</a><a class="xref" onclick="jumpTo('entry-patterning')">Patterning</a><a class="xref" onclick="jumpTo('entry-spike')">Spike</a><a class="xref" onclick="jumpTo('entry-uncontrolled-variable')">Uncontrolled Variable</a></div></div>
+    </div>
+
+    <div class="entry" id="entry-prompt-contamination"><div class="entry-header"><div class="entry-term">Prompt Contamination</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">Unintentionally influencing witness responses through the way questions are framed or the order in which they are asked.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-interview-contamination')">Interview Contamination</a><a class="xref" onclick="jumpTo('entry-lead-question')">Lead Question</a></div></div></div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ Q–R ═══════════ -->
+  <div class="letter-section" id="Q" data-letter="Q">
+    <div class="letter-anchor"><div class="letter-glyph">Q</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-qualitative-data"><div class="entry-header"><div class="entry-term">Qualitative Data</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Descriptive, non-numerical information from witnesses or observation — accounts, impressions, experiences, and narratives.</div></div>
+    <div class="entry" id="entry-quantitative-data"><div class="entry-header"><div class="entry-term">Quantitative Data</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Numerically measured data from instruments — EMF readings, temperature values, audio levels, timestamps.</div></div>
+    <div class="entry" id="entry-question-framing"><div class="entry-header"><div class="entry-term">Question Framing</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">Structuring questions to minimize suggestion and bias in witness responses.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-lead-question')">Lead Question</a><a class="xref" onclick="jumpTo('entry-follow-up-question')">Follow-Up Question</a><a class="xref" onclick="jumpTo('entry-structured-interview')">Structured Interview</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <div class="letter-section" id="R" data-letter="R">
+    <div class="letter-anchor"><div class="letter-glyph">R</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-replay-phenomenon"><div class="entry-header"><div class="entry-term">Replay Phenomenon</div></div><div class="entry-body">Residual activity that appears to repeat a past event without awareness or interaction. Often explained through imprint theory.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-imprint-theory')">Imprint Theory</a><a class="xref" onclick="jumpTo('entry-residual-loop')">Residual Loop</a><a class="xref" onclick="jumpTo('entry-energy-imprint')">Energy Imprint</a></div></div></div>
+    <div class="entry" id="entry-residual-loop"><div class="entry-header"><div class="entry-term">Residual Loop</div></div><div class="entry-body">A repeating sequence of residual events — the same sounds, movements, or figures appearing in the same pattern repeatedly.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-imprint-theory')">Imprint Theory</a><a class="xref" onclick="jumpTo('entry-replay-phenomenon')">Replay Phenomenon</a><a class="xref" onclick="jumpTo('entry-patterning')">Patterning</a></div></div></div>
+    <div class="entry" id="entry-response-bias"><div class="entry-header"><div class="entry-term">Response Bias</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">A tendency to respond in a predictable or expected way regardless of actual experience, often due to group dynamics or social pressure.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-bias')">Bias</a><a class="xref" onclick="jumpTo('entry-suggestibility')">Suggestibility</a></div></div></div>
+    <div class="entry" id="entry-review-blindness"><div class="entry-header"><div class="entry-term">Review Blindness</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">Failure to detect analytical bias during evidence review — often caused by over-familiarity with a case or confirmation expectation.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-analytical-bias')">Analytical Bias</a><a class="xref" onclick="jumpTo('entry-blind-review')">Blind Review</a></div></div></div>
+    <div class="entry" id="entry-review-protocol"><div class="entry-header"><div class="entry-term">Review Protocol</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A standardized, repeatable method for reviewing investigation evidence consistently across cases and reviewers.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-evidence-review')">Evidence Review</a><a class="xref" onclick="jumpTo('entry-validation-pass')">Validation Pass</a><a class="xref" onclick="jumpTo('entry-blind-review')">Blind Review</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ S ═══════════ -->
+  <div class="letter-section" id="S" data-letter="S">
+    <div class="letter-anchor"><div class="letter-glyph">S</div><div class="letter-rule"></div><div class="letter-count">10 entries</div></div>
+
+    <div class="entry" id="entry-session-control"><div class="entry-header"><div class="entry-term">Session Control</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">The rules, conditions, and documentation used to keep an investigation session structured and comparable across sessions.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-operational-protocol')">Operational Protocol</a><a class="xref" onclick="jumpTo('entry-structured-interview')">Structured Interview</a><a class="xref" onclick="jumpTo('entry-trigger-session')">Trigger Session</a></div></div></div>
+
+    <div class="entry" id="entry-shadow-figure"><div class="entry-header"><div class="entry-term">Shadow Figure</div><div class="entry-tags"><span class="tag tag-visual">Visual</span><span class="tag tag-psych">Experiential</span></div></div><div class="entry-body">A dark humanoid or figure-like form, often seen quickly, peripherally, or in low-light conditions. Reports vary widely and interpretations are inconsistent.</div><div class="subtypes"><div class="subtypes-label">Common Interpretations</div><div class="subtype-row"><div class="subtype-name">Perceptual</div><div class="subtype-desc">Misperception caused by angle, movement, and lighting.</div></div><div class="subtype-row"><div class="subtype-name">Expectation-driven</div><div class="subtype-desc">Interpretation influenced by prior belief or fear.</div></div><div class="subtype-row"><div class="subtype-name">Apparitional</div><div class="subtype-desc">A distinct paranormal category in some investigation frameworks.</div></div></div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-apparition')">Apparition</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a><a class="xref" onclick="jumpTo('entry-ghost')">Ghost</a></div></div></div>
+
+    <div class="entry" id="entry-signal-vs-noise"><div class="entry-header"><div class="entry-term">Signal vs Noise</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Distinguishing meaningful data from background interference, equipment artifacts, or environmental causes. The central challenge in paranormal evidence review.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-noise-floor')">Noise Floor</a><a class="xref" onclick="jumpTo('entry-instrument-artifact')">Instrument Artifact</a><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a></div></div></div>
+
+    <div class="entry" id="entry-spike"><div class="entry-header"><div class="entry-term">Spike</div><div class="entry-tags"><span class="tag tag-env">Environmental</span><span class="tag tag-method">Instrument-Based</span></div></div><div class="entry-body">A sudden increase above baseline in a measured condition such as EMF, sound level, temperature differential, motion trigger, or other monitored variable.</div><div class="review-qs"><div class="review-qs-label">Review Questions</div><ul><li>Was the spike isolated or repeated?</li><li>Was there a known source nearby?</li><li>Did other instruments register a related change?</li><li>Did witness reports align in time?</li></ul></div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-baseline')">Baseline</a><a class="xref" onclick="jumpTo('entry-baseline-drift')">Baseline Drift</a><a class="xref" onclick="jumpTo('entry-environmental-trigger')">Environmental Trigger</a><a class="xref" onclick="jumpTo('entry-known-source')">Known Source</a><a class="xref" onclick="jumpTo('entry-temporal-correlation')">Temporal Correlation</a></div></div></div>
+
+    <div class="entry" id="entry-spirit"><div class="entry-header"><div class="entry-term">Spirit</div><div class="entry-tags"><span class="tag tag-entity">Entity</span></div></div><div class="entry-body">A broad term for a surviving consciousness, non-physical being, or discarnate presence.</div><div class="subtypes"><div class="subtypes-label">Common Usage Categories</div><div class="subtype-row"><div class="subtype-name">Human Spirit</div><div class="subtype-desc">Believed to be the surviving consciousness of a deceased person.</div></div><div class="subtype-row"><div class="subtype-name">Non-Human Spirit</div><div class="subtype-desc">A presence not believed to have been human.</div></div><div class="subtype-row"><div class="subtype-name">Guardian Spirit</div><div class="subtype-desc">A protective or guiding presence.</div></div><div class="subtype-row"><div class="subtype-name">Nature or Place Spirit</div><div class="subtype-desc">A spirit associated with land, water, or location.</div></div></div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-ghost')">Ghost</a><a class="xref" onclick="jumpTo('entry-haunting')">Haunting</a><a class="xref" onclick="jumpTo('entry-unidentified-entity')">Unidentified Entity</a></div></div></div>
+
+    <div class="entry" id="entry-spirit-attachment-theory"><div class="entry-header"><div class="entry-term">Spirit Attachment Theory</div><div class="entry-tags"><span class="tag tag-entity">Entity Theory</span></div></div><div class="entry-body">The belief that entities or spirits can attach to individuals, objects, or places and continue to influence later experiences.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-attachment')">Attachment</a><a class="xref" onclick="jumpTo('entry-haunting')">Haunting</a></div></div></div>
+
+    <div class="entry" id="entry-structured-interview"><div class="entry-header"><div class="entry-term">Structured Interview</div><div class="entry-tags"><span class="tag tag-method">Methodology</span><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">A consistent interview method designed to reduce contamination, improve comparison across witnesses, and preserve testimony reliability.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-follow-up-question')">Follow-Up Question</a><a class="xref" onclick="jumpTo('entry-interview-contamination')">Interview Contamination</a><a class="xref" onclick="jumpTo('entry-lead-question')">Lead Question</a><a class="xref" onclick="jumpTo('entry-witness-statement')">Witness Statement</a></div></div></div>
+
+    <div class="entry" id="entry-subjective-experience"><div class="entry-header"><div class="entry-term">Subjective Experience</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">An event based on personal perception, sensation, or emotional experience that may not be externally measurable or reproducible.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-apparition')">Apparition</a><a class="xref" onclick="jumpTo('entry-objective-data')">Objective Data</a><a class="xref" onclick="jumpTo('entry-perceptual-error')">Perceptual Error</a><a class="xref" onclick="jumpTo('entry-witness-statement')">Witness Statement</a></div></div></div>
+
+    <div class="entry" id="entry-suggestibility"><div class="entry-header"><div class="entry-term">Suggestibility</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">The degree to which a witness's account is influenced by expectation, suggestion, group dynamics, or prior information.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-bias')">Bias</a><a class="xref" onclick="jumpTo('entry-human-factor')">Human Factor</a><a class="xref" onclick="jumpTo('entry-interview-contamination')">Interview Contamination</a></div></div></div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ T ═══════════ -->
+  <div class="letter-section" id="T" data-letter="T">
+    <div class="letter-anchor"><div class="letter-glyph">T</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-tagging"><div class="entry-header"><div class="entry-term">Tagging</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">Marking events in real time — verbally or through a logging app — for later review during evidence analysis. Tagging reduces false positives caused by known sounds or team activity.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-event-marker')">Event Marker</a><a class="xref" onclick="jumpTo('entry-log-entry')">Log Entry</a><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a></div></div></div>
+    <div class="entry" id="entry-temporal-correlation"><div class="entry-header"><div class="entry-term">Temporal Correlation</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Matching events, readings, or reports to specific times, dates, seasons, or recurring patterns to identify timing-based anomalies.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-patterning')">Patterning</a><a class="xref" onclick="jumpTo('entry-pattern-confirmation')">Pattern Confirmation</a><a class="xref" onclick="jumpTo('entry-time-sync')">Time Sync</a></div></div></div>
+    <div class="entry" id="entry-time-sync"><div class="entry-header"><div class="entry-term">Time Sync</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">Aligning timestamps across all recording devices and instruments before investigation begins. Essential for multi-source correlation.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-multi-source-correlation')">Multi-Source Correlation</a><a class="xref" onclick="jumpTo('entry-temporal-correlation')">Temporal Correlation</a><a class="xref" onclick="jumpTo('entry-audit-trail')">Audit Trail</a></div></div></div>
+    <div class="entry" id="entry-trigger-session"><div class="entry-header"><div class="entry-term">Trigger Session</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A session using music, objects, names, lights, toys, questions, or other stimuli to invite interaction or response from a suspected presence.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-active-haunting')">Active Haunting</a><a class="xref" onclick="jumpTo('entry-session-control')">Session Control</a><a class="xref" onclick="jumpTo('entry-target-question')">Target Question</a><a class="xref" onclick="jumpTo('entry-vigil')">Vigil</a></div></div></div>
+    <div class="entry" id="entry-target-question"><div class="entry-header"><div class="entry-term">Target Question</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A focused, specific question used during a session to prompt a testable response.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-trigger-session')">Trigger Session</a><a class="xref" onclick="jumpTo('entry-session-control')">Session Control</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ U ═══════════ -->
+  <div class="letter-section" id="U" data-letter="U">
+    <div class="letter-anchor"><div class="letter-glyph">U</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-uncontrolled-variable"><div class="entry-header"><div class="entry-term">Uncontrolled Variable</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">An unaccounted factor that may affect investigation results — weather, building occupants, equipment interaction, or investigator behavior.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-contamination')">Contamination</a><a class="xref" onclick="jumpTo('entry-false-positive')">False Positive</a></div></div></div>
+    <div class="entry" id="entry-unidentified-entity"><div class="entry-header"><div class="entry-term">Unidentified Entity</div><div class="entry-tags"><span class="tag tag-entity">Entity</span></div></div><div class="entry-body">A reported presence that cannot be confidently classified within the available case evidence or descriptive framework.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-attachment')">Attachment</a><a class="xref" onclick="jumpTo('entry-ghost')">Ghost</a><a class="xref" onclick="jumpTo('entry-spirit')">Spirit</a><a class="xref" onclick="jumpTo('entry-unverified-claim')">Unverified Claim</a></div></div></div>
+    <div class="entry" id="entry-unresolved-case"><div class="entry-header"><div class="entry-term">Unresolved Case</div><div class="entry-tags"><span class="tag tag-case">Case Status</span></div></div><div class="entry-body">A case in which available evidence does not support a confident ordinary explanation, but also does not justify a definitive paranormal conclusion.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-differential-assessment')">Differential Assessment</a><a class="xref" onclick="jumpTo('entry-null-result')">Null Result</a></div></div></div>
+    <div class="entry" id="entry-unverified-claim"><div class="entry-header"><div class="entry-term">Unverified Claim</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">A reported experience not yet supported by corroborating evidence, independent confirmation, or instrument data.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-claim')">Claim</a><a class="xref" onclick="jumpTo('entry-witness-statement')">Witness Statement</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ V ═══════════ -->
+  <div class="letter-section" id="V" data-letter="V">
+    <div class="letter-anchor"><div class="letter-glyph">V</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-validation-pass"><div class="entry-header"><div class="entry-term">Validation Pass</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A second, independent review of collected evidence to confirm or challenge the findings of the initial review.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-evidence-review')">Evidence Review</a><a class="xref" onclick="jumpTo('entry-blind-review')">Blind Review</a><a class="xref" onclick="jumpTo('entry-review-protocol')">Review Protocol</a></div></div></div>
+    <div class="entry" id="entry-veridical-information"><div class="entry-header"><div class="entry-term">Veridical Information</div></div><div class="entry-body">Accurate, specific information obtained through claimed paranormal means that can be independently verified after the fact.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-ground-truth')">Ground Truth</a></div></div></div>
+    <div class="entry" id="entry-vigil"><div class="entry-header"><div class="entry-term">Vigil</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A defined observation period during an investigation — typically conducted in low light with instruments running.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-session-control')">Session Control</a><a class="xref" onclick="jumpTo('entry-trigger-session')">Trigger Session</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ W ═══════════ -->
+  <div class="letter-section" id="W" data-letter="W">
+    <div class="letter-anchor"><div class="letter-glyph">W</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-warm-reading"><div class="entry-header"><div class="entry-term">Warm Reading</div><div class="entry-tags"><span class="tag tag-psych">Psychological</span></div></div><div class="entry-body">A technique — often unconscious — in which a reader or investigator makes observations that appear specific but are actually inferred from visible behavioral cues, demographic information, body language, or emotional responses. Important to understand when evaluating psychic or mediumship claims.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-suggestibility')">Suggestibility</a><a class="xref" onclick="jumpTo('entry-human-factor')">Human Factor</a><a class="xref" onclick="jumpTo('entry-bias')">Bias</a></div></div></div>
+
+    <div class="entry" id="entry-witness-statement"><div class="entry-header"><div class="entry-term">Witness Statement</div><div class="entry-tags"><span class="tag tag-witness">Witness Reporting</span></div></div><div class="entry-body">A person's documented report of what they saw, heard, felt, believed, or experienced.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-claim')">Claim</a><a class="xref" onclick="jumpTo('entry-follow-up-question')">Follow-Up Question</a><a class="xref" onclick="jumpTo('entry-structured-interview')">Structured Interview</a><a class="xref" onclick="jumpTo('entry-subjective-experience')">Subjective Experience</a></div></div></div>
+    <div class="entry" id="entry-workflow-gate"><div class="entry-header"><div class="entry-term">Workflow Gate</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">A required process step that must be completed before the investigation proceeds to the next phase.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-operational-protocol')">Operational Protocol</a><a class="xref" onclick="jumpTo('entry-workflow-integrity')">Workflow Integrity</a></div></div></div>
+    <div class="entry" id="entry-workflow-integrity"><div class="entry-header"><div class="entry-term">Workflow Integrity</div><div class="entry-tags"><span class="tag tag-method">Methodology</span></div></div><div class="entry-body">Adherence to all defined investigation procedures without skipping steps, ensuring consistency and comparability across cases.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-operational-protocol')">Operational Protocol</a><a class="xref" onclick="jumpTo('entry-data-integrity')">Data Integrity</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- ═══════════ X–Z ═══════════ -->
+  <div class="letter-section" id="X" data-letter="X">
+    <div class="letter-anchor"><div class="letter-glyph">X</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-x-factor"><div class="entry-header"><div class="entry-term">X-Factor Event</div></div><div class="entry-body">An occurrence with an unknown or unidentified variable as its cause — used informally when standard assessment does not produce an explanation.</div></div>
+    <div class="entry" id="entry-x-variable"><div class="entry-header"><div class="entry-term">X-Variable</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">An unknown or unidentified influencing factor in a case — distinct from an uncontrolled variable in that it is not merely unaccounted for but actively unidentifiable with available evidence.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-x-factor')">X-Factor Event</a><a class="xref" onclick="jumpTo('entry-uncontrolled-variable')">Uncontrolled Variable</a><a class="xref" onclick="jumpTo('entry-unresolved-case')">Unresolved Case</a></div></div></div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <div class="letter-section" id="Y" data-letter="Y">
+    <div class="letter-anchor"><div class="letter-glyph">Y</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-yield-analysis"><div class="entry-header"><div class="entry-term">Yield Analysis</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">Evaluation of session or investigation effectiveness — how much usable, reviewable material was produced relative to total session time.</div></div>
+    <div class="entry" id="entry-yield-rate"><div class="entry-header"><div class="entry-term">Yield Rate</div><div class="entry-tags"><span class="tag tag-analysis">Analysis</span></div></div><div class="entry-body">The proportion of useful, reviewable, or anomalous results produced relative to total session time or total material collected. A low yield rate does not indicate a failed investigation — it may reflect a clean environment or rigorous elimination of false positives.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-yield-analysis')">Yield Analysis</a><a class="xref" onclick="jumpTo('entry-null-result')">Null Result</a></div></div></div>
+
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <div class="letter-section" id="Z" data-letter="Z">
+    <div class="letter-anchor"><div class="letter-glyph">Z</div><div class="letter-rule"></div></div>
+    <div class="entry" id="entry-zero-data"><div class="entry-header"><div class="entry-term">Zero Data Event</div><div class="entry-tags"><span class="tag tag-case">Case Status</span></div></div><div class="entry-body">An investigation session with no measurable anomalies detected across all instruments and witness reports.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-null-result')">Null Result</a></div></div></div>
+    <div class="entry" id="entry-zone-disturbance"><div class="entry-header"><div class="entry-term">Zone Disturbance</div><div class="entry-tags"><span class="tag tag-case">Location Analysis</span></div></div><div class="entry-body">An area with repeated anomalies, elevated readings, or clustered reports during investigation.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-hotspot')">Hotspot</a><a class="xref" onclick="jumpTo('entry-occurrence-cluster')">Occurrence Cluster</a></div></div></div>
+    <div class="entry" id="entry-zone-of-claim"><div class="entry-header"><div class="entry-term">Zone of Claim</div><div class="entry-tags"><span class="tag tag-case">Location Analysis</span></div></div><div class="entry-body">The specific location tied to a witness report — the place where the reported event occurred.</div><div class="see-also"><span class="see-also-label">See also</span><div class="see-also-links"><a class="xref" onclick="jumpTo('entry-claim-area')">Claim Area</a><a class="xref" onclick="jumpTo('entry-hotspot')">Hotspot</a><a class="xref" onclick="jumpTo('entry-claim')">Claim</a></div></div></div>
+    <div class="back-top"><a href="#top">↑ Return to top</a></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div class="footer-brand">The Paranormal Initiative · Investigation Development Series</div>
+    <div class="footer-note">Paranormal Terminology Reference Guide — Unified Master Edition</div>
+  </div>
+
+</div>
+
+<script>
+function jumpTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.classList.remove('highlighted');
+  void el.offsetWidth;
+  el.classList.add('highlighted');
+  setTimeout(() => el.classList.remove('highlighted'), 2000);
+}
+
+const searchInput = document.getElementById('search-input');
+const searchCount = document.getElementById('search-count');
+const noResults = document.getElementById('no-results');
+const allEntries = document.querySelectorAll('.entry');
+const allSections = document.querySelectorAll('.letter-section');
+
+searchInput.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) {
+    allEntries.forEach(e => e.style.display = '');
+    allSections.forEach(s => s.style.display = '');
+    document.querySelectorAll('.back-top').forEach(b => b.style.display = '');
+    searchCount.textContent = '';
+    noResults.style.display = 'none';
+    return;
+  }
+  let count = 0;
+  allEntries.forEach(entry => {
+    const text = entry.textContent.toLowerCase();
+    const match = text.includes(q);
+    entry.style.display = match ? '' : 'none';
+    if (match) count++;
+  });
+  allSections.forEach(section => {
+    const visible = Array.from(section.querySelectorAll('.entry')).some(e => e.style.display !== 'none');
+    section.style.display = visible ? '' : 'none';
+    const bt = section.querySelector('.back-top');
+    if (bt) bt.style.display = visible ? '' : 'none';
+  });
+  searchCount.textContent = count > 0 ? count + ' results' : '';
+  noResults.style.display = count === 0 ? 'block' : 'none';
+});
+</script>
+</body>
+</html>

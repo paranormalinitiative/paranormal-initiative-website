@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forensic Analysis Compendium | The Paranormal Initiative</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c; --gold-light: #e8c97a; --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a; --teal-light: #5ecfb7; --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4; --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6; --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840; --orange-dim: rgba(224,120,64,0.1);
+  --green: #4a9e6a; --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a; --red-dim: rgba(196,90,90,0.1);
+  --amber: #d4a017; --amber-dim: rgba(212,160,23,0.1);
+  --text-primary: #ede9e2; --text-secondary: #a8a098; --text-muted: #6a6460;
+  --bg: #090c10; --surface: rgba(255,255,255,0.04); --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08); --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(74,143,196,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(139,92,246,0.03) 0%, transparent 70%);
+  color: var(--text-primary); font-family: 'Raleway', sans-serif;
+  font-weight: 400; line-height: 1.8; min-height: 100vh;
+}
+/* HEADER */
+.brand-header {
+  position: sticky; top: 0; z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass); border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.brand-left { display: flex; align-items: center; gap: 13px; }
+.brand-emblem {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(74,143,196,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.brand-emblem svg { width: 17px; height: 17px; }
+.brand-name { font-family:'Cinzel',serif; font-size:10.5px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; color:var(--gold); line-height:1.35; }
+.brand-series { font-family:'Raleway',sans-serif; font-size:9.5px; font-weight:300; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-secondary); margin-top:1px; }
+.doc-badge { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue); border:0.5px solid rgba(74,143,196,0.3); padding:3px 10px; border-radius:20px; background:var(--blue-dim); white-space:nowrap; }
+.search-wrap { position:relative; flex:1; max-width:320px; }
+.search-wrap input { width:100%; background:rgba(255,255,255,0.05); border:0.5px solid var(--border); border-radius:8px; padding:0.55rem 1rem 0.55rem 2.25rem; color:var(--text-primary); font-family:'Raleway',sans-serif; font-size:12px; outline:none; transition:border-color 0.2s; }
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(74,143,196,0.4); }
+.search-icon { position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:12px; pointer-events:none; }
+#search-count { position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); font-size:10px; color:var(--text-muted); }
+/* PAGE */
+.page { max-width: 960px; margin: 0 auto; padding: 0 1.75rem 5rem; }
+/* HERO */
+.hero { padding:3.5rem 0 2.5rem; border-bottom:0.5px solid var(--border); margin-bottom:2rem; }
+.hero-eyebrow { font-size:9.5px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--blue); margin-bottom:1rem; }
+.hero-title { font-family:'Cinzel',serif; font-size:clamp(1.7rem,4.5vw,2.6rem); font-weight:700; line-height:1.15; color:var(--text-primary); margin-bottom:1rem; }
+.hero-title em { color:var(--gold); font-style:normal; }
+.hero-desc { font-family:'Crimson Pro',serif; font-size:16px; font-weight:300; color:var(--text-secondary); line-height:1.85; max-width:640px; margin-bottom:1.5rem; }
+.hero-meta { display:flex; gap:1.5rem; flex-wrap:wrap; }
+.hero-meta-item { font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); }
+.hero-meta-item span { color:var(--gold); margin-right:5px; }
+/* SECTION NAV */
+.sec-nav { display:flex; gap:0; background:var(--surface); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:2.5rem; }
+.sec-nav a { flex:1; text-align:center; padding:0.65rem 0.5rem; font-family:'Cinzel',serif; font-size:9.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; border-right:0.5px solid var(--border); transition:all 0.15s; }
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover, .sec-nav a.active { color:var(--gold); background:var(--gold-dim); }
+/* SECTION BLOCK */
+.sec-block { margin-bottom:4rem; }
+.sec-header {
+  display:flex; align-items:center; gap:1.25rem; padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(74,143,196,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(74,143,196,0.2); border-radius:14px; margin-bottom:1.75rem;
+}
+.sec-number { font-family:'Cinzel',serif; font-size:28px; font-weight:700; color:rgba(201,168,76,0.25); line-height:1; min-width:48px; }
+.sec-title-block { flex:1; }
+.sec-eyebrow { font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--blue); margin-bottom:3px; }
+.sec-title { font-family:'Cinzel',serif; font-size:1.45rem; font-weight:700; color:var(--text-primary); line-height:1.2; }
+.sec-tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); border:0.5px solid rgba(201,168,76,0.3); padding:4px 12px; border-radius:20px; background:var(--gold-dim); white-space:nowrap; }
+.sec-intro { font-family:'Crimson Pro',serif; font-size:15.5px; font-weight:300; color:var(--text-secondary); line-height:1.85; margin-bottom:1.75rem; padding:0 0.25rem; }
+/* ENTRY */
+.entry { background:var(--surface); border:0.5px solid var(--border); border-radius:12px; padding:1.4rem 1.5rem; margin-bottom:1.25rem; transition:border-color 0.2s; }
+.entry:hover { border-color:var(--border-hover); }
+.entry-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:0.85rem; flex-wrap:wrap; }
+.entry-term { font-family:'Cinzel',serif; font-size:1.05rem; font-weight:600; color:var(--gold-light); line-height:1.3; }
+.entry-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+.tag-photo { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-video { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-audio { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-science { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-debunk { color:var(--red); background:var(--red-dim); border:0.5px solid rgba(196,90,90,0.2); }
+.tag-protocol { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-environment { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+.tag-history { color:var(--amber); background:var(--amber-dim); border:0.5px solid rgba(212,160,23,0.2); }
+.entry-body { font-family:'Crimson Pro',serif; font-size:15px; font-weight:300; color:var(--text-secondary); line-height:1.85; margin-bottom:1rem; }
+.entry-body:last-child { margin-bottom:0; }
+/* DOC LIST */
+.doc-list { background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dim); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.doc-list-label { font-size:9.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+.doc-list ul { list-style:none; padding:0; }
+.doc-list li { font-size:13.5px; color:var(--text-secondary); padding:0.3rem 0; padding-left:1.25rem; position:relative; line-height:1.65; }
+.doc-list li::before { content:'·'; position:absolute; left:0.25rem; color:var(--gold); font-size:16px; line-height:1.2; }
+/* FIELD NOTE */
+.field-note { background:rgba(201,168,76,0.06); border:0.5px solid rgba(201,168,76,0.18); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.field-note-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem; }
+.field-note p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
+/* PRO TIP */
+.pro-tip { background:rgba(139,92,246,0.07); border:0.5px solid rgba(139,92,246,0.2); border-left:3px solid var(--purple); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.pro-tip-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--purple); margin-bottom:0.4rem; }
+.pro-tip p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
+/* IDENTIFY BOX */
+.identify-box { background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); border-radius:10px; padding:0.9rem 1.1rem; margin-top:0.85rem; }
+.identify-label { font-family:'Cinzel',serif; font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue); margin-bottom:0.55rem; }
+.identify-box ul { list-style:none; padding:0; }
+.identify-box li { font-size:13px; color:var(--text-secondary); padding:0.25rem 0; padding-left:1.2rem; position:relative; line-height:1.6; }
+.identify-box li::before { content:'→'; position:absolute; left:0; color:var(--blue); font-size:10px; top:0.35rem; }
+/* STEP LIST */
+.step-list { display:flex; flex-direction:column; gap:0.6rem; margin:0.85rem 0; }
+.step-item { display:flex; gap:0.85rem; align-items:flex-start; }
+.step-num { font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:var(--gold); min-width:28px; padding-top:2px; }
+.step-text { font-size:13.5px; color:var(--text-secondary); line-height:1.65; flex:1; }
+/* DEBUNK BOX */
+.debunk-box { background:rgba(196,90,90,0.06); border:0.5px solid rgba(196,90,90,0.18); border-left:3px solid var(--red); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.debunk-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--red); margin-bottom:0.4rem; }
+.debunk-box p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
+/* WEATHER TABLE */
+.weather-table { overflow-x:auto; margin:0.85rem 0; }
+.weather-table table { width:100%; border-collapse:collapse; font-size:13px; }
+.weather-table th { font-family:'Cinzel',serif; font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); padding:0.6rem 0.85rem; background:rgba(201,168,76,0.06); border-bottom:0.5px solid rgba(201,168,76,0.15); text-align:left; }
+.weather-table td { padding:0.55rem 0.85rem; border-bottom:0.5px solid var(--border); color:var(--text-secondary); line-height:1.55; vertical-align:top; }
+.weather-table tr:last-child td { border-bottom:none; }
+.weather-table tr:hover td { background:var(--surface-hover); }
+/* BACK TOP */
+.back-top { text-align:right; margin:1.5rem 0; }
+.back-top a { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; padding:5px 12px; border:0.5px solid var(--border); border-radius:20px; transition:all 0.15s; }
+.back-top a:hover { color:var(--gold); border-color:rgba(201,168,76,0.3); }
+/* SECTION LABEL */
+.section-label { font-family:'Cinzel',serif; font-size:9.5px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin:1.2rem 0 0.75rem; }
+/* CODE */
+code { font-family: 'Courier New', monospace; font-size:11.5px; background:rgba(74,143,196,0.1); color:var(--blue); padding:1px 5px; border-radius:4px; border:0.5px solid rgba(74,143,196,0.15); }
+/* Footer */
+.doc-footer { border-top:0.5px solid var(--border); margin-top:3rem; padding:2rem 1.75rem; }
+.footer-inner { max-width:960px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:0.5rem; text-align:center; }
+.footer-emblem svg { width:22px; height:22px; color:var(--gold); opacity:0.5; }
+.footer-name { font-family:'Cinzel',serif; font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); opacity:0.7; }
+.footer-doc { font-size:11px; color:var(--text-muted); letter-spacing:0.08em; }
+.footer-note { font-size:11px; color:var(--text-muted); max-width:520px; line-height:1.6; margin-top:0.25rem; }
+</style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<header class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(201,168,76,0.85)" stroke-width="1.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Forensic Analysis Compendium</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search-input" placeholder="Search all analysis topics…">
+    <span id="search-count"></span>
+  </div>
+  <div class="doc-badge">Complete Analysis Guide</div>
+</header>
+
+<div class="page">
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">The Paranormal Initiative · Forensic Evidence Analysis</div>
+  <div class="hero-title">The <em>Forensic Analysis</em> Compendium</div>
+  <div class="hero-desc">The complete TPI methodology for reviewing, processing, and classifying photographic, video, and audio/EVP evidence. Three disciplines — one rigorous standard. From raw file intake through blind review to final classification, this guide establishes the full analytical workflow every TPI investigator follows when evidence comes off the field.</div>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><span>Disciplines</span>Photo · Video · Audio/EVP</div>
+    <div class="hero-meta-item"><span>Workflows</span>Step-by-Step Protocols</div>
+    <div class="hero-meta-item"><span>Standards</span>Classification &amp; Blind Review</div>
+    <div class="hero-meta-item"><span>Format</span>Searchable · Live Navigation</div>
+  </div>
+</div>
+
+<!-- SECTION NAV -->
+<nav class="sec-nav" id="sec-nav">
+  <a href="#sec-photo-workflow" id="nav-photo">📷 Photo Analysis</a>
+  <a href="#sec-video-workflow" id="nav-video">🎥 Video Analysis</a>
+  <a href="#sec-audio-workflow" id="nav-audio">🎙 Audio &amp; EVP</a>
+</nav>
+
+
+  <!-- ════════════════════════════════ PHOTO ANALYSIS SECTION EXPANDED -->
+  <div class="sec-block" id="sec-photo-workflow">
+    <div class="sec-header">
+      <div class="sec-number">01</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">Section One</div>
+        <div class="sec-title">Complete Photo Analysis Workflow</div>
+      </div>
+      <div class="sec-tag">Photo Analysis</div>
+    </div>
+    <div class="sec-intro">Reviewing photographic evidence is a methodical discipline. Every photograph carries embedded technical data, a capture context, and a contamination history — all of which must be examined before any visual anomaly can be considered. The workflow below is the standard TPI process for all photographic evidence, from raw import through final classification. Follow every step in sequence. Skipping steps leads to misclassifications.</div>
+
+    <div class="entry" id="entry-photo-workflow">
+      <div class="entry-header"><div class="entry-term">TPI Photo Analysis: Step-by-Step Review Protocol</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-protocol">Protocol</span></div></div>
+      <div class="entry-body">The following is the complete sequential process for reviewing any photograph submitted as potential evidence. This process applies equally to photos taken by investigators and photos submitted by clients. Do not accelerate through any step — the majority of misidentifications occur when reviewers jump directly to visual inspection without establishing technical context first.</div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 1 — File Intake &amp; Organization (Before Viewing Any Images)</div><ul>
+        <li><strong>Separate originals immediately:</strong> Copy all original files to a read-only archive folder before any review begins. Never work with original files directly — JPEG compression is destructive, and any re-save of an original will alter or destroy embedded metadata. All analysis should be performed on working copies.</li>
+        <li><strong>Record collection context:</strong> Before opening a single image, document — in writing — who took the photos, what camera/device was used, what time frame, what locations, and what conditions were present (temperature, humidity, weather, what was happening in the room). This context prevents post-hoc rationalization where you unconsciously interpret images based on what you see rather than what you know independently.</li>
+        <li><strong>Batch-extract all EXIF data:</strong> Use ExifTool to extract metadata from every file in the batch simultaneously: <code>exiftool -csv *.jpg > session_exif.csv</code>. Open the CSV in a spreadsheet. This gives you a full timeline of all photos — timestamps, camera modes, focal lengths, ISO values, shutter speeds, GPS coordinates (if enabled), and whether any processing has been applied. This takes 10 minutes and prevents hours of misanalysis later.</li>
+        <li><strong>Sort by timestamp, not filename:</strong> Camera filenames are not always sequential and do not always reflect actual capture time. Sort by EXIF timestamp. This reconstructs the actual photographic sequence and allows you to see which images were taken in rapid succession vs. with time gaps between them.</li>
+        <li><strong>Flag images taken in burst mode:</strong> EXIF data will show multiple images with identical or near-identical timestamps (within fractions of a second). These are burst frames. Review burst sequences together — an anomaly that appears in only one of 10 burst frames taken at 1/10th second intervals is almost certainly a particle that passed through the focal range during that specific exposure window.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 2 — Technical Parameter Assessment (EXIF Deep Read)</div><ul>
+        <li><strong>Shutter speed check:</strong> Any shutter speed below 1/60s carries meaningful risk of motion blur artifacts from insects, particles, and camera movement. Any shutter speed below 1/15s produces high risk. Shutter speeds of 1 second or longer produce high risk of transparent-person ghosting, long trails, and orb streaks. Record the shutter speed for every flagged image. If the shutter speed explains the anomaly, the case is closed at this step — no further visual analysis is needed to confirm the artifact type.</li>
+        <li><strong>ISO sensitivity check:</strong> ISO 800+ introduces visible luminance noise — random bright pixels across the image, especially in dark areas. ISO 3200+ on most cameras produces noise patterns that can appear as floating bright particles, texture anomalies, or glowing regions. If a claimed orb or glowing shape appears in a high-ISO image, inspect the surrounding frame for the uniform noise pattern that confirms the camera's sensor sensitivity was the source.</li>
+        <li><strong>Flash mode check:</strong> If the flash fired, you must consider backscatter. If no flash fired and the camera used IR illumination (common in full-spectrum and night cameras), assess the IR illuminator distance and angle. A pop-up flash or on-camera flash at distances under 10 feet in the presence of airborne particles will almost always produce orbs. This is not a sometimes occurrence — it is physics.</li>
+        <li><strong>Camera mode check:</strong> HDR, Night Mode, or any bracketing mode confirmed in EXIF data immediately flags all images in that batch for potential multi-frame merge ghosting. Live Photo mode (Apple) introduces additional temporal blending risk. Portrait Mode uses computational depth separation which can create haloing artifacts around subjects and sharp edges.</li>
+        <li><strong>Focal length and aperture check:</strong> Wide apertures (f/1.8, f/2.0, f/2.8) dramatically shorten depth of field — particles within 18 inches of the lens are often too out-of-focus to be resolved as recognizable objects and will appear as circular bokeh orbs. Telephoto compression at long focal lengths creates spatial compression artifacts where background elements appear unnaturally close to foreground subjects.</li>
+        <li><strong>GPS and location verification:</strong> If GPS is embedded, verify the location matches the claimed investigation site. A mismatch raises a chain-of-custody question. Cross-reference GPS timestamp with team logs to confirm the photographer was where they claimed to be when the image was taken.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 3 — Environmental Comparison (Cross-Reference With Site Conditions)</div><ul>
+        <li><strong>Pull weather records for the capture time:</strong> Use Weather Underground historical data for the exact date, time, and location. Note temperature, dew point, relative humidity, wind speed, and precipitation. Relative humidity above 75% significantly increases likelihood of moisture particles. Temperatures near or below dew point create ground-level fog and condensation artifacts. Pollen counts — available through AirNow — directly affect particle density in outdoor photos.</li>
+        <li><strong>Compare against baseline photos of the same location:</strong> Any anomaly that appears in only one photo of a location must be compared against clean baseline photos taken within minutes, from the same position, with the same settings. If the anomaly is absent from baseline photos, the comparison eliminates structural and environmental causes — but also confirms the anomaly was transient, which is consistent with a moving particle, not a fixed phenomenon.</li>
+        <li><strong>Check investigator proximity logs:</strong> Was anyone within 10 feet of the camera when the photo was taken? Walking near a camera in a dusty environment kicks up particles that settle slowly. Breathing near a cold camera lens produces visible vapor plumes in cold conditions. Clothing fibers from jackets and sweaters shed continuously in any environment. If another investigator was nearby during capture, their presence is the first variable to eliminate.</li>
+        <li><strong>Check what was happening in the room:</strong> Were candles burning? (produces soot particles and wax vapor) Was anyone using tobacco products? Was there HVAC running? (blows dust and debris) Had anyone recently disturbed rugs, furniture, or dusty surfaces? Were curtains moved? Each of these activities dramatically increases particle density for 5–15 minutes afterward.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 4 — Visual Analysis Protocol (In This Order)</div><ul>
+        <li><strong>Assess the full frame first:</strong> Before zooming in on the anomaly, study the full image. What is the overall quality? Is there noise throughout the frame? Is the background in focus? Is there motion blur in other areas of the image? You are establishing the baseline quality of this image — anomalies should be assessed in context of the whole frame, not in isolation.</li>
+        <li><strong>Identify all light sources:</strong> List every light source in the frame. For each light source, trace the probable reflection paths. Any glass surface, glossy surface, or metallic object can produce secondary reflections. For IR photos, list the IR illuminator position and angle relative to every reflective surface in the field of view.</li>
+        <li><strong>Measure the anomaly's relationship to the lens:</strong> Lens flares and reflections always maintain a geometric relationship to the primary light source and to the optical axis of the lens. If the anomaly's position moves predictably when you slightly shift the camera angle (which you can confirm if multiple sequential photos show position-shift relative to frame center), it is optical, not physical.</li>
+        <li><strong>Look for the absence of shadows:</strong> Any physical object or figure with mass casts a shadow in any lighting condition. Check whether the claimed anomaly casts any shadow on the environment. Check whether existing light sources in the scene should cast the anomaly's shadow somewhere visible in the frame. If no shadow is present when physics dictates there should be one, this is more likely an artifact than a physical presence — but also be aware that many genuine artifacts cast no shadow because they are optical.</li>
+        <li><strong>Apply known artifact templates:</strong> Systematically ask: Does this match the round, glowing, diffuse profile of backscatter? Does this match the elongated, finned profile of an interlaced rod? Does this match the lens flare hexagonal chain? Does this match the soft-edged translucent form of an HDR merge ghost? Does this match the diagonal smear profile of a camera strap vortex? Does this match the hair/fiber profile — irregular, curved, appearing brighter than surroundings? Matching to a known template ends the analysis at that step.</li>
+        <li><strong>Perform blind review before final classification:</strong> Before documenting your classification, have at least one other investigator review the anomaly without being told what it is or what you think it is. If their independent description matches a known artifact type, the classification is confirmed. If their blind description matches the claimed paranormal phenomenon (without coaching), note this as a data point — but do not treat it as evidence without corroboration.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 5 — Classification and Documentation</div><ul>
+        <li><strong>Assign a classification tier:</strong> Every anomaly must receive a final classification before the file is closed. Use the four-tier framework: Environmental (explainable by known cause), Possible (likely explainable but cause not confirmed), Plausible (not obviously explainable, corroborated by other data), or Paranormal (extraordinary evidence standard met). The vast majority of reviewed images will close at Environmental or Possible.</li>
+        <li><strong>Write the classification report for each flagged image:</strong> The report must include: image filename and timestamp, EXIF parameters that are relevant, environmental conditions, what the anomaly visually appears to be, what natural causes were considered, what tests were applied, what the final classification is, and the reviewer's name. One-word notes ("orb — dust") are not acceptable classification records.</li>
+        <li><strong>Cross-reference with other evidence streams:</strong> A photograph showing an anomaly at a specific location and time must be compared against the EMF log, temperature log, audio log, and video coverage for the same time and location. An anomaly that occurs simultaneously in multiple independent evidence streams is weighted significantly higher than a photographic anomaly with no corresponding data in other streams.</li>
+      </ul></div>
+
+      <div class="identify-box">
+        <div class="identify-label">Quick Reference — Most Common Photo Misidentification Sources by Environment</div>
+        <ul>
+          <li><strong>Old houses and churches:</strong> Disturbed dust (dominant — accounts for 80%+ of orbs), spider webs on walls and in corners, fabric fibers from aged upholstery and drapery, lens reflections off old glass windows</li>
+          <li><strong>Basements and attics:</strong> High humidity producing moisture orbs, mold spores, cellulose fibers from insulation materials, condensation on lens when moving from cold to warm spaces</li>
+          <li><strong>Outdoor/night environments:</strong> Insects (moths especially are drawn to IR illuminators), rain and fog, pollen (seasonal), breath vapor in cold temperatures, vehicle headlights at distance</li>
+          <li><strong>Cemeteries:</strong> All outdoor factors plus highly reflective polished granite and marble headstones, embedded quartz and reflective minerals in stone, proximity of roads (passing headlights), evening insect activity</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════ OUTDOOR & CEMETERY PHOTOGRAPHY -->
+    <div class="entry" id="entry-cemetery-photo">
+      <div class="entry-header"><div class="entry-term">Outdoor &amp; Cemetery Photography — Unique Challenges</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-protocol">Protocol</span><span class="tag tag-science">Science</span></div></div>
+      <div class="entry-body">Cemetery and outdoor night photography presents a distinct and challenging environment for evidence photography. The combination of biological activity, reflective materials, ambient light pollution, atmospheric moisture, and difficult camera settings creates conditions where every known photographic artifact is simultaneously more likely to occur. Understanding these compounding factors is essential for any investigator conducting outdoor investigations.</div>
+
+      <div class="doc-list"><div class="doc-list-label">Environmental Factors Specific to Outdoor Night Investigation</div><ul>
+        <li><strong>Insects and IR illuminators:</strong> Near-infrared light from camera IR illuminators is invisible to human eyes but strongly attractive to many insect species — particularly moths, gnats, mosquitoes, and midges. Within minutes of setting up IR cameras outdoors, insects will begin entering the illuminated field. At close range and with a wide-aperture lens, these insects produce orbs, rods, and streak artifacts continuously. Solution: use a longer focal length to move the sharp-focus zone away from near-lens insect zones, and review footage knowing insects will be a constant presence in the field.</li>
+        <li><strong>Ground-level moisture and fog:</strong> Cold, clear nights allow rapid radiative cooling at ground level, producing ground fog that rises and drifts through frames. Cemetery environments near rivers, ponds, or low-lying ground experience this more than urban environments. Ground fog produces drifting, semi-transparent white masses that move slowly through frames — exactly the description of many "apparition" reports in outdoor footage. Temperature inversion at night concentrates moisture in precisely the low-lying areas where cemetery graves are located.</li>
+        <li><strong>Breath vapor:</strong> Human breath at temperatures below approximately 50°F (10°C) produces a visible vapor plume that persists for 1–3 seconds in still air and longer in saturated air. In near-infrared camera footage, breath vapor reflects IR light strongly and appears as a bright, dense, drifting cloud. Breath vapor has been responsible for countless outdoor "apparition" captures. Protocol: investigators must hold their breath or turn away from the camera during captures in cold conditions. Record the ambient temperature and note whether breath condensation is visible to the naked eye.</li>
+        <li><strong>Reflective headstone materials:</strong> Modern polished granite and polished marble headstones have mirror-like surface qualities that produce strong specular reflections of IR illuminators, camera flashes, and any ambient light source. These reflections are position-specific — a headstone that reflects light at one angle may not at another — meaning the reflection may appear in some camera positions and not others, mimicking the "specificity" of a paranormal phenomenon that only appears from certain angles. Quartz inclusions and mica flakes common in granite produce especially strong IR reflections that appear as glowing orbs embedded in the stone itself.</li>
+        <li><strong>Light pollution and passing vehicle headlights:</strong> Even rural cemeteries near roads receive periodic illumination from passing vehicles. Headlights sweeping through a cemetery at distance create moving light sources that produce lens flare sweeps across footage, unexpected illumination that triggers IR AGC darkening, and temporary "reveals" of mist or fog that appear and disappear. Photograph metadata timestamps can be cross-referenced against video coverage to identify whether a headlight sweep explains a photograph anomaly at that moment.</li>
+        <li><strong>Overgrown vegetation:</strong> Many cemeteries contain tall grass, weeds, low shrubs, and tree branches at or near camera level. Plant material in the near field produces severe foreground blur and bokeh effects. Moving branches in slight wind produce streaks. Spider webs — ubiquitous in cemetery environments — are extremely IR-reflective and produce fine, bright web patterns across large areas of IR footage. Spider webs in outdoor environments can span 4–6 feet across sections of night footage and appear as large, complex bright patterns.</li>
+        <li><strong>Dew and surface moisture:</strong> As temperatures drop toward dew point overnight, all surfaces accumulate a fine film of dew. This includes the camera's front element if not protected. Lens dew appears as a soft, glowing diffusion of all point light sources and a general loss of sharpness across the entire frame. Any bright point lights become large, soft glowing areas. This is distinct from internal lens flare (which is geometric) — dew diffusion is uniform and affects the entire frame equally.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Protocol Adaptations for Outdoor &amp; Cemetery Investigations</div><ul>
+        <li><strong>Establish clean baseline documentation first:</strong> Before the investigation begins, photograph the entire site in available light if possible, or with a powerful flashlight sweep. This documents the physical environment — stone positions, vegetation, fences, nearby roads — so that later anomalies can be compared against the known physical layout.</li>
+        <li><strong>Mount cameras on tripods and use remote shutter release:</strong> Hand-held photography in outdoor environments magnifies motion artifacts. Camera shake from walking on uneven ground, reaching to press the shutter, and wind all contribute to blur artifacts. A solid tripod and remote shutter eliminates these variables.</li>
+        <li><strong>Log all investigator positions during every capture:</strong> In outdoor environments where investigators move freely, it is essential that all team members' positions are logged for every photograph taken. A team member standing 8 feet away in a dark coat is invisible in a photograph but may be deflecting wind, casting shadows, or contributing movement-triggered artifacts.</li>
+        <li><strong>Protect lenses from moisture:</strong> Use a lens hood and check the front element for fogging every 20–30 minutes during cold-night investigations. A UV filter on the front element provides a sacrificial glass surface that is easier to de-fog without risking the lens coating. If dew is found on the front element, the entire photography session since the last clean check must be reviewed with dew diffusion in mind.</li>
+        <li><strong>Note temperature at time of every photograph:</strong> Record ambient temperature alongside the photograph timestamp. This enables post-review assessment of breath vapor risk and moisture artifact probability for every image in the session.</li>
+      </ul></div>
+    </div>
+
+    <!-- ════════════════════════════════ SPIRIT PHOTOGRAPHY HISTORY -->
+    <div class="entry" id="entry-spirit-photo-history">
+      <div class="entry-header"><div class="entry-term">Spirit Photography — A History of Illusion and Investigation</div><div class="entry-tags"><span class="tag tag-photo">Photo</span><span class="tag tag-history">History</span><span class="tag tag-debunk">Debunk</span></div></div>
+      <div class="entry-body">Spirit photography — the production of photographs purporting to show ghosts, spirits, or deceased individuals — has a history nearly as long as photography itself. From the earliest daguerreotypes to modern digital manipulation, this history is a case study in how grieving people, wishful thinking, and photographic inexperience combine to create compelling but ultimately false evidence. Understanding this history is not merely academic — the same psychological mechanisms and the same technical exploits that fooled investigators in 1870 continue to fool investigators today.</div>
+
+      <div class="doc-list"><div class="doc-list-label">William H. Mumler — The First Spirit Photographer (1861–1875)</div><ul>
+        <li><strong>Who he was:</strong> William Mumler was a Boston jewelry engraver who in 1861 accidentally discovered that improperly cleaned photographic plates produced faint ghost images of previous sitters. Recognizing the commercial opportunity, he began deliberately producing these effects and charging grieving Civil War families to photograph their living relatives alongside the "spirits" of their deceased loved ones.</li>
+        <li><strong>His method:</strong> Mumler used double exposure — he would photograph a subject, then introduce a partially-exposed "spirit" plate containing a faint, posed image of another person. The resulting composite showed the living subject with a soft, translucent figure draped beside them. Many sitters identified the figures as deceased relatives — a classic demonstration of the power of suggestion and wishful recognition over objective perception.</li>
+        <li><strong>His trial:</strong> In 1869, Mumler was tried for fraud in New York City. Investigators discovered that several of his "spirits" were living people who had previously sat for portraits in his studio. The prosecution demonstrated that double exposure produced identical results. Despite this, he was acquitted due to insufficient direct evidence of fraud — and continued practicing. His case remains a foundational lesson in why photographic evidence requires independent technical verification, not just viewer identification of subjects.</li>
+        <li><strong>The lesson for modern investigation:</strong> Viewers consistently identify faces, figures, and recognizable features in ambiguous images — especially when emotionally motivated to do so. Mumler's clients genuinely believed they saw their lost relatives. Modern investigators who ask clients "does this look like anyone you know?" are performing the same exercise that allowed Mumler to perpetuate his fraud for 14 years. Visual identification by an emotionally invested party has near-zero evidentiary value.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">The Cottingley Fairies (1917–1983)</div><ul>
+        <li><strong>The photographs:</strong> In 1917, two cousins in Cottingley, England — Elsie Wright (16) and Frances Griffiths (9) — produced five photographs appearing to show them playing with fairies near a stream. The photographs were technically convincing for the era: the fairies appeared sharp, correctly scaled relative to the girls, and positioned naturally in the scene. The photographs were examined by photographic experts who declared them genuine.</li>
+        <li><strong>Why they fooled experts:</strong> The "fairies" were drawings made from a book illustration, cut out, and held in position with hatpins. The simple explanation eluded investigators for decades partly because the investigators — including Arthur Conan Doyle, who published the photographs in 1920 as genuine paranormal evidence — were eager to believe. Conan Doyle was deeply grieving the deaths of his son and brother in World War I, and his emotional investment overwhelmed his analytical judgment. This is not a failure of intelligence — it is a well-documented psychological phenomenon (motivated cognition) that can affect any investigator who enters a case with a predetermined desired outcome.</li>
+        <li><strong>The confession:</strong> Elsie Wright admitted the hoax in 1983, at age 82. Frances Griffiths maintained until her death in 1986 that four of the five photographs were faked — but that the fifth was genuine. This postscript illustrates another persistent phenomenon: even hoaxers can become convinced by their own work. The lesson is not that all claimants are liars — some are genuinely mistaken, some are partially truthful — but that self-report is not evidence.</li>
+        <li><strong>The lesson for modern investigation:</strong> Compelling photographs are not immune to simple physical explanations. The simpler the explanation, the more likely it is to be correct. When evaluating any "figure" in a photograph, consider all physical objects that might occupy that position and space before concluding it is non-physical.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">The Séance Photography Era (1880s–1930s)</div><ul>
+        <li><strong>Ectoplasm photographs:</strong> During the Victorian and Edwardian séance era, mediums produced "ectoplasm" — a substance claimed to physically manifest from their bodies and take the form of spirits. Photographs of ectoplasm séances show white, drapery-like material emerging from mediums in various forms. Subsequent investigation revealed these were muslin cloth, gauze, rubber gloves, doll heads, cut-out photographs, and papier-mâché heads that mediums concealed on their persons and produced in the darkness of séance rooms. In bright photography, the materials were obvious — but in séance conditions, they were convincing. Many of these photographs survive and are used today as a baseline comparison for what fabricated photographic evidence looks like.</li>
+        <li><strong>Thoughtography claims:</strong> Ted Serios, a Chicago bellhop, claimed in the 1960s to project mental images onto Polaroid film through a device he called a "gizmo" (a small tube he held near the camera). Investigators from Time magazine examined him and concluded the gizmo contained optical elements used to introduce pre-made images onto the film. The case illustrates how close-range camera manipulation, combined with sufficient social pressure on observers, can defeat casual observation.</li>
+        <li><strong>The lesson for modern investigation:</strong> The existence of a compelling photograph is not evidence that a compelling event occurred. Photography is a passive recording medium that captures what was physically placed in front of the lens, regardless of whether the photographer controlled that placement honestly. Chain of custody for evidence photographs is essential — when photographs are submitted by clients without documented capture context, their evidentiary value is limited.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">The "Brown Lady of Raynham Hall" (1936)</div><ul>
+        <li><strong>The photograph:</strong> The most famous ghost photograph of the 20th century was taken at Raynham Hall, Norfolk, England in September 1936 by Hubert Provand and Indre Shira, photographers working for Country Life magazine. The photo appears to show a translucent figure descending a staircase. It remains the most analyzed ghost photograph in history.</li>
+        <li><strong>The theories:</strong> Multiple photographic experts have examined the original glass plate negative. Proposed explanations include: double exposure (unintentional or intentional), light reflection from a glass newel post at the base of the stairs, deliberate superimposition of a separately photographed figure, and translucent overlay material. The most technically credible explanation is that someone held a semi-transparent material in the frame while the photograph was taken — the form shows the characteristic soft-edge profile of a translucent physical obstruction, not the hard-edge bokeh of an out-of-focus particle. No definitive debunking has been published, but neither has the photograph met the evidentiary standard required for classification as "paranormal" — it is one uncorroborated photograph with no supporting evidence from any other stream, taken in circumstances that could not be independently verified.</li>
+        <li><strong>The lesson for modern investigation:</strong> Even the most analyzed and most famous ghost photograph in existence fails to meet the standard of extraordinary evidence. Age, fame, and extensive analysis do not substitute for independent corroboration. A single photograph — regardless of its visual impact — is at most a starting point for investigation, not a conclusion.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">The Digital Era — Manipulation, Simulation, and AI</div><ul>
+        <li><strong>Adobe Photoshop and digital compositing (1990s–present):</strong> The widespread availability of digital image editing software made photograph fabrication accessible to anyone with a consumer computer. Where Mumler required a darkroom and photographic expertise, a modern person with an hour of YouTube tutorials can composite a convincing ghost into any photograph. Metadata forgery tools also allow EXIF data to be altered. Modern photographic evidence submitted by clients should be treated as technically unverified until the original raw file — not a JPEG, not a screenshot of a photo, not a photo forwarded through social media — can be examined with ExifTool for edit history and processing artifacts.</li>
+        <li><strong>AI-generated imagery (2022–present):</strong> Text-to-image AI systems can now produce photorealistic images of any described scene, including ghost figures in specific environments, that contain no detectable editing artifacts because they were never edited — they are computationally generated from scratch. There are no camera artifacts to find because there was no camera. Detecting AI-generated imagery requires different methods than detecting photographic manipulation: look for characteristic AI failure modes (incorrect number of fingers, distorted text, physically impossible reflections, non-Euclidean background geometry, texture repetition patterns). As AI image generation improves, these failure modes are decreasing — making provenance documentation more important than ever. An image submitted without a device, a location, a timestamp, and a chain of custody from capture to submission should be treated with extreme caution.</li>
+        <li><strong>The lesson for modern investigation:</strong> The evidentiary bar for photographic evidence must be raised continuously as manipulation capability improves. Photographs submitted without verifiable provenance and unbroken chain of custody cannot be relied upon as evidence regardless of their content.</li>
+      </ul></div>
+
+      <div class="identify-box">
+        <div class="identify-label">What Genuine High-Quality Paranormal Photo Evidence Would Need to Demonstrate</div>
+        <ul>
+          <li>The original RAW or unprocessed file with intact, unmodified EXIF metadata showing the exact capture device, settings, and timestamp</li>
+          <li>Multiple simultaneous images from different angles or cameras showing the same anomaly — ruling out lens-specific and position-specific artifacts</li>
+          <li>The anomaly cannot be explained by any known photographic artifact after thorough technical analysis by at least two independent reviewers who examined the original file</li>
+          <li>The anomaly occurred simultaneously with corroborating events in at least one other evidence stream (EMF, temperature, audio, video) at the same location</li>
+          <li>The capture context has been documented and all persons present at the time of capture have been interviewed and their positions logged</li>
+          <li>Blind review by at least three reviewers, none of whom were present during capture, produces consistent descriptions of the anomaly</li>
+          <li>Environmental conditions have been documented and ruled out as an explanation (humidity, temperature, particle sources, light sources)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+  </div>
+
+  <!-- ════════════════════════════════ COMPLETE VIDEO REVIEW WORKFLOW -->
+  <div class="sec-block" id="sec-video-workflow">
+    <div class="sec-header">
+      <div class="sec-number">02</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">Section Two</div>
+        <div class="sec-title">Complete Video Analysis Workflow</div>
+      </div>
+      <div class="sec-tag">Video Analysis</div>
+    </div>
+    <div class="sec-intro">Video evidence is the most data-rich form of investigation capture — it records motion, audio, lighting change, and temporal context simultaneously. This richness comes at a cost: the volume of footage from a multi-camera night investigation can exceed 40 hours of combined recording. The complete video analysis workflow below provides a systematic method for processing this volume without missing significant events and without misidentifying artifacts as evidence.</div>
+
+    <div class="entry" id="entry-video-workflow-full">
+      <div class="entry-header"><div class="entry-term">TPI Video Analysis: Complete Step-by-Step Review Protocol</div><div class="entry-tags"><span class="tag tag-video">Video</span><span class="tag tag-protocol">Protocol</span></div></div>
+      <div class="entry-body">The following process applies to all video evidence — investigation cameras, personal phone footage, client-submitted clips, and security camera exports. Follow every phase in sequence. The most common analytical failure in video review is jumping directly to timestamp-flagged "interesting" sections without first completing technical and contextual assessment.</div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 1 — File Intake and Technical Inventory</div><ul>
+        <li><strong>Catalog all footage files:</strong> Create a spreadsheet listing every video file: filename, camera source, file format (MP4/MOV/AVI/MKV), resolution, frame rate, bit rate (compression quality), duration, and file size. This is the master evidence inventory. Files missing from this inventory cannot be used as evidence — gaps must be documented and explained.</li>
+        <li><strong>Extract technical metadata:</strong> Use FFMPEG to extract embedded technical data from every file: <code>ffmpeg -i filename.mp4</code>. This reveals codec, bit rate, actual frame rate, audio sample rate, and any embedded timestamps. Compare the file's embedded timestamps against the team investigation log. Discrepancies must be explained before the footage is used.</li>
+        <li><strong>Assess compression quality:</strong> Bit rate determines how much compression was applied. Standard definition investigation cameras: look for 4 Mbps or higher. High definition: 15 Mbps or higher. Files below these thresholds are heavily compressed and will show blocking and motion smear artifacts continuously — especially in dark, grainy night-vision footage where the codec struggles to encode high-noise areas. Note low bit-rate files prominently in the evidence inventory because artifact risk is elevated throughout.</li>
+        <li><strong>Check for file continuity:</strong> DVR systems and SD-card cameras often split recordings into segments (typically 4GB or 30-minute chunks). Verify that the segments chain together without gaps. A missing segment between two flagged clips is a chain-of-custody problem that must be documented. For DVR systems, verify that the system clock was synchronized and accurate — many off-the-shelf DVR units drift significantly or were set incorrectly, producing timestamps that do not match actual event times.</li>
+        <li><strong>Back up all original files before any analysis:</strong> Never work with originals. Copy everything to a read-only archive location. All review and export work should be performed on duplicates.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 2 — Synchronization and Timeline Construction</div><ul>
+        <li><strong>Establish a master timeline reference:</strong> Choose one clock source as master — typically a camera with GPS time, or a phone recording of a digital clock at investigation start. All other cameras are synchronized relative to this reference. At the start of every investigation, it is good practice to clap or use a common audio cue (a hand clap visible to all cameras simultaneously) with all cameras recording simultaneously. This clap spike is visible in audio waveforms and provides a synchronization frame for all cameras.</li>
+        <li><strong>Calculate per-camera time offsets:</strong> Compare the clap (or reference event) timestamp across all camera recordings. If Camera A shows the clap at 22:14:03.2 and Camera B shows it at 22:14:05.8, Camera B is running 2.6 seconds ahead. Apply this offset when cross-referencing events between cameras. Note the offset in the evidence inventory.</li>
+        <li><strong>Build a multi-camera timeline grid:</strong> Create a grid with time across the horizontal axis and cameras along the vertical axis. Mark the start and end time of each camera's recording. Mark investigator positions and movements (from the investigation log) at their known times. Mark audio events from the session log. This grid becomes the reference document for all cross-camera analysis.</li>
+        <li><strong>Flag multi-camera coverage windows:</strong> Identify time windows where two or more cameras had overlapping fields of view. Any anomaly that occurs in a multi-camera overlap window can be cross-checked: does Camera B show the same anomaly at the synchronized time? If yes, the anomaly is either real or a common environmental factor (ambient light change, fog bank). If no, the anomaly is camera-specific — an artifact of that particular lens, sensor, or IR illuminator.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 3 — First-Pass Screening (Full-Speed Review)</div><ul>
+        <li><strong>Review all footage at 1.5–2x speed for full-session overview:</strong> The purpose of this pass is not detailed analysis — it is event triage. Watch for: sudden lighting changes, unexpected movements, objects that appear or disappear, camera adjustments, audio anomalies (bumps, voices, unexplained sounds), and any visual irregularity that warrants closer examination. Mark timestamps of all flagged moments. Do not stop to analyze during this pass — annotate and continue.</li>
+        <li><strong>Annotate the first pass with zero interpretation:</strong> Notes during first-pass should be purely descriptive: "Object moves left to right across frame at 23:14:07," not "dark shadow entity crosses room at 23:14:07." Interpretive language during first-pass contaminates the analysis that follows by anchoring subsequent review toward a predetermined conclusion.</li>
+        <li><strong>Build the flagged-events list:</strong> After completing first-pass on all cameras, compile a single master list of all flagged events sorted by synchronized timeline time. Group events that occur within the same 30-second window across cameras — these are candidates for multi-camera cross-reference analysis.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 4 — Detailed Analysis of Flagged Events</div><ul>
+        <li><strong>For each flagged event: step through frame by frame:</strong> VLC Media Player: use the E key to advance one frame at a time. DaVinci Resolve: use the period/comma keys. Frame-by-frame review reveals motion artifacts that are invisible at full speed, shows the onset and decay of visual anomalies, and allows precise measurement of an anomaly's position and movement path within the frame.</li>
+        <li><strong>Apply the artifact identification checklist for each event:</strong> At each flagged event, systematically work through: Is there a bright source entering the frame in the preceding 2 seconds that would trigger AGC darkening? Is there a reflective surface in the field of view that could produce IR bloom? Does the anomaly's movement path match insect flight behavior (erratic, fast, short arcs)? Is the anomaly position-fixed to the sensor (rules out physical presence) or position-fixed to the scene (relevant)? Does compression blocking explain the shape at this specific bit rate and motion level?</li>
+        <li><strong>Export flagged segments for documentation:</strong> Extract all flagged segments as separate files using HandBrake or FFMPEG. Export at the highest available quality — do not compress exports. These clips become the primary evidence record. Name each export with a standardized format: <code>[CameraID]_[SyncTime]_[RoomCode]_[EventDescription].mp4</code>. Example: <code>CAM2_231407_PARLOR_ShadowMovement.mp4</code>.</li>
+        <li><strong>Cross-reference each event against all other evidence streams:</strong> For every flagged video event, check the EMF log, temperature log, audio log, and photography log for entries within 5 minutes of the video timestamp, at the same location. An anomaly corroborated by simultaneous events in another stream is a multi-stream event — classify and document it separately. An anomaly with no corresponding activity in any other stream is isolated and must be evaluated with that isolation in mind.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 5 — Multi-Camera Cross-Reference Analysis</div><ul>
+        <li><strong>For each multi-camera overlap event: compare simultaneously:</strong> Pull the synchronized clips from all cameras that covered the area in question. Play them side by side (DaVinci Resolve's multi-cam timeline makes this straightforward). If an anomaly appears on Camera A at a given synchronized time, look for it on Camera B at the same synchronized time. If it appears on both, it is either a real physical event or a shared environmental factor (both cameras can see the same fog bank, both cameras respond to the same AGC trigger). If it appears only on Camera A, it is specific to Camera A's sensor, lens, IR illuminator, or position.</li>
+        <li><strong>Assess camera angle geometry:</strong> If the same physical entity appeared in two cameras' overlapping fields, its apparent size and position should be consistent with the geometric relationship between the cameras and the entity's distance. An anomaly that appears at different sizes in different cameras despite geometric predictions being consistent is more likely a lens-specific artifact than a physical presence.</li>
+        <li><strong>Document the multi-camera comparison in writing:</strong> For every event reviewed under multi-camera cross-reference, write a comparative note: which cameras covered the area, what each camera showed at the synchronized time, and whether the cameras corroborated or contradicted each other. This documentation is essential for the final evidence report.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 6 — Classification and Reporting</div><ul>
+        <li><strong>Apply the four-tier evidence classification to each flagged event:</strong> Environmental (explained), Possible (likely explained), Plausible (not obviously explained, corroborated), Paranormal (extraordinary evidence standard met). For video, the classification should note: whether multi-camera cross-reference was performed, what the camera's technical parameters were, what artifact types were considered and ruled in or out, and what other evidence streams were checked.</li>
+        <li><strong>Produce a timestamp-indexed evidence summary:</strong> The final video evidence report is a sorted table of all reviewed events with: synchronized timestamp, camera(s) that captured it, description (visual and audio), artifact types considered, classification, and cross-reference results. This table is appended to the case report and preserved in the evidence archive.</li>
+      </ul></div>
+
+      <div class="identify-box">
+        <div class="identify-label">Essential Video Analysis Tools — Quick Reference</div>
+        <ul>
+          <li><strong>VLC Media Player (free):</strong> Frame-by-frame review (E key), slow motion playback, loop section playback, basic video filters. Best for quick review and frame stepping.</li>
+          <li><strong>DaVinci Resolve (free edition):</strong> Multi-camera timeline sync, waveform audio display, color grading for dark footage enhancement, export at original quality. Best for professional multi-camera analysis and export.</li>
+          <li><strong>HandBrake (free):</strong> High-quality re-encoding for archival copies and evidence exports. Preserves quality better than most consumer export tools.</li>
+          <li><strong>FFMPEG (free, command line):</strong> Frame extraction (<code>ffmpeg -i input.mp4 -vf fps=1 frame%04d.png</code>), metadata extraction, time-offset trimming, format conversion. Fastest tool for bulk operations.</li>
+          <li><strong>Avisynth / VapourSynth (advanced, free):</strong> Frame-level filter scripting for deinterlacing old footage, motion vector analysis, and artifact visualization. Required for serious analysis of old interlaced video evidence.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+  </div>
+
+  <!-- ════════════════════════════════ COMPLETE AUDIO / EVP WORKFLOW -->
+  <div class="sec-block" id="sec-audio-workflow">
+    <div class="sec-header">
+      <div class="sec-number">03</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">Section Three</div>
+        <div class="sec-title">Complete Audio &amp; EVP Analysis Workflow</div>
+      </div>
+      <div class="sec-tag">Audio &amp; EVP</div>
+    </div>
+    <div class="sec-intro">Electronic Voice Phenomena (EVP) analysis demands rigorous methodology because it operates in a domain where human psychology is maximally unreliable — we are primed by evolution to find and interpret speech sounds, even in pure noise. The standards below are designed to counteract this tendency at every step, ensuring that the classification of a recording as an EVP reflects the recording's actual content rather than the reviewer's expectations.</div>
+
+    <div class="entry" id="entry-evp-workflow-full">
+      <div class="entry-header"><div class="entry-term">TPI Audio Analysis: Complete Step-by-Step EVP Review Protocol</div><div class="entry-tags"><span class="tag tag-audio">Audio</span><span class="tag tag-protocol">Protocol</span></div></div>
+      <div class="entry-body">The following process must be completed in full for every EVP recording session. Any shortcut in this process — particularly skipping the blind review step or performing analysis with headphones in a group setting where one person announces findings — invalidates the resulting classification. The process is designed to make strong claims rare, which is by design: if your process produces many "Class A EVPs" from every session, the process is not rigorous enough.</div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 1 — File Intake and Environment Documentation</div><ul>
+        <li><strong>Collect all audio files with metadata:</strong> Document every recording device used, its microphone type (built-in, directional, omnidirectional, lavalier), its position and orientation during the session, and its recording settings (sample rate, bit depth, compression type). For uncompressed WAV recordings, note bit depth — 24-bit recordings preserve more frequency information for analysis than 16-bit. MP3 and AAC recordings use lossy compression that degrades high-frequency content and can introduce artifacts that resemble noise phenomena.</li>
+        <li><strong>Document the contamination environment:</strong> Before beginning audio review, compile the contamination log from the investigation session. This includes: all known HVAC activity and times, all investigator movements and their positions at each time, all known sounds (footsteps, door movements, exterior traffic), all times investigators spoke or whispered, all times stomach sounds or body sounds were noticed, all times investigators made physical contact with surfaces, all times electronic devices produced sounds (phone vibrations, camera shutters, K-II alerts). This log is the primary reference against which all anomalous audio events are compared.</li>
+        <li><strong>Note the investigative context for each recording:</strong> Record which questions were asked, when the silence windows occurred, who was present, and whether any K-II or Mel Meter alerts occurred during the session. Anomalous audio should be cross-referenced against these context markers — an EVP-like sound occurring outside a directed silence window is less significant than one occurring during a structured question period.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 2 — Waveform and Spectrogram Review</div><ul>
+        <li><strong>Import all audio into Audacity and build the waveform overview:</strong> Open each recording as a full-session timeline. Set the waveform view to show the amplitude over time. Do not apply any processing yet. Make a copy of the track before any editing — always keep the original unprocessed track preserved on a separate track labeled "ORIGINAL — DO NOT EDIT."</li>
+        <li><strong>Switch to spectrogram view for anomaly hunting:</strong> Audacity's spectrogram view (View → Show Spectrogram) displays frequency content over time — time on the horizontal axis, frequency on the vertical axis (typically 0–8000 Hz for voice range analysis), amplitude as color brightness. Human speech produces characteristic patterns in the 100–3000 Hz range: voiced consonants, vowel formants, and sibilant consonants (S, SH, F) each have distinct spectral signatures. If a suspected EVP does not show these spectral characteristics, it is not speech — it may be a structural creak, HVAC rumble, or RF interference that sounds speech-like through auditory pareidolia.</li>
+        <li><strong>Mark time regions for anomaly events on the contamination log:</strong> As you work through the waveform, mark every event in the contamination log as a labeled region in Audacity (Tracks → Add Label at Selection). Labels should include the source type: "HVAC ON," "Investigator step — NE corner," "Door creak — hallway," "Stomach rumble — Todd." These markers allow you to visually verify in one view whether a claimed anomaly coincides with a known contamination event.</li>
+        <li><strong>Identify and label all candidate EVP events:</strong> As you work through the recording, mark any sound that cannot be immediately matched to a known contamination source. Label these "EVP-Candidate" with a number for reference. At this stage, do not listen repeatedly to candidates — one initial identification and labeling pass is sufficient. Repeated listening to ambiguous sounds trains your brain to hear increasingly defined speech patterns that may not exist.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 3 — Technical Processing (In This Exact Sequence)</div><ul>
+        <li><strong>Step 1 — Noise profile and noise reduction:</strong> Select 1–2 seconds of pure background noise from the recording (no events, no voices). Go to Effect → Noise Reduction → Get Noise Profile. Then select the entire track, go back to Noise Reduction, and apply with Noise Reduction: 12 dB, Sensitivity: 6, Frequency Smoothing: 3. These settings reduce background noise without introducing musical artifacts that could sound voice-like. Do not use noise reduction values above 18 dB — aggressive noise reduction introduces artifacts that can be misidentified as EVPs by creating ghost speech patterns from pure noise.</li>
+        <li><strong>Step 2 — High-pass filter to remove low-frequency rumble:</strong> Go to Effect → High-Pass Filter, set cutoff to 80 Hz, rolloff to 12 dB/octave. This removes HVAC rumble, building vibration, footstep sub-bass, and vehicle noise that can mask or distort higher-frequency content. Do not set the cutoff above 150 Hz — this begins cutting into the fundamental frequency range of human voice (male voice: 85–180 Hz, female voice: 165–255 Hz) and can eliminate genuine speech.</li>
+        <li><strong>Step 3 — Normalize the track:</strong> Go to Effect → Normalize, set to -3 dB. This brings the loudest peak in the track to -3 dBFS without distorting relative levels. Normalization allows quiet anomalies to be heard at monitor volume without manually amplifying specific sections, which introduces the risk of amplifying noise into apparent voices.</li>
+        <li><strong>Step 4 — Export the processed track as a new file:</strong> Save as [RecorderID]_[Date]_[Location]_processed.wav. Never overwrite the original. All classification review is performed on the processed file.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 4 — Blind Review Protocol (Non-Negotiable)</div><ul>
+        <li><strong>Why blind review is non-negotiable:</strong> Auditory pareidolia — the brain's tendency to construct meaningful patterns, especially speech, from ambiguous sound — is not a failure of analytical skill. It is a fundamental property of human auditory processing. Studies in cognitive psychology show that when subjects are told what to listen for, their recognition rate of "correct" identifications in pure noise exceeds 80%. When subjects have no prior suggestion, recognition rates drop below 20% for the same sounds. This means that any process that tells reviewers what a candidate EVP says before they hear it is not a review — it is confirmation bias manufacturing.</li>
+        <li><strong>Conduct the blind review:</strong> Send each candidate EVP clip — processed, labeled only with a number, with no description of what it supposedly says — to at least two reviewers who were NOT present during the investigation and who have NOT been told anything about the claimed content. Reviewers should listen once or twice with headphones and write down: (a) what they hear, if anything, and (b) their confidence level (0–10). Do not allow reviewers to discuss with each other before writing their responses.</li>
+        <li><strong>Evaluate blind review results:</strong> Collect all blind review responses before any results are shared. For a candidate EVP to advance toward classification as Class A or Class B, the blind responses must meet these criteria: at least two of three reviewers independently transcribed content that is consistent with each other (not identical, but consistent — "come here" and "come home" are consistent; "come here" and "get out" are not). If only one reviewer heard speech content and others heard nothing or heard different content, the candidate cannot advance beyond Class C or Unclassified.</li>
+        <li><strong>Document every blind review response:</strong> Preserve all written blind review responses in the evidence file regardless of outcome. Responses that failed the consistency test are still part of the analytical record and demonstrate due diligence.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 5 — EVP Classification (Detailed Standards)</div><ul>
+        <li><strong>Class A — Highest Standard:</strong> A Class A EVP must meet all of the following criteria simultaneously: (1) The EVP is clearly audible without headphones on any standard speaker — reviewers can hear it at normal listening volume without straining; (2) At least three independent blind reviewers transcribed content that is substantially consistent with each other; (3) The EVP cannot be matched to any entry in the contamination log after exhaustive review; (4) Spectrogram analysis shows a spectral profile consistent with human speech — formant structure in the 100–4000 Hz range, consonant plosives at appropriate frequencies, sibilant energy in the 4000–8000 Hz range; (5) The EVP has been shared with at least one skeptical technical reviewer (someone actively looking to debunk) who was unable to identify a natural cause. Class A EVPs are extremely rare. A legitimate investigation team that produces more than one Class A EVP per year of active investigation should scrutinize their review process for gaps.</li>
+        <li><strong>Class B — Moderate Standard:</strong> Clearly audible with headphones at normal volume. At least two of three blind reviewers transcribed consistent content. Not matched to the contamination log. Spectrogram shows some speech-consistent characteristics but may be ambiguous in frequency profile. Not independently debunked but not independently confirmed. Class B EVPs are the most common "significant" category — they are intriguing but insufficient as standalone evidence.</li>
+        <li><strong>Class C — Low Standard:</strong> Faint, difficult to hear even with headphones, or requires volume amplification to perceive. Blind reviewer consistency was low (only one reviewer heard speech content). May have a plausible contamination-log match that was not definitively confirmed. Spectrogram profile is ambiguous or inconsistent with speech. Class C EVPs are documented but not presented as evidence to clients — they are internal classification records only. Class C is frequently where wishful misidentification occurs; reviewers should be especially skeptical of Class C captures they find compelling.</li>
+        <li><strong>Unclassified:</strong> Any candidate that failed the blind review consistency test, was matched to a contamination source, or whose spectrogram profile is clearly inconsistent with speech. Unclassified candidates are documented for completeness but receive no weight in the final evidence assessment. "Unclassified" is not a negative finding — correctly dismissing contaminated audio is good science.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Phase 6 — Cross-Reference and Contextual Weighting</div><ul>
+        <li><strong>Compare all classified EVPs against the investigation event timeline:</strong> For each Class A or Class B EVP, check the synchronized investigation timeline: Was there a K-II or Mel Meter alert within the same 2-minute window at the same location? Was there a temperature anomaly recorded near the same time and position? Was there a visual anomaly on video coverage? Does the EVP content correspond with a question asked during the session? Each corroborating factor in another evidence stream increases the weight of the EVP finding in the final assessment.</li>
+        <li><strong>Assess the investigative context:</strong> An EVP that appears to respond directly and coherently to a question — especially one not heard by the investigator at the time — carries more contextual weight than an unrelated utterance. Document the question/response sequence explicitly in the report: "Investigator asked [exact question] at [timestamp]. EVP candidate at [timestamp + X seconds] appears to [say / respond with]. Blind review result: [results]."</li>
+        <li><strong>Calculate session EVP density:</strong> Divide the number of Class A/B classified EVPs by the total recording time in hours. A "healthy" session density for a location with no significant finds is near zero. Sessions that produce high EVP density (more than 3 Class A/B per hour of recording) should be examined for systematic contamination — an HVAC system cycling at regular intervals, an investigator with a persistent stomach rumble, RF interference from nearby equipment, or a recorder with a hardware defect that introduces periodic artifacts.</li>
+      </ul></div>
+
+      <div class="identify-box">
+        <div class="identify-label">The One Rule That Overrides Everything Else in Audio Analysis</div>
+        <ul>
+          <li>If you already know what a suspected EVP supposedly says when you press play, your review is contaminated. Every reviewer must hear the clip cold — no transcript, no prior suggestion, no description of the claimed content. This is not a preference. It is the difference between evidence collection and confirmation bias. A Class A EVP that failed blind review is not Class A. It is an interesting noise that your brain found meaningful.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════ AUDACITY DEEP WORKFLOW -->
+    <div class="entry" id="entry-audacity-deep">
+      <div class="entry-header"><div class="entry-term">Audacity Deep Reference — Advanced EVP Analysis Techniques</div><div class="entry-tags"><span class="tag tag-audio">Audio</span><span class="tag tag-protocol">Protocol</span><span class="tag tag-science">Science</span></div></div>
+      <div class="entry-body">Beyond the standard noise reduction and normalization workflow, Audacity offers several advanced analysis capabilities that can resolve ambiguous EVP candidates — particularly those where the fundamental question is whether a sound is mechanical (HVAC, building) or human-voice in origin.</div>
+
+      <div class="doc-list"><div class="doc-list-label">Advanced Audacity Techniques for EVP Analysis</div><ul>
+        <li><strong>Spectral editing (Audacity 2.3+):</strong> Multi-tool → Spectral Selection enables you to select a specific frequency range within a specific time window and apply processing only to that range. Use this to: isolate the voice frequency range (300–3000 Hz) from an anomaly and listen to only that band; suppress a narrow frequency band occupied by a constant noise source (an AC unit humming at 120 Hz) without affecting adjacent frequencies; visually "draw" the shape of a suspected voice in the spectrogram to assess whether the frequency movement is consistent with human formant transitions.</li>
+        <li><strong>Spectrogram color mapping for formant analysis:</strong> In the spectrogram settings, set "Maximum Frequency" to 8000 Hz and "Gain" to 20 dB. Human speech formants appear as horizontal bands of elevated energy — the first formant (F1) typically sits between 250–1000 Hz, and the second formant (F2) between 700–2500 Hz. Vowels are distinguished by the specific relationship between F1 and F2. If your suspected EVP shows two clear, closely-spaced horizontal bands in the 250–2500 Hz range that shift in frequency together over time (formant transitions), this is strong spectrogram evidence for human vowel production. Mechanical noises, HVAC, and RF artifacts do not produce formant transitions.</li>
+        <li><strong>Phase inversion cancellation:</strong> If you have two microphone channels recorded simultaneously from slightly different positions, and you suspect a voice is coming from a specific direction, you can use phase inversion to cancel out common-mode sound (sounds that arrived equally at both mics — i.e., sounds from the same direction as the suspected source) and isolate sounds that came from a different direction. This is an advanced technique that requires understanding of stereo microphone theory — do not apply it unless you are confident in the methodology.</li>
+        <li><strong>Macro recording for consistent processing:</strong> Audacity supports recording macros (Tools → Macros). Record the standard processing chain once (noise reduction → high-pass → normalize) as a macro and apply it identically to every file in a session. This ensures processing consistency across all recordings and prevents the risk of "tuning" the processing differently for files that seem to have interesting content.</li>
+        <li><strong>Label track export for documentation:</strong> After completing annotation, export all label tracks to a text file (File → Export → Export Labels). This creates a timestamped plain-text record of all annotations — contamination markers, candidate EVP locations, and classifications — that can be included in the evidence file archive independently of the audio file.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Understanding the Frequency Profile of Common Contamination Sources</div><ul>
+        <li><strong>HVAC and building systems:</strong> Primarily infrasonic to low-frequency (10–200 Hz). Shows as a broad, constant low-frequency band in the spectrogram with harmonics at multiples of 60 Hz (for 60-Hz electrical systems). Does not show formant structure. Transitions occur gradually when the system cycles on or off — typically a 3–8 second ramp-up or ramp-down. An abrupt onset at these frequencies is more likely a mechanical impact than HVAC.</li>
+        <li><strong>Human voice (normal speech):</strong> Fundamental pitch: Male 85–180 Hz, female 165–255 Hz, children 250–400 Hz. First formant (F1): 250–1000 Hz. Second formant (F2): 700–2500 Hz. Third formant (F3): 1500–3500 Hz. Sibilants (S, SH): strong energy 4000–8000 Hz. Plosives (P, B, T, D, K, G): brief energy burst across 50–4000 Hz. A sound that lacks sibilant energy and formant transitions is not speech, regardless of what it sounds like to the ear.</li>
+        <li><strong>Electronic interference (RF, mobile phone):</strong> GSM phone interference ("buzz-buzz-buzz" before a call) appears as a regular periodic burst pattern repeating at 217 Hz (GSM frame rate). LTE/4G interference appears as wider-band irregular bursts. Both show as regular, patterned events in the spectrogram — not speech-like, but sometimes sufficiently regular to trigger pareidolia if heard without spectrogram context.</li>
+        <li><strong>Rodent and small animal activity:</strong> Mice and rats produce ultrasonic vocalizations above human hearing range (above 20 kHz), but their movement — claws on hard surfaces, body brushing against pipes and insulation — produces scratching sounds in the 3000–8000 Hz range that can resemble speech consonants. The giveaway: rodent sounds do not show the low-frequency fundamental component of human voice. They lack energy below 1000 Hz in most cases.</li>
+        <li><strong>Human stomach and body sounds:</strong> Borborygmi (stomach gurgling) produces a characteristic low-frequency, irregular, wet-sounding event — broad-spectrum energy from 50–2000 Hz with a distinctive "bubbling" pattern in the spectrogram. These events are extremely common in quiet investigation environments and are responsible for a significant number of Class C EVP misclassifications. Log all stomach sounds noted during the investigation session, including whose they were.</li>
+        <li><strong>Whispers from other investigators:</strong> Whispered speech lacks fundamental voice frequency (whispers are unvoiced — the vocal cords are not vibrating). Whispers show energy primarily above 1000 Hz, with sibilant energy in the 4000–8000 Hz range and fricative energy through the mid range. They do not show the low-frequency fundamental component. A suspected EVP that shows only high-frequency energy and no low-frequency fundamental is consistent with a distant whisper — which may be an investigator out of audible range, not a paranormal source.</li>
+      </ul></div>
+    </div>
+
+    <!-- ════════════════════════════════ SPIRIT BOX DEEP PROTOCOL -->
+    <div class="entry" id="entry-spirit-box-deep">
+      <div class="entry-header"><div class="entry-term">Spirit Box &amp; Swept-Radio Analysis — Critical Standards</div><div class="entry-tags"><span class="tag tag-audio">Audio</span><span class="tag tag-protocol">Protocol</span><span class="tag tag-debunk">Debunk</span></div></div>
+      <div class="entry-body">Spirit box (also called ghost box, Frank's Box, or P-SB7/P-SB11) sessions generate audio content by rapidly sweeping through AM or FM radio frequencies, producing a continuous stream of radio fragments, static bursts, and brief audio snippets. The intent is to provide raw audio material for alleged paranormal communication. Spirit box sessions are among the most analytically challenging evidence to evaluate rigorously — the format is specifically designed to produce a continuous stream of material that the brain can interpret as language.</div>
+
+      <div class="doc-list"><div class="doc-list-label">The Physics of Spirit Box Audio Generation</div><ul>
+        <li><strong>What the sweep actually produces:</strong> A typical P-SB7 sweeps through 100 FM frequencies per second or 150 AM frequencies per second. At each momentary frequency position, the device captures whatever signal exists — a radio station fragment, carrier wave static, intermodulation distortion between adjacent strong stations, or white noise. The result is a rapid, continuous stream of audio fragments, each approximately 10 milliseconds long, mixed with static. Human speech is constructed from phonemes that are typically 50–300 milliseconds long. The 10ms sweep windows are too short to capture complete phonemes from any single radio source — what sounds like speech is constructed across multiple sequential frequency fragments.</li>
+        <li><strong>Stronger reception = more false positives, not better communication:</strong> In urban areas or near strong broadcast towers, the spirit box produces more radio fragments — more partial words, more voice fragments, more recognizable speech-like content. Investigators who notice they get "better responses" in locations with stronger radio reception are observing this effect: more raw material for pareidolia construction, not better paranormal signal. A rigorous spirit box analysis should note the regional FM/AM broadcast strength at the investigation location. High-density radio markets produce dramatically more false-positive spirit box "responses."</li>
+        <li><strong>The station bleed problem:</strong> Even at maximum sweep speed, strong broadcast signals "bleed" across multiple adjacent frequencies. A station broadcasting at 101.3 MHz may produce partial audio fragments at 101.1, 101.2, 101.4, and 101.5 MHz as the sweep passes. A single word from a radio announcer may appear across 3–5 consecutive sweep windows, creating the impression of a sustained utterance that seems to persist beyond a single sweep cycle.</li>
+      </ul></div>
+
+      <div class="doc-list"><div class="doc-list-label">Evidentiary Standards for Spirit Box Responses</div><ul>
+        <li><strong>The consistency test:</strong> Any response that could plausibly come from a radio broadcast fragment (any word, phrase, or fragment that could plausibly be said on any radio format) cannot be classified above Unclassified based on spirit box evidence alone. Only responses that contain specific, verifiable, non-public information that the radio could not have produced (the first name of a deceased person not known to any investigator, a location detail not known to anyone present, a date confirmed only through later research) can be weighted as significant.</li>
+        <li><strong>The sweep-direction test:</strong> Some investigators use spirit boxes that can sweep in both directions (up and down through frequencies). If a response is produced by the sweep in one direction, the session should be paused and the sweep reversed. If the same apparent response occurs sweeping in the opposite direction at the same time in the session, the response is radio-derived (the same station fragment is encountered regardless of sweep direction). If it occurs only in one direction, this eliminates that specific station-bleed explanation, though does not confirm a paranormal source.</li>
+        <li><strong>The shielded-room test:</strong> The most rigorous spirit box test is conducting a session inside a Faraday cage or RF-shielded room. If the spirit box produces no intelligible responses in a shielded environment but produces responses in the investigation environment, the responses are radio-derived. This test is not feasible in most investigations but should be the conceptual standard against which spirit box evidence is assessed.</li>
+        <li><strong>Recording and blind review requirements:</strong> All spirit box sessions must be recorded. Live responses — where the investigator interprets what they hear in real time without recording — have zero evidentiary value. Responses must be extracted from the recording, presented to blind reviewers as isolated clips, and meet the same consistency standards as EVP Class B or higher to receive any weight in the evidence assessment.</li>
+      </ul></div>
+    </div>
+
+    <div class="back-top"><a href="#top">↑ Back to Top</a></div>
+  </div>
+
+</div><!-- /page -->
+
+<footer class="doc-footer">
+  <div class="footer-inner">
+    <div class="footer-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="footer-name">The Paranormal Initiative</div>
+    <div class="footer-doc">Forensic Analysis Compendium — Photo · Video · Audio &amp; EVP</div>
+    <div class="footer-note">For use by all TPI investigators during evidence review. Evidence is only as strong as the process used to evaluate it. Follow every step, perform blind review, and let the data speak before the interpretation begins.</div>
+  </div>
+</footer>
+
+</body>
+</html>
+
+<script>
+// ─── SEARCH ───────────────────────────────────────────────────────
+const searchInput = document.getElementById('search-input');
+const searchCount = document.getElementById('search-count');
+const entries = document.querySelectorAll('.entry');
+
+function runSearch() {
+  const q = searchInput.value.trim().toLowerCase();
+  let visible = 0;
+  entries.forEach(el => {
+    const text = el.textContent.toLowerCase();
+    const show = !q || text.includes(q);
+    el.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  if (q) {
+    searchCount.textContent = visible + ' result' + (visible !== 1 ? 's' : '');
+  } else {
+    searchCount.textContent = '';
+  }
+  document.querySelectorAll('.sec-block').forEach(block => {
+    const vis = block.querySelectorAll('.entry:not([style*="display: none"])');
+    block.style.display = (vis.length === 0 && q) ? 'none' : '';
+  });
+}
+
+if (searchInput) {
+  searchInput.addEventListener('input', runSearch);
+}
+
+// ─── SECTION NAV ACTIVE STATE ──────────────────────────────────
+const secLinks = document.querySelectorAll('.sec-nav a');
+const secBlocks = document.querySelectorAll('.sec-block[id]');
+
+function updateSecNav() {
+  let current = '';
+  secBlocks.forEach(block => {
+    const rect = block.getBoundingClientRect();
+    if (rect.top <= 120) current = block.id;
+  });
+  secLinks.forEach(link => {
+    const href = link.getAttribute('href').replace('#', '');
+    link.classList.toggle('active', href === current);
+  });
+}
+
+window.addEventListener('scroll', updateSecNav, { passive: true });
+updateSecNav();
+
+// ─── CROSS-REFERENCE JUMP ─────────────────────────────────────
+function jumpTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (searchInput && searchInput.value) {
+    searchInput.value = '';
+    runSearch();
+  }
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.style.outline = '1.5px solid rgba(201,168,76,0.5)';
+    el.style.borderRadius = '12px';
+    setTimeout(() => { el.style.outline = ''; el.style.borderRadius = ''; }, 1800);
+  }, 80);
+}
+</script>
