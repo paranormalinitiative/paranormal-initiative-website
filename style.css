@@ -727,7 +727,7 @@ footer {
 .repository-hero {
     position: relative;
     overflow: hidden;
-    padding: 48px 28px 40px;
+    padding: 18px 20px;
     border-radius: 22px;
     border: 1px solid rgba(73, 178, 255, 0.22);
     background:
@@ -747,58 +747,15 @@ footer {
     background: linear-gradient(120deg, transparent, rgba(0, 194, 255, 0.05), transparent 55%);
 }
 
-.repository-title {
-    margin: 0;
-    max-width: none;
-    text-align: center;
-    font-size: clamp(1.3rem, 2vw, 1.75rem);
-    line-height: 1.18;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-}
-
-.repository-title-line {
-    display: block;
-}
-
-.repository-lead {
-    max-width: 820px;
-    margin: 24px auto 0;
-    text-align: center;
-    color: #b4c5d4;
-    font-size: 17px;
-    line-height: 1.75;
-}
-
-.repository-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 26px;
-    justify-content: center;
-}
-
-.repository-stat {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(73, 178, 255, 0.18);
-    background: rgba(7, 14, 20, 0.58);
-    color: #d8e5f1;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-}
-
 .repository-stat-dot {
+    display: inline-block;
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: #55c8ff;
     box-shadow: 0 0 12px rgba(85, 200, 255, 0.85);
+    margin-right: 8px;
+    vertical-align: middle;
 }
 
 .repository-group {
@@ -812,6 +769,22 @@ footer {
 
 .repository-hero-header {
     padding-bottom: 2px;
+}
+
+.repository-hero-body {
+    width: 100%;
+}
+
+.repository-hero-title {
+    font-size: 1.6rem;
+}
+
+.repository-hero-description {
+    max-width: 1000px;
+}
+
+.repository-hero-tags {
+    margin-top: 18px;
 }
 
 .repository-group-label {
@@ -937,19 +910,8 @@ footer {
     }
 
     .repository-hero {
-        padding: 28px 18px 30px;
+        padding: 16px;
         border-radius: 18px;
-    }
-
-    .repository-title {
-        max-width: 760px;
-        line-height: 1.12;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .repository-lead {
-        font-size: 15px;
     }
 
     .repository-card {
