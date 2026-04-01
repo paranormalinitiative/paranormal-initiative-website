@@ -259,6 +259,10 @@ h2 {
     position: relative;
 }
 
+.dashboard-panel-featured {
+    grid-column: 1 / -1;
+}
+
 /* Divider line above grid (absolute so it never steals a grid cell) */
 .dashboard-grid::before {
     content: "";
@@ -316,6 +320,15 @@ h2 {
     animation-delay: 180ms;
 }
 
+.dashboard-panel-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background:
+        radial-gradient(circle at top left, rgba(0, 194, 255, 0.14), transparent 34%),
+        linear-gradient(180deg, rgba(20, 28, 36, 0.98), rgba(13, 18, 25, 0.98));
+}
+
 /* Stagger for grid cards */
 .dashboard-grid .dashboard-panel:nth-child(1) { animation-delay: 160ms; }
 .dashboard-grid .dashboard-panel:nth-child(2) { animation-delay: 210ms; }
@@ -334,6 +347,25 @@ h2 {
 .dashboard-panel p {
     color: #b8c4d1;
     font-size: 14px;
+}
+
+.dashboard-panel-kicker {
+    margin-bottom: 10px;
+    color: #55c8ff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.dashboard-panel-cta {
+    display: inline-block;
+    margin-top: 14px;
+    color: #f2f7fb;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 /* Subtle shimmer scan */
