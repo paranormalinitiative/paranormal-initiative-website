@@ -758,15 +758,19 @@ footer {
 
 .repository-title {
     margin: 0;
-    max-width: 1040px;
-    font-size: clamp(2rem, 4vw, 3.1rem);
-    line-height: 1.08;
+    max-width: 980px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.02;
     font-weight: 700;
     letter-spacing: -0.03em;
 }
 
-.repository-title span {
-    display: inline;
+.repository-title-line {
+    display: block;
+}
+
+.repository-title-line-secondary {
+    margin-top: 6px;
 }
 
 .repository-lead {
@@ -948,8 +952,8 @@ footer {
         line-height: 1.02;
     }
 
-    .repository-title span {
-        display: block;
+    .repository-title-line-secondary {
+        margin-top: 4px;
     }
 
     .repository-lead {
