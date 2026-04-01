@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Forensic Analysis Compendium | The Paranormal Initiative</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="content-protection.css">
 <style>
 :root {
   --gold: #c9a84c; --gold-light: #e8c97a; --gold-dim: rgba(201,168,76,0.15);
@@ -154,7 +155,7 @@ code { font-family: 'Courier New', monospace; font-size:11.5px; background:rgba(
 .footer-note { font-size:11px; color:var(--text-muted); max-width:520px; line-height:1.6; margin-top:0.25rem; }
 </style>
 </head>
-<body id="top">
+<body id="top" class="content-protected">
 
 <!-- HEADER -->
 <header class="brand-header">
@@ -536,9 +537,6 @@ code { font-family: 'Courier New', monospace; font-size:11.5px; background:rgba(
   </div>
 </footer>
 
-</body>
-</html>
-
 <script>
 // ─── SEARCH ───────────────────────────────────────────────────────
 const searchInput = document.getElementById('search-input');
@@ -604,3 +602,6 @@ function jumpTo(id) {
   }, 80);
 }
 </script>
+<script src="content-protection.js"></script>
+</body>
+</html>
