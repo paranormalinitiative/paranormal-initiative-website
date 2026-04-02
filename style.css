@@ -724,19 +724,6 @@ footer {
     animation: none;
 }
 
-.repository-hero {
-    position: relative;
-    overflow: hidden;
-}
-
-.repository-hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(120deg, transparent, rgba(0, 194, 255, 0.05), transparent 55%);
-}
-
 .repository-stat-dot {
     display: inline-block;
     width: 7px;
@@ -759,28 +746,6 @@ footer {
 
 .repository-hero-header {
     padding-bottom: 2px;
-}
-
-.repository-hero-body {
-    width: 100%;
-}
-
-.repository-hero-title {
-    font-size: 1.6rem;
-}
-
-.repository-hero-description {
-    max-width: 1000px;
-}
-
-.repository-hero-tags {
-    margin-top: 14px;
-}
-
-.repository-hero-icon,
-.repository-hero-arrow {
-    opacity: 0;
-    pointer-events: none;
 }
 
 .repository-group-label {
@@ -832,6 +797,16 @@ footer {
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.05),
         0 14px 34px rgba(0, 0, 0, 0.2);
+}
+
+.repository-hero-card {
+    background:
+        radial-gradient(circle at top left, rgba(0, 194, 255, 0.14), transparent 36%),
+        radial-gradient(circle at bottom right, rgba(233, 201, 118, 0.10), transparent 28%),
+        linear-gradient(180deg, rgba(17, 28, 40, 0.96), rgba(10, 17, 24, 0.98));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 16px 40px rgba(0, 0, 0, 0.22);
 }
 
 .repository-card-icon {
