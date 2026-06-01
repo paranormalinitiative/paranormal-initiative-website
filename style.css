@@ -407,6 +407,131 @@ footer {
     font-size: 13px;
 }
 
+/* ===== RESEARCH PORTAL EXTENSIONS ===== */
+
+.portal-hero {
+    max-width: 980px;
+    padding-top: 72px;
+    padding-bottom: 42px;
+}
+
+.portal-hero h2 {
+    margin-top: 0;
+    font-size: 34px;
+    line-height: 1.18;
+    border-bottom: 0;
+    padding-bottom: 0;
+    color: #f4f8fb;
+}
+
+.portal-hero p {
+    color: #c3cfda;
+    font-size: 16px;
+}
+
+.portal-kicker {
+    margin: 0 0 14px;
+    color: #55c8ff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.portal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.portal-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 15px;
+    color: #f4f8fb;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid rgba(0, 194, 255, 0.55);
+    border-radius: 6px;
+    background: rgba(0, 194, 255, 0.1);
+}
+
+.portal-button-secondary {
+    border-color: #243140;
+    background: rgba(12, 17, 22, 0.85);
+    color: #c7d5e2;
+}
+
+.portal-grid {
+    padding-top: 105px;
+}
+
+.dashboard-panel-link {
+    min-height: 100%;
+}
+
+.timeline-list {
+    display: grid;
+    gap: 18px;
+    max-width: 980px;
+}
+
+.timeline-list article {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 20px;
+    padding: 24px;
+    background: linear-gradient(180deg, rgba(20, 28, 36, 0.98), rgba(15, 21, 29, 0.98));
+    border: 1px solid #1f2a36;
+    border-radius: 6px;
+}
+
+.timeline-list span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    color: #bfeeff;
+    font-size: 12px;
+    font-weight: 800;
+    border: 1px solid rgba(0, 194, 255, 0.32);
+    border-radius: 50%;
+    background: rgba(0, 194, 255, 0.08);
+}
+
+.timeline-list h3 {
+    margin: 0 0 8px;
+    color: #f4f8fb;
+    font-size: 18px;
+}
+
+.timeline-list p {
+    margin: 0;
+    color: #b8c4d1;
+    font-size: 14px;
+}
+
+@media (max-width: 650px) {
+    .portal-hero h2 {
+        font-size: 27px;
+    }
+
+    .portal-button {
+        width: 100%;
+    }
+
+    .timeline-list article {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ===== ADVISORY BOARD ===== */
 
 .advisory-grid {
