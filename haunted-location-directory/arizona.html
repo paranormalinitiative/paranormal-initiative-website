@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location Reference Directory • Arizona</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+<div class="brand-header">
+<div class="brand-left">
+<div class="brand-emblem">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 6v6l4 4"></path>
+</svg>
+</div>
+<div>
+<div class="brand-name">The Paranormal Initiative</div>
+<div class="brand-series">Location Reference Directory</div>
+</div>
+</div>
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input autocomplete="off" id="search-input" placeholder="Search locations, cities, states..." type="text"/>
+<div id="search-count">15 locations</div>
+</div>
+<span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+<div class="page">
+<div class="hero">
+<div class="hero-eyebrow">Working Directory • Research Leads</div>
+<h1 class="hero-title">Location Reference <em>Directory</em></h1>
+<p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+<div class="hero-meta">
+<div class="hero-meta-item"><span>1</span> State</div>
+<div class="hero-meta-item"><span>15</span> Location Entries</div>
+<div class="hero-meta-item"><span>10</span> Cities</div>
+<div class="hero-meta-item"><span>WIP</span> Under Review</div>
+</div>
+</div>
+<div class="sec-nav">
+<a href="alabama.html">Alabama</a>
+<a href="alaska.html">Alaska</a>
+<a href="arizona.html">Arizona</a>
+<a href="arkansas.html">Arkansas</a>
+<a href="california.html">California</a>
+<a href="colorado.html">Colorado</a>
+<a href="connecticut.html">Connecticut</a>
+<a href="delaware.html">Delaware</a>
+<a href="florida.html">Florida</a>
+<a href="georgia.html">Georgia</a>
+<a href="hawaii.html">Hawaii</a>
+<a href="idaho.html">Idaho</a>
+<a href="illinois.html">Illinois</a>
+<a href="indiana.html">Indiana</a>
+<a href="iowa.html">Iowa</a>
+<a href="kansas.html">Kansas</a>
+<a href="kentucky.html">Kentucky</a>
+<a href="louisiana.html">Louisiana</a>
+<a href="maine.html">Maine</a>
+<a href="maryland.html">Maryland</a>
+<a href="massachusetts.html">Massachusetts</a>
+<a href="michigan.html">Michigan</a>
+<a href="minnesota.html">Minnesota</a>
+<a href="mississippi.html">Mississippi</a>
+<a href="missouri.html">Missouri</a>
+<a href="montana.html">Montana</a>
+<a href="nebraska.html">Nebraska</a>
+<a href="nevada.html">Nevada</a>
+<a href="new-hampshire.html">New Hampshire</a>
+<a href="new-jersey.html">New Jersey</a>
+<a href="new-mexico.html">New Mexico</a>
+<a href="new-york.html">New York</a>
+<a href="north-carolina.html">North Carolina</a>
+<a href="north-dakota.html">North Dakota</a>
+<a href="ohio.html">Ohio</a>
+<a href="oklahoma.html">Oklahoma</a>
+<a href="oregon.html">Oregon</a>
+<a href="pennsylvania.html">Pennsylvania</a>
+<a href="rhode-island.html">Rhode Island</a>
+<a href="south-carolina.html">South Carolina</a>
+<a href="south-dakota.html">South Dakota</a>
+<a href="tennessee.html">Tennessee</a>
+<a href="texas.html">Texas</a>
+<a href="utah.html">Utah</a>
+<a href="vermont.html">Vermont</a>
+<a href="virginia.html">Virginia</a>
+<a href="washington.html">Washington</a>
+<a href="west-virginia.html">West Virginia</a>
+<a href="wisconsin.html">Wisconsin</a>
+<a href="wyoming.html">Wyoming</a>
+</div>
+<!-- ARIZONA -->
+<section class="sec-block" data-state="AZ" id="arizona">
+<div class="sec-header">
+<div class="sec-number">03</div>
+<div class="sec-title-block">
+<div class="sec-eyebrow">State Directory</div>
+<h2 class="sec-title">Arizona</h2>
+</div>
+<div class="sec-tag">15 Locations</div>
+</div>
+<p class="sec-intro">Arizona's desert and mountain landscape contains some of the most heavily investigated and historically layered paranormal sites in the American Southwest. From Tombstone-era boomtown structures to Cold War-period government buildings, frontier prisons, and indigenous-documented wilderness anomaly zones, the state presents a demanding and richly varied investigation environment.</p>
+<!-- Bird Cage Theatre -->
+<div class="entry" data-location-id="az-tombstone-birdcage">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Bird Cage Theatre</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Theatre</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Tombstone, AZ</div>
+<div class="entry-meta-item">Museum / Public</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Operated 1881–1892 as a combined theater, saloon, gambling hall, and brothel during Tombstone's silver boom. Associated with at least 26 documented deaths across its operational period. The structure has been the subject of more documented paranormal investigations than perhaps any other site in the American Southwest, with reported activity occurring continuously across decades of independent review. The building's original preservation — including fixtures, furnishings, and the 14 suspended "cribs" above the main floor — makes it an unusually intact investigation environment.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Full body apparitions in period dress throughout the main floor</li>
+<li>Disembodied voices and conversation fragments captured via EVP</li>
+<li>Shadow figures in the balcony and private room areas</li>
+<li>Physical interaction events reported by investigators</li>
+<li>Over 100 independently captured EVP recordings logged across multiple investigations</li>
+<li>Cold spots in the basement and backstage areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Floor — Theater and Bar Area (primary activity zone)</li>
+<li>Balcony Level</li>
+<li>Private Rooms / Cribs (14 suspended boxes above main floor)</li>
+<li>Basement</li>
+<li>Backstage and Service Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              535 E Allen St, Tombstone, AZ 85638
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://tombstonebirdcage.com" rel="noopener noreferrer" target="_blank">https://tombstonebirdcage.com</a>
+</p>
+<p><strong>Coordinates:</strong> 31.7126° N, 110.0678° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Haunting with Strong Intelligent Interaction Overlay — One of the most densely documented sites in the southwestern United States. Both residual loop behavior and clearly interactive entity responses have been recorded independently. Site has been reviewed across multiple unaffiliated investigation teams.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Jerome Grand Hotel -->
+<div class="entry" data-location-id="az-jerome-grand">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Jerome Grand Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Jerome, AZ</div>
+<div class="entry-meta-item">Public Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Constructed in 1926 as the United Verde Hospital, the building served as Jerome's primary medical facility through the height of the copper mining era. The hospital was associated with numerous patient deaths, surgical trauma, and frontier-era medical care conditions. Converted to a hotel in 1996, it remains the largest standing structure in Jerome and commands a prominent position above the town. Paranormal reports center on the elevator, specific guest floor corridors, and areas associated with former hospital service functions. Environmental factors including the building's age, mechanical systems, and isolated hillside setting require careful baseline documentation.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition of a nurse figure in white reported in corridors and stairwells</li>
+<li>Elevator operating without activation or stopping at unoccupied floors</li>
+<li>Phantom screaming and distress sounds attributed to former hospital use</li>
+<li>Stretcher and mechanical sounds from inactive areas</li>
+<li>Cold spots in basement-level former service areas</li>
+<li>Presence sensations reported by multiple independent guests</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Basement / Former Hospital Service Areas (primary activity zone)</li>
+<li>Ground Floor / Lobby</li>
+<li>Second Floor (corridor activity)</li>
+<li>Third and Fourth Floors</li>
+<li>Elevator Zones</li>
+<li>Stairwells</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              200 Hill St, Jerome, AZ 86331
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.jeromegrandhotel.com" rel="noopener noreferrer" target="_blank">https://www.jeromegrandhotel.com</a>
+</p>
+<p><strong>Coordinates:</strong> 34.7486° N, 112.1136° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Haunting Associated with Medical Trauma Imprint — Activity patterns suggest entity responses tied to former hospital function. Environmental and acoustic complications in older structure require careful calibration. Multiple independent accounts support intelligent interaction classification.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Hotel San Carlos -->
+<div class="entry" data-location-id="az-phoenix-sancarlos">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Hotel San Carlos</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Phoenix, AZ</div>
+<div class="entry-meta-item">Downtown Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Opened in 1928, the Hotel San Carlos occupies a site with prior historical significance — it stands on the location of a former Native American water source and early Phoenix settlement infrastructure. During the Great Depression, multiple documented suicide events occurred in the building, most frequently involving individuals jumping from upper floors. Reported activity is concentrated on specific guest floors and has been described consistently across decades of independent accounts, with a recurring female apparition and child-related phenomena representing the two most documented patterns.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition of a woman in white reported most frequently on the 7th floor</li>
+<li>Child-figure apparitions and phantom crying in corridor areas</li>
+<li>Door knocking without identifiable source</li>
+<li>Cold spots in upper-level guest rooms</li>
+<li>Elevator anomalies including stops on unoccupied floors</li>
+<li>Disembodied voices during quiet overnight hours</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby and Entry Level</li>
+<li>Mid-Level Guest Floors</li>
+<li>7th Floor (primary activity zone — woman-in-white reports)</li>
+<li>Upper Floor Corridors</li>
+<li>Rooftop Level (historical incident site)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              202 N Central Ave, Phoenix, AZ 85004
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://hotelsancarlos.com" rel="noopener noreferrer" target="_blank">https://hotelsancarlos.com</a>
+</p>
+<p><strong>Coordinates:</strong> 33.4505° N, 112.0727° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Emotional Imprint with Recurring Apparition Reports — Documented apparition patterns are consistent and location-specific. The 7th floor represents the highest-frequency documented zone. Activity consistent with trauma-based residual layering across multiple Depression-era events.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Vulture Gold Mine -->
+<div class="entry" data-location-id="az-wickenburg-vulture">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Vulture Gold Mine</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Mining</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Wickenburg, AZ</div>
+<div class="entry-meta-item">Preservation Site</div>
+<div class="entry-meta-item">Access: Public (Tours)</div>
+</div>
+<p class="entry-body">Arizona's most productive gold mine, operating from 1863 to 1942. The site's history encompasses decades of hazardous mining labor and the execution of at least 18 individuals by hanging at the site's prominent hanging tree — used to enforce theft penalties during the mining operation's peak years. The open outdoor setting and preserved industrial remains present significant environmental considerations; wind, structural instability, and desert heat affect baseline readings. Reported activity concentrates around the hanging tree, processing buildings, and shaft areas.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures reported near the hanging tree and shaft areas</li>
+<li>Miner apparitions in period work clothing documented by multiple visitors</li>
+<li>Unexplained bangs and metallic impacts from inactive machinery</li>
+<li>Strong feelings of being watched near shaft access points</li>
+<li>Cold spots in enclosed processing building interiors</li>
+<li>Disembodied voices documented near the hanging tree</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Mine Grounds and Entry Area</li>
+<li>Processing Buildings (indoor zones)</li>
+<li>Shaft Access Areas</li>
+<li>Hanging Tree Zone (primary activity area)</li>
+<li>Outbuildings and Camp Structures</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              36610 355th Ave, Wickenburg, AZ 85390
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://vultureminetours.com" rel="noopener noreferrer" target="_blank">https://vultureminetours.com</a>
+</p>
+<p><strong>Coordinates:</strong> 33.8742° N, 112.8443° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Trauma-Based Haunting with Environmental Hazard Considerations — Activity concentrated around execution and mining death sites. Open outdoor setting requires weather-adjusted baseline readings. Structural safety and access conditions must be assessed before any field investigation.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Hotel Monte Vista -->
+<div class="entry" data-location-id="az-flagstaff-montevista">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Hotel Monte Vista</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Flagstaff, AZ</div>
+<div class="entry-meta-item">Historic Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Built in 1927 as a community-funded railroad-era hotel, the Monte Vista has hosted notable guests throughout its history. Reports of paranormal activity have accumulated over decades and are room-specific in several documented cases. The "phantom bellboy" — a figure reported knocking on doors and announcing room service before disappearing — is among the most consistently described phenomena. Multiple entity types have been reported by independent guests and staff across different floors and time periods, making this one of the more complex multi-entity hotel environments in northern Arizona.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Phantom bellboy figure reported knocking on doors and disappearing</li>
+<li>Rocking chair in a guest room reported moving without occupant</li>
+<li>Infant crying sounds in areas without corresponding guests</li>
+<li>Room 306 documented as a high-frequency disturbance zone</li>
+<li>Disembodied voices in corridor and stairwell areas</li>
+<li>Cold spots and presence sensations in multiple guest rooms</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby and Entry Level</li>
+<li>Guest Floors (multiple)</li>
+<li>Corridor Areas</li>
+<li>Room 306 Zone (primary activity concentration)</li>
+<li>Service Corridors and Stairwells</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              100 N San Francisco St, Flagstaff, AZ 86001
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://hotelmontevista.com" rel="noopener noreferrer" target="_blank">https://hotelmontevista.com</a>
+</p>
+<p><strong>Coordinates:</strong> 35.1983° N, 111.6513° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Haunting with Multiple Reported Entity Patterns — Multiple distinct entity types reported across different zones independently. Phantom bellboy behavior pattern is consistent and widely documented. Room-specific activity patterns support intelligent rather than purely residual classification.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Yuma Territorial Prison -->
+<div class="entry" data-location-id="az-yuma-territorial">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Yuma Territorial Prison</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Prison</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Yuma, AZ</div>
+<div class="entry-meta-item">Arizona State Park</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Operating from 1876 to 1909, the Yuma Territorial Prison housed some of the Arizona Territory's most notorious criminals under conditions of extreme heat and confinement. Over 3,000 prisoners passed through the facility during its operation, with more than 100 deaths occurring on-site from disease, violence, and execution. The preserved cell block structures, solitary confinement areas, and dark cell — a pitch-black isolation unit — are identified as primary investigation zones. The site now operates as an Arizona State Park with public access.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Voices and whisper phenomena in cell block corridors</li>
+<li>Shadow figures reported near solitary confinement areas</li>
+<li>Unexplained sounds consistent with confinement-era activity</li>
+<li>Oppressive atmospheric sensation in the dark cell area</li>
+<li>Cold spots in enclosed cell areas despite extreme exterior heat</li>
+<li>EVP responses documented across multiple field investigations</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Cell Block (primary activity zone)</li>
+<li>Solitary Confinement / Dark Cell Area</li>
+<li>Guard Towers and Perimeter Areas</li>
+<li>Yard Spaces</li>
+<li>Museum Zones (converted areas)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1 Prison Hill Rd, Yuma, AZ 85364
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://azstateparks.com/yuma-territorial" rel="noopener noreferrer" target="_blank">https://azstateparks.com/yuma-territorial</a>
+</p>
+<p><strong>Coordinates:</strong> 32.7260° N, 114.6236° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Incarceration Imprint / Trauma Residual — High-density trauma history from extreme confinement conditions. Dark cell and solitary confinement areas represent primary investigation zones. Environmental heat creates significant baseline reading challenges requiring adjusted documentation protocols.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Copper Queen Hotel -->
+<div class="entry" data-location-id="az-bisbee-copperqueen">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Copper Queen Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Bisbee, AZ</div>
+<div class="entry-meta-item">Historic Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Built in 1902 by the Phelps Dodge Corporation to accommodate mining executives and business visitors, the Copper Queen is among Arizona's oldest continuously operating hotels. Reports of paranormal activity have been documented consistently by staff and guests across multiple decades. Two primary apparition reports dominate the site's investigative record: a child entity in the stairwell areas and a female apparition in second-floor corridor zones. A third reported entity — an elderly male figure — has been documented less frequently but by multiple independent sources.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Child spirit reports concentrated in stairwell and lower-floor areas</li>
+<li>Female apparition sightings in second-floor corridor zones</li>
+<li>Object displacement and movement in guest rooms</li>
+<li>Voice phenomena during quiet overnight hours</li>
+<li>Cold spots near stairwell landings</li>
+<li>Presence sensations reported by multiple independent guests</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby and Entry Level</li>
+<li>Staircase Areas (primary child-entity zone)</li>
+<li>Second Floor Corridors (primary female apparition zone)</li>
+<li>Upper Guest Floors</li>
+<li>Room-Specific Hotspot Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              11 Howell Ave, Bisbee, AZ 85603
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://copperqueenhotel.com" rel="noopener noreferrer" target="_blank">https://copperqueenhotel.com</a>
+</p>
+<p><strong>Coordinates:</strong> 31.4426° N, 109.9143° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Haunting with Recurring Guest Reports — Multiple distinct entity types with consistent behavioral patterns documented independently over decades. Among the most consistently reported multi-entity hotel environments in Arizona.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Jerome Cemetery -->
+<div class="entry" data-location-id="az-jerome-cemetery">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Jerome Cemetery</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Cemetery</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Jerome, AZ</div>
+<div class="entry-meta-item">Historic Cemetery</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Situated on a hillside above the former mining town of Jerome, the cemetery served the local population during Jerome's copper boom years and is among the most atmospherically documented sites in northern Arizona. The site's elevated position and partial exposure to the elements produce a range of environmental variables requiring careful baseline documentation. EVP and apparition reports have been collected from the cemetery across multiple independent investigations, concentrated in the older grave sections.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures observed near older grave sections</li>
+<li>Apparition sightings in period dress in hillside sections</li>
+<li>EVP responses documented in field investigations</li>
+<li>Emotional atmosphere changes reported near dense burial areas</li>
+<li>Cold spots during otherwise warm desert evenings</li>
+<li>Light anomalies near the perimeter and lower access areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Cemetery Grounds</li>
+<li>Older Grave Sections (primary activity zone)</li>
+<li>Hillside Terrain and Upper Sections</li>
+<li>Pathways Between Sections</li>
+<li>Perimeter Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Cemetery Rd, Jerome, AZ 86331
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 34.7478° N, 112.1130° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Emotional Imprint — Activity consistent with long-duration burial ground imprinting from mining-era deaths. Hillside terrain affects EMF and temperature baselines. Historic grave sections are the primary investigation zone.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Mission San Xavier del Bac -->
+<div class="entry" data-location-id="az-tucson-sanxavier">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Mission San Xavier del Bac</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Mission</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Tucson, AZ</div>
+<div class="entry-meta-item">Active Mission / Historic Site</div>
+<div class="entry-meta-item">Access: Public (with respect)</div>
+</div>
+<p class="entry-body">Founded in 1692 by Jesuit missionary Father Eusebio Kino and constructed in its present form between 1783 and 1797, Mission San Xavier del Bac is among the oldest intact European-constructed structures in North America. Still an active place of worship for the Tohono O'odham Nation, the mission's centuries of continuous use — including as a burial site — have created a layered historical and spiritual environment. Paranormal investigation activity is secondary to the site's primary cultural and religious significance, and any field work requires cultural authorization and a respectful, non-disruptive approach.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports in quieter interior areas during off-hours</li>
+<li>Disembodied voices in the sanctuary and side chapels</li>
+<li>Light anomalies near altar and burial-related areas</li>
+<li>Strong presence sensations reported by independent visitors</li>
+<li>Environmental anomalies in the older structural areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Sanctuary (primary zone)</li>
+<li>Side Chapels</li>
+<li>Interior Corridors</li>
+<li>Exterior Mission Grounds and Courtyard</li>
+<li>Burial-Area Vicinity</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1950 W San Xavier Rd, Tucson, AZ 85746
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://sanxaviermission.org" rel="noopener noreferrer" target="_blank">https://sanxaviermission.org</a>
+</p>
+<p><strong>Coordinates:</strong> 32.1062° N, 111.0025° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Religious Site with Possible Residual Imprint — Cultural and religious significance is primary. Paranormal documentation is secondary and requires a respectful, non-disruptive approach. Active place of worship; all investigation access requires authorization from the Tohono O'odham community.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Orpheum Theatre -->
+<div class="entry" data-location-id="az-phoenix-orpheum">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Orpheum Theatre</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Theatre</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Phoenix, AZ</div>
+<div class="entry-meta-item">Historic Theatre</div>
+<div class="entry-meta-item">Access: Public (Event Hours)</div>
+</div>
+<p class="entry-body">Opened in 1929 as a vaudeville and film palace, the Orpheum Theatre is one of Phoenix's most significant architectural landmarks. Underwent extensive restoration in the 1990s and continues to host live performances. Reports of paranormal activity have been documented primarily by backstage crew and maintenance personnel, concentrated in the backstage areas, balcony level, and upper access corridors. The theatre's nearly century-long performance history represents a substantial potential imprinting environment.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings in the auditorium during non-performance periods</li>
+<li>Shadow movement reported in the balcony level</li>
+<li>Unexplained backstage noises during empty building periods</li>
+<li>Movement in projection and upper access areas</li>
+<li>Cold spots in service corridors and stairwells</li>
+<li>Presence sensations reported by maintenance and overnight staff</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Auditorium (primary zone)</li>
+<li>Balcony Level</li>
+<li>Stage and Wing Areas</li>
+<li>Backstage Corridors</li>
+<li>Projection / Upper Access Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              203 W Adams St, Phoenix, AZ 85003
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://phoenix.gov/orpheum" rel="noopener noreferrer" target="_blank">https://phoenix.gov/orpheum</a>
+</p>
+<p><strong>Coordinates:</strong> 33.4484° N, 112.0766° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Performance-Space Imprint — Activity consistent with long-duration occupational imprinting from continuous theatrical use across nearly a century. Backstage and upper-access zones show highest reported frequency. Active venue; investigation requires authorization outside public event hours.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tombstone Courthouse -->
+<div class="entry" data-location-id="az-tombstone-courthouse">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Tombstone Courthouse</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Government</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Tombstone, AZ</div>
+<div class="entry-meta-item">Arizona State Park</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Built in 1882, the Tombstone Courthouse served as the county courthouse and governmental center during Tombstone's silver boom and the lawless period that defined the town's historical reputation. The courthouse oversaw numerous trials associated with the region's violent frontier era, including proceedings related to the aftermath of the O.K. Corral confrontation. Now operating as an Arizona State Park museum, the building retains much of its original interior character. Activity reports are concentrated in the courtroom and upper-floor areas.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Voices and conversation fragments reported in the courtroom</li>
+<li>Footsteps on upper floors without identifiable source</li>
+<li>Apparition sightings in courtroom and corridor areas</li>
+<li>Room-specific disturbances in former office spaces</li>
+<li>Cold spots near the original judge's bench area</li>
+<li>Disembodied sounds in the stairwell areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Courtroom (primary activity zone)</li>
+<li>Judicial and Office Spaces</li>
+<li>Hallways and Corridors</li>
+<li>Stair Access</li>
+<li>Museum Areas (converted spaces)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              223 Toughnut St, Tombstone, AZ 85638
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://azstateparks.com/tombstone" rel="noopener noreferrer" target="_blank">https://azstateparks.com/tombstone</a>
+</p>
+<p><strong>Coordinates:</strong> 31.7120° N, 110.0670° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Institutional Imprint — Activity consistent with judicial and civic imprinting from the most turbulent period in Tombstone's frontier history. Courtroom area is the primary documented activity zone. Access is public during Arizona State Park hours.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Arizona State Capitol -->
+<div class="entry" data-location-id="az-phoenix-capitol">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Arizona State Capitol</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Government</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Phoenix, AZ</div>
+<div class="entry-meta-item">Historic Museum Capitol</div>
+<div class="entry-meta-item">Access: Public (Museum Hours)</div>
+</div>
+<p class="entry-body">Completed in 1901 and serving as the seat of territorial government before Arizona statehood in 1912, the Capitol building now operates as a museum while active government functions have moved to adjacent structures. Reports of paranormal activity are concentrated in the older sections of the building, particularly the rotunda, stairwells, and museum-preserved legislative chambers. Activity reports come primarily from overnight security and maintenance staff.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Footsteps on upper floors and in the rotunda during after-hours</li>
+<li>Shadow figures observed near legislative spaces and staircases</li>
+<li>Voices in quieter areas during overnight periods</li>
+<li>Presence sensations in museum-preserved sections</li>
+<li>Door anomalies in unoccupied areas</li>
+<li>Cold spots near original legislative chamber areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Rotunda (primary zone)</li>
+<li>Legislative Hall Areas</li>
+<li>Staircases</li>
+<li>Museum and Government Spaces</li>
+<li>Upper Access Floors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1700 W Washington St, Phoenix, AZ 85007
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://azlibrary.gov" rel="noopener noreferrer" target="_blank">https://azlibrary.gov</a>
+</p>
+<p><strong>Coordinates:</strong> 33.4482° N, 112.0965° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Institutional Imprint — Territorial and early statehood-era imprinting across nearly 125 years of government occupation. Rotunda and original legislative areas are the primary documented zones. Museum-only access applies to the historic capitol structure.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Superstition Mountains -->
+<div class="entry" data-location-id="az-superstition-mountains">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Superstition Mountains</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Wilderness</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Regional</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">East of Phoenix, AZ</div>
+<div class="entry-meta-item">Wilderness / Regional Anomaly Entry</div>
+<div class="entry-meta-item">Access: Varies by zone</div>
+</div>
+<p class="entry-body">The Superstition Mountains east of Phoenix represent one of the most enduring and consistently documented regional anomaly zones in the American Southwest. Indigenous Akimel O'odham and Yavapai traditions describe the mountains as inhabited by dangerous supernatural beings. The Lost Dutchman's Gold Mine legend has drawn prospectors and treasure hunters to the area since the 19th century, with numerous documented disappearances and deaths in the wilderness. This entry is classified as a regional anomaly and folklore documentation entry, not a standard paranormal investigation location.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Unexplained lights reported in mountain terrain at night</li>
+<li>Documented disappearance incidents in remote trail zones (causes unconfirmed)</li>
+<li>Entity sightings reported by multiple independent wilderness travelers</li>
+<li>Folklore-driven anomalous experiences consistent with indigenous cultural accounts</li>
+<li>Disorientation and navigation failure in otherwise clear conditions</li>
+<li>Sound anomalies inconsistent with known regional wildlife</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Mountain Trail System</li>
+<li>Canyon and Wash Areas</li>
+<li>Desert Terrain (remote access zones)</li>
+<li>Perimeter Wilderness Boundary</li>
+<li>Lost Dutchman State Park Access Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              East of Phoenix, AZ — No single address applicable
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.fs.usda.gov" rel="noopener noreferrer" target="_blank">https://www.fs.usda.gov</a>
+</p>
+<p><strong>Coordinates:</strong> 33.4636° N, 111.4810° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Unknown / Folklore / Non-Standard Anomaly Zone — This entry documents indigenous cultural warnings, historical disappearances, and wilderness anomaly reports. Not classified under standard TPI haunting methodology. Investigation approach requires cultural consultation and wilderness safety protocols.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- La Posada Hotel -->
+<div class="entry" data-location-id="az-winslow-laposada">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">La Posada Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Winslow, AZ</div>
+<div class="entry-meta-item">Historic Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Designed by architect Mary Colter and opened in 1930 as the last of the great Harvey House railroad hotels, La Posada is widely regarded as Colter's masterwork. The hotel closed in 1957 and was used as Santa Fe Railway offices before reopening following restoration in 1997. Its combination of original Colter design elements, railroad-era history, and the emotional investment of a significant preservation effort have produced a complex site environment. Paranormal reports have come primarily from overnight guests and long-term staff across the restored structure.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings in guest wing corridors and common areas</li>
+<li>Object displacement reported in specific guest rooms</li>
+<li>Disembodied voices in quieter areas of the original building</li>
+<li>Room-specific atmosphere changes noted by multiple guests</li>
+<li>Cold spots in older structural areas</li>
+<li>Presence sensations in original Colter-designed spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby and Main Entry (Colter-designed)</li>
+<li>Guest Wings and Corridors (primary zone)</li>
+<li>Common Rooms and Dining Areas</li>
+<li>Grounds and Garden Areas</li>
+<li>Older Structural Zones (pre-restoration areas)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              303 E 2nd St, Winslow, AZ 86047
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://laposada.org" rel="noopener noreferrer" target="_blank">https://laposada.org</a>
+</p>
+<p><strong>Coordinates:</strong> 35.0233° N, 110.6974° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Haunting with Recurring Guest Reports — Activity demonstrates consistency across independent accounts from multiple occupancy periods. Restored historic structure with activity patterns suggesting entity presence from both original operating era and post-closure period.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Old Bisbee Historic District -->
+<div class="entry" data-location-id="az-bisbee-historicdistrict">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Old Bisbee Historic District</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Mining</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Bisbee, AZ</div>
+<div class="entry-meta-item">Historic District / Mining Town</div>
+<div class="entry-meta-item">Access: Public (district-wide)</div>
+</div>
+<p class="entry-body">One of the most intact surviving mining-era townscapes in the American Southwest, Old Bisbee's stair-stepped hillside district contains dozens of original commercial, residential, and civic structures built during the copper boom years between the 1880s and 1920s. Paranormal reports in Old Bisbee are distributed across the district rather than concentrated in a single structure. The Copper Queen Mine tunnel system runs beneath portions of the district, adding a layered historical dimension. Multiple independent accounts from different buildings, street areas, and subterranean-adjacent spaces have been documented.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Multiple apparition sightings across different district structures</li>
+<li>Shadow figures at street level and in building corridors</li>
+<li>EVP reports documented across multiple structures and outdoor areas</li>
+<li>Disembodied voices attributed to mining-era occupants</li>
+<li>Cold spots in basement and tunnel-adjacent areas</li>
+<li>Environmental anomalies in lower hillside commercial zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic Commercial Streetscape</li>
+<li>Former Commercial Buildings (multiple)</li>
+<li>Mining-Town Residential Structures</li>
+<li>Stair-Stepped Hillside Access Areas</li>
+<li>Tunnel-Adjacent and Basement Zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Old Bisbee, Bisbee, AZ 85603
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 31.4426° N, 109.9143° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Distributed Residual Imprint Across Historic District — Activity is not concentrated in a single structure but distributed across the district's mining-era building stock. Multiple independent accounts from different locations support district-wide imprinting. Investigation of individual structures requires property-specific access authorization.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 15,
+    states: ["Arizona"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+<!-- Machine readable JSON metadata -->
+<script id="tpi-directory-metadata" type="application/json">
+{
+  "schema_version": "1.0",
+  "total_locations": 15,
+  "states": [
+    {
+      "name": "Arizona",
+      "code": "AZ",
+      "count": 15
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+</body>
+</html>

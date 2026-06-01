@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location Reference Directory • Alabama</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+<div class="brand-header">
+<div class="brand-left">
+<div class="brand-emblem">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 6v6l4 4"></path>
+</svg>
+</div>
+<div>
+<div class="brand-name">The Paranormal Initiative</div>
+<div class="brand-series">Location Reference Directory</div>
+</div>
+</div>
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input autocomplete="off" id="search-input" placeholder="Search locations, cities, states..." type="text"/>
+<div id="search-count">18 locations</div>
+</div>
+<span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+<div class="page">
+<div class="hero">
+<div class="hero-eyebrow">Working Directory • Research Leads</div>
+<h1 class="hero-title">Location Reference <em>Directory</em></h1>
+<p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+<div class="hero-meta">
+<div class="hero-meta-item"><span>1</span> State</div>
+<div class="hero-meta-item"><span>18</span> Location Entries</div>
+<div class="hero-meta-item"><span>13</span> Cities</div>
+<div class="hero-meta-item"><span>WIP</span> Under Review</div>
+</div>
+</div>
+<div class="sec-nav">
+<a href="alabama.html">Alabama</a>
+<a href="alaska.html">Alaska</a>
+<a href="arizona.html">Arizona</a>
+<a href="arkansas.html">Arkansas</a>
+<a href="california.html">California</a>
+<a href="colorado.html">Colorado</a>
+<a href="connecticut.html">Connecticut</a>
+<a href="delaware.html">Delaware</a>
+<a href="florida.html">Florida</a>
+<a href="georgia.html">Georgia</a>
+<a href="hawaii.html">Hawaii</a>
+<a href="idaho.html">Idaho</a>
+<a href="illinois.html">Illinois</a>
+<a href="indiana.html">Indiana</a>
+<a href="iowa.html">Iowa</a>
+<a href="kansas.html">Kansas</a>
+<a href="kentucky.html">Kentucky</a>
+<a href="louisiana.html">Louisiana</a>
+<a href="maine.html">Maine</a>
+<a href="maryland.html">Maryland</a>
+<a href="massachusetts.html">Massachusetts</a>
+<a href="michigan.html">Michigan</a>
+<a href="minnesota.html">Minnesota</a>
+<a href="mississippi.html">Mississippi</a>
+<a href="missouri.html">Missouri</a>
+<a href="montana.html">Montana</a>
+<a href="nebraska.html">Nebraska</a>
+<a href="nevada.html">Nevada</a>
+<a href="new-hampshire.html">New Hampshire</a>
+<a href="new-jersey.html">New Jersey</a>
+<a href="new-mexico.html">New Mexico</a>
+<a href="new-york.html">New York</a>
+<a href="north-carolina.html">North Carolina</a>
+<a href="north-dakota.html">North Dakota</a>
+<a href="ohio.html">Ohio</a>
+<a href="oklahoma.html">Oklahoma</a>
+<a href="oregon.html">Oregon</a>
+<a href="pennsylvania.html">Pennsylvania</a>
+<a href="rhode-island.html">Rhode Island</a>
+<a href="south-carolina.html">South Carolina</a>
+<a href="south-dakota.html">South Dakota</a>
+<a href="tennessee.html">Tennessee</a>
+<a href="texas.html">Texas</a>
+<a href="utah.html">Utah</a>
+<a href="vermont.html">Vermont</a>
+<a href="virginia.html">Virginia</a>
+<a href="washington.html">Washington</a>
+<a href="west-virginia.html">West Virginia</a>
+<a href="wisconsin.html">Wisconsin</a>
+<a href="wyoming.html">Wyoming</a>
+</div>
+<!-- ALABAMA -->
+<section class="sec-block" data-state="AL" id="alabama">
+<div class="sec-header">
+<div class="sec-number">01</div>
+<div class="sec-title-block">
+<div class="sec-eyebrow">State Directory</div>
+<h2 class="sec-title">Alabama</h2>
+</div>
+<div class="sec-tag">18 Locations</div>
+</div>
+<p class="sec-intro">Alabama contains one of the highest concentrations of documented paranormal activity in the continental United States, with industrial, antebellum, military, and civic-era sites all represented across the state.</p>
+<!-- Sloss Furnaces -->
+<div class="entry" data-location-id="al-birmingham-sloss">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Sloss Furnaces</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Industrial</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Birmingham, AL</div>
+<div class="entry-meta-item">National Historic Landmark</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Former steel production facility operating 1882–1971. Site of numerous worker deaths during operation. One of the most documented industrial hauntings in the United States.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures near furnace stacks</li>
+<li>Unexplained loud bangs and metallic impacts</li>
+<li>Disembodied voices in the blower building</li>
+<li>Temperature anomalies near casting areas</li>
+<li>Apparitions of former workers in period clothing</li>
+<li>High EMF spikes throughout the facility</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Ground Floor / Casting Area</li>
+<li>Furnace Level (North and South Stacks)</li>
+<li>Upper Catwalks</li>
+<li>Blower Building</li>
+<li>Pump House</li>
+<li>Slag Pit Area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 20 32nd St N, Birmingham, AL 35222</p>
+<p><strong>Website:</strong> <a href="https://www.slossfurnaces.com" rel="noopener noreferrer" target="_blank">https://www.slossfurnaces.com</a></p>
+<p><strong>Coordinates:</strong> 33.5212° N, 86.7886° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Intelligent Haunting — Multiple distinct entities identified. High EMF baseline anomalies present throughout facility. Considered one of the most active industrial haunting sites in the southeastern United States.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Gaines Ridge Dinner Club -->
+<div class="entry" data-location-id="al-camden-gainesridge">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Gaines Ridge Dinner Club</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Restaurant</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Camden, AL</div>
+<div class="entry-meta-item">Historic Home</div>
+</div>
+<p class="entry-body">Former antebellum home built 1830. Site of multiple documented deaths including the original owner and a former cook. Now operates as a dinner club and event venue.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Full body apparitions in dining areas</li>
+<li>Objects moving on their own</li>
+<li>Phantom cooking smells from the kitchen</li>
+<li>Disembodied voices after hours</li>
+<li>Cold drafts in sealed rooms</li>
+<li>Unexplained knocking on walls</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entrance Hall</li>
+<li>Front Dining Room</li>
+<li>Rear Dining Room</li>
+<li>Kitchen Area</li>
+<li>Upper Bedrooms (not open to public)</li>
+<li>Exterior Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 933 AL-10, Camden, AL 36726</p>
+<p><strong>Website:</strong> <a href="http://www.gainesridge.com" rel="noopener noreferrer" target="_blank">http://www.gainesridge.com</a></p>
+<p><strong>Coordinates:</strong> 31.9914° N, 87.2717° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual with Intelligent Overlay — Antebellum-era residual activity tied to original occupants. Interactive responses documented in the main hall and kitchen areas.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Fort Morgan -->
+<div class="entry" data-location-id="al-gulfshores-fortmorgan">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Fort Morgan</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Military</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Gulf Shores, AL</div>
+<div class="entry-meta-item">State Park</div>
+</div>
+<p class="entry-body">Coastal defense fort active 1834–1947. Saw action during the Civil War Battle of Mobile Bay. Site of multiple soldier deaths across more than a century of military use.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Phantom footsteps on the parapets</li>
+<li>Shadow figures in the casemates</li>
+<li>Cannon fire sounds at night</li>
+<li>Uniformed apparitions near the sally port</li>
+<li>Unexplained lights in the old barracks</li>
+<li>Cold spots in the powder magazine</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Parapet / Ramparts</li>
+<li>Casemates (lower gun positions)</li>
+<li>Sally Port (main gate)</li>
+<li>Powder Magazine</li>
+<li>Old Barracks</li>
+<li>Water Battery</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 51 Hwy 180 W, Gulf Shores, AL 36542</p>
+<p><strong>Website:</strong> <a href="https://ahc.alabama.gov/properties/ftmorgan/ftmorgan.aspx" rel="noopener noreferrer" target="_blank">https://ahc.alabama.gov/properties/ftmorgan/ftmorgan.aspx</a></p>
+<p><strong>Coordinates:</strong> 30.2238° N, 88.0205° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Military Haunting — Multi-era residual imprinting from Civil War through WWII periods. Uniformed apparitions consistent with 1860s and early 1900s military dress have been reported.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sturdivant Hall -->
+<div class="entry" data-location-id="al-selma-sturdivant">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Sturdivant Hall</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Selma, AL</div>
+<div class="entry-meta-item">Historic Mansion</div>
+</div>
+<p class="entry-body">Greek Revival mansion completed 1856. Considered one of Alabama's most haunted houses. Former owner John Parkman was arrested for embezzlement and died in jail shortly after, reportedly never accepting his fate.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition of John Parkman throughout the home</li>
+<li>Doors opening and closing on their own</li>
+<li>Cold spots in the upper bedrooms</li>
+<li>Phantom laughter from empty rooms</li>
+<li>Objects displaced overnight</li>
+<li>Feelings of being watched in the parlor</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Entry Hall</li>
+<li>Front Parlor</li>
+<li>Rear Parlor / Dining Room</li>
+<li>Library</li>
+<li>Upper Bedrooms (4)</li>
+<li>Exterior Gardens</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 713 Mabry St, Selma, AL 36701</p>
+<p><strong>Website:</strong> <a href="https://sturdivanthall.com" rel="noopener noreferrer" target="_blank">https://sturdivanthall.com</a></p>
+<p><strong>Coordinates:</strong> 32.4130° N, 87.0289° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Primary entity believed to be former owner John Parkman. Interactive responses documented. Entity appears distressed and territorial. High-frequency activity on upper floors.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Kenworthy Hall -->
+<div class="entry" data-location-id="al-marion-kenworthy">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Kenworthy Hall</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Plantation</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Marion, AL</div>
+<div class="entry-meta-item">Historic Home</div>
+</div>
+<p class="entry-body">Italianate plantation mansion built 1860. Survived the Civil War intact. Listed on the National Register of Historic Places. One of Alabama's most architecturally preserved antebellum estates.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures in the rear corridors</li>
+<li>Phantom footsteps on the upper floor</li>
+<li>Unexplained piano sounds from empty rooms</li>
+<li>Cold spots near the main staircase</li>
+<li>Apparitions observed in period dress</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry Hall</li>
+<li>Front Parlor</li>
+<li>Music Room</li>
+<li>Upper Floor Bedrooms</li>
+<li>Rear Service Area</li>
+<li>Exterior Grounds and Gardens</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> Alabama Hwy 14, Marion, AL 36756</p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 32.6324° N, 87.3192° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Haunting — Activity consistent with antebellum-era imprinting. Apparitions in period dress suggest pre-Civil War origin. No confirmed interactive responses on record.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Redmont Hotel -->
+<div class="entry" data-location-id="al-birmingham-redmont">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Redmont Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Birmingham, AL</div>
+<div class="entry-meta-item">Historic Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Built in 1925, the Redmont is the oldest operating hotel in Birmingham. Multiple floors have been associated with paranormal reports spanning nearly a century of continuous hospitality use.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitions on upper guest floors</li>
+<li>Phantom knocking on room doors</li>
+<li>Elevator anomalies between floors</li>
+<li>Disembodied voices in corridors late at night</li>
+<li>Cold spots in specific guest rooms</li>
+<li>Shadow figures near stairwells</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby / Main Floor</li>
+<li>Mezzanine Level</li>
+<li>Guest Floors 2–8</li>
+<li>Rooftop Bar Area</li>
+<li>Lower Service Level</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 2101 5th Ave N, Birmingham, AL 35203</p>
+<p><strong>Website:</strong> <a href="https://www.redmontbirmingham.com" rel="noopener noreferrer" target="_blank">https://www.redmontbirmingham.com</a></p>
+<p><strong>Coordinates:</strong> 33.5187° N, 86.8064° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Multiple reported entities across distinct floors. Guest-interaction events documented. Primary activity concentrated in upper-floor corridors and stairwell areas.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- USS Alabama Battleship -->
+<div class="entry" data-location-id="al-mobile-ussalabama">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">USS Alabama Battleship</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Military</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Mobile, AL</div>
+<div class="entry-meta-item">Memorial Park / Museum</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">WWII battleship commissioned 1942, now a museum ship anchored in Mobile Bay. Site of multiple wartime deaths during active service. Confined below-deck spaces and gun turrets are primary areas of reported activity.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitions in uniform below decks</li>
+<li>Unexplained footsteps in sealed compartments</li>
+<li>EMF anomalies near gun turrets</li>
+<li>Disembodied voices in the engine room</li>
+<li>Cold spots in crew quarters</li>
+<li>Objects displaced in confined spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Deck</li>
+<li>Gun Turrets (Triple 16-inch)</li>
+<li>Below Deck — Crew Quarters</li>
+<li>Engine Room</li>
+<li>Combat Information Center</li>
+<li>Lower Magazine / Munitions Area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 2703 Battleship Pkwy, Mobile, AL 36603</p>
+<p><strong>Website:</strong> <a href="https://www.ussalabama.com" rel="noopener noreferrer" target="_blank">https://www.ussalabama.com</a></p>
+<p><strong>Coordinates:</strong> 30.6819° N, 88.0144° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Military Haunting — WWII-era imprinting concentrated in below-deck compartments. Activity consistent with residual crew presence. High EMF readings documented near gun turret mechanisms.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sweetwater Mansion -->
+<div class="entry" data-location-id="al-florence-sweetwater">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Sweetwater Mansion</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Plantation</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Florence, AL</div>
+<div class="entry-meta-item">Historic Estate</div>
+</div>
+<p class="entry-body">Federal-style plantation mansion built circa 1835. Considered one of the most haunted private estates in northern Alabama. The property changed hands multiple times during and after the Civil War and carries significant documented paranormal history.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Full body apparitions in the main hall</li>
+<li>Phantom voices and whispers throughout</li>
+<li>Objects moved or displaced overnight</li>
+<li>Cold spots in the upper bedrooms</li>
+<li>Children's laughter heard in empty rooms</li>
+<li>Shadow figures on the staircase</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry Hall</li>
+<li>Double Parlors</li>
+<li>Formal Dining Room</li>
+<li>Upper Floor Bedrooms (6)</li>
+<li>Rear Grounds and Outbuildings</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 1050 Sweetwater Ave, Florence, AL 35630</p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 34.8253° N, 87.6446° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual with Intelligent Overlay — Long-standing multi-entity activity with both residual loops and interactive responses documented. One of the most consistently active private estates in the state.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tutwiler Hotel -->
+<div class="entry" data-location-id="al-birmingham-tutwiler">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Tutwiler Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Birmingham, AL</div>
+<div class="entry-meta-item">Historic Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Originally opened in 1914, closed in 1974, and reopened after extensive renovation in 1986. One of Birmingham's most storied hotels with decades of paranormal reports tied to multiple eras of operation.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitions in formal period attire in hallways</li>
+<li>Phantom voices on upper guest floors</li>
+<li>Unexplained cold drafts in sealed rooms</li>
+<li>Elevator stops on unoccupied floors</li>
+<li>Strong sense of presence in the ballroom</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Lobby</li>
+<li>Historic Ballroom</li>
+<li>Restaurant Level</li>
+<li>Guest Floors 2–9</li>
+<li>Lower Level / Service Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 2021 Park Pl, Birmingham, AL 35203</p>
+<p><strong>Website:</strong> <a href="https://www.hilton.com/en/hotels/bhmdnhx-hampton-suites-birmingham-downtown-tutwiler/" rel="noopener noreferrer" target="_blank">https://www.hilton.com/en/hotels/bhmdnhx-hampton-suites-birmingham-downtown-tutwiler/</a></p>
+<p><strong>Coordinates:</strong> 33.5175° N, 86.8104° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Multiple entities from different operational eras. Ballroom and upper guest floors show highest documented activity. Interactive responses have been reported.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Maple Hill Cemetery -->
+<div class="entry" data-location-id="al-huntsville-maplehill">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Maple Hill Cemetery</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Cemetery</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Huntsville, AL</div>
+<div class="entry-meta-item">Municipal Cemetery</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Huntsville's oldest and largest cemetery, established 1818. Contains graves of prominent historical figures, Civil War soldiers, and civilians spanning over 200 years. Also contains the renowned Dead Children's Playground area.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitions throughout the grounds at dusk</li>
+<li>Orbs and light anomalies near older grave sections</li>
+<li>Children's voices near the playground area</li>
+<li>Shadow figures moving between headstones</li>
+<li>Cold spots in the Civil War section</li>
+<li>EVP responses documented in multiple investigations</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Cemetery Grounds</li>
+<li>Civil War Section</li>
+<li>Historic Founders Section</li>
+<li>Dead Children's Playground Area</li>
+<li>Mausoleum Row</li>
+<li>Eastern Expansion (modern burials)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 202 Maple Hill St SE, Huntsville, AL 35801</p>
+<p><strong>Website:</strong> <a href="https://www.huntsvilleal.gov/historicmarkers/maple-hill-cemetery/" rel="noopener noreferrer" target="_blank">https://www.huntsvilleal.gov/historicmarkers/maple-hill-cemetery/</a></p>
+<p><strong>Coordinates:</strong> 34.7332° N, 86.5747° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual with Intelligent Overlay — Multi-era imprinting across 200+ years. Distinct activity zones within the grounds. Dead Children's Playground documented as a separate high-activity node.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Dead Children's Playground -->
+<div class="entry" data-location-id="al-huntsville-deadchildrens">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Dead Children's Playground</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Cemetery</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Huntsville, AL</div>
+<div class="entry-meta-item">Inside Maple Hill Cemetery</div>
+<div class="entry-meta-item">Access: Public (Daylight Hours)</div>
+</div>
+<p class="entry-body">A public playground situated within Maple Hill Cemetery, surrounded on three sides by cemetery grounds. Considered one of the most consistently documented paranormal locations in Alabama, with reports of children's apparitions and playground equipment moving without cause.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Swings moving with no wind or person present</li>
+<li>Children's laughter and voices after dark</li>
+<li>Child-sized apparitions near equipment</li>
+<li>Orbs clustering around the swing set</li>
+<li>Sudden temperature drops in localized areas</li>
+<li>Investigators report physical contact</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Swing Set Area (primary activity zone)</li>
+<li>Slide Structure</li>
+<li>Open Play Area</li>
+<li>Cemetery Boundary (north, east, south)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> Inside Maple Hill Cemetery, Huntsville, AL 35801</p>
+<p><strong>Website:</strong> <a href="https://www.huntsvilleal.gov/residents/cemeteries/huntsville-municipal-cemeteries/" rel="noopener noreferrer" target="_blank">https://www.huntsvilleal.gov/residents/cemeteries/huntsville-municipal-cemeteries/</a></p>
+<p><strong>Coordinates:</strong> 34.7332° N, 86.5747° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Child entity presence with interactive behavior. Playground equipment movement is a consistent, documentable phenomenon. High-activity node within the Maple Hill Cemetery complex.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Dr. John R. Drish House -->
+<div class="entry" data-location-id="al-tuscaloosa-drishhouse">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Dr. John R. Drish House</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Historic Home</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Tuscaloosa, AL</div>
+<div class="entry-meta-item">Historic Structure</div>
+</div>
+<p class="entry-body">Greek Revival home built in 1837. His wife Sarah reportedly saved the candles from her husband's funeral and requested they be lit when she died. When they could not be found at her passing, her apparition allegedly haunts the tower where candlelight is still reportedly seen.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Candlelight seen in the tower window at night</li>
+<li>Apparition of Sarah Drish on the upper floors</li>
+<li>Unexplained light anomalies in the tower</li>
+<li>Cold spots throughout the structure</li>
+<li>Phantom sounds of movement on upper levels</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry Hall</li>
+<li>Front Parlor</li>
+<li>Rear Living Areas</li>
+<li>Upper Floor Bedrooms</li>
+<li>Tower Room (primary activity zone)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 2300 17th St, Tuscaloosa, AL 35401</p>
+<p><strong>Website:</strong> <a href="https://historicdrishhouse.com" rel="noopener noreferrer" target="_blank">https://historicdrishhouse.com</a></p>
+<p><strong>Coordinates:</strong> 33.1950° N, 87.5692° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Primary entity is Sarah Drish with a documented repeating behavior pattern tied to the tower. Candlelight phenomenon is a consistent, multi-witness reported event.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pickens County Courthouse -->
+<div class="entry" data-location-id="al-carrollton-pickens">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Pickens County Courthouse</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Government</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Carrollton, AL</div>
+<div class="entry-meta-item">Active Courthouse</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Famous for the "Face in the Window" — the image of Henry Wells, accused of burning the original courthouse, reportedly etched permanently into the attic window glass by a lightning strike in 1878 while he sheltered from an angry mob. The face has never been removed or explained.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Permanent face image in attic window glass (Henry Wells)</li>
+<li>Apparition seen inside the attic level</li>
+<li>Cold drafts near the upper floor window</li>
+<li>Shadow movement behind the window at night</li>
+<li>Unexplained sounds in the attic space</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Courthouse Entrance</li>
+<li>Courtroom Level</li>
+<li>Upper Office Floors</li>
+<li>Attic Level (primary anomaly zone)</li>
+<li>Exterior Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 50 Courthouse Square, Carrollton, AL 35447</p>
+<p><strong>Website:</strong> <a href="https://www.tourwestalabama.com/attraction/pickens-county-courthouse/" rel="noopener noreferrer" target="_blank">https://www.tourwestalabama.com/attraction/pickens-county-courthouse/</a></p>
+<p><strong>Coordinates:</strong> 33.2618° N, 88.0950° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Single primary entity. The "Face in the Window" is a permanent physical anomaly consistent with an intelligent binding event. Attic level is the designated primary investigation zone.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Gaineswood Plantation -->
+<div class="entry" data-location-id="al-demopolis-gaineswood">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Gaineswood Plantation</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Plantation</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Demopolis, AL</div>
+<div class="entry-meta-item">National Historic Landmark</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Neoclassical plantation mansion built 1843–1861 by General Nathan Bryan Whitfield. A governess named Evelyn Carter died on the property, and her presence is among the most consistently reported hauntings at the site.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition of Evelyn Carter in the ballroom</li>
+<li>Dancing figure seen in the mirrored ballroom walls</li>
+<li>Music heard from empty rooms</li>
+<li>Cold spots in the central hall</li>
+<li>Phantom perfume scent reported by visitors</li>
+<li>Displacement of objects in the parlor</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry Portico</li>
+<li>Central Hall</li>
+<li>Drawing Room / Parlor</li>
+<li>Ballroom (primary activity zone)</li>
+<li>Upper Bedrooms</li>
+<li>Exterior Gardens and Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 805 S Cedar Ave, Demopolis, AL 36732</p>
+<p><strong>Website:</strong> <a href="https://gaineswoodmuseum.com/" rel="noopener noreferrer" target="_blank">https://gaineswoodmuseum.com/</a></p>
+<p><strong>Coordinates:</strong> 32.5082° N, 87.8338° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Primary entity is Evelyn Carter. Ballroom and mirrored hall are primary activity zones. Behavior is consistent and documented across multiple independent investigations.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Alabama State Capitol -->
+<div class="entry" data-location-id="al-montgomery-capitol">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Alabama State Capitol</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Government</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Montgomery, AL</div>
+<div class="entry-meta-item">Active State Capitol</div>
+<div class="entry-meta-item">Access: Public (Tour Hours)</div>
+</div>
+<p class="entry-body">Completed in 1851 and used as the first Confederate capitol building. Site of Jefferson Davis's inauguration. The building carries the weight of Civil War-era decisions and witnessed significant historical trauma during Alabama's most turbulent political period.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitions in 19th-century dress in the rotunda</li>
+<li>Cold spots on the legislative floors</li>
+<li>Phantom voices heard after hours</li>
+<li>Shadow figures near the ceremonial staircase</li>
+<li>Unexplained sounds in the chambers at night</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Portico / Entry</li>
+<li>Rotunda (primary zone)</li>
+<li>Senate Chamber</li>
+<li>House Chamber</li>
+<li>Governor's Suite</li>
+<li>Lower Level / Basement</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 600 Dexter Ave, Montgomery, AL 36104</p>
+<p><strong>Website:</strong> <a href="https://ahc.alabama.gov/alabama-state-capitol.aspx" rel="noopener noreferrer" target="_blank">https://ahc.alabama.gov/alabama-state-capitol.aspx</a></p>
+<p><strong>Coordinates:</strong> 32.3777° N, 86.3005° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Haunting — Civil War and Reconstruction-era imprinting across multiple chambers. Rotunda identified as the primary residual concentration zone. No confirmed interactive responses on record.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pratt Hall — Huntingdon College -->
+<div class="entry" data-location-id="al-montgomery-pratthall">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Pratt Hall — Huntingdon College</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Academic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Montgomery, AL</div>
+<div class="entry-meta-item">College Dormitory</div>
+<div class="entry-meta-item">Access: Restricted (Campus)</div>
+</div>
+<p class="entry-body">Historic dormitory on the Huntingdon College campus. Home to the legend of the "Red Lady," a student who allegedly dressed entirely in red and died in her room. Her apparition, wearing red, has been reported by students and staff for decades.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition of a woman in red in the corridors</li>
+<li>Cold spots near former room locations</li>
+<li>Doors locking and unlocking without cause</li>
+<li>Unexplained sounds of movement at night</li>
+<li>Feelings of being watched in the hallways</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry / Lobby</li>
+<li>Ground Floor Corridor</li>
+<li>Upper Floor Rooms</li>
+<li>Common Areas</li>
+<li>Stairwells (reported activity zone)</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 3130 Jim Wilson Loop W, Montgomery, AL 36106</p>
+<p><strong>Website:</strong> <a href="https://www.huntingdon.edu/" rel="noopener noreferrer" target="_blank">https://www.huntingdon.edu/</a></p>
+<p><strong>Coordinates:</strong> 32.3480° N, 86.2570° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Single primary entity ("The Red Lady"). Behavior is consistent and entity-specific. Access is restricted to campus personnel; investigation requires institutional clearance.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Cedarhurst Mansion -->
+<div class="entry" data-location-id="al-huntsville-cedarhurst">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Cedarhurst Mansion</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Historic Home</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Huntsville, AL</div>
+<div class="entry-meta-item">Historic Estate</div>
+</div>
+<p class="entry-body">Antebellum estate in the Madison County area associated with the Beirne family. The site is connected to one of Alabama's most documented historical hauntings involving a young woman who died on the grounds and reportedly still appears near the mansion's exterior.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition of a young woman near the grounds</li>
+<li>Cold spots along the exterior walkways</li>
+<li>Shadow figures in the upper windows</li>
+<li>Unexplained sounds inside the structure</li>
+<li>Phantom presence reported by multiple visitors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main House — Entry Level</li>
+<li>Upper Floor Rooms</li>
+<li>Exterior Grounds</li>
+<li>Surrounding Estate Property</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 12 Northampton Dr SE, Huntsville, AL 35801</p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 34.7304° N, 86.5861° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Intelligent Haunting — Single entity with a long-standing and consistent behavioral pattern associated with the Sally Carter legend. Private property; investigation requires owner authorization and careful respect for site conditions.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Old Cahawba -->
+<div class="entry" data-location-id="al-dallascounty-cahawba">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Old Cahawba (Cahawba Archaeological Park)</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Ghost Town</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Cahaba, AL (Dallas County)</div>
+<div class="entry-meta-item">Archaeological Park</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Alabama's first state capital (1820–1826), abandoned after repeated flooding and now a preserved ghost town. The former city contains ruins of a church, antebellum homes, a plantation cemetery, and is widely regarded as one of the most haunted sites in the state.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitions throughout the ruins at dusk</li>
+<li>Mysterious lights (the "Cahawba Lights" phenomenon)</li>
+<li>Disembodied voices near the cemetery</li>
+<li>Shadow figures near former building foundations</li>
+<li>Cold spots along the river-adjacent ruins</li>
+<li>EVP responses documented at the church ruins</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Plantation Cemetery (primary activity zone)</li>
+<li>Former Capitol Site</li>
+<li>Church Ruins</li>
+<li>Antebellum Home Ruins</li>
+<li>River Bluff Area</li>
+<li>Archaeological Excavation Zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p><strong>Address:</strong> 9518 Cahaba Rd, Orrville, AL 36767</p>
+<p><strong>Website:</strong> <a href="https://ahc.alabama.gov/properties/cahawba/cahawba.aspx" rel="noopener noreferrer" target="_blank">https://ahc.alabama.gov/properties/cahawba/cahawba.aspx</a></p>
+<p><strong>Coordinates:</strong> 32.3196° N, 87.1046° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual with Intelligent Overlay — Multi-era imprinting across 200+ years of habitation and abandonment. "Cahawba Lights" are a distinct documented optical phenomenon. Cemetery and church ruins are primary investigation zones.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 18,
+    states: ["Alabama"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+<!-- Machine readable JSON metadata -->
+<script id="tpi-directory-metadata" type="application/json">
+{
+  "schema_version": "1.0",
+  "total_locations": 18,
+  "states": [
+    {
+      "name": "Alabama",
+      "code": "AL",
+      "count": 18
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+</body>
+</html>

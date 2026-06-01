@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location Reference Directory • Connecticut</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+<div class="brand-header">
+<div class="brand-left">
+<div class="brand-emblem">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 6v6l4 4"></path>
+</svg>
+</div>
+<div>
+<div class="brand-name">The Paranormal Initiative</div>
+<div class="brand-series">Location Reference Directory</div>
+</div>
+</div>
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input autocomplete="off" id="search-input" placeholder="Search locations, cities, states..." type="text"/>
+<div id="search-count">14 locations</div>
+</div>
+<span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+<div class="page">
+<div class="hero">
+<div class="hero-eyebrow">Working Directory • Research Leads</div>
+<h1 class="hero-title">Location Reference <em>Directory</em></h1>
+<p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+<div class="hero-meta">
+<div class="hero-meta-item"><span>1</span> State</div>
+<div class="hero-meta-item"><span>14</span> Location Entries</div>
+<div class="hero-meta-item"><span>12</span> Cities</div>
+<div class="hero-meta-item"><span>WIP</span> Under Review</div>
+</div>
+</div>
+<div class="sec-nav">
+<a href="alabama.html">Alabama</a>
+<a href="alaska.html">Alaska</a>
+<a href="arizona.html">Arizona</a>
+<a href="arkansas.html">Arkansas</a>
+<a href="california.html">California</a>
+<a href="colorado.html">Colorado</a>
+<a href="connecticut.html">Connecticut</a>
+<a href="delaware.html">Delaware</a>
+<a href="florida.html">Florida</a>
+<a href="georgia.html">Georgia</a>
+<a href="hawaii.html">Hawaii</a>
+<a href="idaho.html">Idaho</a>
+<a href="illinois.html">Illinois</a>
+<a href="indiana.html">Indiana</a>
+<a href="iowa.html">Iowa</a>
+<a href="kansas.html">Kansas</a>
+<a href="kentucky.html">Kentucky</a>
+<a href="louisiana.html">Louisiana</a>
+<a href="maine.html">Maine</a>
+<a href="maryland.html">Maryland</a>
+<a href="massachusetts.html">Massachusetts</a>
+<a href="michigan.html">Michigan</a>
+<a href="minnesota.html">Minnesota</a>
+<a href="mississippi.html">Mississippi</a>
+<a href="missouri.html">Missouri</a>
+<a href="montana.html">Montana</a>
+<a href="nebraska.html">Nebraska</a>
+<a href="nevada.html">Nevada</a>
+<a href="new-hampshire.html">New Hampshire</a>
+<a href="new-jersey.html">New Jersey</a>
+<a href="new-mexico.html">New Mexico</a>
+<a href="new-york.html">New York</a>
+<a href="north-carolina.html">North Carolina</a>
+<a href="north-dakota.html">North Dakota</a>
+<a href="ohio.html">Ohio</a>
+<a href="oklahoma.html">Oklahoma</a>
+<a href="oregon.html">Oregon</a>
+<a href="pennsylvania.html">Pennsylvania</a>
+<a href="rhode-island.html">Rhode Island</a>
+<a href="south-carolina.html">South Carolina</a>
+<a href="south-dakota.html">South Dakota</a>
+<a href="tennessee.html">Tennessee</a>
+<a href="texas.html">Texas</a>
+<a href="utah.html">Utah</a>
+<a href="vermont.html">Vermont</a>
+<a href="virginia.html">Virginia</a>
+<a href="washington.html">Washington</a>
+<a href="west-virginia.html">West Virginia</a>
+<a href="wisconsin.html">Wisconsin</a>
+<a href="wyoming.html">Wyoming</a>
+</div>
+<!-- CONNECTICUT -->
+<section class="sec-block" data-state="CT" id="connecticut">
+<div class="sec-header">
+<div class="sec-number">07</div>
+<div class="sec-title-block">
+<div class="sec-eyebrow">State Directory</div>
+<h2 class="sec-title">Connecticut</h2>
+</div>
+<div class="sec-tag">14 Locations</div>
+</div>
+<p class="sec-intro">Connecticut offers one of the densest mixes of colonial-era homes, institutional ruins, burial grounds, theaters, and long-operating inns in New England. The state's investigation profile is shaped by layered Revolutionary history, nineteenth-century resort and hospital development, and a strong body of regional folklore. Several Connecticut entries require careful access review, as some of the state's most discussed locations are restricted, partially redeveloped, or best documented as historic anomaly zones rather than standard haunted-site investigations.</p>
+<!-- Dudleytown -->
+<div class="entry" data-location-id="ct-cornwall-dudleytown">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Dudleytown</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Ghost Town</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Regional</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Cornwall, CT</div>
+<div class="entry-meta-item">Abandoned Settlement / Restricted Access</div>
+<div class="entry-meta-item">Access: Private Land</div>
+</div>
+<p class="entry-body">Often described in popular folklore as the "village of the damned," Dudleytown is not a preserved public ghost town but the remains of a former settlement area within the Cornwall region of northwestern Connecticut. The location has accumulated decades of paranormal legend involving curses, disappearances, and oppressive environmental sensations, but access is restricted because the land is privately controlled and unauthorized entry has long been discouraged. For TPI purposes, Dudleytown is best treated as a folklore-heavy anomaly entry requiring strict access ethics and careful separation of documented history from later urban legend amplification.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Reports of oppressive atmosphere in forested approach zones</li>
+<li>Auditory anomalies and unexplained sounds in low-traffic woodland areas</li>
+<li>Folklore-driven accounts of apparitions and shadow forms</li>
+<li>Disorientation narratives frequently repeated in later retellings</li>
+<li>Persistent curse lore associated with the former settlement area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Former settlement footprint within wooded terrain</li>
+<li>Stone foundation remnants and overgrown trace areas</li>
+<li>Forest access routes and ridge-adjacent approach points</li>
+<li>No standard public interior investigation environment</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Near Dark Entry Rd, Cornwall, CT 06753
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 41.8437° N, 73.3293° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Folklore / Restricted Anomaly Zone — Access is private and unauthorized investigation is not appropriate. Historical documentation is limited relative to the scale of modern legend, so the site should be treated as a controlled folklore entry rather than a standard active field location.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Union Cemetery -->
+<div class="entry" data-location-id="ct-easton-unioncemetery">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Union Cemetery</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Cemetery</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Easton, CT</div>
+<div class="entry-meta-item">Historic Cemetery</div>
+<div class="entry-meta-item">Access: Public / Respectful Visitation</div>
+</div>
+<p class="entry-body">Union Cemetery is among the most widely cited outdoor investigation sites in Connecticut and is especially associated with recurring reports of a female apparition commonly described as the "White Lady." The cemetery dates to the eighteenth century and contains multiple generations of burials, producing a layered historical environment rather than a single-incident haunting profile. Much of the site's modern paranormal reputation comes from repeated visual accounts, nighttime anomaly reports, and independent field interest spanning decades.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Recurring female apparition reports along roadway and cemetery edge</li>
+<li>Shadow figures between older headstone rows</li>
+<li>Light anomalies and photographic anomaly claims</li>
+<li>Cold spots concentrated in older burial sections</li>
+<li>Reported vehicle-side visual encounters on the cemetery boundary road</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main cemetery grounds with historic burial rows</li>
+<li>Roadside perimeter where most visual reports are concentrated</li>
+<li>Older grave marker sections</li>
+<li>Tree line and boundary edges</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              59 Sport Hill Rd, Easton, CT 06612
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 41.2727° N, 73.2970° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Emotional Imprint with Recurring Apparition Reports — A multi-generational burial site with strong visual folklore associations. Roadside sightline distortion and low-light contamination should be controlled before visual claims are elevated beyond witness testimony.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Captain Grant's 1754 -->
+<div class="entry" data-location-id="ct-preston-captaingrants">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Captain Grant's 1754</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Historic Inn</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Preston, CT</div>
+<div class="entry-meta-item">Bed and Breakfast</div>
+<div class="entry-meta-item">Access: Public / Reservation</div>
+</div>
+<p class="entry-body">A mid-eighteenth-century house operating as a bed and breakfast in Preston, Captain Grant's has become one of Connecticut's best-known hospitality-based paranormal locations. The structure's colonial-age origins, multiple family occupancy periods, and long-running reputation for room-specific disturbances have made it a recurring destination for overnight investigators and guests. Reports are most often tied to upper sleeping rooms, children's presence phenomena, and recurring tactile or auditory disturbances during low-activity nighttime hours.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Child-related presence reports in upstairs rooms</li>
+<li>Auditory anomalies including voices and footsteps</li>
+<li>Object displacement in guest spaces</li>
+<li>Tactile interaction claims from overnight guests</li>
+<li>Cold spots in room-specific hotspots</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main colonial entry and common room areas</li>
+<li>Upper guest bedrooms (primary activity zone)</li>
+<li>Hallways and stair access</li>
+<li>Dining room and sitting rooms</li>
+<li>Exterior grounds and garden areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              109 Route 2A, Poquetanuck Village, Preston, CT 06365
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.captaingrants.com/" rel="noopener noreferrer" target="_blank">https://www.captaingrants.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 41.5278° N, 71.9365° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Haunting — Repeated overnight witness reports suggest interaction-based behavior rather than purely residual looping. As an active inn, quiet-hour investigation control and guest privacy boundaries are critical.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Fairfield Hills Campus -->
+<div class="entry" data-location-id="ct-newtown-fairfieldhills">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Fairfield Hills Campus</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Institution</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Newtown, CT</div>
+<div class="entry-meta-item">Former Psychiatric Campus / Public Grounds</div>
+<div class="entry-meta-item">Access: Partial Public Access</div>
+</div>
+<p class="entry-body">Originally developed in the 1930s as a psychiatric hospital campus, Fairfield Hills occupies a large institutional landscape that has since been partially repurposed by the Town of Newtown for civic and recreational use. While much of the property no longer functions as an abandoned asylum environment, the surviving campus layout, former treatment buildings, and strong regional memory of the site's medical history have sustained ongoing paranormal interest. For TPI purposes, this location should be approached as a mixed-status institutional site in which open public grounds, preserved structures, and redevelopment all affect investigation viability.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition claims tied to former ward buildings</li>
+<li>Voices and auditory anomalies reported near institutional structures</li>
+<li>Environmental unease in transition zones between public and former treatment areas</li>
+<li>Shadow-form reports in low-traffic evening conditions</li>
+<li>Site-memory association from former hospital use</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Large institutional campus footprint</li>
+<li>Former treatment and ward building zones</li>
+<li>Open civic grounds and walking areas</li>
+<li>Road network linking historic campus buildings</li>
+<li>Mixed preserved and redeveloped sections</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              3 Primrose St, Newtown, CT 06470
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.newtown-ct.gov/fairfield-hills-authority" rel="noopener noreferrer" target="_blank">https://www.newtown-ct.gov/fairfield-hills-authority</a>
+</p>
+<p><strong>Coordinates:</strong> 41.4009° N, 73.2852° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Institutional Residual Imprint / Mixed-Status Site — Strong psychiatric-hospital association remains, but redevelopment and public reuse complicate direct haunting claims. Investigation should focus on documented historic zones rather than generalized campus legend.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Seaside Sanatorium -->
+<div class="entry" data-location-id="ct-waterford-seaside">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Seaside Sanatorium</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Institution</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Coastal</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Waterford, CT</div>
+<div class="entry-meta-item">Former Sanatorium / State Park Site</div>
+<div class="entry-meta-item">Access: Limited / Site-Specific</div>
+</div>
+<p class="entry-body">Built as a heliotropic tuberculosis hospital for children in the early twentieth century, the former Seaside Sanatorium occupies a dramatic coastal setting overlooking Long Island Sound. The site later served additional medical and residential functions, contributing to a layered institutional history rather than a single-use profile. Today the area is associated with Seaside State Park, but the remaining buildings and access conditions have varied over time due to preservation, redevelopment, and safety concerns. Investigative interest remains strong because of the site's medical history, isolation, and prolonged vacancy.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition and shadow reports in former hospital corridors</li>
+<li>Voices and crying-child folklore tied to historic pediatric occupancy</li>
+<li>Environmental unease in shoreline-facing building areas</li>
+<li>Window and hallway anomaly reports during low-light conditions</li>
+<li>Atmospheric changes associated with vacant interior zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main former hospital building footprint</li>
+<li>Long corridors and ward-oriented layout</li>
+<li>Coastal-facing wings and window lines</li>
+<li>Exterior grounds overlooking Long Island Sound</li>
+<li>Mixed parkland and controlled-access structural zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              36 Shore Rd, Waterford, CT 06385
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://ctparks.com/parks/seaside-state-park" rel="noopener noreferrer" target="_blank">https://ctparks.com/parks/seaside-state-park</a>
+</p>
+<p><strong>Coordinates:</strong> 41.3245° N, 72.1430° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Institutional Trauma Imprint with Access Limitations — Historic medical use and prolonged vacancy support strong institutional-haunting narratives, but changing public access and shoreline environmental contamination require caution. Confirm current access conditions before planning.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Mark Twain House -->
+<div class="entry" data-location-id="ct-hartford-marktwain">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">
+            The Mark Twain House
+            &amp;
+            Museum
+          </h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Historic Home</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Hartford, CT</div>
+<div class="entry-meta-item">Historic House Museum</div>
+<div class="entry-meta-item">Access: Public / Guided Access</div>
+</div>
+<p class="entry-body">Samuel Clemens and his family lived in this Hartford mansion from 1874 to 1891, during the period in which he wrote many of his best-known works. The house later passed through periods of changing ownership and institutional use before preservation efforts restored it as a museum. Paranormal interest in the property is tied both to Mark Twain's enduring cultural presence and to witness reports of visual anomalies, lingering presence sensations, and room-specific disturbances in restored family spaces. Because the house now functions as a museum, all investigation activity must be treated within a preservation-first framework.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Presence sensations in library and family rooms</li>
+<li>Visual anomaly and apparition folklore tied to Mark Twain himself</li>
+<li>Footsteps in upper residential areas during quiet periods</li>
+<li>Cold spots in restored room zones</li>
+<li>Room-specific disturbance reports from staff and visitors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main reception rooms and entry hall</li>
+<li>Library and study spaces</li>
+<li>Upper family sleeping quarters</li>
+<li>Stair halls and transitional corridors</li>
+<li>Museum support and preserved exhibit zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              351 Farmington Ave, Hartford, CT 06105
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://marktwainhouse.org/" rel="noopener noreferrer" target="_blank">https://marktwainhouse.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 41.7657° N, 72.6998° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Residential Imprint with Folklore-Driven Apparition Reports — Cultural attachment to the site's famous occupant amplifies witness interpretation, so room-by-room baseline comparison is essential. Museum access and preservation rules govern all field planning.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Nathan Hale Homestead -->
+<div class="entry" data-location-id="ct-coventry-nathanhale">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Nathan Hale Homestead</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Historic Home</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Coventry, CT</div>
+<div class="entry-meta-item">Historic House Museum</div>
+<div class="entry-meta-item">Access: Public / Guided Access</div>
+</div>
+<p class="entry-body">This preserved eighteenth-century homestead is associated with the family of Revolutionary War figure Nathan Hale and now operates as a museum under Connecticut Landmarks. The property represents a classic colonial domestic environment with strong regional historical identity and a long interpretive life as a heritage site. Paranormal reports are not as commercially amplified as those at some Connecticut inns or hospitals, but the homestead is frequently included in Connecticut haunting discussions because of recurring witness claims tied to footsteps, presence sensations, and room-specific environmental changes.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Footsteps in upstairs rooms during low-traffic periods</li>
+<li>Presence sensations in family-use rooms and transitional halls</li>
+<li>Cold spots in older structural zones</li>
+<li>Subtle visual anomaly reports by visitors and staff</li>
+<li>Atmospheric changes in historic domestic spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Central hall colonial layout</li>
+<li>Family rooms and parlors</li>
+<li>Upper sleeping rooms</li>
+<li>Stair access and transitional passage areas</li>
+<li>Grounds and surrounding historic landscape</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              2299 South St, Coventry, CT 06238
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://ctlandmarks.org/properties/nathan-hale-homestead/" rel="noopener noreferrer" target="_blank">https://ctlandmarks.org/properties/nathan-hale-homestead/</a>
+</p>
+<p><strong>Coordinates:</strong> 41.7643° N, 72.3460° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Residential Residual Imprint — A lower-intensity but credible colonial house environment with recurring environmental and auditory reports. Museum context requires preservation-first documentation and controlled access.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Lockwood-Mathews Mansion -->
+<div class="entry" data-location-id="ct-norwalk-lockwoodmathews">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Lockwood-Mathews Mansion Museum</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Mansion</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Norwalk, CT</div>
+<div class="entry-meta-item">Victorian Mansion Museum</div>
+<div class="entry-meta-item">Access: Limited / Event-Based</div>
+</div>
+<p class="entry-body">Completed in 1868 for financier LeGrand Lockwood, this 62-room Second Empire mansion is one of the grandest surviving Gilded Age residences in New England. The scale of the structure, long period of changing use, and preservation history have contributed to an atmosphere frequently described as unusually intense even outside explicitly paranormal framing. Witness accounts tend to cluster in major formal rooms, the rotunda, and transitional spaces between restored and less-public sections. Because of ongoing preservation and event use, access conditions may vary and should always be confirmed in advance.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition folklore tied to formal rooms and grand stair areas</li>
+<li>Presence sensations in restored period spaces</li>
+<li>Footsteps and sound anomalies in upper levels</li>
+<li>Cold spots in transitional corridors and rotunda-adjacent areas</li>
+<li>Visual disturbance reports during low-traffic tours and events</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Grand entry hall and formal reception rooms</li>
+<li>Central rotunda and vertical circulation zones</li>
+<li>Upper private and service-oriented floors</li>
+<li>Large period rooms with extensive decorative surfaces</li>
+<li>Mansion grounds within Mathews Park</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              295 West Ave, Norwalk, CT 06850
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://lockwoodmathewsmansion.com/" rel="noopener noreferrer" target="_blank">https://lockwoodmathewsmansion.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 41.1089° N, 73.4172° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Residential Imprint with Large-Structure Environmental Complexity — The mansion's scale and preservation context create layered interpretive challenges. Disturbance reports are credible but require strong control for sound propagation, event activity, and restoration-zone differences.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- New Haven Green -->
+<div class="entry" data-location-id="ct-newhaven-green">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">New Haven Green</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Historic Park</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Civic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">New Haven, CT</div>
+<div class="entry-meta-item">Historic Public Green</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">The New Haven Green has served as the central civic space of the city since the seventeenth century and was also used for burials during its early history. Its continued use as a public commons, event venue, and historic landmark means it functions less like a contained haunted site and more like a layered urban anomaly zone. Ghost narratives associated with the Green typically draw on its burial-ground history, colonial and Revolutionary-era associations, and the contrast between daily civic use and older unseen ground beneath the modern park surface.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition and shadow-form reports during low-traffic nighttime conditions</li>
+<li>Presence sensations associated with former burial-ground history</li>
+<li>Localized temperature shifts in otherwise open public space</li>
+<li>Environmental unease near church-adjacent and burial-related sectors</li>
+<li>Urban folklore tied to early colonial dead beneath the Green</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Sixteen-acre central public green</li>
+<li>Historic church boundaries and adjacent civic buildings</li>
+<li>Open lawn zones with layered burial-ground history</li>
+<li>Pedestrian pathways and event-use sections</li>
+<li>Perimeter streets and nighttime sightline corridors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              250 Temple St, New Haven, CT 06511
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://thenewhavengreen.org/" rel="noopener noreferrer" target="_blank">https://thenewhavengreen.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 41.3075° N, 72.9240° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Urban Residual / Burial-Ground Imprint — A large public anomaly zone shaped by burial history, civic use, and constant environmental contamination from traffic, lighting, and events. Investigation should focus on controlled time windows and historically grounded sectors.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sterling Opera House -->
+<div class="entry" data-location-id="ct-derby-sterlingopera">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Sterling Opera House</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Theatre</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Derby, CT</div>
+<div class="entry-meta-item">Historic Opera House</div>
+<div class="entry-meta-item">Access: Limited / Preservation Status</div>
+</div>
+<p class="entry-body">Opened in 1889 within Derby City Hall, the Sterling Opera House was once a major performance venue that hosted traveling shows and public events before falling out of regular use. Its long dormancy, preservation campaigns, and inaccessible upper-level theater environment have contributed to a reputation for persistent hauntings tied to the stage, balcony, and backstage spaces. As with many former theaters, the combination of old rigging, large-volume acoustics, and intermittent access complicates clean evaluation of reports, but the site remains one of Connecticut's best-known theater haunting entries.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition and shadow reports in the auditorium and balcony</li>
+<li>Unexplained stage-area sounds during building quiet periods</li>
+<li>Backstage presence sensations and corridor anomalies</li>
+<li>Footsteps in upper access routes and seating areas</li>
+<li>Reported visual movement in low-light theater conditions</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic auditorium with stage and seating bowl</li>
+<li>Balcony and upper viewing areas</li>
+<li>Backstage and service corridors</li>
+<li>City Hall integration below and around the theater</li>
+<li>Limited-access preservation zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              112 Elizabeth St, Derby, CT 06418
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 41.3192° N, 73.0838° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Performance-Space Imprint — Theater acoustics and preservation status create a high-contamination environment, but longstanding witness patterns support keeping the site in active directory review. Access limitations must be confirmed before planning.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Norwich State Hospital -->
+<div class="entry" data-location-id="ct-preston-norwichstate">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Norwich State Hospital</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Institution</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Preston, CT</div>
+<div class="entry-meta-item">Former Psychiatric Hospital Campus</div>
+<div class="entry-meta-item">Access: Restricted / Redevelopment</div>
+</div>
+<p class="entry-body">Opened in 1904 and closed in 1996, Norwich State Hospital grew into a large psychiatric campus with dozens of buildings spread across a broad tract along the Thames River. Since closure, the site has undergone demolition, remediation, and redevelopment planning, meaning the once-classic "abandoned asylum" investigation environment is no longer intact in the way older paranormal media often portray it. Even so, the hospital remains one of Connecticut's most historically significant institutional sites and continues to carry strong public associations with medical trauma, isolation, and long-term confinement.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Voices and distress-sound reports historically tied to ward buildings</li>
+<li>Apparition and shadow narratives across former hospital sectors</li>
+<li>Strong institutional unease reported by former visitors and explorers</li>
+<li>Environmental anomaly claims near administration and tunnel-linked zones</li>
+<li>Site-memory haunting folklore amplified by abandonment era media</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Former multi-building psychiatric campus</li>
+<li>Administration core and historic building remnants</li>
+<li>Redevelopment and remediation zones</li>
+<li>Road network and former ward sectors</li>
+<li>Mixed demolished, weatherized, and transitional areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Route 12 corridor, Preston, CT 06365
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 41.5268° N, 71.9821° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Institutional Trauma Imprint / Redevelopment-Limited Site — Historically significant but no longer a stable abandoned-campus investigation environment. Use as a contextual directory entry with strict emphasis on current access limitations and remediation status.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Gillette Castle -->
+<div class="entry" data-location-id="ct-easthaddam-gillettecastle">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Gillette Castle State Park</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Castle</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">State Park</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">East Haddam, CT</div>
+<div class="entry-meta-item">Historic Home / State Park</div>
+<div class="entry-meta-item">Access: Public / Ticketed Interior</div>
+</div>
+<p class="entry-body">Actor William Gillette, famous for portraying Sherlock Holmes on stage, designed and built this distinctive hilltop stone residence overlooking the Connecticut River in the early twentieth century. The house is architecturally eccentric and intensely personal, with custom-built features, unusual circulation choices, and a strong continuing association with its original owner. Paranormal narratives tied to the castle generally focus on lingering presence, movement in upper spaces, and the sense that the site still carries a strong imprint of Gillette's personality long after his death.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Presence sensations associated with William Gillette's continued occupancy folklore</li>
+<li>Footsteps and movement reports in upper levels and corridors</li>
+<li>Subtle visual anomalies in transitional rooms</li>
+<li>Atmospheric changes in enclosed custom-built spaces</li>
+<li>Low-intensity but persistent witness reports from staff and visitors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Stone residential structure with custom-designed rooms</li>
+<li>Upper corridors and private-use areas</li>
+<li>Main hall and river-facing rooms</li>
+<li>Grounds, terraces, and elevated landscape outlooks</li>
+<li>Mixed interior and exterior investigation context</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              67 River Rd, East Haddam, CT 06423
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://ctparks.com/parks/gillette-castle-state-park" rel="noopener noreferrer" target="_blank">https://ctparks.com/parks/gillette-castle-state-park</a>
+</p>
+<p><strong>Coordinates:</strong> 41.4231° N, 72.4276° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Residential Residual Imprint — A personality-driven site with low-intensity but recurring witness reports. Strong environmental aesthetics can influence perception, so careful distinction between atmosphere and anomaly is recommended.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Wadsworth Atheneum -->
+<div class="entry" data-location-id="ct-hartford-wadsworth">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Wadsworth Atheneum Museum of Art</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Hartford, CT</div>
+<div class="entry-meta-item">Historic Museum</div>
+<div class="entry-meta-item">Access: Public / Museum Hours</div>
+</div>
+<p class="entry-body">Founded in 1842, the Wadsworth Atheneum is the oldest continually operating public art museum in the United States. Its Gothic Revival architecture, long institutional life, and layered interior spaces have contributed to a reputation for unexplained sounds, movement, and visual anomalies, particularly during low-traffic or after-hours conditions. Unlike site narratives driven by death history alone, the museum's haunting profile is more often tied to long-term occupancy, the emotional resonance of collections, and the psychological effects of large historic gallery environments.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Unexplained footsteps and movement sounds in gallery wings</li>
+<li>Visual anomaly reports during low-traffic museum periods</li>
+<li>Presence sensations in historic corridor connections</li>
+<li>Atmospheric changes in older architectural sections</li>
+<li>Staff folklore tied to after-hours building occupancy</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Large interconnected gallery wings</li>
+<li>Historic corridor and stair connections</li>
+<li>Mixed Gothic Revival interior volumes</li>
+<li>Exhibition halls and collection rooms</li>
+<li>Back-of-house support zones not normally public</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              600 Main St, Hartford, CT 06103
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.thewadsworth.org/" rel="noopener noreferrer" target="_blank">https://www.thewadsworth.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 41.7637° N, 72.6731° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Institutional Imprint — A long-operating museum environment with recurring after-hours witness folklore. Large interior volumes and visual complexity require strong baseline comparison before interpreting movement or sound claims.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Griswold Inn -->
+<div class="entry" data-location-id="ct-essex-griswold">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">The Griswold Inn</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Historic Inn</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Colonial</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Essex, CT</div>
+<div class="entry-meta-item">Historic Inn / Tavern</div>
+<div class="entry-meta-item">Access: Public / Reservation</div>
+</div>
+<p class="entry-body">Operating since 1776, The Griswold Inn is one of the oldest continuously operating inns in the United States. Its long maritime and hospitality history, wartime associations, and centuries of uninterrupted use give it a strong standing as a layered New England inn investigation environment. Reports tend to focus on guest-room disturbances, corridor footsteps, and the sense of lingering former occupants within a structure that has changed less dramatically than many comparable sites. Its active restaurant and lodging use require careful separation of normal building activity from anomaly claims.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Footsteps in guest corridors during overnight hours</li>
+<li>Presence sensations in historic sleeping rooms</li>
+<li>Auditory anomalies in tavern-adjacent sections after closing</li>
+<li>Room-specific object displacement folklore</li>
+<li>Visual disturbance reports from staff and repeat guests</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic tavern and dining rooms</li>
+<li>Guest-room corridors and upper sleeping areas</li>
+<li>Stairways and narrow transition halls</li>
+<li>Common inn spaces with active hospitality use</li>
+<li>Rear service and support areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              36 Main St, Essex, CT 06426
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://griswoldinn.com/" rel="noopener noreferrer" target="_blank">https://griswoldinn.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 41.3516° N, 72.3868° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Inn Residual Imprint with Possible Low-Level Intelligent Interaction — Strong long-duration occupancy environment. Active hospitality operations create routine sound and movement contamination that must be accounted for in any overnight documentation plan.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 14,
+    states: ["Connecticut"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+<!-- Machine readable JSON metadata -->
+<script id="tpi-directory-metadata" type="application/json">
+{
+  "schema_version": "1.0",
+  "total_locations": 14,
+  "states": [
+    {
+      "name": "Connecticut",
+      "code": "CT",
+      "count": 14
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+</body>
+</html>

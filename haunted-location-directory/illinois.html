@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Illinois</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">18 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>18</span> Location Entries</div>
+      <div class="hero-meta-item"><span>17</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html" class="active">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- ILLINOIS -->
+  <section id="illinois" class="sec-block" data-state="IL">
+    <div class="sec-header">
+      <div class="sec-number">13</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Illinois</h2>
+      </div>
+      <div class="sec-tag">18 Locations</div>
+    </div>
+    <p class="sec-intro">Illinois blends historic hotels, cemeteries, roads, prisons, theaters, mansions, museums, university sites, and former institutional grounds into a strong Haunted Location Directory state. These entries are built as guided evidence containers: users can select the location, choose a room, zone, or outdoor bucket, and attach photos, EVP/audio, notes, videos, or flags to that area.</p>
+
+    <div class="entry" data-location-id="il-villa-kathrine">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Villa Kathrine</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Home</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Quincy, IL</div>
+          <div class="entry-meta-item">Adams County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Quincy, Illinois. A public historic castle-like landmark with repeated ghost reports and clearly defined rooms and grounds. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost dog Bingo</li>
+              <li>footsteps</li>
+              <li>unexplained presences</li>
+              <li>EVP activity</li>
+              <li>and repeated investigator reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Castle rooms</li>
+              <li>courtyard</li>
+              <li>reflecting pool</li>
+              <li>bluff overlook</li>
+              <li>park grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 532 Gardner Expressway, Quincy, IL 62301</p>
+            <p><strong>Website:</strong> <a href="https://villakathrine.com" rel="noopener noreferrer" target="_blank">https://villakathrine.com</a></p>
+            <p><strong>Coordinates:</strong> 39.9312° N, 91.4087° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic public site in Quincy with a long ghost-story tradition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-mcpike-mansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">McPike Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Home</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Alton, IL</div>
+          <div class="entry-meta-item">Madison County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Alton, Illinois. One of Illinois’ strongest haunted mansions, with long-running paranormal claims and a strong public identity. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitions</li>
+              <li>unexplained sounds</li>
+              <li>cold spots</li>
+              <li>persistent haunting reputation</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Mansion rooms</li>
+              <li>staircase</li>
+              <li>basement</li>
+              <li>grounds</li>
+              <li>exterior estate areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2018 Alby St, Alton, IL 62002</p>
+            <p><strong>Website:</strong> <a href="http://www.mcpikemansion.com" rel="noopener noreferrer" target="_blank">http://www.mcpikemansion.com</a></p>
+            <p><strong>Coordinates:</strong> 38.8948° N, 90.1770° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic mansion with a long paranormal reputation in Alton.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-alton-hauntings-mineral-springs-area">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Alton Hauntings / Mineral Springs area</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Haunted Location</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Alton, IL</div>
+          <div class="entry-meta-item">Madison County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Alton, Illinois. A year-round haunted-town framework tied to real historic locations. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost tours</li>
+              <li>haunted-town stories</li>
+              <li>strange artifacts</li>
+              <li>spirit-board</li>
+              <li>medical-oddity lore in the museum space</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Walking-tour route</li>
+              <li>museum rooms</li>
+              <li>Mineral Springs building spaces</li>
+              <li>riverfront blocks</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 301 E Broadway, Alton, IL 62002 (Mineral Springs / Soul Asylum area)</p>
+            <p><strong>Website:</strong> <a href="https://www.altonhauntings.com" rel="noopener noreferrer" target="_blank">https://www.altonhauntings.com</a></p>
+            <p><strong>Coordinates:</strong> 38.8897° N, 90.1875° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Alton is widely regarded as one of Illinois’ most haunted small towns.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-congress-plaza-hotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Congress Plaza Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Chicago, IL</div>
+          <div class="entry-meta-item">Cook County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Chicago, Illinois. Landmark hotel with a fixed address and a deep paranormal reputation. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly figures</li>
+              <li>voices</li>
+              <li>cold spots</li>
+              <li>moving objects</li>
+              <li>suicides</li>
+              <li>Al Capone-linked lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Fourth floor</li>
+              <li>twelfth floor</li>
+              <li>guest rooms</li>
+              <li>hallways</li>
+              <li>sealed/off-limits sections</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 520 S Michigan Ave, Chicago, IL 60605</p>
+            <p><strong>Website:</strong> <a href="https://www.congressplazahotel.com" rel="noopener noreferrer" target="_blank">https://www.congressplazahotel.com</a></p>
+            <p><strong>Coordinates:</strong> 41.8758° N, 87.6242° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic downtown hotel with repeated haunting reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-bachelor-s-grove-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bachelor’s Grove Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Midlothian, IL</div>
+          <div class="entry-meta-item">Cook County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Midlothian, Illinois. A classic haunted cemetery with public access and repeated apparition reports. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost lights</li>
+              <li>apparitions</li>
+              <li>ghost children</li>
+              <li>repeated eyewitness reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cemetery grounds</li>
+              <li>entry path</li>
+              <li>tree line</li>
+              <li>old settlement remains</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 5900 W Midlothian Turnpike area, Midlothian, IL</p>
+            <p><strong>Website:</strong> <a href="https://www.bachelorsgrove.com" rel="noopener noreferrer" target="_blank">https://www.bachelorsgrove.com</a></p>
+            <p><strong>Coordinates:</strong> 41.6506° N, 87.7574° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic burial ground with a long haunted reputation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-resurrection-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Resurrection Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Justice, IL</div>
+          <div class="entry-meta-item">Cook County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Justice, Illinois. The Resurrection Mary location is one of the state’s best-known ghost legends. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Resurrection Mary sightings</li>
+              <li>roadside hitchhiker lore</li>
+              <li>recurring apparition reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cemetery gate</li>
+              <li>roadside approach</li>
+              <li>Archer Avenue area</li>
+              <li>graveside sections</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 7201 Archer Ave, Justice, IL 60458</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 41.7599° N, 87.8213° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Iconic Illinois ghost-road legend tied to the cemetery.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-old-joliet-prison">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Joliet Prison</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Joliet, IL</div>
+          <div class="entry-meta-item">Will County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Joliet, Illinois. A real prison site with clear zones and strong documented paranormal claims. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>inmate apparitions</li>
+              <li>slamming cell doors</li>
+              <li>voices</li>
+              <li>execution-era lore</li>
+              <li>haunt-tour reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cell blocks</li>
+              <li>corridors</li>
+              <li>yard</li>
+              <li>administrative areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1125 Collins St, Joliet, IL 60432</p>
+            <p><strong>Website:</strong> <a href="https://www.jolietprison.org" rel="noopener noreferrer" target="_blank">https://www.jolietprison.org</a></p>
+            <p><strong>Coordinates:</strong> 41.5228° N, 88.0817° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Long operating prison with executions and deep institutional history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-will-county-historical-museum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Will County Historical Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lockport, IL</div>
+          <div class="entry-meta-item">Will County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Lockport, Illinois. The old canal headquarters now functions as a museum with recurring ghost reports. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>rocking chair moves on its own</li>
+              <li>apparition seated in the chair</li>
+              <li>young boy’s voice</li>
+              <li>childlike footsteps</li>
+              <li>former curator ghost reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Exhibit rooms</li>
+              <li>rocking-chair exhibit area</li>
+              <li>old offices</li>
+              <li>former canal vault</li>
+              <li>museum storage areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 803 S State St, Lockport, IL 60441</p>
+            <p><strong>Website:</strong> <a href="https://willhistory.org" rel="noopener noreferrer" target="_blank">https://willhistory.org</a></p>
+            <p><strong>Coordinates:</strong> 41.5914° N, 88.0504° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Former canal headquarters converted to museum; NRHP-listed historic building.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-kaskaskia-hotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kaskaskia Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">LaSalle, IL</div>
+          <div class="entry-meta-item">LaSalle County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">LaSalle, Illinois. Historic hotel with a specific haunting legend and repeated paranormal reports. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>A woman’s suicide from the roof</li>
+              <li>unexplained activity</li>
+              <li>repeated haunted-hotel reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Guest rooms</li>
+              <li>roofline</li>
+              <li>stairwells</li>
+              <li>lobby/public areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 217 Marquette St, LaSalle, IL 61301</p>
+            <p><strong>Website:</strong> <a href="https://www.illinoishauntedhouses.com/real-haunt/kaskaskia-hotel.html" rel="noopener noreferrer" target="_blank">https://www.illinoishauntedhouses.com/real-haunt/kaskaskia-hotel.html</a></p>
+            <p><strong>Coordinates:</strong> 41.3289° N, 89.0918° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic hotel with a classic haunt narrative.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-starved-rock-lodge-starved-rock-area">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Starved Rock Lodge / Starved Rock area</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Oglesby, IL</div>
+          <div class="entry-meta-item">LaSalle County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Oglesby, Illinois. Public park/lodge setting with repeated paranormal reports and usable outdoor zones. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps</li>
+              <li>flickering lights</li>
+              <li>cigar-smoke scent in empty rooms</li>
+              <li>staff/guest reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Lodge rooms</li>
+              <li>trails</li>
+              <li>canyons</li>
+              <li>park overlooks</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2688 E 873rd Rd, Oglesby, IL 61348</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 41.3244° N, 88.9876° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic park and lodge area with longstanding haunted reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-greenwood-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Greenwood Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Decatur, IL</div>
+          <div class="entry-meta-item">Macon County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Decatur, Illinois. Strong haunted cemetery with repeated apparition claims and clear sections. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Bride apparition</li>
+              <li>Civil War soldier activity</li>
+              <li>weeping woman</li>
+              <li>orbs</li>
+              <li>mass-grave lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cemetery grounds</li>
+              <li>burial sections</li>
+              <li>tree line</li>
+              <li>older grave clusters</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 5361 S Country Club Rd, Decatur, IL 62521</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.8108° N, 88.9307° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic cemetery with strong local haunted reputation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-miner-s-theatre">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Miner’s Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Collinsville, IL</div>
+          <div class="entry-meta-item">Madison County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Collinsville, Illinois. Public haunted theater with specific spirit claims and a fixed address. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>At least three ghosts</li>
+              <li>prank-like activity</li>
+              <li>malevolent family-history narrative</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Stage</li>
+              <li>seating area</li>
+              <li>backstage</li>
+              <li>actor-support spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 204 W Main St, Collinsville, IL 62234</p>
+            <p><strong>Website:</strong> <a href="https://www.illinoishauntedhouses.com/real-haunt/miners-theatre.html" rel="noopener noreferrer" target="_blank">https://www.illinoishauntedhouses.com/real-haunt/miners-theatre.html</a></p>
+            <p><strong>Coordinates:</strong> 38.6722° N, 89.9849° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic theater with a recurring haunted reputation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-cuba-road-white-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Cuba Road / White Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Barrington area, IL</div>
+          <div class="entry-meta-item">Lake County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Barrington area, Illinois. One of Lake County’s strongest haunted-road legends. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Phantom cars</li>
+              <li>apparitions</li>
+              <li>strange lights</li>
+              <li>repeated ghost-hunt stories</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Road stretch</li>
+              <li>White Cemetery</li>
+              <li>roadside pull-offs</li>
+              <li>adjacent woods</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Cuba Rd, Barrington area, Lake County, IL</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.1548° N, 88.1264° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Long-running local road legend and cemetery lore.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-dole-mansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Dole Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Home</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Crystal Lake, IL</div>
+          <div class="entry-meta-item">McHenry County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Crystal Lake, Illinois. Historic building with strong local paranormal accounts. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Strange phenomena</li>
+              <li>orbs</li>
+              <li>voices</li>
+              <li>recurring ghost lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Mansion rooms</li>
+              <li>hallways</li>
+              <li>basement</li>
+              <li>exterior grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 401 Country Club Rd, Crystal Lake, IL 60014</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.2424° N, 88.3373° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic mansion with a long paranormal reputation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-blood-s-point-road-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Blood’s Point Road &amp; Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cherry Valley area, IL</div>
+          <div class="entry-meta-item">Boone County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Boone County, Illinois. Iconic haunted-road and cemetery entry. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Red-eyed dog</li>
+              <li>phantom vehicles</li>
+              <li>murders</li>
+              <li>accidents</li>
+              <li>witchcraft lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Road</li>
+              <li>bridge</li>
+              <li>cemetery</li>
+              <li>roadside woods</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Bloods Point Rd, Boone County near Cherry Valley, IL</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.2449° N, 88.9681° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> One of Illinois’ most recognizable haunted-road legends.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-haunted-rock-island-roadhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Haunted Rock Island Roadhouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Road / Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Rock Island, IL</div>
+          <div class="entry-meta-item">Rock Island County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Rock Island, Illinois. Real, identifiable haunted building with recurring reports and clear interior zones. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Multiple spirits</li>
+              <li>audio/video captures</li>
+              <li>recurring activity</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Second-floor classrooms</li>
+              <li>hallways</li>
+              <li>stairwells</li>
+              <li>common areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Former Old Rock Island YMCA, Rock Island, IL 61201</p>
+            <p><strong>Website:</strong> <a href="https://www.hauntedus.com/illinois/haunted-rock-island-ymca/" rel="noopener noreferrer" target="_blank">https://www.hauntedus.com/illinois/haunted-rock-island-ymca/</a></p>
+            <p><strong>Coordinates:</strong> 41.5080° N, 90.5760° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic building with ongoing paranormal interest.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-peoria-state-hospital">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Peoria State Hospital</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Institutional Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bartonville, IL</div>
+          <div class="entry-meta-item">Peoria County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Bartonville, Illinois. Major institutional haunted site with strong historical context. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Haunted-cemetery activity</li>
+              <li>asylum lore</li>
+              <li>tours</li>
+              <li>apparitions</li>
+              <li>voices</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Historic hospital grounds</li>
+              <li>cemetery areas</li>
+              <li>remaining campus zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 4500 Enterprise Dr, Bartonville, IL 61607</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 40.6597° N, 89.6444° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic state hospital with a long haunted reputation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="il-university-of-illinois-english-building">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">University of Illinois English Building</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Academic / Civic</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Urbana, IL</div>
+          <div class="entry-meta-item">Champaign County</div>
+          <div class="entry-meta-item">Build: High</div>
+        </div>
+        <p class="entry-body">Urbana, Illinois. Strong campus haunt with a defined structure and repeatable claims. This entry is included as a Haunted Location Directory site because it is real, identifiable, and provides meaningful rooms, zones, or buckets for visitor evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Drowned girl / girl-in-white apparition</li>
+              <li>footsteps</li>
+              <li>odd noises</li>
+              <li>recurring campus lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>English Building</li>
+              <li>hallways</li>
+              <li>stairwells</li>
+              <li>classrooms</li>
+              <li>campus paths</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 608 S Wright St, Urbana, IL 61801</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 40.1099° N, 88.2272° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Haunted Location Directory entry with repeatable claims and usable evidence buckets.</p>
+            <p><strong>Context:</strong> Historic university building with longstanding lore.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 18,
+    states: ["Illinois"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 18,
+  "states": [
+    {
+      "name": "Illinois",
+      "code": "IL",
+      "count": 18
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

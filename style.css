@@ -518,6 +518,53 @@ footer {
     font-size: 14px;
 }
 
+.directory-subpage-hero {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.state-directory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.state-directory-grid a {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 82px;
+    padding: 16px;
+    color: #e6edf3;
+    text-decoration: none;
+    background: #141c24;
+    border: 1px solid #1f2a36;
+    border-radius: 6px;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.state-directory-grid a:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 194, 255, 0.75);
+    box-shadow: 0 0 18px rgba(0, 194, 255, 0.1);
+}
+
+.state-directory-grid strong {
+    font-size: 15px;
+}
+
+.state-directory-grid span {
+    color: #8aa0b6;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.state-directory-grid-pending a {
+    background: rgba(12, 17, 22, 0.75);
+    border-color: rgba(36, 49, 64, 0.9);
+}
+
 @media (max-width: 650px) {
     .portal-hero h2 {
         font-size: 27px;
@@ -528,6 +575,10 @@ footer {
     }
 
     .timeline-list article {
+        grid-template-columns: 1fr;
+    }
+
+    .state-directory-grid {
         grid-template-columns: 1fr;
     }
 }

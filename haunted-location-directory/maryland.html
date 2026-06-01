@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Maryland</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">TPI Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations or cities..." autocomplete="off">
+    <div id="search-count">32 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Haunted Location <em>Directory</em></h1>
+    <p class="hero-desc">This directory contains documented haunted locations, historic sites, and culturally recognized paranormal landmarks. Entries are compiled from historical records, publicly accessible data, and widely reported experiences to support exploration, documentation, and personal investigation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>32</span> Location Entries</div>
+      <div class="hero-meta-item"><span>28</span> Cities</div>
+      <div class="hero-meta-item"><span>105</span> County-Aware Research</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html" class="active">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- KANSAS -->
+  <section id="maryland" class="sec-block" data-state="MD">
+    <div class="sec-header">
+      <div class="sec-number">20</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Maryland</h2>
+      </div>
+      <div class="sec-tag">32 Locations</div>
+    </div>
+    <p class="sec-intro">Maryland has 24 jurisdictions, and this v8 build uses the approved Maryland research file as the foundation for a full state HTML. The final build includes battlefields, forts, lighthouses, historic houses, cemeteries, covered bridges, hotels, inns, theatres, civic buildings, tunnels, canal locks, roadside legends, and waterfront sites with meaningful rooms, zones, or evidence buckets.</p>
+
+    <div class="entry" data-location-id="md-sharpsburg-antietam-national-battlefield">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Antietam National Battlefield</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Sharpsburg, MD</div>
+          <div class="entry-meta-item">Civil War Battlefield</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Antietam National Battlefield is a Maryland Haunted Location Directory entry tied to civil war battlefield, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>soldier apparitions</li>
+              <li>phantom cannon fire</li>
+              <li>footsteps</li>
+              <li>voices</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Bloody Lane</li>
+              <li>Burnside Bridge</li>
+              <li>Dunker Church</li>
+              <li>battlefield fields</li>
+              <li>trails</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 5831 Dunker Church Rd, Sharpsburg, MD 21782</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/anti/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/anti/</a></p>
+            <p><strong>Coordinates:</strong> 39.4560° N, 77.7440° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Civil War Battlefield with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-scotland-point-lookout-lighthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Point Lookout Lighthouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lighthouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Scotland, MD</div>
+          <div class="entry-meta-item">Historic Lighthouse / Civil War Context</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Point Lookout Lighthouse is a Maryland Haunted Location Directory entry tied to historic lighthouse / civil war context, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>shadows</li>
+              <li>apparitions</li>
+              <li>Civil War prison-camp lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>tower</li>
+              <li>keeper house context</li>
+              <li>grounds</li>
+              <li>shoreline</li>
+              <li>park approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Point Lookout State Park, 11175 Point Lookout Rd, Scotland, MD 20687</p>
+            <p><strong>Website:</strong> <a href="https://dnr.maryland.gov/publiclands/Pages/southern/pointlookout.aspx" rel="noopener noreferrer" target="_blank">https://dnr.maryland.gov/publiclands/Pages/southern/pointlookout.aspx</a></p>
+            <p><strong>Coordinates:</strong> 38.0360° N, 76.3090° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Lighthouse / Civil War Context with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-waldorf-dr-samuel-a-mudd-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Dr. Samuel A. Mudd House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Waldorf, MD</div>
+          <div class="entry-meta-item">Lincoln Assassination Historic Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Dr. Samuel A. Mudd House is a Maryland Haunted Location Directory entry tied to lincoln assassination historic site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>voices</li>
+              <li>footsteps</li>
+              <li>apparitions</li>
+              <li>house presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>house rooms</li>
+              <li>bedroom context</li>
+              <li>hallways</li>
+              <li>grounds</li>
+              <li>museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3725 Dr. Mudd Rd, Waldorf, MD 20601</p>
+            <p><strong>Website:</strong> <a href="https://drmudd.org/" rel="noopener noreferrer" target="_blank">https://drmudd.org/</a></p>
+            <p><strong>Coordinates:</strong> 38.5520° N, 77.0720° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Lincoln Assassination Historic Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-baltimore-fort-mchenry">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort McHenry</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baltimore, MD</div>
+          <div class="entry-meta-item">Historic Fort / National Monument</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Fort McHenry is a Maryland Haunted Location Directory entry tied to historic fort / national monument, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>soldier apparitions</li>
+              <li>lanterns</li>
+              <li>footsteps</li>
+              <li>military presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>bastions</li>
+              <li>casemate corridors</li>
+              <li>parade ground</li>
+              <li>ramparts</li>
+              <li>visitor route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2400 E Fort Ave, Baltimore, MD 21230</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/fomc/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/fomc/</a></p>
+            <p><strong>Coordinates:</strong> 39.2630° N, 76.5790° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Fort / National Monument with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-baltimore-edgar-allan-poe-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Edgar Allan Poe House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baltimore, MD</div>
+          <div class="entry-meta-item">Literary Historic Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Edgar Allan Poe House is a Maryland Haunted Location Directory entry tied to literary historic site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>shadows</li>
+              <li>footsteps</li>
+              <li>interior presence</li>
+              <li>unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>interior rooms</li>
+              <li>stairways</li>
+              <li>exterior frontage</li>
+              <li>museum route</li>
+              <li>neighborhood context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 203 N Amity St, Baltimore, MD 21223</p>
+            <p><strong>Website:</strong> <a href="https://www.poeinbaltimore.org/" rel="noopener noreferrer" target="_blank">https://www.poeinbaltimore.org/</a></p>
+            <p><strong>Coordinates:</strong> 39.2890° N, 76.6320° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Literary Historic Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-cockeysville-baltimore-county-almshouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Baltimore County Almshouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Almshouse / Poorhouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cockeysville, MD</div>
+          <div class="entry-meta-item">Historic Poorhouse / Institutional Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Baltimore County Almshouse is a Maryland Haunted Location Directory entry tied to historic poorhouse / institutional site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>voices</li>
+              <li>shadow figures</li>
+              <li>footsteps</li>
+              <li>hallway activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>halls</li>
+              <li>stairways</li>
+              <li>exterior grounds</li>
+              <li>former rooms</li>
+              <li>approach areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2000 York Rd, Cockeysville, MD 21030</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.4700° N, 76.6470° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Poorhouse / Institutional Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-clinton-surratt-house-museum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Surratt House Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Clinton, MD</div>
+          <div class="entry-meta-item">Lincoln Conspiracy Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Surratt House Museum is a Maryland Haunted Location Directory entry tied to lincoln conspiracy site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>figures</li>
+              <li>cellar atmosphere</li>
+              <li>house presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>house rooms</li>
+              <li>cellar</li>
+              <li>yard</li>
+              <li>museum route</li>
+              <li>exterior approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 9118 Brandywine Rd, Clinton, MD 20735</p>
+            <p><strong>Website:</strong> <a href="https://www.surrattmuseum.org/" rel="noopener noreferrer" target="_blank">https://www.surrattmuseum.org/</a></p>
+            <p><strong>Coordinates:</strong> 38.7670° N, 76.8960° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Lincoln Conspiracy Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-chestertown-st-paul-s-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">St. Paul’s Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Chestertown, MD</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">St. Paul’s Cemetery is a Maryland Haunted Location Directory entry tied to historic cemetery, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>lantern lights</li>
+              <li>voices</li>
+              <li>apparitions</li>
+              <li>War of 1812 burial lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>cemetery lanes</li>
+              <li>older grave rows</li>
+              <li>bridge edge context</li>
+              <li>perimeter</li>
+              <li>entry paths</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 204 S Cross St, Chestertown, MD 21620</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.2130° N, 76.0710° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Cemetery with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-princess-anne-teackle-mansion-princess-anne-historic-district">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Teackle Mansion / Princess Anne Historic District</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Mansion / District</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Princess Anne, MD</div>
+          <div class="entry-meta-item">Historic Mansion and Street District</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Teackle Mansion / Princess Anne Historic District is a Maryland Haunted Location Directory entry tied to historic mansion and street district, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>ghost walk reports</li>
+              <li>figures</li>
+              <li>sounds</li>
+              <li>mansion presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>mansion rooms</li>
+              <li>grounds</li>
+              <li>Mansion Street district</li>
+              <li>exterior approaches</li>
+              <li>walking route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 11736 Mansion St, Princess Anne, MD 21853</p>
+            <p><strong>Website:</strong> <a href="https://teacklemansion.org/" rel="noopener noreferrer" target="_blank">https://teacklemansion.org/</a></p>
+            <p><strong>Coordinates:</strong> 38.2040° N, 75.6970° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Mansion and Street District with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-frederick-winchester-hall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Winchester Hall</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Hall</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Frederick, MD</div>
+          <div class="entry-meta-item">Civil War Era Building</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Winchester Hall is a Maryland Haunted Location Directory entry tied to civil war era building, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>cold spots</li>
+              <li>hall presence</li>
+              <li>stairwell activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>main hall</li>
+              <li>stairwell</li>
+              <li>interior corridors</li>
+              <li>exterior frontage</li>
+              <li>entry areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 12 E Church St, Frederick, MD 21701</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.4140° N, 77.4100° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Civil War Era Building with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-kingsville-jericho-covered-bridge">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Jericho Covered Bridge</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Covered Bridge</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Kingsville, MD</div>
+          <div class="entry-meta-item">Historic Bridge</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Jericho Covered Bridge is a Maryland Haunted Location Directory entry tied to historic bridge, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>stalled-car legends</li>
+              <li>figures</li>
+              <li>phantom sounds</li>
+              <li>bridge presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>bridge deck</li>
+              <li>roadway approaches</li>
+              <li>stream edge</li>
+              <li>shoulder areas</li>
+              <li>covered span</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Jericho Rd, Kingsville, MD</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.4680° N, 76.4110° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Bridge with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-annapolis-maryland-state-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Maryland State House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government Building</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Annapolis, MD</div>
+          <div class="entry-meta-item">Historic State House</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Maryland State House is a Maryland Haunted Location Directory entry tied to historic state house, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>apparitions</li>
+              <li>public-hall presence</li>
+              <li>historic-building sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>public halls</li>
+              <li>stairways</li>
+              <li>old senate chamber context</li>
+              <li>grounds</li>
+              <li>State Circle exterior</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 100 State Cir, Annapolis, MD 21401</p>
+            <p><strong>Website:</strong> <a href="https://msa.maryland.gov/msa/mdstatehouse/html/home.html" rel="noopener noreferrer" target="_blank">https://msa.maryland.gov/msa/mdstatehouse/html/home.html</a></p>
+            <p><strong>Coordinates:</strong> 38.9788° N, 76.4914° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic State House with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-glen-echo-glen-echo-park-clara-barton-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Glen Echo Park / Clara Barton House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Park / House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Glen Echo, MD</div>
+          <div class="entry-meta-item">Historic Park and Clara Barton Context</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Glen Echo Park / Clara Barton House is a Maryland Haunted Location Directory entry tied to historic park and clara barton context, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>voices</li>
+              <li>movement reports</li>
+              <li>park-building presence</li>
+              <li>house-context atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>park grounds</li>
+              <li>historic structures</li>
+              <li>Clara Barton House context</li>
+              <li>former amusement areas</li>
+              <li>walking route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 5801 Oxford Rd, Glen Echo, MD 20812</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/glec/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/glec/</a></p>
+            <p><strong>Coordinates:</strong> 38.9696° N, 77.1384° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Park and Clara Barton Context with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-hagerstown-jonathan-hager-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Jonathan Hager House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Hagerstown, MD</div>
+          <div class="entry-meta-item">Historic House</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Jonathan Hager House is a Maryland Haunted Location Directory entry tied to historic house, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>shadows</li>
+              <li>footsteps</li>
+              <li>house presence</li>
+              <li>room atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>house rooms</li>
+              <li>stairways</li>
+              <li>cellar/lower areas</li>
+              <li>grounds</li>
+              <li>museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 110 Key St, Hagerstown, MD 21740</p>
+            <p><strong>Website:</strong> <a href="https://www.hagerhouse.org/" rel="noopener noreferrer" target="_blank">https://www.hagerhouse.org/</a></p>
+            <p><strong>Coordinates:</strong> 39.6420° N, 77.7190° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic House with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-edgemere-fort-howard">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Howard</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort / Military Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Edgemere, MD</div>
+          <div class="entry-meta-item">Historic Military Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Fort Howard is a Maryland Haunted Location Directory entry tied to historic military site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>soldier apparitions</li>
+              <li>footsteps</li>
+              <li>unexplained sounds</li>
+              <li>military presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>former military grounds</li>
+              <li>waterfront areas</li>
+              <li>exterior structures</li>
+              <li>park paths</li>
+              <li>approach roads</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 9000 North Point Rd, Edgemere, MD 21219</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.2110° N, 76.4430° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Military Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-burkittsville-crumpton-s-gap-snallygaster-area">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Crumpton’s Gap / Snallygaster Area</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Mountain Gap / Folklore Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Burkittsville, MD</div>
+          <div class="entry-meta-item">Outdoor Folklore Area</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Crumpton’s Gap / Snallygaster Area is a Maryland Haunted Location Directory entry tied to outdoor folklore area, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>beast sightings</li>
+              <li>wooded-road presence</li>
+              <li>phantom sounds</li>
+              <li>mountain-gap unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>gap area</li>
+              <li>wooded roads</li>
+              <li>trail approaches</li>
+              <li>mountain ridge context</li>
+              <li>pull-off areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Crampton’s Gap / Burkittsville area, MD</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.4000° N, 77.6500° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Outdoor Folklore Area with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-baltimore-the-lord-baltimore-hotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Lord Baltimore Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baltimore, MD</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">The Lord Baltimore Hotel is a Maryland Haunted Location Directory entry tied to historic hotel, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>elevator activity</li>
+              <li>voices</li>
+              <li>guest-floor presence</li>
+              <li>apparitions</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>guest floors</li>
+              <li>elevators</li>
+              <li>lobby</li>
+              <li>ballroom/event spaces</li>
+              <li>hallways</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 20 W Baltimore St, Baltimore, MD 21201</p>
+            <p><strong>Website:</strong> <a href="https://www.lordbaltimorehotel.com/" rel="noopener noreferrer" target="_blank">https://www.lordbaltimorehotel.com/</a></p>
+            <p><strong>Coordinates:</strong> 39.2896° N, 76.6168° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Hotel with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-baltimore-admiral-fell-inn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Admiral Fell Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baltimore, MD</div>
+          <div class="entry-meta-item">Historic Inn / Fells Point</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Admiral Fell Inn is a Maryland Haunted Location Directory entry tied to historic inn / fells point, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>figures</li>
+              <li>maritime district lore</li>
+              <li>guest-room activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>guest rooms</li>
+              <li>hallways</li>
+              <li>basement/lower areas</li>
+              <li>lobby</li>
+              <li>Fells Point exterior</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 888 S Broadway, Baltimore, MD 21231</p>
+            <p><strong>Website:</strong> <a href="https://www.admiralfell.com/" rel="noopener noreferrer" target="_blank">https://www.admiralfell.com/</a></p>
+            <p><strong>Coordinates:</strong> 39.2822° N, 76.5934° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Inn / Fells Point with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-baltimore-green-mount-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Green Mount Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baltimore, MD</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Green Mount Cemetery is a Maryland Haunted Location Directory entry tied to historic cemetery, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>apparitions</li>
+              <li>orbs</li>
+              <li>cemetery presence</li>
+              <li>footsteps</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>older sections</li>
+              <li>monument areas</li>
+              <li>paths</li>
+              <li>gates</li>
+              <li>perimeter roads</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1501 Greenmount Ave, Baltimore, MD 21202</p>
+            <p><strong>Website:</strong> <a href="https://greenmountcemetery.com/" rel="noopener noreferrer" target="_blank">https://greenmountcemetery.com/</a></p>
+            <p><strong>Coordinates:</strong> 39.3084° N, 76.6087° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Cemetery with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-stevensville-kent-manor-inn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kent Manor Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Stevensville, MD</div>
+          <div class="entry-meta-item">Historic Inn / Estate</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Kent Manor Inn is a Maryland Haunted Location Directory entry tied to historic inn / estate, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>cigar smoke</li>
+              <li>guest-room presence</li>
+              <li>hallway activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>guest rooms</li>
+              <li>hallways</li>
+              <li>porch areas</li>
+              <li>grounds</li>
+              <li>public rooms</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 500 Kent Manor Dr, Stevensville, MD 21666</p>
+            <p><strong>Website:</strong> <a href="https://www.kentmanor.com/" rel="noopener noreferrer" target="_blank">https://www.kentmanor.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.9802° N, 76.3147° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Inn / Estate with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-lusby-old-field-house-saffron">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Field House / Saffron</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House / Local Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lusby, MD</div>
+          <div class="entry-meta-item">Calvert County Historic Reference</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Old Field House / Saffron is a Maryland Haunted Location Directory entry tied to calvert county historic reference, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>presence reports</li>
+              <li>unexplained sounds</li>
+              <li>shadows</li>
+              <li>exterior unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>house context</li>
+              <li>exterior grounds</li>
+              <li>entry approach</li>
+              <li>room-context areas</li>
+              <li>local road approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Lusby, MD local historic reference</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.4100° N, 76.4550° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Calvert County Historic Reference with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-oldtown-paw-paw-tunnel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Paw Paw Tunnel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Tunnel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Oldtown, MD</div>
+          <div class="entry-meta-item">C&amp;O Canal Tunnel</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Paw Paw Tunnel is a Maryland Haunted Location Directory entry tied to c&amp;o canal tunnel, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>voices</li>
+              <li>canal-worker apparitions</li>
+              <li>echoing sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>tunnel interior</li>
+              <li>north portal</li>
+              <li>south portal</li>
+              <li>towpath</li>
+              <li>canal approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Paw Paw Tunnel, Western Maryland Rail Trail / C&amp;O Canal access, Oldtown, MD</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/choh/planyourvisit/pawpaw-tunnel.htm" rel="noopener noreferrer" target="_blank">https://www.nps.gov/choh/planyourvisit/pawpaw-tunnel.htm</a></p>
+            <p><strong>Coordinates:</strong> 39.5420° N, 78.4630° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — C&amp;O Canal Tunnel with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-easton-hackley-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hackley House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Easton, MD</div>
+          <div class="entry-meta-item">Historic House / Local Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Hackley House is a Maryland Haunted Location Directory entry tied to historic house / local site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>shadows</li>
+              <li>voices</li>
+              <li>footsteps</li>
+              <li>house presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>house rooms context</li>
+              <li>stairways</li>
+              <li>exterior frontage</li>
+              <li>historic street area</li>
+              <li>grounds context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 101 S Washington St, Easton, MD 21601</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.7730° N, 76.0760° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic House / Local Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-ocean-city-ocean-city-life-saving-station-museum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Ocean City Life-Saving Station Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Ocean City, MD</div>
+          <div class="entry-meta-item">Historic Life-Saving Station</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Ocean City Life-Saving Station Museum is a Maryland Haunted Location Directory entry tied to historic life-saving station, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>apparitions</li>
+              <li>doors opening</li>
+              <li>maritime presence</li>
+              <li>exhibit sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>museum rooms</li>
+              <li>exhibit areas</li>
+              <li>exterior station</li>
+              <li>boardwalk approach</li>
+              <li>oceanfront context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 813 S Atlantic Ave, Ocean City, MD 21842</p>
+            <p><strong>Website:</strong> <a href="https://www.ocmuseum.org/" rel="noopener noreferrer" target="_blank">https://www.ocmuseum.org/</a></p>
+            <p><strong>Coordinates:</strong> 38.3266° N, 75.0854° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Life-Saving Station with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-berlin-berlin-clayton-theatre">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Berlin Clayton Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Berlin, MD</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Berlin Clayton Theatre is a Maryland Haunted Location Directory entry tied to historic theatre, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>figures</li>
+              <li>footsteps</li>
+              <li>stage activity</li>
+              <li>seating presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>stage</li>
+              <li>auditorium</li>
+              <li>lobby</li>
+              <li>projection/upper areas</li>
+              <li>exterior frontage</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 200 N Main St, Berlin, MD 21811</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.3260° N, 75.2180° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Theatre with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-salisbury-wicomico-youth-civic-center">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Wicomico Youth &amp; Civic Center</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Civic Center</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Salisbury, MD</div>
+          <div class="entry-meta-item">Event Space / Civic Venue</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Wicomico Youth & Civic Center is a Maryland Haunted Location Directory entry tied to event space / civic venue, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>event-space presence</li>
+              <li>footsteps</li>
+              <li>unexplained sounds</li>
+              <li>corridor activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>event floor</li>
+              <li>seating areas</li>
+              <li>corridors</li>
+              <li>support areas</li>
+              <li>exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 500 Glen Ave, Salisbury, MD 21804</p>
+            <p><strong>Website:</strong> <a href="https://www.wicomicociviccenter.org/" rel="noopener noreferrer" target="_blank">https://www.wicomicociviccenter.org/</a></p>
+            <p><strong>Coordinates:</strong> 38.3652° N, 75.5732° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Event Space / Civic Venue with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-cumberland-c-o-canal-locks-cumberland-section">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">C&amp;O Canal Locks / Cumberland Section</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Canal / Locks</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cumberland, MD</div>
+          <div class="entry-meta-item">Historic Canal Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">C&O Canal Locks / Cumberland Section is a Maryland Haunted Location Directory entry tied to historic canal site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>canal-worker apparitions</li>
+              <li>footsteps</li>
+              <li>water sounds</li>
+              <li>towpath voices</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>canal locks</li>
+              <li>towpath</li>
+              <li>river edge</li>
+              <li>lockhouse context</li>
+              <li>Cumberland terminus areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> C&amp;O Canal Cumberland terminus / lock areas, Cumberland, MD</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/choh/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/choh/</a></p>
+            <p><strong>Coordinates:</strong> 39.6500° N, 78.7620° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Canal Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-elkton-carroll-mansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Carroll Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Elkton, MD</div>
+          <div class="entry-meta-item">Historic House / Mansion</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Carroll Mansion is a Maryland Haunted Location Directory entry tied to historic house / mansion, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>figures</li>
+              <li>footsteps</li>
+              <li>house presence</li>
+              <li>unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>mansion rooms</li>
+              <li>stairways</li>
+              <li>hallways</li>
+              <li>exterior grounds</li>
+              <li>Main Street frontage</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 800 S Main St, Elkton, MD 21921</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.5990° N, 75.8330° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic House / Mansion with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-prince-george-s-county-gunter-s-hill-cry-baby-bridge-area">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Gunter’s Hill / Cry Baby Bridge Area</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Bridge / Roadside Legend</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Prince George’s County, MD</div>
+          <div class="entry-meta-item">Outdoor Bridge Legend</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Gunter’s Hill / Cry Baby Bridge Area is a Maryland Haunted Location Directory entry tied to outdoor bridge legend, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>crying sounds</li>
+              <li>light anomalies</li>
+              <li>roadside presence</li>
+              <li>phantom sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>bridge area</li>
+              <li>roadway approach</li>
+              <li>creek/lowland edge</li>
+              <li>pull-off context</li>
+              <li>tree-line areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Gunter’s Hill / Cry Baby Bridge area, Prince George’s County, MD</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.8000° N, 76.9000° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Outdoor Bridge Legend with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-dorchester-county-choptank-river-bridge-area">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Choptank River Bridge Area</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Bridge / Waterfront</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Dorchester County, MD</div>
+          <div class="entry-meta-item">River Bridge Legend</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Choptank River Bridge Area is a Maryland Haunted Location Directory entry tied to river bridge legend, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>lights</li>
+              <li>figures</li>
+              <li>river-edge presence</li>
+              <li>phantom sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>bridge deck</li>
+              <li>river edge</li>
+              <li>roadway approaches</li>
+              <li>shoulder context</li>
+              <li>waterfront viewing areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Choptank River bridge area, Dorchester County, MD</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.5660° N, 76.0670° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — River Bridge Legend with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-westminster-old-westminster-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Westminster Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Westminster, MD</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Old Westminster Cemetery is a Maryland Haunted Location Directory entry tied to historic cemetery, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>orbs</li>
+              <li>unexplained sounds</li>
+              <li>cemetery presence</li>
+              <li>footsteps</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>older grave rows</li>
+              <li>paths</li>
+              <li>perimeter areas</li>
+              <li>gate/entry</li>
+              <li>tree-line sections</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 334 W Main St, Westminster, MD 21157</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.5790° N, 77.0040° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Cemetery with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="md-bel-air-bel-air-armory">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bel Air Armory</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Armory</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bel Air, MD</div>
+          <div class="entry-meta-item">Historic Armory / Event Space</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Bel Air Armory is a Maryland Haunted Location Directory entry tied to historic armory / event space, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>movement reports</li>
+              <li>event-space presence</li>
+              <li>unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>main hall</li>
+              <li>event spaces</li>
+              <li>entry/lobby</li>
+              <li>exterior frontage</li>
+              <li>support areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 37 N Main St, Bel Air, MD 21014</p>
+            <p><strong>Website:</strong> <a href="https://www.belairarmory.org/" rel="noopener noreferrer" target="_blank">https://www.belairarmory.org/</a></p>
+            <p><strong>Coordinates:</strong> 39.5365° N, 76.3498° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Armory / Event Space with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 32,
+    states: ["Maryland"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 32,
+  "states": [
+    {
+      "name": "Maryland",
+      "code": "MD",
+      "count": 32
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

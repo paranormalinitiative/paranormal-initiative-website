@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Reference Directory • Hawaii</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Location Reference Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">10 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>10</span> Location Entries</div>
+      <div class="hero-meta-item"><span>3</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- HAWAII -->
+  <section id="hawaii" class="sec-block" data-state="HI">
+    <div class="sec-header">
+      <div class="sec-number">11</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Hawaii</h2>
+      </div>
+      <div class="sec-tag">10 Locations</div>
+    </div>
+    <p class="sec-intro">Hawaii requires a more careful documentation standard than most mainland states. Reported activity at royal, military, religious, and landscape sites often overlaps with living cultural memory, spiritual tradition, and historically traumatic events. This section prioritizes public-facing historic sites and clearly distinguishes between standard haunting reports, battle-related residual patterns, and culturally significant anomaly zones.</p>
+    <div class="entry" data-location-id="hi-honolulu-iolani">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">ʻIolani Palace</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">Royal Palace / Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Completed in 1882 as the official royal residence of the Hawaiian Kingdom, ʻIolani Palace remains one of the most historically significant structures in the Pacific. Reports of unusual activity are most often tied to the monarchy period and to the later overthrow-era trauma associated with the imprisonment of Queen Liliʻuokalani. The site should be approached as both a historic landmark and a place of living cultural significance.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition reports associated with royal-era figures</li>
+              <li>Footsteps in upper corridors during quiet periods</li>
+              <li>Presence sensations near private chambers</li>
+              <li>Cold spots in transitional hallway spaces</li>
+              <li>Auditory anomalies reported by staff after hours</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Grand Hall and ceremonial rooms</li>
+              <li>Upper royal chambers</li>
+              <li>Imprisonment room associated with Queen Liliʻuokalani</li>
+              <li>Stair halls and perimeter corridors</li>
+              <li>Grounds and barracks-adjacent areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              364 S King St, Honolulu, HI 96813
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.iolanipalace.org/" rel="noopener noreferrer" target="_blank">https://www.iolanipalace.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3068° N, 157.8588° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic royal site with possible residual and intelligent interaction reports. Cultural respect requirements are high; all interpretation should avoid sensational framing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-kaneohe-pali">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Nuʻuanu Pali Lookout</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Kāneʻohe, HI</div>
+          <div class="entry-meta-item">State Wayside / Battlefield</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">The Nuʻuanu Pali is tied directly to the 1795 Battle of Nuʻuanu, one of the most consequential conflicts in Hawaiian history. Reports from visitors and local tradition describe voices on the wind, sudden temperature shifts, and apparition-like forms in low-visibility conditions. Strong wind conditions, steep terrain, and roadside exposure create significant environmental contamination factors for any field documentation.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Voices or chanting-like sounds carried on extreme winds</li>
+              <li>Apparition reports in cliffside and overlook areas</li>
+              <li>Sudden atmosphere changes and pressure sensations</li>
+              <li>Shadow movement during dusk and low cloud cover</li>
+              <li>Strong residual battle associations in local accounts</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main overlook platform</li>
+              <li>Roadside approach and parking area</li>
+              <li>Cliffside viewing edge</li>
+              <li>Surrounding ridgeline and wind corridor</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              Nuuanu Pali Dr, Kaneohe, HI 96744
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://dlnr.hawaii.gov/dsp/parks/oahu/nuuanu-pali-state-wayside/" rel="noopener noreferrer" target="_blank">https://dlnr.hawaii.gov/dsp/parks/oahu/nuuanu-pali-state-wayside/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3671° N, 157.7931° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual battlefield imprint / outdoor anomaly zone. Wind and terrain interference are significant and must be documented before interpreting auditory or visual events.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-honolulu-moana">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Moana Surfrider</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">Historic Waikīkī Hotel</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Opened in 1901 and widely known as the “First Lady of Waikīkī,” the Moana Surfrider is one of Hawaii’s most frequently cited historic hotel locations for apparition reports. The most persistent accounts center on a woman associated with an early twentieth-century death on the property, with recurring reports of visual anomalies, unexplained room disturbances, and guest-floor activity.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>“Lady in white” apparition reports in guest areas</li>
+              <li>Room-specific disturbances and object displacement</li>
+              <li>Footsteps in corridors during overnight hours</li>
+              <li>Cold spots near older wing sections</li>
+              <li>Elevator and hallway anomaly reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic Banyan Wing</li>
+              <li>Tower Wing guest floors</li>
+              <li>Oceanfront lobby and verandas</li>
+              <li>Corridor and elevator zones</li>
+              <li>Beach-facing public spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              2365 Kalakaua Ave, Honolulu, HI 96815
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.marriott.com/en-us/hotels/hnlwi-moana-surfrider-a-westin-resort-and-spa-waikiki-beach/overview/" rel="noopener noreferrer" target="_blank">https://www.marriott.com/en-us/hotels/hnlwi-moana-surfrider-a-westin-resort-and-spa-waikiki-beach/overview/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.2765° N, 157.8266° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic hotel with recurring apparition and room-specific disturbance reports. Active resort environment requires careful control of guest traffic, HVAC, and elevator noise.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-honolulu-pearlharbor">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Pearl Harbor National Memorial</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Military</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">National Memorial</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Pearl Harbor National Memorial preserves one of the most historically traumatic sites in modern American military history. Reported activity in and around memorial grounds is typically framed in terms of residual wartime imprint rather than conventional haunting language, with visitors and staff describing atmosphere changes, unexplained sounds, and emotional pressure in areas tied closely to the December 7, 1941 attack.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Residual wartime sound reports near memorial zones</li>
+              <li>Atmospheric heaviness and emotional pressure reactions</li>
+              <li>Unexplained voices or distant calls on quieter days</li>
+              <li>Visual anomaly reports near water-facing observation points</li>
+              <li>Staff accounts of after-hours presence sensations</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Visitor center and memorial grounds</li>
+              <li>Waterfront observation areas</li>
+              <li>Boat transport route to the USS Arizona Memorial</li>
+              <li>Interpretive and museum spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1 Arizona Memorial Place, Honolulu, HI 96818
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.nps.gov/perl/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/perl/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3676° N, 157.9389° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual military and memorial imprint. Interpretation should remain historically grounded and respectful; the site is foremost a memorial and not an entertainment-oriented investigation location.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-honolulu-ussarizona">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">USS Arizona Memorial</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Military</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">War Memorial</div>
+          <div class="entry-meta-item">Access: Public / Controlled</div>
+        </div>
+        <p class="entry-body">Built above the remains of the USS Arizona, the memorial marks the resting place of many of the sailors and Marines lost in the 1941 attack. Reports associated with this location are usually described as deeply emotional, atmospheric, and residual in character rather than interactive. Any documentation approach must recognize the memorial’s status as a sacred war grave.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Strong atmosphere changes reported by visitors</li>
+              <li>Unexplained sound impressions over the wreck site</li>
+              <li>Presence sensations during quiet observation periods</li>
+              <li>Emotional and physical response reports disproportionate to conditions</li>
+              <li>Residual wartime association accounts from staff and visitors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Open-air memorial platform</li>
+              <li>Central shrine room</li>
+              <li>Observation openings over the wreck</li>
+              <li>Boat access loading and approach sequence</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1 Arizona Memorial Place, Honolulu, HI 96818
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.pearlharborhistoricsites.org/plan/uss-arizona-memorial" rel="noopener noreferrer" target="_blank">https://www.pearlharborhistoricsites.org/plan/uss-arizona-memorial</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3647° N, 157.9500° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual memorial imprint / sacred military site. Documentation, if undertaken at all, should prioritize solemnity, not provocation or traditional challenge-response methods.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-honolulu-morganscorner">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Morgan’s Corner</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Wilderness</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Regional</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">Roadside / Folklore Zone</div>
+          <div class="entry-meta-item">Access: Public (Roadside)</div>
+        </div>
+        <p class="entry-body">Morgan’s Corner is one of Oʻahu’s most persistent modern folklore locations, associated with fatal accidents, homicide lore, and repeated local accounts of oppressive atmosphere, whispers, and apparition-like roadside phenomena. The area is often linked in public retellings both to twentieth-century crime stories and to deeper historical battle narratives in the Nuʻuanu corridor. It should be treated as a folklore-heavy anomaly zone rather than a standard site-based haunting location.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Oppressive atmosphere and sudden fear responses</li>
+              <li>Whispering or voice phenomena near the roadside bend</li>
+              <li>Visual anomaly and shadow-form reports</li>
+              <li>Device drain and equipment irregularity claims</li>
+              <li>Folklore-linked apparitional accounts from local drivers</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Hairpin turn / roadside bend</li>
+              <li>Old Pali road corridor</li>
+              <li>Vegetation-lined shoulder areas</li>
+              <li>Nearby trail and ridge approaches</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              Nuuanu Pali Dr, Honolulu, HI 96817
+            </p>
+            <p>
+              <strong>Website:</strong>
+              Not publicly maintained
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3045° N, 157.8557° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Folklore / roadside anomaly zone. Reports are culturally and locally layered, with substantial contamination from modern legend, traffic noise, and expectation effects.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-waipahu-plantationvillage">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hawaii’s Plantation Village</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Waipahu, HI</div>
+          <div class="entry-meta-item">Historic Outdoor Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">This reconstructed plantation-era village interprets the multi-ethnic labor history of Hawaii’s sugar industry through relocated and restored worker structures. Reports of unusual activity are usually tied to house interiors, footsteps, and atmosphere changes in preserved dwellings. Because the village is both an educational and cultural site, any paranormal framing should remain secondary to labor history and community memory.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in preserved worker houses</li>
+              <li>Presence sensations in specific dwellings</li>
+              <li>Visual anomaly reports in window and doorway zones</li>
+              <li>Unexplained indoor temperature differences</li>
+              <li>Object-shift reports from staff and visitors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Multiple preserved plantation dwellings</li>
+              <li>Outdoor village pathways</li>
+              <li>Cultural exhibit buildings</li>
+              <li>Garden and perimeter zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              94-695 Waipahu St, Waipahu, HI 96797
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://hawaiiplantationvillage.org/" rel="noopener noreferrer" target="_blank">https://hawaiiplantationvillage.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3854° N, 158.0119° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic cultural site with possible residual occupational imprint. Environmental interpretation should remain subordinate to plantation labor history and community context.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-honolulu-judiciaryhistory">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">King Kamehameha V Judiciary History Center</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">Aliʻiōlani Hale / Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Located inside Aliʻiōlani Hale, one of Honolulu’s most historically significant civic buildings, the Judiciary History Center interprets Hawaiian legal and governmental history. Reports tied to the broader building include unusual sounds, footsteps, and after-hours atmosphere changes in courtroom-adjacent areas. As with other civic-monarchy crossover sites in Honolulu, the building carries layered governmental and cultural significance that should temper any investigative framing.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in upper and adjacent government corridors</li>
+              <li>After-hours voice reports in quiet rooms</li>
+              <li>Presence sensations in courtroom-related areas</li>
+              <li>Door and corridor anomalies during low-traffic periods</li>
+              <li>Localized cold spots in older interior sections</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>First-floor museum exhibits</li>
+              <li>Aliʻiōlani Hale corridors</li>
+              <li>Courtroom-adjacent areas</li>
+              <li>Stair halls and entry sequence</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              417 S King St, Honolulu, HI 96813
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.jhchawaii.org/" rel="noopener noreferrer" target="_blank">https://www.jhchawaii.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3054° N, 157.8599° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual institutional imprint within a historic civic building. Public museum access is available, but building status and cultural context require restrained interpretation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-honolulu-kawaiahao">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kawaiahaʻo Church</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Church</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">Historic Church</div>
+          <div class="entry-meta-item">Access: Public / Worship Site</div>
+        </div>
+        <p class="entry-body">Often called the “Westminster Abbey of Hawaiʻi,” Kawaiahaʻo Church has deep ties to Hawaiian monarchy history, royal ceremonies, and generations of burial and memorial practice. Reports of unusual activity at and around the church are generally subtle, centering on footsteps, visual impressions, and atmosphere changes within a site already saturated with spiritual meaning. This is a living church first, and any TPI documentation should remain culturally respectful and non-intrusive.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footstep reports in quiet sanctuary periods</li>
+              <li>Presence sensations near burial and memorial-associated areas</li>
+              <li>Visual anomaly reports in pew and aisle lines</li>
+              <li>Atmospheric changes during off-hours access</li>
+              <li>Subtle voice impressions reported by staff and visitors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main sanctuary</li>
+              <li>Aisles and pew rows</li>
+              <li>Perimeter burial and memorial grounds</li>
+              <li>Entry and side access points</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              957 Punchbowl St, Honolulu, HI 96813
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://kawaiahaochurch.com/" rel="noopener noreferrer" target="_blank">https://kawaiahaochurch.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.3045° N, 157.8576° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic religious site with subtle residual and atmospheric reports. Active worship space; investigation, if any, requires explicit permission and strict respect protocols.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="hi-honolulu-hiltonvillage">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hilton Hawaiian Village</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Honolulu, HI</div>
+          <div class="entry-meta-item">Resort Complex</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">The Hilton Hawaiian Village occupies a large Waikīkī coastal footprint and has accumulated folklore and witness accounts associated with older land use, burial-ground sensitivity, and unexplained activity within certain towers and corridors. Because the property is a large active resort complex, environmental contamination from heavy guest traffic, elevators, ocean noise, and commercial operations is substantial. It is best treated as a mixed-use hospitality site with localized reports rather than a single concentrated haunting location.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Room-specific anomaly reports from guests</li>
+              <li>Corridor footsteps and voice impressions</li>
+              <li>Presence sensations in older tower areas</li>
+              <li>Localized cold spots despite active HVAC conditions</li>
+              <li>Folklore-linked burial-ground associations in public retellings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Multiple guest towers</li>
+              <li>Interior corridors and elevator zones</li>
+              <li>Lagoon and beachfront public areas</li>
+              <li>Lobby, retail, and event spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              2005 Kalia Rd, Honolulu, HI 96815
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.hilton.com/en/hotels/hnlhvhh-hilton-hawaiian-village-waikiki-beach-resort/" rel="noopener noreferrer" target="_blank">https://www.hilton.com/en/hotels/hnlhvhh-hilton-hawaiian-village-waikiki-beach-resort/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              21.2827° N, 157.8388° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Localized hospitality-site disturbance reports within a high-noise resort environment. Investigation value is limited unless narrowed to a specific tower, floor, or repeating room cluster.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 10,
+    states: ["Hawaii"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 10,
+  "states": [
+    {
+      "name": "Hawaii",
+      "code": "HI",
+      "count": 10
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location Reference Directory • Delaware</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+<div class="brand-header">
+<div class="brand-left">
+<div class="brand-emblem">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 6v6l4 4"></path>
+</svg>
+</div>
+<div>
+<div class="brand-name">The Paranormal Initiative</div>
+<div class="brand-series">Location Reference Directory</div>
+</div>
+</div>
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input autocomplete="off" id="search-input" placeholder="Search locations, cities, states..." type="text"/>
+<div id="search-count">4 locations</div>
+</div>
+<span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+<div class="page">
+<div class="hero">
+<div class="hero-eyebrow">Working Directory • Research Leads</div>
+<h1 class="hero-title">Location Reference <em>Directory</em></h1>
+<p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+<div class="hero-meta">
+<div class="hero-meta-item"><span>1</span> State</div>
+<div class="hero-meta-item"><span>4</span> Location Entries</div>
+<div class="hero-meta-item"><span>3</span> Cities</div>
+<div class="hero-meta-item"><span>WIP</span> Under Review</div>
+</div>
+</div>
+<div class="sec-nav">
+<a href="alabama.html">Alabama</a>
+<a href="alaska.html">Alaska</a>
+<a href="arizona.html">Arizona</a>
+<a href="arkansas.html">Arkansas</a>
+<a href="california.html">California</a>
+<a href="colorado.html">Colorado</a>
+<a href="connecticut.html">Connecticut</a>
+<a href="delaware.html">Delaware</a>
+<a href="florida.html">Florida</a>
+<a href="georgia.html">Georgia</a>
+<a href="hawaii.html">Hawaii</a>
+<a href="idaho.html">Idaho</a>
+<a href="illinois.html">Illinois</a>
+<a href="indiana.html">Indiana</a>
+<a href="iowa.html">Iowa</a>
+<a href="kansas.html">Kansas</a>
+<a href="kentucky.html">Kentucky</a>
+<a href="louisiana.html">Louisiana</a>
+<a href="maine.html">Maine</a>
+<a href="maryland.html">Maryland</a>
+<a href="massachusetts.html">Massachusetts</a>
+<a href="michigan.html">Michigan</a>
+<a href="minnesota.html">Minnesota</a>
+<a href="mississippi.html">Mississippi</a>
+<a href="missouri.html">Missouri</a>
+<a href="montana.html">Montana</a>
+<a href="nebraska.html">Nebraska</a>
+<a href="nevada.html">Nevada</a>
+<a href="new-hampshire.html">New Hampshire</a>
+<a href="new-jersey.html">New Jersey</a>
+<a href="new-mexico.html">New Mexico</a>
+<a href="new-york.html">New York</a>
+<a href="north-carolina.html">North Carolina</a>
+<a href="north-dakota.html">North Dakota</a>
+<a href="ohio.html">Ohio</a>
+<a href="oklahoma.html">Oklahoma</a>
+<a href="oregon.html">Oregon</a>
+<a href="pennsylvania.html">Pennsylvania</a>
+<a href="rhode-island.html">Rhode Island</a>
+<a href="south-carolina.html">South Carolina</a>
+<a href="south-dakota.html">South Dakota</a>
+<a href="tennessee.html">Tennessee</a>
+<a href="texas.html">Texas</a>
+<a href="utah.html">Utah</a>
+<a href="vermont.html">Vermont</a>
+<a href="virginia.html">Virginia</a>
+<a href="washington.html">Washington</a>
+<a href="west-virginia.html">West Virginia</a>
+<a href="wisconsin.html">Wisconsin</a>
+<a href="wyoming.html">Wyoming</a>
+</div>
+<!-- DELAWARE -->
+<section class="sec-block" data-state="DE" id="delaware">
+<div class="sec-header">
+<div class="sec-number">08</div>
+<div class="sec-title-block">
+<div class="sec-eyebrow">State Directory</div>
+<h2 class="sec-title">Delaware</h2>
+</div>
+<div class="sec-tag">4 Locations</div>
+</div>
+<p class="sec-intro">Delaware's paranormal profile features colonial-era religious sites, Revolutionary War landmarks, Civil War military history, riverfront mansions, and long-occupied hospitality properties.</p>
+<div class="entry" data-location-id="de-delawarecity-fortdelaware">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Fort Delaware</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Military</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Delaware City, DE</div>
+<div class="entry-meta-item">Civil War Fort</div>
+<div class="entry-meta-item">Access: Public / Ferry Access</div>
+</div>
+<p class="entry-body">Union fortress and Civil War prison on Pea Patch Island.</p>
+</div>
+<div class="entry-details"><div class="detail-grid"><div class="detail-box"><div class="detail-label">Activity Reported</div><ul><li>Apparition reports associated with Civil War soldier and prisoner areas</li><li>Footsteps and movement sounds in casemate and corridor zones</li><li>Voices and call-outs reported in confinement-related areas</li><li>Cold spots and atmospheric heaviness in low-light interior sectors</li><li>Residual military and prison folklore tied to specific rooms and passageways</li></ul></div><div class="detail-box"><div class="detail-label">Structure Layout</div><ul><li>Main fort interior and parade-ground access</li><li>Casemates, passage corridors, and confinement areas</li><li>Barracks and support rooms</li><li>Exterior ramparts and island-facing perimeter zones</li><li>Ferry-linked public entry sequence from Delaware City</li></ul></div><div class="detail-box"><div class="detail-label">Location Data</div><p><strong>Address:</strong> 45 Clinton St, Delaware City, DE 19706</p><p><strong>Website:</strong> <a href="https://www.destateparks.com/park/fort-delaware/" rel="noopener noreferrer" target="_blank">https://www.destateparks.com/park/fort-delaware/</a></p><p><strong>Coordinates:</strong> 39.5932° N, 75.5719° W</p></div><div class="detail-box"><div class="detail-label">Classification</div><p>Residual military and confinement imprint. Island exposure, ferry transport, and fort acoustics require careful baseline control before elevating auditory reports.</p></div></div></div>
+</div>
+<div class="entry" data-location-id="de-wilmington-rockwood">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">
+            Rockwood Park
+            &amp;
+            Museum
+          </h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Wilmington, DE</div>
+<div class="entry-meta-item">Historic Mansion</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">1850s Gothic Revival estate, one of Delaware's most investigated sites.</p>
+</div>
+<div class="entry-details"><div class="detail-grid"><div class="detail-box"><div class="detail-label">Activity Reported</div><ul><li>Apparition and presence reports tied to upper rooms and hallways</li><li>Footsteps in staircase and landing areas during quiet periods</li><li>Cold spots in restored historic rooms</li><li>Object-movement and subtle room-disturbance folklore</li><li>Visual anomaly reports from staff, visitors, and event guests</li></ul></div><div class="detail-box"><div class="detail-label">Structure Layout</div><ul><li>Gothic Revival mansion interior</li><li>Main stair hall and upper-room circulation</li><li>Formal rooms and museum exhibit spaces</li><li>Grounds, gardens, and estate approach areas</li><li>Mixed museum and park-use environment</li></ul></div><div class="detail-box"><div class="detail-label">Location Data</div><p><strong>Address:</strong> 4651 Washington Street Extension, Wilmington, DE 19809</p><p><strong>Website:</strong> <a href="https://www.newcastlede.gov/431/Rockwood-Park-Museum" rel="noopener noreferrer" target="_blank">https://www.newcastlede.gov/431/Rockwood-Park-Museum</a></p><p><strong>Coordinates:</strong> 39.7725° N, 75.5210° W</p></div><div class="detail-box"><div class="detail-label">Classification</div><p>Possible intelligent residential haunting in a preserved museum setting. Stair hall and upper rooms remain the strongest comparative zones for repeated-session work.</p></div></div></div>
+</div>
+<div class="entry" data-location-id="de-dover-woodburn">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Woodburn</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Government</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Dover, DE</div>
+<div class="entry-meta-item">Governor's Residence</div>
+<div class="entry-meta-item">Access: Limited</div>
+</div>
+<p class="entry-body">Governor's residence since 1965 with colonial-era origins.</p>
+</div>
+<div class="entry-details"><div class="detail-grid"><div class="detail-box"><div class="detail-label">Activity Reported</div><ul><li>Folklore-based apparition and presence reports tied to former occupants</li><li>Footstep and movement stories in formal rooms and stair areas</li><li>Atmospheric changes in preserved historic interiors</li><li>Visual anomaly reports associated with low-traffic periods</li><li>Government-residence lore amplified by long-term public fascination</li></ul></div><div class="detail-box"><div class="detail-label">Structure Layout</div><ul><li>Historic governor’s residence and formal reception rooms</li><li>Central hall and stair circulation</li><li>Private upper residential areas</li><li>Grounds and approach from Kings Highway</li><li>Restricted-access government-use environment</li></ul></div><div class="detail-box"><div class="detail-label">Location Data</div><p><strong>Address:</strong> 151 Kings Highway Southwest, Dover, DE 19901</p><p><strong>Website:</strong> <a href="https://woodburn.delaware.gov/" rel="noopener noreferrer" target="_blank">https://woodburn.delaware.gov/</a></p><p><strong>Coordinates:</strong> 39.1558° N, 75.5295° W</p></div><div class="detail-box"><div class="detail-label">Classification</div><p>Folklore-associated governmental residence. Access restrictions and active state use mean this entry is best treated as a contextual historic site rather than a routine field location.</p></div></div></div>
+</div>
+<div class="entry" data-location-id="de-wilmington-oldswedes">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Old Swedes Church</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Church</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Wilmington, DE</div>
+<div class="entry-meta-item">1698 Church</div>
+<div class="entry-meta-item">Access: Public / Tours</div>
+</div>
+<p class="entry-body">One of the oldest churches in the U.S. with colonial burial ground.</p>
+</div>
+<div class="entry-details"><div class="detail-grid"><div class="detail-box"><div class="detail-label">Activity Reported</div><ul><li>Presence sensations in church interior and burial-ground approach areas</li><li>Footsteps and subtle movement reports during quiet visitation periods</li><li>Atmospheric changes near older grave-marker sections</li><li>Auditory anomaly folklore tied to the historic sanctuary</li><li>Low-light visual disturbance reports within the churchyard</li></ul></div><div class="detail-box"><div class="detail-label">Structure Layout</div><ul><li>Historic church sanctuary</li><li>Churchyard and colonial burial-ground perimeter</li><li>Entry paths and adjacent heritage-site structures</li><li>Mixed interior religious and exterior cemetery context</li><li>Public tour and historic-site circulation zones</li></ul></div><div class="detail-box"><div class="detail-label">Location Data</div><p><strong>Address:</strong> 606 N Church St, Wilmington, DE 19801</p><p><strong>Website:</strong> <a href="https://oldswedes.org/" rel="noopener noreferrer" target="_blank">https://oldswedes.org/</a></p><p><strong>Coordinates:</strong> 39.7386° N, 75.5413° W</p></div><div class="detail-box"><div class="detail-label">Classification</div><p>Residual religious and burial-ground imprint. The churchyard and sanctuary are best approached with quiet, documentation-first methodology and strong respect-site protocols.</p></div></div></div>
+</div>
+</section>
+</div>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 4,
+    states: ["Delaware"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+<!-- Machine readable JSON metadata -->
+<script id="tpi-directory-metadata" type="application/json">
+{
+  "schema_version": "1.0",
+  "total_locations": 4,
+  "states": [
+    {
+      "name": "Delaware",
+      "code": "DE",
+      "count": 4
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+</body>
+</html>

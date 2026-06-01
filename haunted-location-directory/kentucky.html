@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Kentucky</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">TPI Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations or cities..." autocomplete="off">
+    <div id="search-count">20 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Haunted Location <em>Directory</em></h1>
+    <p class="hero-desc">This directory contains documented haunted locations, historic sites, and culturally recognized paranormal landmarks. Entries are compiled from historical records, publicly accessible data, and widely reported experiences to support exploration, documentation, and personal investigation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>20</span> Location Entries</div>
+      <div class="hero-meta-item"><span>14</span> Cities</div>
+      <div class="hero-meta-item"><span>105</span> County-Aware Research</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html" class="active">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- KANSAS -->
+  <section id="kentucky" class="sec-block" data-state="KY">
+    <div class="sec-header">
+      <div class="sec-number">17</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Kentucky</h2>
+      </div>
+      <div class="sec-tag">20 Locations</div>
+    </div>
+    <p class="sec-intro">Kentucky has 120 counties, so this Gold Standard upgrade expands beyond the first-pass anchor list while preserving required regional entries such as Ditto House Inn and Fort Duffield. Final entries include sanatoriums, cemeteries, taverns, house museums, Civil War sites, theatres, schools, parks, prisons, hotels, and outdoor historic locations with meaningful rooms, zones, or evidence buckets.</p>
+
+    <div class="entry" data-location-id="ky-louisville-waverlyhills">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Waverly Hills Sanatorium</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Sanatorium</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Louisville, KY</div>
+          <div class="entry-meta-item">Former Tuberculosis Hospital</div>
+          <div class="entry-meta-item">Access: Public / Tour or Investigation</div>
+        </div>
+        <p class="entry-body">Kentucky’s primary haunted-location anchor, tied to tuberculosis-hospital history, extensive death history, and reports across hospital corridors, patient rooms, upper floors, the body chute, and grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Shadow figures</li>
+              <li>Children’s voices</li>
+              <li>Unexplained movement</li>
+              <li>Apparitions in halls and body-chute / tunnel activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Hallways</li>
+              <li>Patient rooms</li>
+              <li>Third-floor areas</li>
+              <li>Body chute / tunnel</li>
+              <li>Grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 4400 Paralee Dr, Louisville, KY 40272</p>
+            <p><strong>Website:</strong> <a href="https://www.therealwaverlyhills.com/" rel="noopener noreferrer" target="_blank">https://www.therealwaverlyhills.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.1381° N, 85.8689° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — major institutional haunting with residual, apparitional, and interactive reports across defined hospital zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-louisville-cavehill">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Cave Hill Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Louisville, KY</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A major Victorian cemetery in Louisville with notable burials, long-standing local lore, and outdoor evidence buckets across sections, paths, gates, grave rows, and hills.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Whispers</li>
+              <li>Unexplained lights</li>
+              <li>Apparitions</li>
+              <li>Cold spots</li>
+              <li>Cemetery-presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Cemetery sections</li>
+              <li>Paths</li>
+              <li>Gates</li>
+              <li>Grave rows</li>
+              <li>Hills</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 701 Baxter Ave, Louisville, KY 40204</p>
+            <p><strong>Website:</strong> <a href="https://www.cavehillcemetery.com/" rel="noopener noreferrer" target="_blank">https://www.cavehillcemetery.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.2445° N, 85.7123° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic burial-ground lore organized by cemetery sections and paths.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-louisville-seelbach">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Seelbach Hilton Louisville</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Louisville, KY</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A landmark Louisville hotel with long-running ghost stories, including Lady in Blue traditions and evidence buckets through guest floors, ballrooms, stairways, elevators, and lobby spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Lady in Blue apparition reports</li>
+              <li>Elevator and hallway activity</li>
+              <li>Footsteps</li>
+              <li>Cold spots</li>
+              <li>Guest-floor presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest floors</li>
+              <li>Ballrooms</li>
+              <li>Stairways</li>
+              <li>Elevator areas</li>
+              <li>Lobby and public spaces</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 500 S 4th St, Louisville, KY 40202</p>
+            <p><strong>Website:</strong> <a href="https://www.hilton.com/en/hotels/sdfshqq-the-seelbach-hilton-louisville/" rel="noopener noreferrer" target="_blank">https://www.hilton.com/en/hotels/sdfshqq-the-seelbach-hilton-louisville/</a></p>
+            <p><strong>Coordinates:</strong> 38.2510° N, 85.7578° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic hotel haunting with named apparition lore and public / guest-space buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-bardstown-talbott">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Talbott Tavern</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bardstown, KY</div>
+          <div class="entry-meta-item">Historic Tavern / Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">One of Kentucky’s best-known haunted inns, a stagecoach-era landmark with guest-room activity, tavern lore, hallway reports, stairway reports, and Daniel Boone Room traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Apparitions</li>
+              <li>Moving objects</li>
+              <li>Guest-room activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest rooms</li>
+              <li>Tavern / bar</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Daniel Boone Room</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 107 W Stephen Foster Ave, Bardstown, KY 40004</p>
+            <p><strong>Website:</strong> <a href="https://talbotttavern.com/" rel="noopener noreferrer" target="_blank">https://talbotttavern.com/</a></p>
+            <p><strong>Coordinates:</strong> 37.8092° N, 85.4669° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic lodging site with repeated room, hallway, and tavern-area reports.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-bardstown-myoldkentuckyhome">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">My Old Kentucky Home State Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Estate</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bardstown, KY</div>
+          <div class="entry-meta-item">Historic Estate / State Park</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A historic estate and park entry with ghost-story value, mansion-room buckets, grounds, garden paths, and outbuildings connected to Bardstown heritage lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Apparition reports</li>
+              <li>Historic-house lore</li>
+              <li>Grounds atmosphere claims</li>
+              <li>Old-estate presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Mansion rooms</li>
+              <li>Grounds</li>
+              <li>Garden paths</li>
+              <li>Outbuildings</li>
+              <li>Tour route areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 501 E Stephen Foster Ave, Bardstown, KY 40004</p>
+            <p><strong>Website:</strong> <a href="https://parks.ky.gov/bardstown/parks/historic/my-old-kentucky-home-state-park" rel="noopener noreferrer" target="_blank">https://parks.ky.gov/bardstown/parks/historic/my-old-kentucky-home-state-park</a></p>
+            <p><strong>Coordinates:</strong> 37.8096° N, 85.4545° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic-estate lore with mansion and park evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-frankfort-libertyhall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Liberty Hall Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Frankfort, KY</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">A strong historic-house entry with the Gray Lady tradition, long-running house-ghost reports, and defined interior and grounds buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Gray Lady reports</li>
+              <li>Footsteps</li>
+              <li>Moving objects</li>
+              <li>House-ghost reports</li>
+              <li>Presence activity in upper rooms</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house</li>
+              <li>Upper rooms</li>
+              <li>Stairways</li>
+              <li>Grounds</li>
+              <li>Museum route areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 202 Wilkinson St, Frankfort, KY 40601</p>
+            <p><strong>Website:</strong> <a href="https://libertyhall.org/" rel="noopener noreferrer" target="_blank">https://libertyhall.org/</a></p>
+            <p><strong>Coordinates:</strong> 38.2002° N, 84.8763° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — named historic-house apparition tradition with defined room and stairway zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-westpoint-dittohouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Ditto House Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic House / Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">West Point, KY</div>
+          <div class="entry-meta-item">Historic House / Inn</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A required Kentucky entry: a real West Point historic house / inn with strong paranormal-investigation identity, owner/local connection, and claims tied to guest rooms, hallways, stairways, basement, and grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom voices</li>
+              <li>Moving objects</li>
+              <li>Shadow figures</li>
+              <li>Footsteps</li>
+              <li>Doors opening and EVP activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house</li>
+              <li>Hallways</li>
+              <li>Guest rooms</li>
+              <li>Stairways</li>
+              <li>Basement and grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 204 Elm St, West Point, KY 40177</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 37.9976° N, 85.9502° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic-house / inn activity with specific interior and basement buckets; required West Point final-build entry.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-westpoint-fortduffield">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Duffield</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Civil War Earthwork</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">West Point, KY</div>
+          <div class="entry-meta-item">Civil War Fortification</div>
+          <div class="entry-meta-item">Access: Public / Outdoor Site</div>
+        </div>
+        <p class="entry-body">A required West Point entry: a preserved Civil War earthwork with strong local historical value and paranormal-investigation references tied to earthworks, overlook, trails, interpretive areas, and ridgelines.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Civil War soldier apparitions</li>
+              <li>Voices</li>
+              <li>Unexplained activity</li>
+              <li>Ridge-line presence reports</li>
+              <li>Investigation reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Earthworks</li>
+              <li>Overlook</li>
+              <li>Walking trail</li>
+              <li>Interpretive stations</li>
+              <li>Ridge line</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 16706 Abbott’s Beach Rd, West Point, KY 40177</p>
+            <p><strong>Website:</strong> <a href="https://www.fortduffield.com/" rel="noopener noreferrer" target="_blank">https://www.fortduffield.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.0029° N, 85.9438° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Civil War terrain and preserved fortification site with outdoor evidence buckets; required West Point final-build entry.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-perryville-battlefield">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Perryville Battlefield State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Perryville, KY</div>
+          <div class="entry-meta-item">Civil War Battlefield</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A major Civil War battlefield entry with heavy casualty history, phantom soldier reports, cannon sounds, whispers, cries, and outdoor field / ridge / trail evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom soldiers</li>
+              <li>Cannon sounds</li>
+              <li>Whispers</li>
+              <li>Cries</li>
+              <li>Battlefield anomalies</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Battlefield ridge</li>
+              <li>Fields</li>
+              <li>Trail sections</li>
+              <li>Interpretive areas</li>
+              <li>Visitor / approach zones</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1825 Battlefield Rd, Perryville, KY 40468</p>
+            <p><strong>Website:</strong> <a href="https://parks.ky.gov/perryville/parks/historic/perryville-battlefield-state-historic-site" rel="noopener noreferrer" target="_blank">https://parks.ky.gov/perryville/parks/historic/perryville-battlefield-state-historic-site</a></p>
+            <p><strong>Coordinates:</strong> 37.6490° N, 84.9510° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — battlefield-imprint claims tied to specific terrain and interpretive zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-wilder-bobbymackeys">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bobby Mackey’s Music World</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Venue</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Wilder, KY</div>
+          <div class="entry-meta-item">Music Venue / Historic Site</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A nationally recognized Kentucky haunted venue with claims tied to stage, dance floor, basement, back rooms, and entry areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Shadow figures</li>
+              <li>Scratches</li>
+              <li>Voices</li>
+              <li>Oppressive energy reports</li>
+              <li>Recurring spirit-lore reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Dance floor</li>
+              <li>Stage</li>
+              <li>Back rooms</li>
+              <li>Basement</li>
+              <li>Entry areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 44 Licking Pike, Wilder, KY 41071</p>
+            <p><strong>Website:</strong> <a href="https://bobbymackeys.com/" rel="noopener noreferrer" target="_blank">https://bobbymackeys.com/</a></p>
+            <p><strong>Coordinates:</strong> 39.0564° N, 84.4825° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic venue lore with claims distributed across stage, basement, and public venue spaces.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-owensboro-theatreworkshop">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Theatre Workshop of Owensboro / Trinity Centre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Theatre / Church</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Owensboro, KY</div>
+          <div class="entry-meta-item">Historic Theatre / Former Church</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A strong Owensboro anchor using a historic Gothic church setting with reports around basement, green room, stage, sanctuary / theatre spaces, and grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom voices</li>
+              <li>Basement activity</li>
+              <li>Green-room activity</li>
+              <li>Lady in White reports</li>
+              <li>Multiple-spirit traditions</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Basement</li>
+              <li>Green room</li>
+              <li>Stage</li>
+              <li>Sanctuary / theatre spaces</li>
+              <li>Exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 407 W 5th St, Owensboro, KY 42301</p>
+            <p><strong>Website:</strong> <a href="https://theatreworkshop.org/" rel="noopener noreferrer" target="_blank">https://theatreworkshop.org/</a></p>
+            <p><strong>Coordinates:</strong> 37.7726° N, 87.1154° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — former church / theatre activity with distinct interior evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-owensboro-benhawes">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Ben Hawes State Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Park / Outdoor Legend</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Owensboro, KY</div>
+          <div class="entry-meta-item">Parkland / Woods</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A useful outdoor Kentucky entry with local woods, trail, and witchcraft legend traditions that can be organized by trails, park roads, woods, and overlook sections.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Witchcraft legend</li>
+              <li>Woods apparition reports</li>
+              <li>Trail-area stories</li>
+              <li>Park-road unease</li>
+              <li>Outdoor presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Woods</li>
+              <li>Trails</li>
+              <li>Park roads</li>
+              <li>Overlook sections</li>
+              <li>Exterior park areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 400 Booth Field Rd, Owensboro, KY 42301</p>
+            <p><strong>Website:</strong> <a href="https://parks.ky.gov/owensboro/parks/recreation/ben-hawes-state-park" rel="noopener noreferrer" target="_blank">https://parks.ky.gov/owensboro/parks/recreation/ben-hawes-state-park</a></p>
+            <p><strong>Coordinates:</strong> 37.7787° N, 87.2044° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Folkloric-Mixed — outdoor legend site with trail and woods buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-owensboro-daviessmiddle">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Daviess County Middle School</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">School</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Owensboro, KY</div>
+          <div class="entry-meta-item">Public School Site</div>
+          <div class="entry-meta-item">Access: Restricted / Reference</div>
+        </div>
+        <p class="entry-body">A regional Owensboro ghost-story site with claims tied to screams, slamming doors, dark figures, hallways, classrooms, stairwells, and exterior grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Screams</li>
+              <li>Slamming doors</li>
+              <li>Dark figure reports</li>
+              <li>School-grounds activity</li>
+              <li>Hallway activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Classrooms</li>
+              <li>Hallways</li>
+              <li>Stairwells</li>
+              <li>Exterior grounds</li>
+              <li>School route areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1415 E 4th St, Owensboro, KY 42303</p>
+            <p><strong>Website:</strong> <a href="https://www.daviesskyschools.org/o/dcms" rel="noopener noreferrer" target="_blank">https://www.daviesskyschools.org/o/dcms</a></p>
+            <p><strong>Coordinates:</strong> 37.7775° N, 87.0908° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — regional school-site lore with restricted-access handling.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-campbellsville-hiestandhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hiestand House / Taylor County Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Campbellsville, KY</div>
+          <div class="entry-meta-item">Historic Stone House / Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A smaller-county historic entry with Civil War-era disturbance lore, footsteps, house interior reports, museum rooms, grounds, and spring-house buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Civil War-era disturbance lore</li>
+              <li>Local ghost activity</li>
+              <li>Museum-area presence reports</li>
+              <li>Old-house atmosphere claims</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>House interior</li>
+              <li>Museum rooms</li>
+              <li>Grounds</li>
+              <li>Spring house</li>
+              <li>Tour route areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1075 Campbellsville Bypass, Campbellsville, KY 42718</p>
+            <p><strong>Website:</strong> <a href="https://www.taylorcountymuseum.org/" rel="noopener noreferrer" target="_blank">https://www.taylorcountymuseum.org/</a></p>
+            <p><strong>Coordinates:</strong> 37.3635° N, 85.3377° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic stone-house / museum lore with smaller-county coverage value.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-wooton-muncyschool">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">W.B. Muncy School</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Rural School Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Wooton, KY</div>
+          <div class="entry-meta-item">Rural School / Cemetery Context</div>
+          <div class="entry-meta-item">Access: Reference / Caution</div>
+        </div>
+        <p class="entry-body">A rural Kentucky site with strong local ghost-story traditions tied to cemetery-linked ghosts, hill-side apparitions, a headless-man story, school building, cemetery above, hill, and grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Cemetery-linked ghosts</li>
+              <li>Headless man reports</li>
+              <li>Hill-side apparitions</li>
+              <li>School-ground activity</li>
+              <li>Local ghost-story traditions</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>School building</li>
+              <li>Cemetery above</li>
+              <li>Hill behind school</li>
+              <li>Grounds</li>
+              <li>Approach area</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Wooton, KY 41776</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 37.1690° N, 83.3130° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Folkloric-Mixed — rural school / cemetery legend with local history and outdoor buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-franklin-octagonhall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Octagon Hall Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Franklin, KY</div>
+          <div class="entry-meta-item">Civil War House Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A strong Kentucky Civil War house-museum entry with reported apparitions, voices, footsteps, soldier activity, and clear room / basement / grounds buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparition reports</li>
+              <li>Voices</li>
+              <li>Footsteps</li>
+              <li>Civil War soldier activity</li>
+              <li>Basement and grounds activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main rooms</li>
+              <li>Basement</li>
+              <li>Stairways</li>
+              <li>Grounds</li>
+              <li>Museum route areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 6040 Bowling Green Rd, Franklin, KY 42134</p>
+            <p><strong>Website:</strong> <a href="https://www.octagonhallmuseum.com/" rel="noopener noreferrer" target="_blank">https://www.octagonhallmuseum.com/</a></p>
+            <p><strong>Coordinates:</strong> 36.7837° N, 86.5750° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Civil War house-museum site with repeated reports and defined room / grounds buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-cynthiana-rohsopera">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Rohs Opera House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Opera House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cynthiana, KY</div>
+          <div class="entry-meta-item">Historic Opera House</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A historic theatre and opera-house entry with reports of the Lady in White, footsteps, voices, stage-area activity, balcony activity, and lobby / projection-area buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Lady in White reports</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Stage-area activity</li>
+              <li>Balcony activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Stage</li>
+              <li>Auditorium</li>
+              <li>Balcony</li>
+              <li>Lobby</li>
+              <li>Projection / upper areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 133 E Pike St, Cynthiana, KY 41031</p>
+            <p><strong>Website:</strong> <a href="https://www.rohsoperahouse.com/" rel="noopener noreferrer" target="_blank">https://www.rohsoperahouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.3907° N, 84.2942° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic theatre haunting with specific performance-space zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-lexington-opera">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lexington Opera House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Opera House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lexington, KY</div>
+          <div class="entry-meta-item">Historic Opera House</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A major historic performance venue with ghost-story traditions organized through stage, auditorium, balcony, backstage, lobby, and upper-level buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Performance-space presence reports</li>
+              <li>Apparition-style lore</li>
+              <li>Historic-theatre atmosphere claims</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Stage</li>
+              <li>Auditorium</li>
+              <li>Balcony</li>
+              <li>Backstage</li>
+              <li>Lobby and upper levels</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 401 W Short St, Lexington, KY 40507</p>
+            <p><strong>Website:</strong> <a href="https://www.lexingtonoperahouse.com/" rel="noopener noreferrer" target="_blank">https://www.lexingtonoperahouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.0505° N, 84.4996° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic opera-house lore with public performance-space buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-lawrenceburg-andersonhotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Anderson Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lawrenceburg, KY</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Restricted / Reference</div>
+        </div>
+        <p class="entry-body">A Kentucky haunted-hotel candidate with a strong paranormal reputation in regional accounts, using room, hallway, stairway, lobby, and basement evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Voices</li>
+              <li>Footsteps</li>
+              <li>Apparition reports</li>
+              <li>Room activity</li>
+              <li>Unexplained movement</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Lobby</li>
+              <li>Basement</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 137 S Main St, Lawrenceburg, KY 40342</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.0367° N, 84.8964° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic hotel folklore with usable interior buckets; access should be handled carefully.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ky-eddyville-statepenitentiary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kentucky State Penitentiary</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Eddyville, KY</div>
+          <div class="entry-meta-item">Historic Prison</div>
+          <div class="entry-meta-item">Access: Restricted / Reference</div>
+        </div>
+        <p class="entry-body">A major institutional reference site with prison-history depth, execution context, and folklore suitable for cellblock, corridor, yard, gate, and exterior grounds buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Prison haunting reports</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Cellblock presence reports</li>
+              <li>Execution-history atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Cellblocks</li>
+              <li>Corridors</li>
+              <li>Yard</li>
+              <li>Gate / exterior approach</li>
+              <li>Institutional grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 266 Water St, Eddyville, KY 42038</p>
+            <p><strong>Website:</strong> <a href="https://corrections.ky.gov/Facilities/AI/KSP/Pages/default.aspx" rel="noopener noreferrer" target="_blank">https://corrections.ky.gov/Facilities/AI/KSP/Pages/default.aspx</a></p>
+            <p><strong>Coordinates:</strong> 37.0778° N, 88.0738° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — prison-history reference location with institutional buckets; restricted-access handling required.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 20,
+    states: ["Kentucky"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 20,
+  "states": [
+    {
+      "name": "Kentucky",
+      "code": "KY",
+      "count": 20
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

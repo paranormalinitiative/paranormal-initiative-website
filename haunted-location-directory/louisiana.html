@@ -1,0 +1,2629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Louisiana</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">TPI Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations or cities..." autocomplete="off">
+    <div id="search-count">46 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Haunted Location <em>Directory</em></h1>
+    <p class="hero-desc">This directory contains documented haunted locations, historic sites, and culturally recognized paranormal landmarks. Entries are compiled from historical records, publicly accessible data, and widely reported experiences to support exploration, documentation, and personal investigation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>46</span> Location Entries</div>
+      <div class="hero-meta-item"><span>17</span> Cities</div>
+      <div class="hero-meta-item"><span>105</span> County-Aware Research</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html" class="active">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- KANSAS -->
+  <section id="louisiana" class="sec-block" data-state="LA">
+    <div class="sec-header">
+      <div class="sec-number">18</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Louisiana</h2>
+      </div>
+      <div class="sec-tag">46 Locations</div>
+    </div>
+    <p class="sec-intro">Louisiana has 64 parishes, and this v8 build expands the uploaded Louisiana sample into a full haunted-location state file. The final build includes cemeteries, plantations, hotels, museums, restaurants, forts, battlefields, theatres, historic districts, and outdoor public sites with meaningful rooms, zones, or evidence buckets for exploration and documentation.</p>
+
+    <div class="entry" data-location-id="la-neworleans-stlouiscemetery1">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">St. Louis Cemetery No. 1</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Tour Controlled</div>
+        </div>
+        <p class="entry-body">New Orleans’ oldest surviving cemetery and one of Louisiana’s strongest haunted-location anchors, tied to Marie Laveau traditions, above-ground tombs, plague-era burials, and long-running cemetery lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Voices near tomb rows</li>
+              <li>Scratching or knocking reports</li>
+              <li>Apparition traditions</li>
+              <li>Marie Laveau-related offerings and folklore</li>
+              <li>Cold spots and presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Marie Laveau tomb area</li>
+              <li>Wall vaults</li>
+              <li>Tomb rows</li>
+              <li>Cemetery paths</li>
+              <li>Entry gate / tour route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 425 Basin St, New Orleans, LA 70112</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 29.9589° N, 90.0770° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — cemetery folklore tied to a stable historic site and specific tomb/cemetery zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-metairiecemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Metairie Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A major historic cemetery built on former racetrack land, with elaborate mausoleums, lanes, statues, and ghost-light / apparition traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Unexplained lights</li>
+              <li>Figures near mausoleums</li>
+              <li>Cemetery presence reports</li>
+              <li>Statue-related unease</li>
+              <li>Nighttime sound reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Mausoleum rows</li>
+              <li>Cemetery lanes</li>
+              <li>Statue areas</li>
+              <li>Older tomb sections</li>
+              <li>Entrance drives</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 5100 Pontchartrain Blvd, New Orleans, LA 70124</p>
+            <p><strong>Website:</strong> <a href="https://metairiecemetery.com/" rel="noopener noreferrer" target="_blank">https://metairiecemetery.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9790° N, 90.1102° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — large historic cemetery with monument and mausoleum-based evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-lafayettecemetery1">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lafayette Cemetery No. 1</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Restricted / Reference</div>
+        </div>
+        <p class="entry-body">A famous Garden District cemetery with above-ground tombs and long-running New Orleans ghost-tour significance, handled as a reference entry while access remains controlled.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Tomb-row presence reports</li>
+              <li>Shadow figures</li>
+              <li>Footsteps</li>
+              <li>Whispers</li>
+              <li>Tour-route ghost lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Tomb rows</li>
+              <li>Wall vaults</li>
+              <li>Central paths</li>
+              <li>Garden District perimeter</li>
+              <li>Entry gate</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1427 Washington Ave, New Orleans, LA 70130</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 29.9287° N, 90.0846° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — historic cemetery lore with stable tomb-row and path buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-lalauriemansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">LaLaurie Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Mansion / Exterior Reference</div>
+          <div class="entry-meta-item">Access: Exterior / Restricted</div>
+        </div>
+        <p class="entry-body">A notorious French Quarter mansion associated with the 1834 LaLaurie scandal and one of the city’s most repeated haunting traditions, restricted to exterior-reference handling.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Cries from upper floors</li>
+              <li>Chain sounds</li>
+              <li>Shadow reports</li>
+              <li>Exterior presence reports</li>
+              <li>Trauma-linked lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Exterior façade</li>
+              <li>Upper-floor context</li>
+              <li>Royal Street sidewalk</li>
+              <li>Courtyard context</li>
+              <li>Entry frontage</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1140 Royal St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 29.9594° N, 90.0636° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — trauma-linked mansion lore with restricted-access exterior buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-stfrancisville-myrtles">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Myrtles Plantation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Francisville, LA</div>
+          <div class="entry-meta-item">Historic House / Inn</div>
+          <div class="entry-meta-item">Access: Public / Tour or Guest Access</div>
+        </div>
+        <p class="entry-body">One of America’s best-known haunted homes, The Myrtles is a major Louisiana anchor with room, porch, mirror, stairway, and grounds buckets tied to repeated visitor and guest reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Handprints or mirror marks</li>
+              <li>Child voices</li>
+              <li>Apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Guest-room activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house rooms</li>
+              <li>Porch</li>
+              <li>Mirror / entry areas</li>
+              <li>Stairways</li>
+              <li>Grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 7747 U.S. Hwy 61, St. Francisville, LA 70775</p>
+            <p><strong>Website:</strong> <a href="https://themyrtles.com/" rel="noopener noreferrer" target="_blank">https://themyrtles.com/</a></p>
+            <p><strong>Coordinates:</strong> 30.8467° N, 91.3778° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — nationally recognized haunted-house/inn site with repeated room and grounds activity reports.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-batonrouge-oldstatecapitol">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Louisiana Old State Capitol</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government Building</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baton Rouge, LA</div>
+          <div class="entry-meta-item">Historic Statehouse Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A Gothic Revival statehouse museum with ghost lore connected to political history, interior stairways, public halls, and museum-route spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Apparition reports</li>
+              <li>Museum presence claims</li>
+              <li>Stairway atmosphere</li>
+              <li>Historic-building sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Rotunda</li>
+              <li>Stairways</li>
+              <li>Public halls</li>
+              <li>Museum rooms</li>
+              <li>Exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 100 North Blvd, Baton Rouge, LA 70801</p>
+            <p><strong>Website:</strong> <a href="https://louisianaoldstatecapitol.org/" rel="noopener noreferrer" target="_blank">https://louisianaoldstatecapitol.org/</a></p>
+            <p><strong>Coordinates:</strong> 30.4467° N, 91.1902° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — civic-building lore tied to defined museum and public-route zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-vacherie-oakalley">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Oak Alley Plantation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Vacherie, LA</div>
+          <div class="entry-meta-item">Historic Plantation / Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">A landmark plantation site with a strong public identity, oak-lined approach, mansion rooms, exhibit areas, and grounds buckets suited for historic-haunt logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Grounds presence reports</li>
+              <li>Interior atmosphere claims</li>
+              <li>Oak-alley folklore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Oak alley approach</li>
+              <li>Main house rooms</li>
+              <li>Grounds</li>
+              <li>Exhibit areas</li>
+              <li>Exterior porches</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3645 LA-18, Vacherie, LA 70090</p>
+            <p><strong>Website:</strong> <a href="https://www.oakalleyplantation.org/" rel="noopener noreferrer" target="_blank">https://www.oakalleyplantation.org/</a></p>
+            <p><strong>Coordinates:</strong> 30.0036° N, 90.7785° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic plantation landscape with indoor and outdoor evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-destrehan-destrehanplantation">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Destrehan Plantation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Destrehan, LA</div>
+          <div class="entry-meta-item">Historic Plantation / Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">A public historic plantation site with haunted-tour programming tied to the 1811 revolt, Big House spaces, grounds, and outbuildings.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Reported spirit presence</li>
+              <li>Voices</li>
+              <li>Grounds activity</li>
+              <li>Big House atmosphere claims</li>
+              <li>Revolt-related haunting lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Big House</li>
+              <li>Grounds</li>
+              <li>Outbuildings</li>
+              <li>Porches</li>
+              <li>Tour route areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 13034 River Rd, Destrehan, LA 70047</p>
+            <p><strong>Website:</strong> <a href="https://www.destrehanplantation.org/" rel="noopener noreferrer" target="_blank">https://www.destrehanplantation.org/</a></p>
+            <p><strong>Coordinates:</strong> 29.9507° N, 90.3650° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic plantation and revolt-memory site with defined house and grounds buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-cheneyville-loydhall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Loyd Hall Plantation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Plantation Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cheneyville, LA</div>
+          <div class="entry-meta-item">Historic Plantation / B&amp;B</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A historic plantation bed and breakfast with repeated ghost stories involving former residents, music, food aromas, halls, guest rooms, attic, and grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps in halls</li>
+              <li>Apparition traditions</li>
+              <li>Violin sounds</li>
+              <li>Food aroma reports</li>
+              <li>Guest-room activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house</li>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Attic context</li>
+              <li>Grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 292 Loyd Bridge Rd, Cheneyville, LA 71325</p>
+            <p><strong>Website:</strong> <a href="https://www.loydhall.com/" rel="noopener noreferrer" target="_blank">https://www.loydhall.com/</a></p>
+            <p><strong>Coordinates:</strong> 31.0180° N, 92.2914° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic inn/plantation site with named spirit traditions and room-based buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-natchitoches-magnoliaplantation">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Magnolia Plantation Complex</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation Complex</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Derry / Natchitoches, LA</div>
+          <div class="entry-meta-item">Cane River Creole Site</div>
+          <div class="entry-meta-item">Access: Public / National Park Site</div>
+        </div>
+        <p class="entry-body">A Cane River Creole National Historical Park site with preserved structures, slave/tenant quarters, store, hospital, blacksmith shop, and strong history suitable for respectful evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Grounds presence reports</li>
+              <li>Historic-structure atmosphere</li>
+              <li>Voices or sound traditions</li>
+              <li>Quarters-related lore</li>
+              <li>Nighttime environmental reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Slave / tenant quarters</li>
+              <li>Store</li>
+              <li>Blacksmith shop</li>
+              <li>Hospital structure</li>
+              <li>Grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 5487 LA-119, Derry, LA 71416</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/cari/planyourvisit/magnolia-plantation.htm" rel="noopener noreferrer" target="_blank">https://www.nps.gov/cari/planyourvisit/magnolia-plantation.htm</a></p>
+            <p><strong>Coordinates:</strong> 31.6509° N, 93.0018° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — historic plantation complex with multiple preserved zone buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-batonrouge-magnoliamound">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Magnolia Mound Plantation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baton Rouge, LA</div>
+          <div class="entry-meta-item">Historic House / Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A public historic house museum with French Creole architecture, outbuildings, grounds, and regional ghost-story value.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Historic-house presence reports</li>
+              <li>Footsteps</li>
+              <li>Unexplained sounds</li>
+              <li>Grounds atmosphere claims</li>
+              <li>Museum-room activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house rooms</li>
+              <li>Outbuildings</li>
+              <li>Grounds</li>
+              <li>Kitchen / service areas</li>
+              <li>Tour route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2161 Nicholson Dr, Baton Rouge, LA 70802</p>
+            <p><strong>Website:</strong> <a href="https://www.brec.org/facility/MagnoliaMound" rel="noopener noreferrer" target="_blank">https://www.brec.org/facility/MagnoliaMound</a></p>
+            <p><strong>Coordinates:</strong> 30.4291° N, 91.1867° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic house-museum setting with indoor and grounds evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-darrow-houmashouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Houmas House Estate</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation Estate</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Darrow, LA</div>
+          <div class="entry-meta-item">Historic Estate / Gardens</div>
+          <div class="entry-meta-item">Access: Public / Tour or Guest Access</div>
+        </div>
+        <p class="entry-body">A major River Road estate with mansion rooms, gardens, guest areas, and ghost-story traditions tied to the property’s long history.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Garden presence reports</li>
+              <li>Interior atmosphere claims</li>
+              <li>Guest-area activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Mansion rooms</li>
+              <li>Gardens</li>
+              <li>Porches</li>
+              <li>Guest areas</li>
+              <li>Grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 40136 LA-942, Darrow, LA 70725</p>
+            <p><strong>Website:</strong> <a href="https://houmashouse.com/" rel="noopener noreferrer" target="_blank">https://houmashouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 30.1413° N, 90.9373° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic estate lore tied to house and garden zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-whitecastle-nottoway">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Nottoway Resort</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">White Castle, LA</div>
+          <div class="entry-meta-item">Historic House / Resort</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A large antebellum mansion/resort with public tours, hotel use, and long-running historic-house atmosphere claims.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Room presence reports</li>
+              <li>Apparition traditions</li>
+              <li>Unexplained sounds</li>
+              <li>Grounds activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>White Ballroom</li>
+              <li>Guest rooms</li>
+              <li>Stairways</li>
+              <li>Porches</li>
+              <li>Grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 31025 LA-1, White Castle, LA 70788</p>
+            <p><strong>Website:</strong> <a href="https://www.nottoway.com/" rel="noopener noreferrer" target="_blank">https://www.nottoway.com/</a></p>
+            <p><strong>Coordinates:</strong> 30.1526° N, 91.1460° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — large historic mansion with room and resort-space buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-edgard-whitneyplantation">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Whitney Plantation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Edgard, LA</div>
+          <div class="entry-meta-item">Historic Museum / Memorial Site</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A public museum dedicated to the history of slavery with preserved structures, memorial spaces, and grounds that require respectful documentation language.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Grounds atmosphere reports</li>
+              <li>Memorial-site presence traditions</li>
+              <li>Historic-structure sounds</li>
+              <li>Emotional environmental responses</li>
+              <li>Outbuilding-area unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Memorial areas</li>
+              <li>Slave cabins</li>
+              <li>Church</li>
+              <li>Grounds</li>
+              <li>Museum route spaces</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 5099 LA-18, Edgard, LA 70049</p>
+            <p><strong>Website:</strong> <a href="https://www.whitneyplantation.org/" rel="noopener noreferrer" target="_blank">https://www.whitneyplantation.org/</a></p>
+            <p><strong>Coordinates:</strong> 30.0390° N, 90.7019° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Memorial — historically serious site where documentation must remain respectful and non-sensational.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-vacherie-lauraplantation">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Laura Plantation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Vacherie, LA</div>
+          <div class="entry-meta-item">Creole Plantation / Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">A Creole plantation museum with strong historical interpretation, house rooms, slave cabins, grounds, and folklore context tied to Louisiana storytelling traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Historic-house atmosphere claims</li>
+              <li>Footsteps</li>
+              <li>Grounds presence reports</li>
+              <li>Cabin-area unease</li>
+              <li>Storytelling folklore context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house rooms</li>
+              <li>Slave cabins</li>
+              <li>Grounds</li>
+              <li>Porches</li>
+              <li>Tour route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2247 LA-18, Vacherie, LA 70090</p>
+            <p><strong>Website:</strong> <a href="https://www.lauraplantation.com/" rel="noopener noreferrer" target="_blank">https://www.lauraplantation.com/</a></p>
+            <p><strong>Coordinates:</strong> 30.0069° N, 90.7267° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — Creole plantation museum with house, cabins, and grounds buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-beauregardkeyes">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Beauregard-Keyes House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A French Quarter house museum with Civil War and literary history, haunted-house reputation, courtyard, parlor, stair, and upper-room buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Parlor presence reports</li>
+              <li>Courtyard atmosphere</li>
+              <li>Upper-room activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Parlors</li>
+              <li>Stairways</li>
+              <li>Upper rooms</li>
+              <li>Courtyard</li>
+              <li>Museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1113 Chartres St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://www.bkhouse.org/" rel="noopener noreferrer" target="_blank">https://www.bkhouse.org/</a></p>
+            <p><strong>Coordinates:</strong> 29.9604° N, 90.0629° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic French Quarter house with indoor/courtyard evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-ursulineconvent">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Ursuline Convent</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Convent</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Convent / Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">One of the oldest buildings in the Mississippi Valley, tied to convent history, vampire/folklore traditions, attic lore, and French Quarter ghost storytelling.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Attic folklore</li>
+              <li>Footsteps</li>
+              <li>Whispers</li>
+              <li>Convent presence reports</li>
+              <li>Vampire-legend traditions</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Chapel / convent rooms</li>
+              <li>Stairways</li>
+              <li>Attic context</li>
+              <li>Courtyard</li>
+              <li>Exterior frontage</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1100 Chartres St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://oldursulineconventmuseum.com/" rel="noopener noreferrer" target="_blank">https://oldursulineconventmuseum.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9606° N, 90.0635° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Folkloric-Mixed — historic convent with strong legend tradition and stable structure buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-muriels">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Muriel’s Jackson Square</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Restaurant</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Restaurant</div>
+          <div class="entry-meta-item">Access: Public / Restaurant</div>
+        </div>
+        <p class="entry-body">A French Quarter restaurant famous for its resident spirit traditions and Séance Lounge, with dining rooms, balcony, courtyard, and upper areas as buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Resident spirit lore</li>
+              <li>Objects moving</li>
+              <li>Footsteps</li>
+              <li>Table-setting traditions</li>
+              <li>Séance Lounge atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Séance Lounge</li>
+              <li>Dining rooms</li>
+              <li>Balcony</li>
+              <li>Courtyard</li>
+              <li>Stairways</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 801 Chartres St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://muriels.com/" rel="noopener noreferrer" target="_blank">https://muriels.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9578° N, 90.0635° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — public restaurant with strong spirit tradition and defined interior zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-andrewjacksonhotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Andrew Jackson Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A French Quarter hotel on a historic site with child-spirit and courtyard/room claims, making it a strong lodging entry.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Child voices</li>
+              <li>Footsteps</li>
+              <li>Courtyard presence reports</li>
+              <li>Guest-room activity</li>
+              <li>Unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest rooms</li>
+              <li>Courtyard</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Exterior entry</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 919 Royal St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://andrewjacksonhotel.com/" rel="noopener noreferrer" target="_blank">https://andrewjacksonhotel.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9591° N, 90.0644° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic hotel haunting with guest-room and courtyard buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-hotelmonteleone">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hotel Monteleone</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A landmark French Quarter hotel with a long haunted reputation, including elevator, hallway, restaurant, and guest-floor reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Elevator activity</li>
+              <li>Child-spirit reports</li>
+              <li>Hallway apparitions</li>
+              <li>Restaurant area claims</li>
+              <li>Guest-floor sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest floors</li>
+              <li>Elevators</li>
+              <li>Hallways</li>
+              <li>Carousel Bar / public spaces</li>
+              <li>Lobby</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 214 Royal St, New Orleans, LA 70130</p>
+            <p><strong>Website:</strong> <a href="https://hotelmonteleone.com/" rel="noopener noreferrer" target="_blank">https://hotelmonteleone.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9544° N, 90.0675° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — major historic hotel with repeated guest and public-space activity traditions.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-bourbonorleans">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bourbon Orleans Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A historic French Quarter hotel with ballroom, convent/orphanage history, guest-floor, hallway, and child-spirit reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Ballroom apparition reports</li>
+              <li>Children’s voices</li>
+              <li>Footsteps</li>
+              <li>Hallway activity</li>
+              <li>Guest-room presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Ballroom</li>
+              <li>Guest floors</li>
+              <li>Hallways</li>
+              <li>Lobby</li>
+              <li>Courtyard</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 717 Orleans St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://www.bourbonorleans.com/" rel="noopener noreferrer" target="_blank">https://www.bourbonorleans.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9582° N, 90.0653° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic hotel activity tied to ballroom and lodging zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-lepavillon">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Le Pavillon Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A historic New Orleans hotel with multiple named ghost traditions and strong guest-floor, suite, lobby, and public-space buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Named apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Guest-room activity</li>
+              <li>Unexplained sounds</li>
+              <li>Lobby / hallway presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest rooms</li>
+              <li>Suites</li>
+              <li>Hallways</li>
+              <li>Lobby</li>
+              <li>Public rooms</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 833 Poydras St, New Orleans, LA 70112</p>
+            <p><strong>Website:</strong> <a href="https://www.lepavillon.com/" rel="noopener noreferrer" target="_blank">https://www.lepavillon.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9504° N, 90.0726° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic hotel with multiple reported entities and guest-space activity.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-lafittesblacksmith">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lafitte’s Blacksmith Shop Bar</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Bar</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Bar</div>
+          <div class="entry-meta-item">Access: Public / Bar</div>
+        </div>
+        <p class="entry-body">A landmark Bourbon Street bar associated with Jean Lafitte lore and apparition / shadow traditions in one of the oldest bar settings in New Orleans.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Shadow figures</li>
+              <li>Jean Lafitte presence traditions</li>
+              <li>Unexplained sounds</li>
+              <li>Bar-room atmosphere claims</li>
+              <li>Candlelit-room unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main bar room</li>
+              <li>Back rooms</li>
+              <li>Bourbon Street frontage</li>
+              <li>Courtyard context</li>
+              <li>Upper structure context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 941 Bourbon St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://www.lafittesblacksmithshop.com/" rel="noopener noreferrer" target="_blank">https://www.lafittesblacksmithshop.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9612° N, 90.0630° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — historic bar with famous pirate/privateer lore and stable public buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-pharmacymuseum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">New Orleans Pharmacy Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Pharmacy Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A historic apothecary museum with ghost-story traditions tied to medical history, courtyard, display rooms, and upper areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Object movement reports</li>
+              <li>Courtyard presence reports</li>
+              <li>Apparition traditions</li>
+              <li>Medical-history atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Display rooms</li>
+              <li>Courtyard</li>
+              <li>Stairways</li>
+              <li>Upper rooms</li>
+              <li>Exterior entry</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 514 Chartres St, New Orleans, LA 70130</p>
+            <p><strong>Website:</strong> <a href="https://www.pharmacymuseum.org/" rel="noopener noreferrer" target="_blank">https://www.pharmacymuseum.org/</a></p>
+            <p><strong>Coordinates:</strong> 29.9564° N, 90.0654° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — medical-history museum with room/courtyard buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-hermanngrima">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hermann-Grima House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A preserved French Quarter house museum with enslaved-quarters interpretation, courtyard, kitchen, parlor, and upper-room buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Kitchen-area atmosphere</li>
+              <li>Courtyard presence reports</li>
+              <li>Historic-house sounds</li>
+              <li>Upper-room activity traditions</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Parlors</li>
+              <li>Courtyard</li>
+              <li>Kitchen</li>
+              <li>Slave quarters context</li>
+              <li>Upper rooms</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 820 St Louis St, New Orleans, LA 70112</p>
+            <p><strong>Website:</strong> <a href="https://hgghh.org/" rel="noopener noreferrer" target="_blank">https://hgghh.org/</a></p>
+            <p><strong>Coordinates:</strong> 29.9585° N, 90.0679° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — historic house museum with multiple structure zones and serious interpretive context.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-gallierhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Gallier House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A French Quarter house museum with preserved domestic spaces, courtyard, servants’ areas, and local haunted-house traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Domestic-space presence reports</li>
+              <li>Courtyard unease</li>
+              <li>Object movement lore</li>
+              <li>Upper-room atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Parlors</li>
+              <li>Courtyard</li>
+              <li>Servants’ areas</li>
+              <li>Upper rooms</li>
+              <li>Stairways</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1132 Royal St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://hgghh.org/visit/gallier-house/" rel="noopener noreferrer" target="_blank">https://hgghh.org/visit/gallier-house/</a></p>
+            <p><strong>Coordinates:</strong> 29.9597° N, 90.0632° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — historic domestic setting with room and courtyard buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-madamejohnslegacy">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Madame John’s Legacy</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A Louisiana State Museum property and one of the French Quarter’s oldest surviving residential structures, with house, courtyard, and historic-room buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Historic-house presence reports</li>
+              <li>Footsteps</li>
+              <li>Courtyard atmosphere</li>
+              <li>Upper room sounds</li>
+              <li>French Quarter ghost lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house</li>
+              <li>Courtyard</li>
+              <li>Upper rooms</li>
+              <li>Stairways</li>
+              <li>Museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 632 Dumaine St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://louisianastatemuseum.org/museum/madame-johns-legacy" rel="noopener noreferrer" target="_blank">https://louisianastatemuseum.org/museum/madame-johns-legacy</a></p>
+            <p><strong>Coordinates:</strong> 29.9595° N, 90.0651° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — historic museum-house setting with stable structure buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-presbytere">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Presbytère</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A historic museum building beside Jackson Square, included as a civic / museum reference site with public halls, galleries, stairways, and exterior-square buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Museum presence reports</li>
+              <li>Footsteps</li>
+              <li>Gallery atmosphere claims</li>
+              <li>Historic-building sounds</li>
+              <li>Jackson Square lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Galleries</li>
+              <li>Stairways</li>
+              <li>Public halls</li>
+              <li>Exterior square frontage</li>
+              <li>Museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 751 Chartres St, New Orleans, LA 70116</p>
+            <p><strong>Website:</strong> <a href="https://louisianastatemuseum.org/museum/presbytere" rel="noopener noreferrer" target="_blank">https://louisianastatemuseum.org/museum/presbytere</a></p>
+            <p><strong>Coordinates:</strong> 29.9576° N, 90.0640° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — historic museum building with public exhibit-space buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-oldabsinthe">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Absinthe House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Bar</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Bar</div>
+          <div class="entry-meta-item">Access: Public / Bar</div>
+        </div>
+        <p class="entry-body">A historic Bourbon Street bar tied to pirate, political, and literary lore, with bar-room, upstairs, courtyard/street, and public-space buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Shadow reports</li>
+              <li>Historic-bar presence claims</li>
+              <li>Upstairs atmosphere</li>
+              <li>Bourbon Street lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main bar</li>
+              <li>Upper areas</li>
+              <li>Bourbon Street frontage</li>
+              <li>Back rooms</li>
+              <li>Public seating areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 240 Bourbon St, New Orleans, LA 70112</p>
+            <p><strong>Website:</strong> <a href="https://www.oldabsinthehouse.com/" rel="noopener noreferrer" target="_blank">https://www.oldabsinthehouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9553° N, 90.0687° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Folkloric-Mixed — historic bar with layered New Orleans lore and stable public spaces.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-arnauds">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Arnaud’s Restaurant</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Restaurant</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Restaurant</div>
+          <div class="entry-meta-item">Access: Public / Restaurant</div>
+        </div>
+        <p class="entry-body">A historic French Quarter restaurant with ghost-story traditions involving dining rooms, museum spaces, stairways, and upper areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparition traditions</li>
+              <li>Dining-room presence reports</li>
+              <li>Footsteps</li>
+              <li>Museum-area atmosphere</li>
+              <li>Unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Dining rooms</li>
+              <li>Stairways</li>
+              <li>Upper rooms</li>
+              <li>Museum / display areas</li>
+              <li>Entry areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 813 Bienville St, New Orleans, LA 70112</p>
+            <p><strong>Website:</strong> <a href="https://www.arnaudsrestaurant.com/" rel="noopener noreferrer" target="_blank">https://www.arnaudsrestaurant.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9560° N, 90.0689° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic restaurant with public dining and upper-level evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-napoleonhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Napoleon House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Restaurant / Bar</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Restaurant</div>
+          <div class="entry-meta-item">Access: Public / Restaurant</div>
+        </div>
+        <p class="entry-body">A historic French Quarter landmark associated with Napoleon-era refuge lore and public bar/restaurant spaces suited to folklore-based documentation.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Historic-presence reports</li>
+              <li>Courtyard atmosphere</li>
+              <li>Unexplained sounds</li>
+              <li>French Quarter lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main dining rooms</li>
+              <li>Courtyard</li>
+              <li>Upstairs context</li>
+              <li>Bar area</li>
+              <li>Chartres Street frontage</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 500 Chartres St, New Orleans, LA 70130</p>
+            <p><strong>Website:</strong> <a href="https://www.napoleonhouse.com/" rel="noopener noreferrer" target="_blank">https://www.napoleonhouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 29.9563° N, 90.0657° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Folkloric-Mixed — historic landmark with strong identity and public zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-fortmacomb">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Macomb</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort / Ruin</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Fort Ruins</div>
+          <div class="entry-meta-item">Access: Restricted / Exterior Reference</div>
+        </div>
+        <p class="entry-body">A ruined coastal fort with Civil War and military history, decay, water-edge setting, and outdoor/exterior buckets; access should be treated as restricted and cautionary.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Soldier presence reports</li>
+              <li>Voices</li>
+              <li>Water-edge unease</li>
+              <li>Ruins atmosphere</li>
+              <li>Shadow or figure reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Fort exterior</li>
+              <li>Water edge</li>
+              <li>Gate / approach</li>
+              <li>Ruined walls</li>
+              <li>Surrounding marsh area</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Fort Macomb Rd, New Orleans, LA 70129</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 30.0654° N, 89.8085° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — military ruin with restricted access and outdoor evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-fortpike">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Pike State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">Historic Fort</div>
+          <div class="entry-meta-item">Access: Restricted / State Site Status</div>
+        </div>
+        <p class="entry-body">A historic coastal fort with military history, casemates, walls, parade ground, and water-edge areas connected to regional haunting traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Soldier lore</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Casemate atmosphere claims</li>
+              <li>Water-edge presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Casemates</li>
+              <li>Fort walls</li>
+              <li>Parade ground</li>
+              <li>Entry approach</li>
+              <li>Water-edge areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 27100 Chef Menteur Hwy, New Orleans, LA 70129</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 30.1698° N, 89.7369° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — historic fort setting with clear military-zone buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-shreveport-loganmansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Logan Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Shreveport, LA</div>
+          <div class="entry-meta-item">Historic Mansion</div>
+          <div class="entry-meta-item">Access: Public / Tour or Event Based</div>
+        </div>
+        <p class="entry-body">A Queen Anne mansion in Shreveport with a strong haunted-house reputation and claims tied to rooms, staircase, attic, and exterior grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Staircase reports</li>
+              <li>Attic activity</li>
+              <li>Historic-house presence claims</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Parlor rooms</li>
+              <li>Staircase</li>
+              <li>Upper rooms</li>
+              <li>Attic context</li>
+              <li>Exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 725 Austin Pl, Shreveport, LA 71101</p>
+            <p><strong>Website:</strong> <a href="https://theloganmansion.com/" rel="noopener noreferrer" target="_blank">https://theloganmansion.com/</a></p>
+            <p><strong>Coordinates:</strong> 32.5076° N, 93.7517° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic mansion activity with defined interior evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-shreveport-municipalauditorium">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Shreveport Municipal Auditorium</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Auditorium</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Shreveport, LA</div>
+          <div class="entry-meta-item">Historic Performance Venue</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A landmark performance venue with music history, stage, backstage, balcony, dressing rooms, and auditorium buckets tied to ghost-story reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Backstage presence reports</li>
+              <li>Footsteps</li>
+              <li>Stage-area atmosphere</li>
+              <li>Apparition traditions</li>
+              <li>Unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Stage</li>
+              <li>Backstage</li>
+              <li>Balcony</li>
+              <li>Dressing rooms</li>
+              <li>Auditorium seating</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 705 Elvis Presley Ave, Shreveport, LA 71101</p>
+            <p><strong>Website:</strong> <a href="https://shreveportmunicipalauditorium.com/" rel="noopener noreferrer" target="_blank">https://shreveportmunicipalauditorium.com/</a></p>
+            <p><strong>Coordinates:</strong> 32.5155° N, 93.7468° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic performance-space lore tied to stage and backstage zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-shreveport-strandtheatre">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Strand Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Shreveport, LA</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A historic theatre with performance-space ghost lore and clear evidence buckets across stage, balcony, auditorium, lobby, and backstage areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Balcony presence reports</li>
+              <li>Stage-area activity</li>
+              <li>Historic-theatre atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Stage</li>
+              <li>Auditorium</li>
+              <li>Balcony</li>
+              <li>Backstage</li>
+              <li>Lobby</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 619 Louisiana Ave, Shreveport, LA 71101</p>
+            <p><strong>Website:</strong> <a href="https://thestrandtheatre.com/" rel="noopener noreferrer" target="_blank">https://thestrandtheatre.com/</a></p>
+            <p><strong>Coordinates:</strong> 32.5125° N, 93.7490° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic theatre activity tied to performance and audience zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-lakecharles-courthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Calcasieu Parish Courthouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Courthouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lake Charles, LA</div>
+          <div class="entry-meta-item">Historic Courthouse</div>
+          <div class="entry-meta-item">Access: Public / Civic Building</div>
+        </div>
+        <p class="entry-body">A Lake Charles civic landmark tied to the Toni Jo Henry execution story and courthouse ghost lore, with courtroom, hall, stair, jail-context, and exterior buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Woman apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Hallway activity</li>
+              <li>Courtroom atmosphere</li>
+              <li>Execution-history lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Courtrooms</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Exterior grounds</li>
+              <li>Historic jail / execution context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1000 Ryan St, Lake Charles, LA 70601</p>
+            <p><strong>Website:</strong> <a href="https://www.calcasieu.gov/" rel="noopener noreferrer" target="_blank">https://www.calcasieu.gov/</a></p>
+            <p><strong>Coordinates:</strong> 30.2266° N, 93.2174° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — courthouse lore connected to legal and execution-history memory.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-lakecharles-charpentier">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Charpentier Historic District</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic District</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lake Charles, LA</div>
+          <div class="entry-meta-item">Historic District / Walking Route</div>
+          <div class="entry-meta-item">Access: Public / Exterior Walking Route</div>
+        </div>
+        <p class="entry-body">A historic district with Victorian architecture, walking-route ghost-story value, and exterior evidence buckets across streets, houses, porches, and public approaches.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Historic-house ghost traditions</li>
+              <li>Street-level presence reports</li>
+              <li>Footsteps</li>
+              <li>Window / porch lore</li>
+              <li>Walking-route atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Historic streets</li>
+              <li>House exteriors</li>
+              <li>Porches</li>
+              <li>Sidewalks</li>
+              <li>Walking-route zones</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Charpentier Historic District, Lake Charles, LA</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 30.2258° N, 93.2165° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Folkloric-Mixed — district-scale haunted heritage with exterior-only buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-alexandria-kenthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kent Plantation House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Alexandria, LA</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A public historic house museum with outbuildings, kitchen, grounds, and house rooms that can support a respectful historic-haunt card.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Historic-house atmosphere claims</li>
+              <li>Footsteps</li>
+              <li>Grounds presence reports</li>
+              <li>Outbuilding unease</li>
+              <li>Museum-route sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house rooms</li>
+              <li>Kitchen / outbuildings</li>
+              <li>Grounds</li>
+              <li>Porches</li>
+              <li>Museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3601 Bayou Rapides Rd, Alexandria, LA 71303</p>
+            <p><strong>Website:</strong> <a href="https://www.kenthouse.org/" rel="noopener noreferrer" target="_blank">https://www.kenthouse.org/</a></p>
+            <p><strong>Coordinates:</strong> 31.2988° N, 92.4833° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — house museum with structure and grounds evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-natchitoches-americancemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">American Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Natchitoches, LA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A historic Natchitoches cemetery and regional lore site with tomb rows, paths, tree lines, and cemetery-section buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparition traditions</li>
+              <li>Lights</li>
+              <li>Footsteps</li>
+              <li>Cemetery presence reports</li>
+              <li>Local ghost-story claims</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Tomb rows</li>
+              <li>Paths</li>
+              <li>Tree line</li>
+              <li>Older sections</li>
+              <li>Perimeter areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2nd St / American Cemetery area, Natchitoches, LA 71457</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 31.7623° N, 93.0863° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic cemetery lore with stable outdoor buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-stfrancisville-rosedown">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Rosedown Plantation State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Plantation Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Francisville, LA</div>
+          <div class="entry-meta-item">State Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A state historic site with mansion, gardens, outbuildings, and grounds that support historic-house and landscape buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Historic-house atmosphere reports</li>
+              <li>Garden presence traditions</li>
+              <li>Footsteps</li>
+              <li>Grounds sounds</li>
+              <li>Interior room unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house rooms</li>
+              <li>Gardens</li>
+              <li>Outbuildings</li>
+              <li>Porches</li>
+              <li>Grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 12501 LA-10, St. Francisville, LA 70775</p>
+            <p><strong>Website:</strong> <a href="https://www.crt.state.la.us/louisiana-state-parks/historic-sites/rosedown-plantation-state-historic-site/" rel="noopener noreferrer" target="_blank">https://www.crt.state.la.us/louisiana-state-parks/historic-sites/rosedown-plantation-state-historic-site/</a></p>
+            <p><strong>Coordinates:</strong> 30.8055° N, 91.3756° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — historic plantation state site with strong house and garden zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-batonrouge-highlandroadpark">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Highland Road Park Observatory / Area</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Park / Observatory</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baton Rouge, LA</div>
+          <div class="entry-meta-item">Parkland / Local Legend</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A Baton Rouge park/observatory area included as an outdoor local-legend entry with woods, paths, observatory grounds, and roadside buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Outdoor presence reports</li>
+              <li>Night-sound lore</li>
+              <li>Roadside unease</li>
+              <li>Woods atmosphere claims</li>
+              <li>Local legend references</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Park paths</li>
+              <li>Observatory grounds</li>
+              <li>Wooded edges</li>
+              <li>Roadside approach</li>
+              <li>Open field areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 13800 Highland Rd, Baton Rouge, LA 70810</p>
+            <p><strong>Website:</strong> <a href="https://www.brec.org/facility/HighlandRoadParkObservatory" rel="noopener noreferrer" target="_blank">https://www.brec.org/facility/HighlandRoadParkObservatory</a></p>
+            <p><strong>Coordinates:</strong> 30.3462° N, 91.0668° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Folkloric-Mixed — outdoor public site with stable park buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-porthudson-porthudson">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Port Hudson State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Jackson / Port Hudson, LA</div>
+          <div class="entry-meta-item">Civil War Battlefield</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A Civil War battlefield and siege site with trail, earthwork, interpretive, and wooded terrain buckets tied to battlefield memory.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom battle sounds</li>
+              <li>Soldier presence reports</li>
+              <li>Trail voices</li>
+              <li>Cannon / gunfire lore</li>
+              <li>Wooded battlefield atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Battlefield trails</li>
+              <li>Earthworks</li>
+              <li>Interpretive areas</li>
+              <li>Wooded sections</li>
+              <li>Visitor center / approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 236 US-61, Jackson, LA 70748</p>
+            <p><strong>Website:</strong> <a href="https://www.crt.state.la.us/louisiana-state-parks/historic-sites/port-hudson-state-historic-site/" rel="noopener noreferrer" target="_blank">https://www.crt.state.la.us/louisiana-state-parks/historic-sites/port-hudson-state-historic-site/</a></p>
+            <p><strong>Coordinates:</strong> 30.6838° N, 91.2664° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — battlefield imprinting with outdoor terrain and trail buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-mansfield-mansfieldbattlefield">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Mansfield State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Mansfield, LA</div>
+          <div class="entry-meta-item">Civil War Battlefield</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A Civil War battlefield with preserved terrain, interpretive areas, trails, and battle-memory traditions suitable for outdoor logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Battle sounds</li>
+              <li>Soldier apparition traditions</li>
+              <li>Voices</li>
+              <li>Trail atmosphere</li>
+              <li>Residual battlefield reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Battlefield grounds</li>
+              <li>Trail sections</li>
+              <li>Interpretive areas</li>
+              <li>Visitor center approach</li>
+              <li>Tree-line / field edges</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 15149 LA-175, Mansfield, LA 71052</p>
+            <p><strong>Website:</strong> <a href="https://www.crt.state.la.us/louisiana-state-parks/historic-sites/mansfield-state-historic-site/" rel="noopener noreferrer" target="_blank">https://www.crt.state.la.us/louisiana-state-parks/historic-sites/mansfield-state-historic-site/</a></p>
+            <p><strong>Coordinates:</strong> 32.0377° N, 93.7039° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — battlefield-site lore tied to preserved outdoor zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-many-fortjesup">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Jesup State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort / Military Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Many, LA</div>
+          <div class="entry-meta-item">State Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A historic military site with preserved structures, grounds, barracks context, and frontier-era memory buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Soldier-presence traditions</li>
+              <li>Grounds atmosphere</li>
+              <li>Barracks-context reports</li>
+              <li>Unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Barracks / historic structures</li>
+              <li>Grounds</li>
+              <li>Trail / approach areas</li>
+              <li>Visitor route</li>
+              <li>Exterior military zones</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 32 Geoghagan Rd, Many, LA 71449</p>
+            <p><strong>Website:</strong> <a href="https://www.crt.state.la.us/louisiana-state-parks/historic-sites/fort-jesup-state-historic-site/" rel="noopener noreferrer" target="_blank">https://www.crt.state.la.us/louisiana-state-parks/historic-sites/fort-jesup-state-historic-site/</a></p>
+            <p><strong>Coordinates:</strong> 31.6087° N, 93.3944° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — military-history site with structure and grounds buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="la-neworleans-chalmettebattlefield">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Chalmette Battlefield</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Orleans, LA</div>
+          <div class="entry-meta-item">War of 1812 Battlefield</div>
+          <div class="entry-meta-item">Access: Public / National Park Site</div>
+        </div>
+        <p class="entry-body">A War of 1812 battlefield with strong public identity and outdoor zones including battlefield grounds, monument areas, river-side edges, and interpretive paths.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Battlefield atmosphere reports</li>
+              <li>Soldier presence traditions</li>
+              <li>Phantom sounds</li>
+              <li>River-edge unease</li>
+              <li>Residual conflict lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Battlefield grounds</li>
+              <li>Monument area</li>
+              <li>River edge</li>
+              <li>Interpretive paths</li>
+              <li>Visitor center approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 8606 W St Bernard Hwy, Chalmette, LA 70043</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/jela/chalmette-battlefield.htm" rel="noopener noreferrer" target="_blank">https://www.nps.gov/jela/chalmette-battlefield.htm</a></p>
+            <p><strong>Coordinates:</strong> 29.9431° N, 89.9863° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — preserved battlefield landscape with stable outdoor buckets.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 46,
+    states: ["Louisiana"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 46,
+  "states": [
+    {
+      "name": "Louisiana",
+      "code": "LA",
+      "count": 46
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

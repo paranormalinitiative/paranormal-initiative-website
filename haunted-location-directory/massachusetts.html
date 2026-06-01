@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Massachusetts</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">TPI Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations or cities..." autocomplete="off">
+    <div id="search-count">23 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Haunted Location <em>Directory</em></h1>
+    <p class="hero-desc">This directory contains documented haunted locations, historic sites, and culturally recognized paranormal landmarks. Entries are compiled from historical records, publicly accessible data, and widely reported experiences to support exploration, documentation, and personal investigation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>23</span> Location Entries</div>
+      <div class="hero-meta-item"><span>17</span> Cities</div>
+      <div class="hero-meta-item"><span>105</span> County-Aware Research</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html" class="active">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- KANSAS -->
+  <section id="massachusetts" class="sec-block" data-state="MA">
+    <div class="sec-header">
+      <div class="sec-number">21</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Massachusetts</h2>
+      </div>
+      <div class="sec-tag">23 Locations</div>
+    </div>
+    <p class="sec-intro">Massachusetts has 14 counties, and this v8 build uses the approved Massachusetts research file as the foundation for a full state HTML. The final build includes forts, burial grounds, historic hotels, Salem landmarks, mansions, woods, chasms, former hospitals, jails, cemeteries, waterfalls, forests, and nationally known historic houses with meaningful rooms, zones, or evidence buckets.</p>
+
+    <div class="entry" data-location-id="ma-georges-island-fort-warren">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Warren</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Georges Island, MA</div>
+          <div class="entry-meta-item">Boston Harbor Civil War Fort</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Fort Warren is a Massachusetts Haunted Location Directory entry tied to boston harbor civil war fort, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Lady in Black apparition</li>
+              <li>footsteps</li>
+              <li>voices</li>
+              <li>military presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>ramparts</li>
+              <li>casemates</li>
+              <li>parade ground</li>
+              <li>tunnels / corridors</li>
+              <li>island approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Georges Island, Boston Harbor Islands National Recreation Area</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/boha/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/boha/</a></p>
+            <p><strong>Coordinates:</strong> 42.3210° N, 70.9610° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Boston Harbor Civil War Fort with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-boston-king-s-chapel-burying-ground">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">King&#x27;s Chapel Burying Ground</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Burying Ground</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boston, MA</div>
+          <div class="entry-meta-item">Historic Burial Ground</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">King&#x27;s Chapel Burying Ground is a Massachusetts Haunted Location Directory entry tied to historic burial ground, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>shadows</li>
+              <li>voices</li>
+              <li>unexplained movement</li>
+              <li>burial-ground presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>grave rows</li>
+              <li>gate</li>
+              <li>central paths</li>
+              <li>perimeter walls</li>
+              <li>Freedom Trail approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Tremont St, Boston, MA 02108</p>
+            <p><strong>Website:</strong> <a href="https://www.thefreedomtrail.org/" rel="noopener noreferrer" target="_blank">https://www.thefreedomtrail.org/</a></p>
+            <p><strong>Coordinates:</strong> 42.3580° N, 71.0610° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Burial Ground with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-boston-the-omni-parker-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Omni Parker House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boston, MA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">The Omni Parker House is a Massachusetts Haunted Location Directory entry tied to historic hotel, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>elevator activity</li>
+              <li>apparitions</li>
+              <li>guest-floor activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>guest rooms</li>
+              <li>elevators</li>
+              <li>hallways</li>
+              <li>lobby</li>
+              <li>public dining areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 60 School St, Boston, MA 02108</p>
+            <p><strong>Website:</strong> <a href="https://www.omnihotels.com/hotels/boston-parker-house" rel="noopener noreferrer" target="_blank">https://www.omnihotels.com/hotels/boston-parker-house</a></p>
+            <p><strong>Coordinates:</strong> 42.3560° N, 71.0590° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Hotel with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-salem-howard-street-burying-ground">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Howard Street Burying Ground</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Burying Ground</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Salem, MA</div>
+          <div class="entry-meta-item">Colonial Burial Ground</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Howard Street Burying Ground is a Massachusetts Haunted Location Directory entry tied to colonial burial ground, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>apparitions</li>
+              <li>phantom sounds</li>
+              <li>cold spots</li>
+              <li>cemetery presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>gates</li>
+              <li>headstones</li>
+              <li>perimeter paths</li>
+              <li>central rows</li>
+              <li>street frontage</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Howard St, Salem, MA 01970</p>
+            <p><strong>Website:</strong> <a href="https://www.salem.org/" rel="noopener noreferrer" target="_blank">https://www.salem.org/</a></p>
+            <p><strong>Coordinates:</strong> 42.5220° N, 70.8910° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Colonial Burial Ground with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-salem-joshua-ward-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Joshua Ward House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Salem, MA</div>
+          <div class="entry-meta-item">Historic Salem House</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Joshua Ward House is a Massachusetts Haunted Location Directory entry tied to historic salem house, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>faces</li>
+              <li>unexplained movement</li>
+              <li>witch-trial-era presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>stairway</li>
+              <li>upper rooms</li>
+              <li>front parlor</li>
+              <li>exterior facade</li>
+              <li>street approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 148 Washington St, Salem, MA 01970</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.5230° N, 70.8940° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Salem House with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-salem-ropes-mansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Ropes Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Salem, MA</div>
+          <div class="entry-meta-item">18th-century Merchant Mansion</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Ropes Mansion is a Massachusetts Haunted Location Directory entry tied to 18th-century merchant mansion, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>apparitions</li>
+              <li>cold spots</li>
+              <li>voices</li>
+              <li>mansion presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>halls</li>
+              <li>stairs</li>
+              <li>garden</li>
+              <li>upper rooms</li>
+              <li>exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 318 Essex St, Salem, MA 01970</p>
+            <p><strong>Website:</strong> <a href="https://www.pem.org/visit/historic-houses/ropes-mansion" rel="noopener noreferrer" target="_blank">https://www.pem.org/visit/historic-houses/ropes-mansion</a></p>
+            <p><strong>Coordinates:</strong> 42.5210° N, 70.8980° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — 18th-century Merchant Mansion with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-salem-the-hawthorne-hotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Hawthorne Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Salem, MA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">The Hawthorne Hotel is a Massachusetts Haunted Location Directory entry tied to historic hotel, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>door movement</li>
+              <li>apparitions</li>
+              <li>elevator-area activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>guest rooms</li>
+              <li>corridors</li>
+              <li>elevator areas</li>
+              <li>lobby</li>
+              <li>public rooms</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 18 Washington Sq W, Salem, MA 01970</p>
+            <p><strong>Website:</strong> <a href="https://www.hawthornehotel.com/" rel="noopener noreferrer" target="_blank">https://www.hawthornehotel.com/</a></p>
+            <p><strong>Coordinates:</strong> 42.5230° N, 70.8970° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Hotel with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-marblehead-old-burial-hill">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Burial Hill</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Burying Ground</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Marblehead, MA</div>
+          <div class="entry-meta-item">Colonial Burial Ground</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Old Burial Hill is a Massachusetts Haunted Location Directory entry tied to colonial burial ground, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>figures</li>
+              <li>voices</li>
+              <li>orbs</li>
+              <li>hilltop presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>hilltop</li>
+              <li>stones</li>
+              <li>paths</li>
+              <li>harbor overlook</li>
+              <li>cemetery perimeter</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Orne St, Marblehead, MA 01945</p>
+            <p><strong>Website:</strong> <a href="https://marbleheadmuseum.org/" rel="noopener noreferrer" target="_blank">https://marbleheadmuseum.org/</a></p>
+            <p><strong>Coordinates:</strong> 42.5000° N, 70.8540° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Colonial Burial Ground with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-gloucester-hammond-castle">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hammond Castle</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Castle / Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Gloucester, MA</div>
+          <div class="entry-meta-item">Historic Castle and Inventor’s Home</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Hammond Castle is a Massachusetts Haunted Location Directory entry tied to historic castle and inventor’s home, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>voices</li>
+              <li>footsteps</li>
+              <li>figures</li>
+              <li>castle atmosphere reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>halls</li>
+              <li>courtyard</li>
+              <li>towers</li>
+              <li>great hall</li>
+              <li>exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 80 Hesperus Ave, Gloucester, MA 01930</p>
+            <p><strong>Website:</strong> <a href="https://www.hammondcastle.org/" rel="noopener noreferrer" target="_blank">https://www.hammondcastle.org/</a></p>
+            <p><strong>Coordinates:</strong> 42.6200° N, 70.6780° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Castle and Inventor’s Home with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-gloucester-rockport-dogtown">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Dogtown</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Abandoned Settlement / Woods</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Gloucester / Rockport, MA</div>
+          <div class="entry-meta-item">Historic Settlement Ruins</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Dogtown is a Massachusetts Haunted Location Directory entry tied to historic settlement ruins, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>ghost lights</li>
+              <li>apparitions</li>
+              <li>strange sounds</li>
+              <li>woods presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>woods</li>
+              <li>stone ruins</li>
+              <li>trails</li>
+              <li>cellar holes</li>
+              <li>boulder / path areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Dogtown Road trail access, Gloucester, MA</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.6500° N, 70.6500° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Settlement Ruins with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-sutton-purgatory-chasm-state-reservation">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Purgatory Chasm State Reservation</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">State Reservation</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Sutton, MA</div>
+          <div class="entry-meta-item">Geological Landmark / Legend Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Purgatory Chasm State Reservation is a Massachusetts Haunted Location Directory entry tied to geological landmark / legend site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>voices</li>
+              <li>figures</li>
+              <li>strange echoes</li>
+              <li>chasm presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>chasm trail</li>
+              <li>ledges</li>
+              <li>rock passage</li>
+              <li>wooded trails</li>
+              <li>overlook areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 198 Purgatory Rd, Sutton, MA 01590</p>
+            <p><strong>Website:</strong> <a href="https://www.mass.gov/locations/purgatory-chasm-state-reservation" rel="noopener noreferrer" target="_blank">https://www.mass.gov/locations/purgatory-chasm-state-reservation</a></p>
+            <p><strong>Coordinates:</strong> 42.1070° N, 71.7500° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Geological Landmark / Legend Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-leicester-spider-gates-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Spider Gates Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Leicester, MA</div>
+          <div class="entry-meta-item">Rural Burial Ground</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Spider Gates Cemetery is a Massachusetts Haunted Location Directory entry tied to rural burial ground, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>voices</li>
+              <li>cold spots</li>
+              <li>cemetery legend reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>gates</li>
+              <li>central burial area</li>
+              <li>paths</li>
+              <li>tree line</li>
+              <li>perimeter</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 790 Pine St, Leicester, MA 01524</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.2360° N, 71.9180° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Rural Burial Ground with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-worcester-higgins-armory-museum-site">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Higgins Armory Museum Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Former Museum / Armory</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Worcester, MA</div>
+          <div class="entry-meta-item">Former Armory Museum Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Higgins Armory Museum Site is a Massachusetts Haunted Location Directory entry tied to former armory museum site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>shadows</li>
+              <li>footsteps</li>
+              <li>former exhibit-space presence</li>
+              <li>unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>former exhibit spaces</li>
+              <li>exterior</li>
+              <li>stair / hall context</li>
+              <li>grounds</li>
+              <li>building frontage</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 100 Barber Ave, Worcester, MA 01606</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.2850° N, 71.8140° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Former Armory Museum Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-worcester-worcester-city-hospital-site">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Worcester City Hospital Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Former Hospital Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Worcester, MA</div>
+          <div class="entry-meta-item">Former Medical Facility</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Worcester City Hospital Site is a Massachusetts Haunted Location Directory entry tied to former medical facility, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>apparitions</li>
+              <li>sounds</li>
+              <li>movement</li>
+              <li>hospital-ground presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>former hospital grounds</li>
+              <li>building footprint context</li>
+              <li>exterior paths</li>
+              <li>road approach</li>
+              <li>institutional grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Belmont Street area, Worcester, MA</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.2780° N, 71.8090° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Former Medical Facility with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-plymouth-spooner-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Spooner House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Plymouth, MA</div>
+          <div class="entry-meta-item">18th-century Plymouth House</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Spooner House is a Massachusetts Haunted Location Directory entry tied to 18th-century plymouth house, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>child apparition</li>
+              <li>ball sounds</li>
+              <li>footsteps</li>
+              <li>window-area presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>rooms</li>
+              <li>stairway</li>
+              <li>windows</li>
+              <li>exterior grounds</li>
+              <li>museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 27 North St, Plymouth, MA 02360</p>
+            <p><strong>Website:</strong> <a href="https://plymouthantiquarian.org/spooner-house/" rel="noopener noreferrer" target="_blank">https://plymouthantiquarian.org/spooner-house/</a></p>
+            <p><strong>Coordinates:</strong> 41.9590° N, 70.6700° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — 18th-century Plymouth House with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-plymouth-cole-s-hill">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Cole&#x27;s Hill</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Hill / Memorial Grounds</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Plymouth, MA</div>
+          <div class="entry-meta-item">Early Colonial Burial Area</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Cole&#x27;s Hill is a Massachusetts Haunted Location Directory entry tied to early colonial burial area, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>apparitions</li>
+              <li>colonial burial-ground presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>hilltop</li>
+              <li>memorial grounds</li>
+              <li>pathways</li>
+              <li>waterfront overlook</li>
+              <li>burial context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 79 Water St, Plymouth, MA 02360</p>
+            <p><strong>Website:</strong> <a href="https://www.plymouth400inc.org/" rel="noopener noreferrer" target="_blank">https://www.plymouth400inc.org/</a></p>
+            <p><strong>Coordinates:</strong> 41.9570° N, 70.6650° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Early Colonial Burial Area with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-west-bridgewater-hockomock-swamp-bridgewater-triangle">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hockomock Swamp / Bridgewater Triangle</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Swamp / Folklore Region</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">West Bridgewater, MA</div>
+          <div class="entry-meta-item">Bridgewater Triangle Outdoor Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Hockomock Swamp / Bridgewater Triangle is a Massachusetts Haunted Location Directory entry tied to bridgewater triangle outdoor site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>lights</li>
+              <li>creatures</li>
+              <li>voices</li>
+              <li>woods / swamp presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>swamp trails</li>
+              <li>wooded edges</li>
+              <li>pull-offs</li>
+              <li>trailheads</li>
+              <li>wetland areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Swamp and trail network in the Bridgewater Triangle region</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 41.9750° N, 70.9750° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Bridgewater Triangle Outdoor Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-barnstable-the-old-gaol">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Old Gaol</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Jail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Barnstable, MA</div>
+          <div class="entry-meta-item">Cape Cod Historic Jail</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">The Old Gaol is a Massachusetts Haunted Location Directory entry tied to cape cod historic jail, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>jail sounds</li>
+              <li>figures</li>
+              <li>prisoner presence reports</li>
+              <li>footsteps</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>cells</li>
+              <li>courtyard</li>
+              <li>exterior walls</li>
+              <li>jail corridors</li>
+              <li>museum route</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3356 Main St, Barnstable, MA 02630</p>
+            <p><strong>Website:</strong> <a href="https://barnstablehistory.org/" rel="noopener noreferrer" target="_blank">https://barnstablehistory.org/</a></p>
+            <p><strong>Coordinates:</strong> 41.7050° N, 70.3000° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Cape Cod Historic Jail with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-mount-washington-bash-bish-falls">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bash Bish Falls</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Waterfall / State Park</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Mount Washington, MA</div>
+          <div class="entry-meta-item">Waterfall Legend Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Bash Bish Falls is a Massachusetts Haunted Location Directory entry tied to waterfall legend site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>woman apparition</li>
+              <li>cries</li>
+              <li>water-edge presence</li>
+              <li>ledge unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>falls overlook</li>
+              <li>trail</li>
+              <li>ledge area</li>
+              <li>waterline</li>
+              <li>gorge approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Falls Rd access, Mt Washington, MA 01258</p>
+            <p><strong>Website:</strong> <a href="https://www.mass.gov/locations/bash-bish-falls-state-park" rel="noopener noreferrer" target="_blank">https://www.mass.gov/locations/bash-bish-falls-state-park</a></p>
+            <p><strong>Coordinates:</strong> 42.1110° N, 73.4510° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Waterfall Legend Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-north-adams-hillside-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hillside Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">North Adams, MA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Hillside Cemetery is a Massachusetts Haunted Location Directory entry tied to historic cemetery, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>apparitions</li>
+              <li>orbs</li>
+              <li>sounds</li>
+              <li>cemetery-lane presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>cemetery lanes</li>
+              <li>older sections</li>
+              <li>monument areas</li>
+              <li>tree line</li>
+              <li>entry paths</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Monument Square area, North Adams, MA 01247</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.7000° N, 73.1100° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Historic Cemetery with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-leominster-leominster-state-forest">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Leominster State Forest</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">State Forest</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Leominster, MA</div>
+          <div class="entry-meta-item">Public Forest / Folklore Site</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Leominster State Forest is a Massachusetts Haunted Location Directory entry tied to public forest / folklore site, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>lights</li>
+              <li>figures</li>
+              <li>odd sounds</li>
+              <li>wooded-trail presence</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>trails</li>
+              <li>wooded overlooks</li>
+              <li>trailheads</li>
+              <li>forest roads</li>
+              <li>rocky areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> State forest trail network, Leominster, MA</p>
+            <p><strong>Website:</strong> <a href="https://www.mass.gov/locations/leominster-state-forest" rel="noopener noreferrer" target="_blank">https://www.mass.gov/locations/leominster-state-forest</a></p>
+            <p><strong>Coordinates:</strong> 42.5300° N, 71.7600° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Public Forest / Folklore Site with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-fall-river-the-lizzie-borden-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Lizzie Borden House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic House / Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fall River, MA</div>
+          <div class="entry-meta-item">Murder House / Museum and Lodging</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">The Lizzie Borden House is a Massachusetts Haunted Location Directory entry tied to murder house / museum and lodging, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>footsteps</li>
+              <li>voices</li>
+              <li>apparitions</li>
+              <li>room activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>bedrooms</li>
+              <li>stairs</li>
+              <li>kitchen</li>
+              <li>sitting room</li>
+              <li>exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 230 2nd St, Fall River, MA 02721</p>
+            <p><strong>Website:</strong> <a href="https://lizzie-borden.com/" rel="noopener noreferrer" target="_blank">https://lizzie-borden.com/</a></p>
+            <p><strong>Coordinates:</strong> 41.6980° N, 71.1550° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Murder House / Museum and Lodging with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ma-grafton-grafton-state-hospital-site">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Grafton State Hospital Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Former Hospital Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Grafton, MA</div>
+          <div class="entry-meta-item">Former State Hospital Grounds</div>
+          <div class="entry-meta-item">Access: Public / Reference Based</div>
+        </div>
+        <p class="entry-body">Grafton State Hospital Site is a Massachusetts Haunted Location Directory entry tied to former state hospital grounds, with documented claims and usable evidence buckets for TPI field logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>figures</li>
+              <li>sounds</li>
+              <li>institutional presence</li>
+              <li>movement reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>grounds</li>
+              <li>former structure areas</li>
+              <li>roads / paths</li>
+              <li>exterior building context</li>
+              <li>institutional perimeter</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Former state hospital grounds in Grafton, MA</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.2000° N, 71.6900° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — Former State Hospital Grounds with location-specific claims and meaningful documentation zones.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 23,
+    states: ["Massachusetts"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 23,
+  "states": [
+    {
+      "name": "Massachusetts",
+      "code": "MA",
+      "count": 23
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

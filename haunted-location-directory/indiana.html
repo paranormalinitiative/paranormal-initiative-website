@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Indiana</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">19 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>19</span> Location Entries</div>
+      <div class="hero-meta-item"><span>15</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html" class="active">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- INDIANA -->
+  <section id="indiana" class="sec-block" data-state="IN">
+    <div class="sec-header">
+      <div class="sec-number">14</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Indiana</h2>
+      </div>
+      <div class="sec-tag">19 Locations</div>
+    </div>
+    <p class="sec-intro">Indiana has 92 counties, so this rebuild uses the v8 rule set as a broader state pass rather than a top-list extraction. The final build includes historic houses, cemeteries, institutional campuses, libraries, sanatoriums, jails, bridges, tunnels, theatres, inns, and resort hotels with meaningful rooms, zones, or evidence buckets for TPI users.</p>
+
+    <div class="entry" data-location-id="in-indianapolis-hannahhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hannah House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Indianapolis, IN</div>
+          <div class="entry-meta-item">Historic House</div>
+          <div class="entry-meta-item">Access: Public / Investigation Based</div>
+        </div>
+        <p class="entry-body">Hannah House is a major Indianapolis haunted-location anchor with a public identity, documented historic-house status, and long-running claims tied to the Underground Railroad, footsteps, voices, cold spots, and child-spirit lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Phantom footsteps</li>
+              <li>Unexplained voices</li>
+              <li>Cold spots</li>
+              <li>Child-ghost lore</li>
+              <li>Underground Railroad death-room tradition</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Main house rooms</li>
+              <li>Basement</li>
+              <li>Stairways</li>
+              <li>Parlor</li>
+              <li>Upper floors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3801 Madison Ave, Indianapolis, IN 46227</p>
+            <p><strong>Website:</strong> <a href="https://www.historichannahhouse.net" rel="noopener noreferrer" target="_blank">https://www.historichannahhouse.net</a></p>
+            <p><strong>Coordinates:</strong> 39.7064° N, 86.1224° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic house activity with apparition, environmental, and folklore-linked claims tied to defined rooms and interior zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-indianapolis-centralstate">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Indiana Central State Hospital Grounds / Indiana Medical History Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Institutional Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Indianapolis, IN</div>
+          <div class="entry-meta-item">Former State Hospital Campus</div>
+          <div class="entry-meta-item">Access: Public / Museum Grounds</div>
+        </div>
+        <p class="entry-body">The former Central State Hospital campus and Indiana Medical History Museum form one of Indiana’s strongest institutional haunt entries, with preserved pathology-building spaces, burial-ground context, and repeated stories tied to the former psychiatric hospital campus.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figure reports</li>
+              <li>Screams near former power-house areas</li>
+              <li>Voices</li>
+              <li>Orb activity</li>
+              <li>Haunting lore around pathology and burial areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Pathology Building</li>
+              <li>Museum rooms</li>
+              <li>Cemetery / burial area</li>
+              <li>Former power-house context</li>
+              <li>Remaining grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3270 Vermont St, Indianapolis, IN 46222</p>
+            <p><strong>Website:</strong> <a href="https://indianamedicalhistorymuseum.org" rel="noopener noreferrer" target="_blank">https://indianamedicalhistorymuseum.org</a></p>
+            <p><strong>Coordinates:</strong> 39.7641° N, 86.2288° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — institutional history, preserved museum spaces, and burial-ground context create multiple claim-bearing evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-indianapolis-crownhill">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Crown Hill Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Indianapolis, IN</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Crown Hill Cemetery is a major historic burial ground with famous interments, repeated cemetery lore, and large outdoor sections that work naturally as evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost stories tied to famous burials</li>
+              <li>Apparitions</li>
+              <li>Unexplained sounds</li>
+              <li>Cemetery lore</li>
+              <li>Presence reports around monuments and burial areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cemetery sections</li>
+              <li>Mausoleums</li>
+              <li>Monument areas</li>
+              <li>Roads and paths</li>
+              <li>Older burial rows</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 700 W 38th St, Indianapolis, IN 46208</p>
+            <p><strong>Website:</strong> <a href="https://www.crownhillhf.org" rel="noopener noreferrer" target="_blank">https://www.crownhillhf.org</a></p>
+            <p><strong>Coordinates:</strong> 39.8279° N, 86.1767° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — historic burial-ground lore and apparition traditions tied to a large, mappable cemetery environment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-evansville-willardlibrary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Willard Public Library</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Library</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Evansville, IN</div>
+          <div class="entry-meta-item">Historic Public Library</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Willard Public Library is one of Indiana’s most documented haunted libraries, with the Gray Lady legend, public ghost cams, and repeatable reports in library rooms, staircases, basement, and upper floors.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Gray Lady sightings</li>
+              <li>Moving objects</li>
+              <li>Ghost-cam anomalies</li>
+              <li>Footsteps</li>
+              <li>Unexplained activity in public library areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Reading rooms</li>
+              <li>Basement</li>
+              <li>Staircase</li>
+              <li>Upper floors</li>
+              <li>Ghost-cam zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 21 N 1st Ave, Evansville, IN 47710</p>
+            <p><strong>Website:</strong> <a href="https://www.willardlib.org/ghost-cams" rel="noopener noreferrer" target="_blank">https://www.willardlib.org/ghost-cams</a></p>
+            <p><strong>Coordinates:</strong> 37.9742° N, 87.5719° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — public-library haunting with a named apparition tradition and repeatable interior evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-rockville-statesanatorium">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Indiana State Sanatorium</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Sanatorium</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Rockville, IN</div>
+          <div class="entry-meta-item">Former Institutional Campus</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">Indiana State Sanatorium is a large preserved institutional campus with tuberculosis hospital, nursing home, mental hospital, support buildings, steam tunnels, and a major paranormal-investigation reputation.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures</li>
+              <li>Screams</li>
+              <li>Tunnel activity</li>
+              <li>Apparitions</li>
+              <li>Voices and EVP reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Main hospital buildings</li>
+              <li>Nursing home building</li>
+              <li>Mental hospital buildings</li>
+              <li>Steam tunnels</li>
+              <li>Grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 6408 S State Rd 63, Rockville, IN 47872</p>
+            <p><strong>Website:</strong> <a href="https://thesanatorium.net" rel="noopener noreferrer" target="_blank">https://thesanatorium.net</a></p>
+            <p><strong>Coordinates:</strong> 39.7635° N, 87.2148° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — large institutional campus with strong claims and multiple user-facing evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-nashville-storyinn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Story Inn / Blue Lady</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Nashville, IN</div>
+          <div class="entry-meta-item">Historic Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Story Inn is a classic Indiana haunted inn tied to the Blue Lady tradition, room activity, footsteps, and exterior grounds lore in the historic Story village setting.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Blue Lady sightings</li>
+              <li>Footsteps</li>
+              <li>Room activity</li>
+              <li>Recurring inn lore</li>
+              <li>Presence sensations in guest and common areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Dining area</li>
+              <li>Exterior grounds</li>
+              <li>Inn common spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 6404 Indiana 135, Nashville, IN 47448</p>
+            <p><strong>Website:</strong> <a href="https://storyinn.com" rel="noopener noreferrer" target="_blank">https://storyinn.com</a></p>
+            <p><strong>Coordinates:</strong> 39.1800° N, 86.2469° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic inn folklore with recurring apparition and environmental claims tied to lodging spaces.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-fortwayne-lindenwood">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lindenwood Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fort Wayne, IN</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Lindenwood Cemetery is a major historic cemetery in Fort Wayne with recurring apparition, voice, and burial-ground lore that can be organized into paths, mausoleums, gates, and older burial sections.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitions</li>
+              <li>Unexplained voices</li>
+              <li>Burial-ground lore</li>
+              <li>Repeated eyewitness reports</li>
+              <li>Presence sensations near older burial areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cemetery sections</li>
+              <li>Gates</li>
+              <li>Paths</li>
+              <li>Mausoleums</li>
+              <li>Older burial rows</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2324 English Ave, Fort Wayne, IN 46807</p>
+            <p><strong>Website:</strong> <a href="https://www.lindenwoodcemetery.org" rel="noopener noreferrer" target="_blank">https://www.lindenwoodcemetery.org</a></p>
+            <p><strong>Coordinates:</strong> 41.0554° N, 85.1328° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — cemetery haunting reports tied to identifiable paths, gates, mausoleums, and historic burial sections.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-bloomington-steppcemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Stepp Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bloomington, IN</div>
+          <div class="entry-meta-item">Historic / Folklore Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Caution</div>
+        </div>
+        <p class="entry-body">Stepp Cemetery is one of Indiana’s classic haunted cemetery legends, with ghostly-light and apparition traditions tied to a specific cemetery, roadside area, tree line, and access path.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly lights</li>
+              <li>Apparitions</li>
+              <li>Cryptid and legend overlap</li>
+              <li>Repeated cemetery reports</li>
+              <li>Unease along cemetery edge and access path</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cemetery</li>
+              <li>Tree line</li>
+              <li>Access path</li>
+              <li>Roadside area</li>
+              <li>Grave sections</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Edgewood Dr area, Bloomington, IN</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.1454° N, 86.5266° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — classic outdoor cemetery legend with repeated reports tied to a specific and mappable site.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-atlanta-roadshotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Roads Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Atlanta, IN</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Investigation Based</div>
+        </div>
+        <p class="entry-body">Roads Hotel is a well-known Indiana paranormal-investigation hotel in Atlanta, with public and private investigations and claims distributed throughout rooms, hallways, and stairways.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Reported activity throughout the building</li>
+              <li>Physical contact reports</li>
+              <li>Apparition and presence reports</li>
+              <li>EVP-style investigation reports</li>
+              <li>Historic hotel haunting reputation</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Main floor</li>
+              <li>Upper-floor rooms</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 103 S Walnut St, Atlanta, IN 46031</p>
+            <p><strong>Website:</strong> <a href="https://roadshotel.com" rel="noopener noreferrer" target="_blank">https://roadshotel.com</a></p>
+            <p><strong>Coordinates:</strong> 40.2153° N, 86.0260° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic hotel investigation site with reports distributed across multiple rooms and common areas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-crawfordsville-rotaryjail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Rotary Jail Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Jail Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Crawfordsville, IN</div>
+          <div class="entry-meta-item">Historic Rotary Jail</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">Rotary Jail Museum is a rare preserved jail with a rotating cell mechanism, museum identity, and ghost-hunting use, making it a strong room-and-zone entry.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost-hunting events</li>
+              <li>Jail-cell atmosphere reports</li>
+              <li>Former prisoner and sheriff-residence lore</li>
+              <li>Unexplained sounds in cell areas</li>
+              <li>Presence reports in museum spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Rotary cellblock</li>
+              <li>Sheriff’s residence</li>
+              <li>Museum rooms</li>
+              <li>Jail corridors</li>
+              <li>Grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 225 N Washington St, Crawfordsville, IN 47933</p>
+            <p><strong>Website:</strong> <a href="https://www.rotaryjailmuseum.org" rel="noopener noreferrer" target="_blank">https://www.rotaryjailmuseum.org</a></p>
+            <p><strong>Coordinates:</strong> 40.0441° N, 86.9018° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — public historic jail site with ghost-hunting use and highly defined evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-winchester-randolphasylum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Randolph County Asylum / Infirmary</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Asylum / Infirmary</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Winchester, IN</div>
+          <div class="entry-meta-item">Historic Asylum / Infirmary</div>
+          <div class="entry-meta-item">Access: Public / Investigation Based</div>
+        </div>
+        <p class="entry-body">Randolph County Asylum is a strong institutional entry with poor-farm, infirmary, and asylum history, public investigation access, and claim zones across wards, halls, rooms, and grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Paranormal investigation programming</li>
+              <li>Institutional presence reports</li>
+              <li>Voices and unexplained sounds</li>
+              <li>Activity tied to infirmary and asylum history</li>
+              <li>Overnight investigation reputation</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Twin tower exterior</li>
+              <li>Patient rooms</li>
+              <li>Hallways</li>
+              <li>Common areas</li>
+              <li>Grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1882 US 27 South, Winchester, IN 47394</p>
+            <p><strong>Website:</strong> <a href="https://hauntedrandolphcounty.com" rel="noopener noreferrer" target="_blank">https://hauntedrandolphcounty.com</a></p>
+            <p><strong>Coordinates:</strong> 40.1420° N, 84.9760° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — institutional site with public investigation access and recurring asylum / infirmary haunting traditions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-newalbany-culbertsonmansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Culbertson Mansion State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">New Albany, IN</div>
+          <div class="entry-meta-item">State Historic Site</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">Culbertson Mansion is a public state historic site with strong architectural identity, restoration history, and regional haunting accounts associated with carriage-house, room, stairway, and hallway spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Mysterious figure reports</li>
+              <li>Electrical problems</li>
+              <li>Strange sounds after hours</li>
+              <li>Missing-item reports</li>
+              <li>Presence reports in mansion and carriage-house areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Mansion rooms</li>
+              <li>Carriage House</li>
+              <li>Staircases</li>
+              <li>Hallways</li>
+              <li>Exterior grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 914 E Main St, New Albany, IN 47150</p>
+            <p><strong>Website:</strong> <a href="https://www.indianamuseum.org/historic-sites/culbertson-mansion-historic-site/" rel="noopener noreferrer" target="_blank">https://www.indianamuseum.org/historic-sites/culbertson-mansion-historic-site/</a></p>
+            <p><strong>Coordinates:</strong> 38.2860° N, 85.8154° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — public historic mansion with room-based evidence bucket potential and recurring regional ghost lore.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-avon-hauntedbridge">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Avon Haunted Bridge</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Bridge</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Avon, IN</div>
+          <div class="entry-meta-item">Historic Railroad Bridge</div>
+          <div class="entry-meta-item">Access: Public Roadway / Caution</div>
+        </div>
+        <p class="entry-body">Avon Haunted Bridge is a classic Indiana railroad-bridge legend tied to a real 1900s bridge, repeated local accounts, and defined outdoor buckets around the span, roadway, creek, and approaches.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Screams reportedly heard near the bridge</li>
+              <li>Buried-worker legend</li>
+              <li>Young mother and infant apparition tradition</li>
+              <li>Roadside unease</li>
+              <li>Repeated local bridge haunting stories</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Bridge span</li>
+              <li>Roadway below</li>
+              <li>Bridge approach</li>
+              <li>Rail corridor</li>
+              <li>White Lick Creek area</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> County Road 625 E / Avon Bridge area, Avon, IN</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.7619° N, 86.3994° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual — haunted bridge legend tied to a specific structure and repeated tragedy-based folklore.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-mitchell-whispersestate">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Whispers Estate</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Mitchell, IN</div>
+          <div class="entry-meta-item">Historic House / Former Doctor’s Office</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">Whispers Estate is a well-known southern Indiana haunted house with former medical-use history, repeated whispering-voice reports, and room-based activity that supports guided evidence logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Whispering voices</li>
+              <li>Poltergeist-style activity reports</li>
+              <li>Child-spirit lore</li>
+              <li>Doctor’s office haunting traditions</li>
+              <li>Unexplained sounds and presence reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>House rooms</li>
+              <li>Former doctor’s office areas</li>
+              <li>Stairways</li>
+              <li>Bedrooms</li>
+              <li>Lower areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Mitchell, IN 47446</p>
+            <p><strong>Website:</strong> <a href="https://whispersestate.com" rel="noopener noreferrer" target="_blank">https://whispersestate.com</a></p>
+            <p><strong>Coordinates:</strong> 38.7320° N, 86.4810° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — former residence and doctor’s office with repeated haunting reports and room-based evidence bucket potential.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-tunnelton-tunnel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Tunnelton Tunnel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Railroad Tunnel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Tunnelton / Bedford Area, IN</div>
+          <div class="entry-meta-item">Historic Railroad Tunnel</div>
+          <div class="entry-meta-item">Access: Restricted / Reference Only</div>
+        </div>
+        <p class="entry-body">Tunnelton Tunnel is a long-running Indiana railroad legend tied to phantom train sounds, screams, apparition stories, and a specific historic tunnel location.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Phantom train sounds</li>
+              <li>Railroad worker ghost lore</li>
+              <li>Lantern-carrying apparition tradition</li>
+              <li>Screams near the tunnel</li>
+              <li>Horse-and-buggy family legend</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Tunnel entrance</li>
+              <li>Rail corridor</li>
+              <li>Approach path</li>
+              <li>Surrounding wooded area</li>
+              <li>Trackside reference zone</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Tunnelton Tunnel area, Tunnelton / Bedford, IN</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.7680° N, 86.3390° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual — railroad folklore location tied to a specific tunnel and repeated phantom-train traditions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-indianapolis-rivoli">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Rivoli Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Indianapolis, IN</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Limited / Restoration Context</div>
+        </div>
+        <p class="entry-body">Rivoli Theatre is a historic Indianapolis theatre with repeated reports of apparitions, moving objects, unexplained restroom activity, and theatre-space anomalies.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition reports</li>
+              <li>Moving objects</li>
+              <li>Faucets and toilets activating on their own</li>
+              <li>Cigarette-butt manifestation lore</li>
+              <li>Odd noises in theatre spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Stage</li>
+              <li>Auditorium</li>
+              <li>Lobby</li>
+              <li>Basement</li>
+              <li>Restroom / support areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3155 E 10th St, Indianapolis, IN 46201</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.7814° N, 86.1120° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic theatre haunting with claims distributed across performance, support, and public spaces.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-indianapolis-slipperynoodle">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Slippery Noodle Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Bar</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Indianapolis, IN</div>
+          <div class="entry-meta-item">Historic Inn / Bar</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Slippery Noodle Inn is one of Indianapolis’ oldest bar properties, with a long history, public access, and ghost stories tied to voices, footsteps, touch reports, and back-room / upstairs areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps and voices</li>
+              <li>Unseen touch reports</li>
+              <li>Apparition and presence reports</li>
+              <li>Historical gangster and Civil War lore</li>
+              <li>Bar-room haunting traditions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Main bar rooms</li>
+              <li>Upstairs areas</li>
+              <li>Back rooms</li>
+              <li>Stage / music areas</li>
+              <li>Historic interior sections</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 372 S Meridian St, Indianapolis, IN 46225</p>
+            <p><strong>Website:</strong> <a href="https://www.slipperynoodle.com" rel="noopener noreferrer" target="_blank">https://www.slipperynoodle.com</a></p>
+            <p><strong>Coordinates:</strong> 39.7610° N, 86.1585° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic inn / bar with layered social, criminal, and Civil War-era folklore attached to active public spaces.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-crownpoint-oldlakejail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Lake County Jail / Sheriff’s House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Jail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Crown Point, IN</div>
+          <div class="entry-meta-item">Historic Jail</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">Old Lake County Jail and Sheriff’s House is a preserved historic jail known for public tours, paranormal programming, Dillinger-related history, and defined jail / residence evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Jail-cell presence reports</li>
+              <li>Dillinger-era lore</li>
+              <li>Unexplained sounds</li>
+              <li>Corridor activity</li>
+              <li>Historic incarceration atmosphere</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cell areas</li>
+              <li>Corridors</li>
+              <li>Sheriff’s residence sections</li>
+              <li>Exterior jail grounds</li>
+              <li>Museum / tour route</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 226 S Main St, Crown Point, IN 46307</p>
+            <p><strong>Website:</strong> <a href="https://www.oldsheriffshouse.org" rel="noopener noreferrer" target="_blank">https://www.oldsheriffshouse.org</a></p>
+            <p><strong>Coordinates:</strong> 41.4140° N, 87.3646° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — historic jail lore tied to incarceration history, escape stories, and defined jail zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="in-frenchlick-frenchlicksprings">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">French Lick Springs Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">French Lick, IN</div>
+          <div class="entry-meta-item">Historic Resort Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">French Lick Springs Hotel is a historic resort hotel with a documented ghost-story reputation, including disembodied voices, mysterious phone calls, and Thomas Taggart lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Disembodied voices in halls</li>
+              <li>Mysterious calls from empty rooms</li>
+              <li>Thomas Taggart spirit traditions</li>
+              <li>Guest and staff reports</li>
+              <li>Historic hotel atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Hotel hallways</li>
+              <li>Guest rooms</li>
+              <li>Lobby areas</li>
+              <li>Grounds</li>
+              <li>Historic resort spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 8670 IN-56, French Lick, IN 47432</p>
+            <p><strong>Website:</strong> <a href="https://www.frenchlick.com" rel="noopener noreferrer" target="_blank">https://www.frenchlick.com</a></p>
+            <p><strong>Coordinates:</strong> 38.5480° N, 86.6204° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic resort hotel with repeated guest/staff claims and clearly usable hotel evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 19,
+    states: ["Indiana"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 19,
+  "states": [
+    {
+      "name": "Indiana",
+      "code": "IN",
+      "count": 19
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

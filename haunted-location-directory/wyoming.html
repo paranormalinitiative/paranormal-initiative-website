@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Reference Directory • Wyoming</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Location Reference Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">18 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>18</span> Location Entries</div>
+      <div class="hero-meta-item"><span>14</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- IDAHO -->
+  <section id="wyoming" class="sec-block" data-state="WY">
+    <div class="sec-header">
+      <div class="sec-number">50</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Wyoming</h2>
+      </div>
+      <div class="sec-tag">18 Locations</div>
+    </div>
+    <p class="sec-intro">Wyoming combines prisons, frontier forts, railroad-era hotels, ghost-town landscapes, civic buildings, churches, libraries, and national-park lodges into one of the West’s most diverse historic-haunting reference states. This build prioritizes public-facing sites with strong structural identity, repeatable claim traditions, and usable investigation zones across Laramie, Rawlins, South Pass City, Fort Laramie, Thermopolis, Buffalo, Cheyenne, Fort Bridger, Casper, Yellowstone, Cody, Hartville, Sheridan, and Green River.</p>
+
+    <div class="entry" data-location-id="wy-laramie-territorialprison">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Wyoming Territorial Prison State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Laramie, WY</div>
+          <div class="entry-meta-item">Territorial Prison Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of Wyoming’s strongest prison entries, the Wyoming Territorial Prison combines official state-historic-site status, preserved prison-era buildings, and a long-running folklore tradition centered on inmate, guard, and corridor activity.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps and creaks reported in prison corridors</li>
+              <li>Cigar-smoke odor traditions tied to historic inmate lore</li>
+              <li>Whistles and voice-like sounds in upper prison areas</li>
+              <li>Apparition-style reports associated with Julius Greenwelch</li>
+              <li>Environmental heaviness in preserved confinement spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main prison building</li>
+              <li>North Cellblock</li>
+              <li>Second-floor prison areas</li>
+              <li>Prison Industries Building</li>
+              <li>Warden’s House and surrounding grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 975 Snowy Range Rd, Laramie, WY 82070</p>
+            <p><strong>Website:</strong> <a href="https://wyoparks.wyo.gov/index.php/places-to-go/wyoming-territorial-prison" rel="noopener noreferrer" target="_blank">https://wyoparks.wyo.gov/index.php/places-to-go/wyoming-territorial-prison</a></p>
+            <p><strong>Coordinates:</strong> 41.3006° N, 105.6065° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual with Intelligent Overlay — multi-era prison and post-prison imprinting supported by repeated sensory and named-spirit traditions across preserved site zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-rawlins-frontierprison">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Wyoming Frontier Prison</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Rawlins, WY</div>
+          <div class="entry-meta-item">Historic Prison Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A major former penitentiary turned museum, Wyoming Frontier Prison is one of the best documented haunted-prison candidates in the state, with specific lore tied to cells, Death House traditions, museum rooms, and prison grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition reports in prison interiors</li>
+              <li>Voices, screams, and crying in cell areas</li>
+              <li>Pressure sensations in confinement-related spaces</li>
+              <li>Object movement and disturbance reports</li>
+              <li>Recurring prison-lore experiences near Death House references</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Prison building</li>
+              <li>Cell areas and corridors</li>
+              <li>Death House tradition zone</li>
+              <li>Museum exhibit rooms</li>
+              <li>Grounds and cemetery-path access</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 500 W Walnut St, Rawlins, WY 82301</p>
+            <p><strong>Website:</strong> <a href="https://wyomingfrontierprison.org" rel="noopener noreferrer" target="_blank">https://wyomingfrontierprison.org</a></p>
+            <p><strong>Coordinates:</strong> 41.7924° N, 107.2421° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — repeated prison-environment phenomena overlap with more interactive manifestation traditions tied to specific confinement spaces.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-southpasscity-historicsite">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">South Pass City State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Ghost Town</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">South Pass City, WY</div>
+          <div class="entry-meta-item">Historic Mining Settlement</div>
+          <div class="entry-meta-item">Access: Public / Seasonal</div>
+        </div>
+        <p class="entry-body">One of Wyoming’s strongest preserved ghost-town environments, South Pass City offers a large historic footprint, multiple intact structures, and a mining-era setting that naturally supports zone-based investigation and environmental-paranormal comparison.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Mining-camp haunting traditions across preserved buildings</li>
+              <li>Visual anomaly lore in abandoned-looking interior spaces</li>
+              <li>Atmospheric shifts reported across the streetscape</li>
+              <li>Presence sensations tied to older structure clusters</li>
+              <li>Settlement-wide folklore linked to preserved gold-rush architecture</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic town streetscape</li>
+              <li>Preserved mining-era buildings</li>
+              <li>Period room exhibits</li>
+              <li>Carissa Mine area context</li>
+              <li>Grounds and trail-linked site areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 125 South Pass Main St, South Pass City, WY 82520</p>
+            <p><strong>Website:</strong> <a href="https://www.southpasscity.org/" rel="noopener noreferrer" target="_blank">https://www.southpasscity.org/</a></p>
+            <p><strong>Coordinates:</strong> 42.4776° N, 108.8090° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Environmental or Mixed — a preserved historic landscape where building-based lore, isolation, and settlement history overlap in a broad ghost-town setting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-fortlaramie-nationalhistoricsite">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Laramie National Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Military</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fort Laramie, WY</div>
+          <div class="entry-meta-item">National Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of the strongest historic-site candidates in Wyoming, Fort Laramie combines official National Park Service status, major frontier and military history, and longstanding apparitional traditions tied to both preserved fort buildings and surrounding landscape zones.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Soldier-apparition traditions on fort grounds</li>
+              <li>Lady in Green folklore</li>
+              <li>Location-specific ghost stories tied to outlying zones</li>
+              <li>Environmental unease across preserved fort buildings</li>
+              <li>Historic manifestation lore connected to military-era spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Preserved fort buildings</li>
+              <li>Parade-ground and exterior grounds</li>
+              <li>Interior military and domestic structures</li>
+              <li>Bovee Draw / Detention Dam story-linked areas</li>
+              <li>Broader fort landscape</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 965 Gray Rocks Road, Fort Laramie, WY 82212</p>
+            <p><strong>Website:</strong> <a href="https://www.nps.gov/fola/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/fola/</a></p>
+            <p><strong>Coordinates:</strong> 42.2048° N, 104.5565° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — repeated apparitional traditions and location-specific manifestations are layered over one of the state’s most historically significant frontier military sites.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-thermopolis-hotspringslibrary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hot Springs County Library</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Library</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Thermopolis, WY</div>
+          <div class="entry-meta-item">Historic Public Library</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A civic-building candidate with recurring local reports of voices, shadow figures, and books moving from shelves, the Hot Springs County Library offers a usable public-building case with identifiable interior activity zones.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Random voices in library interior spaces</li>
+              <li>Shadow-figure reports among shelving areas</li>
+              <li>Books reportedly flying or falling from shelves</li>
+              <li>Object movement associated with quiet library hours</li>
+              <li>Presence sensations in staff-facing areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main shelving areas</li>
+              <li>Reading rooms</li>
+              <li>Circulation / desk zone</li>
+              <li>Program and public-use rooms</li>
+              <li>Interior stack corridors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 344 Arapahoe St, Thermopolis, WY 82443</p>
+            <p><strong>Website:</strong> <a href="https://www.hsclibrary.org/" rel="noopener noreferrer" target="_blank">https://www.hsclibrary.org/</a></p>
+            <p><strong>Coordinates:</strong> 43.6450° N, 108.2140° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — public-building anomaly profile combining object movement, shadow-form reporting, and voice traditions in specific library zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-buffalo-occidentalhotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Historic Occidental Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Buffalo, WY</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">One of the strongest haunted-hotel entries in Wyoming, the Occidental blends preserved Western-hotel history with repeated room, hallway, staircase, saloon, and library-focused activity traditions tied to both sensory and interactive experiences.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Female voices on EVP and in hall traditions</li>
+              <li>Closet and door movement in guest-room areas</li>
+              <li>Physical pokes and touch reports</li>
+              <li>Shadow figures, moving bottles, and cracking glasses</li>
+              <li>Perfume scents, footsteps, and child-apparition lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>North wing</li>
+              <li>North hallway</li>
+              <li>Rooms 18 and 19</li>
+              <li>Saloon and bar areas</li>
+              <li>Back staircase and library</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 10 N Main St, Buffalo, WY 82834</p>
+            <p><strong>Website:</strong> <a href="https://www.occidentalwyoming.com/" rel="noopener noreferrer" target="_blank">https://www.occidentalwyoming.com/</a></p>
+            <p><strong>Coordinates:</strong> 44.3472° N, 106.6992° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — classic historic-hotel layering with both residual-style footstep traditions and apparently responsive manifestations tied to specific room clusters.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-cheyenne-naglewarrenmansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Nagle Warren Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Home</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cheyenne, WY</div>
+          <div class="entry-meta-item">Historic Mansion Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A prominent Cheyenne mansion with a preserved physical identity and long-running haunting traditions, the Nagle Warren is one of the strongest room-based mansion cases in Wyoming.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitions of a woman in period clothing</li>
+              <li>Doors opening on their own</li>
+              <li>Moved-object reports in mansion rooms</li>
+              <li>Repeated second-floor activity</li>
+              <li>Turret-room anomaly traditions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Second floor</li>
+              <li>Turret room</li>
+              <li>Main hallways</li>
+              <li>Guest spaces</li>
+              <li>Broader mansion interior</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 222 E 17th St, Cheyenne, WY 82001</p>
+            <p><strong>Website:</strong> <a href="https://www.naglewarrenmansion.com" rel="noopener noreferrer" target="_blank">https://www.naglewarrenmansion.com</a></p>
+            <p><strong>Coordinates:</strong> 41.1370° N, 104.8150° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — location-specific mansion activity traditions combine visual and environmental anomalies in upper-floor and room-based zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-cheyenne-plainshotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Historic Plains Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cheyenne, WY</div>
+          <div class="entry-meta-item">Historic Railroad-Era Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">One of Cheyenne’s best-known haunted hotel traditions, The Historic Plains Hotel is tied to recurring fourth-floor and honeymoon-suite lore centered on a named bride narrative and long-lived downtown hotel folklore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Bride-apparition traditions tied to Rosie lore</li>
+              <li>Fourth-floor activity reports</li>
+              <li>Recurring honeymoon-suite ghost narrative</li>
+              <li>Apparitional and presence traditions in guest-room zones</li>
+              <li>Downtown hotel folklore tied to hallway and lounge areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Fourth floor</li>
+              <li>Honeymoon-suite tradition zone</li>
+              <li>Guest-room sections</li>
+              <li>Hotel lounge / bar areas</li>
+              <li>Historic corridor and stair access</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 1600 Central Ave, Cheyenne, WY 82001</p>
+            <p><strong>Website:</strong> <a href="https://theplainshotel.com/" rel="noopener noreferrer" target="_blank">https://theplainshotel.com/</a></p>
+            <p><strong>Coordinates:</strong> 41.1361° N, 104.8155° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — repeating tragic-hotel folklore overlaps with room- and floor-specific manifestation traditions in a major downtown hospitality property.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-cheyenne-atlastheatre">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Historic Atlas Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cheyenne, WY</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A downtown Cheyenne theatre with recurring woman-in-white, cold-spot, electrical, and upper-level haunting traditions, the Atlas is one of the city’s strongest theatre-based entries.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Woman in white apparition traditions</li>
+              <li>Mischievous male-entity folklore</li>
+              <li>Cold spots and electrical disturbances</li>
+              <li>Phantom footsteps in upper building areas</li>
+              <li>Hair- and clothing-tugging reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Top-floor windows</li>
+              <li>Balcony</li>
+              <li>Stage / performance interior</li>
+              <li>Upper building areas</li>
+              <li>Main theatre floor</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 211 W Lincolnway, Cheyenne, WY 82001</p>
+            <p><strong>Website:</strong> <a href="https://www.cheyennelittletheatre.org/" rel="noopener noreferrer" target="_blank">https://www.cheyennelittletheatre.org/</a></p>
+            <p><strong>Coordinates:</strong> 41.1330° N, 104.8166° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — repeated theatre-environment anomalies and apparitional traditions are tied to balcony, stage, and upper-building locations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-cheyenne-stmarks">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">St. Mark’s Episcopal Church</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Church</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cheyenne, WY</div>
+          <div class="entry-meta-item">Historic Church</div>
+          <div class="entry-meta-item">Access: Limited / Public Worship</div>
+        </div>
+        <p class="entry-body">One of Cheyenne’s most repeated church-haunting legends, St. Mark’s combines strong historic identity with bell-tower-specific auditory and light phenomena tied to a tragic construction story.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Unexplained hammering sounds</li>
+              <li>Disembodied voices</li>
+              <li>Ghostly lights associated with the bell tower</li>
+              <li>Repeated upper-structure auditory anomalies</li>
+              <li>Location-specific church folklore tied to tower areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Bell tower</li>
+              <li>Upper tower-related areas</li>
+              <li>Church walls and upper structure</li>
+              <li>Sanctuary context</li>
+              <li>Exterior approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 1908 Central Ave, Cheyenne, WY 82001</p>
+            <p><strong>Website:</strong> <a href="https://www.stmarkscheyenne.org/" rel="noopener noreferrer" target="_blank">https://www.stmarkscheyenne.org/</a></p>
+            <p><strong>Coordinates:</strong> 41.1358° N, 104.8158° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — repeated auditory and light-based traditions are tightly linked to a specific church-tower legend and historical event.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-fortbridger-historicsite">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Bridger State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fort Bridger, WY</div>
+          <div class="entry-meta-item">State Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A strong southwest Wyoming candidate, Fort Bridger combines an official state-historic-site identity, a preserved multi-era footprint, and publicly acknowledged paranormal reputation tied to after-dark programming and broad grounds-based traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Officially acknowledged paranormal reputation</li>
+              <li>Night-programming and ghost-hunt style traditions</li>
+              <li>Historic-building anomaly lore</li>
+              <li>Environmental activity traditions across fort grounds</li>
+              <li>Broader manifestation folklore tied to multiple occupation eras</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic fort buildings</li>
+              <li>Museum spaces</li>
+              <li>Military-era structures</li>
+              <li>Replica buildings</li>
+              <li>Grounds, creek corridor, and trail-linked landscape zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 37000 I-80BL, Fort Bridger, WY 82933</p>
+            <p><strong>Website:</strong> <a href="https://wyoparks.wyo.gov/index.php/places-to-go/fort-bridger" rel="noopener noreferrer" target="_blank">https://wyoparks.wyo.gov/index.php/places-to-go/fort-bridger</a></p>
+            <p><strong>Coordinates:</strong> 41.3160° N, 110.3870° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Environmental or Mixed — the official site’s acknowledged paranormal reputation overlaps with layered historic use and expansive site geography.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-casper-rialtosodafountain">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Rialto Soda Fountain (Rialto Theater Building)</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Commercial</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Casper, WY</div>
+          <div class="entry-meta-item">Historic Soda Fountain / Theatre Building</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of Casper’s stronger downtown haunting candidates, the Rialto is tied to repeated owner and staff reports of moving objects, voices, and strange activity within a historically identifiable theatre-connected building.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Unexplained moving objects</li>
+              <li>Ghostly voices in interior spaces</li>
+              <li>Repeated strange activity during restoration</li>
+              <li>Human-presence style manifestations</li>
+              <li>Environmental disturbance traditions in the old building core</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Soda fountain interior</li>
+              <li>Theatre-connected building spaces</li>
+              <li>Front commercial floor</li>
+              <li>Service / back-of-house areas</li>
+              <li>Downtown street-facing interior zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 100 E 2nd St, Casper, WY 82601</p>
+            <p><strong>Website:</strong> <a href="https://www.rialtosodafountain.com/" rel="noopener noreferrer" target="_blank">https://www.rialtosodafountain.com/</a></p>
+            <p><strong>Coordinates:</strong> 42.8499° N, 106.3250° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — environmental disturbance and human-presence style reports overlap in a historic downtown commercial property with layered use history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-casper-wonderbar">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Wonder Bar</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Bar</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Casper, WY</div>
+          <div class="entry-meta-item">Historic Downtown Bar</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A long-running Casper bar with strong local reputation and repeated reports of footsteps, voices, apparitional traditions, and electrical disturbances, the Wonder Bar remains a useful secondary Natrona County entry after tightening its structure and history profile.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Voices and footsteps in bar spaces</li>
+              <li>Lights switching on and off</li>
+              <li>Unexplained noises after hours</li>
+              <li>Old cowboy and woman-in-white apparition traditions</li>
+              <li>Presence reports from staff and patrons</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Downstairs bar</li>
+              <li>Upstairs lounge / sports-bar level</li>
+              <li>Stairwell between levels</li>
+              <li>Employee and service areas</li>
+              <li>Street-facing downtown frontage</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 256 S Center St, Casper, WY 82601</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.8468° N, 106.3264° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — classic downtown-bar environmental and apparitional traditions combine with staff-experience style reports in a two-level commercial setting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-yellowstone-oldfaithfulinn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Faithful Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Yellowstone National Park, WY</div>
+          <div class="entry-meta-item">Historic National Park Lodge</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">One of the most famous historic lodges in Wyoming, Old Faithful Inn blends major architectural and hospitality history with repeated corridor, room, and shadow-figure traditions — though some of its most famous ghost narratives remain partly folklore-driven.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Corridor footsteps</li>
+              <li>Door activity in room areas</li>
+              <li>Shadow-figure reports</li>
+              <li>Headless-bride tradition centered on Room 127</li>
+              <li>Room and hallway presence lore in Old House and wing areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Room 127</li>
+              <li>Old House areas</li>
+              <li>West Wing rooms</li>
+              <li>East Wing rooms</li>
+              <li>Lobby and upper corridor spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 3200 Old Faithful Inn Rd, Yellowstone National Park, WY 82190</p>
+            <p><strong>Website:</strong> <a href="https://www.yellowstonenationalparklodges.com/lodgings/hotel/old-faithful-inn/" rel="noopener noreferrer" target="_blank">https://www.yellowstonenationalparklodges.com/lodgings/hotel/old-faithful-inn/</a></p>
+            <p><strong>Coordinates:</strong> 44.4605° N, 110.8281° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Uncertain to Mixed — strong repeated folklore and room-based traditions exist, but the most famous narratives include a significant storytelling and legend component.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-cody-irmahotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Irma Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cody, WY</div>
+          <div class="entry-meta-item">Historic Buffalo Bill Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A famous Cody landmark built by Buffalo Bill Cody, the Irma Hotel is one of Park County’s strongest historic-hotel entries, with repeated reports of playful disturbances, room activity, and sightings tied to Buffalo Bill-era lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Friendly-ghost traditions in guest rooms</li>
+              <li>Sightings of Buffalo Bill himself</li>
+              <li>Water turning on in rooms</li>
+              <li>Belongings moving during the night</li>
+              <li>Prank-like disturbances in hotel interior zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Guest rooms</li>
+              <li>Hallways and lodging corridors</li>
+              <li>Historic lobby and common areas</li>
+              <li>Restaurant / bar context</li>
+              <li>Upper-floor room zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 1192 Sheridan Ave, Cody, WY 82414</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.5268° N, 109.0563° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — playful environmental disturbances and apparition-style traditions overlap with one of the state’s best-known Buffalo Bill hospitality properties.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-hartville-minersstockmens">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Miners and Stockmen’s Steakhouse &amp; Spirits</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Restaurant</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Hartville, WY</div>
+          <div class="entry-meta-item">Historic Bar / Steakhouse</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A historically significant hospitality property in one of Wyoming’s oldest settlements, Miners and Stockmen’s is repeatedly cited in statewide haunting coverage and carries a broad tradition of unexplained mischief tied to its long commercial life.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Recurring unexplained mischief traditions</li>
+              <li>General disturbance reports in the old bar</li>
+              <li>Hospitality-space anomaly folklore</li>
+              <li>Presence sensations in older sections</li>
+              <li>Historic-business haunting reputation rather than one named entity</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Steakhouse dining room</li>
+              <li>Historic bar area</li>
+              <li>Older hospitality-era interior sections</li>
+              <li>Back-of-house support areas</li>
+              <li>Main-street frontage</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 608 Main St, Hartville, WY 82215</p>
+            <p><strong>Website:</strong> <a href="https://minersandstockmens.com/" rel="noopener noreferrer" target="_blank">https://minersandstockmens.com/</a></p>
+            <p><strong>Coordinates:</strong> 42.3272° N, 104.7250° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed or Environmental — recurring disturbances are tied more to the building’s long hospitality history than to one singular apparition narrative.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-sheridan-historicinn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Historic Sheridan Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Sheridan, WY</div>
+          <div class="entry-meta-item">Historic Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">One of Wyoming’s strongest hotel entries, the Sheridan Inn combines major documented historic importance with repeated haunting reports tied to specific rooms, the ballroom, downstairs windows, and the recurring Miss Kate Arnold tradition.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Lights turning on and off</li>
+              <li>Doors opening and closing</li>
+              <li>Cold spots and strong presence reports</li>
+              <li>Miss Kate Arnold spirit traditions</li>
+              <li>Activity near downstairs front windows and guest-room zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Third-floor room tied to Miss Kate</li>
+              <li>Ballroom</li>
+              <li>Downstairs front-window areas</li>
+              <li>Guest rooms</li>
+              <li>Broader inn interior</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 856 Broadway St, Sheridan, WY 82801</p>
+            <p><strong>Website:</strong> <a href="https://www.sheridanwyoming.org/arts-culture/historic-sites/historic-sheridan-inn/" rel="noopener noreferrer" target="_blank">https://www.sheridanwyoming.org/arts-culture/historic-sites/historic-sheridan-inn/</a></p>
+            <p><strong>Coordinates:</strong> 44.7975° N, 106.9562° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — both environmental anomalies and apparently intelligent interaction traditions are reported within a highly significant restored inn.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wy-greenriver-sweetwaterlibrary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Sweetwater County Library</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Library</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Green River, WY</div>
+          <div class="entry-meta-item">Historic Public Library Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of Wyoming’s stronger public-building entries, the Sweetwater County Library combines a clear civic identity with repeated reports of flickering lights, whispers, thrown books, and apparition-style experiences tied to a cemetery-ground narrative beneath the site.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Lights flickering in library spaces</li>
+              <li>Books thrown to the floor</li>
+              <li>Whispers and crying reported during ghost-walk lore</li>
+              <li>Apparition-style sightings</li>
+              <li>Other disturbances tied to the cemetery-ground narrative</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Library interior spaces</li>
+              <li>Shelving and book areas</li>
+              <li>Public reading rooms</li>
+              <li>Circulation and common-use areas</li>
+              <li>Grounds narrative tied to the lot</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 300 N 1st East, Green River, WY 82935</p>
+            <p><strong>Website:</strong> <a href="https://www.sweetwaterlibraries.com/" rel="noopener noreferrer" target="_blank">https://www.sweetwaterlibraries.com/</a></p>
+            <p><strong>Coordinates:</strong> 41.5290° N, 109.4670° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — physical disturbances, environmental anomalies, and human-presence style experiences are all tied to a civic building associated with historically sensitive ground.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 18,
+    states: ["Wyoming"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 18,
+  "states": [
+    {
+      "name": "Wyoming",
+      "code": "WY",
+      "count": 18
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location Reference Directory • Colorado</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+<div class="brand-header">
+<div class="brand-left">
+<div class="brand-emblem">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 6v6l4 4"></path>
+</svg>
+</div>
+<div>
+<div class="brand-name">The Paranormal Initiative</div>
+<div class="brand-series">Location Reference Directory</div>
+</div>
+</div>
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input autocomplete="off" id="search-input" placeholder="Search locations, cities, states..." type="text"/>
+<div id="search-count">22 locations</div>
+</div>
+<span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+<div class="page">
+<div class="hero">
+<div class="hero-eyebrow">Working Directory • Research Leads</div>
+<h1 class="hero-title">Location Reference <em>Directory</em></h1>
+<p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+<div class="hero-meta">
+<div class="hero-meta-item"><span>1</span> State</div>
+<div class="hero-meta-item"><span>22</span> Location Entries</div>
+<div class="hero-meta-item"><span>13</span> Cities</div>
+<div class="hero-meta-item"><span>WIP</span> Under Review</div>
+</div>
+</div>
+<div class="sec-nav">
+<a href="alabama.html">Alabama</a>
+<a href="alaska.html">Alaska</a>
+<a href="arizona.html">Arizona</a>
+<a href="arkansas.html">Arkansas</a>
+<a href="california.html">California</a>
+<a href="colorado.html">Colorado</a>
+<a href="connecticut.html">Connecticut</a>
+<a href="delaware.html">Delaware</a>
+<a href="florida.html">Florida</a>
+<a href="georgia.html">Georgia</a>
+<a href="hawaii.html">Hawaii</a>
+<a href="idaho.html">Idaho</a>
+<a href="illinois.html">Illinois</a>
+<a href="indiana.html">Indiana</a>
+<a href="iowa.html">Iowa</a>
+<a href="kansas.html">Kansas</a>
+<a href="kentucky.html">Kentucky</a>
+<a href="louisiana.html">Louisiana</a>
+<a href="maine.html">Maine</a>
+<a href="maryland.html">Maryland</a>
+<a href="massachusetts.html">Massachusetts</a>
+<a href="michigan.html">Michigan</a>
+<a href="minnesota.html">Minnesota</a>
+<a href="mississippi.html">Mississippi</a>
+<a href="missouri.html">Missouri</a>
+<a href="montana.html">Montana</a>
+<a href="nebraska.html">Nebraska</a>
+<a href="nevada.html">Nevada</a>
+<a href="new-hampshire.html">New Hampshire</a>
+<a href="new-jersey.html">New Jersey</a>
+<a href="new-mexico.html">New Mexico</a>
+<a href="new-york.html">New York</a>
+<a href="north-carolina.html">North Carolina</a>
+<a href="north-dakota.html">North Dakota</a>
+<a href="ohio.html">Ohio</a>
+<a href="oklahoma.html">Oklahoma</a>
+<a href="oregon.html">Oregon</a>
+<a href="pennsylvania.html">Pennsylvania</a>
+<a href="rhode-island.html">Rhode Island</a>
+<a href="south-carolina.html">South Carolina</a>
+<a href="south-dakota.html">South Dakota</a>
+<a href="tennessee.html">Tennessee</a>
+<a href="texas.html">Texas</a>
+<a href="utah.html">Utah</a>
+<a href="vermont.html">Vermont</a>
+<a href="virginia.html">Virginia</a>
+<a href="washington.html">Washington</a>
+<a href="west-virginia.html">West Virginia</a>
+<a href="wisconsin.html">Wisconsin</a>
+<a href="wyoming.html">Wyoming</a>
+</div>
+<!-- COLORADO -->
+<section class="sec-block" data-state="CO" id="colorado">
+<div class="sec-header">
+<div class="sec-number">06</div>
+<div class="sec-title-block">
+<div class="sec-eyebrow">State Directory</div>
+<h2 class="sec-title">Colorado</h2>
+</div>
+<div class="sec-tag">22 Locations</div>
+</div>
+<p class="sec-intro">Colorado presents one of the strongest mixed-environment investigation profiles in the mountain west, combining historic hotels, mining towns, prison sites, theaters, battle-adjacent landscapes, cemeteries, and alpine wilderness training grounds. Elevation, weather variability, abandoned structures, rail corridors, and strong tourism traffic all create meaningful baseline-control demands across the state.</p>
+<div class="entry" data-location-id="co-estespark-stanley">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">The Stanley Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Estes Park, CO</div>
+<div class="entry-meta-item">Historic Mountain Hotel</div>
+<div class="entry-meta-item">Access: Public / Guest Access</div>
+</div>
+<p class="entry-body">Opened in 1909, the Stanley Hotel is Colorado's best-known haunted hotel and one of the most culturally recognized paranormal locations in the United States. Reports have accumulated across guest rooms, concert and ballroom spaces, and underground service areas. The property's age, elevation, and active hospitality use require disciplined baseline control, especially for corridor acoustics and overnight traffic contamination.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Children's laughter in unoccupied hallways</li>
+<li>Phantom piano music in performance areas</li>
+<li>Room-specific visual anomalies and presence sensations</li>
+<li>Footsteps in upper corridors during quiet hours</li>
+<li>Guest-reported object displacement and door anomalies</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main lobby and grand stair</li>
+<li>Historic guest wings</li>
+<li>Ballroom and music spaces</li>
+<li>Service corridors and tunnel areas</li>
+<li>Upper-floor room zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              333 E Wonderview Ave, Estes Park, CO 80517
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.stanleyhotel.com/" rel="noopener noreferrer" target="_blank">https://www.stanleyhotel.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 40.3833° N, 105.5183° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible intelligent haunting with recurring hotel-wide interaction reports. Corridor acoustics, guest traffic, and building age require structured zone-by-zone baseline work.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-brownpalace">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">The Brown Palace Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">Historic Downtown Hotel</div>
+<div class="entry-meta-item">Access: Public / Guest Access</div>
+</div>
+<p class="entry-body">Opened in 1892, the Brown Palace is one of Denver's defining historic hotels and among its most commonly cited paranormal sites. Reports are concentrated in the atrium-adjacent club areas, upper guest corridors, and service access zones. The active hotel setting and downtown vibration environment require careful noise and movement baselines before any serious evidence review.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports of a suited male figure</li>
+<li>Lights operating without clear cause</li>
+<li>Carpet and floor sensation anomalies in club areas</li>
+<li>Voices and footsteps in guest corridors</li>
+<li>Visual anomalies near elevators and service spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Atrium lobby core</li>
+<li>Club and lounge areas</li>
+<li>Historic guest floors</li>
+<li>Elevator and service corridors</li>
+<li>Lower support levels</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              321 17th St, Denver, CO 80202
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.brownpalace.com/" rel="noopener noreferrer" target="_blank">https://www.brownpalace.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 39.7441° N, 104.9876° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic hotel haunting with repeated apparition and corridor disturbance reports. Dense public use and mechanical systems create moderate environmental contamination risk.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-oxford">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">The Oxford Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">Historic Boutique Hotel</div>
+<div class="entry-meta-item">Access: Public / Guest Access</div>
+</div>
+<p class="entry-body">Opened in 1891 in Denver's LoDo district, the Oxford is among the city's oldest operating hotels. Reports commonly center on room-specific disturbances, especially around the long-cited Room 320, along with activity in the Cruise Room and corridor spaces. The building's age and downtown setting demand careful filtering for plumbing, traffic, and neighboring-structure noise.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Bed disturbance and tactile reports in Room 320</li>
+<li>Sink and bathroom anomalies</li>
+<li>Apparition reports in bar and corridor areas</li>
+<li>Voices during low-traffic overnight periods</li>
+<li>Unexplained movement near historic room zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby and bar level</li>
+<li>Historic guest floors</li>
+<li>Room 320 corridor zone</li>
+<li>Cruise Room</li>
+<li>Service and utility routes</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1600 17th St, Denver, CO 80202
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.theoxfordhotel.com/" rel="noopener noreferrer" target="_blank">https://www.theoxfordhotel.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 39.7519° N, 104.9986° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible intelligent haunting with room-specific reports and repeated hospitality-era disturbance patterns. Plumbing and urban noise should be isolated during evidence review.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-glenwoodsprings-hotelcolorado">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Hotel Colorado</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Glenwood Springs, CO</div>
+<div class="entry-meta-item">Historic Resort Hotel</div>
+<div class="entry-meta-item">Access: Public / Guest Access</div>
+</div>
+<p class="entry-body">Completed in 1893, Hotel Colorado has hosted presidents, military officers, and long-term resort guests for more than a century. The property is frequently cited in Colorado haunting literature for apparition and corridor activity associated with upper guest levels and common interior spaces. As with other large resort hotels, active operations introduce ongoing contamination from foot traffic, HVAC, and service movement.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings in guest corridors</li>
+<li>Room-specific environmental disturbances</li>
+<li>Footsteps and voices in quiet hall zones</li>
+<li>Object displacement in occupied rooms</li>
+<li>Presence sensations in historic common spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main lobby and reception area</li>
+<li>Historic guest wings</li>
+<li>Interior hall corridors</li>
+<li>Banquet and lounge areas</li>
+<li>Service and lower support zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              526 Pine St, Glenwood Springs, CO 81601
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.hotelcolorado.com/" rel="noopener noreferrer" target="_blank">https://www.hotelcolorado.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 39.5507° N, 107.3244° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic hotel with recurring apparition and corridor disturbance reports. Strong operational contamination factors require off-hours comparison and repeated baseline capture.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-canoncity-prisonmuseum">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Museum of Colorado Prisons</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Cañon City, CO</div>
+<div class="entry-meta-item">Former Prison / Museum</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Housed in the former Colorado Women's Correctional Facility, the Museum of Colorado Prisons offers one of the strongest institutional environments in the state for residual confinement-based reporting. Cell-block layout, preserved prison architecture, and proximity to active correctional grounds create a layered setting where voices, cold spots, and room-specific reports are frequently cited. The institutional environment demands careful interpretation to separate structural sounds from possible anomaly events.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Cold spots in former laundry and cell areas</li>
+<li>Reports of tobacco smell without source</li>
+<li>Cell-specific apparition accounts</li>
+<li>Voices and movement in preserved confinement zones</li>
+<li>Presence sensations in corridor intersections</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic cell block corridors</li>
+<li>Former laundry and work areas</li>
+<li>Administrative rooms</li>
+<li>Display and museum spaces</li>
+<li>Perimeter access and entry hall</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              201 N 1st St, Cañon City, CO 81212
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.prisonmuseum.org/" rel="noopener noreferrer" target="_blank">https://www.prisonmuseum.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 38.4449° N, 105.2457° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual incarceration imprint with possible localized intelligent interaction. Structural noise, echo behavior, and adjacent active-corrections context require disciplined control logging.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-centralcity-operahouse">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Central City Opera House</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Theatre</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Central City, CO</div>
+<div class="entry-meta-item">Historic Opera House</div>
+<div class="entry-meta-item">Access: Public / Event Access</div>
+</div>
+<p class="entry-body">Built in 1878 during Colorado's mining boom, the Central City Opera House remains one of the state's most important surviving performance venues. Disturbance reports are commonly associated with seating areas, backstage corridors, and upper access points. The preserved theatre interior offers a strong performance-space imprint environment, but acoustic reflections must be documented carefully.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings near stage and balcony zones</li>
+<li>Shadow movement in upper seating and access areas</li>
+<li>Backstage voices and movement sounds</li>
+<li>Temperature drops in side corridors</li>
+<li>Presence sensations during empty-house periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main auditorium seating</li>
+<li>Balcony and upper viewing level</li>
+<li>Stage and wing spaces</li>
+<li>Backstage corridors</li>
+<li>Entry and lobby zone</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              124 Eureka St, Central City, CO 80427
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://centralcityopera.org/" rel="noopener noreferrer" target="_blank">https://centralcityopera.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 39.8019° N, 105.5142° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual performance-space imprint with repeated visual and auditory anomaly reports. Strong reverberation characteristics require audio contamination controls before EVP review.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-mollybrown">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Molly Brown House Museum</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">Historic House Museum</div>
+<div class="entry-meta-item">Access: Public / Tour Hours</div>
+</div>
+<p class="entry-body">Built in 1889 and later home to Margaret "Molly" Brown, this Denver mansion is a major historic museum site with long-running folklore and apparition reports. Witness accounts commonly describe visual anomalies, movement, and room-specific disturbances within the preserved domestic layout. The museum context supports controlled daytime documentation but limits after-hours access without authorization.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings attributed to former occupants</li>
+<li>Footsteps in upper rooms and stairs</li>
+<li>Door and object movement reports</li>
+<li>Presence sensations in parlor and bedroom zones</li>
+<li>Temperature drops in preserved domestic spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Front parlor and domestic common spaces</li>
+<li>Main staircase</li>
+<li>Upper bedrooms</li>
+<li>Hall corridors</li>
+<li>Service and exhibit zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1340 Pennsylvania St, Denver, CO 80203
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://mollybrown.org/" rel="noopener noreferrer" target="_blank">https://mollybrown.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 39.7375° N, 104.9807° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible intelligent residential haunting within a preserved museum environment. Historic interpretation context should be separated from field claims through repeated-session comparison.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-crokepatterson">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Croke-Patterson Mansion</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Mansion</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">Historic Mansion</div>
+<div class="entry-meta-item">Access: Limited / Private Use</div>
+</div>
+<p class="entry-body">Built in 1890 on Denver's Capitol Hill, the Croke-Patterson Mansion is one of the city's most persistent haunted-house legends. Stories tied to ownership changes, unexplained deaths, and repeated occupant misfortune have made it a staple of Denver paranormal lore. Current access depends on property use and private control, so all investigation planning must begin with access verification.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Voices and disembodied conversation reports</li>
+<li>Object displacement in interior rooms</li>
+<li>Shadow figures near upper floors and courtyard</li>
+<li>Strong oppressive atmosphere reports from visitors</li>
+<li>Tactile and presence sensations in hallway zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Formal entry and parlor rooms</li>
+<li>Main staircase and upper landings</li>
+<li>Bedroom levels</li>
+<li>Carriage-house adjacency/courtyard zone</li>
+<li>Basement and service spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              420 E 11th Ave, Denver, CO 80203
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 39.7333° N, 104.9811° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible intelligent haunting with strong folklore amplification. Private-access limitations and retold narrative inflation require careful source separation before evidence weighting.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-cheesman">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Cheesman Park</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Park</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">Urban Park / Former Cemetery Site</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Cheesman Park occupies the former Mount Prospect Cemetery, a burial ground whose removal was partial, controversial, and historically chaotic. The park is among Denver's most cited outdoor anomaly sites, with recurring reports of apparitions, shadow forms, and generalized unease during low-traffic periods. Outdoor conditions, nightlife, and urban lighting create substantial contamination variables that must be logged in every session.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures and distant-form apparitions</li>
+<li>Presence sensations across former burial zones</li>
+<li>Cold spots and atmospheric pressure changes</li>
+<li>Reports of voices during low-traffic evening periods</li>
+<li>Visual anomaly claims near pavilion and tree lines</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Open lawn and former cemetery grounds</li>
+<li>Pavilion area</li>
+<li>Walking paths and perimeter edges</li>
+<li>Tree-lined transition zones</li>
+<li>Street-facing urban boundary</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1599 E 8th Ave, Denver, CO 80218
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 39.7335° N, 104.9652° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Outdoor residual cemetery-adjacent anomaly zone. Urban noise, lighting, wildlife, and pedestrian traffic create high contamination risk; use repeated time-controlled sessions before drawing conclusions.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-nathrop-stelmo">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">St. Elmo Ghost Town</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Ghost Town</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">St. Elmo, CO</div>
+<div class="entry-meta-item">Preserved Mining Town</div>
+<div class="entry-meta-item">Access: Public / Seasonal</div>
+</div>
+<p class="entry-body">Founded in 1880 in the Chalk Creek mining district, St. Elmo remains one of Colorado's best-known preserved ghost towns. The distributed townsite, surviving commercial structures, and long history of abandonment lore make it a strong candidate for settlement-wide residual study rather than a single-building investigation. Altitude, weather, wildlife, and tourist activity significantly affect baseline conditions.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports near general store and town structures</li>
+<li>Footsteps in empty boardwalk and building zones</li>
+<li>Shadow movement in windows and upper levels</li>
+<li>Environmental unease in low-traffic hours</li>
+<li>Auditory anomalies attributed to abandoned structures</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main street and boardwalk corridor</li>
+<li>General store and surviving commercial buildings</li>
+<li>Residential structure remnants</li>
+<li>Mining-road approach zones</li>
+<li>Town perimeter and hillside transitions</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              16 miles west of Nathrop, St. Elmo, CO 81236
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://stelmoghosttown.com/" rel="noopener noreferrer" target="_blank">https://stelmoghosttown.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 38.7034° N, 106.3462° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Distributed residual mining-town imprint. Outdoor and altitude factors are significant; individual structure claims should be documented separately from district-wide atmosphere reports.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-aspen-ashcroft">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Ashcroft Ghost Town</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Ghost Town</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Aspen, CO</div>
+<div class="entry-meta-item">Historic Mining Town Site</div>
+<div class="entry-meta-item">Access: Public / Seasonal</div>
+</div>
+<p class="entry-body">Once a silver mining settlement west of Aspen, Ashcroft declined quickly after its boom period and is now preserved as a distributed ghost town landscape. Reports tend to focus less on a single named entity and more on atmosphere, movement, and structure-associated sounds within the preserved town footprint. Snow, wildlife, and seasonal closure conditions can strongly affect site use and evidence collection.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow movement in preserved structures</li>
+<li>Footsteps and creaks in still conditions</li>
+<li>Visual anomaly reports near building entrances</li>
+<li>Presence sensations in low-light periods</li>
+<li>Environmental unease across the town footprint</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main town street footprint</li>
+<li>Preserved cabins and structures</li>
+<li>Perimeter fields and cemetery-adjacent terrain</li>
+<li>Trail approach and parking access</li>
+<li>Hillside backdrop zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              10931 Castle Creek Rd, Aspen, CO 81611
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 39.0546° N, 106.7995° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Distributed residual settlement imprint with high seasonal environmental influence. Outdoor winter conditions and wildlife noise must be treated as primary contamination variables.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-aspen-independence">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Independence Ghost Town</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Ghost Town</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Aspen, CO</div>
+<div class="entry-meta-item">High-Altitude Mining Settlement</div>
+<div class="entry-meta-item">Access: Seasonal / Public</div>
+</div>
+<p class="entry-body">Located on Independence Pass, this former mining settlement operated in a harsh alpine environment that now contributes heavily to its investigative profile. Reports focus on atmosphere, movement, and unexplained sounds around surviving cabin remains and trail corridors. High altitude, wind exposure, and seasonal access restrictions make it a specialized site for carefully planned fieldwork only.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Footsteps and structure creaks in still conditions</li>
+<li>Apparition lore tied to mining-era residents</li>
+<li>Environmental unease and pressure-change reports</li>
+<li>Shadow movement between cabin remnants</li>
+<li>Voices reported in low-traffic periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Cabin remains and preserved mining settlement footprint</li>
+<li>Trail corridor through townsite</li>
+<li>Perimeter alpine slope zones</li>
+<li>Interpretive structures and viewing points</li>
+<li>Roadside pass access area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Independence Pass, east of Aspen, CO 81611
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 39.0830° N, 106.6206° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>High-altitude residual mining-settlement imprint. Wind exposure and terrain acoustics create strong contamination potential; repeat daylight and nightfall baselines are recommended.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-georgetown-loop">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Georgetown Loop Railroad</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Railroad</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Georgetown, CO</div>
+<div class="entry-meta-item">Historic Railroad / Mining Park</div>
+<div class="entry-meta-item">Access: Public / Seasonal</div>
+</div>
+<p class="entry-body">The Georgetown Loop Railroad preserves one of Colorado's best-known narrow-gauge rail experiences, connecting Georgetown and Silver Plume through a route built to support mining-era transport. Reports associated with the line often involve rail-yard atmosphere, station areas, and historic travel narratives rather than a single building-based haunting. Moving equipment, ambient tourism noise, and active operations require rigorous contamination logging.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Rail-yard apparition lore and platform sightings</li>
+<li>Unexplained footsteps in station areas</li>
+<li>Voices near loading and waiting zones</li>
+<li>Visual anomalies along the route during low traffic</li>
+<li>Presence sensations in historic cars and depot spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Devil's Gate station area</li>
+<li>Rail line and bridge approach</li>
+<li>Historic cars and boarding platforms</li>
+<li>Mining park adjacency</li>
+<li>Silver Plume side access zone</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              646 Loop Dr, Georgetown, CO 80444
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.georgetownlooprr.com/" rel="noopener noreferrer" target="_blank">https://www.georgetownlooprr.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 39.7010° N, 105.7067° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual transportation-corridor imprint with strong operational contamination variables. Active rail movement, crowds, and mechanical noise require continuous logging for all sessions.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-coloradosprings-goldcamp">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Gold Camp Road Tunnels</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Tunnels</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Colorado Springs, CO</div>
+<div class="entry-meta-item">Historic Rail / Road Tunnel Corridor</div>
+<div class="entry-meta-item">Access: Public Roadway</div>
+</div>
+<p class="entry-body">Built along the former Colorado Springs and Cripple Creek rail corridor, the Gold Camp Road tunnels have accumulated persistent local folklore around collapses, fatalities, and visual anomalies. As an outdoor roadside tunnel environment, the site is highly susceptible to vehicle, wind, echo, and recreational-user contamination. It is best treated as an anomaly-prone transit corridor rather than a conventional static haunting site.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Visual anomaly reports near tunnel entrances</li>
+<li>Apparition lore linked to collapsed-tunnel narratives</li>
+<li>Vehicle-side tapping and movement stories</li>
+<li>Echo-driven voice reports in enclosed tunnel spaces</li>
+<li>Atmospheric shifts during low-traffic night periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Road corridor with multiple tunnel segments</li>
+<li>Tunnel entrances and roadside pull-off zones</li>
+<li>Former rail alignment sections</li>
+<li>Adjacent canyon and slope terrain</li>
+<li>Collapsed/closed tunnel influence zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Gold Camp Rd, Colorado Springs, CO 80906
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 38.7981° N, 104.8856° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Roadside anomaly corridor with high acoustic and vehicle contamination. Treat reported events as environment-first until replicated under controlled low-traffic conditions.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-riversidecemetery">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Riverside Cemetery</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Cemetery</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">Historic Cemetery</div>
+<div class="entry-meta-item">Access: Public / Respectful Access</div>
+</div>
+<p class="entry-body">Founded in 1876, Riverside Cemetery is one of Denver's oldest burial grounds and contains graves tied to frontier, civic, and early-urban periods of the city. The grounds are frequently cited in local paranormal lore for shadow figures, unusual atmosphere, and occasional apparition reports. Nearby industry, traffic, and environmental exposure make site control especially important.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures near older grave rows</li>
+<li>Cold spots and pressure shifts in low-light periods</li>
+<li>Visual anomaly reports near monuments and markers</li>
+<li>Voices and distant conversation claims</li>
+<li>Presence sensations in historic burial sections</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic grave rows and family plots</li>
+<li>Monument clusters</li>
+<li>Roadway and path network</li>
+<li>Perimeter edges near industrial surroundings</li>
+<li>Open lawn transition zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              5201 Brighton Blvd, Denver, CO 80216
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 39.7942° N, 104.9592° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual burial-ground imprint with strong environmental contamination from urban and industrial adjacency. Multi-session comparison is recommended before rating any anomaly cluster as significant.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-fortlogan">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Fort Logan National Cemetery</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Cemetery</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">National Cemetery</div>
+<div class="entry-meta-item">Access: Public / Federal Site</div>
+</div>
+<p class="entry-body">Fort Logan National Cemetery occupies the grounds of the former frontier-era military post and serves as one of Colorado's most historically layered burial landscapes. Military history, repurposed land use, and generations of veteran burials make it a strong residual-environment candidate, but federal cemetery protocols and respect requirements govern all site behavior. Paranormal claims are typically subdued and atmosphere-based rather than sensational.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures reported along grave rows and roadways</li>
+<li>Cold spots in older military-associated sections</li>
+<li>Presence sensations near monuments and boundary areas</li>
+<li>Auditory anomaly reports during low-traffic periods</li>
+<li>Atmospheric heaviness tied to specific sectors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Military and veteran burial sections</li>
+<li>Monument and memorial zones</li>
+<li>Roadway and path network</li>
+<li>Entry gate and public information area</li>
+<li>Perimeter tree-line sections</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              4400 W Kenyon Ave, Denver, CO 80236
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.cem.va.gov/cems/nchp/FtLogan.asp" rel="noopener noreferrer" target="_blank">https://www.cem.va.gov/cems/nchp/FtLogan.asp</a>
+</p>
+<p><strong>Coordinates:</strong> 39.6457° N, 105.0521° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual military-burial imprint. Federal-site access and cemetery ethics override standard paranormal workflow; use quiet observation and documentation-first methodology only.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-leadville-camphale">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Camp Hale</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Military</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Leadville, CO</div>
+<div class="entry-meta-item">Historic Military Training Ground</div>
+<div class="entry-meta-item">Access: Public Lands / Varies</div>
+</div>
+<p class="entry-body">Camp Hale served as the World War II training ground of the 10th Mountain Division and remains one of Colorado's most important military landscapes. Much of the built camp no longer stands, but foundations, training-ground context, and memorialized terrain remain. The site is best approached as a large-scale historical field environment rather than a building-based haunting location, with weather, terrain, and remoteness shaping all interpretation.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Atmospheric heaviness in former camp-core zones</li>
+<li>Footstep and movement reports near foundation traces</li>
+<li>Apparition lore tied to training-ground memory</li>
+<li>Auditory anomalies across open terrain in still conditions</li>
+<li>Presence sensations near memorial features</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic camp footprint and foundation traces</li>
+<li>Memorial access points</li>
+<li>Open valley training grounds</li>
+<li>Road and trail approaches</li>
+<li>River and meadow transition zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Camp Hale area, south of Red Cliff and north of Leadville, CO
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.fs.usda.gov/r02/whiteriver/recreation/camp-hale-continental-divide-national-monument" rel="noopener noreferrer" target="_blank">https://www.fs.usda.gov/r02/whiteriver/recreation/camp-hale-continental-divide-national-monument</a>
+</p>
+<p><strong>Coordinates:</strong> 39.4351° N, 106.3255° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Open-terrain military residual imprint. Treat this as a landscape documentation zone requiring environmental logging, not a traditional contained haunting site.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-silverton-grandimperial">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Grand Imperial Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Silverton, CO</div>
+<div class="entry-meta-item">Historic Mining-Town Hotel</div>
+<div class="entry-meta-item">Access: Public / Guest Access</div>
+</div>
+<p class="entry-body">Operating in Silverton's historic mining district since the nineteenth century, the Grand Imperial sits in one of Colorado's most atmospheric high-altitude town centers. Reports associated with the hotel reflect a combination of mining-town residual lore, guest-room disturbances, and corridor activity. The surrounding historic district adds contextual value but also introduces noise from tourism, weather, and nearby commercial activity.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports in upper guest corridors</li>
+<li>Voices and movement sounds in low-traffic periods</li>
+<li>Room-specific disturbances and object movement</li>
+<li>Presence sensations in stair and landing zones</li>
+<li>Cold spots near historic room blocks</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic lobby and reception area</li>
+<li>Guest rooms and upper corridors</li>
+<li>Restaurant/saloon-related spaces</li>
+<li>Stairwells and landing transitions</li>
+<li>Street-facing historic frontage</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1219 Greene St, Silverton, CO 81433
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.grandimperialhotel.com/" rel="noopener noreferrer" target="_blank">https://www.grandimperialhotel.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 37.8117° N, 107.6644° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic mining-town hotel with recurring corridor and guest-room disturbance reports. High-altitude weather and active tourism create moderate contamination variables.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-cripplecreek-districtmuseum">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Cripple Creek District Museum</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Cripple Creek, CO</div>
+<div class="entry-meta-item">Mining District Museum</div>
+<div class="entry-meta-item">Access: Public / Tour Hours</div>
+</div>
+<p class="entry-body">Located in one of Colorado's most famous gold-mining towns, the Cripple Creek District Museum preserves artifacts, structures, and narratives tied to the district's rapid boom-and-bust history. Reports cluster around preserved interior spaces and building-adjacent zones where occupational density, loss, and mining-era volatility overlap. The district context supports comparative work with nearby outdoor and hotel sites.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition lore tied to mining-era figures</li>
+<li>Footsteps and movement reports in preserved interiors</li>
+<li>Cold spots in exhibit and hall zones</li>
+<li>Voices in low-traffic periods</li>
+<li>Presence sensations in artifact-heavy spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Museum entry and exhibit rooms</li>
+<li>Historic district adjacency</li>
+<li>Stair access and side rooms</li>
+<li>Artifact display spaces</li>
+<li>Exterior lot and mining-town frontage</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              510 Bennett Ave, Cripple Creek, CO 80813
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://cripplecreekmuseum.com/" rel="noopener noreferrer" target="_blank">https://cripplecreekmuseum.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 38.7467° N, 105.1726° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Mining-district residual imprint with museum-context anomaly reports. Best used as part of a wider Cripple Creek comparison set rather than a standalone single-entity location.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-centralcity-cemetery">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Central City Cemetery</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Cemetery</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Central City, CO</div>
+<div class="entry-meta-item">Historic Mountain Cemetery</div>
+<div class="entry-meta-item">Access: Public / Respectful Access</div>
+</div>
+<p class="entry-body">Serving a mining population through periods of accident, disease, and frontier hardship, Central City's cemetery landscape is frequently cited for atmospheric and visual anomalies. The steep terrain and mountain exposure can amplify both genuine environmental stress and misinterpretation, making it a valuable but contamination-prone site for comparative work.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Shadow figures between grave rows</li>
+<li>Cold spots and pressure changes in older sections</li>
+<li>Voices and faint conversation claims</li>
+<li>Visual anomalies near monuments and fence lines</li>
+<li>Atmospheric unease in low-light periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Historic grave rows and monument clusters</li>
+<li>Steep hillside burial sections</li>
+<li>Perimeter fence and tree lines</li>
+<li>Path network and roadside access</li>
+<li>Upper-viewpoint zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Central City Parkway area, Central City, CO 80427
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 39.8090° N, 105.5294° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual burial-ground imprint in a high-exposure mountain environment. Terrain, wind, and low-light distortion must be documented aggressively during all sessions.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-denver-buckhornexchange">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Buckhorn Exchange</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Restaurant</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Denver, CO</div>
+<div class="entry-meta-item">Historic Restaurant / Saloon</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Denver's oldest restaurant remains a staple of local haunting lore, with staff and patrons describing movement, voices, and atmosphere anomalies tied to its nineteenth-century trading-post and saloon history. The active dining environment creates heavy contamination potential, but repeated folklore persistence keeps it relevant as a cross-check site within downtown Denver's broader paranormal cluster.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Voices and conversation fragments during low-traffic periods</li>
+<li>Moving-table and object disturbance stories</li>
+<li>Shadow figures and peripheral movement</li>
+<li>Presence sensations in upper and back rooms</li>
+<li>Cold spots in older interior sections</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main dining and bar areas</li>
+<li>Back-room and service spaces</li>
+<li>Upper room zones</li>
+<li>Street-facing frontage</li>
+<li>Kitchen/service transition points</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1000 Osage St, Denver, CO 80204
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.buckhorn.com/" rel="noopener noreferrer" target="_blank">https://www.buckhorn.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 39.7322° N, 105.0161° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic restaurant/saloon residual environment with heavy operational contamination. Useful as a comparative folklore site rather than a primary evidence-first location.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="entry" data-location-id="co-blackhawk-thirdbridge">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Third Bridge</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Bridge</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Regional</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Bennett, CO</div>
+<div class="entry-meta-item">Roadside Anomaly Site / Bridge</div>
+<div class="entry-meta-item">Access: Public Roadway</div>
+</div>
+<p class="entry-body">Third Bridge in the Black Hawk area is a long-running Colorado roadside legend associated with ghostly children, unexplained lights, and interaction claims involving vehicles and nighttime visitors. Like most roadside anomaly locations, it is heavily exposed to traffic, weather, and intentional thrill-seeking contamination. It remains useful for documentation only when approached with strict control conditions and skepticism-first methodology.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Light anomalies near bridge approaches</li>
+<li>Vehicle-tactile stories and tapping claims</li>
+<li>Child-voice folklore reports</li>
+<li>Shadow movement near roadside edges</li>
+<li>Atmospheric unease in late-night visits</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Bridge deck and roadside pull-off zones</li>
+<li>Approach roadway</li>
+<li>Creek/ditch and embankment edges</li>
+<li>Treeline adjacency</li>
+<li>Vehicle-viewing positions</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              County Line Rd bridge near Bennett, CO 80102
+            </p>
+<p>
+<strong>Website:</strong>
+Not publicly maintained
+            </p>
+<p><strong>Coordinates:</strong> 39.5637° N, 104.4428° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Roadside folklore/anomaly site with very high contamination risk. Use only for controlled observational logging; do not weight anecdotal interaction claims heavily without replication.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 22,
+    states: ["Colorado"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+<!-- Machine readable JSON metadata -->
+<script id="tpi-directory-metadata" type="application/json">
+{
+  "schema_version": "1.0",
+  "total_locations": 22,
+  "states": [
+    {
+      "name": "Colorado",
+      "code": "CO",
+      "count": 22
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+</body>
+</html>

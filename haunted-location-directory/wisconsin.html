@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Reference Directory • Wisconsin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Location Reference Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">12 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>12</span> Location Entries</div>
+      <div class="hero-meta-item"><span>10</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- WISCONSIN -->
+  <section id="wisconsin" class="sec-block" data-state="WI">
+    <div class="sec-header">
+      <div class="sec-number">49</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Wisconsin</h2>
+      </div>
+      <div class="sec-tag">12 Locations</div>
+    </div>
+    <p class="sec-intro">Wisconsin combines haunted hotels, vice-era bars, prison properties, campus landmarks, civic buildings, museum ships, fire-disaster memorial sites, and spiritualist landmarks into one of the Midwest’s most varied historic-haunting reference states. This build prioritizes strong public-facing locations with usable structure zones, repeated claim traditions, and investigation-ready context across Milwaukee, Baraboo, Fond du Lac, Madison, Kenosha, Maribel, Manitowoc, Peshtigo, Waupun, and Whitewater.</p>
+
+    <div class="entry" data-location-id="wi-milwaukee-pfisterhotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Pfister Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Milwaukee, WI</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">One of Wisconsin’s most iconic haunted hotels, The Pfister combines a major public identity, a preserved luxury-hotel footprint, and a long-running ghost tradition tied to former owner Charles Pfister and his dog.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Sightings of Mr. Pfister and his dog</li>
+              <li>Wandering-figure reports in hallways</li>
+              <li>Electrical oddities in guest and corridor areas</li>
+              <li>General presence sensations in upper-floor lodging zones</li>
+              <li>Long-standing hotel haunting tradition reinforced by repeated guest stories</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and common areas</li>
+              <li>Guest-room corridors</li>
+              <li>Upper-floor lodging zones</li>
+              <li>Historic hotel interior</li>
+              <li>Elevator and hallway transition areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 424 E Wisconsin Ave, Milwaukee, WI 53202</p>
+            <p><strong>Website:</strong> <a href="http://www.thepfisterhotel.com" rel="noopener noreferrer" target="_blank">http://www.thepfisterhotel.com</a></p>
+            <p><strong>Coordinates:</strong> 43.0386° N, 87.9065° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — apparition-style reports and broader environmental oddities overlap in a historically significant downtown hotel with a long witness tradition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-milwaukee-shakerscigarbar">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Shaker’s Cigar Bar</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Bar</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Milwaukee, WI</div>
+          <div class="entry-meta-item">Historic Cigar Bar</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of the strongest haunted venues in Wisconsin, Shaker’s has an official public identity, active ghost-tour programming, and unusually specific investigation zones tied to the basement, women’s restroom, penthouse, and upstairs rooms.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Disembodied voices and laughter in the women’s restroom</li>
+              <li>Bathroom stall door opening and closing on its own</li>
+              <li>Objects reportedly moving in the penthouse</li>
+              <li>Woman’s apparition traditions in upper areas</li>
+              <li>Basement unease, hair-pulling, shaking doors, and heavy-safe movement lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Basement</li>
+              <li>Women’s restroom</li>
+              <li>Penthouse</li>
+              <li>Upstairs apartment / brothel areas</li>
+              <li>Main bar floor and ghost-tour route spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 422 S 2nd St, Milwaukee, WI 53204</p>
+            <p><strong>Website:</strong> <a href="https://www.shakerscigarbar.com" rel="noopener noreferrer" target="_blank">https://www.shakerscigarbar.com</a></p>
+            <p><strong>Coordinates:</strong> 43.0278° N, 87.9132° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — strong zone-specific reports include both environmental disturbances and apparently interactive manifestations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-baraboo-oldbarabooinn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Baraboo Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baraboo, WI</div>
+          <div class="entry-meta-item">Historic Inn / Tavern</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of the strongest haunted properties in the state, the Old Baraboo Inn combines a fixed public identity, a documented address, ghost-tour use, and multiple specific claims tied to the bar, basement, and restored interior.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Sightings of Mary, a former tenant</li>
+              <li>Dishes flying from shelves</li>
+              <li>Brooms moving on their own</li>
+              <li>Voices reported in the building</li>
+              <li>Orb-capture and apparition traditions in restored interior areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Bar area</li>
+              <li>Basement</li>
+              <li>Shelf and service zones</li>
+              <li>Restored interior sections</li>
+              <li>Main hospitality rooms</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 135 Walnut St, Baraboo, WI 53913</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 43.4702° N, 89.7443° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — environmental movement and apparition-style reports cluster in identifiable tavern and basement zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-baraboo-alringlingmansion">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">AL. Ringling Mansion</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Home</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Baraboo, WI</div>
+          <div class="entry-meta-item">Historic Mansion</div>
+          <div class="entry-meta-item">Access: Public / Tour Access</div>
+        </div>
+        <p class="entry-body">A strong mansion candidate with an official site, a fixed address, and haunted-tour programming, the AL. Ringling Mansion is especially useful for TPI-style room-by-room investigation zoning.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Reported anomalies on camera during tours</li>
+              <li>Unusual experiences in mansion rooms</li>
+              <li>Tour-based paranormal claims tied to interior spaces</li>
+              <li>General anomaly reporting during haunted investigations</li>
+              <li>Presence-style lore associated with the preserved mansion interior</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Mansion rooms</li>
+              <li>Conservatory</li>
+              <li>Hallways and staircase zones</li>
+              <li>Public tour path</li>
+              <li>Formal historic interior spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 623 Broadway St, Baraboo, WI 53913</p>
+            <p><strong>Website:</strong> <a href="https://alringlingmansion.com" rel="noopener noreferrer" target="_blank">https://alringlingmansion.com</a></p>
+            <p><strong>Coordinates:</strong> 43.4716° N, 89.7442° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — the mansion openly supports paranormal touring and repeated anomaly claims tied to identifiable interior zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-fonddulac-hotelretlaw">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hotel Retlaw</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fond du Lac, WI</div>
+          <div class="entry-meta-item">Historic Downtown Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">One of Wisconsin’s best-known haunted hotels, Hotel Retlaw combines strong public identity with clearly described claim zones such as Room 717, the basement, upper floors, and tunnel-connected areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Lights and faucets turning on and off</li>
+              <li>Screaming associated with Room 717</li>
+              <li>Ghost of a woman in a bathrobe</li>
+              <li>Recurring apparition tradition disappearing into walls</li>
+              <li>Environmental disturbances in upper-floor and tunnel lore zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Room 717</li>
+              <li>Basement</li>
+              <li>Upper floors</li>
+              <li>Tunnel-connected hotel areas</li>
+              <li>Historic guest corridors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 1 N Main St, Fond du Lac, WI 54935</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 43.7748° N, 88.4467° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — recurring environmental disturbances and apparition traditions are tied to specific room and floor zones in a major historic hotel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-madison-bascomhall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bascom Hall</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Academic</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Madison, WI</div>
+          <div class="entry-meta-item">Historic University Building</div>
+          <div class="entry-meta-item">Access: Public / Campus</div>
+        </div>
+        <p class="entry-body">One of Wisconsin’s best-known campus haunting traditions, Bascom Hall is tied to the former cemetery beneath Bascom Hill and repeated ghost-story coverage surrounding the university’s oldest symbolic grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost-sighting traditions on Bascom Hill</li>
+              <li>Unusual atmosphere changes around the hill and monument area</li>
+              <li>Campus-legend activity tied to the former cemetery</li>
+              <li>Presence sensations around stair and hilltop spaces</li>
+              <li>Recurring university folklore centered on the building and grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Bascom Hall</li>
+              <li>Bascom Hill</li>
+              <li>Stair areas</li>
+              <li>Hilltop grounds</li>
+              <li>Monument-adjacent spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 500 Lincoln Dr, Madison, WI 53706</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 43.0768° N, 89.4108° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — recurring campus lore is tightly linked to a specific land-use change and historic burial-ground tradition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-kenosha-kempercenter">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kemper Center / Kemper Hall</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Kenosha, WI</div>
+          <div class="entry-meta-item">Former School / Mansion Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A strong former school and mansion site with a public address, clear institutional identity, and recurring reports of nuns, figures in windows, and hall-based apparitions tied to multiple preserved buildings.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly nuns looking out windows</li>
+              <li>Figures appearing in darkness</li>
+              <li>Apparitions in hallways</li>
+              <li>Dark shadows moving along walls</li>
+              <li>Creaking footsteps in former school and mansion spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Hallways</li>
+              <li>Window-facing rooms</li>
+              <li>Faulkner Building</li>
+              <li>Durkee Mansion</li>
+              <li>Former mansion / school spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 6501 3rd Ave, Kenosha, WI 53143</p>
+            <p><strong>Website:</strong> <a href="https://kempercenter.com" rel="noopener noreferrer" target="_blank">https://kempercenter.com</a></p>
+            <p><strong>Coordinates:</strong> 42.5752° N, 87.8127° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — visual apparitions and environmental sound traditions overlap across a layered mansion-and-school property.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-maribel-maribelcaveshotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Maribel Caves Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Ruin Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Maribel, WI</div>
+          <div class="entry-meta-item">Historic Hotel Ruins</div>
+          <div class="entry-meta-item">Access: Public / Exterior</div>
+        </div>
+        <p class="entry-body">One of Wisconsin’s most famous haunted ruins, Maribel Caves Hotel has a fixed roadside identity, a strong historical footprint, and a legend-rich claim tradition tied to the ruins and surrounding cave-park landscape.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly apparition traditions around the ruins</li>
+              <li>Strange gatherings and night-time lore</li>
+              <li>Eerie moonlit glow traditions</li>
+              <li>Long-running “Hotel Hell” reputation</li>
+              <li>Environmental unease tied to the ruin landscape</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Remaining ruins</li>
+              <li>Former hotel footprint</li>
+              <li>Roadside view areas</li>
+              <li>Cave-park adjacency</li>
+              <li>Exterior grounds around the structure remains</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 15401 County Rd R, Maribel, WI 54227</p>
+            <p><strong>Website:</strong> <a href="https://www.maribelcaves.com/about-1" rel="noopener noreferrer" target="_blank">https://www.maribelcaves.com/about-1</a></p>
+            <p><strong>Coordinates:</strong> 44.1930° N, 87.8222° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Environmental or Mixed — much of the claim tradition is bound to the ruin landscape and its long-standing local legend cycle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-manitowoc-usscobia">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">USS Cobia</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum Ship</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Manitowoc, WI</div>
+          <div class="entry-meta-item">Historic Submarine Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A strong public-attraction candidate, USS Cobia is a National Historic Landmark with a fixed address, a highly defined interior structure, and reported paranormal activity tied to the submarine’s confined wartime spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Paranormal activity reported aboard the submarine</li>
+              <li>Haunted submarine-tour traditions</li>
+              <li>Presence reports in confined interior compartments</li>
+              <li>Atmospheric unease in crew areas</li>
+              <li>Wartime-history-linked anomaly lore in the tour route</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Submarine interior</li>
+              <li>Crew areas</li>
+              <li>Compartment corridors</li>
+              <li>Tour route sections</li>
+              <li>Museum-adjacent boarding access</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 75 Maritime Dr, Manitowoc, WI 54220</p>
+            <p><strong>Website:</strong> <a href="https://www.wisconsinmaritime.org" rel="noopener noreferrer" target="_blank">https://www.wisconsinmaritime.org</a></p>
+            <p><strong>Coordinates:</strong> 44.0919° N, 87.6556° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — the confined submarine structure and wartime history support both environmental and human-presence style traditions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-peshtigo-peshtigofiremuseum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Peshtigo Fire Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Peshtigo, WI</div>
+          <div class="entry-meta-item">Historic Fire Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of the most historically significant trauma-linked haunted sites in Wisconsin, the Peshtigo Fire Museum carries strong contextual value through its museum exhibits, cemetery, memorial grounds, and the preserved history of the nation’s deadliest fire.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Lingering trauma-based memorial atmosphere</li>
+              <li>Haunted-place coverage tied to museum and cemetery context</li>
+              <li>Presence-style lore on memorial grounds</li>
+              <li>Emotional and environmental heaviness near victim sites</li>
+              <li>Historical-tragedy-linked anomaly traditions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Museum exhibits</li>
+              <li>Fire victim cemetery</li>
+              <li>Memorial grounds</li>
+              <li>Historical display areas</li>
+              <li>Exterior reflection and approach spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 400 Oconto Ave, Peshtigo, WI 54157</p>
+            <p><strong>Website:</strong> <a href="https://peshtigofiremuseum.com" rel="noopener noreferrer" target="_blank">https://peshtigofiremuseum.com</a></p>
+            <p><strong>Coordinates:</strong> 45.0548° N, 87.7509° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Environmental or Mixed — the claim tradition is heavily bound to memorial landscape, mass tragedy, and preserved trauma history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-waupun-correctionalinstitution">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Waupun Correctional Institution</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Waupun, WI</div>
+          <div class="entry-meta-item">Historic Correctional Site</div>
+          <div class="entry-meta-item">Access: Limited / Exterior Context</div>
+        </div>
+        <p class="entry-body">One of Wisconsin’s oldest prison properties, Waupun Correctional Institution carries historical-society coverage and prison-grounds lore tied to the site’s long correctional history and associated cemetery-linked narratives.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Haunted-history-tour lore associated with the grounds</li>
+              <li>Prison-grounds haunting traditions</li>
+              <li>Cemetery-linked manifestation stories</li>
+              <li>Atmospheric heaviness tied to prison history</li>
+              <li>Long-standing correctional-site paranormal folklore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Prison grounds</li>
+              <li>Historical prison areas</li>
+              <li>Exterior perimeter context</li>
+              <li>Waupun Historical Society tour-linked zones</li>
+              <li>Cemetery-associated surrounding spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 200 S Madison St, Waupun, WI 53963</p>
+            <p><strong>Website:</strong> <a href="https://doc.wi.gov/families-visitors/find-facility/waupun-correctional-institution" rel="noopener noreferrer" target="_blank">https://doc.wi.gov/families-visitors/find-facility/waupun-correctional-institution</a></p>
+            <p><strong>Coordinates:</strong> 43.6328° N, 88.7290° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — prison-grounds lore and cemetery-linked traditions overlap in one of Wisconsin’s longest-running correctional properties.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="entry" data-location-id="wi-whitewater-morrispratt">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Morris Pratt Institute</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Spiritualist Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Whitewater, WI</div>
+          <div class="entry-meta-item">Historic Spiritualist Landmark</div>
+          <div class="entry-meta-item">Access: Public / Institutional</div>
+        </div>
+        <p class="entry-body">A major Wisconsin spiritualist landmark, Morris Pratt fits the TPI system because it has a strong historical identity, repeated association with haunting and spiritualist activity, and defined lore tied to the former school building and cemetery-linked traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Temperature drops</li>
+              <li>Strange shadow reports</li>
+              <li>Cemetery-linked ghost lore</li>
+              <li>Broader spiritualist haunting traditions around Whitewater</li>
+              <li>Environmental anomaly reports tied to the former school context</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Former school building location</li>
+              <li>White Room references</li>
+              <li>Whitewater cemetery-related zones</li>
+              <li>Institutional interior context</li>
+              <li>Associated spiritualist grounds narrative</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 301 Whitewater St, Whitewater, WI 53190</p>
+            <p><strong>Website:</strong> <a href="https://morrispratt.org" rel="noopener noreferrer" target="_blank">https://morrispratt.org</a></p>
+            <p><strong>Coordinates:</strong> 42.8344° N, 88.7320° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — spiritualist-center history, cemetery stories, and recurring environmental reports all support an investigation-ready landmark entry.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 12,
+    states: ["Wisconsin"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 12,
+  "states": [
+    {
+      "name": "Wisconsin",
+      "code": "WI",
+      "count": 12
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • West Virginia</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">11 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>11</span> Location Entries</div>
+      <div class="hero-meta-item"><span>11</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html" class="active">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- WEST VIRGINIA -->
+  <section id="west-virginia" class="sec-block" data-state="WV">
+    <div class="sec-header">
+      <div class="sec-number">48</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">West Virginia</h2>
+      </div>
+      <div class="sec-tag">11 Locations</div>
+    </div>
+    <p class="sec-intro">West Virginia’s Haunted Location Directory focuses on real, identifiable haunted destinations that can support guided exploration and evidence logging. These entries use rooms, zones, or outdoor buckets as user-facing evidence containers rather than strict investigation floorplans, allowing visitors to organize photos, audio, notes, and flags by meaningful areas.</p>
+
+    <div class="entry" data-location-id="wv-moundsville-penitentiary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">West Virginia Penitentiary</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Moundsville, WV</div>
+          <div class="entry-meta-item">Historic Penitentiary</div>
+          <div class="entry-meta-item">Access: Public / Tours</div>
+        </div>
+        <p class="entry-body">One of West Virginia’s strongest haunted-location anchors, the West Virginia Penitentiary combines an official public tour site, a fixed address, Gothic Revival architecture, and a long-running paranormal reputation tied to executions, riots, overcrowding, and prison confinement.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost hunts and public paranormal investigations</li>
+              <li>Execution- and riot-linked haunting traditions</li>
+              <li>Voices, footsteps, and presence reports in prison corridors</li>
+              <li>Long-standing claims tied to cell blocks and confinement areas</li>
+              <li>Residual and interactive activity traditions across the former penitentiary</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Stone cell blocks</li>
+              <li>Prison corridors</li>
+              <li>Tour route areas</li>
+              <li>Execution-related zones</li>
+              <li>Exterior Gothic Revival grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 818 Jefferson Ave, Moundsville, WV 26041</p>
+            <p><strong>Website:</strong> <a href="https://wvpentours.com" rel="noopener noreferrer" target="_blank">https://wvpentours.com</a></p>
+            <p><strong>Coordinates:</strong> 39.9171° N, 80.7445° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — major institutional haunting anchor with repeated public investigation use and claim clusters tied to confinement, violence, and long-term prison history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-weston-transallegheny">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Trans-Allegheny Lunatic Asylum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Asylum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Weston, WV</div>
+          <div class="entry-meta-item">Historic Kirkbride Asylum</div>
+          <div class="entry-meta-item">Access: Public / Tours</div>
+        </div>
+        <p class="entry-body">A top-tier West Virginia haunted-location anchor, Trans-Allegheny Lunatic Asylum offers a massive public historic site with defined wings, wards, hallways, and recurring claims tied to institutional history, overcrowding, and named apparition traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost hunts and paranormal tours</li>
+              <li>Lily spirit tradition</li>
+              <li>Nurse apparition reports</li>
+              <li>Unexplained presence reports in wards and hallways</li>
+              <li>Civil War raid and institutional-history folklore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Long wings</li>
+              <li>Patient wards</li>
+              <li>Hallways</li>
+              <li>Kirkbride-plan building areas</li>
+              <li>Tour and investigation route zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 50 S River Ave, Weston, WV 26452</p>
+            <p><strong>Website:</strong> <a href="https://trans-alleghenylunaticasylum.com" rel="noopener noreferrer" target="_blank">https://trans-alleghenylunaticasylum.com</a></p>
+            <p><strong>Coordinates:</strong> 39.0373° N, 80.4713° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — large institutional site with recurring apparition reports and environmental activity tied to asylum history and building layout.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-rock-lakeshawnee">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lake Shawnee Abandoned Amusement Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Amusement Park</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Rock, WV</div>
+          <div class="entry-meta-item">Abandoned Amusement Park</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">One of the state’s strongest outdoor haunted locations, Lake Shawnee combines a fixed address, tragic amusement-park history, burial-ground lore, and clear outdoor evidence buckets across rides, midway grounds, lake edges, and overgrown park areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly laughter reported on the grounds</li>
+              <li>Phantom figure traditions</li>
+              <li>Lingering spirit claims tied to park tragedies</li>
+              <li>Native burial-ground lore</li>
+              <li>Environmental unease across abandoned ride and lake areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Ride areas</li>
+              <li>Midway grounds</li>
+              <li>Lake edge</li>
+              <li>Overgrown park sections</li>
+              <li>Former amusement-park footprint</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 470 Matoaka Rd, Rock, WV 24747</p>
+            <p><strong>Website:</strong> <a href="https://www.wvlakeshawnee.com" rel="noopener noreferrer" target="_blank">https://www.wvlakeshawnee.com</a></p>
+            <p><strong>Coordinates:</strong> 37.3937° N, 81.3096° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Environmental or Mixed — outdoor trauma-linked site with defined exploration zones and recurring apparition / presence traditions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-princeton-railroadmuseum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Princeton Railroad Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Princeton, WV</div>
+          <div class="entry-meta-item">Railroad Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A public museum candidate tied to Mercer County’s railroad history, the Princeton Railroad Museum offers defined exhibit and rail-display zones that can function as user evidence buckets within the Haunted Location Directory.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Regional ghost-story and haunted-history association</li>
+              <li>Paranormal lore tied to nearby rail corridors</li>
+              <li>Presence-style claims around railroad history displays</li>
+              <li>Museum and rail-yard atmosphere reports</li>
+              <li>Folklore overlay connected to coal-and-rail development</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Museum exhibits</li>
+              <li>Caboose area</li>
+              <li>Rail-history display spaces</li>
+              <li>Exterior rail-display zones</li>
+              <li>Public tour / visitor areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 99 Mercer St, Princeton, WV 24740</p>
+            <p><strong>Website:</strong> <a href="https://www.princetonrailroadmuseum.com" rel="noopener noreferrer" target="_blank">https://www.princetonrailroadmuseum.com</a></p>
+            <p><strong>Coordinates:</strong> 37.3666° N, 81.1026° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historical museum with railroad folklore overlay and usable rail-display evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-lewisburg-carnegiehall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Carnegie Hall</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Performance Hall</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lewisburg, WV</div>
+          <div class="entry-meta-item">Historic Performance Hall</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A strong institutional haunted-location candidate, Carnegie Hall in Lewisburg is tied to fire-and-rebuild history and recurring claims of footsteps, flickering lights, whispers, and lingering energy in performance and public interior areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Unexplained footsteps</li>
+              <li>Flickering light reports</li>
+              <li>Spectral whisper traditions</li>
+              <li>Lingering energy tied to the building’s past</li>
+              <li>Performance-hall atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Performance hall</li>
+              <li>Stage and backstage areas</li>
+              <li>Interior public spaces</li>
+              <li>Exterior architecture</li>
+              <li>Corridors and event route areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 611 Church St, Lewisburg, WV 24901</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 37.8021° N, 80.4453° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — performance-space activity traditions linked to a rebuilt historic institution and repeated interior claims.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-hillsboro-droopmountain">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Droop Mountain Battlefield State Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Hillsboro, WV</div>
+          <div class="entry-meta-item">Civil War Battlefield</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A major Civil War battlefield entry, Droop Mountain Battlefield State Park belongs in the Haunted Location Directory because it is a real public site with mapped outdoor zones, battlefield claims, and history directly tied to the reported apparitions and eerie encounters.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Soldiers’ spirit traditions</li>
+              <li>Battlefield apparition reports</li>
+              <li>Eerie encounters on the grounds</li>
+              <li>Residual battle-memory claims</li>
+              <li>Atmospheric shifts along trails and overlooks</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Battlefield grounds</li>
+              <li>Overlook areas</li>
+              <li>Trail sections</li>
+              <li>Memorial areas</li>
+              <li>Outdoor battlefield approach zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 683 Battlefield Rd, Hillsboro, WV 24946</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.1058° N, 80.2741° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — outdoor battlefield site with claims tied directly to Civil War death, memory, and preserved terrain.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-huntersville-oldjail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Huntersville Jail</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Jail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Huntersville, WV</div>
+          <div class="entry-meta-item">Historic Jail Site</div>
+          <div class="entry-meta-item">Access: Exterior / Historic Area</div>
+        </div>
+        <p class="entry-body">A historic county-seat relic, Old Huntersville Jail provides a smaller but meaningful haunted-location entry with defined jail and village-area evidence buckets tied to hard-lived local history and ghost-hunting interest.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Jail-related unease</li>
+              <li>Outdoor ghost-hunting interest</li>
+              <li>Residual local-history atmosphere</li>
+              <li>Historic village haunting traditions</li>
+              <li>Presence-style claims tied to the preserved jail context</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Jail walls</li>
+              <li>Exterior grounds</li>
+              <li>Historic village surroundings</li>
+              <li>Former county-seat context</li>
+              <li>Outdoor approach area</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Huntersville, WV 24966</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.1904° N, 80.0184° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual — small historic jail entry where haunting value is tied to preserved confinement memory and county-seat history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-martinsburg-apollo">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Apollo Civic Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Martinsburg, WV</div>
+          <div class="entry-meta-item">Historic Civic Theatre</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A strong public venue with a fixed address and performance-space zones, Apollo Civic Theatre provides a classic haunted-theatre entry for West Virginia with claims tied to stage, lobby, and performance traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Haunted theatre programming</li>
+              <li>Local ghost-theatre traditions</li>
+              <li>Performance-space anomaly lore</li>
+              <li>Presence reports in public theatre areas</li>
+              <li>Event-based haunted venue claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Stage</li>
+              <li>Lobby</li>
+              <li>Performance spaces</li>
+              <li>Audience seating areas</li>
+              <li>Backstage / support areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 128 E Martin St, Martinsburg, WV 25401</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.4568° N, 77.9636° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — theatre folklore and public venue activity traditions tied to defined performance and event spaces.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-harpersferry-district">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Harpers Ferry Historic District</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic District</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Harpers Ferry, WV</div>
+          <div class="entry-meta-item">Historic Town / District</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of West Virginia’s strongest land-and-town haunted environments, Harpers Ferry functions as a dense historic-haunt ecosystem with Civil War history, townwide walking-tour claims, clergy apparition stories, soldier sightings, and mapped outdoor evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Haunted walking-tour traditions</li>
+              <li>Soldier sighting claims</li>
+              <li>Clergy apparition stories</li>
+              <li>Historic-town haunting reports</li>
+              <li>Civil War occupation and trauma-linked folklore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Town streets</li>
+              <li>Church grounds</li>
+              <li>Camp Hill</li>
+              <li>Historic house stops</li>
+              <li>Lower Town and walking-route areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Harpers Ferry, WV 25425</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.3254° N, 77.7389° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic district with multiple destination zones and claims spread across a preserved town landscape.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-holden-mamiethurman">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Mamie Thurman Murder Site / 22 Mine Road</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Roadside Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Holden, WV</div>
+          <div class="entry-meta-item">Roadside Legend Site</div>
+          <div class="entry-meta-item">Access: Public Roadway / Caution</div>
+        </div>
+        <p class="entry-body">A clear roadside folklore site, the Mamie Thurman / 22 Mine Road location remains useful for the Haunted Location Directory because the story is specific, geographically anchored, and tied to repeated local legend references.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Sightings of Mamie Thurman’s ghost</li>
+              <li>Eerie roadside encounters</li>
+              <li>Repeated local legend reports</li>
+              <li>Residual murder-site memory</li>
+              <li>Mountain-road haunting traditions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>22 Mine Road area</li>
+              <li>Roadside pull-off context</li>
+              <li>Wooded mountain road</li>
+              <li>Hillside / overlook areas</li>
+              <li>Approach route</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 22 Mine Road area, Holden, WV 25625</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 37.8176° N, 82.0606° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual — roadside murder-site legend tied to a specific remembered location and repeated apparition tradition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="wv-matewan-historicdistrict">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Matewan Historic District / Hatfield-McCoy Site Areas</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic District</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Matewan, WV</div>
+          <div class="entry-meta-item">Historic Conflict District</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Matewan and the surrounding Hatfield-McCoy site areas offer a strong regional haunted-history entry with defined town, road, and conflict-memory zones tied to feud-era land memory and violent historical tradition.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Voices and mumbling traditions</li>
+              <li>Spirits said to linger on conflict-era land</li>
+              <li>Feud-era ghost-history stories</li>
+              <li>Roadside and land-memory claims</li>
+              <li>Residual violence-linked atmosphere</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Matewan town streets</li>
+              <li>Historic district areas</li>
+              <li>Feud-location context</li>
+              <li>Roadside conflict-linked zones</li>
+              <li>Nearby land sections tied to historical violence</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Matewan, WV 25678</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 37.6207° N, 82.1587° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual — haunting tradition tied to violent historical memory and feud-era regional identity.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 11,
+    states: ["West Virginia"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 11,
+  "states": [
+    {
+      "name": "West Virginia",
+      "code": "WV",
+      "count": 11
+    }
+  ],
+  "last_updated": "2026-04-23T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Kansas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">TPI Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations or cities..." autocomplete="off">
+    <div id="search-count">21 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Haunted Location <em>Directory</em></h1>
+    <p class="hero-desc">This directory contains documented haunted locations, historic sites, and culturally recognized paranormal landmarks. Entries are compiled from historical records, publicly accessible data, and widely reported experiences to support exploration, documentation, and personal investigation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>21</span> Location Entries</div>
+      <div class="hero-meta-item"><span>18</span> Cities</div>
+      <div class="hero-meta-item"><span>105</span> County-Aware Research</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html" class="active">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- KANSAS -->
+  <section id="kansas" class="sec-block" data-state="KS">
+    <div class="sec-header">
+      <div class="sec-number">16</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Kansas</h2>
+      </div>
+      <div class="sec-tag">21 Locations</div>
+    </div>
+    <p class="sec-intro">Kansas has 105 counties, so this locked v8 build treats the uploaded Kansas research as a candidate pool and expands it with additional verified haunted-location anchors. Final entries include historic houses, hotels, military posts, cemeteries, depots, government buildings, outdoor landmarks, ghost-town ruins, theaters, libraries, bridges, and park legends with meaningful structure zones or outdoor evidence buckets.</p>
+
+    <div class="entry" data-location-id="ks-atchison-salliehouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Sallie House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Atchison, KS</div>
+          <div class="entry-meta-item">Historic Haunted House</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">The Sallie House is one of Kansas’ best-known haunted locations, a real historic Atchison house with a long-running public paranormal reputation and repeated claims tied to rooms, stairs, hallway spaces, and exterior entry points.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Apparitions</li>
+              <li>Moving objects</li>
+              <li>Scratches, burns, and electrical disturbances</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Office / first-floor room</li>
+              <li>Upstairs bedroom</li>
+              <li>Stairwell</li>
+              <li>Hallway</li>
+              <li>Exterior entry</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 508 N 2nd St, Atchison, KS 66002</p>
+            <p><strong>Website:</strong> <a href="https://visitatchison.com/highlight/sallie-house" rel="noopener noreferrer" target="_blank">https://visitatchison.com/highlight/sallie-house</a></p>
+            <p><strong>Coordinates:</strong> 39.5667° N, 95.1209° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — a historic-house case with repeated physical, auditory, visual, and electrical claims distributed across defined interior zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-atchison-mcinteervilla">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">1889 McInteer Villa</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Villa</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Atchison, KS</div>
+          <div class="entry-meta-item">Historic Villa</div>
+          <div class="entry-meta-item">Access: Public / Tour or Event Based</div>
+        </div>
+        <p class="entry-body">The 1889 McInteer Villa is a major Atchison haunted-location anchor, combining a documented Victorian residence, public-facing haunting reputation, and clearly usable evidence buckets across the house, basement, hallways, and grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Screams</li>
+              <li>Basement disturbance and poltergeist-style reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main house</li>
+              <li>Hallways</li>
+              <li>Second-floor rooms</li>
+              <li>Basement</li>
+              <li>Exterior grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1301 Kansas Ave, Atchison, KS 66002</p>
+            <p><strong>Website:</strong> <a href="https://www.1889mcinteervilla.com/" rel="noopener noreferrer" target="_blank">https://www.1889mcinteervilla.com/</a></p>
+            <p><strong>Coordinates:</strong> 39.5633° N, 95.1335° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic residence activity with repeated reports across multiple room and floor zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-atchison-evahcray">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Evah C. Cray Historical Home</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Home Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Atchison, KS</div>
+          <div class="entry-meta-item">Historic Home Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">The Evah C. Cray Historical Home is a preserved Atchison historic house museum connected to the city’s broader haunted-home reputation and repeated reports involving voices, figures, and upper-room activity.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly figure reports</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Burial-ground-related lore</li>
+              <li>Historic-house atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main house rooms</li>
+              <li>Upper rooms</li>
+              <li>Stairways</li>
+              <li>Exterior grounds</li>
+              <li>Museum route spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 805 N 5th St, Atchison, KS 66002</p>
+            <p><strong>Website:</strong> <a href="https://www.evahcraymuseum.com/" rel="noopener noreferrer" target="_blank">https://www.evahcraymuseum.com/</a></p>
+            <p><strong>Coordinates:</strong> 39.5702° N, 95.1227° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — historic-house lore tied to Atchison’s haunted-home cluster with usable room and grounds buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-lawrence-eldridgehotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Eldridge Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lawrence, KS</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">The Eldridge Hotel is a strong Lawrence haunted-location entry with Civil War-era and Quantrill’s Raid context, a fixed downtown address, and room-specific reports centered on Col. Shalor Eldridge lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Breath marks on mirrors</li>
+              <li>Doors opening and closing</li>
+              <li>Lights switching on and off</li>
+              <li>Shaking luggage</li>
+              <li>Strange noises and Col. Eldridge presence reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby</li>
+              <li>Fifth floor</li>
+              <li>Room 506</li>
+              <li>Guest rooms</li>
+              <li>Basement and elevator area</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 701 Massachusetts St, Lawrence, KS 66044</p>
+            <p><strong>Website:</strong> <a href="https://eldridgehotel.com/" rel="noopener noreferrer" target="_blank">https://eldridgehotel.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.9708° N, 95.2358° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic hotel haunting with named-spirit traditions and repeated activity tied to specific guest and public zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-lecompton-stullcemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Stull Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lecompton, KS</div>
+          <div class="entry-meta-item">Folklore Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Caution</div>
+        </div>
+        <p class="entry-body">Stull Cemetery is a folklore-heavy but nationally recognized Kansas cemetery legend, best handled as a careful haunted-location entry with outdoor buckets rather than a sensationalized claim card.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Gate-to-hell legend</li>
+              <li>Occult rumors</li>
+              <li>Apparition traditions</li>
+              <li>Halloween visitation lore</li>
+              <li>Cemetery unease reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Cemetery grounds</li>
+              <li>Former church foundation area</li>
+              <li>Wooded approach</li>
+              <li>Roadside entry</li>
+              <li>Grave sections</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1600 N Rd, Lecompton, KS 66050</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.0736° N, 95.4538° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Folkloric-Mixed — strong location stability and repeated legend tradition, but claims should remain grounded and non-sensational.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-fortleavenworth-fortleavenworth">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Leavenworth</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Military Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fort Leavenworth, KS</div>
+          <div class="entry-meta-item">Historic Military Post</div>
+          <div class="entry-meta-item">Access: Restricted / Visitor Rules</div>
+        </div>
+        <p class="entry-body">Fort Leavenworth is a major historic military site with defined haunted sub-areas, including older housing, disciplinary barracks context, cemetery areas, and long-running apparition and nighttime-noise lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitions near old housing</li>
+              <li>Nighttime noises</li>
+              <li>Faces seen in fireplaces</li>
+              <li>Unexplained activity</li>
+              <li>Cemetery-linked lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>The Rookery</li>
+              <li>Officers’ housing</li>
+              <li>Disciplinary barracks area</li>
+              <li>St. Ignatius area</li>
+              <li>Fort Leavenworth National Cemetery</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 100 Stimson Ave, Fort Leavenworth, KS 66027</p>
+            <p><strong>Website:</strong> <a href="https://home.army.mil/leavenworth/" rel="noopener noreferrer" target="_blank">https://home.army.mil/leavenworth/</a></p>
+            <p><strong>Coordinates:</strong> 39.3540° N, 94.9225° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — multi-era military and incarceration history with claims distributed across housing, cemetery, and institutional zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-hays-forthays">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Hays State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Military Historic Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Hays, KS</div>
+          <div class="entry-meta-item">State Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Fort Hays State Historic Site is a strong outdoor and preserved-building haunted-location entry tied to frontier military history and the Blue Light Lady legend near Sentinel Hill and associated historic areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Blue Light Lady reports</li>
+              <li>Footsteps</li>
+              <li>Crying</li>
+              <li>Woman in blue dress and white bonnet tradition</li>
+              <li>Activity near Sentinel Hill</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Sentinel Hill</li>
+              <li>Officer’s quarters</li>
+              <li>Blockhouse</li>
+              <li>Guardhouse</li>
+              <li>Grounds and Elizabeth Polly Park context</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1472 US-183 Alt, Hays, KS 67601</p>
+            <p><strong>Website:</strong> <a href="https://www.kshs.org/p/fort-hays/19578" rel="noopener noreferrer" target="_blank">https://www.kshs.org/p/fort-hays/19578</a></p>
+            <p><strong>Coordinates:</strong> 38.8624° N, 99.3426° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — frontier-site memory and legend traditions tied to specific historic-site and hill zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-dodgecity-santafedepot">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Santa Fe Depot &amp; Harvey House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Depot / Harvey House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Dodge City, KS</div>
+          <div class="entry-meta-item">Historic Rail Depot</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">Dodge City’s Santa Fe Depot and Harvey House is a real rail and hospitality complex with named-entity reports and clear evidence buckets across basement, stairway, bathroom, wings, and public areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Walter in the basement</li>
+              <li>Beth on the third-floor staircase</li>
+              <li>Moaning Myrtle bathroom lore</li>
+              <li>Henry and Wyatt boy-spirit reports</li>
+              <li>Public-area activity</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Basement</li>
+              <li>Third-floor staircase</li>
+              <li>Bathroom</li>
+              <li>Second-floor east wing</li>
+              <li>First-floor public areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 201 E Wyatt Earp Blvd, Dodge City, KS 67801</p>
+            <p><strong>Website:</strong> <a href="https://www.visitdodgecity.org/" rel="noopener noreferrer" target="_blank">https://www.visitdodgecity.org/</a></p>
+            <p><strong>Coordinates:</strong> 37.7528° N, 100.0171° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — rail, hotel, and public-building activity traditions tied to defined interior zones and named reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-wilson-midlandrailroadhotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Midland Railroad Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Wilson, KS</div>
+          <div class="entry-meta-item">Historic Railroad Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">The Midland Railroad Hotel is a restored late-19th-century hotel with repeat paranormal claims, fire-history associations, and evidence buckets across guest rooms, third floor, hallways, stairways, and public restaurant spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Smoke odors</li>
+              <li>Fire imagery</li>
+              <li>Apparitions in period clothing</li>
+              <li>Children’s voices</li>
+              <li>Knocking, bed-jumping, and room disturbances</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Third floor</li>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Restaurant / public areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 414 26th St, Wilson, KS 67490</p>
+            <p><strong>Website:</strong> <a href="https://www.midlandrailroadhotel.com/" rel="noopener noreferrer" target="_blank">https://www.midlandrailroadhotel.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.8268° N, 98.4738° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — restored railroad hotel with recurring sensory, apparitional, and room-based claims.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-topeka-statecapitol">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kansas State Capitol</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government Building</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Topeka, KS</div>
+          <div class="entry-meta-item">State Capitol</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">The Kansas State Capitol is a public landmark with documented local ghost lore involving basement footsteps, crying, and staircase/dome traditions in a historically significant statehouse setting.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in the basement</li>
+              <li>Crying reports</li>
+              <li>Woman associated with the dome staircase</li>
+              <li>Historic-building atmosphere claims</li>
+              <li>Public-building ghost lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Basement</li>
+              <li>Staircase</li>
+              <li>Rotunda</li>
+              <li>Dome</li>
+              <li>Public tour areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 300 SW 10th Ave, Topeka, KS 66612</p>
+            <p><strong>Website:</strong> <a href="https://www.kshs.org/p/kansas-state-capitol-plan-your-visit/18649" rel="noopener noreferrer" target="_blank">https://www.kshs.org/p/kansas-state-capitol-plan-your-visit/18649</a></p>
+            <p><strong>Coordinates:</strong> 39.0483° N, 95.6780° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — public-statehouse lore tied to defined interior and dome-access zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-pawneerock-pawneerock">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Pawnee Rock State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Landmark</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Pawnee Rock, KS</div>
+          <div class="entry-meta-item">Santa Fe Trail Landmark</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Pawnee Rock is a Santa Fe Trail landmark with frontier conflict history and repeated haunting accounts involving battle sounds, apparitions, and murder-related ghost stories.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Battle sounds</li>
+              <li>Apparition reports</li>
+              <li>Murder-related ghost stories</li>
+              <li>Trail-landmark unease</li>
+              <li>Frontier-conflict lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Rock overlook</li>
+              <li>Trail approach</li>
+              <li>Ridge area</li>
+              <li>Base area</li>
+              <li>Monument / park space</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 417 Pawnee Ave, Pawnee Rock, KS 67567</p>
+            <p><strong>Website:</strong> <a href="https://www.kshs.org/p/pawnee-rock/19579" rel="noopener noreferrer" target="_blank">https://www.kshs.org/p/pawnee-rock/19579</a></p>
+            <p><strong>Coordinates:</strong> 38.2614° N, 98.9870° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Environmental — outdoor landmark with conflict history and broad terrain-based evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-ellinwood-wolfhotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Historic Wolf Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Ellinwood, KS</div>
+          <div class="entry-meta-item">Historic Hotel / Tunnel Site</div>
+          <div class="entry-meta-item">Access: Public / Tour Based</div>
+        </div>
+        <p class="entry-body">The Historic Wolf Hotel is a strong Kansas hotel entry with underground tunnel lore, dining-room death traditions, apparitions, footsteps, and room disturbances tied to a real historic hotel and tunnel system.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Tunnel spirit reports</li>
+              <li>Dining-room death lore</li>
+              <li>Footsteps</li>
+              <li>Apparitions</li>
+              <li>Guest-room disturbances</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Dining room</li>
+              <li>Tunnel system</li>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Basement</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1 N Main St, Ellinwood, KS 67526</p>
+            <p><strong>Website:</strong> <a href="https://historicsignatureinn.com/" rel="noopener noreferrer" target="_blank">https://historicsignatureinn.com/</a></p>
+            <p><strong>Coordinates:</strong> 38.3556° N, 98.5809° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic hotel and tunnel-site activity with room, basement, and underground evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-beaumont-beaumonthotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Beaumont Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Beaumont, KS</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">The Beaumont Hotel is a late-19th-century hotel with a public haunted reputation, cowboy-apparition lore, object movement claims, and clear lodging-space evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Cowboy apparition named Zeke</li>
+              <li>Spurs heard jangling</li>
+              <li>Objects moving on their own</li>
+              <li>Guest reports</li>
+              <li>Historic hotel atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby</li>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Exterior hotel approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 11651 SE Main St, Beaumont, KS 67012</p>
+            <p><strong>Website:</strong> <a href="https://www.hotelbeaumontks.com/" rel="noopener noreferrer" target="_blank">https://www.hotelbeaumontks.com/</a></p>
+            <p><strong>Coordinates:</strong> 37.6556° N, 96.5329° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic lodging traditions with auditory, visual, and object-movement claims.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-fort-riley-fortriley">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Riley</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Military Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fort Riley, KS</div>
+          <div class="entry-meta-item">Historic Military Post</div>
+          <div class="entry-meta-item">Access: Restricted / Visitor Rules</div>
+        </div>
+        <p class="entry-body">Fort Riley is a major Kansas military site with long-running post history and ghost lore tied to housing areas, older building contexts, and surrounding grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Young woman haunting tradition</li>
+              <li>Phantom activity</li>
+              <li>Military-housing lore</li>
+              <li>Unexplained sounds</li>
+              <li>Historic post atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Post housing area</li>
+              <li>Old building site</li>
+              <li>Historic grounds</li>
+              <li>Exterior post areas</li>
+              <li>Military cemetery / memorial context</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Fort Riley Main Post, Fort Riley, KS 66442</p>
+            <p><strong>Website:</strong> <a href="https://home.army.mil/riley/" rel="noopener noreferrer" target="_blank">https://home.army.mil/riley/</a></p>
+            <p><strong>Coordinates:</strong> 39.0880° N, 96.8139° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — broad military-post lore with structured outdoor and building-context buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-kansascity-sauercastle">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Sauer Castle</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Kansas City, KS</div>
+          <div class="entry-meta-item">Historic Mansion</div>
+          <div class="entry-meta-item">Access: Exterior / Restricted</div>
+        </div>
+        <p class="entry-body">Sauer Castle is one of the Kansas City area’s major haunted mansion legends, a real 19th-century Italianate residence with recurring reports of apparitions, footsteps, voices, and activity tied to the tower, upper levels, grounds, and entries.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitions</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Mansion haunting reports</li>
+              <li>Tower and upper-level presence lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Mansion interior context</li>
+              <li>Tower / upper levels</li>
+              <li>Grounds</li>
+              <li>Entryways</li>
+              <li>Exterior view areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 935 Shawnee Rd, Kansas City, KS 66103</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.0688° N, 94.6239° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — major historic mansion lore with strong public recognition, but access should be treated carefully.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-emporia-rockyfordbridge">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Rocky Ford Bridge</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Bridge</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Emporia Area, KS</div>
+          <div class="entry-meta-item">Bridge / Roadside Legend</div>
+          <div class="entry-meta-item">Access: Public Roadway / Caution</div>
+        </div>
+        <p class="entry-body">Rocky Ford Bridge is a Kansas bridge-and-roadside legend site connected to tragedy-linked folklore and outdoor investigation buckets such as bridge deck, roadway approach, and surrounding banks.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly presence reports</li>
+              <li>Fatal-accident lore</li>
+              <li>Bridge unease</li>
+              <li>Roadside apparition traditions</li>
+              <li>Environmental night-sound reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Bridge deck</li>
+              <li>Roadway approach</li>
+              <li>Surrounding banks</li>
+              <li>Roadside pull-off context</li>
+              <li>Water / creek edge</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Rocky Ford Bridge area, Emporia, KS</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 38.4048° N, 96.1817° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Environmental — outdoor bridge legend with tragedy-linked folklore and clear evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-concordia-browngrandtheatre">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Brown Grand Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Concordia, KS</div>
+          <div class="entry-meta-item">Historic Theatre / Opera House</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">The Brown Grand Theatre is a National Register-listed historic theatre and opera house with a long public identity and recurring ghost lore tied to Earl Brown, stage areas, wings, balcony spaces, and the restored auditorium.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghost of Earl Brown theatre lore</li>
+              <li>Opening-season activity traditions</li>
+              <li>Unexplained sounds in performance areas</li>
+              <li>Presence reports in wings and backstage areas</li>
+              <li>Historic-theatre atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Stage</li>
+              <li>Wings</li>
+              <li>Auditorium</li>
+              <li>Balcony</li>
+              <li>Lobby / public theatre areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 310 W 6th St, Concordia, KS 66901</p>
+            <p><strong>Website:</strong> <a href="https://www.browngrand.org/" rel="noopener noreferrer" target="_blank">https://www.browngrand.org/</a></p>
+            <p><strong>Coordinates:</strong> 39.5708° N, 97.6631° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — historic theatre lore tied to a specific public building, stage zones, and long-running local accounts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-montgomerycounty-lehunt">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Le Hunt Ghost Town / Cement Plant Ruins</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Ghost Town / Ruins</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Montgomery County, KS</div>
+          <div class="entry-meta-item">Ghost Town / Cement Plant Ruins</div>
+          <div class="entry-meta-item">Access: Outdoor / Caution</div>
+        </div>
+        <p class="entry-body">Le Hunt is a real Kansas ghost town and former cement-company settlement with surviving plant ruins, a smokestack, foundations, old cemetery context, and repeated haunted-ruin folklore near Elk City Lake.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Haunted ghost-town reputation</li>
+              <li>Ruins-related presence reports</li>
+              <li>Cemetery and abandoned-settlement lore</li>
+              <li>Unease around old plant remains</li>
+              <li>Local stories tied to the cement plant ruins</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Cement plant ruins</li>
+              <li>Old smokestack</li>
+              <li>Foundation remnants</li>
+              <li>Former townsite paths</li>
+              <li>Cemetery / wooded edges</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Le Hunt ruins near County Road 5000 and Elk City Lake, Montgomery County, KS</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 37.2792° N, 95.7892° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Environmental or Residual — abandoned industrial ghost-town setting with landmark ruins and cemetery-linked folklore.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-galena-oakhillcemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Oak Hill Cemetery / Witch’s Grave</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Galena, KS</div>
+          <div class="entry-meta-item">Historic Cemetery Legend</div>
+          <div class="entry-meta-item">Access: Public / Respectful Use</div>
+        </div>
+        <p class="entry-body">Oak Hill Cemetery in Galena is a recognized Kansas cemetery-legend site associated with the so-called Witch’s Grave, apparitions, voices, strange sounds, EVP claims, and repeated 3:33 a.m. folklore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition reports</li>
+              <li>Voices and strange sounds</li>
+              <li>EVP claims</li>
+              <li>3:33 a.m. cemetery folklore</li>
+              <li>Witch’s Grave legend</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Witch’s Grave area</li>
+              <li>Back cemetery section</li>
+              <li>Hill / upper cemetery ground</li>
+              <li>Pathways</li>
+              <li>Cemetery entrance and approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1501 Columbus St, Galena, KS 66739</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 37.0960° N, 94.6470° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Folkloric-Mixed — cemetery legend with a stable site, repeated claims, and usable outdoor evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-hutchinson-publiclibrary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hutchinson Public Library</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Public Library</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Hutchinson, KS</div>
+          <div class="entry-meta-item">Civic Library</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Hutchinson Public Library is a civic-building haunt associated with former librarian Ida Day Holzapfel, whose apparition and interactions are part of repeated local lore tied especially to library and basement areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Former librarian apparition reports</li>
+              <li>Basement interaction lore</li>
+              <li>Unexplained noises</li>
+              <li>Presence reports in library spaces</li>
+              <li>Local newspaper and patron-story tradition</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Basement</li>
+              <li>Reading rooms</li>
+              <li>Stacks</li>
+              <li>Stairwells</li>
+              <li>Public library areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 901 N Main St, Hutchinson, KS 67501</p>
+            <p><strong>Website:</strong> <a href="https://www.hutchpl.org/" rel="noopener noreferrer" target="_blank">https://www.hutchpl.org/</a></p>
+            <p><strong>Coordinates:</strong> 38.0632° N, 97.9323° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Intelligent Overlay — civic-building lore centered on a named former librarian and repeat basement/library reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ks-atchison-mollyshollow">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Molly’s Hollow / Jackson Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Park / Hollow</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Atchison, KS</div>
+          <div class="entry-meta-item">Outdoor Folklore Site</div>
+          <div class="entry-meta-item">Access: Public Park / Caution</div>
+        </div>
+        <p class="entry-body">Molly’s Hollow in Jackson Park is one of Atchison’s best-known outdoor ghost legends, associated with screams, apparition traditions, and a specific wooded hollow within a real public park.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Screams reportedly heard in the hollow</li>
+              <li>Ghostly figure reports</li>
+              <li>Tree / hanging apparition lore</li>
+              <li>Lover’s-lane haunting tradition</li>
+              <li>Outdoor night-sound claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Molly’s Hollow</li>
+              <li>Jackson Park wooded area</li>
+              <li>Park road / approach</li>
+              <li>Hollow edge</li>
+              <li>Nearby open park areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Jackson Park, 6th St &amp; College Ave area, Atchison, KS 66002</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 39.5689° N, 95.1297° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Folkloric-Mixed — stable outdoor Atchison legend location with repeated story tradition and identifiable park buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 21,
+    states: ["Kansas"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 21,
+  "states": [
+    {
+      "name": "Kansas",
+      "code": "KS",
+      "count": 21
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

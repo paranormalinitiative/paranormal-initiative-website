@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Reference Directory • Idaho</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Location Reference Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">20 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>20</span> Location Entries</div>
+      <div class="hero-meta-item"><span>13</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- IDAHO -->
+  <section id="idaho" class="sec-block" data-state="ID">
+    <div class="sec-header">
+      <div class="sec-number">12</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Idaho</h2>
+      </div>
+      <div class="sec-tag">20 Locations</div>
+    </div>
+    <p class="sec-intro">Idaho combines territorial prisons, mining-town districts, ghost towns, theaters, cemeteries, historic schools, hotels, hot-springs properties, and frontier stations into one of the West’s stronger mixed-environment paranormal reference states. This build prioritizes public-facing locations with persistent folklore, historical weight, and usable site data across Boise, Wallace, Idaho City, Silver City, Albion, Oakley, Soda Springs, Lava Hot Springs, Blackfoot, Pocatello, Cataldo, Hansen, and Donnelly.</p>
+
+    <div class="entry" data-location-id="id-boise-oldpen">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Idaho Penitentiary</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boise, ID</div>
+          <div class="entry-meta-item">State Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Territorial prison first constructed in 1870 and operated for more than a century before closing in 1973. Its cell blocks, isolation areas, gallows history, and repeated escape lore make it Idaho’s strongest prison-haunting reference site.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps and cell-door sounds in empty blocks</li>
+              <li>Shadow figures in the old cell house</li>
+              <li>Presence sensations in solitary and maximum-security areas</li>
+              <li>Cold spots near the women’s ward and administration spaces</li>
+              <li>Apparitional inmate reports from staff and visitors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic Cell House</li>
+              <li>Solitary / Maximum Security</li>
+              <li>Women’s Ward</li>
+              <li>Administration Building</li>
+              <li>Prison Yard and Gallows-adjacent grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 2445 Old Penitentiary Rd, Boise, ID 83712</p>
+            <p><strong>Website:</strong> <a href="https://history.idaho.gov/oldpen/" rel="noopener noreferrer" target="_blank">https://history.idaho.gov/oldpen/</a></p>
+            <p><strong>Coordinates:</strong> 43.5953° N, 116.1617° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual with Intelligent Overlay — high-value confinement site with layered inmate and staff reporting across multiple structures.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-boise-egyptian">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Egyptian Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boise, ID</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Opened in 1927 in downtown Boise, the Egyptian Theatre is one of Idaho’s best-known performing-arts landmarks and a frequent focal point in local haunting lore tied to projection-booth, balcony, and stage-area reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Projection-booth and backstage footsteps</li>
+              <li>Flickering-light and shadow-form reports during quiet periods</li>
+              <li>Voice impressions in the balcony and aisle lines</li>
+              <li>Cold spots near stage wings</li>
+              <li>Presence sensations during late-night screenings or rehearsals</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and ticketing area</li>
+              <li>Main auditorium and aisle rows</li>
+              <li>Balcony seating</li>
+              <li>Projection booth</li>
+              <li>Stage and backstage wings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 700 W Main St, Boise, ID 83702</p>
+            <p><strong>Website:</strong> <a href="https://egyptiantheatre.net/" rel="noopener noreferrer" target="_blank">https://egyptiantheatre.net/</a></p>
+            <p><strong>Coordinates:</strong> 43.6157° N, 116.2026° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic theatre with recurring atmospheric and visual reports; active venue conditions require strong control for sound, lighting, and staffing variables.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-boise-idanha">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Idanha Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boise, ID</div>
+          <div class="entry-meta-item">Historic Hotel / Apartments</div>
+          <div class="entry-meta-item">Access: Limited / Mixed Use</div>
+        </div>
+        <p class="entry-body">The 1901 Idanha is one of Boise’s most recognizable historic downtown buildings. Former hotel history, long residential use, and repeated staff and resident stories have made it a persistent Boise haunting reference point.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Object-movement reports in upper floors</li>
+              <li>Apparitional sightings in hallways</li>
+              <li>Kitchen and service-area disturbances</li>
+              <li>Blanket-pulling and bed-disturbance stories from residents</li>
+              <li>Shadow figures on stair landings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Street-level commercial spaces</li>
+              <li>Historic lobby access zone</li>
+              <li>Upper residential corridors</li>
+              <li>Third and fourth floor hotspot areas</li>
+              <li>Basement and service levels</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 928 W Main St, Boise, ID 83702</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 43.6148° N, 116.2040° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible intelligent hotel-residential haunting with strongest clustering in upper residential floors.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-boise-capitol">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Idaho State Capitol</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boise, ID</div>
+          <div class="entry-meta-item">State Capitol</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Completed in the early twentieth century, the Idaho State Capitol anchors Boise’s civic core and carries long-running local stories of after-hours footsteps, voices, and presence sensations in ceremonial and corridor spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in legislative corridors after hours</li>
+              <li>Voice impressions in hearing and chamber-adjacent areas</li>
+              <li>Presence sensations in stair halls and rotunda zones</li>
+              <li>Cold spots in quieter upper corridors</li>
+              <li>Shadow movement on upper balcony levels</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main rotunda</li>
+              <li>House and Senate chamber corridors</li>
+              <li>Ceremonial staircase</li>
+              <li>Public gallery levels</li>
+              <li>Committee and hallway zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 700 W Jefferson St, Boise, ID 83702</p>
+            <p><strong>Website:</strong> <a href="https://legislature.idaho.gov/capitol/" rel="noopener noreferrer" target="_blank">https://legislature.idaho.gov/capitol/</a></p>
+            <p><strong>Coordinates:</strong> 43.6170° N, 116.1997° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual governmental imprint with corridor-based reporting; active public and legislative use creates substantial environmental contamination factors.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-boise-morrishill">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Morris Hill Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boise, ID</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Boise’s large nineteenth-century cemetery contains thousands of burials and is one of the city’s most commonly cited cemetery haunting sites, especially for dusk visual anomalies and section-specific presence reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitional sightings between older sections</li>
+              <li>Shadow figures along tree-lined paths</li>
+              <li>Cold spots near historic family plots</li>
+              <li>Voice impressions in quieter interior roads</li>
+              <li>Atmospheric heaviness near older burial concentrations</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic burial sections</li>
+              <li>Tree-lined interior roads</li>
+              <li>Family plot clusters</li>
+              <li>Mausoleum and memorial areas</li>
+              <li>Perimeter and entry drives</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 317 N Latah St, Boise, ID 83706</p>
+            <p><strong>Website:</strong> <a href="https://www.morrishill.com/" rel="noopener noreferrer" target="_blank">https://www.morrishill.com/</a></p>
+            <p><strong>Coordinates:</strong> 43.6077° N, 116.2363° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground imprint with broad visual-report distribution across older sections.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-idahocity-pioneer">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Boot Hill / Idaho City Pioneer Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Idaho City, ID</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Linked to Idaho City’s gold-rush violence and early boomtown mortality, this cemetery is one of Idaho’s stronger mining-frontier burial sites for residual and apparition-based folklore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures near older graves</li>
+              <li>Atmospheric shifts in low-light conditions</li>
+              <li>Voice impressions tied to older sections</li>
+              <li>Cold spots near unmarked burial areas</li>
+              <li>Presence sensations at the cemetery edge</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic grave rows</li>
+              <li>Older marker concentrations</li>
+              <li>Unmarked and damaged sections</li>
+              <li>Entry paths</li>
+              <li>Wooded perimeter edge</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> Centerville Rd, Idaho City, ID 83631</p>
+            <p><strong>Website:</strong> <a href="https://www.idahocityhistoricalfoundation.org/" rel="noopener noreferrer" target="_blank">https://www.idahocityhistoricalfoundation.org/</a></p>
+            <p><strong>Coordinates:</strong> 43.8285° N, 115.8299° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual mining-era burial-ground imprint with strong frontier-history overlay.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-idahocity-boisebasin">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Boise Basin Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Idaho City, ID</div>
+          <div class="entry-meta-item">Historic Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Located in Idaho City’s preserved mining-era district, the Boise Basin Museum interprets the region’s boomtown history and is often folded into local reports of footsteps, object movement, and after-hours building activity.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in quiet exhibit rooms</li>
+              <li>Object-shift reports from staff and volunteers</li>
+              <li>Presence sensations in older interior zones</li>
+              <li>Door and floorboard sounds without visible cause</li>
+              <li>Atmospheric changes in low-traffic rooms</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main exhibit floor</li>
+              <li>Historic display rooms</li>
+              <li>Hall and stair transitions</li>
+              <li>Storage and work spaces</li>
+              <li>Immediate exterior walk</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 110 Main St, Idaho City, ID 83631</p>
+            <p><strong>Website:</strong> <a href="https://www.idahocityhistoricalfoundation.org/" rel="noopener noreferrer" target="_blank">https://www.idahocityhistoricalfoundation.org/</a></p>
+            <p><strong>Coordinates:</strong> 43.8281° N, 115.8316° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic-museum residual activity with strongest reports in older interior rooms and transitions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-silvercity-idahohotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Idaho Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Silver City, ID</div>
+          <div class="entry-meta-item">Historic Hotel / Ghost Town</div>
+          <div class="entry-meta-item">Access: Public / Seasonal</div>
+        </div>
+        <p class="entry-body">The Idaho Hotel is one of Silver City’s flagship preserved buildings and a centerpiece for the ghost-town district’s long-running paranormal reputation, especially for guest-room, hallway, and saloon-adjacent reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Guest-room footsteps and door sounds</li>
+              <li>Apparitional sightings in upper windows</li>
+              <li>Late-night hallway voices</li>
+              <li>Cold spots in historic rooms</li>
+              <li>Presence sensations tied to the old bar and dining spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic guest rooms</li>
+              <li>Upper corridors</li>
+              <li>Dining room and common areas</li>
+              <li>Stair hall</li>
+              <li>Immediate ghost-town street frontage</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> Silver City Rd, Silver City, ID 83650</p>
+            <p><strong>Website:</strong> <a href="https://www.historicsilvercityidaho.com/idahohotel.html" rel="noopener noreferrer" target="_blank">https://www.historicsilvercityidaho.com/idahohotel.html</a></p>
+            <p><strong>Coordinates:</strong> 43.0157° N, 116.7323° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual mining-hospitality imprint with repeated guest-room clustering and strong ghost-town atmosphere effects.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-wallace-oasis">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Oasis Bordello Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Wallace, ID</div>
+          <div class="entry-meta-item">Former Bordello Museum</div>
+          <div class="entry-meta-item">Access: Public / Seasonal</div>
+        </div>
+        <p class="entry-body">Preserved almost exactly as it was left when it closed in 1988, the Oasis Bordello Museum is one of Wallace’s most distinctive historic interiors and a major anchor in the town’s haunt-focused tourism culture.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Presence sensations in preserved rooms</li>
+              <li>Object-displacement stories tied to displays</li>
+              <li>Unexplained sounds in quiet interior periods</li>
+              <li>Visual anomaly reports in hall and bedroom areas</li>
+              <li>Atmospheric heaviness in the upper-floor spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Front entry and stair access</li>
+              <li>Former parlor / common room</li>
+              <li>Upper-room cluster</li>
+              <li>Hall transitions</li>
+              <li>Display preservation zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 611 Cedar St, Wallace, ID 83873</p>
+            <p><strong>Website:</strong> <a href="https://www.wallaceid.fun/places/united-states/idaho/wallace/attractions-museums-destinations/oasis-bordello-museum/" rel="noopener noreferrer" target="_blank">https://www.wallaceid.fun/places/united-states/idaho/wallace/attractions-museums-destinations/oasis-bordello-museum/</a></p>
+            <p><strong>Coordinates:</strong> 47.4735° N, 115.9276° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic bordello residual activity with strong environmental reinforcement from preserved interior conditions and visitor expectation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-wallace-depot">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Northern Pacific Depot Railroad Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Wallace, ID</div>
+          <div class="entry-meta-item">Railroad Museum</div>
+          <div class="entry-meta-item">Access: Public / Seasonal</div>
+        </div>
+        <p class="entry-body">Wallace’s railroad depot museum adds transportation, labor, and mining-town crossover history to the district’s larger haunting reputation. Depot and trackside stories usually center on footsteps, voices, and after-hours presence reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps on platform and interior floorboards</li>
+              <li>Voice impressions in quiet museum periods</li>
+              <li>Shadow movement near depot windows</li>
+              <li>Presence sensations in office and waiting-room areas</li>
+              <li>Cold spots near trackside access points</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Platform and exterior trackside edge</li>
+              <li>Ticket / waiting-room area</li>
+              <li>Depot office spaces</li>
+              <li>Interior museum displays</li>
+              <li>Side-entry and utility zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 219 6th St, Wallace, ID 83873</p>
+            <p><strong>Website:</strong> <a href="https://www.wallaceid.fun/wp-content/uploads/2024/09/Wallace-City-Map-Directory-Final-Proof-5k-reprint.pdf" rel="noopener noreferrer" target="_blank">https://www.wallaceid.fun/wp-content/uploads/2024/09/Wallace-City-Map-Directory-Final-Proof-5k-reprint.pdf</a></p>
+            <p><strong>Coordinates:</strong> 47.4731° N, 115.9262° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual rail and labor-history imprint in a preserved depot setting with strongest reporting in low-traffic interior periods.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-wallace-jameson">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Jameson Saloon</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Saloon</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Wallace, ID</div>
+          <div class="entry-meta-item">Historic Saloon</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Wallace’s mining-district saloon culture is central to the town’s haunted reputation, and the Jameson is one of the best-known surviving nightlife interiors associated with stories of former patrons and staff lingering in the building.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Bar-area object movement</li>
+              <li>Voices and laughter in quiet periods</li>
+              <li>Presence sensations near upper or rear sections</li>
+              <li>Glass and bottle sounds without visible source</li>
+              <li>Shadow figures reflected in mirrors or dark windows</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main bar room</li>
+              <li>Back seating area</li>
+              <li>Rear service spaces</li>
+              <li>Upper or storage access zones</li>
+              <li>Streetfront entry</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> Main St, Wallace, ID 83873</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 47.4742° N, 115.9268° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic saloon haunting lore with likely residual hospitality overlay and strong expectation effects from Wallace’s broader ghost narrative.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-albion-normal">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Albion State Normal School</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Academic</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Albion, ID</div>
+          <div class="entry-meta-item">Historic Campus</div>
+          <div class="entry-meta-item">Access: Event / Limited</div>
+        </div>
+        <p class="entry-body">The former Albion State Normal School campus is one of Idaho’s largest preserved institutional complexes and is closely tied to decades of haunted-school folklore involving dorms, tunnels, and former academic buildings.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in long corridors and dorm spaces</li>
+              <li>Voices in empty classrooms</li>
+              <li>Door and window movement in older buildings</li>
+              <li>Presence sensations in stairwells and basements</li>
+              <li>Apparitional student and staff folklore tied to campus buildings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic dormitories</li>
+              <li>Classroom buildings</li>
+              <li>Auditorium and assembly spaces</li>
+              <li>Basement and tunnel-adjacent zones</li>
+              <li>Campus grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 400 N Albion St, Albion, ID 83311</p>
+            <p><strong>Website:</strong> <a href="https://www.hauntedalbion.com/" rel="noopener noreferrer" target="_blank">https://www.hauntedalbion.com/</a></p>
+            <p><strong>Coordinates:</strong> 42.4125° N, 113.5797° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Large-scale institutional residual haunting lore with multiple building-specific hotspot claims.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-oakley-howells">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Howells Opera House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Oakley, ID</div>
+          <div class="entry-meta-item">Historic Opera House</div>
+          <div class="entry-meta-item">Access: Event / Limited</div>
+        </div>
+        <p class="entry-body">Completed in the early twentieth century, Howells Opera House is a major historic venue in southern Idaho and a recurring site in regional stories of stage, balcony, and after-hours apparitional activity.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps and voices in the seating hall</li>
+              <li>Presence sensations on stage and backstage</li>
+              <li>Shadow movement in balcony lines</li>
+              <li>Cold spots near stair access</li>
+              <li>Unexplained sounds during quiet building hours</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main hall seating</li>
+              <li>Stage area</li>
+              <li>Backstage support zones</li>
+              <li>Balcony or upper seating</li>
+              <li>Entry and stair transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 160 N Blaine Ave, Oakley, ID 83346</p>
+            <p><strong>Website:</strong> <a href="https://www.oakleyvalleyartscouncil.org/howells-opera-house" rel="noopener noreferrer" target="_blank">https://www.oakleyvalleyartscouncil.org/howells-opera-house</a></p>
+            <p><strong>Coordinates:</strong> 42.2429° N, 113.8818° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic theatre residual activity with stage-versus-seating comparison value.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-lavahotsprings-inn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lava Hot Springs Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lava Hot Springs, ID</div>
+          <div class="entry-meta-item">Historic Inn</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">The Lava Hot Springs Inn is one of Idaho’s most frequently cited haunted hotels, combining historic lodging, hot-springs tourism, and repeated stories of guest-room and hallway disturbances.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Guest-room voices and footsteps</li>
+              <li>Object movement and door activity</li>
+              <li>Presence sensations in older room clusters</li>
+              <li>Cold spots despite warm-building conditions</li>
+              <li>Apparitional reports in hallways and common spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic guest rooms</li>
+              <li>Hallways and stair zones</li>
+              <li>Lobby and common spaces</li>
+              <li>Hot-springs-adjacent rooms</li>
+              <li>Streetfront entry</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 1 Center St, Lava Hot Springs, ID 83246</p>
+            <p><strong>Website:</strong> <a href="https://hotspringsofamerica.com/location/lava-hot-springs-inn/" rel="noopener noreferrer" target="_blank">https://hotspringsofamerica.com/location/lava-hot-springs-inn/</a></p>
+            <p><strong>Coordinates:</strong> 42.6192° N, 112.0131° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible intelligent hotel haunting with recurring room-based witness clustering in an active tourist environment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-sodasprings-enders">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Enders Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Soda Springs, ID</div>
+          <div class="entry-meta-item">Historic Hotel / Theatre Block</div>
+          <div class="entry-meta-item">Access: Public / Mixed Use</div>
+        </div>
+        <p class="entry-body">The Enders complex is one of southeastern Idaho’s best-known historic hotel properties and is repeatedly cited for old-hotel reports involving guests, hallways, and former entertainment spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in upper corridors</li>
+              <li>Apparitional sightings in guest and hall areas</li>
+              <li>Voices in the old building core</li>
+              <li>Cold spots in older room sections</li>
+              <li>Mirror and reflection anomalies</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Street-level lobby/commercial area</li>
+              <li>Upper hotel corridors</li>
+              <li>Guest-room cluster</li>
+              <li>Historic theatre / assembly-adjacent areas</li>
+              <li>Stair and service transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 76 S Main St, Soda Springs, ID 83276</p>
+            <p><strong>Website:</strong> <a href="https://www.endershotel.com/" rel="noopener noreferrer" target="_blank">https://www.endershotel.com/</a></p>
+            <p><strong>Coordinates:</strong> 42.6541° N, 111.6047° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic hospitality residual activity with multi-use building layering and strongest reports in upper corridors.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-blackfoot-statehospital">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">State Hospital South Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Blackfoot, ID</div>
+          <div class="entry-meta-item">Institutional Cemetery</div>
+          <div class="entry-meta-item">Access: Limited / Exterior</div>
+        </div>
+        <p class="entry-body">Associated with Idaho’s oldest state mental-health institution, this cemetery is tied to persistent stories of unmarked burials, atmosphere changes, and lingering institutional trauma around the hospital grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Presence sensations near unmarked grave areas</li>
+              <li>Atmospheric heaviness across the cemetery footprint</li>
+              <li>Voice or crying folklore reports</li>
+              <li>Cold spots in still conditions</li>
+              <li>Shadow movement at the grounds edge</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Cemetery plot area</li>
+              <li>Unmarked-burial sections</li>
+              <li>Grounds edge</li>
+              <li>Roadside access point</li>
+              <li>Hospital-adjacent perimeter</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 700 E Alice St, Blackfoot, ID 83221</p>
+            <p><strong>Website:</strong> <a href="https://healthandwelfare.idaho.gov/services-programs/behavioral-health/state-hospital-south" rel="noopener noreferrer" target="_blank">https://healthandwelfare.idaho.gov/services-programs/behavioral-health/state-hospital-south</a></p>
+            <p><strong>Coordinates:</strong> 43.1940° N, 112.3212° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual institutional and burial-ground imprint; access and interpretation should remain restrained and historically grounded.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-hansen-stricker">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Stricker Ranch &amp; Rock Creek Station</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Frontier</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Hansen, ID</div>
+          <div class="entry-meta-item">Historic Ranch / Stage Station</div>
+          <div class="entry-meta-item">Access: Public / Seasonal</div>
+        </div>
+        <p class="entry-body">This preserved Oregon Trail and stage-station property carries frontier-travel, ranch, and conflict history that supports long-standing regional stories of footsteps, apparitions, and nighttime activity on the grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in preserved ranch structures</li>
+              <li>Apparitional sightings near the station buildings</li>
+              <li>Presence sensations on the grounds at dusk</li>
+              <li>Voices in quiet interior spaces</li>
+              <li>Cold spots around former travel-route access areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main ranch house</li>
+              <li>Stage-station structures</li>
+              <li>Grounds and outbuildings</li>
+              <li>Trail-adjacent areas</li>
+              <li>Entry and yard spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 3715 N 3200 E, Hansen, ID 83334</p>
+            <p><strong>Website:</strong> <a href="https://history.idaho.gov/stricker/" rel="noopener noreferrer" target="_blank">https://history.idaho.gov/stricker/</a></p>
+            <p><strong>Coordinates:</strong> 42.5176° N, 114.1826° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual frontier-site imprint with structure-and-grounds comparison value tied to travel and ranch history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-cataldo-oldmission">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Cataldo Mission (Mission of the Sacred Heart)</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Church</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cataldo, ID</div>
+          <div class="entry-meta-item">Historic Mission</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">The Cataldo Mission is one of Idaho’s most important surviving religious structures and is often folded into regional stories of voices, presence sensations, and subtle visual anomalies tied to mission-era history.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps and voice impressions in the church interior</li>
+              <li>Presence sensations near altar and gallery areas</li>
+              <li>Atmospheric changes in quiet visitation periods</li>
+              <li>Visual anomalies in window light and aisle lines</li>
+              <li>Grounds-based unease reports near the historic compound</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Sanctuary interior</li>
+              <li>Aisles and pew rows</li>
+              <li>Gallery / upper viewing area</li>
+              <li>Mission grounds and cemetery-adjacent space</li>
+              <li>Entry and museum support areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 31732 S Mission Rd, Cataldo, ID 83810</p>
+            <p><strong>Website:</strong> <a href="https://parksandrecreation.idaho.gov/parks/cataldo/" rel="noopener noreferrer" target="_blank">https://parksandrecreation.idaho.gov/parks/cataldo/</a></p>
+            <p><strong>Coordinates:</strong> 47.5539° N, 116.3308° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic religious residual imprint with strong respect-site requirements and subtle report profile.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-pocatello-mountainview">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Mountain View Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Pocatello, ID</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Pocatello’s older cemetery ground is a recurring regional source of apparition, voice, and roadside folklore, especially around older sections and low-light interior drives.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures near older rows</li>
+              <li>Voice impressions after dark</li>
+              <li>Cold spots around historic graves</li>
+              <li>Presence sensations in quieter sections</li>
+              <li>Atmospheric heaviness along the cemetery roads</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic grave rows</li>
+              <li>Interior drives</li>
+              <li>Older marker concentrations</li>
+              <li>Perimeter fence lines</li>
+              <li>Gate and entry area</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 1520 S 5th Ave, Pocatello, ID 83204</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 42.8515° N, 112.4512° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground imprint with stronger folklore concentration in older sections and approach roads.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="id-roseberry-historic">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Roseberry Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Ghost Town</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Donnelly, ID</div>
+          <div class="entry-meta-item">Historic Village</div>
+          <div class="entry-meta-item">Access: Public / Seasonal</div>
+        </div>
+        <p class="entry-body">Roseberry preserves a cluster of historic buildings, church, barn, and school structures that create a useful north-central Idaho comparison site for rural-community residual reports and building-specific folklore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in preserved interiors</li>
+              <li>Presence sensations in church and school spaces</li>
+              <li>Cold spots in older wooden structures</li>
+              <li>Visual anomalies near door and window lines</li>
+              <li>Atmospheric shifts at dusk across the grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic church</li>
+              <li>Schoolhouse</li>
+              <li>Barn and outbuildings</li>
+              <li>Grounds and paths</li>
+              <li>Village-core structures</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address:</strong> 5245 Farm to Market Rd, Donnelly, ID 83615</p>
+            <p><strong>Website:</strong> <a href="https://roseberryidaho.org/" rel="noopener noreferrer" target="_blank">https://roseberryidaho.org/</a></p>
+            <p><strong>Coordinates:</strong> 44.7416° N, 116.0830° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual rural-community imprint with building-specific comparison value across multiple preserved structures.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 20,
+    states: ["Idaho"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 20,
+  "states": [
+    {
+      "name": "Idaho",
+      "code": "ID",
+      "count": 20
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

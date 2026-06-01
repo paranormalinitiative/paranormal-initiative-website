@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Maine</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">TPI Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations or cities..." autocomplete="off">
+    <div id="search-count">31 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Haunted Location <em>Directory</em></h1>
+    <p class="hero-desc">This directory contains documented haunted locations, historic sites, and culturally recognized paranormal landmarks. Entries are compiled from historical records, publicly accessible data, and widely reported experiences to support exploration, documentation, and personal investigation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>31</span> Location Entries</div>
+      <div class="hero-meta-item"><span>30</span> Cities</div>
+      <div class="hero-meta-item"><span>105</span> County-Aware Research</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html" class="active">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- KANSAS -->
+  <section id="maine" class="sec-block" data-state="ME">
+    <div class="sec-header">
+      <div class="sec-number">19</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Maine</h2>
+      </div>
+      <div class="sec-tag">31 Locations</div>
+    </div>
+    <p class="sec-intro">Maine has 16 counties, and this v8 build uses the approved Maine research file as the foundation for a full state HTML. The final build includes cemeteries, lighthouses, forts, roads, woods, jails, historic inns, campuses, theatres, dams, cliffs, lakes, and coastal legends with meaningful rooms, zones, or evidence buckets.</p>
+
+    <div class="entry" data-location-id="me-bangor-mount-hope-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Mount Hope Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bangor, ME</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Mount Hope Cemetery is a major Bangor haunted-location anchor tied to 1830s cemetery history, epidemic-era burials, older paths, apparition traditions, and reported light/orb activity.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Apparitions</li>
+              <li>Orb / light reports</li>
+              <li>Presence along older paths</li>
+              <li>Cemetery atmosphere claims</li>
+              <li>Unexplained movement near older sections</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Older paths</li>
+              <li>Cemetery roads</li>
+              <li>Older burial sections</li>
+              <li>Tree-line areas</li>
+              <li>Gate / approach areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1048 State St, Bangor, ME 04401</p>
+            <p><strong>Website:</strong> <a href="https://mounthopebgr.com/" rel="noopener noreferrer" target="_blank">https://mounthopebgr.com/</a></p>
+            <p><strong>Coordinates:</strong> 44.8040° N, 68.7780° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic cemetery lore tied to older burial paths and stable outdoor evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-phippsburg-seguin-island-lighthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Seguin Island Lighthouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lighthouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Phippsburg, ME</div>
+          <div class="entry-meta-item">Historic Island Lighthouse</div>
+          <div class="entry-meta-item">Access: Seasonal / Island Access</div>
+        </div>
+        <p class="entry-body">Seguin Island Lighthouse is a classic Maine lighthouse haunt tied to keeper legends, island isolation, tower activity, footsteps, and keeper-house history.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Footsteps</li>
+              <li>Keeper-spirit traditions</li>
+              <li>Island presence reports</li>
+              <li>Tower-area sounds</li>
+              <li>Unexplained lighthouse activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Lighthouse tower</li>
+              <li>Keeper house</li>
+              <li>Island trails</li>
+              <li>Dock / approach area</li>
+              <li>Exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Seguin Island, Phippsburg, ME</p>
+            <p><strong>Website:</strong> <a href="https://www.seguinisland.org/" rel="noopener noreferrer" target="_blank">https://www.seguinisland.org/</a></p>
+            <p><strong>Coordinates:</strong> 43.7080° N, 69.7640° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — lighthouse and keeper-history lore tied to tower, house, and island zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-saco-wood-island-lighthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Wood Island Lighthouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lighthouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Saco, ME</div>
+          <div class="entry-meta-item">Historic Island Lighthouse</div>
+          <div class="entry-meta-item">Access: Seasonal / Ferry Based</div>
+        </div>
+        <p class="entry-body">Wood Island Lighthouse is an island lighthouse entry with war and keeper lore, reports of soldiers and figures, and defined tower, keeper-house, island, and shoreline buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Soldier apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Keeper-house presence reports</li>
+              <li>Unexplained sounds</li>
+              <li>Island atmosphere claims</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Lighthouse tower</li>
+              <li>Keeper house</li>
+              <li>Island trails</li>
+              <li>Landing / ferry approach</li>
+              <li>Shoreline areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Ferry from 109 Harbour Rd, Saco, ME</p>
+            <p><strong>Website:</strong> <a href="https://woodislandlighthouse.org/" rel="noopener noreferrer" target="_blank">https://woodislandlighthouse.org/</a></p>
+            <p><strong>Coordinates:</strong> 43.4730° N, 70.3680° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — coastal lighthouse haunting with keeper-house and island evidence zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-prospect-fort-knox-state-historic-site">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Knox State Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Prospect, ME</div>
+          <div class="entry-meta-item">Historic Fortification</div>
+          <div class="entry-meta-item">Access: Public / State Historic Site</div>
+        </div>
+        <p class="entry-body">Fort Knox State Historic Site is one of Maine’s strongest haunted forts, with corridors, casemates, tunnels, parade-ground spaces, EVPs, apparitions, and military-history claims.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>EVP reports</li>
+              <li>Apparitions</li>
+              <li>Footsteps in corridors</li>
+              <li>Cold spots</li>
+              <li>Military presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Corridors</li>
+              <li>Casemates</li>
+              <li>Tunnels / lower areas</li>
+              <li>Parade ground</li>
+              <li>Exterior ramparts</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 711 Fort Knox Rd, Prospect, ME 04981</p>
+            <p><strong>Website:</strong> <a href="https://fortknoxmaine.com/" rel="noopener noreferrer" target="_blank">https://fortknoxmaine.com/</a></p>
+            <p><strong>Coordinates:</strong> 44.5680° N, 68.8110° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic fort activity tied to corridors, stonework, and military zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-franklin-catherine-hill-route-182-black-woods">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Catherine Hill / Route 182 Black Woods</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Haunted Road</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Franklin, ME</div>
+          <div class="entry-meta-item">Roadside Legend</div>
+          <div class="entry-meta-item">Access: Public Roadway / Caution</div>
+        </div>
+        <p class="entry-body">Catherine Hill is a classic Maine roadside legend tied to Route 182 / Black Woods, a phantom hitchhiker tradition, carriage-accident lore, and roadway / woods evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom hitchhiker reports</li>
+              <li>Roadside apparition traditions</li>
+              <li>Carriage-accident lore</li>
+              <li>Unease near wooded bends</li>
+              <li>Night driving reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Roadway bends</li>
+              <li>Wooded shoulder</li>
+              <li>Roadside pull-off context</li>
+              <li>Hill approach</li>
+              <li>Black Woods corridor</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Route 182 / Black Woods Road, Franklin, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.5790° N, 68.1730° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — roadside tragedy legend with stable route-based buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-forest-city-twp-haynesville-woods-route-2a">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Haynesville Woods / Route 2A</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Haunted Road / Woods</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Forest City Twp, ME</div>
+          <div class="entry-meta-item">Roadside / Woods Legend</div>
+          <div class="entry-meta-item">Access: Public Roadway / Caution</div>
+        </div>
+        <p class="entry-body">Haynesville Woods on Route 2A is a northern Maine legend site tied to crash history, phantom trucks, roadway encounters, and dense-woods atmosphere.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom truck reports</li>
+              <li>Crash-related apparitions</li>
+              <li>Unexplained roadside sounds</li>
+              <li>Woods presence reports</li>
+              <li>Night-driving encounter lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Route 2A corridor</li>
+              <li>Wooded shoulders</li>
+              <li>Road bends</li>
+              <li>Roadside pull-off context</li>
+              <li>Forest edge</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Route 2A near Houlton / Haynesville Woods, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 46.3000° N, 67.9000° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — road-and-woods haunting tied to crash history and route buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-lewiston-riverside-cemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Riverside Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lewiston, ME</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Riverside Cemetery is a Lewiston cemetery entry tied to river-bluff history, local figure sightings, and tragedy-linked stories connected to the Androscoggin River area.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Figure sightings</li>
+              <li>Orb / light reports</li>
+              <li>Bluff-area presence reports</li>
+              <li>Cemetery unease</li>
+              <li>River-tragedy lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Bluff area</li>
+              <li>Cemetery paths</li>
+              <li>Older burial sections</li>
+              <li>River-facing edge</li>
+              <li>Entry lanes</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 44 Campus Ave, Lewiston, ME 04240</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.0900° N, 70.2030° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — cemetery and river-tragedy lore with outdoor evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-augusta-kennebec-arsenal">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kennebec Arsenal</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Arsenal</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Augusta, ME</div>
+          <div class="entry-meta-item">Historic Military / Institutional Site</div>
+          <div class="entry-meta-item">Access: Exterior / Restricted Context</div>
+        </div>
+        <p class="entry-body">Kennebec Arsenal is a historic military-industrial and later institutional site tied to sobbing reports, barracks lore, Arsenal Green, and preserved exterior/building-context buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Sobbing reports</li>
+              <li>Footsteps</li>
+              <li>Military-site atmosphere</li>
+              <li>Institutional presence claims</li>
+              <li>Unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Barracks context</li>
+              <li>Arsenal Green</li>
+              <li>Exterior buildings</li>
+              <li>Grounds</li>
+              <li>River-facing approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Arsenal Green, Augusta, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.3160° N, 69.7680° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — arsenal and institutional memory tied to building and grounds zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-york-old-york-gaol">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old York Gaol</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Jail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">York, ME</div>
+          <div class="entry-meta-item">Historic Jail Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">Old York Gaol is a strong southern Maine jail entry tied to colonial imprisonment, hanging history, cell spaces, moans, and museum-route buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Moans</li>
+              <li>Cell-area presence reports</li>
+              <li>Footsteps</li>
+              <li>Prisoner apparition traditions</li>
+              <li>Hanging-history lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Cells</li>
+              <li>Jail corridors</li>
+              <li>Museum rooms</li>
+              <li>Exterior grounds</li>
+              <li>Entry / stair areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 207 York St, York, ME 03909</p>
+            <p><strong>Website:</strong> <a href="https://oldyork.org/visit/old-york-gaol/" rel="noopener noreferrer" target="_blank">https://oldyork.org/visit/old-york-gaol/</a></p>
+            <p><strong>Coordinates:</strong> 43.1700° N, 70.6610° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — colonial jail history with cell and museum-route evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-camden-maiden-s-cliff">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Maiden’s Cliff</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cliff / Trail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Camden, ME</div>
+          <div class="entry-meta-item">State Park / Outdoor Legend</div>
+          <div class="entry-meta-item">Access: Public Trail / Caution</div>
+        </div>
+        <p class="entry-body">Maiden’s Cliff is an outdoor legend site tied to an 1864 fall, girl-ghost traditions, trail access, cliff-edge zones, and overlook evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Girl apparition tradition</li>
+              <li>Trail presence reports</li>
+              <li>Cliff-edge unease</li>
+              <li>Phantom sounds</li>
+              <li>Fall-history lore</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Trail approach</li>
+              <li>Cliff edge</li>
+              <li>Overlook area</li>
+              <li>Wooded trail sections</li>
+              <li>Memorial / marker context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Camden Hills State Park, Camden, ME</p>
+            <p><strong>Website:</strong> <a href="https://www.maine.gov/dacf/parks/trail_activities/camden_trail_conditions.shtml" rel="noopener noreferrer" target="_blank">https://www.maine.gov/dacf/parks/trail_activities/camden_trail_conditions.shtml</a></p>
+            <p><strong>Coordinates:</strong> 44.2200° N, 69.0900° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — tragedy-linked cliff legend with trail and overlook buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-poland-poland-spring-resort">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Poland Spring Resort</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Resort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Poland, ME</div>
+          <div class="entry-meta-item">Historic Resort / Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest or Event Based</div>
+        </div>
+        <p class="entry-body">Poland Spring Resort is a historic inn/resort candidate with reported guest spirits, hall activity, room atmosphere, and resort-ground evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Guest-spirit reports</li>
+              <li>Footsteps</li>
+              <li>Hallway activity</li>
+              <li>Room presence reports</li>
+              <li>Historic resort atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Lobby / public rooms</li>
+              <li>Grounds</li>
+              <li>Historic resort buildings</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 640 Maine St, Poland, ME 04274</p>
+            <p><strong>Website:</strong> <a href="https://polandspringresort.com/" rel="noopener noreferrer" target="_blank">https://polandspringresort.com/</a></p>
+            <p><strong>Coordinates:</strong> 44.0600° N, 70.3780° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic resort lore with lodging and grounds buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-presque-isle-flewelling-house-site">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Flewelling House Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Presque Isle, ME</div>
+          <div class="entry-meta-item">Historic House / Regional Site</div>
+          <div class="entry-meta-item">Access: Reference / Local Context</div>
+        </div>
+        <p class="entry-body">Flewelling House Site is included as an Aroostook County historic-house legend entry tied to shadow figures, old-house context, and exterior / room-context buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Shadow figures</li>
+              <li>Footsteps</li>
+              <li>Old-house presence reports</li>
+              <li>Unexplained sounds</li>
+              <li>Exterior approach unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Main house context</li>
+              <li>Upper-room context</li>
+              <li>Stair / hallway context</li>
+              <li>Exterior grounds</li>
+              <li>Approach area</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Presque Isle, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 46.6810° N, 68.0160° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Folkloric-Mixed — regional historic-house lore with limited public details but county-spread value.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-bucksport-silver-lake">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Silver Lake</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lake / Outdoor Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bucksport, ME</div>
+          <div class="entry-meta-item">Lake / Drowning Lore</div>
+          <div class="entry-meta-item">Access: Public Outdoor Area</div>
+        </div>
+        <p class="entry-body">Silver Lake is an outdoor haunted-location entry tied to drowning lore, lake-edge claims, water sounds, shorelines, and local apparition traditions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Drowning-related apparition lore</li>
+              <li>Water sounds</li>
+              <li>Lake-edge presence reports</li>
+              <li>Unexplained lights</li>
+              <li>Nighttime atmosphere claims</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Lake edge</li>
+              <li>Shoreline access</li>
+              <li>Roadside pull-off context</li>
+              <li>Waterline areas</li>
+              <li>Wooded edge</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Silver Lake, Bucksport, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.5870° N, 68.7910° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Residual — lake tragedy lore with water and shoreline buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-owls-head-owls-head-lighthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Owls Head Lighthouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lighthouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Owls Head, ME</div>
+          <div class="entry-meta-item">Historic Lighthouse</div>
+          <div class="entry-meta-item">Access: Public / Seasonal</div>
+        </div>
+        <p class="entry-body">Owls Head Lighthouse is a coastal lighthouse entry tied to keeper-ghost traditions, tower reports, keeper-house context, and shoreline evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Keeper ghost reports</li>
+              <li>Footsteps</li>
+              <li>Tower presence claims</li>
+              <li>Unexplained sounds</li>
+              <li>Shoreline atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Lighthouse tower</li>
+              <li>Keeper house context</li>
+              <li>Walkway / stairs</li>
+              <li>Shoreline</li>
+              <li>Exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 186 Lighthouse Rd, Owls Head, ME 04854</p>
+            <p><strong>Website:</strong> <a href="https://www.maine.gov/dacf/parks/trail_activities/owls_head_light.shtml" rel="noopener noreferrer" target="_blank">https://www.maine.gov/dacf/parks/trail_activities/owls_head_light.shtml</a></p>
+            <p><strong>Coordinates:</strong> 44.0920° N, 69.0440° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — keeper-history haunting with tower and shoreline buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-kennebunk-kennebunk-jail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kennebunk Jail</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Jail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Kennebunk, ME</div>
+          <div class="entry-meta-item">Historic Jail / Local Site</div>
+          <div class="entry-meta-item">Access: Reference / Museum Context</div>
+        </div>
+        <p class="entry-body">Kennebunk Jail is a York County jail entry tied to prisoner apparitions, cell-area lore, and historic incarceration context.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Prisoner apparition reports</li>
+              <li>Footsteps</li>
+              <li>Moans</li>
+              <li>Cell-area presence</li>
+              <li>Unexplained sounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Cell areas</li>
+              <li>Jail corridor context</li>
+              <li>Exterior grounds</li>
+              <li>Entry area</li>
+              <li>Historic town context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Kennebunk, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 43.3830° N, 70.5450° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — jail-history lore with incarceration buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-rangeley-rangeley-inn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Rangeley Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Rangeley, ME</div>
+          <div class="entry-meta-item">Historic Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Rangeley Inn is a historic lodging entry tied to guest-spirit stories, hallways, rooms, stairways, and lakeside-town atmosphere.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Guest spirit reports</li>
+              <li>Footsteps</li>
+              <li>Room activity</li>
+              <li>Hallway presence</li>
+              <li>Historic inn atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Lobby / public rooms</li>
+              <li>Exterior grounds</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 2443 Main St, Rangeley, ME 04970</p>
+            <p><strong>Website:</strong> <a href="https://rangeleyinn.com/" rel="noopener noreferrer" target="_blank">https://rangeleyinn.com/</a></p>
+            <p><strong>Coordinates:</strong> 44.9660° N, 70.6420° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Mixed — historic inn claims tied to guest and public lodging areas.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-orono-university-of-maine-perry-hall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">University of Maine Perry Hall</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Academic Building / Dorm</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Orono, ME</div>
+          <div class="entry-meta-item">Campus Building / Dorm Lore</div>
+          <div class="entry-meta-item">Access: Restricted / Campus Context</div>
+        </div>
+        <p class="entry-body">University of Maine Perry Hall is a campus haunt entry tied to dorm traditions, student reports, and hallway / room / stairwell buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Dorm haunting reports</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Room presence claims</li>
+              <li>Hallway activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Dorm rooms context</li>
+              <li>Hallways</li>
+              <li>Stairwells</li>
+              <li>Campus paths</li>
+              <li>Exterior building area</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> University of Maine, Orono, ME</p>
+            <p><strong>Website:</strong> <a href="https://umaine.edu/" rel="noopener noreferrer" target="_blank">https://umaine.edu/</a></p>
+            <p><strong>Coordinates:</strong> 44.8990° N, 68.6690° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Folkloric-Mixed — campus residence lore with restricted-access handling.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-lovell-lake-kezar-camps">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lake Kezar Camps</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lake / Camp Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Lovell, ME</div>
+          <div class="entry-meta-item">Lake Camp / Outdoor Lore</div>
+          <div class="entry-meta-item">Access: Reference / Outdoor Area</div>
+        </div>
+        <p class="entry-body">Lake Kezar Camps is an Oxford County outdoor/lodging legend entry tied to lake apparitions, camp areas, docks, wooded paths, and shoreline buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Lake apparition reports</li>
+              <li>Camp-area presence</li>
+              <li>Dock sounds</li>
+              <li>Nighttime waterline lore</li>
+              <li>Unexplained voices</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Lake edge</li>
+              <li>Camp areas</li>
+              <li>Docks</li>
+              <li>Wooded paths</li>
+              <li>Shoreline</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Lake Kezar, Lovell, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.1340° N, 70.8910° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Mixed — lake/camp folklore tied to water and camp zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-boothbay-harbor-boothbay-opera-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Boothbay Opera House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Opera House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Boothbay Harbor, ME</div>
+          <div class="entry-meta-item">Historic Opera House</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">Boothbay Opera House is a coastal Maine theatre entry tied to stage ghosts, performance-space sounds, balcony reports, and backstage buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Stage ghost traditions</li>
+              <li>Footsteps</li>
+              <li>Performance-space sounds</li>
+              <li>Balcony presence</li>
+              <li>Backstage activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Stage</li>
+              <li>Auditorium</li>
+              <li>Balcony</li>
+              <li>Backstage</li>
+              <li>Lobby</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 86 Townsend Ave, Boothbay Harbor, ME 04538</p>
+            <p><strong>Website:</strong> <a href="https://boothbayoperahouse.com/" rel="noopener noreferrer" target="_blank">https://boothbayoperahouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 43.8520° N, 69.6280° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic performance-space haunting with stage and audience buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-edgecomb-fort-edgecomb">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Edgecomb</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Edgecomb, ME</div>
+          <div class="entry-meta-item">Revolutionary-era Blockhouse</div>
+          <div class="entry-meta-item">Access: Public / Historic Site</div>
+        </div>
+        <p class="entry-body">Fort Edgecomb is a small historic fort / blockhouse entry tied to soldier lore, waterfront atmosphere, and fort / grounds buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Soldier apparition traditions</li>
+              <li>Footsteps</li>
+              <li>Riverfront atmosphere claims</li>
+              <li>Unexplained sounds</li>
+              <li>Blockhouse presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Blockhouse</li>
+              <li>Grounds</li>
+              <li>Riverfront edge</li>
+              <li>Trail / approach area</li>
+              <li>Exterior walls</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 66 Fort Rd, Edgecomb, ME 04556</p>
+            <p><strong>Website:</strong> <a href="https://www.maine.gov/fortedgecomb" rel="noopener noreferrer" target="_blank">https://www.maine.gov/fortedgecomb</a></p>
+            <p><strong>Coordinates:</strong> 44.0040° N, 69.6290° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — historic fort memory with blockhouse and riverfront buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-greenville-piscataquis-ruins-logging-camp-context">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Piscataquis Ruins / Logging Camp Context</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Ruins / Logging Camp</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Greenville, ME</div>
+          <div class="entry-meta-item">Logging Camp / Ruins Lore</div>
+          <div class="entry-meta-item">Access: Reference / Outdoor Caution</div>
+        </div>
+        <p class="entry-body">Piscataquis ruins are included as a logging-camp style outdoor entry tied to regional timber history, ruins, woods, phantom sounds, and camp-memory lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom sounds</li>
+              <li>Logging-camp presence reports</li>
+              <li>Woods atmosphere</li>
+              <li>Unexplained voices</li>
+              <li>Ruin-area unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Ruins / foundation context</li>
+              <li>Wooded trail areas</li>
+              <li>Camp approach</li>
+              <li>Clearing / site area</li>
+              <li>Forest edge</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Greenville, ME area</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 45.4590° N, 69.5900° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Folkloric-Mixed — logging-history outdoor lore with ruins and woods buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-belfast-waldo-woods">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Waldo Woods</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Woods / Roadside Legend</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Belfast, ME</div>
+          <div class="entry-meta-item">Woods / Hitchhiker Lore</div>
+          <div class="entry-meta-item">Access: Public Road / Outdoor Caution</div>
+        </div>
+        <p class="entry-body">Waldo Woods is a county-spread outdoor entry tied to hitchhiker traditions, wooded roadways, phantom figures, and forest-edge evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Hitchhiker apparition reports</li>
+              <li>Woods presence</li>
+              <li>Roadside figure traditions</li>
+              <li>Unexplained sounds</li>
+              <li>Night-driving unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Wooded roadway</li>
+              <li>Forest edge</li>
+              <li>Roadside pull-off context</li>
+              <li>Trail / approach area</li>
+              <li>Dark road sections</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Belfast / Waldo County woods area, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.4260° N, 69.0060° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Folkloric-Mixed — roadside woods legend with defined route and forest buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-calais-washington-bridge">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Washington Bridge</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Bridge</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Calais, ME</div>
+          <div class="entry-meta-item">Bridge / Accident Lore</div>
+          <div class="entry-meta-item">Access: Public Roadway / Caution</div>
+        </div>
+        <p class="entry-body">Washington Bridge is a Washington County bridge entry tied to accident ghosts, roadway approaches, river/stream edge, and bridge-deck buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Accident ghost reports</li>
+              <li>Bridge presence</li>
+              <li>Phantom sounds</li>
+              <li>Roadside unease</li>
+              <li>Water-edge atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Bridge deck</li>
+              <li>Roadway approach</li>
+              <li>River / stream edge</li>
+              <li>Guardrail areas</li>
+              <li>Roadside pull-off context</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Calais, ME bridge area</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 45.1880° N, 67.2780° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Environmental — bridge accident lore with stable outdoor buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-jackman-somerset-woods-trail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Somerset Woods Trail</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Woods / Trail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Jackman, ME</div>
+          <div class="entry-meta-item">Wooded Trail / Outdoor Legend</div>
+          <div class="entry-meta-item">Access: Public Outdoor Area / Caution</div>
+        </div>
+        <p class="entry-body">Somerset Woods Trail is a northern Maine outdoor entry tied to phantom sounds, isolated wooded paths, and trail / clearing / forest-edge buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Phantom sounds</li>
+              <li>Trail presence reports</li>
+              <li>Unexplained voices</li>
+              <li>Woods atmosphere</li>
+              <li>Nighttime unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Trailhead</li>
+              <li>Wooded trail</li>
+              <li>Clearings</li>
+              <li>Forest edge</li>
+              <li>Approach road</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Jackman, ME woods trail area</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 45.6230° N, 70.2570° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Folkloric-Mixed — isolated woods legend with trail-based evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-portland-cumberland-county-jail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Cumberland County Jail</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Jail</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Portland, ME</div>
+          <div class="entry-meta-item">Jail / Institutional Site</div>
+          <div class="entry-meta-item">Access: Restricted / Reference</div>
+        </div>
+        <p class="entry-body">Cumberland jail is a Portland-area institutional entry tied to cells, corridors, prisoner lore, and restricted-access reference handling.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Cell-area presence reports</li>
+              <li>Footsteps</li>
+              <li>Voices</li>
+              <li>Prisoner apparition traditions</li>
+              <li>Institutional atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Cell areas</li>
+              <li>Corridors</li>
+              <li>Exterior grounds</li>
+              <li>Entry context</li>
+              <li>Institutional perimeter</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 50 County Way, Portland, ME 04102</p>
+            <p><strong>Website:</strong> <a href="https://www.cumberlandcounty.org/" rel="noopener noreferrer" target="_blank">https://www.cumberlandcounty.org/</a></p>
+            <p><strong>Coordinates:</strong> 43.6540° N, 70.2950° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — jail-history lore with restricted institutional buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-rumford-oxford-cemetery-rumford-cemetery-context">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Oxford Cemetery / Rumford Cemetery Context</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Rumford, ME</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Oxford cemetery coverage is represented through the Rumford cemetery context as an Oxford County burial-ground entry tied to orbs, apparitions, and old-row buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Orb reports</li>
+              <li>Apparition traditions</li>
+              <li>Older-row presence</li>
+              <li>Cemetery sounds</li>
+              <li>Cold spots</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Older grave rows</li>
+              <li>Paths</li>
+              <li>Tree line</li>
+              <li>Entrance lanes</li>
+              <li>Perimeter areas</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Rumford, ME cemetery area</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.5530° N, 70.5520° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — cemetery folklore with stable outdoor buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-gouldsboro-hancock-light-gouldsboro-coast">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hancock Light / Gouldsboro Coast</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lighthouse / Coastal Site</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Gouldsboro, ME</div>
+          <div class="entry-meta-item">Coastal Lighthouse / Shipwreck Lore</div>
+          <div class="entry-meta-item">Access: Reference / Coastal Caution</div>
+        </div>
+        <p class="entry-body">Hancock light is included as a coastal/shipwreck lore entry tied to Gouldsboro-area maritime history, shoreline, light context, and shipwreck claims.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Shipwreck apparition traditions</li>
+              <li>Phantom lights</li>
+              <li>Coastal sounds</li>
+              <li>Keeper / sailor lore</li>
+              <li>Shoreline presence reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Light / beacon context</li>
+              <li>Shoreline</li>
+              <li>Rocky coast</li>
+              <li>Approach area</li>
+              <li>Water-facing edge</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Gouldsboro coastal light area, ME</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.4780° N, 68.0400° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Maritime-Mixed — shipwreck and coastal light lore with shoreline buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-bangor-penobscot-theatre-company-bangor-opera-house">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Penobscot Theatre Company / Bangor Opera House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bangor, ME</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">Penobscot Theatre / Bangor Opera House is a performance-space entry tied to actor spirits, stage sounds, balcony claims, and backstage buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Actor-spirit traditions</li>
+              <li>Stage sounds</li>
+              <li>Footsteps</li>
+              <li>Balcony presence</li>
+              <li>Backstage activity</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Stage</li>
+              <li>Auditorium</li>
+              <li>Balcony</li>
+              <li>Backstage</li>
+              <li>Lobby</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 131 Main St, Bangor, ME 04401</p>
+            <p><strong>Website:</strong> <a href="https://www.penobscottheatre.org/" rel="noopener noreferrer" target="_blank">https://www.penobscottheatre.org/</a></p>
+            <p><strong>Coordinates:</strong> 44.8000° N, 68.7720° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — historic theatre lore tied to performance and audience zones.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-guilford-piscataquis-dam">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Piscataquis Dam</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Dam / Waterway</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Guilford, ME</div>
+          <div class="entry-meta-item">Dam / Drowning Lore</div>
+          <div class="entry-meta-item">Access: Public Outdoor Reference</div>
+        </div>
+        <p class="entry-body">Piscataquis Dam is a waterway entry tied to drowning lore, dam overlook, river edge, and public outdoor evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Drowning-related lore</li>
+              <li>Water sounds</li>
+              <li>River-edge presence</li>
+              <li>Phantom voices</li>
+              <li>Dam-area unease</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Dam overlook</li>
+              <li>River edge</li>
+              <li>Access path</li>
+              <li>Bridge / road approach</li>
+              <li>Waterline</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Guilford, ME dam area</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 45.1680° N, 69.3840° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Environmental or Residual — drowning and waterway lore with dam and river buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-bath-sagadahoc-inn-bath-historic-inn-context">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Sagadahoc Inn / Bath Historic Inn Context</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bath, ME</div>
+          <div class="entry-meta-item">Historic Inn / Maritime Town</div>
+          <div class="entry-meta-item">Access: Reference / Local Context</div>
+        </div>
+        <p class="entry-body">Sagadahoc inn coverage is represented as a Bath historic-inn / maritime-town entry tied to historic deaths, lodging areas, stairs, halls, and seaport atmosphere.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Historic-death lore</li>
+              <li>Guest-spirit reports</li>
+              <li>Footsteps</li>
+              <li>Hallway presence</li>
+              <li>Maritime-town atmosphere</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Guest-room context</li>
+              <li>Hallways</li>
+              <li>Stairways</li>
+              <li>Exterior frontage</li>
+              <li>Historic district approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Bath, ME historic district area</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 43.9100° N, 69.8200° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Mixed — maritime town lodging lore with inn-style evidence buckets.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="me-searsport-waldo-cemetery-searsport-sea-captain-burials">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Waldo Cemetery / Searsport Sea Captain Burials</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Searsport, ME</div>
+          <div class="entry-meta-item">Historic Maritime Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Cemetery</div>
+        </div>
+        <p class="entry-body">Waldo cemetery coverage is represented as a Searsport maritime cemetery entry tied to sea-captain burials, shipwreck memory, cemetery rows, and coastal lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box"><div class="detail-label">Activity Reported</div><ul>
+              <li>Sea-captain apparition traditions</li>
+              <li>Shipwreck memory lore</li>
+              <li>Cemetery presence reports</li>
+              <li>Unexplained lights</li>
+              <li>Coastal wind / sound reports</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Structure Layout</div><ul>
+              <li>Sea-captain grave rows</li>
+              <li>Cemetery paths</li>
+              <li>Tree line</li>
+              <li>Perimeter areas</li>
+              <li>Coastal approach</li>
+            </ul></div>
+          <div class="detail-box"><div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Searsport, ME cemetery area</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 44.4570° N, 68.9250° W</p>
+          </div>
+          <div class="detail-box"><div class="detail-label">Classification</div><p>Residual or Maritime-Mixed — maritime cemetery lore with burial-row and coastal-memory buckets.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 31,
+    states: ["Maine"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 31,
+  "states": [
+    {
+      "name": "Maine",
+      "code": "ME",
+      "count": 31
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

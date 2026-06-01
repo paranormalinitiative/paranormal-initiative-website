@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location Reference Directory • Arkansas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+<div class="brand-header">
+<div class="brand-left">
+<div class="brand-emblem">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 6v6l4 4"></path>
+</svg>
+</div>
+<div>
+<div class="brand-name">The Paranormal Initiative</div>
+<div class="brand-series">Location Reference Directory</div>
+</div>
+</div>
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input autocomplete="off" id="search-input" placeholder="Search locations, cities, states..." type="text"/>
+<div id="search-count">12 locations</div>
+</div>
+<span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+<div class="page">
+<div class="hero">
+<div class="hero-eyebrow">Working Directory • Research Leads</div>
+<h1 class="hero-title">Location Reference <em>Directory</em></h1>
+<p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+<div class="hero-meta">
+<div class="hero-meta-item"><span>1</span> State</div>
+<div class="hero-meta-item"><span>12</span> Location Entries</div>
+<div class="hero-meta-item"><span>10</span> Cities</div>
+<div class="hero-meta-item"><span>WIP</span> Under Review</div>
+</div>
+</div>
+<div class="sec-nav">
+<a href="alabama.html">Alabama</a>
+<a href="alaska.html">Alaska</a>
+<a href="arizona.html">Arizona</a>
+<a href="arkansas.html">Arkansas</a>
+<a href="california.html">California</a>
+<a href="colorado.html">Colorado</a>
+<a href="connecticut.html">Connecticut</a>
+<a href="delaware.html">Delaware</a>
+<a href="florida.html">Florida</a>
+<a href="georgia.html">Georgia</a>
+<a href="hawaii.html">Hawaii</a>
+<a href="idaho.html">Idaho</a>
+<a href="illinois.html">Illinois</a>
+<a href="indiana.html">Indiana</a>
+<a href="iowa.html">Iowa</a>
+<a href="kansas.html">Kansas</a>
+<a href="kentucky.html">Kentucky</a>
+<a href="louisiana.html">Louisiana</a>
+<a href="maine.html">Maine</a>
+<a href="maryland.html">Maryland</a>
+<a href="massachusetts.html">Massachusetts</a>
+<a href="michigan.html">Michigan</a>
+<a href="minnesota.html">Minnesota</a>
+<a href="mississippi.html">Mississippi</a>
+<a href="missouri.html">Missouri</a>
+<a href="montana.html">Montana</a>
+<a href="nebraska.html">Nebraska</a>
+<a href="nevada.html">Nevada</a>
+<a href="new-hampshire.html">New Hampshire</a>
+<a href="new-jersey.html">New Jersey</a>
+<a href="new-mexico.html">New Mexico</a>
+<a href="new-york.html">New York</a>
+<a href="north-carolina.html">North Carolina</a>
+<a href="north-dakota.html">North Dakota</a>
+<a href="ohio.html">Ohio</a>
+<a href="oklahoma.html">Oklahoma</a>
+<a href="oregon.html">Oregon</a>
+<a href="pennsylvania.html">Pennsylvania</a>
+<a href="rhode-island.html">Rhode Island</a>
+<a href="south-carolina.html">South Carolina</a>
+<a href="south-dakota.html">South Dakota</a>
+<a href="tennessee.html">Tennessee</a>
+<a href="texas.html">Texas</a>
+<a href="utah.html">Utah</a>
+<a href="vermont.html">Vermont</a>
+<a href="virginia.html">Virginia</a>
+<a href="washington.html">Washington</a>
+<a href="west-virginia.html">West Virginia</a>
+<a href="wisconsin.html">Wisconsin</a>
+<a href="wyoming.html">Wyoming</a>
+</div>
+<!-- ARKANSAS -->
+<section class="sec-block" data-state="AR" id="arkansas">
+<div class="sec-header">
+<div class="sec-number">04</div>
+<div class="sec-title-block">
+<div class="sec-eyebrow">State Directory</div>
+<h2 class="sec-title">Arkansas</h2>
+</div>
+<div class="sec-tag">12 Locations</div>
+</div>
+<p class="sec-intro">Arkansas contains some of the most well-documented and consistently reported paranormal activity in the southern United States. From Victorian-era resort hotels and frontier-era execution sites to Civil War battlefields, mining ghost towns, and private investigation properties, the state presents a layered investigation environment requiring careful historical grounding and baseline control across diverse site types.</p>
+<!-- Crescent Hotel -->
+<div class="entry" data-location-id="ar-eurekasprings-crescent">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Crescent Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Eureka Springs, AR</div>
+<div class="entry-meta-item">Public Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Built in 1886 as a luxury resort hotel, the Crescent has operated continuously across multiple distinct eras that have contributed significantly to its documented investigation history. Most critically, from 1937 to 1939 the building was repurposed by Norman Baker as a fraudulent cancer treatment hospital — a period in which patients with terminal illness paid substantial sums for treatments later found to have no medical basis, and in which numerous patients died on the premises. This hospital era is identified as the primary contributing factor to reported activity. The site is widely considered one of the most heavily investigated hotels in the United States, with a substantial body of independent investigation records accumulated across decades.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition identified as "Michael" — a stonemason reportedly killed during construction — documented in basement and lower areas</li>
+<li>Nurse figure apparition ("Theodora") reported in former hospital corridors</li>
+<li>Child apparition reported on the third floor across multiple independent accounts</li>
+<li>Multiple distinct entity types documented across different floor zones</li>
+<li>Hundreds of independent guest and investigator experience reports on record</li>
+<li>Object movement and cold spots in former patient room areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Basement / Former Morgue Area (primary activity zone)</li>
+<li>Ground Floor / Lobby and Main Stair Zone</li>
+<li>Second Floor Guest Corridors</li>
+<li>Third Floor (child apparition zone)</li>
+<li>Fourth and Fifth Floors</li>
+<li>Attic / Upper Access Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              75 Prospect Ave, Eureka Springs, AR 72632
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://crescent-hotel.com" rel="noopener noreferrer" target="_blank">https://crescent-hotel.com</a>
+</p>
+<p><strong>Coordinates:</strong> 36.4083° N, 93.7374° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Haunting with Repeated Possible Intelligent Interaction Reports — The Baker hospital era is identified as the dominant imprinting event. Multiple distinct entity types are documented across different floor zones. Both residual loop behavior and interactive response patterns have been independently recorded. Among the most densely documented hotel investigation environments in the United States.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Basin Park Hotel -->
+<div class="entry" data-location-id="ar-eurekasprings-basinpark">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Basin Park Hotel</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Eureka Springs, AR</div>
+<div class="entry-meta-item">Victorian Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Built in 1905 and set directly into the Ozark hillside, the Basin Park Hotel is unusual among Arkansas investigation sites in that each of its seven floors opens at ground level on a different hillside tier. Reports of paranormal activity have been documented by guests and investigators across multiple decades, with a particular concentration of accounts tied to the rooftop areas, basement cave zones, and specific upper-floor corridors. The site's layered geological and architectural character creates environmental variables requiring careful baseline control.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition of a violin player reported in common areas</li>
+<li>Woman in blue figure documented in upper floor corridor zones</li>
+<li>Phantom perfume scents reported by multiple independent guests</li>
+<li>Shadow figures in rooftop and stairwell areas</li>
+<li>Acoustic anomalies in the underground cave-adjacent zones</li>
+<li>Cold spots in historic room areas despite building HVAC</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby and Main Entry Level</li>
+<li>Guest Floors (tiered hillside access)</li>
+<li>Rooftop Level (reported activity zone)</li>
+<li>Underground / Cave-Adjacent Zone</li>
+<li>Hallways and Stair Access Points</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              12 Spring St, Eureka Springs, AR 72632
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://basinpark.com" rel="noopener noreferrer" target="_blank">https://basinpark.com</a>
+</p>
+<p><strong>Coordinates:</strong> 36.4024° N, 93.7374° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Haunting with Layered Residual Hotel Activity — Activity is documented across multiple distinct zones with different behavioral patterns in each. Hillside geological character and cave-adjacent spaces introduce environmental variables that require adjusted baseline protocols.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Fort Smith National Historic Site -->
+<div class="entry" data-location-id="ar-fortsmith-national">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Fort Smith National Historic Site</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Military</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Fort Smith, AR</div>
+<div class="entry-meta-item">National Park Service</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Frontier military fort established 1817, later converted to a federal court under Judge Isaac Parker — "The Hanging Judge" — whose jurisdiction oversaw 86 documented executions by hanging between 1875 and 1896. The site encompasses both the original military fort remains and the federal court complex, including the preserved gallows structure, jail cells, and courtroom. The density of violent and judicial death events associated with the site creates a high-potential imprinting environment, with activity reports concentrated around execution-era areas. NPS access rules govern all investigation activity.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Phantom horse and cavalry sounds on fort grounds</li>
+<li>Apparition associated with the hangman or condemned figures near the gallows</li>
+<li>Disembodied voices in the jail and courtroom areas</li>
+<li>Cold spots concentrated at the gallows structure</li>
+<li>Footsteps in the preserved interior spaces</li>
+<li>Unexplained sounds in the basement jail area after hours</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Fort Grounds and Exterior Areas</li>
+<li>Courtroom (federal court era)</li>
+<li>Jail / Basement Cell Areas (primary activity zone)</li>
+<li>Gallows Structure and Adjacent Zone</li>
+<li>Walkways and Museum Preserved Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              301 Parker Ave, Fort Smith, AR 72901
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.nps.gov/fosm/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/fosm/</a>
+</p>
+<p><strong>Coordinates:</strong> 35.3883° N, 94.4313° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Institutional and Trauma Imprint — Activity consistent with execution-era imprinting across both military and judicial occupational periods. Gallows zone and jail area are the primary documented activity zones. NPS regulations govern all investigation access and activity.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Old State House Museum -->
+<div class="entry" data-location-id="ar-littlerock-oldstate">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Old State House Museum</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Little Rock, AR</div>
+<div class="entry-meta-item">Historic Capitol / Museum</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">The original Arkansas state capitol, built in 1836 and serving as the seat of state government until 1911. The building witnessed significant political conflict across its occupancy, including dueling incidents in the legislative chambers, multiple deaths associated with its history, and occupation and use by both sides during the Civil War. Now operating as a museum, paranormal reports are driven primarily by visitor accounts and longstanding folklore associated with the building's turbulent political era. The museum context means investigation access requires institutional authorization.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition associated with a former legislator reported in the main halls</li>
+<li>Woman in black figure documented near legislative rooms</li>
+<li>Phantom piano sounds heard in common areas</li>
+<li>Door anomalies in unoccupied sections</li>
+<li>Cold spots in the original legislative chamber area</li>
+<li>Footsteps on staircases during after-hours periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry Hall</li>
+<li>Legislative Rooms (primary zone)</li>
+<li>Staircases</li>
+<li>Gallery and Exhibition Areas</li>
+<li>Surrounding Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              300 W Markham St, Little Rock, AR 72201
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.arkansasheritage.com/old-state-house-museum/oshm-home" rel="noopener noreferrer" target="_blank">https://www.arkansasheritage.com/old-state-house-museum/oshm-home</a>
+</p>
+<p><strong>Coordinates:</strong> 34.7490° N, 92.2726° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Institutional Imprint with Folklore-Associated Apparition Reports — Activity reports are primarily visitor-account and folklore-driven, consistent with long-duration political and civic occupational imprinting. Legislative chambers and stairwell areas are the primary reported zones. Museum access requires institutional authorization for formal investigation.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- The Haxan House -->
+<div class="entry" data-location-id="ar-huntsville-haxan">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">The Haxan House</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Residence</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Huntsville, AR</div>
+<div class="entry-meta-item">Private Investigation Property</div>
+<div class="entry-meta-item">Access: Investigation Bookings</div>
+</div>
+<p class="entry-body">A Civil War-era farmhouse operating as a dedicated private investigation venue. The Haxan House is among the more frequently visited private investigation properties in the South, with a substantial accumulated record of investigator-reported events across multiple independent teams. Reported phenomena include object movement, apparent intelligent responses to investigator prompts, and physical interaction events. As with all private investigation properties, independent verification of claimed phenomena requires cross-referencing multiple unaffiliated source accounts.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Poltergeist-type object movement reported across multiple independent investigator accounts</li>
+<li>Object apport events documented by multiple teams</li>
+<li>Apparent intelligent communication responses to investigator prompts</li>
+<li>Physical interaction events including touching and pushing reported</li>
+<li>Cold spots and EMF anomalies in bedroom and hallway areas</li>
+<li>Disembodied voices captured via EVP across multiple sessions</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main House Entry and Common Areas</li>
+<li>Bedrooms (multiple — primary interaction zones)</li>
+<li>Hallways and Stair Access</li>
+<li>Exterior Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1266 Madison 6041, Huntsville, AR 72740
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.thehaxanhouse.com" rel="noopener noreferrer" target="_blank">https://www.thehaxanhouse.com</a>
+</p>
+<p><strong>Coordinates:</strong> 36.0866° N, 93.7318° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Haunting with Repeated Investigator-Reported Interaction Claims — Behavioral patterns reported across multiple independent teams suggest intelligent entity responses. Private investigation venue; all access is booking-based. Cross-referencing of unaffiliated source accounts is recommended before classification confirmation.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Arlington Resort Hotel -->
+<div class="entry" data-location-id="ar-hotsprings-arlington">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">
+            Arlington Resort Hotel
+            &amp;
+            Spa
+          </h3>
+<div class="entry-tags">
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Hot Springs, AR</div>
+<div class="entry-meta-item">Historic Resort Hotel</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">The Arlington has anchored Hot Springs' Bathhouse Row since the original structure opened in 1875, with the current building completed in 1924. The hotel was a favored destination for gangsters, politicians, and celebrities during the Prohibition and Depression eras, and has operated continuously for over a century. Its long uninterrupted occupancy across multiple significant historical periods creates layered conditions for investigation. Activity reports have come primarily from overnight guests and long-term staff, concentrated in the guest floor corridors and ballroom-level areas.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings in guest floor corridors during overnight hours</li>
+<li>Footsteps in hallways without corresponding guests</li>
+<li>Room-specific disturbances reported by multiple independent guests</li>
+<li>Unexplained presence sensations in ballroom and common areas</li>
+<li>Cold spots in specific corridor sections</li>
+<li>Disembodied voices during quiet overnight periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lobby and Main Entry</li>
+<li>Guest Floors (multiple — primary corridor zone)</li>
+<li>Ballroom and Common Areas</li>
+<li>Stairways and Elevator Zones</li>
+<li>Service Corridors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              239 Central Ave, Hot Springs, AR 71901
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.arlingtonhotel.com/" rel="noopener noreferrer" target="_blank">https://www.arlingtonhotel.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 34.5167° N, 93.0531° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Hotel with Recurring Apparition and Hallway Disturbance Reports — Over a century of continuous high-profile occupancy across multiple significant historical periods. Guest floor corridors and ballroom-level areas are the primary documented zones. Activity patterns are consistent with long-duration residual imprinting.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Clayton House -->
+<div class="entry" data-location-id="ar-fortsmith-claytonhouse">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Clayton House</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Museum</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Fort Smith, AR</div>
+<div class="entry-meta-item">Historic Mansion / Museum</div>
+<div class="entry-meta-item">Access: Public (Tour Hours)</div>
+</div>
+<p class="entry-body">Built in 1882 as the residence of U.S. Attorney William H. H. Clayton, who prosecuted cases in Judge Isaac Parker's federal court during the height of frontier-era enforcement in Indian Territory. The Victorian mansion has been preserved and operates as a historic museum. The house's direct connection to the judicial and law-enforcement apparatus responsible for the Fort Smith executions creates a contextual link between this site and the National Historic Site a short distance away. Activity reports are concentrated in the staircase hall and upper room areas.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitional sightings in the parlor and entry areas</li>
+<li>Voices documented in upper room areas</li>
+<li>Staircase and room-specific anomalies reported by staff and visitors</li>
+<li>Object movement in preserved display areas</li>
+<li>Cold spots near the main staircase landing</li>
+<li>Presence sensations in the formal rooms during quiet periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Parlors and Entry Hall</li>
+<li>Main Stair Hall (primary zone)</li>
+<li>Upper Floor Rooms</li>
+<li>Service Areas</li>
+<li>Exterior Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              514 N 6th St, Fort Smith, AR 72901
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://claytonhouse.org/" rel="noopener noreferrer" target="_blank">https://claytonhouse.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 35.3890° N, 94.4219° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Residential Haunting in Preserved Victorian Structure — Activity patterns suggest entity presence tied to the home's occupational era. Staircase and upper rooms are the primary documented zones. Museum access applies; investigation requires institutional authorization.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Gurdon Light -->
+<div class="entry" data-location-id="ar-gurdon-light">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Gurdon Light</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Railway</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Regional</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Gurdon, AR (Clark County)</div>
+<div class="entry-meta-item">Outdoor Anomaly / Railway Corridor</div>
+<div class="entry-meta-item">Access: Public (trail access)</div>
+</div>
+<p class="entry-body">One of Arkansas's most documented recurring anomaly phenomena, the Gurdon Light is a floating light reported moving along the railroad tracks near Gurdon in Clark County. The light has been observed and documented over many decades by independent witnesses. Local folklore attributes the light to a railroad worker killed on the tracks, though no definitive scientific explanation has been established. This entry is classified as an outdoor recurring anomaly rather than a standard building investigation entry. Access is via a hiking trail and the phenomenon requires patience and appropriate weather conditions for observation.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Recurring floating light phenomenon observed along the rail corridor</li>
+<li>Light movement along the track with apparent directional behavior</li>
+<li>Brightness and apparent distance shifts during observation</li>
+<li>Strong local legend associations with a railroad worker death</li>
+<li>Multiple independent witness accounts spanning decades</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Rail Corridor (primary observation zone)</li>
+<li>Wooded Approaches and Trail Access</li>
+<li>Trackside Viewing Zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Railroad tracks near Gurdon, Clark County, AR
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 33.9528° N, 93.1790° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Unknown Anomaly / Folklore Phenomenon — This entry documents a recurring light anomaly that does not conform to standard TPI haunting classification methodology. No confirmed paranormal origin has been established. Investigation approach differs from standard site-based work; observation protocols and weather baseline documentation are primary requirements.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pea Ridge National Military Park -->
+<div class="entry" data-location-id="ar-garfield-pearidge">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Pea Ridge National Military Park</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Military</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Garfield, AR</div>
+<div class="entry-meta-item">National Military Park (NPS)</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Site of the Battle of Pea Ridge (March 7–8, 1862), one of the largest and most decisive Civil War engagements west of the Mississippi. The two-day battle resulted in significant casualties on both sides and secured Missouri for the Union. The preserved battlefield encompasses the Elkhorn Tavern — used as headquarters by both armies at different points in the battle — along with artillery positions, troop movement corridors, and combat-associated terrain. NPS access regulations govern all activity on the grounds.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Phantom battle sounds reported in combat-associated terrain areas</li>
+<li>Apparitional soldier figures observed near artillery positions</li>
+<li>Footsteps on trails and in the Elkhorn Tavern structure</li>
+<li>Atmosphere changes in areas identified with heaviest combat</li>
+<li>Cold spots in the Elkhorn Tavern interior</li>
+<li>EVP responses documented near the primary engagement zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Battlefield Trails (primary zone)</li>
+<li>Elkhorn Tavern Structure</li>
+<li>Artillery Position Areas</li>
+<li>Wooded Combat Zones</li>
+<li>Visitor and Museum Areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              15930 E US Hwy 62, Garfield, AR 72732
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.nps.gov/peri/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/peri/</a>
+</p>
+<p><strong>Coordinates:</strong> 36.4532° N, 94.0346° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Battlefield Imprint / Trauma Residual — Activity consistent with multi-day high-casualty combat imprinting. Elkhorn Tavern and artillery positions are identified as primary investigation zones. NPS regulations govern all investigation activity; advance coordination required.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Rush Historic District -->
+<div class="entry" data-location-id="ar-rush-historicdistrict">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Rush Historic District</h3>
+<div class="entry-tags">
+<span class="tag tag-location">Industrial</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Near Yellville, AR (Buffalo National River)</div>
+<div class="entry-meta-item">Mining Ghost Town / NPS</div>
+<div class="entry-meta-item">Access: Public (NPS trails)</div>
+</div>
+<p class="entry-body">Rush was an active zinc mining community from the 1880s through the 1960s, with a peak population of several hundred residents during the World War I zinc boom. The town was gradually abandoned as zinc prices declined, and the physical remains — including mine structures, ruins of commercial buildings, and a former hotel — are now preserved as part of Buffalo National River. The isolated setting, structural decay, and multi-generational mining history create both significant environmental hazards and a rich investigation environment. Access is via NPS-maintained trails; structural entry requires safety assessment.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Footsteps in abandoned building areas without identifiable cause</li>
+<li>Environmental unease and atmospheric pressure changes reported by visitors</li>
+<li>Mining-era residual lore associated with specific structure sites</li>
+<li>Structure-associated sounds from vacant buildings</li>
+<li>Cold spots in the more intact building remains</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Town Ruins and Foundation Remains</li>
+<li>Mine-Related Structures and Shaft Areas (fenced)</li>
+<li>NPS Trail Corridors</li>
+<li>Former Hotel and Store Remains</li>
+<li>Surrounding Wilderness Terrain</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Buffalo National River area, near Yellville, AR
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.nps.gov/buff/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/buff/</a>
+</p>
+<p><strong>Coordinates:</strong> 36.1229° N, 92.5507° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual Industrial / Settlement Imprint with Strong Environmental Caution — Activity reports are consistent with mining-era occupational imprinting. Structural instability, mine shaft hazards, and remote access create significant safety requirements. Environmental contamination factors must be controlled before any investigation classification. NPS access rules apply throughout.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Allen House -->
+<div class="entry" data-location-id="ar-monticello-allenhouse">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Allen House</h3>
+<div class="entry-tags">
+<span class="tag tag-residential">Residence</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Monticello, AR</div>
+<div class="entry-meta-item">Historic Residence</div>
+<div class="entry-meta-item">Access: Limited</div>
+</div>
+<p class="entry-body">A three-story Colonial Revival house built in 1906 for Joe Lee Allen, a prominent local businessman. The home is associated most strongly with the death of Ladell Allen, who died in the house in 1948 in circumstances that were the subject of ongoing speculation. Activity reports have accumulated across multiple decades and include apparitional sightings, voice phenomena, and room-specific recurring disturbances. The home's original architecture and multi-generational residential history contribute to its layered investigation profile.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitional reports in upper floor and staircase areas</li>
+<li>Voices documented in bedroom and parlor zones</li>
+<li>Object movement reported in multiple rooms</li>
+<li>Room-specific recurring phenomena documented across independent visits</li>
+<li>Cold spots near the main staircase</li>
+<li>Presence sensations in the formal rooms</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry and Parlors</li>
+<li>Staircases (primary zone)</li>
+<li>Upper Floor Bedrooms</li>
+<li>Third Floor Areas</li>
+<li>Exterior Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              705 N Main St, Monticello, AR 71655
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 33.6347° N, 91.7873° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Possible Intelligent Residential Haunting — Activity patterns suggest entity presence tied to a specific historic occupant. Staircase and upper floor areas are the primary documented zones. Access is limited; investigation requires owner or custodian authorization.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Captain Henderson House -->
+<div class="entry" data-location-id="ar-arkadelphia-captainhenderson">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Captain Henderson House</h3>
+<div class="entry-tags">
+<span class="tag tag-business">Historic Inn</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-historic">Historic</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Arkadelphia, AR</div>
+<div class="entry-meta-item">Historic Bed and Breakfast</div>
+<div class="entry-meta-item">Access: Public (Reservations)</div>
+</div>
+<p class="entry-body">A 19th-century historic house operating as a bed and breakfast inn in Arkadelphia, the Captain Henderson House has accumulated paranormal reports from both guests and staff across its operation as a hospitality venue. The building's age, residential character, and conversion to a public accommodation use create an environment consistent with layered imprinting. Activity reports are primarily hallway and staircase-based, with room-specific accounts from multiple independent guests.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Footsteps in hallway areas during overnight hours</li>
+<li>Apparitional sightings reported by multiple independent guests</li>
+<li>Hallway disturbances without identifiable source</li>
+<li>Cold spots near specific room entries</li>
+<li>Presence sensations in common areas during quiet periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main Entry and Common Rooms</li>
+<li>Hallways (primary zone)</li>
+<li>Staircases</li>
+<li>Guest Rooms</li>
+<li>Exterior Grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              349 N 10th St, Arkadelphia, AR 71923
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://captainhendersonhouse.com/" rel="noopener noreferrer" target="_blank">https://captainhendersonhouse.com/</a>
+</p>
+<p><strong>Coordinates:</strong> 34.1204° N, 93.0537° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic Inn with Recurring Folklore-Associated Disturbance Reports — Activity reports are consistent with hospitality-era occupational imprinting in a 19th-century structure. Hallways and staircase areas are the primary documented zones. Investigation access available through standard lodging reservations.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 12,
+    states: ["Arkansas"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+<!-- Machine readable JSON metadata -->
+<script id="tpi-directory-metadata" type="application/json">
+{
+  "schema_version": "1.0",
+  "total_locations": 12,
+  "states": [
+    {
+      "name": "Arkansas",
+      "code": "AR",
+      "count": 12
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Reference Directory • Alaska</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Location Reference Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">11 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>11</span> Location Entries</div>
+      <div class="hero-meta-item"><span>7</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- ALASKA -->
+  <section id="alaska" class="sec-block" data-state="AK">
+    <div class="sec-header">
+      <div class="sec-number">02</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Alaska</h2>
+      </div>
+      <div class="sec-tag">11 Locations</div>
+    </div>
+    <p class="sec-intro">Alaska contains some of the most geographically isolated and environmentally complex documented sites in North America. From Gold Rush-era structures in Southeast Alaska to Cold War military facilities and deep wilderness zones, the state demands rigorous environmental baseline assessment alongside standard TPI documentation protocols. Remote access conditions, extreme climate variables, and significant cultural sensitivity factors apply across this region.</p>
+    <!-- Golden North Hotel -->
+    <div class="entry" data-location-id="ak-skagway-goldennorth">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Golden North Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Skagway, AK</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Klondike Gold Rush era hotel established 1898, among the oldest hotels in Alaska. Reported activity has centered primarily on upper-floor rooms and narrow corridor spaces. The figure known locally as "Mary" — associated with a Gold Rush-era resident who reportedly died awaiting the return of her fiance — has been documented across multiple independent investigator accounts spanning decades. Hallway acoustics in the original structure represent a required baseline calibration factor.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition of a woman in period dress observed on upper floors</li>
+              <li>Phantom footsteps in corridor spaces</li>
+              <li>Doors opening without cause in sealed rooms</li>
+              <li>Reported presence sensation in attic level</li>
+              <li>Acoustic anomalies consistent with narrow hallway resonance</li>
+              <li>Cold spots near third-floor room entries</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and Dining Room (ground level)</li>
+              <li>Second Floor Corridor and Guest Rooms</li>
+              <li>Third Floor Corridor (primary activity zone)</li>
+              <li>Attic Level (restricted access)</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              329 Broadway, Skagway, AK 99840
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.goldennorthhotel.com" target="_blank" rel="noopener noreferrer">https://www.goldennorthhotel.com</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              59.4581° N, 135.3141° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual Haunting with Possible Intelligent Interaction — Primary reported entity ("Mary") displays both residual pattern behavior and occasional interactive responses. Corridor acoustics require baseline noise documentation before EVP collection begins.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Red Dog Saloon -->
+    <div class="entry" data-location-id="ak-juneau-reddog">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Red Dog Saloon</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Saloon</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Juneau, AK</div>
+          <div class="entry-meta-item">Historic Saloon</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Gold Rush-era saloon established 1899. Frequented by miners, prospectors, and reportedly Wyatt Earp during the Klondike era. The venue's proximity to an active waterfront and its continuous operation as a high-traffic public space make environmental noise calibration a required baseline step. Object displacement and apparition reports have been documented primarily near the main bar and stage area across multiple independent accounts.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition of a cowboy figure reported near the bar</li>
+              <li>Phantom piano and instrumental music during off-hours</li>
+              <li>Objects reportedly displaced without contact</li>
+              <li>Cold drafts in sealed areas without ventilation source</li>
+              <li>Shadow movement observed near the back wall</li>
+              <li>Disembodied voices reported by staff during quiet periods</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main Bar Room (primary activity zone)</li>
+              <li>Stage and Music Performance Area</li>
+              <li>Back Bar and Service Areas</li>
+              <li>Entry Vestibule</li>
+              <li>Upper Storage (limited access)</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              278 S Franklin St, Juneau, AK 99801
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.reddogsaloon.com" target="_blank" rel="noopener noreferrer">https://www.reddogsaloon.com</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              58.2995° N, 134.4043° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual Environmental Imprint — Activity patterns are consistent with long-duration occupational residual imprinting from continuous Gold Rush-era operation. High ambient noise environment elevates acoustic contamination risk and requires careful baseline documentation before field work begins.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Buckner Building -->
+    <div class="entry" data-location-id="ak-whittier-buckner">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Buckner Building</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Military</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Abandoned</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Whittier, AK</div>
+          <div class="entry-meta-item">Abandoned Military Structure</div>
+          <div class="entry-meta-item">Access: Restricted</div>
+        </div>
+        <p class="entry-body">Massive Cold War-era military housing facility constructed 1953. At peak capacity, the Buckner Building housed the entire civilian and military population of Whittier. Abandoned since 1969, the structure has accumulated significant environmental decay. Note: environmental hazards including structural instability, deteriorating materials, and confined air quality issues make unauthorized entry dangerous. Reported activity spans multiple floors and must be evaluated against substantial environmental contamination factors before any classification can be confirmed.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures in long abandoned corridor stretches</li>
+              <li>Disembodied voices attributed to former residents</li>
+              <li>Reports of children's sounds in abandoned residential areas</li>
+              <li>Heavy oppressive atmospheric sensation on upper floors</li>
+              <li>Unexplained light phenomena in sealed units</li>
+              <li>Structural and environmental sound require careful documentation control</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main Entry / Ground Level</li>
+              <li>Multi-floor Residential Corridors (floors 1-6)</li>
+              <li>Abandoned Unit Interiors</li>
+              <li>Stairwells (multiple — structurally compromised)</li>
+              <li>Mechanical Basement Levels</li>
+              <li>Exterior Platforms (deteriorated)</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              Begich Towers Rd, Whittier, AK 99693
+            </p>
+            <p>
+              <strong>Website:</strong>
+              Not publicly maintained
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              60.7748° N, 148.6853° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Environmental and Psychological Contamination Risk — Structural decay, isolation, and sensory deprivation factors must be controlled for before attributing activity to paranormal origin. Possible residual imprint beneath environmental noise floor. Investigation requires advance safety assessment and controlled team entry with appropriate permits.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Kennecott Mines -->
+    <div class="entry" data-location-id="ak-mccarthy-kennecott">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kennecott Mines</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Industrial</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">McCarthy, AK</div>
+          <div class="entry-meta-item">National Historic Landmark</div>
+          <div class="entry-meta-item">Access: Public (NPS)</div>
+        </div>
+        <p class="entry-body">Active copper mining operation from 1903 to 1938, Kennecott processed some of the richest ore deposits ever discovered in North America. The site, now administered by the National Park Service as a National Historic Landmark, consists of multi-story mill buildings, worker housing, and processing facilities preserved largely as found at closure. Decades of hazardous mining labor under extreme conditions have produced what investigators describe as a densely imprinted site environment.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Phantom footsteps in mill building stairwells</li>
+              <li>Reported miner apparitions in period work clothing</li>
+              <li>Metallic sounds from inactive machinery areas</li>
+              <li>Disembodied voices in former worker housing</li>
+              <li>Cold spots documented in lower processing levels</li>
+              <li>Shadow figures observed on upper mill floors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Concentration Mill — multi-floor (primary activity zone)</li>
+              <li>Ammonia Leaching Plant</li>
+              <li>Worker Housing Barracks</li>
+              <li>Power House</li>
+              <li>General Store and Town Buildings</li>
+              <li>Underground Tunnel Access Points (NPS restricted)</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              McCarthy Rd, McCarthy, AK 99588
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.nps.gov/wrst/planyourvisit/kennecott.htm" target="_blank" rel="noopener noreferrer">https://www.nps.gov/wrst/planyourvisit/kennecott.htm</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              61.5267° N, 142.8903° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual Industrial Haunting — Activity consistent with long-duration occupational imprinting from hazardous mining labor. Multiple reported entity types documented across distinct building zones. NPS access regulations govern all investigation activity on site.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Anchorage Pioneer Home -->
+    <div class="entry" data-location-id="ak-anchorage-pioneerhome">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Anchorage Pioneer Home</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Anchorage, AK</div>
+          <div class="entry-meta-item">State Care Facility</div>
+          <div class="entry-meta-item">Access: Restricted</div>
+        </div>
+        <p class="entry-body">Established in 1913, the Anchorage Pioneer Home is among Alaska's oldest continuously operating care facilities, providing residence for elderly Alaskans. The building's long history of multi-decade residency and end-of-life care creates conditions associated with accumulated emotional imprinting. Activity reports have originated primarily from long-term overnight staff, concentrated in residential corridor areas during quiet hours.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitions in hallway areas during overnight hours</li>
+              <li>Disembodied voices in unoccupied rooms</li>
+              <li>Physical presence sensations near former long-term resident rooms</li>
+              <li>Doors with unexplained movement reported by staff</li>
+              <li>Cold spots in certain corridor sections</li>
+              <li>Reported comfort-seeking entity behavior patterns</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main Entry and Administrative Level</li>
+              <li>Residential Corridors (multiple floors)</li>
+              <li>Common Areas and Dining Hall</li>
+              <li>Chapel and Gathering Space</li>
+              <li>Exterior Grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              923 W 11th Ave, Anchorage, AK 99501
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://health.alaska.gov/dsds/Pages/pioneerhomes/default.aspx" target="_blank" rel="noopener noreferrer">https://health.alaska.gov/dsds/Pages/pioneerhomes/default.aspx</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              61.2116° N, 149.9006° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Intelligent Haunting — Entity behavior is consistent with former resident presence. Comfort-seeking patterns documented across multiple staff accounts. Active care facility; investigation access requires institutional authorization and must not interfere with residents or operations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fourth Avenue Theatre -->
+    <div class="entry" data-location-id="ak-anchorage-fourthave">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fourth Avenue Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Anchorage, AK</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Limited</div>
+        </div>
+        <p class="entry-body">Built in 1947 and regarded as one of Alaska's architectural landmarks, the Fourth Avenue Theatre served as an Anchorage entertainment anchor for decades before closing. Reports of paranormal activity have persisted across multiple ownership periods, concentrated in the auditorium level and projection room. Access is subject to current building ownership and preservation status.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition sightings in the auditorium seating area</li>
+              <li>Unexplained movement observed near the stage</li>
+              <li>Shadow figures in the balcony level</li>
+              <li>Disembodied voices in the projection room</li>
+              <li>Unexplained sounds during otherwise silent periods</li>
+              <li>Cold spots in the orchestra pit area</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main Lobby and Entry</li>
+              <li>Auditorium Level (primary activity zone)</li>
+              <li>Balcony Level</li>
+              <li>Stage and Wing Areas</li>
+              <li>Projection Room</li>
+              <li>Lower Service Level</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              630 W 4th Ave, Anchorage, AK 99501
+            </p>
+            <p>
+              <strong>Website:</strong>
+              Not publicly maintained
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              61.2181° N, 149.9003° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual Haunting — Activity patterns suggest theatrical-era imprinting consistent with decades of public performance use. Auditorium acoustics require careful baseline documentation before EVP collection. Access is variable pending current building status.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Alaska State Capitol -->
+    <div class="entry" data-location-id="ak-juneau-capitol">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Alaska State Capitol</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Government</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Juneau, AK</div>
+          <div class="entry-meta-item">Active State Capitol</div>
+          <div class="entry-meta-item">Access: Public (Tour Hours)</div>
+        </div>
+        <p class="entry-body">Completed in 1931, the Alaska State Capitol predates statehood (1959) and has housed territorial and state government operations for nearly a century. Activity reports have been documented primarily by overnight custodial and security staff, concentrated in the upper legislative floors and main stairwell. The building's continuous institutional occupation across nearly 100 years represents a significant potential imprinting environment.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Phantom footsteps on legislative floors during after-hours</li>
+              <li>Disembodied voices in empty committee rooms</li>
+              <li>Shadow figures observed near the main stairwell</li>
+              <li>Cold spots in the senate chamber corridor</li>
+              <li>Documented sense of presence reported by overnight security staff</li>
+              <li>Door anomalies on upper floors without mechanical explanation</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main Entry and Lobby</li>
+              <li>House Chamber Level</li>
+              <li>Senate Chamber Level</li>
+              <li>Committee Room Floors</li>
+              <li>Main Stairwell (primary activity zone)</li>
+              <li>Governor's Office Level</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              120 4th St, Juneau, AK 99801
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://akleg.gov" target="_blank" rel="noopener noreferrer">https://akleg.gov</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              58.3019° N, 134.4070° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual Institutional Imprint — Nearly a century of governmental occupation across territorial and statehood periods. Activity is consistent with long-duration residual patterns. Active government building; all investigation access requires official authorization.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Talkeetna Roadhouse -->
+    <div class="entry" data-location-id="ak-talkeetna-roadhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Talkeetna Roadhouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Business</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Talkeetna, AK</div>
+          <div class="entry-meta-item">Historic Roadhouse</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">One of Alaska's oldest operating roadhouses, serving travelers, miners, and mountaineers since the early 20th century. The building retains its original character and layout. Activity reports span multiple decades and have been documented by both staff and overnight guests, primarily in the upper sleeping quarters. The roadhouse's role as a gathering point for remote wilderness travelers adds a layered occupational history to the site environment.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Objects reportedly moved or displaced in guest rooms without cause</li>
+              <li>Apparition sightings in upstairs corridors</li>
+              <li>Disembodied voices during quiet overnight hours</li>
+              <li>Cold spots near specific upper-floor rooms</li>
+              <li>Physical presence sensations reported by long-term guests</li>
+              <li>Unexplained sounds from unoccupied areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main Entry and Dining Room</li>
+              <li>Kitchen and Service Areas</li>
+              <li>Upper Sleeping Quarters (primary activity zone)</li>
+              <li>Common Corridor Areas</li>
+              <li>Exterior and Outbuildings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              13550 E Main St, Talkeetna, AK 99676
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://talkeetnaroadhouse.com" target="_blank" rel="noopener noreferrer">https://talkeetnaroadhouse.com</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              62.3209° N, 150.1077° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible Intelligent Haunting — Activity demonstrates interaction patterns rather than simple residual loops. Entity behavior is non-threatening and consistent across multiple independent witness accounts. Investigation access available through standard lodging reservations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Sitka National Cemetery -->
+    <div class="entry" data-location-id="ak-sitka-nationalcemetery">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Sitka National Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Sitka, AK</div>
+          <div class="entry-meta-item">National Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Established as a military burial ground in the 19th century, Sitka National Cemetery contains graves spanning the Russian-American period through modern conflicts. The cemetery's layered historical significance across Russian colonial, American frontier, and 20th-century military periods creates a complex multi-era documentation environment. EVP documentation and shadow figure reports have been collected from the older grave sections.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures observed near older grave sections at dusk</li>
+              <li>EVP responses documented in multiple field investigations</li>
+              <li>Cold spots concentrated in the pre-20th century burial areas</li>
+              <li>Atmospheric pressure changes near oldest sections</li>
+              <li>Orb phenomena reported near the treeline boundary</li>
+              <li>Disembodied sounds in the military marker area</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main Cemetery Grounds</li>
+              <li>Historic Grave Sections (19th century — primary zone)</li>
+              <li>Military Markers Area (20th century)</li>
+              <li>Perimeter Treeline Boundary</li>
+              <li>Access Road and Entry Gate</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              803 Sawmill Creek Rd, Sitka, AK 99835
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.cem.va.gov/cems/nchp/sitka.asp" target="_blank" rel="noopener noreferrer">https://www.cem.va.gov/cems/nchp/sitka.asp</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              57.0426° N, 135.3311° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual Emotional Imprint — Multi-era layered activity across distinct historical burial zones. EVP evidence suggests varying entity types corresponding to different occupational periods. Standard national cemetery protocols apply to all investigation activity.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Castle Hill -->
+    <div class="entry" data-location-id="ak-sitka-castlehill">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Castle Hill</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Government</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Sitka, AK</div>
+          <div class="entry-meta-item">State Historic Site</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Castle Hill is the elevated rocky prominence where the formal transfer of Alaska from Russia to the United States took place on October 18, 1867. Prior to American acquisition, it served as the site of the Tlingit village Noow Tlein and later the Russian colonial administrative center. The site carries layered cultural significance across indigenous, Russian colonial, and American periods. Activity reports are primarily environmental in nature and concentrated around the formal transfer site at the summit.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Historical apparitions in period dress from multiple eras observed at summit</li>
+              <li>Environmental anomalies near the flag transfer site</li>
+              <li>Cold spots at the summit during otherwise calm weather conditions</li>
+              <li>Unexplained auditory phenomena consistent with ceremonial crowd sounds</li>
+              <li>Shadow figures near Russian-era foundation remnants</li>
+              <li>Atmospheric pressure anomalies documented at the highest point</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Summit Grounds (primary activity zone)</li>
+              <li>Stairway Approach (multiple levels)</li>
+              <li>Lower Platform Area</li>
+              <li>Russian-Era Foundation Remnants</li>
+              <li>Viewpoint Overlook</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              315 Seward St, Sitka, AK 99801
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://dnr.alaska.gov/parks/aspunits/southeast/castlehill.htm" target="_blank" rel="noopener noreferrer">https://dnr.alaska.gov/parks/aspunits/southeast/castlehill.htm</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              57.0539° N, 135.3340° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual Multi-Era Haunting — Layered activity spanning Tlingit, Russian colonial, and American transfer periods. Historically and culturally significant site; documentation approach must maintain cultural respect. No confirmed intelligent interactions on record.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tongass National Forest -->
+    <div class="entry" data-location-id="ak-se-tongass">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Tongass National Forest</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Wilderness</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Regional</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Southeast Alaska Region</div>
+          <div class="entry-meta-item">Wilderness / Regional Anomaly Entry</div>
+          <div class="entry-meta-item">Access: Varies by zone</div>
+        </div>
+        <p class="entry-body">Encompassing approximately 17 million acres, the Tongass is the largest national forest in the United States. This entry is classified as a regional anomaly entry rather than a standard location, documenting indigenous cultural accounts, folklore traditions, and field-reported wilderness anomalies across the forest region. The Kushtaka (Land Otter Man) of Tlingit tradition represents one of the most substantiated indigenous entity accounts in North American documentation, with consistent behavioral descriptors recorded across centuries of separate cultural testimony.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Mimicry voice phenomena reported by wilderness travelers</li>
+              <li>Shape-shifting entity reports consistent with Kushtaka behavioral descriptors</li>
+              <li>Documented disappearance incidents in remote zones (causes unconfirmed)</li>
+              <li>Disorientation and navigation failure in otherwise clear conditions</li>
+              <li>Sound anomalies inconsistent with known regional wildlife</li>
+              <li>Reported encounters concentrated near water features and river confluences</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Coastal Forest Zones</li>
+              <li>River Confluence Points (historically elevated activity)</li>
+              <li>Remote Wilderness Interior</li>
+              <li>Island Waterways (Alexander Archipelago)</li>
+              <li>Trail Corridors (limited access areas)</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              Southeast Alaska Region — No single address applicable
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.fs.usda.gov/tongass" target="_blank" rel="noopener noreferrer">https://www.fs.usda.gov/tongass</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              57.8000° N, 135.0000° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Folklore / Unknown Classification (Non-Standard Entry) — This entry documents indigenous cultural accounts and wilderness anomalies that do not conform to standard TPI investigation classifications. The Kushtaka is treated as an entity of indigenous cultural significance. Investigation approach requires cultural consultation and differs fundamentally from standard site-based methodology.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 11,
+    states: ["Alaska"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 11,
+  "states": [
+    {
+      "name": "Alaska",
+      "code": "AK",
+      "count": 11
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

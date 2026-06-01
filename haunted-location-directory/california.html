@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location Reference Directory • California</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Raleway:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+<div class="brand-header">
+<div class="brand-left">
+<div class="brand-emblem">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 6v6l4 4"></path>
+</svg>
+</div>
+<div>
+<div class="brand-name">The Paranormal Initiative</div>
+<div class="brand-series">Location Reference Directory</div>
+</div>
+</div>
+<div class="search-wrap">
+<span class="search-icon">🔍</span>
+<input autocomplete="off" id="search-input" placeholder="Search locations, cities, states..." type="text"/>
+<div id="search-count">15 locations</div>
+</div>
+<span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+<div class="page">
+<div class="hero">
+<div class="hero-eyebrow">Working Directory • Research Leads</div>
+<h1 class="hero-title">Location Reference <em>Directory</em></h1>
+<p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+<div class="hero-meta">
+<div class="hero-meta-item"><span>1</span> State</div>
+<div class="hero-meta-item"><span>15</span> Location Entries</div>
+<div class="hero-meta-item"><span>15</span> Cities</div>
+<div class="hero-meta-item"><span>WIP</span> Under Review</div>
+</div>
+</div>
+<div class="sec-nav">
+<a href="alabama.html">Alabama</a>
+<a href="alaska.html">Alaska</a>
+<a href="arizona.html">Arizona</a>
+<a href="arkansas.html">Arkansas</a>
+<a href="california.html">California</a>
+<a href="colorado.html">Colorado</a>
+<a href="connecticut.html">Connecticut</a>
+<a href="delaware.html">Delaware</a>
+<a href="florida.html">Florida</a>
+<a href="georgia.html">Georgia</a>
+<a href="hawaii.html">Hawaii</a>
+<a href="idaho.html">Idaho</a>
+<a href="illinois.html">Illinois</a>
+<a href="indiana.html">Indiana</a>
+<a href="iowa.html">Iowa</a>
+<a href="kansas.html">Kansas</a>
+<a href="kentucky.html">Kentucky</a>
+<a href="louisiana.html">Louisiana</a>
+<a href="maine.html">Maine</a>
+<a href="maryland.html">Maryland</a>
+<a href="massachusetts.html">Massachusetts</a>
+<a href="michigan.html">Michigan</a>
+<a href="minnesota.html">Minnesota</a>
+<a href="mississippi.html">Mississippi</a>
+<a href="missouri.html">Missouri</a>
+<a href="montana.html">Montana</a>
+<a href="nebraska.html">Nebraska</a>
+<a href="nevada.html">Nevada</a>
+<a href="new-hampshire.html">New Hampshire</a>
+<a href="new-jersey.html">New Jersey</a>
+<a href="new-mexico.html">New Mexico</a>
+<a href="new-york.html">New York</a>
+<a href="north-carolina.html">North Carolina</a>
+<a href="north-dakota.html">North Dakota</a>
+<a href="ohio.html">Ohio</a>
+<a href="oklahoma.html">Oklahoma</a>
+<a href="oregon.html">Oregon</a>
+<a href="pennsylvania.html">Pennsylvania</a>
+<a href="rhode-island.html">Rhode Island</a>
+<a href="south-carolina.html">South Carolina</a>
+<a href="south-dakota.html">South Dakota</a>
+<a href="tennessee.html">Tennessee</a>
+<a href="texas.html">Texas</a>
+<a href="utah.html">Utah</a>
+<a href="vermont.html">Vermont</a>
+<a href="virginia.html">Virginia</a>
+<a href="washington.html">Washington</a>
+<a href="west-virginia.html">West Virginia</a>
+<a href="wisconsin.html">Wisconsin</a>
+<a href="wyoming.html">Wyoming</a>
+</div>
+<!-- CALIFORNIA -->
+<section class="sec-block" data-state="CA" id="california">
+<div class="sec-header">
+<div class="sec-number">05</div>
+<div class="sec-title-block">
+<div class="sec-eyebrow">State Directory</div>
+<h2 class="sec-title">California</h2>
+</div>
+<div class="sec-tag">15 Locations</div>
+</div>
+<p class="sec-intro">California contains one of the broadest paranormal location profiles in the United States, spanning maritime sites, prisons, gold-rush districts, hotels, institutional buildings, and preserved ghost towns. The state's geographic and historical range makes it especially useful for comparative investigation planning, environmental control analysis, and regional classification work. Entries span active public sites, state and federal parks, and historically significant private properties, requiring varied access protocols.</p>
+<!-- Winchester Mystery House -->
+<div class="entry" data-location-id="ca-sanjose-winchester">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Winchester Mystery House</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Mansion</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">San Jose, CA</div>
+<div class="entry-meta-item">Historic Mansion / Museum</div>
+<div class="entry-meta-item">Access: Public / Ticketed</div>
+</div>
+<p class="entry-body">Constructed over decades by Sarah Winchester following the death of her husband and daughter, the Winchester Mystery House is a sprawling 160-room residential anomaly that has drawn investigative attention since the early twentieth century. The property underwent near-constant construction from 1886 until Winchester's death in 1922, producing a labyrinthine layout characterized by sealed rooms, stairways leading to ceilings, and corridors of ambiguous function. Reported disturbances are distributed across multiple structural zones, with recurring witness accounts referencing footsteps, unexplained temperature variations, and visual anomalies in corridors and the upper floors. The property's architectural disorientation presents meaningful environmental control challenges for investigators.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Footsteps in unoccupied corridors</li>
+<li>Unexplained door movement</li>
+<li>Apparition reports in upper-floor zones</li>
+<li>Cold spots in sealed or transitional rooms</li>
+<li>Room-specific disturbances in the seance room and stairwell areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Maze-like multi-story hallways</li>
+<li>Staircases terminating at walls or ceilings</li>
+<li>Dedicated seance room</li>
+<li>Interior courtyards and enclosed garden areas</li>
+<li>Numerous sealed, windowless, or structurally anomalous rooms</li>
+<li>Upper floors with restricted passage routes</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              525 S Winchester Blvd, San Jose, CA 95128
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://winchestermysteryhouse.com" rel="noopener noreferrer" target="_blank">https://winchestermysteryhouse.com</a>
+</p>
+<p><strong>Coordinates:</strong> 37.3183° N, 121.9512° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic residential anomaly site with repeated apparition and environmental disorientation reports. Architectural complexity creates significant baseline contamination risk and requires structured zone-by-zone investigation planning.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- The Queen Mary -->
+<div class="entry" data-location-id="ca-longbeach-queenmary">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">The Queen Mary</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Hotel</span>
+<span class="tag tag-business">Ship</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Long Beach, CA</div>
+<div class="entry-meta-item">Historic Ship / Hotel / Museum</div>
+<div class="entry-meta-item">Access: Public / Ticketed</div>
+</div>
+<p class="entry-body">Decommissioned in 1967 and permanently docked in Long Beach, the RMS Queen Mary served as a transatlantic ocean liner from 1936 onward, with wartime service that included conversion to a troop transport vessel. The ship's history encompasses passenger deaths, wartime casualties, and documented maritime incidents. Investigative reports have consistently referenced the engine rooms, boiler areas, and former swimming pools as high-activity zones, with disturbance patterns including apparition sightings, auditory anomalies, and reports of unexplained movement in enclosed service corridors. The layered structural complexity of the vessel introduces significant acoustic and environmental contamination factors that require controlled baseline documentation.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports in engine room and boiler areas</li>
+<li>Voices and auditory anomalies in service corridors</li>
+<li>Footsteps in passenger and crew deck areas</li>
+<li>Unexplained door movement in staterooms</li>
+<li>Recurring disturbance reports associated with the first-class pool area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Multiple passenger decks and staterooms</li>
+<li>Engine room and boiler machinery areas</li>
+<li>First-class and third-class pool areas</li>
+<li>Service corridors and cargo-level access</li>
+<li>Public museum and exhibit zones</li>
+<li>Former crew quarters and galley spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1126 Queens Hwy, Long Beach, CA 90802
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.queenmary.com" rel="noopener noreferrer" target="_blank">https://www.queenmary.com</a>
+</p>
+<p><strong>Coordinates:</strong> 33.7526° N, 118.1905° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual maritime haunting with repeated possible intelligent interaction reports. Strong acoustic and mechanical contamination environment; engine rooms and pool area require controlled noise and EMF baselines before investigation.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Whaley House Museum -->
+<div class="entry" data-location-id="ca-sandiego-whaley">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Whaley House Museum</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">San Diego, CA</div>
+<div class="entry-meta-item">Historic House Museum</div>
+<div class="entry-meta-item">Access: Public / Ticketed</div>
+</div>
+<p class="entry-body">Constructed in 1857 on the site of a former public execution ground, the Whaley House is one of the most extensively documented residential haunting cases in the American Southwest. The property served variously as a family home, general store, courtroom, and theater, with the Whaley family experiencing multiple traumatic losses during their occupancy. The U.S. Commerce Department officially designated the site as haunted in the mid-twentieth century based on accumulated witness reports. Observed disturbance patterns include recurring apparition sightings associated with historical figures, auditory anomalies, and room-specific disturbances concentrated in the courtroom and family sleeping quarters. The site's layered occupancy history warrants careful classification of residual versus possible intelligent interaction patterns.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Recurring apparition sightings associated with documented historical occupants</li>
+<li>Auditory anomalies including voices and footsteps</li>
+<li>Room-specific disturbances in courtroom and family quarters</li>
+<li>Reports of environmental unease near the execution ground footprint</li>
+<li>Object displacement in exhibit areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Parlor rooms and formal family spaces</li>
+<li>Courtroom and former theater area</li>
+<li>Central stair hall with documented visual anomaly reports</li>
+<li>Upstairs sleeping quarters and family rooms</li>
+<li>Grounds including former execution site area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              2476 San Diego Ave, San Diego, CA 92110
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.whaleyhousesandiego.org/" rel="noopener noreferrer" target="_blank">https://www.whaleyhousesandiego.org/</a>
+</p>
+<p><strong>Coordinates:</strong> 32.7529° N, 117.1946° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual emotional imprint with repeated possible intelligent interaction reports. Layered occupancy history and execution-site foundation require careful event classification and multi-session baseline comparison.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Hotel del Coronado -->
+<div class="entry" data-location-id="ca-coronado-hoteldel">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Hotel del Coronado</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Hotel</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Coronado, CA</div>
+<div class="entry-meta-item">Historic Hotel</div>
+<div class="entry-meta-item">Access: Public / Guest Access</div>
+</div>
+<p class="entry-body">Opened in 1888, the Hotel del Coronado is one of the largest surviving wooden structures in the United States and a National Historic Landmark. The property has accumulated a substantial investigative record over more than a century of continuous operation, with disturbance reports distributed across guest wings, service corridors, and oceanfront rooms. Recurring accounts are most frequently associated with a guest who died on the property in 1892 under circumstances that were never conclusively resolved. Reported phenomena include apparition sightings, electrical and lighting anomalies, object displacement, and room-specific guest experiences. The property's scale and active hospitality operation present meaningful baseline challenges for structured investigation.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports associated with room 3327 and surrounding corridor</li>
+<li>Lighting and electrical anomalies in guest wing areas</li>
+<li>Object displacement in occupied rooms</li>
+<li>Room-specific environmental disturbances reported by repeat guests</li>
+<li>Visual anomalies in stairway and lobby areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Extensive Victorian-era guest wings</li>
+<li>Lobby and formal reception areas</li>
+<li>Service corridors and stairwells</li>
+<li>Ocean-facing rooms along beach approach</li>
+<li>Event and banquet spaces</li>
+<li>Grounds and beachfront areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              1500 Orange Ave, Coronado, CA 92118
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://hoteldel.com" rel="noopener noreferrer" target="_blank">https://hoteldel.com</a>
+</p>
+<p><strong>Coordinates:</strong> 32.6809° N, 117.1784° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic hotel with layered folklore and recurring apparition reports concentrated in specific room and corridor zones. Active hospitality environment requires off-hours access coordination and structured noise isolation protocols.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Alcatraz Island -->
+<div class="entry" data-location-id="ca-sanfrancisco-alcatraz">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Alcatraz Island</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Prison</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">San Francisco, CA</div>
+<div class="entry-meta-item">Federal Prison / National Park / Historic</div>
+<div class="entry-meta-item">Access: Public / Ticketed</div>
+</div>
+<p class="entry-body">Operated as a federal penitentiary from 1934 to 1963, Alcatraz Island housed some of the most high-profile federal inmates of the mid-twentieth century and was the site of multiple attempted escapes, riots, and prisoner deaths. The facility was subsequently transferred to the National Park Service and has been open for public tours since 1973. Investigative reports have consistently concentrated on the cell house interior, isolation block areas, and utility tunnels, with documented patterns including auditory anomalies, atmospheric heaviness, and cell-block specific disturbances. The island setting introduces strong environmental contamination factors including wind noise, structural resonance from water proximity, and tourist foot traffic that complicate clean baseline collection.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Voices and unexplained auditory patterns in cell block areas</li>
+<li>Footsteps in unoccupied corridor zones</li>
+<li>Metallic sounds in isolation block and utility areas</li>
+<li>Reports of oppressive atmosphere concentrated in solitary confinement zones</li>
+<li>Cell-block specific visual anomaly reports during low-traffic periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Main cell house with multiple cell blocks</li>
+<li>Isolation and solitary confinement areas</li>
+<li>Service corridors and utility zones</li>
+<li>Guard station and administrative areas</li>
+<li>Yard and recreation perimeter</li>
+<li>Dock approach and exterior island areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Alcatraz Island, San Francisco, CA 94133
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.nps.gov/alca/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/alca/</a>
+</p>
+<p><strong>Coordinates:</strong> 37.8268° N, 122.4230° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual incarceration and trauma imprint with strong environmental influence factors. Island isolation creates acoustic resonance challenges; wind, water, and structural noise require careful filtering and extended baseline collection before active investigation sessions.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Preston Castle -->
+<div class="entry" data-location-id="ca-ione-prestoncastle">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Preston Castle</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Institution</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Ione, CA</div>
+<div class="entry-meta-item">Historic Institutional Building / Museum</div>
+<div class="entry-meta-item">Access: Public / Tour Access</div>
+</div>
+<p class="entry-body">Constructed in 1894 as part of the Ione Reform School system, Preston Castle operated as a juvenile correctional facility for decades before closure and eventual transfer to the Preston Castle Foundation for historic preservation. The building's institutional history spans multiple generations of youth detention, documented deaths including a housekeeper whose case was never resolved, and the general environmental residue of long-term institutional confinement. Investigative reports from researchers and organized groups have consistently referenced the main hallways, stairwells, and basement service areas as zones with above-average anomaly density. The building's deteriorated state during earlier investigation periods has since been partially stabilized, reducing some structural contamination factors while preserving original spatial layouts.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports in central hallways and stairwells</li>
+<li>Footsteps in unoccupied upper floor areas</li>
+<li>Voices in basement and service zones</li>
+<li>Movement observed in peripheral vision reports from multiple investigator accounts</li>
+<li>Recurring disturbance patterns associated with the unresolved housekeeper case</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Central hallway structure spanning multiple floors</li>
+<li>Dormitory-style institutional rooms</li>
+<li>Main staircase with high-report frequency</li>
+<li>Basement and service level access</li>
+<li>Administrative offices and processing areas</li>
+<li>Exterior grounds and perimeter</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              900 Palm Dr, Ione, CA 95640
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://prestoncastle.org" rel="noopener noreferrer" target="_blank">https://prestoncastle.org</a>
+</p>
+<p><strong>Coordinates:</strong> 38.3611° N, 120.9358° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Institutional residual haunting with repeated investigator-reported anomalies across multiple access periods. Ongoing preservation work may affect structural baseline; confirm current interior access levels before planning.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bodie State Historic Park -->
+<div class="entry" data-location-id="ca-bodie-statepark">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Bodie State Historic Park</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Ghost Town</span>
+<span class="tag tag-business">District</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Bridgeport, CA</div>
+<div class="entry-meta-item">Ghost Town / State Historic Park</div>
+<div class="entry-meta-item">Access: Public / Seasonal Access</div>
+</div>
+<p class="entry-body">Bodie reached a peak population of approximately 10,000 residents during the gold rush era of the late 1870s and early 1880s before rapid decline left it largely abandoned by the early twentieth century. The California State Parks system maintains the site in a state of "arrested decay," preserving structures without active restoration. The distributed nature of the site, spanning over 100 structures across an open high-desert landscape, creates a complex investigation environment with significant environmental contamination from wind, wildlife, and structural settlement. Anomaly reports are associated with individual structures including the church, schoolhouse, and residential homes, as well as the cemetery perimeter. A persistent folklore element holds that items removed from the site attract misfortune, which reflects documented community attachment to the site.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition reports in individual preserved structures</li>
+<li>Footsteps and movement sounds inside residential and commercial buildings</li>
+<li>Environmental unease reported by visitors in specific structure interiors</li>
+<li>Auditory anomalies attributed to wind contamination requiring careful filtering</li>
+<li>Cemetery perimeter disturbance reports during low-light periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>More than 100 preserved residential and commercial structures</li>
+<li>Historic church and schoolhouse</li>
+<li>Mining-era commercial buildings along main street</li>
+<li>Residential homes in varying stages of arrested decay</li>
+<li>Cemetery perimeter with documented burial grounds</li>
+<li>Open high-desert landscape with full perimeter access</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              CA-270, Bridgeport, CA 93517
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.parks.ca.gov/?page_id=509" rel="noopener noreferrer" target="_blank">https://www.parks.ca.gov/?page_id=509</a>
+</p>
+<p><strong>Coordinates:</strong> 38.2119° N, 119.0142° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Distributed residual imprint across preserved ghost-town environment. Environmental contamination from wind, wildlife, and structural movement is significant and requires full baseline documentation per structure. Seasonal access restrictions apply; confirm access window before planning.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Mission Inn Hotel & Spa -->
+<div class="entry" data-location-id="ca-riverside-missioninn">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">
+            Mission Inn Hotel
+            &amp;
+            Spa
+          </h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Hotel</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Riverside, CA</div>
+<div class="entry-meta-item">Historic Hotel / Mission-Style Landmark</div>
+<div class="entry-meta-item">Access: Public / Guest Access</div>
+</div>
+<p class="entry-body">The Mission Inn began as a small boarding house in 1876 and was transformed through successive expansions into one of the most architecturally elaborate hotels in the American Southwest, incorporating Moorish, Spanish, and Mission Revival elements across multiple wings and courtyards. The property has hosted several U.S. presidents and is a designated National Historic Landmark. Disturbance reports have been documented across multiple wings and time periods, with recurring accounts referencing apparitions in corridor and stairwell areas, room-specific environmental anomalies, and footsteps in unoccupied zones. The property's architectural layering creates complex spatial relationships that may contribute to acoustic and thermal baseline variation.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings in corridor and stairwell zones</li>
+<li>Footsteps in unoccupied wing areas</li>
+<li>Room-specific environmental anomalies reported by guests</li>
+<li>Corridor disturbances in older sections of the building</li>
+<li>Unexplained temperature variations in stairwell and transitional spaces</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Multiple historically distinct guest wings</li>
+<li>Open-air and enclosed courtyards</li>
+<li>Ornate staircases connecting multi-level spaces</li>
+<li>Chapel and ceremonial common rooms</li>
+<li>Corridors with layered architectural periods</li>
+<li>Event spaces and ballroom areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              3649 Mission Inn Ave, Riverside, CA 92501
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.missioninn.com" rel="noopener noreferrer" target="_blank">https://www.missioninn.com</a>
+</p>
+<p><strong>Coordinates:</strong> 33.9834° N, 117.3733° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic hotel with recurring apparition and hallway disturbance reports distributed across multiple architectural eras. Active hospitality environment requires access coordination; older wing corridors represent primary investigation priority zones.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Brookdale Lodge -->
+<div class="entry" data-location-id="ca-brookdale-lodge">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Brookdale Lodge</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Hotel</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Brookdale, CA</div>
+<div class="entry-meta-item">Historic Lodge / Hotel</div>
+<div class="entry-meta-item">Access: Limited / Variable Access</div>
+</div>
+<p class="entry-body">Established in 1890 in the Santa Cruz Mountains, Brookdale Lodge is notable for an interior dining room built directly over a natural creek channel, creating a structural environment with no direct parallel at other investigated sites. The property reached its peak popularity in the 1920s and 1930s before entering a series of ownership changes and periods of closure. Paranormal reports associated with the lodge include accounts of a child apparition in pool and common areas, auditory anomalies attributed to voices, and object movement in guest and service zones. The creek-integrated construction introduces significant acoustic contamination from running water that requires careful baseline documentation. Access and operational status have been variable; investigators should confirm current conditions before planning.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Child apparition reports in pool and common room areas</li>
+<li>Voices and auditory anomalies in guest and dining spaces</li>
+<li>Object movement reported in room and corridor zones</li>
+<li>Room-specific environmental disturbances in older guest wings</li>
+<li>Atmospheric unease reported in creek-adjacent interior areas</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lodge interior with creek-channel dining room</li>
+<li>Swimming pool area with documented apparition lore</li>
+<li>Guest wings and common areas</li>
+<li>Dining and social spaces</li>
+<li>Creek-integrated structural zone with ambient noise factors</li>
+<li>Exterior grounds and mountain setting</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              11570 Hwy 9, Brookdale, CA 95007
+            </p>
+<p><strong>Website:</strong> Not publicly maintained</p>
+<p><strong>Coordinates:</strong> 37.1060° N, 122.1067° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Folklore-heavy lodge haunting with possible residual overlay. Creek-integrated structure creates significant ambient acoustic contamination; extended baseline documentation required before EVP or audio-focused work. Confirm current operational status before investigation planning.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Moss Beach Distillery -->
+<div class="entry" data-location-id="ca-mossbeach-distillery">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Moss Beach Distillery</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Restaurant</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Moss Beach, CA</div>
+<div class="entry-meta-item">Historic Coastal Restaurant</div>
+<div class="entry-meta-item">Access: Public / Dining Access</div>
+</div>
+<p class="entry-body">Operating since the Prohibition era, the Moss Beach Distillery occupies a coastal bluff position above the Pacific with documented use during the 1920s as a smuggling and bootlegging operation. The site became associated with the figure known as the Blue Lady, reportedly a woman who died near the property under unresolved circumstances in the 1920s. Witness reports have accumulated over several decades and include apparition sightings in the dining room and bar area, object movement on tables and in window-adjacent zones, and cold spot reports. A publicly acknowledged mechanical effect installed in one section of the restaurant complicates raw witness testimony and requires investigator awareness. The ocean proximity introduces significant acoustic and environmental baseline factors.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>"Blue Lady" apparition reports in dining room and bar areas</li>
+<li>Object movement on tables and in window-facing zones</li>
+<li>Cold spots in dining and approach areas</li>
+<li>Visual anomalies reported near ocean-facing windows</li>
+<li>Auditory anomalies including reported name-calls and whispers</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Dining room with ocean-view exposure</li>
+<li>Bar area and service zone</li>
+<li>Ocean-facing window seating areas</li>
+<li>Exterior approach and bluff areas</li>
+<li>Service and kitchen zones</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              140 Beach Way, Moss Beach, CA 94038
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://mossbeachdistillery.com" rel="noopener noreferrer" target="_blank">https://mossbeachdistillery.com</a>
+</p>
+<p><strong>Coordinates:</strong> 37.5178° N, 122.5128° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Historic coastal site with recurring apparition-based folklore and witness reports. Investigators should note the presence of a known mechanical effect in one section of the property; raw witness reports require careful screening against this baseline.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Black Diamond Mines Regional Preserve -->
+<div class="entry" data-location-id="ca-antioch-blackdiamond">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Black Diamond Mines Regional Preserve</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Industrial</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Antioch, CA</div>
+<div class="entry-meta-item">Mining Site / Regional Preserve / Historic</div>
+<div class="entry-meta-item">Access: Public / Guided Access</div>
+</div>
+<p class="entry-body">The Black Diamond Mines Regional Preserve encompasses the remains of five coal-mining communities that operated in the Mount Diablo foothills between the 1860s and early 1900s. Multiple mine shafts, a sandstone mine, and the Rose Hill Cemetery are accessible within the preserve. The underground environment of the accessible Hazel-Atlas sandstone mine presents investigation conditions distinct from surface sites, including ambient temperature stability, acoustic isolation, and documented visitor discomfort in specific tunnel sections. Disturbance reports include voice anomalies and footstep sounds in underground tour areas, apparition reports associated with cemetery and surface structures, and oppressive atmosphere accounts in mine interior zones. Guided access requirements limit independent investigation windows.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Reported voice anomalies and auditory patterns in underground tunnel sections</li>
+<li>Footstep sounds in mine-interior areas</li>
+<li>Oppressive atmosphere and disorientation reports from visitors in specific tunnel zones</li>
+<li>Miner apparition lore associated with surface ruins and trail areas</li>
+<li>Environmental unease reported at Rose Hill Cemetery perimeter</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Hazel-Atlas sandstone mine with guided underground access</li>
+<li>Coal mine shaft ruins and surface remains</li>
+<li>Preserved trail network across former mining community footprints</li>
+<li>Rose Hill Cemetery with documented burial grounds</li>
+<li>Visitor center and interpretive areas</li>
+<li>Open hillside and chaparral terrain</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              5175 Somersville Rd, Antioch, CA 94509
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.ebparks.org/parks/black-diamond" rel="noopener noreferrer" target="_blank">https://www.ebparks.org/parks/black-diamond</a>
+</p>
+<p><strong>Coordinates:</strong> 37.9564° N, 121.8497° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual industrial imprint with strong environmental control requirements. Underground investigation access requires guided coordination; acoustic conditions in mine tunnels may amplify subtle phenomena but require extended ambient baseline before active sessions.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Calico Ghost Town -->
+<div class="entry" data-location-id="ca-yermo-calico">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Calico Ghost Town</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Ghost Town</span>
+<span class="tag tag-business">District</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Yermo, CA</div>
+<div class="entry-meta-item">Ghost Town / Historic District / County Park</div>
+<div class="entry-meta-item">Access: Public / Ticketed</div>
+</div>
+<p class="entry-body">Established during the Mojave Desert silver rush of the 1880s, Calico grew to a population of approximately 1,200 before the collapse of silver prices led to abandonment in the mid-1890s. The site was partially restored by Walter Knott in the 1950s and donated to San Bernardino County, which now operates it as a regional park. The restored environment includes a mix of original and reconstructed structures along preserved town streets, mine-related features, and a cemetery. Disturbance reports reference apparition sightings in specific buildings, footsteps and structural sounds during low-traffic periods, and atmospheric anomalies near mining-related structures. The desert environment introduces significant thermal and acoustic baseline variation between day and night investigation conditions.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings in specific restored structures</li>
+<li>Footsteps and structural sounds in town building interiors</li>
+<li>Mining-camp residual lore associated with mine-entrance areas</li>
+<li>Atmospheric anomalies reported during low-traffic evening access periods</li>
+<li>Environmental unease in cemetery area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Restored main street with period commercial structures</li>
+<li>Mine-related shaft and tunnel access areas</li>
+<li>Historic schoolhouse and civic buildings</li>
+<li>Town trail network and perimeter areas</li>
+<li>Cemetery with documented historical interments</li>
+<li>Desert landscape with thermal variation factors</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              36600 Ghost Town Rd, Yermo, CA 92398
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://parks.sbcounty.gov/park/calico-ghost-town-regional-park/" rel="noopener noreferrer" target="_blank">https://parks.sbcounty.gov/park/calico-ghost-town-regional-park/</a>
+</p>
+<p><strong>Coordinates:</strong> 34.9489° N, 116.8642° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Distributed residual mining-town imprint across a partially reconstructed environment. Distinguish between original and restored structures when classifying anomaly reports; thermal baseline variation in desert climate is significant and must be documented.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Columbia State Historic Park -->
+<div class="entry" data-location-id="ca-columbia-statepark">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Columbia State Historic Park</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">District</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Columbia, CA</div>
+<div class="entry-meta-item">Gold Rush Historic District / State Park</div>
+<div class="entry-meta-item">Access: Public / Partial Access</div>
+</div>
+<p class="entry-body">Columbia was one of the largest and most productive mining towns of the California Gold Rush, reaching a population of approximately 5,000 at its 1850s peak before population decline left much of the district preserved. The California State Parks system maintains the downtown core as an operating historic district, with period-appropriate businesses and interpretive programming. The layered occupancy history and density of original structures create investigation conditions distinct from reconstructed ghost towns, with original building fabric intact across much of the district. Disturbance reports reference apparition sightings in saloon and hotel structures, footsteps during off-hours in commercial zones, and night-environment anomalies reported by staff and researchers. Active daytime tourist use requires off-hours investigation access coordination.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparitional sightings reported in saloon and hotel structures</li>
+<li>Footsteps in commercial zone corridors during off-hours</li>
+<li>Night-environment anomalies reported by period staff and research access holders</li>
+<li>Room-specific disturbances in hotel building upper floors</li>
+<li>Environmental unease in transitional zones between structures</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Preserved main street with original Gold Rush-era commercial buildings</li>
+<li>Saloon and hotel structures with multi-floor access</li>
+<li>Theater and civic buildings</li>
+<li>Period shops and operational commercial interiors</li>
+<li>Town block perimeter and rear service areas</li>
+<li>Surrounding historic district grounds</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              11255 Jackson St, Columbia, CA 95310
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.parks.ca.gov/columbia" rel="noopener noreferrer" target="_blank">https://www.parks.ca.gov/columbia</a>
+</p>
+<p><strong>Coordinates:</strong> 38.0358° N, 120.4011° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Distributed residual imprint across preserved gold-rush district with original building fabric. Active daytime visitor use requires off-hours coordination; hotel and saloon structures represent primary investigation priority zones based on accumulated report density.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Fort Humboldt State Historic Park -->
+<div class="entry" data-location-id="ca-eureka-forthumboldt">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Fort Humboldt State Historic Park</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Military</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Eureka, CA</div>
+<div class="entry-meta-item">Military Historic Site / State Park</div>
+<div class="entry-meta-item">Access: Public</div>
+</div>
+<p class="entry-body">Established in 1853 during the period of active conflict between U.S. Army forces and Indigenous tribes of the northern California coast, Fort Humboldt served as a military garrison and hospital for several years before closure in 1870. The site is notable as a posting where Ulysses S. Grant served briefly before his resignation from the Army in 1854. Preserved structures include the original surgeon's quarters and reconstructed hospital and log cabin interpretive exhibits. Disturbance reports reference apparition sightings near preserved structures, figure reports in window areas, footstep anomalies, and environmental unease reported by staff and late-access visitors along the bluff perimeter. The open-air nature of much of the site introduces significant acoustic contamination from surrounding urban Eureka.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings near preserved military structures</li>
+<li>Figure reports in window areas of the surgeon's quarters</li>
+<li>Footstep anomalies in and around preserved building interiors</li>
+<li>Environmental unease reported along bluffside perimeter approach</li>
+<li>Auditory anomalies during low-traffic access periods</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Surgeon's quarters (original preserved structure)</li>
+<li>Reconstructed hospital and log cabin interpretive buildings</li>
+<li>Parade grounds and open garrison area</li>
+<li>Bluffside trail and perimeter approach</li>
+<li>Equipment and interpretive display areas</li>
+<li>Surrounding urban park perimeter</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              3431 Fort Ave, Eureka, CA 95503
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.parks.ca.gov/?page_id=665" rel="noopener noreferrer" target="_blank">https://www.parks.ca.gov/?page_id=665</a>
+</p>
+<p><strong>Coordinates:</strong> 40.7773° N, 124.1878° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual military imprint with folklore-associated apparition reports concentrated near the original surgeon's quarters. Open-air setting and urban perimeter introduce acoustic contamination factors; interior structure investigation is limited to available building access windows.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Point Sur Lighthouse -->
+<div class="entry" data-location-id="ca-bigsur-pointsur">
+<div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+<div class="entry-header">
+<h3 class="entry-term">Point Sur Lighthouse</h3>
+<div class="entry-tags">
+<span class="tag tag-historic">Historic</span>
+<span class="tag tag-haunted">Haunted</span>
+<span class="tag tag-business">Lighthouse</span>
+<span class="tag tag-business">Museum</span>
+</div>
+</div>
+<div class="entry-meta">
+<div class="entry-meta-item">Big Sur, CA</div>
+<div class="entry-meta-item">Historic Lighthouse / Museum</div>
+<div class="entry-meta-item">Access: Public / Tour</div>
+</div>
+<p class="entry-body">Perched on a volcanic rock formation rising from the California coast south of Monterey, Point Sur Lighthouse has guided maritime traffic since 1889 and served as a staffed keeper station for decades before automation in 1975. The isolation of the site, accessible only by a narrow causeway and managed exclusively through guided tours, created a self-contained living and working environment for keepers and their families across multiple generations. Disturbance reports are distributed across the tower interior, keeper quarters, and access paths, with recurring accounts referencing figures associated with former occupants, auditory anomalies in the tower stairwell, and light-related observations during low-traffic periods. The site's remoteness and environmental exposure introduce significant acoustic and atmospheric baseline variation that requires careful documentation before active investigation work.</p>
+</div>
+<div class="entry-details">
+<div class="detail-grid">
+<div class="detail-box">
+<div class="detail-label">Activity Reported</div>
+<ul>
+<li>Apparition sightings of keeper figures in tower and quarters areas</li>
+<li>Footsteps in tower stairwell and keeper residence rooms</li>
+<li>Disembodied voices reported in enclosed interior spaces</li>
+<li>Shadow movement observed in peripheral vision near access paths and outbuildings</li>
+<li>Light anomalies associated with the tower lens and lantern room area</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Structure Layout</div>
+<ul>
+<li>Lighthouse tower with spiral stairwell access to lantern room</li>
+<li>Primary and secondary keeper quarters</li>
+<li>Storage and support buildings within the compound</li>
+<li>Cliffside access paths connecting compound structures</li>
+<li>Volcanic rock formation base with coastal perimeter exposure</li>
+</ul>
+</div>
+<div class="detail-box">
+<div class="detail-label">Location Data</div>
+<p>
+<strong>Address:</strong>
+              Highway 1, Big Sur, CA 93920
+            </p>
+<p>
+<strong>Website:</strong>
+<a href="https://www.pointsur.org" rel="noopener noreferrer" target="_blank">https://www.pointsur.org</a>
+</p>
+<p><strong>Coordinates:</strong> 36.3064° N, 121.9016° W</p>
+</div>
+<div class="detail-box">
+<div class="detail-label">Classification</div>
+<p>Residual maritime imprint with possible intelligent interaction. Isolated compound environment supports multi-zone baseline work; tower stairwell and keeper quarters represent primary investigation zones based on accumulated report patterns. Tour-access-only site requires advance coordination with site management.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 15,
+    states: ["California"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+<!-- Machine readable JSON metadata -->
+<script id="tpi-directory-metadata" type="application/json">
+{
+  "schema_version": "1.0",
+  "total_locations": 15,
+  "states": [
+    {
+      "name": "California",
+      "code": "CA",
+      "count": 15
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+</body>
+</html>

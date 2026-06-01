@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Reference Directory • Georgia</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Location Reference Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">15 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>15</span> Location Entries</div>
+      <div class="hero-meta-item"><span>8</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- GEORGIA -->
+  <section id="georgia" class="sec-block" data-state="GA">
+    <div class="sec-header">
+      <div class="sec-number">10</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Georgia</h2>
+      </div>
+      <div class="sec-tag">15 Locations</div>
+    </div>
+    <p class="sec-intro">Georgia is one of the strongest paranormal-reference states in the South, anchored by Savannah’s dense historic-core cluster and reinforced by Civil War battlefields, coastal resort properties, antebellum homes, and major urban cemeteries. The state offers unusual depth for comparing hospitality, burial-ground, battlefield, and domestic cases within a single regional file.</p>
+    <div class="entry" data-location-id="ga-savannah-marshallhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Marshall House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Opened in 1851 and later used as a Civil War hospital, The Marshall House is one of Savannah’s strongest hospital-overlay hotel cases. Reports of wartime residue and guest-room disturbances have accumulated across decades of modern hotel use.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in guest corridors</li>
+              <li>Voice anomalies in quiet upper floors</li>
+              <li>Reports of medical-era apparitional imagery</li>
+              <li>Cold spots in guest rooms and hall transitions</li>
+              <li>Object disturbances during overnight hours</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and public rooms</li>
+              <li>Historic guest corridors</li>
+              <li>Upper floors</li>
+              <li>Stair and service transitions</li>
+              <li>Room-specific hotspot zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              123 E Broughton St, Savannah, GA 31401
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.marshallhouse.com/" rel="noopener noreferrer" target="_blank">https://www.marshallhouse.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0808° N, 81.0900° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual hospitality and wartime medical imprint with strong corridor-based disturbance patterns.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-savannah-sorrelweed">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Sorrel-Weed House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-residential">Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic Mansion</div>
+          <div class="entry-meta-item">Access: Public / Tour Access</div>
+        </div>
+        <p class="entry-body">Prominent 1840 Greek Revival mansion on Madison Square and one of Savannah’s most heavily investigated residential cases. The main house and carriage structure have both contributed to a long-running reputation for direct-response phenomena.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition and shadow-form reports</li>
+              <li>Direct-response EVP and interactive folklore claims</li>
+              <li>Cold spots in upper rooms</li>
+              <li>Presence sensations in carriage-house contexts</li>
+              <li>Visual anomalies on stairs and hallways</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Formal parlors</li>
+              <li>Central halls and stairs</li>
+              <li>Upper bedrooms</li>
+              <li>Carriage house</li>
+              <li>Rear service and exterior spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              6 W Harris St, Savannah, GA 31401
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://sorrelweedhouse.com/" rel="noopener noreferrer" target="_blank">https://sorrelweedhouse.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0719° N, 81.0930° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible intelligent haunting with repeated investigator-reported interaction claims across primary and secondary structures.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-savannah-17hundred90">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">17Hundred90 Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Historic inn in Savannah’s old city fabric with a concentrated guest-room haunting reputation, especially around reports tied to a female apparition traditionally identified as “Anna.” Its scale makes it useful for focused room-by-room comparison work.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Female apparition sightings in specific room zones</li>
+              <li>Guest-room object movement</li>
+              <li>Footsteps in stair and corridor spaces</li>
+              <li>Cold spots and sudden atmosphere changes</li>
+              <li>Late-night voice reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Inn guest rooms</li>
+              <li>Dining/pub spaces</li>
+              <li>Main staircase</li>
+              <li>Upper corridors</li>
+              <li>Entry and side passage zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              307 E President St, Savannah, GA 31401
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://17hundred90.com/" rel="noopener noreferrer" target="_blank">https://17hundred90.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0777° N, 81.0878° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible intelligent hotel/inn haunting with strong room-specific witness clustering.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-savannah-colonialpark">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Colonial Park Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Established in the eighteenth century and containing thousands of burials, Colonial Park Cemetery is one of Savannah’s central residual burial-ground entries. Urban placement makes environmental control important, but the site remains historically significant and widely reported.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures and visual anomalies between rows</li>
+              <li>Voice reports at low traffic times</li>
+              <li>Cold spots near central burial concentrations</li>
+              <li>Atmospheric shifts near older markers</li>
+              <li>Folklore-linked disturbance reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic grave rows</li>
+              <li>Interior pathways</li>
+              <li>Boundary walls</li>
+              <li>Central monument concentrations</li>
+              <li>Urban edge access</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              200 Abercorn St, Savannah, GA 31401
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.savannahga.gov/879/Colonial-Park-Cemetery" rel="noopener noreferrer" target="_blank">https://www.savannahga.gov/879/Colonial-Park-Cemetery</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0756° N, 81.0895° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground imprint with significant tourist and urban noise contamination requiring controlled timing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-savannah-bonaventure">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bonaventure Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Expansive Victorian-era cemetery overlooking the Wilmington River and one of Georgia’s best-known funerary landscapes. Bonaventure functions as a major residual cemetery entry with high visual and atmospheric report frequency.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitional reports in older garden sections</li>
+              <li>Shadow and light anomalies</li>
+              <li>Voice reports near major family plots</li>
+              <li>Localized cold spots</li>
+              <li>Atmospheric changes in quieter interior roads</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic section grid</li>
+              <li>Family plot concentrations</li>
+              <li>River-edge perimeter</li>
+              <li>Interior roads and walking paths</li>
+              <li>Monument clusters</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              330 Bonaventure Rd, Savannah, GA 31404
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.savannahga.gov/498/City-Cemeteries" rel="noopener noreferrer" target="_blank">https://www.savannahga.gov/498/City-Cemeteries</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0478° N, 81.0444° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground imprint with strong atmospheric qualities and broad zone-by-zone comparison potential.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-savannah-kehoehouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kehoe House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Late nineteenth-century mansion now operating as a boutique inn, with persistent reports often framed around child-related activity and room-specific disturbances. Its smaller scale makes it useful for controlled overnight comparison work.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Child-related voice or presence reports</li>
+              <li>Footsteps in upper halls</li>
+              <li>Cold spots in guest rooms</li>
+              <li>Object irregularities and subtle movement</li>
+              <li>Presence sensations near stair landings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Formal lower rooms</li>
+              <li>Guest suites</li>
+              <li>Upper hallway zones</li>
+              <li>Staircase transitions</li>
+              <li>Courtyard / exterior edge</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              123 Habersham St, Savannah, GA 31401
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.kehoehouse.com/" rel="noopener noreferrer" target="_blank">https://www.kehoehouse.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0795° N, 81.0891° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic inn with recurring room-specific disturbance reports and possible intelligent interaction indicators.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-savannah-mercerwilliams">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Mercer-Williams House Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Access</div>
+        </div>
+        <p class="entry-body">Famous for both its architecture and later criminal notoriety, the Mercer-Williams House adds a layered domestic and cultural-history case to Savannah’s portfolio. Reports are often subtle but persistent in guided-tour contexts.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Presence sensations in formal rooms</li>
+              <li>Visual anomalies in stair and upper-floor transitions</li>
+              <li>Cold spots in preserved interiors</li>
+              <li>Object irregularities in display areas</li>
+              <li>Room-specific unease reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Formal parlors</li>
+              <li>Central stair</li>
+              <li>Upper rooms</li>
+              <li>Museum display spaces</li>
+              <li>Garden / rear approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              429 Bull St, Savannah, GA 31401
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.mercerwilliamshousemuseum.com/" rel="noopener noreferrer" target="_blank">https://www.mercerwilliamshousemuseum.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0718° N, 81.0938° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual domestic and later-event imprint with restrained but consistent witness reporting in preserved interior zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-savannah-oldepink">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Olde Pink House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Restaurant</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Savannah, GA</div>
+          <div class="entry-meta-item">Historic Restaurant / Mansion</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Eighteenth-century mansion now operating as one of Savannah’s best-known restaurants. Hospitality use layered over an exceptionally old urban structure has produced ongoing staff and patron disturbance reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Visual anomalies in dining rooms and halls</li>
+              <li>Footsteps in upper or restricted areas</li>
+              <li>Presence sensations near staircases</li>
+              <li>Object movement or misplaced settings</li>
+              <li>Cold spots in older wall-adjacent rooms</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Dining rooms and parlors</li>
+              <li>Bar / tavern-level spaces</li>
+              <li>Hallway transitions</li>
+              <li>Upper historic rooms</li>
+              <li>Stair and cellar-adjacent areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              23 Abercorn St, Savannah, GA 31401
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.theoldepinkhouserestaurant.com/" rel="noopener noreferrer" target="_blank">https://www.theoldepinkhouserestaurant.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0791° N, 81.0898° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic hospitality residual case with probable multi-era layering across domestic and restaurant use.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-macon-hayhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hay House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-residential">Mansion</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Macon, GA</div>
+          <div class="entry-meta-item">Historic Mansion Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Access</div>
+        </div>
+        <p class="entry-body">Lavish nineteenth-century mansion museum in Macon with preserved interiors and a strong architectural identity. A valuable Georgia residential entry with recurring but generally restrained anomaly reports tied to room and stair transitions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in upper halls</li>
+              <li>Cold spots in preserved rooms</li>
+              <li>Visual anomalies near staircases</li>
+              <li>Presence sensations in formal parlors</li>
+              <li>Subtle object or door irregularities</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Formal parlors</li>
+              <li>Central and rear stairs</li>
+              <li>Upper bedrooms</li>
+              <li>Service areas</li>
+              <li>Grounds and approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              934 Georgia Ave, Macon, GA 31201
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.hayhousemacon.org/" rel="noopener noreferrer" target="_blank">https://www.hayhousemacon.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.8415° N, 83.6280° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual domestic imprint in a preserved mansion environment with good controlled-tour comparison potential.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-jekyll-jicr">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Jekyll Island Club Resort</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Jekyll Island, GA</div>
+          <div class="entry-meta-item">Historic Resort Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Former private club for some of America’s wealthiest industrial families, later adapted into a public resort. The property’s scale, age, and layered hospitality history make it one of coastal Georgia’s strongest hotel entries.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Corridor footsteps and voice reports</li>
+              <li>Guest-room atmosphere changes</li>
+              <li>Visual anomalies in public rooms</li>
+              <li>Cold spots in historic suites</li>
+              <li>Presence sensations in lower-traffic wings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and common rooms</li>
+              <li>Historic guest wings</li>
+              <li>Suite corridors</li>
+              <li>Verandas and exterior approach</li>
+              <li>Service transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              371 Riverview Dr, Jekyll Island, GA 31527
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.jekyllclub.com/" rel="noopener noreferrer" target="_blank">https://www.jekyllclub.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              31.0580° N, 81.4212° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic coastal hospitality imprint with recurring guest- and staff-reported disturbances.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-andersonville-nhs">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Andersonville National Historic Site</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Andersonville, GA</div>
+          <div class="entry-meta-item">Civil War Prison Camp / NPS</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Site of the Civil War prison camp where thousands of Union soldiers died under catastrophic confinement conditions. This is one of Georgia’s highest-value residual trauma entries and should be treated with serious historical gravity.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Atmospheric heaviness across prison-ground footprint</li>
+              <li>Voice and cry folklore reports</li>
+              <li>Visual anomaly accounts near the stockade area</li>
+              <li>Cold spots in memorial and burial-adjacent areas</li>
+              <li>Emotional intensity reports from visitors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Former stockade footprint</li>
+              <li>National cemetery areas</li>
+              <li>Museum and memorial spaces</li>
+              <li>Interior paths and field zones</li>
+              <li>Perimeter observation points</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              760 POW Rd, Andersonville, GA 31711
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.nps.gov/ande/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/ande/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.1988° N, 84.1299° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual trauma and incarceration imprint of exceptional historical weight; memorial context requires high respect and low-intrusion methodology.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-kennesaw-battlefield">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Kennesaw Mountain National Battlefield Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Battlefield</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Kennesaw, GA</div>
+          <div class="entry-meta-item">National Battlefield Park</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Civil War battlefield preserving major June 1864 engagement terrain. The site combines open landscape, wooded approach zones, and preserved military movement corridors, creating a broad residual battlefield entry rather than a structure-specific case.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Phantom battle-sound reports</li>
+              <li>Apparitional soldier accounts on trails and slopes</li>
+              <li>Atmospheric shifts near engagement areas</li>
+              <li>Footsteps in wooded approaches</li>
+              <li>Cold spots in quiet overlook zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Mountain trails and slopes</li>
+              <li>Engagement fields</li>
+              <li>Wooded approach corridors</li>
+              <li>Visitor and museum area</li>
+              <li>Overlook and artillery-context positions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              900 Kennesaw Mountain Dr, Kennesaw, GA 30152
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.nps.gov/kemo/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/kemo/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              33.9837° N, 84.5799° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual battlefield imprint with strong outdoor environmental variables including weather, wildlife, and crowd noise.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-tybee-lighthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">
+            Tybee Island Light Station
+            &amp;
+            Museum
+          </h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lighthouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Tybee Island, GA</div>
+          <div class="entry-meta-item">Lighthouse / Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Historic coastal light station with deep maritime history and a valuable mix of tower, keeper, and support-structure zones. The site offers strong comparative value against other southeastern lighthouse cases.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Tower-area footsteps and movement reports</li>
+              <li>Visual anomalies in keeper spaces</li>
+              <li>Cold spots in enclosed museum rooms</li>
+              <li>Presence sensations on stairs and landings</li>
+              <li>Voices reported during low-traffic periods</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lighthouse tower</li>
+              <li>Keeper cottages / museum spaces</li>
+              <li>Support buildings</li>
+              <li>Yard and perimeter grounds</li>
+              <li>Entry walk and stair transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              30 Meddin Dr, Tybee Island, GA 31328
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.tybeelighthouse.org/" rel="noopener noreferrer" target="_blank">https://www.tybeelighthouse.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              32.0171° N, 80.8458° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual maritime and keeper-residence imprint with distinct tower-versus-ground-structure comparison value.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-atlanta-oakland">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Oakland Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Atlanta, GA</div>
+          <div class="entry-meta-item">Historic Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Large Victorian-era cemetery in Atlanta containing Confederate, civic, and family burials spanning major eras of city history. It serves as Georgia’s strongest large-city cemetery counterpart to Savannah’s burial grounds.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow-form reports at dusk</li>
+              <li>Cold spots in older sections</li>
+              <li>Voice anomalies near prominent family plots</li>
+              <li>Atmospheric changes on interior paths</li>
+              <li>Visual disturbances in low-light conditions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic cemetery grid</li>
+              <li>Confederate memorial area</li>
+              <li>Family plot concentrations</li>
+              <li>Garden sections and paths</li>
+              <li>Perimeter road and gate access</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              248 Oakland Ave SE, Atlanta, GA 30312
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://oaklandcemetery.com/" rel="noopener noreferrer" target="_blank">https://oaklandcemetery.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              33.7486° N, 84.3680° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground imprint with urban-noise contamination but high comparative historical value.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="ga-roswell-bullochhall">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Bulloch Hall</h3>
+          <div class="entry-tags">
+            <span class="tag tag-residential">House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Roswell, GA</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Access</div>
+        </div>
+        <p class="entry-body">Antebellum house museum in Roswell tied to prominent Georgia family history. The house adds a quieter but worthwhile residential comparison case outside Savannah’s much denser cluster.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Presence sensations in formal rooms</li>
+              <li>Cold spots in upper chambers</li>
+              <li>Footstep reports on stairs</li>
+              <li>Subtle visual anomalies in hallways</li>
+              <li>Room-specific unease reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Formal front rooms</li>
+              <li>Hall and stair core</li>
+              <li>Upper chambers</li>
+              <li>Porch and grounds</li>
+              <li>Service-use transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              180 Bulloch Ave, Roswell, GA 30075
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.bullochhall.org/" rel="noopener noreferrer" target="_blank">https://www.bullochhall.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              34.0241° N, 84.3604° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual domestic imprint in a preserved antebellum museum setting with controlled-access comparison value.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 15,
+    states: ["Georgia"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 15,
+  "states": [
+    {
+      "name": "Georgia",
+      "code": "GA",
+      "count": 15
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

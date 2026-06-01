@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunted Location Directory • Iowa</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">TPI Haunted Location Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations or cities..." autocomplete="off">
+    <div id="search-count">16 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Haunted Location <em>Directory</em></h1>
+    <p class="hero-desc">This directory contains documented haunted locations, historic sites, and culturally recognized paranormal landmarks. Entries are compiled from historical records, publicly accessible data, and widely reported experiences to support exploration, documentation, and personal investigation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>16</span> Location Entries</div>
+      <div class="hero-meta-item"><span>15</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html" class="active">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- IOWA -->
+  <section id="iowa" class="sec-block" data-state="IA">
+    <div class="sec-header">
+      <div class="sec-number">15</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Iowa</h2>
+      </div>
+      <div class="sec-tag">16 Locations</div>
+    </div>
+    <p class="sec-intro">Iowa has 99 counties, so this v8 rebuild expands beyond the initial anchors while filtering out reject notes and attraction-only filler. The final build includes murder houses, jails, historic inns and hotels, house museums, opera houses, former institutions, schoolhouses, cemeteries, prisons, haunted roads, and civic landmarks with meaningful rooms, zones, or evidence buckets.</p>
+
+    <div class="entry" data-location-id="ia-villisca-axemurderhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Villisca Axe Murder House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Villisca, IA</div>
+          <div class="entry-meta-item">Historic Murder House</div>
+          <div class="entry-meta-item">Access: Public / Tour or Overnight</div>
+        </div>
+        <p class="entry-body">One of Iowa’s strongest haunted anchors, the Villisca Axe Murder House is tied to the unsolved 1912 murders of eight people and remains a nationally recognized haunted destination with rooms that directly support evidence-bucket logging.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Child voices and EVP traditions</li>
+              <li>Motion and equipment-trigger reports</li>
+              <li>Apparition and presence reports</li>
+              <li>Hair-tugging and touch reports</li>
+              <li>Unease tied to murder-room history</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Parents’ bedroom</li>
+              <li>Children’s bedroom</li>
+              <li>Guest bedroom</li>
+              <li>Attic</li>
+              <li>Main rooms and staircase</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 508 E 2nd St, Villisca, IA 50864</p>
+            <p><strong>Website:</strong> <a href="https://murderhouse.com/" rel="noopener noreferrer" target="_blank">https://murderhouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 40.9308° N, 94.9731° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — true-crime history, room-specific murder context, and repeated paranormal tourism claims make this a primary Iowa entry.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-councilbluffs-squirrelcagejail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Squirrel Cage Jail</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Jail Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Council Bluffs, IA</div>
+          <div class="entry-meta-item">Historic Rotating Jail</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A unique revolving jail and one of Iowa’s best-documented haunted public sites, the Squirrel Cage Jail has preserved cell structures, sheriff quarters, and museum spaces tied to deaths, footsteps, voices, whispers, and inmate lore.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps</li>
+              <li>Voices and whispers</li>
+              <li>Unexplained movement</li>
+              <li>Apparitions</li>
+              <li>Former-inmate and jail-death lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Rotating cell ring</li>
+              <li>Jail cells</li>
+              <li>Sheriff’s quarters</li>
+              <li>Stairways</li>
+              <li>Museum rooms</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 226 Pearl St, Council Bluffs, IA 51503</p>
+            <p><strong>Website:</strong> <a href="https://www.iowahistory.org/sites/squirrel-cage-jail/" rel="noopener noreferrer" target="_blank">https://www.iowahistory.org/sites/squirrel-cage-jail/</a></p>
+            <p><strong>Coordinates:</strong> 41.2610° N, 95.8523° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — historic jail deaths and strong museum identity support room-based evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-bentonsport-masonhouseinn">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Mason House Inn</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Inn</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Bentonsport, IA</div>
+          <div class="entry-meta-item">Historic Inn</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A historic inn with hospital and Underground Railroad associations, Mason House Inn is a strong Iowa haunted lodging entry with repeated spirit reports and well-defined guest-room and stairway buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Boy on the landing tradition</li>
+              <li>Lady in white nightgown</li>
+              <li>Old man spirit reports</li>
+              <li>Unexplained sounds</li>
+              <li>Recurring guest and inn lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Guest rooms</li>
+              <li>Stair landing</li>
+              <li>Hallway</li>
+              <li>Dining areas</li>
+              <li>Exterior grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 100 First St, Bentonsport, IA 52565</p>
+            <p><strong>Website:</strong> <a href="https://themasonhouseinn.com" rel="noopener noreferrer" target="_blank">https://themasonhouseinn.com</a></p>
+            <p><strong>Coordinates:</strong> 40.7422° N, 91.9528° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — lodging, hospital, and Underground Railroad history overlap with repeated apparition and sound claims.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-davenport-blackhawkhotel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">The Black Hawk Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Davenport, IA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A historic Davenport hotel with a long haunted reputation, the Black Hawk Hotel provides classic hotel evidence buckets across guest rooms, halls, ballroom, basement, and lobby spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Voices</li>
+              <li>Apparitions</li>
+              <li>Footsteps</li>
+              <li>Cold spots</li>
+              <li>Room activity</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Ballroom</li>
+              <li>Basement</li>
+              <li>Lobby</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 200 E 3rd St, Davenport, IA 52801</p>
+            <p><strong>Website:</strong> <a href="https://www.blackhawkhotel.com" rel="noopener noreferrer" target="_blank">https://www.blackhawkhotel.com</a></p>
+            <p><strong>Coordinates:</strong> 41.5215° N, 90.5756° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — hotel-based apparitional and environmental reports tied to multiple public and lodging spaces.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-marion-grangerhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Granger House Victorian Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">House Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Marion, IA</div>
+          <div class="entry-meta-item">Victorian House Museum</div>
+          <div class="entry-meta-item">Access: Public / Museum</div>
+        </div>
+        <p class="entry-body">A preserved Victorian house museum with public identity and reported historic-house ghost lore, Granger House offers parlor, stairway, upstairs-room, basement, and grounds buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Historic-house ghost lore</li>
+              <li>Unexplained sounds</li>
+              <li>House-museum activity reports</li>
+              <li>Presence sensations</li>
+              <li>Old-house atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Parlor</li>
+              <li>Upstairs rooms</li>
+              <li>Stairway</li>
+              <li>Basement</li>
+              <li>Exterior grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 970 10th St, Marion, IA 52302</p>
+            <p><strong>Website:</strong> <a href="https://grangerhouse.org" rel="noopener noreferrer" target="_blank">https://grangerhouse.org</a></p>
+            <p><strong>Coordinates:</strong> 42.0336° N, 91.5829° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — house-museum context with reported activity and usable room buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-fairfield-opera">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Fairfield Opera House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Opera House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fairfield, IA</div>
+          <div class="entry-meta-item">Historic Opera House</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A public historic theater and opera house with a local haunted reputation, Old Fairfield Opera House supports stage, balcony, backstage, auditorium, and lobby evidence buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Unexplained sounds</li>
+              <li>Footsteps</li>
+              <li>Stage-area activity</li>
+              <li>Recurring opera-house lore</li>
+              <li>Presence reports in performance spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Stage</li>
+              <li>Balcony</li>
+              <li>Backstage</li>
+              <li>Auditorium</li>
+              <li>Lobby</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 121 S Main St, Fairfield, IA 52556</p>
+            <p><strong>Website:</strong> <a href="https://www.oldfairfieldop.com" rel="noopener noreferrer" target="_blank">https://www.oldfairfieldop.com</a></p>
+            <p><strong>Coordinates:</strong> 41.0063° N, 91.9627° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — performance-hall claims tied to known stage and auditorium areas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-scotchgrove-edinburghmanor">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Edinburgh Manor</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Former Poor Farm / Asylum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Scotch Grove, IA</div>
+          <div class="entry-meta-item">Historic Institutional Site</div>
+          <div class="entry-meta-item">Access: Public / Reservation</div>
+        </div>
+        <p class="entry-body">A major eastern Iowa institutional haunt, Edinburgh Manor is a former county home / asylum site with official visitation, investigation history, and usable zones tied to rooms, halls, basement, grounds, and institutional history.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow and presence reports</li>
+              <li>Whispers and voices</li>
+              <li>Reported breathing or touch experiences</li>
+              <li>Window and hallway activity</li>
+              <li>Former resident / institution lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Patient rooms</li>
+              <li>Hallways</li>
+              <li>Basement</li>
+              <li>Stairways</li>
+              <li>Exterior grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 13241 E23 County Home Rd, Scotch Grove, IA 52310</p>
+            <p><strong>Website:</strong> <a href="https://edinburghmanor.wixsite.com/edinburgh" rel="noopener noreferrer" target="_blank">https://edinburghmanor.wixsite.com/edinburgh</a></p>
+            <p><strong>Coordinates:</strong> 42.2320° N, 91.1235° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — institutional history and repeated investigation reports support multiple room and corridor buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-farrar-schoolhouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Farrar Schoolhouse</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Schoolhouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Farrar, IA</div>
+          <div class="entry-meta-item">Historic Schoolhouse</div>
+          <div class="entry-meta-item">Access: Public / Investigation Based</div>
+        </div>
+        <p class="entry-body">A widely known Iowa haunted schoolhouse, Farrar Schoolhouse offers classroom, principal’s office, hallway, gym, and basement buckets tied to school-spirit traditions and public paranormal investigations.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Whistles and voices</li>
+              <li>Door and shaking reports</li>
+              <li>Principal spirit lore</li>
+              <li>Shadow and presence reports</li>
+              <li>Schoolhouse investigation claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Classrooms</li>
+              <li>Principal’s office</li>
+              <li>Hallways</li>
+              <li>Gym / assembly space</li>
+              <li>Basement</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 11125 NE 134th Ave, Maxwell, IA 50161</p>
+            <p><strong>Website:</strong> <a href="https://farrarschoolhouse.com/" rel="noopener noreferrer" target="_blank">https://farrarschoolhouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 41.8657° N, 93.3698° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — haunted schoolhouse reputation with room-based buckets and active investigation access.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-malvern-malvernmanor">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Malvern Manor</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Former Care Facility</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Malvern, IA</div>
+          <div class="entry-meta-item">Historic Manor / Former Care Facility</div>
+          <div class="entry-meta-item">Access: Public / Investigation Based</div>
+        </div>
+        <p class="entry-body">A southwest Iowa haunted manor with public walkthroughs and investigation rentals, Malvern Manor has a documented public identity and reports tied to corridors, rooms, common areas, and upper floors.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Voices and footsteps</li>
+              <li>Objects moving</li>
+              <li>Lights flickering</li>
+              <li>Touch, push, and pinch reports</li>
+              <li>Shadow and presence reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Main room</li>
+              <li>Back hallway</li>
+              <li>Second floor</li>
+              <li>Patient / resident rooms</li>
+              <li>Common areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 103 E 3rd St, Malvern, IA 51551</p>
+            <p><strong>Website:</strong> <a href="https://www.malvernmanoria.com/" rel="noopener noreferrer" target="_blank">https://www.malvernmanoria.com/</a></p>
+            <p><strong>Coordinates:</strong> 41.0045° N, 95.5858° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Mixed — former care-facility context and repeated investigation claims support room and hallway evidence buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-ottumwa-hotelottumwa">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Hotel Ottumwa</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Historic Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Ottumwa, IA</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">A historic downtown hotel built in the early twentieth century, Hotel Ottumwa is included as a haunted hotel candidate with guest-room, hallway, lobby, ballroom, and meeting-space buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Hotel haunting reports</li>
+              <li>Guest-room activity</li>
+              <li>Footsteps and unexplained sounds</li>
+              <li>Presence reports</li>
+              <li>Historic hotel atmosphere claims</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Guest rooms</li>
+              <li>Hallways</li>
+              <li>Lobby</li>
+              <li>Grand Ballroom</li>
+              <li>Meeting and banquet rooms</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 107 E 2nd St, Ottumwa, IA 52501</p>
+            <p><strong>Website:</strong> <a href="https://www.hotelottumwa.com/" rel="noopener noreferrer" target="_blank">https://www.hotelottumwa.com/</a></p>
+            <p><strong>Coordinates:</strong> 41.0189° N, 92.4114° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — historic hotel setting with reported haunted reputation and clear lodging buckets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-cresco-theatre">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Cresco Theatre and Opera House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre / Opera House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Cresco, IA</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Public / Event Based</div>
+        </div>
+        <p class="entry-body">A 1914 theatre and opera house with a public haunted reputation noted by tourism sources, Cresco Theatre and Opera House provides stage, balcony, auditorium, lobby, and backstage buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Haunted reputation</li>
+              <li>Unexplained theatre sounds</li>
+              <li>Stage and balcony lore</li>
+              <li>Presence reports</li>
+              <li>Historic performance-space activity</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Stage</li>
+              <li>Balcony</li>
+              <li>Auditorium</li>
+              <li>Lobby</li>
+              <li>Backstage / Champlin Hall areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 115 2nd Ave W, Cresco, IA 52136</p>
+            <p><strong>Website:</strong> <a href="https://www.crescotheatreoperahouse.com/" rel="noopener noreferrer" target="_blank">https://www.crescotheatreoperahouse.com/</a></p>
+            <p><strong>Coordinates:</strong> 43.3717° N, 92.1168° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — historic performance venue with tourism-acknowledged haunted reputation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-iowacity-oaklandblackangel">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Oakland Cemetery / Black Angel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery Landmark</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Iowa City, IA</div>
+          <div class="entry-meta-item">Historic Cemetery Landmark</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">A famous Iowa cemetery legend, the Black Angel at Oakland Cemetery is a strong outdoor bucket entry tied to repeated folklore, ghostly voices, light anomalies, and long-standing local superstition.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly voices</li>
+              <li>Strange light anomalies</li>
+              <li>Black Angel curse folklore</li>
+              <li>Cemetery apparition traditions</li>
+              <li>Presence reports near the statue</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Black Angel statue</li>
+              <li>Oakland Cemetery sections</li>
+              <li>Pathways</li>
+              <li>Nearby graves</li>
+              <li>Tree-line and approach areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1000 Brown St, Iowa City, IA 52245</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 41.6705° N, 91.5220° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Folkloric-Mixed — cemetery landmark legend with a specific mappable feature and repeated local lore.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-fortmadison-statepenitentiary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Historic Iowa State Penitentiary</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fort Madison, IA</div>
+          <div class="entry-meta-item">Historic Prison</div>
+          <div class="entry-meta-item">Access: Restricted / Reference</div>
+        </div>
+        <p class="entry-body">Iowa’s historic state penitentiary is a major prison-history anchor with reported haunted reputation and strong evidence buckets through cell houses, corridors, yard areas, and execution-history context.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Prison haunting reports</li>
+              <li>Former inmate lore</li>
+              <li>Footsteps and voices</li>
+              <li>Cell-block presence reports</li>
+              <li>Execution and institutional-history atmosphere</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Cell houses</li>
+              <li>Prison corridors</li>
+              <li>Yard areas</li>
+              <li>Gate / exterior approach</li>
+              <li>Execution-history context</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 3 John Bennett Dr, Fort Madison, IA 52627</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 40.6348° N, 91.3124° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Mixed — historic prison setting with institutional lore and defined prison zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="entry" data-location-id="ia-burlington-stonyhollowroad">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Stony Hollow Road</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Haunted Road</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Burlington, IA</div>
+          <div class="entry-meta-item">Roadside Legend Site</div>
+          <div class="entry-meta-item">Access: Public Roadway / Caution</div>
+        </div>
+        <p class="entry-body">A classic Iowa haunted-road legend, Stony Hollow Road is tied to apparition and tragic-jump folklore and functions as an outdoor evidence-bucket entry using road, bridge/overlook, and pull-off context.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition of a woman</li>
+              <li>Ghostly presence near the road</li>
+              <li>Tragic-jump legend</li>
+              <li>Roadside unease</li>
+              <li>Recurring local lore</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Roadway</li>
+              <li>Roadside pull-off</li>
+              <li>Overlook / drop area</li>
+              <li>Wooded edge</li>
+              <li>Approach route</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> Stony Hollow Rd, Burlington, IA</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 40.8329° N, 91.1630° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual — road legend tied to a specific travel corridor and repeated tragic folklore.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-desmoines-statecapitol">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Iowa State Capitol</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Capitol Building</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Des Moines, IA</div>
+          <div class="entry-meta-item">Historic Government Building</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">The Iowa State Capitol is a major public landmark tied to Des Moines ghost-tour claims involving whispers, missing-paperboy lore, and historic-building atmosphere, giving users interior and grounds buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Ghostly whispers</li>
+              <li>Missing-paperboy lore</li>
+              <li>Lost-soul traditions</li>
+              <li>Historic-building unease</li>
+              <li>Reported activity in public tour context</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Capitol interior</li>
+              <li>Hallways</li>
+              <li>Dome / rotunda context</li>
+              <li>Grounds</li>
+              <li>Public tour areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 1007 E Grand Ave, Des Moines, IA 50319</p>
+            <p><strong>Website:</strong> <a href="https://www.legis.iowa.gov/resources/tourCapitol" rel="noopener noreferrer" target="_blank">https://www.legis.iowa.gov/resources/tourCapitol</a></p>
+            <p><strong>Coordinates:</strong> 41.5912° N, 93.6039° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Folkloric-Mixed — official landmark with ghost-tour claims tied to public interior and grounds areas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="entry" data-location-id="ia-desmoines-argonnearmory">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Argonne Armory</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Historic Armory</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Des Moines, IA</div>
+          <div class="entry-meta-item">Historic Armory</div>
+          <div class="entry-meta-item">Access: Public / Exterior Context</div>
+        </div>
+        <p class="entry-body">A Des Moines ghost-tour stop and historic armory location, Argonne Armory is tied to soldier and phantom-horse claims that can be organized by exterior, hall, former armory, and district route buckets.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Phantom horse sounds</li>
+              <li>Bloodied soldier apparition lore</li>
+              <li>Military haunting tradition</li>
+              <li>Historic district unease</li>
+              <li>Ghost-tour claim reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Rooms / Zones / Buckets</div>
+            <ul>
+              <li>Armory exterior</li>
+              <li>Historic district route</li>
+              <li>Former armory interior context</li>
+              <li>Sidewalk approach</li>
+              <li>Nearby street frontage</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p><strong>Address / Reference:</strong> 602 Robert D. Ray Dr, Des Moines, IA 50309</p>
+            <p><strong>Website:</strong> Not publicly maintained</p>
+            <p><strong>Coordinates:</strong> 41.5890° N, 93.6132° W</p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual or Folkloric-Mixed — military-building lore tied to a specific historic armory and ghost-tour tradition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 16,
+    states: ["Iowa"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 16,
+  "states": [
+    {
+      "name": "Iowa",
+      "code": "IA",
+      "count": 16
+    }
+  ],
+  "last_updated": "2026-04-24T00:00:00Z"
+}
+</script>
+
+</body>
+</html>

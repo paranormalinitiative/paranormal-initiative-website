@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Reference Directory • Florida</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #3a9e8a;
+  --teal-light: #5ecfb7;
+  --teal-dim: rgba(58,158,138,0.12);
+  --blue: #4a8fc4;
+  --blue-dim: rgba(74,143,196,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.12);
+  --orange: #e07840;
+  --orange-dim: rgba(224,120,64,0.10);
+  --green: #4a9e6a;
+  --green-dim: rgba(74,158,106,0.12);
+  --red: #c45a5a;
+  --red-dim: rgba(196,90,90,0.10);
+
+  --text-primary: #ede9e2;
+  --text-secondary: #a8a098;
+  --text-muted: #6a6460;
+
+  --bg: #090c10;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-hover: rgba(201,168,76,0.25);
+  --glass: rgba(9,12,16,0.88);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(58,158,138,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 95%, rgba(201,168,76,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(74,143,196,0.03) 0%, transparent 70%);
+  color: var(--text-primary);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.brand-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--glass);
+  border-bottom: 0.5px solid rgba(201,168,76,0.2);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-emblem {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(58,158,138,0.2), rgba(201,168,76,0.15));
+  border: 1px solid rgba(201,168,76,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-emblem svg { width: 17px; height: 17px; }
+
+.brand-name {
+  font-family:'Cinzel',serif;
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--gold);
+  line-height:1.35;
+}
+
+.brand-series {
+  font-family:'Raleway',sans-serif;
+  font-size:9.5px;
+  font-weight:300;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-secondary);
+  margin-top:1px;
+}
+
+.doc-badge {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--teal-light);
+  border:0.5px solid rgba(58,158,138,0.3);
+  padding:3px 10px;
+  border-radius:20px;
+  background:var(--teal-dim);
+  white-space:nowrap;
+}
+
+.search-wrap {
+  position:relative;
+  flex:1;
+  max-width:320px;
+}
+
+.search-wrap input {
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  padding:0.55rem 1rem 0.55rem 2.25rem;
+  color:var(--text-primary);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.search-wrap input::placeholder { color:var(--text-muted); }
+.search-wrap input:focus { border-color:rgba(58,158,138,0.4); }
+
+.search-icon {
+  position:absolute;
+  left:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:12px;
+  pointer-events:none;
+}
+
+#search-count {
+  position:absolute;
+  right:0.75rem;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:var(--text-muted);
+}
+
+/* PAGE */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.75rem 5rem;
+}
+
+/* HERO */
+.hero {
+  padding:3.5rem 0 2.5rem;
+  border-bottom:0.5px solid var(--border);
+  margin-bottom:2rem;
+}
+
+.hero-eyebrow {
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:1rem;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.7rem,4.5vw,2.6rem);
+  font-weight:700;
+  line-height:1.15;
+  color:var(--text-primary);
+  margin-bottom:1rem;
+}
+
+.hero-title em {
+  color:var(--gold);
+  font-style:normal;
+}
+
+.hero-desc {
+  font-family:'Crimson Pro',serif;
+  font-size:16px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  max-width:720px;
+  margin-bottom:1.5rem;
+}
+
+.hero-meta {
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+}
+
+.hero-meta-item {
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.hero-meta-item span {
+  color:var(--gold);
+  margin-right:5px;
+}
+
+/* SECTION NAV */
+.sec-nav {
+  display:flex;
+  gap:0;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  overflow:auto;
+  margin-bottom:2.5rem;
+}
+
+.sec-nav a {
+  flex:1;
+  text-align:center;
+  padding:0.65rem 0.75rem;
+  font-family:'Cinzel',serif;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  border-right:0.5px solid var(--border);
+  transition:all 0.15s;
+  white-space:nowrap;
+}
+
+.sec-nav a:last-child { border-right:none; }
+.sec-nav a:hover,
+.sec-nav a.active {
+  color:var(--gold);
+  background:var(--gold-dim);
+}
+
+/* STATE BLOCK */
+.sec-block { margin-bottom:4rem; }
+
+.sec-header {
+  display:flex;
+  align-items:center;
+  gap:1.25rem;
+  padding:1.4rem 1.5rem;
+  background: linear-gradient(90deg, rgba(58,158,138,0.08) 0%, rgba(201,168,76,0.04) 100%);
+  border:0.5px solid rgba(58,158,138,0.2);
+  border-radius:14px;
+  margin-bottom:1.75rem;
+}
+
+.sec-number {
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  font-weight:700;
+  color:rgba(201,168,76,0.25);
+  line-height:1;
+  min-width:48px;
+}
+
+.sec-title-block { flex:1; }
+
+.sec-eyebrow {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--teal);
+  margin-bottom:3px;
+}
+
+.sec-title {
+  font-family:'Cinzel',serif;
+  font-size:1.45rem;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.2;
+}
+
+.sec-tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:0.5px solid rgba(201,168,76,0.3);
+  padding:4px 12px;
+  border-radius:20px;
+  background:var(--gold-dim);
+  white-space:nowrap;
+}
+
+.sec-intro {
+  font-family:'Crimson Pro',serif;
+  font-size:15.5px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.85;
+  margin-bottom:1.75rem;
+  padding:0 0.25rem;
+}
+
+/* LOCATION CARD */
+.entry {
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+
+.entry:hover { border-color:var(--border-hover); }
+
+.entry-summary {
+  padding:1.25rem 1.5rem;
+  cursor:pointer;
+}
+
+.entry-header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.7rem;
+}
+
+.entry-term {
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--gold-light);
+  line-height:1.3;
+}
+
+.entry-tags {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.tag {
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:3px 10px;
+  border-radius:20px;
+}
+
+.tag-location { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
+.tag-haunted { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
+.tag-historic { color:var(--orange); background:var(--orange-dim); border:0.5px solid rgba(224,120,64,0.2); }
+.tag-business { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
+.tag-residential { color:var(--green); background:var(--green-dim); border:0.5px solid rgba(74,158,106,0.2); }
+
+.entry-meta {
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:0.65rem;
+}
+
+.entry-meta-item {
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+.entry-body {
+  font-family:'Crimson Pro',serif;
+  font-size:15px;
+  font-weight:300;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+
+.entry-details {
+  display:none;
+  padding:0 1.5rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  background:rgba(255,255,255,0.02);
+}
+
+.entry.open .entry-details {
+  display:block;
+}
+
+.detail-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:1rem;
+  margin-top:1.25rem;
+}
+
+.detail-box {
+  background:rgba(0,0,0,0.18);
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:1rem;
+}
+
+.detail-label {
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:0.6rem;
+}
+
+.detail-box p,
+.detail-box li {
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.65;
+}
+
+.detail-box ul {
+  list-style:none;
+  padding-left:0;
+}
+
+.detail-box li {
+  padding:0.2rem 0 0.2rem 1rem;
+  position: relative;
+}
+
+.detail-box li:before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:300;background:rgba(5,8,12,.96);border-bottom:1px solid rgba(201,168,76,.28);padding:.55rem 1.25rem;font-family:Raleway,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+  <a href="../haunted-locations.html" style="color:#e8c97a;text-decoration:none;">← Haunted Locations</a>
+  <a href="index.html" style="color:#5ecfb7;text-decoration:none;">State Index</a>
+  <span style="color:#a8a098;">Work in progress research directory</span>
+</div>
+
+<div class="brand-header">
+  <div class="brand-left">
+    <div class="brand-emblem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">The Paranormal Initiative</div>
+      <div class="brand-series">Location Reference Directory</div>
+    </div>
+  </div>
+  
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search locations, cities, states..." autocomplete="off">
+    <div id="search-count">20 locations</div>
+  </div>
+  
+  <span class="doc-badge">WORK IN PROGRESS</span>
+</div>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Working Directory • Research Leads</div>
+    <h1 class="hero-title">Location Reference <em>Directory</em></h1>
+    <p class="hero-desc">Working directory of haunted-location research leads. Entries are being reviewed, sourced, and organized for future field planning.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span>1</span> State</div>
+      <div class="hero-meta-item"><span>20</span> Location Entries</div>
+      <div class="hero-meta-item"><span>12</span> Cities</div>
+      <div class="hero-meta-item"><span>WIP</span> Under Review</div>
+    </div>
+  </div>
+
+    <div class="sec-nav">
+    <a href="alabama.html">Alabama</a>
+    <a href="alaska.html">Alaska</a>
+    <a href="arizona.html">Arizona</a>
+    <a href="arkansas.html">Arkansas</a>
+    <a href="california.html">California</a>
+    <a href="colorado.html">Colorado</a>
+    <a href="connecticut.html">Connecticut</a>
+    <a href="delaware.html">Delaware</a>
+    <a href="florida.html">Florida</a>
+    <a href="georgia.html">Georgia</a>
+    <a href="hawaii.html">Hawaii</a>
+    <a href="idaho.html">Idaho</a>
+    <a href="illinois.html">Illinois</a>
+    <a href="indiana.html">Indiana</a>
+    <a href="iowa.html">Iowa</a>
+    <a href="kansas.html">Kansas</a>
+    <a href="kentucky.html">Kentucky</a>
+    <a href="louisiana.html">Louisiana</a>
+    <a href="maine.html">Maine</a>
+    <a href="maryland.html">Maryland</a>
+    <a href="massachusetts.html">Massachusetts</a>
+    <a href="michigan.html">Michigan</a>
+    <a href="minnesota.html">Minnesota</a>
+    <a href="mississippi.html">Mississippi</a>
+    <a href="missouri.html">Missouri</a>
+    <a href="montana.html">Montana</a>
+    <a href="nebraska.html">Nebraska</a>
+    <a href="nevada.html">Nevada</a>
+    <a href="new-hampshire.html">New Hampshire</a>
+    <a href="new-jersey.html">New Jersey</a>
+    <a href="new-mexico.html">New Mexico</a>
+    <a href="new-york.html">New York</a>
+    <a href="north-carolina.html">North Carolina</a>
+    <a href="north-dakota.html">North Dakota</a>
+    <a href="ohio.html">Ohio</a>
+    <a href="oklahoma.html">Oklahoma</a>
+    <a href="oregon.html">Oregon</a>
+    <a href="pennsylvania.html">Pennsylvania</a>
+    <a href="rhode-island.html">Rhode Island</a>
+    <a href="south-carolina.html">South Carolina</a>
+    <a href="south-dakota.html">South Dakota</a>
+    <a href="tennessee.html">Tennessee</a>
+    <a href="texas.html">Texas</a>
+    <a href="utah.html">Utah</a>
+    <a href="vermont.html">Vermont</a>
+    <a href="virginia.html">Virginia</a>
+    <a href="washington.html">Washington</a>
+    <a href="west-virginia.html">West Virginia</a>
+    <a href="wisconsin.html">Wisconsin</a>
+    <a href="wyoming.html">Wyoming</a>
+  </div>
+
+  <!-- FLORIDA -->
+  <section id="florida" class="sec-block" data-state="FL">
+    <div class="sec-header">
+      <div class="sec-number">09</div>
+      <div class="sec-title-block">
+        <div class="sec-eyebrow">State Directory</div>
+        <h2 class="sec-title">Florida</h2>
+      </div>
+      <div class="sec-tag">20 Locations</div>
+    </div>
+    <p class="sec-intro">Florida contains one of the broadest paranormal location profiles in the southeastern United States, with major concentrations in St. Augustine, Tampa/Ybor, coastal military forts, historic hotels, and burial grounds. The state is especially valuable for comparative investigation because it combines colonial, military, Gilded Age hospitality, maritime, and folklore-driven environments across both urban and coastal settings.</p>
+    <div class="entry" data-location-id="fl-staugustine-castillo">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Castillo de San Marcos</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Augustine, FL</div>
+          <div class="entry-meta-item">National Monument</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Seventeenth-century Spanish masonry fortification overlooking Matanzas Bay. Built to defend St. Augustine and the Atlantic trade route, the Castillo carries layered military, colonial, and siege-period history that makes it one of Florida’s strongest residual military candidates.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition reports along gun deck and casemate areas</li>
+              <li>Footsteps in enclosed corridor spaces</li>
+              <li>Disembodied voices near sentry positions</li>
+              <li>Cold spots in interior chambers</li>
+              <li>Atmospheric shifts during low-traffic hours</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Exterior gun deck and bastions</li>
+              <li>Interior casemates</li>
+              <li>Sally port and entry tunnel</li>
+              <li>Upper watch positions</li>
+              <li>Waterfront perimeter approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1 S Castillo Dr, St. Augustine, FL 32084
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.nps.gov/casa/" rel="noopener noreferrer" target="_blank">https://www.nps.gov/casa/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              29.8980° N, 81.3112° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual military and colonial-period imprint with strong environmental wind and stone-resonance factors requiring careful audio control.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-staugustine-lighthouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">
+            St. Augustine Lighthouse
+            &amp;
+            Maritime Museum
+          </h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Lighthouse</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Augustine, FL</div>
+          <div class="entry-meta-item">Lighthouse / Maritime Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Active lighthouse and maritime museum with one of the most established paranormal reputations in the state. The property’s documented shipwreck, keeper-family, and worksite history has made it a repeated focus for both public and investigator attention.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Child-voice reports near keeper areas</li>
+              <li>Shadow movement in tower access zones</li>
+              <li>Apparition sightings on the grounds</li>
+              <li>Footsteps on stairs when tower traffic is low</li>
+              <li>Object and door anomalies in museum structures</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lighthouse tower stairwell</li>
+              <li>Keeper’s house museum areas</li>
+              <li>Grounds and outbuildings</li>
+              <li>Maritime exhibit structures</li>
+              <li>Perimeter walkway and yard</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              81 Lighthouse Ave, St. Augustine, FL 32080
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.staugustinelighthouse.org/" rel="noopener noreferrer" target="_blank">https://www.staugustinelighthouse.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              29.8856° N, 81.2880° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible intelligent haunting with repeated child-entity and tower-associated reports across distinct site zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-staugustine-lightner">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Lightner Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Augustine, FL</div>
+          <div class="entry-meta-item">Former Hotel Alcazar / Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Housed in the former Hotel Alcazar, this Gilded Age structure anchors one of St. Augustine’s most visually prominent historic interiors. Its hotel-era scale, service corridors, and preserved architectural volume make it a strong hotel-conversion investigation site.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Voices and footsteps in gallery transitions</li>
+              <li>Visual anomalies in balcony and upper interior zones</li>
+              <li>Cold spots in isolated rooms</li>
+              <li>Object disturbances reported by staff</li>
+              <li>Presence sensations in former hotel-use areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Grand courtyard and interior pool area</li>
+              <li>Museum galleries</li>
+              <li>Upper balconies</li>
+              <li>Service corridors</li>
+              <li>Stair and elevator transition zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              75 King St, St. Augustine, FL 32084
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://lightnermuseum.org/" rel="noopener noreferrer" target="_blank">https://lightnermuseum.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              29.8916° N, 81.3149° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual hospitality-era imprint with museum-environment baseline contamination from HVAC, foot traffic, and open interior acoustics.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-staugustine-oldjail">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Old Jail</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Prison</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Augustine, FL</div>
+          <div class="entry-meta-item">Historic Jail Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Constructed in 1891, the Old Jail served as St. Johns County’s detention facility for decades and remains one of the city’s strongest confinement-based entries. Reports are concentrated in cells, gallows-adjacent storytelling spaces, and sheriff-family quarters.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in cell rows</li>
+              <li>Disembodied voices in lockup areas</li>
+              <li>Cold spots in punishment zones</li>
+              <li>Apparitional reports tied to inmates and staff</li>
+              <li>Object movement and door anomalies</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main cell block</li>
+              <li>Sheriff family living quarters</li>
+              <li>Booking and holding spaces</li>
+              <li>Exterior yard and gallows-context area</li>
+              <li>Upper corridor transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              167 San Marco Ave, St. Augustine, FL 32084
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.staugustineoldjail.com/" rel="noopener noreferrer" target="_blank">https://www.staugustineoldjail.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              29.9087° N, 81.3145° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual incarceration imprint with repeated confinement-era disturbance patterns and strong contextual folklore layering.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-staugustine-casamonica">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">
+            Casa Monica Resort
+            &amp;
+            Spa
+          </h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Augustine, FL</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Originally opened in 1888 and later restored as a landmark luxury hotel, Casa Monica adds a major hospitality anchor to the St. Augustine cluster. Disturbance reports tend to center on guest corridors, historic suites, and late-night public areas.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Guest-room atmosphere changes</li>
+              <li>Corridor footsteps during low occupancy</li>
+              <li>Visual anomalies in upper floors</li>
+              <li>Cold spots near suite entries</li>
+              <li>Presence sensations in public rooms</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and reception hall</li>
+              <li>Guest corridors</li>
+              <li>Historic suites</li>
+              <li>Meeting/event rooms</li>
+              <li>Service and stair transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              95 Cordova St, St. Augustine, FL 32084
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.kesslercollection.com/casa-monica/" rel="noopener noreferrer" target="_blank">https://www.kesslercollection.com/casa-monica/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              29.8912° N, 81.3144° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic hotel with recurring guest-floor disturbance reports and probable residual hospitality layering.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-staugustine-huguenot">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Huguenot Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Augustine, FL</div>
+          <div class="entry-meta-item">Historic Protestant Cemetery</div>
+          <div class="entry-meta-item">Access: Public / Limited Hours</div>
+        </div>
+        <p class="entry-body">Established after the American takeover of St. Augustine, Huguenot Cemetery represents one of the city’s most important nineteenth-century burial grounds. It is a high-value residual cemetery entry within the broader St. Augustine cluster.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow figures between grave rows</li>
+              <li>Voice and whisper reports</li>
+              <li>Localized cold spots</li>
+              <li>Visual anomalies near gate and interior paths</li>
+              <li>Atmospheric pressure changes during quiet sessions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Entry gate and perimeter wall</li>
+              <li>Historic grave rows</li>
+              <li>Interior footpaths</li>
+              <li>Boundary facing city gate</li>
+              <li>Tree-lined edge zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              104 Marine St, St. Augustine, FL 32084
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://dos.fl.gov/historical/preservation/national-register/recent-national-register-listings/huguenot-cemetery/" rel="noopener noreferrer" target="_blank">https://dos.fl.gov/historical/preservation/national-register/recent-national-register-listings/huguenot-cemetery/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              29.8988° N, 81.3118° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground imprint with low-light visual anomaly reports and strong historical context.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-staugustine-tolomato">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Tolomato Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Augustine, FL</div>
+          <div class="entry-meta-item">Historic Catholic Cemetery</div>
+          <div class="entry-meta-item">Access: Limited / Guided Days</div>
+        </div>
+        <p class="entry-body">Located on the site of an early mission complex, Tolomato Cemetery preserves centuries of Catholic burial history within St. Augustine’s oldest urban fabric. Access is limited, making it more appropriate for planned documentation than casual field visits.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitional reports in interior burial sections</li>
+              <li>Voice anomalies during guided-access periods</li>
+              <li>Cold spots near older markers</li>
+              <li>Atmospheric unease in central rows</li>
+              <li>Visual disturbances tied to low-light conditions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Perimeter wall and narrow entrance</li>
+              <li>Historic burial rows</li>
+              <li>Interior monument concentrations</li>
+              <li>Mission-associated ground footprint</li>
+              <li>Restricted preservation-sensitive areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              16 Cordova St, St. Augustine, FL 32084
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.tolomatocemetery.com/" rel="noopener noreferrer" target="_blank">https://www.tolomatocemetery.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              29.8966° N, 81.3143° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground and mission-era imprint with preservation-sensitive access limitations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-fernandinabeach-fortclinch">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Clinch State Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Fernandina Beach, FL</div>
+          <div class="entry-meta-item">State Park / Civil War Fort</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Well-preserved nineteenth-century coastal fort on Amelia Island with barracks, bastions, prison, and support buildings intact. The preserved room sequence and military layout make it one of Florida’s strongest fort-based investigation sites.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in barracks and galleries</li>
+              <li>Voices near guard and prison rooms</li>
+              <li>Shadow movement in artillery corridors</li>
+              <li>Cold spots in enclosed masonry rooms</li>
+              <li>Presence sensations along upper walls</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Five-bastion fort plan</li>
+              <li>Barracks and galleries</li>
+              <li>Prison and guard rooms</li>
+              <li>Bakery, hospital, and storehouse spaces</li>
+              <li>Exterior parade and perimeter grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              2601 Atlantic Ave, Fernandina Beach, FL 32034
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.floridastateparks.org/fortclinch" rel="noopener noreferrer" target="_blank">https://www.floridastateparks.org/fortclinch</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              30.7045° N, 81.4330° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual military imprint with strong room-by-room investigation value and manageable public-access structure zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-pensacola-fortpickens">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Pickens</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Pensacola Beach, FL</div>
+          <div class="entry-meta-item">National Seashore Fort</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Major Gulf Coast brick fortification associated with Civil War defense, imprisonment, and coastal isolation. The site’s scale, confinement areas, and preserved casemate network create a strong residual military environment.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in casemate corridors</li>
+              <li>Disembodied voices near former cell areas</li>
+              <li>Atmospheric heaviness in enclosed rooms</li>
+              <li>Shadow movement in artillery passages</li>
+              <li>Cold spots in interior chambers</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Main brick fortification</li>
+              <li>Casemates and corridors</li>
+              <li>Battery and artillery areas</li>
+              <li>Former prisoner / cell contexts</li>
+              <li>Exterior waterfront perimeter</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1400 Fort Pickens Rd, Pensacola Beach, FL 32561
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.nps.gov/guis/planyourvisit/fort-pickens-area.htm" rel="noopener noreferrer" target="_blank">https://www.nps.gov/guis/planyourvisit/fort-pickens-area.htm</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              30.3279° N, 87.2961° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual military and confinement imprint with significant wind and surf noise contamination across exterior zones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-keywest-fortzachary">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Fort Zachary Taylor Historic State Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Fort</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Key West, FL</div>
+          <div class="entry-meta-item">Historic State Park</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Civil War-era coastal fort at the southern edge of Key West with thick masonry construction, artillery positions, and layered military occupation. The site offers both preserved interior spaces and open exterior batteries.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in interior fort rooms</li>
+              <li>Voices near magazine and corridor spaces</li>
+              <li>Shadow anomalies in low-light chambers</li>
+              <li>Cold spots in masonry interiors</li>
+              <li>Presence sensations in battery approach areas</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Interior fort chambers</li>
+              <li>Magazine and corridor network</li>
+              <li>Exterior battery positions</li>
+              <li>Grounds and parade context</li>
+              <li>Waterfront perimeter</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              601 Howard England Way, Key West, FL 33040
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.floridastateparks.org/parks-and-trails/fort-zachary-taylor-historic-state-park" rel="noopener noreferrer" target="_blank">https://www.floridastateparks.org/parks-and-trails/fort-zachary-taylor-historic-state-park</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              24.5465° N, 81.8114° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual military imprint with strong environmental noise influence from coastal exposure.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-coralgables-biltmore">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Biltmore Hotel</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Coral Gables, FL</div>
+          <div class="entry-meta-item">Historic Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Opened in 1926, the Biltmore is one of Florida’s grandest hotel structures and is associated with Prohibition-era history, wartime adaptation, and long hospitality continuity. Disturbance reports are generally focused on upper floors and service transitions.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Upper-floor footsteps</li>
+              <li>Visual anomalies in corridor and ballroom-adjacent areas</li>
+              <li>Unexplained room disturbances</li>
+              <li>Presence sensations near historic suites</li>
+              <li>Cold spots in lower-traffic hall zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and reception</li>
+              <li>Guest floors</li>
+              <li>Ballroom and event spaces</li>
+              <li>Service and kitchen transitions</li>
+              <li>Pool and exterior grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1200 Anastasia Ave, Coral Gables, FL 33134
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://biltmorehotel.com/" rel="noopener noreferrer" target="_blank">https://biltmorehotel.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              25.7405° N, 80.2793° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic hotel with layered hospitality-era residual disturbance reports and selective room-focused activity.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-stpetersburg-vinoy">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">
+            The Vinoy Resort
+            &amp;
+            Golf Club
+          </h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Hotel</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">St. Petersburg, FL</div>
+          <div class="entry-meta-item">Historic Resort Hotel</div>
+          <div class="entry-meta-item">Access: Public / Guest Access</div>
+        </div>
+        <p class="entry-body">Mediterranean Revival waterfront hotel opened in 1925 and long associated with social, civic, and wartime-era Florida history. The Vinoy is a strong Gulf Coast hotel entry with recurring corridor and guest-space disturbance reports.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in guest corridors</li>
+              <li>Visual anomalies in older wings</li>
+              <li>Room-specific atmosphere changes</li>
+              <li>Presence sensations in ballroom and public rooms</li>
+              <li>Late-night voice reports</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Lobby and public rooms</li>
+              <li>Historic guest wings</li>
+              <li>Ballroom/event spaces</li>
+              <li>Stairwells and service zones</li>
+              <li>Waterfront exterior approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              501 5th Ave NE, St. Petersburg, FL 33701
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.marriott.com/en-us/hotels/pieak-the-vinoy-resort-and-golf-club-autograph-collection/overview/" rel="noopener noreferrer" target="_blank">https://www.marriott.com/en-us/hotels/pieak-the-vinoy-resort-and-golf-club-autograph-collection/overview/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              27.7778° N, 82.6286° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual hospitality imprint with probable multi-era layering tied to resort and civic-use continuity.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-westpalm-riddlehouse">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Riddle House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-residential">House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">West Palm Beach, FL</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Event-Based</div>
+        </div>
+        <p class="entry-body">Now located in Yesteryear Village, the Riddle House is one of South Florida’s strongest dedicated haunting cases, with reports accumulated by both docents and investigative teams. It is frequently cited for concentrated upstairs activity and object movement.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Object displacement in upper rooms</li>
+              <li>Shadow figures in stair and hallway areas</li>
+              <li>Voice phenomena and direct-response claims</li>
+              <li>Cold spots around upper landing</li>
+              <li>Apparitional reports tied to attic and bedroom spaces</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Entry level rooms</li>
+              <li>Main staircase</li>
+              <li>Upper bedrooms and hall</li>
+              <li>Attic / upper storage context</li>
+              <li>Exterior porch and grounds</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              9067 Southern Blvd, West Palm Beach, FL 33411
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.southfloridafair.com/p/yesteryearvillage" rel="noopener noreferrer" target="_blank">https://www.southfloridafair.com/p/yesteryearvillage</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              26.6823° N, 80.1799° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible intelligent haunting with repeated investigator-reported interaction claims in a controlled museum setting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-brooksville-maystringer">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">May-Stringer House</h3>
+          <div class="entry-tags">
+            <span class="tag tag-residential">House</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Brooksville, FL</div>
+          <div class="entry-meta-item">Historic House Museum</div>
+          <div class="entry-meta-item">Access: Public / Tour Access</div>
+        </div>
+        <p class="entry-body">Victorian-era house museum with one of Florida’s best-known room-specific haunting reputations. Reports have accumulated over many years and often center on staircase transitions, upstairs rooms, and child-related folklore elements.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparitional reports on upper floor</li>
+              <li>Voices and whisper anomalies</li>
+              <li>Cold spots in preserved room interiors</li>
+              <li>Object movement and light disturbances</li>
+              <li>Presence sensations on stair landings</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Ground-floor parlors</li>
+              <li>Central staircase</li>
+              <li>Upper bedrooms</li>
+              <li>Museum exhibit rooms</li>
+              <li>Porch and surrounding yard</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              601 Museum Ct, Brooksville, FL 34601
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://hernandohistoricalmuseumassoc.com/" rel="noopener noreferrer" target="_blank">https://hernandohistoricalmuseumassoc.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              28.5559° N, 82.3894° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Historic residential haunting case with consistent room-by-room disturbance reporting and strong comparative investigation value.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-rockledge-ashleys">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Ashley’s of Rockledge</h3>
+          <div class="entry-tags">
+            <span class="tag tag-business">Restaurant</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Rockledge, FL</div>
+          <div class="entry-meta-item">Historic Restaurant</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Operating inside a nineteenth-century riverfront house, Ashley’s is one of the Space Coast’s strongest public-access hospitality haunting entries. Reports include staff, guest, and investigator accounts tied to dining rooms and upper house spaces.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition reports in dining and upstairs areas</li>
+              <li>Unexplained movement of objects and settings</li>
+              <li>Cold spots in interior rooms</li>
+              <li>Voices and whisper reports after hours</li>
+              <li>Presence sensations near staircase and hallway zones</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Ground-floor dining rooms</li>
+              <li>Bar and service spaces</li>
+              <li>Upper-floor rooms</li>
+              <li>Central hallway and stair</li>
+              <li>Exterior veranda approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1609 S Harbor City Blvd, Melbourne, FL 32901
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://ashleys.com/" rel="noopener noreferrer" target="_blank">https://ashleys.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              28.0830° N, 80.6007° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Possible intelligent haunting in a converted historic residence with repeated hospitality-context witness reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-tampa-tampatheatre">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Tampa Theatre</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Theatre</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Tampa, FL</div>
+          <div class="entry-meta-item">Historic Theatre</div>
+          <div class="entry-meta-item">Access: Public / Event Hours</div>
+        </div>
+        <p class="entry-body">Lavish 1926 atmospheric theatre in downtown Tampa with classic backstage, balcony, and projection-era investigation potential. Reports are concentrated in performance-adjacent spaces and low-traffic interior transition zones.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Apparition folklore associated with theatre interior</li>
+              <li>Backstage footsteps and movement</li>
+              <li>Balcony visual anomalies</li>
+              <li>Voices in projection and access areas</li>
+              <li>Cold spots in stage-side corridors</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Auditorium and seating bowl</li>
+              <li>Balcony and upper access</li>
+              <li>Stage and backstage wings</li>
+              <li>Projection room context</li>
+              <li>Lobby and stair approaches</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              711 N Franklin St, Tampa, FL 33602
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://tampatheatre.org/" rel="noopener noreferrer" target="_blank">https://tampatheatre.org/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              27.9506° N, 82.4604° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual performance-space imprint with selective backstage and balcony disturbance reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-tampa-ybormuseum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Ybor City Museum State Park</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Tampa, FL</div>
+          <div class="entry-meta-item">State Park Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Museum and preserved cigar-worker cottage cluster documenting Tampa’s immigrant labor and cigar-industry era. This is a strong district-context entry for Ybor City and helps anchor broader reports tied to the neighborhood’s layered occupational history.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Presence sensations in worker cottage spaces</li>
+              <li>Footsteps in preserved rooms</li>
+              <li>Visual anomalies in museum transitions</li>
+              <li>Cold spots in quieter interior corners</li>
+              <li>Atmospheric shifts during low-traffic periods</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Museum building</li>
+              <li>Worker cottages</li>
+              <li>Garden and courtyard areas</li>
+              <li>Exhibit rooms</li>
+              <li>District-edge approach</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1818 E 9th Ave, Tampa, FL 33605
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.floridastateparks.org/parks-and-trails/ybor-city-museum-state-park" rel="noopener noreferrer" target="_blank">https://www.floridastateparks.org/parks-and-trails/ybor-city-museum-state-park</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              27.9608° N, 82.4383° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual labor-and-domestic imprint tied to immigrant working-class history within the larger Ybor City cluster.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-tampa-plantmuseum">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Henry B. Plant Museum</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Museum</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Tampa, FL</div>
+          <div class="entry-meta-item">Historic Hotel Museum</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Located in the former Tampa Bay Hotel, this museum preserves one of Florida’s grandest Gilded Age hospitality interiors. It functions as a high-value comparative site for hotel-era residual cases without relying solely on folklore-heavy framing.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Footsteps in exhibit corridors</li>
+              <li>Visual anomalies in preserved guest spaces</li>
+              <li>Cold spots in isolated rooms</li>
+              <li>Presence sensations in grand hall transitions</li>
+              <li>Object or light irregularities reported by staff</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Grand corridors and exhibit halls</li>
+              <li>Former guest-room zones</li>
+              <li>Public rooms</li>
+              <li>Stair and tower-adjacent areas</li>
+              <li>Museum service transitions</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              401 W Kennedy Blvd, Tampa, FL 33606
+            </p>
+            <p>
+              <strong>Website:</strong>
+              <a href="https://www.plantmuseum.com/" rel="noopener noreferrer" target="_blank">https://www.plantmuseum.com/</a>
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              27.9466° N, 82.4645° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual hospitality-era imprint within a museum-managed environment requiring normal public-site access coordination.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-orlando-greenwood">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Greenwood Cemetery</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Cemetery</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Orlando, FL</div>
+          <div class="entry-meta-item">Historic Municipal Cemetery</div>
+          <div class="entry-meta-item">Access: Public</div>
+        </div>
+        <p class="entry-body">Large historic cemetery containing multiple eras of Orlando’s civic and family history. As with other major burial-ground entries, the site is best approached as a residual and environmental documentation location rather than a sensationalized haunt site.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Shadow and light anomalies at dusk</li>
+              <li>Voice reports in older sections</li>
+              <li>Localized cold spots</li>
+              <li>Atmospheric shifts along interior roads</li>
+              <li>Presence sensations near family plots</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Historic burial sections</li>
+              <li>Roadway grid and paths</li>
+              <li>Older marker concentrations</li>
+              <li>Memorial areas</li>
+              <li>Perimeter tree line</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              1603 Greenwood St, Orlando, FL 32801
+            </p>
+            <p>
+              <strong>Website:</strong>
+              Not publicly maintained
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              28.5236° N, 81.3693° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Residual burial-ground imprint with moderate city-noise contamination and stronger value for controlled comparative cemetery work.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="entry" data-location-id="fl-portstlucie-devilstree">
+      <div class="entry-summary" onclick="this.parentElement.classList.toggle('open')">
+        <div class="entry-header">
+          <h3 class="entry-term">Devil’s Tree</h3>
+          <div class="entry-tags">
+            <span class="tag tag-location">Folklore</span>
+            <span class="tag tag-haunted">Haunted</span>
+            <span class="tag tag-historic">Historic</span>
+          </div>
+        </div>
+        <div class="entry-meta">
+          <div class="entry-meta-item">Port St. Lucie, FL</div>
+          <div class="entry-meta-item">Outdoor Folklore Landmark</div>
+          <div class="entry-meta-item">Access: Public Park Area</div>
+        </div>
+        <p class="entry-body">Folklore-heavy outdoor anomaly entry associated with local violence narratives and longstanding regional legend. This site is better treated as an outdoor folklore / environmental case than a standard haunting location.</p>
+      </div>
+      <div class="entry-details">
+        <div class="detail-grid">
+          <div class="detail-box">
+            <div class="detail-label">Activity Reported</div>
+            <ul>
+              <li>Reports of oppressive atmosphere</li>
+              <li>Audio anomaly claims after dark</li>
+              <li>Touch and scratch folklore accounts</li>
+              <li>Environmental discomfort in immediate tree area</li>
+              <li>Repeated regional legend reporting</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Structure Layout</div>
+            <ul>
+              <li>Single-tree focal point</li>
+              <li>Immediate clearing and trail approach</li>
+              <li>Park-edge environment</li>
+              <li>Road and access perimeter</li>
+            </ul>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Location Data</div>
+            <p>
+              <strong>Address:</strong>
+              9401 SW Citrus Blvd, Port St. Lucie, FL 34987
+            </p>
+            <p>
+              <strong>Website:</strong>
+              Not publicly maintained
+            </p>
+            <p>
+              <strong>Coordinates:</strong>
+              27.2938° N, 80.4396° W
+            </p>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Classification</div>
+            <p>Folklore / outdoor anomaly entry. High legend density; requires strict environmental and expectation-bias controls before assigning paranormal weight.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+
+<script>
+  const searchInput = document.getElementById('search-input');
+  const searchCount = document.getElementById('search-count');
+  const allEntries = document.querySelectorAll('.entry');
+  const allSections = document.querySelectorAll('.sec-block');
+
+  searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    allEntries.forEach(entry => {
+      const text = entry.textContent.toLowerCase();
+      const matches = term === '' || text.includes(term);
+
+      entry.style.display = matches ? 'block' : 'none';
+      if (matches) visibleCount++;
+    });
+
+    allSections.forEach(section => {
+      if (term === '') {
+        section.style.display = 'block';
+        return;
+      }
+
+      const hasVisible = section.querySelector('.entry[style*="display: block"]');
+      section.style.display = hasVisible ? 'block' : 'none';
+    });
+
+    searchCount.textContent = `${visibleCount} locations`;
+  });
+
+  // Machine readable metadata export for Swift bridge
+  window.TPI_LocationDirectory = {
+    version: "1.0.0",
+    totalLocations: 20,
+    states: ["Florida"],
+    lastUpdated: new Date().toISOString(),
+    getAllLocations: function() {
+      return Array.from(allEntries).map(entry => ({
+        id: entry.dataset.locationId,
+        state: entry.closest('.sec-block').dataset.state,
+        name: entry.querySelector('.entry-term').textContent,
+        city: entry.querySelector('.entry-meta-item').textContent.split(',')[0]
+      }));
+    }
+  };
+</script>
+
+<!-- Machine readable JSON metadata -->
+<script type="application/json" id="tpi-directory-metadata">
+{
+  "schema_version": "1.0",
+  "total_locations": 20,
+  "states": [
+    {
+      "name": "Florida",
+      "code": "FL",
+      "count": 20
+    }
+  ],
+  "last_updated": "2026-04-22T00:00:00Z"
+}
+</script>
+
+</body>
+</html>
