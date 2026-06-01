@@ -36,7 +36,7 @@ body {
 
 .command-header {
     background: #111820;
-    padding: 80px 20px;
+    padding: 64px 20px;
     text-align: center;
     border-bottom: 1px solid #1f2a36;
     position: relative;
@@ -94,7 +94,7 @@ body {
 
 .command-nav {
     background: #0c1116;
-    padding: 12px 14px;
+    padding: 10px 12px;
     border-bottom: 1px solid #1f2a36;
 
     display: flex;
@@ -102,7 +102,7 @@ body {
     justify-content: center;
     align-items: center;
 
-    gap: 8px 10px;
+    gap: 7px 8px;
     position: relative;
 }
 
@@ -112,12 +112,12 @@ body {
     color: #9fb3c8;
     text-decoration: none;
 
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
 
-    padding: 7px 10px;
+    padding: 7px 8px;
     border-radius: 6px;
     border: 1px solid transparent;
 
