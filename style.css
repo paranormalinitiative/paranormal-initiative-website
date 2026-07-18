@@ -562,6 +562,51 @@ footer {
     box-shadow: 0 0 18px rgba(0, 194, 255, 0.12);
 }
 
+.ghostology-module-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.lesson-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin-bottom: 14px;
+    color: #bfeeff;
+    font-size: 12px;
+    font-weight: 800;
+    border: 1px solid rgba(0, 194, 255, 0.28);
+    border-radius: 50%;
+    background: rgba(0, 194, 255, 0.08);
+}
+
+.lesson-topics {
+    margin-top: 14px !important;
+    color: #8aa0b6 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.ghostology-image-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.ghostology-image-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    border-radius: 6px;
+    border: 1px solid #1f2a36;
+    background: #0c1116;
+}
+
 .directory-subpage-hero {
     margin-left: auto;
     margin-right: auto;
@@ -623,6 +668,11 @@ footer {
     }
 
     .learning-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ghostology-module-list,
+    .ghostology-image-grid {
         grid-template-columns: 1fr;
     }
 
