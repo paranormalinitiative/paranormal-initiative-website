@@ -1085,3 +1085,128 @@ footer {
         display: none;
     }
 }
+
+/* ===== EVP / ITC RESEARCH EXTENSIONS ===== */
+
+/* Figures / screenshot media (bordered, rounded, on-brand) */
+.research-figure {
+    margin: 26px 0;
+    border: 1px solid rgba(0, 194, 255, 0.22);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #111820;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.30);
+}
+
+.research-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.research-figure figcaption {
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #8aa0b6;
+    border-top: 1px solid #1f2a36;
+    background: rgba(12, 17, 22, 0.6);
+}
+
+/* Two-up figure grid for paired screenshots */
+.research-figure-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 26px 0;
+}
+
+@media (max-width: 760px) {
+    .research-figure-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* On-brand data tables */
+.research-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 22px 0;
+    font-size: 14px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #1f2a36;
+}
+
+.research-table th,
+.research-table td {
+    text-align: left;
+    padding: 13px 15px;
+    border-bottom: 1px solid #1f2a36;
+    vertical-align: top;
+    color: #c6d2de;
+}
+
+.research-table thead th {
+    background: rgba(0, 194, 255, 0.08);
+    color: #55c8ff;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(0, 194, 255, 0.30);
+}
+
+.research-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.research-table tbody tr:hover {
+    background: rgba(0, 194, 255, 0.04);
+}
+
+.research-table strong {
+    color: #f4f8fb;
+}
+
+/* Wrapping for small screens */
+.table-wrap {
+    overflow-x: auto;
+    margin: 22px 0;
+    border-radius: 12px;
+}
+
+/* Pull-quote styled to theme */
+.research-quote {
+    margin: 26px 0;
+    padding: 8px 0 8px 22px;
+    border-left: 3px solid #00c2ff;
+    color: #e6edf3;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* Author byline */
+.research-byline {
+    margin-top: 14px;
+    color: #8aa0b6;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+}
+
+.research-byline strong {
+    color: #bfeeff;
+}
+
+/* Compact two-column feature cards on the research page */
+.research-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 18px;
+}
+
+@media (max-width: 760px) {
+    .research-grid {
+        grid-template-columns: 1fr;
+    }
+}
