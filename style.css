@@ -847,6 +847,92 @@ footer {
     color: #bfeeff;
 }
 
+.series-intro {
+    max-width: 840px;
+    margin: 0 0 26px;
+    color: #b8c4d1;
+}
+
+.series-post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.series-post-card {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    background: linear-gradient(180deg, rgba(20, 28, 36, 0.98), rgba(12, 17, 22, 0.98));
+    border: 1px solid #1f2a36;
+    border-radius: 6px;
+    transition: transform 0.22s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.series-post-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 194, 255, 0.75);
+    box-shadow: 0 0 20px rgba(0, 194, 255, 0.13);
+}
+
+.series-post-card img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    background: #0c1116;
+    border-bottom: 1px solid #1f2a36;
+}
+
+.series-post-card-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.series-post-card-copy span {
+    margin-bottom: 10px;
+    color: #55c8ff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.series-post-card-copy h3 {
+    margin: 0 0 10px;
+    color: #f4f8fb;
+    font-size: 20px;
+    line-height: 1.22;
+}
+
+.series-post-card-copy p {
+    margin: 0;
+    color: #aebdca;
+    font-size: 14px;
+}
+
+.series-post-card-copy strong {
+    margin-top: auto;
+    padding-top: 18px;
+    color: #55c8ff;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.series-feature img {
+    max-height: 980px;
+}
+
+.series-article {
+    padding-top: 18px;
+}
+
 .lesson-navigation-band {
     display: flex;
     flex-wrap: wrap;
@@ -931,7 +1017,8 @@ footer {
 
     .ghostology-module-list,
     .ghostology-lesson-grid,
-    .ghostology-image-grid {
+    .ghostology-image-grid,
+    .series-post-grid {
         grid-template-columns: 1fr;
     }
 
