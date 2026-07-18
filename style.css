@@ -695,6 +695,48 @@ footer {
     box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
 }
 
+.annotated-feature figure {
+    margin: 0;
+}
+
+.annotated-feature figcaption {
+    margin-top: 12px;
+    color: #8aa0b6;
+    font-size: 13px;
+}
+
+.diagram-callout-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.diagram-callout {
+    padding: 16px;
+    background: rgba(12, 17, 22, 0.82);
+    border: 1px solid rgba(0, 194, 255, 0.18);
+    border-radius: 6px;
+}
+
+.diagram-callout strong,
+.diagram-callout span {
+    display: block;
+}
+
+.diagram-callout strong {
+    margin-bottom: 6px;
+    color: #bfeeff;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.diagram-callout span {
+    color: #b8c4d1;
+    font-size: 13px;
+}
+
 .lesson-reading-section {
     max-width: 980px;
     padding-top: 34px;
@@ -817,6 +859,10 @@ footer {
 
     .lesson-reading-block {
         padding: 20px;
+    }
+
+    .diagram-callout-grid {
+        grid-template-columns: 1fr;
     }
 
     .state-directory-grid {
