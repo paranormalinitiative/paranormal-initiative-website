@@ -493,6 +493,10 @@ footer {
 
 .app-feature-media {
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
     border: 1px solid rgba(0, 194, 255, 0.2);
     border-radius: 8px;
     background: #05080b;
@@ -500,13 +504,15 @@ footer {
 
 .app-feature-media img {
     width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
+    height: 100%;
+    object-fit: contain;
     display: block;
+    padding: 0;
 }
 
 .app-feature-media-wide img {
-    aspect-ratio: 3 / 2;
+    width: 100%;
+    height: 100%;
 }
 
 .app-feature-copy h3 {
