@@ -9,5 +9,6 @@ node_modules/**
 .DS_Store
 **/.DS_Store
 wrangler.jsonc
+wrangler.toml
 package-lock.json
 npm-debug.log*
