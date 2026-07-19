@@ -855,7 +855,8 @@ footer {
 
 .series-post-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 360px));
+    justify-content: center;
     gap: 20px;
 }
 
