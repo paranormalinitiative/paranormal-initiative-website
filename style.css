@@ -37,6 +37,43 @@ select,
     user-select: text;
 }
 
+.dev-copy-mode body,
+.dev-copy-mode body * {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.dev-copy-mode img {
+    -webkit-user-drag: auto;
+    user-drag: auto;
+}
+
+.dev-copy-toast {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 9999;
+    max-width: min(320px, calc(100vw - 36px));
+    padding: 10px 14px;
+    border: 1px solid rgba(67, 215, 255, 0.45);
+    border-radius: 6px;
+    background: rgba(8, 15, 21, 0.94);
+    box-shadow: 0 0 24px rgba(67, 215, 255, 0.2);
+    color: #e6edf3;
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dev-copy-toast-hide {
+    opacity: 0;
+    transform: translateY(8px);
+}
+
 /* Reduce motion support */
 @media (prefers-reduced-motion: reduce) {
     html {

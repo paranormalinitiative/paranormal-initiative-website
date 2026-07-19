@@ -7,20 +7,76 @@
 
   function installContentProtection() {
     const blockedEvents = ["contextmenu", "copy", "cut", "dragstart"];
+    let devUnlockClicks = 0;
+    let devUnlockTimer;
+
+    function isDevCopyMode() {
+      return localStorage.getItem("tpiDevCopyMode") === "enabled";
+    }
+
+    function setDevCopyMode(enabled) {
+      localStorage.setItem("tpiDevCopyMode", enabled ? "enabled" : "disabled");
+      document.documentElement.classList.toggle("dev-copy-mode", enabled);
+      showDevCopyToast(enabled);
+    }
+
+    function showDevCopyToast(enabled) {
+      const existing = document.querySelector(".dev-copy-toast");
+      if (existing) existing.remove();
+
+      const toast = document.createElement("div");
+      toast.className = "dev-copy-toast";
+      toast.textContent = enabled ? "Dev copy mode enabled" : "Dev copy mode disabled";
+      document.body.appendChild(toast);
+
+      window.setTimeout(() => {
+        toast.classList.add("dev-copy-toast-hide");
+        window.setTimeout(() => toast.remove(), 350);
+      }, 1800);
+    }
+
+    function installDevCopyUnlock() {
+      document.documentElement.classList.toggle("dev-copy-mode", isDevCopyMode());
+
+      document.addEventListener("click", event => {
+        const x = event.clientX;
+        const y = event.clientY;
+        const inUnlockZone = x > window.innerWidth - 96 && y > window.innerHeight - 96;
+
+        if (!inUnlockZone) {
+          devUnlockClicks = 0;
+          return;
+        }
+
+        devUnlockClicks += 1;
+        window.clearTimeout(devUnlockTimer);
+        devUnlockTimer = window.setTimeout(() => {
+          devUnlockClicks = 0;
+        }, 2500);
+
+        if (devUnlockClicks >= 10) {
+          devUnlockClicks = 0;
+          setDevCopyMode(!isDevCopyMode());
+        }
+      });
+    }
 
     blockedEvents.forEach(eventName => {
       document.addEventListener(eventName, event => {
+        if (isDevCopyMode()) return;
         if (isEditableTarget(event.target)) return;
         event.preventDefault();
       });
     });
 
     document.addEventListener("selectstart", event => {
+      if (isDevCopyMode()) return;
       if (isEditableTarget(event.target)) return;
       event.preventDefault();
     });
 
     document.addEventListener("keydown", event => {
+      if (isDevCopyMode()) return;
       if (isEditableTarget(event.target)) return;
 
       const key = event.key.toLowerCase();
@@ -38,6 +94,8 @@
     document.querySelectorAll("img").forEach(img => {
       img.setAttribute("draggable", "false");
     });
+
+    installDevCopyUnlock();
   }
 
   async function inject(selector, url) {
