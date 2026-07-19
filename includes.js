@@ -1,4 +1,45 @@
 (async function () {
+  function isEditableTarget(target) {
+    if (!target || target === document) return false;
+    const editable = target.closest?.("input, textarea, select, [contenteditable='true']");
+    return Boolean(editable);
+  }
+
+  function installContentProtection() {
+    const blockedEvents = ["contextmenu", "copy", "cut", "dragstart"];
+
+    blockedEvents.forEach(eventName => {
+      document.addEventListener(eventName, event => {
+        if (isEditableTarget(event.target)) return;
+        event.preventDefault();
+      });
+    });
+
+    document.addEventListener("selectstart", event => {
+      if (isEditableTarget(event.target)) return;
+      event.preventDefault();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (isEditableTarget(event.target)) return;
+
+      const key = event.key.toLowerCase();
+      const modifier = event.metaKey || event.ctrlKey;
+      const blockedShortcut = modifier && ["a", "c", "x", "s", "u", "p"].includes(key);
+      const blockedDevTools =
+        event.key === "F12" ||
+        (modifier && event.shiftKey && ["i", "j", "c"].includes(key));
+
+      if (blockedShortcut || blockedDevTools) {
+        event.preventDefault();
+      }
+    });
+
+    document.querySelectorAll("img").forEach(img => {
+      img.setAttribute("draggable", "false");
+    });
+  }
+
   async function inject(selector, url) {
     const host = document.querySelector(selector);
     if (!host) return;
@@ -14,6 +55,7 @@
 
   await inject("#site-header", "header.html");
   await inject("#site-footer", "footer.html");
+  installContentProtection();
 
   // Per-page title/subtitle (optional)
   const titleMeta = document.querySelector('meta[name="pp:title"]');

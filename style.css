@@ -18,6 +18,23 @@ body {
     background: #0f1419;
     color: #e6edf3;
     line-height: 1.6;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+img {
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+input,
+textarea,
+select,
+[contenteditable="true"] {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 /* Reduce motion support */
