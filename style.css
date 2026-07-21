@@ -1174,6 +1174,31 @@ footer {
     color: #c1ccd7;
 }
 
+.advisory-invitation-hero {
+    max-width: 1060px;
+}
+
+.advisory-invitation-feature {
+    max-width: 1180px;
+}
+
+.advisory-invitation-feature img {
+    max-height: none;
+    border-color: rgba(0, 194, 255, 0.26);
+    box-shadow: 0 0 34px rgba(0, 194, 255, 0.12);
+}
+
+.advisory-invitation-cta {
+    border-color: rgba(0, 194, 255, 0.3);
+    background:
+        radial-gradient(circle at top right, rgba(0, 194, 255, 0.12), transparent 36%),
+        linear-gradient(180deg, rgba(20, 28, 36, 0.98), rgba(12, 17, 22, 0.98));
+}
+
+.advisory-invitation-cta p:last-child {
+    color: #e6edf3;
+}
+
 .advisory-grid {
     display: grid;
     gap: 28px;
