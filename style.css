@@ -1329,6 +1329,19 @@ footer {
     color: #c1ccd7;
 }
 
+.advisory-value-grid a {
+    color: inherit;
+    overflow-wrap: anywhere;
+    text-decoration-color: rgba(0, 194, 255, 0.45);
+    text-underline-offset: 3px;
+}
+
+.advisory-value-grid a:hover,
+.advisory-value-grid a:focus {
+    color: #ffffff;
+    text-decoration-color: #00c2ff;
+}
+
 .advisory-invitation-hero {
     max-width: 1060px;
 }
