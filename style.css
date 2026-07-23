@@ -1258,6 +1258,15 @@ footer {
     padding-top: 32px;
 }
 
+.lesson-credit {
+    margin: 0;
+    color: #d8edf8;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
 .directory-subpage-hero {
     margin-left: auto;
     margin-right: auto;
