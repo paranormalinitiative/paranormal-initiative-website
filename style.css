@@ -1258,10 +1258,40 @@ footer {
     padding-top: 32px;
 }
 
-.lesson-credit {
-    margin: 0;
-    color: #d8edf8;
+.paper-author-note {
+    max-width: 980px;
+    margin: 22px auto 0;
+    padding: 24px;
+    background: linear-gradient(180deg, rgba(16, 23, 30, 0.95), rgba(9, 13, 18, 0.96));
+    border: 1px solid rgba(85, 200, 255, 0.22);
+    border-radius: 6px;
+}
+
+.paper-author-note h3 {
+    margin: 0 0 10px;
+    color: #f4f8fb;
+    font-size: 20px;
+}
+
+.paper-author-note p {
+    margin: 4px 0;
+    color: #b8c4d1;
     font-size: 14px;
+    line-height: 1.6;
+}
+
+.paper-author-note a {
+    color: #55c8ff;
+    text-decoration: none;
+}
+
+.paper-author-note a:hover {
+    text-decoration: underline;
+}
+
+.paper-author-label {
+    color: #55c8ff !important;
+    font-size: 11px !important;
     font-weight: 800;
     letter-spacing: 0.16em;
     text-transform: uppercase;
