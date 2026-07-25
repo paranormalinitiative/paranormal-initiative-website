@@ -1,17 +1,35 @@
 (function () {
-  let noticeShown = false;
+  let noticeTimer;
+
+  function isEditableTarget(target) {
+    if (!target || target === document) return false;
+    return Boolean(target.closest?.("input, textarea, select, [contenteditable='true']"));
+  }
+
+  function isDevCopyMode() {
+    return localStorage.getItem("tpiDevCopyMode") === "enabled";
+  }
 
   function showNotice() {
-    if (noticeShown) return;
-    noticeShown = true;
-
-    const banner = document.createElement("div");
-    banner.className = "content-protection-banner";
+    let banner = document.querySelector(".content-protection-banner");
+    if (!banner) {
+      banner = document.createElement("div");
+      banner.className = "content-protection-banner";
+      document.body.appendChild(banner);
+    }
     banner.textContent = "Protected Content: Copy, paste, and selection are disabled.";
-    document.body.prepend(banner);
+    banner.classList.remove("content-protection-banner-hide");
+
+    window.clearTimeout(noticeTimer);
+    noticeTimer = window.setTimeout(() => {
+      banner.classList.add("content-protection-banner-hide");
+      window.setTimeout(() => banner.remove(), 300);
+    }, 2200);
   }
 
   function block(event) {
+    if (isDevCopyMode()) return;
+    if (isEditableTarget(event.target)) return;
     event.preventDefault();
     showNotice();
   }
