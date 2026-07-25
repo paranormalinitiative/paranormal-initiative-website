@@ -168,7 +168,7 @@
         <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
         <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
         <button type="submit">Open Editor</button>
-        <p class="access-note">Need access? Use an invite code on the Member Login page.</p>
+        <p class="access-note">Need access? Use your invite code on the Contributor Invite page. Returning contributors can sign in from Member Login.</p>
       </form>
     `;
     document.body.appendChild(gate);
@@ -213,7 +213,7 @@
         </div>
         <div class="media-modal-body contributor-manager">
           <form data-invite-form class="contributor-login-panel">
-            <p class="access-note">Create invite-only access codes. Give a code to a contributor so they can register from Member Login.</p>
+            <p class="access-note">Create invite-only access codes. Give a code to a contributor so they can register from the Contributor Invite page.</p>
             <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Example: TPI-RESEARCH-2026" required></label>
             <label><span>Role</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
             <button type="submit">Create Invite</button>
@@ -227,6 +227,7 @@
           </form>` : ""}
           <form data-contributor-form>
             <label><span>Display Name</span><input name="displayName" type="text" required></label>
+            <label><span>Title / Role Label</span><input name="title" type="text" placeholder="Research Contributor"></label>
             <label><span>Username</span><input name="username" type="text" required></label>
             <label><span>Password</span><input name="password" type="text" required></label>
             <label><span>Role</span><select name="role"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
@@ -234,6 +235,7 @@
             <label><span>Affiliation</span><input name="affiliation" type="text"></label>
             <label><span>Organization</span><input name="organization" type="text"></label>
             <label><span>Website</span><input name="website" type="url"></label>
+            <label class="access-checkbox"><input name="commentSignature" type="checkbox" checked><span>Use this name and title automatically on comments and replies.</span></label>
             <button type="submit">Add Contributor</button>
           </form>
           <div class="contributor-list">
@@ -264,11 +266,13 @@
       username,
       password: String(data.get("password") || ""),
       displayName: String(data.get("displayName") || username).trim(),
+      title: String(data.get("title") || "").trim(),
       role: String(data.get("role") || "contributor"),
       correspondence: String(data.get("correspondence") || "").trim(),
       affiliation: String(data.get("affiliation") || "").trim(),
       organization: String(data.get("organization") || "").trim(),
       website: String(data.get("website") || "").trim(),
+      commentSignatureEnabled: data.get("commentSignature") === "on",
       active: true
     });
     saveUsers(users);

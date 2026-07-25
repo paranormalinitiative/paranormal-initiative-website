@@ -49,6 +49,7 @@ Admin needs a way to:
 - Disable contributor
 - Reset password / send invite
 - Assign role
+- Generate invite code
 - Review submitted papers
 - Approve, reject, or request edits
 
@@ -71,8 +72,22 @@ Each contributor should have:
 - Website
 - Bio note, optional
 - Default author note
+- Comment signature enabled / disabled
 - Role
 - Active / disabled status
+
+## Invite-Only Account Flow
+
+Current prototype:
+
+1. Admin/editor opens the editor with contributor access or the site owner's 10-click dev unlock.
+2. Admin/editor opens **Contributors** and creates an invite code.
+3. The contributor opens `contributor-invite.html`.
+4. The contributor enters the invite code first.
+5. If the code is valid and unused, the page reveals the account setup form.
+6. The contributor creates display name, title/role label, username, password, and optional author/contact fields.
+7. The contributor can choose whether their display name and title should be used automatically on comments and replies.
+8. After setup, they use `member-login.html` for returning access.
 
 These fields should populate the Research Paper Editor Post Settings.
 
@@ -128,12 +143,14 @@ Comment options:
 - Anonymous comment
 - Name-only comment
 - Logged-in contributor comment
+- Logged-in contributor reply using saved name/title when enabled
 - Reply to an existing comment
 
 Recommended comment fields:
 
 - Post/article id
 - Name, optional
+- Contributor title / role label, optional
 - Email, optional and private if collected
 - Comment text
 - Created date

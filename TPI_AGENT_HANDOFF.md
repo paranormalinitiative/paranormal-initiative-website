@@ -123,8 +123,11 @@ The editor currently includes:
 - The editor page is exempt from the public copy/paste lock once unlocked so writing, copying, and pasting inside the editor works normally.
 - The main navigation includes `Member Login`.
 - Public users cannot create their own account freely. Registration requires an invite code.
+- `Member Login` is the last item in the main nav and is for returning contributors only.
+- `contributor-invite.html` is the invite-only setup page: enter invite code first, then create username/password and contributor profile.
 - Contributor tools can create invite codes and add contributor/editor/admin accounts with profile fields.
 - Contributor profile fields populate the author note settings when logged in.
+- Contributor profiles include a title/role label and an option to use the contributor name/title automatically on comments and replies.
 - This access layer is a local browser prototype using `localStorage`; it is not production security.
 - `Publish Article` can publish a local article record to the selected destination. Destination pages inject matching locally published cards into their existing grids. The generated article opens through `published-article.html?id=...`.
 
@@ -132,7 +135,7 @@ The editor currently includes:
 
 `includes.js` now injects local prototype published article cards and a local prototype comment section before the footer on actual readable article/paper pages only. Do not put comments on Education Center hubs, Research Library hubs, destination/category pages, or section listing pages such as `education-area-investigation-science.html`.
 
-Comments currently appear on generated `published-article.html` entries plus article-style pages such as `education-research-*`, `investigation-development-*`, `ghostology-101-lesson-*`, and `evp-itc-lesson-*`. Visitors can comment anonymously or enter a name. Each comment logs a local date/time and supports local replies. Comments are stored per page in `localStorage`.
+Comments currently appear on generated `published-article.html` entries plus article-style pages such as `education-research-*`, `investigation-development-*`, `ghostology-101-lesson-*`, and `evp-itc-lesson-*`. Visitors can comment anonymously or enter a name. Logged-in contributors can automatically post or reply using their saved display name and title/role label when their profile option is enabled. Each comment logs a local date/time and supports local replies. Comments are stored per page in `localStorage`.
 
 This is a working front-end scaffold only. Production comments still need backend storage and moderation.
 

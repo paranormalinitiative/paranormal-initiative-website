@@ -138,6 +138,7 @@
     if (!shouldShowComments(pageId)) return;
 
     const storageKey = `tpiComments:${pageId}`;
+    const contributorSignature = getContributorSignature();
 
     function shouldShowComments(currentPage) {
       if (currentPage === "published-article.html") return true;
@@ -216,13 +217,62 @@
       });
     }
 
+    function getContributorSignature() {
+      const username = localStorage.getItem("tpiEditorSession");
+      if (!username) return null;
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+      } catch (error) {
+        users = [];
+      }
+
+      const user = users.find(candidate => candidate.username === username && candidate.active !== false);
+      if (!user || user.commentSignatureEnabled === false) return null;
+
+      const name = user.displayName || user.username || "";
+      const title = user.title || user.role || "";
+      if (!name) return null;
+      return { name, title };
+    }
+
+    function getSubmittedIdentity(form, nameField, useProfileField) {
+      const useProfile = contributorSignature && form.querySelector(`[name='${useProfileField}']`)?.checked;
+      if (useProfile) {
+        return {
+          name: contributorSignature.name,
+          authorTitle: contributorSignature.title
+        };
+      }
+
+      return {
+        name: String(new FormData(form).get(nameField) || "").trim(),
+        authorTitle: ""
+      };
+    }
+
+    function renderCommentAuthor(name, authorTitle, fallback) {
+      return `
+        <div>
+          <h3>${escapeComment(name || fallback)}</h3>
+          ${authorTitle ? `<strong class="tpi-comment-title">${escapeComment(authorTitle)}</strong>` : ""}
+        </div>
+      `;
+    }
+
     const section = document.createElement("section");
     section.className = "tpi-comments";
     section.innerHTML = `
       <div class="tpi-comments-inner">
         <h2>Comments</h2>
-        <p>You may comment anonymously or add your name if you would like it shown.</p>
+        <p>${contributorSignature ? `Signed in comments can use your contributor name and title automatically.` : `You may comment anonymously or add your name if you would like it shown.`}</p>
         <form class="tpi-comment-form">
+          ${contributorSignature ? `
+          <label class="tpi-comment-profile">
+            <input name="useContributorProfile" type="checkbox" checked>
+            <span>Post as ${escapeComment(contributorSignature.name)}${contributorSignature.title ? ` - ${escapeComment(contributorSignature.title)}` : ""}</span>
+          </label>` : ""}
           <label>
             <span>Name (optional)</span>
             <input name="name" type="text" placeholder="Anonymous Contributor">
@@ -243,7 +293,7 @@
       list.innerHTML = comments.length ? comments.map(comment => `
         <article class="tpi-comment">
           <div class="tpi-comment-meta">
-            <h3>${escapeComment(comment.name || "Anonymous Contributor")}</h3>
+            ${renderCommentAuthor(comment.name, comment.authorTitle, "Anonymous Contributor")}
             <time>${escapeComment(formatCommentDate(comment.createdAt))}</time>
           </div>
           <p>${escapeComment(comment.text)}</p>
@@ -252,7 +302,7 @@
               ${comment.replies.map(reply => `
                 <article class="tpi-reply">
                   <div class="tpi-comment-meta">
-                    <h3>${escapeComment(reply.name || "TPI Reply")}</h3>
+                    ${renderCommentAuthor(reply.name, reply.authorTitle, "TPI Reply")}
                     <time>${escapeComment(formatCommentDate(reply.createdAt))}</time>
                   </div>
                   <p>${escapeComment(reply.text)}</p>
@@ -261,6 +311,11 @@
             </div>
           ` : ""}
           <form class="tpi-reply-form" data-comment-id="${escapeComment(comment.id || "")}">
+            ${contributorSignature ? `
+            <label class="tpi-comment-profile">
+              <input name="useContributorProfile" type="checkbox" checked>
+              <span>Reply as ${escapeComment(contributorSignature.name)}${contributorSignature.title ? ` - ${escapeComment(contributorSignature.title)}` : ""}</span>
+            </label>` : ""}
             <label>
               <span>Reply name (optional)</span>
               <input name="name" type="text" placeholder="TPI Reply">
@@ -280,7 +335,7 @@
       const replyForm = event.target.closest(".tpi-reply-form");
       if (replyForm) {
         const data = new FormData(replyForm);
-        const name = String(data.get("name") || "").trim();
+        const identity = getSubmittedIdentity(replyForm, "name", "useContributorProfile");
         const text = String(data.get("reply") || "").trim();
         if (!text) return;
 
@@ -288,7 +343,12 @@
         const comment = comments.find(item => item.id === replyForm.dataset.commentId);
         if (!comment) return;
         comment.replies = Array.isArray(comment.replies) ? comment.replies : [];
-        comment.replies.push({ name, text, createdAt: new Date().toISOString() });
+        comment.replies.push({
+          name: identity.name,
+          authorTitle: identity.authorTitle,
+          text,
+          createdAt: new Date().toISOString()
+        });
         saveComments(comments);
         replyForm.reset();
         renderComments();
@@ -298,13 +358,14 @@
       const commentForm = event.target.closest(".tpi-comment-form");
       if (!commentForm) return;
       const data = new FormData(commentForm);
-      const name = String(data.get("name") || "").trim();
+      const identity = getSubmittedIdentity(commentForm, "name", "useContributorProfile");
       const text = String(data.get("comment") || "").trim();
       if (!text) return;
       const comments = getComments();
       comments.push({
         id: makeCommentId(),
-        name,
+        name: identity.name,
+        authorTitle: identity.authorTitle,
         text,
         replies: [],
         status: "local-prototype",

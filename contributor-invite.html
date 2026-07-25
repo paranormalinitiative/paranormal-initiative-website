@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contributor Invite | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Contributor Invite">
+    <meta name="pp:subtitle" content="Invite-Only Research Access">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+</head>
+<body>
+<div id="site-header"></div>
+
+<section class="member-login-shell member-login-single">
+    <div class="editor-access-card" data-invite-code-panel>
+        <p class="portal-kicker">Invite Only</p>
+        <h2>Enter Invite Code</h2>
+        <p>Contributor accounts are created by invitation only. Enter the invite code you were given to begin setup.</p>
+        <form data-invite-check>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required></label>
+            <button type="submit">Submit Invite Code</button>
+        </form>
+        <p class="access-note">Already have a contributor account? <a href="member-login.html">Go to Member Login</a>.</p>
+    </div>
+
+    <div class="editor-access-card invite-setup-card" data-invite-setup-panel hidden>
+        <p class="portal-kicker">Create Contributor Login</p>
+        <h2>Set Up Your Account</h2>
+        <p>Create the login you will use when returning to the Research Paper Editor.</p>
+        <form data-invite-register>
+            <input name="inviteCode" type="hidden">
+            <label><span>Display Name</span><input name="displayName" type="text" required></label>
+            <label><span>Title / Role Label</span><input name="title" type="text" placeholder="Research Contributor"></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
+            <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
+            <label><span>Affiliation</span><input name="affiliation" type="text"></label>
+            <label><span>Organization</span><input name="organization" type="text"></label>
+            <label><span>Website</span><input name="website" type="url"></label>
+            <label class="access-checkbox">
+                <input name="commentSignature" type="checkbox" checked>
+                <span>Use my name and title automatically on comments and replies.</span>
+            </label>
+            <button type="submit">Create Login</button>
+        </form>
+    </div>
+
+    <p id="member-login-status" class="access-note member-login-status"></p>
+</section>
+
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="member-login.js"></script>
+</body>
+</html>

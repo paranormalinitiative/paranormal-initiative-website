@@ -1440,6 +1440,37 @@ footer {
     max-width: 980px;
 }
 
+.member-login-single {
+    grid-template-columns: minmax(0, 480px);
+}
+
+.member-login-status {
+    grid-column: 1 / -1;
+    justify-self: center;
+    max-width: 480px;
+}
+
+.access-checkbox,
+.tpi-comment-profile {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 10px !important;
+    color: #b8c4d1;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.access-checkbox input,
+.tpi-comment-profile input {
+    width: auto !important;
+    margin-top: 3px;
+}
+
+.access-checkbox span,
+.tpi-comment-profile span {
+    color: #b8c4d1 !important;
+}
+
 .contributor-manager form {
     gap: 12px;
 }
@@ -1986,6 +2017,14 @@ footer {
 .tpi-comment h3 {
     color: #f4f8fb;
     font-size: 15px;
+}
+
+.tpi-comment-title {
+    display: block;
+    margin-top: 2px;
+    color: #8aa0b6;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .tpi-comment time {
