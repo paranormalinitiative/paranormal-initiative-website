@@ -1309,6 +1309,224 @@ footer {
     text-transform: uppercase;
 }
 
+/* ===== PAPER EDITOR ===== */
+
+.editor-hero {
+    padding-bottom: 24px;
+}
+
+.paper-editor-shell {
+    max-width: 1320px;
+    padding-top: 20px;
+}
+
+.editor-meta-panel,
+.editor-pane,
+.preview-pane {
+    background: rgba(20, 28, 36, 0.72);
+    border: 1px solid #1f2a36;
+    border-radius: 6px;
+}
+
+.editor-meta-panel {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+.editor-meta-panel label {
+    display: grid;
+    gap: 7px;
+}
+
+.editor-meta-panel span {
+    color: #55c8ff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.editor-meta-panel input,
+.editor-output-panel textarea {
+    width: 100%;
+    color: #e6edf3;
+    background: rgba(9, 13, 18, 0.92);
+    border: 1px solid #243140;
+    border-radius: 6px;
+    outline: none;
+}
+
+.editor-meta-panel input {
+    min-height: 42px;
+    padding: 10px 12px;
+    font: inherit;
+}
+
+.paper-editor-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.86fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.editor-pane,
+.preview-pane {
+    padding: 18px;
+}
+
+.editor-pane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.editor-pane-header h3,
+.editor-pane-header p {
+    margin: 0;
+}
+
+.editor-pane-header h3 {
+    color: #f4f8fb;
+    font-size: 16px;
+}
+
+.editor-pane-header p {
+    color: #8aa0b6;
+    font-size: 12px;
+}
+
+.editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
+    background: rgba(9, 13, 18, 0.7);
+    border: 1px solid #1f2a36;
+    border-radius: 6px;
+}
+
+.editor-toolbar button,
+.editor-output-panel .portal-button {
+    min-height: 34px;
+    padding: 7px 10px;
+    color: #f4f8fb;
+    background: rgba(0, 194, 255, 0.08);
+    border: 1px solid rgba(0, 194, 255, 0.35);
+    border-radius: 5px;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.paper-editor-body {
+    min-height: 560px;
+    padding: 24px;
+    color: #d7e2ec;
+    background: rgba(9, 13, 18, 0.92);
+    border: 1px solid #243140;
+    border-radius: 6px;
+    outline: none;
+}
+
+.paper-editor-body h3,
+.paper-preview-card h3 {
+    margin: 30px 0 12px;
+    color: #f4f8fb;
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+.paper-editor-body h3:first-child,
+.paper-preview-card h3:first-child {
+    margin-top: 0;
+}
+
+.paper-editor-body p,
+.paper-preview-card p {
+    color: #c7d3de;
+    font-size: 15px;
+}
+
+.paper-editor-body p {
+    margin: 0 0 14px;
+}
+
+.paper-editor-body ul,
+.paper-preview-card ul {
+    color: #c7d3de;
+}
+
+.editor-output-panel {
+    margin-top: 18px;
+}
+
+.editor-output-panel textarea {
+    min-height: 170px;
+    padding: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    resize: vertical;
+}
+
+.paper-preview-card {
+    min-height: 720px;
+    padding: 28px;
+    background: rgba(9, 13, 18, 0.92);
+    border: 1px solid #243140;
+    border-radius: 6px;
+}
+
+.paper-preview-card h2 {
+    margin: 0 0 8px;
+    color: #f4f8fb;
+    font-size: 30px;
+    line-height: 1.16;
+}
+
+.paper-preview-subtitle {
+    margin: 0;
+}
+
+.paper-preview-meta {
+    margin: 10px 0 24px;
+    color: #8aa0b6;
+    font-size: 13px;
+}
+
+.paper-preview-card .lesson-reading-copy p {
+    margin: 0 0 14px;
+}
+
+.paper-preview-card .lesson-reading-copy p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+    .editor-meta-panel,
+    .paper-editor-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .paper-editor-shell {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .paper-editor-body {
+        min-height: 420px;
+    }
+}
+
 .directory-subpage-hero {
     margin-left: auto;
     margin-right: auto;

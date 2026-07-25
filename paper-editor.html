@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Editor | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Paper Editor">
+    <meta name="pp:subtitle" content="Research Library Drafting Tool">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+</head>
+<body>
+<div id="site-header"></div>
+
+<section class="portal-hero editor-hero">
+    <p class="portal-kicker">Drafting Tool</p>
+    <h2>Blogger-style paper editor with live preview.</h2>
+    <p>Write the full paper in one editing surface, preview it as a TPI research page, and copy the cleaned article HTML when it is ready to move into WordPress.</p>
+</section>
+
+<section class="paper-editor-shell">
+    <div class="editor-meta-panel">
+        <label>
+            <span>Paper Title</span>
+            <input id="editor-title" type="text" value="Untitled Research Paper">
+        </label>
+        <label>
+            <span>Subtitle</span>
+            <input id="editor-subtitle" type="text" value="Research Library Draft">
+        </label>
+        <label>
+            <span>Author</span>
+            <input id="editor-author" type="text" value="Todd Wayne">
+        </label>
+        <label>
+            <span>Source / Link Note</span>
+            <input id="editor-source" type="text" placeholder="Optional source, profile, or external paper link">
+        </label>
+    </div>
+
+    <div class="paper-editor-layout">
+        <section class="editor-pane">
+            <div class="editor-pane-header">
+                <h3>Editor</h3>
+                <p id="editor-status">Draft ready</p>
+            </div>
+            <div class="editor-toolbar" aria-label="Editor toolbar">
+                <button type="button" data-block="h3">Heading</button>
+                <button type="button" data-block="p">Paragraph</button>
+                <button type="button" data-command="bold">Bold</button>
+                <button type="button" data-command="italic">Italic</button>
+                <button type="button" data-command="insertUnorderedList">List</button>
+                <button type="button" data-action="link">Link</button>
+                <button type="button" data-action="sample">Sample</button>
+                <button type="button" data-action="clear">Clear</button>
+            </div>
+            <div id="paper-editor-body" class="paper-editor-body" contenteditable="true" spellcheck="true"></div>
+            <div class="editor-output-panel">
+                <div class="editor-pane-header">
+                    <h3>Article HTML</h3>
+                    <button type="button" class="portal-button" data-action="copy">Copy HTML</button>
+                </div>
+                <textarea id="editor-html-output" readonly></textarea>
+            </div>
+        </section>
+
+        <section class="preview-pane">
+            <div class="editor-pane-header">
+                <h3>Preview</h3>
+                <p>Single paper body</p>
+            </div>
+            <article class="paper-preview-card">
+                <p class="portal-kicker">Research Library · Field Paper</p>
+                <h2 id="preview-title"></h2>
+                <p id="preview-subtitle" class="paper-preview-subtitle"></p>
+                <p id="preview-meta" class="paper-preview-meta"></p>
+                <div id="preview-body" class="lesson-reading-copy paper-single-textbox"></div>
+            </article>
+        </section>
+    </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="paper-editor.js"></script>
+</body>
+</html>
