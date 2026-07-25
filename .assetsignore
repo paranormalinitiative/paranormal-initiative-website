@@ -14,5 +14,14 @@ node_modules/**
 **/.DS_Store
 wrangler.jsonc
 wrangler.toml
+worker.js
+functions
+functions/**
+migrations
+migrations/**
+CLOUDFLARE_PORTAL_SETUP.md
+CONTRIBUTOR_PORTAL_PLAN.md
+PAPER_EDITOR_ROADMAP.md
+TPI_AGENT_HANDOFF.md
 package-lock.json
 npm-debug.log*
