@@ -1318,8 +1318,134 @@ footer {
 .paper-editor-shell {
     width: min(96vw, 1680px);
     max-width: none;
+    margin-left: auto;
+    margin-right: auto;
     min-height: calc(100vh - 120px);
     padding: 26px 0 18px;
+    opacity: 1;
+    transform: none;
+    animation: none;
+}
+
+.editor-locked .paper-editor-shell {
+    display: none;
+}
+
+.editor-access-gate {
+    display: grid;
+    place-items: center;
+    min-height: calc(100vh - 180px);
+    padding: 32px 18px;
+}
+
+.editor-access-card {
+    display: grid;
+    gap: 14px;
+    width: min(440px, 100%);
+    padding: 26px;
+    background: #101820;
+    border: 1px solid #2b3d4f;
+    border-radius: 6px;
+}
+
+.editor-access-card h2,
+.editor-access-card p {
+    margin: 0;
+}
+
+.editor-access-card h2 {
+    color: #f4f8fb;
+    font-size: 28px;
+    line-height: 1.15;
+}
+
+.editor-access-card p,
+.access-note {
+    color: #8aa0b6;
+    font-size: 13px;
+}
+
+.access-error {
+    color: #ff9a9a;
+}
+
+.editor-access-card label,
+.contributor-manager form {
+    display: grid;
+    gap: 8px;
+}
+
+.editor-access-card span {
+    color: #8aa0b6;
+    font-size: 13px;
+}
+
+.editor-access-card input,
+.contributor-manager input,
+.contributor-manager select {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    color: #e6edf3;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 3px;
+    outline: none;
+    font: inherit;
+}
+
+.editor-access-card button,
+.contributor-manager button {
+    min-height: 38px;
+    padding: 8px 12px;
+    color: #061018;
+    background: #55c8ff;
+    border: 1px solid #55c8ff;
+    border-radius: 3px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.contributor-modal-card {
+    width: min(760px, 100%);
+}
+
+.contributor-manager {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.75fr);
+    align-items: start;
+}
+
+.contributor-manager form {
+    gap: 12px;
+}
+
+.contributor-manager form label {
+    display: grid;
+    gap: 6px;
+}
+
+.contributor-list {
+    display: grid;
+    gap: 8px;
+}
+
+.contributor-row {
+    display: grid;
+    gap: 2px;
+    padding: 10px;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 3px;
+}
+
+.contributor-row strong {
+    color: #f4f8fb;
+}
+
+.contributor-row span {
+    color: #8aa0b6;
+    font-size: 12px;
 }
 
 .paper-editor-topbar {
@@ -1432,10 +1558,15 @@ footer {
 }
 
 .editor-pane {
+    max-width: none;
+    margin: 0;
     height: 760px;
     padding: 0 22px 0 0;
     border-right: 1px solid #1f2a36;
     overflow: hidden;
+    opacity: 1;
+    transform: none;
+    animation: none;
 }
 
 .editor-pane-header {
@@ -1720,6 +1851,97 @@ footer {
     margin: 0;
     color: #8aa0b6;
     font-size: 13px;
+}
+
+.tpi-comments {
+    max-width: 980px;
+    padding-top: 28px;
+    padding-bottom: 56px;
+}
+
+.tpi-comments-inner {
+    display: grid;
+    gap: 16px;
+    padding: 24px;
+    background: #101820;
+    border: 1px solid #263646;
+    border-radius: 6px;
+}
+
+.tpi-comments h2,
+.tpi-comments h3,
+.tpi-comments p {
+    margin: 0;
+}
+
+.tpi-comments h2 {
+    color: #f4f8fb;
+    font-size: 24px;
+}
+
+.tpi-comments p {
+    color: #b8c4d1;
+}
+
+.tpi-comment-form {
+    display: grid;
+    gap: 12px;
+}
+
+.tpi-comment-form label {
+    display: grid;
+    gap: 7px;
+}
+
+.tpi-comment-form span {
+    color: #8aa0b6;
+    font-size: 13px;
+}
+
+.tpi-comment-form input,
+.tpi-comment-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    color: #e6edf3;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
+    outline: none;
+    font: inherit;
+}
+
+.tpi-comment-form button {
+    justify-self: start;
+    min-height: 38px;
+    padding: 8px 14px;
+    color: #061018;
+    background: #55c8ff;
+    border: 1px solid #55c8ff;
+    border-radius: 3px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.tpi-comment-list {
+    display: grid;
+    gap: 10px;
+}
+
+.tpi-comment {
+    padding: 14px;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
+}
+
+.tpi-comment h3 {
+    color: #f4f8fb;
+    font-size: 15px;
+}
+
+.tpi-comment-empty {
+    color: #8aa0b6 !important;
 }
 
 @media (max-width: 900px) {

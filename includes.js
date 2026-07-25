@@ -129,6 +129,87 @@
     if (s) s.textContent = subtitleMeta.content;
   }
 
+  function installComments() {
+    if (document.body.classList.contains("editor-locked") || document.querySelector(".tpi-comments")) return;
+    const footerHost = document.getElementById("site-footer");
+    if (!footerHost) return;
+
+    const pageId = window.location.pathname.split("/").pop() || "index.html";
+    const storageKey = `tpiComments:${pageId}`;
+
+    function getComments() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || "[]");
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveComments(comments) {
+      localStorage.setItem(storageKey, JSON.stringify(comments));
+    }
+
+    function escapeComment(value) {
+      return String(value || "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    const section = document.createElement("section");
+    section.className = "tpi-comments";
+    section.innerHTML = `
+      <div class="tpi-comments-inner">
+        <h2>Comments</h2>
+        <p>You may comment anonymously or add your name if you would like it shown.</p>
+        <form class="tpi-comment-form">
+          <label>
+            <span>Name (optional)</span>
+            <input name="name" type="text" placeholder="Anonymous Contributor">
+          </label>
+          <label>
+            <span>Comment</span>
+            <textarea name="comment" rows="4" required></textarea>
+          </label>
+          <button type="submit">Post Comment</button>
+        </form>
+        <div class="tpi-comment-list" aria-live="polite"></div>
+      </div>
+    `;
+
+    function renderComments() {
+      const list = section.querySelector(".tpi-comment-list");
+      const comments = getComments();
+      list.innerHTML = comments.length ? comments.map(comment => `
+        <article class="tpi-comment">
+          <h3>${escapeComment(comment.name || "Anonymous Contributor")}</h3>
+          <p>${comment.text}</p>
+        </article>
+      `).join("") : `<p class="tpi-comment-empty">No comments yet.</p>`;
+    }
+
+    section.querySelector("form").addEventListener("submit", event => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const name = String(data.get("name") || "").trim();
+      const text = escapeComment(String(data.get("comment") || "").trim());
+      if (!text) return;
+      const comments = getComments();
+      comments.push({ name, text, status: "local-prototype", createdAt: new Date().toISOString() });
+      saveComments(comments);
+      event.currentTarget.reset();
+      renderComments();
+    });
+
+    footerHost.before(section);
+    renderComments();
+  }
+
+  installComments();
+
   // Auto-active nav link (for injected header pages)
   try {
     const path = window.location.pathname;

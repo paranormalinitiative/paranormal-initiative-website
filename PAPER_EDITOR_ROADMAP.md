@@ -16,6 +16,8 @@ The editor should help the user produce complete research papers with:
 - HTML output,
 - and a separate preview page.
 
+The next major phase is a contributor portal: login-protected editor access, admin-managed contributors, submitted papers/media, publishing review, and moderated comments. See `CONTRIBUTOR_PORTAL_PLAN.md`.
+
 ## Current Editor Behavior
 
 Location:
@@ -43,6 +45,9 @@ Current layout:
 - Inserted media has editor-only controls for moving and resizing while drafting.
 - Destination dropdown chooses where the paper belongs in the Education Center.
 - Publish Article opens a publish dialog for the chosen section/page.
+- A local prototype login gate protects the editor page until a contributor/admin signs in.
+- Admin can add contributors in the editor's Contributors dialog.
+- Public pages receive a local prototype comment section through `includes.js`.
 
 ## Toolbar Requirements
 
@@ -275,6 +280,27 @@ The user asked about Academia.edu and external papers. The working policy for th
    - Download draft HTML
 6. Add a real media storage strategy before using this as a production publishing tool.
 7. Add a "New Paper From Existing Research Page" importer if the user wants to edit current `education-research-*.html` pages.
+
+## Contributor Portal Future Phase
+
+The user wants the Research Paper Editor to require username/password access after the editor workflow is stable. A local prototype exists now, but production auth still needs a backend.
+
+Required features:
+
+- Login before opening the editor. Prototype implemented with localStorage.
+- Admin can add contributors. Prototype implemented with localStorage.
+- Contributor profiles store author note data. Prototype implemented with localStorage.
+- Contributors can submit research notes, papers, images, and videos.
+- Admin/editor can review submissions.
+- Publish flow places approved articles into the selected Education Center destination.
+- Public comments can be anonymous, name-only, or logged-in. Anonymous/name-only prototype implemented with localStorage.
+- Comments should be moderated. Production moderation is not implemented yet.
+
+Security rule:
+
+- Do not treat the current localStorage login as real security.
+- Choose a backend/auth provider first.
+- See `CONTRIBUTOR_PORTAL_PLAN.md`.
 
 ## Validation Commands
 

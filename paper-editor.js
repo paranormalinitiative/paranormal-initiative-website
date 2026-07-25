@@ -1,4 +1,6 @@
 (function () {
+  const ACCESS_USERS_KEY = "tpiEditorContributors";
+  const ACCESS_SESSION_KEY = "tpiEditorSession";
   const titleInput = document.getElementById("editor-title");
   const subtitleInput = document.getElementById("editor-subtitle");
   const destinationInput = document.getElementById("editor-destination");
@@ -30,6 +32,7 @@
 
   let activeView = "compose";
   let savedSelection = null;
+  let currentUser = null;
 
   const allowedIframeHosts = [
     "youtube.com",
@@ -68,6 +71,196 @@
     setStatus.timer = window.setTimeout(() => {
       status.textContent = "Draft ready";
     }, 1800);
+  }
+
+  function getUsers() {
+    try {
+      return JSON.parse(localStorage.getItem(ACCESS_USERS_KEY) || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem(ACCESS_USERS_KEY, JSON.stringify(users));
+  }
+
+  function getSessionUser() {
+    const username = localStorage.getItem(ACCESS_SESSION_KEY);
+    if (!username) return null;
+    return getUsers().find(user => user.username === username && user.active !== false) || null;
+  }
+
+  function applyContributorProfile(user) {
+    if (!user) return;
+    authorInput.value = user.displayName || user.username || "";
+    if (user.affiliation) affiliationInput.value = user.affiliation;
+    if (user.organization) organizationInput.value = user.organization;
+    if (user.correspondence) correspondenceInput.value = user.correspondence;
+    if (user.website) websiteInput.value = user.website;
+  }
+
+  function unlockEditor(user) {
+    currentUser = user;
+    localStorage.setItem(ACCESS_SESSION_KEY, user.username);
+    document.body.classList.remove("editor-locked");
+    document.body.classList.add("editor-authenticated");
+    document.querySelectorAll(".admin-only").forEach(node => {
+      node.hidden = user.role !== "admin";
+    });
+    applyContributorProfile(user);
+    setStatus(`Signed in as ${user.displayName || user.username}`);
+    const gate = document.getElementById("editor-access-gate");
+    if (gate) gate.remove();
+  }
+
+  function lockEditor() {
+    currentUser = null;
+    localStorage.removeItem(ACCESS_SESSION_KEY);
+    document.body.classList.add("editor-locked");
+    document.body.classList.remove("editor-authenticated");
+    document.querySelectorAll(".admin-only").forEach(node => {
+      node.hidden = true;
+    });
+    showAccessGate();
+  }
+
+  function showAccessGate() {
+    const existing = document.getElementById("editor-access-gate");
+    if (existing) existing.remove();
+
+    const users = getUsers();
+    const needsSetup = users.length === 0;
+    const gate = document.createElement("div");
+    gate.id = "editor-access-gate";
+    gate.className = "editor-access-gate";
+    gate.innerHTML = needsSetup ? `
+      <form class="editor-access-card" data-access-form="setup">
+        <p class="portal-kicker">Contributor Access</p>
+        <h2>Create Admin Login</h2>
+        <p>This local prototype protects the editor workflow on this browser. Use backend auth before public launch.</p>
+        <label><span>Admin Name</span><input name="displayName" type="text" value="Todd Wayne" required></label>
+        <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+        <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
+        <button type="submit">Create Admin</button>
+      </form>
+    ` : `
+      <form class="editor-access-card" data-access-form="login">
+        <p class="portal-kicker">Contributor Access</p>
+        <h2>Sign In</h2>
+        <p>Use your contributor username and password to open the Research Paper Editor.</p>
+        <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+        <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit">Open Editor</button>
+        <p class="access-note">Anonymous visitors can comment on posts without signing in.</p>
+      </form>
+    `;
+    document.body.appendChild(gate);
+  }
+
+  function handleAccessSubmit(event) {
+    const form = event.target.closest("[data-access-form]");
+    if (!form) return;
+    event.preventDefault();
+
+    const data = new FormData(form);
+    const mode = form.dataset.accessForm;
+    const username = String(data.get("username") || "").trim();
+    const password = String(data.get("password") || "");
+
+    if (mode === "setup") {
+      const displayName = String(data.get("displayName") || username).trim();
+      const user = {
+        username,
+        password,
+        displayName,
+        role: "admin",
+        active: true,
+        affiliation: "The Paranormal Initiative - Applied Paranormal Research and Studies",
+        organization: "Somerset Paranormal Research Society",
+        correspondence: "paranormalinitiative@yahoo.com",
+        website: ""
+      };
+      saveUsers([user]);
+      unlockEditor(user);
+      return;
+    }
+
+    const user = getUsers().find(candidate => candidate.username === username && candidate.password === password && candidate.active !== false);
+    if (!user) {
+      form.querySelector(".access-note")?.remove();
+      const note = document.createElement("p");
+      note.className = "access-note access-error";
+      note.textContent = "Username or password did not match.";
+      form.appendChild(note);
+      return;
+    }
+    unlockEditor(user);
+  }
+
+  function openContributorManager() {
+    if (!currentUser || currentUser.role !== "admin") return;
+    const existing = document.getElementById("contributors-modal");
+    if (existing) existing.remove();
+
+    const users = getUsers();
+    const modal = document.createElement("div");
+    modal.id = "contributors-modal";
+    modal.className = "media-modal";
+    modal.innerHTML = `
+      <div class="media-modal-card contributor-modal-card" role="dialog" aria-modal="true" aria-labelledby="contributors-title">
+        <div class="media-modal-header">
+          <h3 id="contributors-title">Contributors</h3>
+          <button type="button" data-action="contributors-close">Close</button>
+        </div>
+        <div class="media-modal-body contributor-manager">
+          <form data-contributor-form>
+            <label><span>Display Name</span><input name="displayName" type="text" required></label>
+            <label><span>Username</span><input name="username" type="text" required></label>
+            <label><span>Password</span><input name="password" type="text" required></label>
+            <label><span>Role</span><select name="role"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
+            <label><span>Correspondence</span><input name="correspondence" type="email"></label>
+            <label><span>Affiliation</span><input name="affiliation" type="text"></label>
+            <label><span>Organization</span><input name="organization" type="text"></label>
+            <label><span>Website</span><input name="website" type="url"></label>
+            <button type="submit">Add Contributor</button>
+          </form>
+          <div class="contributor-list">
+            ${users.map(user => `<div class="contributor-row"><strong>${escapeHtml(user.displayName || user.username)}</strong><span>${escapeHtml(user.username)} · ${escapeHtml(user.role || "contributor")}</span></div>`).join("") || "<p>No contributors yet.</p>"}
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  function addContributor(event) {
+    const form = event.target.closest("[data-contributor-form]");
+    if (!form) return;
+    event.preventDefault();
+
+    const data = new FormData(form);
+    const users = getUsers();
+    const username = String(data.get("username") || "").trim();
+    if (!username || users.some(user => user.username === username)) {
+      setStatus("Contributor username already exists");
+      return;
+    }
+
+    users.push({
+      username,
+      password: String(data.get("password") || ""),
+      displayName: String(data.get("displayName") || username).trim(),
+      role: String(data.get("role") || "contributor"),
+      correspondence: String(data.get("correspondence") || "").trim(),
+      affiliation: String(data.get("affiliation") || "").trim(),
+      organization: String(data.get("organization") || "").trim(),
+      website: String(data.get("website") || "").trim(),
+      active: true
+    });
+    saveUsers(users);
+    setStatus("Contributor added");
+    openContributorManager();
   }
 
   function escapeHtml(value) {
@@ -622,6 +815,8 @@ ${buildArticleHtml()}
     if (action === "image-menu") openMediaModal("image");
     if (action === "video-menu") openMediaModal("video");
     if (action === "media-close") closeMediaModal();
+    if (action === "contributors") openContributorManager();
+    if (action === "contributors-close") document.getElementById("contributors-modal")?.remove();
     if (action === "image-upload") imageFileInput.click();
     if (action === "image-url") insertImageUrl();
     if (action === "video-upload") videoFileInput.click();
@@ -637,6 +832,12 @@ ${buildArticleHtml()}
     if (action === "copy") copyOutput();
     if (action === "copy-card") copyDestinationCard();
     if (action === "clear") clearDraft();
+    if (action === "logout") lockEditor();
+  });
+
+  document.addEventListener("submit", event => {
+    handleAccessSubmit(event);
+    addContributor(event);
   });
 
   viewMode.addEventListener("change", event => {
@@ -670,4 +871,10 @@ ${buildArticleHtml()}
 
   editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
   htmlView.value = cleanHtml(editor.innerHTML);
+  const sessionUser = getSessionUser();
+  if (sessionUser) {
+    unlockEditor(sessionUser);
+  } else {
+    showAccessGate();
+  }
 })();

@@ -8,6 +8,8 @@ This repository is the static website for **The Paranormal Initiative**. The sit
 
 The current focus is the **Education Center / Research Library** and the new **Research Paper Editor**. The user wants full research papers, long-form field papers, and practical investigation material. They do not want short academic-looking summaries.
 
+There is now also a future **Contributor Portal** requirement: the Research Paper Editor should eventually require login, allow admins to add contributors, let contributors submit their own research papers/notes/media, and support moderated article comments including anonymous/name-only comments. See `CONTRIBUTOR_PORTAL_PLAN.md`.
+
 ## Non-Negotiable Direction
 
 - Do not turn the Education Center into a college, academy, or classroom-style course unless the user explicitly asks for that later.
@@ -116,6 +118,16 @@ The editor currently includes:
 - Preview opens a separate browser window using generated HTML.
 - Author Note insertion is built into `paper-editor.js` and is generated from the Post Settings author fields.
 - Destination selection is built into `paper-editor.js`; `Publish Article` opens a publish dialog with the article filename, destination page, full article HTML download/copy actions, destination card copy action, and an Open Destination Page action.
+- The editor now has a local prototype login gate. On first use it asks to create an admin login, then requires sign-in before showing the editor.
+- Admin users can open a Contributors manager from the editor top bar and add contributor/editor/admin accounts with profile fields.
+- Contributor profile fields populate the author note settings when logged in.
+- This access layer is a local browser prototype using `localStorage`; it is not production security.
+
+### Comments
+
+`includes.js` now injects a local prototype comment section before the footer on public pages. Visitors can comment anonymously or enter a name. Comments are stored per page in `localStorage`.
+
+This is a working front-end scaffold only. Production comments still need backend storage and moderation.
 
 ### Easy Access
 
@@ -192,11 +204,28 @@ Do not revert unrelated changes without user approval.
 15. Improve toolbar buttons with icons if desired, but keep them compact and Blogger-like.
 16. Do not reintroduce the permanent preview pane.
 17. Do not reintroduce the short rejected paper headings.
+18. Replace the local prototype auth/comment storage with a backend before public launch.
 
 ## Known Limitations
 
 - The editor is a static-browser prototype. It does not save posts to a backend.
+- The editor has local prototype access control. It uses browser `localStorage`; real contributor login still needs a backend or hosted auth provider before public launch.
 - Uploaded media is embedded as data URLs in the HTML. This is simple and offline-friendly, but not ideal for production.
 - A production workflow should eventually copy uploaded files into an `assets/` folder or use a CMS media library.
 - Browser popup settings may block Preview because it opens a new window.
 - `document.execCommand` is older browser API but still practical for this lightweight static editor. Replace later only if building a full CMS/editor system.
+
+## Contributor Portal Requirement
+
+Future editor access should work like this:
+
+1. User clicks Research Paper Editor from Education Center.
+2. If not logged in, user sees a login screen.
+3. Admin can add contributors and manage usernames/passwords or invite links.
+4. Logged-in contributor can draft/submit research papers, notes, images, and videos.
+5. Contributor author fields can auto-fill from their profile.
+6. Admin/editor reviews submissions before publishing unless the contributor has direct publish permission.
+7. Public article comments should allow anonymous, name-only, or logged-in comments.
+8. Comments should be moderated before display.
+
+See `CONTRIBUTOR_PORTAL_PLAN.md` before production implementation. The current static login is only a workflow prototype.
