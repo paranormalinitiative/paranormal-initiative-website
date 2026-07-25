@@ -1148,6 +1148,18 @@ footer {
     line-height: 1.25;
 }
 
+.paper-single-textbox h3 {
+    margin-top: 34px;
+}
+
+.paper-single-textbox h3:first-child {
+    margin-top: 0;
+}
+
+.paper-single-textbox .lesson-reading-copy + h3 {
+    margin-top: 38px;
+}
+
 .lesson-reading-copy p {
     margin: 0;
     color: #c7d3de;
