@@ -1388,6 +1388,7 @@ footer {
 }
 
 .editor-access-card input,
+.editor-access-card select,
 .contributor-manager input,
 .contributor-manager select {
     width: 100%;

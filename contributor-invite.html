@@ -16,9 +16,9 @@
 
 <section class="member-login-shell member-login-single">
     <div class="editor-access-card" data-invite-code-panel>
-        <p class="portal-kicker">Invite Only</p>
-        <h2>Enter Invite Code</h2>
-        <p>Contributor accounts are created by invitation only. Enter the invite code you were given to begin setup.</p>
+        <p class="portal-kicker">For Invited Contributors</p>
+        <h2>Enter Your Invite Code</h2>
+        <p>This is for someone who has already received an invite from The Paranormal Initiative. They enter that code here to create their contributor login.</p>
         <form data-invite-check>
             <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required></label>
             <button type="submit">Submit Invite Code</button>
@@ -27,16 +27,16 @@
     </div>
 
     <div class="editor-access-card invite-owner-tools" data-invite-owner-tools hidden>
-        <p class="portal-kicker">Owner Tools</p>
-        <h2>Generate Invite Code</h2>
-        <p>Visible only when 10-click developer unlock is active in this browser. Create a contributor invite link and send it to the person you are inviting.</p>
+        <p class="portal-kicker">Owner Tools - Private</p>
+        <h2>Create An Invite For Someone Else</h2>
+        <p>This private card appears for you while 10-click developer unlock is active. Use it when someone asks to contribute and you want to invite them.</p>
         <form data-owner-invite-form>
-            <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Leave blank to generate one"></label>
-            <label><span>Role</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
-            <button type="submit">Create Invite Link</button>
+            <label><span>Invite Code For Them</span><input name="inviteCode" type="text" placeholder="Leave blank to auto-generate"></label>
+            <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Owner / Admin</option></select></label>
+            <button type="submit">Generate Invite Link</button>
         </form>
         <form data-owner-bootstrap-form>
-            <p class="access-note">First Cloudflare setup only: enter the one-time owner setup key saved in Cloudflare Secret Store, then create your owner password.</p>
+            <p class="access-note">First-time owner setup only. Use this once to create your real owner login, then use Member Login after that.</p>
             <label><span>Owner Setup Key</span><input name="setupKey" type="password"></label>
             <label><span>Owner Username</span><input name="username" type="text" value="tpi-owner"></label>
             <label><span>Owner Password</span><input name="password" type="password"></label>
