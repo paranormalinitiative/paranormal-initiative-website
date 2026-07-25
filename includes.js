@@ -176,7 +176,7 @@
     if (!username) return null;
     try {
       const users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
-      return users.find(user => user.username === username && user.active !== false) || null;
+      return users.find(user => user.username === username && user.active !== false && !user.developerOwner) || null;
     } catch (error) {
       return null;
     }

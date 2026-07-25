@@ -62,27 +62,6 @@
     return localStorage.getItem("tpiDevCopyMode") === "enabled";
   }
 
-  function isOwnerSetupUrl() {
-    return new URLSearchParams(window.location.search).get("ownerSetup") === "1";
-  }
-
-  function installDeveloperAccessNotice() {
-    if (!isDevUnlocked()) return;
-    const shell = document.querySelector(".member-login-shell");
-    if (!shell || document.querySelector("[data-dev-access-notice]")) return;
-
-    const notice = document.createElement("div");
-    notice.className = "editor-access-card dev-access-notice";
-    notice.dataset.devAccessNotice = "true";
-    notice.innerHTML = `
-      <p class="portal-kicker">Developer Unlock Active</p>
-      <h2>Local Dev Unlock</h2>
-      <p>10-click is active for local editing. Real invite generation still requires an owner/admin login.</p>
-      <a class="portal-button" href="paper-editor.html">Open Research Paper Editor</a>
-    `;
-    shell.prepend(notice);
-  }
-
   function makeInviteCode() {
     return `TPI-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
   }
@@ -136,15 +115,15 @@
   }
 
   function showOwnerToolsForSetupOnly() {
-    if (!inviteOwnerTools || !ownerBootstrapForm || !isDevUnlocked() || !isOwnerSetupUrl()) return;
+    if (!inviteOwnerTools || !ownerBootstrapForm || !isDevUnlocked()) return;
 
     inviteOwnerTools.hidden = false;
     inviteOwnerTools.querySelector("[data-owner-invite-form]")?.setAttribute("hidden", "");
-    if (inviteLinkList) inviteLinkList.innerHTML = `<p class="access-note">Sign in as owner/admin from Member Login to generate contributor invites.</p>`;
+    if (inviteLinkList) inviteLinkList.innerHTML = "";
   }
 
   function renderOwnerInvites() {
-    const currentUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false);
+    const currentUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false && !user.developerOwner);
     if (!inviteOwnerTools || !inviteLinkList || !["admin", "editor"].includes(currentUser?.role)) return;
 
     inviteOwnerTools.hidden = false;
@@ -252,7 +231,7 @@
       return;
     }
 
-    const user = getUsers().find(candidate => candidate.username === localStorage.getItem(ACCESS_SESSION_KEY) && candidate.active !== false);
+    const user = getUsers().find(candidate => candidate.username === localStorage.getItem(ACCESS_SESSION_KEY) && candidate.active !== false && !candidate.developerOwner);
     if (!user) {
       window.location.href = "member-login.html";
       return;
@@ -494,7 +473,6 @@
   if (inviteSetupPanel) inviteSetupPanel.hidden = true;
   if (inviteOwnerTools) inviteOwnerTools.hidden = true;
   importInviteFromUrl();
-  installDeveloperAccessNotice();
   showOwnerToolsForSetupOnly();
   initDashboard();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
