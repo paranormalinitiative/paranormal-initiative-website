@@ -16,6 +16,7 @@
   const profileForm = document.querySelector("[data-profile-form]");
   const publicProfileLink = document.querySelector("[data-public-profile-link]");
   const publicProfileRoot = document.querySelector("[data-public-profile]");
+  const profilePhotoPreview = document.querySelector("[data-profile-photo-preview]");
 
   function setStatus(message, isError) {
     if (!status) return;
@@ -127,7 +128,7 @@
 
   function renderOwnerInvites() {
     const currentUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false && !user.developerOwner);
-    if (!inviteOwnerTools || !inviteLinkList || !["admin", "editor"].includes(currentUser?.role)) return;
+    if (!inviteOwnerTools || !inviteLinkList || !["owner", "admin"].includes(currentUser?.role)) return;
 
     inviteOwnerTools.hidden = false;
     inviteOwnerTools.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
@@ -153,7 +154,7 @@
 
     try {
       const session = await window.TPIApi.me();
-      if (!["admin", "editor"].includes(session.user?.role)) return false;
+      if (!["owner", "admin"].includes(session.user?.role)) return false;
       const data = await window.TPIApi.listInvites();
       ownerToolsHost.hidden = false;
       ownerToolsHost.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
@@ -181,16 +182,33 @@
     if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
     if (dashboardRole) dashboardRole.textContent = [user.title, user.role].filter(Boolean).join(" - ");
     if (publicProfileLink) publicProfileLink.href = `contributor-profile.html?username=${encodeURIComponent(user.username)}`;
+    const profileName = user.displayName || user.username || "Contributor";
+    const photoMarkup = user.photoUrl
+      ? `<img class="member-profile-photo" src="${escapeHtml(user.photoUrl)}" alt="${escapeHtml(profileName)}">`
+      : `<div class="member-profile-photo member-profile-photo-empty">${escapeHtml(profileName.charAt(0) || "C")}</div>`;
     dashboardProfile.innerHTML = `
-      ${user.photoUrl ? `<img class="member-profile-photo" src="${escapeHtml(user.photoUrl)}" alt="${escapeHtml(user.displayName || user.username || "Contributor")}">` : ""}
-      <h2>${escapeHtml(user.displayName || user.username || "Contributor")}</h2>
-      ${user.title ? `<p><strong>${escapeHtml(user.title)}</strong></p>` : ""}
-      ${user.affiliation ? `<p>${escapeHtml(user.affiliation)}</p>` : ""}
-      ${user.organization ? `<p>${escapeHtml(user.organization)}</p>` : ""}
-      ${user.correspondence ? `<p>Correspondence: ${escapeHtml(user.correspondence)}</p>` : ""}
-      ${user.website ? `<p><a href="${escapeHtml(user.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(user.website)}</a></p>` : ""}
-      ${user.bio ? `<p>${escapeHtml(user.bio).replace(/\n/g, "<br>")}</p>` : ""}
+      <div class="member-profile-summary">
+        ${photoMarkup}
+        <div>
+          <h2>${escapeHtml(profileName)}</h2>
+          <p class="public-profile-title">${escapeHtml(user.title || "Research Contributor")}</p>
+          <p class="member-profile-role">${escapeHtml(user.role || "contributor")}</p>
+        </div>
+      </div>
+      <div class="member-profile-facts">
+        ${user.affiliation ? `<p><span>Affiliation</span>${escapeHtml(user.affiliation)}</p>` : ""}
+        ${user.organization ? `<p><span>Organization</span>${escapeHtml(user.organization)}</p>` : ""}
+        ${user.correspondence ? `<p><span>Correspondence</span>${escapeHtml(user.correspondence)}</p>` : ""}
+        ${user.website ? `<p><span>Website</span><a href="${escapeHtml(user.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(user.website)}</a></p>` : ""}
+      </div>
+      <div class="member-profile-bio-preview">
+        <strong>Biography</strong>
+        <p>${user.bio ? escapeHtml(user.bio).replace(/\n/g, "<br>") : "Biography coming soon."}</p>
+      </div>
     `;
+    if (profilePhotoPreview) {
+      profilePhotoPreview.innerHTML = photoMarkup;
+    }
     if (profileForm) {
       profileForm.displayName.value = user.displayName || "";
       profileForm.title.value = user.title || "";
@@ -205,7 +223,8 @@
   }
 
   async function renderDashboardArticles(user) {
-    if (!dashboardArticles) return;
+    const dashboardDrafts = document.querySelector("[data-dashboard-drafts]");
+    if (!dashboardArticles && !dashboardDrafts) return;
     let articles = [];
     if (await cloudflareReady()) {
       try {
@@ -225,13 +244,19 @@
       }
     }
 
-    dashboardArticles.innerHTML = articles.length ? articles.map(article => `
+    const renderList = (items, emptyText, isDraftList) => items.length ? items.map(article => `
       <div class="invite-link-row">
         <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
         <span>${escapeHtml(article.subtitle || article.destination || "Research paper")}</span>
-        <a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>
+        ${isDraftList ? "" : `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>`}
+        <a class="portal-button portal-button-secondary" href="paper-editor.html?article=${encodeURIComponent(article.id)}">${isDraftList ? "Continue Editing" : "Edit Paper"}</a>
       </div>
-    `).join("") : `<p class="access-note">No published papers yet. Use the Research Paper Editor to create your first contribution.</p>`;
+    `).join("") : `<p class="access-note">${escapeHtml(emptyText)}</p>`;
+
+    const drafts = articles.filter(article => article.status !== "published");
+    const published = articles.filter(article => article.status === "published");
+    if (dashboardDrafts) dashboardDrafts.innerHTML = renderList(drafts, "No unpublished drafts yet.", true);
+    if (dashboardArticles) dashboardArticles.innerHTML = renderList(published, "No published papers yet. Use the Research Paper Editor to create your first contribution.", false);
   }
 
   async function initDashboard() {
@@ -272,18 +297,32 @@
       const profile = data.profile;
       const articles = data.articles || [];
       document.title = `${profile.displayName || profile.username} | The Paranormal Initiative`;
+      const profileName = profile.displayName || profile.username || "Contributor";
       publicProfileRoot.innerHTML = `
         <article class="public-profile-card">
-          ${profile.photoUrl ? `<img class="public-profile-photo" src="${escapeHtml(profile.photoUrl)}" alt="${escapeHtml(profile.displayName || profile.username)}">` : ""}
-          <div>
-            <p class="portal-kicker">Research Contributor</p>
-            <h2>${escapeHtml(profile.displayName || profile.username)}</h2>
-            ${profile.title ? `<p><strong>${escapeHtml(profile.title)}</strong></p>` : ""}
-            ${profile.affiliation ? `<p>${escapeHtml(profile.affiliation)}</p>` : ""}
-            ${profile.organization ? `<p>${escapeHtml(profile.organization)}</p>` : ""}
-            ${profile.correspondence ? `<p>Correspondence: ${escapeHtml(profile.correspondence)}</p>` : ""}
-            ${profile.website ? `<p><a href="${escapeHtml(profile.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.website)}</a></p>` : ""}
-            ${profile.bio ? `<div class="public-profile-bio">${escapeHtml(profile.bio).replace(/\n/g, "<br>")}</div>` : ""}
+          <aside class="public-profile-sidebar">
+            ${profile.photoUrl ? `<img class="public-profile-photo" src="${escapeHtml(profile.photoUrl)}" alt="${escapeHtml(profileName)}">` : `<div class="public-profile-photo public-profile-photo-empty">${escapeHtml(profileName.charAt(0) || "C")}</div>`}
+            <p class="portal-kicker">Contributor</p>
+            <h2>${escapeHtml(profileName)}</h2>
+            ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : `<p class="public-profile-title">Research Contributor</p>`}
+            ${profile.role ? `<p class="public-profile-role">${escapeHtml(profile.role)}</p>` : ""}
+          </aside>
+          <div class="public-profile-main">
+            <div class="public-profile-heading">
+              <p class="portal-kicker">Contributor Profile</p>
+              <h1>${escapeHtml(profileName)}</h1>
+              <p>${escapeHtml(profile.title || "Research Contributor")}</p>
+            </div>
+            <div class="public-profile-details">
+              ${profile.affiliation ? `<div><span>Affiliation</span><strong>${escapeHtml(profile.affiliation)}</strong></div>` : ""}
+              ${profile.organization ? `<div><span>Organization</span><strong>${escapeHtml(profile.organization)}</strong></div>` : ""}
+              ${profile.correspondence ? `<div><span>Correspondence</span><strong>${escapeHtml(profile.correspondence)}</strong></div>` : ""}
+              ${profile.website ? `<div><span>Website</span><strong><a href="${escapeHtml(profile.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.website)}</a></strong></div>` : ""}
+            </div>
+            <section class="public-profile-bio">
+              <h3>Biography</h3>
+              ${profile.bio ? `<p>${escapeHtml(profile.bio).replace(/\n/g, "<br>")}</p>` : `<p class="access-note">Biography coming soon.</p>`}
+            </section>
           </div>
         </article>
         <section class="editor-access-card public-profile-work">
@@ -319,6 +358,22 @@
     const users = getUsers();
 
     if (profileSubmitForm) {
+      const uploadedPhoto = profileSubmitForm.querySelector("input[name='profilePhotoFile']")?.files?.[0];
+      let photoUrl = String(data.get("photoUrl") || "").trim();
+      if (uploadedPhoto) {
+        if (!window.TPIApi || !await cloudflareReady()) {
+          setStatus("Profile photo upload needs the Cloudflare R2 media bucket. Save an image URL for now.", true);
+          return;
+        }
+        try {
+          setStatus("Uploading profile photo...", false);
+          const upload = await window.TPIApi.uploadProfilePhoto(uploadedPhoto);
+          photoUrl = upload.url || photoUrl;
+        } catch (error) {
+          setStatus(error.message, true);
+          return;
+        }
+      }
       const payload = {
         displayName: String(data.get("displayName") || "").trim(),
         title: String(data.get("title") || "").trim(),
@@ -326,7 +381,7 @@
         organization: String(data.get("organization") || "").trim(),
         correspondence: String(data.get("correspondence") || "").trim(),
         website: String(data.get("website") || "").trim(),
-        photoUrl: String(data.get("photoUrl") || "").trim(),
+        photoUrl,
         bio: String(data.get("bio") || "").trim(),
         commentSignatureEnabled: data.get("commentSignature") === "on"
       };
@@ -387,13 +442,13 @@
       if (await cloudflareReady()) {
         try {
           const session = await window.TPIApi.me();
-          hasCloudflareInviteAccess = ["admin", "editor"].includes(session.user?.role);
+          hasCloudflareInviteAccess = ["owner", "admin"].includes(session.user?.role);
         } catch (error) {
           hasCloudflareInviteAccess = false;
         }
       }
 
-      if (!hasCloudflareInviteAccess && !["admin", "editor"].includes(localUser?.role)) {
+      if (!hasCloudflareInviteAccess && !["owner", "admin"].includes(localUser?.role)) {
         setStatus("Owner/admin login is required to create invite links.", true);
         return;
       }
@@ -574,6 +629,19 @@
     }
 
     setStatus("Select the invite link field and copy it manually.", false);
+  });
+
+  document.addEventListener("change", event => {
+    const photoInput = event.target.closest("input[name='profilePhotoFile']");
+    if (!photoInput || !profilePhotoPreview || !photoInput.files?.[0]) return;
+    const file = photoInput.files[0];
+    if (!file.type.startsWith("image/")) {
+      setStatus("Profile photo must be an image file.", true);
+      photoInput.value = "";
+      return;
+    }
+    const previewUrl = URL.createObjectURL(file);
+    profilePhotoPreview.innerHTML = `<img class="member-profile-photo" src="${previewUrl}" alt="Selected profile photo preview">`;
   });
 
   if (inviteSetupPanel) inviteSetupPanel.hidden = true;

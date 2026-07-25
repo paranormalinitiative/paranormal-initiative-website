@@ -16,7 +16,7 @@ The editor should help the user produce complete research papers with:
 - HTML output,
 - and a separate preview page.
 
-The next major phase is a contributor portal: login-protected editor access, admin-managed contributors, submitted papers/media, publishing review, and moderated comments. See `CONTRIBUTOR_PORTAL_PLAN.md`.
+The contributor portal is now in progress: login-protected editor access, invite-only contributor accounts, owner/admin invite generation, dashboard profiles, drafts, published papers, and public profile pages. See `CONTRIBUTOR_PORTAL_PLAN.md`.
 
 ## Current Editor Behavior
 
@@ -51,14 +51,20 @@ Current layout:
 - Registration is invite-only.
 - Returning contributors use `member-login.html`.
 - First-time contributors use `contributor-invite.html`, enter an invite code, then create their login/profile.
-- With 10-click dev copy mode active, the site owner gets local owner access and can generate portable invite links on `contributor-invite.html`.
-- Invite codes and contributor accounts can be managed in the editor's Contributors dialog.
+- With 10-click dev copy mode active, the site owner can reveal owner setup on `member-login.html`.
+- Invite codes are generated from the private member dashboard by `owner` or `admin` accounts only.
+- Normal visitors should never see owner/admin invite tools on `contributor-invite.html`.
+- `Member Dashboard` is not a public nav item. Contributors reach it after member login.
+- Dashboard paper sections are split into unpublished drafts and published papers.
+- Drafts autosave and can be reopened in the editor.
+- Published papers can also be reopened by the owner/contributor for editing.
 - Actual readable article/paper pages receive a local prototype comment section through `includes.js`.
 - Education Center hubs, Research Library hubs, destination/category pages, and section listing pages should not show comments.
 - Comments allow anonymous/name-only posting, show local date/time, and support replies.
 - Logged-in contributors can automatically post/reply with their saved display name and title/role label when their profile option is enabled.
-- Destination pages receive locally published article cards through `includes.js`.
+- Destination pages receive published article cards through the API when Cloudflare is available, with local fallback for preview.
 - Generated published papers open through `published-article.html`.
+- Public contributor profiles open through `contributor-profile.html?username=...`.
 
 ## Toolbar Requirements
 
@@ -111,9 +117,10 @@ Current:
 
 Future:
 
-- Store uploaded images in `assets/` or a CMS media library.
-- Insert relative asset paths instead of data URLs.
+- Store uploaded images in Cloudflare R2.
+- Insert R2 media URLs instead of data URLs.
 - Add alt text/caption fields in a small modal rather than prompt boxes.
+- Profile photo should support Upload from Computer and URL. Current dashboard still needs the upload wiring.
 
 ### Videos
 
@@ -136,7 +143,7 @@ Current:
 
 Future:
 
-- Store uploaded videos in a real media folder/service.
+- Store uploaded videos/audio in Cloudflare R2.
 - Add a media picker with tabs:
   - Upload from computer
   - YouTube
@@ -144,6 +151,7 @@ Future:
   - URL
   - Embed code
 - Test Rumble URL variants with actual user examples.
+ - Add support for uploaded audio where research papers need EVP/ITC evidence clips.
 
 ## Link Behavior
 
@@ -186,7 +194,7 @@ Correspondence: paranormalinitiative@yahoo.com</p>
 
 Future:
 
-- Make author profiles configurable.
+- Make author profiles configurable from the member dashboard.
 - Add quick presets if more authors join.
 - Keep Todd Wayne as the default.
 - Consider an "Insert or Update Author Note" action so changing Post Settings can refresh an existing note.
@@ -224,9 +232,39 @@ Current behavior:
 
 Future:
 
-- Add a real publish flow that creates the new paper HTML file and inserts the card into the chosen destination page.
+- Continue the API publish flow so published records appear in the selected destination page and drafts stay private.
 - Add different card templates for field articles, investigation development posts, and research-topic papers if their page layouts diverge.
 - Let the user choose whether the generated paper should use an `education-research-*`, `investigation-development-*`, or another filename pattern.
+
+## Contributor Dashboard Requirements
+
+The dashboard should feel like a professional contributor home page, not an admin form dump.
+
+Current direction:
+
+- Profile section with display name, public title/credentials, role, affiliation, organization, correspondence email, website, profile photo, and biography.
+- Profile photo supports Upload from Computer once R2 is connected, plus URL fallback.
+- Separate paper sections:
+  - Drafts / Not Published
+  - Published Papers
+- Owner/admin-only invite tools.
+- No public `Member Dashboard` nav button.
+- Greeting in the site header after login, for example `Hello, Todd`.
+
+Still required:
+
+- Change Password / account settings.
+- Test profile photo upload from computer after R2 is connected.
+- Public profile links from article author names and contributor comments.
+- Cleaner public profile visual QA after real data is entered.
+
+## Cloudflare Storage Direction
+
+D1 is the records database. It stores accounts, invites, sessions, profile text, article records, article status, comments, and media URLs/keys.
+
+R2 is the media/file storage. It must store profile photos, article images, videos, audio, PDFs, DOCX/TXT files, and AI-generated assets.
+
+Do not store large image/video/audio data inside D1.
 
 ## Preview
 
@@ -281,45 +319,52 @@ The user asked about Academia.edu and external papers. The working policy for th
 
 ## Suggested Next Build Steps
 
-1. Visually test current editor in the browser.
-2. Make the toolbar more icon-like and less text-heavy.
-3. Replace prompt-based dialogs with dark modal dialogs for link, image URL, video URL, and embed code.
-4. Add save/load draft using `localStorage`.
-5. Add export options:
-   - Copy body HTML
-   - Copy full research page HTML
-   - Download draft HTML
-6. Add a real media storage strategy before using this as a production publishing tool.
-7. Add a "New Paper From Existing Research Page" importer if the user wants to edit current `education-research-*.html` pages.
+1. Create the Cloudflare R2 bucket and uncomment the `TPI_MEDIA` binding.
+2. Test profile photo upload from the member dashboard.
+3. Replace editor data-URL media insertion with the existing R2 article-media endpoint.
+4. Add Change Password/account settings to the member dashboard.
+5. Link article author names and contributor comment names to public profiles.
+6. Add comment moderation/admin tools.
+7. Visually test current editor, dashboard, public profile, invite page, login page, and published article page.
+8. Make the toolbar more icon-like and less text-heavy after the core portal flow is stable.
+9. Add a "New Paper From Existing Research Page" importer if the user wants to edit current `education-research-*.html` pages.
 
-## Contributor Portal Future Phase
+## Contributor Portal State
 
-The user wants the Research Paper Editor to require username/password access after the editor workflow is stable. A local prototype exists now, but production auth still needs a backend.
+The Research Paper Editor now has a Cloudflare-ready contributor portal path. D1 stores accounts, invites, sessions, profiles, article records, draft/published status, and comments. Local storage remains only as a local preview fallback.
 
-Required features:
+Current/required behavior:
 
-- Login before opening the editor. Prototype implemented with localStorage, with dev-copy-mode bypass for the site owner.
-- Admin can add contributors and invite codes. Prototype implemented with localStorage through the Contributors dialog.
-- Contributor profiles store author note data. Prototype implemented with localStorage.
+- Login before opening the editor, unless the site owner's 10-click dev copy mode is enabled.
+- Invite-only contributor setup through `contributor-invite.html`.
+- Returning contributor login through `member-login.html`.
+- Private contributor home through `member-dashboard.html`.
+- Owner/admin invite generation from the private dashboard only.
+- System roles are `contributor`, `admin`, and `owner`.
+- `editor` is a public title/credential, not a permission role.
+- Contributor profiles store author note data.
 - Contributors can submit research notes, papers, images, and videos.
-- Admin/editor can review submissions.
-- Publish flow places approved articles into the selected Education Center destination.
+- Contributors can save unpublished drafts and publish articles.
+- Published articles appear in the selected Education Center destination.
 - Public comments can be anonymous, name-only, or logged-in. Anonymous/name-only prototype implemented with localStorage.
 - Comments should be moderated. Production moderation is not implemented yet.
 
 Security rule:
 
-- Do not treat the current localStorage contributor tools as real security.
-- Choose a backend/auth provider first.
+- Do not treat localStorage fallback behavior as real security.
+- Real production auth must use the Cloudflare API/D1 session flow.
 - See `CONTRIBUTOR_PORTAL_PLAN.md`.
 
 ## Validation Commands
 
-Run these after editor changes:
+Run these after editor/contributor changes:
 
 ```bash
 node --check paper-editor.js
+node --check member-login.js
 node --check includes.js
+node --check api-client.js
+node --check 'functions/api/[[path]].js'
 ```
 
 Optional static page check:

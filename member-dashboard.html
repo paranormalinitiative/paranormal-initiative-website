@@ -38,8 +38,15 @@
                 <label><span>Organization</span><input name="organization" type="text"></label>
                 <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
                 <label><span>Website</span><input name="website" type="url"></label>
-                <label><span>Profile Photo URL</span><input name="photoUrl" type="url" placeholder="https://..."></label>
-                <label><span>Biography</span><textarea name="bio" rows="7" placeholder="Write a professional contributor biography."></textarea></label>
+                <div class="profile-photo-editor">
+                    <div class="profile-photo-preview" data-profile-photo-preview></div>
+                    <div class="profile-photo-controls">
+                        <label><span>Profile Photo</span><input name="profilePhotoFile" type="file" accept="image/*"></label>
+                        <label><span>Or Use Image URL</span><input name="photoUrl" type="url" placeholder="https://..."></label>
+                        <p class="access-note">Upload from computer after the Cloudflare R2 media bucket is connected. Until then, an image URL can still be saved.</p>
+                    </div>
+                </div>
+                <label><span>Biography</span><textarea name="bio" rows="12" placeholder="Write a professional contributor biography. This is the public biography people will see when they click your name."></textarea></label>
                 <label class="access-checkbox">
                     <input name="commentSignature" type="checkbox" checked>
                     <span>Use my display name and title on comments and replies.</span>
@@ -51,10 +58,10 @@
 
         <article class="editor-access-card">
             <p class="portal-kicker">Contributions</p>
-            <h2>Your Papers</h2>
-            <div class="invite-link-list" data-dashboard-articles>
-                <p class="access-note">Loading your papers...</p>
-            </div>
+            <h2>Unpublished Drafts</h2>
+            <div class="invite-link-list" data-dashboard-drafts><p class="access-note">Loading drafts...</p></div>
+            <h2>Published Papers</h2>
+            <div class="invite-link-list" data-dashboard-articles><p class="access-note">Loading published papers...</p></div>
         </article>
 
         <article class="editor-access-card invite-owner-tools" data-dashboard-admin hidden>
@@ -63,7 +70,7 @@
             <p>Generate invite links for approved contributors. Public visitors and regular contributors do not see this panel.</p>
             <form data-owner-invite-form>
                 <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Leave blank to auto-generate"></label>
-                <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Owner / Admin</option></select></label>
+                <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label>
                 <button type="submit">Generate Invite Link</button>
             </form>
             <div class="invite-link-list" data-invite-link-list></div>

@@ -13,3 +13,8 @@ directory = "."
 binding = "TPI_DB"
 database_name = "tpi_contributor_portal"
 database_id = "f36b9161-b517-4634-9857-bef4147cefe3"
+
+# Enable after creating the Cloudflare R2 bucket named tpi-contributor-media.
+# [[r2_buckets]]
+# binding = "TPI_MEDIA"
+# bucket_name = "tpi-contributor-media"

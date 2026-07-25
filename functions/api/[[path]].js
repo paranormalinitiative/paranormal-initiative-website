@@ -22,6 +22,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/contributors/me/profile") return requireContributor(request, env, user => handleUpdateProfile(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireContributor(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
+    if (request.method === "POST" && path === "/uploads/profile-photo") return requireContributor(request, env, user => handleProfilePhotoUpload(request, env, user));
+    if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
+    if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
@@ -50,7 +53,7 @@ async function handleOwnerBootstrap(request, env) {
     await hashPassword(password),
     clean(data.displayName || "Todd Wayne"),
     clean(data.title || "Site Owner / Administrator"),
-    "admin",
+    "owner",
     clean(data.correspondence || "paranormalinitiative@yahoo.com"),
     clean(data.affiliation || "The Paranormal Initiative - Applied Paranormal Research and Studies"),
     clean(data.organization || "Somerset Paranormal Research Society"),
@@ -66,7 +69,7 @@ async function handleOwnerBootstrap(request, env) {
       password_hash = excluded.password_hash,
       display_name = excluded.display_name,
       title = excluded.title,
-      role = 'admin',
+      role = 'owner',
       correspondence = excluded.correspondence,
       affiliation = excluded.affiliation,
       organization = excluded.organization,
@@ -113,7 +116,7 @@ async function handleMe(request, env) {
 async function handleCreateInvite(request, env, user) {
   const data = await readJson(request);
   const code = clean(data.code || makeInviteCode());
-  const role = ["admin", "editor", "contributor"].includes(data.role) ? data.role : "contributor";
+  const role = ["owner", "admin", "contributor"].includes(data.role) ? data.role : "contributor";
   if (!code) return json({ error: "Invite code is required." }, 400);
 
   await env.TPI_DB.prepare("INSERT INTO invite_codes (code, role, created_by) VALUES (?, ?, ?)")
@@ -202,12 +205,67 @@ async function handleUpdateProfile(request, env, user) {
   return json({ user: publicUser(updated) });
 }
 
+async function handleProfilePhotoUpload(request, env, user) {
+  if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
+  const upload = await readUploadFile(request);
+  if (!upload) return json({ error: "Choose a profile photo to upload." }, 400);
+  if (!upload.type.startsWith("image/")) return json({ error: "Profile photo must be an image file." }, 400);
+
+  const key = makeMediaKey("profiles", user.username, upload.name, upload.type);
+  await env.TPI_MEDIA.put(key, upload.body, {
+    httpMetadata: { contentType: upload.type },
+    customMetadata: { contributorId: user.id, purpose: "profile-photo" }
+  });
+  const url = `/api/media/${key}`;
+  await env.TPI_DB.prepare("UPDATE contributors SET photo_url = ? WHERE id = ?").bind(url, user.id).run();
+  const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
+  return json({ url, key, user: publicUser(updated) });
+}
+
+async function handleArticleMediaUpload(request, env, user) {
+  if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
+  const upload = await readUploadFile(request);
+  if (!upload) return json({ error: "Choose a media file to upload." }, 400);
+
+  const allowed = [
+    "image/",
+    "video/",
+    "audio/",
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain"
+  ];
+  if (!allowed.some(prefix => upload.type === prefix || upload.type.startsWith(prefix))) {
+    return json({ error: "That file type is not allowed for article media." }, 400);
+  }
+
+  const key = makeMediaKey("articles", user.username, upload.name, upload.type);
+  await env.TPI_MEDIA.put(key, upload.body, {
+    httpMetadata: { contentType: upload.type },
+    customMetadata: { contributorId: user.id, purpose: "article-media" }
+  });
+  return json({ url: `/api/media/${key}`, key, contentType: upload.type, name: upload.name });
+}
+
+async function handleMediaRequest(path, env) {
+  if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
+  const key = decodeURIComponent(path.replace(/^\/media\//, ""));
+  if (!key || key.includes("..")) return json({ error: "Media key is invalid." }, 400);
+  const object = await env.TPI_MEDIA.get(key);
+  if (!object) return json({ error: "Media file not found." }, 404);
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  headers.set("Content-Security-Policy", "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'none'");
+  return new Response(object.body, { headers });
+}
+
 async function handleCreateArticle(request, env, user) {
   const data = await readJson(request);
   const id = clean(data.id || crypto.randomUUID());
   await env.TPI_DB.prepare(`
-    INSERT INTO articles (id, destination, href, title, subtitle, author, source, body_html, article_html, labels, created_by, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    INSERT INTO articles (id, destination, href, title, subtitle, author, source, body_html, article_html, labels, status, created_by, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     ON CONFLICT(id) DO UPDATE SET
       destination = excluded.destination,
       href = excluded.href,
@@ -218,6 +276,7 @@ async function handleCreateArticle(request, env, user) {
       body_html = excluded.body_html,
       article_html = excluded.article_html,
       labels = excluded.labels,
+      status = excluded.status,
       updated_at = CURRENT_TIMESTAMP
   `).bind(
     id,
@@ -230,6 +289,7 @@ async function handleCreateArticle(request, env, user) {
     String(data.bodyHtml || ""),
     String(data.articleHtml || ""),
     clean(data.labels),
+    data.status === "published" ? "published" : "draft",
     user.id
   ).run();
 
@@ -240,15 +300,15 @@ async function handleListArticles(request, env) {
   const url = new URL(request.url);
   const destination = url.searchParams.get("destination");
   const stmt = destination
-    ? env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, created_at AS createdAt FROM articles WHERE destination = ? ORDER BY created_at DESC").bind(destination)
-    : env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, created_at AS createdAt FROM articles ORDER BY created_at DESC");
+    ? env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE destination = ? AND status = 'published' ORDER BY created_at DESC").bind(destination)
+    : env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE status = 'published' ORDER BY created_at DESC");
   const { results } = await stmt.all();
   return json({ articles: results });
 }
 
 async function handleContributorArticles(env, user) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, labels, created_at AS createdAt
+    SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt
     FROM articles
     WHERE created_by = ?
     ORDER BY created_at DESC
@@ -261,9 +321,9 @@ async function handlePublicContributorProfile(request, env) {
   const user = await getUserByUsername(env, username);
   if (!user || !user.active) return json({ error: "Contributor profile not found." }, 404);
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, href, title, subtitle, destination, created_at AS createdAt
+    SELECT id, href, title, subtitle, destination, status, created_at AS createdAt
     FROM articles
-    WHERE created_by = ?
+    WHERE created_by = ? AND status = 'published'
     ORDER BY created_at DESC
   `).bind(user.id).all();
   return json({ profile: publicUser(user), articles: results });
@@ -313,7 +373,7 @@ async function requireContributor(request, env, handler) {
 
 async function requireAdmin(request, env, handler) {
   const user = await getSessionUser(request, env);
-  if (!user || !["admin", "editor"].includes(user.role)) return json({ error: "Admin or editor access required." }, 403);
+  if (!user || !["owner", "admin"].includes(user.role)) return json({ error: "Owner or admin access required." }, 403);
   return handler(user);
 }
 
@@ -352,12 +412,49 @@ async function readJson(request) {
   }
 }
 
+async function readUploadFile(request) {
+  const formData = await request.formData();
+  const file = formData.get("file");
+  if (!file || typeof file === "string") return null;
+  return {
+    name: clean(file.name || "upload"),
+    type: clean(file.type || "application/octet-stream"),
+    body: await file.arrayBuffer()
+  };
+}
+
 function clean(value) {
   return String(value || "").trim();
 }
 
 function makeInviteCode() {
   return `TPI-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+}
+
+function makeMediaKey(area, username, filename, contentType) {
+  const safeArea = clean(area).toLowerCase().replace(/[^a-z0-9-]/g, "-") || "media";
+  const safeUser = clean(username).toLowerCase().replace(/[^a-z0-9-]/g, "-") || "contributor";
+  const safeName = clean(filename).toLowerCase().replace(/[^a-z0-9._-]/g, "-").replace(/-+/g, "-") || "upload";
+  const ext = extensionFromNameOrType(safeName, contentType);
+  const baseName = safeName.replace(/\.[a-z0-9]+$/, "").slice(0, 80) || "upload";
+  const day = new Date().toISOString().slice(0, 10);
+  return `${safeArea}/${safeUser}/${day}/${crypto.randomUUID()}-${baseName}${ext}`;
+}
+
+function extensionFromNameOrType(filename, contentType) {
+  const match = filename.match(/(\.[a-z0-9]{2,8})$/);
+  if (match) return match[1];
+  const type = clean(contentType);
+  if (type === "image/jpeg") return ".jpg";
+  if (type === "image/png") return ".png";
+  if (type === "image/webp") return ".webp";
+  if (type === "image/gif") return ".gif";
+  if (type === "video/mp4") return ".mp4";
+  if (type === "audio/mpeg") return ".mp3";
+  if (type === "audio/wav") return ".wav";
+  if (type === "application/pdf") return ".pdf";
+  if (type === "text/plain") return ".txt";
+  return "";
 }
 
 function publicUser(user) {

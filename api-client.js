@@ -21,6 +21,24 @@
     return data;
   }
 
+  async function upload(path, file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await fetch(`${API_ROOT}${path}`, {
+      method: "POST",
+      credentials: "same-origin",
+      body: formData
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(data.error || "Upload failed.");
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  }
+
   async function isAvailable() {
     try {
       await request("/auth/me");
@@ -41,6 +59,8 @@
     checkInvite: code => request("/invites/check", { method: "POST", body: { code } }),
     registerContributor: payload => request("/contributors/register", { method: "POST", body: payload }),
     updateProfile: payload => request("/contributors/me/profile", { method: "POST", body: payload }),
+    uploadProfilePhoto: file => upload("/uploads/profile-photo", file),
+    uploadArticleMedia: file => upload("/uploads/article-media", file),
     contributorArticles: () => request("/contributors/me/articles"),
     publicProfile: username => request(`/contributors/profile?username=${encodeURIComponent(username)}`),
     listArticles: destination => request(`/articles${destination ? `?destination=${encodeURIComponent(destination)}` : ""}`),

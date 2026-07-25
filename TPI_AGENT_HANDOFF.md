@@ -8,7 +8,7 @@ This repository is the static website for **The Paranormal Initiative**. The sit
 
 The current focus is the **Education Center / Research Library** and the new **Research Paper Editor**. The user wants full research papers, long-form field papers, and practical investigation material. They do not want short academic-looking summaries.
 
-There is now also a future **Contributor Portal** requirement: the Research Paper Editor should eventually require login, allow admins to add contributors, let contributors submit their own research papers/notes/media, and support moderated article comments including anonymous/name-only comments. See `CONTRIBUTOR_PORTAL_PLAN.md`.
+There is now also a live **Contributor Portal** direction: the Research Paper Editor requires contributor access, invite-only contributors can create accounts, logged-in members land on a private dashboard, contributors can save drafts/publish papers, and public article comments are being added. See `CONTRIBUTOR_PORTAL_PLAN.md`.
 
 ## Non-Negotiable Direction
 
@@ -38,7 +38,7 @@ Correspondence: paranormalinitiative@yahoo.com
 
 The user wants the site to support full research-paper publishing in a way that is easy to edit. The desired workflow is closer to **Blogger / WordPress editing**:
 
-- One large writing canvas.
+- One large fixed-size writing canvas.
 - Compose view and HTML view at the top.
 - A compact toolbar similar to Blogger.
 - Preview should open separately, not sit permanently next to the editor.
@@ -47,6 +47,7 @@ The user wants the site to support full research-paper publishing in a way that 
 - Link insertion should include address and whether to open in a new window.
 - Author Note should be insertable automatically from editable author-note fields.
 - The editor should include a destination/category dropdown so a paper can be assigned to the correct Education Center section or topic page.
+- The editor should autosave drafts and separate drafts from published work on the contributor dashboard.
 - The editor should be dark, but laid out like Blogger rather than like a dashboard.
 
 ## Current Built State
@@ -118,20 +119,26 @@ The editor currently includes:
 - Preview opens a separate browser window using generated HTML.
 - Author Note insertion is built into `paper-editor.js` and is generated from the Post Settings author fields.
 - Destination selection is built into `paper-editor.js`; `Publish Article` opens a publish dialog with the article filename, destination page, full article HTML download/copy actions, destination card copy action, and an Open Destination Page action.
-- The editor is behind a contributor login gate again for public publishing safety.
+- The editor is behind a contributor login gate for public publishing safety.
 - The user's existing 10-click dev copy mode bypasses the editor gate and unlocks copy/paste while building.
 - The editor page is exempt from the public copy/paste lock once unlocked so writing, copying, and pasting inside the editor works normally.
 - The main navigation includes `Member Login`.
 - Public users cannot create their own account freely. Registration requires an invite code.
-- `Member Login` is the last item in the main nav and is for returning contributors only.
-- `contributor-invite.html` is the invite-only setup page: enter invite code first, then create username/password and contributor profile.
 - `Contributor Invite` appears immediately before `Member Login` in the main nav.
-- When 10-click dev copy mode is active, `member-login.js` creates a local `tpi-owner` admin session for the site owner and shows owner access controls.
-- `contributor-invite.html` includes 10-click-only Owner Tools that generate portable invite links. The invite link carries the code payload into the contributor's browser so the static prototype can remember it locally.
-- Contributor tools can create invite codes and add contributor/editor/admin accounts with profile fields.
+- `Member Login` is the last item in the main nav and is for returning contributors only.
+- `Member Dashboard` is private after login and should not be shown as a normal public nav button.
+- `contributor-invite.html` is the invite-only setup page: enter invite code first, then create username/password and contributor profile.
+- Owner setup is hidden on `member-login.html` until the site owner's 10-click dev mode is enabled.
+- The site owner should create a real owner account through Cloudflare D1 using the `TPI_OWNER_SETUP_KEY`, then use the dashboard admin tools for invites.
+- The contributor invite page must not show owner/admin tools to normal visitors.
+- System roles are only `contributor`, `admin`, and `owner`. Do not re-add `editor` as a permission role.
+- A contributor can still call themselves Editor, Writer, Researcher, Scientist, PhD, etc. in the public title/credentials field.
 - Contributor profile fields populate the author note settings when logged in.
+- Contributor dashboard sections are split into unpublished drafts and published papers.
 - Contributor profiles include a title/role label and an option to use the contributor name/title automatically on comments and replies.
-- Cloudflare backend scaffolding has been added: `functions/api/[[path]].js`, `migrations/0001_contributor_portal.sql`, `api-client.js`, and the `TPI_DB` D1 binding placeholder in `wrangler.toml`.
+- Cloudflare backend scaffolding has been added: `worker.js`, `functions/api/[[path]].js`, `migrations/0001_contributor_portal.sql`, `migrations/0002_contributor_profiles.sql`, `api-client.js`, and the `TPI_DB` D1 binding in `wrangler.toml`.
+- R2 upload endpoints have been added for profile photos and article media. They require the `TPI_MEDIA` R2 binding, which is commented in `wrangler.toml` until the Cloudflare bucket exists.
+- The public contributor profile page has been upgraded into a professional profile layout with photo, name/title, role badge, profile details, biography showcase, and published work.
 - `CLOUDFLARE_PORTAL_SETUP.md` explains the D1 database, migration, owner setup secret, and first owner login flow.
 - `Publish Article` tries to publish to Cloudflare D1 when the API is available, then falls back to a local article record for local preview. Destination pages inject matching published cards into their existing grids. The generated article opens through `published-article.html?id=...`.
 
@@ -141,7 +148,7 @@ The editor currently includes:
 
 Comments currently appear on generated `published-article.html` entries plus article-style pages such as `education-research-*`, `investigation-development-*`, `ghostology-101-lesson-*`, and `evp-itc-lesson-*`. Visitors can comment anonymously or enter a name. Logged-in contributors can automatically post or reply using their saved display name and title/role label when their profile option is enabled. Each comment logs a date/time and supports replies. Comments use Cloudflare D1 when the API is available, with `localStorage` fallback for local preview.
 
-This is a working front-end scaffold only. Production comments still need backend storage and moderation.
+This is a working front-end/API scaffold. Production comments still need moderation controls before open public use.
 
 ### Easy Access
 
@@ -153,13 +160,16 @@ This is a working front-end scaffold only. Production comments still need backen
 
 This gives the user a visible way to open the editor.
 
-## Validation Already Run
+## Validation To Run Before Handoff/Deploy
 
-These checks passed after the latest editor work:
+Run these checks after contributor/profile/editor edits:
 
 ```bash
 node --check paper-editor.js
+node --check member-login.js
 node --check includes.js
+node --check api-client.js
+node --check 'functions/api/[[path]].js'
 ```
 
 Static ID/asset validation also passed for `paper-editor.html`: no missing editor IDs and no missing local CSS/script assets.
@@ -186,61 +196,39 @@ python3 -m http.server 4174
 - `includes.js` - Shared include/navigation behavior.
 - `header.html` / `footer.html` - Shared site chrome.
 
-## Current Git State At Handoff
-
-Expected modified files from this work:
-
-```text
-M education-center.html
-M paper-editor.html
-M paper-editor.js
-M style.css
-```
-
-Do not revert unrelated changes without user approval.
-
 ## Next Agent Priorities
 
-1. Open `paper-editor.html` in the local browser and visually test the editor.
-2. Confirm bold, italic, and strike work on highlighted text.
-3. Confirm Compose / HTML view switching preserves content.
-4. Confirm Destination dropdown choices match the Education Center landing sections and topic pages.
-5. Confirm Preview opens a separate page/window and shows title, subtitle, destination, meta, body, media, and Author Note.
-6. Confirm `Publish Article` opens the publish dialog and shows the selected destination and suggested generated paper filename.
-7. Confirm the publish dialog can download the full article HTML, copy the full article HTML, copy the destination card, and open the destination page.
-8. Confirm the Image button opens a modal card with upload and URL options.
-9. Confirm the Video button opens a modal card with upload and URL options.
-10. Confirm image upload inserts a visible image.
-11. Confirm video upload inserts a playable local video. Note: large uploaded videos become data URLs and may create huge copied HTML; this is acceptable for a prototype but should be replaced with real asset upload/storage later.
-12. Confirm YouTube and Rumble URL conversion works with real sample URLs.
-13. Confirm inserted media can be moved up/down and resized to Small, Medium, or Full in Compose view.
-14. Confirm copied/preview HTML does not include the media control buttons.
-15. Improve toolbar buttons with icons if desired, but keep them compact and Blogger-like.
-16. Do not reintroduce the permanent preview pane.
-17. Do not reintroduce the short rejected paper headings.
-18. Replace the local prototype auth/comment storage with a backend before public launch.
+1. Add Cloudflare R2 for media uploads and bind it as `TPI_MEDIA`.
+2. Add authenticated upload API endpoints for profile photos and editor media.
+3. Replace profile photo URL-only input with Upload from Computer plus URL.
+4. Replace editor image/video/audio data URLs with R2 upload URLs.
+5. Add Change Password / account settings to `member-dashboard.html`.
+6. Link article author names and contributor comments to `contributor-profile.html?username=...`.
+7. Add comment moderation before open public launch.
+8. Visually test `member-dashboard.html`, `contributor-profile.html`, `member-login.html`, `contributor-invite.html`, and `paper-editor.html`.
+9. Do not reintroduce the permanent preview pane.
+10. Do not reintroduce the short rejected paper headings.
 
 ## Known Limitations
 
-- The editor is a static-browser prototype. It does not save posts to a backend.
-- The editor has a local prototype contributor login gate with invite-code registration. It uses browser `localStorage`; real contributor login still needs a backend or hosted auth provider before public launch.
-- Uploaded media is embedded as data URLs in the HTML. This is simple and offline-friendly, but not ideal for production.
-- A production workflow should eventually copy uploaded files into an `assets/` folder or use a CMS media library.
+- R2 upload code is wired, but it will not work until the `tpi-contributor-media` bucket exists and the `TPI_MEDIA` binding is uncommented/deployed.
+- Uploaded editor media can still fall back to data URLs if R2 is unavailable; production should use R2 URLs.
+- Change Password is not implemented yet.
+- Comment moderation/admin queue is not implemented yet.
 - Browser popup settings may block Preview because it opens a new window.
-- `document.execCommand` is older browser API but still practical for this lightweight static editor. Replace later only if building a full CMS/editor system.
+- `document.execCommand` is older browser API but still practical for this lightweight editor. Replace later only if building a full CMS/editor system.
 
 ## Contributor Portal Requirement
 
-Future editor access should work like this:
+Contributor access should work like this:
 
 1. User clicks Research Paper Editor from Education Center and sees a login gate unless dev copy mode is enabled.
 2. User can also use Member Login from the main navigation.
 3. Contributor registration requires an invite code.
-4. Admin/contributor tools can manage local usernames/passwords or future invite links.
-4. Contributor can draft/submit research papers, notes, images, and videos.
-5. Contributor author fields can auto-fill from their profile.
-6. Current `Publish Article` saves locally and places the article card into the selected destination grid in this browser.
-7. Production should let an admin/editor review submissions before publishing unless the contributor has direct publish permission.
+4. Owner/admin can generate invite links from the private dashboard only.
+5. Contributor can draft/save/publish research papers, notes, images, and videos.
+6. Contributor author fields can auto-fill from their profile.
+7. Current `Publish Article` writes to the API when Cloudflare is available and falls back locally for preview.
 8. Public article comments should allow anonymous, name-only, or logged-in comments.
 9. Comments should be moderated before display in production.
 

@@ -35,6 +35,7 @@
   let activeView = "compose";
   let savedSelection = null;
   let currentUser = null;
+  let autosaveTimer = null;
 
   const allowedIframeHosts = [
     "youtube.com",
@@ -240,7 +241,7 @@
           <form data-invite-form class="contributor-login-panel">
             <p class="access-note">Create invite-only access codes. Give a code to a contributor so they can register from the Contributor Invite page.</p>
             <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Example: TPI-RESEARCH-2026" required></label>
-            <label><span>Role</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
+            <label><span>Role</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label>
             <button type="submit">Create Invite</button>
           </form>
           ${hasAdmin && !currentUser ? `
@@ -255,7 +256,7 @@
             <label><span>Title / Role Label</span><input name="title" type="text" placeholder="Research Contributor"></label>
             <label><span>Username</span><input name="username" type="text" required></label>
             <label><span>Password</span><input name="password" type="text" required></label>
-            <label><span>Role</span><select name="role"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
+            <label><span>Role</span><select name="role"><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label>
             <label><span>Correspondence</span><input name="correspondence" type="email"></label>
             <label><span>Affiliation</span><input name="affiliation" type="text"></label>
             <label><span>Organization</span><input name="organization" type="text"></label>
@@ -642,8 +643,33 @@
     setStatus("Author note inserted");
   }
 
-  function insertUploadedFile(file, kind) {
+  async function insertUploadedFile(file, kind) {
     if (!file) return;
+
+    if (window.TPIApi?.uploadArticleMedia) {
+      try {
+        setStatus(`Uploading ${kind === "image" ? "image" : "video"}...`);
+        const upload = await window.TPIApi.uploadArticleMedia(file);
+        const mediaUrl = upload.url;
+        if (mediaUrl) {
+          if (kind === "image") {
+            const alt = imageCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+            insertHtml(withMediaControls(`<img src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(alt)}">${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ""}`));
+          } else {
+            insertHtml(withMediaControls(`<video controls src="${escapeHtml(mediaUrl)}"></video><figcaption>${escapeHtml(file.name)}</figcaption>`));
+          }
+          closeMediaModal();
+          setStatus(`${kind === "image" ? "Image" : "Video"} uploaded`);
+          return;
+        }
+      } catch (error) {
+        if (error.status !== 401 && error.status !== 501 && error.status !== 500) {
+          setStatus(error.message, true);
+          return;
+        }
+        setStatus("R2 upload is not ready yet. Using local draft embed for now.");
+      }
+    }
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -799,17 +825,48 @@ ${buildArticleHtml()}
       labels: labelsInput.value.trim(),
       bodyHtml: buildArticleHtml(),
       fullHtml: buildFullArticleDocument(""),
+      status: "draft",
       updatedAt: new Date().toISOString()
     };
   }
 
+  async function saveDraft(isAutosave) {
+    if (activeView === "html") syncHtmlToCompose();
+    const record = { ...buildPublishedRecord(), status: "draft" };
+    if (window.TPIApi && await window.TPIApi.isAvailable()) {
+      try {
+        await window.TPIApi.createArticle({ ...record, articleHtml: record.fullHtml, status: "draft" });
+        setStatus(isAutosave ? "Draft autosaved" : "Draft saved");
+        return;
+      } catch (error) {
+        setStatus(error.message || "Draft save failed");
+        return;
+      }
+    }
+
+    const articles = getPublishedArticles();
+    const existingIndex = articles.findIndex(article => article.id === record.id);
+    if (existingIndex >= 0) articles[existingIndex] = record;
+    else articles.push(record);
+    savePublishedArticles(articles);
+    setStatus(isAutosave ? "Draft autosaved locally" : "Draft saved locally");
+  }
+
+  function scheduleAutosave() {
+    window.clearTimeout(autosaveTimer);
+    autosaveTimer = window.setTimeout(() => {
+      saveDraft(true);
+    }, 2500);
+  }
+
   async function publishToDestination() {
-    const record = buildPublishedRecord();
+    const record = { ...buildPublishedRecord(), status: "published" };
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
         await window.TPIApi.createArticle({
           ...record,
-          articleHtml: record.fullHtml
+          articleHtml: record.fullHtml,
+          status: "published"
         });
         publishFilename.value = record.href;
         publishDestination.value = record.destination;
@@ -938,6 +995,7 @@ ${buildArticleHtml()}
     if (action === "embed") insertEmbedCode();
     if (action === "author-note") insertAuthorNote();
     if (action === "preview") openPreview();
+    if (action === "save-draft") saveDraft(false);
     if (action === "publish") openPublishModal();
     if (action === "publish-close") closePublishModal();
     if (action === "download-article") downloadArticle();
@@ -963,12 +1021,18 @@ ${buildArticleHtml()}
     setBlock(event.target.value);
   });
 
-  editor.addEventListener("input", saveSelection);
+  editor.addEventListener("input", () => {
+    saveSelection();
+    scheduleAutosave();
+  });
   editor.addEventListener("keyup", saveSelection);
   editor.addEventListener("mouseup", saveSelection);
   editor.addEventListener("focus", saveSelection);
   editor.addEventListener("paste", handlePaste);
-  htmlView.addEventListener("input", () => setStatus("HTML edited"));
+  htmlView.addEventListener("input", () => {
+    setStatus("HTML edited");
+    scheduleAutosave();
+  });
   imageFileInput.addEventListener("change", event => {
     insertUploadedFile(event.target.files[0], "image");
     imageFileInput.value = "";
@@ -987,6 +1051,7 @@ ${buildArticleHtml()}
   async function initEditorAccess() {
     editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
     htmlView.value = cleanHtml(editor.innerHTML);
+    await loadArticleForEditing();
 
     if (isDevUnlocked()) {
       unlockEditor({
@@ -1027,6 +1092,37 @@ ${buildArticleHtml()}
     } else {
       showAccessGate();
     }
+  }
+
+  async function loadArticleForEditing() {
+    const articleId = new URLSearchParams(window.location.search).get("article");
+    if (!articleId) return;
+
+    let article = null;
+    if (window.TPIApi && await window.TPIApi.isAvailable()) {
+      try {
+        const response = await fetch("/api/contributors/me/articles", { credentials: "same-origin" });
+        if (response.ok) {
+          const articles = (await response.json()).articles || [];
+          article = articles.find(item => item.id === articleId);
+        }
+      } catch (error) {
+        article = null;
+      }
+    } else {
+      article = getPublishedArticles().find(item => item.id === articleId);
+    }
+
+    if (!article) return;
+    titleInput.value = article.title || "Untitled Research Paper";
+    subtitleInput.value = article.subtitle || "Research Library Draft";
+    if (article.destination) destinationInput.value = article.destination;
+    if (article.author) authorInput.value = article.author;
+    if (article.source) sourceInput.value = article.source;
+    if (article.labels) labelsInput.value = article.labels;
+    editor.innerHTML = article.bodyHtml || "<p><br></p>";
+    htmlView.value = cleanHtml(editor.innerHTML);
+    setStatus(article.status === "published" ? "Loaded published paper" : "Loaded draft");
   }
 
   initEditorAccess();
