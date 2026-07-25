@@ -20,13 +20,19 @@
   const viewMode = document.getElementById("editor-view-mode");
   const imageFileInput = document.getElementById("image-file-input");
   const videoFileInput = document.getElementById("video-file-input");
+  const audioFileInput = document.getElementById("audio-file-input");
   const mediaModal = document.getElementById("media-modal");
   const mediaModalTitle = document.getElementById("media-modal-title");
   const imageModalBody = document.querySelector(".media-modal-image");
   const videoModalBody = document.querySelector(".media-modal-video");
+  const audioModalBody = document.querySelector(".media-modal-audio");
   const imageUrlInput = document.getElementById("image-url-input");
+  const imageAltInput = document.getElementById("image-alt-input");
   const imageCaptionInput = document.getElementById("image-caption-input");
   const videoUrlInput = document.getElementById("video-url-input");
+  const videoCaptionInput = document.getElementById("video-caption-input");
+  const audioUrlInput = document.getElementById("audio-url-input");
+  const audioCaptionInput = document.getElementById("audio-caption-input");
   const publishModal = document.getElementById("publish-modal");
   const publishSummary = document.getElementById("publish-summary");
   const publishFilename = document.getElementById("publish-filename");
@@ -524,12 +530,11 @@
     mediaModal.hidden = false;
     imageModalBody.hidden = kind !== "image";
     videoModalBody.hidden = kind !== "video";
-    mediaModalTitle.textContent = kind === "image" ? "Insert Image" : "Insert Video";
-    if (kind === "image") {
-      imageUrlInput.focus();
-    } else {
-      videoUrlInput.focus();
-    }
+    audioModalBody.hidden = kind !== "audio";
+    const titleMap = { image: "Insert Image", video: "Insert Video", audio: "Insert Audio" };
+    mediaModalTitle.textContent = titleMap[kind] || "Insert Media";
+    const focusMap = { image: imageUrlInput, video: videoUrlInput, audio: audioUrlInput };
+    (focusMap[kind] || imageUrlInput).focus();
   }
 
   function closeMediaModal() {
@@ -607,23 +612,43 @@
   function insertImageUrl() {
     const url = imageUrlInput.value.trim();
     if (!url || !isSafeUrl(url, false)) return;
-    const alt = imageCaptionInput.value.trim();
-    insertHtml(withMediaControls(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ""}`));
+    const alt = imageAltInput.value.trim();
+    const caption = imageCaptionInput.value.trim();
+    insertHtml(withMediaControls(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
     imageUrlInput.value = "";
+    imageAltInput.value = "";
     imageCaptionInput.value = "";
     closeMediaModal();
   }
 
   function insertVideoUrl() {
     const url = videoUrlInput.value.trim();
+    const caption = videoCaptionInput.value.trim();
     if (!url) return;
     const html = buildVideoEmbed(url);
     if (!html) {
       setStatus("Video URL not recognized");
       return;
     }
-    insertHtml(html);
+    if (caption) {
+      const figcaption = `<figcaption>${escapeHtml(caption)}</figcaption>`;
+      insertHtml(html.replace("</figure>", figcaption + "</figure>"));
+    } else {
+      insertHtml(html);
+    }
     videoUrlInput.value = "";
+    videoCaptionInput.value = "";
+    closeMediaModal();
+  }
+
+  function insertAudioUrl() {
+    const url = audioUrlInput.value.trim();
+    const caption = audioCaptionInput.value.trim();
+    if (!url || !isSafeUrl(url, false)) return;
+    const audioHtml = `<audio controls src="${escapeHtml(url)}"></audio>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`;
+    insertHtml(withMediaControls(audioHtml));
+    audioUrlInput.value = "";
+    audioCaptionInput.value = "";
     closeMediaModal();
   }
 
@@ -648,18 +673,23 @@
 
     if (window.TPIApi?.uploadArticleMedia) {
       try {
-        setStatus(`Uploading ${kind === "image" ? "image" : "video"}...`);
+        setStatus(`Uploading ${kind === "image" ? "image" : kind === "video" ? "video" : "audio"}...`);
         const upload = await window.TPIApi.uploadArticleMedia(file);
         const mediaUrl = upload.url;
         if (mediaUrl) {
           if (kind === "image") {
-            const alt = imageCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
-            insertHtml(withMediaControls(`<img src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(alt)}">${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ""}`));
+            const alt = imageAltInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+            const caption = imageCaptionInput.value.trim();
+            insertHtml(withMediaControls(`<img src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(alt)}">${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
+          } else if (kind === "video") {
+            const caption = videoCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+            insertHtml(withMediaControls(`<video controls src="${escapeHtml(mediaUrl)}"></video>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
           } else {
-            insertHtml(withMediaControls(`<video controls src="${escapeHtml(mediaUrl)}"></video><figcaption>${escapeHtml(file.name)}</figcaption>`));
+            const caption = audioCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+            insertHtml(withMediaControls(`<audio controls src="${escapeHtml(mediaUrl)}"></audio>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
           }
           closeMediaModal();
-          setStatus(`${kind === "image" ? "Image" : "Video"} uploaded`);
+          setStatus(`${kind === "image" ? "Image" : kind === "video" ? "Video" : "Audio"} uploaded`);
           return;
         }
       } catch (error) {
@@ -675,13 +705,18 @@
     reader.onload = () => {
       const dataUrl = reader.result;
       if (kind === "image") {
-        const alt = imageCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
-        insertHtml(withMediaControls(`<img src="${escapeHtml(dataUrl)}" alt="${escapeHtml(alt)}">${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ""}`));
+        const alt = imageAltInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+        const caption = imageCaptionInput.value.trim();
+        insertHtml(withMediaControls(`<img src="${escapeHtml(dataUrl)}" alt="${escapeHtml(alt)}">${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
+      } else if (kind === "video") {
+        const caption = videoCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+        insertHtml(withMediaControls(`<video controls src="${escapeHtml(dataUrl)}"></video>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
       } else {
-        insertHtml(withMediaControls(`<video controls src="${escapeHtml(dataUrl)}"></video><figcaption>${escapeHtml(file.name)}</figcaption>`));
+        const caption = audioCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+        insertHtml(withMediaControls(`<audio controls src="${escapeHtml(dataUrl)}"></audio>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
       }
       closeMediaModal();
-      setStatus(`${kind === "image" ? "Image" : "Video"} uploaded`);
+      setStatus(`${kind === "image" ? "Image" : kind === "video" ? "Video" : "Audio"} uploaded`);
     };
     reader.readAsDataURL(file);
   }
@@ -992,6 +1027,9 @@ ${buildArticleHtml()}
     if (action === "image-url") insertImageUrl();
     if (action === "video-upload") videoFileInput.click();
     if (action === "video-url") insertVideoUrl();
+    if (action === "audio-menu") openMediaModal("audio");
+    if (action === "audio-upload") audioFileInput.click();
+    if (action === "audio-url") insertAudioUrl();
     if (action === "embed") insertEmbedCode();
     if (action === "author-note") insertAuthorNote();
     if (action === "preview") openPreview();
@@ -1040,6 +1078,10 @@ ${buildArticleHtml()}
   videoFileInput.addEventListener("change", event => {
     insertUploadedFile(event.target.files[0], "video");
     videoFileInput.value = "";
+  });
+  audioFileInput.addEventListener("change", event => {
+    insertUploadedFile(event.target.files[0], "audio");
+    audioFileInput.value = "";
   });
   mediaModal.addEventListener("click", event => {
     if (event.target === mediaModal) closeMediaModal();

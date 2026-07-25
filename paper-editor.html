@@ -49,6 +49,7 @@
         <button type="button" data-action="link" title="Insert link">Link</button>
         <button type="button" data-action="image-menu" title="Insert image">Image</button>
         <button type="button" data-action="video-menu" title="Insert video">Video</button>
+        <button type="button" data-action="audio-menu" title="Insert audio">Audio</button>
         <button type="button" data-action="embed" title="Embed code">Embed</button>
         <button type="button" data-action="author-note" title="Insert author note">Author Note</button>
         <button type="button" data-command="removeFormat" title="Clear formatting">Clear Format</button>
@@ -127,6 +128,7 @@
 
     <input id="image-file-input" type="file" accept="image/*" hidden>
     <input id="video-file-input" type="file" accept="video/*" hidden>
+    <input id="audio-file-input" type="file" accept="audio/*" hidden>
 
     <div id="media-modal" class="media-modal" hidden>
         <div class="media-modal-card" role="dialog" aria-modal="true" aria-labelledby="media-modal-title">
@@ -142,8 +144,12 @@
                     <input id="image-url-input" type="url" placeholder="https://example.com/image.jpg">
                 </label>
                 <label>
-                    <span>Caption / Alt Text</span>
-                    <input id="image-caption-input" type="text" placeholder="Optional caption">
+                    <span>Alt Text</span>
+                    <input id="image-alt-input" type="text" placeholder="Descriptive text for accessibility">
+                </label>
+                <label>
+                    <span>Caption</span>
+                    <input id="image-caption-input" type="text" placeholder="Optional caption displayed below image">
                 </label>
                 <button type="button" data-action="image-url">Insert Image URL</button>
             </div>
@@ -154,8 +160,25 @@
                     <span>Video URL</span>
                     <input id="video-url-input" type="url" placeholder="YouTube, Rumble, Google Drive, or direct MP4/WebM URL">
                 </label>
+                <label>
+                    <span>Caption</span>
+                    <input id="video-caption-input" type="text" placeholder="Optional caption displayed below video">
+                </label>
                 <button type="button" data-action="video-url">Insert Video URL</button>
                 <p>YouTube and Rumble links are embedded when recognized. Direct video files are inserted with controls.</p>
+            </div>
+
+            <div class="media-modal-body media-modal-audio" hidden>
+                <button type="button" data-action="audio-upload">Upload From Computer</button>
+                <label>
+                    <span>Audio URL</span>
+                    <input id="audio-url-input" type="url" placeholder="https://example.com/audio.mp3">
+                </label>
+                <label>
+                    <span>Caption</span>
+                    <input id="audio-caption-input" type="text" placeholder="Optional caption displayed below audio player">
+                </label>
+                <button type="button" data-action="audio-url">Insert Audio URL</button>
             </div>
         </div>
     </div>
