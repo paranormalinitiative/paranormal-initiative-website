@@ -693,30 +693,28 @@
           return;
         }
       } catch (error) {
-        if (error.status !== 401 && error.status !== 501 && error.status !== 500) {
-          setStatus(error.message, true);
-          return;
-        }
-        setStatus("R2 upload is not ready yet. Using local draft embed for now.");
+        setStatus(error.message || "Upload failed.", true);
+        return;
       }
+    }
+
+    if (kind !== "image") {
+      setStatus("Upload failed. Audio and video files require the media server.", true);
+      return;
+    }
+
+    if (!window.confirm("The file could not be uploaded. Embed as a local draft image placeholder? It will not be saved permanently.")) {
+      return;
     }
 
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result;
-      if (kind === "image") {
-        const alt = imageAltInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
-        const caption = imageCaptionInput.value.trim();
-        insertHtml(withMediaControls(`<img src="${escapeHtml(dataUrl)}" alt="${escapeHtml(alt)}">${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
-      } else if (kind === "video") {
-        const caption = videoCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
-        insertHtml(withMediaControls(`<video controls src="${escapeHtml(dataUrl)}"></video>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
-      } else {
-        const caption = audioCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
-        insertHtml(withMediaControls(`<audio controls src="${escapeHtml(dataUrl)}"></audio>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
-      }
+      const alt = imageAltInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+      const caption = imageCaptionInput.value.trim();
+      insertHtml(withMediaControls(`<img src="${escapeHtml(dataUrl)}" alt="${escapeHtml(alt)}">${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ""}`));
       closeMediaModal();
-      setStatus(`${kind === "image" ? "Image" : kind === "video" ? "Video" : "Audio"} uploaded`);
+      setStatus("Image added as local placeholder (not uploaded to server)");
     };
     reader.readAsDataURL(file);
   }
