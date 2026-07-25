@@ -26,6 +26,18 @@
         <p class="access-note">Already have a contributor account? <a href="member-login.html">Go to Member Login</a>.</p>
     </div>
 
+    <div class="editor-access-card invite-owner-tools" data-invite-owner-tools hidden>
+        <p class="portal-kicker">Owner Tools</p>
+        <h2>Generate Invite Code</h2>
+        <p>Visible only when 10-click developer unlock is active in this browser. Create a contributor invite link and send it to the person you are inviting.</p>
+        <form data-owner-invite-form>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Leave blank to generate one"></label>
+            <label><span>Role</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
+            <button type="submit">Create Invite Link</button>
+        </form>
+        <div class="invite-link-list" data-invite-link-list></div>
+    </div>
+
     <div class="editor-access-card invite-setup-card" data-invite-setup-panel hidden>
         <p class="portal-kicker">Create Contributor Login</p>
         <h2>Set Up Your Account</h2>

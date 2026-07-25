@@ -80,14 +80,16 @@ Each contributor should have:
 
 Current prototype:
 
-1. Admin/editor opens the editor with contributor access or the site owner's 10-click dev unlock.
-2. Admin/editor opens **Contributors** and creates an invite code.
-3. The contributor opens `contributor-invite.html`.
+1. Site owner enables 10-click dev unlock or signs in as an admin/editor.
+2. In the current static prototype, the owner can open `contributor-invite.html` and use the 10-click-only Owner Tools to generate a portable invite link.
+3. The contributor opens the invite link, which imports the invite code into that browser's local storage.
 4. The contributor enters the invite code first.
 5. If the code is valid and unused, the page reveals the account setup form.
 6. The contributor creates display name, title/role label, username, password, and optional author/contact fields.
 7. The contributor can choose whether their display name and title should be used automatically on comments and replies.
 8. After setup, they use `member-login.html` for returning access.
+
+Static-site limitation: local accounts and invite codes are remembered in the visitor's browser with `localStorage`. Real site-wide contributor accounts, shared invite codes, password security, and moderation require a backend.
 
 These fields should populate the Research Paper Editor Post Settings.
 

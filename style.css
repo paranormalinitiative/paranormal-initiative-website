@@ -1450,6 +1450,60 @@ footer {
     max-width: 480px;
 }
 
+.dev-access-notice,
+.invite-owner-tools {
+    border-color: rgba(85, 200, 255, 0.42);
+}
+
+.invite-link-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.invite-link-row {
+    display: grid;
+    gap: 7px;
+    padding: 12px;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
+}
+
+.invite-link-row strong {
+    color: #f4f8fb;
+}
+
+.invite-link-row span {
+    color: #8aa0b6;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.invite-link-row input {
+    width: 100%;
+    padding: 9px 10px;
+    color: #dce7ef;
+    background: #071017;
+    border: 1px solid #263646;
+    border-radius: 3px;
+    font: inherit;
+    font-size: 12px;
+}
+
+.invite-link-row button {
+    justify-self: start;
+    min-height: 34px;
+    padding: 7px 12px;
+    color: #061018;
+    background: #55c8ff;
+    border: 1px solid #55c8ff;
+    border-radius: 3px;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
 .access-checkbox,
 .tpi-comment-profile {
     display: flex !important;

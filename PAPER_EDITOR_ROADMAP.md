@@ -47,9 +47,11 @@ Current layout:
 - Publish Article opens a publish dialog for the chosen section/page.
 - The editor requires contributor login unless the user's 10-click dev copy mode is enabled.
 - Main navigation includes Member Login as the final nav item.
+- Main navigation includes Contributor Invite immediately before Member Login.
 - Registration is invite-only.
 - Returning contributors use `member-login.html`.
 - First-time contributors use `contributor-invite.html`, enter an invite code, then create their login/profile.
+- With 10-click dev copy mode active, the site owner gets local owner access and can generate portable invite links on `contributor-invite.html`.
 - Invite codes and contributor accounts can be managed in the editor's Contributors dialog.
 - Actual readable article/paper pages receive a local prototype comment section through `includes.js`.
 - Education Center hubs, Research Library hubs, destination/category pages, and section listing pages should not show comments.

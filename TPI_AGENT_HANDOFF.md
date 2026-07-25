@@ -125,6 +125,9 @@ The editor currently includes:
 - Public users cannot create their own account freely. Registration requires an invite code.
 - `Member Login` is the last item in the main nav and is for returning contributors only.
 - `contributor-invite.html` is the invite-only setup page: enter invite code first, then create username/password and contributor profile.
+- `Contributor Invite` appears immediately before `Member Login` in the main nav.
+- When 10-click dev copy mode is active, `member-login.js` creates a local `tpi-owner` admin session for the site owner and shows owner access controls.
+- `contributor-invite.html` includes 10-click-only Owner Tools that generate portable invite links. The invite link carries the code payload into the contributor's browser so the static prototype can remember it locally.
 - Contributor tools can create invite codes and add contributor/editor/admin accounts with profile fields.
 - Contributor profile fields populate the author note settings when logged in.
 - Contributor profiles include a title/role label and an option to use the contributor name/title automatically on comments and replies.
