@@ -197,7 +197,7 @@ async function handleUpdateProfile(request, env, user) {
     clean(data.organization),
     clean(data.website),
     clean(data.bio),
-    clean(data.photoUrl),
+    clean(data.photoUrl || user.photo_url),
     data.commentSignatureEnabled === false ? 0 : 1,
     user.id
   ).run();
