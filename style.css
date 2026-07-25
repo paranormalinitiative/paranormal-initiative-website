@@ -1331,6 +1331,13 @@ footer {
     display: none;
 }
 
+.paper-editor-page,
+.paper-editor-page * {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
 .editor-access-gate {
     display: grid;
     place-items: center;
@@ -1414,6 +1421,14 @@ footer {
 .contributor-manager {
     grid-template-columns: minmax(0, 1fr) minmax(220px, 0.75fr);
     align-items: start;
+}
+
+.contributor-login-panel {
+    grid-column: 1 / -1;
+    padding: 12px;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
 }
 
 .contributor-manager form {
@@ -1784,6 +1799,16 @@ footer {
 
 .publish-modal-card {
     width: min(640px, 100%);
+}
+
+.published-article-root {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 72px 25px 24px;
+}
+
+.tpi-published-card {
+    border-color: rgba(85, 200, 255, 0.55);
 }
 
 .media-modal-header {

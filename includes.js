@@ -130,7 +130,7 @@
   }
 
   function installComments() {
-    if (document.body.classList.contains("editor-locked") || document.querySelector(".tpi-comments")) return;
+    if (document.body.classList.contains("paper-editor-page") || document.querySelector(".tpi-comments")) return;
     const footerHost = document.getElementById("site-footer");
     if (!footerHost) return;
 
@@ -208,6 +208,53 @@
     renderComments();
   }
 
+  function installPublishedArticleCards() {
+    const current = window.location.pathname.split("/").pop() || "index.html";
+    const grid =
+      document.querySelector(".study-resource-grid") ||
+      document.querySelector(".series-post-grid") ||
+      document.querySelector(".learning-grid");
+    if (!grid) return;
+
+    function escapeCard(value) {
+      return String(value || "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    let articles = [];
+    try {
+      articles = JSON.parse(localStorage.getItem("tpiPublishedArticles") || "[]");
+    } catch (error) {
+      articles = [];
+    }
+
+    articles
+      .filter(article => article.destination === current)
+      .forEach(article => {
+        if ([...grid.querySelectorAll("[data-published-id]")].some(card => card.dataset.publishedId === article.id)) return;
+        const card = document.createElement("a");
+        card.className = grid.classList.contains("series-post-grid") ? "study-resource-card tpi-published-card" : "study-resource-card tpi-published-card";
+        card.href = article.href || `published-article.html?id=${encodeURIComponent(article.id)}`;
+        card.dataset.publishedId = article.id;
+        card.innerHTML = `
+          <div class="study-resource-card-media"><span>Field</span></div>
+          <div class="study-resource-card-copy">
+            <span>Published Article</span>
+            <h3>${escapeCard(article.title)}</h3>
+            <p>${escapeCard(article.subtitle || "Field paper")}</p>
+            <strong>Open Paper</strong>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+  }
+
+  installPublishedArticleCards();
   installComments();
 
   // Auto-active nav link (for injected header pages)

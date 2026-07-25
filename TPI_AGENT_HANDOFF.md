@@ -118,14 +118,16 @@ The editor currently includes:
 - Preview opens a separate browser window using generated HTML.
 - Author Note insertion is built into `paper-editor.js` and is generated from the Post Settings author fields.
 - Destination selection is built into `paper-editor.js`; `Publish Article` opens a publish dialog with the article filename, destination page, full article HTML download/copy actions, destination card copy action, and an Open Destination Page action.
-- The editor now has a local prototype login gate. On first use it asks to create an admin login, then requires sign-in before showing the editor.
-- Admin users can open a Contributors manager from the editor top bar and add contributor/editor/admin accounts with profile fields.
+- The editor opens directly. It is not blocked by a login gate.
+- The editor page is exempt from the public copy/paste lock so writing, copying, and pasting inside the editor works normally.
+- The editor still has optional contributor tools. Users can open a Contributors manager from the editor top bar and add contributor/editor/admin accounts with profile fields.
 - Contributor profile fields populate the author note settings when logged in.
 - This access layer is a local browser prototype using `localStorage`; it is not production security.
+- `Publish Article` can publish a local article record to the selected destination. Destination pages inject matching locally published cards into their existing grids. The generated article opens through `published-article.html?id=...`.
 
 ### Comments
 
-`includes.js` now injects a local prototype comment section before the footer on public pages. Visitors can comment anonymously or enter a name. Comments are stored per page in `localStorage`.
+`includes.js` now injects local prototype published article cards and a local prototype comment section before the footer on public pages. Visitors can comment anonymously or enter a name. Comments are stored per page in `localStorage`.
 
 This is a working front-end scaffold only. Production comments still need backend storage and moderation.
 
@@ -209,7 +211,7 @@ Do not revert unrelated changes without user approval.
 ## Known Limitations
 
 - The editor is a static-browser prototype. It does not save posts to a backend.
-- The editor has local prototype access control. It uses browser `localStorage`; real contributor login still needs a backend or hosted auth provider before public launch.
+- The editor has optional local prototype contributor account tools. It uses browser `localStorage`; real contributor login still needs a backend or hosted auth provider before public launch.
 - Uploaded media is embedded as data URLs in the HTML. This is simple and offline-friendly, but not ideal for production.
 - A production workflow should eventually copy uploaded files into an `assets/` folder or use a CMS media library.
 - Browser popup settings may block Preview because it opens a new window.
@@ -219,13 +221,14 @@ Do not revert unrelated changes without user approval.
 
 Future editor access should work like this:
 
-1. User clicks Research Paper Editor from Education Center.
-2. If not logged in, user sees a login screen.
-3. Admin can add contributors and manage usernames/passwords or invite links.
-4. Logged-in contributor can draft/submit research papers, notes, images, and videos.
+1. User clicks Research Paper Editor from Education Center and the editor opens directly.
+2. Contributor sign-in is optional in the current prototype.
+3. Admin/contributor tools can manage local usernames/passwords or future invite links.
+4. Contributor can draft/submit research papers, notes, images, and videos.
 5. Contributor author fields can auto-fill from their profile.
-6. Admin/editor reviews submissions before publishing unless the contributor has direct publish permission.
-7. Public article comments should allow anonymous, name-only, or logged-in comments.
-8. Comments should be moderated before display.
+6. Current `Publish Article` saves locally and places the article card into the selected destination grid in this browser.
+7. Production should let an admin/editor review submissions before publishing unless the contributor has direct publish permission.
+8. Public article comments should allow anonymous, name-only, or logged-in comments.
+9. Comments should be moderated before display in production.
 
 See `CONTRIBUTOR_PORTAL_PLAN.md` before production implementation. The current static login is only a workflow prototype.

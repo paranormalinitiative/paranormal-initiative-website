@@ -1,6 +1,7 @@
 (function () {
   const ACCESS_USERS_KEY = "tpiEditorContributors";
   const ACCESS_SESSION_KEY = "tpiEditorSession";
+  const PUBLISHED_ARTICLES_KEY = "tpiPublishedArticles";
   const titleInput = document.getElementById("editor-title");
   const subtitleInput = document.getElementById("editor-subtitle");
   const destinationInput = document.getElementById("editor-destination");
@@ -59,10 +60,25 @@
   }
 
   function getSuggestedArticleHref() {
+    return `published-article.html?id=${encodeURIComponent(getArticleId())}`;
+  }
+
+  function getArticleId() {
     const title = titleInput.value.trim() || "Untitled Research Paper";
-    const destination = destinationInput.value;
-    const prefix = destination.startsWith("education-area-") ? "education-research" : destination.replace(/\.html$/, "");
-    return `${prefix}-${slugify(title)}.html`;
+    const destination = destinationInput.value.replace(/\.html$/, "");
+    return `${destination}-${slugify(title)}`;
+  }
+
+  function getPublishedArticles() {
+    try {
+      return JSON.parse(localStorage.getItem(PUBLISHED_ARTICLES_KEY) || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function savePublishedArticles(articles) {
+    localStorage.setItem(PUBLISHED_ARTICLES_KEY, JSON.stringify(articles));
   }
 
   function setStatus(message) {
@@ -103,11 +119,7 @@
   function unlockEditor(user) {
     currentUser = user;
     localStorage.setItem(ACCESS_SESSION_KEY, user.username);
-    document.body.classList.remove("editor-locked");
     document.body.classList.add("editor-authenticated");
-    document.querySelectorAll(".admin-only").forEach(node => {
-      node.hidden = user.role !== "admin";
-    });
     applyContributorProfile(user);
     setStatus(`Signed in as ${user.displayName || user.username}`);
     const gate = document.getElementById("editor-access-gate");
@@ -117,12 +129,8 @@
   function lockEditor() {
     currentUser = null;
     localStorage.removeItem(ACCESS_SESSION_KEY);
-    document.body.classList.add("editor-locked");
     document.body.classList.remove("editor-authenticated");
-    document.querySelectorAll(".admin-only").forEach(node => {
-      node.hidden = true;
-    });
-    showAccessGate();
+    setStatus("Contributor signed out");
   }
 
   function showAccessGate() {
@@ -199,11 +207,11 @@
   }
 
   function openContributorManager() {
-    if (!currentUser || currentUser.role !== "admin") return;
     const existing = document.getElementById("contributors-modal");
     if (existing) existing.remove();
 
     const users = getUsers();
+    const hasAdmin = users.some(user => user.role === "admin");
     const modal = document.createElement("div");
     modal.id = "contributors-modal";
     modal.className = "media-modal";
@@ -214,6 +222,13 @@
           <button type="button" data-action="contributors-close">Close</button>
         </div>
         <div class="media-modal-body contributor-manager">
+          ${hasAdmin && !currentUser ? `
+          <form data-access-form="login" class="contributor-login-panel">
+            <p class="access-note">Optional contributor sign-in. The editor itself stays open.</p>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+            <button type="submit">Sign In</button>
+          </form>` : ""}
           <form data-contributor-form>
             <label><span>Display Name</span><input name="displayName" type="text" required></label>
             <label><span>Username</span><input name="username" type="text" required></label>
@@ -226,6 +241,7 @@
             <button type="submit">Add Contributor</button>
           </form>
           <div class="contributor-list">
+            ${currentUser ? `<p class="access-note">Signed in as ${escapeHtml(currentUser.displayName || currentUser.username)}.</p>` : `<p class="access-note">Local contributor accounts are for workflow testing only.</p>`}
             ${users.map(user => `<div class="contributor-row"><strong>${escapeHtml(user.displayName || user.username)}</strong><span>${escapeHtml(user.username)} · ${escapeHtml(user.role || "contributor")}</span></div>`).join("") || "<p>No contributors yet.</p>"}
           </div>
         </div>
@@ -683,10 +699,13 @@ ${buildArticleHtml()}
     return [
       `<!-- Add this card to ${destination}: ${destinationInput.value} -->`,
       `<a class="study-resource-card" href="${escapeHtml(href)}">`,
+      `    <div class="study-resource-card-media"><span>Field</span></div>`,
+      `    <div class="study-resource-card-copy">`,
       `    <p class="dashboard-panel-kicker">Research Paper</p>`,
       `    <h3>${escapeHtml(title)}</h3>`,
       `    <p>${escapeHtml(subtitle)}</p>`,
       `    <span class="dashboard-panel-cta">Read Paper ›</span>`,
+      `    </div>`,
       `</a>`
     ].join("\n");
   }
@@ -720,6 +739,40 @@ ${buildArticleHtml()}
 
   function closePublishModal() {
     publishModal.hidden = true;
+  }
+
+  function buildPublishedRecord() {
+    const title = titleInput.value.trim() || "Untitled Research Paper";
+    return {
+      id: getArticleId(),
+      href: getSuggestedArticleHref(),
+      title,
+      subtitle: subtitleInput.value.trim() || "Field paper",
+      destination: destinationInput.value,
+      destinationLabel: getDestinationLabel(),
+      author: authorInput.value.trim(),
+      source: sourceInput.value.trim(),
+      labels: labelsInput.value.trim(),
+      bodyHtml: buildArticleHtml(),
+      fullHtml: buildFullArticleDocument(""),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function publishToDestination() {
+    const record = buildPublishedRecord();
+    const articles = getPublishedArticles();
+    const existingIndex = articles.findIndex(article => article.id === record.id);
+    if (existingIndex >= 0) {
+      articles[existingIndex] = record;
+    } else {
+      articles.push(record);
+    }
+    savePublishedArticles(articles);
+    publishFilename.value = record.href;
+    publishDestination.value = record.destination;
+    setStatus("Published to destination");
+    window.open(record.destination, "_blank");
   }
 
   function downloadArticle() {
@@ -827,12 +880,12 @@ ${buildArticleHtml()}
     if (action === "publish") openPublishModal();
     if (action === "publish-close") closePublishModal();
     if (action === "download-article") downloadArticle();
+    if (action === "publish-destination") publishToDestination();
     if (action === "copy-full-page") copyFullArticlePage();
     if (action === "open-destination") openDestinationPage();
     if (action === "copy") copyOutput();
     if (action === "copy-card") copyDestinationCard();
     if (action === "clear") clearDraft();
-    if (action === "logout") lockEditor();
   });
 
   document.addEventListener("submit", event => {
@@ -874,7 +927,5 @@ ${buildArticleHtml()}
   const sessionUser = getSessionUser();
   if (sessionUser) {
     unlockEditor(sessionUser);
-  } else {
-    showAccessGate();
   }
 })();

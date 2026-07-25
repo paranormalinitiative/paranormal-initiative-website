@@ -11,18 +11,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=15">
 </head>
-<body class="editor-locked">
+<body class="paper-editor-page">
 <div id="site-header"></div>
 
 <section class="paper-editor-shell">
     <div class="paper-editor-topbar">
         <div class="paper-editor-brand">Research Paper Editor</div>
         <div class="post-action-controls">
-            <button type="button" class="admin-only" data-action="contributors" hidden>Contributors</button>
+            <button type="button" data-action="contributors">Contributors</button>
             <button type="button" data-action="preview">Preview</button>
             <button type="button" data-action="publish">Publish Article</button>
             <button type="button" data-action="copy">Copy HTML</button>
-            <button type="button" data-action="logout">Log Out</button>
         </div>
     </div>
 
@@ -177,6 +176,7 @@
                     <input id="publish-destination" type="text" readonly>
                 </label>
                 <button type="button" data-action="download-article">Download Article HTML</button>
+                <button type="button" data-action="publish-destination">Publish To Destination</button>
                 <button type="button" data-action="copy-full-page">Copy Full Article HTML</button>
                 <button type="button" data-action="copy-card">Copy Destination Card</button>
                 <button type="button" data-action="open-destination">Open Destination Page</button>
