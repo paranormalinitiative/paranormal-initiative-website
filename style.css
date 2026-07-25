@@ -1519,6 +1519,72 @@ footer {
     width: 100%;
 }
 
+.member-profile-form {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid #263646;
+}
+
+.member-profile-form label {
+    display: grid;
+    gap: 7px;
+}
+
+.member-profile-form input,
+.member-profile-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    color: #e6edf3;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
+    font: inherit;
+}
+
+.member-profile-photo,
+.public-profile-photo {
+    width: 132px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(85, 200, 255, 0.28);
+    background: #090f14;
+}
+
+.public-profile-shell {
+    display: grid;
+    gap: 22px;
+    max-width: 1040px;
+}
+
+.public-profile-card {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 22px;
+    padding: 28px;
+    background: #101820;
+    border: 1px solid #263646;
+    border-radius: 6px;
+}
+
+.public-profile-card h2,
+.public-profile-work h2 {
+    margin: 0;
+    color: #f4f8fb;
+}
+
+.public-profile-card p {
+    margin: 0 0 8px;
+    color: #b8c4d1;
+}
+
+.public-profile-bio {
+    margin-top: 16px;
+    color: #d6e2ea;
+}
+
 .member-login-status {
     grid-column: 1 / -1;
     justify-self: center;

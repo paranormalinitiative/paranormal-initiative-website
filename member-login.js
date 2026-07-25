@@ -13,6 +13,9 @@
   const dashboardArticles = document.querySelector("[data-dashboard-articles]");
   const dashboardName = document.querySelector("[data-dashboard-name]");
   const dashboardRole = document.querySelector("[data-dashboard-role]");
+  const profileForm = document.querySelector("[data-profile-form]");
+  const publicProfileLink = document.querySelector("[data-public-profile-link]");
+  const publicProfileRoot = document.querySelector("[data-public-profile]");
 
   function setStatus(message, isError) {
     if (!status) return;
@@ -177,14 +180,28 @@
     if (!dashboardProfile || !user) return;
     if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
     if (dashboardRole) dashboardRole.textContent = [user.title, user.role].filter(Boolean).join(" - ");
+    if (publicProfileLink) publicProfileLink.href = `contributor-profile.html?username=${encodeURIComponent(user.username)}`;
     dashboardProfile.innerHTML = `
+      ${user.photoUrl ? `<img class="member-profile-photo" src="${escapeHtml(user.photoUrl)}" alt="${escapeHtml(user.displayName || user.username || "Contributor")}">` : ""}
       <h2>${escapeHtml(user.displayName || user.username || "Contributor")}</h2>
       ${user.title ? `<p><strong>${escapeHtml(user.title)}</strong></p>` : ""}
       ${user.affiliation ? `<p>${escapeHtml(user.affiliation)}</p>` : ""}
       ${user.organization ? `<p>${escapeHtml(user.organization)}</p>` : ""}
       ${user.correspondence ? `<p>Correspondence: ${escapeHtml(user.correspondence)}</p>` : ""}
       ${user.website ? `<p><a href="${escapeHtml(user.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(user.website)}</a></p>` : ""}
+      ${user.bio ? `<p>${escapeHtml(user.bio).replace(/\n/g, "<br>")}</p>` : ""}
     `;
+    if (profileForm) {
+      profileForm.displayName.value = user.displayName || "";
+      profileForm.title.value = user.title || "";
+      profileForm.affiliation.value = user.affiliation || "";
+      profileForm.organization.value = user.organization || "";
+      profileForm.correspondence.value = user.correspondence || "";
+      profileForm.website.value = user.website || "";
+      profileForm.photoUrl.value = user.photoUrl || "";
+      profileForm.bio.value = user.bio || "";
+      profileForm.commentSignature.checked = user.commentSignatureEnabled !== false;
+    }
   }
 
   async function renderDashboardArticles(user) {
@@ -241,17 +258,106 @@
     renderOwnerInvites();
   }
 
+  async function initPublicProfile() {
+    if (!publicProfileRoot) return;
+    const username = new URLSearchParams(window.location.search).get("username");
+    if (!username) {
+      publicProfileRoot.innerHTML = `<p class="access-note">Contributor profile was not specified.</p>`;
+      return;
+    }
+    try {
+      const response = await fetch(`/api/contributors/profile?username=${encodeURIComponent(username)}`, { credentials: "same-origin" });
+      if (!response.ok) throw new Error("Contributor profile was not found.");
+      const data = await response.json();
+      const profile = data.profile;
+      const articles = data.articles || [];
+      document.title = `${profile.displayName || profile.username} | The Paranormal Initiative`;
+      publicProfileRoot.innerHTML = `
+        <article class="public-profile-card">
+          ${profile.photoUrl ? `<img class="public-profile-photo" src="${escapeHtml(profile.photoUrl)}" alt="${escapeHtml(profile.displayName || profile.username)}">` : ""}
+          <div>
+            <p class="portal-kicker">Research Contributor</p>
+            <h2>${escapeHtml(profile.displayName || profile.username)}</h2>
+            ${profile.title ? `<p><strong>${escapeHtml(profile.title)}</strong></p>` : ""}
+            ${profile.affiliation ? `<p>${escapeHtml(profile.affiliation)}</p>` : ""}
+            ${profile.organization ? `<p>${escapeHtml(profile.organization)}</p>` : ""}
+            ${profile.correspondence ? `<p>Correspondence: ${escapeHtml(profile.correspondence)}</p>` : ""}
+            ${profile.website ? `<p><a href="${escapeHtml(profile.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.website)}</a></p>` : ""}
+            ${profile.bio ? `<div class="public-profile-bio">${escapeHtml(profile.bio).replace(/\n/g, "<br>")}</div>` : ""}
+          </div>
+        </article>
+        <section class="editor-access-card public-profile-work">
+          <p class="portal-kicker">Contributions</p>
+          <h2>Published Work</h2>
+          <div class="invite-link-list">
+            ${articles.length ? articles.map(article => `
+              <div class="invite-link-row">
+                <strong>${escapeHtml(article.title)}</strong>
+                <span>${escapeHtml(article.subtitle || article.destination || "Research paper")}</span>
+                <a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>
+              </div>
+            `).join("") : `<p class="access-note">No published contributions yet.</p>`}
+          </div>
+        </section>
+      `;
+    } catch (error) {
+      publicProfileRoot.innerHTML = `<p class="access-note">${escapeHtml(error.message)}</p>`;
+    }
+  }
+
   document.addEventListener("submit", async event => {
     const loginForm = event.target.closest("[data-member-login]");
     const inviteCheckForm = event.target.closest("[data-invite-check]");
     const registerForm = event.target.closest("[data-invite-register]");
     const ownerInviteForm = event.target.closest("[data-owner-invite-form]");
     const ownerBootstrapForm = event.target.closest("[data-owner-bootstrap-form]");
-    if (!loginForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm) return;
+    const profileSubmitForm = event.target.closest("[data-profile-form]");
+    if (!loginForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
     const users = getUsers();
+
+    if (profileSubmitForm) {
+      const payload = {
+        displayName: String(data.get("displayName") || "").trim(),
+        title: String(data.get("title") || "").trim(),
+        affiliation: String(data.get("affiliation") || "").trim(),
+        organization: String(data.get("organization") || "").trim(),
+        correspondence: String(data.get("correspondence") || "").trim(),
+        website: String(data.get("website") || "").trim(),
+        photoUrl: String(data.get("photoUrl") || "").trim(),
+        bio: String(data.get("bio") || "").trim(),
+        commentSignatureEnabled: data.get("commentSignature") === "on"
+      };
+      if (await cloudflareReady()) {
+        try {
+          const response = await fetch("/api/contributors/me/profile", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || "Profile save failed.");
+          renderDashboardProfile(result.user);
+          setStatus("Profile saved.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+      const username = localStorage.getItem(ACCESS_SESSION_KEY);
+      const localUsers = getUsers();
+      const userIndex = localUsers.findIndex(user => user.username === username);
+      if (userIndex >= 0) {
+        localUsers[userIndex] = { ...localUsers[userIndex], ...payload };
+        saveUsers(localUsers);
+        renderDashboardProfile(localUsers[userIndex]);
+        setStatus("Profile saved locally.", false);
+      }
+      return;
+    }
 
     if (ownerBootstrapForm) {
       if (!await cloudflareReady()) {
@@ -475,6 +581,7 @@
   importInviteFromUrl();
   showOwnerToolsForSetupOnly();
   initDashboard();
+  initPublicProfile();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();
   });

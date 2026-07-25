@@ -19,7 +19,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
+    if (request.method === "POST" && path === "/contributors/me/profile") return requireContributor(request, env, user => handleUpdateProfile(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireContributor(request, env, user => handleContributorArticles(env, user));
+    if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
@@ -52,12 +54,14 @@ async function handleOwnerBootstrap(request, env) {
     clean(data.correspondence || "paranormalinitiative@yahoo.com"),
     clean(data.affiliation || "The Paranormal Initiative - Applied Paranormal Research and Studies"),
     clean(data.organization || "Somerset Paranormal Research Society"),
-    clean(data.website || "")
+    clean(data.website || ""),
+    clean(data.bio || ""),
+    clean(data.photoUrl || "")
   ];
 
   await env.TPI_DB.prepare(`
-    INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, affiliation, organization, website, comment_signature_enabled, active)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1)
+    INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, affiliation, organization, website, bio, photo_url, comment_signature_enabled, active)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1)
     ON CONFLICT(username) DO UPDATE SET
       password_hash = excluded.password_hash,
       display_name = excluded.display_name,
@@ -67,6 +71,8 @@ async function handleOwnerBootstrap(request, env) {
       affiliation = excluded.affiliation,
       organization = excluded.organization,
       website = excluded.website,
+      bio = excluded.bio,
+      photo_url = excluded.photo_url,
       active = 1
   `).bind(...payload).run();
 
@@ -143,8 +149,8 @@ async function handleRegister(request, env) {
   const id = crypto.randomUUID();
   await env.TPI_DB.batch([
     env.TPI_DB.prepare(`
-      INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, affiliation, organization, website, comment_signature_enabled, active)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, affiliation, organization, website, bio, photo_url, comment_signature_enabled, active)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `).bind(
       id,
       username,
@@ -156,12 +162,44 @@ async function handleRegister(request, env) {
       clean(data.affiliation),
       clean(data.organization),
       clean(data.website),
+      clean(data.bio),
+      clean(data.photoUrl),
       data.commentSignatureEnabled === false ? 0 : 1
     ),
     env.TPI_DB.prepare("UPDATE invite_codes SET used = 1, used_by = ?, used_at = CURRENT_TIMESTAMP WHERE code = ?").bind(username, invite.code)
   ]);
 
   return json({ ok: true });
+}
+
+async function handleUpdateProfile(request, env, user) {
+  const data = await readJson(request);
+  await env.TPI_DB.prepare(`
+    UPDATE contributors SET
+      display_name = ?,
+      title = ?,
+      correspondence = ?,
+      affiliation = ?,
+      organization = ?,
+      website = ?,
+      bio = ?,
+      photo_url = ?,
+      comment_signature_enabled = ?
+    WHERE id = ?
+  `).bind(
+    clean(data.displayName || user.display_name),
+    clean(data.title),
+    clean(data.correspondence),
+    clean(data.affiliation),
+    clean(data.organization),
+    clean(data.website),
+    clean(data.bio),
+    clean(data.photoUrl),
+    data.commentSignatureEnabled === false ? 0 : 1,
+    user.id
+  ).run();
+  const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
+  return json({ user: publicUser(updated) });
 }
 
 async function handleCreateArticle(request, env, user) {
@@ -216,6 +254,19 @@ async function handleContributorArticles(env, user) {
     ORDER BY created_at DESC
   `).bind(user.id).all();
   return json({ articles: results });
+}
+
+async function handlePublicContributorProfile(request, env) {
+  const username = clean(new URL(request.url).searchParams.get("username"));
+  const user = await getUserByUsername(env, username);
+  if (!user || !user.active) return json({ error: "Contributor profile not found." }, 404);
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id, href, title, subtitle, destination, created_at AS createdAt
+    FROM articles
+    WHERE created_by = ?
+    ORDER BY created_at DESC
+  `).bind(user.id).all();
+  return json({ profile: publicUser(user), articles: results });
 }
 
 async function handleListComments(request, env) {
@@ -319,6 +370,8 @@ function publicUser(user) {
     affiliation: user.affiliation,
     organization: user.organization,
     website: user.website,
+    bio: user.bio,
+    photoUrl: user.photo_url,
     commentSignatureEnabled: Boolean(user.comment_signature_enabled)
   };
 }

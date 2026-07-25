@@ -31,6 +31,22 @@
         <article class="editor-access-card member-profile-card">
             <p class="portal-kicker">Profile</p>
             <div data-dashboard-profile></div>
+            <form class="member-profile-form" data-profile-form>
+                <label><span>Display Name</span><input name="displayName" type="text"></label>
+                <label><span>Public Title / Credentials</span><input name="title" type="text" placeholder="Research Contributor, PhD, Investigator"></label>
+                <label><span>Affiliation</span><input name="affiliation" type="text"></label>
+                <label><span>Organization</span><input name="organization" type="text"></label>
+                <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
+                <label><span>Website</span><input name="website" type="url"></label>
+                <label><span>Profile Photo URL</span><input name="photoUrl" type="url" placeholder="https://..."></label>
+                <label><span>Biography</span><textarea name="bio" rows="7" placeholder="Write a professional contributor biography."></textarea></label>
+                <label class="access-checkbox">
+                    <input name="commentSignature" type="checkbox" checked>
+                    <span>Use my display name and title on comments and replies.</span>
+                </label>
+                <button type="submit">Save Profile</button>
+                <a class="portal-button portal-button-secondary" data-public-profile-link href="#">View Public Profile</a>
+            </form>
         </article>
 
         <article class="editor-access-card">
