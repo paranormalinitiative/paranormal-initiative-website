@@ -3,26 +3,28 @@
   const subtitleInput = document.getElementById("editor-subtitle");
   const sourceInput = document.getElementById("editor-source");
   const authorInput = document.getElementById("editor-author");
+  const affiliationInput = document.getElementById("editor-affiliation");
+  const organizationInput = document.getElementById("editor-organization");
+  const correspondenceInput = document.getElementById("editor-correspondence");
+  const websiteInput = document.getElementById("editor-website");
+  const labelsInput = document.getElementById("editor-labels");
   const editor = document.getElementById("paper-editor-body");
   const htmlView = document.getElementById("editor-html-view");
-  const previewTitle = document.getElementById("preview-title");
-  const previewSubtitle = document.getElementById("preview-subtitle");
-  const previewMeta = document.getElementById("preview-meta");
-  const previewBody = document.getElementById("preview-body");
   const status = document.getElementById("editor-status");
   const layout = document.querySelector(".paper-editor-layout");
-  const modeButtons = document.querySelectorAll("[data-view]");
+  const viewMode = document.getElementById("editor-view-mode");
+  const imageFileInput = document.getElementById("image-file-input");
+  const videoFileInput = document.getElementById("video-file-input");
+  const mediaModal = document.getElementById("media-modal");
+  const mediaModalTitle = document.getElementById("media-modal-title");
+  const imageModalBody = document.querySelector(".media-modal-image");
+  const videoModalBody = document.querySelector(".media-modal-video");
+  const imageUrlInput = document.getElementById("image-url-input");
+  const imageCaptionInput = document.getElementById("image-caption-input");
+  const videoUrlInput = document.getElementById("video-url-input");
 
   let activeView = "compose";
-
-  const defaultBody = [
-    "<h3>Introduction</h3>",
-    "<p>Begin the paper here. Write it like one continuous research article, not a collection of separate cards.</p>",
-    "<h3>Evidence and Context</h3>",
-    "<p>Add field background, source links, photographs, audio references, video embeds, review limits, and documentation that support the paper.</p>",
-    "<h3>Working Notes</h3>",
-    "<p>Use clear paragraphs, occasional bold labels, and restrained research language.</p>"
-  ].join("");
+  let savedSelection = null;
 
   const allowedIframeHosts = [
     "youtube.com",
@@ -44,7 +46,7 @@
   }
 
   function escapeHtml(value) {
-    return value.replace(/[&<>"']/g, char => ({
+    return String(value).replace(/[&<>"']/g, char => ({
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
@@ -53,9 +55,12 @@
     }[char]));
   }
 
-  function isSafeUrl(rawUrl) {
+  function isSafeUrl(rawUrl, allowDataMedia) {
     try {
       const url = new URL(rawUrl, window.location.href);
+      if (allowDataMedia && url.protocol === "data:") {
+        return /^data:(image|video)\//i.test(rawUrl);
+      }
       return ["http:", "https:", "mailto:"].includes(url.protocol);
     } catch (error) {
       return false;
@@ -71,10 +76,13 @@
     }
   }
 
-  function cleanHtml(html) {
+  function cleanHtml(html, stripEditorControls) {
     const template = document.createElement("template");
     template.innerHTML = html;
 
+    if (stripEditorControls !== false) {
+      template.content.querySelectorAll(".media-edit-controls").forEach(node => node.remove());
+    }
     template.content.querySelectorAll("script, style, object, embed").forEach(node => node.remove());
     template.content.querySelectorAll("iframe").forEach(node => {
       const src = node.getAttribute("src") || "";
@@ -94,6 +102,15 @@
     });
 
     template.content.querySelectorAll("*").forEach(node => {
+      if (stripEditorControls !== false) {
+        node.removeAttribute("contenteditable");
+        [...node.attributes].forEach(attr => {
+          if (attr.name.toLowerCase().startsWith("data-")) {
+            node.removeAttribute(attr.name);
+          }
+        });
+      }
+
       [...node.attributes].forEach(attr => {
         const name = attr.name.toLowerCase();
         const value = attr.value.trim();
@@ -103,7 +120,7 @@
           node.removeAttribute(attr.name);
         }
 
-        if (["href", "src"].includes(name) && value && !isSafeUrl(value)) {
+        if (["href", "src"].includes(name) && value && !isSafeUrl(value, name === "src")) {
           node.removeAttribute(attr.name);
         }
       });
@@ -112,58 +129,73 @@
     return template.innerHTML;
   }
 
+  function saveSelection() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    if (editor.contains(range.commonAncestorContainer)) {
+      savedSelection = range.cloneRange();
+    }
+  }
+
+  function restoreSelection() {
+    if (activeView === "html") return;
+    if (!savedSelection) {
+      editor.focus();
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return;
+    }
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(savedSelection);
+  }
+
   function getDraftHtml() {
     return activeView === "html" ? htmlView.value : editor.innerHTML;
   }
 
   function buildArticleHtml() {
-    return cleanHtml(getDraftHtml()).trim();
+    return cleanHtml(getDraftHtml(), true).trim();
   }
 
-  function updatePreview() {
-    const title = titleInput.value.trim() || "Untitled Research Paper";
-    const subtitle = subtitleInput.value.trim() || "Research Library Draft";
-    const author = authorInput.value.trim();
-    const source = sourceInput.value.trim();
-
-    previewTitle.textContent = title;
-    previewSubtitle.textContent = subtitle;
-    previewMeta.textContent = [author, source].filter(Boolean).join(" · ");
-    previewBody.innerHTML = buildArticleHtml();
+  function syncHtmlToCompose() {
+    editor.innerHTML = cleanHtml(htmlView.value, false);
   }
 
   function setViewMode(mode) {
-    if (mode === activeView) return;
+    if (activeView === mode) return;
 
     if (activeView === "html") {
-      editor.innerHTML = cleanHtml(htmlView.value);
+      syncHtmlToCompose();
+    } else {
+      htmlView.value = cleanHtml(editor.innerHTML, true);
     }
 
     activeView = mode;
-    modeButtons.forEach(button => {
-      button.classList.toggle("active", button.dataset.view === mode);
-    });
-
+    viewMode.value = mode;
     layout.classList.toggle("html-mode", mode === "html");
-    layout.classList.toggle("preview-focus", mode === "preview");
 
     if (mode === "html") {
-      htmlView.value = cleanHtml(editor.innerHTML);
       htmlView.focus();
       setStatus("HTML view");
-    } else {
-      editor.focus();
-      setStatus(mode === "preview" ? "Preview focus" : "Compose view");
+      return;
     }
 
-    updatePreview();
+    editor.focus();
+    setStatus("Compose view");
   }
 
   function exec(command, value) {
     if (activeView === "html") setViewMode("compose");
-    editor.focus();
+    restoreSelection();
     document.execCommand(command, false, value || null);
-    updatePreview();
+    saveSelection();
+    setStatus("Format applied");
   }
 
   function setBlock(tagName) {
@@ -171,21 +203,88 @@
   }
 
   function insertHtml(html) {
+    const cleaned = cleanHtml(html, activeView !== "compose");
+
     if (activeView === "html") {
-      htmlView.setRangeText(html, htmlView.selectionStart, htmlView.selectionEnd, "end");
-      updatePreview();
+      htmlView.setRangeText(cleaned, htmlView.selectionStart, htmlView.selectionEnd, "end");
+      setStatus("HTML inserted");
       return;
     }
 
-    editor.focus();
-    document.execCommand("insertHTML", false, cleanHtml(html));
-    updatePreview();
+    restoreSelection();
+    document.execCommand("insertHTML", false, cleaned);
+    saveSelection();
+    setStatus("Inserted");
+  }
+
+  function buildAuthorNoteHtml() {
+    const author = authorInput.value.trim();
+    const affiliation = affiliationInput.value.trim();
+    const organization = organizationInput.value.trim();
+    const correspondence = correspondenceInput.value.trim();
+    const website = websiteInput.value.trim();
+    const lines = [author, affiliation, organization].filter(Boolean).map(escapeHtml);
+
+    if (correspondence) {
+      lines.push(`Correspondence: ${escapeHtml(correspondence)}`);
+    }
+
+    if (website) {
+      lines.push(`Website: <a href="${escapeHtml(website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(website)}</a>`);
+    }
+
+    return `<h3>Author Note</h3><p>${lines.join("<br>")}</p>`;
+  }
+
+  function withMediaControls(mediaHtml, width) {
+    return `<figure class="embedded-media editable-media" style="max-width:${width || "100%"}"><div class="media-edit-controls" contenteditable="false"><button type="button" data-media-action="up">Move Up</button><button type="button" data-media-action="down">Move Down</button><button type="button" data-media-action="small">Small</button><button type="button" data-media-action="medium">Medium</button><button type="button" data-media-action="full">Full</button></div>${mediaHtml}</figure>`;
+  }
+
+  function openMediaModal(kind) {
+    saveSelection();
+    mediaModal.hidden = false;
+    imageModalBody.hidden = kind !== "image";
+    videoModalBody.hidden = kind !== "video";
+    mediaModalTitle.textContent = kind === "image" ? "Insert Image" : "Insert Video";
+    if (kind === "image") {
+      imageUrlInput.focus();
+    } else {
+      videoUrlInput.focus();
+    }
+  }
+
+  function closeMediaModal() {
+    mediaModal.hidden = true;
   }
 
   function insertLink() {
-    const url = window.prompt("Paste the source URL");
-    if (!url || !isSafeUrl(url)) return;
-    exec("createLink", url);
+    const url = window.prompt("Address to link");
+    if (!url || !isSafeUrl(url, false)) return;
+    const openNewWindow = window.confirm("Open this link in a new window?");
+
+    if (activeView === "html") {
+      const text = window.prompt("Link text", url) || url;
+      insertHtml(`<a href="${escapeHtml(url)}"${openNewWindow ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(text)}</a>`);
+      return;
+    }
+
+    restoreSelection();
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      insertHtml(`<a href="${escapeHtml(url)}"${openNewWindow ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(url)}</a>`);
+      return;
+    }
+
+    document.execCommand("createLink", false, url);
+    if (openNewWindow) {
+      const anchor = selection.anchorNode.parentElement.closest("a");
+      if (anchor) {
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
+      }
+    }
+    saveSelection();
+    setStatus("Link inserted");
   }
 
   function buildVideoEmbed(rawUrl) {
@@ -213,29 +312,31 @@
       }
 
       if (src && isAllowedIframe(src)) {
-        return `<figure class="embedded-media"><iframe src="${escapeHtml(src)}" title="Embedded video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></figure>`;
+        return withMediaControls(`<iframe src="${escapeHtml(src)}" title="Embedded video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`);
       }
 
       if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url.pathname)) {
-        return `<figure class="embedded-media"><video controls src="${escapeHtml(rawUrl.trim())}"></video></figure>`;
+        return withMediaControls(`<video controls src="${escapeHtml(rawUrl.trim())}"></video>`);
       }
-
-      return `<p><a href="${escapeHtml(rawUrl.trim())}">Video source</a></p>`;
     } catch (error) {
       return "";
     }
+
+    return "";
   }
 
-  function insertImage() {
-    const url = window.prompt("Paste the image URL");
-    if (!url || !isSafeUrl(url)) return;
-    const alt = window.prompt("Image description or caption", "") || "";
-    insertHtml(`<figure class="embedded-media"><img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ""}</figure>`);
-    setStatus("Image inserted");
+  function insertImageUrl() {
+    const url = imageUrlInput.value.trim();
+    if (!url || !isSafeUrl(url, false)) return;
+    const alt = imageCaptionInput.value.trim();
+    insertHtml(withMediaControls(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ""}`));
+    imageUrlInput.value = "";
+    imageCaptionInput.value = "";
+    closeMediaModal();
   }
 
-  function insertVideo() {
-    const url = window.prompt("Paste a YouTube, Rumble, Google Drive preview, or MP4/WebM video URL");
+  function insertVideoUrl() {
+    const url = videoUrlInput.value.trim();
     if (!url) return;
     const html = buildVideoEmbed(url);
     if (!html) {
@@ -243,19 +344,91 @@
       return;
     }
     insertHtml(html);
-    setStatus("Video inserted");
+    videoUrlInput.value = "";
+    closeMediaModal();
   }
 
   function insertEmbedCode() {
     const html = window.prompt("Paste trusted iframe embed code");
     if (!html) return;
-    const cleaned = cleanHtml(html);
+    const cleaned = cleanHtml(html, true);
     if (!cleaned.trim()) {
       setStatus("Embed was blocked");
       return;
     }
     insertHtml(`<figure class="embedded-media">${cleaned}</figure>`);
-    setStatus("Embed inserted");
+  }
+
+  function insertAuthorNote() {
+    insertHtml(buildAuthorNoteHtml());
+    setStatus("Author note inserted");
+  }
+
+  function insertUploadedFile(file, kind) {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      if (kind === "image") {
+        const alt = imageCaptionInput.value.trim() || file.name.replace(/\.[^.]+$/, "");
+        insertHtml(withMediaControls(`<img src="${escapeHtml(dataUrl)}" alt="${escapeHtml(alt)}">${alt ? `<figcaption>${escapeHtml(alt)}</figcaption>` : ""}`));
+      } else {
+        insertHtml(withMediaControls(`<video controls src="${escapeHtml(dataUrl)}"></video><figcaption>${escapeHtml(file.name)}</figcaption>`));
+      }
+      closeMediaModal();
+      setStatus(`${kind === "image" ? "Image" : "Video"} uploaded`);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function buildPreviewDocument() {
+    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const subtitle = subtitleInput.value.trim();
+    const author = authorInput.value.trim();
+    const source = sourceInput.value.trim();
+    const labels = labelsInput.value.trim();
+    const meta = [author, source, labels].filter(Boolean).join(" · ");
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${escapeHtml(title)} Preview</title>
+<style>
+body{margin:0;background:#0f1419;color:#d7e2ec;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.65}
+main{max-width:900px;margin:0 auto;padding:46px 24px 72px}
+.kicker{color:#55c8ff;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+h1{margin:12px 0 8px;color:#f4f8fb;font-size:42px;line-height:1.1}
+.subtitle{margin:0;color:#c7d3de;font-size:18px}
+.meta{margin:12px 0 34px;color:#8aa0b6;font-size:13px}
+h3{margin:34px 0 12px;color:#f4f8fb;font-size:23px;line-height:1.25}
+p{margin:0 0 16px}
+a{color:#55c8ff}
+blockquote{margin:20px 0;padding:4px 0 4px 18px;border-left:3px solid #55c8ff}
+.embedded-media{margin:26px 0}.embedded-media iframe,.embedded-media video,.embedded-media img{display:block;width:100%;max-width:100%;background:#05080c;border:1px solid #243140;border-radius:6px}.embedded-media iframe,.embedded-media video{aspect-ratio:16/9;height:auto}.embedded-media img{height:auto}.embedded-media figcaption{margin-top:8px;color:#8aa0b6;font-size:13px}
+</style>
+</head>
+<body><main>
+<p class="kicker">Research Library · Field Paper</p>
+<h1>${escapeHtml(title)}</h1>
+${subtitle ? `<p class="subtitle">${escapeHtml(subtitle)}</p>` : ""}
+${meta ? `<p class="meta">${escapeHtml(meta)}</p>` : ""}
+${buildArticleHtml()}
+</main></body></html>`;
+  }
+
+  function openPreview() {
+    if (activeView === "html") syncHtmlToCompose();
+    const previewWindow = window.open("", "tpiPaperPreview");
+    if (!previewWindow) {
+      setStatus("Preview blocked");
+      return;
+    }
+    previewWindow.document.open();
+    previewWindow.document.write(buildPreviewDocument());
+    previewWindow.document.close();
+    setStatus("Preview opened");
   }
 
   async function copyOutput() {
@@ -280,17 +453,28 @@
 
   function clearDraft() {
     if (!window.confirm("Clear the editor body?")) return;
-    editor.innerHTML = "";
-    htmlView.value = "";
-    updatePreview();
-    setStatus("Editor cleared");
+    editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
+    htmlView.value = cleanHtml(editor.innerHTML, true);
+    setStatus("Draft cleared");
   }
 
-  function loadSample() {
-    editor.innerHTML = defaultBody;
-    htmlView.value = cleanHtml(defaultBody);
-    updatePreview();
-    setStatus("Sample loaded");
+  function handleMediaAction(button) {
+    const figure = button.closest(".embedded-media");
+    if (!figure) return;
+    const action = button.dataset.mediaAction;
+
+    if (action === "up" && figure.previousElementSibling) {
+      figure.parentNode.insertBefore(figure, figure.previousElementSibling);
+    }
+
+    if (action === "down" && figure.nextElementSibling) {
+      figure.parentNode.insertBefore(figure.nextElementSibling, figure);
+    }
+
+    if (action === "small") figure.style.maxWidth = "45%";
+    if (action === "medium") figure.style.maxWidth = "70%";
+    if (action === "full") figure.style.maxWidth = "100%";
+    setStatus("Media adjusted");
   }
 
   function handlePaste(event) {
@@ -299,8 +483,8 @@
     const text = event.clipboardData.getData("text/plain");
 
     if (html) {
-      document.execCommand("insertHTML", false, cleanHtml(html));
-      updatePreview();
+      document.execCommand("insertHTML", false, cleanHtml(html, false));
+      saveSelection();
       return;
     }
 
@@ -311,37 +495,65 @@
       .map(part => `<p>${escapeHtml(part).replace(/\n/g, "<br>")}</p>`)
       .join("");
     document.execCommand("insertHTML", false, paragraphs);
-    updatePreview();
+    saveSelection();
   }
 
   document.addEventListener("click", event => {
-    const button = event.target.closest("button[data-command], button[data-action], button[data-view]");
+    const button = event.target.closest("button[data-command], button[data-action], button[data-block], button[data-media-action]");
     if (!button) return;
+
+    if (button.dataset.mediaAction) {
+      handleMediaAction(button);
+      return;
+    }
 
     const command = button.dataset.command;
     const action = button.dataset.action;
-    const view = button.dataset.view;
+    const block = button.dataset.block;
 
-    if (view) setViewMode(view);
     if (command) exec(command);
+    if (block) setBlock(block);
     if (action === "link") insertLink();
-    if (action === "image") insertImage();
-    if (action === "video") insertVideo();
+    if (action === "image-menu") openMediaModal("image");
+    if (action === "video-menu") openMediaModal("video");
+    if (action === "media-close") closeMediaModal();
+    if (action === "image-upload") imageFileInput.click();
+    if (action === "image-url") insertImageUrl();
+    if (action === "video-upload") videoFileInput.click();
+    if (action === "video-url") insertVideoUrl();
     if (action === "embed") insertEmbedCode();
+    if (action === "author-note") insertAuthorNote();
+    if (action === "preview") openPreview();
     if (action === "copy") copyOutput();
     if (action === "clear") clearDraft();
-    if (action === "sample") loadSample();
+  });
+
+  viewMode.addEventListener("change", event => {
+    setViewMode(event.target.value);
   });
 
   document.getElementById("editor-block-format").addEventListener("change", event => {
     setBlock(event.target.value);
   });
 
-  [titleInput, subtitleInput, sourceInput, authorInput, editor].forEach(node => {
-    node.addEventListener("input", updatePreview);
-  });
-  htmlView.addEventListener("input", updatePreview);
+  editor.addEventListener("input", saveSelection);
+  editor.addEventListener("keyup", saveSelection);
+  editor.addEventListener("mouseup", saveSelection);
+  editor.addEventListener("focus", saveSelection);
   editor.addEventListener("paste", handlePaste);
+  htmlView.addEventListener("input", () => setStatus("HTML edited"));
+  imageFileInput.addEventListener("change", event => {
+    insertUploadedFile(event.target.files[0], "image");
+    imageFileInput.value = "";
+  });
+  videoFileInput.addEventListener("change", event => {
+    insertUploadedFile(event.target.files[0], "video");
+    videoFileInput.value = "";
+  });
+  mediaModal.addEventListener("click", event => {
+    if (event.target === mediaModal) closeMediaModal();
+  });
 
-  loadSample();
+  editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
+  htmlView.value = cleanHtml(editor.innerHTML);
 })();
