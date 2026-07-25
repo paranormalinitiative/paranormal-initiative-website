@@ -304,14 +304,14 @@
             ${profile.photoUrl ? `<img class="public-profile-photo" src="${escapeHtml(profile.photoUrl)}" alt="${escapeHtml(profileName)}">` : `<div class="public-profile-photo public-profile-photo-empty">${escapeHtml(profileName.charAt(0) || "C")}</div>`}
             <p class="portal-kicker">Contributor</p>
             <h2>${escapeHtml(profileName)}</h2>
-            ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : `<p class="public-profile-title">Research Contributor</p>`}
+            ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : ""}
             ${profile.role ? `<p class="public-profile-role">${escapeHtml(profile.role)}</p>` : ""}
           </aside>
           <div class="public-profile-main">
             <div class="public-profile-heading">
               <p class="portal-kicker">Contributor Profile</p>
               <h1>${escapeHtml(profileName)}</h1>
-              <p>${escapeHtml(profile.title || "Research Contributor")}</p>
+              ${profile.title ? `<p>${escapeHtml(profile.title)}</p>` : ""}
             </div>
             <div class="public-profile-details">
               ${profile.affiliation ? `<div><span>Affiliation</span><strong>${escapeHtml(profile.affiliation)}</strong></div>` : ""}

@@ -191,7 +191,7 @@ async function handleUpdateProfile(request, env, user) {
     WHERE id = ?
   `).bind(
     clean(data.displayName || user.display_name),
-    clean(data.title),
+    clean(data.title).slice(0, 160),
     clean(data.correspondence),
     clean(data.affiliation),
     clean(data.organization),
