@@ -141,7 +141,10 @@
     const badge = document.createElement("div");
     badge.className = "member-greeting";
     badge.innerHTML = `
-      <a href="member-dashboard.html">Hello, ${escapeGreeting(firstName)}</a>
+      <a class="member-dashboard-link" href="member-dashboard.html">
+        <span>Hello, ${escapeGreeting(firstName)}</span>
+        <strong>Member Dashboard</strong>
+      </a>
       <button type="button" data-header-logout>Sign Out</button>
     `;
     header.appendChild(badge);

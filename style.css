@@ -158,12 +158,35 @@ select,
     border-radius: 4px;
 }
 
-.member-greeting a,
+.member-dashboard-link {
+    display: grid;
+    gap: 2px;
+    min-width: 142px;
+}
+
+.member-dashboard-link span {
+    color: #dff3fb;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.member-dashboard-link strong {
+    color: #55c8ff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
 .member-greeting button {
     color: #dff3fb;
     font: inherit;
     font-size: 12px;
     font-weight: 800;
+    text-decoration: none;
+}
+
+.member-greeting a {
     text-decoration: none;
 }
 
