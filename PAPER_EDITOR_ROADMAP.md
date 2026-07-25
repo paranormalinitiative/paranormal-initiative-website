@@ -45,9 +45,10 @@ Current layout:
 - Inserted media has editor-only controls for moving and resizing while drafting.
 - Destination dropdown chooses where the paper belongs in the Education Center.
 - Publish Article opens a publish dialog for the chosen section/page.
-- The editor opens directly; it is not blocked by login.
-- Contributor sign-in is optional in the editor's Contributors dialog.
-- Admin/contributor accounts can be added in the editor's Contributors dialog.
+- The editor requires contributor login unless the user's 10-click dev copy mode is enabled.
+- Main navigation includes Member Login.
+- Registration is invite-only.
+- Invite codes and contributor accounts can be managed in the editor's Contributors dialog.
 - Public pages receive a local prototype comment section through `includes.js`.
 - Destination pages receive locally published article cards through `includes.js`.
 - Generated published papers open through `published-article.html`.
@@ -290,8 +291,8 @@ The user wants the Research Paper Editor to require username/password access aft
 
 Required features:
 
-- Login before opening the editor. Not active in the current prototype because the user needs direct editor access.
-- Admin can add contributors. Prototype implemented with localStorage through the Contributors dialog.
+- Login before opening the editor. Prototype implemented with localStorage, with dev-copy-mode bypass for the site owner.
+- Admin can add contributors and invite codes. Prototype implemented with localStorage through the Contributors dialog.
 - Contributor profiles store author note data. Prototype implemented with localStorage.
 - Contributors can submit research notes, papers, images, and videos.
 - Admin/editor can review submissions.

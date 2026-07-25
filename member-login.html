@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Login | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Member Login">
+    <meta name="pp:subtitle" content="Contributor Access">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+</head>
+<body>
+<div id="site-header"></div>
+
+<section class="member-login-shell">
+    <div class="editor-access-card">
+        <p class="portal-kicker">Member Login</p>
+        <h2>Contributor Access</h2>
+        <p>Sign in to open the Research Paper Editor. New contributors need an invite code from The Paranormal Initiative.</p>
+        <form data-member-login>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+
+    <div class="editor-access-card">
+        <p class="portal-kicker">Invite Only</p>
+        <h2>Create Contributor Login</h2>
+        <p>Use the invite code you were given to create your contributor account.</p>
+        <form data-invite-register>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" required></label>
+            <label><span>Display Name</span><input name="displayName" type="text" required></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
+            <button type="submit">Create Login</button>
+        </form>
+        <p id="member-login-status" class="access-note"></p>
+    </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="member-login.js"></script>
+</body>
+</html>

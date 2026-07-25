@@ -118,9 +118,12 @@ The editor currently includes:
 - Preview opens a separate browser window using generated HTML.
 - Author Note insertion is built into `paper-editor.js` and is generated from the Post Settings author fields.
 - Destination selection is built into `paper-editor.js`; `Publish Article` opens a publish dialog with the article filename, destination page, full article HTML download/copy actions, destination card copy action, and an Open Destination Page action.
-- The editor opens directly. It is not blocked by a login gate.
-- The editor page is exempt from the public copy/paste lock so writing, copying, and pasting inside the editor works normally.
-- The editor still has optional contributor tools. Users can open a Contributors manager from the editor top bar and add contributor/editor/admin accounts with profile fields.
+- The editor is behind a contributor login gate again for public publishing safety.
+- The user's existing 10-click dev copy mode bypasses the editor gate and unlocks copy/paste while building.
+- The editor page is exempt from the public copy/paste lock once unlocked so writing, copying, and pasting inside the editor works normally.
+- The main navigation includes `Member Login`.
+- Public users cannot create their own account freely. Registration requires an invite code.
+- Contributor tools can create invite codes and add contributor/editor/admin accounts with profile fields.
 - Contributor profile fields populate the author note settings when logged in.
 - This access layer is a local browser prototype using `localStorage`; it is not production security.
 - `Publish Article` can publish a local article record to the selected destination. Destination pages inject matching locally published cards into their existing grids. The generated article opens through `published-article.html?id=...`.
@@ -211,7 +214,7 @@ Do not revert unrelated changes without user approval.
 ## Known Limitations
 
 - The editor is a static-browser prototype. It does not save posts to a backend.
-- The editor has optional local prototype contributor account tools. It uses browser `localStorage`; real contributor login still needs a backend or hosted auth provider before public launch.
+- The editor has a local prototype contributor login gate with invite-code registration. It uses browser `localStorage`; real contributor login still needs a backend or hosted auth provider before public launch.
 - Uploaded media is embedded as data URLs in the HTML. This is simple and offline-friendly, but not ideal for production.
 - A production workflow should eventually copy uploaded files into an `assets/` folder or use a CMS media library.
 - Browser popup settings may block Preview because it opens a new window.
@@ -221,9 +224,10 @@ Do not revert unrelated changes without user approval.
 
 Future editor access should work like this:
 
-1. User clicks Research Paper Editor from Education Center and the editor opens directly.
-2. Contributor sign-in is optional in the current prototype.
-3. Admin/contributor tools can manage local usernames/passwords or future invite links.
+1. User clicks Research Paper Editor from Education Center and sees a login gate unless dev copy mode is enabled.
+2. User can also use Member Login from the main navigation.
+3. Contributor registration requires an invite code.
+4. Admin/contributor tools can manage local usernames/passwords or future invite links.
 4. Contributor can draft/submit research papers, notes, images, and videos.
 5. Contributor author fields can auto-fill from their profile.
 6. Current `Publish Article` saves locally and places the article card into the selected destination grid in this browser.

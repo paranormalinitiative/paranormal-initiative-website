@@ -1,6 +1,7 @@
 (function () {
   const ACCESS_USERS_KEY = "tpiEditorContributors";
   const ACCESS_SESSION_KEY = "tpiEditorSession";
+  const ACCESS_INVITES_KEY = "tpiEditorInvites";
   const PUBLISHED_ARTICLES_KEY = "tpiPublishedArticles";
   const titleInput = document.getElementById("editor-title");
   const subtitleInput = document.getElementById("editor-subtitle");
@@ -101,6 +102,22 @@
     localStorage.setItem(ACCESS_USERS_KEY, JSON.stringify(users));
   }
 
+  function getInvites() {
+    try {
+      return JSON.parse(localStorage.getItem(ACCESS_INVITES_KEY) || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveInvites(invites) {
+    localStorage.setItem(ACCESS_INVITES_KEY, JSON.stringify(invites));
+  }
+
+  function isDevUnlocked() {
+    return localStorage.getItem("tpiDevCopyMode") === "enabled";
+  }
+
   function getSessionUser() {
     const username = localStorage.getItem(ACCESS_SESSION_KEY);
     if (!username) return null;
@@ -118,7 +135,8 @@
 
   function unlockEditor(user) {
     currentUser = user;
-    localStorage.setItem(ACCESS_SESSION_KEY, user.username);
+    if (user.username) localStorage.setItem(ACCESS_SESSION_KEY, user.username);
+    document.body.classList.remove("editor-locked");
     document.body.classList.add("editor-authenticated");
     applyContributorProfile(user);
     setStatus(`Signed in as ${user.displayName || user.username}`);
@@ -129,38 +147,28 @@
   function lockEditor() {
     currentUser = null;
     localStorage.removeItem(ACCESS_SESSION_KEY);
+    document.body.classList.add("editor-locked");
     document.body.classList.remove("editor-authenticated");
     setStatus("Contributor signed out");
+    showAccessGate();
   }
 
   function showAccessGate() {
     const existing = document.getElementById("editor-access-gate");
     if (existing) existing.remove();
 
-    const users = getUsers();
-    const needsSetup = users.length === 0;
     const gate = document.createElement("div");
     gate.id = "editor-access-gate";
     gate.className = "editor-access-gate";
-    gate.innerHTML = needsSetup ? `
-      <form class="editor-access-card" data-access-form="setup">
-        <p class="portal-kicker">Contributor Access</p>
-        <h2>Create Admin Login</h2>
-        <p>This local prototype protects the editor workflow on this browser. Use backend auth before public launch.</p>
-        <label><span>Admin Name</span><input name="displayName" type="text" value="Todd Wayne" required></label>
-        <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
-        <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
-        <button type="submit">Create Admin</button>
-      </form>
-    ` : `
+    gate.innerHTML = `
       <form class="editor-access-card" data-access-form="login">
         <p class="portal-kicker">Contributor Access</p>
         <h2>Sign In</h2>
-        <p>Use your contributor username and password to open the Research Paper Editor.</p>
+        <p>Use your contributor username and password to open the Research Paper Editor. Dev copy mode also unlocks this page for site work.</p>
         <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
         <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
         <button type="submit">Open Editor</button>
-        <p class="access-note">Anonymous visitors can comment on posts without signing in.</p>
+        <p class="access-note">Need access? Use an invite code on the Member Login page.</p>
       </form>
     `;
     document.body.appendChild(gate);
@@ -175,24 +183,6 @@
     const mode = form.dataset.accessForm;
     const username = String(data.get("username") || "").trim();
     const password = String(data.get("password") || "");
-
-    if (mode === "setup") {
-      const displayName = String(data.get("displayName") || username).trim();
-      const user = {
-        username,
-        password,
-        displayName,
-        role: "admin",
-        active: true,
-        affiliation: "The Paranormal Initiative - Applied Paranormal Research and Studies",
-        organization: "Somerset Paranormal Research Society",
-        correspondence: "paranormalinitiative@yahoo.com",
-        website: ""
-      };
-      saveUsers([user]);
-      unlockEditor(user);
-      return;
-    }
 
     const user = getUsers().find(candidate => candidate.username === username && candidate.password === password && candidate.active !== false);
     if (!user) {
@@ -222,6 +212,12 @@
           <button type="button" data-action="contributors-close">Close</button>
         </div>
         <div class="media-modal-body contributor-manager">
+          <form data-invite-form class="contributor-login-panel">
+            <p class="access-note">Create invite-only access codes. Give a code to a contributor so they can register from Member Login.</p>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Example: TPI-RESEARCH-2026" required></label>
+            <label><span>Role</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
+            <button type="submit">Create Invite</button>
+          </form>
           ${hasAdmin && !currentUser ? `
           <form data-access-form="login" class="contributor-login-panel">
             <p class="access-note">Optional contributor sign-in. The editor itself stays open.</p>
@@ -243,6 +239,7 @@
           <div class="contributor-list">
             ${currentUser ? `<p class="access-note">Signed in as ${escapeHtml(currentUser.displayName || currentUser.username)}.</p>` : `<p class="access-note">Local contributor accounts are for workflow testing only.</p>`}
             ${users.map(user => `<div class="contributor-row"><strong>${escapeHtml(user.displayName || user.username)}</strong><span>${escapeHtml(user.username)} · ${escapeHtml(user.role || "contributor")}</span></div>`).join("") || "<p>No contributors yet.</p>"}
+            ${getInvites().map(invite => `<div class="contributor-row"><strong>Invite: ${escapeHtml(invite.code)}</strong><span>${escapeHtml(invite.role || "contributor")} · ${invite.used ? "used" : "open"}</span></div>`).join("")}
           </div>
         </div>
       </div>
@@ -276,6 +273,24 @@
     });
     saveUsers(users);
     setStatus("Contributor added");
+    openContributorManager();
+  }
+
+  function addInvite(event) {
+    const form = event.target.closest("[data-invite-form]");
+    if (!form) return;
+    event.preventDefault();
+    const data = new FormData(form);
+    const code = String(data.get("inviteCode") || "").trim();
+    if (!code) return;
+    const invites = getInvites();
+    if (invites.some(invite => invite.code === code && !invite.used)) {
+      setStatus("Invite code already exists");
+      return;
+    }
+    invites.push({ code, role: String(data.get("inviteRole") || "contributor"), used: false, createdAt: new Date().toISOString() });
+    saveInvites(invites);
+    setStatus("Invite created");
     openContributorManager();
   }
 
@@ -891,6 +906,7 @@ ${buildArticleHtml()}
   document.addEventListener("submit", event => {
     handleAccessSubmit(event);
     addContributor(event);
+    addInvite(event);
   });
 
   viewMode.addEventListener("change", event => {
@@ -925,7 +941,16 @@ ${buildArticleHtml()}
   editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
   htmlView.value = cleanHtml(editor.innerHTML);
   const sessionUser = getSessionUser();
-  if (sessionUser) {
+  if (isDevUnlocked()) {
+    unlockEditor({
+      username: "",
+      displayName: "Developer Unlock",
+      role: "admin",
+      active: true
+    });
+  } else if (sessionUser) {
     unlockEditor(sessionUser);
+  } else {
+    showAccessGate();
   }
 })();

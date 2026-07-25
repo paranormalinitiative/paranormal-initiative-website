@@ -16,7 +16,7 @@ This repository is currently a static site. Static files can show a login screen
 
 Real login needs a backend or hosted auth provider.
 
-Current state note: a local browser prototype has been added so the workflow can be tested now. The editor opens directly, contributor sign-in is optional, and contributor accounts, locally published articles, and comments are stored in `localStorage`. This is only for local workflow testing and must be replaced before public launch.
+Current state note: a local browser prototype has been added so the workflow can be tested now. The editor uses a login gate, the site owner's 10-click dev copy mode bypasses the gate, contributor registration is invite-only, and contributor accounts, invite codes, locally published articles, and comments are stored in `localStorage`. This is only for local workflow testing and must be replaced before public launch.
 
 Recommended secure options:
 

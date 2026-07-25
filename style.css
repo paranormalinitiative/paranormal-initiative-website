@@ -1431,6 +1431,15 @@ footer {
     border-radius: 4px;
 }
 
+.member-login-shell {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 440px));
+    gap: 18px;
+    justify-content: center;
+    align-items: start;
+    max-width: 980px;
+}
+
 .contributor-manager form {
     gap: 12px;
 }
@@ -1997,6 +2006,11 @@ footer {
     .paper-editor-body,
     .paper-html-view {
         height: 520px;
+    }
+
+    .member-login-shell,
+    .contributor-manager {
+        grid-template-columns: 1fr;
     }
 }
 
