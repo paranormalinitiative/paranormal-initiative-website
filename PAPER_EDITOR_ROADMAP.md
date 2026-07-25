@@ -42,7 +42,7 @@ Current layout:
 - Image and Video buttons open small modal cards with the available insertion options.
 - Inserted media has editor-only controls for moving and resizing while drafting.
 - Destination dropdown chooses where the paper belongs in the Education Center.
-- Copy Destination Card generates the card snippet for that chosen section/page.
+- Publish Article opens a publish dialog for the chosen section/page.
 
 ## Toolbar Requirements
 
@@ -202,7 +202,7 @@ Current destination choices:
 Current behavior:
 
 - The selected destination is included in preview metadata.
-- `Copy Destination Card` generates a card snippet for the selected destination page.
+- `Publish Article` opens a dialog with the generated article filename, destination page, article download/copy actions, destination card copy action, and open-destination action.
 - The card includes an HTML comment naming the target file where it belongs.
 - The suggested paper filename is generated from the title.
 

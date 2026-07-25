@@ -23,6 +23,10 @@
   const imageUrlInput = document.getElementById("image-url-input");
   const imageCaptionInput = document.getElementById("image-caption-input");
   const videoUrlInput = document.getElementById("video-url-input");
+  const publishModal = document.getElementById("publish-modal");
+  const publishSummary = document.getElementById("publish-summary");
+  const publishFilename = document.getElementById("publish-filename");
+  const publishDestination = document.getElementById("publish-destination");
 
   let activeView = "compose";
   let savedSelection = null;
@@ -404,6 +408,10 @@
   }
 
   function buildPreviewDocument() {
+    return buildFullArticleDocument("Preview");
+  }
+
+  function buildFullArticleDocument(label) {
     const title = titleInput.value.trim() || "Untitled Research Paper";
     const subtitle = subtitleInput.value.trim();
     const author = authorInput.value.trim();
@@ -416,7 +424,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>${escapeHtml(title)} Preview</title>
+<title>${escapeHtml(title)}${label ? ` ${escapeHtml(label)}` : ""}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;background:#0f1419;color:#d7e2ec;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.65}
 main{max-width:900px;margin:0 auto;padding:46px 24px 72px}
@@ -473,12 +482,12 @@ ${buildArticleHtml()}
     setStatus("Post HTML copied");
   }
 
-  async function copyDestinationCard() {
+  function buildDestinationCard() {
     const title = titleInput.value.trim() || "Untitled Research Paper";
     const subtitle = subtitleInput.value.trim() || "Field paper";
     const href = getSuggestedArticleHref();
     const destination = getDestinationLabel();
-    const card = [
+    return [
       `<!-- Add this card to ${destination}: ${destinationInput.value} -->`,
       `<a class="study-resource-card" href="${escapeHtml(href)}">`,
       `    <p class="dashboard-panel-kicker">Research Paper</p>`,
@@ -487,12 +496,14 @@ ${buildArticleHtml()}
       `    <span class="dashboard-panel-cta">Read Paper ›</span>`,
       `</a>`
     ].join("\n");
+  }
 
+  async function writeClipboard(value, message) {
     try {
-      await navigator.clipboard.writeText(card);
+      await navigator.clipboard.writeText(value);
     } catch (error) {
       const temporary = document.createElement("textarea");
-      temporary.value = card;
+      temporary.value = value;
       temporary.setAttribute("readonly", "");
       temporary.style.position = "fixed";
       temporary.style.left = "-9999px";
@@ -502,7 +513,47 @@ ${buildArticleHtml()}
       temporary.remove();
     }
 
-    setStatus("Destination card copied");
+    setStatus(message);
+  }
+
+  function openPublishModal() {
+    if (activeView === "html") syncHtmlToCompose();
+    const title = titleInput.value.trim() || "Untitled Research Paper";
+    publishFilename.value = getSuggestedArticleHref();
+    publishDestination.value = destinationInput.value;
+    publishSummary.textContent = `"${title}" is ready for ${getDestinationLabel()}.`;
+    publishModal.hidden = false;
+  }
+
+  function closePublishModal() {
+    publishModal.hidden = true;
+  }
+
+  function downloadArticle() {
+    const html = buildFullArticleDocument("");
+    const blob = new Blob([html], { type: "text/html" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = publishFilename.value || getSuggestedArticleHref();
+    document.body.appendChild(link);
+    link.click();
+    URL.revokeObjectURL(link.href);
+    link.remove();
+    setStatus("Article downloaded");
+  }
+
+  async function copyFullArticlePage() {
+    await writeClipboard(buildFullArticleDocument(""), "Full article copied");
+  }
+
+  async function copyDestinationCard() {
+    const card = buildDestinationCard();
+    await writeClipboard(card, "Destination card copied");
+  }
+
+  function openDestinationPage() {
+    window.open(destinationInput.value, "_blank");
+    setStatus("Destination opened");
   }
 
   function clearDraft() {
@@ -578,6 +629,11 @@ ${buildArticleHtml()}
     if (action === "embed") insertEmbedCode();
     if (action === "author-note") insertAuthorNote();
     if (action === "preview") openPreview();
+    if (action === "publish") openPublishModal();
+    if (action === "publish-close") closePublishModal();
+    if (action === "download-article") downloadArticle();
+    if (action === "copy-full-page") copyFullArticlePage();
+    if (action === "open-destination") openDestinationPage();
     if (action === "copy") copyOutput();
     if (action === "copy-card") copyDestinationCard();
     if (action === "clear") clearDraft();
@@ -607,6 +663,9 @@ ${buildArticleHtml()}
   });
   mediaModal.addEventListener("click", event => {
     if (event.target === mediaModal) closeMediaModal();
+  });
+  publishModal.addEventListener("click", event => {
+    if (event.target === publishModal) closePublishModal();
   });
 
   editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;

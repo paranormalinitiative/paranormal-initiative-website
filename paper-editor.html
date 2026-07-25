@@ -19,6 +19,7 @@
         <div class="paper-editor-brand">Research Paper Editor</div>
         <div class="post-action-controls">
             <button type="button" data-action="preview">Preview</button>
+            <button type="button" data-action="publish">Publish Article</button>
             <button type="button" data-action="copy">Copy HTML</button>
         </div>
     </div>
@@ -117,7 +118,7 @@
                 <span>Labels</span>
                 <input id="editor-labels" type="text" placeholder="Research, EVP, ITC">
             </label>
-            <button type="button" class="settings-action" data-action="copy-card">Copy Destination Card</button>
+            <button type="button" class="settings-action" data-action="publish">Publish Article</button>
             <button type="button" class="settings-action" data-action="clear">Clear Draft</button>
         </aside>
     </div>
@@ -153,6 +154,30 @@
                 </label>
                 <button type="button" data-action="video-url">Insert Video URL</button>
                 <p>YouTube and Rumble links are embedded when recognized. Direct video files are inserted with controls.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="publish-modal" class="media-modal" hidden>
+        <div class="media-modal-card publish-modal-card" role="dialog" aria-modal="true" aria-labelledby="publish-modal-title">
+            <div class="media-modal-header">
+                <h3 id="publish-modal-title">Publish Article</h3>
+                <button type="button" data-action="publish-close" aria-label="Close publish dialog">Close</button>
+            </div>
+            <div class="media-modal-body">
+                <p id="publish-summary"></p>
+                <label>
+                    <span>Article File</span>
+                    <input id="publish-filename" type="text" readonly>
+                </label>
+                <label>
+                    <span>Destination Page</span>
+                    <input id="publish-destination" type="text" readonly>
+                </label>
+                <button type="button" data-action="download-article">Download Article HTML</button>
+                <button type="button" data-action="copy-full-page">Copy Full Article HTML</button>
+                <button type="button" data-action="copy-card">Copy Destination Card</button>
+                <button type="button" data-action="open-destination">Open Destination Page</button>
             </div>
         </div>
     </div>
