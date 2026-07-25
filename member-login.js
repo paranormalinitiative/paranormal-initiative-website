@@ -38,6 +38,10 @@
     localStorage.setItem(ACCESS_INVITES_KEY, JSON.stringify(invites));
   }
 
+  async function cloudflareReady() {
+    return Boolean(window.TPIApi && await window.TPIApi.isAvailable());
+  }
+
   function escapeHtml(value) {
     return String(value || "").replace(/[&<>"']/g, char => ({
       "&": "&amp;",
@@ -171,16 +175,63 @@
     }).join("") : `<p class="access-note">No open invite links yet.</p>`;
   }
 
-  document.addEventListener("submit", event => {
+  async function renderCloudflareOwnerInvites() {
+    if (!inviteOwnerTools || !inviteLinkList || !isDevUnlocked() || !await cloudflareReady()) return false;
+
+    try {
+      const data = await window.TPIApi.listInvites();
+      inviteOwnerTools.hidden = false;
+      const openInvites = (data.invites || []).filter(invite => !invite.used);
+      inviteLinkList.innerHTML = openInvites.length ? openInvites.map(invite => {
+        const link = getInviteLink(invite);
+        return `
+          <div class="invite-link-row">
+            <strong>${escapeHtml(invite.code)}</strong>
+            <span>${escapeHtml(invite.role || "contributor")}</span>
+            <input type="text" readonly value="${escapeHtml(link)}">
+            <button type="button" data-copy-invite-link="${escapeHtml(link)}">Copy Link</button>
+          </div>
+        `;
+      }).join("") : `<p class="access-note">No open invite links yet.</p>`;
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  document.addEventListener("submit", async event => {
     const loginForm = event.target.closest("[data-member-login]");
     const inviteCheckForm = event.target.closest("[data-invite-check]");
     const registerForm = event.target.closest("[data-invite-register]");
     const ownerInviteForm = event.target.closest("[data-owner-invite-form]");
-    if (!loginForm && !inviteCheckForm && !registerForm && !ownerInviteForm) return;
+    const ownerBootstrapForm = event.target.closest("[data-owner-bootstrap-form]");
+    if (!loginForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
     const users = getUsers();
+
+    if (ownerBootstrapForm) {
+      if (!await cloudflareReady()) {
+        setStatus("Cloudflare API is not available in this preview.", true);
+        return;
+      }
+
+      try {
+        await window.TPIApi.ownerBootstrap({
+          setupKey: String(data.get("setupKey") || ""),
+          username: String(data.get("username") || "tpi-owner").trim(),
+          password: String(data.get("password") || ""),
+          displayName: "Todd Wayne",
+          title: "Site Owner / Administrator"
+        });
+        ownerBootstrapForm.reset();
+        setStatus("Owner login created. Go to Member Login and sign in with that username and password.", false);
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+      return;
+    }
 
     if (ownerInviteForm) {
       if (!isDevUnlocked()) {
@@ -189,6 +240,18 @@
       }
 
       const code = String(data.get("inviteCode") || "").trim() || makeInviteCode();
+      if (await cloudflareReady()) {
+        try {
+          await window.TPIApi.createInvite({ code, role: String(data.get("inviteRole") || "contributor") });
+          ownerInviteForm.reset();
+          await renderCloudflareOwnerInvites();
+          setStatus("Cloudflare invite link created. Copy it and send it to the contributor.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+
       const invites = getInvites();
       if (invites.some(invite => invite.code === code && !invite.used)) {
         setStatus("That invite code already exists.", true);
@@ -211,6 +274,18 @@
     if (loginForm) {
       const username = String(data.get("username") || "").trim();
       const password = String(data.get("password") || "");
+      if (await cloudflareReady()) {
+        try {
+          const result = await window.TPIApi.login(username, password);
+          if (result.user) saveUsers([{ ...result.user, active: true }]);
+          localStorage.setItem(ACCESS_SESSION_KEY, username);
+          window.location.href = "paper-editor.html";
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+
       const user = users.find(candidate => candidate.username === username && candidate.password === password && candidate.active !== false);
       if (!user) {
         setStatus("Username or password did not match.", true);
@@ -223,6 +298,21 @@
 
     if (inviteCheckForm) {
       const inviteCode = String(data.get("inviteCode") || "").trim();
+      if (await cloudflareReady()) {
+        try {
+          await window.TPIApi.checkInvite(inviteCode);
+          const hiddenCode = inviteSetupPanel?.querySelector("input[name='inviteCode']");
+          if (hiddenCode) hiddenCode.value = inviteCode;
+          if (inviteCodePanel) inviteCodePanel.hidden = true;
+          if (inviteSetupPanel) inviteSetupPanel.hidden = false;
+          setStatus("Invite accepted. Create your contributor login.", false);
+          inviteSetupPanel?.querySelector("input[name='displayName']")?.focus();
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+
       const invites = getInvites();
       const invite = invites.find(item => item.code === inviteCode && !item.used);
       if (!invite) {
@@ -241,6 +331,30 @@
 
     const inviteCode = String(data.get("inviteCode") || "").trim();
     const username = String(data.get("username") || "").trim();
+    if (await cloudflareReady()) {
+      try {
+        await window.TPIApi.registerContributor({
+          inviteCode,
+          username,
+          password: String(data.get("password") || ""),
+          displayName: String(data.get("displayName") || username).trim(),
+          title: String(data.get("title") || "").trim(),
+          correspondence: String(data.get("correspondence") || "").trim(),
+          affiliation: String(data.get("affiliation") || "").trim(),
+          organization: String(data.get("organization") || "").trim(),
+          website: String(data.get("website") || "").trim(),
+          commentSignatureEnabled: data.get("commentSignature") === "on"
+        });
+        setStatus("Contributor login created. Go to Member Login and sign in.", false);
+        window.setTimeout(() => {
+          window.location.href = "member-login.html";
+        }, 900);
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+      return;
+    }
+
     const invites = getInvites();
     const invite = invites.find(item => item.code === inviteCode && !item.used);
     if (!invite) {
@@ -295,5 +409,7 @@
   importInviteFromUrl();
   const developerOwner = ensureDeveloperSession();
   installDeveloperAccessNotice(developerOwner);
-  renderOwnerInvites();
+  renderCloudflareOwnerInvites().then(renderedCloudflare => {
+    if (!renderedCloudflare) renderOwnerInvites();
+  });
 })();

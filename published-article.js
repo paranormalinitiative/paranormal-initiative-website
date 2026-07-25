@@ -1,4 +1,4 @@
-(function () {
+(async function () {
   const root = document.getElementById("published-article-root");
   if (!root) return;
 
@@ -20,8 +20,18 @@
     }
   }
 
+  async function getCloudflareArticle(id) {
+    if (!window.TPIApi) return null;
+    try {
+      const data = await window.TPIApi.listArticles();
+      return (data.articles || []).find(item => item.id === id) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
   const id = new URLSearchParams(window.location.search).get("id");
-  const article = getPublishedArticles().find(item => item.id === id);
+  const article = await getCloudflareArticle(id) || getPublishedArticles().find(item => item.id === id);
   if (!article) return;
 
   document.title = `${article.title} | The Paranormal Initiative`;

@@ -139,6 +139,18 @@
 
     const storageKey = `tpiComments:${pageId}`;
     const contributorSignature = getContributorSignature();
+    let cloudflareComments = null;
+
+    async function apiRequest(path, options = {}) {
+      const response = await fetch(`/api${path}`, {
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        ...options,
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      if (!response.ok) throw new Error("Cloudflare API request failed.");
+      return response.json();
+    }
 
     function shouldShowComments(currentPage) {
       if (currentPage === "published-article.html") return true;
@@ -167,6 +179,7 @@
     }
 
     function getComments() {
+      if (cloudflareComments) return cloudflareComments;
       try {
         const comments = JSON.parse(localStorage.getItem(storageKey) || "[]");
         let changed = false;
@@ -188,6 +201,16 @@
 
     function saveComments(comments) {
       localStorage.setItem(storageKey, JSON.stringify(comments));
+    }
+
+    async function loadCloudflareComments() {
+      try {
+        const data = await apiRequest(`/comments?pageId=${encodeURIComponent(pageId)}`);
+        cloudflareComments = data.comments || [];
+        renderComments();
+      } catch (error) {
+        cloudflareComments = null;
+      }
     }
 
     function escapeComment(value) {
@@ -330,7 +353,7 @@
       `).join("") : `<p class="tpi-comment-empty">No comments yet.</p>`;
     }
 
-    section.addEventListener("submit", event => {
+    section.addEventListener("submit", async event => {
       event.preventDefault();
       const replyForm = event.target.closest(".tpi-reply-form");
       if (replyForm) {
@@ -342,6 +365,28 @@
         const comments = getComments();
         const comment = comments.find(item => item.id === replyForm.dataset.commentId);
         if (!comment) return;
+
+        if (cloudflareComments) {
+          try {
+            await apiRequest("/comments", {
+              method: "POST",
+              body: {
+                pageId,
+                parentId: comment.id,
+                name: identity.name,
+                authorTitle: identity.authorTitle,
+                text,
+                useContributorProfile: Boolean(contributorSignature && replyForm.querySelector("[name='useContributorProfile']")?.checked)
+              }
+            });
+            replyForm.reset();
+            await loadCloudflareComments();
+            return;
+          } catch (error) {
+            // Fall back to local prototype below.
+          }
+        }
+
         comment.replies = Array.isArray(comment.replies) ? comment.replies : [];
         comment.replies.push({
           name: identity.name,
@@ -361,6 +406,27 @@
       const identity = getSubmittedIdentity(commentForm, "name", "useContributorProfile");
       const text = String(data.get("comment") || "").trim();
       if (!text) return;
+
+      if (cloudflareComments) {
+        try {
+          await apiRequest("/comments", {
+            method: "POST",
+            body: {
+              pageId,
+              name: identity.name,
+              authorTitle: identity.authorTitle,
+              text,
+              useContributorProfile: Boolean(contributorSignature && commentForm.querySelector("[name='useContributorProfile']")?.checked)
+            }
+          });
+          commentForm.reset();
+          await loadCloudflareComments();
+          return;
+        } catch (error) {
+          // Fall back to local prototype below.
+        }
+      }
+
       const comments = getComments();
       comments.push({
         id: makeCommentId(),
@@ -378,6 +444,7 @@
 
     footerHost.before(section);
     renderComments();
+    loadCloudflareComments();
   }
 
   function installPublishedArticleCards() {
@@ -398,6 +465,35 @@
       }[char]));
     }
 
+    function appendArticleCard(article) {
+      if ([...grid.querySelectorAll("[data-published-id]")].some(card => card.dataset.publishedId === article.id)) return;
+      const card = document.createElement("a");
+      card.className = grid.classList.contains("series-post-grid") ? "study-resource-card tpi-published-card" : "study-resource-card tpi-published-card";
+      card.href = article.href || `published-article.html?id=${encodeURIComponent(article.id)}`;
+      card.dataset.publishedId = article.id;
+      card.innerHTML = `
+        <div class="study-resource-card-media"><span>Field</span></div>
+        <div class="study-resource-card-copy">
+          <span>Published Article</span>
+          <h3>${escapeCard(article.title)}</h3>
+          <p>${escapeCard(article.subtitle || "Field paper")}</p>
+          <strong>Open Paper</strong>
+        </div>
+      `;
+      grid.appendChild(card);
+    }
+
+    async function loadCloudflareArticleCards() {
+      try {
+        const response = await fetch(`/api/articles?destination=${encodeURIComponent(current)}`, { credentials: "same-origin" });
+        if (!response.ok) return;
+        const data = await response.json();
+        (data.articles || []).forEach(appendArticleCard);
+      } catch (error) {
+        // Local-only previews do not have the Cloudflare API.
+      }
+    }
+
     let articles = [];
     try {
       articles = JSON.parse(localStorage.getItem("tpiPublishedArticles") || "[]");
@@ -407,23 +503,8 @@
 
     articles
       .filter(article => article.destination === current)
-      .forEach(article => {
-        if ([...grid.querySelectorAll("[data-published-id]")].some(card => card.dataset.publishedId === article.id)) return;
-        const card = document.createElement("a");
-        card.className = grid.classList.contains("series-post-grid") ? "study-resource-card tpi-published-card" : "study-resource-card tpi-published-card";
-        card.href = article.href || `published-article.html?id=${encodeURIComponent(article.id)}`;
-        card.dataset.publishedId = article.id;
-        card.innerHTML = `
-          <div class="study-resource-card-media"><span>Field</span></div>
-          <div class="study-resource-card-copy">
-            <span>Published Article</span>
-            <h3>${escapeCard(article.title)}</h3>
-            <p>${escapeCard(article.subtitle || "Field paper")}</p>
-            <strong>Open Paper</strong>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
+      .forEach(appendArticleCard);
+    loadCloudflareArticleCards();
   }
 
   installPublishedArticleCards();

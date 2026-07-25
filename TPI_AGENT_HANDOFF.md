@@ -131,14 +131,15 @@ The editor currently includes:
 - Contributor tools can create invite codes and add contributor/editor/admin accounts with profile fields.
 - Contributor profile fields populate the author note settings when logged in.
 - Contributor profiles include a title/role label and an option to use the contributor name/title automatically on comments and replies.
-- This access layer is a local browser prototype using `localStorage`; it is not production security.
-- `Publish Article` can publish a local article record to the selected destination. Destination pages inject matching locally published cards into their existing grids. The generated article opens through `published-article.html?id=...`.
+- Cloudflare backend scaffolding has been added: `functions/api/[[path]].js`, `migrations/0001_contributor_portal.sql`, `api-client.js`, and the `TPI_DB` D1 binding placeholder in `wrangler.toml`.
+- `CLOUDFLARE_PORTAL_SETUP.md` explains the D1 database, migration, owner setup secret, and first owner login flow.
+- `Publish Article` tries to publish to Cloudflare D1 when the API is available, then falls back to a local article record for local preview. Destination pages inject matching published cards into their existing grids. The generated article opens through `published-article.html?id=...`.
 
 ### Comments
 
 `includes.js` now injects local prototype published article cards and a local prototype comment section before the footer on actual readable article/paper pages only. Do not put comments on Education Center hubs, Research Library hubs, destination/category pages, or section listing pages such as `education-area-investigation-science.html`.
 
-Comments currently appear on generated `published-article.html` entries plus article-style pages such as `education-research-*`, `investigation-development-*`, `ghostology-101-lesson-*`, and `evp-itc-lesson-*`. Visitors can comment anonymously or enter a name. Logged-in contributors can automatically post or reply using their saved display name and title/role label when their profile option is enabled. Each comment logs a local date/time and supports local replies. Comments are stored per page in `localStorage`.
+Comments currently appear on generated `published-article.html` entries plus article-style pages such as `education-research-*`, `investigation-development-*`, `ghostology-101-lesson-*`, and `evp-itc-lesson-*`. Visitors can comment anonymously or enter a name. Logged-in contributors can automatically post or reply using their saved display name and title/role label when their profile option is enabled. Each comment logs a date/time and supports replies. Comments use Cloudflare D1 when the API is available, with `localStorage` fallback for local preview.
 
 This is a working front-end scaffold only. Production comments still need backend storage and moderation.
 

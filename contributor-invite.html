@@ -35,6 +35,13 @@
             <label><span>Role</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Admin</option></select></label>
             <button type="submit">Create Invite Link</button>
         </form>
+        <form data-owner-bootstrap-form>
+            <p class="access-note">First Cloudflare setup only: enter the one-time owner setup key saved in Cloudflare Secret Store, then create your owner password.</p>
+            <label><span>Owner Setup Key</span><input name="setupKey" type="password"></label>
+            <label><span>Owner Username</span><input name="username" type="text" value="tpi-owner"></label>
+            <label><span>Owner Password</span><input name="password" type="password"></label>
+            <button type="submit">Create / Update Owner Login</button>
+        </form>
         <div class="invite-link-list" data-invite-link-list></div>
     </div>
 
@@ -65,6 +72,7 @@
 
 <div id="site-footer"></div>
 <script src="includes.js"></script>
+<script src="api-client.js"></script>
 <script src="member-login.js"></script>
 </body>
 </html>

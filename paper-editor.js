@@ -174,7 +174,7 @@
     document.body.appendChild(gate);
   }
 
-  function handleAccessSubmit(event) {
+  async function handleAccessSubmit(event) {
     const form = event.target.closest("[data-access-form]");
     if (!form) return;
     event.preventDefault();
@@ -183,6 +183,31 @@
     const mode = form.dataset.accessForm;
     const username = String(data.get("username") || "").trim();
     const password = String(data.get("password") || "");
+
+    if (window.TPIApi && await window.TPIApi.isAvailable()) {
+      try {
+        const result = await window.TPIApi.login(username, password);
+        unlockEditor({
+          username: result.user.username,
+          displayName: result.user.displayName,
+          title: result.user.title,
+          role: result.user.role,
+          correspondence: result.user.correspondence,
+          affiliation: result.user.affiliation,
+          organization: result.user.organization,
+          website: result.user.website,
+          commentSignatureEnabled: result.user.commentSignatureEnabled,
+          active: true
+        });
+      } catch (error) {
+        form.querySelector(".access-note")?.remove();
+        const note = document.createElement("p");
+        note.className = "access-note access-error";
+        note.textContent = error.message || "Username or password did not match.";
+        form.appendChild(note);
+      }
+      return;
+    }
 
     const user = getUsers().find(candidate => candidate.username === username && candidate.password === password && candidate.active !== false);
     if (!user) {
@@ -778,8 +803,25 @@ ${buildArticleHtml()}
     };
   }
 
-  function publishToDestination() {
+  async function publishToDestination() {
     const record = buildPublishedRecord();
+    if (window.TPIApi && await window.TPIApi.isAvailable()) {
+      try {
+        await window.TPIApi.createArticle({
+          ...record,
+          articleHtml: record.fullHtml
+        });
+        publishFilename.value = record.href;
+        publishDestination.value = record.destination;
+        setStatus("Published to Cloudflare destination");
+        window.open(record.destination, "_blank");
+        return;
+      } catch (error) {
+        setStatus(error.message || "Cloudflare publish failed");
+        return;
+      }
+    }
+
     const articles = getPublishedArticles();
     const existingIndex = articles.findIndex(article => article.id === record.id);
     if (existingIndex >= 0) {
@@ -942,19 +984,50 @@ ${buildArticleHtml()}
     if (event.target === publishModal) closePublishModal();
   });
 
-  editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
-  htmlView.value = cleanHtml(editor.innerHTML);
-  const sessionUser = getSessionUser();
-  if (isDevUnlocked()) {
-    unlockEditor({
-      username: "",
-      displayName: "Developer Unlock",
-      role: "admin",
-      active: true
-    });
-  } else if (sessionUser) {
-    unlockEditor(sessionUser);
-  } else {
-    showAccessGate();
+  async function initEditorAccess() {
+    editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
+    htmlView.value = cleanHtml(editor.innerHTML);
+
+    if (isDevUnlocked()) {
+      unlockEditor({
+        username: "",
+        displayName: "Developer Unlock",
+        role: "admin",
+        active: true
+      });
+      return;
+    }
+
+    if (window.TPIApi && await window.TPIApi.isAvailable()) {
+      try {
+        const result = await window.TPIApi.me();
+        if (result.user) {
+          unlockEditor({
+            username: result.user.username,
+            displayName: result.user.displayName,
+            title: result.user.title,
+            role: result.user.role,
+            correspondence: result.user.correspondence,
+            affiliation: result.user.affiliation,
+            organization: result.user.organization,
+            website: result.user.website,
+            commentSignatureEnabled: result.user.commentSignatureEnabled,
+            active: true
+          });
+          return;
+        }
+      } catch (error) {
+        // Fall back to local prototype login below.
+      }
+    }
+
+    const sessionUser = getSessionUser();
+    if (sessionUser) {
+      unlockEditor(sessionUser);
+    } else {
+      showAccessGate();
+    }
   }
+
+  initEditorAccess();
 })();

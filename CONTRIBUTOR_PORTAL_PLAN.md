@@ -16,15 +16,12 @@ This repository is currently a static site. Static files can show a login screen
 
 Real login needs a backend or hosted auth provider.
 
-Current state note: a local browser prototype has been added so the workflow can be tested now. The editor uses a login gate, the site owner's 10-click dev copy mode bypasses the gate, contributor registration is invite-only, and contributor accounts, invite codes, locally published articles, and article-level comments are stored in `localStorage`. This is only for local workflow testing and must be replaced before public launch.
+Current state note: a Cloudflare-ready backend scaffold has been added. The editor uses a login gate, the site owner's 10-click dev copy mode bypasses the gate locally, contributor registration is invite-only, and Cloudflare D1 can store contributor accounts, invite codes, published articles, comments, and replies. Local `localStorage` behavior remains as a fallback for local preview.
 
-Recommended secure options:
+Chosen secure option:
 
-- Cloudflare Pages + Cloudflare Workers + D1/R2
-- Supabase Auth + database + storage
-- Firebase Auth + Firestore/Storage
-- Netlify Identity / Netlify Functions
-- WordPress with roles if the site moves into WordPress
+- Cloudflare Pages Functions + D1 for accounts, invites, articles, comments, and replies.
+- R2 later for uploaded image/video/document files.
 
 ## Desired User Flow
 
@@ -89,7 +86,7 @@ Current prototype:
 7. The contributor can choose whether their display name and title should be used automatically on comments and replies.
 8. After setup, they use `member-login.html` for returning access.
 
-Static-site limitation: local accounts and invite codes are remembered in the visitor's browser with `localStorage`. Real site-wide contributor accounts, shared invite codes, password security, and moderation require a backend.
+Cloudflare implementation note: `functions/api/[[path]].js` and `migrations/0001_contributor_portal.sql` are now present. See `CLOUDFLARE_PORTAL_SETUP.md` for D1 setup, migration, and owner bootstrap instructions.
 
 These fields should populate the Research Paper Editor Post Settings.
 
