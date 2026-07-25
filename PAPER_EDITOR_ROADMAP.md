@@ -11,6 +11,7 @@ The editor should help the user produce complete research papers with:
 - one continuous body,
 - media insertion,
 - source links,
+- destination/category assignment,
 - author note fields and insertion,
 - HTML output,
 - and a separate preview page.
@@ -40,6 +41,8 @@ Current layout:
 - Preview opens a separate page/window.
 - Image and Video buttons open small modal cards with the available insertion options.
 - Inserted media has editor-only controls for moving and resizing while drafting.
+- Destination dropdown chooses where the paper belongs in the Education Center.
+- Copy Destination Card generates the card snippet for that chosen section/page.
 
 ## Toolbar Requirements
 
@@ -172,6 +175,43 @@ Future:
 - Keep Todd Wayne as the default.
 - Consider an "Insert or Update Author Note" action so changing Post Settings can refresh an existing note.
 
+## Destination Placement
+
+The editor needs to help the user place papers in the correct Education Center location.
+
+Current destination choices:
+
+- Investigation Science
+- Evidence Science & Analysis
+- Instrumentation & Technology
+- Environmental Research
+- EVP / ITC Research
+- Consciousness & Human Experience
+- Ethics & Professional Standards
+- Reporting & Documentation
+- Community Development & Publication
+- Technology Development
+- Artificial Intelligence
+- Historical & Cultural Research
+- Investigation Development Series
+- Ghostology Reference
+- EVP / ITC Research Notes
+- Field Articles
+- Method Exercises
+
+Current behavior:
+
+- The selected destination is included in preview metadata.
+- `Copy Destination Card` generates a card snippet for the selected destination page.
+- The card includes an HTML comment naming the target file where it belongs.
+- The suggested paper filename is generated from the title.
+
+Future:
+
+- Add a real publish flow that creates the new paper HTML file and inserts the card into the chosen destination page.
+- Add different card templates for field articles, investigation development posts, and research-topic papers if their page layouts diverge.
+- Let the user choose whether the generated paper should use an `education-research-*`, `investigation-development-*`, or another filename pattern.
+
 ## Preview
 
 Preview should not be permanently visible in the editor.
@@ -271,7 +311,7 @@ parser = Parser()
 parser.feed(Path("paper-editor.html").read_text())
 required = {
     "editor-title", "editor-subtitle", "editor-source", "editor-author",
-    "editor-affiliation", "editor-organization", "editor-correspondence",
+    "editor-destination", "editor-affiliation", "editor-organization", "editor-correspondence",
     "editor-website", "editor-labels", "paper-editor-body", "editor-html-view",
     "editor-status", "editor-view-mode", "editor-block-format",
     "image-file-input", "video-file-input", "media-modal",

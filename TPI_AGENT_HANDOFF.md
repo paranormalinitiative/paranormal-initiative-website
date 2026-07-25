@@ -44,6 +44,7 @@ The user wants the site to support full research-paper publishing in a way that 
 - Video insertion should support upload from computer, URL, YouTube, and Rumble.
 - Link insertion should include address and whether to open in a new window.
 - Author Note should be insertable automatically from editable author-note fields.
+- The editor should include a destination/category dropdown so a paper can be assigned to the correct Education Center section or topic page.
 - The editor should be dark, but laid out like Blogger rather than like a dashboard.
 
 ## Current Built State
@@ -98,6 +99,7 @@ The editor currently includes:
 - HTML textarea that appears only in HTML view.
 - Right-side Post Settings panel:
   - Subtitle
+  - Destination
   - Author
   - Affiliation
   - Organization
@@ -105,6 +107,7 @@ The editor currently includes:
   - Website
   - Source / Link Note
   - Labels
+  - Copy Destination Card
   - Clear Draft
 - Hidden file inputs for image/video upload.
 - Image and Video toolbar buttons open small modal cards with upload and URL options.
@@ -112,6 +115,7 @@ The editor currently includes:
 - Editor-only media controls are stripped from copied/preview HTML.
 - Preview opens a separate browser window using generated HTML.
 - Author Note insertion is built into `paper-editor.js` and is generated from the Post Settings author fields.
+- Destination selection is built into `paper-editor.js`; `Copy Destination Card` generates an `<a class="study-resource-card">` snippet and includes an HTML comment naming the target page where the card belongs.
 
 ### Easy Access
 
@@ -174,17 +178,19 @@ Do not revert unrelated changes without user approval.
 1. Open `paper-editor.html` in the local browser and visually test the editor.
 2. Confirm bold, italic, and strike work on highlighted text.
 3. Confirm Compose / HTML view switching preserves content.
-4. Confirm Preview opens a separate page/window and shows title, subtitle, meta, body, media, and Author Note.
-5. Confirm the Image button opens a modal card with upload and URL options.
-6. Confirm the Video button opens a modal card with upload and URL options.
-7. Confirm image upload inserts a visible image.
-8. Confirm video upload inserts a playable local video. Note: large uploaded videos become data URLs and may create huge copied HTML; this is acceptable for a prototype but should be replaced with real asset upload/storage later.
-9. Confirm YouTube and Rumble URL conversion works with real sample URLs.
-10. Confirm inserted media can be moved up/down and resized to Small, Medium, or Full in Compose view.
-11. Confirm copied/preview HTML does not include the media control buttons.
-12. Improve toolbar buttons with icons if desired, but keep them compact and Blogger-like.
-13. Do not reintroduce the permanent preview pane.
-14. Do not reintroduce the short rejected paper headings.
+4. Confirm Destination dropdown choices match the Education Center landing sections and topic pages.
+5. Confirm Preview opens a separate page/window and shows title, subtitle, destination, meta, body, media, and Author Note.
+6. Confirm `Copy Destination Card` creates a card for the selected destination and suggested generated paper filename.
+7. Confirm the Image button opens a modal card with upload and URL options.
+8. Confirm the Video button opens a modal card with upload and URL options.
+9. Confirm image upload inserts a visible image.
+10. Confirm video upload inserts a playable local video. Note: large uploaded videos become data URLs and may create huge copied HTML; this is acceptable for a prototype but should be replaced with real asset upload/storage later.
+11. Confirm YouTube and Rumble URL conversion works with real sample URLs.
+12. Confirm inserted media can be moved up/down and resized to Small, Medium, or Full in Compose view.
+13. Confirm copied/preview HTML does not include the media control buttons.
+14. Improve toolbar buttons with icons if desired, but keep them compact and Blogger-like.
+15. Do not reintroduce the permanent preview pane.
+16. Do not reintroduce the short rejected paper headings.
 
 ## Known Limitations
 

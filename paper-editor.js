@@ -1,6 +1,7 @@
 (function () {
   const titleInput = document.getElementById("editor-title");
   const subtitleInput = document.getElementById("editor-subtitle");
+  const destinationInput = document.getElementById("editor-destination");
   const sourceInput = document.getElementById("editor-source");
   const authorInput = document.getElementById("editor-author");
   const affiliationInput = document.getElementById("editor-affiliation");
@@ -36,6 +37,26 @@
     "drive.google.com",
     "docs.google.com"
   ];
+
+  function getDestinationLabel() {
+    return destinationInput.options[destinationInput.selectedIndex].textContent.trim();
+  }
+
+  function slugify(value) {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "untitled-research-paper";
+  }
+
+  function getSuggestedArticleHref() {
+    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const destination = destinationInput.value;
+    const prefix = destination.startsWith("education-area-") ? "education-research" : destination.replace(/\.html$/, "");
+    return `${prefix}-${slugify(title)}.html`;
+  }
 
   function setStatus(message) {
     status.textContent = message;
@@ -388,7 +409,8 @@
     const author = authorInput.value.trim();
     const source = sourceInput.value.trim();
     const labels = labelsInput.value.trim();
-    const meta = [author, source, labels].filter(Boolean).join(" · ");
+    const destination = getDestinationLabel();
+    const meta = [author, destination, source, labels].filter(Boolean).join(" · ");
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -449,6 +471,38 @@ ${buildArticleHtml()}
     }
 
     setStatus("Post HTML copied");
+  }
+
+  async function copyDestinationCard() {
+    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const subtitle = subtitleInput.value.trim() || "Field paper";
+    const href = getSuggestedArticleHref();
+    const destination = getDestinationLabel();
+    const card = [
+      `<!-- Add this card to ${destination}: ${destinationInput.value} -->`,
+      `<a class="study-resource-card" href="${escapeHtml(href)}">`,
+      `    <p class="dashboard-panel-kicker">Research Paper</p>`,
+      `    <h3>${escapeHtml(title)}</h3>`,
+      `    <p>${escapeHtml(subtitle)}</p>`,
+      `    <span class="dashboard-panel-cta">Read Paper ›</span>`,
+      `</a>`
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(card);
+    } catch (error) {
+      const temporary = document.createElement("textarea");
+      temporary.value = card;
+      temporary.setAttribute("readonly", "");
+      temporary.style.position = "fixed";
+      temporary.style.left = "-9999px";
+      document.body.appendChild(temporary);
+      temporary.select();
+      document.execCommand("copy");
+      temporary.remove();
+    }
+
+    setStatus("Destination card copied");
   }
 
   function clearDraft() {
@@ -525,6 +579,7 @@ ${buildArticleHtml()}
     if (action === "author-note") insertAuthorNote();
     if (action === "preview") openPreview();
     if (action === "copy") copyOutput();
+    if (action === "copy-card") copyDestinationCard();
     if (action === "clear") clearDraft();
   });
 

@@ -1426,12 +1426,15 @@ footer {
     grid-template-columns: minmax(0, 1fr) 260px;
     gap: 0;
     align-items: stretch;
+    height: 720px;
+    overflow: hidden;
 }
 
 .editor-pane {
-    min-height: 720px;
+    height: 720px;
     padding: 0 22px 0 0;
     border-right: 1px solid #1f2a36;
+    overflow: hidden;
 }
 
 .editor-pane-header {
@@ -1462,13 +1465,14 @@ footer {
 .paper-editor-body,
 .paper-html-view {
     width: 100%;
-    min-height: 650px;
+    height: 676px;
     padding: 26px 24px;
     color: #d7e2ec;
     background: #090f14;
     border: 1px solid #263646;
     border-radius: 4px;
     outline: none;
+    overflow-y: auto;
     -webkit-user-select: text;
     user-select: text;
 }
@@ -1478,7 +1482,7 @@ footer {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     font-size: 13px;
     line-height: 1.55;
-    resize: vertical;
+    resize: none;
 }
 
 .paper-editor-layout.html-mode .paper-editor-body {
@@ -1519,7 +1523,9 @@ footer {
 }
 
 .post-settings-panel {
+    height: 720px;
     padding: 18px 0 0 22px;
+    overflow-y: auto;
 }
 
 .post-settings-panel label {
@@ -1534,7 +1540,8 @@ footer {
     font-size: 13px;
 }
 
-.post-settings-panel input {
+.post-settings-panel input,
+.post-settings-panel select {
     width: 100%;
     min-height: 38px;
     padding: 8px 10px;
@@ -1547,7 +1554,8 @@ footer {
 }
 
 .post-settings-panel input[type="email"],
-.post-settings-panel input[type="url"] {
+.post-settings-panel input[type="url"],
+.post-settings-panel select {
     font-size: 13px;
 }
 
@@ -1717,20 +1725,25 @@ footer {
 
     .paper-editor-layout {
         grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
     }
 
     .editor-pane {
+        height: auto;
         padding-right: 0;
         border-right: 0;
     }
 
     .post-settings-panel {
+        height: auto;
         padding-left: 0;
+        overflow: visible;
     }
 
     .paper-editor-body,
     .paper-html-view {
-        min-height: 480px;
+        height: 520px;
     }
 }
 
