@@ -373,6 +373,18 @@ h2 {
     .dashboard-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .home-focus-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .home-collaboration {
+        grid-template-columns: 1fr;
+    }
+
+    .home-collaboration-actions {
+        min-width: 0;
+    }
 }
 
 /* Mobile */
@@ -387,6 +399,29 @@ h2 {
         top: 60px;
         left: 20px;
         right: 20px;
+    }
+
+    .home-mission-band,
+    .home-section,
+    .home-pathways {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .home-focus-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .home-mission-band article,
+    .home-collaboration {
+        padding: 22px;
+    }
+
+    .home-mission-band h2,
+    .home-section h2,
+    .home-collaboration h2,
+    .home-pathways h2 {
+        font-size: 25px;
     }
 }
 
@@ -559,6 +594,101 @@ footer {
 
 .portal-grid {
     padding-top: 105px;
+}
+
+.home-mission-band,
+.home-section,
+.home-collaboration,
+.home-pathways {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.home-mission-band {
+    padding: 34px 40px;
+}
+
+.home-mission-band article,
+.home-collaboration {
+    padding: 30px;
+    background:
+        linear-gradient(90deg, rgba(85, 200, 255, 0.08), transparent 50%),
+        #101820;
+    border: 1px solid #263646;
+    border-radius: 6px;
+}
+
+.home-mission-band h2,
+.home-section h2,
+.home-collaboration h2,
+.home-pathways h2 {
+    margin: 0 0 14px;
+    color: #f4f8fb;
+    font-size: 30px;
+    line-height: 1.18;
+}
+
+.home-mission-band p,
+.home-section > p,
+.home-collaboration p,
+.home-pathways > p {
+    color: #c3cfda;
+}
+
+.home-section {
+    padding: 64px 40px 24px;
+}
+
+.home-focus-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.home-focus-grid .dashboard-panel {
+    min-height: 210px;
+}
+
+.home-collaboration {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: center;
+    margin-top: 46px;
+    margin-bottom: 34px;
+}
+
+.home-collaboration-actions {
+    display: grid;
+    gap: 12px;
+    min-width: 230px;
+}
+
+.home-pathways {
+    padding: 48px 40px 92px;
+}
+
+.home-pathway-group {
+    margin-top: 34px;
+}
+
+.home-pathway-group > h3 {
+    margin: 0 0 16px;
+    color: #55c8ff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.home-card-grid {
+    max-width: none;
+    padding: 0;
+}
+
+.home-card-grid::before {
+    display: none;
 }
 
 .education-study-intro {
