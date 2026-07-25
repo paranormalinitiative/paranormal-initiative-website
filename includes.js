@@ -135,11 +135,51 @@
     if (!footerHost) return;
 
     const pageId = window.location.pathname.split("/").pop() || "index.html";
+    if (!shouldShowComments(pageId)) return;
+
     const storageKey = `tpiComments:${pageId}`;
+
+    function shouldShowComments(currentPage) {
+      if (currentPage === "published-article.html") return true;
+
+      const articlePrefixes = [
+        "education-research-",
+        "investigation-development-",
+        "ghostology-101-lesson-",
+        "evp-itc-lesson-"
+      ];
+
+      const hubPages = new Set([
+        "investigation-development-series.html",
+        "ghostology-101.html",
+        "evp-itc-lessons.html",
+        "field-articles.html",
+        "method-exercises.html",
+        "repository-pathways.html",
+        "education-center.html"
+      ]);
+
+      if (hubPages.has(currentPage)) return false;
+      if (currentPage.startsWith("education-area-")) return false;
+
+      return articlePrefixes.some(prefix => currentPage.startsWith(prefix));
+    }
 
     function getComments() {
       try {
-        return JSON.parse(localStorage.getItem(storageKey) || "[]");
+        const comments = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        let changed = false;
+        const normalized = comments.map(comment => {
+          const normalizedComment = {
+            ...comment,
+            id: comment.id || makeCommentId(),
+            replies: Array.isArray(comment.replies) ? comment.replies : []
+          };
+          if (!comment.id || !Array.isArray(comment.replies)) changed = true;
+          return normalizedComment;
+        });
+        if (changed) saveComments(normalized);
+        return normalized;
       } catch (error) {
         return [];
       }
@@ -157,6 +197,23 @@
         "\"": "&quot;",
         "'": "&#39;"
       }[char]));
+    }
+
+    function makeCommentId() {
+      if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+      return `comment-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function formatCommentDate(value) {
+      const date = value ? new Date(value) : null;
+      if (!date || Number.isNaN(date.getTime())) return "";
+      return date.toLocaleString([], {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
     }
 
     const section = document.createElement("section");
@@ -185,22 +242,76 @@
       const comments = getComments();
       list.innerHTML = comments.length ? comments.map(comment => `
         <article class="tpi-comment">
-          <h3>${escapeComment(comment.name || "Anonymous Contributor")}</h3>
-          <p>${comment.text}</p>
+          <div class="tpi-comment-meta">
+            <h3>${escapeComment(comment.name || "Anonymous Contributor")}</h3>
+            <time>${escapeComment(formatCommentDate(comment.createdAt))}</time>
+          </div>
+          <p>${escapeComment(comment.text)}</p>
+          ${Array.isArray(comment.replies) && comment.replies.length ? `
+            <div class="tpi-replies">
+              ${comment.replies.map(reply => `
+                <article class="tpi-reply">
+                  <div class="tpi-comment-meta">
+                    <h3>${escapeComment(reply.name || "TPI Reply")}</h3>
+                    <time>${escapeComment(formatCommentDate(reply.createdAt))}</time>
+                  </div>
+                  <p>${escapeComment(reply.text)}</p>
+                </article>
+              `).join("")}
+            </div>
+          ` : ""}
+          <form class="tpi-reply-form" data-comment-id="${escapeComment(comment.id || "")}">
+            <label>
+              <span>Reply name (optional)</span>
+              <input name="name" type="text" placeholder="TPI Reply">
+            </label>
+            <label>
+              <span>Reply</span>
+              <textarea name="reply" rows="3" required></textarea>
+            </label>
+            <button type="submit">Reply</button>
+          </form>
         </article>
       `).join("") : `<p class="tpi-comment-empty">No comments yet.</p>`;
     }
 
-    section.querySelector("form").addEventListener("submit", event => {
+    section.addEventListener("submit", event => {
       event.preventDefault();
-      const data = new FormData(event.currentTarget);
+      const replyForm = event.target.closest(".tpi-reply-form");
+      if (replyForm) {
+        const data = new FormData(replyForm);
+        const name = String(data.get("name") || "").trim();
+        const text = String(data.get("reply") || "").trim();
+        if (!text) return;
+
+        const comments = getComments();
+        const comment = comments.find(item => item.id === replyForm.dataset.commentId);
+        if (!comment) return;
+        comment.replies = Array.isArray(comment.replies) ? comment.replies : [];
+        comment.replies.push({ name, text, createdAt: new Date().toISOString() });
+        saveComments(comments);
+        replyForm.reset();
+        renderComments();
+        return;
+      }
+
+      const commentForm = event.target.closest(".tpi-comment-form");
+      if (!commentForm) return;
+      const data = new FormData(commentForm);
       const name = String(data.get("name") || "").trim();
-      const text = escapeComment(String(data.get("comment") || "").trim());
+      const text = String(data.get("comment") || "").trim();
       if (!text) return;
       const comments = getComments();
-      comments.push({ name, text, status: "local-prototype", createdAt: new Date().toISOString() });
+      comments.push({
+        id: makeCommentId(),
+        name,
+        text,
+        replies: [],
+        status: "local-prototype",
+        createdAt: new Date().toISOString()
+      });
       saveComments(comments);
-      event.currentTarget.reset();
+      commentForm.reset();
       renderComments();
     });
 

@@ -49,7 +49,9 @@ Current layout:
 - Main navigation includes Member Login.
 - Registration is invite-only.
 - Invite codes and contributor accounts can be managed in the editor's Contributors dialog.
-- Public pages receive a local prototype comment section through `includes.js`.
+- Actual readable article/paper pages receive a local prototype comment section through `includes.js`.
+- Education Center hubs, Research Library hubs, destination/category pages, and section listing pages should not show comments.
+- Comments allow anonymous/name-only posting, show local date/time, and support replies.
 - Destination pages receive locally published article cards through `includes.js`.
 - Generated published papers open through `published-article.html`.
 

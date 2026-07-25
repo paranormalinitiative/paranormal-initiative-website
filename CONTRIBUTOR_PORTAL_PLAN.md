@@ -6,7 +6,7 @@ Last updated: July 25, 2026
 
 The Research Paper Editor should eventually become a contributor publishing tool for The Paranormal Initiative. The public Education Center can link to the editor, but opening the editor should require contributor access before someone can submit research papers, notes, images, or videos.
 
-The user also wants public comments on posts, with optional anonymous commenting.
+The user also wants public comments on actual posts/articles, with optional anonymous commenting. Public visitors should not need to become members.
 
 ## Important Security Boundary
 
@@ -16,7 +16,7 @@ This repository is currently a static site. Static files can show a login screen
 
 Real login needs a backend or hosted auth provider.
 
-Current state note: a local browser prototype has been added so the workflow can be tested now. The editor uses a login gate, the site owner's 10-click dev copy mode bypasses the gate, contributor registration is invite-only, and contributor accounts, invite codes, locally published articles, and comments are stored in `localStorage`. This is only for local workflow testing and must be replaced before public launch.
+Current state note: a local browser prototype has been added so the workflow can be tested now. The editor uses a login gate, the site owner's 10-click dev copy mode bypasses the gate, contributor registration is invite-only, and contributor accounts, invite codes, locally published articles, and article-level comments are stored in `localStorage`. This is only for local workflow testing and must be replaced before public launch.
 
 Recommended secure options:
 
@@ -121,13 +121,14 @@ The saved article should reference media by URL/path.
 
 ## Comments
 
-The user wants comments on posts, including anonymous comments.
+The user wants comments on readable posts/articles, including anonymous comments. Do not show comment boxes on hubs, landing pages, Research Library listing pages, or Education Center category pages. Show them only after a visitor opens a specific article/paper/card.
 
 Comment options:
 
 - Anonymous comment
 - Name-only comment
 - Logged-in contributor comment
+- Reply to an existing comment
 
 Recommended comment fields:
 
@@ -136,6 +137,7 @@ Recommended comment fields:
 - Email, optional and private if collected
 - Comment text
 - Created date
+- Parent comment id, for replies
 - Status
 - IP/user-agent hash for moderation, if legally/policy appropriate
 
@@ -156,6 +158,8 @@ Each article page should eventually show:
 - Name field, optional
 - Comment box
 - Submit button
+- Date/time on each comment
+- Reply option under each comment
 - Notice that comments may be moderated
 
 Anonymous mode wording:

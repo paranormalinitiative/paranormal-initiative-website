@@ -1917,23 +1917,28 @@ footer {
     color: #b8c4d1;
 }
 
-.tpi-comment-form {
+.tpi-comment-form,
+.tpi-reply-form {
     display: grid;
     gap: 12px;
 }
 
-.tpi-comment-form label {
+.tpi-comment-form label,
+.tpi-reply-form label {
     display: grid;
     gap: 7px;
 }
 
-.tpi-comment-form span {
+.tpi-comment-form span,
+.tpi-reply-form span {
     color: #8aa0b6;
     font-size: 13px;
 }
 
 .tpi-comment-form input,
-.tpi-comment-form textarea {
+.tpi-comment-form textarea,
+.tpi-reply-form input,
+.tpi-reply-form textarea {
     width: 100%;
     padding: 10px 12px;
     color: #e6edf3;
@@ -1944,7 +1949,8 @@ footer {
     font: inherit;
 }
 
-.tpi-comment-form button {
+.tpi-comment-form button,
+.tpi-reply-form button {
     justify-self: start;
     min-height: 38px;
     padding: 8px 14px;
@@ -1969,9 +1975,52 @@ footer {
     border-radius: 4px;
 }
 
+.tpi-comment-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
 .tpi-comment h3 {
     color: #f4f8fb;
     font-size: 15px;
+}
+
+.tpi-comment time {
+    flex: 0 0 auto;
+    color: #7f95aa;
+    font-size: 12px;
+}
+
+.tpi-replies {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+    padding-left: 14px;
+    border-left: 2px solid rgba(85, 200, 255, 0.22);
+}
+
+.tpi-reply {
+    padding: 12px;
+    background: rgba(16, 24, 32, 0.82);
+    border: 1px solid rgba(38, 54, 70, 0.82);
+    border-radius: 4px;
+}
+
+.tpi-reply-form {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(38, 54, 70, 0.78);
+}
+
+.tpi-reply-form button {
+    min-height: 34px;
+    padding: 7px 12px;
+    color: #d8edf7;
+    background: #142230;
+    border-color: #2c465d;
 }
 
 .tpi-comment-empty {

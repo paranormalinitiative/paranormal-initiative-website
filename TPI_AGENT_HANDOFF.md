@@ -130,7 +130,9 @@ The editor currently includes:
 
 ### Comments
 
-`includes.js` now injects local prototype published article cards and a local prototype comment section before the footer on public pages. Visitors can comment anonymously or enter a name. Comments are stored per page in `localStorage`.
+`includes.js` now injects local prototype published article cards and a local prototype comment section before the footer on actual readable article/paper pages only. Do not put comments on Education Center hubs, Research Library hubs, destination/category pages, or section listing pages such as `education-area-investigation-science.html`.
+
+Comments currently appear on generated `published-article.html` entries plus article-style pages such as `education-research-*`, `investigation-development-*`, `ghostology-101-lesson-*`, and `evp-itc-lesson-*`. Visitors can comment anonymously or enter a name. Each comment logs a local date/time and supports local replies. Comments are stored per page in `localStorage`.
 
 This is a working front-end scaffold only. Production comments still need backend storage and moderation.
 
