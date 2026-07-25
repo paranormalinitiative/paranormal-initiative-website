@@ -114,6 +114,7 @@
   await inject("#site-header", "header.html");
   await inject("#site-footer", "footer.html");
   installContentProtection();
+  installMemberGreeting();
 
   // Per-page title/subtitle (optional)
   const titleMeta = document.querySelector('meta[name="pp:title"]');
@@ -127,6 +128,68 @@
   if (subtitleMeta) {
     const s = document.getElementById("page-subtitle");
     if (s) s.textContent = subtitleMeta.content;
+  }
+
+  async function installMemberGreeting() {
+    const header = document.querySelector(".command-header");
+    if (!header || document.querySelector(".member-greeting")) return;
+
+    const user = await getSignedInUser();
+    if (!user) return;
+
+    const firstName = String(user.displayName || user.username || "Member").trim().split(/\s+/)[0] || "Member";
+    const badge = document.createElement("div");
+    badge.className = "member-greeting";
+    badge.innerHTML = `
+      <a href="member-dashboard.html">Hello, ${escapeGreeting(firstName)}</a>
+      <button type="button" data-header-logout>Sign Out</button>
+    `;
+    header.appendChild(badge);
+
+    badge.querySelector("[data-header-logout]").addEventListener("click", async () => {
+      localStorage.removeItem("tpiEditorSession");
+      try {
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" }
+        });
+      } catch (error) {
+        // Local previews do not always have the Cloudflare API.
+      }
+      window.location.href = "member-login.html";
+    });
+  }
+
+  async function getSignedInUser() {
+    try {
+      const response = await fetch("/api/auth/me", { credentials: "same-origin" });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.user) return data.user;
+      }
+    } catch (error) {
+      // Fall back to local preview state.
+    }
+
+    const username = localStorage.getItem("tpiEditorSession");
+    if (!username) return null;
+    try {
+      const users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+      return users.find(user => user.username === username && user.active !== false) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function escapeGreeting(value) {
+    return String(value || "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&#39;"
+    }[char]));
   }
 
   function installComments() {
