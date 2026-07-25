@@ -17,7 +17,7 @@
 <section class="portal-hero editor-hero">
     <p class="portal-kicker">Drafting Tool</p>
     <h2>Blogger-style paper editor with live preview.</h2>
-    <p>Write the full paper in one editing surface, preview it as a TPI research page, and copy the cleaned article HTML when it is ready to move into WordPress.</p>
+    <p>Write the full paper in one editing surface, preview it as a TPI research page, and copy the cleaned article HTML when it is ready to move into the site.</p>
 </section>
 
 <section class="paper-editor-shell">
@@ -40,6 +40,17 @@
         </label>
     </div>
 
+    <div class="blogger-composer-bar">
+        <div class="view-mode-controls" aria-label="Editor view mode">
+            <button type="button" class="active" data-view="compose">Compose view</button>
+            <button type="button" data-view="html">HTML view</button>
+            <button type="button" data-view="preview">Preview focus</button>
+        </div>
+        <div class="post-action-controls">
+            <button type="button" data-action="copy">Copy post HTML</button>
+        </div>
+    </div>
+
     <div class="paper-editor-layout">
         <section class="editor-pane">
             <div class="editor-pane-header">
@@ -47,23 +58,29 @@
                 <p id="editor-status">Draft ready</p>
             </div>
             <div class="editor-toolbar" aria-label="Editor toolbar">
-                <button type="button" data-block="h3">Heading</button>
-                <button type="button" data-block="p">Paragraph</button>
+                <button type="button" data-command="undo">Undo</button>
+                <button type="button" data-command="redo">Redo</button>
+                <select id="editor-block-format" aria-label="Block format">
+                    <option value="p">Paragraph</option>
+                    <option value="h3">Heading</option>
+                    <option value="blockquote">Quote</option>
+                </select>
                 <button type="button" data-command="bold">Bold</button>
                 <button type="button" data-command="italic">Italic</button>
+                <button type="button" data-command="underline">Underline</button>
+                <button type="button" data-command="strikeThrough">Strike</button>
                 <button type="button" data-command="insertUnorderedList">List</button>
+                <button type="button" data-command="insertOrderedList">Numbered</button>
                 <button type="button" data-action="link">Link</button>
+                <button type="button" data-action="image">Image</button>
+                <button type="button" data-action="video">Video</button>
+                <button type="button" data-action="embed">Embed code</button>
+                <button type="button" data-command="removeFormat">Clear format</button>
                 <button type="button" data-action="sample">Sample</button>
                 <button type="button" data-action="clear">Clear</button>
             </div>
             <div id="paper-editor-body" class="paper-editor-body" contenteditable="true" spellcheck="true"></div>
-            <div class="editor-output-panel">
-                <div class="editor-pane-header">
-                    <h3>Article HTML</h3>
-                    <button type="button" class="portal-button" data-action="copy">Copy HTML</button>
-                </div>
-                <textarea id="editor-html-output" readonly></textarea>
-            </div>
+            <textarea id="editor-html-view" class="paper-html-view" spellcheck="false"></textarea>
         </section>
 
         <section class="preview-pane">
