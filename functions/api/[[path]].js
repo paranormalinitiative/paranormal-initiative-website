@@ -19,6 +19,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
+    if (request.method === "GET" && path === "/contributors/me/articles") return requireContributor(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
@@ -204,6 +205,16 @@ async function handleListArticles(request, env) {
     ? env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, created_at AS createdAt FROM articles WHERE destination = ? ORDER BY created_at DESC").bind(destination)
     : env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, created_at AS createdAt FROM articles ORDER BY created_at DESC");
   const { results } = await stmt.all();
+  return json({ articles: results });
+}
+
+async function handleContributorArticles(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, labels, created_at AS createdAt
+    FROM articles
+    WHERE created_by = ?
+    ORDER BY created_at DESC
+  `).bind(user.id).all();
   return json({ articles: results });
 }
 

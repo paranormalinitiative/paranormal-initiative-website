@@ -1449,6 +1449,45 @@ footer {
     grid-template-columns: minmax(0, 480px);
 }
 
+.member-dashboard-shell {
+    display: grid;
+    gap: 22px;
+    max-width: 1180px;
+}
+
+.member-dashboard-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #263646;
+}
+
+.member-dashboard-header h2,
+.member-profile-card h2 {
+    margin: 0;
+    color: #f4f8fb;
+}
+
+.member-dashboard-header p,
+.member-profile-card p {
+    margin: 0;
+    color: #9fb1c3;
+}
+
+.member-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.25fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.member-dashboard-grid .invite-owner-tools {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
 .member-login-status {
     grid-column: 1 / -1;
     justify-self: center;

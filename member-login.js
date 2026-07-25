@@ -8,6 +8,11 @@
   const inviteOwnerTools = document.querySelector("[data-invite-owner-tools]");
   const ownerBootstrapForm = document.querySelector("[data-owner-bootstrap-form]");
   const inviteLinkList = document.querySelector("[data-invite-link-list]");
+  const dashboardAdmin = document.querySelector("[data-dashboard-admin]");
+  const dashboardProfile = document.querySelector("[data-dashboard-profile]");
+  const dashboardArticles = document.querySelector("[data-dashboard-articles]");
+  const dashboardName = document.querySelector("[data-dashboard-name]");
+  const dashboardRole = document.querySelector("[data-dashboard-role]");
 
   function setStatus(message, isError) {
     if (!status) return;
@@ -55,6 +60,10 @@
 
   function isDevUnlocked() {
     return localStorage.getItem("tpiDevCopyMode") === "enabled";
+  }
+
+  function isOwnerSetupUrl() {
+    return new URLSearchParams(window.location.search).get("ownerSetup") === "1";
   }
 
   function installDeveloperAccessNotice() {
@@ -127,7 +136,7 @@
   }
 
   function showOwnerToolsForSetupOnly() {
-    if (!inviteOwnerTools || !ownerBootstrapForm || !isDevUnlocked()) return;
+    if (!inviteOwnerTools || !ownerBootstrapForm || !isDevUnlocked() || !isOwnerSetupUrl()) return;
 
     inviteOwnerTools.hidden = false;
     inviteOwnerTools.querySelector("[data-owner-invite-form]")?.setAttribute("hidden", "");
@@ -157,14 +166,15 @@
   }
 
   async function renderCloudflareOwnerInvites() {
-    if (!inviteOwnerTools || !inviteLinkList || !await cloudflareReady()) return false;
+    const ownerToolsHost = dashboardAdmin || inviteOwnerTools;
+    if (!ownerToolsHost || !inviteLinkList || !await cloudflareReady()) return false;
 
     try {
       const session = await window.TPIApi.me();
       if (!["admin", "editor"].includes(session.user?.role)) return false;
       const data = await window.TPIApi.listInvites();
-      inviteOwnerTools.hidden = false;
-      inviteOwnerTools.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
+      ownerToolsHost.hidden = false;
+      ownerToolsHost.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
       if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
       const openInvites = (data.invites || []).filter(invite => !invite.used);
       inviteLinkList.innerHTML = openInvites.length ? openInvites.map(invite => {
@@ -182,6 +192,74 @@
     } catch (error) {
       return false;
     }
+  }
+
+  function renderDashboardProfile(user) {
+    if (!dashboardProfile || !user) return;
+    if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
+    if (dashboardRole) dashboardRole.textContent = [user.title, user.role].filter(Boolean).join(" - ");
+    dashboardProfile.innerHTML = `
+      <h2>${escapeHtml(user.displayName || user.username || "Contributor")}</h2>
+      ${user.title ? `<p><strong>${escapeHtml(user.title)}</strong></p>` : ""}
+      ${user.affiliation ? `<p>${escapeHtml(user.affiliation)}</p>` : ""}
+      ${user.organization ? `<p>${escapeHtml(user.organization)}</p>` : ""}
+      ${user.correspondence ? `<p>Correspondence: ${escapeHtml(user.correspondence)}</p>` : ""}
+      ${user.website ? `<p><a href="${escapeHtml(user.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(user.website)}</a></p>` : ""}
+    `;
+  }
+
+  async function renderDashboardArticles(user) {
+    if (!dashboardArticles) return;
+    let articles = [];
+    if (await cloudflareReady()) {
+      try {
+        const response = await fetch("/api/contributors/me/articles", { credentials: "same-origin" });
+        if (response.ok) {
+          articles = (await response.json()).articles || [];
+        }
+      } catch (error) {
+        articles = [];
+      }
+    } else {
+      try {
+        articles = JSON.parse(localStorage.getItem("tpiPublishedArticles") || "[]")
+          .filter(article => !user?.displayName || article.author === user.displayName);
+      } catch (error) {
+        articles = [];
+      }
+    }
+
+    dashboardArticles.innerHTML = articles.length ? articles.map(article => `
+      <div class="invite-link-row">
+        <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
+        <span>${escapeHtml(article.subtitle || article.destination || "Research paper")}</span>
+        <a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>
+      </div>
+    `).join("") : `<p class="access-note">No published papers yet. Use the Research Paper Editor to create your first contribution.</p>`;
+  }
+
+  async function initDashboard() {
+    if (!dashboardProfile) return;
+    if (await cloudflareReady()) {
+      const session = await window.TPIApi.me();
+      if (!session.user) {
+        window.location.href = "member-login.html";
+        return;
+      }
+      renderDashboardProfile(session.user);
+      await renderDashboardArticles(session.user);
+      await renderCloudflareOwnerInvites();
+      return;
+    }
+
+    const user = getUsers().find(candidate => candidate.username === localStorage.getItem(ACCESS_SESSION_KEY) && candidate.active !== false);
+    if (!user) {
+      window.location.href = "member-login.html";
+      return;
+    }
+    renderDashboardProfile(user);
+    await renderDashboardArticles(user);
+    renderOwnerInvites();
   }
 
   document.addEventListener("submit", async event => {
@@ -275,7 +353,7 @@
           const result = await window.TPIApi.login(username, password);
           if (result.user) saveUsers([{ ...result.user, active: true }]);
           localStorage.setItem(ACCESS_SESSION_KEY, username);
-          window.location.href = "paper-editor.html";
+          window.location.href = "member-dashboard.html";
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -288,7 +366,7 @@
         return;
       }
       localStorage.setItem(ACCESS_SESSION_KEY, user.username);
-      window.location.href = "paper-editor.html";
+      window.location.href = "member-dashboard.html";
       return;
     }
 
@@ -381,10 +459,21 @@
     saveUsers(users);
     saveInvites(invites);
     localStorage.setItem(ACCESS_SESSION_KEY, username);
-    window.location.href = "paper-editor.html";
+    window.location.href = "member-dashboard.html";
   });
 
   document.addEventListener("click", event => {
+    const logoutButton = event.target.closest("[data-member-logout]");
+    if (logoutButton) {
+      event.preventDefault();
+      localStorage.removeItem(ACCESS_SESSION_KEY);
+      if (window.TPIApi) window.TPIApi.logout().finally(() => {
+        window.location.href = "member-login.html";
+      });
+      else window.location.href = "member-login.html";
+      return;
+    }
+
     const button = event.target.closest("[data-copy-invite-link]");
     if (!button) return;
     const link = button.dataset.copyInviteLink;
@@ -407,6 +496,7 @@
   importInviteFromUrl();
   installDeveloperAccessNotice();
   showOwnerToolsForSetupOnly();
+  initDashboard();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();
   });

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Dashboard | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Member Dashboard">
+    <meta name="pp:subtitle" content="Contributor Home">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+</head>
+<body>
+<div id="site-header"></div>
+
+<section class="member-dashboard-shell">
+    <div class="member-dashboard-header">
+        <div>
+            <p class="portal-kicker">Contributor Home</p>
+            <h2 data-dashboard-name>Member Dashboard</h2>
+            <p data-dashboard-role>Loading contributor profile...</p>
+        </div>
+        <div class="portal-actions">
+            <a class="portal-button" href="paper-editor.html">Open Research Paper Editor</a>
+            <button class="portal-button portal-button-secondary" type="button" data-member-logout>Sign Out</button>
+        </div>
+    </div>
+
+    <div class="member-dashboard-grid">
+        <article class="editor-access-card member-profile-card">
+            <p class="portal-kicker">Profile</p>
+            <div data-dashboard-profile></div>
+        </article>
+
+        <article class="editor-access-card">
+            <p class="portal-kicker">Contributions</p>
+            <h2>Your Papers</h2>
+            <div class="invite-link-list" data-dashboard-articles>
+                <p class="access-note">Loading your papers...</p>
+            </div>
+        </article>
+
+        <article class="editor-access-card invite-owner-tools" data-dashboard-admin hidden>
+            <p class="portal-kicker">Admin Tools</p>
+            <h2>Contributor Invites</h2>
+            <p>Generate invite links for approved contributors. Public visitors and regular contributors do not see this panel.</p>
+            <form data-owner-invite-form>
+                <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Leave blank to auto-generate"></label>
+                <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Owner / Admin</option></select></label>
+                <button type="submit">Generate Invite Link</button>
+            </form>
+            <div class="invite-link-list" data-invite-link-list></div>
+        </article>
+    </div>
+
+    <p id="member-login-status" class="access-note member-login-status"></p>
+</section>
+
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="api-client.js"></script>
+<script src="member-login.js"></script>
+</body>
+</html>
