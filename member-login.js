@@ -6,6 +6,7 @@
   const inviteCodePanel = document.querySelector("[data-invite-code-panel]");
   const inviteSetupPanel = document.querySelector("[data-invite-setup-panel]");
   const inviteOwnerTools = document.querySelector("[data-invite-owner-tools]");
+  const ownerBootstrapForm = document.querySelector("[data-owner-bootstrap-form]");
   const inviteLinkList = document.querySelector("[data-invite-link-list]");
 
   function setStatus(message, isError) {
@@ -56,39 +57,8 @@
     return localStorage.getItem("tpiDevCopyMode") === "enabled";
   }
 
-  function ensureDeveloperSession() {
-    if (!isDevUnlocked()) return null;
-
-    const users = getUsers();
-    const owner = {
-      username: "tpi-owner",
-      password: "",
-      displayName: "Todd Wayne",
-      title: "Site Owner / Administrator",
-      role: "admin",
-      correspondence: "paranormalinitiative@yahoo.com",
-      affiliation: "The Paranormal Initiative - Applied Paranormal Research and Studies",
-      organization: "Somerset Paranormal Research Society",
-      website: "",
-      commentSignatureEnabled: true,
-      active: true,
-      developerOwner: true
-    };
-
-    const index = users.findIndex(user => user.username === owner.username);
-    if (index >= 0) {
-      users[index] = { ...users[index], ...owner };
-    } else {
-      users.push(owner);
-    }
-
-    saveUsers(users);
-    localStorage.setItem(ACCESS_SESSION_KEY, owner.username);
-    return owner;
-  }
-
-  function installDeveloperAccessNotice(owner) {
-    if (!owner) return;
+  function installDeveloperAccessNotice() {
+    if (!isDevUnlocked()) return;
     const shell = document.querySelector(".member-login-shell");
     if (!shell || document.querySelector("[data-dev-access-notice]")) return;
 
@@ -97,8 +67,8 @@
     notice.dataset.devAccessNotice = "true";
     notice.innerHTML = `
       <p class="portal-kicker">Developer Unlock Active</p>
-      <h2>Owner Access Ready</h2>
-      <p>You are signed in locally as ${escapeHtml(owner.displayName)}. This lets you open the editor and generate invite links while 10-click mode is active.</p>
+      <h2>Local Dev Unlock</h2>
+      <p>10-click is active for local editing. Real invite generation still requires an owner/admin login.</p>
       <a class="portal-button" href="paper-editor.html">Open Research Paper Editor</a>
     `;
     shell.prepend(notice);
@@ -156,10 +126,21 @@
     setStatus("Invite link loaded. Submit the invite code to continue.", false);
   }
 
-  function renderOwnerInvites() {
-    if (!inviteOwnerTools || !inviteLinkList || !isDevUnlocked()) return;
+  function showOwnerToolsForSetupOnly() {
+    if (!inviteOwnerTools || !ownerBootstrapForm || !isDevUnlocked()) return;
 
     inviteOwnerTools.hidden = false;
+    inviteOwnerTools.querySelector("[data-owner-invite-form]")?.setAttribute("hidden", "");
+    if (inviteLinkList) inviteLinkList.innerHTML = `<p class="access-note">Sign in as owner/admin from Member Login to generate contributor invites.</p>`;
+  }
+
+  function renderOwnerInvites() {
+    const currentUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false);
+    if (!inviteOwnerTools || !inviteLinkList || !["admin", "editor"].includes(currentUser?.role)) return;
+
+    inviteOwnerTools.hidden = false;
+    inviteOwnerTools.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
+    if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
     const invites = getInvites();
     const openInvites = invites.filter(invite => !invite.used);
     inviteLinkList.innerHTML = openInvites.length ? openInvites.map(invite => {
@@ -176,11 +157,15 @@
   }
 
   async function renderCloudflareOwnerInvites() {
-    if (!inviteOwnerTools || !inviteLinkList || !isDevUnlocked() || !await cloudflareReady()) return false;
+    if (!inviteOwnerTools || !inviteLinkList || !await cloudflareReady()) return false;
 
     try {
+      const session = await window.TPIApi.me();
+      if (!["admin", "editor"].includes(session.user?.role)) return false;
       const data = await window.TPIApi.listInvites();
       inviteOwnerTools.hidden = false;
+      inviteOwnerTools.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
+      if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
       const openInvites = (data.invites || []).filter(invite => !invite.used);
       inviteLinkList.innerHTML = openInvites.length ? openInvites.map(invite => {
         const link = getInviteLink(invite);
@@ -234,13 +219,24 @@
     }
 
     if (ownerInviteForm) {
-      if (!isDevUnlocked()) {
-        setStatus("10-click developer unlock is required to create invite links.", true);
+      const localUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false);
+      let hasCloudflareInviteAccess = false;
+      if (await cloudflareReady()) {
+        try {
+          const session = await window.TPIApi.me();
+          hasCloudflareInviteAccess = ["admin", "editor"].includes(session.user?.role);
+        } catch (error) {
+          hasCloudflareInviteAccess = false;
+        }
+      }
+
+      if (!hasCloudflareInviteAccess && !["admin", "editor"].includes(localUser?.role)) {
+        setStatus("Owner/admin login is required to create invite links.", true);
         return;
       }
 
       const code = String(data.get("inviteCode") || "").trim() || makeInviteCode();
-      if (await cloudflareReady()) {
+      if (hasCloudflareInviteAccess) {
         try {
           await window.TPIApi.createInvite({ code, role: String(data.get("inviteRole") || "contributor") });
           ownerInviteForm.reset();
@@ -406,9 +402,11 @@
     setStatus("Select the invite link field and copy it manually.", false);
   });
 
+  if (inviteSetupPanel) inviteSetupPanel.hidden = true;
+  if (inviteOwnerTools) inviteOwnerTools.hidden = true;
   importInviteFromUrl();
-  const developerOwner = ensureDeveloperSession();
-  installDeveloperAccessNotice(developerOwner);
+  installDeveloperAccessNotice();
+  showOwnerToolsForSetupOnly();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();
   });

@@ -28,15 +28,15 @@
 
     <div class="editor-access-card invite-owner-tools" data-invite-owner-tools hidden>
         <p class="portal-kicker">Owner Tools - Private</p>
-        <h2>Create An Invite For Someone Else</h2>
-        <p>This private card appears for you while 10-click developer unlock is active. Use it when someone asks to contribute and you want to invite them.</p>
-        <form data-owner-invite-form>
+        <h2>Admin Invite Tools</h2>
+        <p>Only the site owner, admins, or editors can generate contributor invites. Contributors and public visitors do not see or use this card.</p>
+        <form data-owner-invite-form hidden>
             <label><span>Invite Code For Them</span><input name="inviteCode" type="text" placeholder="Leave blank to auto-generate"></label>
             <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="admin">Owner / Admin</option></select></label>
             <button type="submit">Generate Invite Link</button>
         </form>
         <form data-owner-bootstrap-form>
-            <p class="access-note">First-time owner setup only. Use this once to create your real owner login, then use Member Login after that.</p>
+            <p class="access-note">First-time owner setup only. This appears with 10-click so you can create your real owner login. After that, use Member Login.</p>
             <label><span>Owner Setup Key</span><input name="setupKey" type="password"></label>
             <label><span>Owner Username</span><input name="username" type="text" value="tpi-owner"></label>
             <label><span>Owner Password</span><input name="password" type="password"></label>

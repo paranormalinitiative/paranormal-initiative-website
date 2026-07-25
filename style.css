@@ -23,6 +23,10 @@ body {
     user-select: none;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 img {
     -webkit-user-drag: none;
     user-drag: none;
