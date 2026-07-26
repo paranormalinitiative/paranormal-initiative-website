@@ -40,8 +40,9 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
-    if (request.method === "GET" && path === "/forum") return handleForumIndex(env);
+    if (request.method === "GET" && path === "/forum") return handleForumIndex(request, env);
     if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, env);
+    if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkForumTopicRead(path, env, user));
     if (request.method === "POST" && path === "/forum/topics") return requireMember(request, env, user => handleCreateForumTopic(request, env, user));
     if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/posts$/)) return requireMember(request, env, user => handleCreateForumPost(path, request, env, user));
     if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireMember(request, env, user => handleDeleteForumPost(path, env, user));
@@ -605,7 +606,8 @@ async function handleDeleteArticle(path, env, user) {
   return json({ deleted: true, id });
 }
 
-async function handleForumIndex(env) {
+async function handleForumIndex(request, env) {
+  const user = await getSessionUser(request, env);
   const { results: categoryRows } = await env.TPI_DB.prepare(`
     SELECT
       fc.id,
@@ -644,7 +646,36 @@ async function handleForumIndex(env) {
     LIMIT 80
   `).all();
 
-  return json({ categories: categoryRows, topics: topicRows });
+  const readRows = user ? await getForumReadRows(env, user.id) : [];
+  const readMap = new Map(readRows.map(row => [row.topic_id, row]));
+  const topics = topicRows.map(topic => {
+    const postCount = Number(topic.postCount || 0);
+    const replyCount = Math.max(0, postCount - 1);
+    const read = readMap.get(topic.id);
+    const seenPostCount = Number(read?.seen_post_count || 0);
+    const unreadTopicCount = user && !read ? 1 : 0;
+    const unreadReplyCount = user ? Math.max(0, postCount - Math.max(1, seenPostCount)) : 0;
+    return {
+      ...topic,
+      postCount,
+      replyCount,
+      unreadTopicCount,
+      unreadReplyCount
+    };
+  });
+  const categories = categoryRows.map(category => {
+    const categoryTopics = topics.filter(topic => topic.categoryId === category.id);
+    return {
+      ...category,
+      topicCount: Number(category.topicCount || 0),
+      postCount: Number(category.postCount || 0),
+      replyCount: Math.max(0, Number(category.postCount || 0) - Number(category.topicCount || 0)),
+      unreadTopicCount: categoryTopics.reduce((total, topic) => total + Number(topic.unreadTopicCount || 0), 0),
+      unreadReplyCount: categoryTopics.reduce((total, topic) => total + Number(topic.unreadReplyCount || 0), 0)
+    };
+  });
+
+  return json({ categories, topics });
 }
 
 async function handleForumTopic(path, env) {
@@ -734,6 +765,38 @@ async function handleCreateForumPost(path, request, env, user) {
   ]);
 
   return json({ post: { id: postId, topicId, body } });
+}
+
+async function handleMarkForumTopicRead(path, env, user) {
+  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)\/read$/)?.[1] || ""));
+  if (!topicId) return json({ error: "Topic id is required." }, 400);
+
+  const topic = await env.TPI_DB.prepare(`
+    SELECT
+      ft.id,
+      COUNT(fp.id) AS postCount,
+      MAX(fp.created_at) AS lastPostAt
+    FROM forum_topics ft
+    LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
+    WHERE ft.id = ? AND ft.status NOT IN ('deleted', 'inactive')
+    GROUP BY ft.id
+  `).bind(topicId).first();
+  if (!topic) return json({ error: "Topic was not found." }, 404);
+
+  try {
+    await env.TPI_DB.prepare(`
+      INSERT INTO forum_topic_reads (contributor_id, topic_id, seen_post_count, seen_last_post_at, read_at)
+      VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(contributor_id, topic_id) DO UPDATE SET
+        seen_post_count = excluded.seen_post_count,
+        seen_last_post_at = excluded.seen_last_post_at,
+        read_at = CURRENT_TIMESTAMP
+    `).bind(user.id, topicId, Number(topic.postCount || 0), topic.lastPostAt || null).run();
+  } catch (error) {
+    return json({ ok: false, migrationRequired: true });
+  }
+
+  return json({ ok: true, topicId, seenPostCount: Number(topic.postCount || 0), seenLastPostAt: topic.lastPostAt || null });
 }
 
 async function handleDeleteForumPost(path, env, user) {
@@ -845,6 +908,19 @@ async function getUserByUsername(env, username) {
 async function getOpenInvite(env, code) {
   if (!code) return null;
   return env.TPI_DB.prepare("SELECT * FROM invite_codes WHERE code = ? AND used = 0").bind(code).first();
+}
+
+async function getForumReadRows(env, contributorId) {
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT topic_id, seen_post_count, seen_last_post_at, read_at
+      FROM forum_topic_reads
+      WHERE contributor_id = ?
+    `).bind(contributorId).all();
+    return results || [];
+  } catch (error) {
+    return [];
+  }
 }
 
 async function hashPassword(password) {

@@ -1053,6 +1053,31 @@ footer {
     flex: 0 0 auto;
 }
 
+.discussion-activity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #55c8ff;
+}
+
+.discussion-activity-badge.is-reply {
+    color: #53d18d;
+}
+
+.discussion-activity-badge.is-read {
+    color: #5f7284;
+    opacity: 0.64;
+}
+
+.discussion-activity-badge.is-unread {
+    opacity: 1;
+}
+
+.discussion-activity-badge strong,
+.discussion-activity-badge.is-read strong {
+    color: currentColor;
+}
+
 .discussion-chat-icon {
     position: relative;
     display: inline-block;
@@ -1060,7 +1085,7 @@ footer {
     height: 10px;
     border: 2px solid currentColor;
     border-radius: 8px;
-    color: #55c8ff;
+    color: currentColor;
 }
 
 .discussion-chat-icon::after {
@@ -1077,7 +1102,7 @@ footer {
 }
 
 .discussion-chat-icon-reply {
-    color: #53d18d;
+    color: currentColor;
 }
 
 .discussion-category-topics {
@@ -1130,6 +1155,10 @@ footer {
 .discussion-topic-icons .discussion-chat-icon {
     width: 12px;
     height: 9px;
+}
+
+.discussion-topic-icons .discussion-activity-badge strong {
+    font-size: 11px;
 }
 
 .discussion-topic-button small {

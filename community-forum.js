@@ -95,10 +95,12 @@
       state.categories = data.categories || [];
       state.topics = data.topics || [];
       state.previewMode = false;
+      applyLocalReadState();
     } catch (error) {
       state.categories = fallbackCategories;
       state.topics = fallbackTopics;
       state.previewMode = true;
+      applyLocalReadState();
     }
   }
 
@@ -178,9 +180,8 @@
           <button class="discussion-category-title" type="button" data-category-toggle="${escapeAttr(category.id)}" aria-expanded="${isExpanded ? "true" : "false"}">
             <span>${escapeHtml(category.title)}</span>
             <span class="discussion-category-activity" aria-label="${counts.topicCount} topics and ${counts.commentCount} replies">
-              ${counts.topicCount > 0 ? `<i class="discussion-chat-icon discussion-chat-icon-topic"></i>` : ""}
-              ${counts.commentCount > 0 ? `<i class="discussion-chat-icon discussion-chat-icon-reply"></i>` : ""}
-              <strong>${counts.topicCount}</strong>
+              ${counts.topicCount > 0 ? renderActivityBadge("topic", counts.topicCount, counts.unreadTopicCount) : ""}
+              ${counts.commentCount > 0 ? renderActivityBadge("reply", counts.commentCount, counts.unreadReplyCount) : ""}
             </span>
           </button>
           <div class="discussion-category-topics" ${isExpanded ? "" : "hidden"}>${topicHtml}</div>
@@ -201,13 +202,14 @@
 
   function renderTopicButton(topic) {
     const activeClass = topic.id === state.activeTopicId ? " is-active" : "";
+    const replyCount = Number(topic.replyCount ?? Math.max(0, Number(topic.postCount || 0) - 1));
     return `
       <button class="discussion-topic-button${activeClass}" type="button" data-topic-id="${escapeAttr(topic.id)}">
         <span>
           ${escapeHtml(topic.title)}
           <small class="discussion-topic-icons">
-            <i class="discussion-chat-icon discussion-chat-icon-topic"></i>
-            ${Number(topic.postCount || 0) > 1 ? `<i class="discussion-chat-icon discussion-chat-icon-reply"></i>` : ""}
+            ${renderActivityBadge("topic", 1, Number(topic.unreadTopicCount || 0))}
+            ${replyCount > 0 ? renderActivityBadge("reply", replyCount, Number(topic.unreadReplyCount || 0)) : ""}
           </small>
         </span>
         <small>${escapeHtml(topic.authorName || "Community")} · ${formatDate(topic.lastPostAt || topic.updatedAt || topic.createdAt)}</small>
@@ -232,8 +234,11 @@
     try {
       const data = state.previewMode ? { posts: fallbackPosts[topicId] || [] } : await window.TPIApi.forumTopic(topicId);
       renderMessages(data.posts || []);
+      await markTopicRead(topicId, data.posts || []);
     } catch (error) {
-      renderMessages(fallbackPosts[topicId] || []);
+      const posts = fallbackPosts[topicId] || [];
+      renderMessages(posts);
+      await markTopicRead(topicId, posts);
     }
     updateComposerState();
   }
@@ -419,10 +424,86 @@
   function getCategoryCounts(category, topics) {
     const topicCount = Number(category.topicCount ?? topics.length) || 0;
     const postCount = Number(category.postCount ?? topics.reduce((total, topic) => total + Number(topic.postCount || 0), 0)) || 0;
+    const unreadTopicCount = Number(category.unreadTopicCount ?? topics.reduce((total, topic) => total + Number(topic.unreadTopicCount || 0), 0)) || 0;
+    const unreadReplyCount = Number(category.unreadReplyCount ?? topics.reduce((total, topic) => total + Number(topic.unreadReplyCount || 0), 0)) || 0;
     return {
       topicCount,
-      commentCount: Math.max(0, postCount - topicCount)
+      commentCount: Math.max(0, Number(category.replyCount ?? (postCount - topicCount)) || 0),
+      unreadTopicCount,
+      unreadReplyCount
     };
+  }
+
+  function renderActivityBadge(type, count, unreadCount) {
+    const isReply = type === "reply";
+    const unread = Number(unreadCount || 0);
+    const label = `${count} ${isReply ? "replies" : "topics"}${unread ? `, ${unread} unread` : ", read"}`;
+    return `
+      <span class="discussion-activity-badge${isReply ? " is-reply" : " is-topic"}${unread ? " is-unread" : " is-read"}" title="${escapeAttr(label)}">
+        <i class="discussion-chat-icon${isReply ? " discussion-chat-icon-reply" : " discussion-chat-icon-topic"}"></i>
+        <strong>${Number(count || 0)}</strong>
+      </span>
+    `;
+  }
+
+  async function markTopicRead(topicId, posts) {
+    if (!state.activeUser || !topicId) return;
+    const topic = state.topics.find(item => item.id === topicId);
+    if (!topic) return;
+    const postCount = posts.length || Number(topic.postCount || 0);
+    topic.postCount = postCount;
+    topic.replyCount = Math.max(0, postCount - 1);
+    topic.unreadTopicCount = 0;
+    topic.unreadReplyCount = 0;
+    setLocalTopicRead(topicId, postCount);
+    try {
+      await window.TPIApi.markForumTopicRead(topicId);
+    } catch (error) {
+      // Local read state still keeps the preview usable until D1 read tracking is applied.
+    }
+    renderCategories();
+  }
+
+  function setLocalTopicRead(topicId, postCount) {
+    try {
+      const username = state.activeUser?.username || "header-user";
+      const key = `tpiForumReads:${username}`;
+      const reads = JSON.parse(localStorage.getItem(key) || "{}");
+      reads[topicId] = { seenPostCount: Number(postCount || 0), readAt: new Date().toISOString() };
+      localStorage.setItem(key, JSON.stringify(reads));
+    } catch (error) {
+      // Read indicators are helpful, but they should never break topic reading.
+    }
+  }
+
+  function applyLocalReadState() {
+    if (!state.activeUser) return;
+    try {
+      const username = state.activeUser.username || "header-user";
+      const reads = JSON.parse(localStorage.getItem(`tpiForumReads:${username}`) || "{}");
+      state.topics = state.topics.map(topic => {
+        const read = reads[topic.id];
+        if (!read) return topic;
+        const postCount = Number(topic.postCount || 0);
+        const seenPostCount = Number(read.seenPostCount || 0);
+        return {
+          ...topic,
+          replyCount: Number(topic.replyCount ?? Math.max(0, postCount - 1)),
+          unreadTopicCount: 0,
+          unreadReplyCount: Math.max(0, postCount - Math.max(1, seenPostCount))
+        };
+      });
+      state.categories = state.categories.map(category => {
+        const topics = state.topics.filter(topic => topic.categoryId === category.id);
+        return {
+          ...category,
+          unreadTopicCount: topics.reduce((total, topic) => total + Number(topic.unreadTopicCount || 0), 0),
+          unreadReplyCount: topics.reduce((total, topic) => total + Number(topic.unreadReplyCount || 0), 0)
+        };
+      });
+    } catch (error) {
+      // Ignore malformed local read cache.
+    }
   }
 
   function readHeaderMemberName() {

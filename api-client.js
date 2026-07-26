@@ -81,6 +81,7 @@
     deleteArticle: id => request(`/articles/${encodeURIComponent(id)}`, { method: "DELETE" }),
     forumIndex: () => request("/forum"),
     forumTopic: id => request(`/forum/topics/${encodeURIComponent(id)}`),
+    markForumTopicRead: id => request(`/forum/topics/${encodeURIComponent(id)}/read`, { method: "POST" }),
     createForumTopic: payload => request("/forum/topics", { method: "POST", body: payload }),
     createForumPost: (topicId, payload) => request(`/forum/topics/${encodeURIComponent(topicId)}/posts`, { method: "POST", body: payload }),
     deleteForumPost: id => request(`/forum/posts/${encodeURIComponent(id)}`, { method: "DELETE" }),
