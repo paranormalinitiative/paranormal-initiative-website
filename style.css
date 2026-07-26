@@ -1945,6 +1945,10 @@ footer {
     color: #f4f8fb;
 }
 
+.public-profile-work {
+    width: 100%;
+}
+
 .public-profile-card p {
     margin: 0 0 8px;
     color: #b8c4d1;
