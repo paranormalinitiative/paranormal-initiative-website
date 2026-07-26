@@ -61,6 +61,7 @@
     checkInvite: code => request("/invites/check", { method: "POST", body: { code } }),
     registerContributor: payload => request("/contributors/register", { method: "POST", body: payload }),
     updateProfile: payload => request("/contributors/me/profile", { method: "POST", body: payload }),
+    changePassword: payload => request("/contributors/me/password", { method: "POST", body: payload }),
     uploadProfilePhoto: file => upload("/uploads/profile-photo", file),
     uploadArticleMedia: file => upload("/uploads/article-media", file),
     contributorArticles: () => request("/contributors/me/articles"),

@@ -122,11 +122,12 @@ The editor currently includes:
 - The editor is behind a contributor login gate for public publishing safety.
 - The user's existing 10-click dev copy mode bypasses the editor gate and unlocks copy/paste while building.
 - The editor page is exempt from the public copy/paste lock once unlocked so writing, copying, and pasting inside the editor works normally.
-- The main navigation includes `Member Login`.
+- The main public navigation should stay visitor-focused.
 - Public users cannot create their own account freely. Registration requires an invite code.
-- `Contributor Invite` appears immediately before `Member Login` in the main nav.
-- `Member Login` is the last item in the main nav and is for returning contributors only.
+- `Contributor Invite` and `Member Login` are footer utility links, not primary public nav items.
+- `Member Login` is for returning contributors only.
 - `Member Dashboard` is private after login and should not be shown as a normal public nav button.
+- Logged-in contributors can reach the dashboard from the header greeting/dashboard control.
 - `contributor-invite.html` is the invite-only setup page: enter invite code first, then create username/password and contributor profile.
 - Owner setup is hidden on `member-login.html` until the site owner's 10-click dev mode is enabled.
 - The site owner should create a real owner account through Cloudflare D1 using the `TPI_OWNER_SETUP_KEY`, then use the dashboard admin tools for invites.
@@ -199,15 +200,19 @@ python3 -m http.server 4174
 ## Next Agent Priorities
 
 1. Add Cloudflare R2 for media uploads and bind it as `TPI_MEDIA`.
-2. Add authenticated upload API endpoints for profile photos and editor media.
-3. Replace profile photo URL-only input with Upload from Computer plus URL.
+2. Test the existing authenticated upload API endpoints for profile photos and editor media after R2 is bound.
+3. Verify profile photo upload from computer plus URL fallback against Cloudflare R2.
 4. Replace editor image/video/audio data URLs with R2 upload URLs.
-5. Add Change Password / account settings to `member-dashboard.html`.
-6. Link article author names and contributor comments to `contributor-profile.html?username=...`.
-7. Add comment moderation before open public launch.
-8. Visually test `member-dashboard.html`, `contributor-profile.html`, `member-login.html`, `contributor-invite.html`, and `paper-editor.html`.
-9. Do not reintroduce the permanent preview pane.
-10. Do not reintroduce the short rejected paper headings.
+5. Add comment moderation before open public launch.
+6. Visually test `member-dashboard.html`, `contributor-profile.html`, `member-login.html`, `contributor-invite.html`, and `paper-editor.html`.
+7. Do not reintroduce the permanent preview pane.
+8. Do not reintroduce the short rejected paper headings.
+
+Recently completed:
+
+- Change Password/account settings were added to `member-dashboard.html`.
+- Published article author names and logged-in contributor comment/reply names link to `contributor-profile.html?username=...` when a contributor username is available.
+- Legacy authored pages are centralized in `legacy-contributions.js` and can be imported from the Content Editor's My Content library.
 
 ## Known Limitations
 
@@ -223,7 +228,7 @@ python3 -m http.server 4174
 Contributor access should work like this:
 
 1. User clicks Content Editor from Education Center and sees a login gate unless dev copy mode is enabled.
-2. User can also use Member Login from the main navigation.
+2. User can also use Member Login from the footer utility links.
 3. Contributor registration requires an invite code.
 4. Owner/admin can generate invite links from the private dashboard only.
 5. Contributor can draft/save/publish research papers, notes, images, and videos.

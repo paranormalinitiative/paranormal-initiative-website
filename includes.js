@@ -382,7 +382,7 @@
       const name = user.displayName || user.username || "";
       const title = user.title || user.role || "";
       if (!name) return null;
-      return { name, title };
+      return { name, title, username: user.username || "" };
     }
 
     function getSubmittedIdentity(form, nameField, useProfileField) {
@@ -390,20 +390,26 @@
       if (useProfile) {
         return {
           name: contributorSignature.name,
-          authorTitle: contributorSignature.title
+          authorTitle: contributorSignature.title,
+          authorUsername: contributorSignature.username
         };
       }
 
       return {
         name: String(new FormData(form).get(nameField) || "").trim(),
-        authorTitle: ""
+        authorTitle: "",
+        authorUsername: ""
       };
     }
 
-    function renderCommentAuthor(name, authorTitle, fallback) {
+    function renderCommentAuthor(name, authorTitle, fallback, authorUsername) {
+      const displayName = escapeComment(name || fallback);
+      const nameHtml = authorUsername
+        ? `<a href="contributor-profile.html?username=${encodeURIComponent(authorUsername)}">${displayName}</a>`
+        : displayName;
       return `
         <div>
-          <h3>${escapeComment(name || fallback)}</h3>
+          <h3>${nameHtml}</h3>
           ${authorTitle ? `<strong class="tpi-comment-title">${escapeComment(authorTitle)}</strong>` : ""}
         </div>
       `;
@@ -441,7 +447,7 @@
       list.innerHTML = comments.length ? comments.map(comment => `
         <article class="tpi-comment">
           <div class="tpi-comment-meta">
-            ${renderCommentAuthor(comment.name, comment.authorTitle, "Anonymous Contributor")}
+            ${renderCommentAuthor(comment.name, comment.authorTitle, "Anonymous Contributor", comment.authorUsername)}
             <time>${escapeComment(formatCommentDate(comment.createdAt))}</time>
           </div>
           <p>${escapeComment(comment.text)}</p>
@@ -450,7 +456,7 @@
               ${comment.replies.map(reply => `
                 <article class="tpi-reply">
                   <div class="tpi-comment-meta">
-                    ${renderCommentAuthor(reply.name, reply.authorTitle, "TPI Reply")}
+                    ${renderCommentAuthor(reply.name, reply.authorTitle, "TPI Reply", reply.authorUsername)}
                     <time>${escapeComment(formatCommentDate(reply.createdAt))}</time>
                   </div>
                   <p>${escapeComment(reply.text)}</p>
@@ -500,6 +506,7 @@
                 parentId: comment.id,
                 name: identity.name,
                 authorTitle: identity.authorTitle,
+                authorUsername: identity.authorUsername,
                 text,
                 useContributorProfile: Boolean(contributorSignature && replyForm.querySelector("[name='useContributorProfile']")?.checked)
               }
@@ -516,6 +523,7 @@
         comment.replies.push({
           name: identity.name,
           authorTitle: identity.authorTitle,
+          authorUsername: identity.authorUsername,
           text,
           createdAt: new Date().toISOString()
         });
@@ -557,6 +565,7 @@
         id: makeCommentId(),
         name: identity.name,
         authorTitle: identity.authorTitle,
+        authorUsername: identity.authorUsername,
         text,
         replies: [],
         status: "local-prototype",

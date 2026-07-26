@@ -1,4 +1,4 @@
-# Research Paper Editor Roadmap
+# Content Editor Roadmap
 
 Last updated: July 25, 2026
 
@@ -46,15 +46,15 @@ Current layout:
 - Destination dropdown chooses where the paper belongs in the Education Center.
 - Publish Article opens a publish dialog for the chosen section/page.
 - The editor requires contributor login unless the user's 10-click dev copy mode is enabled.
-- Main navigation includes Member Login as the final nav item.
-- Main navigation includes Contributor Invite immediately before Member Login.
+- Public navigation does not include contributor tools.
+- Member Login and Contributor Invite are footer utility links so they stay available without distracting first-time visitors.
 - Registration is invite-only.
 - Returning contributors use `member-login.html`.
 - First-time contributors use `contributor-invite.html`, enter an invite code, then create their login/profile.
 - With 10-click dev copy mode active, the site owner can reveal owner setup on `member-login.html`.
 - Invite codes are generated from the private member dashboard by `owner` or `admin` accounts only.
 - Normal visitors should never see owner/admin invite tools on `contributor-invite.html`.
-- `Member Dashboard` is not a public nav item. Contributors reach it after member login.
+- `Member Dashboard` is not a public nav item. Contributors reach it after member login or from the logged-in header dashboard control.
 - Dashboard paper sections are split into unpublished drafts and published papers.
 - Drafts autosave and can be reopened in the editor.
 - Published papers can also be reopened by the owner/contributor for editing.
@@ -322,16 +322,22 @@ The user asked about Academia.edu and external papers. The working policy for th
 1. Create the Cloudflare R2 bucket and uncomment the `TPI_MEDIA` binding.
 2. Test profile photo upload from the member dashboard.
 3. Replace editor data-URL media insertion with the existing R2 article-media endpoint.
-4. Add Change Password/account settings to the member dashboard.
-5. Link article author names and contributor comment names to public profiles.
-6. Add comment moderation/admin tools.
-7. Visually test current editor, dashboard, public profile, invite page, login page, and published article page.
-8. Make the toolbar more icon-like and less text-heavy after the core portal flow is stable.
-9. Add a "New Paper From Existing Research Page" importer if the user wants to edit current `education-research-*.html` pages.
+4. Add comment moderation/admin tools.
+5. Visually test current editor, dashboard, public profile, invite page, login page, and published article page.
+6. Make the toolbar more icon-like and less text-heavy after the core portal flow is stable.
+
+Recently completed:
+
+- Change Password/account settings were added to the member dashboard with Cloudflare D1 and local-preview fallback behavior.
+- Published article author names link to public contributor profiles when the article has a contributor username.
+- Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.
+- Legacy authored pages can be imported from the Content Editor's My Content library.
 
 ## Contributor Portal State
 
-The Research Paper Editor now has a Cloudflare-ready contributor portal path. D1 stores accounts, invites, sessions, profiles, article records, draft/published status, and comments. Local storage remains only as a local preview fallback.
+The Content Editor now has a Cloudflare-ready contributor portal path. D1 stores accounts, invites, sessions, profiles, article records, draft/published status, and comments. Local storage remains only as a local preview fallback.
+
+Legacy authored pages are centralized in `legacy-contributions.js` so the dashboard, public contributor profile, and editor My Content library stay aligned. Legacy items are archived links that can be imported into the Content Editor to create a newer editable article record.
 
 Current/required behavior:
 
@@ -363,6 +369,7 @@ Run these after editor/contributor changes:
 node --check paper-editor.js
 node --check member-login.js
 node --check includes.js
+node --check published-article.js
 node --check api-client.js
 node --check 'functions/api/[[path]].js'
 ```

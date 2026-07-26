@@ -30,6 +30,20 @@
     }
   }
 
+  function renderAuthorMeta(article, contributionType) {
+    const parts = [];
+    if (article.author) {
+      const author = article.authorUsername
+        ? `<a href="contributor-profile.html?username=${encodeURIComponent(article.authorUsername)}">${escapeHtml(article.author)}</a>`
+        : escapeHtml(article.author);
+      parts.push(author);
+    }
+    [contributionType, article.destinationLabel, article.source, article.labels].filter(Boolean).forEach(value => {
+      parts.push(escapeHtml(value));
+    });
+    return parts.join(" · ");
+  }
+
   const id = new URLSearchParams(window.location.search).get("id");
   const article = await getCloudflareArticle(id) || getPublishedArticles().find(item => item.id === id);
   if (!article) return;
@@ -41,7 +55,7 @@
       <p class="portal-kicker">Research Library · ${escapeHtml(contributionType)}</p>
       <h2>${escapeHtml(article.title)}</h2>
       ${article.subtitle ? `<p class="paper-preview-subtitle">${escapeHtml(article.subtitle)}</p>` : ""}
-      <p class="paper-preview-meta">${[article.author, contributionType, article.destinationLabel, article.source, article.labels].filter(Boolean).map(escapeHtml).join(" · ")}</p>
+      <p class="paper-preview-meta">${renderAuthorMeta(article, contributionType)}</p>
       <div class="lesson-reading-copy">${article.bodyHtml || ""}</div>
     </article>
     <section class="lesson-navigation-band">

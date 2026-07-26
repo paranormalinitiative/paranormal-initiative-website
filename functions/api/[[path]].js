@@ -22,6 +22,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
     if (request.method === "POST" && path === "/contributors/me/profile") return requireContributor(request, env, user => handleUpdateProfile(request, env, user));
+    if (request.method === "POST" && path === "/contributors/me/password") return requireContributor(request, env, user => handleChangePassword(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireContributor(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireContributor(request, env, user => handleProfilePhotoUpload(request, env, user));
@@ -255,6 +256,20 @@ async function handleUpdateProfile(request, env, user) {
   return json({ user: publicUser(updated) });
 }
 
+async function handleChangePassword(request, env, user) {
+  const data = await readJson(request);
+  const currentPassword = String(data.currentPassword || "");
+  const newPassword = String(data.newPassword || "");
+  if (!currentPassword || !newPassword) return json({ error: "Current password and new password are required." }, 400);
+  if (newPassword.length < 8) return json({ error: "New password must be at least 8 characters." }, 400);
+  if (user.password_hash !== await hashPassword(currentPassword)) return json({ error: "Current password did not match." }, 401);
+
+  await env.TPI_DB.prepare("UPDATE contributors SET password_hash = ? WHERE id = ?")
+    .bind(await hashPassword(newPassword), user.id)
+    .run();
+  return json({ ok: true });
+}
+
 async function handleProfilePhotoUpload(request, env, user) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const upload = await readUploadFile(request);
@@ -352,19 +367,31 @@ async function handleListArticles(request, env) {
   const url = new URL(request.url);
   const destination = url.searchParams.get("destination");
   const stmt = destination
-    ? env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE destination = ? AND status = 'published' ORDER BY created_at DESC").bind(destination)
-    : env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE status = 'published' ORDER BY created_at DESC");
+    ? env.TPI_DB.prepare(`
+      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
+      FROM articles a
+      LEFT JOIN contributors c ON c.id = a.created_by
+      WHERE a.destination = ? AND a.status = 'published'
+      ORDER BY a.created_at DESC
+    `).bind(destination)
+    : env.TPI_DB.prepare(`
+      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
+      FROM articles a
+      LEFT JOIN contributors c ON c.id = a.created_by
+      WHERE a.status = 'published'
+      ORDER BY a.created_at DESC
+    `);
   const { results } = await stmt.all();
   return json({ articles: results });
 }
 
 async function handleContributorArticles(env, user) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt
+    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt
     FROM articles
     WHERE created_by = ?
     ORDER BY created_at DESC
-  `).bind(user.id).all();
+  `).bind(user.username, user.id).all();
   return json({ articles: results });
 }
 
@@ -397,7 +424,13 @@ async function handleListComments(request, env) {
   const pageId = new URL(request.url).searchParams.get("pageId");
   if (!pageId) return json({ error: "pageId is required." }, 400);
 
-  const { results } = await env.TPI_DB.prepare("SELECT id, parent_id AS parentId, name, author_title AS authorTitle, text, created_at AS createdAt FROM comments WHERE page_id = ? AND status = 'approved' ORDER BY created_at ASC")
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT cm.id, cm.parent_id AS parentId, cm.name, cm.author_title AS authorTitle, c.username AS authorUsername, cm.text, cm.created_at AS createdAt
+    FROM comments cm
+    LEFT JOIN contributors c ON c.id = cm.contributor_id
+    WHERE cm.page_id = ? AND cm.status = 'approved'
+    ORDER BY cm.created_at ASC
+  `)
     .bind(pageId)
     .all();
   const comments = results.filter(row => !row.parentId).map(row => ({ ...row, replies: results.filter(reply => reply.parentId === row.id) }));

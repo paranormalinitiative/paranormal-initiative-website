@@ -30,8 +30,9 @@ The research paper system must support full papers, full contributor profiles, d
 - Private member dashboard: `member-dashboard.html`
 - Public contributor profile page: `contributor-profile.html`
 - R2 upload API endpoints in `functions/api/[[path]].js`
-- Research paper editor: `paper-editor.html`
+- Content editor page: `paper-editor.html`
 - Editor script: `paper-editor.js`
+- Shared legacy contribution archive: `legacy-contributions.js`
 - Shared nav/comments/greeting behavior: `includes.js`
 - Main styling: `style.css`
 
@@ -62,16 +63,15 @@ Do not store large media files in D1. D1 should only store the media URL/key.
 
 ## Navigation Rules
 
-Public navigation should show:
+Primary public navigation should stay focused on visitors: what TPI is, research areas, search, education, standards, contact, and public resources.
 
-- `Contributor Invite`
-- `Member Login`
+Contributor tools should stay available but out of the primary public nav:
 
-Do not show `Member Dashboard` as a public navigation item. Logged-in contributors reach the dashboard after `Member Login`.
+- `Contributor Invite` belongs in the footer utility links and is only for people who already received an invite code/link.
+- `Member Login` belongs in the footer utility links and is for returning contributors.
+- `Member Dashboard` is private after login and should not appear as a public navigation item.
 
-`Contributor Invite` is only for people who already received an invite code/link.
-
-`Member Login` is for returning contributors.
+Logged-in contributors can reach the dashboard from the header greeting/dashboard control or after signing in through `member-login.html`.
 
 ## Role Rules
 
@@ -143,7 +143,7 @@ Do not show drafts on public profiles.
 
 ## Editor Requirements
 
-The Research Paper Editor should remain Blogger-style:
+The Content Editor should remain Blogger-style:
 
 - large fixed-size compose canvas
 - compose view
@@ -192,11 +192,14 @@ Comments need:
 2. Uncomment the `TPI_MEDIA` R2 binding in `wrangler.toml` after the bucket exists.
 3. Deploy and test profile photo upload from the member dashboard.
 4. Replace editor data-URL media storage with the existing R2 article-media endpoint.
-5. Add Change Password/account settings to the dashboard.
-6. Link article author names to public contributor profiles.
-7. Link logged-in contributor comment names to public contributor profiles.
-8. Add comment moderation tools.
-9. Visually test dashboard, public profile, invite, login, editor, and published article pages.
+5. Add comment moderation tools.
+6. Visually test dashboard, public profile, invite, login, editor, and published article pages.
+
+Recently completed:
+
+- Change Password/account settings were added to the member dashboard with Cloudflare D1 and local-preview fallback behavior.
+- Published article author names link to public contributor profiles when the article has a contributor username.
+- Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.
 
 ## Validation Commands
 
@@ -206,6 +209,7 @@ Run these after changes:
 node --check paper-editor.js
 node --check member-login.js
 node --check includes.js
+node --check published-article.js
 node --check api-client.js
 node --check 'functions/api/[[path]].js'
 ```

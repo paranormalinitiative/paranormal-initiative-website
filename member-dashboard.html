@@ -90,6 +90,18 @@
             <a class="portal-button portal-button-secondary" href="paper-editor.html">Open Content Editor</a>
         </article>
 
+        <article class="editor-access-card">
+            <p class="portal-kicker">Account</p>
+            <h2>Password Settings</h2>
+            <p class="access-note">Update your contributor password. This does not change your public profile.</p>
+            <form class="member-profile-form" data-password-form>
+                <label><span>Current Password</span><input name="currentPassword" type="password" autocomplete="current-password" required></label>
+                <label><span>New Password</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+                <label><span>Confirm New Password</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+                <button type="submit">Update Password</button>
+            </form>
+        </article>
+
         <article class="editor-access-card invite-owner-tools" data-dashboard-admin hidden>
             <p class="portal-kicker">Admin Tools</p>
             <h2>Contributor Invites</h2>
@@ -122,6 +134,7 @@
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
+<script src="legacy-contributions.js"></script>
 <script src="member-login.js"></script>
 </body>
 </html>
