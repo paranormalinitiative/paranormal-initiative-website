@@ -15,6 +15,8 @@
   const dashboardArticles = document.querySelector("[data-dashboard-articles]");
   const dashboardName = document.querySelector("[data-dashboard-name]");
   const dashboardRole = document.querySelector("[data-dashboard-role]");
+  const dashboardKicker = document.querySelector("[data-dashboard-kicker]");
+  const contributorTools = document.querySelectorAll("[data-contributor-tool]");
   const accountIdentity = document.querySelector("[data-account-identity]");
   const profileForm = document.querySelector("[data-profile-form]");
   const usernameForm = document.querySelector("[data-username-form]");
@@ -183,6 +185,23 @@
       contributor: "Can write, save drafts, and publish assigned work",
       member: "Can join discussions and manage a member profile"
     }[role] || "Member account";
+  }
+
+  function canUseContributorTools(user) {
+    return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase());
+  }
+
+  function canUseAdminTools(user) {
+    return ["owner", "admin"].includes(String(user?.role || "").toLowerCase());
+  }
+
+  function updateDashboardToolVisibility(user) {
+    const contributorAllowed = canUseContributorTools(user);
+    contributorTools.forEach(element => {
+      element.hidden = !contributorAllowed;
+    });
+    if (dashboardAdmin && !canUseAdminTools(user)) dashboardAdmin.hidden = true;
+    if (dashboardKicker) dashboardKicker.textContent = contributorAllowed ? "Contributor Home" : "Member Home";
   }
 
   function isValidUsername(value) {
@@ -443,6 +462,7 @@
 
   function renderDashboardProfile(user) {
     if (!dashboardProfile || !user) return;
+    updateDashboardToolVisibility(user);
     if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
     if (dashboardRole) dashboardRole.textContent = [user.title, getAccountAccessLabel(user.role)].filter(Boolean).join(" - ");
     if (publicProfileLink) publicProfileLink.href = `contributor-profile.html?username=${encodeURIComponent(user.username)}`;

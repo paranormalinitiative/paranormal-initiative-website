@@ -17,12 +17,12 @@
 <section class="member-dashboard-shell">
     <div class="member-dashboard-header">
         <div>
-            <p class="portal-kicker">Contributor Home</p>
+            <p class="portal-kicker" data-dashboard-kicker>Member Home</p>
             <h2 data-dashboard-name>Member Dashboard</h2>
             <p data-dashboard-role>Loading contributor profile...</p>
         </div>
         <div class="portal-actions">
-            <a class="portal-button" href="paper-editor.html">Open Content Editor</a>
+            <a class="portal-button" href="paper-editor.html" data-contributor-tool hidden>Open Content Editor</a>
             <button class="portal-button portal-button-secondary" type="button" data-member-logout>Sign Out</button>
         </div>
     </div>
@@ -73,7 +73,7 @@
             </form>
         </article>
 
-        <article class="editor-access-card">
+        <article class="editor-access-card" data-contributor-tool hidden>
             <p class="portal-kicker">Contributions</p>
             <h2>Content Summary</h2>
             <p class="access-note">Manage drafts, published work, and legacy archive pages from the Content Editor.</p>
@@ -87,7 +87,7 @@
                     <strong data-dashboard-articles>0</strong>
                 </div>
             </div>
-            <a class="portal-button portal-button-secondary" href="paper-editor.html">Open Content Editor</a>
+            <a class="portal-button portal-button-secondary" href="paper-editor.html" data-contributor-tool>Open Content Editor</a>
         </article>
 
         <article class="editor-access-card">
