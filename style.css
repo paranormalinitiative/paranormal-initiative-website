@@ -2891,13 +2891,25 @@ footer {
 
 .content-library-card {
     width: min(860px, calc(100vw - 32px));
-    max-height: min(780px, calc(100vh - 32px));
+    height: min(780px, calc(100vh - 32px));
+    max-height: calc(100vh - 16px);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .content-library-body {
-    max-height: calc(100vh - 124px);
+    flex: 1;
+    min-height: 0;
     overflow: auto;
+    padding-bottom: 28px;
+}
+
+.content-library-list {
+    display: grid;
+    gap: 18px;
+    min-height: 0;
+    padding-bottom: 36px;
 }
 
 .content-library-section {
