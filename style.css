@@ -2949,6 +2949,9 @@ footer {
 }
 
 .content-library-empty {
+    display: flex;
+    align-items: center;
+    min-height: 76px;
     padding: 16px;
     background: #090f14;
     border: 1px dashed #263646;
@@ -2966,6 +2969,7 @@ footer {
     grid-template-columns: 1fr auto;
     gap: 12px;
     align-items: center;
+    min-height: 76px;
     padding: 12px;
     background: #090f14;
     border: 1px solid #263646;
