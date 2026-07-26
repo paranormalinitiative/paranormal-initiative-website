@@ -18,6 +18,31 @@
   const publicProfileLink = document.querySelector("[data-public-profile-link]");
   const publicProfileRoot = document.querySelector("[data-public-profile]");
   const profilePhotoPreview = document.querySelector("[data-profile-photo-preview]");
+  const LEGACY_CONTRIBUTIONS = {
+    todd: [
+      { title: "EVP / ITC Research", subtitle: "Research position", href: "evp-itc-research.html" },
+      { title: "Raising The Standards Of Paranormal Investigation", subtitle: "Investigation Development Series", href: "investigation-development-raising-the-standards.html" },
+      { title: "What Is Paranormal Investigation?", subtitle: "Education Center Research", href: "education-research-what-is-paranormal-investigation.html" },
+      { title: "What Is Ghost Hunting?", subtitle: "Education Center Research", href: "education-research-what-is-ghost-hunting.html" },
+      { title: "Why People Choose to Investigate the Paranormal", subtitle: "Education Center Research", href: "education-research-why-investigate-paranormal.html" },
+      { title: "Basic Terminology and Foundational Language", subtitle: "Education Center Research", href: "education-research-foundational-terminology-paranormal-research.html" },
+      { title: "Basic Field Safety and Permission", subtitle: "Education Center Research", href: "education-research-field-safety-permission.html" },
+      { title: "Basic Observation and Note-Taking", subtitle: "Education Center Research", href: "education-research-observation-note-taking.html" },
+      { title: "Introduction to Equipment and What Tools Actually Measure", subtitle: "Education Center Research", href: "education-research-equipment-what-tools-measure.html" },
+      { title: "How Beginners Choose and Research a Location", subtitle: "Education Center Research", href: "education-research-choosing-researching-location.html" },
+      { title: "Introduction to Audio, Photo, and Video Review", subtitle: "Education Center Research", href: "education-research-audio-photo-video-review.html" },
+      { title: "Investigation Ethics and Professional Conduct", subtitle: "Education Center Research", href: "education-research-investigation-ethics-professional-conduct.html" },
+      { title: "Professional Investigation Documentation and Reporting", subtitle: "Education Center Research", href: "education-research-professional-documentation-reporting.html" },
+      { title: "Debunking Basics and Natural Explanations", subtitle: "Education Center Research", href: "education-research-debunking-natural-explanations.html" },
+      { title: "Weather, Environment, and Building-Science Causes", subtitle: "Education Center Research", href: "education-research-weather-environment-building-science-causes.html" },
+      { title: "Psychological Triggers of Paranormal Experiences", subtitle: "Education Center Research", href: "education-research-psychological-triggers-paranormal-experiences.html" },
+      { title: "Spiritual, Religious, and Demonic-Claim Language", subtitle: "Education Center Research", href: "education-research-spiritual-religious-demonic-claim-language.html" },
+      { title: "Types of Hauntings and Claim Categories", subtitle: "Education Center Research", href: "education-research-types-hauntings-claim-categories.html" },
+      { title: "Historical Records, Local Legends, Cemeteries, and Oral History", subtitle: "Education Center Research", href: "education-research-historical-records-local-legends-cemeteries-oral-history.html" },
+      { title: "History of Hauntings, Folklore, Ghost Hunting, and Psychical Research", subtitle: "Education Center Research", href: "education-research-history-hauntings-folklore-psychical-research.html" },
+      { title: "Personal Experience, Curiosity, Belief, Fear, Grief, Social Media, and the Search for Meaning", subtitle: "Education Center Research", href: "education-research-motivations-meaning-paranormal-experience.html" }
+    ]
+  };
 
   function setStatus(message, isError) {
     if (!status) return;
@@ -61,6 +86,28 @@
       "\"": "&quot;",
       "'": "&#39;"
     }[char]));
+  }
+
+  function contributorKey(profile) {
+    const name = `${profile?.displayName || ""} ${profile?.username || ""}`.toLowerCase().replace(/[^a-z0-9]+/g, "");
+    if (name.includes("toddwayne") || name.includes("tpiowner")) return "todd";
+    return "";
+  }
+
+  function getProfileContributions(profile, articles) {
+    const dynamicArticles = (articles || []).map(article => ({
+      title: article.title || "Untitled Research Paper",
+      subtitle: article.subtitle || article.destination || "Research paper",
+      href: article.href || `published-article.html?id=${encodeURIComponent(article.id)}`
+    }));
+    const legacyArticles = LEGACY_CONTRIBUTIONS[contributorKey(profile)] || [];
+    const seen = new Set();
+    return [...dynamicArticles, ...legacyArticles].filter(article => {
+      const key = article.href || article.title;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
 
   function isDevUnlocked() {
@@ -457,7 +504,8 @@
       const data = await response.json();
       const profile = data.profile;
       const articles = data.articles || [];
-      const publishedCount = articles.filter(article => article.status === "published" || !article.status).length;
+      const contributions = getProfileContributions(profile, articles.filter(article => article.status === "published" || !article.status));
+      const publishedCount = contributions.length;
       const contributionLevel = getContributionLevel(publishedCount, profile.role, profile.title);
       document.title = `${profile.displayName || profile.username} | The Paranormal Initiative`;
       const profileName = profile.displayName || profile.username || "Contributor";
@@ -492,11 +540,11 @@
           <p class="portal-kicker">Contributions</p>
           <h2>Published Work</h2>
           <div class="invite-link-list">
-            ${articles.length ? articles.map(article => `
+            ${contributions.length ? contributions.map(article => `
               <div class="invite-link-row">
                 <strong>${escapeHtml(article.title)}</strong>
-                <span>${escapeHtml(article.subtitle || article.destination || "Research paper")}</span>
-                <a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>
+                <span>${escapeHtml(article.subtitle || "Research paper")}</span>
+                <a class="portal-button portal-button-secondary" href="${escapeHtml(article.href)}">Open Paper</a>
               </div>
             `).join("") : `<p class="access-note">No published contributions yet.</p>`}
           </div>
