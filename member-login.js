@@ -222,6 +222,27 @@
     }
   }
 
+  function getContributionLevel(publishedCount, role) {
+    if (role === "owner") return { label: "Founder / Owner", note: "Site leadership and full contributor access" };
+    if (role === "admin") return { label: "Administrator", note: "Contributor support and site administration" };
+    if (publishedCount >= 25) return { label: "Principal Contributor", note: `${publishedCount} published contributions` };
+    if (publishedCount >= 15) return { label: "Senior Research Contributor", note: `${publishedCount} published contributions` };
+    if (publishedCount >= 10) return { label: "Published Researcher", note: `${publishedCount} published contributions` };
+    if (publishedCount >= 5) return { label: "Research Contributor", note: `${publishedCount} published contributions` };
+    if (publishedCount >= 1) return { label: "Contributing Researcher", note: `${publishedCount} published contribution${publishedCount === 1 ? "" : "s"}` };
+    return { label: "Contributor", note: "New contributor profile" };
+  }
+
+  function renderContributionLevel(level, className = "") {
+    return `
+      <div class="contribution-level ${escapeHtml(className)}">
+        <span>Contribution Level</span>
+        <strong>${escapeHtml(level.label)}</strong>
+        <em>${escapeHtml(level.note)}</em>
+      </div>
+    `;
+  }
+
   async function renderDashboardArticles(user) {
     const dashboardDrafts = document.querySelector("[data-dashboard-drafts]");
     if (!dashboardArticles && !dashboardDrafts) return;
@@ -255,6 +276,9 @@
 
     const drafts = articles.filter(article => article.status !== "published");
     const published = articles.filter(article => article.status === "published");
+    const level = getContributionLevel(published.length, user?.role);
+    const levelHost = document.querySelector("[data-dashboard-level]");
+    if (levelHost) levelHost.innerHTML = renderContributionLevel(level);
     if (dashboardDrafts) dashboardDrafts.innerHTML = renderList(drafts, "No unpublished drafts yet.", true);
     if (dashboardArticles) dashboardArticles.innerHTML = renderList(published, "No published papers yet. Use the Research Paper Editor to create your first contribution.", false);
   }
@@ -296,16 +320,18 @@
       const data = await response.json();
       const profile = data.profile;
       const articles = data.articles || [];
+      const publishedCount = articles.filter(article => article.status === "published" || !article.status).length;
+      const contributionLevel = getContributionLevel(publishedCount, profile.role);
       document.title = `${profile.displayName || profile.username} | The Paranormal Initiative`;
       const profileName = profile.displayName || profile.username || "Contributor";
       publicProfileRoot.innerHTML = `
         <article class="public-profile-card">
           <aside class="public-profile-sidebar">
             ${profile.photoUrl ? `<img class="public-profile-photo" src="${escapeHtml(profile.photoUrl)}" alt="${escapeHtml(profileName)}">` : `<div class="public-profile-photo public-profile-photo-empty">${escapeHtml(profileName.charAt(0) || "C")}</div>`}
-            <p class="portal-kicker">Contributor</p>
+            <p class="portal-kicker">${escapeHtml(contributionLevel.label)}</p>
             <h2>${escapeHtml(profileName)}</h2>
             ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : ""}
-            ${profile.role ? `<p class="public-profile-role">${escapeHtml(profile.role)}</p>` : ""}
+            ${renderContributionLevel(contributionLevel, "public-contribution-level")}
           </aside>
           <div class="public-profile-main">
             <div class="public-profile-heading">

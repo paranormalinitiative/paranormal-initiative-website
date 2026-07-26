@@ -1737,6 +1737,40 @@ footer {
     justify-self: center;
 }
 
+.contribution-level {
+    display: grid;
+    gap: 4px;
+    margin-top: 14px;
+    padding: 12px;
+    background: rgba(85, 200, 255, 0.08);
+    border: 1px solid rgba(85, 200, 255, 0.24);
+    border-radius: 4px;
+}
+
+.contribution-level span {
+    color: #7f95aa;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.contribution-level strong {
+    color: #f4f8fb;
+    font-size: 15px;
+}
+
+.contribution-level em {
+    color: #9fb1c3;
+    font-size: 12px;
+    font-style: normal;
+}
+
+.public-contribution-level {
+    width: 100%;
+    text-align: center;
+}
+
 .member-profile-facts {
     display: grid;
     gap: 9px;
