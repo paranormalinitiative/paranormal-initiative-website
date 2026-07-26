@@ -971,15 +971,31 @@ async function getUserByUsername(env, username) {
 async function getUserByLoginIdentifier(env, identifier) {
   const value = clean(identifier);
   if (!value) return null;
-  if (!value.includes("@")) return getUserByUsername(env, value);
+  if (!value.includes("@")) return getUserByUsername(env, value) || getUserByLegacyLoginAlias(env, value);
   const byEmail = await getUserByEmail(env, value.toLowerCase());
-  return byEmail || getUserByUsername(env, value);
+  return byEmail || getUserByUsername(env, value) || getUserByLegacyLoginAlias(env, value);
 }
 
 async function getUserByEmail(env, email) {
   const value = clean(email).toLowerCase();
   if (!value) return null;
   return env.TPI_DB.prepare("SELECT * FROM contributors WHERE lower(correspondence) = ?").bind(value).first();
+}
+
+async function getUserByLegacyLoginAlias(env, identifier) {
+  const value = clean(identifier);
+  if (!value) return null;
+  const spaced = value.replace(/[_-]+/g, " ");
+  const compact = value.replace(/[\s_-]+/g, "").toLowerCase();
+  return env.TPI_DB.prepare(`
+    SELECT *
+    FROM contributors
+    WHERE lower(display_name) = lower(?)
+       OR lower(username) = lower(?)
+       OR replace(replace(replace(lower(username), ' ', ''), '_', ''), '-', '') = ?
+       OR replace(replace(replace(lower(display_name), ' ', ''), '_', ''), '-', '') = ?
+    LIMIT 1
+  `).bind(spaced, spaced, compact, compact).first();
 }
 
 async function getOpenInvite(env, code) {

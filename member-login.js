@@ -194,6 +194,10 @@
     return "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols.";
   }
 
+  function normalizeLoginAlias(value) {
+    return String(value || "").trim().toLowerCase().replace(/[\s_-]+/g, "");
+  }
+
   function option(value, current, label = value) {
     return `<option value="${escapeHtml(value)}"${value === current ? " selected" : ""}>${escapeHtml(label)}</option>`;
   }
@@ -955,7 +959,10 @@
 
       const user = users.find(candidate => {
         const email = String(candidate.correspondence || candidate.email || "").toLowerCase();
-        return (candidate.username === identifier || email === identifier.toLowerCase()) && candidate.password === password && candidate.active !== false;
+        const alias = normalizeLoginAlias(identifier);
+        const usernameAlias = normalizeLoginAlias(candidate.username);
+        const displayAlias = normalizeLoginAlias(candidate.displayName || candidate.display_name);
+        return (candidate.username === identifier || usernameAlias === alias || displayAlias === alias || email === identifier.toLowerCase()) && candidate.password === password && candidate.active !== false;
       });
       if (!user) {
         setStatus("Username or password did not match.", true);
