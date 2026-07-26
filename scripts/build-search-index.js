@@ -9,6 +9,8 @@ const excludedFiles = new Set([
   "member-login.html",
   "contributor-invite.html",
   "contributor-profile.html",
+  "footer.html",
+  "header.html",
   "published-article.html",
   "search.html"
 ]);

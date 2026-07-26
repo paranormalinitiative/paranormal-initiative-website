@@ -708,6 +708,27 @@ footer {
     user-select: none;
 }
 
+.footer-links {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.footer-links a {
+    color: #9fdcf4;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
 /* ===== RESEARCH PORTAL EXTENSIONS ===== */
 
 .portal-hero {
