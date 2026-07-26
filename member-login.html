@@ -18,24 +18,40 @@
     <div class="editor-access-card">
         <p class="portal-kicker">Member Login</p>
         <h2>Contributor Access</h2>
-        <p>Sign in with the contributor username and password you created from your invite code.</p>
+        <p>Sign in with your member, contributor, admin, or owner username and password.</p>
         <form data-member-login>
             <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
             <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
             <button type="submit">Sign In</button>
         </form>
-        <p class="access-note">Use this after your contributor account has already been created.</p>
+        <p class="access-note">Members can join discussions. Contributors can also use the Content Editor after approval.</p>
+    </div>
+
+    <div class="editor-access-card">
+        <p class="portal-kicker">New Member</p>
+        <h2>Create Member Account</h2>
+        <p>Create a normal member account for the Discussion Portal. Contributor publishing access is approved separately.</p>
+        <form data-member-register>
+            <label><span>Display Name</span><input name="displayName" type="text" autocomplete="name" required></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
+            <label class="access-checkbox">
+                <input name="commentSignature" type="checkbox" checked>
+                <span>Use my name automatically on comments and forum replies.</span>
+            </label>
+            <button type="submit">Create Member Account</button>
+        </form>
     </div>
 
     <div class="editor-access-card" data-invite-code-panel>
-        <p class="portal-kicker">Invite Code</p>
-        <h2>Create Contributor Login</h2>
-        <p>Have an invite code from The Paranormal Initiative? Enter it here to create your member login.</p>
+        <p class="portal-kicker">Contributor Invite</p>
+        <h2>Upgrade With Invite Code</h2>
+        <p>Have a contributor invite code from The Paranormal Initiative? Enter it here to create approved contributor access.</p>
         <form data-invite-check>
             <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required></label>
             <button type="submit">Submit Invite Code</button>
         </form>
-        <p class="access-note">Contributor access is invite-only. Public visitors do not need an account to read the site.</p>
+        <p class="access-note">Contributor access allows writing, drafts, and publishing tools. Normal membership does not require an invite.</p>
     </div>
 
     <div class="editor-access-card invite-setup-card" data-invite-setup-panel hidden>

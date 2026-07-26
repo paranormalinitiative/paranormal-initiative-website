@@ -14,21 +14,26 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/auth/me") return handleMe(request, env);
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
     if (request.method === "POST" && path === "/auth/logout") return handleLogout();
+    if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
+    if (request.method === "GET" && path === "/admin/members") return requireAdmin(request, env, user => handleAdminListMembers(request, env, user));
+    if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
+    if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
+    if (request.method === "GET" && path === "/admin/forum/posts") return requireAdmin(request, env, user => handleAdminMemberForumPosts(request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
-    if (request.method === "POST" && path === "/contributors/me/profile") return requireContributor(request, env, user => handleUpdateProfile(request, env, user));
-    if (request.method === "POST" && path === "/contributors/me/password") return requireContributor(request, env, user => handleChangePassword(request, env, user));
-    if (request.method === "GET" && path === "/contributors/me/articles") return requireContributor(request, env, user => handleContributorArticles(env, user));
+    if (request.method === "POST" && path === "/contributors/me/profile") return requireMember(request, env, user => handleUpdateProfile(request, env, user));
+    if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
+    if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
-    if (request.method === "POST" && path === "/uploads/profile-photo") return requireContributor(request, env, user => handleProfilePhotoUpload(request, env, user));
+    if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
@@ -36,9 +41,9 @@ export async function onRequest(context) {
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
     if (request.method === "GET" && path === "/forum") return handleForumIndex(env);
     if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, env);
-    if (request.method === "POST" && path === "/forum/topics") return requireContributor(request, env, user => handleCreateForumTopic(request, env, user));
-    if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/posts$/)) return requireContributor(request, env, user => handleCreateForumPost(path, request, env, user));
-    if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireContributor(request, env, user => handleDeleteForumPost(path, env, user));
+    if (request.method === "POST" && path === "/forum/topics") return requireMember(request, env, user => handleCreateForumTopic(request, env, user));
+    if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/posts$/)) return requireMember(request, env, user => handleCreateForumPost(path, request, env, user));
+    if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireMember(request, env, user => handleDeleteForumPost(path, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
 
@@ -125,11 +130,44 @@ async function handleMe(request, env) {
   return json({ user: user ? publicUser(user) : null });
 }
 
+async function handleMemberRegister(request, env) {
+  const data = await readJson(request);
+  const username = clean(data.username);
+  const password = String(data.password || "");
+  const displayName = clean(data.displayName || username);
+  if (!username || !password || !displayName) {
+    return json({ error: "Display name, username, and password are required." }, 400);
+  }
+  if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
+  if (await getUserByUsername(env, username)) return json({ error: "That username already exists." }, 409);
+
+  const id = crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, affiliation, organization, website, bio, photo_url, comment_signature_enabled, active)
+    VALUES (?, ?, ?, ?, ?, 'member', ?, ?, ?, ?, ?, ?, ?, 1)
+  `).bind(
+    id,
+    username,
+    await hashPassword(password),
+    displayName,
+    clean(data.title || "Member"),
+    clean(data.correspondence),
+    clean(data.affiliation),
+    clean(data.organization),
+    clean(data.website),
+    clean(data.bio),
+    clean(data.photoUrl),
+    data.commentSignatureEnabled === false ? 0 : 1
+  ).run();
+
+  return json({ ok: true });
+}
+
 async function handleCreateInvite(request, env, user) {
   const data = await readJson(request);
   const code = clean(data.code || makeInviteCode());
   const assignment = getInviteAssignment(code);
-  const role = assignment?.role || (["owner", "admin", "contributor"].includes(data.role) ? data.role : "contributor");
+  const role = assignment?.role || (["owner", "admin", "contributor", "member"].includes(data.role) ? data.role : "contributor");
   if (!code) return json({ error: "Invite code is required." }, 400);
   if (role === "owner" && user.role !== "owner") {
     return json({ error: "Only the owner can create a Director invite." }, 403);
@@ -169,8 +207,14 @@ async function handleUpdateContributorTitle(request, env, actingUser) {
 
   let nextRole = target.role;
   if (requestedRole && requestedRole !== target.role) {
-    if (actingUser.role !== "owner") return json({ error: "Only the owner can change account access." }, 403);
-    nextRole = ["owner", "admin", "contributor"].includes(requestedRole) ? requestedRole : target.role;
+    const changingLeadershipAccess = ["owner", "admin"].includes(requestedRole) || ["owner", "admin"].includes(target.role);
+    if (changingLeadershipAccess && actingUser.role !== "owner") {
+      return json({ error: "Only the owner can change owner or admin access." }, 403);
+    }
+    if (!["owner", "admin", "contributor", "member"].includes(requestedRole)) {
+      return json({ error: "Account access type was not recognized." }, 400);
+    }
+    nextRole = requestedRole;
   }
 
   await env.TPI_DB.prepare("UPDATE contributors SET title = ?, role = ? WHERE username = ?")
@@ -179,6 +223,102 @@ async function handleUpdateContributorTitle(request, env, actingUser) {
 
   const updated = await getUserByUsername(env, username);
   return json({ contributor: publicUser(updated) });
+}
+
+async function handleAdminListMembers(request, env) {
+  const url = new URL(request.url);
+  const search = clean(url.searchParams.get("search")).slice(0, 80);
+  const like = `%${search}%`;
+  const stmt = search
+    ? env.TPI_DB.prepare(`
+      SELECT
+        c.username,
+        c.display_name AS displayName,
+        c.title,
+        c.role,
+        c.active,
+        c.created_at AS createdAt,
+        COUNT(DISTINCT ft.id) AS topicCount,
+        COUNT(DISTINCT fp.id) AS postCount
+      FROM contributors c
+      LEFT JOIN forum_topics ft ON ft.created_by = c.id AND ft.status != 'deleted'
+      LEFT JOIN forum_posts fp ON fp.contributor_id = c.id AND fp.status = 'visible'
+      WHERE c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR c.role LIKE ?
+      GROUP BY c.id
+      ORDER BY c.active DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
+      LIMIT 100
+    `).bind(like, like, like, like)
+    : env.TPI_DB.prepare(`
+      SELECT
+        c.username,
+        c.display_name AS displayName,
+        c.title,
+        c.role,
+        c.active,
+        c.created_at AS createdAt,
+        COUNT(DISTINCT ft.id) AS topicCount,
+        COUNT(DISTINCT fp.id) AS postCount
+      FROM contributors c
+      LEFT JOIN forum_topics ft ON ft.created_by = c.id AND ft.status != 'deleted'
+      LEFT JOIN forum_posts fp ON fp.contributor_id = c.id AND fp.status = 'visible'
+      GROUP BY c.id
+      ORDER BY c.active DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
+      LIMIT 100
+    `);
+  const { results } = await stmt.all();
+  return json({
+    members: results.map(member => ({
+      ...member,
+      active: Boolean(member.active),
+      topicCount: Number(member.topicCount || 0),
+      postCount: Number(member.postCount || 0)
+    }))
+  });
+}
+
+async function handleAdminSetMemberActive(path, env, actingUser, active) {
+  const username = clean(decodeURIComponent(path.replace(/^\/admin\/members\//, "").replace(/\/(?:un)?block$/, "")));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const target = await getUserByUsername(env, username);
+  if (!target) return json({ error: "Member was not found." }, 404);
+  if (target.id === actingUser.id) return json({ error: "You cannot block your own account." }, 400);
+  if (target.role === "owner" && actingUser.role !== "owner") return json({ error: "Only the owner can change a director account." }, 403);
+
+  await env.TPI_DB.prepare("UPDATE contributors SET active = ? WHERE username = ?")
+    .bind(active ? 1 : 0, username)
+    .run();
+
+  const updated = await getUserByUsername(env, username);
+  return json({ member: { username: updated.username, displayName: updated.display_name, title: updated.title, role: updated.role, active: Boolean(updated.active) } });
+}
+
+async function handleAdminMemberForumPosts(request, env) {
+  const username = clean(new URL(request.url).searchParams.get("username"));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const member = await getUserByUsername(env, username);
+  if (!member) return json({ error: "Member was not found." }, 404);
+
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT
+      fp.id,
+      fp.topic_id AS topicId,
+      fp.body,
+      fp.status,
+      fp.created_at AS createdAt,
+      ft.title AS topicTitle,
+      fc.title AS categoryTitle
+    FROM forum_posts fp
+    JOIN forum_topics ft ON ft.id = fp.topic_id
+    JOIN forum_categories fc ON fc.id = ft.category_id
+    WHERE fp.contributor_id = ?
+    ORDER BY fp.created_at DESC
+    LIMIT 100
+  `).bind(member.id).all();
+
+  return json({
+    member: { username: member.username, displayName: member.display_name, title: member.title, role: member.role, active: Boolean(member.active) },
+    posts: results
+  });
 }
 
 async function handleAdminListComments(request, env) {
@@ -647,6 +787,15 @@ async function handleCreateComment(request, env) {
 async function requireContributor(request, env, handler) {
   const user = await getSessionUser(request, env);
   if (!user) return json({ error: "Contributor login required." }, 401);
+  if (!["owner", "admin", "contributor"].includes(user.role)) {
+    return json({ error: "Contributor access is required." }, 403);
+  }
+  return handler(user);
+}
+
+async function requireMember(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Member login required." }, 401);
   return handler(user);
 }
 

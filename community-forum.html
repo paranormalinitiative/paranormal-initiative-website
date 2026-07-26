@@ -41,8 +41,47 @@
             <h2>Community Forum</h2>
         </div>
         <div class="discussion-toolbar-actions">
+            <button class="portal-button portal-button-secondary" type="button" data-member-tools-button hidden>Members</button>
             <a class="portal-button portal-button-secondary" href="member-login.html" data-member-action>Member Login</a>
             <button class="portal-button" type="button" data-new-topic-button>New Topic</button>
+        </div>
+    </div>
+
+    <div class="discussion-admin-panel" data-member-tools-panel hidden>
+        <div class="discussion-admin-card" role="dialog" aria-modal="true" aria-labelledby="member-tools-title">
+            <div class="discussion-new-topic-head">
+                <div>
+                    <p class="portal-kicker">Leadership Tools</p>
+                    <h3 id="member-tools-title">Member Search</h3>
+                </div>
+                <button type="button" data-close-member-tools>Close</button>
+            </div>
+            <form class="discussion-admin-search" data-member-search-form>
+                <label>
+                    <span>Find A Member</span>
+                    <input type="search" data-member-search-input placeholder="Search by name, username, title, or access level...">
+                </label>
+                <button class="portal-button" type="submit">Search</button>
+            </form>
+            <p class="discussion-admin-status" data-member-tools-status>Search members, review forum activity, and block accounts when cleanup is needed.</p>
+            <div class="discussion-admin-grid">
+                <section>
+                    <div class="discussion-admin-section-head">
+                        <h4>Members</h4>
+                        <span data-member-result-count>0</span>
+                    </div>
+                    <div class="discussion-member-results" data-member-search-results></div>
+                </section>
+                <section>
+                    <div class="discussion-admin-section-head">
+                        <h4>Forum Activity</h4>
+                        <span data-member-post-count>0</span>
+                    </div>
+                    <div class="discussion-member-posts" data-member-posts-panel>
+                        <p class="discussion-admin-empty">Choose a member to see where they have posted.</p>
+                    </div>
+                </section>
+            </div>
         </div>
     </div>
 

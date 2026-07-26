@@ -266,6 +266,10 @@
     savedSelection = range.cloneRange();
   }
 
+  function hasContributorAccess(user) {
+    return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase());
+  }
+
   function isEditorBlank() {
     return !editor.textContent.trim() && !editor.querySelector("img, video, audio, iframe, figure");
   }
@@ -328,6 +332,9 @@
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
         const result = await window.TPIApi.login(username, password);
+        if (!hasContributorAccess(result.user)) {
+          throw new Error("Contributor access is required to open the Content Editor.");
+        }
         unlockEditor({
           username: result.user.username,
           displayName: result.user.displayName,
@@ -351,11 +358,11 @@
     }
 
     const user = getUsers().find(candidate => candidate.username === username && candidate.password === password && candidate.active !== false);
-    if (!user) {
+    if (!user || !hasContributorAccess(user)) {
       form.querySelector(".access-note")?.remove();
       const note = document.createElement("p");
       note.className = "access-note access-error";
-      note.textContent = "Username or password did not match.";
+      note.textContent = !user ? "Username or password did not match." : "Contributor access is required to open the Content Editor.";
       form.appendChild(note);
       return;
     }

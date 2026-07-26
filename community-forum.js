@@ -46,6 +46,7 @@
     activeTopicId: "",
     activeUser: null,
     expandedCategories: new Set(),
+    selectedAdminUsername: "",
     previewMode: false
   };
 
@@ -65,6 +66,16 @@
   const newTopicBody = portal.querySelector("[data-new-topic-body]");
   const newTopicStatus = portal.querySelector("[data-new-topic-status]");
   const memberAction = portal.querySelector("[data-member-action]");
+  const memberToolsButton = portal.querySelector("[data-member-tools-button]");
+  const memberToolsPanel = portal.querySelector("[data-member-tools-panel]");
+  const closeMemberTools = portal.querySelector("[data-close-member-tools]");
+  const memberSearchForm = portal.querySelector("[data-member-search-form]");
+  const memberSearchInput = portal.querySelector("[data-member-search-input]");
+  const memberSearchResults = portal.querySelector("[data-member-search-results]");
+  const memberPostsPanel = portal.querySelector("[data-member-posts-panel]");
+  const memberToolsStatus = portal.querySelector("[data-member-tools-status]");
+  const memberResultCount = portal.querySelector("[data-member-result-count]");
+  const memberPostCount = portal.querySelector("[data-member-post-count]");
 
   init();
 
@@ -73,6 +84,7 @@
     await loadForum();
     renderCategories();
     updateMemberAction();
+    updateMemberToolsAccess();
     updateComposerState();
     [500, 1500, 3000].forEach(delay => window.setTimeout(refreshActiveUser, delay));
   }
@@ -145,6 +157,7 @@
       headerOnly: true
     };
     updateMemberAction();
+    updateMemberToolsAccess();
     updateComposerState();
   }
 
@@ -333,6 +346,57 @@
 
   filterInput.addEventListener("input", renderCategories);
 
+  memberToolsButton?.addEventListener("click", async () => {
+    if (!isLeadership(state.activeUser)) return;
+    memberToolsPanel.hidden = false;
+    memberSearchInput.focus();
+    await loadMemberSearch();
+  });
+
+  closeMemberTools?.addEventListener("click", () => {
+    memberToolsPanel.hidden = true;
+  });
+
+  memberToolsPanel?.addEventListener("click", event => {
+    if (event.target === memberToolsPanel) memberToolsPanel.hidden = true;
+  });
+
+  memberSearchForm?.addEventListener("submit", async event => {
+    event.preventDefault();
+    await loadMemberSearch();
+  });
+
+  memberSearchInput?.addEventListener("input", debounce(() => loadMemberSearch(), 250));
+
+  memberSearchResults?.addEventListener("click", async event => {
+    const action = event.target.closest("[data-member-admin-action]");
+    if (!action) return;
+    const username = action.dataset.username;
+    if (action.dataset.memberAdminAction === "posts") {
+      await loadMemberPosts(username);
+      return;
+    }
+    if (action.dataset.memberAdminAction === "block") {
+      await setMemberBlocked(username, true);
+      return;
+    }
+    if (action.dataset.memberAdminAction === "unblock") {
+      await setMemberBlocked(username, false);
+    }
+  });
+
+  memberPostsPanel?.addEventListener("click", async event => {
+    const openButton = event.target.closest("[data-open-admin-topic]");
+    if (openButton) {
+      memberToolsPanel.hidden = true;
+      await openTopic(openButton.dataset.openAdminTopic);
+      return;
+    }
+    const deleteButton = event.target.closest("[data-delete-admin-post]");
+    if (!deleteButton) return;
+    await deleteMemberPost(deleteButton.dataset.deleteAdminPost);
+  });
+
   function toggleCategory(categoryId) {
     if (!categoryId) return;
     if (state.expandedCategories.has(categoryId)) {
@@ -356,6 +420,188 @@
     const greeting = document.querySelector(".member-dashboard-link span")?.textContent || "";
     const match = greeting.match(/hello,\s*(.+)/i);
     return match ? match[1].trim() : "";
+  }
+
+  function updateMemberToolsAccess() {
+    if (!memberToolsButton) return;
+    memberToolsButton.hidden = !isLeadership(state.activeUser);
+  }
+
+  function isLeadership(user) {
+    if (!user) return false;
+    const role = String(user.role || "").toLowerCase();
+    if (role === "owner" || role === "admin") return true;
+    const title = String(user.title || "").toLowerCase().replace(/\s+/g, " ").trim();
+    return [
+      "founder / director",
+      "founder/director",
+      "founder director",
+      "assistant director",
+      "administrator",
+      "administration"
+    ].includes(title);
+  }
+
+  async function loadMemberSearch() {
+    if (!memberSearchResults) return;
+    const query = cleanText(memberSearchInput.value);
+    memberToolsStatus.textContent = "Searching members...";
+    try {
+      const data = await window.TPIApi.searchMembers(query);
+      renderMemberResults(data.members || []);
+      memberToolsStatus.textContent = data.members?.length ? "Choose View Posts to trace forum activity." : "No members matched that search.";
+    } catch (error) {
+      const members = searchLocalMembers(query);
+      renderMemberResults(members);
+      memberToolsStatus.textContent = members.length
+        ? "Static preview mode: local member records are shown here."
+        : error.message || "Members could not be loaded.";
+    }
+  }
+
+  function renderMemberResults(members) {
+    memberResultCount.textContent = `${members.length}`;
+    if (!members.length) {
+      memberSearchResults.innerHTML = `<p class="discussion-admin-empty">No members found.</p>`;
+      return;
+    }
+    memberSearchResults.innerHTML = members.map(member => `
+      <article class="discussion-member-card${member.active === false ? " is-blocked" : ""}">
+        <div>
+          <h5>${escapeHtml(member.displayName || member.username)}</h5>
+          <p>${escapeHtml(member.title || "Member")} · ${escapeHtml(formatRole(member.role))}</p>
+          <small>@${escapeHtml(member.username)} · ${member.active === false ? "Blocked" : "Active"} · ${Number(member.topicCount || 0)} topics · ${Number(member.postCount || 0)} posts</small>
+        </div>
+        <div class="discussion-member-actions">
+          <button type="button" data-member-admin-action="posts" data-username="${escapeAttr(member.username)}">View Posts</button>
+          ${member.active === false
+            ? `<button type="button" data-member-admin-action="unblock" data-username="${escapeAttr(member.username)}">Unblock</button>`
+            : `<button type="button" data-member-admin-action="block" data-username="${escapeAttr(member.username)}">Block</button>`}
+        </div>
+      </article>
+    `).join("");
+  }
+
+  async function loadMemberPosts(username) {
+    state.selectedAdminUsername = username;
+    memberPostsPanel.innerHTML = `<p class="discussion-admin-empty">Loading forum activity...</p>`;
+    memberPostCount.textContent = "0";
+    try {
+      const data = await window.TPIApi.memberForumPosts(username);
+      renderMemberPosts(data.member, data.posts || []);
+    } catch (error) {
+      renderMemberPosts({ username }, []);
+      memberToolsStatus.textContent = error.message || "Forum activity could not be loaded.";
+    }
+  }
+
+  function renderMemberPosts(member, posts) {
+    memberPostCount.textContent = `${posts.length}`;
+    if (!posts.length) {
+      memberPostsPanel.innerHTML = `<p class="discussion-admin-empty">No forum posts found for ${escapeHtml(member.displayName || member.username)}.</p>`;
+      return;
+    }
+    memberPostsPanel.innerHTML = posts.map(post => `
+      <article class="discussion-admin-post">
+        <div>
+          <h5>${escapeHtml(post.topicTitle || "Forum Topic")}</h5>
+          <small>${escapeHtml(post.categoryTitle || "Discussion Portal")} · ${formatDate(post.createdAt)} · ${escapeHtml(post.status || "visible")}</small>
+        </div>
+        <p>${escapeHtml(post.body).replace(/\n/g, "<br>")}</p>
+        <div class="discussion-admin-post-actions">
+          <button type="button" data-open-admin-topic="${escapeAttr(post.topicId)}">Open Topic</button>
+          ${post.status === "deleted" ? "" : `<button type="button" data-delete-admin-post="${escapeAttr(post.id)}">Delete Post</button>`}
+        </div>
+      </article>
+    `).join("");
+  }
+
+  async function deleteMemberPost(postId) {
+    if (!postId) return;
+    try {
+      memberToolsStatus.textContent = "Deleting forum post...";
+      await window.TPIApi.deleteForumPost(postId);
+      if (state.selectedAdminUsername) await loadMemberPosts(state.selectedAdminUsername);
+      await loadForum();
+      renderCategories();
+      memberToolsStatus.textContent = "Forum post deleted.";
+    } catch (error) {
+      memberToolsStatus.textContent = error.message || "Forum post could not be deleted.";
+    }
+  }
+
+  async function setMemberBlocked(username, blocked) {
+    if (!username) return;
+    try {
+      memberToolsStatus.textContent = blocked ? "Blocking member..." : "Restoring member...";
+      if (blocked) {
+        await window.TPIApi.blockMember(username);
+      } else {
+        await window.TPIApi.unblockMember(username);
+      }
+      await loadMemberSearch();
+      if (state.selectedAdminUsername === username) await loadMemberPosts(username);
+      memberToolsStatus.textContent = blocked ? "Member blocked." : "Member restored.";
+    } catch (error) {
+      if (setLocalMemberBlocked(username, blocked)) {
+        await loadMemberSearch();
+        memberToolsStatus.textContent = blocked ? "Local preview member blocked." : "Local preview member restored.";
+        return;
+      }
+      memberToolsStatus.textContent = error.message || "Member status could not be changed.";
+    }
+  }
+
+  function searchLocalMembers(query) {
+    const needle = cleanText(query).toLowerCase();
+    try {
+      const users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]")
+        .filter(user => !user.developerOwner)
+        .map(user => ({
+          username: user.username,
+          displayName: user.displayName || user.display_name || user.username,
+          title: user.title,
+          role: user.role || "member",
+          active: user.active !== false,
+          topicCount: 0,
+          postCount: 0
+        }));
+      if (!needle) return users;
+      return users.filter(user => `${user.username} ${user.displayName} ${user.title} ${user.role}`.toLowerCase().includes(needle));
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function setLocalMemberBlocked(username, blocked) {
+    try {
+      const users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+      const index = users.findIndex(user => user.username === username);
+      if (index < 0) return false;
+      users[index].active = !blocked;
+      localStorage.setItem("tpiEditorContributors", JSON.stringify(users));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function formatRole(role) {
+    const value = String(role || "member").toLowerCase();
+    return {
+      owner: "Director",
+      admin: "Administration",
+      contributor: "Contributor",
+      member: "Member"
+    }[value] || value;
+  }
+
+  function debounce(fn, wait) {
+    let timeout;
+    return function (...args) {
+      window.clearTimeout(timeout);
+      timeout = window.setTimeout(() => fn.apply(this, args), wait);
+    };
   }
 
   function renderAuthorLink(post) {

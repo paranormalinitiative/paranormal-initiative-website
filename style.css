@@ -962,6 +962,7 @@ footer {
 
 .discussion-sidebar-head span,
 .discussion-new-topic label span,
+.discussion-admin-search label span,
 .discussion-reply-box label span {
     color: #55c8ff;
     font-size: 10px;
@@ -974,6 +975,7 @@ footer {
 .discussion-new-topic input,
 .discussion-new-topic select,
 .discussion-new-topic textarea,
+.discussion-admin-search input,
 .discussion-reply-box textarea {
     width: 100%;
     padding: 11px 12px;
@@ -989,6 +991,7 @@ footer {
 .discussion-new-topic input:focus,
 .discussion-new-topic select:focus,
 .discussion-new-topic textarea:focus,
+.discussion-admin-search input:focus,
 .discussion-reply-box textarea:focus {
     border-color: rgba(85, 200, 255, 0.78);
     box-shadow: 0 0 0 3px rgba(85, 200, 255, 0.12);
@@ -1339,6 +1342,166 @@ footer {
     cursor: not-allowed;
 }
 
+.discussion-admin-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(3, 7, 12, 0.72);
+    backdrop-filter: blur(8px);
+}
+
+.discussion-admin-panel[hidden] {
+    display: none;
+}
+
+.discussion-admin-card {
+    width: min(980px, calc(100vw - 32px));
+    max-height: min(780px, calc(100vh - 32px));
+    overflow: auto;
+    padding: 22px;
+    border: 1px solid #263646;
+    border-radius: 8px;
+    background:
+        radial-gradient(circle at top left, rgba(85, 200, 255, 0.09), transparent 30%),
+        #101820;
+    box-shadow: 0 28px 72px rgba(0, 0, 0, 0.42);
+}
+
+.discussion-admin-search {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+    padding: 16px 0;
+    border-top: 1px solid #1f2a36;
+    border-bottom: 1px solid #1f2a36;
+}
+
+.discussion-admin-search label {
+    display: grid;
+    gap: 7px;
+}
+
+.discussion-admin-status,
+.discussion-admin-empty {
+    margin: 14px 0;
+    color: #9fb3c8;
+    font-size: 13px;
+}
+
+.discussion-admin-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 18px;
+    margin-top: 14px;
+}
+
+.discussion-admin-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid #263646;
+}
+
+.discussion-admin-section-head h4 {
+    margin: 0;
+    color: #f4f8fb;
+}
+
+.discussion-admin-section-head span {
+    color: #9fb3c8;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+}
+
+.discussion-member-results,
+.discussion-member-posts {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.discussion-member-card,
+.discussion-admin-post {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #263646;
+    border-radius: 7px;
+    background: rgba(8, 14, 20, 0.86);
+}
+
+.discussion-member-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+}
+
+.discussion-member-card.is-blocked {
+    border-color: rgba(255, 106, 106, 0.45);
+    background: rgba(90, 20, 24, 0.22);
+}
+
+.discussion-member-card h5,
+.discussion-admin-post h5 {
+    margin: 0 0 5px;
+    color: #f4f8fb;
+    font-size: 15px;
+}
+
+.discussion-member-card p,
+.discussion-admin-post p {
+    margin: 0;
+    color: #c7d5e2;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.discussion-member-card small,
+.discussion-admin-post small {
+    color: #8aa0b6;
+    font-size: 11px;
+}
+
+.discussion-member-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.discussion-member-actions button,
+.discussion-admin-post button {
+    padding: 8px 10px;
+    color: #d8e6f3;
+    background: #101820;
+    border: 1px solid #263646;
+    border-radius: 5px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.discussion-member-actions button:hover,
+.discussion-admin-post button:hover {
+    border-color: rgba(85, 200, 255, 0.56);
+    color: #ffffff;
+}
+
+.discussion-admin-post-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.discussion-admin-post-actions button {
+    justify-self: start;
+}
+
 .forum-build-note {
     padding: 28px;
     border: 1px solid #263646;
@@ -1639,6 +1802,16 @@ footer {
 
     .discussion-chat {
         min-height: 640px;
+    }
+
+    .discussion-admin-grid,
+    .discussion-admin-search,
+    .discussion-member-card {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .discussion-member-actions {
+        justify-content: flex-start;
     }
 }
 

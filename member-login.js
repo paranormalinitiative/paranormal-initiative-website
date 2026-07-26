@@ -168,8 +168,9 @@
       owner: "Owner Access",
       admin: "Admin Access",
       editor: "Contributor Access",
-      contributor: "Contributor Access"
-    }[role] || "Contributor Access";
+      contributor: "Contributor Access",
+      member: "Member Access"
+    }[role] || "Member Access";
   }
 
   function getAccountAccessDetail(role) {
@@ -177,8 +178,9 @@
       owner: "Full site administration",
       admin: "Contributor support and administration",
       editor: "Can write, save drafts, and publish assigned work",
-      contributor: "Can write, save drafts, and publish assigned work"
-    }[role] || "Contributor account";
+      contributor: "Can write, save drafts, and publish assigned work",
+      member: "Can join discussions and manage a member profile"
+    }[role] || "Member account";
   }
 
   function option(value, current, label = value) {
@@ -307,6 +309,7 @@
           ${option("Investigator", currentTitle)}
         </select>
         <select name="role" aria-label="Account access for ${escapeHtml(name)}"${canChangeAccess ? "" : " disabled"}>
+          ${option("member", currentRole, "Member Access")}
           ${option("contributor", currentRole, "Contributor Access")}
           ${option("admin", currentRole, "Admin Access")}
           ${option("owner", currentRole, "Owner Access")}
@@ -449,6 +452,7 @@
   function getContributionLevel(publishedCount, role, title) {
     const leadershipLevel = getLeadershipContributionLevel(title, role);
     if (leadershipLevel) return leadershipLevel;
+    if (role === "member") return { label: "Member", note: "Community discussion member" };
     if (publishedCount >= 25) return { label: "Principal Contributor", note: `${publishedCount} published contributions` };
     if (publishedCount >= 15) return { label: "Senior Research Contributor", note: `${publishedCount} published contributions` };
     if (publishedCount >= 10) return { label: "Published Researcher", note: `${publishedCount} published contributions` };
@@ -595,6 +599,7 @@
 
   document.addEventListener("submit", async event => {
     const loginForm = event.target.closest("[data-member-login]");
+    const memberRegisterForm = event.target.closest("[data-member-register]");
     const inviteCheckForm = event.target.closest("[data-invite-check]");
     const registerForm = event.target.closest("[data-invite-register]");
     const ownerInviteForm = event.target.closest("[data-owner-invite-form]");
@@ -602,7 +607,7 @@
     const profileSubmitForm = event.target.closest("[data-profile-form]");
     const passwordForm = event.target.closest("[data-password-form]");
     const adminTitleForm = event.target.closest("[data-admin-title-form]");
-    if (!loginForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !passwordForm && !adminTitleForm) return;
+    if (!loginForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !passwordForm && !adminTitleForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
@@ -619,7 +624,7 @@
         try {
           await window.TPIApi.updateContributorTitle(payload);
           await renderCloudflareOwnerInvites();
-          setStatus("Contributor title saved.", false);
+          setStatus("Member access saved.", false);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -628,16 +633,23 @@
 
       const currentUser = users.find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false);
       if (!["owner", "admin"].includes(currentUser?.role)) {
-        setStatus("Owner/admin login is required to change contributor titles.", true);
+        setStatus("Owner/admin login is required to change member access.", true);
         return;
       }
       const targetIndex = users.findIndex(user => user.username === payload.username);
       if (targetIndex >= 0) {
-        const nextRole = currentUser.role === "owner" && payload.role ? payload.role : users[targetIndex].role;
+        const targetRole = users[targetIndex].role;
+        const requestedRole = payload.role || targetRole;
+        const changingLeadershipAccess = ["owner", "admin"].includes(requestedRole) || ["owner", "admin"].includes(targetRole);
+        if (changingLeadershipAccess && currentUser.role !== "owner") {
+          setStatus("Only the owner can change owner or admin access.", true);
+          return;
+        }
+        const nextRole = requestedRole;
         users[targetIndex] = { ...users[targetIndex], title: payload.title, role: nextRole };
         saveUsers(users);
         renderLocalContributorTitles(currentUser);
-        setStatus("Contributor title saved locally.", false);
+        setStatus("Member access saved locally.", false);
       }
       return;
     }
@@ -852,6 +864,56 @@
         return;
       }
       localStorage.setItem(ACCESS_SESSION_KEY, user.username);
+      window.location.href = "member-dashboard.html";
+      return;
+    }
+
+    if (memberRegisterForm) {
+      const username = String(data.get("username") || "").trim();
+      const password = String(data.get("password") || "");
+      const displayName = String(data.get("displayName") || username).trim();
+      if (!username || !password || !displayName) {
+        setStatus("Display name, username, and password are required.", true);
+        return;
+      }
+      if (password.length < 8) {
+        setStatus("Password must be at least 8 characters.", true);
+        return;
+      }
+
+      if (await cloudflareReady()) {
+        try {
+          await window.TPIApi.registerMember({
+            username,
+            password,
+            displayName,
+            title: "Member",
+            commentSignatureEnabled: data.get("commentSignature") === "on"
+          });
+          await window.TPIApi.login(username, password);
+          localStorage.setItem(ACCESS_SESSION_KEY, username);
+          window.location.href = "member-dashboard.html";
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+
+      if (users.some(user => user.username === username)) {
+        setStatus("That username already exists.", true);
+        return;
+      }
+      users.push({
+        username,
+        password,
+        displayName,
+        title: "Member",
+        role: "member",
+        commentSignatureEnabled: data.get("commentSignature") === "on",
+        active: true
+      });
+      saveUsers(users);
+      localStorage.setItem(ACCESS_SESSION_KEY, username);
       window.location.href = "member-dashboard.html";
       return;
     }
