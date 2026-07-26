@@ -220,10 +220,9 @@ async function handleListInvites(env) {
 
 async function handleListContributors(env) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT username, display_name, title, role, active, created_at
+    SELECT username, display_name, title, role, correspondence, active, created_at
     FROM contributors
-    WHERE active = 1
-    ORDER BY display_name COLLATE NOCASE, username COLLATE NOCASE
+    ORDER BY active DESC, display_name COLLATE NOCASE, username COLLATE NOCASE
   `).all();
   return json({ contributors: results.map(publicUser) });
 }
@@ -1112,7 +1111,9 @@ function publicUser(user) {
     website: user.website,
     bio: user.bio,
     photoUrl: user.photo_url,
-    commentSignatureEnabled: Boolean(user.comment_signature_enabled)
+    commentSignatureEnabled: Boolean(user.comment_signature_enabled),
+    active: user.active !== 0,
+    createdAt: user.created_at
   };
 }
 

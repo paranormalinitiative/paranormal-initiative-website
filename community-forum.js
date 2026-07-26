@@ -225,9 +225,14 @@
     renderCategories();
 
     topicHeader.innerHTML = `
-      <span>${escapeHtml(getCategoryTitle(topic.categoryId))}</span>
-      <h3>${escapeHtml(topic.title)}</h3>
-      <p>${escapeHtml(topic.authorName || "Community")} · ${escapeHtml(topic.authorTitle || "Member Discussion")} · ${formatDate(topic.lastPostAt || topic.updatedAt || topic.createdAt)}</p>
+      <div class="discussion-chat-heading">
+        <div>
+          <span>${escapeHtml(getCategoryTitle(topic.categoryId))}</span>
+          <h3>${escapeHtml(topic.title)}</h3>
+          <p>${escapeHtml(topic.authorName || "Community")} · ${escapeHtml(topic.authorTitle || "Member Discussion")} · ${formatDate(topic.lastPostAt || topic.updatedAt || topic.createdAt)}</p>
+        </div>
+        ${renderHeaderTopicControls(topic)}
+      </div>
     `;
     messageList.innerHTML = `<p class="discussion-loading">Opening conversation...</p>`;
 
@@ -241,6 +246,15 @@
       await markTopicRead(topicId, posts);
     }
     updateComposerState();
+  }
+
+  function renderHeaderTopicControls(topic) {
+    if (!isLeadership(state.activeUser) || state.previewMode) return "";
+    return `
+      <div class="discussion-topic-admin-controls" aria-label="Topic administration">
+        ${renderTopicControlButtons(topic)}
+      </div>
+    `;
   }
 
   function renderMessages(posts) {
@@ -406,6 +420,12 @@
       await deleteMemberPost(deleteButton.dataset.deleteAdminPost);
       return;
     }
+    const topicAction = event.target.closest("[data-topic-admin-action]");
+    if (!topicAction) return;
+    await setTopicStatus(topicAction.dataset.topicId, topicAction.dataset.topicAdminAction);
+  });
+
+  topicHeader?.addEventListener("click", async event => {
     const topicAction = event.target.closest("[data-topic-admin-action]");
     if (!topicAction) return;
     await setTopicStatus(topicAction.dataset.topicId, topicAction.dataset.topicAdminAction);
@@ -614,8 +634,8 @@
   }
 
   function renderTopicControlButtons(post) {
-    const status = String(post.topicStatus || "open").toLowerCase();
-    const topicId = escapeAttr(post.topicId);
+    const status = String(post.topicStatus || post.status || "open").toLowerCase();
+    const topicId = escapeAttr(post.topicId || post.id);
     const lockButton = status === "locked"
       ? `<button type="button" data-topic-admin-action="open" data-topic-id="${topicId}">Reopen Thread</button>`
       : `<button type="button" data-topic-admin-action="locked" data-topic-id="${topicId}">Stop Thread</button>`;
@@ -630,6 +650,8 @@
 
   async function setTopicStatus(topicId, status) {
     if (!topicId || !status) return;
+    if (status === "deleted" && !window.confirm("Delete this thread from the public forum?")) return;
+    if (status === "inactive" && !window.confirm("Mark this thread inactive and hide it from the public forum list?")) return;
     try {
       memberToolsStatus.textContent = status === "deleted" ? "Deleting thread..." : "Updating thread...";
       await window.TPIApi.setForumTopicStatus(topicId, status);

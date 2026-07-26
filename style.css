@@ -1186,6 +1186,13 @@ footer {
     border-bottom: 1px solid #1f2a36;
 }
 
+.discussion-chat-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
 .discussion-chat-header span {
     color: #55c8ff;
     font-size: 10px;
@@ -1204,6 +1211,34 @@ footer {
 .discussion-chat-header p {
     margin: 0;
     color: #9fb3c8;
+}
+
+.discussion-topic-admin-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    flex: 0 0 min(340px, 45%);
+}
+
+.discussion-topic-admin-controls button {
+    min-height: 32px;
+    padding: 7px 9px;
+    color: #d8e6f3;
+    background: #101820;
+    border: 1px solid #263646;
+    border-radius: 5px;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.discussion-topic-admin-controls button:hover {
+    color: #ffffff;
+    border-color: rgba(85, 200, 255, 0.62);
 }
 
 .discussion-new-topic {
@@ -2739,6 +2774,62 @@ footer {
     color: #bfeeff;
     font-size: 42px;
     font-weight: 900;
+}
+
+.admin-member-heading,
+.admin-member-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-member-heading {
+    justify-content: space-between;
+}
+
+.admin-member-active,
+.admin-member-inactive {
+    padding: 4px 7px;
+    border-radius: 999px;
+    font-size: 10px !important;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.admin-member-active {
+    color: #061018 !important;
+    background: #53d18d;
+}
+
+.admin-member-inactive {
+    color: #ffd6d6 !important;
+    background: rgba(255, 106, 106, 0.18);
+    border: 1px solid rgba(255, 106, 106, 0.42);
+}
+
+.admin-member-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+    background: rgba(9, 15, 20, 0.62);
+    border: 1px solid rgba(38, 54, 70, 0.8);
+    border-radius: 4px;
+}
+
+.admin-member-facts span {
+    display: grid;
+    gap: 3px;
+    overflow-wrap: anywhere;
+}
+
+.admin-member-facts b {
+    color: #7f95aa;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .profile-photo-editor {

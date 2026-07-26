@@ -304,11 +304,25 @@
     const name = contributor.displayName || contributor.username || "Contributor";
     const currentTitle = contributor.title || "";
     const currentRole = contributor.role || "contributor";
+    const active = contributor.active !== false;
+    const isSelf = contributor.username === currentUser?.username;
+    const createdAt = contributor.createdAt ? new Date(contributor.createdAt).toLocaleString() : "Unknown";
+    const correspondence = contributor.correspondence || "";
     return `
       <form class="invite-link-row admin-title-row" data-admin-title-form>
         <input name="username" type="hidden" value="${escapeHtml(contributor.username)}">
-        <strong>${escapeHtml(name)}</strong>
-        <span>${escapeHtml(contributor.username)}</span>
+        <div class="admin-member-heading">
+          <strong>${escapeHtml(name)}</strong>
+          <span class="${active ? "admin-member-active" : "admin-member-inactive"}">${active ? "Active" : "Inactive"}</span>
+        </div>
+        <div class="admin-member-facts">
+          <span><b>Username</b>${escapeHtml(contributor.username)}</span>
+          <span><b>Display Name</b>${escapeHtml(name)}</span>
+          <span><b>Role</b>${escapeHtml(currentRole || "member")}</span>
+          <span><b>Title</b>${escapeHtml(currentTitle || "No leadership title")}</span>
+          <span><b>Correspondence</b>${escapeHtml(correspondence || "Not provided")}</span>
+          <span><b>Created</b>${escapeHtml(createdAt)}</span>
+        </div>
         <select name="title" aria-label="Public organization title for ${escapeHtml(name)}">
           ${option("", currentTitle, "No leadership title")}
           ${option("Founder / Director", currentTitle)}
@@ -329,17 +343,22 @@
           ${option("admin", currentRole, "Admin Access")}
           ${option("owner", currentRole, "Owner Access")}
         </select>
-        <button type="submit">Save</button>
+        <div class="admin-member-actions">
+          <button type="submit">Save</button>
+          ${active
+            ? `<button type="button" class="portal-button-secondary" data-admin-member-active="deactivate" data-username="${escapeHtml(contributor.username)}"${isSelf ? " disabled" : ""}>Deactivate</button>`
+            : `<button type="button" class="portal-button-secondary" data-admin-member-active="restore" data-username="${escapeHtml(contributor.username)}">Restore</button>`}
+        </div>
       </form>
     `;
   }
 
   function renderLocalContributorTitles(currentUser) {
     if (!adminContributorList || !["owner", "admin"].includes(currentUser?.role)) return;
-    const contributors = getUsers().filter(user => user.active !== false && !user.developerOwner);
+    const contributors = getUsers().filter(user => !user.developerOwner);
     adminContributorList.innerHTML = contributors.length
       ? contributors.map(contributor => renderContributorTitleRow(contributor, currentUser)).join("")
-      : `<p class="access-note">No contributors have been created yet.</p>`;
+      : `<p class="access-note">No member accounts have been created yet.</p>`;
   }
 
   function renderModerationComment(comment, statusFilter) {
@@ -410,7 +429,7 @@
         const contributors = contributorData.contributors || [];
         adminContributorList.innerHTML = contributors.length
           ? contributors.map(contributor => renderContributorTitleRow(contributor, session.user)).join("")
-          : `<p class="access-note">No contributors have been created yet.</p>`;
+          : `<p class="access-note">No member accounts have been created yet.</p>`;
       }
       await renderCommentModeration(commentModerationList?.dataset.moderationStatus || "pending");
       return true;
@@ -976,6 +995,7 @@
     if (memberRegisterForm) {
       const username = String(data.get("username") || "").trim();
       const password = String(data.get("password") || "");
+      const confirmPassword = String(data.get("confirmPassword") || "");
       const displayName = String(data.get("displayName") || username).trim();
       const email = String(data.get("email") || "").trim();
       if (!username || !password || !displayName) {
@@ -992,6 +1012,10 @@
       }
       if (password.length < 8) {
         setStatus("Password must be at least 8 characters.", true);
+        return;
+      }
+      if (password !== confirmPassword) {
+        setStatus("Passwords do not match.", true);
         return;
       }
 
@@ -1075,6 +1099,8 @@
 
     const inviteCode = String(data.get("inviteCode") || "").trim();
     const username = String(data.get("username") || "").trim();
+    const password = String(data.get("password") || "");
+    const confirmPassword = String(data.get("confirmPassword") || "");
     const inviteAssignment = getInviteAssignment(inviteCode);
     const requestedTitle = String(data.get("title") || "").trim();
     const assignedTitle = inviteAssignment?.title || requestedTitle;
@@ -1086,12 +1112,20 @@
       setStatus(usernameErrorMessage(), true);
       return;
     }
+    if (password.length < 8) {
+      setStatus("Password must be at least 8 characters.", true);
+      return;
+    }
+    if (password !== confirmPassword) {
+      setStatus("Passwords do not match.", true);
+      return;
+    }
     if (await cloudflareReady()) {
       try {
         await window.TPIApi.registerContributor({
           inviteCode,
           username,
-          password: String(data.get("password") || ""),
+          password,
           displayName: String(data.get("displayName") || username).trim(),
           title: assignedTitle,
           correspondence: String(data.get("correspondence") || "").trim(),
@@ -1123,7 +1157,7 @@
 
     users.push({
       username,
-      password: String(data.get("password") || ""),
+      password,
       displayName: String(data.get("displayName") || username).trim(),
       title: assignedTitle,
       role: inviteAssignment?.role || invite.role || "contributor",
@@ -1143,7 +1177,7 @@
     window.location.href = "member-dashboard.html";
   });
 
-  document.addEventListener("click", event => {
+  document.addEventListener("click", async event => {
     const logoutButton = event.target.closest("[data-member-logout]");
     if (logoutButton) {
       event.preventDefault();
@@ -1184,6 +1218,48 @@
         setStatus("Comment deleted.", false);
         return renderCommentModeration(commentModerationList?.dataset.moderationStatus || "pending");
       }).catch(error => setStatus(error.message || "Comment delete failed.", true));
+      return;
+    }
+
+    const activeButton = event.target.closest("[data-admin-member-active]");
+    if (activeButton) {
+      event.preventDefault();
+      const username = activeButton.dataset.username;
+      const action = activeButton.dataset.adminMemberActive;
+      if (!username || !action) return;
+      if (action === "deactivate" && !window.confirm(`Deactivate ${username}? They will not be able to log in or post until restored.`)) return;
+
+      if (await cloudflareReady()) {
+        try {
+          if (action === "deactivate") {
+            await window.TPIApi.blockMember(username);
+            setStatus("Member account deactivated.", false);
+          } else {
+            await window.TPIApi.unblockMember(username);
+            setStatus("Member account restored.", false);
+          }
+          await renderCloudflareOwnerInvites();
+        } catch (error) {
+          setStatus(error.message || "Member status could not be changed.", true);
+        }
+        return;
+      }
+
+      const currentUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false);
+      const localUsers = getUsers();
+      const targetIndex = localUsers.findIndex(user => user.username === username);
+      if (!["owner", "admin"].includes(currentUser?.role) || targetIndex < 0) {
+        setStatus("Owner/admin login is required to change member status.", true);
+        return;
+      }
+      if (username === currentUser.username) {
+        setStatus("You cannot deactivate your own account.", true);
+        return;
+      }
+      localUsers[targetIndex].active = action !== "deactivate";
+      saveUsers(localUsers);
+      renderLocalContributorTitles(currentUser);
+      setStatus(action === "deactivate" ? "Member account deactivated locally." : "Member account restored locally.", false);
       return;
     }
 
