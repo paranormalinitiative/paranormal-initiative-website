@@ -34,6 +34,11 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
+    if (request.method === "GET" && path === "/forum") return handleForumIndex(env);
+    if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, env);
+    if (request.method === "POST" && path === "/forum/topics") return requireContributor(request, env, user => handleCreateForumTopic(request, env, user));
+    if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/posts$/)) return requireContributor(request, env, user => handleCreateForumPost(path, request, env, user));
+    if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireContributor(request, env, user => handleDeleteForumPost(path, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
 
@@ -437,6 +442,149 @@ async function handleDeleteArticle(path, env, user) {
   }
   await env.TPI_DB.prepare("DELETE FROM articles WHERE id = ?").bind(id).run();
   return json({ deleted: true, id });
+}
+
+async function handleForumIndex(env) {
+  const { results: categoryRows } = await env.TPI_DB.prepare(`
+    SELECT
+      fc.id,
+      fc.title,
+      fc.description,
+      fc.sort_order AS sortOrder,
+      COUNT(DISTINCT ft.id) AS topicCount,
+      COUNT(fp.id) AS postCount
+    FROM forum_categories fc
+    LEFT JOIN forum_topics ft ON ft.category_id = fc.id AND ft.status != 'deleted'
+    LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
+    WHERE fc.active = 1
+    GROUP BY fc.id
+    ORDER BY fc.sort_order ASC, fc.title COLLATE NOCASE
+  `).all();
+
+  const { results: topicRows } = await env.TPI_DB.prepare(`
+    SELECT
+      ft.id,
+      ft.category_id AS categoryId,
+      ft.title,
+      ft.status,
+      ft.created_at AS createdAt,
+      ft.updated_at AS updatedAt,
+      c.username AS authorUsername,
+      c.display_name AS authorName,
+      c.title AS authorTitle,
+      COUNT(fp.id) AS postCount,
+      MAX(fp.created_at) AS lastPostAt
+    FROM forum_topics ft
+    LEFT JOIN contributors c ON c.id = ft.created_by
+    LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
+    WHERE ft.status != 'deleted'
+    GROUP BY ft.id
+    ORDER BY COALESCE(MAX(fp.created_at), ft.created_at) DESC
+    LIMIT 80
+  `).all();
+
+  return json({ categories: categoryRows, topics: topicRows });
+}
+
+async function handleForumTopic(path, env) {
+  const topicId = clean(decodeURIComponent(path.replace(/^\/forum\/topics\//, "")));
+  if (!topicId) return json({ error: "Topic id is required." }, 400);
+
+  const topic = await env.TPI_DB.prepare(`
+    SELECT
+      ft.id,
+      ft.category_id AS categoryId,
+      ft.title,
+      ft.status,
+      ft.created_at AS createdAt,
+      ft.updated_at AS updatedAt,
+      fc.title AS categoryTitle,
+      c.username AS authorUsername,
+      c.display_name AS authorName,
+      c.title AS authorTitle
+    FROM forum_topics ft
+    JOIN forum_categories fc ON fc.id = ft.category_id
+    LEFT JOIN contributors c ON c.id = ft.created_by
+    WHERE ft.id = ? AND ft.status != 'deleted'
+  `).bind(topicId).first();
+  if (!topic) return json({ error: "Topic was not found." }, 404);
+
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT
+      fp.id,
+      fp.topic_id AS topicId,
+      fp.body,
+      fp.created_at AS createdAt,
+      fp.updated_at AS updatedAt,
+      c.username AS authorUsername,
+      c.display_name AS authorName,
+      c.title AS authorTitle,
+      c.role AS authorRole,
+      c.photo_url AS authorPhotoUrl
+    FROM forum_posts fp
+    LEFT JOIN contributors c ON c.id = fp.contributor_id
+    WHERE fp.topic_id = ? AND fp.status = 'visible'
+    ORDER BY fp.created_at ASC
+  `).bind(topicId).all();
+
+  return json({ topic, posts: results });
+}
+
+async function handleCreateForumTopic(request, env, user) {
+  const data = await readJson(request);
+  const categoryId = clean(data.categoryId);
+  const title = clean(data.title).slice(0, 160);
+  const body = clean(data.body).slice(0, 6000);
+  if (!categoryId || !title || !body) return json({ error: "Category, topic title, and message are required." }, 400);
+
+  const category = await env.TPI_DB.prepare("SELECT id FROM forum_categories WHERE id = ? AND active = 1").bind(categoryId).first();
+  if (!category) return json({ error: "Forum category was not found." }, 404);
+
+  const topicId = crypto.randomUUID();
+  const postId = crypto.randomUUID();
+  await env.TPI_DB.batch([
+    env.TPI_DB.prepare("INSERT INTO forum_topics (id, category_id, title, created_by, status, updated_at) VALUES (?, ?, ?, ?, 'open', CURRENT_TIMESTAMP)")
+      .bind(topicId, categoryId, title, user.id),
+    env.TPI_DB.prepare("INSERT INTO forum_posts (id, topic_id, contributor_id, body, status) VALUES (?, ?, ?, ?, 'visible')")
+      .bind(postId, topicId, user.id, body)
+  ]);
+
+  return json({ topic: { id: topicId, categoryId, title, status: "open" }, post: { id: postId, topicId, body } });
+}
+
+async function handleCreateForumPost(path, request, env, user) {
+  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)\/posts$/)?.[1] || ""));
+  const data = await readJson(request);
+  const body = clean(data.body).slice(0, 6000);
+  if (!topicId || !body) return json({ error: "Topic id and message are required." }, 400);
+
+  const topic = await env.TPI_DB.prepare("SELECT id, status FROM forum_topics WHERE id = ? AND status != 'deleted'").bind(topicId).first();
+  if (!topic) return json({ error: "Topic was not found." }, 404);
+  if (topic.status === "locked" && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "This topic is locked." }, 403);
+  }
+
+  const postId = crypto.randomUUID();
+  await env.TPI_DB.batch([
+    env.TPI_DB.prepare("INSERT INTO forum_posts (id, topic_id, contributor_id, body, status) VALUES (?, ?, ?, ?, 'visible')")
+      .bind(postId, topicId, user.id, body),
+    env.TPI_DB.prepare("UPDATE forum_topics SET updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+      .bind(topicId)
+  ]);
+
+  return json({ post: { id: postId, topicId, body } });
+}
+
+async function handleDeleteForumPost(path, env, user) {
+  const postId = clean(decodeURIComponent(path.replace(/^\/forum\/posts\//, "")));
+  if (!postId) return json({ error: "Post id is required." }, 400);
+  const post = await env.TPI_DB.prepare("SELECT id, contributor_id FROM forum_posts WHERE id = ?").bind(postId).first();
+  if (!post) return json({ deleted: false });
+  if (post.contributor_id !== user.id && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "You can only delete your own forum replies." }, 403);
+  }
+  await env.TPI_DB.prepare("UPDATE forum_posts SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(postId).run();
+  return json({ deleted: true, id: postId });
 }
 
 async function handlePublicContributorProfile(request, env) {

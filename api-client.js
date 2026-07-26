@@ -72,6 +72,11 @@
     listArticles: destination => request(`/articles${destination ? `?destination=${encodeURIComponent(destination)}` : ""}`),
     createArticle: payload => request("/articles", { method: "POST", body: payload }),
     deleteArticle: id => request(`/articles/${encodeURIComponent(id)}`, { method: "DELETE" }),
+    forumIndex: () => request("/forum"),
+    forumTopic: id => request(`/forum/topics/${encodeURIComponent(id)}`),
+    createForumTopic: payload => request("/forum/topics", { method: "POST", body: payload }),
+    createForumPost: (topicId, payload) => request(`/forum/topics/${encodeURIComponent(topicId)}/posts`, { method: "POST", body: payload }),
+    deleteForumPost: id => request(`/forum/posts/${encodeURIComponent(id)}`, { method: "DELETE" }),
     listComments: pageId => request(`/comments?pageId=${encodeURIComponent(pageId)}`),
     createComment: payload => request("/comments", { method: "POST", body: payload })
   };

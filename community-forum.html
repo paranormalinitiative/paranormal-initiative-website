@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>Community Forum | The Paranormal Initiative</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="The Paranormal Initiative Community Forum is being prepared as a dedicated discussion space for paranormal research, EVP, ITC, field practice, experiences, and collaboration.">
+    <meta name="description" content="The Paranormal Initiative Community Discussion Portal is a messenger-style forum for paranormal research, EVP, ITC, field practice, experiences, and collaboration.">
     <meta name="pp:title" content="Community Forum">
-    <meta name="pp:subtitle" content="Discussion, Collaboration, Research Exchange, and Community">
+    <meta name="pp:subtitle" content="Community Discussion Portal">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,143 +19,118 @@
 <div id="site-header"></div>
 
 <section class="portal-hero forum-portal-hero">
-    <p class="portal-kicker">Community Forum</p>
-    <h2>A dedicated discussion space for research, experience, and collaboration.</h2>
+    <p class="portal-kicker">Community Discussion Portal</p>
+    <h2>Messenger-style discussion for research, experience, and collaboration.</h2>
     <p>
-        The Paranormal Initiative forum is being prepared as a place where investigators,
-        researchers, contributors, experiencers, and curious visitors can talk through ideas,
-        questions, field methods, equipment, EVP, ITC, consciousness, parapsychology, haunted
-        locations, and the broader study of the unexplained.
+        The Discussion Portal blends organized forum categories with a modern conversation layout.
+        Topics stay visible on the left, while the selected discussion opens as a clean bubble-style
+        thread for reading, replying, and following the flow of conversation.
     </p>
     <p>
-        Public reading will remain simple. Posting topics and replies will be connected to member
-        access so the community can grow with accountability while still keeping discussion open,
-        thoughtful, and easy to follow.
+        Visitors can read the discussions. Signed-in members and invited contributors can create
+        topics and reply when the database migration is active. Site leadership retains simple block,
+        delete, and cleanup tools for spam, harassment, doxxing, unlawful content, or material that
+        harms the purpose of the community.
     </p>
-    <div class="portal-actions">
-        <a class="portal-button" href="member-login.html">Member Login</a>
-        <a class="portal-button portal-button-secondary" href="contributor-invite.html">Invite Access</a>
-        <a class="portal-button portal-button-secondary" href="early-access.html">Contact TPI</a>
+</section>
+
+<section class="discussion-portal" data-discussion-portal>
+    <div class="discussion-toolbar">
+        <div>
+            <p class="portal-kicker">Live Layout</p>
+            <h2>Community Forum</h2>
+        </div>
+        <div class="discussion-toolbar-actions">
+            <a class="portal-button portal-button-secondary" href="member-login.html">Member Login</a>
+            <button class="portal-button" type="button" data-new-topic-button>New Topic</button>
+        </div>
     </div>
-</section>
 
-<section class="forum-status-band">
-    <article class="forum-status-card">
-        <p class="portal-kicker">How It Will Work</p>
-        <h3>Open reading, member posting, and practical owner tools.</h3>
-        <p>
-            Visitors will be able to read forum discussions. Members and approved contributors will
-            be able to start topics, reply, react, and share links or media when appropriate. Site
-            leadership will retain simple block, delete, and cleanup tools for spam, harassment,
-            doxxing, unlawful content, or material that damages the purpose of the forum.
-        </p>
-    </article>
-    <aside class="forum-status-card forum-status-card-compact">
-        <h3>Forum Status</h3>
-        <p>
-            The page is now in place. The discussion backend, topic creation, replies, reactions,
-            and member tools are the next build step.
-        </p>
-    </aside>
-</section>
+    <div class="discussion-shell">
+        <aside class="discussion-sidebar" aria-label="Forum topics">
+            <div class="discussion-sidebar-head">
+                <label>
+                    <span>Find A Topic</span>
+                    <input type="search" data-topic-filter placeholder="Search topics...">
+                </label>
+            </div>
+            <div class="discussion-topic-list" data-topic-list>
+                <p class="discussion-loading">Loading discussion topics...</p>
+            </div>
+        </aside>
 
-<section class="forum-category-section">
-    <p class="portal-kicker">Forum Categories</p>
-    <h2>Planned discussion areas.</h2>
-    <p>
-        These categories keep the forum organized while still leaving room for personal experience,
-        research questions, technical work, and open conversation.
-    </p>
+        <main class="discussion-chat" aria-live="polite">
+            <header class="discussion-chat-header" data-topic-header>
+                <span>Discussion Portal</span>
+                <h3>Select a topic to read the conversation.</h3>
+                <p>Topics stay on the left so visitors can move through the community without losing their place.</p>
+            </header>
 
-    <div class="forum-category-grid">
-        <article class="forum-category-card">
-            <div>
-                <span>Research</span>
-                <h3>EVP / ITC Research</h3>
-                <p>Voice-like material, ACS experimentation, recording methods, review language, and ITC theory.</p>
+            <div class="discussion-new-topic" data-new-topic-panel hidden>
+                <div class="discussion-new-topic-head">
+                    <h3>Start A New Topic</h3>
+                    <button type="button" data-close-topic-panel>Close</button>
+                </div>
+                <form data-new-topic-form>
+                    <label>
+                        <span>Category</span>
+                        <select data-new-topic-category required></select>
+                    </label>
+                    <label>
+                        <span>Topic Title</span>
+                        <input type="text" data-new-topic-title maxlength="160" placeholder="What should this discussion be called?" required>
+                    </label>
+                    <label>
+                        <span>Opening Message</span>
+                        <textarea data-new-topic-body rows="5" maxlength="6000" placeholder="Start the conversation here..." required></textarea>
+                    </label>
+                    <div class="discussion-form-actions">
+                        <p data-new-topic-status></p>
+                        <button class="portal-button" type="submit">Create Topic</button>
+                    </div>
+                </form>
             </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Experiences</span>
-                <h3>Your Paranormal Experiences</h3>
-                <p>Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters.</p>
+
+            <div class="discussion-messages" data-message-list>
+                <article class="discussion-empty-state">
+                    <h3>Choose a topic from the left.</h3>
+                    <p>
+                        The conversation will open here in a messenger-style thread with member names,
+                        titles, timestamps, replies, and reactions.
+                    </p>
+                </article>
             </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Field Work</span>
-                <h3>Paranormal Investigation</h3>
-                <p>Case intake, walkthroughs, baselines, documentation, team practice, field safety, and evidence review.</p>
-            </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Tools</span>
-                <h3>Equipment &amp; Technology</h3>
-                <p>Audio recorders, cameras, EMF meters, thermal tools, SLS, environmental sensors, and experimental devices.</p>
-            </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Study</span>
-                <h3>Consciousness &amp; Parapsychology</h3>
-                <p>Human experience, perception, psi research, survival questions, and responsible theoretical discussion.</p>
-            </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Exploration</span>
-                <h3>Spirituality, Metaphysics, OBE &amp; NDE</h3>
-                <p>Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making.</p>
-            </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Science</span>
-                <h3>AI, Quantum Ideas &amp; Time</h3>
-                <p>Artificial intelligence, speculative models, quantum theory discussions, time questions, and technology culture.</p>
-            </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Locations</span>
-                <h3>Haunted Locations &amp; History</h3>
-                <p>Location claims, historical context, folklore, cemeteries, buildings, legends, and responsible exploration planning.</p>
-            </div>
-            <strong>Coming Online</strong>
-        </article>
-        <article class="forum-category-card">
-            <div>
-                <span>Community</span>
-                <h3>General Discussion</h3>
-                <p>Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation.</p>
-            </div>
-            <strong>Coming Online</strong>
-        </article>
+
+            <form class="discussion-reply-box" data-reply-form>
+                <label>
+                    <span>Reply</span>
+                    <textarea data-reply-body rows="3" maxlength="6000" placeholder="Write a reply..."></textarea>
+                </label>
+                <div class="discussion-reply-actions">
+                    <p data-reply-status>Sign in as a member or contributor to reply.</p>
+                    <button class="portal-button" type="submit">Send Reply</button>
+                </div>
+            </form>
+        </main>
     </div>
 </section>
 
 <section class="forum-build-note">
-    <p class="portal-kicker">Next Build Step</p>
-    <h2>From page to working forum.</h2>
+    <p class="portal-kicker">Build Note</p>
+    <h2>What is active now.</h2>
     <p>
-        The next phase is to connect this page to the existing member system so signed-in members can
-        create topics, reply to discussions, react to posts, edit their own entries, and keep their
-        forum activity connected to their contributor profile.
+        The page, layout, topic browser, message bubbles, reply composer, member-aware posting hooks,
+        and Cloudflare D1 migration are in place. If the D1 forum migration has not been applied yet,
+        the portal shows a built-in preview so the public page still looks complete while the database
+        is being prepared.
     </p>
 </section>
 
 <div id="site-footer"></div>
 
+<script src="api-client.js"></script>
 <script src="includes.js"></script>
+<script src="community-forum.js"></script>
 
 </body>
 </html>
