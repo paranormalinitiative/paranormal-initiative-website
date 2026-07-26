@@ -148,6 +148,9 @@ async function handleRegister(request, env) {
     return json({ error: "Display name, username, and password are required." }, 400);
   }
   if (await getUserByUsername(env, username)) return json({ error: "That username already exists." }, 409);
+  if (isProtectedOrgTitle(data.title) && !["owner", "admin"].includes(invite.role)) {
+    return json({ error: "That leadership title is assigned by site leadership." }, 403);
+  }
 
   const id = crypto.randomUUID();
   await env.TPI_DB.batch([
@@ -177,6 +180,9 @@ async function handleRegister(request, env) {
 
 async function handleUpdateProfile(request, env, user) {
   const data = await readJson(request);
+  if (isProtectedOrgTitle(data.title) && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "That leadership title is assigned by site leadership." }, 403);
+  }
   await env.TPI_DB.prepare(`
     UPDATE contributors SET
       display_name = ?,
@@ -429,6 +435,17 @@ function clean(value) {
 
 function makeInviteCode() {
   return `TPI-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+}
+
+function isProtectedOrgTitle(title) {
+  const normalized = clean(title).toLowerCase().replace(/\s+/g, " ");
+  return [
+    "founder / director",
+    "founder/director",
+    "founder director",
+    "assistant director",
+    "advisory board member"
+  ].includes(normalized);
 }
 
 function makeMediaKey(area, username, filename, contentType) {

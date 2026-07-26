@@ -70,6 +70,20 @@
     return `TPI-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
   }
 
+  function isProtectedOrgTitle(title) {
+    const normalized = String(title || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+    return [
+      "founder / director",
+      "founder/director",
+      "founder director",
+      "assistant director",
+      "advisory board member"
+    ].includes(normalized);
+  }
+
   function encodeInvite(invite) {
     return btoa(JSON.stringify({
       code: invite.code,
@@ -411,6 +425,22 @@
         bio: String(data.get("bio") || "").trim(),
         commentSignatureEnabled: data.get("commentSignature") === "on"
       };
+      if (isProtectedOrgTitle(payload.title)) {
+        let currentRole = "";
+        if (await cloudflareReady()) {
+          try {
+            currentRole = (await window.TPIApi.me()).user?.role || "";
+          } catch (error) {
+            currentRole = "";
+          }
+        } else {
+          currentRole = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY))?.role || "";
+        }
+        if (!["owner", "admin"].includes(currentRole)) {
+          setStatus("That leadership title is assigned by site leadership. Please choose a contributor title.", true);
+          return;
+        }
+      }
       if (await cloudflareReady()) {
         try {
           const response = await fetch("/api/contributors/me/profile", {
@@ -571,6 +601,11 @@
 
     const inviteCode = String(data.get("inviteCode") || "").trim();
     const username = String(data.get("username") || "").trim();
+    const requestedTitle = String(data.get("title") || "").trim();
+    if (isProtectedOrgTitle(requestedTitle)) {
+      setStatus("That leadership title is assigned by site leadership. Please choose a contributor title.", true);
+      return;
+    }
     if (await cloudflareReady()) {
       try {
         await window.TPIApi.registerContributor({
@@ -578,7 +613,7 @@
           username,
           password: String(data.get("password") || ""),
           displayName: String(data.get("displayName") || username).trim(),
-          title: String(data.get("title") || "").trim(),
+          title: requestedTitle,
           correspondence: String(data.get("correspondence") || "").trim(),
           affiliation: String(data.get("affiliation") || "").trim(),
           organization: String(data.get("organization") || "").trim(),
@@ -610,7 +645,7 @@
       username,
       password: String(data.get("password") || ""),
       displayName: String(data.get("displayName") || username).trim(),
-      title: String(data.get("title") || "").trim(),
+      title: requestedTitle,
       role: invite.role || "contributor",
       correspondence: String(data.get("correspondence") || "").trim(),
       affiliation: String(data.get("affiliation") || "").trim(),

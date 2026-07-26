@@ -33,7 +33,21 @@
         <form data-invite-register>
             <input name="inviteCode" type="hidden">
             <label><span>Display Name</span><input name="displayName" type="text" required></label>
-            <label><span>Title / Role Label</span><input name="title" type="text" placeholder="Research Contributor"></label>
+            <label>
+                <span>Title / Role Label</span>
+                <input name="title" type="text" list="public-title-options" placeholder="Research Contributor">
+            </label>
+            <datalist id="public-title-options">
+                <option value="Research Contributor"></option>
+                <option value="Field Contributor"></option>
+                <option value="Editor / Reviewer"></option>
+                <option value="Technical Contributor"></option>
+                <option value="Education Contributor"></option>
+                <option value="Community Liaison"></option>
+                <option value="Researcher"></option>
+                <option value="Investigator"></option>
+            </datalist>
+            <p class="access-note">Leadership titles such as Founder / Director, Assistant Director, and Advisory Board Member are assigned by site leadership.</p>
             <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
             <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
