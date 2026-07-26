@@ -210,7 +210,7 @@ python3 -m http.server 4174
 
 Recently completed:
 
-- Comment moderation tools were added to the owner/admin dashboard. Public anonymous/name-only comments are pending by default, contributor-signed comments publish immediately, and owner/admin can approve or delete comments.
+- Comment moderation tools were added to the owner/admin dashboard and the Content Editor. Public anonymous/name-only comments are pending by default, contributor-signed comments publish immediately, and owner/admin can approve or delete comments.
 - Change Password/account settings were added to `member-dashboard.html`.
 - Published article author names and logged-in contributor comment/reply names link to `contributor-profile.html?username=...` when a contributor username is available.
 - Legacy authored pages are centralized in `legacy-contributions.js` and can be imported from the Content Editor's My Content library.

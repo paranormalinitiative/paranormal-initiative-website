@@ -1167,6 +1167,100 @@ ${buildArticleHtml()}
     await renderContentLibraryList();
   }
 
+  async function openCommentModeration(statusFilter = "pending") {
+    const existing = document.getElementById("editor-comment-moderation-modal");
+    if (existing) existing.remove();
+
+    const modal = document.createElement("div");
+    modal.id = "editor-comment-moderation-modal";
+    modal.className = "media-modal";
+    modal.innerHTML = `
+      <div class="media-modal-card content-library-card" role="dialog" aria-modal="true" aria-labelledby="editor-comment-moderation-title">
+        <div class="media-modal-header">
+          <h3 id="editor-comment-moderation-title">Comment Moderation</h3>
+          <button type="button" data-action="comment-moderation-close">Close</button>
+        </div>
+        <div class="media-modal-body content-library-body">
+          <p class="access-note">Approve or delete public comments before they appear on article pages.</p>
+          <div class="moderation-toolbar">
+            <button type="button" data-action="comment-moderation-filter" data-moderation-filter="pending">Pending</button>
+            <button type="button" data-action="comment-moderation-filter" data-moderation-filter="approved">Approved</button>
+          </div>
+          <div id="editor-comment-moderation-list" class="comment-moderation-list" data-moderation-status="${escapeHtml(statusFilter)}">
+            <p class="access-note">Loading comments...</p>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    await renderEditorCommentModeration(statusFilter);
+  }
+
+  function renderEditorModerationComment(comment, statusFilter) {
+    const author = [comment.name || "Anonymous Contributor", comment.authorTitle].filter(Boolean).join(" - ");
+    const pageUrl = comment.pageId || "";
+    const date = comment.createdAt ? new Date(comment.createdAt).toLocaleString() : "";
+    return `
+      <article class="moderation-comment">
+        <div class="moderation-comment-meta">
+          <strong>${escapeHtml(author)}</strong>
+          <span>${escapeHtml(date)}</span>
+        </div>
+        <p>${escapeHtml(comment.text)}</p>
+        <a href="${escapeHtml(pageUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(pageUrl || "Article page")}</a>
+        <div class="moderation-comment-actions">
+          ${statusFilter === "pending" ? `<button type="button" data-action="comment-approve" data-comment-id="${escapeHtml(comment.id)}">Approve</button>` : ""}
+          <button type="button" data-action="comment-delete" data-comment-id="${escapeHtml(comment.id)}">Delete</button>
+        </div>
+      </article>
+    `;
+  }
+
+  async function renderEditorCommentModeration(statusFilter = "pending") {
+    const host = document.getElementById("editor-comment-moderation-list");
+    if (!host) return;
+    host.dataset.moderationStatus = statusFilter;
+    if (!window.TPIApi?.listModerationComments || !await window.TPIApi.isAvailable()) {
+      host.innerHTML = `<p class="access-note">Owner/admin Cloudflare login is required for comment moderation.</p>`;
+      return;
+    }
+
+    try {
+      const data = await window.TPIApi.listModerationComments(statusFilter);
+      const comments = data.comments || [];
+      host.innerHTML = comments.length
+        ? comments.map(comment => renderEditorModerationComment(comment, statusFilter)).join("")
+        : `<p class="access-note">No ${escapeHtml(statusFilter)} comments.</p>`;
+    } catch (error) {
+      host.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Could not load comments.")}</p>`;
+    }
+  }
+
+  async function approveModerationComment(commentId) {
+    if (!commentId || !window.TPIApi?.approveComment) return;
+    try {
+      await window.TPIApi.approveComment(commentId);
+      setStatus("Comment approved");
+      const statusFilter = document.getElementById("editor-comment-moderation-list")?.dataset.moderationStatus || "pending";
+      await renderEditorCommentModeration(statusFilter);
+    } catch (error) {
+      setStatus(error.message || "Comment approval failed");
+    }
+  }
+
+  async function deleteModerationComment(commentId) {
+    if (!commentId || !window.TPIApi?.deleteComment) return;
+    if (!window.confirm("Delete this comment?")) return;
+    try {
+      await window.TPIApi.deleteComment(commentId);
+      setStatus("Comment deleted");
+      const statusFilter = document.getElementById("editor-comment-moderation-list")?.dataset.moderationStatus || "pending";
+      await renderEditorCommentModeration(statusFilter);
+    } catch (error) {
+      setStatus(error.message || "Comment delete failed");
+    }
+  }
+
   async function renderContentLibraryList() {
     const host = document.getElementById("content-library-list");
     if (!host) return;
@@ -1518,6 +1612,11 @@ ${buildArticleHtml()}
     if (action === "contributors-close") document.getElementById("contributors-modal")?.remove();
     if (action === "content-library") openContentLibrary();
     if (action === "content-library-close") document.getElementById("content-library-modal")?.remove();
+    if (action === "comment-moderation") openCommentModeration();
+    if (action === "comment-moderation-close") document.getElementById("editor-comment-moderation-modal")?.remove();
+    if (action === "comment-moderation-filter") renderEditorCommentModeration(button.dataset.moderationFilter || "pending");
+    if (action === "comment-approve") approveModerationComment(button.dataset.commentId);
+    if (action === "comment-delete") deleteModerationComment(button.dataset.commentId);
     if (action === "content-edit") editContentArticle(button.dataset.articleId);
     if (action === "content-import-legacy") importLegacyArticle(button.dataset.articleId);
     if (action === "content-delete") deleteContentArticle(button.dataset.articleId);
