@@ -18,11 +18,16 @@
     <div class="editor-access-card">
         <p class="portal-kicker">Member Login</p>
         <h2>Contributor Access</h2>
-        <p>Sign in with your member, contributor, admin, or owner username and password.</p>
+        <p>Sign in with your member, contributor, admin, or owner username/email and password.</p>
         <form data-member-login>
-            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Username Or Email</span><input name="username" type="text" autocomplete="username" required></label>
             <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
             <button type="submit">Sign In</button>
+        </form>
+        <button class="portal-button portal-button-secondary account-toggle-button" type="button" data-forgot-password-toggle>Forgot Password?</button>
+        <form class="account-recovery-form" data-password-reset-request hidden>
+            <label><span>Account Email</span><input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+            <button type="submit">Send Reset Instructions</button>
         </form>
         <p class="access-note">Members can join discussions. Contributors can also use the Content Editor after approval.</p>
     </div>
@@ -33,7 +38,9 @@
         <p>Create a normal member account for the Discussion Portal. Contributor publishing access is approved separately.</p>
         <form data-member-register>
             <label><span>Display Name</span><input name="displayName" type="text" autocomplete="name" required></label>
-            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces." required></label>
+            <p class="access-note">Usernames are login handles. Use letters, numbers, dashes, underscores, periods, or symbols. No spaces.</p>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
             <label class="access-checkbox">
                 <input name="commentSignature" type="checkbox" checked>
@@ -79,7 +86,8 @@
                 <option value="Investigator"></option>
             </datalist>
             <p class="access-note">Leadership titles are assigned by the Founder / Director or Assistant Director. Most contributors should choose a research, field, education, technical, or reviewer label.</p>
-            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces." required></label>
+            <p class="access-note">Usernames are login handles. Use letters, numbers, dashes, underscores, periods, or symbols. No spaces.</p>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
             <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
             <label><span>Affiliation</span><input name="affiliation" type="text"></label>

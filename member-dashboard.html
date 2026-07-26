@@ -92,8 +92,13 @@
 
         <article class="editor-access-card">
             <p class="portal-kicker">Account</p>
-            <h2>Password Settings</h2>
-            <p class="access-note">Update your contributor password. This does not change your public profile.</p>
+            <h2>Login Settings</h2>
+            <div class="account-identity-card" data-account-identity></div>
+            <form class="member-profile-form" data-username-form hidden>
+                <label><span>New Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces."></label>
+                <button type="submit">Update Username</button>
+            </form>
+            <p class="access-note">Update your contributor password. Passwords are protected and cannot be displayed after they are saved.</p>
             <form class="member-profile-form" data-password-form>
                 <label><span>Current Password</span><input name="currentPassword" type="password" autocomplete="current-password" required></label>
                 <label><span>New Password</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>

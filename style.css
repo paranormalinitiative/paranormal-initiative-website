@@ -2507,6 +2507,48 @@ footer {
     text-align: center;
 }
 
+.account-toggle-button {
+    justify-self: start;
+}
+
+.account-recovery-form,
+.account-identity-card {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    background: rgba(9, 15, 20, 0.72);
+    border: 1px solid rgba(38, 54, 70, 0.9);
+    border-radius: 4px;
+}
+
+.account-recovery-form[hidden] {
+    display: none;
+}
+
+.account-identity-card div {
+    display: grid;
+    gap: 3px;
+}
+
+.account-identity-card span {
+    color: #7f95aa;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.account-identity-card strong {
+    color: #f4f8fb;
+    overflow-wrap: anywhere;
+}
+
+.account-identity-card p {
+    margin: 0;
+    color: #8aa0b6;
+    font-size: 12px;
+}
+
 .member-dashboard-shell {
     display: grid;
     gap: 22px;

@@ -15,7 +15,9 @@
   const dashboardArticles = document.querySelector("[data-dashboard-articles]");
   const dashboardName = document.querySelector("[data-dashboard-name]");
   const dashboardRole = document.querySelector("[data-dashboard-role]");
+  const accountIdentity = document.querySelector("[data-account-identity]");
   const profileForm = document.querySelector("[data-profile-form]");
+  const usernameForm = document.querySelector("[data-username-form]");
   const publicProfileLink = document.querySelector("[data-public-profile-link]");
   const publicProfileRoot = document.querySelector("[data-public-profile]");
   const profilePhotoPreview = document.querySelector("[data-profile-photo-preview]");
@@ -181,6 +183,15 @@
       contributor: "Can write, save drafts, and publish assigned work",
       member: "Can join discussions and manage a member profile"
     }[role] || "Member account";
+  }
+
+  function isValidUsername(value) {
+    const username = String(value || "").trim();
+    return Boolean(username && !/\s/.test(username) && /^[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+$/.test(username));
+  }
+
+  function usernameErrorMessage() {
+    return "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols.";
   }
 
   function option(value, current, label = value) {
@@ -409,6 +420,24 @@
     if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
     if (dashboardRole) dashboardRole.textContent = [user.title, getAccountAccessLabel(user.role)].filter(Boolean).join(" - ");
     if (publicProfileLink) publicProfileLink.href = `contributor-profile.html?username=${encodeURIComponent(user.username)}`;
+    if (accountIdentity) {
+      const email = user.correspondence || "";
+      accountIdentity.innerHTML = `
+        <div>
+          <span>Login Username</span>
+          <strong>${escapeHtml(user.username || "Not set")}</strong>
+        </div>
+        <div>
+          <span>Account Email</span>
+          <strong>${escapeHtml(email || "Add an email for account recovery")}</strong>
+        </div>
+        <p>Password: protected and never displayed after saving.</p>
+      `;
+    }
+    if (usernameForm) {
+      usernameForm.hidden = false;
+      if (usernameForm.username) usernameForm.username.value = user.username || "";
+    }
     const profileName = user.displayName || user.username || "Contributor";
     const photoMarkup = user.photoUrl
       ? `<img class="member-profile-photo" src="${escapeHtml(user.photoUrl)}" alt="${escapeHtml(profileName)}">`
@@ -599,19 +628,44 @@
 
   document.addEventListener("submit", async event => {
     const loginForm = event.target.closest("[data-member-login]");
+    const resetRequestForm = event.target.closest("[data-password-reset-request]");
     const memberRegisterForm = event.target.closest("[data-member-register]");
     const inviteCheckForm = event.target.closest("[data-invite-check]");
     const registerForm = event.target.closest("[data-invite-register]");
     const ownerInviteForm = event.target.closest("[data-owner-invite-form]");
     const ownerBootstrapForm = event.target.closest("[data-owner-bootstrap-form]");
     const profileSubmitForm = event.target.closest("[data-profile-form]");
+    const usernameSubmitForm = event.target.closest("[data-username-form]");
     const passwordForm = event.target.closest("[data-password-form]");
     const adminTitleForm = event.target.closest("[data-admin-title-form]");
-    if (!loginForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !passwordForm && !adminTitleForm) return;
+    if (!loginForm && !resetRequestForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !usernameSubmitForm && !passwordForm && !adminTitleForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
     const users = getUsers();
+
+    if (resetRequestForm) {
+      const email = String(data.get("email") || "").trim();
+      if (!email || !email.includes("@")) {
+        setStatus("Enter the email address on the account.", true);
+        return;
+      }
+      if (await cloudflareReady()) {
+        try {
+          const response = await window.TPIApi.requestPasswordReset({ email });
+          resetRequestForm.reset();
+          setStatus(response.message || "If that email is on an account, reset instructions will be sent.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+      const localUser = users.find(user => String(user.correspondence || user.email || "").toLowerCase() === email.toLowerCase());
+      setStatus(localUser
+        ? "Local preview found that email. Cloudflare email delivery is needed for live reset instructions."
+        : "If that email is on an account, reset instructions will be sent when email delivery is connected.", false);
+      return;
+    }
 
     if (adminTitleForm) {
       const payload = {
@@ -689,6 +743,42 @@
       saveUsers(localUsers);
       passwordForm.reset();
       setStatus("Password updated locally.", false);
+      return;
+    }
+
+    if (usernameSubmitForm) {
+      const username = String(data.get("username") || "").trim();
+      if (!isValidUsername(username)) {
+        setStatus(usernameErrorMessage(), true);
+        return;
+      }
+
+      if (await cloudflareReady()) {
+        try {
+          const result = await window.TPIApi.updateUsername({ username });
+          localStorage.setItem(ACCESS_SESSION_KEY, result.user.username);
+          renderDashboardProfile(result.user);
+          setStatus("Username updated.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+
+      const currentUsername = localStorage.getItem(ACCESS_SESSION_KEY);
+      const localUsers = getUsers();
+      if (localUsers.some(user => user.username === username && user.username !== currentUsername)) {
+        setStatus("That username already exists.", true);
+        return;
+      }
+      const userIndex = localUsers.findIndex(user => user.username === currentUsername && user.active !== false);
+      if (userIndex >= 0) {
+        localUsers[userIndex].username = username;
+        saveUsers(localUsers);
+        localStorage.setItem(ACCESS_SESSION_KEY, username);
+        renderDashboardProfile(localUsers[userIndex]);
+        setStatus("Username updated locally.", false);
+      }
       return;
     }
 
@@ -772,11 +862,16 @@
         setStatus("Cloudflare API is not available in this preview.", true);
         return;
       }
+      const ownerUsername = String(data.get("username") || "tpi-owner").trim();
+      if (!isValidUsername(ownerUsername)) {
+        setStatus(usernameErrorMessage(), true);
+        return;
+      }
 
       try {
         await window.TPIApi.ownerBootstrap({
           setupKey: String(data.get("setupKey") || ""),
-          username: String(data.get("username") || "tpi-owner").trim(),
+          username: ownerUsername,
           password: String(data.get("password") || ""),
           displayName: "Todd Wayne",
           title: "Founder / Director"
@@ -844,13 +939,13 @@
     }
 
     if (loginForm) {
-      const username = String(data.get("username") || "").trim();
+      const identifier = String(data.get("username") || "").trim();
       const password = String(data.get("password") || "");
       if (await cloudflareReady()) {
         try {
-          const result = await window.TPIApi.login(username, password);
+          const result = await window.TPIApi.login(identifier, password);
           if (result.user) saveUsers([{ ...result.user, active: true }]);
-          localStorage.setItem(ACCESS_SESSION_KEY, username);
+          localStorage.setItem(ACCESS_SESSION_KEY, result.user?.username || identifier);
           window.location.href = "member-dashboard.html";
         } catch (error) {
           setStatus(error.message, true);
@@ -858,7 +953,10 @@
         return;
       }
 
-      const user = users.find(candidate => candidate.username === username && candidate.password === password && candidate.active !== false);
+      const user = users.find(candidate => {
+        const email = String(candidate.correspondence || candidate.email || "").toLowerCase();
+        return (candidate.username === identifier || email === identifier.toLowerCase()) && candidate.password === password && candidate.active !== false;
+      });
       if (!user) {
         setStatus("Username or password did not match.", true);
         return;
@@ -872,8 +970,17 @@
       const username = String(data.get("username") || "").trim();
       const password = String(data.get("password") || "");
       const displayName = String(data.get("displayName") || username).trim();
+      const email = String(data.get("email") || "").trim();
       if (!username || !password || !displayName) {
         setStatus("Display name, username, and password are required.", true);
+        return;
+      }
+      if (!isValidUsername(username)) {
+        setStatus(usernameErrorMessage(), true);
+        return;
+      }
+      if (!email || !email.includes("@")) {
+        setStatus("A valid email address is required.", true);
         return;
       }
       if (password.length < 8) {
@@ -887,6 +994,7 @@
             username,
             password,
             displayName,
+            email,
             title: "Member",
             commentSignatureEnabled: data.get("commentSignature") === "on"
           });
@@ -903,10 +1011,15 @@
         setStatus("That username already exists.", true);
         return;
       }
+      if (users.some(user => String(user.correspondence || user.email || "").toLowerCase() === email.toLowerCase())) {
+        setStatus("That email is already connected to an account.", true);
+        return;
+      }
       users.push({
         username,
         password,
         displayName,
+        correspondence: email,
         title: "Member",
         role: "member",
         commentSignatureEnabled: data.get("commentSignature") === "on",
@@ -960,6 +1073,10 @@
     const assignedTitle = inviteAssignment?.title || requestedTitle;
     if (isProtectedOrgTitle(requestedTitle) && !inviteAssignment) {
       setStatus("That leadership title is assigned by site leadership. Please choose a contributor title.", true);
+      return;
+    }
+    if (!isValidUsername(username)) {
+      setStatus(usernameErrorMessage(), true);
       return;
     }
     if (await cloudflareReady()) {
@@ -1060,6 +1177,16 @@
         setStatus("Comment deleted.", false);
         return renderCommentModeration(commentModerationList?.dataset.moderationStatus || "pending");
       }).catch(error => setStatus(error.message || "Comment delete failed.", true));
+      return;
+    }
+
+    const forgotToggle = event.target.closest("[data-forgot-password-toggle]");
+    if (forgotToggle) {
+      event.preventDefault();
+      const resetForm = document.querySelector("[data-password-reset-request]");
+      if (!resetForm) return;
+      resetForm.hidden = !resetForm.hidden;
+      if (!resetForm.hidden) resetForm.querySelector("input[name='email']")?.focus();
       return;
     }
 

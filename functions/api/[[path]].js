@@ -14,6 +14,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/auth/me") return handleMe(request, env);
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
     if (request.method === "POST" && path === "/auth/logout") return handleLogout();
+    if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
@@ -31,6 +32,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
     if (request.method === "POST" && path === "/contributors/me/profile") return requireMember(request, env, user => handleUpdateProfile(request, env, user));
+    if (request.method === "POST" && path === "/contributors/me/username") return requireMember(request, env, user => handleUpdateUsername(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
@@ -64,6 +66,7 @@ async function handleOwnerBootstrap(request, env) {
   const username = clean(data.username || "tpi-owner");
   const password = String(data.password || "");
   if (!username || !password) return json({ error: "Username and password are required." }, 400);
+  if (!isValidUsername(username)) return json({ error: "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols." }, 400);
 
   const user = await getUserByUsername(env, username);
   const payload = [
@@ -105,7 +108,7 @@ async function handleLogin(request, env) {
   const data = await readJson(request);
   const username = clean(data.username);
   const password = String(data.password || "");
-  const user = await getUserByUsername(env, username);
+  const user = await getUserByLoginIdentifier(env, username);
   if (!user || !user.active || user.password_hash !== await hashPassword(password)) {
     return json({ error: "Username or password did not match." }, 401);
   }
@@ -118,6 +121,31 @@ async function handleLogin(request, env) {
 
   return json({ user: publicUser(user) }, 200, {
     "Set-Cookie": `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 14}`
+  });
+}
+
+async function handlePasswordResetRequest(request, env) {
+  const data = await readJson(request);
+  const email = clean(data.email).toLowerCase();
+  if (!email || !email.includes("@")) return json({ error: "Enter the email address on the account." }, 400);
+
+  const user = await getUserByEmail(env, email);
+  if (user) {
+    try {
+      const token = crypto.randomUUID();
+      const expires = new Date(Date.now() + 1000 * 60 * 60).toISOString();
+      await env.TPI_DB.prepare(`
+        INSERT INTO password_reset_tokens (token, contributor_id, expires_at)
+        VALUES (?, ?, ?)
+      `).bind(token, user.id, expires).run();
+    } catch (error) {
+      // The reset-token table and outbound email provider can be enabled after the UI is live.
+    }
+  }
+
+  return json({
+    ok: true,
+    message: "If that email is on a member account, reset instructions will be sent when email delivery is connected."
   });
 }
 
@@ -137,11 +165,15 @@ async function handleMemberRegister(request, env) {
   const username = clean(data.username);
   const password = String(data.password || "");
   const displayName = clean(data.displayName || username);
+  const email = clean(data.email || data.correspondence).toLowerCase();
   if (!username || !password || !displayName) {
     return json({ error: "Display name, username, and password are required." }, 400);
   }
+  if (!isValidUsername(username)) return json({ error: "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols." }, 400);
+  if (!email || !email.includes("@")) return json({ error: "A valid email address is required." }, 400);
   if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
   if (await getUserByUsername(env, username)) return json({ error: "That username already exists." }, 409);
+  if (await getUserByEmail(env, email)) return json({ error: "That email is already connected to an account." }, 409);
 
   const id = crypto.randomUUID();
   await env.TPI_DB.prepare(`
@@ -153,7 +185,7 @@ async function handleMemberRegister(request, env) {
     await hashPassword(password),
     displayName,
     clean(data.title || "Member"),
-    clean(data.correspondence),
+    email,
     clean(data.affiliation),
     clean(data.organization),
     clean(data.website),
@@ -389,7 +421,10 @@ async function handleRegister(request, env) {
   if (!username || !password || !clean(data.displayName)) {
     return json({ error: "Display name, username, and password are required." }, 400);
   }
+  if (!isValidUsername(username)) return json({ error: "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols." }, 400);
   if (await getUserByUsername(env, username)) return json({ error: "That username already exists." }, 409);
+  const email = clean(data.correspondence || data.email).toLowerCase();
+  if (email && await getUserByEmail(env, email)) return json({ error: "That email is already connected to an account." }, 409);
   const inviteAssignment = getInviteAssignment(invite.code);
   const assignedTitle = inviteAssignment?.title || clean(data.title);
   if (isProtectedOrgTitle(data.title) && !inviteAssignment && !["owner", "admin"].includes(invite.role)) {
@@ -408,7 +443,7 @@ async function handleRegister(request, env) {
       clean(data.displayName),
       assignedTitle,
       inviteAssignment?.role || invite.role,
-      clean(data.correspondence),
+      email,
       clean(data.affiliation),
       clean(data.organization),
       clean(data.website),
@@ -427,6 +462,13 @@ async function handleUpdateProfile(request, env, user) {
   if (isProtectedOrgTitle(data.title) && !["owner", "admin"].includes(user.role)) {
     return json({ error: "That leadership title is assigned by site leadership." }, 403);
   }
+  const correspondence = clean(data.correspondence).toLowerCase();
+  if (correspondence && correspondence.includes("@")) {
+    const existingEmailUser = await getUserByEmail(env, correspondence);
+    if (existingEmailUser && existingEmailUser.id !== user.id) {
+      return json({ error: "That email is already connected to another account." }, 409);
+    }
+  }
   await env.TPI_DB.prepare(`
     UPDATE contributors SET
       display_name = ?,
@@ -442,7 +484,7 @@ async function handleUpdateProfile(request, env, user) {
   `).bind(
     clean(data.displayName || user.display_name),
     clean(data.title).slice(0, 160),
-    clean(data.correspondence),
+    correspondence,
     clean(data.affiliation),
     clean(data.organization),
     clean(data.website),
@@ -451,6 +493,27 @@ async function handleUpdateProfile(request, env, user) {
     data.commentSignatureEnabled === false ? 0 : 1,
     user.id
   ).run();
+  const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
+  return json({ user: publicUser(updated) });
+}
+
+async function handleUpdateUsername(request, env, user) {
+  const data = await readJson(request);
+  const username = clean(data.username);
+  if (!isValidUsername(username)) {
+    return json({ error: "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols." }, 400);
+  }
+  if (username === user.username) return json({ user: publicUser(user) });
+  const existing = await getUserByUsername(env, username);
+  if (existing) return json({ error: "That username already exists." }, 409);
+
+  await env.TPI_DB.prepare("UPDATE contributors SET username = ? WHERE id = ?")
+    .bind(username, user.id)
+    .run();
+  await env.TPI_DB.prepare("UPDATE invite_codes SET used_by = ? WHERE used_by = ?")
+    .bind(username, user.username)
+    .run();
+
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
   return json({ user: publicUser(updated) });
 }
@@ -905,6 +968,20 @@ async function getUserByUsername(env, username) {
   return env.TPI_DB.prepare("SELECT * FROM contributors WHERE username = ?").bind(username).first();
 }
 
+async function getUserByLoginIdentifier(env, identifier) {
+  const value = clean(identifier);
+  if (!value) return null;
+  if (!value.includes("@")) return getUserByUsername(env, value);
+  const byEmail = await getUserByEmail(env, value.toLowerCase());
+  return byEmail || getUserByUsername(env, value);
+}
+
+async function getUserByEmail(env, email) {
+  const value = clean(email).toLowerCase();
+  if (!value) return null;
+  return env.TPI_DB.prepare("SELECT * FROM contributors WHERE lower(correspondence) = ?").bind(value).first();
+}
+
 async function getOpenInvite(env, code) {
   if (!code) return null;
   return env.TPI_DB.prepare("SELECT * FROM invite_codes WHERE code = ? AND used = 0").bind(code).first();
@@ -950,6 +1027,11 @@ async function readUploadFile(request) {
 
 function clean(value) {
   return String(value || "").trim();
+}
+
+function isValidUsername(value) {
+  const username = clean(value);
+  return Boolean(username && !/\s/.test(username) && /^[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+$/.test(username));
 }
 
 function makeInviteCode() {
