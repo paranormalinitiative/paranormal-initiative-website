@@ -63,6 +63,7 @@
   const newTopicTitle = portal.querySelector("[data-new-topic-title]");
   const newTopicBody = portal.querySelector("[data-new-topic-body]");
   const newTopicStatus = portal.querySelector("[data-new-topic-status]");
+  const memberAction = portal.querySelector("[data-member-action]");
 
   init();
 
@@ -70,6 +71,7 @@
     state.activeUser = await getActiveUser();
     await loadForum();
     renderCategories();
+    updateMemberAction();
     updateComposerState();
     if (state.topics[0]) openTopic(state.topics[0].id);
   }
@@ -90,10 +92,43 @@
   async function getActiveUser() {
     try {
       const data = await window.TPIApi.me();
-      return data.user || null;
+      if (data.user) return data.user;
+    } catch (error) {
+      // Local static previews fall back to the same cached session used by the site header.
+    }
+
+    return getCachedMember();
+  }
+
+  function getCachedMember() {
+    const username = localStorage.getItem("tpiEditorSession");
+    if (!username) return null;
+    try {
+      const users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+      const user = users.find(item => item.username === username && item.active !== false && !item.developerOwner);
+      if (!user) return null;
+      return {
+        username: user.username,
+        displayName: user.displayName || user.display_name || user.username,
+        title: user.title,
+        role: user.role,
+        localOnly: true
+      };
     } catch (error) {
       return null;
     }
+  }
+
+  function updateMemberAction() {
+    if (!memberAction) return;
+    if (!state.activeUser) {
+      memberAction.href = "member-login.html";
+      memberAction.textContent = "Member Login";
+      return;
+    }
+    const firstName = String(state.activeUser.displayName || state.activeUser.username || "Member").trim().split(/\s+/)[0] || "Member";
+    memberAction.href = "member-dashboard.html";
+    memberAction.textContent = `Dashboard: ${firstName}`;
   }
 
   function renderCategories() {
