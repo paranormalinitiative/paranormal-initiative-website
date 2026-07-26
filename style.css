@@ -2949,12 +2949,14 @@ footer {
 }
 
 .content-library-empty {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
     align-items: center;
-    min-height: 76px;
-    padding: 16px;
+    height: 76px;
+    padding: 12px;
     background: #090f14;
-    border: 1px dashed #263646;
+    border: 1px solid #263646;
     border-radius: 4px;
 }
 
