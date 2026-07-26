@@ -2013,14 +2013,32 @@ footer {
 }
 
 .public-profile-work-item {
-    align-content: start;
-    min-height: 150px;
+    grid-template-rows: minmax(68px, auto) 28px 1fr;
+    align-content: stretch;
+    min-height: 172px;
+}
+
+.public-profile-work-item strong {
+    align-self: start;
+    font-size: 16px;
+    line-height: 1.25;
+}
+
+.public-profile-work-item span {
+    align-self: start;
+    min-height: 28px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .public-profile-work-item .portal-button {
     align-self: end;
     justify-self: start;
     margin-top: 6px;
+    min-height: 38px;
+    display: inline-grid;
+    align-items: center;
 }
 
 .public-profile-photo-empty {
