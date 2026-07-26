@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Site Search">
+    <meta name="pp:subtitle" content="Find Articles, Papers, Notes, References, and Pages">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+</head>
+<body>
+<div id="site-header"></div>
+
+<section class="site-search-shell">
+    <p class="portal-kicker">Search The Paranormal Initiative</p>
+    <h2>Find articles, papers, notes, equipment pages, research areas, and reference material.</h2>
+    <form class="site-search-page-form" data-site-search-page-form>
+        <input data-site-search-page-input type="search" placeholder="Search EVP, ITC, evidence review, haunted locations..." autocomplete="off">
+        <button type="submit">Search</button>
+    </form>
+    <p class="access-note" data-site-search-summary>Enter a word or phrase to search the site.</p>
+    <div class="site-search-results" data-site-search-results></div>
+</section>
+
+<div id="site-footer"></div>
+<script src="search-index.js"></script>
+<script src="includes.js"></script>
+<script src="search.js"></script>
+</body>
+</html>

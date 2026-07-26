@@ -93,7 +93,7 @@
 
     blockedEvents.forEach(eventName => {
       document.addEventListener(eventName, event => {
-        if (isLockedSiteChrome(event.target)) {
+        if (isLockedSiteChrome(event.target) && !isEditableTarget(event.target)) {
           event.preventDefault();
           return;
         }
@@ -104,7 +104,7 @@
     });
 
     document.addEventListener("selectstart", event => {
-      if (isLockedSiteChrome(event.target)) {
+      if (isLockedSiteChrome(event.target) && !isEditableTarget(event.target)) {
         event.preventDefault();
         return;
       }
@@ -114,7 +114,7 @@
     });
 
     document.addEventListener("keydown", event => {
-      if (isLockedSiteChrome(event.target)) {
+      if (isLockedSiteChrome(event.target) && !isEditableTarget(event.target)) {
         const key = event.key.toLowerCase();
         const modifier = event.metaKey || event.ctrlKey;
         if (modifier && ["a", "c", "x", "s", "u", "p"].includes(key)) {
@@ -161,6 +161,7 @@
   await inject("#site-footer", "footer.html");
   installContentProtection();
   installMemberGreeting();
+  installHeaderSearch();
 
   // Per-page title/subtitle (optional)
   const titleMeta = document.querySelector('meta[name="pp:title"]');
@@ -239,6 +240,18 @@
       "\"": "&quot;",
       "'": "&#39;"
     }[char]));
+  }
+
+  function installHeaderSearch() {
+    const form = document.querySelector("[data-site-search-form]");
+    const input = document.querySelector("[data-site-search-input]");
+    if (!form || !input) return;
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const query = input.value.trim();
+      window.location.href = query ? `search.html?q=${encodeURIComponent(query)}` : "search.html";
+    });
   }
 
   function installComments() {
