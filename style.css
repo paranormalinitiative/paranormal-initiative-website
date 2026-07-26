@@ -2588,21 +2588,29 @@ footer {
 
 .writing-guides-card {
     width: min(980px, calc(100vw - 32px));
-    max-height: min(780px, calc(100vh - 32px));
+    height: min(780px, calc(100vh - 32px));
+    min-width: min(520px, calc(100vw - 32px));
+    min-height: 420px;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
     overflow: hidden;
+    resize: both;
+    display: flex;
+    flex-direction: column;
 }
 
 .writing-guides-body {
     grid-template-columns: minmax(180px, 240px) 1fr;
     align-items: start;
-    max-height: calc(100vh - 124px);
-    overflow: hidden;
+    min-height: 0;
+    overflow: auto;
+    flex: 1;
 }
 
 .writing-guides-tabs {
     display: grid;
     gap: 8px;
-    max-height: calc(100vh - 160px);
+    max-height: none;
     overflow: auto;
 }
 
@@ -2614,13 +2622,108 @@ footer {
 
 .writing-guide-content {
     min-height: 420px;
-    max-height: calc(100vh - 160px);
+    height: 100%;
     overflow: auto;
     padding: 18px;
     color: #d7e2ec;
     background: #090f14;
     border: 1px solid #263646;
     border-radius: 4px;
+}
+
+.modal-drag-handle {
+    margin-left: auto;
+    padding: 5px 9px;
+    color: #8aa0b6;
+    background: #0b1219;
+    border: 1px solid #263646;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: grab;
+    user-select: none;
+}
+
+.writing-guides-card.is-dragging .modal-drag-handle {
+    cursor: grabbing;
+}
+
+.template-insert-panel {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 14px;
+    background: #101820;
+    border: 1px solid #263646;
+    border-radius: 4px;
+}
+
+.template-insert-panel h3 {
+    margin: 0;
+}
+
+.template-insert-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.content-library-card {
+    width: min(860px, calc(100vw - 32px));
+    max-height: min(780px, calc(100vh - 32px));
+    overflow: hidden;
+}
+
+.content-library-body {
+    max-height: calc(100vh - 124px);
+    overflow: auto;
+}
+
+.content-library-section {
+    display: grid;
+    gap: 10px;
+}
+
+.content-library-section + .content-library-section {
+    padding-top: 18px;
+    border-top: 1px solid #263646;
+}
+
+.content-library-section h4 {
+    margin: 0;
+    color: #f4f8fb;
+    font-size: 15px;
+}
+
+.content-library-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
+}
+
+.content-library-row strong,
+.content-library-row span {
+    display: block;
+}
+
+.content-library-row span {
+    margin-top: 4px;
+    color: #8aa0b6;
+    font-size: 12px;
+}
+
+.content-library-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
 }
 
 .writing-guide-content h2 {
@@ -2919,6 +3022,15 @@ footer {
 
     .writing-guide-content {
         min-height: 360px;
+    }
+
+    .template-insert-grid,
+    .content-library-row {
+        grid-template-columns: 1fr;
+    }
+
+    .content-library-actions {
+        justify-content: flex-start;
     }
 
     .member-login-shell,

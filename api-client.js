@@ -67,6 +67,7 @@
     publicProfile: username => request(`/contributors/profile?username=${encodeURIComponent(username)}`),
     listArticles: destination => request(`/articles${destination ? `?destination=${encodeURIComponent(destination)}` : ""}`),
     createArticle: payload => request("/articles", { method: "POST", body: payload }),
+    deleteArticle: id => request(`/articles/${encodeURIComponent(id)}`, { method: "DELETE" }),
     listComments: pageId => request(`/comments?pageId=${encodeURIComponent(pageId)}`),
     createComment: payload => request("/comments", { method: "POST", body: payload })
   };

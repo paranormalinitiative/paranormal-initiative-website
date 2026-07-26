@@ -47,8 +47,10 @@
   let activeView = "compose";
   let savedSelection = null;
   let currentUser = null;
+  let currentArticleId = null;
   let autosaveTimer = null;
   let resizeState = null;
+  let guideDragState = null;
 
   const allowedIframeHosts = [
     "youtube.com",
@@ -60,6 +62,41 @@
     "drive.google.com",
     "docs.google.com"
   ];
+
+  const templateStarters = {
+    "research-paper": {
+      label: "Research Paper Template",
+      html: "<h3>Introduction</h3><p></p><h3>Background or Field Context</h3><p></p><h3>Key Terms or Definitions</h3><p></p><h3>Main Discussion</h3><p></p><h3>Evidence, Examples, Sources, or Observations</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p>"
+    },
+    "research-note": {
+      label: "Research Note Template",
+      html: "<h3>Observation, Question, or Idea</h3><p></p><h3>Context</h3><p></p><h3>Why It Matters</h3><p></p><h3>Supporting Details</h3><p></p><h3>Limits or Concerns</h3><p></p><h3>Possible Next Steps</h3><p></p>"
+    },
+    "experimental-report": {
+      label: "Experimental Report Template",
+      html: "<h3>Purpose or Research Question</h3><p></p><h3>Date, Time, and Location</h3><p></p><h3>Equipment or Software Used</h3><p></p><h3>Setup</h3><p></p><h3>Procedure</h3><p></p><h3>Controls</h3><p></p><h3>Observations</h3><p></p><h3>Results</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p><h3>Suggested Follow-Up</h3><p></p>"
+    },
+    "technical-note": {
+      label: "Technical Note Template",
+      html: "<h3>Plain-Language Summary</h3><p></p><h3>What It Does</h3><p></p><h3>What It Does Not Do</h3><p></p><h3>Common Uses</h3><p></p><h3>Common Mistakes</h3><p></p><h3>Setup or Workflow Notes</h3><p></p><h3>Limitations</h3><p></p><h3>Example Field Language</h3><p></p>"
+    },
+    "field-article": {
+      label: "Field Article Template",
+      html: "<h3>Field Topic or Lesson</h3><p></p><h3>What Happened or Prompted This Article</h3><p></p><h3>Practical Context</h3><p></p><h3>What Investigators Should Notice</h3><p></p><h3>Documentation or Safety Concerns</h3><p></p><h3>What This Teaches</h3><p></p><h3>Limitations</h3><p></p>"
+    },
+    "review-paper": {
+      label: "Review Paper Template",
+      html: "<h3>Topic or Question Being Reviewed</h3><p></p><h3>Why The Topic Matters</h3><p></p><h3>Sources, Methods, Claims, or Ideas Compared</h3><p></p><h3>Summary of Major Positions</h3><p></p><h3>Strengths</h3><p></p><h3>Weaknesses or Limitations</h3><p></p><h3>Open Questions</h3><p></p><h3>Conclusion</h3><p></p>"
+    },
+    "case-location-study": {
+      label: "Case / Location Study Template",
+      html: "<h3>Location, Case, or Claim Being Studied</h3><p></p><h3>Reason for Study</h3><p></p><h3>Historical or Cultural Background</h3><p></p><h3>Reported Claims</h3><p></p><h3>Known Sources and Records</h3><p></p><h3>Field Observations</h3><p></p><h3>Evidence or Documentation Reviewed</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p>"
+    },
+    "media-review": {
+      label: "Media Review Template",
+      html: "<h3>Media Type Being Reviewed</h3><p></p><h3>Source, Date, and File Context</h3><p></p><h3>Original-File Status</h3><p></p><h3>Review Method</h3><p></p><h3>Observations</h3><p></p><h3>Possible Contamination or Ordinary Explanations</h3><p></p><h3>Classification</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p>"
+    }
+  };
 
   function getDestinationLabel() {
     return destinationInput.options[destinationInput.selectedIndex].textContent.trim();
@@ -670,13 +707,73 @@
     try {
       const response = await fetch(`contributor-guidelines/${fileName}`, { cache: "no-store" });
       if (!response.ok) throw new Error("Guide unavailable");
-      writingGuideContent.innerHTML = renderGuideMarkdown(await response.text());
+      const guideHtml = renderGuideMarkdown(await response.text());
+      writingGuideContent.innerHTML = fileName === "sample-templates.md" ? `${renderTemplateInsertControls()}${guideHtml}` : guideHtml;
     } catch (error) {
       writingGuideContent.innerHTML = `
         <h2>Writing Guides</h2>
         <p>The guide files could not be loaded in this browser preview. Open the contributor-guidelines folder to review the writing standards.</p>
       `;
     }
+  }
+
+  function renderTemplateInsertControls() {
+    return `
+      <div class="template-insert-panel">
+        <h3>Add A Template To The Editor</h3>
+        <p>Choose a starter structure and it will be inserted at the cursor in Compose view.</p>
+        <div class="template-insert-grid">
+          ${Object.entries(templateStarters).map(([key, template]) => `<button type="button" data-template-insert="${escapeHtml(key)}">${escapeHtml(template.label)}</button>`).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function insertTemplate(key) {
+    const template = templateStarters[key];
+    if (!template) return;
+    if (activeView === "html") setViewMode("compose");
+    insertHtml(template.html);
+    writingGuidesModal.hidden = true;
+    scheduleAutosave();
+    setStatus(`${template.label} inserted`);
+  }
+
+  function startGuideDrag(event) {
+    const handle = event.target.closest("[data-modal-drag-handle]");
+    if (!handle) return;
+    const card = writingGuidesModal.querySelector(".writing-guides-card");
+    const rect = card.getBoundingClientRect();
+    guideDragState = {
+      pointerId: event.pointerId,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top
+    };
+    card.classList.add("is-dragging");
+    card.style.position = "fixed";
+    card.style.left = `${rect.left}px`;
+    card.style.top = `${rect.top}px`;
+    card.style.margin = "0";
+    handle.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+  }
+
+  function moveGuideDrag(event) {
+    if (!guideDragState) return;
+    const card = writingGuidesModal.querySelector(".writing-guides-card");
+    const rect = card.getBoundingClientRect();
+    const left = clamp(event.clientX - guideDragState.offsetX, 8, window.innerWidth - rect.width - 8);
+    const top = clamp(event.clientY - guideDragState.offsetY, 8, window.innerHeight - rect.height - 8);
+    card.style.left = `${left}px`;
+    card.style.top = `${top}px`;
+  }
+
+  function stopGuideDrag(event) {
+    if (!guideDragState) return;
+    const handle = event.target.closest("[data-modal-drag-handle]");
+    handle?.releasePointerCapture?.(guideDragState.pointerId || event.pointerId);
+    writingGuidesModal.querySelector(".writing-guides-card")?.classList.remove("is-dragging");
+    guideDragState = null;
   }
 
   function insertHtml(html) {
@@ -1008,6 +1105,129 @@ ${buildArticleHtml()}
     ].join("\n");
   }
 
+  async function loadEditorArticles() {
+    if (window.TPIApi && await window.TPIApi.isAvailable()) {
+      try {
+        const data = await window.TPIApi.contributorArticles();
+        return data.articles || [];
+      } catch (error) {
+        setStatus(error.message || "Could not load content");
+        return [];
+      }
+    }
+
+    return getPublishedArticles().filter(article => {
+      if (!currentUser?.displayName) return true;
+      return !article.author || article.author === currentUser.displayName;
+    });
+  }
+
+  async function openContentLibrary() {
+    const existing = document.getElementById("content-library-modal");
+    if (existing) existing.remove();
+
+    const modal = document.createElement("div");
+    modal.id = "content-library-modal";
+    modal.className = "media-modal";
+    modal.innerHTML = `
+      <div class="media-modal-card content-library-card" role="dialog" aria-modal="true" aria-labelledby="content-library-title">
+        <div class="media-modal-header">
+          <h3 id="content-library-title">My Content</h3>
+          <button type="button" data-action="content-library-close">Close</button>
+        </div>
+        <div class="media-modal-body content-library-body">
+          <p class="access-note">Open a draft or published contribution to edit it here. Delete removes it from this editor list and your member dashboard.</p>
+          <div id="content-library-list" class="content-library-list"><p class="access-note">Loading content...</p></div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    await renderContentLibraryList();
+  }
+
+  async function renderContentLibraryList() {
+    const host = document.getElementById("content-library-list");
+    if (!host) return;
+    const articles = await loadEditorArticles();
+    const drafts = articles.filter(article => article.status !== "published");
+    const published = articles.filter(article => article.status === "published");
+    host.innerHTML = `
+      ${renderContentLibrarySection("Drafts", drafts)}
+      ${renderContentLibrarySection("Published", published)}
+    `;
+  }
+
+  function renderContentLibrarySection(title, items) {
+    if (!items.length) {
+      return `<section class="content-library-section"><h4>${escapeHtml(title)}</h4><p class="access-note">No ${escapeHtml(title.toLowerCase())} yet.</p></section>`;
+    }
+    return `
+      <section class="content-library-section">
+        <h4>${escapeHtml(title)}</h4>
+        ${items.map(article => `
+          <div class="content-library-row" data-article-id="${escapeHtml(article.id)}">
+            <div>
+              <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
+              <span>${escapeHtml([article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
+            </div>
+            <div class="content-library-actions">
+              <button type="button" data-action="content-edit" data-article-id="${escapeHtml(article.id)}">Edit</button>
+              ${article.status === "published" ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open</a>` : ""}
+              <button type="button" data-action="content-delete" data-article-id="${escapeHtml(article.id)}">Delete</button>
+            </div>
+          </div>
+        `).join("")}
+      </section>
+    `;
+  }
+
+  async function findEditorArticle(articleId) {
+    const articles = await loadEditorArticles();
+    return articles.find(article => article.id === articleId) || null;
+  }
+
+  function loadArticleIntoEditor(article) {
+    currentArticleId = article.id;
+    titleInput.value = article.title || "Untitled Research Paper";
+    subtitleInput.value = article.subtitle || "Research Library Draft";
+    if (article.destination) destinationInput.value = article.destination;
+    if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
+    if (article.author) authorInput.value = article.author;
+    if (article.source) sourceInput.value = article.source;
+    if (article.labels) labelsInput.value = article.labels;
+    editor.innerHTML = article.bodyHtml || "<p><br></p>";
+    htmlView.value = cleanHtml(editor.innerHTML);
+    focusEditorStart();
+    setStatus(article.status === "published" ? "Loaded published contribution" : "Loaded draft");
+  }
+
+  async function editContentArticle(articleId) {
+    const article = await findEditorArticle(articleId);
+    if (!article) {
+      setStatus("Article could not be found");
+      return;
+    }
+    loadArticleIntoEditor(article);
+    document.getElementById("content-library-modal")?.remove();
+  }
+
+  async function deleteContentArticle(articleId) {
+    if (!window.confirm("Delete this contribution? This removes it from your dashboard and published lists.")) return;
+    if (window.TPIApi && await window.TPIApi.isAvailable()) {
+      try {
+        await window.TPIApi.deleteArticle(articleId);
+      } catch (error) {
+        setStatus(error.message || "Delete failed");
+        return;
+      }
+    } else {
+      savePublishedArticles(getPublishedArticles().filter(article => article.id !== articleId));
+    }
+    if (currentArticleId === articleId) currentArticleId = null;
+    await renderContentLibraryList();
+    setStatus("Contribution deleted");
+  }
+
   async function writeClipboard(value, message) {
     try {
       await navigator.clipboard.writeText(value);
@@ -1042,8 +1262,8 @@ ${buildArticleHtml()}
   function buildPublishedRecord() {
     const title = titleInput.value.trim() || "Untitled Research Paper";
     return {
-      id: getArticleId(),
-      href: getSuggestedArticleHref(),
+      id: currentArticleId || getArticleId(),
+      href: currentArticleId ? `published-article.html?id=${encodeURIComponent(currentArticleId)}` : getSuggestedArticleHref(),
       title,
       subtitle: subtitleInput.value.trim() || "Field paper",
       contributionType: getContributionType(),
@@ -1065,6 +1285,7 @@ ${buildArticleHtml()}
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
         await window.TPIApi.createArticle({ ...record, articleHtml: record.fullHtml, status: "draft" });
+        currentArticleId = record.id;
         setStatus(isAutosave ? "Draft autosaved" : "Draft saved");
         return;
       } catch (error) {
@@ -1078,6 +1299,7 @@ ${buildArticleHtml()}
     if (existingIndex >= 0) articles[existingIndex] = record;
     else articles.push(record);
     savePublishedArticles(articles);
+    currentArticleId = record.id;
     setStatus(isAutosave ? "Draft autosaved locally" : "Draft saved locally");
   }
 
@@ -1097,6 +1319,7 @@ ${buildArticleHtml()}
           articleHtml: record.fullHtml,
           status: "published"
         });
+        currentArticleId = record.id;
         publishFilename.value = record.href;
         publishDestination.value = record.destination;
         setStatus("Published to Cloudflare destination");
@@ -1116,6 +1339,7 @@ ${buildArticleHtml()}
       articles.push(record);
     }
     savePublishedArticles(articles);
+    currentArticleId = record.id;
     publishFilename.value = record.href;
     publishDestination.value = record.destination;
     setStatus("Published to destination");
@@ -1196,7 +1420,7 @@ ${buildArticleHtml()}
   }
 
   document.addEventListener("click", event => {
-    const button = event.target.closest("button[data-command], button[data-action], button[data-block], button[data-media-action]");
+    const button = event.target.closest("button[data-command], button[data-action], button[data-block], button[data-media-action], button[data-template-insert]");
     if (!button) return;
 
     if (button.dataset.mediaAction) {
@@ -1216,6 +1440,10 @@ ${buildArticleHtml()}
     if (action === "media-close") closeMediaModal();
     if (action === "contributors") openContributorManager();
     if (action === "contributors-close") document.getElementById("contributors-modal")?.remove();
+    if (action === "content-library") openContentLibrary();
+    if (action === "content-library-close") document.getElementById("content-library-modal")?.remove();
+    if (action === "content-edit") editContentArticle(button.dataset.articleId);
+    if (action === "content-delete") deleteContentArticle(button.dataset.articleId);
     if (action === "writing-guides") openWritingGuides();
     if (action === "writing-guides-close") writingGuidesModal.hidden = true;
     if (action === "spellcheck-toggle") toggleSpellcheck(button);
@@ -1239,6 +1467,9 @@ ${buildArticleHtml()}
     if (action === "copy") copyOutput();
     if (action === "copy-card") copyDestinationCard();
     if (action === "clear") clearDraft();
+
+    const templateKey = button.dataset.templateInsert;
+    if (templateKey) insertTemplate(templateKey);
   });
 
   document.addEventListener("submit", event => {
@@ -1311,6 +1542,10 @@ ${buildArticleHtml()}
     const guideButton = event.target.closest("[data-guide-file]");
     if (guideButton) loadWritingGuide(guideButton.dataset.guideFile);
   });
+  writingGuidesModal.addEventListener("pointerdown", startGuideDrag);
+  writingGuidesModal.addEventListener("pointermove", moveGuideDrag);
+  writingGuidesModal.addEventListener("pointerup", stopGuideDrag);
+  writingGuidesModal.addEventListener("pointercancel", stopGuideDrag);
   resizeHandle?.addEventListener("pointerdown", startResize);
   resizeHandle?.addEventListener("pointermove", moveResize);
   resizeHandle?.addEventListener("pointerup", stopResize);
@@ -1381,16 +1616,7 @@ ${buildArticleHtml()}
     }
 
     if (!article) return false;
-    titleInput.value = article.title || "Untitled Research Paper";
-    subtitleInput.value = article.subtitle || "Research Library Draft";
-    if (article.destination) destinationInput.value = article.destination;
-    if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
-    if (article.author) authorInput.value = article.author;
-    if (article.source) sourceInput.value = article.source;
-    if (article.labels) labelsInput.value = article.labels;
-    editor.innerHTML = article.bodyHtml || "<p><br></p>";
-    htmlView.value = cleanHtml(editor.innerHTML);
-    setStatus(article.status === "published" ? "Loaded published paper" : "Loaded draft");
+    loadArticleIntoEditor(article);
     return true;
   }
 

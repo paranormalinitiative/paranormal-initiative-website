@@ -449,12 +449,33 @@
       }
     }
 
+    async function deleteDashboardArticle(articleId) {
+      if (!window.confirm("Delete this contribution? This removes it from your dashboard and published lists.")) return;
+      if (await cloudflareReady()) {
+        try {
+          await window.TPIApi.deleteArticle(articleId);
+        } catch (error) {
+          setStatus(error.message || "Delete failed.", true);
+          return;
+        }
+      } else {
+        localStorage.setItem("tpiPublishedArticles", JSON.stringify(
+          JSON.parse(localStorage.getItem("tpiPublishedArticles") || "[]").filter(article => article.id !== articleId)
+        ));
+      }
+      setStatus("Contribution deleted.", false);
+      await renderDashboardArticles(user);
+    }
+
+    window.deleteDashboardArticle = deleteDashboardArticle;
+
     const renderList = (items, emptyText, isDraftList) => items.length ? items.map(article => `
       <div class="invite-link-row">
         <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
         <span>${escapeHtml([article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
         ${isDraftList ? "" : `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>`}
         <a class="portal-button portal-button-secondary" href="paper-editor.html?article=${encodeURIComponent(article.id)}">${isDraftList ? "Continue Editing" : "Edit Paper"}</a>
+        <button class="portal-button portal-button-secondary" type="button" data-dashboard-delete-article="${escapeHtml(article.id)}">Delete</button>
       </div>
     `).join("") : `<p class="access-note">${escapeHtml(emptyText)}</p>`;
 
@@ -889,6 +910,13 @@
         window.location.href = "member-login.html";
       });
       else window.location.href = "member-login.html";
+      return;
+    }
+
+    const deleteArticleButton = event.target.closest("[data-dashboard-delete-article]");
+    if (deleteArticleButton && window.deleteDashboardArticle) {
+      event.preventDefault();
+      window.deleteDashboardArticle(deleteArticleButton.dataset.dashboardDeleteArticle);
       return;
     }
 

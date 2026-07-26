@@ -29,6 +29,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
+    if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
 
@@ -365,6 +366,18 @@ async function handleContributorArticles(env, user) {
     ORDER BY created_at DESC
   `).bind(user.id).all();
   return json({ articles: results });
+}
+
+async function handleDeleteArticle(path, env, user) {
+  const id = clean(decodeURIComponent(path.replace(/^\/articles\//, "")));
+  if (!id) return json({ error: "Article id is required." }, 400);
+  const article = await env.TPI_DB.prepare("SELECT id, created_by FROM articles WHERE id = ?").bind(id).first();
+  if (!article) return json({ deleted: false });
+  if (article.created_by !== user.id && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "You can only delete your own articles." }, 403);
+  }
+  await env.TPI_DB.prepare("DELETE FROM articles WHERE id = ?").bind(id).run();
+  return json({ deleted: true, id });
 }
 
 async function handlePublicContributorProfile(request, env) {
