@@ -15,6 +15,7 @@ If a contribution crosses categories, choose the closest primary type and use la
 | Shares field experience, investigation practice, or lessons learned | Field Article |
 | Studies a location, claim, case history, or background record | Case or Location Study |
 | Compares sources, methods, theories, equipment, or claims | Review Paper |
+| Examines audio, photo, video, screenshots, files, timestamps, or possible contamination | Media Review |
 
 ## Review Paper, Not Peer Review
 

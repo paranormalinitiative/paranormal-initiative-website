@@ -1,13 +1,12 @@
 # Contributor Writing Guidelines
 
-The Paranormal Initiative publishes research papers, field articles, experimental reports, technical notes, research notes, case and location studies, and review papers focused on paranormal investigation, EVP, ITC, consciousness, anomalous experience, equipment, methodology, ethics, and evidence review.
+The Paranormal Initiative publishes research papers, field articles, experimental reports, technical notes, research notes, case and location studies, review papers, and media reviews focused on paranormal investigation, EVP, ITC, consciousness, anomalous experience, equipment, methodology, ethics, and evidence review.
 
 Contributions should be serious, readable, clearly documented, and honest about limitations. The goal is not to force every contributor into the same academic format. The goal is to help each piece land in the clearest form for what it is trying to do.
 
 ## Contribution Types
 
 - [Choosing a Contribution Type](choosing-a-contribution-type.md)
-- [Sample Templates](sample-templates.md)
 - [Research Papers](research-papers.md)
 - [Experimental Reports](experimental-reports.md)
 - [Technical Notes](technical-notes.md)
@@ -15,6 +14,7 @@ Contributions should be serious, readable, clearly documented, and honest about 
 - [Field Articles](field-articles.md)
 - [Case and Location Studies](case-location-studies.md)
 - [Review Papers](review-papers.md)
+- [Media Reviews](media-reviews.md)
 
 ## Flexible Format Standard
 
@@ -31,6 +31,7 @@ When a contribution could fit more than one category, choose the primary purpose
 - If it comes from field experience, investigation practice, or lessons learned, treat it as a field article.
 - If it focuses on a location, claim, history, or case background, treat it as a case or location study.
 - If it compares sources, methods, theories, claims, or equipment, treat it as a review paper.
+- If it examines audio, photo, video, screenshots, files, timestamps, or possible contamination, treat it as a media review.
 
 Labels can be used to show secondary subjects such as EVP, ITC, equipment, ethics, consciousness, anomalous experience, methodology, evidence review, or environmental factors.
 

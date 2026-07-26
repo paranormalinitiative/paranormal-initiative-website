@@ -50,7 +50,7 @@
   let currentArticleId = null;
   let autosaveTimer = null;
   let resizeState = null;
-  let guideDragState = null;
+  let modalDragState = null;
 
   const allowedIframeHosts = [
     "youtube.com",
@@ -66,36 +66,47 @@
   const templateStarters = {
     "research-paper": {
       label: "Research Paper Template",
-      html: "<h3>Introduction</h3><p></p><h3>Background or Field Context</h3><p></p><h3>Key Terms or Definitions</h3><p></p><h3>Main Discussion</h3><p></p><h3>Evidence, Examples, Sources, or Observations</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the paper title or remove this heading if the title field above already covers it.</p><h3>Subtitle or Short Description</h3><p>Briefly state what this paper examines and why the subject matters.</p><h3>Introduction</h3><p>Introduce the topic, question, method, claim, or research area. Explain what the reader should understand by the end of the paper.</p><h3>Background or Context</h3><p>Provide the field, historical, technical, environmental, cultural, or investigative context needed to understand the subject.</p><h3>Key Terms or Definitions</h3><p>Define any important terms, methods, equipment names, theories, or claim categories used in the paper.</p><h3>Main Discussion</h3><p>Develop the central argument, explanation, comparison, or research discussion in clear paragraphs.</p><h3>Evidence, Examples, Sources, or Observations</h3><p>Include documented examples, source links, field observations, photographs, charts, audio, video, or other supporting material where useful.</p><h3>Limitations</h3><p>State what cannot be concluded, what remains uncertain, and what information would be needed for stronger interpretation.</p><h3>Conclusion</h3><p>Summarize the most important points without overstating the claim.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p><h3>References or Source Links</h3><p>Add source links, citations, author pages, books, articles, archives, or related references.</p>"
     },
     "research-note": {
       label: "Research Note Template",
-      html: "<h3>Observation, Question, or Idea</h3><p></p><h3>Context</h3><p></p><h3>Why It Matters</h3><p></p><h3>Supporting Details</h3><p></p><h3>Limits or Concerns</h3><p></p><h3>Possible Next Steps</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the note title or remove this heading if the title field above already covers it.</p><h3>Note Type or Topic</h3><p>Describe whether this is a field note, source note, equipment note, EVP/ITC note, theory note, or working question.</p><h3>Date or Context</h3><p>Add the date, location, session, source, or situation if relevant.</p><h3>Observation, Question, or Idea</h3><p>Write the main note clearly. What did you observe, wonder, notice, compare, or want to preserve?</p><h3>Why It Matters</h3><p>Explain why this note may be useful for future research, field work, review, education, or discussion.</p><h3>Supporting Details</h3><p>Add details, source links, timestamps, images, graphs, screenshots, audio, video, or equipment settings where useful.</p><h3>Limits or Concerns</h3><p>State what is uncertain, incomplete, private, untested, or not ready for a stronger conclusion.</p><h3>Possible Next Steps</h3><p>List follow-up questions, tests, sources to review, or ways this note could become a larger paper.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
     },
     "experimental-report": {
       label: "Experimental Report Template",
-      html: "<h3>Purpose or Research Question</h3><p></p><h3>Date, Time, and Location</h3><p></p><h3>Equipment or Software Used</h3><p></p><h3>Setup</h3><p></p><h3>Procedure</h3><p></p><h3>Controls</h3><p></p><h3>Observations</h3><p></p><h3>Results</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p><h3>Suggested Follow-Up</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the experiment title or remove this heading if the title field above already covers it.</p><h3>Experiment Type</h3><p>State whether this is EVP, ITC, ACS, environmental, equipment, audio, visual, consciousness, or another type of experiment.</p><h3>Purpose or Research Question</h3><p>Explain what the experiment was designed to explore, compare, test, or document.</p><h3>Date, Time, and Location</h3><p>Add relevant date, time, session, room, site, or controlled environment information.</p><h3>Equipment or Software Used</h3><p>List devices, software, microphones, cameras, sensors, apps, settings, versions, or experimental tools.</p><h3>Setup</h3><p>Describe how the experiment was arranged before it began.</p><h3>Procedure</h3><p>Describe what was done, in what order, and for how long.</p><h3>Controls</h3><p>Document controls, baseline checks, contamination checks, silence periods, control files, or comparison conditions.</p><h3>Observations</h3><p>Write what was observed during the session or review, including timestamps where useful.</p><h3>Results</h3><p>Describe the outcome carefully. Separate raw observations from interpretation.</p><h3>Limitations</h3><p>State weaknesses, unknowns, possible contamination, equipment limits, environmental concerns, or review limits.</p><h3>Conclusion</h3><p>Summarize what the experiment suggests and what it does not prove.</p><h3>Suggested Follow-Up</h3><p>Describe what should be repeated, changed, controlled, or reviewed next.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
     },
     "technical-note": {
       label: "Technical Note Template",
-      html: "<h3>Plain-Language Summary</h3><p></p><h3>What It Does</h3><p></p><h3>What It Does Not Do</h3><p></p><h3>Common Uses</h3><p></p><h3>Common Mistakes</h3><p></p><h3>Setup or Workflow Notes</h3><p></p><h3>Limitations</h3><p></p><h3>Example Field Language</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the technical note title or remove this heading if the title field above already covers it.</p><h3>Tool, Method, or System Being Discussed</h3><p>Name the device, method, software, workflow, setting, sensor, file type, or concept.</p><h3>Plain-Language Summary</h3><p>Explain the subject in practical language for investigators and readers.</p><h3>What It Does</h3><p>Describe what the tool or method actually measures, produces, changes, records, or helps review.</p><h3>What It Does Not Do</h3><p>Clarify common misunderstandings and claims the tool or method cannot support by itself.</p><h3>Common Uses</h3><p>List appropriate research, documentation, review, or field uses.</p><h3>Common Mistakes</h3><p>Describe frequent errors, misreadings, setup problems, contamination issues, or exaggerated claims.</p><h3>Setup or Workflow Notes</h3><p>Add settings, steps, file handling notes, repeatable workflow details, or recommended documentation.</p><h3>Limitations</h3><p>Explain what can affect reliability, interpretation, accuracy, or usefulness.</p><h3>Example Field Language</h3><p>Provide careful wording investigators can use when documenting this tool or method.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
     },
     "field-article": {
       label: "Field Article Template",
-      html: "<h3>Field Topic or Lesson</h3><p></p><h3>What Happened or Prompted This Article</h3><p></p><h3>Practical Context</h3><p></p><h3>What Investigators Should Notice</h3><p></p><h3>Documentation or Safety Concerns</h3><p></p><h3>What This Teaches</h3><p></p><h3>Limitations</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the field article title or remove this heading if the title field above already covers it.</p><h3>Field Topic or Lesson</h3><p>State the practical investigation topic, lesson, situation, or issue being discussed.</p><h3>What Happened or Prompted This Article</h3><p>Describe the field experience, question, mistake, observation, case pattern, or training need that led to the article.</p><h3>Practical Context</h3><p>Explain the real-world investigation context so readers understand when this matters.</p><h3>What Investigators Should Notice</h3><p>Point out details, behaviors, environmental factors, documentation needs, or review habits that matter in the field.</p><h3>Documentation or Safety Concerns</h3><p>Include permission, privacy, witness care, physical safety, contamination, equipment handling, or reporting concerns.</p><h3>What This Teaches</h3><p>Explain the main lesson clearly and practically.</p><h3>Limitations</h3><p>State where the lesson may not apply, what remains uncertain, or what depends on the case.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
     },
     "review-paper": {
       label: "Review Paper Template",
-      html: "<h3>Topic or Question Being Reviewed</h3><p></p><h3>Why The Topic Matters</h3><p></p><h3>Sources, Methods, Claims, or Ideas Compared</h3><p></p><h3>Summary of Major Positions</h3><p></p><h3>Strengths</h3><p></p><h3>Weaknesses or Limitations</h3><p></p><h3>Open Questions</h3><p></p><h3>Conclusion</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the review title or remove this heading if the title field above already covers it.</p><h3>Topic or Question Being Reviewed</h3><p>State the subject, claim, method, theory, author, equipment issue, or research question being reviewed.</p><h3>Why The Topic Matters</h3><p>Explain why readers, investigators, researchers, or contributors should care about the topic.</p><h3>Sources, Authors, Methods, or Ideas Being Compared</h3><p>List or describe the sources, positions, methods, evidence, papers, books, videos, or claims being examined.</p><h3>Summary of Major Positions</h3><p>Summarize the main views fairly before offering analysis.</p><h3>Strengths</h3><p>Describe what is useful, credible, well documented, thoughtful, or worth preserving.</p><h3>Weaknesses or Limitations</h3><p>Describe missing context, weak evidence, unclear claims, unsupported certainty, or unresolved issues.</p><h3>Open Questions</h3><p>List questions that remain after the review.</p><h3>Conclusion</h3><p>Summarize the review in careful language without turning it into a verdict.</p><h3>References or Source Links</h3><p>Add source links, citations, author pages, books, articles, archives, or related references.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
     },
     "case-location-study": {
       label: "Case / Location Study Template",
-      html: "<h3>Location, Case, or Claim Being Studied</h3><p></p><h3>Reason for Study</h3><p></p><h3>Historical or Cultural Background</h3><p></p><h3>Reported Claims</h3><p></p><h3>Known Sources and Records</h3><p></p><h3>Field Observations</h3><p></p><h3>Evidence or Documentation Reviewed</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the case or location title or remove this heading if the title field above already covers it.</p><h3>Location, Case, or Claim Being Studied</h3><p>Name the location, case type, historical claim, reported activity, or subject of study.</p><h3>Reason for Study</h3><p>Explain why this case, location, or claim deserves documentation or review.</p><h3>Historical or Cultural Background</h3><p>Add relevant history, folklore, records, local context, timelines, or cultural material.</p><h3>Reported Claims</h3><p>Document reported experiences or claims carefully, separating witness reports from verified facts.</p><h3>Known Sources and Records</h3><p>List records, archives, books, articles, interviews, maps, newspaper items, cemetery records, or other sources.</p><h3>Field Observations</h3><p>Add investigation observations if available, including environmental conditions, access limits, and field notes.</p><h3>Evidence or Documentation Reviewed</h3><p>Include photographs, audio, video, documents, maps, timelines, or other reviewed material.</p><h3>Limitations</h3><p>State what could not be verified, what is missing, and what should not be concluded.</p><h3>Conclusion</h3><p>Summarize what the study documents and what remains open.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
     },
     "media-review": {
       label: "Media Review Template",
-      html: "<h3>Media Type Being Reviewed</h3><p></p><h3>Source, Date, and File Context</h3><p></p><h3>Original-File Status</h3><p></p><h3>Review Method</h3><p></p><h3>Observations</h3><p></p><h3>Possible Contamination or Ordinary Explanations</h3><p></p><h3>Classification</h3><p></p><h3>Limitations</h3><p></p><h3>Conclusion</h3><p></p>"
+      html: "<h3>Title</h3><p>Replace this with the media review title or remove this heading if the title field above already covers it.</p><h3>Media Type Being Reviewed</h3><p>State whether this is audio, EVP, ITC, photo, video, screenshot, spectrogram, metadata, or another file type.</p><h3>Source, Date, and File Context</h3><p>Document where the file came from, when it was created, who provided it, and what surrounding context matters.</p><h3>Original-File Status</h3><p>State whether the original file is preserved, whether a copy was used, and whether edits or compression are known.</p><h3>Review Method</h3><p>Describe how the media was reviewed, including software, listening/viewing method, timestamps, blind review, comparisons, or controls.</p><h3>Observations</h3><p>Describe what was observed without telling readers what they must hear or see. Include timestamps where useful.</p><h3>Possible Contamination or Ordinary Explanations</h3><p>Consider voices, handling noise, compression, reflections, blur, radio, team movement, environmental sound, equipment behavior, or other ordinary causes.</p><h3>Classification</h3><p>Classify the material as explained, likely explained, unresolved, unusable, contamination suspected, or requiring further review.</p><h3>Limitations</h3><p>State what cannot be determined from the media and what context is missing.</p><h3>Conclusion</h3><p>Summarize the review carefully. Unresolved media is not proof; it is material for further analysis.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
     }
+  };
+
+  const guideTemplateMap = {
+    "research-papers.md": "research-paper",
+    "research-notes.md": "research-note",
+    "experimental-reports.md": "experimental-report",
+    "technical-notes.md": "technical-note",
+    "field-articles.md": "field-article",
+    "case-location-studies.md": "case-location-study",
+    "review-papers.md": "review-paper",
+    "media-reviews.md": "media-review"
   };
 
   function getDestinationLabel() {
@@ -720,7 +731,7 @@
       const response = await fetch(`contributor-guidelines/${fileName}`, { cache: "no-store" });
       if (!response.ok) throw new Error("Guide unavailable");
       const guideHtml = renderGuideMarkdown(await response.text());
-      writingGuideContent.innerHTML = fileName === "sample-templates.md" ? `${renderTemplateInsertControls()}${guideHtml}` : guideHtml;
+      writingGuideContent.innerHTML = `${renderTemplateInsertControls(fileName)}${guideHtml}`;
     } catch (error) {
       writingGuideContent.innerHTML = `
         <h2>Writing Guides</h2>
@@ -729,14 +740,15 @@
     }
   }
 
-  function renderTemplateInsertControls() {
+  function renderTemplateInsertControls(fileName) {
+    const templateKey = guideTemplateMap[fileName];
+    if (!templateKey || !templateStarters[templateKey]) return "";
+    const template = templateStarters[templateKey];
     return `
       <div class="template-insert-panel">
-        <h3>Add A Template To The Editor</h3>
-        <p>Choose a starter structure and it will be inserted at the cursor in Compose view.</p>
-        <div class="template-insert-grid">
-          ${Object.entries(templateStarters).map(([key, template]) => `<button type="button" data-template-insert="${escapeHtml(key)}">${escapeHtml(template.label)}</button>`).join("")}
-        </div>
+        <h3>${escapeHtml(template.label)}</h3>
+        <p>Add the full working template to the editor, then remove or rewrite anything you do not need.</p>
+        <button type="button" data-template-insert="${escapeHtml(templateKey)}">Add Template To Editor</button>
       </div>
     `;
   }
@@ -754,9 +766,11 @@
   function startGuideDrag(event) {
     const handle = event.target.closest("[data-modal-drag-handle]");
     if (!handle) return;
-    const card = writingGuidesModal.querySelector(".writing-guides-card");
+    const card = handle.closest("[data-floating-modal-card]");
+    if (!card) return;
     const rect = card.getBoundingClientRect();
-    guideDragState = {
+    modalDragState = {
+      card,
       pointerId: event.pointerId,
       offsetX: event.clientX - rect.left,
       offsetY: event.clientY - rect.top
@@ -771,21 +785,21 @@
   }
 
   function moveGuideDrag(event) {
-    if (!guideDragState) return;
-    const card = writingGuidesModal.querySelector(".writing-guides-card");
+    if (!modalDragState) return;
+    const card = modalDragState.card;
     const rect = card.getBoundingClientRect();
-    const left = clamp(event.clientX - guideDragState.offsetX, 8, window.innerWidth - rect.width - 8);
-    const top = clamp(event.clientY - guideDragState.offsetY, 8, window.innerHeight - rect.height - 8);
+    const left = clamp(event.clientX - modalDragState.offsetX, 8, window.innerWidth - rect.width - 8);
+    const top = clamp(event.clientY - modalDragState.offsetY, 8, window.innerHeight - rect.height - 8);
     card.style.left = `${left}px`;
     card.style.top = `${top}px`;
   }
 
   function stopGuideDrag(event) {
-    if (!guideDragState) return;
+    if (!modalDragState) return;
     const handle = event.target.closest("[data-modal-drag-handle]");
-    handle?.releasePointerCapture?.(guideDragState.pointerId || event.pointerId);
-    writingGuidesModal.querySelector(".writing-guides-card")?.classList.remove("is-dragging");
-    guideDragState = null;
+    handle?.releasePointerCapture?.(modalDragState.pointerId || event.pointerId);
+    modalDragState.card?.classList.remove("is-dragging");
+    modalDragState = null;
   }
 
   function insertHtml(html) {
@@ -1152,9 +1166,10 @@ ${buildArticleHtml()}
     modal.id = "content-library-modal";
     modal.className = "media-modal";
     modal.innerHTML = `
-      <div class="media-modal-card content-library-card" role="dialog" aria-modal="true" aria-labelledby="content-library-title">
+      <div class="media-modal-card content-library-card" data-floating-modal-card role="dialog" aria-modal="true" aria-labelledby="content-library-title">
         <div class="media-modal-header">
           <h3 id="content-library-title">My Content</h3>
+          <span class="modal-drag-handle" data-modal-drag-handle>Move</span>
           <button type="button" data-action="content-library-close">Close</button>
         </div>
         <div class="media-modal-body content-library-body">
@@ -1164,6 +1179,9 @@ ${buildArticleHtml()}
       </div>
     `;
     document.body.appendChild(modal);
+    modal.addEventListener("click", event => {
+      if (event.target === modal) modal.remove();
+    });
     await renderContentLibraryList();
   }
 
@@ -1718,10 +1736,10 @@ ${buildArticleHtml()}
     const guideButton = event.target.closest("[data-guide-file]");
     if (guideButton) loadWritingGuide(guideButton.dataset.guideFile);
   });
-  writingGuidesModal.addEventListener("pointerdown", startGuideDrag);
-  writingGuidesModal.addEventListener("pointermove", moveGuideDrag);
-  writingGuidesModal.addEventListener("pointerup", stopGuideDrag);
-  writingGuidesModal.addEventListener("pointercancel", stopGuideDrag);
+  document.addEventListener("pointerdown", startGuideDrag);
+  document.addEventListener("pointermove", moveGuideDrag);
+  document.addEventListener("pointerup", stopGuideDrag);
+  document.addEventListener("pointercancel", stopGuideDrag);
   resizeHandle?.addEventListener("pointerdown", startResize);
   resizeHandle?.addEventListener("pointermove", moveResize);
   resizeHandle?.addEventListener("pointerup", stopResize);

@@ -2865,7 +2865,8 @@ footer {
     user-select: none;
 }
 
-.writing-guides-card.is-dragging .modal-drag-handle {
+.writing-guides-card.is-dragging .modal-drag-handle,
+.content-library-card.is-dragging .modal-drag-handle {
     cursor: grabbing;
 }
 
@@ -2883,17 +2884,15 @@ footer {
     margin: 0;
 }
 
-.template-insert-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-}
-
 .content-library-card {
-    width: min(860px, calc(100vw - 32px));
-    height: min(780px, calc(100vh - 32px));
+    width: min(960px, calc(100vw - 32px));
+    height: min(820px, calc(100vh - 24px));
+    min-width: min(520px, calc(100vw - 32px));
+    min-height: 460px;
+    max-width: calc(100vw - 16px);
     max-height: calc(100vh - 16px);
     overflow: hidden;
+    resize: both;
     display: flex;
     flex-direction: column;
 }
@@ -2901,15 +2900,16 @@ footer {
 .content-library-body {
     flex: 1;
     min-height: 0;
-    overflow: auto;
-    padding-bottom: 28px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 56px;
 }
 
 .content-library-list {
     display: grid;
     gap: 18px;
     min-height: 0;
-    padding-bottom: 36px;
+    padding-bottom: 80px;
 }
 
 .content-library-section {
@@ -3298,7 +3298,6 @@ footer {
         min-height: 360px;
     }
 
-    .template-insert-grid,
     .content-library-row {
         grid-template-columns: 1fr;
     }
