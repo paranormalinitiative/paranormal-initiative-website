@@ -14,7 +14,7 @@
 <body>
 <div id="site-header"></div>
 
-<section class="member-login-shell member-login-single">
+<section class="member-login-shell">
     <div class="editor-access-card">
         <p class="portal-kicker">Member Login</p>
         <h2>Contributor Access</h2>
@@ -24,8 +24,57 @@
             <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
             <button type="submit">Sign In</button>
         </form>
-        <p class="access-note">Have an invite code? <a href="contributor-invite.html">Create your contributor login</a>.</p>
-        <p id="member-login-status" class="access-note"></p>
+        <p class="access-note">Use this after your contributor account has already been created.</p>
+    </div>
+
+    <div class="editor-access-card" data-invite-code-panel>
+        <p class="portal-kicker">Invite Code</p>
+        <h2>Create Contributor Login</h2>
+        <p>Have an invite code from The Paranormal Initiative? Enter it here to create your member login.</p>
+        <form data-invite-check>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required></label>
+            <button type="submit">Submit Invite Code</button>
+        </form>
+        <p class="access-note">Contributor access is invite-only. Public visitors do not need an account to read the site.</p>
+    </div>
+
+    <div class="editor-access-card invite-setup-card" data-invite-setup-panel hidden>
+        <p class="portal-kicker">Account Setup</p>
+        <h2>Set Up Your Account</h2>
+        <p>Create the login you will use for the Discussion Portal and Content Editor.</p>
+        <form data-invite-register>
+            <input name="inviteCode" type="hidden">
+            <label><span>Display Name</span><input name="displayName" type="text" required></label>
+            <label>
+                <span>Title / Role Label</span>
+                <input name="title" type="text" list="public-title-options" placeholder="Research Contributor">
+            </label>
+            <datalist id="public-title-options">
+                <option value="Founder / Director"></option>
+                <option value="Assistant Director"></option>
+                <option value="Advisory Board Member"></option>
+                <option value="Research Contributor"></option>
+                <option value="Field Contributor"></option>
+                <option value="Editor / Reviewer"></option>
+                <option value="Technical Contributor"></option>
+                <option value="Education Contributor"></option>
+                <option value="Community Liaison"></option>
+                <option value="Researcher"></option>
+                <option value="Investigator"></option>
+            </datalist>
+            <p class="access-note">Leadership titles are assigned by the Founder / Director or Assistant Director. Most contributors should choose a research, field, education, technical, or reviewer label.</p>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
+            <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
+            <label><span>Affiliation</span><input name="affiliation" type="text"></label>
+            <label><span>Organization</span><input name="organization" type="text"></label>
+            <label><span>Website</span><input name="website" type="url"></label>
+            <label class="access-checkbox">
+                <input name="commentSignature" type="checkbox" checked>
+                <span>Use my name and title automatically on comments and replies.</span>
+            </label>
+            <button type="submit">Create Login</button>
+        </form>
     </div>
 
     <div class="editor-access-card invite-owner-tools" data-invite-owner-tools hidden>
@@ -39,6 +88,8 @@
             <button type="submit">Create / Update Owner Login</button>
         </form>
     </div>
+
+    <p id="member-login-status" class="access-note member-login-status"></p>
 </section>
 
 <div id="site-footer"></div>

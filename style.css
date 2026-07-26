@@ -2300,6 +2300,11 @@ footer {
     grid-template-columns: minmax(0, 480px);
 }
 
+.member-login-status {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
 .member-dashboard-shell {
     display: grid;
     gap: 22px;
