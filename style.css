@@ -2315,7 +2315,7 @@ footer {
 
 .paper-editor-layout {
     display: grid;
-    grid-template-columns: minmax(560px, 1fr) 12px minmax(340px, var(--post-settings-width, 390px));
+    grid-template-columns: minmax(520px, 1fr) 12px minmax(380px, var(--post-settings-width, 430px));
     gap: 0;
     align-items: stretch;
     height: 760px;
@@ -2455,8 +2455,9 @@ footer {
 .post-settings-panel {
     height: 760px;
     min-width: 0;
-    padding: 18px 0 0 22px;
+    padding: 18px 18px 0 22px;
     overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 
 .post-settings-panel label {

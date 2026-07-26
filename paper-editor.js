@@ -105,8 +105,8 @@
   }
 
   function setPostSettingsWidth(width) {
-    const maxWidth = Math.max(340, Math.min(560, Math.floor(window.innerWidth * 0.42)));
-    const nextWidth = clamp(Math.round(width), 340, maxWidth);
+    const maxWidth = Math.max(380, Math.min(620, Math.floor(window.innerWidth * 0.46)));
+    const nextWidth = clamp(Math.round(width), 380, maxWidth);
     layout?.style.setProperty("--post-settings-width", `${nextWidth}px`);
     return nextWidth;
   }
@@ -281,7 +281,7 @@
     if (!resizeHandle || window.matchMedia("(max-width: 900px)").matches) return;
     resizeState = {
       startX: event.clientX,
-      startWidth: resizeHandle.nextElementSibling?.getBoundingClientRect().width || 390
+      startWidth: resizeHandle.nextElementSibling?.getBoundingClientRect().width || 430
     };
     layout.classList.add("is-resizing");
     resizeHandle.setPointerCapture?.(event.pointerId);
@@ -305,7 +305,7 @@
 
   function handleResizeKey(event) {
     if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-    const currentWidth = resizeHandle.nextElementSibling?.getBoundingClientRect().width || 390;
+    const currentWidth = resizeHandle.nextElementSibling?.getBoundingClientRect().width || 430;
     const step = event.shiftKey ? 40 : 16;
     const nextWidth = setPostSettingsWidth(currentWidth + (event.key === "ArrowLeft" ? step : -step));
     localStorage.setItem(POST_SETTINGS_WIDTH_KEY, String(nextWidth));
