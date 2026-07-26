@@ -2586,6 +2586,73 @@ footer {
     width: min(640px, 100%);
 }
 
+.writing-guides-card {
+    width: min(980px, calc(100vw - 32px));
+    max-height: min(780px, calc(100vh - 32px));
+    overflow: hidden;
+}
+
+.writing-guides-body {
+    grid-template-columns: minmax(180px, 240px) 1fr;
+    align-items: start;
+    max-height: calc(100vh - 124px);
+    overflow: hidden;
+}
+
+.writing-guides-tabs {
+    display: grid;
+    gap: 8px;
+    max-height: calc(100vh - 160px);
+    overflow: auto;
+}
+
+.writing-guides-tabs button.is-active {
+    color: #061018;
+    background: #55c8ff;
+    border-color: #55c8ff;
+}
+
+.writing-guide-content {
+    min-height: 420px;
+    max-height: calc(100vh - 160px);
+    overflow: auto;
+    padding: 18px;
+    color: #d7e2ec;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
+}
+
+.writing-guide-content h2 {
+    margin: 0 0 16px;
+    color: #f4f8fb;
+    font-size: 26px;
+}
+
+.writing-guide-content h3 {
+    margin: 24px 0 10px;
+    color: #f4f8fb;
+    font-size: 18px;
+}
+
+.writing-guide-content p,
+.writing-guide-content li {
+    color: #c7d3de;
+    line-height: 1.65;
+}
+
+.writing-guide-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px;
+}
+
+.writing-guide-content td {
+    padding: 10px;
+    border: 1px solid #263646;
+    vertical-align: top;
+}
+
 .published-article-root {
     max-width: 980px;
     margin: 0 auto;
@@ -2843,6 +2910,15 @@ footer {
     .paper-editor-body,
     .paper-html-view {
         height: 520px;
+    }
+
+    .writing-guides-body {
+        grid-template-columns: 1fr;
+        overflow: auto;
+    }
+
+    .writing-guide-content {
+        min-height: 360px;
     }
 
     .member-login-shell,

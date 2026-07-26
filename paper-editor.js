@@ -21,6 +21,7 @@
   const layout = document.querySelector(".paper-editor-layout");
   const resizeHandle = document.querySelector(".editor-resize-handle");
   const viewMode = document.getElementById("editor-view-mode");
+  const fontFamilyInput = document.getElementById("editor-font-family");
   const imageFileInput = document.getElementById("image-file-input");
   const videoFileInput = document.getElementById("video-file-input");
   const audioFileInput = document.getElementById("audio-file-input");
@@ -40,6 +41,8 @@
   const publishSummary = document.getElementById("publish-summary");
   const publishFilename = document.getElementById("publish-filename");
   const publishDestination = document.getElementById("publish-destination");
+  const writingGuidesModal = document.getElementById("writing-guides-modal");
+  const writingGuideContent = document.getElementById("writing-guide-content");
 
   let activeView = "compose";
   let savedSelection = null;
@@ -574,6 +577,106 @@
 
   function setBlock(tagName) {
     exec("formatBlock", tagName);
+  }
+
+  function setFontFamily(fontName) {
+    if (!fontName) {
+      setStatus("Site font selected");
+      return;
+    }
+    exec("fontName", fontName);
+  }
+
+  function toggleSpellcheck(button) {
+    const enabled = editor.getAttribute("spellcheck") !== "false";
+    const nextEnabled = !enabled;
+    editor.setAttribute("spellcheck", String(nextEnabled));
+    button.textContent = nextEnabled ? "Spellcheck On" : "Spellcheck Off";
+    setStatus(nextEnabled ? "Spellcheck on" : "Spellcheck off");
+  }
+
+  function renderGuideMarkdown(markdown) {
+    const lines = markdown.replace(/\r/g, "").split("\n");
+    const html = [];
+    let listOpen = false;
+    let tableRows = [];
+
+    function closeList() {
+      if (!listOpen) return;
+      html.push("</ul>");
+      listOpen = false;
+    }
+
+    function closeTable() {
+      if (!tableRows.length) return;
+      html.push("<table><tbody>");
+      tableRows.forEach(row => {
+        const cells = row.split("|").slice(1, -1).map(cell => cell.trim());
+        if (!cells.length || cells.every(cell => /^-+$/.test(cell.replace(/\s/g, "")))) return;
+        html.push(`<tr>${cells.map(cell => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`);
+      });
+      html.push("</tbody></table>");
+      tableRows = [];
+    }
+
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        closeList();
+        closeTable();
+        return;
+      }
+      if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
+        closeList();
+        tableRows.push(trimmed);
+        return;
+      }
+      closeTable();
+      if (trimmed.startsWith("## ")) {
+        closeList();
+        html.push(`<h3>${escapeHtml(trimmed.slice(3))}</h3>`);
+        return;
+      }
+      if (trimmed.startsWith("# ")) {
+        closeList();
+        html.push(`<h2>${escapeHtml(trimmed.slice(2))}</h2>`);
+        return;
+      }
+      if (trimmed.startsWith("- ")) {
+        if (!listOpen) {
+          html.push("<ul>");
+          listOpen = true;
+        }
+        html.push(`<li>${escapeHtml(trimmed.slice(2))}</li>`);
+        return;
+      }
+      closeList();
+      html.push(`<p>${escapeHtml(trimmed)}</p>`);
+    });
+    closeList();
+    closeTable();
+    return html.join("");
+  }
+
+  async function openWritingGuides(fileName = "choosing-a-contribution-type.md") {
+    writingGuidesModal.hidden = false;
+    await loadWritingGuide(fileName);
+  }
+
+  async function loadWritingGuide(fileName) {
+    const buttons = writingGuidesModal.querySelectorAll("[data-guide-file]");
+    buttons.forEach(button => button.classList.toggle("is-active", button.dataset.guideFile === fileName));
+    writingGuideContent.innerHTML = `<p class="access-note">Loading guide...</p>`;
+    try {
+      const response = await fetch(`contributor-guidelines/${fileName}`, { cache: "no-store" });
+      if (!response.ok) throw new Error("Guide unavailable");
+      writingGuideContent.innerHTML = renderGuideMarkdown(await response.text());
+    } catch (error) {
+      writingGuideContent.innerHTML = `
+        <h2>Writing Guides</h2>
+        <p>The guide files could not be loaded in this browser preview. Open the contributor-guidelines folder to review the writing standards.</p>
+      `;
+    }
   }
 
   function insertHtml(html) {
@@ -1113,6 +1216,9 @@ ${buildArticleHtml()}
     if (action === "media-close") closeMediaModal();
     if (action === "contributors") openContributorManager();
     if (action === "contributors-close") document.getElementById("contributors-modal")?.remove();
+    if (action === "writing-guides") openWritingGuides();
+    if (action === "writing-guides-close") writingGuidesModal.hidden = true;
+    if (action === "spellcheck-toggle") toggleSpellcheck(button);
     if (action === "image-upload") imageFileInput.click();
     if (action === "image-url") insertImageUrl();
     if (action === "video-upload") videoFileInput.click();
@@ -1147,6 +1253,11 @@ ${buildArticleHtml()}
 
   document.getElementById("editor-block-format").addEventListener("change", event => {
     setBlock(event.target.value);
+  });
+
+  fontFamilyInput?.addEventListener("change", event => {
+    setFontFamily(event.target.value);
+    event.target.value = "";
   });
 
   editor.addEventListener("input", () => {
@@ -1194,6 +1305,11 @@ ${buildArticleHtml()}
   });
   publishModal.addEventListener("click", event => {
     if (event.target === publishModal) closePublishModal();
+  });
+  writingGuidesModal.addEventListener("click", event => {
+    if (event.target === writingGuidesModal) writingGuidesModal.hidden = true;
+    const guideButton = event.target.closest("[data-guide-file]");
+    if (guideButton) loadWritingGuide(guideButton.dataset.guideFile);
   });
   resizeHandle?.addEventListener("pointerdown", startResize);
   resizeHandle?.addEventListener("pointermove", moveResize);

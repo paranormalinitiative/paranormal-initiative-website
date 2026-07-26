@@ -7,6 +7,7 @@ Contributions should be serious, readable, clearly documented, and honest about 
 ## Contribution Types
 
 - [Choosing a Contribution Type](choosing-a-contribution-type.md)
+- [Sample Templates](sample-templates.md)
 - [Research Papers](research-papers.md)
 - [Experimental Reports](experimental-reports.md)
 - [Technical Notes](technical-notes.md)
