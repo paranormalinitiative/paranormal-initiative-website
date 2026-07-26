@@ -1294,12 +1294,31 @@ ${buildArticleHtml()}
   }
 
   function renderContentLibrarySection(title, items) {
+    const countLabel = `${items.length} ${items.length === 1 ? "item" : "items"}`;
+    const emptyMessages = {
+      Drafts: "No drafts yet. Saved drafts will appear here so you can keep working on them.",
+      Published: "No published articles yet. Once you publish from the editor, those articles will appear here.",
+      "Contributor Profile Site Pages": "No legacy site pages found for this profile."
+    };
     if (!items.length) {
-      return `<section class="content-library-section"><h4>${escapeHtml(title)}</h4><p class="access-note">No ${escapeHtml(title.toLowerCase())} yet.</p></section>`;
+      return `
+        <section class="content-library-section">
+          <div class="content-library-section-header">
+            <h4>${escapeHtml(title)}</h4>
+            <span>${escapeHtml(countLabel)}</span>
+          </div>
+          <div class="content-library-empty">
+            <p>${escapeHtml(emptyMessages[title] || `No ${title.toLowerCase()} yet.`)}</p>
+          </div>
+        </section>
+      `;
     }
     return `
       <section class="content-library-section">
-        <h4>${escapeHtml(title)}</h4>
+        <div class="content-library-section-header">
+          <h4>${escapeHtml(title)}</h4>
+          <span>${escapeHtml(countLabel)}</span>
+        </div>
         ${items.map(article => `
           <div class="content-library-row" data-article-id="${escapeHtml(article.id)}" ${article.legacy ? `data-legacy="true"` : ""}>
             <div>
