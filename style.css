@@ -2949,15 +2949,7 @@ footer {
 }
 
 .content-library-empty {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    align-items: center;
-    height: 76px;
-    padding: 12px;
-    background: #090f14;
-    border: 1px solid #263646;
-    border-radius: 4px;
+    min-height: 76px;
 }
 
 .content-library-empty p {
@@ -2990,7 +2982,7 @@ footer {
 }
 
 .content-library-row[data-legacy="true"] {
-    border-color: rgba(85, 200, 255, 0.42);
+    border-color: #263646;
 }
 
 .legacy-archive-note {
@@ -3037,6 +3029,10 @@ footer {
     flex-wrap: wrap;
     gap: 8px;
     justify-content: flex-end;
+}
+
+.content-library-actions-placeholder {
+    min-width: 118px;
 }
 
 .writing-guide-content h2 {

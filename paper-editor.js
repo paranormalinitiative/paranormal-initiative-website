@@ -1307,8 +1307,9 @@ ${buildArticleHtml()}
             <h4>${escapeHtml(title)}</h4>
             <span>${escapeHtml(countLabel)}</span>
           </div>
-          <div class="content-library-empty">
+          <div class="content-library-row content-library-empty">
             <p>${escapeHtml(emptyMessages[title] || `No ${title.toLowerCase()} yet.`)}</p>
+            <div class="content-library-actions content-library-actions-placeholder" aria-hidden="true"></div>
           </div>
         </section>
       `;
