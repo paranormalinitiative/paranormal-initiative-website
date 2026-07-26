@@ -539,9 +539,9 @@
         <section class="editor-access-card public-profile-work">
           <p class="portal-kicker">Contributions</p>
           <h2>Published Work</h2>
-          <div class="invite-link-list">
+          <div class="invite-link-list public-profile-work-grid">
             ${contributions.length ? contributions.map(article => `
-              <div class="invite-link-row">
+              <div class="invite-link-row public-profile-work-item">
                 <strong>${escapeHtml(article.title)}</strong>
                 <span>${escapeHtml(article.subtitle || "Research paper")}</span>
                 <a class="portal-button portal-button-secondary" href="${escapeHtml(article.href)}">Open Paper</a>
