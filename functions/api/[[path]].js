@@ -444,7 +444,7 @@ async function handlePublicContributorProfile(request, env) {
   const user = await getUserByUsername(env, username);
   if (!user || !user.active) return json({ error: "Contributor profile not found." }, 404);
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, href, title, subtitle, article_type AS contributionType, destination, status, created_at AS createdAt
+    SELECT id, href, title, subtitle, article_type AS contributionType, destination, source, status, created_at AS createdAt
     FROM articles
     WHERE created_by = ? AND status = 'published'
     ORDER BY created_at DESC

@@ -202,6 +202,7 @@ Recently completed:
 - Change Password/account settings were added to the member dashboard with Cloudflare D1 and local-preview fallback behavior.
 - Published article author names link to public contributor profiles when the article has a contributor username.
 - Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.
+- Legacy authored pages now behave as a conversion queue in My Content. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy.
 
 ## Validation Commands
 

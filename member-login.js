@@ -68,13 +68,24 @@
     return window.TPILegacyContributions?.forProfile(profile) || [];
   }
 
+  function normalizeLegacyHref(value) {
+    return String(value || "").trim().replace(/^\.?\//, "");
+  }
+
+  function filterUnconvertedLegacyContributions(legacyArticles, articles) {
+    const convertedSources = new Set((articles || [])
+      .map(article => normalizeLegacyHref(article.source))
+      .filter(Boolean));
+    return (legacyArticles || []).filter(article => !convertedSources.has(normalizeLegacyHref(article.href)));
+  }
+
   function getProfileContributions(profile, articles) {
     const dynamicArticles = (articles || []).map(article => ({
       title: article.title || "Untitled Research Paper",
       subtitle: [article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "),
       href: article.href || `published-article.html?id=${encodeURIComponent(article.id)}`
     }));
-    const legacyArticles = getLegacyContributions(profile);
+    const legacyArticles = filterUnconvertedLegacyContributions(getLegacyContributions(profile), articles);
     const seen = new Set();
     return [...dynamicArticles, ...legacyArticles].filter(article => {
       const key = article.href || article.title;
@@ -84,8 +95,8 @@
     });
   }
 
-  function getLegacyDashboardArticles(profile) {
-    return getLegacyContributions(profile).map(article => ({
+  function getLegacyDashboardArticles(profile, articles = []) {
+    return filterUnconvertedLegacyContributions(getLegacyContributions(profile), articles).map(article => ({
       id: `legacy:${article.href}`,
       title: article.title,
       subtitle: article.subtitle,
@@ -477,7 +488,7 @@
       }
     }
 
-    const legacyArticles = getLegacyDashboardArticles(user);
+    const legacyArticles = getLegacyDashboardArticles(user, articles);
     const seen = new Set();
     const drafts = articles.filter(article => article.status !== "published");
     const published = [...articles.filter(article => article.status === "published"), ...legacyArticles].filter(article => {

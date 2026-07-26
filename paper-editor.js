@@ -212,6 +212,16 @@
     }));
   }
 
+  function normalizeLegacyHref(value) {
+    return String(value || "").trim().replace(/^\.?\//, "");
+  }
+
+  function getConvertedLegacySources(articles) {
+    return new Set((articles || [])
+      .map(article => normalizeLegacyHref(article.source))
+      .filter(Boolean));
+  }
+
   function getSessionUser() {
     const username = localStorage.getItem(ACCESS_SESSION_KEY);
     if (!username) return null;
@@ -1148,7 +1158,9 @@ ${buildArticleHtml()}
       });
     }
 
-    const legacyArticles = getLegacyEditorArticles(currentUser);
+    const convertedLegacySources = getConvertedLegacySources(articles);
+    const legacyArticles = getLegacyEditorArticles(currentUser)
+      .filter(article => !convertedLegacySources.has(normalizeLegacyHref(article.href)));
     const seen = new Set();
     return [...articles, ...legacyArticles].filter(article => {
       const key = article.href || article.id || article.title;
@@ -1173,7 +1185,7 @@ ${buildArticleHtml()}
           <button type="button" data-action="content-library-close">Close</button>
         </div>
         <div class="media-modal-body content-library-body">
-          <p class="access-note">Open a draft or published contribution to edit it here. Delete removes it from this editor list and your member dashboard.</p>
+          <p class="access-note">Open drafts and published articles to edit them here. Legacy pages are a conversion queue: once a legacy page is saved or published from the editor, it leaves the legacy list.</p>
           <div id="content-library-list" class="content-library-list"><p class="access-note">Loading content...</p></div>
         </div>
       </div>
@@ -1289,7 +1301,7 @@ ${buildArticleHtml()}
     host.innerHTML = `
       ${renderContentLibrarySection("Drafts", drafts)}
       ${renderContentLibrarySection("Published", published)}
-      ${renderContentLibrarySection("Contributor Profile Site Pages", legacy)}
+      ${renderContentLibrarySection("Legacy Conversion Queue", legacy)}
     `;
   }
 
@@ -1298,7 +1310,7 @@ ${buildArticleHtml()}
     const emptyMessages = {
       Drafts: "No drafts yet. Saved drafts will appear here so you can keep working on them.",
       Published: "No published articles yet. Once you publish from the editor, those articles will appear here.",
-      "Contributor Profile Site Pages": "No legacy site pages found for this profile."
+      "Legacy Conversion Queue": "No remaining legacy pages found for this profile."
     };
     if (!items.length) {
       return `
@@ -1324,11 +1336,11 @@ ${buildArticleHtml()}
           <div class="content-library-row" data-article-id="${escapeHtml(article.id)}" ${article.legacy ? `data-legacy="true"` : ""}>
             <div>
               <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
-          <span>${escapeHtml([article.legacy ? "Legacy Archive" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
-          ${article.legacy ? `<em class="legacy-archive-note">Archived site page - open it as-is or import it into the Content Editor.</em>` : ""}
+          <span>${escapeHtml([article.legacy ? "Legacy Conversion" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
+          ${article.legacy ? `<em class="legacy-archive-note">Needs conversion - open it as-is or convert it into an editable Content Editor article.</em>` : ""}
             </div>
             <div class="content-library-actions">
-              <button type="button" data-action="${article.legacy ? "content-import-legacy" : "content-edit"}" data-article-id="${escapeHtml(article.id)}">${article.legacy ? "Import To Editor" : "Edit"}</button>
+              <button type="button" data-action="${article.legacy ? "content-import-legacy" : "content-edit"}" data-article-id="${escapeHtml(article.id)}">${article.legacy ? "Convert" : "Edit"}</button>
               ${article.status === "published" ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open</a>` : ""}
               ${article.legacy ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href)}">Open</a>` : `<button type="button" data-action="content-delete" data-article-id="${escapeHtml(article.id)}">Delete</button>`}
             </div>

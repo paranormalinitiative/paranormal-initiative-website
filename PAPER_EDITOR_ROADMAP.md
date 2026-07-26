@@ -331,6 +331,7 @@ Recently completed:
 - Published article author names link to public contributor profiles when the article has a contributor username.
 - Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.
 - Legacy authored pages can be imported from the Content Editor's My Content library.
+- Legacy authored pages now behave as a conversion queue. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy.
 
 ## Contributor Portal State
 
