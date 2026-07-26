@@ -282,6 +282,8 @@
       replyStatus.textContent = "Sending reply...";
       await window.TPIApi.createForumPost(state.activeTopicId, { body });
       replyBody.value = "";
+      await loadForum();
+      renderCategories();
       await openTopic(state.activeTopicId);
       replyStatus.textContent = "Reply posted.";
     } catch (error) {
