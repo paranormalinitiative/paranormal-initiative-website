@@ -1263,10 +1263,6 @@ footer {
     align-self: flex-start;
 }
 
-.discussion-message-own {
-    align-self: flex-end;
-}
-
 .discussion-message-meta {
     display: flex;
     flex-wrap: wrap;
@@ -1292,13 +1288,6 @@ footer {
     border: 1px solid #263646;
     border-radius: 16px 16px 16px 4px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-}
-
-.discussion-message-own .discussion-bubble {
-    color: #f4f8fb;
-    background: rgba(0, 194, 255, 0.13);
-    border-color: rgba(85, 200, 255, 0.42);
-    border-radius: 16px 16px 4px 16px;
 }
 
 .discussion-reactions {

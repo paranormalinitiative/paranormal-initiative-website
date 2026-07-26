@@ -236,11 +236,9 @@
       return;
     }
 
-    messageList.innerHTML = posts.map((post, index) => {
-      const ownPost = state.activeUser && post.authorUsername === state.activeUser.username;
-      const sideClass = ownPost || index % 3 === 1 ? " discussion-message-own" : "";
+    messageList.innerHTML = posts.map(post => {
       return `
-        <article class="discussion-message${sideClass}">
+        <article class="discussion-message">
           <div class="discussion-message-meta">
             <strong>${escapeHtml(post.authorName || "Community Member")}</strong>
             <span>${escapeHtml(post.authorTitle || "Contributor")} · ${formatDate(post.createdAt)}</span>
