@@ -6,6 +6,10 @@
     return Boolean(target.closest?.("input, textarea, select, [contenteditable='true']"));
   }
 
+  function isLockedSiteChrome(target) {
+    return Boolean(target?.closest?.(".command-header, .command-nav, footer"));
+  }
+
   function isDevCopyMode() {
     return localStorage.getItem("tpiDevCopyMode") === "enabled";
   }
@@ -54,6 +58,11 @@
   }
 
   function block(event) {
+    if (isLockedSiteChrome(event.target)) {
+      event.preventDefault();
+      showNotice();
+      return;
+    }
     if (isCopyAllowed()) return;
     if (isEditableTarget(event.target)) return;
     event.preventDefault();

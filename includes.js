@@ -5,6 +5,10 @@
     return Boolean(editable);
   }
 
+  function isLockedSiteChrome(target) {
+    return Boolean(target?.closest?.(".command-header, .command-nav, footer"));
+  }
+
   function installContentProtection() {
     const blockedEvents = ["contextmenu", "copy", "cut", "dragstart"];
     let devUnlockClicks = 0;
@@ -89,6 +93,10 @@
 
     blockedEvents.forEach(eventName => {
       document.addEventListener(eventName, event => {
+        if (isLockedSiteChrome(event.target)) {
+          event.preventDefault();
+          return;
+        }
         if (isCopyAllowed()) return;
         if (isEditableTarget(event.target)) return;
         event.preventDefault();
@@ -96,12 +104,24 @@
     });
 
     document.addEventListener("selectstart", event => {
+      if (isLockedSiteChrome(event.target)) {
+        event.preventDefault();
+        return;
+      }
       if (isCopyAllowed()) return;
       if (isEditableTarget(event.target)) return;
       event.preventDefault();
     });
 
     document.addEventListener("keydown", event => {
+      if (isLockedSiteChrome(event.target)) {
+        const key = event.key.toLowerCase();
+        const modifier = event.metaKey || event.ctrlKey;
+        if (modifier && ["a", "c", "x", "s", "u", "p"].includes(key)) {
+          event.preventDefault();
+        }
+        return;
+      }
       if (isCopyAllowed()) return;
       if (isEditableTarget(event.target)) return;
 

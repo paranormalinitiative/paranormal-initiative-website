@@ -141,8 +141,25 @@
   }
 
   function setDefaultDraftBody() {
-    editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
+    editor.innerHTML = "<p><br></p>";
     htmlView.value = cleanHtml(editor.innerHTML, true);
+    focusEditorStart();
+  }
+
+  function focusEditorStart() {
+    if (activeView === "html") {
+      htmlView.focus();
+      htmlView.setSelectionRange(0, 0);
+      return;
+    }
+    editor.focus();
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    savedSelection = range.cloneRange();
   }
 
   function isEditorBlank() {
@@ -157,6 +174,7 @@
     document.body.dataset.editorCopyAllowed = "true";
     if (options.applyProfile !== false) applyContributorProfile(user);
     if (options.initializeDraft && isEditorBlank()) setDefaultDraftBody();
+    if (options.focusEditor) focusEditorStart();
     setStatus(`Signed in as ${user.displayName || user.username}`);
     const gate = document.getElementById("editor-access-gate");
     if (gate) gate.remove();
@@ -217,7 +235,7 @@
           website: result.user.website,
           commentSignatureEnabled: result.user.commentSignatureEnabled,
           active: true
-        }, { initializeDraft: true });
+        }, { initializeDraft: true, focusEditor: true });
       } catch (error) {
         form.querySelector(".access-note")?.remove();
         const note = document.createElement("p");
@@ -237,7 +255,7 @@
       form.appendChild(note);
       return;
     }
-    unlockEditor(user, { initializeDraft: true });
+    unlockEditor(user, { initializeDraft: true, focusEditor: true });
   }
 
   function openContributorManager() {
@@ -967,8 +985,7 @@ ${buildArticleHtml()}
 
   function clearDraft() {
     if (!window.confirm("Clear the editor body?")) return;
-    editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
-    htmlView.value = cleanHtml(editor.innerHTML, true);
+    setDefaultDraftBody();
     setStatus("Draft cleared");
   }
 
@@ -1120,7 +1137,7 @@ ${buildArticleHtml()}
             website: result.user.website,
             commentSignatureEnabled: result.user.commentSignatureEnabled,
             active: true
-          }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded });
+          }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
           return;
         }
       } catch (error) {
@@ -1130,14 +1147,14 @@ ${buildArticleHtml()}
 
     const sessionUser = getSessionUser();
     if (sessionUser) {
-      unlockEditor(sessionUser, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded });
+      unlockEditor(sessionUser, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
     } else if (isDevUnlocked()) {
       unlockEditor({
         username: "",
         displayName: "Developer Unlock",
         role: "admin",
         active: true
-      }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded });
+      }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded, focusEditor: !articleLoaded });
     } else {
       showAccessGate();
     }

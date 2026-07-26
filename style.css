@@ -53,6 +53,17 @@ select,
     user-drag: auto;
 }
 
+.dev-copy-mode .command-header,
+.dev-copy-mode .command-header *,
+.dev-copy-mode .command-nav,
+.dev-copy-mode .command-nav *,
+.dev-copy-mode footer,
+.dev-copy-mode footer * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 .dev-copy-toast {
     position: fixed;
     right: 18px;
@@ -99,6 +110,9 @@ select,
     border-bottom: 1px solid #1f2a36;
     position: relative;
     overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Animated cyan header scan */
@@ -216,6 +230,9 @@ select,
 
     gap: 7px 8px;
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Links as “command chips” */
@@ -552,6 +569,9 @@ footer {
     border-top: 1px solid #1f2a36;
     color: #6e859c;
     font-size: 13px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* ===== RESEARCH PORTAL EXTENSIONS ===== */
