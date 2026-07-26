@@ -221,6 +221,28 @@
     return `<option value="${escapeHtml(value)}"${value === current ? " selected" : ""}>${escapeHtml(label)}</option>`;
   }
 
+  const publicTitleOptions = [
+    "Founder / Director",
+    "Assistant Director",
+    "Advisory Board Member",
+    "Paranormal Researcher & Investigator",
+    "EVP / ITC Researcher",
+    "Field Investigator",
+    "Technical Researcher",
+    "Historical Researcher",
+    "Evidence Reviewer",
+    "Education & Outreach",
+    "Community Liaison",
+    "Contributor"
+  ];
+
+  function renderPublicTitleOptions(currentTitle) {
+    return [
+      option("", currentTitle, "No leadership title"),
+      ...publicTitleOptions.map(title => option(title, currentTitle))
+    ].join("");
+  }
+
   function encodeInvite(invite) {
     return btoa(JSON.stringify({
       code: invite.code,
@@ -280,7 +302,7 @@
     } else {
       titleInput.readOnly = false;
       if (isProtectedOrgTitle(titleInput.value)) titleInput.value = "";
-      titleInput.placeholder = "Research Contributor";
+      titleInput.placeholder = "Paranormal Researcher & Investigator";
     }
   }
 
@@ -346,18 +368,7 @@
           <span><b>Created</b>${escapeHtml(createdAt)}</span>
         </div>
         <select name="title" aria-label="Public organization title for ${escapeHtml(name)}">
-          ${option("", currentTitle, "No leadership title")}
-          ${option("Founder / Director", currentTitle)}
-          ${option("Assistant Director", currentTitle)}
-          ${option("Advisory Board Member", currentTitle)}
-          ${option("Research Contributor", currentTitle)}
-          ${option("Field Contributor", currentTitle)}
-          ${option("Editor / Reviewer", currentTitle)}
-          ${option("Technical Contributor", currentTitle)}
-          ${option("Education Contributor", currentTitle)}
-          ${option("Community Liaison", currentTitle)}
-          ${option("Researcher", currentTitle)}
-          ${option("Investigator", currentTitle)}
+          ${renderPublicTitleOptions(currentTitle)}
         </select>
         <select name="role" aria-label="Account access for ${escapeHtml(name)}"${canChangeStandardAccess ? "" : " disabled"}>
           ${option("member", currentRole, "Member Access")}
@@ -493,7 +504,7 @@
         ${photoMarkup}
         <div>
           <h2>${escapeHtml(profileName)}</h2>
-          <p class="public-profile-title">${escapeHtml(user.title || "Research Contributor")}</p>
+          <p class="public-profile-title">${escapeHtml(user.title || "Contributor")}</p>
           <p class="member-profile-role">${escapeHtml(getAccountAccessDetail(user.role))}</p>
         </div>
       </div>
