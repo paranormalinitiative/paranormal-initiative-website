@@ -1,6 +1,6 @@
 # The Paranormal Initiative Website - Agent Handoff
 
-Last updated: July 25, 2026
+Last updated: July 26, 2026
 
 ## Project Identity
 
@@ -8,7 +8,37 @@ This repository is the static website for **The Paranormal Initiative**. The sit
 
 The current focus is the **Education Center / Research Library** and the new **Content Editor**. The user wants full research papers, notes, reviews, long-form field papers, and practical investigation material. They do not want short academic-looking summaries.
 
-There is now also a live **Contributor Portal** direction: the Content Editor requires contributor access, invite-only contributors can create accounts, logged-in members land on a private dashboard, contributors can save drafts/publish contributions, and public article comments are being added. See `CONTRIBUTOR_PORTAL_PLAN.md`.
+There is now also a live **Contributor Portal** and **Discussion Portal** direction. The Content Editor requires contributor access, public members can join the forum, invite/admin tools stay hidden from normal visitors, logged-in members land on a private dashboard, contributors can save drafts/publish contributions, and comments/discussion features use Cloudflare D1 when deployed. See `CONTRIBUTOR_PORTAL_PLAN.md` and `CLOUDFLARE_PORTAL_SETUP.md`.
+
+## Current Status - July 26, 2026
+
+- The editor is now named **Content Editor**, not Paper Editor.
+- Public visitors can read the site and public Discussion Portal topics.
+- Normal members can sign in, use their profile/dashboard, and participate in the Discussion Portal.
+- Contributor/editor/admin tools must stay hidden from normal members and public visitors.
+- Contributors can access the Content Editor, save drafts, publish articles, and manage their own content.
+- Owner/admin/director-level tools include member/contributor access management, comment moderation, and forum topic cleanup.
+- The Discussion Portal has a messenger-style layout with categories on the left and topic/chat bubbles on the right.
+- Forum topic badges use blue for topics and green for replies, with member read tracking when `forum_topic_reads` exists.
+- Forum categories now match the Education Center discussion areas, including Investigation Science, Evidence Science & Analysis, Instrumentation & Technology, Environmental Research, EVP & ITC Research, Consciousness & Human Experience, Ethics & Professional Standards, Reporting & Documentation, Community Development & Publication, Technology Development, Artificial Intelligence, Historical & Cultural Research, plus community discussion areas.
+- R2 media upload is already in practical use for profile photos through `tpi-contributor-media`; keep using R2 for uploaded profile/article media and D1 only for records/URLs.
+- Legacy authored pages are treated as archived/conversion items. They can be opened as-is or imported into the Content Editor, then converted into editable D1 article records over time.
+
+## Cloudflare D1 Console Rule
+
+When the user needs to apply a migration in the Cloudflare dashboard, do **not** tell them to paste the migration filename. They need the **full SQL contents**.
+
+Correct path:
+
+```text
+Cloudflare Dashboard -> D1 SQLite Database -> tpi_contributor_portal -> Console -> paste the full SQL text -> Execute
+```
+
+If asked to run or apply a migration, provide the exact SQL block from the file, especially for:
+
+- `migrations/0005_forum_read_tracking.sql`
+- `migrations/0006_account_recovery.sql`
+- `migrations/0007_discussion_education_categories.sql`
 
 ## Non-Negotiable Direction
 
@@ -125,14 +155,14 @@ The editor currently includes:
 - The main public navigation should stay visitor-focused.
 - Public users cannot create their own account freely. Registration requires an invite code.
 - `Contributor Invite` and `Member Login` are footer utility links, not primary public nav items.
-- `Member Login` is for returning contributors only.
+- `Member Login` is for returning members, contributors, admins, and the owner.
 - `Member Dashboard` is private after login and should not be shown as a normal public nav button.
 - Logged-in contributors can reach the dashboard from the header greeting/dashboard control.
 - `contributor-invite.html` is the invite-only setup page: enter invite code first, then create username/password and contributor profile.
 - Owner setup is hidden on `member-login.html` until the site owner's 10-click dev mode is enabled.
 - The site owner should create a real owner account through Cloudflare D1 using the `TPI_OWNER_SETUP_KEY`, then use the dashboard admin tools for invites.
 - The contributor invite page must not show owner/admin tools to normal visitors.
-- System roles are only `contributor`, `admin`, and `owner`. Do not re-add `editor` as a permission role.
+- System access levels are `member`, `contributor`, `admin`, and `owner`. Do not re-add `editor` as a permission role.
 - A contributor can still call themselves Editor, Writer, Researcher, Scientist, PhD, etc. in the public title/credentials field.
 - Contributor profile fields populate the author note settings when logged in.
 - Contributor dashboard sections are split into unpublished drafts and published papers.
@@ -199,12 +229,12 @@ python3 -m http.server 4174
 
 ## Next Agent Priorities
 
-1. Add Cloudflare R2 for media uploads and bind it as `TPI_MEDIA`.
-2. Test the existing authenticated upload API endpoints for profile photos and editor media after R2 is bound.
-3. Verify profile photo upload from computer plus URL fallback against Cloudflare R2.
-4. Replace editor image/video/audio data URLs with R2 upload URLs.
-5. Visually test `member-dashboard.html`, `contributor-profile.html`, `member-login.html`, `contributor-invite.html`, `paper-editor.html`, `published-article.html`, and comment moderation.
-6. Continue converting older legacy pages into the new Content Editor format over time.
+1. Test the full live flow: member login, member dashboard, contributor access, Content Editor, save draft, publish article, public article display, comments, Discussion Portal topics/replies, and admin cleanup.
+2. Make sure normal members cannot see or use admin/contributor tools unless their access is upgraded.
+3. Continue converting older legacy pages into the new Content Editor format over time.
+4. Keep search results clean and useful across public pages and published articles.
+5. Keep the Education Center easy to browse as article volume grows.
+6. Verify profile photo and article media uploads against Cloudflare R2.
 7. Do not reintroduce the permanent preview pane.
 8. Do not reintroduce the short rejected paper headings.
 
@@ -221,8 +251,8 @@ Recently completed:
 
 - R2 upload code is wired, but it will not work until the `tpi-contributor-media` bucket exists and the `TPI_MEDIA` binding is uncommented/deployed.
 - Uploaded editor media can still fall back to data URLs if R2 is unavailable; production should use R2 URLs.
-- Change Password is not implemented yet.
-- Comment moderation/admin queue is not implemented yet.
+- Password reset has a D1 token table and UI/API foundation, but actual email delivery still needs a mail provider.
+- Comment moderation/admin queue is implemented for owner/admin workflow, but still needs live visual testing before broad public launch.
 - Browser popup settings may block Preview because it opens a new window.
 - `document.execCommand` is older browser API but still practical for this lightweight editor. Replace later only if building a full CMS/editor system.
 

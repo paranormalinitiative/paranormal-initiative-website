@@ -1,6 +1,6 @@
 # Cloudflare Contributor Portal Setup
 
-Last updated: July 25, 2026
+Last updated: July 26, 2026
 
 ## What Was Added
 
@@ -10,6 +10,11 @@ The static prototype now has a Cloudflare-ready backend:
 - Cloudflare Pages Function API: `functions/api/[[path]].js`
 - D1 schema: `migrations/0001_contributor_portal.sql`
 - Contributor profile schema: `migrations/0002_contributor_profiles.sql`
+- Comment moderation schema: `migrations/0003_comment_moderation.sql`
+- Discussion Portal schema: `migrations/0004_discussion_portal.sql`
+- Forum read tracking schema: `migrations/0005_forum_read_tracking.sql`
+- Account recovery schema: `migrations/0006_account_recovery.sql`
+- Education-aligned forum categories: `migrations/0007_discussion_education_categories.sql`
 - Front-end API helper: `api-client.js`
 - D1 binding in `wrangler.toml`
 
@@ -28,6 +33,8 @@ The API supports:
 - R2-backed profile photo upload endpoint
 - R2-backed article media upload endpoint
 - private R2 media serving through `/api/media/...`
+- Discussion Portal categories, topics, replies, read tracking, and admin cleanup controls
+- account recovery/password reset token foundation
 
 ## Cloudflare Storage Choice
 
@@ -99,15 +106,65 @@ member-login.html
 
 8. Go to `member-login.html`, sign in as owner/admin, then use Member Dashboard admin tools to create invite codes.
 
-## Next Required Cloudflare Step: R2 Uploads
+## Important D1 Console Rule
 
-Add an R2 bucket for uploads. Suggested name:
+When using the Cloudflare dashboard Console, paste the **full SQL contents**, not the migration filename.
+
+Do **not** paste this by itself:
+
+```text
+migrations/0007_discussion_education_categories.sql
+```
+
+Instead:
+
+1. Open Cloudflare.
+2. Go to **Storage & Databases**.
+3. Open **D1 SQLite Database**.
+4. Open `tpi_contributor_portal`.
+5. Click **Console**.
+6. Paste the full SQL text from the migration file.
+7. Click **Execute**.
+
+If Cloudflare Console rejects a multi-statement file, paste and execute one complete SQL statement at a time.
+
+## Current Required D1 Migration SQL
+
+The latest category migration is `migrations/0007_discussion_education_categories.sql`. Paste this full SQL into the D1 Console:
+
+```sql
+INSERT INTO forum_categories (id, title, description, sort_order, active) VALUES
+  ('investigation', 'Investigation Science', 'Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows.', 10, 1),
+  ('evidence-science', 'Evidence Science & Analysis', 'Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings.', 20, 1),
+  ('equipment', 'Instrumentation & Technology', 'Equipment literacy, sensor behavior, EMF, environmental tools, recording systems, and limitations.', 30, 1),
+  ('environmental-research', 'Environmental Research', 'Baseline studies, weather, buildings, sound, atmospheric conditions, human factors, and correlation.', 40, 1),
+  ('evp-itc', 'EVP & ITC Research', 'EVP methodology, ITC experimentation, controls, source-material transparency, ACS, phonemes, and allophones.', 50, 1),
+  ('consciousness', 'Consciousness & Human Experience', 'NDE research, parapsychology, psi and psionics, consciousness studies, and witness-centered experiences.', 60, 1),
+  ('ethics-standards', 'Ethics & Professional Standards', 'Client care, witness respect, confidentiality, responsible disclosure, professional conduct, and accountability.', 70, 1),
+  ('reporting-documentation', 'Reporting & Documentation', 'Case reports, careful language, research transparency, evidence presentation, logs, and file preservation.', 80, 1),
+  ('community-development', 'Community Development & Publication', 'Contributor resources, mentorship, publication, public outreach, respectful discussion, and ongoing field development.', 90, 1),
+  ('technology-development', 'Technology Development', 'App workflows, research software, digital evidence management, platform planning, and responsible tool development.', 100, 1),
+  ('science-ai', 'Artificial Intelligence', 'AI literacy, responsible use, source verification, research support, disclosure, safeguards, and investigator judgment.', 110, 1),
+  ('locations', 'Historical & Cultural Research', 'Haunted locations, local legends, folklore, public records, archival studies, and historical context.', 120, 1),
+  ('experiences', 'Your Paranormal Experiences', 'Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters.', 130, 1),
+  ('metaphysics', 'Spirituality, Metaphysics, OBE & NDE', 'Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making.', 140, 1),
+  ('general', 'General Discussion', 'Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation.', 150, 1)
+ON CONFLICT(id) DO UPDATE SET
+  title = excluded.title,
+  description = excluded.description,
+  sort_order = excluded.sort_order,
+  active = excluded.active;
+```
+
+## R2 Uploads
+
+R2 is used for uploaded media. The user has confirmed an R2 bucket exists:
 
 ```text
 tpi-contributor-media
 ```
 
-Dashboard path:
+If this ever needs to be recreated, use this dashboard path:
 
 1. Open Cloudflare.
 2. Go to **Storage & Databases**.
@@ -120,7 +177,7 @@ tpi-contributor-media
 ```
 
 6. Keep the default/private bucket behavior. Contributors do not need Cloudflare accounts.
-7. After the bucket exists, update the site code by uncommenting the R2 binding block in `wrangler.toml`.
+7. After the bucket exists, update the site code by confirming the R2 binding block in `wrangler.toml`.
 
 Then add an R2 binding to `wrangler.toml`, for example:
 
@@ -130,7 +187,9 @@ binding = "TPI_MEDIA"
 bucket_name = "tpi-contributor-media"
 ```
 
-The binding is already present as a commented block in `wrangler.toml`. Do not uncomment it until the bucket exists in Cloudflare, because a missing bound bucket can break deployment.
+If the binding is commented in `wrangler.toml`, do not uncomment it until the bucket exists in Cloudflare, because a missing bound bucket can break deployment.
+
+Current live note: the user has confirmed an R2 bucket named `tpi-contributor-media` exists and profile media is being stored under object paths such as `articles/todd-wayne/2026-07-26/...`. Continue using this bucket for profile photos and article media.
 
 After the bucket exists, these API endpoints are already wired:
 

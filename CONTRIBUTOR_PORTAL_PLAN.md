@@ -1,10 +1,10 @@
 # Contributor Portal, Login, Publishing, and Comments Plan
 
-Last updated: July 25, 2026
+Last updated: July 26, 2026
 
 ## Purpose
 
-The Research Paper Editor should eventually become a contributor publishing tool for The Paranormal Initiative. The public Education Center can link to the editor, but opening the editor should require contributor access before someone can submit research papers, notes, images, or videos.
+The Content Editor is the contributor publishing tool for The Paranormal Initiative. The public Education Center can describe the editor, but opening the editor requires contributor access before someone can submit research papers, notes, images, or videos.
 
 The user also wants public comments on actual posts/articles, with optional anonymous commenting. Public visitors should not need to become members.
 
@@ -16,25 +16,36 @@ This repository is currently a static site. Static files can show a login screen
 
 Real login needs a backend or hosted auth provider.
 
-Current state note: a Cloudflare-ready backend scaffold has been added. The editor uses a login gate, the site owner's 10-click dev copy mode bypasses the editor gate while building, contributor registration is invite-only, and Cloudflare D1 stores contributor accounts, invite codes, sessions, profile text, draft/published article records, comments, and replies. Local `localStorage` behavior remains only as a fallback for local preview.
+Current state note: a Cloudflare-ready backend scaffold has been added. The editor uses a contributor gate, the site owner's 10-click dev copy mode bypasses locks while building, contributor access is admin-managed, public members can use the Discussion Portal, and Cloudflare D1 stores member/contributor accounts, invite codes, sessions, profile text, draft/published article records, comments, replies, forum topics, forum replies, and read tracking. Local `localStorage` behavior remains only as a fallback for local preview.
 
 Chosen secure option:
 
 - Cloudflare Pages Functions + D1 for accounts, invites, articles, comments, and replies.
 - Cloudflare R2 for uploaded image/video/audio/document/AI-generated files.
 
+## Current Access Model
+
+- Public visitor: can browse public pages, read public articles, use public search, and read Discussion Portal content.
+- Member: can sign in, maintain a profile/dashboard, and create/reply to Discussion Portal topics.
+- Contributor: can do member actions plus open the Content Editor, save drafts, publish articles, and manage their own content.
+- Admin: can manage member/contributor access, invites, comments, and forum cleanup.
+- Owner: full control, including assigning owner/admin access.
+
+Normal members must not see Content Editor tools, contributor tools, invite tools, comment moderation tools, or admin/forum cleanup panels.
+
 ## Desired User Flow
 
 ### Contributor Access
 
-1. User clicks **Research Paper Editor** in the Education Center.
+1. User clicks **Content Editor** in the Education Center.
 2. If not logged in, they see a login screen.
-3. Contributor enters username/email and password.
-4. If approved, they can open the editor.
-5. Their author fields can auto-fill from their contributor profile.
-6. They draft a paper, add images/video, choose destination/category, and can save draft/unpublished work.
-7. The editor autosaves drafts while they work.
-8. When ready, they click **Publish Article** to make the paper live in the selected destination.
+3. Member/contributor enters username/email and password.
+4. If the account has contributor/admin/owner access, they can open the editor.
+5. If the account is a normal member, they are told contributor access is required.
+6. Their author fields can auto-fill from their contributor profile.
+7. They draft a paper, add images/video, choose destination/category, and can save draft/unpublished work.
+8. The editor autosaves drafts while they work.
+9. When ready, they click **Publish Article** to make the paper live in the selected destination.
 
 ### Admin / Add Contributor
 
@@ -44,13 +55,15 @@ Owner/admin needs a way to:
 - Edit contributor
 - Disable contributor
 - Reset password / send invite
-- Assign role
+- Assign member/contributor/admin/owner access
+- Assign public leadership/professional title
 - Generate invite code
 - Review submitted papers
 - Approve, reject, or request edits
 
 System permission roles:
 
+- Member
 - Contributor
 - Admin
 - Owner
@@ -88,9 +101,11 @@ Current prototype:
 7. Contributor can choose whether their display name and title should be used automatically on comments and replies.
 8. After setup, they use `member-login.html` and land on `member-dashboard.html`.
 
-Cloudflare implementation note: `worker.js`, `functions/api/[[path]].js`, `migrations/0001_contributor_portal.sql`, and `migrations/0002_contributor_profiles.sql` are now present. See `CLOUDFLARE_PORTAL_SETUP.md` for D1 setup, migration, and owner bootstrap instructions.
+Cloudflare implementation note: `worker.js`, `functions/api/[[path]].js`, `migrations/0001_contributor_portal.sql` through `migrations/0007_discussion_education_categories.sql` are now present. See `CLOUDFLARE_PORTAL_SETUP.md` for D1 setup, migration SQL, and owner bootstrap instructions.
 
-These fields should populate the Research Paper Editor Post Settings.
+Cloudflare Console note: when using the dashboard D1 Console, paste the full SQL contents from a migration file. Do not paste the filename.
+
+These fields should populate the Content Editor Post Settings.
 
 ## Publishing Model
 
@@ -168,6 +183,39 @@ Recommended statuses:
 
 Moderation should be required before public display, especially for anonymous comments.
 
+## Discussion Portal
+
+The Discussion Portal is the community forum. It uses the same member login session as the rest of the site.
+
+Current model:
+
+- Public visitors can read.
+- Signed-in members can create topics and reply.
+- Categories stay on the left in a collapsible list.
+- The active topic opens on the right with messenger-style bubbles.
+- Blue topic badges and green reply badges show category activity.
+- Member-specific read tracking uses `forum_topic_reads`.
+- Leadership/admin cleanup tools can stop, mark inactive, delete, or reopen topics.
+- Normal members do not get admin cleanup controls.
+
+Forum categories now align with the Education Center plus community discussion areas:
+
+- Investigation Science
+- Evidence Science & Analysis
+- Instrumentation & Technology
+- Environmental Research
+- EVP & ITC Research
+- Consciousness & Human Experience
+- Ethics & Professional Standards
+- Reporting & Documentation
+- Community Development & Publication
+- Technology Development
+- Artificial Intelligence
+- Historical & Cultural Research
+- Your Paranormal Experiences
+- Spirituality, Metaphysics, OBE & NDE
+- General Discussion
+
 ## Public Comment UI
 
 Each article page should eventually show:
@@ -199,15 +247,13 @@ Admin/owner needs:
 
 ## Recommended Implementation Order
 
-1. Add Cloudflare R2 bucket/binding for media uploads.
-2. Build authenticated upload API endpoints.
-3. Replace profile photo URL-only behavior with upload-from-computer plus URL.
-4. Replace editor media data URLs with R2 uploads.
-5. Add change-password/account settings in dashboard.
-6. Add author-name links from papers/comments to public contributor profile.
-7. Continue improving paper edit workflow and permissions.
-8. Add comment moderation/admin tools.
-9. Add optional submit/review queue if direct publishing becomes too permissive.
+1. Live-test login, profile, dashboard, forum, Content Editor, save draft, publish article, comments, and admin cleanup.
+2. Confirm normal members cannot see or use contributor/admin tools.
+3. Verify R2 profile photo and article-media upload on the deployed site.
+4. Continue improving paper edit workflow and permissions.
+5. Continue converting older legacy pages into Content Editor/D1 article records.
+6. Add real email delivery for password reset.
+7. Add optional submit/review queue if direct publishing becomes too permissive.
 
 ## Do Not Do
 
@@ -215,4 +261,4 @@ Admin/owner needs:
 - Do not fake secure login with a client-side password check.
 - Do not allow anonymous comments to publish instantly without moderation.
 - Do not allow contributors to overwrite live articles without role checks.
-- Do not make the Research Paper Editor public-writeable.
+- Do not make the Content Editor public-writeable.

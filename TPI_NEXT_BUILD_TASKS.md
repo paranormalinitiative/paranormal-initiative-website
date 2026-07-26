@@ -1,6 +1,6 @@
 # TPI Contributor Portal - Next Build Tasks
 
-Last updated: July 25, 2026
+Last updated: July 26, 2026
 
 ## Read This First
 
@@ -14,7 +14,7 @@ Do not use these rejected headings in research papers:
 - Applied Method
 - Conclusion
 
-The research paper system must support full papers, full contributor profiles, drafts, publishing, uploaded media, comments, and invite-only contributor accounts.
+The research paper system must support full papers, full contributor profiles, drafts, publishing, uploaded media, comments, invite/admin-managed contributor accounts, public member accounts, and the Discussion Portal.
 
 ## What Is Already Built
 
@@ -25,11 +25,17 @@ The research paper system must support full papers, full contributor profiles, d
   - `migrations/0001_contributor_portal.sql`
   - `migrations/0002_contributor_profiles.sql`
   - `migrations/0003_comment_moderation.sql`
+  - `migrations/0004_discussion_portal.sql`
+  - `migrations/0005_forum_read_tracking.sql`
+  - `migrations/0006_account_recovery.sql`
+  - `migrations/0007_discussion_education_categories.sql`
 - D1 binding in `wrangler.toml`
 - Member login page: `member-login.html`
 - Contributor invite page: `contributor-invite.html`
 - Private member dashboard: `member-dashboard.html`
 - Public contributor profile page: `contributor-profile.html`
+- Discussion Portal page: `community-forum.html`
+- Discussion Portal script: `community-forum.js`
 - R2 upload API endpoints in `functions/api/[[path]].js`
 - Content editor page: `paper-editor.html`
 - Editor script: `paper-editor.js`
@@ -62,6 +68,22 @@ R2 must store uploaded files:
 
 Do not store large media files in D1. D1 should only store the media URL/key.
 
+## Cloudflare D1 Console Rule
+
+When the user is applying a migration through the Cloudflare dashboard, give them the **full SQL contents** to paste into the D1 Console. Do not tell them to paste a filename such as:
+
+```text
+migrations/0007_discussion_education_categories.sql
+```
+
+Correct dashboard path:
+
+```text
+Cloudflare Dashboard -> D1 SQLite Database -> tpi_contributor_portal -> Console -> paste the full SQL text -> Execute
+```
+
+For multi-statement migrations, if Cloudflare Console complains, paste and execute one complete SQL statement at a time.
+
 ## Navigation Rules
 
 Primary public navigation should stay focused on visitors: what TPI is, research areas, search, education, standards, contact, and public resources.
@@ -69,20 +91,23 @@ Primary public navigation should stay focused on visitors: what TPI is, research
 Contributor tools should stay available but out of the primary public nav:
 
 - `Contributor Invite` belongs in the footer utility links and is only for people who already received an invite code/link.
-- `Member Login` belongs in the footer utility links and is for returning contributors.
+- `Member Login` belongs in the footer utility links and is for returning members, contributors, admins, and the owner.
 - `Member Dashboard` is private after login and should not appear as a public navigation item.
 
 Logged-in contributors can reach the dashboard from the header greeting/dashboard control or after signing in through `member-login.html`.
 
-## Role Rules
+## Access And Title Rules
 
-System roles:
+System access levels:
 
+- `member`: can maintain a profile and participate in the Discussion Portal only.
 - `contributor`: can create/edit/save/publish their own papers and edit their own profile.
-- `admin`: can do contributor work and generate/manage invites.
-- `owner`: Todd/full control.
+- `admin`: can do contributor work, generate/manage invites, moderate comments/forum items, and manage member/contributor access.
+- `owner`: Todd/full control, including assigning owner/admin access.
 
 Do not add `editor` as a system permission role. If someone wants to call themselves Editor, Writer, Researcher, Scientist, PhD, Founder, etc., that belongs in the public title/credentials profile field.
+
+Public-facing titles are separate from access levels. Current public title options include Founder / Director, Assistant Director, Advisory Board Member, Paranormal Researcher & Investigator, EVP / ITC Researcher, Field Investigator, Technical Researcher, Historical Researcher, Evidence Reviewer, Education & Outreach, Community Liaison, and Contributor.
 
 ## Dashboard Requirements
 
@@ -187,14 +212,51 @@ Comments need:
 - moderation status
 - admin/owner moderation tools before open public launch
 
+## Discussion Portal Requirements
+
+The Discussion Portal is a dedicated community forum page with a messenger-style reading layout.
+
+Current rules:
+
+- Public visitors can read.
+- Signed-in members can create topics and reply.
+- Contributors/admin/owner use the same login session as the main site; they should not have to log in twice.
+- Forum categories live on the left and remain collapsible.
+- Topic/reply content opens on the right as chat-style bubbles.
+- Blue badge/icon means topics.
+- Green badge/icon means replies.
+- Badge brightness should reflect read/unread when the read-tracking table is present.
+- Person names in forum posts should open public contributor/member profiles where possible.
+- Copy/paste should work inside the forum writing area.
+- Admin/director tools can stop, mark inactive, delete, or reopen a topic.
+- Normal members cannot delete public threads. At most they may close/stop their own thread if that remains desired.
+
+Current category set:
+
+- Investigation Science
+- Evidence Science & Analysis
+- Instrumentation & Technology
+- Environmental Research
+- EVP & ITC Research
+- Consciousness & Human Experience
+- Ethics & Professional Standards
+- Reporting & Documentation
+- Community Development & Publication
+- Technology Development
+- Artificial Intelligence
+- Historical & Cultural Research
+- Your Paranormal Experiences
+- Spirituality, Metaphysics, OBE & NDE
+- General Discussion
+
 ## Next Implementation Order
 
-1. Create Cloudflare R2 bucket `tpi-contributor-media`.
-2. Uncomment the `TPI_MEDIA` R2 binding in `wrangler.toml` after the bucket exists.
-3. Deploy and test profile photo upload from the member dashboard.
-4. Replace editor data-URL media storage with the existing R2 article-media endpoint.
-5. Visually test dashboard, public profile, invite, login, editor, published article pages, and comment moderation.
-6. Continue converting older legacy pages into the new Content Editor format over time.
+1. Live-test member login, dashboard, forum, contributor gate, Content Editor, save draft, publish article, comments, and admin cleanup.
+2. Confirm normal members cannot see admin tools or Content Editor access until upgraded.
+3. Verify R2 profile photo upload and article media upload on the deployed site.
+4. Keep Discussion Portal category badges and read/unread behavior clean.
+5. Continue converting older legacy pages into the new Content Editor format over time.
+6. Refine search/Education Center browsing as the article library grows.
 
 Recently completed:
 
@@ -204,6 +266,9 @@ Recently completed:
 - Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.
 - Legacy authored pages now behave as a conversion queue in My Content. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy.
 - Legacy conversion records now include best-fit destination and contribution type metadata, so Convert pre-fills the editor destination/type before saving or publishing.
+- The Discussion Portal was added with member posting, category browsing, chat-style topic display, leadership/admin cleanup controls, and Education Center-aligned categories.
+- Account recovery/password reset table and UI/API foundation were added, but email delivery is not connected yet.
+- Member/contributor/admin access boundaries were tightened so normal members do not see contributor/editor/admin tools.
 
 ## Validation Commands
 
@@ -212,6 +277,8 @@ Run these after changes:
 ```bash
 node --check paper-editor.js
 node --check member-login.js
+node --check member-dashboard.js
+node --check community-forum.js
 node --check includes.js
 node --check published-article.js
 node --check api-client.js
@@ -232,12 +299,13 @@ http://127.0.0.1:4174/member-dashboard.html
 http://127.0.0.1:4174/contributor-invite.html
 http://127.0.0.1:4174/contributor-profile.html
 http://127.0.0.1:4174/paper-editor.html
+http://127.0.0.1:4174/community-forum.html
 ```
 
 ## Do Not Do
 
 - Do not make public visitors create accounts just to comment.
-- Do not let anyone self-register without an invite.
+- Do not let normal members see contributor/editor/admin tools.
 - Do not show owner tools to normal visitors.
 - Do not put Member Dashboard in public navigation.
 - Do not store passwords in JavaScript.

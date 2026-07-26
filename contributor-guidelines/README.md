@@ -4,6 +4,8 @@ The Paranormal Initiative publishes research papers, field articles, experimenta
 
 Contributions should be serious, readable, clearly documented, and honest about limitations. The goal is not to force every contributor into the same academic format. The goal is to help each piece land in the clearest form for what it is trying to do.
 
+These guidelines support the website's **Content Editor** writing guides. A contributor should be able to open a guide, read the expected style, and use the matching template as a starting point inside the editor.
+
 ## Contribution Types
 
 - [Choosing a Contribution Type](choosing-a-contribution-type.md)
@@ -34,6 +36,17 @@ When a contribution could fit more than one category, choose the primary purpose
 - If it examines audio, photo, video, screenshots, files, timestamps, or possible contamination, treat it as a media review.
 
 Labels can be used to show secondary subjects such as EVP, ITC, equipment, ethics, consciousness, anomalous experience, methodology, evidence review, or environmental factors.
+
+The current Content Editor article-type choices should stay aligned with these guide categories:
+
+- Research Paper
+- Experimental Report
+- Technical Note
+- Research Note
+- Field Article
+- Case / Location Study
+- Review Paper
+- Media Review
 
 ## Shared Writing Standard
 

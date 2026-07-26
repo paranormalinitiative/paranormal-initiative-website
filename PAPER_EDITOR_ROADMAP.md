@@ -1,6 +1,6 @@
 # Content Editor Roadmap
 
-Last updated: July 25, 2026
+Last updated: July 26, 2026
 
 ## Goal
 
@@ -16,7 +16,7 @@ The editor should help the user produce complete research papers with:
 - HTML output,
 - and a separate preview page.
 
-The contributor portal is now in progress: login-protected editor access, invite-only contributor accounts, owner/admin invite generation, dashboard profiles, drafts, published papers, and public profile pages. See `CONTRIBUTOR_PORTAL_PLAN.md`.
+The contributor portal and Discussion Portal are now in progress: contributor-protected editor access, public member accounts, admin-managed contributor access, owner/admin invite generation, dashboard profiles, drafts, published papers, public profile pages, and a messenger-style forum. See `CONTRIBUTOR_PORTAL_PLAN.md`.
 
 ## Current Editor Behavior
 
@@ -65,6 +65,9 @@ Current layout:
 - Destination pages receive published article cards through the API when Cloudflare is available, with local fallback for preview.
 - Generated published papers open through `published-article.html`.
 - Public contributor profiles open through `contributor-profile.html?username=...`.
+- The Discussion Portal lives at `community-forum.html` and uses the same member login session as the rest of the site.
+- Normal members can use the Discussion Portal but must not see Content Editor or admin tools unless upgraded.
+- Owner/admin/director-level users have forum cleanup and member access management tools.
 
 ## Toolbar Requirements
 
@@ -117,7 +120,7 @@ Current:
 
 Future:
 
-- Store uploaded images in Cloudflare R2.
+- Store uploaded images in Cloudflare R2 for production article media.
 - Insert R2 media URLs instead of data URLs.
 - Add alt text/caption fields in a small modal rather than prompt boxes.
 - Profile photo should support Upload from Computer and URL. Current dashboard still needs the upload wiring.
@@ -253,7 +256,7 @@ Current direction:
 
 Still required:
 
-- Visual test profile photo upload from computer after R2 is connected.
+- Visual test profile photo upload from computer on the deployed site.
 - Cleaner public profile visual QA after real data is entered.
 - Visual test owner/admin comment moderation against live Cloudflare data.
 
@@ -264,6 +267,10 @@ D1 is the records database. It stores accounts, invites, sessions, profile text,
 R2 is the media/file storage. It must store profile photos, article images, videos, audio, PDFs, DOCX/TXT files, and AI-generated assets.
 
 Do not store large image/video/audio data inside D1.
+
+Current live note: the user has confirmed the R2 bucket `tpi-contributor-media` exists and profile image objects are being stored there. Keep D1 for records and R2 for files.
+
+Cloudflare D1 Console rule: when the user needs to apply a migration in Cloudflare Dashboard, provide the full SQL contents to paste into the D1 Console. Do not tell them to paste a migration filename.
 
 ## Preview
 
@@ -318,10 +325,10 @@ The user asked about Academia.edu and external papers. The working policy for th
 
 ## Suggested Next Build Steps
 
-1. Create the Cloudflare R2 bucket and uncomment the `TPI_MEDIA` binding.
-2. Test profile photo upload from the member dashboard.
-3. Replace editor data-URL media insertion with the existing R2 article-media endpoint.
-4. Visually test current editor, dashboard, public profile, invite page, login page, published article page, and comment moderation.
+1. Live-test the current editor, dashboard, public profile, invite page, login page, published article page, Discussion Portal, and comment moderation.
+2. Confirm normal members cannot access Content Editor or admin tools.
+3. Verify profile photo upload and article media upload against Cloudflare R2.
+4. Continue converting older legacy pages into Content Editor/D1 article records.
 5. Make the toolbar more icon-like and less text-heavy after the core portal flow is stable.
 
 Recently completed:
@@ -333,10 +340,13 @@ Recently completed:
 - Legacy authored pages can be imported from the Content Editor's My Content library.
 - Legacy authored pages now behave as a conversion queue. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy.
 - Legacy conversion records now include best-fit destination and contribution type metadata, so Convert pre-fills the editor destination/type before saving or publishing.
+- Discussion Portal was added with category browsing, member topics/replies, chat-style bubbles, blue/green activity badges, and leadership/admin cleanup controls.
+- Member/contributor/admin access boundaries were tightened so regular members can use the forum but do not see contributor/editor/admin tools.
+- Account recovery/password reset UI and token table were added, but email delivery is not connected yet.
 
 ## Contributor Portal State
 
-The Content Editor now has a Cloudflare-ready contributor portal path. D1 stores accounts, invites, sessions, profiles, article records, draft/published status, and comments. Local storage remains only as a local preview fallback.
+The Content Editor now has a Cloudflare-ready contributor portal path. D1 stores accounts, invites, sessions, profiles, article records, draft/published status, comments, forum categories, forum topics/replies, read-tracking records, and account recovery tokens. Local storage remains only as a local preview fallback.
 
 Legacy authored pages are centralized in `legacy-contributions.js` so the dashboard, public contributor profile, and editor My Content library stay aligned. Legacy items are archived links that can be imported into the Content Editor to create a newer editable article record.
 
@@ -347,14 +357,16 @@ Current/required behavior:
 - Returning contributor login through `member-login.html`.
 - Private contributor home through `member-dashboard.html`.
 - Owner/admin invite generation from the private dashboard only.
-- System roles are `contributor`, `admin`, and `owner`.
+- System access levels are `member`, `contributor`, `admin`, and `owner`.
 - `editor` is a public title/credential, not a permission role.
+- Normal members can participate in the Discussion Portal but cannot publish articles or use admin tools.
 - Contributor profiles store author note data.
 - Contributors can submit research notes, papers, images, and videos.
 - Contributors can save unpublished drafts and publish articles.
 - Published articles appear in the selected Education Center destination.
-- Public comments can be anonymous, name-only, or logged-in. Anonymous/name-only prototype implemented with localStorage.
-- Comments should be moderated. Production moderation is not implemented yet.
+- Public comments can be anonymous, name-only, or logged-in.
+- Anonymous/name-only comments should remain moderated before public display.
+- Discussion Portal topics can be stopped, marked inactive, deleted, or reopened by owner/admin/director-level users.
 
 Security rule:
 
@@ -369,6 +381,8 @@ Run these after editor/contributor changes:
 ```bash
 node --check paper-editor.js
 node --check member-login.js
+node --check member-dashboard.js
+node --check community-forum.js
 node --check includes.js
 node --check published-article.js
 node --check api-client.js

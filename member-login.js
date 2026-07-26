@@ -2,6 +2,9 @@
   const ACCESS_USERS_KEY = "tpiEditorContributors";
   const ACCESS_SESSION_KEY = "tpiEditorSession";
   const ACCESS_INVITES_KEY = "tpiEditorInvites";
+  const VISIBLE_INVITE_KEY = "tpiVisibleInviteLink";
+  const VISIBLE_INVITE_MS = 5 * 60 * 1000;
+  let visibleInviteTimer = null;
   const status = document.getElementById("member-login-status");
   const inviteCodePanel = document.querySelector("[data-invite-code-panel]");
   const inviteSetupPanel = document.querySelector("[data-invite-setup-panel]");
@@ -273,6 +276,88 @@
     return url.href;
   }
 
+  function saveVisibleInvite(invite) {
+    if (!invite?.code) return;
+    try {
+      sessionStorage.setItem(VISIBLE_INVITE_KEY, JSON.stringify({
+        code: invite.code,
+        role: invite.role || "contributor",
+        createdAt: invite.createdAt || invite.created_at || new Date().toISOString(),
+        hideAt: Date.now() + VISIBLE_INVITE_MS
+      }));
+    } catch (error) {
+      // Session storage is only for hiding the displayed link; the invite still exists in D1/local fallback.
+    }
+  }
+
+  function clearVisibleInvite() {
+    try {
+      sessionStorage.removeItem(VISIBLE_INVITE_KEY);
+    } catch (error) {
+      // Ignore storage cleanup failures.
+    }
+    if (visibleInviteTimer) {
+      window.clearTimeout(visibleInviteTimer);
+      visibleInviteTimer = null;
+    }
+  }
+
+  function getVisibleInvite(openInvites = []) {
+    let visibleInvite = null;
+    try {
+      visibleInvite = JSON.parse(sessionStorage.getItem(VISIBLE_INVITE_KEY) || "null");
+    } catch (error) {
+      visibleInvite = null;
+    }
+    if (!visibleInvite?.code || Date.now() > Number(visibleInvite.hideAt || 0)) {
+      clearVisibleInvite();
+      return null;
+    }
+    const matchingOpenInvite = openInvites.find(invite => invite.code === visibleInvite.code);
+    if (openInvites.length && !matchingOpenInvite) {
+      clearVisibleInvite();
+      return null;
+    }
+    return {
+      ...visibleInvite,
+      ...(matchingOpenInvite || {})
+    };
+  }
+
+  function renderInviteLinks(openInvites = []) {
+    if (!inviteLinkList) return;
+    if (visibleInviteTimer) {
+      window.clearTimeout(visibleInviteTimer);
+      visibleInviteTimer = null;
+    }
+
+    const invite = getVisibleInvite(openInvites);
+    if (!invite) {
+      inviteLinkList.innerHTML = `<p class="access-note">No invite link is being displayed. Generated links auto-hide after a few minutes, but sent links stay valid until used.</p>`;
+      return;
+    }
+
+    const link = getInviteLink(invite);
+    const secondsLeft = Math.max(1, Math.ceil((Number(invite.hideAt) - Date.now()) / 1000));
+    inviteLinkList.innerHTML = `
+      <div class="invite-link-row">
+        <strong>${escapeHtml(invite.code)}</strong>
+        <span>${escapeHtml(getInviteAssignment(invite.code)?.label || invite.role || "contributor")}</span>
+        <p class="access-note">This generated link will hide automatically in about ${Math.ceil(secondsLeft / 60)} minute${secondsLeft > 60 ? "s" : ""}. The invite remains valid for the person you sent it to until it is used.</p>
+        <input type="text" readonly value="${escapeHtml(link)}">
+        <div class="invite-link-actions">
+          <button type="button" data-copy-invite-link="${escapeHtml(link)}">Copy Link</button>
+          <button type="button" class="portal-button-secondary" data-clear-visible-invite>Clear Link</button>
+        </div>
+      </div>
+    `;
+
+    visibleInviteTimer = window.setTimeout(() => {
+      clearVisibleInvite();
+      renderInviteLinks(openInvites);
+    }, Math.max(500, Number(invite.hideAt) - Date.now()));
+  }
+
   function importInviteFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const packedInvite = params.get("invite");
@@ -322,18 +407,7 @@
     inviteOwnerTools.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
     if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
     const invites = getInvites();
-    const openInvites = invites.filter(invite => !invite.used);
-    inviteLinkList.innerHTML = openInvites.length ? openInvites.map(invite => {
-      const link = getInviteLink(invite);
-      return `
-        <div class="invite-link-row">
-          <strong>${escapeHtml(invite.code)}</strong>
-          <span>${escapeHtml(getInviteAssignment(invite.code)?.label || invite.role || "contributor")}</span>
-          <input type="text" readonly value="${escapeHtml(link)}">
-          <button type="button" data-copy-invite-link="${escapeHtml(link)}">Copy Link</button>
-        </div>
-      `;
-    }).join("") : `<p class="access-note">No open invite links yet.</p>`;
+    renderInviteLinks(invites.filter(invite => !invite.used));
     renderLocalContributorTitles(currentUser);
     if (commentModerationList) {
       commentModerationList.innerHTML = `<p class="access-note">Comment moderation is available after signing in through Cloudflare.</p>`;
@@ -446,18 +520,7 @@
       ownerToolsHost.hidden = false;
       ownerToolsHost.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
       if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
-      const openInvites = (data.invites || []).filter(invite => !invite.used);
-      inviteLinkList.innerHTML = openInvites.length ? openInvites.map(invite => {
-        const link = getInviteLink(invite);
-        return `
-          <div class="invite-link-row">
-            <strong>${escapeHtml(invite.code)}</strong>
-            <span>${escapeHtml(getInviteAssignment(invite.code)?.label || invite.role || "contributor")}</span>
-            <input type="text" readonly value="${escapeHtml(link)}">
-            <button type="button" data-copy-invite-link="${escapeHtml(link)}">Copy Link</button>
-          </div>
-        `;
-      }).join("") : `<p class="access-note">No open invite links yet.</p>`;
+      renderInviteLinks((data.invites || []).filter(invite => !invite.used));
       if (adminContributorList) {
         const contributors = contributorData.contributors || [];
         adminContributorList.innerHTML = contributors.length
@@ -966,10 +1029,15 @@
       const inviteRole = inviteAssignment?.role || String(data.get("inviteRole") || "contributor");
       if (hasCloudflareInviteAccess) {
         try {
-          await window.TPIApi.createInvite({ code, role: inviteRole });
+          const result = await window.TPIApi.createInvite({ code, role: inviteRole });
+          saveVisibleInvite(result.invite || {
+            code,
+            role: inviteRole,
+            createdAt: new Date().toISOString()
+          });
           ownerInviteForm.reset();
           await renderCloudflareOwnerInvites();
-          setStatus("Cloudflare invite link created. Copy it and send it to the contributor.", false);
+          setStatus("Cloudflare invite link created. Copy it and send it to the contributor. The displayed link will auto-hide after a few minutes.", false);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -989,9 +1057,10 @@
         createdAt: new Date().toISOString()
       });
       saveInvites(invites);
+      saveVisibleInvite({ code, role: inviteRole, createdAt: new Date().toISOString() });
       ownerInviteForm.reset();
       renderOwnerInvites();
-      setStatus("Invite link created. Copy it and send it to the contributor.", false);
+      setStatus("Invite link created. Copy it and send it to the contributor. The displayed link will auto-hide after a few minutes.", false);
       return;
     }
 
@@ -1304,6 +1373,14 @@
       if (!resetForm) return;
       resetForm.hidden = !resetForm.hidden;
       if (!resetForm.hidden) resetForm.querySelector("input[name='email']")?.focus();
+      return;
+    }
+
+    const clearInviteButton = event.target.closest("[data-clear-visible-invite]");
+    if (clearInviteButton) {
+      clearVisibleInvite();
+      renderInviteLinks();
+      setStatus("Invite link cleared from this screen. The sent invite still works until it is used.", false);
       return;
     }
 

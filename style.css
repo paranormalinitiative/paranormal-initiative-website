@@ -3124,6 +3124,18 @@ footer {
     cursor: pointer;
 }
 
+.invite-link-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.invite-link-actions .portal-button-secondary {
+    color: #dce7ef;
+    background: #101b25;
+    border-color: #263646;
+}
+
 .moderation-toolbar {
     display: flex;
     flex-wrap: wrap;
