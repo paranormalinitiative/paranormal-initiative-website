@@ -206,7 +206,8 @@
       title: article.title,
       subtitle: article.subtitle,
       href: article.href,
-      contributionType: "Legacy Site Page",
+      destination: article.destination || "",
+      contributionType: article.contributionType || "Legacy Site Page",
       status: "legacy-published",
       legacy: true
     }));
@@ -220,6 +221,12 @@
     return new Set((articles || [])
       .map(article => normalizeLegacyHref(article.source))
       .filter(Boolean));
+  }
+
+  function getLegacySourceTitle(source) {
+    const normalizedSource = normalizeLegacyHref(source);
+    if (!normalizedSource) return "";
+    return getLegacyEditorArticles(currentUser).find(article => normalizeLegacyHref(article.href) === normalizedSource)?.title || "";
   }
 
   function getSessionUser() {
@@ -1336,8 +1343,9 @@ ${buildArticleHtml()}
           <div class="content-library-row" data-article-id="${escapeHtml(article.id)}" ${article.legacy ? `data-legacy="true"` : ""}>
             <div>
               <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
-          <span>${escapeHtml([article.legacy ? "Legacy Conversion" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
+          <span>${escapeHtml([article.legacy ? "Legacy Conversion" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper", article.legacy ? article.contributionType : ""].filter(Boolean).join(" · "))}</span>
           ${article.legacy ? `<em class="legacy-archive-note">Needs conversion - open it as-is or convert it into an editable Content Editor article.</em>` : ""}
+          ${!article.legacy && getLegacySourceTitle(article.source) ? `<em class="legacy-archive-note">Converted from legacy page: ${escapeHtml(getLegacySourceTitle(article.source))}</em>` : ""}
             </div>
             <div class="content-library-actions">
               <button type="button" data-action="${article.legacy ? "content-import-legacy" : "content-edit"}" data-article-id="${escapeHtml(article.id)}">${article.legacy ? "Convert" : "Edit"}</button>
@@ -1417,7 +1425,10 @@ ${buildArticleHtml()}
       currentArticleId = null;
       titleInput.value = title.trim() || legacyArticle.title;
       subtitleInput.value = subtitle.trim();
-      contributionTypeInput.value = subtitle.toLowerCase().includes("research paper") ? "Research Paper" : "Field Article";
+      if (legacyArticle.destination && [...destinationInput.options].some(option => option.value === legacyArticle.destination)) {
+        destinationInput.value = legacyArticle.destination;
+      }
+      contributionTypeInput.value = legacyArticle.contributionType || (subtitle.toLowerCase().includes("research paper") ? "Research Paper" : "Field Article");
       sourceInput.value = legacyArticle.href;
       labelsInput.value = "Imported, Legacy Site Page";
       editor.innerHTML = cleanHtml(articleBody.innerHTML || "<p><br></p>", false);

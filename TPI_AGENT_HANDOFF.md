@@ -215,6 +215,7 @@ Recently completed:
 - Published article author names and logged-in contributor comment/reply names link to `contributor-profile.html?username=...` when a contributor username is available.
 - Legacy authored pages are centralized in `legacy-contributions.js` and can be imported from the Content Editor's My Content library.
 - Legacy authored pages behave as a conversion queue. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy.
+- Legacy conversion records now include best-fit destination and contribution type metadata, so Convert pre-fills the editor destination/type before saving or publishing.
 
 ## Known Limitations
 

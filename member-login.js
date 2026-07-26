@@ -101,7 +101,8 @@
       title: article.title,
       subtitle: article.subtitle,
       href: article.href,
-      contributionType: "Legacy Site Page",
+      destination: article.destination || "",
+      contributionType: article.contributionType || "Legacy Site Page",
       status: "legacy-published",
       legacy: true
     }));
