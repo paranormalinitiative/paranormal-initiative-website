@@ -300,10 +300,13 @@
   }
 
   function renderContributorTitleRow(contributor, currentUser) {
-    const canChangeAccess = currentUser?.role === "owner";
     const name = contributor.displayName || contributor.username || "Contributor";
     const currentTitle = contributor.title || "";
     const currentRole = contributor.role || "contributor";
+    const currentUserRole = currentUser?.role || "";
+    const canChangeLeadershipAccess = currentUserRole === "owner";
+    const canChangeStandardAccess = canChangeLeadershipAccess || (currentUserRole === "admin" && ["member", "contributor"].includes(currentRole));
+    const lockLeadershipOptions = !canChangeLeadershipAccess;
     const active = contributor.active !== false;
     const isSelf = contributor.username === currentUser?.username;
     const createdAt = contributor.createdAt ? new Date(contributor.createdAt).toLocaleString() : "Unknown";
@@ -337,11 +340,11 @@
           ${option("Researcher", currentTitle)}
           ${option("Investigator", currentTitle)}
         </select>
-        <select name="role" aria-label="Account access for ${escapeHtml(name)}"${canChangeAccess ? "" : " disabled"}>
+        <select name="role" aria-label="Account access for ${escapeHtml(name)}"${canChangeStandardAccess ? "" : " disabled"}>
           ${option("member", currentRole, "Member Access")}
           ${option("contributor", currentRole, "Contributor Access")}
-          ${option("admin", currentRole, "Admin Access")}
-          ${option("owner", currentRole, "Owner Access")}
+          <option value="admin"${currentRole === "admin" ? " selected" : ""}${lockLeadershipOptions ? " disabled" : ""}>Admin Access</option>
+          <option value="owner"${currentRole === "owner" ? " selected" : ""}${lockLeadershipOptions ? " disabled" : ""}>Owner Access</option>
         </select>
         <div class="admin-member-actions">
           <button type="submit">Save</button>
