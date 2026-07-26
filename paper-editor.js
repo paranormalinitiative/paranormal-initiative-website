@@ -225,7 +225,7 @@
       <form class="editor-access-card" data-access-form="login">
         <p class="portal-kicker">Contributor Access</p>
         <h2>Sign In</h2>
-        <p>Use your contributor username and password to open the Research Paper Editor. Dev copy mode also unlocks this page for site work.</p>
+        <p>Use your contributor username and password to open the Content Editor. Dev copy mode also unlocks this page for site work.</p>
         <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
         <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
         <button type="submit">Open Editor</button>

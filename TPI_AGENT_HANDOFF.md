@@ -6,9 +6,9 @@ Last updated: July 25, 2026
 
 This repository is the static website for **The Paranormal Initiative**. The site should feel professional, dark, research-driven, and evidence-aware. It is not a college, not a generic course site, and not a sensational paranormal entertainment page.
 
-The current focus is the **Education Center / Research Library** and the new **Research Paper Editor**. The user wants full research papers, long-form field papers, and practical investigation material. They do not want short academic-looking summaries.
+The current focus is the **Education Center / Research Library** and the new **Content Editor**. The user wants full research papers, notes, reviews, long-form field papers, and practical investigation material. They do not want short academic-looking summaries.
 
-There is now also a live **Contributor Portal** direction: the Research Paper Editor requires contributor access, invite-only contributors can create accounts, logged-in members land on a private dashboard, contributors can save drafts/publish papers, and public article comments are being added. See `CONTRIBUTOR_PORTAL_PLAN.md`.
+There is now also a live **Contributor Portal** direction: the Content Editor requires contributor access, invite-only contributors can create accounts, logged-in members land on a private dashboard, contributors can save drafts/publish contributions, and public article comments are being added. See `CONTRIBUTOR_PORTAL_PLAN.md`.
 
 ## Non-Negotiable Direction
 
@@ -70,7 +70,7 @@ CSS support exists in `style.css`:
 .paper-single-textbox .lesson-reading-copy + h3
 ```
 
-### Research Paper Editor
+### Content Editor
 
 The current editor files are:
 
@@ -81,7 +81,7 @@ The current editor files are:
 
 The editor currently includes:
 
-- Top bar with `Research Paper Editor`, `Preview`, and `Copy HTML`.
+- Top bar with `Content Editor`, `Preview`, and `Copy HTML`.
 - Large title input.
 - Toolbar with:
   - Compose / HTML view
@@ -222,7 +222,7 @@ python3 -m http.server 4174
 
 Contributor access should work like this:
 
-1. User clicks Research Paper Editor from Education Center and sees a login gate unless dev copy mode is enabled.
+1. User clicks Content Editor from Education Center and sees a login gate unless dev copy mode is enabled.
 2. User can also use Member Login from the main navigation.
 3. Contributor registration requires an invite code.
 4. Owner/admin can generate invite links from the private dashboard only.

@@ -464,7 +464,7 @@
     const levelHost = document.querySelector("[data-dashboard-level]");
     if (levelHost) levelHost.innerHTML = renderContributionLevel(level);
     if (dashboardDrafts) dashboardDrafts.innerHTML = renderList(drafts, "No unpublished drafts yet.", true);
-    if (dashboardArticles) dashboardArticles.innerHTML = renderList(published, "No published papers yet. Use the Research Paper Editor to create your first contribution.", false);
+    if (dashboardArticles) dashboardArticles.innerHTML = renderList(published, "No published contributions yet. Use the Content Editor to create your first contribution.", false);
   }
 
   async function initDashboard() {
