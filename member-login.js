@@ -110,6 +110,18 @@
     });
   }
 
+  function getLegacyDashboardArticles(profile) {
+    return (LEGACY_CONTRIBUTIONS[contributorKey(profile)] || []).map(article => ({
+      id: `legacy:${article.href}`,
+      title: article.title,
+      subtitle: article.subtitle,
+      href: article.href,
+      contributionType: "Legacy Site Page",
+      status: "legacy-published",
+      legacy: true
+    }));
+  }
+
   function isDevUnlocked() {
     return localStorage.getItem("tpiDevCopyMode") === "enabled";
   }
@@ -472,15 +484,25 @@
     const renderList = (items, emptyText, isDraftList) => items.length ? items.map(article => `
       <div class="invite-link-row">
         <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
-        <span>${escapeHtml([article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
+        <span>${escapeHtml([article.legacy ? "Legacy Archive" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
+        ${article.legacy ? `<em class="legacy-archive-note">Archived site page - still available to open or import into the Content Editor.</em>` : ""}
         ${isDraftList ? "" : `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>`}
-        <a class="portal-button portal-button-secondary" href="paper-editor.html?article=${encodeURIComponent(article.id)}">${isDraftList ? "Continue Editing" : "Edit Paper"}</a>
-        <button class="portal-button portal-button-secondary" type="button" data-dashboard-delete-article="${escapeHtml(article.id)}">Delete</button>
+        ${article.legacy
+          ? `<a class="portal-button portal-button-secondary" href="paper-editor.html?legacy=${encodeURIComponent(article.href)}">Import To Editor</a>`
+          : `<a class="portal-button portal-button-secondary" href="paper-editor.html?article=${encodeURIComponent(article.id)}">${isDraftList ? "Continue Editing" : "Edit Paper"}</a>
+             <button class="portal-button portal-button-secondary" type="button" data-dashboard-delete-article="${escapeHtml(article.id)}">Delete</button>`}
       </div>
     `).join("") : `<p class="access-note">${escapeHtml(emptyText)}</p>`;
 
+    const legacyArticles = getLegacyDashboardArticles(user);
+    const seen = new Set();
     const drafts = articles.filter(article => article.status !== "published");
-    const published = articles.filter(article => article.status === "published");
+    const published = [...articles.filter(article => article.status === "published"), ...legacyArticles].filter(article => {
+      const key = article.href || article.id || article.title;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
     const level = getContributionLevel(published.length, user?.role, user?.title);
     const levelHost = document.querySelector("[data-dashboard-level]");
     if (levelHost) levelHost.innerHTML = renderContributionLevel(level);

@@ -2857,6 +2857,15 @@ footer {
     border-color: rgba(85, 200, 255, 0.42);
 }
 
+.legacy-archive-note {
+    display: block;
+    margin-top: 6px;
+    color: #55c8ff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
+}
+
 .content-library-actions {
     display: flex;
     flex-wrap: wrap;

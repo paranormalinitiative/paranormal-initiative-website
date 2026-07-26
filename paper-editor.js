@@ -1224,7 +1224,8 @@ ${buildArticleHtml()}
           <div class="content-library-row" data-article-id="${escapeHtml(article.id)}" ${article.legacy ? `data-legacy="true"` : ""}>
             <div>
               <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
-              <span>${escapeHtml([article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
+          <span>${escapeHtml([article.legacy ? "Legacy Archive" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
+          ${article.legacy ? `<em class="legacy-archive-note">Archived site page - open it as-is or import it into the Content Editor.</em>` : ""}
             </div>
             <div class="content-library-actions">
               <button type="button" data-action="${article.legacy ? "content-import-legacy" : "content-edit"}" data-article-id="${escapeHtml(article.id)}">${article.legacy ? "Import To Editor" : "Edit"}</button>
@@ -1270,6 +1271,14 @@ ${buildArticleHtml()}
   async function importLegacyArticle(articleId) {
     const legacyArticle = (await loadEditorArticles()).find(article => article.id === articleId && article.legacy);
     if (!legacyArticle) {
+      setStatus("Legacy page could not be found");
+      return;
+    }
+    await importLegacyPage(legacyArticle);
+  }
+
+  async function importLegacyPage(legacyArticle) {
+    if (!legacyArticle?.href) {
       setStatus("Legacy page could not be found");
       return;
     }
@@ -1696,7 +1705,20 @@ ${buildArticleHtml()}
   }
 
   async function loadArticleForEditing() {
-    const articleId = new URLSearchParams(window.location.search).get("article");
+    const params = new URLSearchParams(window.location.search);
+    const legacyHref = params.get("legacy");
+    if (legacyHref) {
+      await importLegacyPage(getLegacyEditorArticles(currentUser).find(article => article.href === legacyHref) || {
+        id: `legacy:${legacyHref}`,
+        title: "Imported Site Page",
+        subtitle: "Legacy Site Page",
+        href: legacyHref,
+        legacy: true
+      });
+      return true;
+    }
+
+    const articleId = params.get("article");
     if (!articleId) return false;
 
     let article = null;
