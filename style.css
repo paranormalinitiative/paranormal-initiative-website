@@ -902,6 +902,9 @@ footer {
 .discussion-portal {
     padding-top: 24px;
     padding-bottom: 32px;
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 .discussion-toolbar {
@@ -1274,6 +1277,17 @@ footer {
 .discussion-message-meta strong {
     color: #f4f8fb;
     font-size: 13px;
+}
+
+.discussion-author-link {
+    color: #f4f8fb;
+    text-decoration-color: rgba(85, 200, 255, 0.45);
+    text-underline-offset: 3px;
+}
+
+.discussion-author-link:hover,
+.discussion-author-link:focus {
+    color: #55c8ff;
 }
 
 .discussion-message-meta span {

@@ -240,7 +240,7 @@
       return `
         <article class="discussion-message">
           <div class="discussion-message-meta">
-            <strong>${escapeHtml(post.authorName || "Community Member")}</strong>
+            <strong>${renderAuthorLink(post)}</strong>
             <span>${escapeHtml(post.authorTitle || "Contributor")} · ${formatDate(post.createdAt)}</span>
           </div>
           <div class="discussion-bubble">
@@ -356,6 +356,12 @@
     const greeting = document.querySelector(".member-dashboard-link span")?.textContent || "";
     const match = greeting.match(/hello,\s*(.+)/i);
     return match ? match[1].trim() : "";
+  }
+
+  function renderAuthorLink(post) {
+    const name = escapeHtml(post.authorName || "Community Member");
+    if (!post.authorUsername) return name;
+    return `<a class="discussion-author-link" href="contributor-profile.html?username=${encodeURIComponent(post.authorUsername)}">${name}</a>`;
   }
 
   function getCategoryTitle(categoryId) {

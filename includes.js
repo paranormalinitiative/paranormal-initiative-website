@@ -9,6 +9,10 @@
     return Boolean(target?.closest?.(".command-header, .command-nav, footer"));
   }
 
+  function isDiscussionPortalTarget(target) {
+    return Boolean(target?.closest?.(".discussion-portal"));
+  }
+
   function installContentProtection() {
     const blockedEvents = ["contextmenu", "copy", "cut", "dragstart"];
     let devUnlockClicks = 0;
@@ -38,9 +42,10 @@
         ["founder / director", "founder/director", "founder director", "assistant director"].includes(title);
     }
 
-    function isCopyAllowed() {
+    function isCopyAllowed(target) {
       return isDevCopyMode() ||
         isLeadershipCopyAllowed() ||
+        isDiscussionPortalTarget(target) ||
         document.body?.dataset.editorCopyAllowed === "true";
     }
 
@@ -97,7 +102,7 @@
           event.preventDefault();
           return;
         }
-        if (isCopyAllowed()) return;
+        if (isCopyAllowed(event.target)) return;
         if (isEditableTarget(event.target)) return;
         event.preventDefault();
       });
@@ -108,7 +113,7 @@
         event.preventDefault();
         return;
       }
-      if (isCopyAllowed()) return;
+      if (isCopyAllowed(event.target)) return;
       if (isEditableTarget(event.target)) return;
       event.preventDefault();
     });
@@ -122,7 +127,7 @@
         }
         return;
       }
-      if (isCopyAllowed()) return;
+      if (isCopyAllowed(event.target)) return;
       if (isEditableTarget(event.target)) return;
 
       const key = event.key.toLowerCase();
