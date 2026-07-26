@@ -34,13 +34,14 @@
   const article = await getCloudflareArticle(id) || getPublishedArticles().find(item => item.id === id);
   if (!article) return;
 
+  const contributionType = article.contributionType || article.articleType || "Research Paper";
   document.title = `${article.title} | The Paranormal Initiative`;
   root.innerHTML = `
     <article class="lesson-reading-block paper-single-textbox">
-      <p class="portal-kicker">Research Library · Field Paper</p>
+      <p class="portal-kicker">Research Library · ${escapeHtml(contributionType)}</p>
       <h2>${escapeHtml(article.title)}</h2>
       ${article.subtitle ? `<p class="paper-preview-subtitle">${escapeHtml(article.subtitle)}</p>` : ""}
-      <p class="paper-preview-meta">${[article.author, article.destinationLabel, article.source, article.labels].filter(Boolean).map(escapeHtml).join(" · ")}</p>
+      <p class="paper-preview-meta">${[article.author, contributionType, article.destinationLabel, article.source, article.labels].filter(Boolean).map(escapeHtml).join(" · ")}</p>
       <div class="lesson-reading-copy">${article.bodyHtml || ""}</div>
     </article>
     <section class="lesson-navigation-band">

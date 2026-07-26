@@ -313,13 +313,14 @@ async function handleCreateArticle(request, env, user) {
   const data = await readJson(request);
   const id = clean(data.id || crypto.randomUUID());
   await env.TPI_DB.prepare(`
-    INSERT INTO articles (id, destination, href, title, subtitle, author, source, body_html, article_html, labels, status, created_by, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     ON CONFLICT(id) DO UPDATE SET
       destination = excluded.destination,
       href = excluded.href,
       title = excluded.title,
       subtitle = excluded.subtitle,
+      article_type = excluded.article_type,
       author = excluded.author,
       source = excluded.source,
       body_html = excluded.body_html,
@@ -333,6 +334,7 @@ async function handleCreateArticle(request, env, user) {
     clean(data.href),
     clean(data.title || "Untitled Research Paper"),
     clean(data.subtitle),
+    clean(data.contributionType || data.articleType || "Research Paper"),
     clean(data.author),
     clean(data.source),
     String(data.bodyHtml || ""),
@@ -342,22 +344,22 @@ async function handleCreateArticle(request, env, user) {
     user.id
   ).run();
 
-  return json({ article: { id, href: data.href, destination: data.destination, title: data.title, subtitle: data.subtitle } });
+  return json({ article: { id, href: data.href, destination: data.destination, title: data.title, subtitle: data.subtitle, contributionType: data.contributionType || data.articleType || "Research Paper" } });
 }
 
 async function handleListArticles(request, env) {
   const url = new URL(request.url);
   const destination = url.searchParams.get("destination");
   const stmt = destination
-    ? env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE destination = ? AND status = 'published' ORDER BY created_at DESC").bind(destination)
-    : env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE status = 'published' ORDER BY created_at DESC");
+    ? env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE destination = ? AND status = 'published' ORDER BY created_at DESC").bind(destination)
+    : env.TPI_DB.prepare("SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt FROM articles WHERE status = 'published' ORDER BY created_at DESC");
   const { results } = await stmt.all();
   return json({ articles: results });
 }
 
 async function handleContributorArticles(env, user) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, destination, href, title, subtitle, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt
+    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt
     FROM articles
     WHERE created_by = ?
     ORDER BY created_at DESC
@@ -370,7 +372,7 @@ async function handlePublicContributorProfile(request, env) {
   const user = await getUserByUsername(env, username);
   if (!user || !user.active) return json({ error: "Contributor profile not found." }, 404);
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, href, title, subtitle, destination, status, created_at AS createdAt
+    SELECT id, href, title, subtitle, article_type AS contributionType, destination, status, created_at AS createdAt
     FROM articles
     WHERE created_by = ? AND status = 'published'
     ORDER BY created_at DESC

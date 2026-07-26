@@ -7,6 +7,7 @@
   const titleInput = document.getElementById("editor-title");
   const subtitleInput = document.getElementById("editor-subtitle");
   const destinationInput = document.getElementById("editor-destination");
+  const contributionTypeInput = document.getElementById("editor-contribution-type");
   const sourceInput = document.getElementById("editor-source");
   const authorInput = document.getElementById("editor-author");
   const affiliationInput = document.getElementById("editor-affiliation");
@@ -59,6 +60,10 @@
 
   function getDestinationLabel() {
     return destinationInput.options[destinationInput.selectedIndex].textContent.trim();
+  }
+
+  function getContributionType() {
+    return contributionTypeInput?.value?.trim() || "Research Paper";
   }
 
   function slugify(value) {
@@ -811,10 +816,11 @@
     const title = titleInput.value.trim() || "Untitled Research Paper";
     const subtitle = subtitleInput.value.trim();
     const author = authorInput.value.trim();
+    const contributionType = getContributionType();
     const source = sourceInput.value.trim();
     const labels = labelsInput.value.trim();
     const destination = getDestinationLabel();
-    const meta = [author, destination, source, labels].filter(Boolean).join(" · ");
+    const meta = [author, contributionType, destination, source, labels].filter(Boolean).join(" · ");
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -837,7 +843,7 @@ blockquote{margin:20px 0;padding:4px 0 4px 18px;border-left:3px solid #55c8ff}
 </style>
 </head>
 <body><main>
-<p class="kicker">Research Library · Field Paper</p>
+<p class="kicker">Research Library · ${escapeHtml(contributionType)}</p>
 <h1>${escapeHtml(title)}</h1>
 ${subtitle ? `<p class="subtitle">${escapeHtml(subtitle)}</p>` : ""}
 ${meta ? `<p class="meta">${escapeHtml(meta)}</p>` : ""}
@@ -883,15 +889,17 @@ ${buildArticleHtml()}
     const subtitle = subtitleInput.value.trim() || "Field paper";
     const href = getSuggestedArticleHref();
     const destination = getDestinationLabel();
+    const contributionType = getContributionType();
+    const cardBadge = contributionType.replace(/\s*\/\s*/g, " / ").split(/\s+/)[0] || "Field";
     return [
       `<!-- Add this card to ${destination}: ${destinationInput.value} -->`,
       `<a class="study-resource-card" href="${escapeHtml(href)}">`,
-      `    <div class="study-resource-card-media"><span>Field</span></div>`,
+      `    <div class="study-resource-card-media"><span>${escapeHtml(cardBadge)}</span></div>`,
       `    <div class="study-resource-card-copy">`,
-      `    <p class="dashboard-panel-kicker">Research Paper</p>`,
+      `    <p class="dashboard-panel-kicker">${escapeHtml(contributionType)}</p>`,
       `    <h3>${escapeHtml(title)}</h3>`,
       `    <p>${escapeHtml(subtitle)}</p>`,
-      `    <span class="dashboard-panel-cta">Read Paper ›</span>`,
+      `    <span class="dashboard-panel-cta">Open ${escapeHtml(contributionType)} ›</span>`,
       `    </div>`,
       `</a>`
     ].join("\n");
@@ -935,6 +943,7 @@ ${buildArticleHtml()}
       href: getSuggestedArticleHref(),
       title,
       subtitle: subtitleInput.value.trim() || "Field paper",
+      contributionType: getContributionType(),
       destination: destinationInput.value,
       destinationLabel: getDestinationLabel(),
       author: authorInput.value.trim(),
@@ -1152,6 +1161,22 @@ ${buildArticleHtml()}
     setStatus("HTML edited");
     scheduleAutosave();
   });
+  [
+    titleInput,
+    subtitleInput,
+    destinationInput,
+    contributionTypeInput,
+    sourceInput,
+    authorInput,
+    affiliationInput,
+    organizationInput,
+    correspondenceInput,
+    websiteInput,
+    labelsInput
+  ].forEach(input => {
+    input?.addEventListener("input", scheduleAutosave);
+    input?.addEventListener("change", scheduleAutosave);
+  });
   imageFileInput.addEventListener("change", event => {
     insertUploadedFile(event.target.files[0], "image");
     imageFileInput.value = "";
@@ -1243,6 +1268,7 @@ ${buildArticleHtml()}
     titleInput.value = article.title || "Untitled Research Paper";
     subtitleInput.value = article.subtitle || "Research Library Draft";
     if (article.destination) destinationInput.value = article.destination;
+    if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
     if (article.author) authorInput.value = article.author;
     if (article.source) sourceInput.value = article.source;
     if (article.labels) labelsInput.value = article.labels;

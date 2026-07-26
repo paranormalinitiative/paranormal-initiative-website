@@ -97,7 +97,7 @@
   function getProfileContributions(profile, articles) {
     const dynamicArticles = (articles || []).map(article => ({
       title: article.title || "Untitled Research Paper",
-      subtitle: article.subtitle || article.destination || "Research paper",
+      subtitle: [article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "),
       href: article.href || `published-article.html?id=${encodeURIComponent(article.id)}`
     }));
     const legacyArticles = LEGACY_CONTRIBUTIONS[contributorKey(profile)] || [];
@@ -452,7 +452,7 @@
     const renderList = (items, emptyText, isDraftList) => items.length ? items.map(article => `
       <div class="invite-link-row">
         <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
-        <span>${escapeHtml(article.subtitle || article.destination || "Research paper")}</span>
+        <span>${escapeHtml([article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
         ${isDraftList ? "" : `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open Paper</a>`}
         <a class="portal-button portal-button-secondary" href="paper-editor.html?article=${encodeURIComponent(article.id)}">${isDraftList ? "Continue Editing" : "Edit Paper"}</a>
       </div>

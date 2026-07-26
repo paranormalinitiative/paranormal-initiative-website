@@ -579,17 +579,19 @@
 
     function appendArticleCard(article) {
       if ([...grid.querySelectorAll("[data-published-id]")].some(card => card.dataset.publishedId === article.id)) return;
+      const contributionType = article.contributionType || article.articleType || "Published Article";
+      const cardBadge = contributionType.replace(/\s*\/\s*/g, " / ").split(/\s+/)[0] || "Field";
       const card = document.createElement("a");
       card.className = grid.classList.contains("series-post-grid") ? "study-resource-card tpi-published-card" : "study-resource-card tpi-published-card";
       card.href = article.href || `published-article.html?id=${encodeURIComponent(article.id)}`;
       card.dataset.publishedId = article.id;
       card.innerHTML = `
-        <div class="study-resource-card-media"><span>Field</span></div>
+        <div class="study-resource-card-media"><span>${escapeCard(cardBadge)}</span></div>
         <div class="study-resource-card-copy">
-          <span>Published Article</span>
+          <span>${escapeCard(contributionType)}</span>
           <h3>${escapeCard(article.title)}</h3>
           <p>${escapeCard(article.subtitle || "Field paper")}</p>
-          <strong>Open Paper</strong>
+          <strong>Open ${escapeCard(contributionType)}</strong>
         </div>
       `;
       grid.appendChild(card);
