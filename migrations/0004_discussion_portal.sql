@@ -43,12 +43,18 @@ CREATE TABLE IF NOT EXISTS forum_reactions (
 );
 
 INSERT OR IGNORE INTO forum_categories (id, title, description, sort_order) VALUES
-  ('evp-itc', 'EVP / ITC Research', 'Voice-like material, ACS experimentation, recording methods, review language, and ITC theory.', 10),
-  ('experiences', 'Your Paranormal Experiences', 'Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters.', 20),
-  ('investigation', 'Paranormal Investigation', 'Case intake, walkthroughs, baselines, documentation, team practice, field safety, and evidence review.', 30),
-  ('equipment', 'Equipment & Technology', 'Audio recorders, cameras, EMF meters, thermal tools, SLS, environmental sensors, and experimental devices.', 40),
-  ('consciousness', 'Consciousness & Parapsychology', 'Human experience, perception, psi research, survival questions, and responsible theoretical discussion.', 50),
-  ('metaphysics', 'Spirituality, Metaphysics, OBE & NDE', 'Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making.', 60),
-  ('science-ai', 'AI, Quantum Ideas & Time', 'Artificial intelligence, speculative models, quantum theory discussions, time questions, and technology culture.', 70),
-  ('locations', 'Haunted Locations & History', 'Location claims, historical context, folklore, cemeteries, buildings, legends, and responsible exploration planning.', 80),
-  ('general', 'General Discussion', 'Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation.', 90);
+  ('investigation', 'Investigation Science', 'Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows.', 10),
+  ('evidence-science', 'Evidence Science & Analysis', 'Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings.', 20),
+  ('equipment', 'Instrumentation & Technology', 'Equipment literacy, sensor behavior, EMF, environmental tools, recording systems, and limitations.', 30),
+  ('environmental-research', 'Environmental Research', 'Baseline studies, weather, buildings, sound, atmospheric conditions, human factors, and correlation.', 40),
+  ('evp-itc', 'EVP & ITC Research', 'EVP methodology, ITC experimentation, controls, source-material transparency, ACS, phonemes, and allophones.', 50),
+  ('consciousness', 'Consciousness & Human Experience', 'NDE research, parapsychology, psi and psionics, consciousness studies, and witness-centered experiences.', 60),
+  ('ethics-standards', 'Ethics & Professional Standards', 'Client care, witness respect, confidentiality, responsible disclosure, professional conduct, and accountability.', 70),
+  ('reporting-documentation', 'Reporting & Documentation', 'Case reports, careful language, research transparency, evidence presentation, logs, and file preservation.', 80),
+  ('community-development', 'Community Development & Publication', 'Contributor resources, mentorship, publication, public outreach, respectful discussion, and ongoing field development.', 90),
+  ('technology-development', 'Technology Development', 'App workflows, research software, digital evidence management, platform planning, and responsible tool development.', 100),
+  ('science-ai', 'Artificial Intelligence', 'AI literacy, responsible use, source verification, research support, disclosure, safeguards, and investigator judgment.', 110),
+  ('locations', 'Historical & Cultural Research', 'Haunted locations, local legends, folklore, public records, archival studies, and historical context.', 120),
+  ('experiences', 'Your Paranormal Experiences', 'Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters.', 130),
+  ('metaphysics', 'Spirituality, Metaphysics, OBE & NDE', 'Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making.', 140),
+  ('general', 'General Discussion', 'Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation.', 150);

@@ -1,13 +1,19 @@
 (function () {
   const fallbackCategories = [
-    { id: "evp-itc", title: "EVP / ITC Research", description: "Voice-like material, ACS experimentation, recording methods, review language, and ITC theory." },
+    { id: "investigation", title: "Investigation Science", description: "Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows." },
+    { id: "evidence-science", title: "Evidence Science & Analysis", description: "Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings." },
+    { id: "equipment", title: "Instrumentation & Technology", description: "Equipment literacy, sensor behavior, EMF, environmental tools, recording systems, and limitations." },
+    { id: "environmental-research", title: "Environmental Research", description: "Baseline studies, weather, buildings, sound, atmospheric conditions, human factors, and correlation." },
+    { id: "evp-itc", title: "EVP & ITC Research", description: "EVP methodology, ITC experimentation, controls, source-material transparency, ACS, phonemes, and allophones." },
+    { id: "consciousness", title: "Consciousness & Human Experience", description: "NDE research, parapsychology, psi and psionics, consciousness studies, and witness-centered experiences." },
+    { id: "ethics-standards", title: "Ethics & Professional Standards", description: "Client care, witness respect, confidentiality, responsible disclosure, professional conduct, and accountability." },
+    { id: "reporting-documentation", title: "Reporting & Documentation", description: "Case reports, careful language, research transparency, evidence presentation, logs, and file preservation." },
+    { id: "community-development", title: "Community Development & Publication", description: "Contributor resources, mentorship, publication, public outreach, respectful discussion, and ongoing field development." },
+    { id: "technology-development", title: "Technology Development", description: "App workflows, research software, digital evidence management, platform planning, and responsible tool development." },
+    { id: "science-ai", title: "Artificial Intelligence", description: "AI literacy, responsible use, source verification, research support, disclosure, safeguards, and investigator judgment." },
+    { id: "locations", title: "Historical & Cultural Research", description: "Haunted locations, local legends, folklore, public records, archival studies, and historical context." },
     { id: "experiences", title: "Your Paranormal Experiences", description: "Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters." },
-    { id: "investigation", title: "Paranormal Investigation", description: "Case intake, walkthroughs, baselines, documentation, team practice, field safety, and evidence review." },
-    { id: "equipment", title: "Equipment & Technology", description: "Audio recorders, cameras, EMF meters, thermal tools, SLS, environmental sensors, and experimental devices." },
-    { id: "consciousness", title: "Consciousness & Parapsychology", description: "Human experience, perception, psi research, survival questions, and responsible theoretical discussion." },
     { id: "metaphysics", title: "Spirituality, Metaphysics, OBE & NDE", description: "Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making." },
-    { id: "science-ai", title: "AI, Quantum Ideas & Time", description: "Artificial intelligence, speculative models, quantum theory discussions, time questions, and technology culture." },
-    { id: "locations", title: "Haunted Locations & History", description: "Location claims, historical context, folklore, cemeteries, buildings, legends, and responsible exploration planning." },
     { id: "general", title: "General Discussion", description: "Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation." }
   ];
 
