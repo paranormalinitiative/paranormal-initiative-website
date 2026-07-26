@@ -2853,6 +2853,10 @@ footer {
     font-size: 12px;
 }
 
+.content-library-row[data-legacy="true"] {
+    border-color: rgba(85, 200, 255, 0.42);
+}
+
 .content-library-actions {
     display: flex;
     flex-wrap: wrap;

@@ -98,6 +98,32 @@
     }
   };
 
+  const legacyContributions = {
+    todd: [
+      { title: "EVP / ITC Research", subtitle: "Research position", href: "evp-itc-research.html" },
+      { title: "Raising The Standards Of Paranormal Investigation", subtitle: "Investigation Development Series", href: "investigation-development-raising-the-standards.html" },
+      { title: "What Is Paranormal Investigation?", subtitle: "Education Center Research", href: "education-research-what-is-paranormal-investigation.html" },
+      { title: "What Is Ghost Hunting?", subtitle: "Education Center Research", href: "education-research-what-is-ghost-hunting.html" },
+      { title: "Why People Choose to Investigate the Paranormal", subtitle: "Education Center Research", href: "education-research-why-investigate-paranormal.html" },
+      { title: "Basic Terminology and Foundational Language", subtitle: "Education Center Research", href: "education-research-foundational-terminology-paranormal-research.html" },
+      { title: "Basic Field Safety and Permission", subtitle: "Education Center Research", href: "education-research-field-safety-permission.html" },
+      { title: "Basic Observation and Note-Taking", subtitle: "Education Center Research", href: "education-research-observation-note-taking.html" },
+      { title: "Introduction to Equipment and What Tools Actually Measure", subtitle: "Education Center Research", href: "education-research-equipment-what-tools-measure.html" },
+      { title: "How Beginners Choose and Research a Location", subtitle: "Education Center Research", href: "education-research-choosing-researching-location.html" },
+      { title: "Introduction to Audio, Photo, and Video Review", subtitle: "Education Center Research", href: "education-research-audio-photo-video-review.html" },
+      { title: "Investigation Ethics and Professional Conduct", subtitle: "Education Center Research", href: "education-research-investigation-ethics-professional-conduct.html" },
+      { title: "Professional Investigation Documentation and Reporting", subtitle: "Education Center Research", href: "education-research-professional-documentation-reporting.html" },
+      { title: "Debunking Basics and Natural Explanations", subtitle: "Education Center Research", href: "education-research-debunking-natural-explanations.html" },
+      { title: "Weather, Environment, and Building-Science Causes", subtitle: "Education Center Research", href: "education-research-weather-environment-building-science-causes.html" },
+      { title: "Psychological Triggers of Paranormal Experiences", subtitle: "Education Center Research", href: "education-research-psychological-triggers-paranormal-experiences.html" },
+      { title: "Spiritual, Religious, and Demonic-Claim Language", subtitle: "Education Center Research", href: "education-research-spiritual-religious-demonic-claim-language.html" },
+      { title: "Types of Hauntings and Claim Categories", subtitle: "Education Center Research", href: "education-research-types-hauntings-claim-categories.html" },
+      { title: "Historical Records, Local Legends, Cemeteries, and Oral History", subtitle: "Education Center Research", href: "education-research-historical-records-local-legends-cemeteries-oral-history.html" },
+      { title: "History of Hauntings, Folklore, Ghost Hunting, and Psychical Research", subtitle: "Education Center Research", href: "education-research-history-hauntings-folklore-psychical-research.html" },
+      { title: "Personal Experience, Curiosity, Belief, Fear, Grief, Social Media, and the Search for Meaning", subtitle: "Education Center Research", href: "education-research-motivations-meaning-paranormal-experience.html" }
+    ]
+  };
+
   function getDestinationLabel() {
     return destinationInput.options[destinationInput.selectedIndex].textContent.trim();
   }
@@ -187,6 +213,24 @@
 
   function isDevUnlocked() {
     return localStorage.getItem("tpiDevCopyMode") === "enabled";
+  }
+
+  function contributorKey(profile) {
+    const name = `${profile?.displayName || ""} ${profile?.username || ""}`.toLowerCase().replace(/[^a-z0-9]+/g, "");
+    if (name.includes("toddwayne") || name.includes("tpiowner")) return "todd";
+    return "";
+  }
+
+  function getLegacyEditorArticles(profile) {
+    return (legacyContributions[contributorKey(profile)] || []).map(article => ({
+      id: `legacy:${article.href}`,
+      title: article.title,
+      subtitle: article.subtitle,
+      href: article.href,
+      contributionType: "Legacy Site Page",
+      status: "legacy-published",
+      legacy: true
+    }));
   }
 
   function getSessionUser() {
@@ -1106,19 +1150,29 @@ ${buildArticleHtml()}
   }
 
   async function loadEditorArticles() {
+    let articles = [];
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
         const data = await window.TPIApi.contributorArticles();
-        return data.articles || [];
+        articles = data.articles || [];
       } catch (error) {
         setStatus(error.message || "Could not load content");
-        return [];
+        articles = [];
       }
+    } else {
+      articles = getPublishedArticles().filter(article => {
+        if (!currentUser?.displayName) return true;
+        return !article.author || article.author === currentUser.displayName;
+      });
     }
 
-    return getPublishedArticles().filter(article => {
-      if (!currentUser?.displayName) return true;
-      return !article.author || article.author === currentUser.displayName;
+    const legacyArticles = getLegacyEditorArticles(currentUser);
+    const seen = new Set();
+    return [...articles, ...legacyArticles].filter(article => {
+      const key = article.href || article.id || article.title;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
   }
 
@@ -1149,11 +1203,13 @@ ${buildArticleHtml()}
     const host = document.getElementById("content-library-list");
     if (!host) return;
     const articles = await loadEditorArticles();
-    const drafts = articles.filter(article => article.status !== "published");
+    const drafts = articles.filter(article => article.status !== "published" && article.status !== "legacy-published");
     const published = articles.filter(article => article.status === "published");
+    const legacy = articles.filter(article => article.status === "legacy-published");
     host.innerHTML = `
       ${renderContentLibrarySection("Drafts", drafts)}
       ${renderContentLibrarySection("Published", published)}
+      ${renderContentLibrarySection("Contributor Profile Site Pages", legacy)}
     `;
   }
 
@@ -1165,15 +1221,15 @@ ${buildArticleHtml()}
       <section class="content-library-section">
         <h4>${escapeHtml(title)}</h4>
         ${items.map(article => `
-          <div class="content-library-row" data-article-id="${escapeHtml(article.id)}">
+          <div class="content-library-row" data-article-id="${escapeHtml(article.id)}" ${article.legacy ? `data-legacy="true"` : ""}>
             <div>
               <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
               <span>${escapeHtml([article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "))}</span>
             </div>
             <div class="content-library-actions">
-              <button type="button" data-action="content-edit" data-article-id="${escapeHtml(article.id)}">Edit</button>
+              <button type="button" data-action="${article.legacy ? "content-import-legacy" : "content-edit"}" data-article-id="${escapeHtml(article.id)}">${article.legacy ? "Import To Editor" : "Edit"}</button>
               ${article.status === "published" ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`)}">Open</a>` : ""}
-              <button type="button" data-action="content-delete" data-article-id="${escapeHtml(article.id)}">Delete</button>
+              ${article.legacy ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(article.href)}">Open</a>` : `<button type="button" data-action="content-delete" data-article-id="${escapeHtml(article.id)}">Delete</button>`}
             </div>
           </div>
         `).join("")}
@@ -1209,6 +1265,48 @@ ${buildArticleHtml()}
     }
     loadArticleIntoEditor(article);
     document.getElementById("content-library-modal")?.remove();
+  }
+
+  async function importLegacyArticle(articleId) {
+    const legacyArticle = (await loadEditorArticles()).find(article => article.id === articleId && article.legacy);
+    if (!legacyArticle) {
+      setStatus("Legacy page could not be found");
+      return;
+    }
+
+    try {
+      const response = await fetch(legacyArticle.href, { cache: "no-store" });
+      if (!response.ok) throw new Error("Legacy page unavailable");
+      const html = await response.text();
+      const documentCopy = new DOMParser().parseFromString(html, "text/html");
+      const articleBody =
+        documentCopy.querySelector(".lesson-reading-section .lesson-reading-block") ||
+        documentCopy.querySelector(".series-article") ||
+        documentCopy.querySelector(".portal-hero") ||
+        documentCopy.body;
+      const title =
+        documentCopy.querySelector('meta[name="pp:title"]')?.getAttribute("content") ||
+        documentCopy.querySelector("h2")?.textContent ||
+        legacyArticle.title;
+      const subtitle =
+        documentCopy.querySelector('meta[name="pp:subtitle"]')?.getAttribute("content") ||
+        legacyArticle.subtitle ||
+        "Imported site page";
+
+      currentArticleId = null;
+      titleInput.value = title.trim() || legacyArticle.title;
+      subtitleInput.value = subtitle.trim();
+      contributionTypeInput.value = subtitle.toLowerCase().includes("research paper") ? "Research Paper" : "Field Article";
+      sourceInput.value = legacyArticle.href;
+      labelsInput.value = "Imported, Legacy Site Page";
+      editor.innerHTML = cleanHtml(articleBody.innerHTML || "<p><br></p>", false);
+      htmlView.value = cleanHtml(editor.innerHTML);
+      focusEditorStart();
+      document.getElementById("content-library-modal")?.remove();
+      setStatus("Legacy page imported. Save Draft or Publish to create an editable version.");
+    } catch (error) {
+      setStatus(error.message || "Legacy import failed");
+    }
   }
 
   async function deleteContentArticle(articleId) {
@@ -1443,6 +1541,7 @@ ${buildArticleHtml()}
     if (action === "content-library") openContentLibrary();
     if (action === "content-library-close") document.getElementById("content-library-modal")?.remove();
     if (action === "content-edit") editContentArticle(button.dataset.articleId);
+    if (action === "content-import-legacy") importLegacyArticle(button.dataset.articleId);
     if (action === "content-delete") deleteContentArticle(button.dataset.articleId);
     if (action === "writing-guides") openWritingGuides();
     if (action === "writing-guides-close") writingGuidesModal.hidden = true;
