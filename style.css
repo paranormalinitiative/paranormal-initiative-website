@@ -2315,7 +2315,7 @@ footer {
 
 .paper-editor-layout {
     display: grid;
-    grid-template-columns: minmax(760px, 1fr) 320px;
+    grid-template-columns: minmax(560px, 1fr) 12px minmax(340px, var(--post-settings-width, 390px));
     gap: 0;
     align-items: stretch;
     height: 760px;
@@ -2327,11 +2327,44 @@ footer {
     margin: 0;
     height: 760px;
     padding: 0 22px 0 0;
-    border-right: 1px solid #1f2a36;
     overflow: hidden;
     opacity: 1;
     transform: none;
     animation: none;
+}
+
+.editor-resize-handle {
+    position: relative;
+    height: 760px;
+    cursor: col-resize;
+    border-left: 1px solid #1f2a36;
+    border-right: 1px solid #1f2a36;
+    background: #0c1116;
+}
+
+.editor-resize-handle::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 64px;
+    border-radius: 999px;
+    background: #2b3d4f;
+    transform: translate(-50%, -50%);
+}
+
+.editor-resize-handle:hover,
+.editor-resize-handle:focus-visible,
+.paper-editor-layout.is-resizing .editor-resize-handle {
+    background: #111b24;
+    outline: none;
+}
+
+.editor-resize-handle:hover::before,
+.editor-resize-handle:focus-visible::before,
+.paper-editor-layout.is-resizing .editor-resize-handle::before {
+    background: #55c8ff;
 }
 
 .editor-pane-header {
@@ -2421,6 +2454,7 @@ footer {
 
 .post-settings-panel {
     height: 760px;
+    min-width: 0;
     padding: 18px 0 0 22px;
     overflow-y: auto;
 }
@@ -2787,6 +2821,10 @@ footer {
         grid-template-columns: 1fr;
         height: auto;
         overflow: visible;
+    }
+
+    .editor-resize-handle {
+        display: none;
     }
 
     .editor-pane {

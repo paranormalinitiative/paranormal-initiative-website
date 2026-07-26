@@ -3,6 +3,7 @@
   const ACCESS_SESSION_KEY = "tpiEditorSession";
   const ACCESS_INVITES_KEY = "tpiEditorInvites";
   const PUBLISHED_ARTICLES_KEY = "tpiPublishedArticles";
+  const POST_SETTINGS_WIDTH_KEY = "tpiPostSettingsWidth";
   const titleInput = document.getElementById("editor-title");
   const subtitleInput = document.getElementById("editor-subtitle");
   const destinationInput = document.getElementById("editor-destination");
@@ -17,6 +18,7 @@
   const htmlView = document.getElementById("editor-html-view");
   const status = document.getElementById("editor-status");
   const layout = document.querySelector(".paper-editor-layout");
+  const resizeHandle = document.querySelector(".editor-resize-handle");
   const viewMode = document.getElementById("editor-view-mode");
   const imageFileInput = document.getElementById("image-file-input");
   const videoFileInput = document.getElementById("video-file-input");
@@ -42,6 +44,7 @@
   let savedSelection = null;
   let currentUser = null;
   let autosaveTimer = null;
+  let resizeState = null;
 
   const allowedIframeHosts = [
     "youtube.com",
@@ -95,6 +98,22 @@
     setStatus.timer = window.setTimeout(() => {
       status.textContent = "Draft ready";
     }, 1800);
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function setPostSettingsWidth(width) {
+    const maxWidth = Math.max(340, Math.min(560, Math.floor(window.innerWidth * 0.42)));
+    const nextWidth = clamp(Math.round(width), 340, maxWidth);
+    layout?.style.setProperty("--post-settings-width", `${nextWidth}px`);
+    return nextWidth;
+  }
+
+  function loadPostSettingsWidth() {
+    const savedWidth = Number(localStorage.getItem(POST_SETTINGS_WIDTH_KEY));
+    if (Number.isFinite(savedWidth) && savedWidth > 0) setPostSettingsWidth(savedWidth);
   }
 
   function getUsers() {
@@ -256,6 +275,41 @@
       return;
     }
     unlockEditor(user, { initializeDraft: true, focusEditor: true });
+  }
+
+  function startResize(event) {
+    if (!resizeHandle || window.matchMedia("(max-width: 900px)").matches) return;
+    resizeState = {
+      startX: event.clientX,
+      startWidth: resizeHandle.nextElementSibling?.getBoundingClientRect().width || 390
+    };
+    layout.classList.add("is-resizing");
+    resizeHandle.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+  }
+
+  function moveResize(event) {
+    if (!resizeState) return;
+    const delta = resizeState.startX - event.clientX;
+    setPostSettingsWidth(resizeState.startWidth + delta);
+  }
+
+  function stopResize(event) {
+    if (!resizeState) return;
+    const width = resizeHandle.nextElementSibling?.getBoundingClientRect().width || resizeState.startWidth;
+    localStorage.setItem(POST_SETTINGS_WIDTH_KEY, String(Math.round(width)));
+    resizeState = null;
+    layout.classList.remove("is-resizing");
+    resizeHandle.releasePointerCapture?.(event.pointerId);
+  }
+
+  function handleResizeKey(event) {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    const currentWidth = resizeHandle.nextElementSibling?.getBoundingClientRect().width || 390;
+    const step = event.shiftKey ? 40 : 16;
+    const nextWidth = setPostSettingsWidth(currentWidth + (event.key === "ArrowLeft" ? step : -step));
+    localStorage.setItem(POST_SETTINGS_WIDTH_KEY, String(nextWidth));
+    event.preventDefault();
   }
 
   function openContributorManager() {
@@ -1116,8 +1170,14 @@ ${buildArticleHtml()}
   publishModal.addEventListener("click", event => {
     if (event.target === publishModal) closePublishModal();
   });
+  resizeHandle?.addEventListener("pointerdown", startResize);
+  resizeHandle?.addEventListener("pointermove", moveResize);
+  resizeHandle?.addEventListener("pointerup", stopResize);
+  resizeHandle?.addEventListener("pointercancel", stopResize);
+  resizeHandle?.addEventListener("keydown", handleResizeKey);
 
   async function initEditorAccess() {
+    loadPostSettingsWidth();
     editor.innerHTML = "<p><br></p>";
     htmlView.value = cleanHtml(editor.innerHTML);
     const articleLoaded = await loadArticleForEditing();
