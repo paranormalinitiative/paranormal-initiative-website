@@ -8,6 +8,7 @@
   const inviteOwnerTools = document.querySelector("[data-invite-owner-tools]");
   const ownerBootstrapForm = document.querySelector("[data-owner-bootstrap-form]");
   const inviteLinkList = document.querySelector("[data-invite-link-list]");
+  const adminContributorList = document.querySelector("[data-admin-contributor-list]");
   const dashboardAdmin = document.querySelector("[data-dashboard-admin]");
   const dashboardProfile = document.querySelector("[data-dashboard-profile]");
   const dashboardArticles = document.querySelector("[data-dashboard-articles]");
@@ -66,8 +67,21 @@
     return localStorage.getItem("tpiDevCopyMode") === "enabled";
   }
 
-  function makeInviteCode() {
-    return `TPI-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  function makeInviteCode(prefix = "TPI") {
+    return `${prefix}-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  }
+
+  function getInviteAssignment(codeOrKind) {
+    const key = String(codeOrKind || "")
+      .trim()
+      .toUpperCase()
+      .split("-")[0];
+    const assignments = {
+      D: { prefix: "D", title: "Founder / Director", role: "owner", label: "Director" },
+      AD: { prefix: "AD", title: "Assistant Director", role: "admin", label: "Assistant Director" },
+      ABM: { prefix: "ABM", title: "Advisory Board Member", role: "contributor", label: "Advisory Board Member" }
+    };
+    return assignments[key] || null;
   }
 
   function normalizeOrgTitle(title) {
@@ -122,6 +136,10 @@
     }[role] || "Contributor account";
   }
 
+  function option(value, current, label = value) {
+    return `<option value="${escapeHtml(value)}"${value === current ? " selected" : ""}>${escapeHtml(label)}</option>`;
+  }
+
   function encodeInvite(invite) {
     return btoa(JSON.stringify({
       code: invite.code,
@@ -170,6 +188,21 @@
     setStatus("Invite link loaded. Submit the invite code to continue.", false);
   }
 
+  function showAssignedInviteTitle(inviteCode) {
+    const assignment = getInviteAssignment(inviteCode);
+    const titleInput = inviteSetupPanel?.querySelector("input[name='title']");
+    if (!titleInput) return;
+    if (assignment) {
+      titleInput.value = assignment.title;
+      titleInput.readOnly = true;
+      titleInput.placeholder = `${assignment.label} assigned by invite code`;
+    } else {
+      titleInput.readOnly = false;
+      if (isProtectedOrgTitle(titleInput.value)) titleInput.value = "";
+      titleInput.placeholder = "Research Contributor";
+    }
+  }
+
   function showOwnerToolsForSetupOnly() {
     if (!inviteOwnerTools || !ownerBootstrapForm || !isDevUnlocked()) return;
 
@@ -192,12 +225,55 @@
       return `
         <div class="invite-link-row">
           <strong>${escapeHtml(invite.code)}</strong>
-          <span>${escapeHtml(invite.role || "contributor")}</span>
+          <span>${escapeHtml(getInviteAssignment(invite.code)?.label || invite.role || "contributor")}</span>
           <input type="text" readonly value="${escapeHtml(link)}">
           <button type="button" data-copy-invite-link="${escapeHtml(link)}">Copy Link</button>
         </div>
       `;
     }).join("") : `<p class="access-note">No open invite links yet.</p>`;
+    renderLocalContributorTitles(currentUser);
+  }
+
+  function renderContributorTitleRow(contributor, currentUser) {
+    const canChangeAccess = currentUser?.role === "owner";
+    const name = contributor.displayName || contributor.username || "Contributor";
+    const currentTitle = contributor.title || "";
+    const currentRole = contributor.role || "contributor";
+    return `
+      <form class="invite-link-row admin-title-row" data-admin-title-form>
+        <input name="username" type="hidden" value="${escapeHtml(contributor.username)}">
+        <strong>${escapeHtml(name)}</strong>
+        <span>${escapeHtml(contributor.username)}</span>
+        <select name="title" aria-label="Public organization title for ${escapeHtml(name)}">
+          ${option("", currentTitle, "No leadership title")}
+          ${option("Founder / Director", currentTitle)}
+          ${option("Assistant Director", currentTitle)}
+          ${option("Advisory Board Member", currentTitle)}
+          ${option("Research Contributor", currentTitle)}
+          ${option("Field Contributor", currentTitle)}
+          ${option("Editor / Reviewer", currentTitle)}
+          ${option("Technical Contributor", currentTitle)}
+          ${option("Education Contributor", currentTitle)}
+          ${option("Community Liaison", currentTitle)}
+          ${option("Researcher", currentTitle)}
+          ${option("Investigator", currentTitle)}
+        </select>
+        <select name="role" aria-label="Account access for ${escapeHtml(name)}"${canChangeAccess ? "" : " disabled"}>
+          ${option("contributor", currentRole, "Contributor Access")}
+          ${option("admin", currentRole, "Admin Access")}
+          ${option("owner", currentRole, "Owner Access")}
+        </select>
+        <button type="submit">Save</button>
+      </form>
+    `;
+  }
+
+  function renderLocalContributorTitles(currentUser) {
+    if (!adminContributorList || !["owner", "admin"].includes(currentUser?.role)) return;
+    const contributors = getUsers().filter(user => user.active !== false && !user.developerOwner);
+    adminContributorList.innerHTML = contributors.length
+      ? contributors.map(contributor => renderContributorTitleRow(contributor, currentUser)).join("")
+      : `<p class="access-note">No contributors have been created yet.</p>`;
   }
 
   async function renderCloudflareOwnerInvites() {
@@ -207,7 +283,10 @@
     try {
       const session = await window.TPIApi.me();
       if (!["owner", "admin"].includes(session.user?.role)) return false;
-      const data = await window.TPIApi.listInvites();
+      const [data, contributorData] = await Promise.all([
+        window.TPIApi.listInvites(),
+        adminContributorList ? window.TPIApi.listContributors() : Promise.resolve({ contributors: [] })
+      ]);
       ownerToolsHost.hidden = false;
       ownerToolsHost.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
       if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
@@ -217,12 +296,18 @@
         return `
           <div class="invite-link-row">
             <strong>${escapeHtml(invite.code)}</strong>
-            <span>${escapeHtml(invite.role || "contributor")}</span>
+            <span>${escapeHtml(getInviteAssignment(invite.code)?.label || invite.role || "contributor")}</span>
             <input type="text" readonly value="${escapeHtml(link)}">
             <button type="button" data-copy-invite-link="${escapeHtml(link)}">Copy Link</button>
           </div>
         `;
       }).join("") : `<p class="access-note">No open invite links yet.</p>`;
+      if (adminContributorList) {
+        const contributors = contributorData.contributors || [];
+        adminContributorList.innerHTML = contributors.length
+          ? contributors.map(contributor => renderContributorTitleRow(contributor, session.user)).join("")
+          : `<p class="access-note">No contributors have been created yet.</p>`;
+      }
       return true;
     } catch (error) {
       return false;
@@ -429,11 +514,46 @@
     const ownerInviteForm = event.target.closest("[data-owner-invite-form]");
     const ownerBootstrapForm = event.target.closest("[data-owner-bootstrap-form]");
     const profileSubmitForm = event.target.closest("[data-profile-form]");
-    if (!loginForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm) return;
+    const adminTitleForm = event.target.closest("[data-admin-title-form]");
+    if (!loginForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !adminTitleForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
     const users = getUsers();
+
+    if (adminTitleForm) {
+      const payload = {
+        username: String(data.get("username") || "").trim(),
+        title: String(data.get("title") || "").trim(),
+        role: String(data.get("role") || "").trim()
+      };
+
+      if (await cloudflareReady()) {
+        try {
+          await window.TPIApi.updateContributorTitle(payload);
+          await renderCloudflareOwnerInvites();
+          setStatus("Contributor title saved.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+        return;
+      }
+
+      const currentUser = users.find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false);
+      if (!["owner", "admin"].includes(currentUser?.role)) {
+        setStatus("Owner/admin login is required to change contributor titles.", true);
+        return;
+      }
+      const targetIndex = users.findIndex(user => user.username === payload.username);
+      if (targetIndex >= 0) {
+        const nextRole = currentUser.role === "owner" && payload.role ? payload.role : users[targetIndex].role;
+        users[targetIndex] = { ...users[targetIndex], title: payload.title, role: nextRole };
+        saveUsers(users);
+        renderLocalContributorTitles(currentUser);
+        setStatus("Contributor title saved locally.", false);
+      }
+      return;
+    }
 
     if (profileSubmitForm) {
       const uploadedPhoto = profileSubmitForm.querySelector("input[name='profilePhotoFile']")?.files?.[0];
@@ -490,6 +610,7 @@
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || "Profile save failed.");
           renderDashboardProfile(result.user);
+          await renderDashboardArticles(result.user);
           setStatus("Profile saved.", false);
         } catch (error) {
           setStatus(error.message, true);
@@ -503,6 +624,7 @@
         localUsers[userIndex] = { ...localUsers[userIndex], ...payload };
         saveUsers(localUsers);
         renderDashboardProfile(localUsers[userIndex]);
+        await renderDashboardArticles(localUsers[userIndex]);
         setStatus("Profile saved locally.", false);
       }
       return;
@@ -547,10 +669,15 @@
         return;
       }
 
-      const code = String(data.get("inviteCode") || "").trim() || makeInviteCode();
+      const inviteAssignment = getInviteAssignment(data.get("inviteAssignment"));
+      const typedCode = String(data.get("inviteCode") || "").trim();
+      const code = typedCode
+        ? (inviteAssignment && !typedCode.toUpperCase().startsWith(`${inviteAssignment.prefix}-`) ? `${inviteAssignment.prefix}-${typedCode}` : typedCode)
+        : makeInviteCode(inviteAssignment?.prefix || "TPI");
+      const inviteRole = inviteAssignment?.role || String(data.get("inviteRole") || "contributor");
       if (hasCloudflareInviteAccess) {
         try {
-          await window.TPIApi.createInvite({ code, role: String(data.get("inviteRole") || "contributor") });
+          await window.TPIApi.createInvite({ code, role: inviteRole });
           ownerInviteForm.reset();
           await renderCloudflareOwnerInvites();
           setStatus("Cloudflare invite link created. Copy it and send it to the contributor.", false);
@@ -568,7 +695,7 @@
 
       invites.push({
         code,
-        role: String(data.get("inviteRole") || "contributor"),
+        role: inviteRole,
         used: false,
         createdAt: new Date().toISOString()
       });
@@ -611,6 +738,7 @@
           await window.TPIApi.checkInvite(inviteCode);
           const hiddenCode = inviteSetupPanel?.querySelector("input[name='inviteCode']");
           if (hiddenCode) hiddenCode.value = inviteCode;
+          showAssignedInviteTitle(inviteCode);
           if (inviteCodePanel) inviteCodePanel.hidden = true;
           if (inviteSetupPanel) inviteSetupPanel.hidden = false;
           setStatus("Invite accepted. Create your contributor login.", false);
@@ -630,6 +758,7 @@
 
       const hiddenCode = inviteSetupPanel?.querySelector("input[name='inviteCode']");
       if (hiddenCode) hiddenCode.value = inviteCode;
+      showAssignedInviteTitle(inviteCode);
       if (inviteCodePanel) inviteCodePanel.hidden = true;
       if (inviteSetupPanel) inviteSetupPanel.hidden = false;
       setStatus("Invite accepted. Create your contributor login.", false);
@@ -639,8 +768,10 @@
 
     const inviteCode = String(data.get("inviteCode") || "").trim();
     const username = String(data.get("username") || "").trim();
+    const inviteAssignment = getInviteAssignment(inviteCode);
     const requestedTitle = String(data.get("title") || "").trim();
-    if (isProtectedOrgTitle(requestedTitle)) {
+    const assignedTitle = inviteAssignment?.title || requestedTitle;
+    if (isProtectedOrgTitle(requestedTitle) && !inviteAssignment) {
       setStatus("That leadership title is assigned by site leadership. Please choose a contributor title.", true);
       return;
     }
@@ -651,7 +782,7 @@
           username,
           password: String(data.get("password") || ""),
           displayName: String(data.get("displayName") || username).trim(),
-          title: requestedTitle,
+          title: assignedTitle,
           correspondence: String(data.get("correspondence") || "").trim(),
           affiliation: String(data.get("affiliation") || "").trim(),
           organization: String(data.get("organization") || "").trim(),
@@ -683,8 +814,8 @@
       username,
       password: String(data.get("password") || ""),
       displayName: String(data.get("displayName") || username).trim(),
-      title: requestedTitle,
-      role: invite.role || "contributor",
+      title: assignedTitle,
+      role: inviteAssignment?.role || invite.role || "contributor",
       correspondence: String(data.get("correspondence") || "").trim(),
       affiliation: String(data.get("affiliation") || "").trim(),
       organization: String(data.get("organization") || "").trim(),

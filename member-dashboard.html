@@ -86,11 +86,24 @@
             <h2>Contributor Invites</h2>
             <p>Generate invite links for approved contributors. Public visitors and regular contributors do not see this panel.</p>
             <form data-owner-invite-form>
+                <label>
+                    <span>Invite Type</span>
+                    <select name="inviteAssignment">
+                        <option value="standard">Standard Contributor</option>
+                        <option value="D">Director</option>
+                        <option value="AD">Assistant Director</option>
+                        <option value="ABM">Advisory Board Member</option>
+                    </select>
+                </label>
                 <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Leave blank to auto-generate"></label>
                 <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label>
                 <button type="submit">Generate Invite Link</button>
             </form>
             <div class="invite-link-list" data-invite-link-list></div>
+
+            <h2>Contributor Titles</h2>
+            <p>Assign public organization titles and account access for approved members.</p>
+            <div class="invite-link-list" data-admin-contributor-list><p class="access-note">Loading contributors...</p></div>
         </article>
     </div>
 

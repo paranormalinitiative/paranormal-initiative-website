@@ -17,6 +17,8 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
+    if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
+    if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
     if (request.method === "POST" && path === "/contributors/me/profile") return requireContributor(request, env, user => handleUpdateProfile(request, env, user));
@@ -116,8 +118,12 @@ async function handleMe(request, env) {
 async function handleCreateInvite(request, env, user) {
   const data = await readJson(request);
   const code = clean(data.code || makeInviteCode());
-  const role = ["owner", "admin", "contributor"].includes(data.role) ? data.role : "contributor";
+  const assignment = getInviteAssignment(code);
+  const role = assignment?.role || (["owner", "admin", "contributor"].includes(data.role) ? data.role : "contributor");
   if (!code) return json({ error: "Invite code is required." }, 400);
+  if (role === "owner" && user.role !== "owner") {
+    return json({ error: "Only the owner can create a Director invite." }, 403);
+  }
 
   await env.TPI_DB.prepare("INSERT INTO invite_codes (code, role, created_by) VALUES (?, ?, ?)")
     .bind(code, role, user.id)
@@ -128,6 +134,41 @@ async function handleCreateInvite(request, env, user) {
 async function handleListInvites(env) {
   const { results } = await env.TPI_DB.prepare("SELECT code, role, used, used_by, used_at, created_at FROM invite_codes ORDER BY created_at DESC").all();
   return json({ invites: results });
+}
+
+async function handleListContributors(env) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT username, display_name, title, role, active, created_at
+    FROM contributors
+    WHERE active = 1
+    ORDER BY display_name COLLATE NOCASE, username COLLATE NOCASE
+  `).all();
+  return json({ contributors: results.map(publicUser) });
+}
+
+async function handleUpdateContributorTitle(request, env, actingUser) {
+  const data = await readJson(request);
+  const username = clean(data.username);
+  const title = clean(data.title).slice(0, 160);
+  const requestedRole = clean(data.role);
+  const target = await getUserByUsername(env, username);
+  if (!target || !target.active) return json({ error: "Contributor was not found." }, 404);
+  if (target.role === "owner" && actingUser.role !== "owner") {
+    return json({ error: "Only the owner can change an owner profile." }, 403);
+  }
+
+  let nextRole = target.role;
+  if (requestedRole && requestedRole !== target.role) {
+    if (actingUser.role !== "owner") return json({ error: "Only the owner can change account access." }, 403);
+    nextRole = ["owner", "admin", "contributor"].includes(requestedRole) ? requestedRole : target.role;
+  }
+
+  await env.TPI_DB.prepare("UPDATE contributors SET title = ?, role = ? WHERE username = ?")
+    .bind(title, nextRole, username)
+    .run();
+
+  const updated = await getUserByUsername(env, username);
+  return json({ contributor: publicUser(updated) });
 }
 
 async function handleCheckInvite(request, env) {
@@ -148,7 +189,9 @@ async function handleRegister(request, env) {
     return json({ error: "Display name, username, and password are required." }, 400);
   }
   if (await getUserByUsername(env, username)) return json({ error: "That username already exists." }, 409);
-  if (isProtectedOrgTitle(data.title) && !["owner", "admin"].includes(invite.role)) {
+  const inviteAssignment = getInviteAssignment(invite.code);
+  const assignedTitle = inviteAssignment?.title || clean(data.title);
+  if (isProtectedOrgTitle(data.title) && !inviteAssignment && !["owner", "admin"].includes(invite.role)) {
     return json({ error: "That leadership title is assigned by site leadership." }, 403);
   }
 
@@ -162,8 +205,8 @@ async function handleRegister(request, env) {
       username,
       await hashPassword(password),
       clean(data.displayName),
-      clean(data.title),
-      invite.role,
+      assignedTitle,
+      inviteAssignment?.role || invite.role,
       clean(data.correspondence),
       clean(data.affiliation),
       clean(data.organization),
@@ -435,6 +478,15 @@ function clean(value) {
 
 function makeInviteCode() {
   return `TPI-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+}
+
+function getInviteAssignment(code) {
+  const prefix = clean(code).toUpperCase().split("-")[0];
+  return {
+    D: { title: "Founder / Director", role: "owner" },
+    AD: { title: "Assistant Director", role: "admin" },
+    ABM: { title: "Advisory Board Member", role: "contributor" }
+  }[prefix] || null;
 }
 
 function isProtectedOrgTitle(title) {

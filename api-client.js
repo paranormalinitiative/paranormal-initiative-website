@@ -56,6 +56,8 @@
     ownerBootstrap: payload => request("/owner/bootstrap", { method: "POST", body: payload }),
     listInvites: () => request("/invites"),
     createInvite: payload => request("/invites", { method: "POST", body: payload }),
+    listContributors: () => request("/admin/contributors"),
+    updateContributorTitle: payload => request("/admin/contributors/title", { method: "POST", body: payload }),
     checkInvite: code => request("/invites/check", { method: "POST", body: { code } }),
     registerContributor: payload => request("/contributors/register", { method: "POST", body: payload }),
     updateProfile: payload => request("/contributors/me/profile", { method: "POST", body: payload }),
