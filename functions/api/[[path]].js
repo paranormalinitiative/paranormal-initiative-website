@@ -52,7 +52,7 @@ async function handleOwnerBootstrap(request, env) {
     username,
     await hashPassword(password),
     clean(data.displayName || "Todd Wayne"),
-    clean(data.title || "Site Owner / Administrator"),
+    clean(data.title || "Founder / Director"),
     "owner",
     clean(data.correspondence || "paranormalinitiative@yahoo.com"),
     clean(data.affiliation || "The Paranormal Initiative - Applied Paranormal Research and Studies"),

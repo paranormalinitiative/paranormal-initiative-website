@@ -70,11 +70,15 @@
     return `TPI-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
   }
 
-  function isProtectedOrgTitle(title) {
-    const normalized = String(title || "")
+  function normalizeOrgTitle(title) {
+    return String(title || "")
       .trim()
       .toLowerCase()
       .replace(/\s+/g, " ");
+  }
+
+  function isProtectedOrgTitle(title) {
+    const normalized = normalizeOrgTitle(title);
     return [
       "founder / director",
       "founder/director",
@@ -82,6 +86,40 @@
       "assistant director",
       "advisory board member"
     ].includes(normalized);
+  }
+
+  function getLeadershipContributionLevel(title, role) {
+    const normalized = normalizeOrgTitle(title);
+    const leadershipLevels = {
+      "founder / director": { label: "Director", note: "Founder / Director" },
+      "founder/director": { label: "Director", note: "Founder / Director" },
+      "founder director": { label: "Director", note: "Founder / Director" },
+      "assistant director": { label: "Assistant Director", note: "Organizational leadership" },
+      "advisory board member": { label: "Advisory Board Member", note: "Professional advisory role" }
+    };
+
+    if (leadershipLevels[normalized]) return leadershipLevels[normalized];
+    if (role === "owner") return { label: "Director", note: "Founder / Director" };
+    if (role === "admin") return { label: "Assistant Director", note: "Organizational leadership" };
+    return null;
+  }
+
+  function getAccountAccessLabel(role) {
+    return {
+      owner: "Owner Access",
+      admin: "Admin Access",
+      editor: "Contributor Access",
+      contributor: "Contributor Access"
+    }[role] || "Contributor Access";
+  }
+
+  function getAccountAccessDetail(role) {
+    return {
+      owner: "Full site administration",
+      admin: "Contributor support and administration",
+      editor: "Can write, save drafts, and publish assigned work",
+      contributor: "Can write, save drafts, and publish assigned work"
+    }[role] || "Contributor account";
   }
 
   function encodeInvite(invite) {
@@ -194,7 +232,7 @@
   function renderDashboardProfile(user) {
     if (!dashboardProfile || !user) return;
     if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
-    if (dashboardRole) dashboardRole.textContent = [user.title, user.role].filter(Boolean).join(" - ");
+    if (dashboardRole) dashboardRole.textContent = [user.title, getAccountAccessLabel(user.role)].filter(Boolean).join(" - ");
     if (publicProfileLink) publicProfileLink.href = `contributor-profile.html?username=${encodeURIComponent(user.username)}`;
     const profileName = user.displayName || user.username || "Contributor";
     const photoMarkup = user.photoUrl
@@ -206,7 +244,7 @@
         <div>
           <h2>${escapeHtml(profileName)}</h2>
           <p class="public-profile-title">${escapeHtml(user.title || "Research Contributor")}</p>
-          <p class="member-profile-role">${escapeHtml(user.role || "contributor")}</p>
+          <p class="member-profile-role">${escapeHtml(getAccountAccessDetail(user.role))}</p>
         </div>
       </div>
       <div class="member-profile-facts">
@@ -236,9 +274,9 @@
     }
   }
 
-  function getContributionLevel(publishedCount, role) {
-    if (role === "owner") return { label: "Founder / Owner", note: "Site leadership and full contributor access" };
-    if (role === "admin") return { label: "Administrator", note: "Contributor support and site administration" };
+  function getContributionLevel(publishedCount, role, title) {
+    const leadershipLevel = getLeadershipContributionLevel(title, role);
+    if (leadershipLevel) return leadershipLevel;
     if (publishedCount >= 25) return { label: "Principal Contributor", note: `${publishedCount} published contributions` };
     if (publishedCount >= 15) return { label: "Senior Research Contributor", note: `${publishedCount} published contributions` };
     if (publishedCount >= 10) return { label: "Published Researcher", note: `${publishedCount} published contributions` };
@@ -290,7 +328,7 @@
 
     const drafts = articles.filter(article => article.status !== "published");
     const published = articles.filter(article => article.status === "published");
-    const level = getContributionLevel(published.length, user?.role);
+    const level = getContributionLevel(published.length, user?.role, user?.title);
     const levelHost = document.querySelector("[data-dashboard-level]");
     if (levelHost) levelHost.innerHTML = renderContributionLevel(level);
     if (dashboardDrafts) dashboardDrafts.innerHTML = renderList(drafts, "No unpublished drafts yet.", true);
@@ -335,7 +373,7 @@
       const profile = data.profile;
       const articles = data.articles || [];
       const publishedCount = articles.filter(article => article.status === "published" || !article.status).length;
-      const contributionLevel = getContributionLevel(publishedCount, profile.role);
+      const contributionLevel = getContributionLevel(publishedCount, profile.role, profile.title);
       document.title = `${profile.displayName || profile.username} | The Paranormal Initiative`;
       const profileName = profile.displayName || profile.username || "Contributor";
       publicProfileRoot.innerHTML = `
@@ -482,7 +520,7 @@
           username: String(data.get("username") || "tpi-owner").trim(),
           password: String(data.get("password") || ""),
           displayName: "Todd Wayne",
-          title: "Site Owner / Administrator"
+          title: "Founder / Director"
         });
         ownerBootstrapForm.reset();
         setStatus("Owner login created. Go to Member Login and sign in with that username and password.", false);
