@@ -253,10 +253,9 @@ Current direction:
 
 Still required:
 
-- Change Password / account settings.
-- Test profile photo upload from computer after R2 is connected.
-- Public profile links from article author names and contributor comments.
+- Visual test profile photo upload from computer after R2 is connected.
 - Cleaner public profile visual QA after real data is entered.
+- Visual test owner/admin comment moderation against live Cloudflare data.
 
 ## Cloudflare Storage Direction
 
@@ -322,12 +321,12 @@ The user asked about Academia.edu and external papers. The working policy for th
 1. Create the Cloudflare R2 bucket and uncomment the `TPI_MEDIA` binding.
 2. Test profile photo upload from the member dashboard.
 3. Replace editor data-URL media insertion with the existing R2 article-media endpoint.
-4. Add comment moderation/admin tools.
-5. Visually test current editor, dashboard, public profile, invite page, login page, and published article page.
-6. Make the toolbar more icon-like and less text-heavy after the core portal flow is stable.
+4. Visually test current editor, dashboard, public profile, invite page, login page, published article page, and comment moderation.
+5. Make the toolbar more icon-like and less text-heavy after the core portal flow is stable.
 
 Recently completed:
 
+- Comment moderation tools were added to the owner/admin dashboard. Public anonymous/name-only comments are pending by default, contributor-signed comments publish immediately, and owner/admin can approve or delete comments.
 - Change Password/account settings were added to the member dashboard with Cloudflare D1 and local-preview fallback behavior.
 - Published article author names link to public contributor profiles when the article has a contributor username.
 - Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.

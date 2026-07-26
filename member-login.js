@@ -9,6 +9,7 @@
   const ownerBootstrapForm = document.querySelector("[data-owner-bootstrap-form]");
   const inviteLinkList = document.querySelector("[data-invite-link-list]");
   const adminContributorList = document.querySelector("[data-admin-contributor-list]");
+  const commentModerationList = document.querySelector("[data-comment-moderation-list]");
   const dashboardAdmin = document.querySelector("[data-dashboard-admin]");
   const dashboardProfile = document.querySelector("[data-dashboard-profile]");
   const dashboardArticles = document.querySelector("[data-dashboard-articles]");
@@ -264,6 +265,9 @@
       `;
     }).join("") : `<p class="access-note">No open invite links yet.</p>`;
     renderLocalContributorTitles(currentUser);
+    if (commentModerationList) {
+      commentModerationList.innerHTML = `<p class="access-note">Comment moderation is available after signing in through Cloudflare.</p>`;
+    }
   }
 
   function renderContributorTitleRow(contributor, currentUser) {
@@ -308,6 +312,44 @@
       : `<p class="access-note">No contributors have been created yet.</p>`;
   }
 
+  function renderModerationComment(comment, statusFilter) {
+    const author = [comment.name || "Anonymous Contributor", comment.authorTitle].filter(Boolean).join(" - ");
+    const pageUrl = comment.pageId || "";
+    const date = comment.createdAt ? new Date(comment.createdAt).toLocaleString() : "";
+    return `
+      <article class="moderation-comment">
+        <div class="moderation-comment-meta">
+          <strong>${escapeHtml(author)}</strong>
+          <span>${escapeHtml(date)}</span>
+        </div>
+        <p>${escapeHtml(comment.text)}</p>
+        <a href="${escapeHtml(pageUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(pageUrl || "Article page")}</a>
+        <div class="moderation-comment-actions">
+          ${statusFilter === "pending" ? `<button type="button" data-comment-approve="${escapeHtml(comment.id)}">Approve</button>` : ""}
+          <button type="button" data-comment-delete="${escapeHtml(comment.id)}">Delete</button>
+        </div>
+      </article>
+    `;
+  }
+
+  async function renderCommentModeration(statusFilter = "pending") {
+    if (!commentModerationList) return;
+    if (!await cloudflareReady()) {
+      commentModerationList.innerHTML = `<p class="access-note">Cloudflare login is required for comment moderation.</p>`;
+      return;
+    }
+    try {
+      const data = await window.TPIApi.listModerationComments(statusFilter);
+      const comments = data.comments || [];
+      commentModerationList.dataset.moderationStatus = statusFilter;
+      commentModerationList.innerHTML = comments.length
+        ? comments.map(comment => renderModerationComment(comment, statusFilter)).join("")
+        : `<p class="access-note">No ${escapeHtml(statusFilter)} comments.</p>`;
+    } catch (error) {
+      commentModerationList.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Could not load comments.")}</p>`;
+    }
+  }
+
   async function renderCloudflareOwnerInvites() {
     const ownerToolsHost = dashboardAdmin || inviteOwnerTools;
     if (!ownerToolsHost || !inviteLinkList || !await cloudflareReady()) return false;
@@ -340,6 +382,7 @@
           ? contributors.map(contributor => renderContributorTitleRow(contributor, session.user)).join("")
           : `<p class="access-note">No contributors have been created yet.</p>`;
       }
+      await renderCommentModeration(commentModerationList?.dataset.moderationStatus || "pending");
       return true;
     } catch (error) {
       return false;
@@ -911,6 +954,38 @@
         window.location.href = "member-login.html";
       });
       else window.location.href = "member-login.html";
+      return;
+    }
+
+    const moderationFilter = event.target.closest("[data-moderation-filter]");
+    if (moderationFilter) {
+      event.preventDefault();
+      renderCommentModeration(moderationFilter.dataset.moderationFilter || "pending");
+      return;
+    }
+
+    const approveButton = event.target.closest("[data-comment-approve]");
+    if (approveButton) {
+      event.preventDefault();
+      const id = approveButton.dataset.commentApprove;
+      if (!id) return;
+      window.TPIApi.approveComment(id).then(() => {
+        setStatus("Comment approved.", false);
+        return renderCommentModeration(commentModerationList?.dataset.moderationStatus || "pending");
+      }).catch(error => setStatus(error.message || "Comment approval failed.", true));
+      return;
+    }
+
+    const deleteButton = event.target.closest("[data-comment-delete]");
+    if (deleteButton) {
+      event.preventDefault();
+      const id = deleteButton.dataset.commentDelete;
+      if (!id) return;
+      if (!window.confirm("Delete this comment?")) return;
+      window.TPIApi.deleteComment(id).then(() => {
+        setStatus("Comment deleted.", false);
+        return renderCommentModeration(commentModerationList?.dataset.moderationStatus || "pending");
+      }).catch(error => setStatus(error.message || "Comment delete failed.", true));
       return;
     }
 

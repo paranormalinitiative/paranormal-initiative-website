@@ -19,6 +19,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
+    if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
+    if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
+    if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
     if (request.method === "POST" && path === "/contributors/me/profile") return requireContributor(request, env, user => handleUpdateProfile(request, env, user));
@@ -171,6 +174,35 @@ async function handleUpdateContributorTitle(request, env, actingUser) {
 
   const updated = await getUserByUsername(env, username);
   return json({ contributor: publicUser(updated) });
+}
+
+async function handleAdminListComments(request, env) {
+  const url = new URL(request.url);
+  const status = clean(url.searchParams.get("status") || "pending");
+  const allowedStatus = ["pending", "approved"].includes(status) ? status : "pending";
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT cm.id, cm.page_id AS pageId, cm.parent_id AS parentId, cm.name, cm.author_title AS authorTitle, c.username AS authorUsername, cm.text, cm.status, cm.created_at AS createdAt
+    FROM comments cm
+    LEFT JOIN contributors c ON c.id = cm.contributor_id
+    WHERE cm.status = ?
+    ORDER BY cm.created_at DESC
+    LIMIT 100
+  `).bind(allowedStatus).all();
+  return json({ comments: results });
+}
+
+async function handleAdminApproveComment(path, env) {
+  const id = clean(decodeURIComponent(path.replace(/^\/admin\/comments\//, "").replace(/\/approve$/, "")));
+  if (!id) return json({ error: "Comment id is required." }, 400);
+  await env.TPI_DB.prepare("UPDATE comments SET status = 'approved' WHERE id = ?").bind(id).run();
+  return json({ ok: true, id });
+}
+
+async function handleAdminDeleteComment(path, env) {
+  const id = clean(decodeURIComponent(path.replace(/^\/admin\/comments\//, "")));
+  if (!id) return json({ error: "Comment id is required." }, 400);
+  await env.TPI_DB.prepare("DELETE FROM comments WHERE id = ? OR parent_id = ?").bind(id, id).run();
+  return json({ deleted: true, id });
 }
 
 async function handleCheckInvite(request, env) {
@@ -446,9 +478,10 @@ async function handleCreateComment(request, env) {
   if (!pageId || !text) return json({ error: "pageId and text are required." }, 400);
 
   const useContributor = Boolean(user && data.useContributorProfile !== false);
+  const status = useContributor ? "approved" : "pending";
   await env.TPI_DB.prepare(`
-    INSERT INTO comments (id, page_id, parent_id, name, author_title, text, contributor_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO comments (id, page_id, parent_id, name, author_title, text, status, contributor_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).bind(
     id,
     pageId,
@@ -456,10 +489,11 @@ async function handleCreateComment(request, env) {
     useContributor ? user.display_name : clean(data.name),
     useContributor ? user.title || user.role : clean(data.authorTitle),
     text,
+    status,
     useContributor ? user.id : null
   ).run();
 
-  return json({ ok: true, id });
+  return json({ ok: true, id, status });
 }
 
 async function requireContributor(request, env, handler) {
@@ -598,7 +632,7 @@ function getCookie(request, name) {
 function corsHeaders(extra = {}) {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     ...extra
   };

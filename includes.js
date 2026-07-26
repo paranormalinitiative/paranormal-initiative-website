@@ -499,7 +499,7 @@
 
         if (cloudflareComments) {
           try {
-            await apiRequest("/comments", {
+            const result = await apiRequest("/comments", {
               method: "POST",
               body: {
                 pageId,
@@ -512,6 +512,9 @@
               }
             });
             replyForm.reset();
+            if (result.status === "pending") {
+              window.alert("Your reply was received and is waiting for approval.");
+            }
             await loadCloudflareComments();
             return;
           } catch (error) {
@@ -542,7 +545,7 @@
 
       if (cloudflareComments) {
         try {
-          await apiRequest("/comments", {
+          const result = await apiRequest("/comments", {
             method: "POST",
             body: {
               pageId,
@@ -553,6 +556,9 @@
             }
           });
           commentForm.reset();
+          if (result.status === "pending") {
+            window.alert("Your comment was received and is waiting for approval.");
+          }
           await loadCloudflareComments();
           return;
         } catch (error) {

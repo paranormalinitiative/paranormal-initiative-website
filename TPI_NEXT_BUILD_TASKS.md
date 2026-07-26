@@ -24,6 +24,7 @@ The research paper system must support full papers, full contributor profiles, d
 - D1 migrations:
   - `migrations/0001_contributor_portal.sql`
   - `migrations/0002_contributor_profiles.sql`
+  - `migrations/0003_comment_moderation.sql`
 - D1 binding in `wrangler.toml`
 - Member login page: `member-login.html`
 - Contributor invite page: `contributor-invite.html`
@@ -192,11 +193,12 @@ Comments need:
 2. Uncomment the `TPI_MEDIA` R2 binding in `wrangler.toml` after the bucket exists.
 3. Deploy and test profile photo upload from the member dashboard.
 4. Replace editor data-URL media storage with the existing R2 article-media endpoint.
-5. Add comment moderation tools.
-6. Visually test dashboard, public profile, invite, login, editor, and published article pages.
+5. Visually test dashboard, public profile, invite, login, editor, published article pages, and comment moderation.
+6. Continue converting older legacy pages into the new Content Editor format over time.
 
 Recently completed:
 
+- Comment moderation tools were added to the owner/admin dashboard. Public anonymous/name-only comments are pending by default, contributor-signed comments publish immediately, and owner/admin can approve or delete comments.
 - Change Password/account settings were added to the member dashboard with Cloudflare D1 and local-preview fallback behavior.
 - Published article author names link to public contributor profiles when the article has a contributor username.
 - Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.

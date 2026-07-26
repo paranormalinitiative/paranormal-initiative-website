@@ -203,13 +203,14 @@ python3 -m http.server 4174
 2. Test the existing authenticated upload API endpoints for profile photos and editor media after R2 is bound.
 3. Verify profile photo upload from computer plus URL fallback against Cloudflare R2.
 4. Replace editor image/video/audio data URLs with R2 upload URLs.
-5. Add comment moderation before open public launch.
-6. Visually test `member-dashboard.html`, `contributor-profile.html`, `member-login.html`, `contributor-invite.html`, and `paper-editor.html`.
+5. Visually test `member-dashboard.html`, `contributor-profile.html`, `member-login.html`, `contributor-invite.html`, `paper-editor.html`, `published-article.html`, and comment moderation.
+6. Continue converting older legacy pages into the new Content Editor format over time.
 7. Do not reintroduce the permanent preview pane.
 8. Do not reintroduce the short rejected paper headings.
 
 Recently completed:
 
+- Comment moderation tools were added to the owner/admin dashboard. Public anonymous/name-only comments are pending by default, contributor-signed comments publish immediately, and owner/admin can approve or delete comments.
 - Change Password/account settings were added to `member-dashboard.html`.
 - Published article author names and logged-in contributor comment/reply names link to `contributor-profile.html?username=...` when a contributor username is available.
 - Legacy authored pages are centralized in `legacy-contributions.js` and can be imported from the Content Editor's My Content library.
