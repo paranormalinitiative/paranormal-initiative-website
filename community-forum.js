@@ -45,6 +45,7 @@
     topics: [],
     activeTopicId: "",
     activeUser: null,
+    expandedCategories: new Set(),
     previewMode: false
   };
 
@@ -73,7 +74,7 @@
     renderCategories();
     updateMemberAction();
     updateComposerState();
-    if (state.topics[0]) openTopic(state.topics[0].id);
+    [500, 1500, 3000].forEach(delay => window.setTimeout(refreshActiveUser, delay));
   }
 
   async function loadForum() {
@@ -124,11 +125,27 @@
     if (!state.activeUser) {
       memberAction.href = "member-login.html";
       memberAction.textContent = "Member Login";
+      memberAction.hidden = false;
       return;
     }
     const firstName = String(state.activeUser.displayName || state.activeUser.username || "Member").trim().split(/\s+/)[0] || "Member";
     memberAction.href = "member-dashboard.html";
     memberAction.textContent = `Dashboard: ${firstName}`;
+    memberAction.hidden = false;
+  }
+
+  async function refreshActiveUser() {
+    const latestUser = await getActiveUser();
+    if (!latestUser && !readHeaderMemberName()) return;
+    state.activeUser = latestUser || {
+      username: "",
+      displayName: readHeaderMemberName(),
+      title: "Member",
+      role: "contributor",
+      headerOnly: true
+    };
+    updateMemberAction();
+    updateComposerState();
   }
 
   function renderCategories() {
@@ -137,21 +154,31 @@
       const topics = state.topics.filter(topic => topic.categoryId === category.id)
         .filter(topic => !query || `${topic.title} ${category.title}`.toLowerCase().includes(query));
       if (query && topics.length === 0) return "";
+      const activeInCategory = topics.some(topic => topic.id === state.activeTopicId);
+      const isExpanded = Boolean(query || activeInCategory || state.expandedCategories.has(category.id));
+      const counts = getCategoryCounts(category, topics);
       const topicHtml = topics.length
         ? topics.map(renderTopicButton).join("")
         : `<p class="discussion-no-topics">No topics yet.</p>`;
       return `
-        <section class="discussion-category-group">
-          <button class="discussion-category-title" type="button" data-category-id="${escapeAttr(category.id)}">
+        <section class="discussion-category-group${isExpanded ? " is-expanded" : ""}">
+          <button class="discussion-category-title" type="button" data-category-toggle="${escapeAttr(category.id)}" aria-expanded="${isExpanded ? "true" : "false"}">
             <span>${escapeHtml(category.title)}</span>
-            <strong>${topics.length}</strong>
+            <span class="discussion-category-activity" aria-label="${counts.topicCount} topics and ${counts.commentCount} replies">
+              ${counts.topicCount > 0 ? `<i class="discussion-chat-icon discussion-chat-icon-topic"></i>` : ""}
+              ${counts.commentCount > 0 ? `<i class="discussion-chat-icon discussion-chat-icon-reply"></i>` : ""}
+              <strong>${counts.topicCount}</strong>
+            </span>
           </button>
-          <div class="discussion-category-topics">${topicHtml}</div>
+          <div class="discussion-category-topics" ${isExpanded ? "" : "hidden"}>${topicHtml}</div>
         </section>
       `;
     }).join("");
 
     topicList.innerHTML = html || `<p class="discussion-loading">No topics matched your search.</p>`;
+    topicList.querySelectorAll("[data-category-toggle]").forEach(button => {
+      button.addEventListener("click", () => toggleCategory(button.dataset.categoryToggle));
+    });
     topicList.querySelectorAll("[data-topic-id]").forEach(button => {
       button.addEventListener("click", () => openTopic(button.dataset.topicId));
     });
@@ -163,7 +190,13 @@
     const activeClass = topic.id === state.activeTopicId ? " is-active" : "";
     return `
       <button class="discussion-topic-button${activeClass}" type="button" data-topic-id="${escapeAttr(topic.id)}">
-        <span>${escapeHtml(topic.title)}</span>
+        <span>
+          ${escapeHtml(topic.title)}
+          <small class="discussion-topic-icons">
+            <i class="discussion-chat-icon discussion-chat-icon-topic"></i>
+            ${Number(topic.postCount || 0) > 1 ? `<i class="discussion-chat-icon discussion-chat-icon-reply"></i>` : ""}
+          </small>
+        </span>
         <small>${escapeHtml(topic.authorName || "Community")} · ${formatDate(topic.lastPostAt || topic.updatedAt || topic.createdAt)}</small>
       </button>
     `;
@@ -171,9 +204,10 @@
 
   async function openTopic(topicId) {
     state.activeTopicId = topicId;
-    renderCategories();
     const topic = state.topics.find(item => item.id === topicId);
     if (!topic) return;
+    state.expandedCategories.add(topic.categoryId);
+    renderCategories();
 
     topicHeader.innerHTML = `
       <span>${escapeHtml(getCategoryTitle(topic.categoryId))}</span>
@@ -298,6 +332,31 @@
   });
 
   filterInput.addEventListener("input", renderCategories);
+
+  function toggleCategory(categoryId) {
+    if (!categoryId) return;
+    if (state.expandedCategories.has(categoryId)) {
+      state.expandedCategories.delete(categoryId);
+    } else {
+      state.expandedCategories.add(categoryId);
+    }
+    renderCategories();
+  }
+
+  function getCategoryCounts(category, topics) {
+    const topicCount = Number(category.topicCount ?? topics.length) || 0;
+    const postCount = Number(category.postCount ?? topics.reduce((total, topic) => total + Number(topic.postCount || 0), 0)) || 0;
+    return {
+      topicCount,
+      commentCount: Math.max(0, postCount - topicCount)
+    };
+  }
+
+  function readHeaderMemberName() {
+    const greeting = document.querySelector(".member-dashboard-link span")?.textContent || "";
+    const match = greeting.match(/hello,\s*(.+)/i);
+    return match ? match[1].trim() : "";
+  }
 
   function getCategoryTitle(categoryId) {
     return state.categories.find(category => category.id === categoryId)?.title || "Community Discussion";
