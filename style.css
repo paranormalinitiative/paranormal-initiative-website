@@ -893,8 +893,7 @@ footer {
     max-width: 1040px;
 }
 
-.discussion-portal,
-.forum-build-note {
+.discussion-portal {
     max-width: 1120px;
     margin: 0 auto;
 }
@@ -1564,28 +1563,6 @@ footer {
 
 .discussion-admin-post-actions button {
     justify-self: start;
-}
-
-.forum-build-note {
-    padding: 28px;
-    border: 1px solid #263646;
-    border-radius: 8px;
-    background:
-        linear-gradient(90deg, rgba(85, 200, 255, 0.08), transparent 55%),
-        #101820;
-}
-
-.forum-build-note h2 {
-    margin-top: 0;
-    color: #f4f8fb;
-}
-
-.forum-build-note p {
-    color: #c3cfda;
-}
-
-.forum-build-note {
-    margin-bottom: 56px;
 }
 
 .education-study-intro {
