@@ -2866,6 +2866,36 @@ footer {
     font-weight: 800;
 }
 
+.dashboard-count-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.dashboard-count-card {
+    display: grid;
+    gap: 7px;
+    padding: 16px;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 5px;
+}
+
+.dashboard-count-card span {
+    color: #8aa0b6;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.dashboard-count-card strong {
+    color: #f4f8fb;
+    font-size: 34px;
+    line-height: 1;
+}
+
 .content-library-actions {
     display: flex;
     flex-wrap: wrap;
