@@ -140,12 +140,23 @@
     if (user.website) websiteInput.value = user.website;
   }
 
-  function unlockEditor(user) {
+  function setDefaultDraftBody() {
+    editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
+    htmlView.value = cleanHtml(editor.innerHTML, true);
+  }
+
+  function isEditorBlank() {
+    return !editor.textContent.trim() && !editor.querySelector("img, video, audio, iframe, figure");
+  }
+
+  function unlockEditor(user, options = {}) {
     currentUser = user;
     if (user.username) localStorage.setItem(ACCESS_SESSION_KEY, user.username);
     document.body.classList.remove("editor-locked");
     document.body.classList.add("editor-authenticated");
-    applyContributorProfile(user);
+    document.body.dataset.editorCopyAllowed = "true";
+    if (options.applyProfile !== false) applyContributorProfile(user);
+    if (options.initializeDraft && isEditorBlank()) setDefaultDraftBody();
     setStatus(`Signed in as ${user.displayName || user.username}`);
     const gate = document.getElementById("editor-access-gate");
     if (gate) gate.remove();
@@ -156,6 +167,7 @@
     localStorage.removeItem(ACCESS_SESSION_KEY);
     document.body.classList.add("editor-locked");
     document.body.classList.remove("editor-authenticated");
+    delete document.body.dataset.editorCopyAllowed;
     setStatus("Contributor signed out");
     showAccessGate();
   }
@@ -205,7 +217,7 @@
           website: result.user.website,
           commentSignatureEnabled: result.user.commentSignatureEnabled,
           active: true
-        });
+        }, { initializeDraft: true });
       } catch (error) {
         form.querySelector(".access-note")?.remove();
         const note = document.createElement("p");
@@ -225,7 +237,7 @@
       form.appendChild(note);
       return;
     }
-    unlockEditor(user);
+    unlockEditor(user, { initializeDraft: true });
   }
 
   function openContributorManager() {
@@ -1089,19 +1101,9 @@ ${buildArticleHtml()}
   });
 
   async function initEditorAccess() {
-    editor.innerHTML = `<p><br></p>${buildAuthorNoteHtml()}`;
+    editor.innerHTML = "<p><br></p>";
     htmlView.value = cleanHtml(editor.innerHTML);
-    await loadArticleForEditing();
-
-    if (isDevUnlocked()) {
-      unlockEditor({
-        username: "",
-        displayName: "Developer Unlock",
-        role: "admin",
-        active: true
-      });
-      return;
-    }
+    const articleLoaded = await loadArticleForEditing();
 
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
@@ -1118,7 +1120,7 @@ ${buildArticleHtml()}
             website: result.user.website,
             commentSignatureEnabled: result.user.commentSignatureEnabled,
             active: true
-          });
+          }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded });
           return;
         }
       } catch (error) {
@@ -1128,7 +1130,14 @@ ${buildArticleHtml()}
 
     const sessionUser = getSessionUser();
     if (sessionUser) {
-      unlockEditor(sessionUser);
+      unlockEditor(sessionUser, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded });
+    } else if (isDevUnlocked()) {
+      unlockEditor({
+        username: "",
+        displayName: "Developer Unlock",
+        role: "admin",
+        active: true
+      }, { applyProfile: !articleLoaded, initializeDraft: !articleLoaded });
     } else {
       showAccessGate();
     }
@@ -1136,7 +1145,7 @@ ${buildArticleHtml()}
 
   async function loadArticleForEditing() {
     const articleId = new URLSearchParams(window.location.search).get("article");
-    if (!articleId) return;
+    if (!articleId) return false;
 
     let article = null;
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
@@ -1153,7 +1162,7 @@ ${buildArticleHtml()}
       article = getPublishedArticles().find(item => item.id === articleId);
     }
 
-    if (!article) return;
+    if (!article) return false;
     titleInput.value = article.title || "Untitled Research Paper";
     subtitleInput.value = article.subtitle || "Research Library Draft";
     if (article.destination) destinationInput.value = article.destination;
@@ -1163,6 +1172,7 @@ ${buildArticleHtml()}
     editor.innerHTML = article.bodyHtml || "<p><br></p>";
     htmlView.value = cleanHtml(editor.innerHTML);
     setStatus(article.status === "published" ? "Loaded published paper" : "Loaded draft");
+    return true;
   }
 
   initEditorAccess();

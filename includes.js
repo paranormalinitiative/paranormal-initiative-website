@@ -14,6 +14,32 @@
       return localStorage.getItem("tpiDevCopyMode") === "enabled";
     }
 
+    function getCachedMember() {
+      const username = localStorage.getItem("tpiEditorSession");
+      if (!username) return null;
+      try {
+        const users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+        return users.find(user => user.username === username && user.active !== false) || null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function isLeadershipCopyAllowed() {
+      const user = getCachedMember();
+      const role = String(user?.role || "").toLowerCase();
+      const title = String(user?.title || "").toLowerCase().replace(/\s+/g, " ").trim();
+      return role === "owner" ||
+        role === "admin" ||
+        ["founder / director", "founder/director", "founder director", "assistant director"].includes(title);
+    }
+
+    function isCopyAllowed() {
+      return isDevCopyMode() ||
+        isLeadershipCopyAllowed() ||
+        document.body?.dataset.editorCopyAllowed === "true";
+    }
+
     function setDevCopyMode(enabled) {
       localStorage.setItem("tpiDevCopyMode", enabled ? "enabled" : "disabled");
       document.documentElement.classList.toggle("dev-copy-mode", enabled);
@@ -63,20 +89,20 @@
 
     blockedEvents.forEach(eventName => {
       document.addEventListener(eventName, event => {
-        if (isDevCopyMode()) return;
+        if (isCopyAllowed()) return;
         if (isEditableTarget(event.target)) return;
         event.preventDefault();
       });
     });
 
     document.addEventListener("selectstart", event => {
-      if (isDevCopyMode()) return;
+      if (isCopyAllowed()) return;
       if (isEditableTarget(event.target)) return;
       event.preventDefault();
     });
 
     document.addEventListener("keydown", event => {
-      if (isDevCopyMode()) return;
+      if (isCopyAllowed()) return;
       if (isEditableTarget(event.target)) return;
 
       const key = event.key.toLowerCase();
