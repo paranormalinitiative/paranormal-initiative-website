@@ -63,6 +63,8 @@
     blockMember: username => request(`/admin/members/${encodeURIComponent(username)}/block`, { method: "POST" }),
     unblockMember: username => request(`/admin/members/${encodeURIComponent(username)}/unblock`, { method: "POST" }),
     memberForumPosts: username => request(`/admin/forum/posts?username=${encodeURIComponent(username || "")}`),
+    setForumTopicStatus: (id, status) => request(`/admin/forum/topics/${encodeURIComponent(id)}/status`, { method: "POST", body: { status } }),
+    deleteForumTopic: id => request(`/admin/forum/topics/${encodeURIComponent(id)}/status`, { method: "POST", body: { status: "deleted" } }),
     listModerationComments: status => request(`/admin/comments?status=${encodeURIComponent(status || "pending")}`),
     approveComment: id => request(`/admin/comments/${encodeURIComponent(id)}/approve`, { method: "POST" }),
     deleteComment: id => request(`/admin/comments/${encodeURIComponent(id)}`, { method: "DELETE" }),

@@ -271,7 +271,9 @@
   }
 
   function updateComposerState() {
-    const canPost = Boolean(state.activeUser && state.activeTopicId && !state.previewMode);
+    const activeTopic = getActiveTopic();
+    const isStopped = activeTopic?.status === "locked";
+    const canPost = Boolean(state.activeUser && state.activeTopicId && !state.previewMode && !isStopped);
     replyBody.disabled = !canPost;
     replyForm.querySelector("button").disabled = !canPost;
     if (state.previewMode) {
@@ -280,6 +282,8 @@
       replyStatus.textContent = "Sign in as a member or contributor to reply.";
     } else if (!state.activeTopicId) {
       replyStatus.textContent = "Choose a topic to reply.";
+    } else if (isStopped) {
+      replyStatus.textContent = "This thread has been stopped by site leadership. It remains readable, but replies are closed.";
     } else {
       replyStatus.textContent = `Signed in as ${state.activeUser.displayName || state.activeUser.username}.`;
     }
@@ -393,8 +397,13 @@
       return;
     }
     const deleteButton = event.target.closest("[data-delete-admin-post]");
-    if (!deleteButton) return;
-    await deleteMemberPost(deleteButton.dataset.deleteAdminPost);
+    if (deleteButton) {
+      await deleteMemberPost(deleteButton.dataset.deleteAdminPost);
+      return;
+    }
+    const topicAction = event.target.closest("[data-topic-admin-action]");
+    if (!topicAction) return;
+    await setTopicStatus(topicAction.dataset.topicId, topicAction.dataset.topicAdminAction);
   });
 
   function toggleCategory(categoryId) {
@@ -505,15 +514,73 @@
       <article class="discussion-admin-post">
         <div>
           <h5>${escapeHtml(post.topicTitle || "Forum Topic")}</h5>
-          <small>${escapeHtml(post.categoryTitle || "Discussion Portal")} · ${formatDate(post.createdAt)} · ${escapeHtml(post.status || "visible")}</small>
+          <small>${escapeHtml(post.categoryTitle || "Discussion Portal")} · ${formatDate(post.createdAt)} · Topic: ${escapeHtml(formatTopicStatus(post.topicStatus))} · Post: ${escapeHtml(post.status || "visible")}</small>
         </div>
         <p>${escapeHtml(post.body).replace(/\n/g, "<br>")}</p>
         <div class="discussion-admin-post-actions">
-          <button type="button" data-open-admin-topic="${escapeAttr(post.topicId)}">Open Topic</button>
+          ${renderOpenTopicButton(post)}
+          ${renderTopicControlButtons(post)}
           ${post.status === "deleted" ? "" : `<button type="button" data-delete-admin-post="${escapeAttr(post.id)}">Delete Post</button>`}
         </div>
       </article>
     `).join("");
+  }
+
+  function renderOpenTopicButton(post) {
+    const status = String(post.topicStatus || "open").toLowerCase();
+    if (["inactive", "deleted"].includes(status)) return "";
+    return `<button type="button" data-open-admin-topic="${escapeAttr(post.topicId)}">Open Topic</button>`;
+  }
+
+  function renderTopicControlButtons(post) {
+    const status = String(post.topicStatus || "open").toLowerCase();
+    const topicId = escapeAttr(post.topicId);
+    const lockButton = status === "locked"
+      ? `<button type="button" data-topic-admin-action="open" data-topic-id="${topicId}">Reopen Thread</button>`
+      : `<button type="button" data-topic-admin-action="locked" data-topic-id="${topicId}">Stop Thread</button>`;
+    const inactiveButton = status === "inactive"
+      ? `<button type="button" data-topic-admin-action="open" data-topic-id="${topicId}">Make Active</button>`
+      : `<button type="button" data-topic-admin-action="inactive" data-topic-id="${topicId}">Mark Inactive</button>`;
+    const deleteButton = status === "deleted"
+      ? ""
+      : `<button type="button" data-topic-admin-action="deleted" data-topic-id="${topicId}">Delete Thread</button>`;
+    return `${lockButton}${inactiveButton}${deleteButton}`;
+  }
+
+  async function setTopicStatus(topicId, status) {
+    if (!topicId || !status) return;
+    try {
+      memberToolsStatus.textContent = status === "deleted" ? "Deleting thread..." : "Updating thread...";
+      await window.TPIApi.setForumTopicStatus(topicId, status);
+      if (state.selectedAdminUsername) await loadMemberPosts(state.selectedAdminUsername);
+      await loadForum();
+      renderCategories();
+      updateComposerState();
+      if (state.activeTopicId === topicId && ["deleted", "inactive"].includes(status)) {
+        state.activeTopicId = "";
+        topicHeader.innerHTML = `
+          <span>Discussion Portal</span>
+          <h3>Select a topic to read the conversation.</h3>
+          <p>Topics stay on the left so visitors can move through the community without losing their place.</p>
+        `;
+        messageList.innerHTML = `
+          <article class="discussion-empty-state">
+            <h3>Choose a topic from the left.</h3>
+            <p>The conversation will open here in a messenger-style thread with member names, titles, timestamps, replies, and reactions.</p>
+          </article>
+        `;
+        updateComposerState();
+      }
+      memberToolsStatus.textContent = status === "locked"
+        ? "Thread stopped. It remains readable, but replies are closed."
+        : status === "inactive"
+          ? "Thread marked inactive and hidden from the public forum list."
+          : status === "deleted"
+            ? "Thread deleted from the public forum."
+            : "Thread reopened.";
+    } catch (error) {
+      memberToolsStatus.textContent = error.message || "Thread status could not be changed.";
+    }
   }
 
   async function deleteMemberPost(postId) {
@@ -596,6 +663,15 @@
     }[value] || value;
   }
 
+  function formatTopicStatus(status) {
+    return {
+      open: "Open",
+      locked: "Stopped",
+      inactive: "Inactive",
+      deleted: "Deleted"
+    }[String(status || "open").toLowerCase()] || "Open";
+  }
+
   function debounce(fn, wait) {
     let timeout;
     return function (...args) {
@@ -612,6 +688,10 @@
 
   function getCategoryTitle(categoryId) {
     return state.categories.find(category => category.id === categoryId)?.title || "Community Discussion";
+  }
+
+  function getActiveTopic() {
+    return state.topics.find(item => item.id === state.activeTopicId) || null;
   }
 
   function formatDate(value) {

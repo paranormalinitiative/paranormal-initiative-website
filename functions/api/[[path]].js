@@ -24,6 +24,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
     if (request.method === "GET" && path === "/admin/forum/posts") return requireAdmin(request, env, user => handleAdminMemberForumPosts(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/forum\/topics\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetForumTopicStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
@@ -306,6 +307,7 @@ async function handleAdminMemberForumPosts(request, env) {
       fp.status,
       fp.created_at AS createdAt,
       ft.title AS topicTitle,
+      ft.status AS topicStatus,
       fc.title AS categoryTitle
     FROM forum_posts fp
     JOIN forum_topics ft ON ft.id = fp.topic_id
@@ -319,6 +321,25 @@ async function handleAdminMemberForumPosts(request, env) {
     member: { username: member.username, displayName: member.display_name, title: member.title, role: member.role, active: Boolean(member.active) },
     posts: results
   });
+}
+
+async function handleAdminSetForumTopicStatus(path, request, env) {
+  const topicId = clean(decodeURIComponent(path.match(/^\/admin\/forum\/topics\/([^/]+)\/status$/)?.[1] || ""));
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  if (!topicId) return json({ error: "Topic id is required." }, 400);
+  if (!["open", "locked", "inactive", "deleted"].includes(status)) {
+    return json({ error: "Topic status was not recognized." }, 400);
+  }
+
+  const topic = await env.TPI_DB.prepare("SELECT id, title, status FROM forum_topics WHERE id = ?").bind(topicId).first();
+  if (!topic) return json({ error: "Topic was not found." }, 404);
+
+  await env.TPI_DB.prepare("UPDATE forum_topics SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+    .bind(status, topicId)
+    .run();
+
+  return json({ topic: { id: topic.id, title: topic.title, status } });
 }
 
 async function handleAdminListComments(request, env) {
@@ -594,7 +615,7 @@ async function handleForumIndex(env) {
       COUNT(DISTINCT ft.id) AS topicCount,
       COUNT(fp.id) AS postCount
     FROM forum_categories fc
-    LEFT JOIN forum_topics ft ON ft.category_id = fc.id AND ft.status != 'deleted'
+    LEFT JOIN forum_topics ft ON ft.category_id = fc.id AND ft.status NOT IN ('deleted', 'inactive')
     LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
     WHERE fc.active = 1
     GROUP BY fc.id
@@ -617,7 +638,7 @@ async function handleForumIndex(env) {
     FROM forum_topics ft
     LEFT JOIN contributors c ON c.id = ft.created_by
     LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
-    WHERE ft.status != 'deleted'
+    WHERE ft.status NOT IN ('deleted', 'inactive')
     GROUP BY ft.id
     ORDER BY COALESCE(MAX(fp.created_at), ft.created_at) DESC
     LIMIT 80
@@ -645,7 +666,7 @@ async function handleForumTopic(path, env) {
     FROM forum_topics ft
     JOIN forum_categories fc ON fc.id = ft.category_id
     LEFT JOIN contributors c ON c.id = ft.created_by
-    WHERE ft.id = ? AND ft.status != 'deleted'
+    WHERE ft.id = ? AND ft.status NOT IN ('deleted', 'inactive')
   `).bind(topicId).first();
   if (!topic) return json({ error: "Topic was not found." }, 404);
 
@@ -698,7 +719,7 @@ async function handleCreateForumPost(path, request, env, user) {
   const body = clean(data.body).slice(0, 6000);
   if (!topicId || !body) return json({ error: "Topic id and message are required." }, 400);
 
-  const topic = await env.TPI_DB.prepare("SELECT id, status FROM forum_topics WHERE id = ? AND status != 'deleted'").bind(topicId).first();
+  const topic = await env.TPI_DB.prepare("SELECT id, status FROM forum_topics WHERE id = ? AND status NOT IN ('deleted', 'inactive')").bind(topicId).first();
   if (!topic) return json({ error: "Topic was not found." }, 404);
   if (topic.status === "locked" && !["owner", "admin"].includes(user.role)) {
     return json({ error: "This topic is locked." }, 403);
