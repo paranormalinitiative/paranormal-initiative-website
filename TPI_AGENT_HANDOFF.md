@@ -24,6 +24,22 @@ There is now also a live **Contributor Portal** and **Discussion Portal** direct
 - R2 media upload is already in practical use for profile photos through `tpi-contributor-media`; keep using R2 for uploaded profile/article media and D1 only for records/URLs.
 - Legacy authored pages are treated as archived/conversion items. They can be opened as-is or imported into the Content Editor, then converted into editable D1 article records over time.
 
+## Urgent Cloudflare Deploy Note - Anabela Cardoso Assets
+
+Cloudflare Workers static assets fail deployment if any single asset is over 25 MiB. The Anabela Cardoso collection originally included:
+
+```text
+assets/anabela-cardoso/papers/Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf
+```
+
+Cloudflare reported it as 31.1 MiB and failed the deploy with:
+
+```text
+Asset too large. Cloudflare Workers supports assets with sizes of up to 25 MiB.
+```
+
+The local repo no longer has that oversized file in `HEAD`, and `.assetsignore` now explicitly excludes that exact path in case Cloudflare's build checkout/cache still sees the old copy. The Anabela paper card now says `R2 upload needed` for this item. If deployment still fails, verify Cloudflare is deploying the latest `main` commit and not an older cached checkout. The oversized PDF should be uploaded to Cloudflare R2 later and then linked from `anabela-cardoso-papers.html`.
+
 ## Cloudflare D1 Console Rule
 
 When the user needs to apply a migration in the Cloudflare dashboard, do **not** tell them to paste the migration filename. They need the **full SQL contents**.
