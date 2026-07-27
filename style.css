@@ -1759,6 +1759,16 @@ footer {
     min-height: 260px;
 }
 
+.education-center-page .dashboard-panel {
+    display: flex;
+    min-height: 260px;
+    flex-direction: column;
+}
+
+.education-center-page .dashboard-panel .dashboard-panel-cta {
+    margin-top: auto;
+}
+
 .study-area-card p {
     margin-bottom: 0;
 }
@@ -1789,15 +1799,33 @@ footer {
     align-items: start;
 }
 
+.education-intro-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
 .study-hub-card,
 .research-update-card,
 .media-resource-card {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
     padding: 24px;
     border: 1px solid #1f2a36;
     border-radius: 8px;
     background:
         radial-gradient(circle at top left, rgba(0, 194, 255, 0.11), transparent 34%),
         linear-gradient(180deg, rgba(20, 28, 36, 0.98), rgba(12, 17, 22, 0.98));
+}
+
+.education-intro-grid .study-hub-card {
+    min-height: 230px;
+}
+
+.education-intro-grid .study-hub-card .portal-actions {
+    margin-top: auto;
+    padding-top: 18px;
 }
 
 .study-hub-card h3,
