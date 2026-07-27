@@ -280,11 +280,16 @@
     }
 
     messageList.innerHTML = posts.map(post => {
+      const chatColor = normalizeChatColor(post.authorChatColor || "#55c8ff");
+      const authorInitial = escapeHtml((post.authorName || post.authorUsername || "M").trim().charAt(0) || "M");
       return `
-        <article class="discussion-message">
+        <article class="discussion-message" style="--member-chat-color: ${escapeAttr(chatColor)};">
           <div class="discussion-message-meta">
-            <strong>${renderAuthorLink(post)}</strong>
-            <span>${escapeHtml(post.authorTitle || "Contributor")} · ${formatDate(post.createdAt)}</span>
+            ${post.authorPhotoUrl ? `<img class="discussion-author-avatar" src="${escapeAttr(post.authorPhotoUrl)}" alt="${escapeAttr(post.authorName || "Community Member")}">` : `<span class="discussion-author-avatar discussion-author-initial">${authorInitial}</span>`}
+            <span class="discussion-author-text">
+              <strong>${renderAuthorLink(post)}</strong>
+              <em>${escapeHtml(post.authorTitle || "Member")} · ${formatDate(post.createdAt)}</em>
+            </span>
           </div>
           <div class="discussion-bubble">
             ${escapeHtml(post.body).replace(/\n/g, "<br>")}
@@ -861,13 +866,33 @@
           const url = escapeAttr(item.url || "");
           const name = escapeHtml(item.name || "Forum attachment");
           if (!url) return "";
-          if (String(item.mediaType || item.contentType || "").startsWith("video")) {
-            return `<figure class="discussion-attachment discussion-attachment-video"><video src="${url}" controls preload="metadata"></video><figcaption>${name}</figcaption></figure>`;
+          const mediaKind = String(item.mediaType || item.contentType || "").startsWith("video") ? "video" : "image";
+          if (mediaKind === "video") {
+            return `<figure class="discussion-attachment discussion-attachment-video"><button type="button" data-open-forum-media="${url}" data-media-kind="video" data-media-name="${escapeAttr(item.name || "Forum video")}"><video src="${url}" muted preload="metadata"></video><span>Open Video</span></button><figcaption>${name}</figcaption></figure>`;
           }
-          return `<figure class="discussion-attachment discussion-attachment-image"><img src="${url}" alt="${name}" loading="lazy"><figcaption>${name}</figcaption></figure>`;
+          return `<figure class="discussion-attachment discussion-attachment-image"><button type="button" data-open-forum-media="${url}" data-media-kind="image" data-media-name="${escapeAttr(item.name || "Forum image")}"><img src="${url}" alt="${name}" loading="lazy"><span>Open Image</span></button><figcaption>${name}</figcaption></figure>`;
         }).join("")}
       </div>
     `;
+  }
+
+  function openForumMediaViewer(url, kind, name) {
+    const existing = document.querySelector("[data-forum-media-viewer]");
+    if (existing) existing.remove();
+    const viewer = document.createElement("div");
+    viewer.className = "discussion-media-viewer";
+    viewer.dataset.forumMediaViewer = "";
+    viewer.innerHTML = `
+      <div class="discussion-media-viewer-card" role="dialog" aria-modal="true" aria-label="${escapeAttr(name || "Forum media")}">
+        <button type="button" class="discussion-media-close" data-close-forum-media>Close</button>
+        ${kind === "video"
+          ? `<video src="${escapeAttr(url)}" controls autoplay></video>`
+          : `<img src="${escapeAttr(url)}" alt="${escapeAttr(name || "Forum image")}">`}
+        <p>${escapeHtml(name || "Forum media")}</p>
+      </div>
+    `;
+    document.body.appendChild(viewer);
+    viewer.querySelector("[data-close-forum-media]")?.focus();
   }
 
   function debounce(fn, wait) {
@@ -901,6 +926,11 @@
 
   function cleanText(value) {
     return String(value || "").trim();
+  }
+
+  function normalizeChatColor(value) {
+    const color = String(value || "").trim();
+    return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55c8ff";
   }
 
   function escapeHtml(value) {

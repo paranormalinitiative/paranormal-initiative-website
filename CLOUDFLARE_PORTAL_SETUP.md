@@ -16,6 +16,7 @@ The static prototype now has a Cloudflare-ready backend:
 - Account recovery schema: `migrations/0006_account_recovery.sql`
 - Education-aligned forum categories: `migrations/0007_discussion_education_categories.sql`
 - Forum post attachment schema: `migrations/0008_forum_post_attachments.sql`
+- Member/forum chat color schema: `migrations/0009_member_chat_color.sql`
 - Front-end API helper: `api-client.js`
 - D1 binding in `wrangler.toml`
 
@@ -175,6 +176,12 @@ CREATE TABLE IF NOT EXISTS forum_post_attachments (
 );
 
 CREATE INDEX IF NOT EXISTS idx_forum_post_attachments_post ON forum_post_attachments(post_id);
+```
+
+Member-selected forum bubble colors require `migrations/0009_member_chat_color.sql`. Paste this full SQL into the D1 Console:
+
+```sql
+ALTER TABLE contributors ADD COLUMN chat_color TEXT DEFAULT '#55c8ff';
 ```
 
 ## R2 Uploads

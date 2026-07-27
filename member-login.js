@@ -71,6 +71,11 @@
     }[char]));
   }
 
+  function normalizeChatColor(value) {
+    const color = String(value || "").trim();
+    return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55c8ff";
+  }
+
   function getLegacyContributions(profile) {
     return window.TPILegacyContributions?.forProfile(profile) || [];
   }
@@ -592,6 +597,7 @@
       profileForm.organization.value = user.organization || "";
       profileForm.correspondence.value = user.correspondence || "";
       profileForm.website.value = user.website || "";
+      if (profileForm.chatColor) profileForm.chatColor.value = normalizeChatColor(user.chatColor || "#55c8ff");
       profileForm.photoUrl.value = user.photoUrl || "";
       profileForm.bio.value = user.bio || "";
       profileForm.commentSignature.checked = user.commentSignatureEnabled !== false;
@@ -926,6 +932,7 @@
         organization: String(data.get("organization") || "").trim(),
         correspondence: String(data.get("correspondence") || "").trim(),
         website: String(data.get("website") || "").trim(),
+        chatColor: normalizeChatColor(String(data.get("chatColor") || "#55c8ff")),
         photoUrl,
         bio: String(data.get("bio") || "").trim(),
         commentSignatureEnabled: data.get("commentSignature") === "on"

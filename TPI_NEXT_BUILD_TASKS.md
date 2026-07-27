@@ -30,6 +30,7 @@ The research paper system must support full papers, full contributor profiles, d
   - `migrations/0006_account_recovery.sql`
   - `migrations/0007_discussion_education_categories.sql`
   - `migrations/0008_forum_post_attachments.sql`
+  - `migrations/0009_member_chat_color.sql`
 - D1 binding in `wrangler.toml`
 - Member login page: `member-login.html`
 - Contributor invite page: `contributor-invite.html`
@@ -227,6 +228,7 @@ Current rules:
 - New topics and replies can include uploaded forum media: up to 10 images and 2 videos.
 - Forum media uploads use R2 through `/api/uploads/forum-media`; the files can come from the computer, device, or synced cloud folders such as iCloud, Dropbox, or Google Drive.
 - Direct Google Drive/iCloud/Dropbox picker integration is not built yet; current support uses the browser file picker.
+- Member profiles include a chat box color. Forum messages use that color as the bubble accent so readers can more easily see who is speaking.
 - Blue badge/icon means topics.
 - Green badge/icon means replies.
 - Badge brightness should reflect read/unread when the read-tracking table is present.

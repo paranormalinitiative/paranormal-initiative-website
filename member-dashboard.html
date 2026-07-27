@@ -32,6 +32,24 @@
             <p class="portal-kicker">Profile</p>
             <div data-dashboard-profile></div>
             <div data-dashboard-level></div>
+            <section class="dashboard-profile-summary-strip" data-contributor-tool hidden>
+                <div>
+                    <p class="portal-kicker">Contributions</p>
+                    <h2>Content Summary</h2>
+                    <p class="access-note">Manage drafts, published work, and legacy archive pages from the Content Editor.</p>
+                </div>
+                <div class="dashboard-count-grid">
+                    <div class="dashboard-count-card">
+                        <span>Unpublished Drafts</span>
+                        <strong data-dashboard-drafts>0</strong>
+                    </div>
+                    <div class="dashboard-count-card">
+                        <span>Published Papers</span>
+                        <strong data-dashboard-articles>0</strong>
+                    </div>
+                </div>
+                <a class="portal-button portal-button-secondary" href="paper-editor.html" data-contributor-tool>Open Content Editor</a>
+            </section>
             <form class="member-profile-form" data-profile-form>
                 <label><span>Display Name</span><input name="displayName" type="text"></label>
                 <label>
@@ -57,6 +75,7 @@
                 <label><span>Organization</span><input name="organization" type="text"></label>
                 <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
                 <label><span>Website</span><input name="website" type="url"></label>
+                <label class="chat-color-field"><span>Chat Box Color</span><input name="chatColor" type="color" value="#55c8ff"></label>
                 <div class="profile-photo-editor">
                     <div class="profile-photo-preview" data-profile-photo-preview></div>
                     <div class="profile-photo-controls">
@@ -72,23 +91,6 @@
                 <button type="submit">Save Profile</button>
                 <a class="portal-button portal-button-secondary" data-public-profile-link href="#">View Public Profile</a>
             </form>
-        </article>
-
-        <article class="editor-access-card" data-contributor-tool hidden>
-            <p class="portal-kicker">Contributions</p>
-            <h2>Content Summary</h2>
-            <p class="access-note">Manage drafts, published work, and legacy archive pages from the Content Editor.</p>
-            <div class="dashboard-count-grid">
-                <div class="dashboard-count-card">
-                    <span>Unpublished Drafts</span>
-                    <strong data-dashboard-drafts>0</strong>
-                </div>
-                <div class="dashboard-count-card">
-                    <span>Published Papers</span>
-                    <strong data-dashboard-articles>0</strong>
-                </div>
-            </div>
-            <a class="portal-button portal-button-secondary" href="paper-editor.html" data-contributor-tool>Open Content Editor</a>
         </article>
 
         <article class="editor-access-card">

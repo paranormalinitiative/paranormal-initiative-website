@@ -479,7 +479,8 @@ async function handleUpdateProfile(request, env, user) {
       website = ?,
       bio = ?,
       photo_url = ?,
-      comment_signature_enabled = ?
+      comment_signature_enabled = ?,
+      chat_color = ?
     WHERE id = ?
   `).bind(
     clean(data.displayName || user.display_name),
@@ -491,8 +492,35 @@ async function handleUpdateProfile(request, env, user) {
     clean(data.bio),
     clean(data.photoUrl || user.photo_url),
     data.commentSignatureEnabled === false ? 0 : 1,
+    normalizeChatColor(data.chatColor || user.chat_color),
     user.id
-  ).run();
+  ).run().catch(async error => {
+    if (!String(error.message || "").includes("chat_color")) throw error;
+    await env.TPI_DB.prepare(`
+      UPDATE contributors SET
+        display_name = ?,
+        title = ?,
+        correspondence = ?,
+        affiliation = ?,
+        organization = ?,
+        website = ?,
+        bio = ?,
+        photo_url = ?,
+        comment_signature_enabled = ?
+      WHERE id = ?
+    `).bind(
+      clean(data.displayName || user.display_name),
+      clean(data.title).slice(0, 160),
+      correspondence,
+      clean(data.affiliation),
+      clean(data.organization),
+      clean(data.website),
+      clean(data.bio),
+      clean(data.photoUrl || user.photo_url),
+      data.commentSignatureEnabled === false ? 0 : 1,
+      user.id
+    ).run();
+  });
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
   return json({ user: publicUser(updated) });
 }
@@ -772,23 +800,45 @@ async function handleForumTopic(path, env) {
   `).bind(topicId).first();
   if (!topic) return json({ error: "Topic was not found." }, 404);
 
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT
-      fp.id,
-      fp.topic_id AS topicId,
-      fp.body,
-      fp.created_at AS createdAt,
-      fp.updated_at AS updatedAt,
-      c.username AS authorUsername,
-      c.display_name AS authorName,
-      c.title AS authorTitle,
-      c.role AS authorRole,
-      c.photo_url AS authorPhotoUrl
-    FROM forum_posts fp
-    LEFT JOIN contributors c ON c.id = fp.contributor_id
-    WHERE fp.topic_id = ? AND fp.status = 'visible'
-    ORDER BY fp.created_at ASC
-  `).bind(topicId).all();
+  let results = [];
+  try {
+    ({ results } = await env.TPI_DB.prepare(`
+      SELECT
+        fp.id,
+        fp.topic_id AS topicId,
+        fp.body,
+        fp.created_at AS createdAt,
+        fp.updated_at AS updatedAt,
+        c.username AS authorUsername,
+        c.display_name AS authorName,
+        c.title AS authorTitle,
+        c.role AS authorRole,
+        c.photo_url AS authorPhotoUrl,
+        c.chat_color AS authorChatColor
+      FROM forum_posts fp
+      LEFT JOIN contributors c ON c.id = fp.contributor_id
+      WHERE fp.topic_id = ? AND fp.status = 'visible'
+      ORDER BY fp.created_at ASC
+    `).bind(topicId).all());
+  } catch (error) {
+    ({ results } = await env.TPI_DB.prepare(`
+      SELECT
+        fp.id,
+        fp.topic_id AS topicId,
+        fp.body,
+        fp.created_at AS createdAt,
+        fp.updated_at AS updatedAt,
+        c.username AS authorUsername,
+        c.display_name AS authorName,
+        c.title AS authorTitle,
+        c.role AS authorRole,
+        c.photo_url AS authorPhotoUrl
+      FROM forum_posts fp
+      LEFT JOIN contributors c ON c.id = fp.contributor_id
+      WHERE fp.topic_id = ? AND fp.status = 'visible'
+      ORDER BY fp.created_at ASC
+    `).bind(topicId).all());
+  }
 
   const posts = await attachForumPostMedia(env, results);
   return json({ topic, posts });
@@ -1121,6 +1171,11 @@ function clean(value) {
   return String(value || "").trim();
 }
 
+function normalizeChatColor(value) {
+  const color = clean(value);
+  return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55c8ff";
+}
+
 function isValidUsername(value) {
   const username = clean(value);
   return Boolean(username && !/\s/.test(username) && /^[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+$/.test(username));
@@ -1188,6 +1243,7 @@ function publicUser(user) {
     website: user.website,
     bio: user.bio,
     photoUrl: user.photo_url,
+    chatColor: user.chat_color || "#55c8ff",
     commentSignatureEnabled: Boolean(user.comment_signature_enabled),
     active: user.active !== 0,
     createdAt: user.created_at
