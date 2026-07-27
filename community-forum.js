@@ -1,5 +1,6 @@
 (function () {
   const fallbackCategories = [
+    { id: "general", title: "General Discussion", description: "Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation." },
     { id: "investigation", title: "Investigation Science", description: "Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows." },
     { id: "evidence-science", title: "Evidence Science & Analysis", description: "Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings." },
     { id: "equipment", title: "Instrumentation & Technology", description: "Equipment literacy, sensor behavior, EMF, environmental tools, recording systems, and limitations." },
@@ -14,8 +15,7 @@
     { id: "locations", title: "Historical & Cultural Research", description: "Haunted locations, local legends, folklore, public records, archival studies, and historical context." },
     { id: "experiences", title: "Your Paranormal Experiences", description: "Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters." },
     { id: "metaphysics", title: "Spirituality, Metaphysics, OBE & NDE", description: "Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making." },
-    { id: "scrying", title: "Scrying, Divination & Visionary Practices", description: "Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion." },
-    { id: "general", title: "General Discussion", description: "Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation." }
+    { id: "scrying", title: "Scrying, Divination & Visionary Practices", description: "Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion." }
   ];
 
   const fallbackTopics = [
@@ -63,6 +63,7 @@
   const filterInput = portal.querySelector("[data-topic-filter]");
   const replyForm = portal.querySelector("[data-reply-form]");
   const replyBody = portal.querySelector("[data-reply-body]");
+  const replyAttachments = portal.querySelector("[data-reply-attachments]");
   const replyStatus = portal.querySelector("[data-reply-status]");
   const newTopicButton = portal.querySelector("[data-new-topic-button]");
   const newTopicPanel = portal.querySelector("[data-new-topic-panel]");
@@ -71,6 +72,7 @@
   const newTopicCategory = portal.querySelector("[data-new-topic-category]");
   const newTopicTitle = portal.querySelector("[data-new-topic-title]");
   const newTopicBody = portal.querySelector("[data-new-topic-body]");
+  const newTopicAttachments = portal.querySelector("[data-new-topic-attachments]");
   const newTopicStatus = portal.querySelector("[data-new-topic-status]");
   const memberAction = portal.querySelector("[data-member-action]");
   const memberToolsButton = portal.querySelector("[data-member-tools-button]");
@@ -285,6 +287,7 @@
           <div class="discussion-bubble">
             ${escapeHtml(post.body).replace(/\n/g, "<br>")}
           </div>
+          ${renderAttachments(post.attachments)}
           <div class="discussion-reactions">
             <button type="button" disabled>Insightful</button>
             <button type="button" disabled>Helpful</button>
@@ -301,6 +304,7 @@
     const isStopped = activeTopic?.status === "locked";
     const canPost = Boolean(state.activeUser && state.activeTopicId && !state.previewMode && !isStopped);
     replyBody.disabled = !canPost;
+    if (replyAttachments) replyAttachments.disabled = !canPost;
     replyForm.querySelector("button").disabled = !canPost;
     if (state.previewMode) {
       replyStatus.textContent = "Preview mode: apply the D1 forum migration to enable live posting.";
@@ -321,8 +325,10 @@
     if (!body || !state.activeTopicId) return;
     try {
       replyStatus.textContent = "Sending reply...";
-      await window.TPIApi.createForumPost(state.activeTopicId, { body });
+      const attachments = await uploadForumAttachments(replyAttachments?.files, replyStatus);
+      await window.TPIApi.createForumPost(state.activeTopicId, { body, attachments });
       replyBody.value = "";
+      if (replyAttachments) replyAttachments.value = "";
       await loadForum();
       renderCategories();
       await openTopic(state.activeTopicId);
@@ -358,13 +364,16 @@
     }
     try {
       newTopicStatus.textContent = "Creating topic...";
+      const attachments = await uploadForumAttachments(newTopicAttachments?.files, newTopicStatus);
       const response = await window.TPIApi.createForumTopic({
         categoryId: newTopicCategory.value,
         title: newTopicTitle.value,
-        body: newTopicBody.value
+        body: newTopicBody.value,
+        attachments
       });
       newTopicTitle.value = "";
       newTopicBody.value = "";
+      if (newTopicAttachments) newTopicAttachments.value = "";
       newTopicPanel.hidden = true;
       await loadForum();
       renderCategories();
@@ -780,6 +789,56 @@
       inactive: "Inactive",
       deleted: "Deleted"
     }[String(status || "open").toLowerCase()] || "Open";
+  }
+
+  function validateForumFiles(files) {
+    const selected = Array.from(files || []);
+    const images = selected.filter(file => file.type.startsWith("image/"));
+    const videos = selected.filter(file => file.type.startsWith("video/"));
+    const unsupported = selected.filter(file => !file.type.startsWith("image/") && !file.type.startsWith("video/"));
+    if (unsupported.length) throw new Error("Forum uploads can only include photos and videos.");
+    if (images.length > 10) throw new Error("Please choose 10 images or fewer.");
+    if (videos.length > 2) throw new Error("Please choose 2 videos or fewer.");
+    return selected;
+  }
+
+  async function uploadForumAttachments(files, statusElement) {
+    const selected = validateForumFiles(files);
+    if (!selected.length) return [];
+    if (!window.TPIApi?.uploadForumMedia) throw new Error("Forum media upload is not available yet.");
+
+    const uploaded = [];
+    for (let index = 0; index < selected.length; index += 1) {
+      const file = selected[index];
+      if (statusElement) statusElement.textContent = `Uploading ${index + 1} of ${selected.length}...`;
+      const result = await window.TPIApi.uploadForumMedia(file);
+      uploaded.push({
+        url: result.url,
+        key: result.key,
+        name: result.name || file.name,
+        contentType: result.contentType || file.type,
+        mediaType: file.type.startsWith("video/") ? "video" : "image"
+      });
+    }
+    return uploaded;
+  }
+
+  function renderAttachments(attachments) {
+    const items = Array.isArray(attachments) ? attachments : [];
+    if (!items.length) return "";
+    return `
+      <div class="discussion-attachments">
+        ${items.map(item => {
+          const url = escapeAttr(item.url || "");
+          const name = escapeHtml(item.name || "Forum attachment");
+          if (!url) return "";
+          if (String(item.mediaType || item.contentType || "").startsWith("video")) {
+            return `<figure class="discussion-attachment discussion-attachment-video"><video src="${url}" controls preload="metadata"></video><figcaption>${name}</figcaption></figure>`;
+          }
+          return `<figure class="discussion-attachment discussion-attachment-image"><img src="${url}" alt="${name}" loading="lazy"><figcaption>${name}</figcaption></figure>`;
+        }).join("")}
+      </div>
+    `;
   }
 
   function debounce(fn, wait) {

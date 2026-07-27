@@ -15,6 +15,7 @@ The static prototype now has a Cloudflare-ready backend:
 - Forum read tracking schema: `migrations/0005_forum_read_tracking.sql`
 - Account recovery schema: `migrations/0006_account_recovery.sql`
 - Education-aligned forum categories: `migrations/0007_discussion_education_categories.sql`
+- Forum post attachment schema: `migrations/0008_forum_post_attachments.sql`
 - Front-end API helper: `api-client.js`
 - D1 binding in `wrangler.toml`
 
@@ -134,6 +135,7 @@ The latest category migration is `migrations/0007_discussion_education_categorie
 
 ```sql
 INSERT INTO forum_categories (id, title, description, sort_order, active) VALUES
+  ('general', 'General Discussion', 'Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation.', 0, 1),
   ('investigation', 'Investigation Science', 'Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows.', 10, 1),
   ('evidence-science', 'Evidence Science & Analysis', 'Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings.', 20, 1),
   ('equipment', 'Instrumentation & Technology', 'Equipment literacy, sensor behavior, EMF, environmental tools, recording systems, and limitations.', 30, 1),
@@ -148,13 +150,31 @@ INSERT INTO forum_categories (id, title, description, sort_order, active) VALUES
   ('locations', 'Historical & Cultural Research', 'Haunted locations, local legends, folklore, public records, archival studies, and historical context.', 120, 1),
   ('experiences', 'Your Paranormal Experiences', 'Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters.', 130, 1),
   ('metaphysics', 'Spirituality, Metaphysics, OBE & NDE', 'Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making.', 140, 1),
-  ('scrying', 'Scrying, Divination & Visionary Practices', 'Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion.', 145, 1),
-  ('general', 'General Discussion', 'Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation.', 150, 1)
+  ('scrying', 'Scrying, Divination & Visionary Practices', 'Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion.', 145, 1)
 ON CONFLICT(id) DO UPDATE SET
   title = excluded.title,
   description = excluded.description,
   sort_order = excluded.sort_order,
   active = excluded.active;
+```
+
+Forum image/video attachments require `migrations/0008_forum_post_attachments.sql`. Paste this full SQL into the D1 Console:
+
+```sql
+CREATE TABLE IF NOT EXISTS forum_post_attachments (
+  id TEXT PRIMARY KEY,
+  post_id TEXT NOT NULL,
+  url TEXT NOT NULL,
+  media_key TEXT DEFAULT '',
+  name TEXT DEFAULT '',
+  content_type TEXT DEFAULT '',
+  media_type TEXT DEFAULT '',
+  sort_order INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (post_id) REFERENCES forum_posts(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_forum_post_attachments_post ON forum_post_attachments(post_id);
 ```
 
 ## R2 Uploads

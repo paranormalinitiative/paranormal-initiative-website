@@ -29,6 +29,7 @@ The research paper system must support full papers, full contributor profiles, d
   - `migrations/0005_forum_read_tracking.sql`
   - `migrations/0006_account_recovery.sql`
   - `migrations/0007_discussion_education_categories.sql`
+  - `migrations/0008_forum_post_attachments.sql`
 - D1 binding in `wrangler.toml`
 - Member login page: `member-login.html`
 - Contributor invite page: `contributor-invite.html`
@@ -223,6 +224,9 @@ Current rules:
 - Contributors/admin/owner use the same login session as the main site; they should not have to log in twice.
 - Forum categories live on the left and remain collapsible.
 - Topic/reply content opens on the right as chat-style bubbles.
+- New topics and replies can include uploaded forum media: up to 10 images and 2 videos.
+- Forum media uploads use R2 through `/api/uploads/forum-media`; the files can come from the computer, device, or synced cloud folders such as iCloud, Dropbox, or Google Drive.
+- Direct Google Drive/iCloud/Dropbox picker integration is not built yet; current support uses the browser file picker.
 - Blue badge/icon means topics.
 - Green badge/icon means replies.
 - Badge brightness should reflect read/unread when the read-tracking table is present.
@@ -233,6 +237,7 @@ Current rules:
 
 Current category set:
 
+- General Discussion
 - Investigation Science
 - Evidence Science & Analysis
 - Instrumentation & Technology
@@ -248,7 +253,6 @@ Current category set:
 - Your Paranormal Experiences
 - Spirituality, Metaphysics, OBE & NDE
 - Scrying, Divination & Visionary Practices
-- General Discussion
 
 ## Next Implementation Order
 

@@ -123,6 +123,11 @@
                         <span>Opening Message</span>
                         <textarea data-new-topic-body rows="5" maxlength="6000" placeholder="Start the conversation here..." required></textarea>
                     </label>
+                    <label class="discussion-attachment-picker">
+                        <span>Photos / Videos</span>
+                        <input type="file" data-new-topic-attachments accept="image/*,video/*" multiple>
+                        <small>Upload from your computer, device, or synced cloud folders. Max 10 images and 2 videos.</small>
+                    </label>
                     <div class="discussion-form-actions">
                         <p data-new-topic-status></p>
                         <button class="portal-button" type="submit">Create Topic</button>
@@ -144,6 +149,11 @@
                 <label>
                     <span>Reply</span>
                     <textarea data-reply-body rows="3" maxlength="6000" placeholder="Write a reply..."></textarea>
+                </label>
+                <label class="discussion-attachment-picker">
+                    <span>Photos / Videos</span>
+                    <input type="file" data-reply-attachments accept="image/*,video/*" multiple>
+                    <small>Upload from your computer, device, or synced cloud folders. Max 10 images and 2 videos.</small>
                 </label>
                 <div class="discussion-reply-actions">
                     <p data-reply-status>Sign in as a member or contributor to reply.</p>

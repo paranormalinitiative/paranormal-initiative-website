@@ -101,7 +101,7 @@ Current prototype:
 7. Contributor can choose whether their display name and title should be used automatically on comments and replies.
 8. After setup, they use `member-login.html` and land on `member-dashboard.html`.
 
-Cloudflare implementation note: `worker.js`, `functions/api/[[path]].js`, `migrations/0001_contributor_portal.sql` through `migrations/0007_discussion_education_categories.sql` are now present. See `CLOUDFLARE_PORTAL_SETUP.md` for D1 setup, migration SQL, and owner bootstrap instructions.
+Cloudflare implementation note: `worker.js`, `functions/api/[[path]].js`, `migrations/0001_contributor_portal.sql` through `migrations/0008_forum_post_attachments.sql` are now present. See `CLOUDFLARE_PORTAL_SETUP.md` for D1 setup, migration SQL, and owner bootstrap instructions.
 
 Cloudflare Console note: when using the dashboard D1 Console, paste the full SQL contents from a migration file. Do not paste the filename.
 
@@ -193,6 +193,8 @@ Current model:
 - Signed-in members can create topics and reply.
 - Categories stay on the left in a collapsible list.
 - The active topic opens on the right with messenger-style bubbles.
+- New topics and replies can include uploaded photos/videos: up to 10 images and 2 videos per post.
+- Forum media uploads use R2 through `/api/uploads/forum-media`. The current browser file picker supports files from the computer, device, or synced cloud folders such as iCloud, Dropbox, and Google Drive. Direct cloud-provider pickers can be added later if needed.
 - Blue topic badges and green reply badges show category activity.
 - Member-specific read tracking uses `forum_topic_reads`.
 - Leadership/admin cleanup tools can stop, mark inactive, delete, or reopen topics.
@@ -212,10 +214,10 @@ Forum categories now align with the Education Center plus community discussion a
 - Technology Development
 - Artificial Intelligence
 - Historical & Cultural Research
+- General Discussion
 - Your Paranormal Experiences
 - Spirituality, Metaphysics, OBE & NDE
 - Scrying, Divination & Visionary Practices
-- General Discussion
 
 ## Public Comment UI
 

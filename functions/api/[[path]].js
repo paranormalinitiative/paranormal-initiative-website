@@ -37,6 +37,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
+    if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
@@ -549,11 +550,19 @@ async function handleProfilePhotoUpload(request, env, user) {
 }
 
 async function handleArticleMediaUpload(request, env, user) {
+  return handleMediaUpload(request, env, user, "articles", "article-media");
+}
+
+async function handleForumMediaUpload(request, env, user) {
+  return handleMediaUpload(request, env, user, "forum", "forum-media", ["image/", "video/"]);
+}
+
+async function handleMediaUpload(request, env, user, area, purpose, allowedTypes) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const upload = await readUploadFile(request);
   if (!upload) return json({ error: "Choose a media file to upload." }, 400);
 
-  const allowed = [
+  const allowed = allowedTypes || [
     "image/",
     "video/",
     "audio/",
@@ -562,13 +571,13 @@ async function handleArticleMediaUpload(request, env, user) {
     "text/plain"
   ];
   if (!allowed.some(prefix => upload.type === prefix || upload.type.startsWith(prefix))) {
-    return json({ error: "That file type is not allowed for article media." }, 400);
+    return json({ error: "That file type is not allowed for this upload." }, 400);
   }
 
-  const key = makeMediaKey("articles", user.username, upload.name, upload.type);
+  const key = makeMediaKey(area, user.username, upload.name, upload.type);
   await env.TPI_MEDIA.put(key, upload.body, {
     httpMetadata: { contentType: upload.type },
-    customMetadata: { contributorId: user.id, purpose: "article-media" }
+    customMetadata: { contributorId: user.id, purpose }
   });
   return json({ url: `/api/media/${key}`, key, contentType: upload.type, name: upload.name });
 }
@@ -781,7 +790,8 @@ async function handleForumTopic(path, env) {
     ORDER BY fp.created_at ASC
   `).bind(topicId).all();
 
-  return json({ topic, posts: results });
+  const posts = await attachForumPostMedia(env, results);
+  return json({ topic, posts });
 }
 
 async function handleCreateForumTopic(request, env, user) {
@@ -789,6 +799,7 @@ async function handleCreateForumTopic(request, env, user) {
   const categoryId = clean(data.categoryId);
   const title = clean(data.title).slice(0, 160);
   const body = clean(data.body).slice(0, 6000);
+  const attachments = sanitizeForumAttachments(data.attachments);
   if (!categoryId || !title || !body) return json({ error: "Category, topic title, and message are required." }, 400);
 
   const category = await env.TPI_DB.prepare("SELECT id FROM forum_categories WHERE id = ? AND active = 1").bind(categoryId).first();
@@ -802,14 +813,16 @@ async function handleCreateForumTopic(request, env, user) {
     env.TPI_DB.prepare("INSERT INTO forum_posts (id, topic_id, contributor_id, body, status) VALUES (?, ?, ?, ?, 'visible')")
       .bind(postId, topicId, user.id, body)
   ]);
+  await insertForumAttachments(env, postId, attachments);
 
-  return json({ topic: { id: topicId, categoryId, title, status: "open" }, post: { id: postId, topicId, body } });
+  return json({ topic: { id: topicId, categoryId, title, status: "open" }, post: { id: postId, topicId, body, attachments } });
 }
 
 async function handleCreateForumPost(path, request, env, user) {
   const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)\/posts$/)?.[1] || ""));
   const data = await readJson(request);
   const body = clean(data.body).slice(0, 6000);
+  const attachments = sanitizeForumAttachments(data.attachments);
   if (!topicId || !body) return json({ error: "Topic id and message are required." }, 400);
 
   const topic = await env.TPI_DB.prepare("SELECT id, status FROM forum_topics WHERE id = ? AND status NOT IN ('deleted', 'inactive')").bind(topicId).first();
@@ -825,8 +838,9 @@ async function handleCreateForumPost(path, request, env, user) {
     env.TPI_DB.prepare("UPDATE forum_topics SET updated_at = CURRENT_TIMESTAMP WHERE id = ?")
       .bind(topicId)
   ]);
+  await insertForumAttachments(env, postId, attachments);
 
-  return json({ post: { id: postId, topicId, body } });
+  return json({ post: { id: postId, topicId, body, attachments } });
 }
 
 async function handleMarkForumTopicRead(path, env, user) {
@@ -1012,6 +1026,69 @@ async function getForumReadRows(env, contributorId) {
     return results || [];
   } catch (error) {
     return [];
+  }
+}
+
+async function attachForumPostMedia(env, posts) {
+  const safePosts = posts || [];
+  if (!safePosts.length) return safePosts;
+  try {
+    const postIds = safePosts.map(post => post.id);
+    const attachmentsByPost = new Map(postIds.map(id => [id, []]));
+    for (const postId of postIds) {
+      const { results } = await env.TPI_DB.prepare(`
+        SELECT
+          id,
+          post_id AS postId,
+          url,
+          media_key AS key,
+          name,
+          content_type AS contentType,
+          media_type AS mediaType,
+          sort_order AS sortOrder
+        FROM forum_post_attachments
+        WHERE post_id = ?
+        ORDER BY sort_order ASC, created_at ASC
+      `).bind(postId).all();
+      attachmentsByPost.set(postId, results || []);
+    }
+    return safePosts.map(post => ({ ...post, attachments: attachmentsByPost.get(post.id) || [] }));
+  } catch (error) {
+    return safePosts.map(post => ({ ...post, attachments: [] }));
+  }
+}
+
+function sanitizeForumAttachments(value) {
+  const attachments = Array.isArray(value) ? value : [];
+  const cleaned = attachments.map((item, index) => {
+    const contentType = clean(item.contentType);
+    const mediaType = clean(item.mediaType || (contentType.startsWith("video/") ? "video" : "image"));
+    return {
+      url: clean(item.url).slice(0, 1000),
+      key: clean(item.key).slice(0, 1000),
+      name: clean(item.name).slice(0, 180),
+      contentType: contentType.slice(0, 120),
+      mediaType: mediaType === "video" ? "video" : "image",
+      sortOrder: index
+    };
+  }).filter(item => item.url && ["image", "video"].includes(item.mediaType));
+
+  const images = cleaned.filter(item => item.mediaType === "image");
+  const videos = cleaned.filter(item => item.mediaType === "video");
+  if (images.length > 10) throw new Error("Forum posts can include up to 10 images.");
+  if (videos.length > 2) throw new Error("Forum posts can include up to 2 videos.");
+  return cleaned;
+}
+
+async function insertForumAttachments(env, postId, attachments) {
+  if (!attachments.length) return;
+  try {
+    await env.TPI_DB.batch(attachments.map(item => env.TPI_DB.prepare(`
+      INSERT INTO forum_post_attachments (id, post_id, url, media_key, name, content_type, media_type, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(crypto.randomUUID(), postId, item.url, item.key, item.name, item.contentType, item.mediaType, item.sortOrder)));
+  } catch (error) {
+    throw new Error("Forum attachment table is not ready yet. Apply migrations/0008_forum_post_attachments.sql in Cloudflare D1.");
   }
 }
 
