@@ -464,6 +464,27 @@
     await setTopicStatus(topicAction.dataset.topicId, topicAction.dataset.topicAdminAction);
   });
 
+  messageList?.addEventListener("click", event => {
+    const mediaButton = event.target.closest("[data-open-forum-media]");
+    if (!mediaButton) return;
+    openForumMediaViewer(
+      mediaButton.dataset.openForumMedia,
+      mediaButton.dataset.mediaKind || "image",
+      mediaButton.dataset.mediaName || "Forum media"
+    );
+  });
+
+  document.addEventListener("click", event => {
+    const viewer = event.target.closest("[data-forum-media-viewer]");
+    if (!viewer) return;
+    if (event.target.closest("[data-close-forum-media]") || event.target === viewer) viewer.remove();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    document.querySelector("[data-forum-media-viewer]")?.remove();
+  });
+
   function toggleCategory(categoryId) {
     if (!categoryId) return;
     if (state.expandedCategories.has(categoryId)) {
