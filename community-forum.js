@@ -14,6 +14,7 @@
     { id: "locations", title: "Historical & Cultural Research", description: "Haunted locations, local legends, folklore, public records, archival studies, and historical context." },
     { id: "experiences", title: "Your Paranormal Experiences", description: "Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters." },
     { id: "metaphysics", title: "Spirituality, Metaphysics, OBE & NDE", description: "Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making." },
+    { id: "scrying", title: "Scrying, Divination & Visionary Practices", description: "Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion." },
     { id: "general", title: "General Discussion", description: "Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation." }
   ];
 

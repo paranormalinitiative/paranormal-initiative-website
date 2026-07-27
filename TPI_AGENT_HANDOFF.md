@@ -20,7 +20,7 @@ There is now also a live **Contributor Portal** and **Discussion Portal** direct
 - Owner/admin/director-level tools include member/contributor access management, comment moderation, and forum topic cleanup.
 - The Discussion Portal has a messenger-style layout with categories on the left and topic/chat bubbles on the right.
 - Forum topic badges use blue for topics and green for replies, with member read tracking when `forum_topic_reads` exists.
-- Forum categories now match the Education Center discussion areas, including Investigation Science, Evidence Science & Analysis, Instrumentation & Technology, Environmental Research, EVP & ITC Research, Consciousness & Human Experience, Ethics & Professional Standards, Reporting & Documentation, Community Development & Publication, Technology Development, Artificial Intelligence, Historical & Cultural Research, plus community discussion areas.
+- Forum categories now match the Education Center discussion areas, including Investigation Science, Evidence Science & Analysis, Instrumentation & Technology, Environmental Research, EVP & ITC Research, Consciousness & Human Experience, Ethics & Professional Standards, Reporting & Documentation, Community Development & Publication, Technology Development, Artificial Intelligence, Historical & Cultural Research, plus community discussion areas such as Scrying, Divination & Visionary Practices.
 - R2 media upload is already in practical use for profile photos through `tpi-contributor-media`; keep using R2 for uploaded profile/article media and D1 only for records/URLs.
 - Legacy authored pages are treated as archived/conversion items. They can be opened as-is or imported into the Content Editor, then converted into editable D1 article records over time.
 

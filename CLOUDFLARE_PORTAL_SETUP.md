@@ -148,6 +148,7 @@ INSERT INTO forum_categories (id, title, description, sort_order, active) VALUES
   ('locations', 'Historical & Cultural Research', 'Haunted locations, local legends, folklore, public records, archival studies, and historical context.', 120, 1),
   ('experiences', 'Your Paranormal Experiences', 'Personal accounts, witness questions, unusual events, dreams, apparitions, and meaningful encounters.', 130, 1),
   ('metaphysics', 'Spirituality, Metaphysics, OBE & NDE', 'Spiritual frameworks, metaphysical ideas, out-of-body experiences, near-death experiences, and meaning-making.', 140, 1),
+  ('scrying', 'Scrying, Divination & Visionary Practices', 'Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion.', 145, 1),
   ('general', 'General Discussion', 'Introductions, community updates, collaboration ideas, research requests, and open paranormal conversation.', 150, 1)
 ON CONFLICT(id) DO UPDATE SET
   title = excluded.title,

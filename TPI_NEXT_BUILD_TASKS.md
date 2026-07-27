@@ -247,6 +247,7 @@ Current category set:
 - Historical & Cultural Research
 - Your Paranormal Experiences
 - Spirituality, Metaphysics, OBE & NDE
+- Scrying, Divination & Visionary Practices
 - General Discussion
 
 ## Next Implementation Order

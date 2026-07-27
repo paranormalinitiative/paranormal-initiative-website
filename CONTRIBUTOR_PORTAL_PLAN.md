@@ -214,6 +214,7 @@ Forum categories now align with the Education Center plus community discussion a
 - Historical & Cultural Research
 - Your Paranormal Experiences
 - Spirituality, Metaphysics, OBE & NDE
+- Scrying, Divination & Visionary Practices
 - General Discussion
 
 ## Public Comment UI
