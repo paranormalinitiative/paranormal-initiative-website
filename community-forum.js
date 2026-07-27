@@ -18,6 +18,8 @@
     { id: "scrying", title: "Scrying, Divination & Visionary Practices", description: "Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion." }
   ];
 
+  const categoryOrder = new Map(fallbackCategories.map((category, index) => [category.id, index]));
+
   const fallbackTopics = [
     { id: "preview-acs", categoryId: "evp-itc", title: "ACS experiments and phonetic review methods", authorName: "TPI Preview", authorTitle: "Discussion Example", postCount: 3, lastPostAt: new Date().toISOString() },
     { id: "preview-experiences", categoryId: "experiences", title: "How should personal experiences be documented?", authorName: "TPI Preview", authorTitle: "Discussion Example", postCount: 2, lastPostAt: new Date(Date.now() - 3600000).toISOString() },
@@ -101,12 +103,12 @@
   async function loadForum() {
     try {
       const data = await window.TPIApi.forumIndex();
-      state.categories = data.categories || [];
+      state.categories = sortForumCategories(data.categories || []);
       state.topics = data.topics || [];
       state.previewMode = false;
       applyLocalReadState();
     } catch (error) {
-      state.categories = fallbackCategories;
+      state.categories = sortForumCategories(fallbackCategories);
       state.topics = fallbackTopics;
       state.previewMode = true;
       applyLocalReadState();
@@ -789,6 +791,15 @@
       inactive: "Inactive",
       deleted: "Deleted"
     }[String(status || "open").toLowerCase()] || "Open";
+  }
+
+  function sortForumCategories(categories) {
+    return [...(categories || [])].sort((a, b) => {
+      const aOrder = categoryOrder.has(a.id) ? categoryOrder.get(a.id) : Number(a.sortOrder ?? 999);
+      const bOrder = categoryOrder.has(b.id) ? categoryOrder.get(b.id) : Number(b.sortOrder ?? 999);
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return String(a.title || "").localeCompare(String(b.title || ""));
+    });
   }
 
   function validateForumFiles(files) {
