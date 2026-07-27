@@ -103,7 +103,7 @@
   async function loadForum() {
     try {
       const data = await window.TPIApi.forumIndex();
-      state.categories = sortForumCategories(data.categories || []);
+      state.categories = sortForumCategories(mergeBuiltInCategories(data.categories || []));
       state.topics = data.topics || [];
       state.previewMode = false;
       applyLocalReadState();
@@ -321,6 +321,15 @@
     }
   }
 
+  function updateNewTopicState() {
+    const canCreateTopic = Boolean(state.activeUser && !state.previewMode);
+    newTopicCategory.disabled = !canCreateTopic;
+    newTopicTitle.disabled = !canCreateTopic;
+    newTopicBody.disabled = !canCreateTopic;
+    if (newTopicAttachments) newTopicAttachments.disabled = !canCreateTopic;
+    newTopicForm.querySelector("button[type='submit']").disabled = !canCreateTopic;
+  }
+
   replyForm.addEventListener("submit", async event => {
     event.preventDefault();
     const body = cleanText(replyBody.value);
@@ -342,6 +351,7 @@
 
   newTopicButton.addEventListener("click", () => {
     newTopicPanel.hidden = false;
+    updateNewTopicState();
     newTopicTitle.focus();
     newTopicStatus.textContent = state.previewMode
       ? "Preview mode: apply the D1 forum migration to enable live topic creation."
@@ -800,6 +810,14 @@
       if (aOrder !== bOrder) return aOrder - bOrder;
       return String(a.title || "").localeCompare(String(b.title || ""));
     });
+  }
+
+  function mergeBuiltInCategories(categories) {
+    const byId = new Map((categories || []).map(category => [category.id, category]));
+    fallbackCategories.forEach(category => {
+      if (!byId.has(category.id)) byId.set(category.id, { ...category, topicCount: 0, postCount: 0, replyCount: 0 });
+    });
+    return [...byId.values()];
   }
 
   function validateForumFiles(files) {
