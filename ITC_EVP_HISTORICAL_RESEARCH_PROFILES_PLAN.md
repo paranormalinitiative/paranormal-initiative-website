@@ -90,6 +90,36 @@ This section should live in the Education Center and connect strongly to:
 
 It should also be searchable through the site-wide search system.
 
+## Featured Researcher / Profile Highlight
+
+The site should eventually support a manually selected **Featured Researcher** or **Profile Highlight** area.
+
+This should not feel like a social-media spotlight or popularity feature. It should feel like a professional research highlight that helps visitors discover important people, historical figures, active contributors, and major bodies of work.
+
+Possible names:
+
+- Featured Researcher
+- Featured ITC / EVP Researcher
+- Research Profile Highlight
+- Major Contributor Feature
+- Historical Research Spotlight
+
+Suggested behavior:
+
+- One featured profile can be selected manually.
+- The feature can appear on the Education Center, EVP / ITC Research shelf, homepage, or a future Major Research Figures index.
+- The feature should link to the person's public profile and paper/source collection.
+- The feature can include a profile image, name, public title, short biography excerpt, research area labels, and a button such as `Open Profile` or `Read Collection`.
+- Anabela Cardoso should be the first model for this feature.
+- Future featured profiles can include living contributors, major historical figures, or researchers whose work is especially relevant to a current site theme.
+
+Important handling:
+
+- Keep the tone respectful, archival, and research-focused.
+- Avoid making it feel like an award, ranking, endorsement, or popularity contest.
+- For living people, get permission before featuring them prominently when possible.
+- For deceased historical figures, feature the profile as historical/educational context with clear source attribution.
+
 ## Anabela Cardoso Starting Point
 
 Anabela Cardoso should be treated as the first fully developed major contributor profile.
