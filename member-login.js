@@ -468,24 +468,9 @@
   function renderLocalContributorTitles(currentUser) {
     if (!adminContributorList || !["owner", "admin"].includes(currentUser?.role)) return;
     const contributors = getUsers().filter(user => !user.developerOwner);
-    adminContributorList.innerHTML = renderMajorContributorProfileCards() + (contributors.length
+    adminContributorList.innerHTML = contributors.length
       ? contributors.map(contributor => renderContributorTitleRow(contributor, currentUser)).join("")
-      : `<p class="access-note">No member accounts have been created yet.</p>`);
-  }
-
-  function renderMajorContributorProfileCards() {
-    return `
-      <article class="invite-link-row major-contributor-admin-row">
-        <div>
-          <strong>Anabela Cardoso</strong>
-          <span>Major Contributor - EVP / ITC Research - Public profile only, no login account</span>
-        </div>
-        <div class="invite-link-actions">
-          <a class="portal-button portal-button-secondary" href="anabela-cardoso-profile.html">Open Profile</a>
-          <a class="portal-button" href="anabela-cardoso-papers.html">Open Papers</a>
-        </div>
-      </article>
-    `;
+      : `<p class="access-note">No member accounts have been created yet.</p>`;
   }
 
   function renderModerationComment(comment, statusFilter) {
@@ -543,9 +528,9 @@
       renderInviteLinks((data.invites || []).filter(invite => !invite.used));
       if (adminContributorList) {
         const contributors = contributorData.contributors || [];
-        adminContributorList.innerHTML = renderMajorContributorProfileCards() + (contributors.length
+        adminContributorList.innerHTML = contributors.length
           ? contributors.map(contributor => renderContributorTitleRow(contributor, session.user)).join("")
-          : `<p class="access-note">No member accounts have been created yet.</p>`);
+          : `<p class="access-note">No member accounts have been created yet.</p>`;
       }
       await renderCommentModeration(commentModerationList?.dataset.moderationStatus || "pending");
       return true;
