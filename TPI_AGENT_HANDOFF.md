@@ -1,6 +1,6 @@
 # The Paranormal Initiative Website - Agent Handoff
 
-Last updated: July 26, 2026
+Last updated: July 27, 2026
 
 ## Project Identity
 
@@ -10,7 +10,7 @@ The current focus is the **Education Center / Research Library** and the new **C
 
 There is now also a live **Contributor Portal** and **Discussion Portal** direction. The Content Editor requires contributor access, public members can join the forum, invite/admin tools stay hidden from normal visitors, logged-in members land on a private dashboard, contributors can save drafts/publish contributions, and comments/discussion features use Cloudflare D1 when deployed. See `CONTRIBUTOR_PORTAL_PLAN.md` and `CLOUDFLARE_PORTAL_SETUP.md`.
 
-## Current Status - July 26, 2026
+## Current Status - July 27, 2026
 
 - The editor is now named **Content Editor**, not Paper Editor.
 - Public visitors can read the site and public Discussion Portal topics.
@@ -23,6 +23,8 @@ There is now also a live **Contributor Portal** and **Discussion Portal** direct
 - Forum categories now match the Education Center discussion areas, including Investigation Science, Evidence Science & Analysis, Instrumentation & Technology, Environmental Research, EVP & ITC Research, Consciousness & Human Experience, Ethics & Professional Standards, Reporting & Documentation, Community Development & Publication, Technology Development, Artificial Intelligence, Historical & Cultural Research, plus community discussion areas such as Scrying, Divination & Visionary Practices.
 - R2 media upload is already in practical use for profile photos through `tpi-contributor-media`; keep using R2 for uploaded profile/article media and D1 only for records/URLs.
 - Legacy authored pages are treated as archived/conversion items. They can be opened as-is or imported into the Content Editor, then converted into editable D1 article records over time.
+- Anabela Cardoso is now the first deployed **Major Contributor** profile. Her profile page and paper collection are live, searchable, linked from the Education Center and EVP / ITC Research shelf, and listed inside the Member & Contributor Access panel as a public-profile-only record.
+- Major Contributor profiles are different from D1 login accounts. Living or historical figures can have public profile pages without fake member accounts. Real members/contributors/admins remain in the D1 account list.
 
 ## Urgent Cloudflare Deploy Note - Anabela Cardoso Assets
 
@@ -38,7 +40,7 @@ Cloudflare reported it as 31.1 MiB and failed the deploy with:
 Asset too large. Cloudflare Workers supports assets with sizes of up to 25 MiB.
 ```
 
-The local repo no longer has that oversized file in `HEAD`, and `.assetsignore` now explicitly excludes that exact path in case Cloudflare's build checkout/cache still sees the old copy. The Anabela paper card now says `R2 upload needed` for this item. If deployment still fails, verify Cloudflare is deploying the latest `main` commit and not an older cached checkout. The oversized PDF should be uploaded to Cloudflare R2 later and then linked from `anabela-cardoso-papers.html`.
+The local repo no longer has that oversized file in `HEAD`, and `.assetsignore` now explicitly excludes that exact path in case Cloudflare's build checkout/cache still sees the old copy. The Anabela paper card now says `R2 upload needed` for this item. The deploy later succeeded after Cloudflare picked up the updated commit. The oversized PDF should be uploaded to Cloudflare R2 later and then linked from `anabela-cardoso-papers.html`.
 
 ## Cloudflare D1 Console Rule
 
@@ -66,7 +68,7 @@ If asked to run or apply a migration, provide the exact SQL block from the file,
   - Applied Method
   - Conclusion
 - Do not reduce full papers into snippets or summaries.
-- Do not host full third-party papers unless permission is confirmed. External authors' work, such as Anabela Cardoso's Academia.edu papers, should be linked to rather than copied into the site.
+- Do not host full third-party papers unless permission is confirmed. Anabela Cardoso granted permission for relevant work to be shared on TPI; keep attribution and permission notes visible. For future living authors, request permission first. For deceased/historical figures, classify source status before reproducing full documents.
 - Preserve the user's author note pattern:
 
 ```text

@@ -96,15 +96,30 @@ Anabela Cardoso should be treated as the first fully developed major contributor
 
 Current direction:
 
-- Create a special Major Contributor profile.
-- Use her curriculum vitae as the biography foundation.
-- Include her profile image.
-- Include her research interests.
-- Stage her papers in the Education Center.
-- Preserve attribution clearly.
-- Add notes where documents require translation or format conversion.
+- A special Major Contributor profile has been created and deployed.
+- Her curriculum vitae is the biography foundation.
+- Her profile image is staged under `assets/anabela-cardoso/`.
+- Her research interests are listed on the profile.
+- Her paper collection is staged in the Education Center through `anabela-cardoso-papers.html`.
+- Her profile and collection are searchable and linked from the EVP / ITC Research shelf.
+- Her static profile record appears in the Member & Contributor Access panel as a public-profile-only record, separate from D1 login accounts.
+- Attribution and permission notes should remain visible.
+- Documents that require translation or format conversion should be marked during the HTML conversion pass.
 
 This creates the model for future profiles.
+
+## Deployment Note
+
+Cloudflare Workers static assets have a 25 MiB per-file limit. One Anabela source PDF, `Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf`, was 31.1 MiB and caused deployment failures.
+
+Current handling:
+
+- The oversized PDF is not deployed as a static asset.
+- `.assetsignore` explicitly excludes that exact path.
+- The paper collection card currently says `R2 upload needed`.
+- The file should be uploaded to Cloudflare R2 later and linked from the collection page.
+
+Future large papers, scans, recordings, or media files should go to R2 rather than the static site asset folder.
 
 ## Long-Term Value
 
@@ -113,4 +128,3 @@ This area would give The Paranormal Initiative real historical depth.
 It shows that the site is not only a personal project or a general paranormal website. It becomes a serious research and education archive that preserves the people, methods, publications, experiments, and questions that shaped EVP and ITC research.
 
 The section should help new investigators understand the field's history while giving experienced researchers a structured place to explore source material, biographies, and related research pathways.
-

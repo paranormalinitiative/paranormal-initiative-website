@@ -1,6 +1,6 @@
 # TPI Contributor Portal - Next Build Tasks
 
-Last updated: July 26, 2026
+Last updated: July 27, 2026
 
 ## Read This First
 
@@ -44,6 +44,37 @@ The research paper system must support full papers, full contributor profiles, d
 - Shared legacy contribution archive: `legacy-contributions.js`
 - Shared nav/comments/greeting behavior: `includes.js`
 - Main styling: `style.css`
+- Major Contributor profile model:
+  - `anabela-cardoso-profile.html`
+  - `anabela-cardoso-papers.html`
+  - `assets/anabela-cardoso/anabela-cardoso.jpg`
+  - `assets/anabela-cardoso/papers/`
+  - `ITC_EVP_HISTORICAL_RESEARCH_PROFILES_PLAN.md`
+
+## Major Contributor Profiles
+
+Anabela Cardoso is the first deployed Major Contributor profile.
+
+Current behavior:
+
+- Her public profile page is live.
+- Her paper collection page is live.
+- Her staged source documents are linked from the collection page, except the Hans Bender PDF noted below.
+- Her profile/collection is linked from the Education Center and the EVP / ITC Research shelf.
+- Her static profile record appears in the Member & Contributor Access panel above live D1 member accounts.
+- She is not a D1 login account. Do not create fake login accounts for historical figures or living researchers unless they personally need site access.
+
+Important distinction:
+
+- **Member & Contributor Access**: real D1 accounts for people who log in.
+- **Major Contributor / Historical Profiles**: public research profiles for major figures who may not log in.
+
+Outstanding Anabela work:
+
+- Convert each source paper into polished readable HTML pages over time.
+- Add translation notes for mixed-language material where needed.
+- Upload the oversized `Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf` to Cloudflare R2, then update its card in `anabela-cardoso-papers.html` from `R2 upload needed` to a live R2 link.
+- Preserve attribution and the permission note on her profile and collection.
 
 ## Current Working Model
 
