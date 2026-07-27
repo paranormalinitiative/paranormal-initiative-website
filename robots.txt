@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /member-login.html
+Disallow: /member-dashboard.html
+Disallow: /paper-editor.html
+Disallow: /command-center.html
+Disallow: /contributor-invite.html
+Disallow: /api/
+
+Sitemap: https://paranormalinitiative.com/sitemap.xml
