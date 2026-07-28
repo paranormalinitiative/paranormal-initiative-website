@@ -673,15 +673,18 @@ async function handleCreateArticle(request, env, user) {
 
 async function handleListArticles(request, env) {
   const url = new URL(request.url);
-  const destination = url.searchParams.get("destination");
+  const destination = clean(url.searchParams.get("destination"));
+  const destinationAlt = destination.endsWith(".html")
+    ? destination.replace(/\.html$/, "")
+    : `${destination}.html`;
   const stmt = destination
     ? env.TPI_DB.prepare(`
       SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
       FROM articles a
       LEFT JOIN contributors c ON c.id = a.created_by
-      WHERE a.destination = ? AND a.status = 'published'
+      WHERE a.destination IN (?, ?) AND a.status = 'published'
       ORDER BY a.created_at DESC
-    `).bind(destination)
+    `).bind(destination, destinationAlt)
     : env.TPI_DB.prepare(`
       SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
       FROM articles a

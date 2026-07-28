@@ -594,6 +594,8 @@
 
   function installPublishedArticleCards() {
     const current = window.location.pathname.split("/").pop() || "index.html";
+    const currentWithoutExtension = current.replace(/\.html$/, "");
+    const currentWithExtension = current.endsWith(".html") ? current : `${current}.html`;
     const grid =
       document.querySelector(".study-resource-grid") ||
       document.querySelector(".series-post-grid") ||
@@ -649,7 +651,7 @@
     }
 
     articles
-      .filter(article => article.destination === current)
+      .filter(article => article.destination === current || article.destination === currentWithoutExtension || article.destination === currentWithExtension)
       .forEach(appendArticleCard);
     loadCloudflareArticleCards();
   }
