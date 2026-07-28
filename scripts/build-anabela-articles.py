@@ -4,6 +4,7 @@ from __future__ import annotations
 import html
 import re
 import subprocess
+import tempfile
 from pathlib import Path
 
 from pypdf import PdfReader
@@ -11,6 +12,9 @@ from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPER_DIR = ROOT / "assets" / "anabela-cardoso" / "papers"
+POPPLER_BIN = Path("/Users/toddknipple/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override/pdftoppm")
+TESSERACT_BIN = Path("/opt/homebrew/bin/tesseract")
+LOCAL_SOURCE_DIR = Path("/Users/toddknipple/Desktop/Anabela Cardoso")
 
 
 PAPERS = [
@@ -119,6 +123,18 @@ PAPERS = [
         "description": "Review-format ITC paper available as DOC source.",
     },
     {
+        "file": "Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf",
+        "localFile": "Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf",
+        "sourceHref": "",
+        "sourceNote": "PDF pending R2 upload",
+        "ocr": True,
+        "slug": "anabela-cardoso-prof-hans-bender-friedrich-jurgenson-anomalous-voices",
+        "tag": "History",
+        "type": "Historical Research",
+        "title": "Prof. Hans Bender on F. Jurgenson's Anomalous Voices",
+        "description": "Historical EVP material connected to Friedrich Jurgenson and Hans Bender.",
+    },
+    {
         "file": "Jochem_Sotschek_in_ITC_Journal.pdf",
         "slug": "anabela-cardoso-jochem-sotschek-itc-journal",
         "tag": "Journal",
@@ -161,14 +177,6 @@ PAPERS = [
 ]
 
 
-OVERSIZED = {
-    "tag": "History",
-    "type": "Historical Research",
-    "title": "Prof. Hans Bender on F. Jurgenson's Anomalous Voices",
-    "description": "Historical EVP material connected to Friedrich Jurgenson and Hans Bender. The source PDF is larger than Cloudflare Workers' static asset limit and should be hosted through R2.",
-}
-
-
 def clean_text(value: str) -> str:
     value = value.replace("\x00", " ")
     value = re.sub(r"[ \t]+", " ", value)
@@ -186,6 +194,33 @@ def extract_pdf(path: Path) -> str:
         if text:
             pages.append(text)
     return "\n\n".join(pages)
+
+
+def extract_pdf_ocr(path: Path) -> str:
+    if not POPPLER_BIN.exists():
+        raise FileNotFoundError(f"PDF renderer not found: {POPPLER_BIN}")
+    if not TESSERACT_BIN.exists():
+        raise FileNotFoundError(f"Tesseract OCR not found: {TESSERACT_BIN}")
+    with tempfile.TemporaryDirectory() as tmp:
+        prefix = Path(tmp) / "page"
+        subprocess.run(
+            [str(POPPLER_BIN), "-png", "-r", "220", str(path), str(prefix)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        pages = []
+        for image in sorted(Path(tmp).glob("page-*.png")):
+            result = subprocess.run(
+                [str(TESSERACT_BIN), str(image), "stdout", "-l", "eng"],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            page_text = clean_text(result.stdout)
+            if page_text:
+                pages.append(page_text)
+        return "\n\n".join(pages)
 
 
 def extract_doc(path: Path) -> str:
@@ -213,9 +248,21 @@ def paragraph_html(text: str) -> str:
 
 
 def article_page(paper: dict, body: str) -> str:
-    source_href = f"assets/anabela-cardoso/papers/{paper['file']}"
+    source_href = paper.get("sourceHref")
+    if source_href is None:
+        source_href = f"assets/anabela-cardoso/papers/{paper['file']}"
     title = paper["title"]
     subtitle = f"Anabela Cardoso Collection - {paper['type']}"
+    source_action = (
+        f'<a class="portal-button portal-button-secondary" href="{html.escape(source_href)}" target="_blank" rel="noopener">Open Source Document</a>'
+        if source_href else
+        '<span class="portal-button portal-button-secondary portal-button-disabled">Source PDF pending R2 upload</span>'
+    )
+    conversion_note = (
+        "This web version was converted from the source document for easier reading on the site. The original source document remains available above for comparison, citation, and preservation."
+        if source_href else
+        "This web version was converted from the oversized local source PDF for easier reading on the site. The original PDF source remains pending Cloudflare R2 upload and should be linked here after it is hosted."
+    )
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,7 +288,7 @@ def article_page(paper: dict, body: str) -> str:
     <div class="portal-actions">
         <a class="portal-button" href="anabela-cardoso-profile.html">Anabela Cardoso Profile</a>
         <a class="portal-button portal-button-secondary" href="anabela-cardoso-papers.html">Paper Collection</a>
-        <a class="portal-button portal-button-secondary" href="{html.escape(source_href)}" target="_blank" rel="noopener">Open Source Document</a>
+        {source_action}
     </div>
 </section>
 
@@ -249,7 +296,7 @@ def article_page(paper: dict, body: str) -> str:
     <article class="lesson-reading-block paper-single-textbox">
         <div class="lesson-reading-copy">
             <p><strong>Attribution.</strong> This document is presented as part of the Anabela Cardoso Honorary Member Collection on The Paranormal Initiative. Source material is shared with permission from Anabela Cardoso and remains attributed to her work.</p>
-            <p><strong>Conversion note.</strong> This web version was converted from the source document for easier reading on the site. The original source document remains available above for comparison, citation, and preservation.</p>
+            <p><strong>Conversion note.</strong> {html.escape(conversion_note)}</p>
         </div>
         <h3>Full Text</h3>
         <div class="lesson-reading-copy anabela-converted-paper">
@@ -268,19 +315,18 @@ def article_page(paper: dict, body: str) -> str:
 
 def collection_card(paper: dict) -> str:
     href = f"{paper['slug']}.html"
-    source_href = f"assets/anabela-cardoso/papers/{paper['file']}"
+    source_href = paper.get("sourceHref")
+    if source_href is None:
+        source_href = f"assets/anabela-cardoso/papers/{paper['file']}"
+    source_note = source_href or paper.get("sourceNote", "Source document pending")
     return f"""        <a class="study-resource-card" href="{html.escape(href)}">
             <div class="study-resource-card-media"><span>{html.escape(paper['tag'])}</span></div>
-            <div class="study-resource-card-copy"><span>{html.escape(paper['type'])}</span><h3>{html.escape(paper['title'])}</h3><p>{html.escape(paper['description'])}</p><strong>Open readable article</strong><small>Source: {html.escape(source_href)}</small></div>
+            <div class="study-resource-card-copy"><span>{html.escape(paper['type'])}</span><h3>{html.escape(paper['title'])}</h3><p>{html.escape(paper['description'])}</p><strong>Open readable article</strong><small>Source: {html.escape(source_note)}</small></div>
         </a>"""
 
 
 def collection_page() -> str:
     cards = "\n".join(collection_card(paper) for paper in PAPERS)
-    oversized = f"""        <article class="study-resource-card">
-            <div class="study-resource-card-media"><span>{html.escape(OVERSIZED['tag'])}</span></div>
-            <div class="study-resource-card-copy"><span>{html.escape(OVERSIZED['type'])}</span><h3>{html.escape(OVERSIZED['title'])}</h3><p>{html.escape(OVERSIZED['description'])}</p><strong>R2 upload needed</strong></div>
-        </article>"""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -335,11 +381,10 @@ def collection_page() -> str:
 <section class="learning-section study-library-section">
     <h2>Paper Inventory</h2>
     <p>
-        This working collection currently contains {len(PAPERS)} converted source documents. One additional oversized historical PDF remains marked for R2 hosting.
+        This working collection currently contains {len(PAPERS)} converted source documents. The oversized Hans Bender source PDF has been converted into a readable article and remains marked for future R2 source-document hosting.
     </p>
     <div class="study-resource-grid anabela-paper-grid">
 {cards}
-{oversized}
     </div>
 </section>
 
@@ -355,9 +400,13 @@ def main() -> None:
     generated = []
     for paper in PAPERS:
         path = PAPER_DIR / paper["file"]
+        if not path.exists() and paper.get("localFile"):
+            path = LOCAL_SOURCE_DIR / paper["localFile"]
         if not path.exists():
             raise FileNotFoundError(path)
-        if path.suffix.lower() == ".pdf":
+        if paper.get("ocr"):
+            text = extract_pdf_ocr(path)
+        elif path.suffix.lower() == ".pdf":
             text = extract_pdf(path)
         elif path.suffix.lower() in {".doc", ".docx"}:
             text = extract_doc(path)

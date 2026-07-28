@@ -146,8 +146,8 @@ Current handling:
 
 - The oversized PDF is not deployed as a static asset.
 - `.assetsignore` explicitly excludes that exact path.
-- The paper collection card currently says `R2 upload needed`.
-- The file should be uploaded to Cloudflare R2 later and linked from the collection page.
+- The paper has been OCR-converted into a readable HTML article page.
+- The original oversized PDF should still be uploaded to Cloudflare R2 later and linked from the generated article page.
 
 Future large papers, scans, recordings, or media files should go to R2 rather than the static site asset folder.
 

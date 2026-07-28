@@ -790,6 +790,13 @@ footer {
     color: #c7d5e2;
 }
 
+.portal-button-disabled {
+    border-style: dashed;
+    color: #8798a8;
+    cursor: default;
+    opacity: 0.82;
+}
+
 .portal-grid {
     padding-top: 105px;
 }
