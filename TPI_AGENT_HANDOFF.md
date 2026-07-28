@@ -25,6 +25,7 @@ There is now also a live **Contributor Portal** and **Discussion Portal** direct
 - Legacy authored pages are treated as archived/conversion items. They can be opened as-is or imported into the Content Editor, then converted into editable D1 article records over time.
 - Todd Wayne's Legacy Conversion Queue now has a bulk conversion migration at `migrations/0010_convert_todd_legacy_contributions.sql`. It converts 21 queued legacy pages into published D1 `articles` rows with stable `legacy-*` ids, original page hrefs as `source`, and Todd's contributor account as `created_by`.
 - Anabela Cardoso is now the first deployed **Honorary Member** profile. Her profile page and paper collection are live, searchable, linked from the Education Center and EVP / ITC Research shelf, and listed inside the Member & Contributor Access panel as a public-profile-only record.
+- Her staged source PDFs/DOC/DOCX files have been converted into 18 readable TPI article pages using `scripts/build-anabela-articles.py`. The collection page now opens the readable article pages first, and each article page links back to its original source document for attribution, comparison, and preservation.
 - Honorary Member profiles are different from D1 login accounts. Living or historical figures can have public profile pages without fake member accounts. Real members/contributors/admins remain in the D1 account list.
 
 ## Urgent Cloudflare Deploy Note - Anabela Cardoso Assets
@@ -41,7 +42,7 @@ Cloudflare reported it as 31.1 MiB and failed the deploy with:
 Asset too large. Cloudflare Workers supports assets with sizes of up to 25 MiB.
 ```
 
-The local repo no longer has that oversized file in `HEAD`, and `.assetsignore` now explicitly excludes that exact path in case Cloudflare's build checkout/cache still sees the old copy. The Anabela paper card now says `R2 upload needed` for this item. The deploy later succeeded after Cloudflare picked up the updated commit. The oversized PDF should be uploaded to Cloudflare R2 later and then linked from `anabela-cardoso-papers.html`.
+The local repo no longer has that oversized file in `HEAD`, and `.assetsignore` now explicitly excludes that exact path in case Cloudflare's build checkout/cache still sees the old copy. The Anabela paper card now says `R2 upload needed` for this item. The deploy later succeeded after Cloudflare picked up the updated commit. The oversized PDF should be uploaded to Cloudflare R2 later and then linked from `anabela-cardoso-papers.html`; after that, update `scripts/build-anabela-articles.py` if a readable HTML conversion is also needed for that source.
 
 ## Cloudflare D1 Console Rule
 

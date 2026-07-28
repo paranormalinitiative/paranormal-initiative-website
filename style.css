@@ -1953,6 +1953,15 @@ footer {
     text-transform: uppercase;
 }
 
+.study-resource-card-copy small {
+    display: block;
+    margin-top: 8px;
+    color: #7f92a5;
+    font-size: 11px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
 .study-resource-card-placeholder {
     border-color: rgba(0, 194, 255, 0.16);
 }

@@ -60,7 +60,8 @@ Current behavior:
 
 - Her public profile page is live.
 - Her paper collection page is live.
-- Her staged source documents are linked from the collection page, except the Hans Bender PDF noted below.
+- Her staged source documents have been converted into 18 readable TPI article pages with original source-document links preserved on each page.
+- `scripts/build-anabela-articles.py` is the repeatable generator for rebuilding the readable article pages and the collection inventory page.
 - Her profile/collection is linked from the Education Center and the EVP / ITC Research shelf.
 - Her static profile record appears in the Member & Contributor Access panel above live D1 member accounts.
 - She is not a D1 login account. Do not create fake login accounts for historical figures or living researchers unless they personally need site access.
@@ -72,9 +73,9 @@ Important distinction:
 
 Outstanding Anabela work:
 
-- Convert each source paper into polished readable HTML pages over time.
 - Add translation notes for mixed-language material where needed.
 - Upload the oversized `Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf` to Cloudflare R2, then update its card in `anabela-cardoso-papers.html` from `R2 upload needed` to a live R2 link.
+- If the oversized Hans Bender source also needs a readable article page, add it to `scripts/build-anabela-articles.py` after the R2/source path is settled.
 - Preserve attribution and the permission note on her profile and collection.
 - Add a future **Featured Researcher / Profile Highlight** feature for manually spotlighting one major profile at a time. Anabela Cardoso should be the first model. Keep it respectful, research-focused, and archival rather than award-like or social-media styled.
 
