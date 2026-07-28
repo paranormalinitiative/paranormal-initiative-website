@@ -23,6 +23,7 @@ There is now also a live **Contributor Portal** and **Discussion Portal** direct
 - Forum categories now match the Education Center discussion areas, including Investigation Science, Evidence Science & Analysis, Instrumentation & Technology, Environmental Research, EVP & ITC Research, Consciousness & Human Experience, Ethics & Professional Standards, Reporting & Documentation, Community Development & Publication, Technology Development, Artificial Intelligence, Historical & Cultural Research, plus community discussion areas such as Scrying, Divination & Visionary Practices.
 - R2 media upload is already in practical use for profile photos through `tpi-contributor-media`; keep using R2 for uploaded profile/article media and D1 only for records/URLs.
 - Legacy authored pages are treated as archived/conversion items. They can be opened as-is or imported into the Content Editor, then converted into editable D1 article records over time.
+- Todd Wayne's Legacy Conversion Queue now has a bulk conversion migration at `migrations/0010_convert_todd_legacy_contributions.sql`. It converts 21 queued legacy pages into published D1 `articles` rows with stable `legacy-*` ids, original page hrefs as `source`, and Todd's contributor account as `created_by`.
 - Anabela Cardoso is now the first deployed **Honorary Member** profile. Her profile page and paper collection are live, searchable, linked from the Education Center and EVP / ITC Research shelf, and listed inside the Member & Contributor Access panel as a public-profile-only record.
 - Honorary Member profiles are different from D1 login accounts. Living or historical figures can have public profile pages without fake member accounts. Real members/contributors/admins remain in the D1 account list.
 
@@ -57,6 +58,9 @@ If asked to run or apply a migration, provide the exact SQL block from the file,
 - `migrations/0005_forum_read_tracking.sql`
 - `migrations/0006_account_recovery.sql`
 - `migrations/0007_discussion_education_categories.sql`
+- `migrations/0010_convert_todd_legacy_contributions.sql`
+
+The `0010` migration is large because it contains full article HTML. Copy the full SQL text into D1 Console, not the filename. It is safe to rerun because it uses stable ids and `ON CONFLICT(id) DO UPDATE`.
 
 ## Non-Negotiable Direction
 
@@ -262,7 +266,7 @@ Recently completed:
 - Change Password/account settings were added to `member-dashboard.html`.
 - Published article author names and logged-in contributor comment/reply names link to `contributor-profile.html?username=...` when a contributor username is available.
 - Legacy authored pages are centralized in `legacy-contributions.js` and can be imported from the Content Editor's My Content library.
-- Legacy authored pages behave as a conversion queue. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy.
+- Legacy authored pages behave as a conversion queue. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy. Todd Wayne's current queue can be bulk converted through `migrations/0010_convert_todd_legacy_contributions.sql`.
 - Legacy conversion records now include best-fit destination and contribution type metadata, so Convert pre-fills the editor destination/type before saving or publishing.
 
 ## Known Limitations

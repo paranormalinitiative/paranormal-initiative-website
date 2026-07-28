@@ -17,6 +17,7 @@ The static prototype now has a Cloudflare-ready backend:
 - Education-aligned forum categories: `migrations/0007_discussion_education_categories.sql`
 - Forum post attachment schema: `migrations/0008_forum_post_attachments.sql`
 - Member/forum chat color schema: `migrations/0009_member_chat_color.sql`
+- Todd Wayne legacy content conversion: `migrations/0010_convert_todd_legacy_contributions.sql`
 - Front-end API helper: `api-client.js`
 - D1 binding in `wrangler.toml`
 
@@ -183,6 +184,18 @@ Member-selected forum bubble colors require `migrations/0009_member_chat_color.s
 ```sql
 ALTER TABLE contributors ADD COLUMN chat_color TEXT DEFAULT '#55c8ff';
 ```
+
+## Legacy Content Conversion
+
+Todd Wayne's Legacy Conversion Queue can be bulk-converted into editable published Content Editor records with:
+
+```text
+migrations/0010_convert_todd_legacy_contributions.sql
+```
+
+Do not paste the filename into Cloudflare. Open that file, copy the full SQL text, paste it into the D1 Console for `tpi_contributor_portal`, and click Execute.
+
+This migration is large because it contains the full HTML body for 21 legacy pages. It is safe to rerun because each converted article uses a stable `legacy-*` id and `ON CONFLICT(id) DO UPDATE`.
 
 ## R2 Uploads
 

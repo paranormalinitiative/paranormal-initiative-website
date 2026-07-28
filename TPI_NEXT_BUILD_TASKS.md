@@ -31,6 +31,7 @@ The research paper system must support full papers, full contributor profiles, d
   - `migrations/0007_discussion_education_categories.sql`
   - `migrations/0008_forum_post_attachments.sql`
   - `migrations/0009_member_chat_color.sql`
+  - `migrations/0010_convert_todd_legacy_contributions.sql`
 - D1 binding in `wrangler.toml`
 - Member login page: `member-login.html`
 - Contributor invite page: `contributor-invite.html`
@@ -117,6 +118,8 @@ Cloudflare Dashboard -> D1 SQLite Database -> tpi_contributor_portal -> Console 
 ```
 
 For multi-statement migrations, if Cloudflare Console complains, paste and execute one complete SQL statement at a time.
+
+Legacy conversion note: `migrations/0010_convert_todd_legacy_contributions.sql` converts Todd Wayne's 21-item Legacy Conversion Queue into published D1 Content Editor articles. The SQL is large because it contains full article HTML. Open the file, copy the full SQL text, paste it into Cloudflare D1 Console, and execute it. It is safe to rerun because it uses stable `legacy-*` article ids and `ON CONFLICT(id) DO UPDATE`.
 
 ## Navigation Rules
 
@@ -303,7 +306,7 @@ Recently completed:
 - Change Password/account settings were added to the member dashboard with Cloudflare D1 and local-preview fallback behavior.
 - Published article author names link to public contributor profiles when the article has a contributor username.
 - Logged-in contributor comment and reply names link to public contributor profiles when the comment uses the contributor signature.
-- Legacy authored pages now behave as a conversion queue in My Content. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy.
+- Legacy authored pages now behave as a conversion queue in My Content. Once a legacy page is saved or published from the Content Editor with the legacy page as its source, it leaves the legacy queue and the editable article becomes the contributor copy. Todd Wayne's current queue can be converted in bulk by applying `migrations/0010_convert_todd_legacy_contributions.sql` in Cloudflare D1.
 - Legacy conversion records now include best-fit destination and contribution type metadata, so Convert pre-fills the editor destination/type before saving or publishing.
 - The Discussion Portal was added with member posting, category browsing, chat-style topic display, leadership/admin cleanup controls, and Education Center-aligned categories.
 - Account recovery/password reset table and UI/API foundation were added, but email delivery is not connected yet.
