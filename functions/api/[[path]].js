@@ -626,6 +626,15 @@ async function handleMediaRequest(path, env) {
 async function handleCreateArticle(request, env, user) {
   const data = await readJson(request);
   const id = clean(data.id || crypto.randomUUID());
+  const status = data.status === "published" ? "published" : "draft";
+  const href = clean(data.href || `published-article.html?id=${encodeURIComponent(id)}`);
+  const destination = clean(data.destination);
+  const title = clean(data.title || "Untitled Research Paper");
+  const subtitle = clean(data.subtitle);
+  const contributionType = clean(data.contributionType || data.articleType || "Research Paper");
+  const author = clean(data.author);
+  const source = clean(data.source);
+  const labels = clean(data.labels);
   await env.TPI_DB.prepare(`
     INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -644,21 +653,21 @@ async function handleCreateArticle(request, env, user) {
       updated_at = CURRENT_TIMESTAMP
   `).bind(
     id,
-    clean(data.destination),
-    clean(data.href),
-    clean(data.title || "Untitled Research Paper"),
-    clean(data.subtitle),
-    clean(data.contributionType || data.articleType || "Research Paper"),
-    clean(data.author),
-    clean(data.source),
+    destination,
+    href,
+    title,
+    subtitle,
+    contributionType,
+    author,
+    source,
     String(data.bodyHtml || ""),
     String(data.articleHtml || ""),
-    clean(data.labels),
-    data.status === "published" ? "published" : "draft",
+    labels,
+    status,
     user.id
   ).run();
 
-  return json({ article: { id, href: data.href, destination: data.destination, title: data.title, subtitle: data.subtitle, contributionType: data.contributionType || data.articleType || "Research Paper" } });
+  return json({ article: { id, href, destination, title, subtitle, contributionType, author, source, labels, status } });
 }
 
 async function handleListArticles(request, env) {

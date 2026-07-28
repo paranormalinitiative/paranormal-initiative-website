@@ -44,16 +44,16 @@ The research paper system must support full papers, full contributor profiles, d
 - Shared legacy contribution archive: `legacy-contributions.js`
 - Shared nav/comments/greeting behavior: `includes.js`
 - Main styling: `style.css`
-- Major Contributor profile model:
+- Honorary Member profile model:
   - `anabela-cardoso-profile.html`
   - `anabela-cardoso-papers.html`
   - `assets/anabela-cardoso/anabela-cardoso.jpg`
   - `assets/anabela-cardoso/papers/`
   - `ITC_EVP_HISTORICAL_RESEARCH_PROFILES_PLAN.md`
 
-## Major Contributor Profiles
+## Honorary Member Profiles
 
-Anabela Cardoso is the first deployed Major Contributor profile.
+Anabela Cardoso is the first deployed Honorary Member profile.
 
 Current behavior:
 
@@ -67,7 +67,7 @@ Current behavior:
 Important distinction:
 
 - **Member & Contributor Access**: real D1 accounts for people who log in.
-- **Major Contributor / Historical Profiles**: public research profiles for major figures who may not log in.
+- **Honorary Member / Historical Profiles**: public research profiles for major figures who may not log in.
 
 Outstanding Anabela work:
 

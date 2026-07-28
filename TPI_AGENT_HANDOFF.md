@@ -23,8 +23,8 @@ There is now also a live **Contributor Portal** and **Discussion Portal** direct
 - Forum categories now match the Education Center discussion areas, including Investigation Science, Evidence Science & Analysis, Instrumentation & Technology, Environmental Research, EVP & ITC Research, Consciousness & Human Experience, Ethics & Professional Standards, Reporting & Documentation, Community Development & Publication, Technology Development, Artificial Intelligence, Historical & Cultural Research, plus community discussion areas such as Scrying, Divination & Visionary Practices.
 - R2 media upload is already in practical use for profile photos through `tpi-contributor-media`; keep using R2 for uploaded profile/article media and D1 only for records/URLs.
 - Legacy authored pages are treated as archived/conversion items. They can be opened as-is or imported into the Content Editor, then converted into editable D1 article records over time.
-- Anabela Cardoso is now the first deployed **Major Contributor** profile. Her profile page and paper collection are live, searchable, linked from the Education Center and EVP / ITC Research shelf, and listed inside the Member & Contributor Access panel as a public-profile-only record.
-- Major Contributor profiles are different from D1 login accounts. Living or historical figures can have public profile pages without fake member accounts. Real members/contributors/admins remain in the D1 account list.
+- Anabela Cardoso is now the first deployed **Honorary Member** profile. Her profile page and paper collection are live, searchable, linked from the Education Center and EVP / ITC Research shelf, and listed inside the Member & Contributor Access panel as a public-profile-only record.
+- Honorary Member profiles are different from D1 login accounts. Living or historical figures can have public profile pages without fake member accounts. Real members/contributors/admins remain in the D1 account list.
 
 ## Urgent Cloudflare Deploy Note - Anabela Cardoso Assets
 
