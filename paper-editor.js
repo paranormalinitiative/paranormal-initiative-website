@@ -117,6 +117,12 @@
     return contributionTypeInput?.value?.trim() || "Research Paper";
   }
 
+  function getPublishableTitle() {
+    const title = titleInput.value.trim();
+    if (!title || title.toLowerCase() === "untitled research paper") return "";
+    return title;
+  }
+
   function slugify(value) {
     return value
       .trim()
@@ -1485,7 +1491,12 @@ ${buildArticleHtml()}
 
   function openPublishModal() {
     if (activeView === "html") syncHtmlToCompose();
-    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const title = getPublishableTitle();
+    if (!title) {
+      setStatus("Add a real title before publishing");
+      titleInput.focus();
+      return;
+    }
     publishFilename.value = getSuggestedArticleHref();
     publishDestination.value = destinationInput.value;
     publishSummary.textContent = `"${title}" is ready for ${getDestinationLabel()}.`;
@@ -1552,6 +1563,11 @@ ${buildArticleHtml()}
   }
 
   async function publishToDestination() {
+    if (!getPublishableTitle()) {
+      setStatus("Add a real title before publishing");
+      titleInput.focus();
+      return;
+    }
     const record = { ...buildPublishedRecord(), status: "published" };
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
