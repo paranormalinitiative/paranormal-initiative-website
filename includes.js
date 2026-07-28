@@ -629,7 +629,8 @@
           <strong>Open ${escapeCard(contributionType)}</strong>
         </div>
       `;
-      grid.appendChild(card);
+      const firstStaticCard = grid.querySelector(":scope > :not(.tpi-published-card)");
+      grid.insertBefore(card, firstStaticCard || null);
     }
 
     async function loadCloudflareArticleCards() {
