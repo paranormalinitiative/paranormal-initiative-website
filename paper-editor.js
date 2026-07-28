@@ -1410,6 +1410,20 @@ ${buildArticleHtml()}
     await importLegacyPage(legacyArticle);
   }
 
+  function getLegacyImportHtml(documentCopy) {
+    const fullArticleSections = [
+      ...documentCopy.querySelectorAll(".lesson-reading-section"),
+      ...documentCopy.querySelectorAll(".paper-author-note")
+    ];
+    if (fullArticleSections.length) {
+      return fullArticleSections.map(section => section.outerHTML).join("\n\n");
+    }
+
+    const bodyCopy = documentCopy.body.cloneNode(true);
+    bodyCopy.querySelectorAll("#site-header, #site-footer, script, style, link, .lesson-navigation-band").forEach(node => node.remove());
+    return bodyCopy.innerHTML || "<p><br></p>";
+  }
+
   async function importLegacyPage(legacyArticle) {
     if (!legacyArticle?.href) {
       setStatus("Legacy page could not be found");
@@ -1421,11 +1435,7 @@ ${buildArticleHtml()}
       if (!response.ok) throw new Error("Legacy page unavailable");
       const html = await response.text();
       const documentCopy = new DOMParser().parseFromString(html, "text/html");
-      const articleBody =
-        documentCopy.querySelector(".lesson-reading-section .lesson-reading-block") ||
-        documentCopy.querySelector(".series-article") ||
-        documentCopy.querySelector(".portal-hero") ||
-        documentCopy.body;
+      const importHtml = getLegacyImportHtml(documentCopy);
       const title =
         documentCopy.querySelector('meta[name="pp:title"]')?.getAttribute("content") ||
         documentCopy.querySelector("h2")?.textContent ||
@@ -1444,11 +1454,11 @@ ${buildArticleHtml()}
       contributionTypeInput.value = legacyArticle.contributionType || (subtitle.toLowerCase().includes("research paper") ? "Research Paper" : "Field Article");
       sourceInput.value = legacyArticle.href;
       labelsInput.value = "Imported, Legacy Site Page";
-      editor.innerHTML = cleanHtml(articleBody.innerHTML || "<p><br></p>", false);
+      editor.innerHTML = cleanHtml(importHtml, false);
       htmlView.value = cleanHtml(editor.innerHTML);
       focusEditorStart();
       document.getElementById("content-library-modal")?.remove();
-      setStatus("Legacy page imported. Save Draft or Publish to create an editable version.");
+      setStatus("Legacy page converted into the editor. Review it, then Save Draft or Publish Article.");
     } catch (error) {
       setStatus(error.message || "Legacy import failed");
     }
