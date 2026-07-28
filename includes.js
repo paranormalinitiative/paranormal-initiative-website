@@ -309,12 +309,14 @@
         "education-center.html"
       ]);
 
-      if (hubPages.has(currentPage)) return false;
-      if (currentPage.startsWith("education-area-")) return false;
+      const pageSlug = currentPage.replace(/\.html$/, "");
+
+      if (hubPages.has(currentPage) || hubPages.has(`${pageSlug}.html`)) return false;
+      if (pageSlug.startsWith("education-area-")) return false;
       if (
-        currentPage.startsWith("anabela-cardoso-") &&
-        currentPage !== "anabela-cardoso-profile.html" &&
-        currentPage !== "anabela-cardoso-papers.html"
+        pageSlug.startsWith("anabela-cardoso-") &&
+        pageSlug !== "anabela-cardoso-profile" &&
+        pageSlug !== "anabela-cardoso-papers"
       ) return true;
 
       return articlePrefixes.some(prefix => currentPage.startsWith(prefix));
