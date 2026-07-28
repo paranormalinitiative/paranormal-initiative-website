@@ -42,7 +42,7 @@
     }
 
     try {
-      const response = await fetch("/api/articles", { credentials: "same-origin" });
+      const response = await fetch("/api/articles", { credentials: "same-origin", cache: "no-store" });
       if (response.ok) {
         const data = await response.json();
         articles.push(...(data.articles || []));
@@ -62,13 +62,57 @@
       subtitle: [article.contributionType || article.articleType, article.destinationLabel].filter(Boolean).join(" · "),
       href: article.href || `published-article.html?id=${encodeURIComponent(article.id)}`,
       description: article.subtitle || article.source || "Published contributor article.",
-      text: [article.title, article.subtitle, article.author, article.source, article.labels, article.bodyHtml].filter(Boolean).join(" ")
+      text: [
+        article.title,
+        article.subtitle,
+        article.contributionType || article.articleType,
+        article.author,
+        article.authorDisplayName,
+        article.authorUsername,
+        article.source,
+        article.labels,
+        article.bodyHtml
+      ].filter(Boolean).join(" ")
     }));
+  }
+
+  async function getPublicProfiles() {
+    try {
+      const response = await fetch("/api/contributors", { credentials: "same-origin", cache: "no-store" });
+      if (!response.ok) return [];
+      const data = await response.json();
+      return (data.contributors || []).map(profile => {
+        const displayName = profile.displayName || profile.username || "Contributor";
+        return {
+          title: displayName,
+          subtitle: ["Contributor Profile", profile.title].filter(Boolean).join(" · "),
+          href: `contributor-profile.html?username=${encodeURIComponent(profile.username)}`,
+          description: profile.bio || profile.affiliation || profile.organization || "Public contributor profile.",
+          text: [
+            displayName,
+            profile.username,
+            profile.title,
+            profile.role,
+            profile.affiliation,
+            profile.organization,
+            profile.website,
+            profile.bio,
+            profile.publishedCount ? `${profile.publishedCount} published contribution${profile.publishedCount === 1 ? "" : "s"}` : ""
+          ].filter(Boolean).join(" ")
+        };
+      });
+    } catch (error) {
+      return [];
+    }
   }
 
   async function getSearchItems() {
     const staticPages = Array.isArray(window.TPI_SEARCH_INDEX) ? window.TPI_SEARCH_INDEX : [];
-    return [...staticPages, ...await getPublishedArticles()];
+    const [publishedArticles, publicProfiles] = await Promise.all([
+      getPublishedArticles(),
+      getPublicProfiles()
+    ]);
+    return [...staticPages, ...publicProfiles, ...publishedArticles];
   }
 
   function scoreItem(item, terms, phrase) {

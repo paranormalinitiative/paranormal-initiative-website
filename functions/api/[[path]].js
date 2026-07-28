@@ -35,6 +35,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/contributors/me/username") return requireMember(request, env, user => handleUpdateUsername(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
+    if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
@@ -675,14 +676,14 @@ async function handleListArticles(request, env) {
   const destination = url.searchParams.get("destination");
   const stmt = destination
     ? env.TPI_DB.prepare(`
-      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
+      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
       FROM articles a
       LEFT JOIN contributors c ON c.id = a.created_by
       WHERE a.destination = ? AND a.status = 'published'
       ORDER BY a.created_at DESC
     `).bind(destination)
     : env.TPI_DB.prepare(`
-      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
+      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
       FROM articles a
       LEFT JOIN contributors c ON c.id = a.created_by
       WHERE a.status = 'published'
@@ -957,6 +958,28 @@ async function handlePublicContributorProfile(request, env) {
     ORDER BY created_at DESC
   `).bind(user.id).all();
   return json({ profile: publicUser(user), articles: results });
+}
+
+async function handleListPublicContributors(env) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT
+      c.username,
+      c.display_name AS displayName,
+      c.title,
+      c.role,
+      c.affiliation,
+      c.organization,
+      c.website,
+      c.bio,
+      COUNT(a.id) AS publishedCount
+    FROM contributors c
+    LEFT JOIN articles a ON a.created_by = c.id AND a.status = 'published'
+    WHERE c.active = 1
+    GROUP BY c.id
+    ORDER BY publishedCount DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
+    LIMIT 200
+  `).all();
+  return json({ contributors: results.map(profile => ({ ...profile, publishedCount: Number(profile.publishedCount || 0) })) });
 }
 
 async function handleListComments(request, env) {
