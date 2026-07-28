@@ -623,7 +623,7 @@
         <div class="study-resource-card-copy">
           <span>${escapeCard(contributionType)}</span>
           <h3>${escapeCard(article.title)}</h3>
-          <p>${escapeCard(article.subtitle || "Field paper")}</p>
+          ${article.subtitle ? `<p>${escapeCard(article.subtitle)}</p>` : ""}
           <strong>Open ${escapeCard(contributionType)}</strong>
         </div>
       `;
@@ -632,7 +632,7 @@
 
     async function loadCloudflareArticleCards() {
       try {
-        const response = await fetch(`/api/articles?destination=${encodeURIComponent(current)}`, { credentials: "same-origin" });
+        const response = await fetch(`/api/articles?destination=${encodeURIComponent(current)}`, { credentials: "same-origin", cache: "no-store" });
         if (!response.ok) return;
         const data = await response.json();
         (data.articles || []).forEach(appendArticleCard);

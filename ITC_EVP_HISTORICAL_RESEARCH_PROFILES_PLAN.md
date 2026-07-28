@@ -17,7 +17,7 @@ Alternative names:
 - ITC / EVP Historical Research Profiles
 - Historical Figures in EVP and ITC Research
 - EVP / ITC Research Pioneers
-- Major Contributors to EVP and ITC Research
+- Honorary Members and Major Figures in EVP and ITC Research
 
 ## Initial Profile Candidates
 
@@ -101,7 +101,7 @@ Possible names:
 - Featured Researcher
 - Featured ITC / EVP Researcher
 - Research Profile Highlight
-- Major Contributor Feature
+- Honorary Member Feature
 - Historical Research Spotlight
 
 Suggested behavior:
@@ -122,11 +122,11 @@ Important handling:
 
 ## Anabela Cardoso Starting Point
 
-Anabela Cardoso should be treated as the first fully developed major contributor profile.
+Anabela Cardoso should be treated as the first fully developed honorary member profile.
 
 Current direction:
 
-- A special Major Contributor profile has been created and deployed.
+- A special Honorary Member profile has been created and deployed.
 - Her curriculum vitae is the biography foundation.
 - Her profile image is staged under `assets/anabela-cardoso/`.
 - Her research interests are listed on the profile.

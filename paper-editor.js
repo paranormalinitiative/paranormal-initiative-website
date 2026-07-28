@@ -1136,7 +1136,7 @@ ${buildArticleHtml()}
 
   function buildDestinationCard() {
     const title = titleInput.value.trim() || "Untitled Research Paper";
-    const subtitle = subtitleInput.value.trim() || "Field paper";
+    const subtitle = subtitleInput.value.trim();
     const href = getSuggestedArticleHref();
     const destination = getDestinationLabel();
     const contributionType = getContributionType();
@@ -1148,7 +1148,7 @@ ${buildArticleHtml()}
       `    <div class="study-resource-card-copy">`,
       `    <p class="dashboard-panel-kicker">${escapeHtml(contributionType)}</p>`,
       `    <h3>${escapeHtml(title)}</h3>`,
-      `    <p>${escapeHtml(subtitle)}</p>`,
+      subtitle ? `    <p>${escapeHtml(subtitle)}</p>` : "",
       `    <span class="dashboard-panel-cta">Open ${escapeHtml(contributionType)} ›</span>`,
       `    </div>`,
       `</a>`
@@ -1373,7 +1373,7 @@ ${buildArticleHtml()}
   function loadArticleIntoEditor(article) {
     currentArticleId = article.id;
     titleInput.value = article.title || "Untitled Research Paper";
-    subtitleInput.value = article.subtitle || "Research Library Draft";
+    subtitleInput.value = article.subtitle || "";
     if (article.destination) destinationInput.value = article.destination;
     if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
     if (article.author) authorInput.value = article.author;
@@ -1498,11 +1498,12 @@ ${buildArticleHtml()}
 
   function buildPublishedRecord() {
     const title = titleInput.value.trim() || "Untitled Research Paper";
+    const id = currentArticleId || getArticleId();
     return {
-      id: currentArticleId || getArticleId(),
-      href: currentArticleId ? `published-article.html?id=${encodeURIComponent(currentArticleId)}` : getSuggestedArticleHref(),
+      id,
+      href: `published-article.html?id=${encodeURIComponent(id)}`,
       title,
-      subtitle: subtitleInput.value.trim() || "Field paper",
+      subtitle: subtitleInput.value.trim(),
       contributionType: getContributionType(),
       destination: destinationInput.value,
       destinationLabel: getDestinationLabel(),
@@ -1522,9 +1523,10 @@ ${buildArticleHtml()}
     const record = { ...buildPublishedRecord(), status: "draft" };
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
-        await window.TPIApi.createArticle({ ...record, articleHtml: record.fullHtml, status: "draft" });
-        currentArticleId = record.id;
+        const data = await window.TPIApi.createArticle({ ...record, articleHtml: record.fullHtml, status: "draft" });
+        currentArticleId = data.article?.id || record.id;
         setStatus(isAutosave ? "Draft autosaved" : "Draft saved");
+        await renderContentLibraryList();
         return;
       } catch (error) {
         setStatus(error.message || "Draft save failed");
@@ -1539,6 +1541,7 @@ ${buildArticleHtml()}
     savePublishedArticles(articles);
     currentArticleId = record.id;
     setStatus(isAutosave ? "Draft autosaved locally" : "Draft saved locally");
+    await renderContentLibraryList();
   }
 
   function scheduleAutosave() {
@@ -1552,15 +1555,16 @@ ${buildArticleHtml()}
     const record = { ...buildPublishedRecord(), status: "published" };
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
-        await window.TPIApi.createArticle({
+        const data = await window.TPIApi.createArticle({
           ...record,
           articleHtml: record.fullHtml,
           status: "published"
         });
-        currentArticleId = record.id;
+        currentArticleId = data.article?.id || record.id;
         publishFilename.value = record.href;
         publishDestination.value = record.destination;
         setStatus("Published to Cloudflare destination");
+        await renderContentLibraryList();
         window.open(record.destination, "_blank");
         return;
       } catch (error) {
@@ -1581,6 +1585,7 @@ ${buildArticleHtml()}
     publishFilename.value = record.href;
     publishDestination.value = record.destination;
     setStatus("Published to destination");
+    await renderContentLibraryList();
     window.open(record.destination, "_blank");
   }
 
