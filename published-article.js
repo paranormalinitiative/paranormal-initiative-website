@@ -46,7 +46,19 @@
 
   const id = new URLSearchParams(window.location.search).get("id");
   const article = await getCloudflareArticle(id) || getPublishedArticles().find(item => item.id === id);
-  if (!article) return;
+  if (!article) {
+    root.innerHTML = `
+      <article class="lesson-reading-block paper-single-textbox">
+        <p class="portal-kicker">Research Library</p>
+        <h2>Article Not Found</h2>
+        <p class="access-note">This published article could not be found. It may still be deploying, may have been saved as a draft, or the shared link may point to an older article id.</p>
+      </article>
+      <section class="lesson-navigation-band">
+        <a class="portal-button" href="education-center.html">Back to Education Center</a>
+      </section>
+    `;
+    return;
+  }
 
   const contributionType = article.contributionType || article.articleType || "Research Paper";
   document.title = `${article.title} | The Paranormal Initiative`;
