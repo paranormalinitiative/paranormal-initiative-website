@@ -235,6 +235,14 @@
     return getLegacyEditorArticles(currentUser).find(article => normalizeLegacyHref(article.href) === normalizedSource)?.title || "";
   }
 
+  function getLegacyArticleId(legacyArticle) {
+    return `legacy-${normalizeLegacyHref(legacyArticle?.href)
+      .replace(/\.html$/i, "")
+      .replace(/[^a-z0-9]+/gi, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase()}`;
+  }
+
   function getSessionUser() {
     const username = localStorage.getItem(ACCESS_SESSION_KEY);
     if (!username) return null;
@@ -1351,6 +1359,7 @@ ${buildArticleHtml()}
         <div class="content-library-section-header">
           <h4>${escapeHtml(title)}</h4>
           <span>${escapeHtml(countLabel)}</span>
+          ${title === "Legacy Conversion Queue" ? `<button class="content-library-header-button" type="button" data-action="content-import-all-legacy">Convert All Legacy</button>` : ""}
         </div>
         ${items.map(article => `
           <div class="content-library-row" data-article-id="${escapeHtml(article.id)}" ${article.legacy ? `data-legacy="true"` : ""}>
@@ -1424,6 +1433,44 @@ ${buildArticleHtml()}
     return bodyCopy.innerHTML || "<p><br></p>";
   }
 
+  async function buildLegacyConversionRecord(legacyArticle) {
+    if (!legacyArticle?.href) throw new Error("Legacy page could not be found");
+    const response = await fetch(legacyArticle.href, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Legacy page unavailable: ${legacyArticle.title || legacyArticle.href}`);
+    const html = await response.text();
+    const documentCopy = new DOMParser().parseFromString(html, "text/html");
+    const importHtml = getLegacyImportHtml(documentCopy);
+    const title =
+      documentCopy.querySelector('meta[name="pp:title"]')?.getAttribute("content") ||
+      documentCopy.querySelector("h2")?.textContent ||
+      legacyArticle.title ||
+      "";
+    const subtitle =
+      documentCopy.querySelector('meta[name="pp:subtitle"]')?.getAttribute("content") ||
+      legacyArticle.subtitle ||
+      "Imported site page";
+    const id = getLegacyArticleId(legacyArticle);
+    const contributionType = legacyArticle.contributionType || (subtitle.toLowerCase().includes("research paper") ? "Research Paper" : "Field Article");
+    const bodyHtml = cleanHtml(importHtml, false);
+    return {
+      id,
+      href: `published-article.html?id=${encodeURIComponent(id)}`,
+      title: title.trim() || legacyArticle.title || "Imported Legacy Page",
+      subtitle: subtitle.trim(),
+      contributionType,
+      destination: legacyArticle.destination || destinationInput.value,
+      destinationLabel: legacyArticle.destinationLabel || legacyArticle.destination || "",
+      author: authorInput.value.trim() || currentUser?.displayName || currentUser?.username || "",
+      authorUsername: currentUser?.username || "",
+      source: legacyArticle.href,
+      labels: "Imported, Legacy Site Page",
+      bodyHtml,
+      fullHtml: "",
+      status: "published",
+      updatedAt: new Date().toISOString()
+    };
+  }
+
   async function importLegacyPage(legacyArticle) {
     if (!legacyArticle?.href) {
       setStatus("Legacy page could not be found");
@@ -1431,36 +1478,63 @@ ${buildArticleHtml()}
     }
 
     try {
-      const response = await fetch(legacyArticle.href, { cache: "no-store" });
-      if (!response.ok) throw new Error("Legacy page unavailable");
-      const html = await response.text();
-      const documentCopy = new DOMParser().parseFromString(html, "text/html");
-      const importHtml = getLegacyImportHtml(documentCopy);
-      const title =
-        documentCopy.querySelector('meta[name="pp:title"]')?.getAttribute("content") ||
-        documentCopy.querySelector("h2")?.textContent ||
-        legacyArticle.title;
-      const subtitle =
-        documentCopy.querySelector('meta[name="pp:subtitle"]')?.getAttribute("content") ||
-        legacyArticle.subtitle ||
-        "Imported site page";
+      const record = await buildLegacyConversionRecord(legacyArticle);
 
       currentArticleId = null;
-      titleInput.value = title.trim() || legacyArticle.title;
-      subtitleInput.value = subtitle.trim();
-      if (legacyArticle.destination && [...destinationInput.options].some(option => option.value === legacyArticle.destination)) {
-        destinationInput.value = legacyArticle.destination;
+      titleInput.value = record.title;
+      subtitleInput.value = record.subtitle;
+      if (record.destination && [...destinationInput.options].some(option => option.value === record.destination)) {
+        destinationInput.value = record.destination;
       }
-      contributionTypeInput.value = legacyArticle.contributionType || (subtitle.toLowerCase().includes("research paper") ? "Research Paper" : "Field Article");
-      sourceInput.value = legacyArticle.href;
-      labelsInput.value = "Imported, Legacy Site Page";
-      editor.innerHTML = cleanHtml(importHtml, false);
+      contributionTypeInput.value = record.contributionType;
+      sourceInput.value = record.source;
+      labelsInput.value = record.labels;
+      editor.innerHTML = record.bodyHtml;
       htmlView.value = cleanHtml(editor.innerHTML);
       focusEditorStart();
       document.getElementById("content-library-modal")?.remove();
       setStatus("Legacy page converted into the editor. Review it, then Save Draft or Publish Article.");
     } catch (error) {
       setStatus(error.message || "Legacy import failed");
+    }
+  }
+
+  async function bulkConvertLegacyArticles() {
+    try {
+      const articles = await loadEditorArticles();
+      const legacyArticles = articles.filter(article => article.status === "legacy-published");
+      if (!legacyArticles.length) {
+        setStatus("No legacy pages remain to convert");
+        return;
+      }
+      if (!window.confirm(`Convert ${legacyArticles.length} legacy page${legacyArticles.length === 1 ? "" : "s"} into published editable articles?`)) return;
+
+      const useCloudflare = Boolean(window.TPIApi && await window.TPIApi.isAvailable());
+      const localArticles = useCloudflare ? [] : getPublishedArticles();
+      let converted = 0;
+
+      for (const legacyArticle of legacyArticles) {
+        setStatus(`Converting ${converted + 1} of ${legacyArticles.length}: ${legacyArticle.title}`);
+        const record = await buildLegacyConversionRecord(legacyArticle);
+        if (useCloudflare) {
+          await window.TPIApi.createArticle({
+            ...record,
+            articleHtml: record.fullHtml || "",
+            status: "published"
+          });
+        } else {
+          const existingIndex = localArticles.findIndex(article => article.id === record.id);
+          if (existingIndex >= 0) localArticles[existingIndex] = record;
+          else localArticles.push(record);
+        }
+        converted += 1;
+      }
+
+      if (!useCloudflare) savePublishedArticles(localArticles);
+      setStatus(`Converted ${converted} legacy page${converted === 1 ? "" : "s"} into published articles`);
+      await renderContentLibraryList();
+    } catch (error) {
+      setStatus(error.message || "Bulk legacy conversion failed");
     }
   }
 
@@ -1718,6 +1792,7 @@ ${buildArticleHtml()}
     if (action === "comment-delete") deleteModerationComment(button.dataset.commentId);
     if (action === "content-edit") editContentArticle(button.dataset.articleId);
     if (action === "content-import-legacy") importLegacyArticle(button.dataset.articleId);
+    if (action === "content-import-all-legacy") bulkConvertLegacyArticles();
     if (action === "content-delete") deleteContentArticle(button.dataset.articleId);
     if (action === "writing-guides") openWritingGuides();
     if (action === "writing-guides-close") writingGuidesModal.hidden = true;
