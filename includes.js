@@ -311,6 +311,11 @@
 
       if (hubPages.has(currentPage)) return false;
       if (currentPage.startsWith("education-area-")) return false;
+      if (
+        currentPage.startsWith("anabela-cardoso-") &&
+        currentPage !== "anabela-cardoso-profile.html" &&
+        currentPage !== "anabela-cardoso-papers.html"
+      ) return true;
 
       return articlePrefixes.some(prefix => currentPage.startsWith(prefix));
     }
