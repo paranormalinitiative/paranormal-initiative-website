@@ -264,8 +264,15 @@
     const footerHost = document.getElementById("site-footer");
     if (!footerHost) return;
 
-    const pageId = window.location.pathname.split("/").pop() || "index.html";
-    if (!shouldShowComments(pageId)) return;
+    const currentPage = window.location.pathname.split("/").pop() || "index.html";
+    const normalizedPath = window.location.pathname.replace(/\/+$/, "");
+    const isPublishedArticleRoute =
+      currentPage === "published-article.html" ||
+      currentPage === "published-article" ||
+      normalizedPath.endsWith("/published-article");
+    const articleId = new URLSearchParams(window.location.search).get("id");
+    const pageId = isPublishedArticleRoute && articleId ? `published-article:${articleId}` : currentPage;
+    if (!shouldShowComments(currentPage, isPublishedArticleRoute)) return;
 
     const storageKey = `tpiComments:${pageId}`;
     const contributorSignature = getContributorSignature();
@@ -282,8 +289,8 @@
       return response.json();
     }
 
-    function shouldShowComments(currentPage) {
-      if (currentPage === "published-article.html") return true;
+    function shouldShowComments(currentPage, isPublishedArticleRoute) {
+      if (isPublishedArticleRoute) return true;
 
       const articlePrefixes = [
         "education-research-",
