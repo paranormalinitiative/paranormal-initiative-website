@@ -1,0 +1,401 @@
+-- Legacy conversion chunk 01 of 21
+-- Paste this full file into Cloudflare D1 Console and click Execute.
+-- Safe to rerun.
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-evp-itc-research', 'education-area-evp-itc-research.html', 'published-article.html?id=legacy-evp-itc-research', 'EVP / ITC Research', 'Experimental Audio and Instrumental Transcommunication Study', 'Research Paper', 'Todd Wayne', 'evp-itc-research.html', '<section class="portal-hero">
+    <p class="portal-kicker">Research Area</p>
+    <h2>EVP and ITC are treated as serious experimental communication research.</h2>
+    <p>
+        The Paranormal Initiative has always actively researched Electronic Voice Phenomena and Instrumental
+        Transcommunication. This work is approached carefully: sessions are documented, controls matter,
+        and no recording or device output is treated as meaningful without context simply because it is unusual.
+    </p>
+    <p>
+        In simpler terms, this page is about voice-like sounds, audio experiments, and device-based
+        communication claims. It explains why those claims are interesting, why they need caution, and how
+        we try to study them without overstating what a recording or device response can prove.
+    </p>
+    <p class="research-byline">Research position by <strong>Todd Wayne</strong> &middot; Aetheric Communication System (ACS)</p>
+    <div class="portal-actions">
+        <a class="portal-button" href="education-area-evp-itc-research.html">EVP / ITC Library Shelf</a>
+        <a class="portal-button portal-button-secondary" href="evp-itc-lessons.html">EVP / ITC Lessons</a>
+        <a class="portal-button portal-button-secondary" href="education-center.html">Education Center</a>
+    </div>
+</section>
+
+<section class="study-hub-layout">
+    <article class="study-hub-card">
+        <h3>What This Page Is</h3>
+        <p>
+            This page is the public overview and research-position page for TPI''s EVP, ITC,
+            and ACS work. It explains the philosophy, cautions, limits, and experimental
+            reasoning behind the subject.
+        </p>
+        <p>
+            You do not need to know every technical term before reading. Start with the main idea:
+            unusual audio should be preserved, compared, questioned, and reviewed carefully.
+        </p>
+    </article>
+    <aside class="study-hub-card">
+        <h3>Where The Library Lives</h3>
+        <p>
+            Full papers, experiments, ACS updates, videos, contributor notes, and reference
+            materials belong in the Education Center''s EVP / ITC Research shelf.
+        </p>
+    </aside>
+</section>
+
+
+<section>
+    <h2>Stance: Possibility and Plausibility</h2>
+    <p>
+        This is not a debunk and not a faith claim. It is a research posture: these phenomena are
+        <strong>possible</strong>, and the accumulated evidence can make them <strong>plausible</strong> when
+        ordinary explanations have been carefully examined and the strongest candidates remain unresolved.
+    </p>
+    <div class="research-grid">
+        <div class="dashboard-panel">
+            <h3>What is not claimed</h3>
+            <ul>
+                <li>That these phenomena are <em>definitively</em> paranormal.</li>
+                <li>That they are <em>not</em> paranormal.</li>
+                <li>That a single recording or device response is enough by itself.</li>
+            </ul>
+        </div>
+        <div class="dashboard-panel">
+            <h3>What is held</h3>
+            <ul>
+                <li>They are <strong>possible</strong>.</li>
+                <li>The cumulative case makes them <strong>plausible</strong>.</li>
+                <li>We describe the result according to what the evidence can responsibly support.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight">
+        <strong>How we use proof language.</strong> TPI does not limit truth to one narrow form of empirical proof.
+        Scientific testing is one important way to evaluate a claim, but paranormal research may also involve documented
+        experience, witness testimony, historical context, instrumented observation, pattern analysis, and responsible
+        interpretation. We avoid declaring certainty too quickly. But when natural explanations have been carefully
+        considered, controls have been reviewed, and a finding continues to resist ordinary explanation, it may be
+        described as <em>possible</em> or <em>plausible</em> paranormal communication.
+    </div>
+</section>
+
+
+<section>
+    <h2>The Continuum of Contact</h2>
+    <p>
+        One working idea runs through many ITC traditions: a purposely constructed instrument or medium may give
+        an anomalous signal a surface to organize through. Each era has used a different surface. Scrying water,
+        reflective fields, radios, recorders, and software tools are not the same method, but they ask a related
+        research question: can structure appear in a controlled ambiguous field beyond ordinary expectation,
+        contamination, or pattern-making?
+    </p>
+    <div class="table-wrap">
+        <table class="research-table">
+            <thead>
+                <tr><th>Era / Instrument</th><th>Substrate</th><th>Research Value / Interpretive Strength</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Water / mirror scrying</strong></td><td>Reflective surface</td><td>Experimental: strong need for lighting, angle, and expectation controls</td></tr>
+                <tr><td><strong>Crystal / smoke / flame</strong></td><td>Semi-chaotic moving substrate</td><td>Experimental: pattern emergence must be separated from ordinary perception</td></tr>
+                <tr><td><strong>Planchette / Ouija</strong></td><td>Human touch and movement</td><td>Contested: ideomotor action and group expectation remain major alternatives</td></tr>
+                <tr><td><strong>Spirit photography (1860s)</strong></td><td>Film / photographic process</td><td>Historically important, but vulnerable to fraud, exposure, and artifact concerns</td></tr>
+                <tr><td><strong>Edison''s "Spirit Phone" (1920)</strong></td><td>Telephony concept</td><td>Conceptual influence, not an established working instrument</td></tr>
+                <tr><td><strong>EVP - Jurgenson / Raudive</strong></td><td>Tape hiss / room sound / radio static</td><td>Research-relevant: voice-like candidates require source and contamination review</td></tr>
+                <tr><td><strong>Ghost Box / SB-7</strong></td><td>AM/FM sweep</td><td>Contested: broadcast fragments and prompting remain major alternatives</td></tr>
+                <tr><td><strong>Bacci direct voice</strong></td><td>Modified radio</td><td>Historically significant claim area requiring careful source controls</td></tr>
+                <tr><td><strong>Scole Experiment</strong></td><td>Darkroom / sealed setup</td><td>Research-significant case history, still interpreted cautiously</td></tr>
+                <tr><td><strong>Software / AI-assisted</strong></td><td>Spectrograms, synthesis, analysis tools</td><td>Useful for study and visualization; contested if treated as an originating source</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="research-quote">
+        Every tier succeeds or fails on the same two questions: (1) Can consciousness impress a signal on physical media
+        — not only through a living nervous system? (2) Can that signal be told apart from the operator''s own
+        apophenia, pareidolia, and ideoplasty?
+    </p>
+</section>
+
+
+<section>
+    <h2>Why Word-Bank Devices Are Methodologically Weak</h2>
+    <p>
+        Spirit Boxes, Ghost Boxes, and Ovilus-type devices are <em>predefined</em>. The output is constrained to a known
+        set — a radio spectrum or a manufacturer''s word list. This makes them easily misconstrued, and the
+        misconstruction is structurally fair.
+    </p>
+    <div class="research-grid">
+        <div class="dashboard-panel">
+            <h3>Ovilus-type</h3>
+            <p>Selects a <strong>whole word</strong> from a fixed dictionary and speaks it. The critic''s objection is
+            fatal on its face: "The device said the word. Not an agent. The word came from the list." Even if one
+            believes the selection is guided, the <em>form</em> of the output is pre-packaged.</p>
+        </div>
+        <div class="dashboard-panel">
+            <h3>Spirit Box</h3>
+            <p>Sweeps live broadcast radio. The fragments are real station bleed. The critic says: "The device heard
+            snippets of actual broadcasts." Same problem — the material is externally sourced <em>and</em> constrained.</p>
+        </div>
+    </div>
+    <div class="highlight">
+        <strong>The ATransC finding (considered here).</strong> "Radio-sweep produces communication — <em>Status: not
+        established</em> by the archive''s blind-listening work. Ordinary broadcast fragments and prompting remain major
+        alternatives." This does not close the door on radio-sweep or EVP/ITC research. It shows why each method needs
+        strong controls, preserved source material, careful review, and language that matches the strength of the result.
+    </div>
+</section>
+
+
+<section>
+    <h2>The Phoneme / Allophone Edge</h2>
+    <p>
+        <strong>Phonemes</strong> are the smallest units of sound that change meaning (the /p/ in <em>pat</em> vs. the
+        /b/ in <em>bat</em>). <strong>Allophones</strong> are the non-meaning-changing variants of a phoneme. Both sit
+        <em>beneath the word.</em> Generating either is categorically different from outputting predefined words.
+    </p>
+    <p>
+        A recorder captures phonemes and allophones — the acoustic atoms of speech. When a question is asked into an
+        empty room and a voice returns on the recording, the material is sub-lexical fragments, not a sentence from a
+        dictionary. That is why we do not accept that every such capture is mere audio pareidolia:
+    </p>
+    <div class="highlight">
+        <strong>Pareidolia is perceptual</strong> — the brain hearing words in noise <em>as it listens</em>. But a voice
+        <em>on the file</em> is in the <strong>data</strong>, listener-independent. It is replayable, shareable,
+        analyzable. The anomaly is the <em>presence</em> of an unexplained voice-signal on the file; what it
+        <em>means</em> remains open to interpretation. Both can be true at once.
+    </div>
+    <p>
+        This is why the building blocks of speech — phonemes and allophones — are <strong>more credible than a random
+        word bank or predefined words.</strong> Word banks output lexical units selected from a finite set (the "canned"
+        objection applies). Phoneme/allophone generation outputs sub-lexical acoustic atoms that are <em>not words and
+        not from a list.</em> The assembly into perceived speech happens <em>after</em> generation, by ear — exactly as
+        in spontaneous EVP. The "canned dictionary" objection does not apply, and the substrate faithfully models how
+        classic EVP presents: <strong>fragments, not sentences.</strong>
+    </p>
+    <figure class="research-figure">
+        <img src="assets/acs/phoneme-lab.png" alt="ACS Phoneme Lab — phoneme and allophone archive">
+        <figcaption>Phoneme Lab builds a phoneme / allophone sound pool, then randomly pulls from it and randomizes order so the typed input is not preserved.</figcaption>
+    </figure>
+</section>
+
+
+<section id="acs-v3-the-instrument">
+    <h2>ACS V3: The Instrument</h2>
+    <p>
+        Aetheric Communication System V3 is an ITC/EVP experimentation device for macOS and iPadOS. It continues the
+        research program of the pioneers — Jürgenson, Raudive, Estep, the Butlers — by providing
+        <strong>instrumentation</strong>, not novelty.
+    </p>
+
+    <figure class="research-figure">
+        <img src="assets/acs/home.png" alt="ACS V3 home screen">
+        <figcaption>ACS V3 — the integrated ITC / EVP experimentation workspace.</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+        <table class="research-table">
+            <thead>
+                <tr><th>Lab</th><th>Function</th><th>Research role</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ITC Lab</strong></td><td>Multitrack EVP / ITC workspace</td><td>The capture and experimentation bench</td></tr>
+                <tr><td><strong>PH Lab</strong></td><td>Controlled phoneme &amp; allophone generation</td><td>The differentiator — generates sub-lexical material, not word-bank output</td></tr>
+                <tr><td><strong>AR Lab</strong></td><td>Noise &amp; randomization laboratory</td><td>The entropy substrate ("the chaos is the medium")</td></tr>
+                <tr><td><strong>SA Lab</strong></td><td>Professional spectral &amp; waveform analysis</td><td>The discrimination tool — how we fight underdetermination</td></tr>
+                <tr><td><strong>Phoneme Lab</strong></td><td>Curated speech library &amp; chain builder</td><td>Builds sequences of speech-atoms for study</td></tr>
+                <tr><td><strong>ACS Library</strong></td><td>Shared audio, sessions &amp; evidence</td><td>Provenance and record-keeping</td></tr>
+                <tr><td><strong>Research / Notes</strong></td><td>Annotation</td><td>The reasoning layer real research requires</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="research-figure-grid">
+        <figure class="research-figure">
+            <img src="assets/acs/itc-lab.png" alt="ITC Lab multitrack workspace">
+            <figcaption>ITC Lab — where generated and captured audio is loaded and analyzed.</figcaption>
+        </figure>
+        <figure class="research-figure">
+            <img src="assets/acs/ar-lab.png" alt="AR Lab noise and randomization">
+            <figcaption>AR Lab — the entropy substrate for structured emergence.</figcaption>
+        </figure>
+    </div>
+
+    <div class="research-figure-grid">
+        <figure class="research-figure">
+            <img src="assets/acs/sa-lab.png" alt="SA Lab spectral and waveform analysis">
+            <figcaption>SA Lab — spectral and waveform analysis, the discrimination layer.</figcaption>
+        </figure>
+        <figure class="research-figure">
+            <img src="assets/acs/phoneme-lab.png" alt="Phoneme Lab library and chain builder">
+            <figcaption>Phoneme Lab — curated speech library and chain builder.</figcaption>
+        </figure>
+    </div>
+
+    <h3 style="margin-top:34px">How PH Lab Actually Works</h3>
+    <p>
+        PH Lab does not select words. It builds a <strong>phoneme / allophone sound pool</strong> from a curated bank
+        derived from the CMU Pronouncing Dictionary (ARPABET symbols — <code>aa, ah, sh, th, ao</code>…), sliced across
+        eight dialect regions and many speakers. The generator then <strong>randomly pulls from that pool and
+        randomizes the order</strong> so the typed input is not preserved. The output is a stream of speech-<em>like</em>
+        acoustic atoms — precisely the material from which spontaneous EVP appears to assemble.
+    </p>
+
+    <div class="table-wrap">
+        <table class="research-table">
+            <thead>
+                <tr><th></th><th>Ovilus / Spirit Box</th><th>ACS PH Lab</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Output unit</strong></td><td>Whole words / broadcast snippets</td><td>Sub-lexical acoustic atoms (phonemes/allophones)</td></tr>
+                <tr><td><strong>Source of material</strong></td><td>Fixed list / radio spectrum</td><td>Generated phoneme stream</td></tr>
+                <tr><td><strong>"Canned" objection</strong></td><td>Applies (finite set)</td><td><strong>Does not apply</strong></td></tr>
+                <tr><td><strong>Resembles spontaneous EVP?</strong></td><td>No (whole words)</td><td><strong>Yes (fragments)</strong></td></tr>
+                <tr><td><strong>Assembly of meaning</strong></td><td>Device does it</td><td>Hearer / agent does it post-hoc</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 style="margin-top:34px">Built-In Scholarly Discipline</h3>
+    <p>ACS is not a toy. Its reference library enforces the plausibility standard at the code level:</p>
+    <div class="dashboard-panel" style="margin-top:14px">
+        <ul>
+            <li><strong>Evidence tiers A–E</strong> (independent replication → speculation/testimonial) grade the <em>support</em> for a claim, never its importance.</li>
+            <li><strong>An ACS Language Standard</strong> requires every conclusion to state: what was observed, which controls were applied, how reviewers responded, which ordinary explanations remain, which hypothesis is considered, and what result would change the conclusion.</li>
+            <li><strong>A Universal Session Protocol</strong> — define the question and rejection criteria <em>before</em> recording, run controls, preserve raw originals, obtain blind transcriptions, report all candidates and negative results.</li>
+            <li><strong>Explicit findings:</strong> "Radio-sweep produces communication — not established"; "ITC proves survival after death — requires evidence beyond anomaly detection."</li>
+        </ul>
+    </div>
+
+    <div class="research-figure-grid">
+        <figure class="research-figure">
+            <img src="assets/acs/library.png" alt="ACS Library evidence management">
+            <figcaption>ACS Library — shared audio, sessions &amp; evidence management.</figcaption>
+        </figure>
+        <figure class="research-figure">
+            <img src="assets/acs/notes.png" alt="ACS research and sticky notes">
+            <figcaption>Research Notes &amp; Sticky Notes — the annotation layer.</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section>
+    <h2>Education Pathways From This Research</h2>
+    <p>
+        The research page explains the philosophy. The Education Center breaks that philosophy into practical lessons
+        for beginners, investigators, and reviewers who need repeatable methods.
+    </p>
+    <div class="learning-grid">
+        <a class="learning-card learning-card-link" href="evp-itc-lesson-evp-basics.html">
+            <h3>EVP Basics</h3>
+            <p>Start with controlled recording, room notes, original preservation, and careful audio review.</p>
+        </a>
+        <a class="learning-card learning-card-link" href="evp-itc-lesson-acs-philosophy.html">
+            <h3>ACS Philosophy</h3>
+            <p>Study why ACS emphasizes phoneme and allophone work rather than fixed phrase databases.</p>
+        </a>
+        <a class="learning-card learning-card-link" href="evp-itc-lesson-contamination-controls.html">
+            <h3>Controls</h3>
+            <p>Use contamination controls to keep enthusiasm from outrunning the evidence.</p>
+        </a>
+    </div>
+</section>
+
+
+<section>
+    <h2>The Recorder Argument</h2>
+    <p>
+        "I am alone. I ask a question. A voice comes back on the recording. Where did it come from? I do not accept that
+        it is all audio pareidolia." Reframed to be unassailable:
+    </p>
+    <div class="timeline-list">
+        <article><span>1</span><div><h3>Pareidolia is the wrong word for a captured signal</h3><p>Pareidolia is <em>perceptual</em> — the brain hearing words in noise <em>as you listen</em>. A voice <em>on the file</em> is in the data, listener-independent. So: the <em>anomalous signal</em> is real and unexplained; the <em>interpretation</em> of what it says remains subject to pareidolia. Both can be held.</p></div></article>
+        <article><span>2</span><div><h3>"Ruled out all possibilities" is the operational claim</h3><p>EVP''s strength is not "I heard a voice" — it is <em>"a voice-like signal appeared on a clean recorder with no source in the environment, after RFI / EMI / self-bleed were excluded."</em> That is the anomaly worth researching. PH Lab is the <em>controlled</em> version: instead of waiting for noise to organize, we generate the building blocks and study whether — and how — structure emerges.</p></div></article>
+    </div>
+</section>
+
+
+<section>
+    <h2>The Honest Counter-Case</h2>
+    <p>A rigorous treatment holds these without flinching:</p>
+    <div class="dashboard-panel" style="margin-top:14px">
+        <ul>
+            <li><strong>Apophenia / pareidolia</strong> — the brain is a meaning-extraction machine; it will hear words in any noise.</li>
+            <li><strong>Ideoplasty</strong> — the operator''s own mind may shape the ambiguous material into form. The competing explanation for nearly every ITC claim.</li>
+            <li><strong>RFI / natural causes</strong> — radio sweep picks up real stations; unexplained voices may be bleed.</li>
+            <li><strong>Underdetermination</strong> — the core weakness: a voice in static is consistent with (a) discarnate agent, (b) operator psi, (c) apophenia/ideoplasty, <em>and</em> (d) RF bleed. Same observation, none ruled out.</li>
+        </ul>
+    </div>
+    <p style="margin-top:18px">
+        So current evidence <strong>does not conclusively prove</strong> Strong ITC — but it also <strong>does not rule
+        out</strong> the possibility. That is precisely where "plausible" lives. The <strong>Strong Form</strong>
+        (an independent discarnate agent is the source) requires the hardest assumption: that consciousness can exist and
+        act independent of a living brain. The <strong>Weak Form</strong> (the instrument-plus-noise field is a
+        psi-conducive configuration that facilitates the operator''s own anomalous cognition) is far more compatible with
+        what we know — <em>assuming psi exists at all</em>, studied since J.B. Rhine. ACS supports both as live
+        hypotheses; it asserts neither as fact.
+    </p>
+</section>
+
+
+<section>
+    <h2>Conclusion: A Responsible Investigative Stance</h2>
+    <div class="table-wrap">
+        <table class="research-table">
+            <thead>
+                <tr><th>Claim</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>"This is confirmed communication."</td><td><strong>Requires strong controls, corroboration, preserved source material, and careful review.</strong></td></tr>
+                <tr><td>"This is definitely not paranormal."</td><td><strong>Only supportable when a natural cause is clearly identified.</strong></td></tr>
+                <tr><td>"This is <strong>possible</strong> and the evidence makes it <strong>plausible</strong>."</td><td><strong>Responsible language when ordinary explanations have been seriously tested and the finding remains unresolved.</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="research-quote">
+        We build instruments to support serious communication research, not automatic conclusions. ACS V3 continues the
+        work of the pioneers by providing controlled phoneme/allophone generation, rigorous capture, and honest analysis
+        so that the question "where did the voice come from?" can be asked with discipline, openness, and respect for the
+        possibility that genuine interaction may occur.
+    </p>
+</section>
+
+
+<section class="dashboard-grid portal-grid">
+    <a class="dashboard-panel dashboard-panel-link" href="water-itc.html">
+        <div class="dashboard-panel-kicker">Experimental Method</div>
+        <h3>Water ITC</h3>
+        <p>Exploration of reflective, fluid, and audio-visual conditions as experimental ITC session material.</p>
+        <span class="dashboard-panel-cta">Open Page ›</span>
+    </a>
+    <a class="dashboard-panel dashboard-panel-link" href="steam-itc.html">
+        <div class="dashboard-panel-kicker">Experimental Method</div>
+        <h3>Steam ITC</h3>
+        <p>Experimental documentation of vapor, light, motion, and session controls for visual ITC research.</p>
+        <span class="dashboard-panel-cta">Open Page ›</span>
+    </a>
+    <a class="dashboard-panel dashboard-panel-link" href="our-apps.html">
+        <div class="dashboard-panel-kicker">Technology</div>
+        <h3>ACS &amp; The App Ecosystem</h3>
+        <p>See how ACS and The Paranormal Initiative App support case work, documentation, and EVP/ITC research.</p>
+        <span class="dashboard-panel-cta">Open Page ›</span>
+    </a>
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+SELECT 'EVP / ITC Research' AS converted_article;
