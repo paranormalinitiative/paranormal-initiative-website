@@ -18,6 +18,16 @@
     { id: "scrying", title: "Scrying, Divination & Visionary Practices", description: "Water, mirror, steam, smoke, flame, and other reflective or symbolic practices used for observation, meditation, intuitive exploration, and anomalous-experience discussion." }
   ];
 
+  const forumReactions = [
+    { id: "like", label: "Like", emoji: "👍" },
+    { id: "love", label: "Love", emoji: "❤️" },
+    { id: "care", label: "Care", emoji: "🤗" },
+    { id: "haha", label: "Haha", emoji: "😂" },
+    { id: "wow", label: "Wow", emoji: "😮" },
+    { id: "sad", label: "Sad", emoji: "😢" },
+    { id: "angry", label: "Angry", emoji: "😡" }
+  ];
+
   const categoryOrder = new Map(fallbackCategories.map((category, index) => [category.id, index]));
 
   const fallbackTopics = [
@@ -56,7 +66,8 @@
     activeUser: null,
     expandedCategories: new Set(),
     selectedAdminUsername: "",
-    previewMode: false
+    previewMode: false,
+    activePosts: []
   };
 
   const topicList = portal.querySelector("[data-topic-list]");
@@ -249,12 +260,14 @@
 
     try {
       const data = state.previewMode ? { posts: fallbackPosts[topicId] || [] } : await window.TPIApi.forumTopic(topicId);
-      renderMessages(data.posts || []);
-      await markTopicRead(topicId, data.posts || []);
+      state.activePosts = data.posts || [];
+      renderMessages(state.activePosts);
+      await markTopicRead(topicId, state.activePosts);
     } catch (error) {
       const posts = fallbackPosts[topicId] || [];
-      renderMessages(posts);
-      await markTopicRead(topicId, posts);
+      state.activePosts = posts;
+      renderMessages(state.activePosts);
+      await markTopicRead(topicId, state.activePosts);
     }
     updateComposerState();
   }
@@ -295,15 +308,46 @@
             ${escapeHtml(post.body).replace(/\n/g, "<br>")}
           </div>
           ${renderAttachments(post.attachments)}
-          <div class="discussion-reactions">
-            <button type="button" disabled>Insightful</button>
-            <button type="button" disabled>Helpful</button>
-            <button type="button" disabled>Follow</button>
-          </div>
+          ${renderReactionControls(post)}
         </article>
       `;
     }).join("");
     messageList.scrollTop = messageList.scrollHeight;
+  }
+
+  function renderReactionControls(post) {
+    const selected = String(post.userReaction || "");
+    const disabled = !state.activeUser || state.previewMode;
+    const helperText = state.previewMode
+      ? "Preview only"
+      : state.activeUser
+        ? "React to this post"
+        : "Sign in to react";
+    const buttons = forumReactions.map(reaction => {
+      const count = Number(post.reactionCounts?.[reaction.id] || 0);
+      const isSelected = selected === reaction.id;
+      return `
+        <button
+          class="discussion-reaction-button${isSelected ? " is-selected" : ""}"
+          type="button"
+          data-forum-reaction="${escapeAttr(reaction.id)}"
+          data-post-id="${escapeAttr(post.id)}"
+          title="${escapeAttr(`${reaction.label}${count ? ` - ${count}` : ""}`)}"
+          aria-pressed="${isSelected ? "true" : "false"}"
+          ${disabled ? "disabled" : ""}
+        >
+          <span aria-hidden="true">${reaction.emoji}</span>
+          <strong>${escapeHtml(reaction.label)}</strong>
+          ${count ? `<em>${count}</em>` : ""}
+        </button>
+      `;
+    }).join("");
+
+    return `
+      <div class="discussion-reactions" aria-label="${escapeAttr(helperText)}">
+        ${buttons}
+      </div>
+    `;
   }
 
   function updateComposerState() {
@@ -464,7 +508,13 @@
     await setTopicStatus(topicAction.dataset.topicId, topicAction.dataset.topicAdminAction);
   });
 
-  messageList?.addEventListener("click", event => {
+  messageList?.addEventListener("click", async event => {
+    const reactionButton = event.target.closest("[data-forum-reaction]");
+    if (reactionButton) {
+      await toggleForumReaction(reactionButton.dataset.postId, reactionButton.dataset.forumReaction);
+      return;
+    }
+
     const mediaButton = event.target.closest("[data-open-forum-media]");
     if (!mediaButton) return;
     openForumMediaViewer(
@@ -473,6 +523,25 @@
       mediaButton.dataset.mediaName || "Forum media"
     );
   });
+
+  async function toggleForumReaction(postId, reaction) {
+    if (!postId || !reaction) return;
+    if (!state.activeUser || state.previewMode) return;
+    const button = messageList.querySelector(`[data-post-id="${cssEscape(postId)}"][data-forum-reaction="${cssEscape(reaction)}"]`);
+    try {
+      if (button) button.disabled = true;
+      const result = await window.TPIApi.setForumReaction(postId, reaction);
+      state.activePosts = state.activePosts.map(post => post.id === postId
+        ? { ...post, reactionCounts: result.reactionCounts || {}, userReaction: result.userReaction || null }
+        : post);
+      const scrollPosition = messageList.scrollTop;
+      renderMessages(state.activePosts);
+      messageList.scrollTop = scrollPosition;
+    } catch (error) {
+      replyStatus.textContent = error.message || "Reaction could not be saved.";
+      renderMessages(state.activePosts);
+    }
+  }
 
   document.addEventListener("click", event => {
     const viewer = event.target.closest("[data-forum-media-viewer]");
@@ -947,6 +1016,11 @@
 
   function cleanText(value) {
     return String(value || "").trim();
+  }
+
+  function cssEscape(value) {
+    if (window.CSS?.escape) return window.CSS.escape(String(value || ""));
+    return String(value || "").replace(/["\\]/g, "\\$&");
   }
 
   function normalizeChatColor(value) {

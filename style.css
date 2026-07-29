@@ -1561,18 +1561,56 @@ footer {
 .discussion-reactions {
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: 8px;
     padding: 0 4px;
 }
 
-.discussion-reactions button {
-    padding: 5px 8px;
-    color: #8aa0b6;
+.discussion-reaction-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 30px;
+    padding: 5px 9px;
+    color: #a9bed2;
     background: rgba(8, 14, 20, 0.82);
     border: 1px solid #1f2a36;
     border-radius: 999px;
     font: inherit;
     font-size: 11px;
+    cursor: pointer;
+    transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.discussion-reaction-button span {
+    font-size: 15px;
+    line-height: 1;
+}
+
+.discussion-reaction-button strong,
+.discussion-reaction-button em {
+    font-style: normal;
+    line-height: 1;
+}
+
+.discussion-reaction-button em {
+    color: #55c8ff;
+    font-weight: 800;
+}
+
+.discussion-reaction-button:hover:not(:disabled),
+.discussion-reaction-button.is-selected {
+    color: #edf6ff;
+    background: rgba(18, 38, 52, 0.96);
+    border-color: #55c8ff;
+}
+
+.discussion-reaction-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.discussion-reaction-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
 }
 
 .discussion-reply-box {

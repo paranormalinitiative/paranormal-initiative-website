@@ -88,6 +88,7 @@
     markForumTopicRead: id => request(`/forum/topics/${encodeURIComponent(id)}/read`, { method: "POST" }),
     createForumTopic: payload => request("/forum/topics", { method: "POST", body: payload }),
     createForumPost: (topicId, payload) => request(`/forum/topics/${encodeURIComponent(topicId)}/posts`, { method: "POST", body: payload }),
+    setForumReaction: (postId, reaction) => request(`/forum/posts/${encodeURIComponent(postId)}/reactions`, { method: "POST", body: { reaction } }),
     deleteForumPost: id => request(`/forum/posts/${encodeURIComponent(id)}`, { method: "DELETE" }),
     listComments: pageId => request(`/comments?pageId=${encodeURIComponent(pageId)}`),
     createComment: payload => request("/comments", { method: "POST", body: payload })

@@ -45,10 +45,11 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
     if (request.method === "GET" && path === "/forum") return handleForumIndex(request, env);
-    if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, env);
+    if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, request, env);
     if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkForumTopicRead(path, env, user));
     if (request.method === "POST" && path === "/forum/topics") return requireMember(request, env, user => handleCreateForumTopic(request, env, user));
     if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/posts$/)) return requireMember(request, env, user => handleCreateForumPost(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/forum\/posts\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleSetForumReaction(path, request, env, user));
     if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireMember(request, env, user => handleDeleteForumPost(path, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
@@ -793,9 +794,10 @@ async function handleForumIndex(request, env) {
   return json({ categories, topics });
 }
 
-async function handleForumTopic(path, env) {
+async function handleForumTopic(path, request, env) {
   const topicId = clean(decodeURIComponent(path.replace(/^\/forum\/topics\//, "")));
   if (!topicId) return json({ error: "Topic id is required." }, 400);
+  const user = await getSessionUser(request, env);
 
   const topic = await env.TPI_DB.prepare(`
     SELECT
@@ -856,7 +858,8 @@ async function handleForumTopic(path, env) {
     `).bind(topicId).all());
   }
 
-  const posts = await attachForumPostMedia(env, results);
+  let posts = await attachForumPostMedia(env, results);
+  posts = await attachForumPostReactions(env, posts, user?.id);
   return json({ topic, posts });
 }
 
@@ -951,6 +954,43 @@ async function handleDeleteForumPost(path, env, user) {
   }
   await env.TPI_DB.prepare("UPDATE forum_posts SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(postId).run();
   return json({ deleted: true, id: postId });
+}
+
+async function handleSetForumReaction(path, request, env, user) {
+  const postId = clean(decodeURIComponent(path.match(/^\/forum\/posts\/([^/]+)\/reactions$/)?.[1] || ""));
+  const data = await readJson(request);
+  const reaction = clean(data.reaction).toLowerCase();
+  if (!postId) return json({ error: "Post id is required." }, 400);
+  if (!isAllowedForumReaction(reaction)) return json({ error: "Reaction was not recognized." }, 400);
+
+  const post = await env.TPI_DB.prepare("SELECT id FROM forum_posts WHERE id = ? AND status = 'visible'").bind(postId).first();
+  if (!post) return json({ error: "Forum post was not found." }, 404);
+
+  try {
+    const existing = await env.TPI_DB.prepare(`
+      SELECT reaction
+      FROM forum_reactions
+      WHERE post_id = ? AND contributor_id = ?
+      LIMIT 1
+    `).bind(postId, user.id).first();
+
+    await env.TPI_DB.prepare("DELETE FROM forum_reactions WHERE post_id = ? AND contributor_id = ?")
+      .bind(postId, user.id)
+      .run();
+
+    let userReaction = null;
+    if (existing?.reaction !== reaction) {
+      userReaction = reaction;
+      await env.TPI_DB.prepare("INSERT INTO forum_reactions (id, post_id, contributor_id, reaction) VALUES (?, ?, ?, ?)")
+        .bind(crypto.randomUUID(), postId, user.id, reaction)
+        .run();
+    }
+
+    const reactionCounts = await getForumReactionSummary(env, postId);
+    return json({ postId, reactionCounts, userReaction });
+  } catch (error) {
+    return json({ error: "Forum reactions are not ready yet. Apply migrations/0004_discussion_portal.sql in Cloudflare D1." }, 500);
+  }
 }
 
 async function handlePublicContributorProfile(request, env) {
@@ -1144,6 +1184,49 @@ async function attachForumPostMedia(env, posts) {
   } catch (error) {
     return safePosts.map(post => ({ ...post, attachments: [] }));
   }
+}
+
+const FORUM_REACTIONS = new Set(["like", "love", "care", "haha", "wow", "sad", "angry"]);
+
+function isAllowedForumReaction(value) {
+  return FORUM_REACTIONS.has(String(value || "").toLowerCase());
+}
+
+async function attachForumPostReactions(env, posts, contributorId) {
+  const safePosts = posts || [];
+  if (!safePosts.length) return safePosts;
+  try {
+    const withReactions = [];
+    for (const post of safePosts) {
+      const reactionCounts = await getForumReactionSummary(env, post.id);
+      let userReaction = null;
+      if (contributorId) {
+        const row = await env.TPI_DB.prepare(`
+          SELECT reaction
+          FROM forum_reactions
+          WHERE post_id = ? AND contributor_id = ?
+          LIMIT 1
+        `).bind(post.id, contributorId).first();
+        userReaction = row?.reaction || null;
+      }
+      withReactions.push({ ...post, reactionCounts, userReaction });
+    }
+    return withReactions;
+  } catch (error) {
+    return safePosts.map(post => ({ ...post, reactionCounts: {}, userReaction: null }));
+  }
+}
+
+async function getForumReactionSummary(env, postId) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT reaction, COUNT(*) AS count
+    FROM forum_reactions
+    WHERE post_id = ?
+    GROUP BY reaction
+  `).bind(postId).all();
+  return Object.fromEntries((results || [])
+    .filter(row => isAllowedForumReaction(row.reaction))
+    .map(row => [row.reaction, Number(row.count || 0)]));
 }
 
 function sanitizeForumAttachments(value) {
