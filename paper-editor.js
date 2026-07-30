@@ -117,6 +117,22 @@
     return contributionTypeInput?.value?.trim() || "Research Paper";
   }
 
+  function getArticleMediaLabelFromHtml(html) {
+    const source = String(html || "");
+    if (/<(?:video|iframe)\b/i.test(source)) return "Video";
+    if (/<audio\b/i.test(source)) return "Audio";
+    if (/<img\b/i.test(source)) return "Images";
+    return "";
+  }
+
+  function getDisplayContributionType(baseType, html) {
+    const contributionType = baseType || "Research Paper";
+    const mediaLabel = getArticleMediaLabelFromHtml(html);
+    return mediaLabel && !contributionType.toLowerCase().includes(mediaLabel.toLowerCase())
+      ? `${contributionType} / ${mediaLabel}`
+      : contributionType;
+  }
+
   function getPublishableTitle() {
     const title = titleInput.value.trim();
     if (!title || title.toLowerCase() === "untitled research paper") return "";
@@ -1080,7 +1096,8 @@
     const title = titleInput.value.trim() || "Untitled Research Paper";
     const subtitle = subtitleInput.value.trim();
     const author = authorInput.value.trim();
-    const contributionType = getContributionType();
+    const articleHtml = buildArticleHtml();
+    const contributionType = getDisplayContributionType(getContributionType(), articleHtml);
     const source = sourceInput.value.trim();
     const labels = labelsInput.value.trim();
     const destination = getDestinationLabel();
@@ -1111,7 +1128,7 @@ blockquote{margin:20px 0;padding:4px 0 4px 18px;border-left:3px solid #55c8ff}
 <h1>${escapeHtml(title)}</h1>
 ${subtitle ? `<p class="subtitle">${escapeHtml(subtitle)}</p>` : ""}
 ${meta ? `<p class="meta">${escapeHtml(meta)}</p>` : ""}
-${buildArticleHtml()}
+${articleHtml}
 </main></body></html>`;
   }
 
@@ -1153,7 +1170,8 @@ ${buildArticleHtml()}
     const subtitle = subtitleInput.value.trim();
     const href = getSuggestedArticleHref();
     const destination = getDestinationLabel();
-    const contributionType = getContributionType();
+    const articleHtml = buildArticleHtml();
+    const contributionType = getDisplayContributionType(getContributionType(), articleHtml);
     const cardBadge = contributionType.replace(/\s*\/\s*/g, " / ").split(/\s+/)[0] || "Field";
     return [
       `<!-- Add this card to ${destination}: ${destinationInput.value} -->`,
@@ -1594,19 +1612,22 @@ ${buildArticleHtml()}
   function buildPublishedRecord() {
     const title = titleInput.value.trim() || "Untitled Research Paper";
     const id = currentArticleId || getArticleId();
+    const bodyHtml = buildArticleHtml();
+    const mediaType = getArticleMediaLabelFromHtml(bodyHtml);
     return {
       id,
       href: `published-article.html?id=${encodeURIComponent(id)}`,
       title,
       subtitle: subtitleInput.value.trim(),
       contributionType: getContributionType(),
+      mediaType,
       destination: destinationInput.value,
       destinationLabel: getDestinationLabel(),
       author: authorInput.value.trim(),
       authorUsername: currentUser?.username || "",
       source: sourceInput.value.trim(),
       labels: labelsInput.value.trim(),
-      bodyHtml: buildArticleHtml(),
+      bodyHtml,
       fullHtml: buildFullArticleDocument(""),
       status: "draft",
       updatedAt: new Date().toISOString()

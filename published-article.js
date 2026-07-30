@@ -44,6 +44,24 @@
     return parts.join(" · ");
   }
 
+  function getArticleMediaLabel(article) {
+    const explicitType = String(article.mediaType || "").trim();
+    if (explicitType) return explicitType;
+    const html = String(article.bodyHtml || article.articleHtml || "");
+    if (/<(?:video|iframe)\b/i.test(html)) return "Video";
+    if (/<audio\b/i.test(html)) return "Audio";
+    if (/<img\b/i.test(html)) return "Images";
+    return "";
+  }
+
+  function getArticleDisplayType(article) {
+    const contributionType = article.contributionType || article.articleType || "Research Paper";
+    const mediaLabel = getArticleMediaLabel(article);
+    return mediaLabel && !contributionType.toLowerCase().includes(mediaLabel.toLowerCase())
+      ? `${contributionType} / ${mediaLabel}`
+      : contributionType;
+  }
+
   const id = new URLSearchParams(window.location.search).get("id");
   const article = await getCloudflareArticle(id) || getPublishedArticles().find(item => item.id === id);
   if (!article) {
@@ -60,7 +78,7 @@
     return;
   }
 
-  const contributionType = article.contributionType || article.articleType || "Research Paper";
+  const contributionType = getArticleDisplayType(article);
   document.body.dataset.articleAuthorUsername = article.authorUsername || "";
   document.body.dataset.articleAuthorName = article.author || article.authorDisplayName || "";
   document.title = `${article.title} | The Paranormal Initiative`;

@@ -775,9 +775,27 @@
       }[char]));
     }
 
+    function getArticleMediaLabel(article) {
+      const explicitType = String(article.mediaType || "").trim();
+      if (explicitType) return explicitType;
+      const html = String(article.bodyHtml || article.articleHtml || "");
+      if (/<(?:video|iframe)\b/i.test(html)) return "Video";
+      if (/<audio\b/i.test(html)) return "Audio";
+      if (/<img\b/i.test(html)) return "Images";
+      return "";
+    }
+
+    function getArticleDisplayType(article) {
+      const contributionType = article.contributionType || article.articleType || "Published Article";
+      const mediaLabel = getArticleMediaLabel(article);
+      return mediaLabel && !contributionType.toLowerCase().includes(mediaLabel.toLowerCase())
+        ? `${contributionType} / ${mediaLabel}`
+        : contributionType;
+    }
+
     function appendArticleCard(article) {
       if ([...grid.querySelectorAll("[data-published-id]")].some(card => card.dataset.publishedId === article.id)) return;
-      const contributionType = article.contributionType || article.articleType || "Published Article";
+      const contributionType = getArticleDisplayType(article);
       const cardBadge = contributionType.replace(/\s*\/\s*/g, " / ").split(/\s+/)[0] || "Field";
       const card = document.createElement("a");
       card.className = grid.classList.contains("series-post-grid") ? "study-resource-card tpi-published-card" : "study-resource-card tpi-published-card";
