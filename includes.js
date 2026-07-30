@@ -367,6 +367,154 @@
       }[char]));
     }
 
+    function installPaperEngagement() {
+      if (document.querySelector(".paper-engagement")) return;
+      const reactionLabels = [
+        { id: "like", emoji: "👍", label: "Like" },
+        { id: "love", emoji: "❤️", label: "Love" }
+      ];
+      const engagement = document.createElement("section");
+      engagement.className = "paper-engagement";
+      engagement.innerHTML = `
+        <div class="paper-engagement-inner">
+          <div>
+            <p class="portal-kicker">Reader Response</p>
+            <h2>Engage With This Paper</h2>
+            <p class="paper-engagement-note">Signed-in members can leave a simple response or open the author's profile to read more published work.</p>
+          </div>
+          <div class="paper-engagement-actions">
+            ${reactionLabels.map(item => `
+              <button class="paper-reaction-button" type="button" data-reaction="${item.id}">
+                <span>${item.emoji}</span>
+                <strong>${item.label}</strong>
+                <em>0</em>
+              </button>
+            `).join("")}
+            <a class="paper-profile-button" href="#" hidden>View Author Profile</a>
+          </div>
+          <p class="paper-engagement-status" aria-live="polite"></p>
+        </div>
+      `;
+
+      const status = engagement.querySelector(".paper-engagement-status");
+      const buttons = [...engagement.querySelectorAll(".paper-reaction-button")];
+      const profileButton = engagement.querySelector(".paper-profile-button");
+      let signedIn = false;
+      let currentReaction = null;
+
+      async function engagementRequest(path, options = {}) {
+        const response = await fetch(`/api${path}`, {
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { "Content-Type": "application/json" },
+          ...options,
+          body: options.body ? JSON.stringify(options.body) : undefined
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const error = new Error(data.error || "Request failed.");
+          error.status = response.status;
+          throw error;
+        }
+        return data;
+      }
+
+      function renderReactions(counts = {}, userReaction = null) {
+        currentReaction = userReaction;
+        buttons.forEach(button => {
+          const reaction = button.dataset.reaction;
+          button.classList.toggle("is-selected", reaction === currentReaction);
+          button.querySelector("em").textContent = String(Number(counts[reaction] || 0));
+          button.disabled = !signedIn;
+          button.title = signedIn ? `${button.textContent.trim()} this paper` : "Sign in as a member to react.";
+        });
+      }
+
+      function getAuthorProfile() {
+        const username = document.body.dataset.articleAuthorUsername || "";
+        const authorName = document.body.dataset.articleAuthorName || "";
+        const pageSlug = currentPage.replace(/\.html$/, "");
+        if (username) {
+          return {
+            href: `contributor-profile.html?username=${encodeURIComponent(username)}`,
+            label: authorName ? `View ${authorName} Profile` : "View Author Profile"
+          };
+        }
+        if (pageSlug.startsWith("anabela-cardoso-")) {
+          return { href: "anabela-cardoso-profile.html", label: "View Anabela Cardoso Profile" };
+        }
+        if (
+          pageSlug.startsWith("education-research-") ||
+          pageSlug.startsWith("investigation-development-") ||
+          pageSlug.startsWith("ghostology-101-lesson-") ||
+          pageSlug.startsWith("evp-itc-lesson-")
+        ) {
+          return { href: "contributor-profile.html?username=Todd_Wayne", label: "View Todd Wayne Profile" };
+        }
+        return null;
+      }
+
+      function renderAuthorProfile() {
+        const profile = getAuthorProfile();
+        if (!profile) {
+          profileButton.hidden = true;
+          return;
+        }
+        profileButton.hidden = false;
+        profileButton.href = profile.href;
+        profileButton.textContent = profile.label;
+      }
+
+      async function loadEngagement() {
+        renderAuthorProfile();
+        try {
+          const session = await engagementRequest("/auth/me");
+          signedIn = Boolean(session.user);
+        } catch (error) {
+          signedIn = false;
+        }
+        try {
+          const data = await engagementRequest(`/articles/reactions?pageId=${encodeURIComponent(pageId)}`);
+          if (typeof data.signedIn === "boolean") signedIn = data.signedIn;
+          renderReactions(data.reactionCounts || {}, data.userReaction || null);
+          status.textContent = data.migrationRequired ? "Paper reactions will activate after the article reactions migration is applied." : "";
+        } catch (error) {
+          renderReactions({}, null);
+          status.textContent = "Paper reactions will activate after the article reactions migration is applied.";
+        }
+      }
+
+      buttons.forEach(button => {
+        button.addEventListener("click", async () => {
+          if (!signedIn) {
+            status.textContent = "Sign in as a member to react to papers.";
+            return;
+          }
+          try {
+            const data = await engagementRequest("/articles/reactions", {
+              method: "POST",
+              body: { pageId, reaction: button.dataset.reaction }
+            });
+            signedIn = true;
+            renderReactions(data.reactionCounts || {}, data.userReaction || null);
+            status.textContent = data.userReaction ? "Response saved." : "Response removed.";
+          } catch (error) {
+            status.textContent = error.status === 401 ? "Sign in as a member to react to papers." : error.message;
+          }
+        });
+      });
+
+      window.addEventListener("tpi:article-ready", event => {
+        const article = event.detail?.article || {};
+        document.body.dataset.articleAuthorUsername = article.authorUsername || "";
+        document.body.dataset.articleAuthorName = article.author || article.authorDisplayName || "";
+        renderAuthorProfile();
+      });
+
+      footerHost.before(engagement);
+      loadEngagement();
+    }
+
     function makeCommentId() {
       if (window.crypto?.randomUUID) return window.crypto.randomUUID();
       return `comment-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -601,6 +749,7 @@
       renderComments();
     });
 
+    installPaperEngagement();
     footerHost.before(section);
     renderComments();
     loadCloudflareComments();

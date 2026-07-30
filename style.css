@@ -4326,8 +4326,115 @@ footer {
     font-size: 13px;
 }
 
+.paper-engagement,
 .tpi-comments {
     max-width: 980px;
+}
+
+.paper-engagement {
+    padding-top: 28px;
+}
+
+.paper-engagement-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: center;
+    padding: 22px 24px;
+    background:
+        radial-gradient(circle at top left, rgba(85, 200, 255, 0.1), transparent 30%),
+        #101820;
+    border: 1px solid #263646;
+    border-radius: 6px;
+}
+
+.paper-engagement h2,
+.paper-engagement p {
+    margin: 0;
+}
+
+.paper-engagement h2 {
+    color: #f4f8fb;
+    font-size: 22px;
+}
+
+.paper-engagement-note,
+.paper-engagement-status {
+    color: #aebdcc;
+}
+
+.paper-engagement-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.paper-reaction-button,
+.paper-profile-button {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 12px;
+    color: #d8e6f3;
+    background: #101820;
+    border: 1px solid #263646;
+    border-radius: 5px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.paper-reaction-button span {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.paper-reaction-button strong,
+.paper-reaction-button em {
+    font-style: normal;
+    line-height: 1;
+}
+
+.paper-reaction-button em {
+    color: #55c8ff;
+}
+
+.paper-reaction-button:hover:not(:disabled),
+.paper-reaction-button.is-selected,
+.paper-profile-button:hover {
+    color: #ffffff;
+    background: rgba(18, 38, 52, 0.96);
+    border-color: rgba(85, 200, 255, 0.76);
+}
+
+.paper-reaction-button:hover:not(:disabled),
+.paper-profile-button:hover {
+    transform: translateY(-1px);
+}
+
+.paper-reaction-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+}
+
+.paper-profile-button {
+    border-color: rgba(85, 200, 255, 0.56);
+}
+
+.paper-engagement-status {
+    grid-column: 1 / -1;
+    min-height: 18px;
+    font-size: 12px;
+}
+
+.tpi-comments {
     padding-top: 28px;
     padding-bottom: 56px;
 }
@@ -4475,6 +4582,14 @@ footer {
 }
 
 @media (max-width: 900px) {
+    .paper-engagement-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .paper-engagement-actions {
+        justify-content: flex-start;
+    }
+
     .paper-editor-shell {
         width: auto;
         padding-left: 14px;

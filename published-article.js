@@ -61,6 +61,8 @@
   }
 
   const contributionType = article.contributionType || article.articleType || "Research Paper";
+  document.body.dataset.articleAuthorUsername = article.authorUsername || "";
+  document.body.dataset.articleAuthorName = article.author || article.authorDisplayName || "";
   document.title = `${article.title} | The Paranormal Initiative`;
   root.innerHTML = `
     <article class="lesson-reading-block paper-single-textbox">
@@ -74,4 +76,5 @@
       <a class="portal-button" href="${escapeHtml(article.destination)}">Back to ${escapeHtml(article.destinationLabel || "Research Library")}</a>
     </section>
   `;
+  window.dispatchEvent(new CustomEvent("tpi:article-ready", { detail: { article } }));
 })();

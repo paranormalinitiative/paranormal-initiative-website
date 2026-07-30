@@ -41,6 +41,8 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
+    if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
+    if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
@@ -722,6 +724,64 @@ async function handleDeleteArticle(path, env, user) {
   return json({ deleted: true, id });
 }
 
+async function handleArticleReactions(request, env) {
+  const pageId = clean(new URL(request.url).searchParams.get("pageId")).slice(0, 300);
+  if (!pageId) return json({ error: "pageId is required." }, 400);
+
+  try {
+    const user = await getSessionUser(request, env);
+    const reactionCounts = await getArticleReactionSummary(env, pageId);
+    let userReaction = null;
+    if (user) {
+      const row = await env.TPI_DB.prepare(`
+        SELECT reaction
+        FROM article_reactions
+        WHERE page_id = ? AND contributor_id = ?
+        LIMIT 1
+      `).bind(pageId, user.id).first();
+      userReaction = row?.reaction || null;
+    }
+    return json({ pageId, reactionCounts, userReaction, signedIn: Boolean(user) });
+  } catch (error) {
+    return json({ pageId, reactionCounts: {}, userReaction: null, signedIn: false, migrationRequired: true });
+  }
+}
+
+async function handleSetArticleReaction(request, env, user) {
+  const data = await readJson(request);
+  const pageId = clean(data.pageId).slice(0, 300);
+  const reaction = clean(data.reaction).toLowerCase();
+  if (!pageId) return json({ error: "pageId is required." }, 400);
+  if (!isAllowedArticleReaction(reaction)) return json({ error: "Reaction was not recognized." }, 400);
+
+  try {
+    const existing = await env.TPI_DB.prepare(`
+      SELECT reaction
+      FROM article_reactions
+      WHERE page_id = ? AND contributor_id = ?
+      LIMIT 1
+    `).bind(pageId, user.id).first();
+
+    await env.TPI_DB.prepare("DELETE FROM article_reactions WHERE page_id = ? AND contributor_id = ?")
+      .bind(pageId, user.id)
+      .run();
+
+    let userReaction = null;
+    if (existing?.reaction !== reaction) {
+      userReaction = reaction;
+      await env.TPI_DB.prepare(`
+        INSERT INTO article_reactions (id, page_id, contributor_id, reaction)
+        VALUES (?, ?, ?, ?)
+      `).bind(crypto.randomUUID(), pageId, user.id, reaction).run();
+    }
+
+    const reactionCounts = await getArticleReactionSummary(env, pageId);
+    return json({ pageId, reactionCounts, userReaction, signedIn: true });
+  } catch (error) {
+    return json({ error: "Article reactions are not ready yet. Apply migrations/0011_article_reactions.sql in Cloudflare D1." }, 500);
+  }
+}
+
 async function handleForumIndex(request, env) {
   const user = await getSessionUser(request, env);
   const { results: categoryRows } = await env.TPI_DB.prepare(`
@@ -1187,9 +1247,14 @@ async function attachForumPostMedia(env, posts) {
 }
 
 const FORUM_REACTIONS = new Set(["like", "love", "care", "haha", "wow", "sad", "angry"]);
+const ARTICLE_REACTIONS = new Set(["like", "love"]);
 
 function isAllowedForumReaction(value) {
   return FORUM_REACTIONS.has(String(value || "").toLowerCase());
+}
+
+function isAllowedArticleReaction(value) {
+  return ARTICLE_REACTIONS.has(String(value || "").toLowerCase());
 }
 
 async function attachForumPostReactions(env, posts, contributorId) {
@@ -1226,6 +1291,18 @@ async function getForumReactionSummary(env, postId) {
   `).bind(postId).all();
   return Object.fromEntries((results || [])
     .filter(row => isAllowedForumReaction(row.reaction))
+    .map(row => [row.reaction, Number(row.count || 0)]));
+}
+
+async function getArticleReactionSummary(env, pageId) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT reaction, COUNT(*) AS count
+    FROM article_reactions
+    WHERE page_id = ?
+    GROUP BY reaction
+  `).bind(pageId).all();
+  return Object.fromEntries((results || [])
+    .filter(row => isAllowedArticleReaction(row.reaction))
     .map(row => [row.reaction, Number(row.count || 0)]));
 }
 
