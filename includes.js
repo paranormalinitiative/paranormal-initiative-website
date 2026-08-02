@@ -794,7 +794,9 @@
     }
 
     function appendArticleCard(article) {
-      if ([...grid.querySelectorAll("[data-published-id]")].some(card => card.dataset.publishedId === article.id)) return;
+      [...grid.querySelectorAll("[data-published-id]")].forEach(card => {
+        if (card.dataset.publishedId === article.id) card.remove();
+      });
       const contributionType = getArticleDisplayType(article);
       const cardBadge = contributionType.replace(/\s*\/\s*/g, " / ").split(/\s+/)[0] || "Field";
       const card = document.createElement("a");
@@ -814,12 +816,22 @@
       grid.insertBefore(card, firstStaticCard || null);
     }
 
+    function getArticleSortTime(article) {
+      const value = article.updatedAt || article.updated_at || article.createdAt || article.created_at || "";
+      const time = value ? new Date(value).getTime() : 0;
+      return Number.isFinite(time) ? time : 0;
+    }
+
+    function sortArticlesNewestFirst(articles) {
+      return [...articles].sort((a, b) => getArticleSortTime(b) - getArticleSortTime(a));
+    }
+
     async function loadCloudflareArticleCards() {
       try {
         const response = await fetch(`/api/articles?destination=${encodeURIComponent(current)}`, { credentials: "same-origin", cache: "no-store" });
         if (!response.ok) return;
         const data = await response.json();
-        (data.articles || []).forEach(appendArticleCard);
+        sortArticlesNewestFirst(data.articles || []).forEach(appendArticleCard);
       } catch (error) {
         // Local-only previews do not have the Cloudflare API.
       }
@@ -834,6 +846,7 @@
 
     articles
       .filter(article => article.destination === current || article.destination === currentWithoutExtension || article.destination === currentWithExtension)
+      .sort((a, b) => getArticleSortTime(b) - getArticleSortTime(a))
       .forEach(appendArticleCard);
     loadCloudflareArticleCards();
   }

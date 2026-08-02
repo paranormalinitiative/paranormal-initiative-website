@@ -685,18 +685,18 @@ async function handleListArticles(request, env) {
     : `${destination}.html`;
   const stmt = destination
     ? env.TPI_DB.prepare(`
-      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
+      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt, a.updated_at AS updatedAt
       FROM articles a
       LEFT JOIN contributors c ON c.id = a.created_by
       WHERE a.destination IN (?, ?) AND a.status = 'published'
-      ORDER BY a.created_at DESC
+      ORDER BY COALESCE(a.updated_at, a.created_at) DESC
     `).bind(destination, destinationAlt)
     : env.TPI_DB.prepare(`
-      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt
+      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt, a.updated_at AS updatedAt
       FROM articles a
       LEFT JOIN contributors c ON c.id = a.created_by
       WHERE a.status = 'published'
-      ORDER BY a.created_at DESC
+      ORDER BY COALESCE(a.updated_at, a.created_at) DESC
     `);
   const { results } = await stmt.all();
   return json({ articles: results });
@@ -704,10 +704,10 @@ async function handleListArticles(request, env) {
 
 async function handleContributorArticles(env, user) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt
+    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt, updated_at AS updatedAt
     FROM articles
     WHERE created_by = ?
-    ORDER BY created_at DESC
+    ORDER BY COALESCE(updated_at, created_at) DESC
   `).bind(user.username, user.id).all();
   return json({ articles: results });
 }
