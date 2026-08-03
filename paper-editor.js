@@ -1609,9 +1609,16 @@ ${articleHtml}
     publishModal.hidden = true;
   }
 
+  function hasStaleId() {
+    if (!currentArticleId) return false;
+    return currentArticleId.includes("untitled-research-paper") &&
+      titleInput.value.trim() &&
+      titleInput.value.trim().toLowerCase() !== "untitled research paper";
+  }
+
   function buildPublishedRecord() {
     const title = titleInput.value.trim() || "Untitled Research Paper";
-    const id = currentArticleId || getArticleId();
+    const id = (currentArticleId && !hasStaleId()) ? currentArticleId : getArticleId();
     const bodyHtml = buildArticleHtml();
     const mediaType = getArticleMediaLabelFromHtml(bodyHtml);
     return {
@@ -1739,6 +1746,7 @@ ${articleHtml}
 
   function clearDraft() {
     if (!window.confirm("Clear the editor body?")) return;
+    currentArticleId = null;
     setDefaultDraftBody();
     setStatus("Draft cleared");
   }
