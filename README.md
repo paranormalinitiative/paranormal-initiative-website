@@ -11,6 +11,13 @@ The site is designed to be dark, professional, research-driven, and practical. I
 - Content Editor: contributor-only drafting and publishing for papers, notes, reports, reviews, and articles.
 - Contributor Portal: member login, profile pages, contributor access, admin access management, and R2 profile/media uploads.
 - Discussion Portal: public-readable, member-posted forum with Education Center-aligned categories and chat-style topic replies.
+- Apps: public app directory, dedicated app pages, software-use terms, third-party notices, and a future release manifest for Mac/Windows downloads.
+
+## App Release Position
+
+The Paranormal Initiative apps are intended to be free ITC, EVP, paranormal research, documentation, and experimentation tools. They are not open-source releases. TPI source code, interface design, branding, workflows, compiled applications, and assets remain protected unless Todd explicitly changes the license.
+
+Future public builds should use `app-releases.json` for version/download metadata. Large installer files should live in Cloudflare R2 or GitHub Releases, not as oversized static Worker assets.
 
 ## Cloudflare Backend
 

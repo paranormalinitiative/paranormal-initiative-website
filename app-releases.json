@@ -1,0 +1,48 @@
+{
+  "apps": [
+    {
+      "id": "aether-spectra-sls",
+      "name": "Aether Spectra SLS Camera System",
+      "status": "public-release-pending",
+      "version": "",
+      "macDownload": "",
+      "windowsDownload": "",
+      "releaseNotes": "",
+      "updateFeedMac": "",
+      "updateFeedWindows": ""
+    },
+    {
+      "id": "acs",
+      "name": "ACS - Aetheric Communication System",
+      "status": "public-release-pending",
+      "version": "",
+      "macDownload": "",
+      "windowsDownload": "",
+      "releaseNotes": "",
+      "updateFeedMac": "",
+      "updateFeedWindows": ""
+    },
+    {
+      "id": "itc-visual-studio",
+      "name": "ITC Visual Studio",
+      "status": "public-release-pending",
+      "version": "",
+      "macDownload": "",
+      "windowsDownload": "",
+      "releaseNotes": "",
+      "updateFeedMac": "",
+      "updateFeedWindows": ""
+    },
+    {
+      "id": "paranormal-initiative-app",
+      "name": "The Paranormal Initiative App",
+      "status": "public-release-pending",
+      "version": "",
+      "macDownload": "",
+      "windowsDownload": "",
+      "releaseNotes": "",
+      "updateFeedMac": "",
+      "updateFeedWindows": ""
+    }
+  ]
+}

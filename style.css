@@ -2138,6 +2138,18 @@ footer {
     border-radius: 8px;
 }
 
+.app-feature-link {
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.22s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.app-feature-link:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 194, 255, 0.72);
+    box-shadow: 0 0 22px rgba(0, 194, 255, 0.12);
+}
+
 .app-feature-media {
     overflow: hidden;
     display: flex;
@@ -2190,6 +2202,98 @@ footer {
     border: 1px solid rgba(0, 194, 255, 0.22);
     border-radius: 999px;
     background: rgba(0, 194, 255, 0.08);
+}
+
+.software-use-strip,
+.software-terms-panel {
+    max-width: 980px;
+}
+
+.software-use-strip {
+    padding-top: 48px;
+}
+
+.software-use-strip h2,
+.software-terms-panel h2 {
+    margin-top: 0;
+}
+
+.software-use-strip p,
+.software-terms-panel p {
+    color: #c3cfda;
+}
+
+.software-rule-grid,
+.app-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.software-rule-grid article {
+    min-height: 158px;
+    padding: 20px;
+    background: #101820;
+    border: 1px solid #263646;
+    border-radius: 6px;
+}
+
+.software-rule-grid h3 {
+    margin: 0 0 10px;
+    color: #f4f8fb;
+    font-size: 17px;
+}
+
+.software-rule-grid p {
+    margin: 0;
+    color: #b8c4d1;
+    font-size: 14px;
+}
+
+.app-detail-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+    gap: 34px;
+    align-items: center;
+    max-width: 1120px;
+    padding-top: 72px;
+    padding-bottom: 42px;
+}
+
+.app-detail-hero h2 {
+    margin-top: 0;
+    font-size: 36px;
+    line-height: 1.14;
+    border-bottom: 0;
+    padding-bottom: 0;
+    color: #f4f8fb;
+}
+
+.app-detail-hero p {
+    color: #c3cfda;
+    font-size: 16px;
+}
+
+.app-detail-media {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    background: #05080b;
+    border: 1px solid rgba(0, 194, 255, 0.24);
+    border-radius: 8px;
+}
+
+.app-detail-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.app-detail-media-wide {
+    aspect-ratio: 16 / 10;
 }
 
 .dashboard-panel-link {
@@ -4709,6 +4813,12 @@ footer {
     .app-feature-card {
         grid-template-columns: 1fr;
         padding: 20px;
+    }
+
+    .app-detail-hero,
+    .software-rule-grid,
+    .app-detail-grid {
+        grid-template-columns: 1fr;
     }
 
     .app-feature-copy h3 {

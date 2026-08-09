@@ -246,6 +246,11 @@ python3 -m http.server 4174
 - `paper-editor.html` - Editor structure.
 - `paper-editor.js` - Editor behavior, upload handling, formatting, preview generation, author note.
 - `style.css` - Editor styles and paper layout styles.
+- `our-apps.html` - Public app directory with clickable app cards.
+- `app-*.html` - Dedicated public app detail pages.
+- `software-use.html` - Public software-use terms.
+- `THIRD-PARTY-NOTICES.md` - Third-party component/license notice file.
+- `app-releases.json` - Future app version/download/update metadata manifest.
 - `education-research-*.html` - Full research paper pages.
 - `includes.js` - Shared include/navigation behavior.
 - `header.html` / `footer.html` - Shared site chrome.
@@ -258,11 +263,16 @@ python3 -m http.server 4174
 4. Keep search results clean and useful across public pages and published articles.
 5. Keep the Education Center easy to browse as article volume grows.
 6. Verify profile photo and article media uploads against Cloudflare R2.
-7. Do not reintroduce the permanent preview pane.
-8. Do not reintroduce the short rejected paper headings.
+7. Add real app release files to Cloudflare R2 or GitHub Releases, then update `app-releases.json` and the app detail download buttons.
+8. Wire app auto-update support later: Sparkle for macOS and WinSparkle or an equivalent updater for Windows.
+9. Do not reintroduce the permanent preview pane.
+10. Do not reintroduce the short rejected paper headings.
 
 Recently completed:
 
+- The Our Apps page now uses clickable app cards that open dedicated app pages for Aether Spectra SLS, ACS, ITC Visual Studio, and The Paranormal Initiative App.
+- `software-use.html` states the app licensing posture: free to use for ITC/EVP/paranormal research and experimentation, not open source, and not allowed to be copied, redistributed, sold, modified, reverse engineered, or repackaged without written permission.
+- `THIRD-PARTY-NOTICES.md` and `app-releases.json` were added so future app downloads, Sparkle/WinSparkle acknowledgments, and updater metadata have a clear place.
 - Comment moderation tools were added to the owner/admin dashboard and the Content Editor. Public anonymous/name-only comments are pending by default, contributor-signed comments publish immediately, and owner/admin can approve or delete comments.
 - Change Password/account settings were added to `member-dashboard.html`.
 - Published article author names and logged-in contributor comment/reply names link to `contributor-profile.html?username=...` when a contributor username is available.

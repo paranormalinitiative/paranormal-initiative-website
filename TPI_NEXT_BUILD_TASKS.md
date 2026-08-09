@@ -299,9 +299,15 @@ Current category set:
 4. Keep Discussion Portal category badges and read/unread behavior clean.
 5. Continue converting older legacy pages into the new Content Editor format over time.
 6. Refine search/Education Center browsing as the article library grows.
+7. When app builds are ready, upload Mac/Windows releases to Cloudflare R2 or GitHub Releases, then fill in `app-releases.json` and replace the "Coming Soon" download buttons on the app detail pages.
+8. Wire macOS app updates through Sparkle and Windows app updates through WinSparkle or an equivalent Windows updater path. Preserve third-party notices in app bundles/installers/documentation.
 
 Recently completed:
 
+- The Our Apps page now links each large app card to a dedicated app page: `app-aether-spectra-sls.html`, `app-acs.html`, `app-itc-visual-studio.html`, and `app-paranormal-initiative.html`.
+- `software-use.html` defines the public software position: TPI apps are free ITC/EVP/paranormal research tools, but they are not open source and may not be copied, redistributed, sold, modified, reverse engineered, or repackaged without written permission.
+- `THIRD-PARTY-NOTICES.md` was added for Sparkle/WinSparkle and future third-party library acknowledgments. Their open-source licenses do not change the ownership or closed-source status of TPI applications.
+- `app-releases.json` was added as the future version/download manifest for app pages and updater metadata.
 - Comment moderation tools were added to the owner/admin dashboard and the Content Editor. Public anonymous/name-only comments are pending by default, contributor-signed comments publish immediately, and owner/admin can approve or delete comments.
 - Change Password/account settings were added to the member dashboard with Cloudflare D1 and local-preview fallback behavior.
 - Published article author names link to public contributor profiles when the article has a contributor username.
@@ -342,6 +348,8 @@ http://127.0.0.1:4174/contributor-invite.html
 http://127.0.0.1:4174/contributor-profile.html
 http://127.0.0.1:4174/paper-editor.html
 http://127.0.0.1:4174/community-forum.html
+http://127.0.0.1:4174/our-apps.html
+http://127.0.0.1:4174/software-use.html
 ```
 
 ## Do Not Do
@@ -352,5 +360,7 @@ http://127.0.0.1:4174/community-forum.html
 - Do not put Member Dashboard in public navigation.
 - Do not store passwords in JavaScript.
 - Do not store large uploaded media in D1.
+- Do not describe TPI apps as open source unless Todd explicitly changes the license.
+- Do not publish fake app download links before the R2/GitHub release files exist.
 - Do not publish anonymous comments without moderation for final public launch.
 - Do not reintroduce the rejected paper heading template.
