@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ITC Visual Studio / Browser Version</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <!-- Session Creation Dialog -->
+      <dialog id="sessionDialog" class="session-dialog">
+        <div class="session-dialog-inner">
+          <h2 id="sessionDialogTitle">Create Session</h2>
+          <label class="field-label" for="dialogSessionName">Session Name</label>
+          <input id="dialogSessionName" class="text-input" placeholder="Enter session name" />
+          <p id="dialogNameValidation" class="dialog-validation" hidden>Please enter a session name.</p>
+          <label class="field-label" for="dialogSessionType">Experiment Type</label>
+          <select id="dialogSessionType" class="select-input">
+            <option>Water</option>
+            <option>Fire / Flame</option>
+            <option>Smoke</option>
+            <option>Ink</option>
+            <option>Steam / Vapor</option>
+            <option>Mirror / Reflection</option>
+            <option selected>General Visual ITC</option>
+            <option>Custom</option>
+          </select>
+          <div class="dialog-actions">
+            <button id="dialogCancelBtn" class="secondary-button">Cancel</button>
+            <button id="dialogCreateBtn" class="primary-button">Create Session</button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="slideshowProjectDialog" class="session-dialog">
+        <div class="session-dialog-inner">
+          <h2 id="slideshowProjectDialogTitle">New Slideshow Project</h2>
+          <label class="field-label" for="dialogSlideshowProjectName">Project Name</label>
+          <input id="dialogSlideshowProjectName" class="text-input" placeholder="Enter project name" />
+          <p id="dialogSlideshowNameValidation" class="dialog-validation" hidden>Please enter a slideshow project name.</p>
+          <p id="dialogSlideshowDuplicateValidation" class="dialog-validation" hidden>A slideshow project with this name already exists.</p>
+          <div class="dialog-actions">
+            <button id="dialogSlideshowCancelBtn" class="secondary-button">Cancel</button>
+            <button id="dialogSlideshowCreateBtn" class="primary-button">Create Project</button>
+          </div>
+        </div>
+      </dialog>
+
+      <header class="top-bar">
+        <div class="brand">
+          <strong>The Paranormal Initiative</strong>
+          <span>ITC Visual Studio / Browser Version</span>
+        </div>
+        <nav class="nav-strip" aria-label="Primary tools">
+          <button class="nav-button active" data-panel="camera">Camera</button>
+          <button class="nav-button" data-panel="analysis">Analysis</button>
+          <button class="nav-button" data-panel="frames">Frames</button>
+          <button class="nav-button" data-panel="slideshow">Slideshow</button>
+          <button class="nav-button" data-panel="settings">Settings</button>
+          <button class="nav-button" data-panel="library">Library</button>
+          <button class="nav-button" data-panel="manual">Manual</button>
+          <button class="nav-button" data-panel="archive">Import</button>
+          <button class="nav-button" data-panel="evidence">Evidence</button>
+          <button class="nav-button" data-panel="export">Export</button>
+        </nav>
+      </header>
+
+      <main class="workspace">
+        <aside class="left-panel">
+          <section class="panel-section">
+            <h2>Session</h2>
+            <div id="leftPanelNoSession">
+              <strong>No active session</strong>
+              <span>Create a session, restore a capsule, or import video to begin.</span>
+              <button id="newSessionBtn" class="primary-button">Create Session</button>
+              <button id="openSessionZipBtn" class="secondary-button">Restore Capsule</button>
+              <input id="zipInput" type="file" accept=".zip,.vitc,.vitc.zip,application/zip,application/x-zip-compressed" hidden />
+              <button id="importVideoBtn" class="secondary-button">Import Video / Extract Frames</button>
+              <input id="videoInput" type="file" accept="video/*,.mkv,.mp4,.mov,.webm,.avi" hidden />
+            </div>
+            <div id="leftPanelActiveSession" hidden>
+              <label class="field-label" for="sessionName">Session Name</label>
+              <input id="sessionName" class="text-input" placeholder="Enter session name" />
+              <label class="field-label" for="sessionType">Experiment Type</label>
+              <select id="sessionType" class="select-input">
+                <option>Water</option>
+                <option>Fire / Flame</option>
+                <option>Smoke</option>
+                <option>Ink</option>
+                <option>Steam / Vapor</option>
+                <option>Mirror / Reflection</option>
+                <option selected>General Visual ITC</option>
+                <option>Custom</option>
+              </select>
+              <button id="openSessionZipBtn2" class="secondary-button">Restore Capsule</button>
+              <input id="zipInput2" type="file" accept=".zip,.vitc,.vitc.zip,application/zip,application/x-zip-compressed" hidden />
+              <button id="importVideoBtn2" class="secondary-button">Import Video / Extract Frames</button>
+              <input id="videoInput2" type="file" accept="video/*,.mkv,.mp4,.mov,.webm,.avi" hidden />
+            </div>
+            <p id="ffmpegStatus" class="status-line">FFmpeg: Ready to load when needed.</p>
+          </section>
+
+          <section class="panel-section stats">
+            <h2>Frame Set</h2>
+            <div><span>Frames</span><strong id="frameCount">0</strong></div>
+            <div><span>Current</span><strong id="currentFrame">-</strong></div>
+            <div><span>Checked</span><strong id="checkedCount">0</strong></div>
+            <div><span>Junk</span><strong id="junkCount">0</strong></div>
+          </section>
+
+          <section class="panel-section">
+            <h2>Cleanup</h2>
+            <button id="markThisBtn" class="secondary-button">Mark This Junk</button>
+            <button id="markBeforeBtn" class="secondary-button">Mark Before</button>
+            <button id="deleteMarkedBtn" class="danger-button">Delete Marked</button>
+          </section>
+        </aside>
+
+        <section class="center-panel" data-view="analysis">
+          <div class="viewer-header">
+            <h1>Analysis Lab</h1>
+            <div class="view-mode-tabs">
+              <button id="viewFramesBtn" class="view-tab active" data-view="frames">FRAMES</button>
+              <button id="viewSessionVideoBtn" class="view-tab" data-view="session-video">SESSION VIDEO</button>
+            </div>
+            <div class="viewer-actions">
+              <button id="fitBtn" class="icon-button">Fit</button>
+              <button id="focusBtn" class="icon-button">Focus</button>
+              <button id="analysisManualBtn" class="icon-button">Manual</button>
+            </div>
+          </div>
+
+          <div id="viewerStage" class="viewer-stage">
+            <canvas id="analysisCanvas" width="1280" height="720"></canvas>
+            <video id="sessionVideoPlayer" class="session-video-player" hidden></video>
+            <div id="sessionVideoControls" class="session-video-controls" hidden>
+              <button id="videoPlayPauseBtn" class="transport-button play">Play</button>
+              <input id="videoScrubber" type="range" min="0" max="0" value="0" step="0.1" />
+              <span id="videoTimeDisplay">00:00 / 00:00</span>
+            </div>
+            <div id="noVideoState" class="empty-state" hidden>
+              <span class="empty-instruction">No source video saved for this session.</span>
+            </div>
+            <div id="emptyState" class="empty-state">
+              <span class="empty-instruction">No active session. Create a session, restore a .VITC.zip session capsule, or import video to begin.</span>
+            </div>
+          </div>
+
+          <div class="transport">
+            <button id="firstBtn" class="transport-button">|&lt;</button>
+            <button id="prevBtn" class="transport-button">&lt;</button>
+            <button id="playBtn" class="transport-button play">Play</button>
+            <button id="nextBtn" class="transport-button">&gt;</button>
+            <button id="lastBtn" class="transport-button">&gt;|</button>
+            <label class="speed-label">Frame Skim Speed
+              <input id="skimSpeed" type="range" min="1" max="20" value="1" />
+              <span id="skimSpeedValue">1 fps</span>
+            </label>
+          </div>
+
+          <div class="frame-position">
+            <label for="frameSlider">Frame Position</label>
+            <input id="frameSlider" type="range" min="0" max="0" value="0" />
+          </div>
+
+          <div id="filmstrip" class="filmstrip" aria-label="Imported frames"></div>
+        </section>
+
+        <aside class="right-panel">
+          <!-- ZONE A: Fixed top - category controls -->
+          <div class="rp-top">
+            <h2>Effects</h2>
+            <div id="effectGroupFilters" class="effect-filter-grid" aria-label="Effect groups"></div>
+          </div>
+
+          <!-- ZONE B: Scrollable middle - effect presets -->
+          <div class="rp-middle">
+            <div id="effectGrid" class="effect-grid"></div>
+          </div>
+
+          <!-- ZONE C: Fixed bottom - evidence/actions -->
+          <div class="rp-bottom">
+            <section class="evidence-controls">
+              <h2>Evidence</h2>
+              <div class="evidence-status">
+                <span>Selected</span>
+                <strong id="selectedEvidenceCount">0</strong>
+              </div>
+              <button id="checkFrameBtn" class="evidence-button">Check Frame</button>
+              <button id="saveEvidenceBtn" class="primary-button">Save Selected As Evidence</button>
+              <button id="exportImageBtn" class="secondary-button">Export Current Image</button>
+              <button id="openSlideshowBtn" class="secondary-button">Slideshow</button>
+            </section>
+          </div>
+        </aside>
+      </main>
+
+      <section class="drawer work-screen" data-view="camera">
+        <div class="drawer-header">
+          <h2>Camera / Session</h2>
+          <button class="close-drawer">Back To Analysis</button>
+        </div>
+        <div class="native-workspace">
+          <aside class="native-side">
+            <!-- No-session entry state -->
+            <section class="panel-section" id="sessionEntrySection">
+              <h2>Session</h2>
+              <strong>No active session</strong>
+              <span>Create a session or restore a capsule to begin.</span>
+              <button id="cameraCreateSessionBtn" class="primary-button">Create Session</button>
+              <button id="cameraRestoreBtn" class="secondary-button">Restore Capsule</button>
+              <button id="cameraImportVideoBtn" class="secondary-button">Import Video / Extract Frames</button>
+            </section>
+
+            <!-- Active session state -->
+            <section class="panel-section" id="activeSessionSection" hidden>
+              <h2>Session</h2>
+              <strong id="cameraSessionName">No active session</strong>
+              <span id="cameraSessionMeta"></span>
+              <div class="toolbar-row" style="margin-top:8px">
+                <button id="cameraNewSessionBtn" class="secondary-button inline-button">New Session</button>
+                <button id="cameraRestoreBtn2" class="secondary-button inline-button">Restore Capsule</button>
+              </div>
+            </section>
+
+            <!-- Camera controls (visible when session active) -->
+            <section class="panel-section" id="cameraControlsSection">
+              <h2>Camera</h2>
+              <label class="field-label" for="cameraDeviceSelect">Device</label>
+              <select id="cameraDeviceSelect" class="select-input"><option>Detecting cameras...</option></select>
+              <label class="field-label" for="cameraFormatSelect">Format</label>
+              <select id="cameraFormatSelect" class="select-input">
+                <option value="640x480">640 x 480 - 480p</option>
+                <option value="960x540">960 x 540 - 540p</option>
+                <option value="1024x576">1024 x 576</option>
+                <option value="1280x720" selected>1280 x 720 - 720p</option>
+                <option value="1600x896">1600 x 896</option>
+                <option value="1920x1080">1920 x 1080 - 1080p</option>
+              </select>
+              <label class="field-label" for="cameraFpsSelect">Frame Rate</label>
+              <select id="cameraFpsSelect" class="select-input">
+                <option value="24">24.00 FPS</option>
+                <option value="30" selected>30.00 FPS</option>
+              </select>
+              <label class="field-label" for="recordingDurationSelect">Recording Duration</label>
+              <select id="recordingDurationSelect" class="select-input">
+                <option value="60000" selected>1 Minute</option>
+                <option value="120000">2 Minutes</option>
+              </select>
+              <button id="refreshCameraBtn" class="secondary-button">Refresh</button>
+              <button id="retryCameraBtn" class="secondary-button" hidden>Retry Camera</button>
+              <p id="cameraStatus" class="status-line">Camera: Ready</p>
+              <p id="cameraDeviceStatus" class="status-line subtle-status">Detected cameras: checking...</p>
+              <p id="autoStopDiagnostic" class="status-line" style="color:#ff0;font-size:11px;min-height:1.2em;"></p>
+            </section>
+          </aside>
+          <section class="native-preview">
+            <div class="camera-viewport" id="cameraViewport">
+              <video id="cameraPreviewVideo" class="camera-preview-video" autoplay playsinline muted hidden></video>
+              <div id="cameraStartup" class="empty-state">
+                <span class="empty-instruction">No active session. Create a session or restore a capsule to begin.</span>
+              </div>
+              <div id="countdownOverlay" class="countdown-overlay" hidden>
+                <div class="countdown-number" id="countdownNumber">10</div>
+                <div class="countdown-label">SECONDS LEFT</div>
+              </div>
+              <div id="recordingProcessOverlay" class="recording-process-overlay" hidden>
+                <div class="recording-process-inner">
+                  <div id="recordingProcessStage" class="recording-process-stage">PROCESSING RECORDING</div>
+                  <div id="recordingProcessDetail" class="recording-process-detail"></div>
+                  <div class="recording-process-bar-wrap">
+                    <div id="recordingProcessBar" class="recording-process-bar"></div>
+                  </div>
+                  <div id="recordingProcessInfo" class="recording-process-info"></div>
+                </div>
+              </div>
+            </div>
+            <div class="camera-record-strip">
+              <strong id="cameraRecordTimer">00:00</strong>
+              <button id="recordCameraBtn" class="danger-button" disabled>Record</button>
+            </div>
+          </section>
+          <aside class="native-side">
+            <section class="panel-section" id="micControlsSection">
+              <h2>Microphone</h2>
+              <label class="field-label" for="audioDeviceSelect">Device</label>
+              <select id="audioDeviceSelect" class="select-input"><option>Detecting microphones...</option></select>
+              <label class="field-label" for="audioChannelSelect">Channels</label>
+              <select id="audioChannelSelect" class="select-input">
+                <option value="1" selected>Mono</option>
+                <option value="2">Stereo</option>
+              </select>
+              <label class="field-label" for="audioSampleRateSelect">Sample Rate</label>
+              <select id="audioSampleRateSelect" class="select-input">
+                <option value="48000" selected>48000 Hz</option>
+                <option value="44100">44100 Hz</option>
+              </select>
+              <button id="refreshAudioBtn" class="secondary-button">Refresh</button>
+              <p id="audioRmsStatus" class="meter-line">RMS: 0.00</p>
+              <p id="audioPeakStatus" class="meter-line">Peak: 0.00</p>
+              <p id="audioStatus" class="status-line">Mic: Ready</p>
+              <p id="audioDeviceStatus" class="status-line subtle-status">Detected microphones: checking...</p>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="drawer work-screen" data-view="library" hidden>
+        <div class="drawer-header library-header">
+          <div>
+            <h2>Session Library</h2>
+            <p>Browser sessions restore from local .vitc.zip capsules.</p>
+          </div>
+          <div class="toolbar-row">
+            <input class="text-input search-input" placeholder="Search sessions..." />
+            <select class="select-input compact-select"><option>Newest First</option></select>
+            <button id="libraryRestoreBtn" class="secondary-button inline-button">Restore Capsule</button>
+            <button class="secondary-button inline-button" disabled>Refresh</button>
+          </div>
+        </div>
+        <div id="libraryGrid" class="session-card-grid"></div>
+      </section>
+
+      <section class="drawer work-screen" data-view="frames" hidden>
+        <div class="drawer-header">
+          <h2>Frames</h2>
+          <span id="framesCountLabel" class="frames-count-label"></span>
+          <button class="close-drawer">Back To Analysis</button>
+        </div>
+        <div id="framesGrid" class="large-frame-grid"></div>
+        <div id="framesLoadMore" class="frames-load-more" hidden>
+          <button id="loadMoreFramesBtn" class="secondary-button">Load More Frames</button>
+        </div>
+      </section>
+
+      <section class="drawer" data-view="evidence" hidden>
+        <div class="drawer-header">
+          <h2>Evidence Candidates</h2>
+          <div class="toolbar-row">
+            <button id="evidenceExportBtn" class="secondary-button inline-button">Export Evidence</button>
+            <button id="evidenceSlideshowBtn" class="secondary-button inline-button">Slideshow</button>
+            <button class="close-drawer inline-button">Back To Analysis</button>
+          </div>
+        </div>
+        <div id="evidenceGrid" class="evidence-grid"></div>
+        <div id="evidenceBatchExportPanel" class="evidence-batch-panel" hidden>
+          <div class="evidence-batch-header">
+            <h3>Batch Export Evidence</h3>
+            <button id="evidenceBatchCloseBtn" class="secondary-button inline-button">Close</button>
+          </div>
+          <div class="evidence-batch-layout">
+            <section>
+              <div class="toolbar-row">
+                <button id="exportSelectAllBtn" class="secondary-button inline-button">Select All</button>
+                <button id="exportClearBtn" class="secondary-button inline-button">Clear</button>
+              </div>
+              <div id="exportGrid" class="export-grid"></div>
+              <section class="preview-band">
+                <h3>Preview - Derived Export</h3>
+                <canvas id="exportPreviewCanvas" width="1280" height="720"></canvas>
+              </section>
+            </section>
+            <aside class="export-settings">
+              <select class="select-input"><option>JPEG</option><option>PNG</option></select>
+              <select class="select-input"><option>Maximum</option><option>High</option></select>
+              <select class="select-input"><option>Original</option><option>Edited Evidence</option></select>
+              <label class="checkbox-row"><input id="exportWatermarkEnabled" type="checkbox" /> Enable Watermark</label>
+              <input id="exportWatermarkText" class="text-input" value="The Paranormal Initiative - ITC Visual Studio" />
+              <select class="select-input"><option>Bottom Right</option><option>Bottom Left</option><option>Top Right</option><option>Top Left</option><option>Center</option></select>
+              <label class="slider-row">Opacity <input id="exportWatermarkOpacity" type="range" min="0" max="1" step="0.01" value="0.5" /></label>
+              <label class="slider-row">Size <input id="exportWatermarkSize" type="range" min="0.4" max="2.4" step="0.01" value="1" /></label>
+              <button id="exportEvidenceNowBtn" class="primary-button">Export</button>
+              <button id="exportToSlideshowBtn" class="secondary-button">Slideshow</button>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="drawer work-screen" data-view="export" hidden>
+        <div class="drawer-header">
+          <h2>Export Session Capsule</h2>
+          <button class="close-drawer">Back To Analysis</button>
+        </div>
+        <div class="capsule-export-layout">
+          <div class="capsule-export-card">
+            <div class="capsule-export-session">
+              <span class="capsule-export-label">Session</span>
+              <strong id="exportSessionName" class="capsule-export-session-name">No active session</strong>
+            </div>
+            <div id="exportSessionSummary" class="capsule-export-summary">
+              <div class="capsule-summary-row"><span>Experiment Type</span><strong id="exportExpType">-</strong></div>
+              <div class="capsule-summary-row"><span>Created</span><strong id="exportCreated">-</strong></div>
+              <div class="capsule-summary-row"><span>Source Video</span><strong id="exportSourceVideo">Not Saved</strong></div>
+              <div class="capsule-summary-row"><span>Frames</span><strong id="exportFrameCount">0</strong></div>
+              <div class="capsule-summary-row"><span>Evidence Candidates</span><strong id="exportEvidenceCount">0</strong></div>
+              <div class="capsule-summary-row"><span>Saved Slideshow Projects</span><strong id="exportProjectCount">0</strong></div>
+              <div class="capsule-summary-row"><span>Rendered Slideshows</span><strong id="exportSlideshowCount">0</strong></div>
+            </div>
+            <div id="capsuleSizeEstimate" class="capsule-size-estimate" hidden>
+              <span>Estimated Capsule Size</span>
+              <strong id="capsuleSizeValue">-</strong>
+            </div>
+            <div class="capsule-export-actions">
+              <button id="exportSessionCapsuleBtn" class="primary-button capsule-export-btn">EXPORT SESSION CAPSULE</button>
+              <p class="capsule-export-hint">Creates a complete portable .VITC.zip archive of the current research session.</p>
+            </div>
+            <div id="capsuleExportStatus" class="capsule-export-status" hidden>
+              <div class="capsule-status-bar"><div id="capsuleProgressFill" class="capsule-progress-fill"></div></div>
+              <span id="capsuleStatusText">Preparing Session Capsule...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="drawer work-screen" data-view="slideshow" hidden>
+        <div class="drawer-header slideshow-titlebar">
+          <div class="toolbar-row title-row">
+            <button class="close-drawer inline-button">&lt; Back</button>
+            <h2>Evidence Slideshow Builder</h2>
+          </div>
+          <button class="nav-button" data-panel="manual">Manual</button>
+        </div>
+        <div class="slideshow-top-controls">
+          <section>
+            <label class="field-label">Saved Projects</label>
+            <select id="slideshowProjectSelect" class="select-input"><option value="">No Saved Projects</option></select>
+          </section>
+          <button id="newSlideshowBtn" class="primary-button inline-button">New</button>
+          <button id="saveSlideshowBtn" class="secondary-button inline-button">Save</button>
+          <span id="slideshowProjectStatus" class="slideshow-project-status"></span>
+          <section class="project-name">
+            <label class="field-label">Project Name</label>
+            <input id="slideshowName" class="text-input" value="" placeholder="Slideshow project name" />
+          </section>
+          <section class="frame-selection-actions">
+            <label class="field-label">Frame Selection</label>
+            <div class="toolbar-row">
+              <button id="slideshowSelectAllBtn" class="secondary-button inline-button">Select All</button>
+              <button id="slideshowClearBtn" class="secondary-button inline-button">Clear</button>
+              <button id="slideshowChronoBtn" class="secondary-button inline-button">Chronological</button>
+            </div>
+          </section>
+        </div>
+        <div class="slideshow-builder">
+          <section class="slideshow-preview-panel">
+            <h3>Slideshow Preview / Evidence Frames</h3>
+            <div class="live-preview-wrap">
+              <h4>Live Preview</h4>
+              <canvas id="slideshowCanvas" width="1280" height="720"></canvas>
+            </div>
+            <div class="slideshow-controls">
+              <button id="playSlideshowBtn" class="primary-button inline-button">Play Slideshow</button>
+              <button id="previewTransitionBtn" class="secondary-button inline-button">Preview Transition</button>
+              <button id="stopSlideshowBtn" class="danger-button inline-button">Stop</button>
+              <span id="slideshowStatus">Preview stopped</span>
+            </div>
+            <div class="slideshow-progress-wrap" id="slideshowProgressWrap" hidden>
+              <div class="slideshow-progress-bar">
+                <div class="slideshow-progress-fill" id="slideshowProgressFill"></div>
+              </div>
+            </div>
+            <div id="slideshowFrameGrid" class="slideshow-frame-grid"></div>
+          </section>
+          <aside class="slideshow-settings">
+            <h3>Slideshow Settings</h3>
+            <select id="slideDurationSelect" class="select-input"><option value="5">5.0 sec</option><option value="3">3.0 sec</option><option value="8">8.0 sec</option></select>
+            <select id="transitionSelect" class="select-input"><option>Cross Fade</option><option>Fade In / Out</option><option>Dissolve</option><option>Horizontal Wipe</option><option>Vertical Wipe</option></select>
+            <select id="transitionDurationSelect" class="select-input"><option value="0.75">0.75 sec</option><option value="1">1.00 sec</option><option value="1.5">1.50 sec</option></select>
+            <select id="slideshowResSelect" class="select-input"><option value="1920x1080">1080p (1920 x 1080)</option><option value="1280x720" selected>720p (1280 x 720)</option></select>
+            <select id="slideshowFpsSelect" class="select-input"><option value="30" selected>30.00 FPS</option><option value="24">24.00 FPS</option></select>
+            <select id="motionSelect" class="select-input"><option>Still</option><option>Ken Burns Pan/Zoom</option></select>
+            <label class="slider-row">Start <input id="kenStart" type="range" min="1" max="2" step="0.01" value="1" /></label>
+            <label class="slider-row">End <input id="kenEnd" type="range" min="1" max="2" step="0.01" value="1.22" /></label>
+            <p id="slideshowDuration">Est. Duration: 00:00:00</p>
+            <p class="section-heading">WATERMARK</p>
+            <label class="checkbox-row"><input id="watermarkEnabled" type="checkbox" /> Enable Watermark</label>
+            <label class="field-label" for="watermarkType">Watermark Type</label>
+            <select id="watermarkType" class="select-input"><option value="text">Text</option><option value="image">Image</option></select>
+            <div id="watermarkTextSection">
+              <label class="field-label" for="watermarkText">Watermark Text</label>
+              <input id="watermarkText" class="text-input" placeholder="Enter watermark text" />
+              <label class="field-label" for="watermarkColor">Color</label>
+              <div class="color-picker-row">
+                <input id="watermarkColor" type="color" value="#ffffff" class="color-picker-input" />
+                <div class="color-presets">
+                  <button type="button" class="color-preset-btn" data-color="#ffffff" title="White" style="background:#ffffff"></button>
+                  <button type="button" class="color-preset-btn" data-color="#59a9dc" title="Blue" style="background:#59a9dc"></button>
+                  <button type="button" class="color-preset-btn" data-color="#d4a03c" title="Amber" style="background:#d4a03c"></button>
+                  <button type="button" class="color-preset-btn" data-color="#ff4444" title="Red" style="background:#ff4444"></button>
+                  <button type="button" class="color-preset-btn" data-color="#51b878" title="Green" style="background:#51b878"></button>
+                  <button type="button" class="color-preset-btn" data-color="#aa66ff" title="Purple" style="background:#aa66ff"></button>
+                  <button type="button" class="color-preset-btn" data-color="#00cccc" title="Cyan" style="background:#00cccc"></button>
+                  <button type="button" class="color-preset-btn" data-color="#ff8800" title="Orange" style="background:#ff8800"></button>
+                  <button type="button" class="color-preset-btn" data-color="#ff66aa" title="Pink" style="background:#ff66aa"></button>
+                  <button type="button" class="color-preset-btn color-preset-black" data-color="#000000" title="Black" style="background:#000000"></button>
+                </div>
+              </div>
+            </div>
+            <div id="watermarkImageSection" hidden>
+              <label class="field-label">Watermark Image</label>
+              <div id="watermarkImagePreview" class="watermark-image-preview">
+                <span class="watermark-image-placeholder">No image selected</span>
+              </div>
+              <div class="toolbar-row" style="margin-top:6px">
+                <button id="chooseWatermarkImageBtn" class="secondary-button inline-button">Choose Image</button>
+                <button id="removeWatermarkImageBtn" class="secondary-button inline-button" hidden>Remove</button>
+              </div>
+              <input id="watermarkImageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+            </div>
+            <select id="watermarkPosition" class="select-input"><option>Bottom Right</option><option>Bottom Left</option><option>Top Right</option><option>Top Left</option><option>Center</option></select>
+            <label class="slider-row">Opacity <input id="watermarkOpacity" type="range" min="0" max="1" step="0.01" value="0.5" /></label>
+            <label class="slider-row">Size <input id="watermarkSize" type="range" min="0.4" max="2.4" step="0.01" value="1" /></label>
+            <button id="exportSlideshowBtn" class="primary-button">Export MP4</button>
+            <button id="showSlideshowFolderBtn" class="secondary-button" disabled>Show Slideshow Folder</button>
+          </aside>
+        </div>
+      </section>
+
+      <section class="drawer work-screen" data-view="settings" hidden>
+        <div class="drawer-header">
+          <h2>Settings</h2>
+          <button class="close-drawer">Back To Analysis</button>
+        </div>
+        <div class="form-grid">
+          <section class="archive-panel">
+            <h3>Recording Defaults</h3>
+            <div class="settings-field">
+              <label class="field-label" for="settingsDefaultRes">Default Recording Resolution</label>
+              <select id="settingsDefaultRes" class="select-input">
+                <option value="1280x720">1280 x 720 (720p)</option>
+                <option value="1920x1080">1920 x 1080 (1080p)</option>
+                <option value="match">Match Camera Stream</option>
+              </select>
+            </div>
+            <div class="settings-field">
+              <label class="field-label" for="settingsDefaultFps">Default Recording FPS</label>
+              <select id="settingsDefaultFps" class="select-input">
+                <option value="24">24 FPS</option>
+                <option value="30" selected>30 FPS</option>
+                <option value="60">60 FPS</option>
+                <option value="match">Match Camera Stream</option>
+              </select>
+            </div>
+          </section>
+          <section class="archive-panel">
+            <h3>Browser Permissions</h3>
+            <p>Camera and microphone access is required for live preview and recording. If access is blocked, allow camera/mic access in your browser site settings and macOS Privacy & Security settings.</p>
+            <div class="settings-field">
+              <span class="field-label">Camera Permission</span>
+              <strong id="settingsCameraPerm" class="status-line">Checking...</strong>
+            </div>
+            <div class="settings-field">
+              <span class="field-label">Microphone Permission</span>
+              <strong id="settingsMicPerm" class="status-line">Checking...</strong>
+            </div>
+            <div class="toolbar-row" style="margin-top:10px">
+              <button id="settingsRefreshPerms" class="secondary-button inline-button">Refresh Permission Status</button>
+            </div>
+          </section>
+          <section class="archive-panel" id="advancedDiagnosticsSection">
+            <details>
+              <summary style="cursor:pointer;color:#8d93a3;font-weight:700;font-size:12px;text-transform:uppercase;margin-bottom:10px">Advanced Diagnostics</summary>
+              <div class="settings-field">
+                <span class="field-label">Secure Context</span>
+                <strong id="settingsSecureContext">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Camera API</span>
+                <strong id="settingsCameraApi">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Cameras Detected</span>
+                <strong id="settingsCameraCount">0</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Microphones Detected</span>
+                <strong id="settingsMicCount">0</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Selected Camera</span>
+                <strong id="settingsSelectedCamera">None</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Selected Microphone</span>
+                <strong id="settingsSelectedMic">None</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Current Resolution</span>
+                <strong id="settingsCurrentRes">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Current FPS</span>
+                <strong id="settingsCurrentFps">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Last Camera Error</span>
+                <strong id="settingsLastError">None</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Recording MIME</span>
+                <strong id="settingsRecordingMime">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Recording Container</span>
+                <strong id="settingsRecordingContainer">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Last FFmpeg Error</span>
+                <strong id="settingsLastFfmpegError" style="word-break:break-all;max-width:260px;display:inline-block;vertical-align:top">None</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Last FFmpeg Exit Code</span>
+                <strong id="settingsLastFfmpegExitCode">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Detected Input Codec</span>
+                <strong id="settingsDetectedCodec">-</strong>
+              </div>
+              <div class="settings-field">
+                <span class="field-label">Local Storage</span>
+                <strong id="settingsStorageInfo">Checking...</strong>
+              </div>
+            </details>
+          </section>
+        </div>
+      </section>
+
+      <section class="drawer" data-view="archive" hidden>
+        <div class="drawer-header">
+          <h2>Import / Restore Capsule</h2>
+          <button class="close-drawer">Back To Analysis</button>
+        </div>
+        <div class="archive-panel">
+          <p>Restore native .vitc.zip session capsules from ITC Visual Studio, review the extracted frames, and save evidence.</p>
+          <button id="archiveRestoreBtn" class="primary-button">Restore Capsule</button>
+          <button id="archiveImportVideoBtn" class="secondary-button">Import Video / Extract Frames</button>
+        </div>
+      </section>
+
+      <section class="drawer work-screen" data-view="manual" hidden>
+        <div class="drawer-header">
+          <h2>Manual</h2>
+          <button class="close-drawer">Back To Analysis</button>
+        </div>
+        <div class="manual-open-prompt">
+          <p>The User Manual opens in a new browser tab so you can keep your session open while reading.</p>
+          <a id="manualOpenLink" class="primary-button" href="./Resources/VisualITCLab_User_Manual.html" target="_blank" rel="noopener noreferrer">Open User Manual</a>
+        </div>
+      </section>
+    </div>
+
+    <div id="capsuleOverlay" class="capsule-overlay" hidden>
+      <div class="capsule-overlay-inner">
+        <div id="capsuleOverlayPrimary" class="capsule-overlay-primary">INSTALLING CAPSULE SESSION...</div>
+        <div id="capsuleOverlaySecondary" class="capsule-overlay-secondary">Please Wait</div>
+        <div id="capsuleOverlayDetail" class="capsule-overlay-detail"></div>
+        <div class="capsule-overlay-bar"><div id="capsuleOverlayFill" class="capsule-overlay-fill"></div></div>
+      </div>
+    </div>
+
+    <script src="./assets/ffmpeg/ffmpeg.js"></script>
+    <script src="./assets/ffmpeg/util.js"></script>
+    <script src="./src/app.js" defer></script>
+  </body>
+</html>

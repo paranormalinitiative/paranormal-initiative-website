@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ITC Visual Studio / Browser Version - User Manual</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1014;
+      --panel: #171922;
+      --panel-2: #202431;
+      --text: #e3e5ec;
+      --muted: #a4a9b6;
+      --soft: #737b8d;
+      --blue: #6db7e8;
+      --green: #92d2a7;
+      --amber: #e7c878;
+      --red: #e57373;
+      --line: #303545;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 28px 22px;
+      background: #12141b;
+      border-right: 1px solid var(--line);
+    }
+
+    nav h2 {
+      margin: 0 0 18px;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    nav a {
+      display: block;
+      padding: 7px 0;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover { color: var(--text); }
+
+    main {
+      max-width: 1080px;
+      padding: 42px clamp(24px, 5vw, 70px) 80px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .version {
+      margin: 0 0 28px;
+      color: var(--blue);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+    }
+
+    .lead {
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .notice {
+      margin: 28px 0;
+      padding: 18px 20px;
+      border: 1px solid rgba(231, 200, 120, 0.42);
+      background: rgba(231, 200, 120, 0.08);
+      color: #f1dd9d;
+      border-radius: 8px;
+    }
+
+    .beta-badge {
+      display: inline-block;
+      margin: 0 0 20px;
+      padding: 6px 14px;
+      background: rgba(109, 183, 232, 0.15);
+      border: 1px solid rgba(109, 183, 232, 0.35);
+      color: var(--blue);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    section {
+      margin-top: 42px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 26px;
+      color: var(--text);
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      font-size: 18px;
+      color: var(--blue);
+    }
+
+    h4 {
+      margin: 20px 0 8px;
+      font-size: 15px;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    p { margin: 0 0 14px; color: var(--muted); }
+
+    ul, ol {
+      margin: 10px 0 18px;
+      padding-left: 24px;
+      color: var(--muted);
+    }
+
+    li { margin: 6px 0; }
+
+    strong { color: var(--text); }
+
+    code {
+      padding: 2px 6px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--amber);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .card {
+      padding: 16px 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card h3 { margin-top: 0; }
+
+    .workflow {
+      counter-reset: step;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .workflow li {
+      counter-increment: step;
+      position: relative;
+      padding: 12px 14px 12px 52px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .workflow li::before {
+      content: counter(step);
+      position: absolute;
+      left: 14px;
+      top: 11px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #24415a;
+      color: #d7efff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 3px 5px 3px 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .good { color: var(--green); }
+    .warn { color: var(--amber); }
+
+    .tech-note {
+      margin: 18px 0;
+      padding: 14px 18px;
+      background: rgba(109, 183, 232, 0.06);
+      border: 1px solid rgba(109, 183, 232, 0.2);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .tech-note strong { color: var(--blue); }
+
+    .status-example {
+      margin: 12px 0;
+      padding: 16px 20px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .status-example .primary { font-weight: 800; font-size: 16px; text-transform: uppercase; }
+    .status-example .secondary { color: var(--blue); margin-top: 4px; }
+    .status-example .detail { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+    @media (max-width: 850px) {
+      .shell { display: block; }
+      nav {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav aria-label="Manual sections">
+      <h2>Manual</h2>
+      <a href="#overview">Overview</a>
+      <a href="#quick-workflow">Quick Workflow</a>
+      <a href="#session">Sessions</a>
+      <a href="#camera">Camera & Recording</a>
+      <a href="#importing">Importing Media</a>
+      <a href="#extraction">Frame Extraction</a>
+      <a href="#analysis">Analysis Lab</a>
+      <a href="#effects">Effects</a>
+      <a href="#frames">Frames Workspace</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#slideshow">Slideshow Builder</a>
+      <a href="#capsule">Session Capsule</a>
+      <a href="#capsule-export">Capsule Export</a>
+      <a href="#capsule-restore">Capsule Restore</a>
+      <a href="#library">Session Library</a>
+      <a href="#storage">Browser Storage</a>
+      <a href="#compatibility">Browser Compatibility</a>
+      <a href="#privacy">Privacy & Local Data</a>
+      <a href="#method">Recommended Method</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+    </nav>
+
+    <main>
+      <h1>ITC Visual Studio / Browser Version</h1>
+      <p class="version">User Manual</p>
+      <div class="beta-badge">Members-Only Beta</div>
+      <p class="lead">ITC Visual Studio / Browser Version is a session-based image and video analysis tool for visual ITC and scrying experiments. It runs entirely in your web browser. It can record a session with a camera and microphone, or it can import outside videos for analysis.</p>
+      <div class="notice">This software does not prove paranormal communication by itself. It is an experimental research tool. The investigator is responsible for context, controls, notes, comparison material, and final interpretation.</div>
+
+      <section id="overview">
+        <h2>Overview</h2>
+        <p>The Browser Version stores all working session data locally in your browser using IndexedDB. Recordings, evidence, and capsules are not uploaded to any server. Your research stays on your device.</p>
+        <p>The primary workflow is:</p>
+        <ol>
+          <li>Create or restore a session</li>
+          <li>Record video or import existing video</li>
+          <li>Extract frames for analysis</li>
+          <li>Review frames, apply effects, mark evidence</li>
+          <li>Build slideshows from evidence</li>
+          <li>Export a Session Capsule for backup or portability</li>
+        </ol>
+      </section>
+
+      <section id="quick-workflow">
+        <h2>Quick Workflow</h2>
+        <ol class="workflow">
+          <li>The app opens to Camera / Session so you can create, restore, or prepare a session first.</li>
+          <li>Create a new session with a name and experiment type, or restore a Session Capsule.</li>
+          <li>Record a new video with your camera, or import an existing video file.</li>
+          <li>Frames are extracted automatically. The app opens Analysis Lab.</li>
+          <li>Use Frame Skim playback to move quickly through setup or empty sections.</li>
+          <li>Mark junk frames for cleanup. Checked evidence frames are protected.</li>
+          <li>Zoom, pan, and apply effects to inspect details.</li>
+          <li>Check frames worth keeping and save them as evidence.</li>
+          <li>Build a slideshow from saved evidence.</li>
+          <li>Export a Session Capsule for backup or portability.</li>
+        </ol>
+      </section>
+
+      <section id="session">
+        <h2>Sessions</h2>
+        <p>Each session is stored locally in your browser. A session keeps the source video, extracted frames, evidence, slideshow projects, and metadata together.</p>
+        <div class="grid">
+          <div class="card"><h3>Create A New Session</h3><p>Use <strong>Create Session</strong> when starting a fresh experiment. Enter a session name (required) and choose an experiment type.</p></div>
+          <div class="card"><h3>Restore A Capsule</h3><p>Use <strong>Restore Capsule</strong> to import a <code>.vitc.zip</code> archive from a previous session or from the Mac application.</p></div>
+          <div class="card"><h3>Import Video</h3><p>Use <strong>Import Video / Extract Frames</strong> to analyze an existing video file. A session is created automatically if one is not active.</p></div>
+        </div>
+        <h3>Experiment Types</h3>
+        <p><span class="tag">Water</span><span class="tag">Fire / Flame</span><span class="tag">Smoke</span><span class="tag">Ink</span><span class="tag">Steam / Vapor</span><span class="tag">Mirror / Reflection</span><span class="tag">General Visual ITC</span><span class="tag">Custom</span></p>
+        <p>Experiment types help categorize sessions. They do not change application behavior.</p>
+      </section>
+
+      <section id="camera">
+        <h2>Camera & Recording</h2>
+        <h3>Camera Selection</h3>
+        <p>When a session is active, the Camera page shows available camera devices. Select your camera from the <strong>Device</strong> dropdown. The app automatically enumerates available cameras, including external USB cameras and Continuity Camera.</p>
+        <h3>Format & Frame Rate</h3>
+        <p>Choose a resolution from the <strong>Format</strong> dropdown:</p>
+        <p><span class="tag">640 x 480</span><span class="tag">960 x 540</span><span class="tag">1024 x 576</span><span class="tag">1280 x 720</span><span class="tag">1600 x 896</span><span class="tag">1920 x 1080</span></p>
+        <p>Choose a frame rate: <strong>24 FPS</strong> or <strong>30 FPS</strong> (default).</p>
+        <h3>Recording Duration</h3>
+        <p>Choose a recording duration from the <strong>Recording Duration</strong> dropdown:</p>
+        <ul>
+          <li><strong>1 Minute</strong> (default) — Produces approximately 1,800 frames at 30 FPS</li>
+          <li><strong>2 Minutes</strong> — Produces approximately 3,600 frames at 30 FPS</li>
+        </ul>
+        <p>The shorter 1-minute option is useful for shorter experimental sessions and produces fewer extracted frames, reducing post-recording processing time. The 2-minute option is the absolute maximum allowed.</p>
+        <p>The recording duration selector is disabled during recording and finalization.</p>
+        <h3>Microphone</h3>
+        <p>The microphone connects automatically when the camera starts. Select your microphone device, channel count (Mono/Stereo), and sample rate (48000 Hz or 44100 Hz) from the Microphone panel. Audio level meters show RMS and Peak levels during preview.</p>
+        <h3>Live Preview</h3>
+        <p>The camera preview starts automatically after a session becomes active. No manual "Connect Devices" or "Arm Camera" step is required. The preview updates when you change the camera device, format, or frame rate.</p>
+        <h3>Recording</h3>
+        <p>Press <strong>Record</strong> to begin capturing video. Press <strong>Record</strong> again (now showing Stop) to end the recording.</p>
+        <h4>MP4/H.264 Preferred</h4>
+        <p>The app prefers MP4/H.264 recording when the browser supports it. If MP4 is not available, it falls back to WebM. The actual recording format is displayed in Settings &gt; Advanced Diagnostics.</p>
+        <h4>Recording Limit</h4>
+        <p>Recording is limited to the selected duration (1 minute or 2 minutes). This limit protects browser performance and prevents excessively large frame-analysis sessions. The absolute maximum is 2 minutes (120 seconds).</p>
+        <h4>Final 10-Second Countdown</h4>
+        <p>During the last 10 seconds of recording, a red countdown overlay appears in the camera preview:</p>
+        <ul>
+          <li><strong>10-6 seconds remaining:</strong> Red pulsing number with "SECONDS LEFT" label</li>
+          <li><strong>5-1 seconds remaining:</strong> Harder pulse, brighter red</li>
+          <li><strong>0 seconds:</strong> Recording stops automatically</li>
+        </ul>
+        <p>For a 1-minute recording, the countdown begins at 0:50. For a 2-minute recording, the countdown begins at 1:50.</p>
+        <p>The countdown is a UI overlay only. It is <strong>not</strong> recorded into the video file.</p>
+        <h4>After Recording</h4>
+        <p>After recording stops, the video is automatically processed: frames are extracted and Analysis Lab opens. The recorded video is preserved as the session source video for Session Video playback.</p>
+      </section>
+
+      <section id="importing">
+        <h2>Importing Media</h2>
+        <h3>Import Video / Extract Frames</h3>
+        <p>You do not have to record video with the app. You can import an existing video file for analysis.</p>
+        <p><span class="tag">MP4</span><span class="tag">MOV</span><span class="tag">WebM</span><span class="tag">MKV</span><span class="tag">AVI</span></p>
+        <h4>Video Preflight</h4>
+        <p>Before extraction, the app inspects the video and shows a summary:</p>
+        <ul>
+          <li>File name and size</li>
+          <li>Duration and resolution</li>
+          <li>Estimated frame count (when FPS is known)</li>
+        </ul>
+        <p>If the video is very large (over 2 minutes, over 4,000 estimated frames, or over 250 MB), a warning dialog appears asking whether to proceed. You can cancel without affecting the session.</p>
+        <h3>Restore Capsule</h3>
+        <p>Use <strong>Restore Capsule</strong> to import a <code>.vitc.zip</code> session archive. See the <a href="#capsule-restore">Capsule Restore</a> section for details.</p>
+      </section>
+
+      <section id="extraction">
+        <h2>Frame Extraction Architecture</h2>
+        <p>When you record or import a video, the app extracts individual frames for analysis.</p>
+        <h3>How It Works</h3>
+        <ol>
+          <li>The source video is decoded using FFmpeg WASM (WebAssembly)</li>
+          <li>Frames are extracted as temporary PNG images</li>
+          <li>Each PNG is converted to JPEG using browser-native image APIs</li>
+          <li>Final JPEG frames are stored in the session at quality 0.93</li>
+        </ol>
+        <div class="tech-note">
+          <strong>Technical Note:</strong> The PNG intermediate step is intentional. Direct FFmpeg WASM MJPEG/JPEG output was proven unstable and caused <code>RuntimeError: memory access out of bounds</code> crashes. The PNG-to-JPEG architecture uses browser-native image processing which is more stable. This is not an unnecessary conversion &mdash; it is a required workaround for the current FFmpeg WASM build.
+        </div>
+        <h3>Batch Processing</h3>
+        <p>Frames are extracted in 5-second batches to manage memory pressure. The source frame rate is preserved: a 30 FPS video produces approximately 30 frames per second of video.</p>
+      </section>
+
+      <section id="analysis">
+        <h2>Analysis Lab</h2>
+        <p>Analysis Lab is where the main review work happens. It has two viewing modes:</p>
+        <div class="grid">
+          <div class="card"><h3>FRAMES Mode</h3><p>Review extracted still frames. Use Frame Skim Speed to control playback rate. Apply effects, zoom, pan, and mark evidence.</p></div>
+          <div class="card"><h3>SESSION VIDEO Mode</h3><p>Play back the original source video with play/pause/scrub controls. Frame Skim Speed has no effect on Session Video.</p></div>
+        </div>
+
+        <h3>Frame Skim Speed</h3>
+        <p>Frame Skim Speed controls how quickly extracted frames advance during playback:</p>
+        <ul>
+          <li><strong>Range:</strong> 1&ndash;20 FPS (integer values)</li>
+          <li><strong>Default:</strong> 1 FPS</li>
+          <li><strong>Effect on Session Video:</strong> None &mdash; completely independent</li>
+        </ul>
+
+        <h3>Transport Controls</h3>
+        <div class="grid">
+          <div class="card"><h3>Play / Pause</h3><p>Starts or pauses frame-by-frame skim playback.</p></div>
+          <div class="card"><h3>Navigation</h3><p><strong>|&lt;</strong> First frame. <strong>&lt;</strong> Previous. <strong>&gt;</strong> Next. <strong>&gt;|</strong> Last frame.</p></div>
+          <div class="card"><h3>Frame Position</h3><p>The slider shows and controls the current frame position in the set.</p></div>
+          <div class="card"><h3>Filmstrip</h3><p>The filmstrip at the bottom shows frame thumbnails. The active frame is highlighted.</p></div>
+        </div>
+
+        <h3>Viewer Modes</h3>
+        <div class="grid">
+          <div class="card"><h3>FIT</h3><p>Fits the entire frame in the viewer, centered, with aspect ratio preserved.</p></div>
+          <div class="card"><h3>FOCUS</h3><p>Fills the viewport with the image. Overflow is cropped for closer inspection.</p></div>
+          <div class="card"><h3>MANUAL</h3><p>Actual pixels (1:1 zoom). User controls zoom and pan. Note: this is a viewer mode, not the User Manual.</p></div>
+        </div>
+
+        <h3>Zoom & Pan</h3>
+        <p>Use the mouse wheel to zoom in and out (0.25x to 8x range). Drag the image to pan when zoomed in. Use <strong>Fit</strong> to return to the full-image view.</p>
+      </section>
+
+      <section id="effects">
+        <h2>Effects</h2>
+        <p>Effects are analysis and visual-processing tools. They are applied to individual frame review state. Use effects to make contrast, edges, shapes, or light patterns easier to evaluate.</p>
+        <h3>Effect Groups</h3>
+        <div class="grid">
+          <div class="card"><h3>ALL</h3><p>Browse all available presets across every group.</p></div>
+          <div class="card"><h3>GEN / General</h3><p>Normal, Monochrome, High Contrast, Negative, Edge, High Gain, Soft Vignette, Vintage Contrast, Screen Glow, Thermal Style, Night Vision, X-Ray Style.</p></div>
+          <div class="card"><h3>WATER</h3><p>Natural, Reflection Boost, Deep Contrast, Blue Luma, Cyan Detail, Surface Edge, Ripple Detail, High Gain Water, Monochrome Water, Negative Water, False Color, LUT presets, and more.</p></div>
+          <div class="card"><h3>SMOKE</h3><p>Natural, Density Boost, Edge, Fine Structure, Blue Contrast, Green Contrast, Monochrome, Negative, High Gain, False Color, and more.</p></div>
+          <div class="card"><h3>FIRE</h3><p>Natural, Flame Detail, High Contrast, Ember Detail, Monochrome, Negative, Edge, Heat False Color, Shadow Recovery, and more.</p></div>
+          <div class="card"><h3>INK</h3><p>Natural, Flow Detail, Edge, High Contrast, Monochrome, Negative, High Gain, False Color, Plate Contrast, and more.</p></div>
+          <div class="card"><h3>STEAM</h3><p>Natural, Density, Edge, High Gain, Cool Contrast, Monochrome, Negative, Fine Detail, False Color, and more.</p></div>
+          <div class="card"><h3>REF / Reflection</h3><p>Natural, Contrast, Shadow Detail, Highlight Detail, Monochrome, Edge, Negative, Color Isolation, High Gain, Mirror Vignette, and more.</p></div>
+        </div>
+        <p>Effects use the same viewing-layer stack as the Mac application: Monochrome, Contrast, Gamma, Soft Glow, Vignette, Negative, Sobel Edge Enhancement, High Gain with shadow boost/grain, and Posterization. Water-scrying LUT files use trilinear interpolation.</p>
+      </section>
+
+      <section id="frames">
+        <h2>Frames Workspace</h2>
+        <p>The Frames workspace shows the complete session frame collection as a scrollable grid of thumbnails.</p>
+        <h3>Large Frame Collections</h3>
+        <p>Large sessions are rendered incrementally for browser performance. The frame count label always shows the authoritative session total (e.g., "3,600 frames"). Not all full-resolution thumbnails need to be decoded simultaneously &mdash; only visible and near-visible thumbnails exist as DOM nodes.</p>
+        <p>The grid uses continuous scroll: as you scroll down, more thumbnails are automatically loaded and rendered.</p>
+      </section>
+
+      <section id="evidence">
+        <h2>Evidence</h2>
+        <h3>Evidence Candidates</h3>
+        <p>Evidence frames are researcher-selected candidate frames from the session. They represent frames worth keeping, reviewing further, or including in slideshows.</p>
+        <div class="grid">
+          <div class="card"><h3>Check Frame</h3><p>Marks the current frame as a candidate. Preserves the frame number, effect, zoom level, pan position, and preview snapshot.</p></div>
+          <div class="card"><h3>Uncheck Frame</h3><p>Removes the candidate mark. The frame remains in the session but is no longer an evidence candidate.</p></div>
+          <div class="card"><h3>Save Selected As Evidence</h3><p>Saves all checked frames as evidence. Evidence is visible in the Evidence workspace and available for export and slideshow building.</p></div>
+        </div>
+
+        <h3>Frames vs. Evidence</h3>
+        <ul>
+          <li><strong>Frames:</strong> All extracted analysis frames from the session</li>
+          <li><strong>Evidence:</strong> Researcher-selected candidate frames worth keeping</li>
+        </ul>
+
+        <h3>Evidence Workspace</h3>
+        <p>The Evidence workspace shows saved evidence candidates in a grid. From here you can:</p>
+        <ul>
+          <li>Export individual or batch evidence images</li>
+          <li>Send evidence to the Slideshow Builder</li>
+          <li>Preview evidence with or without effects</li>
+        </ul>
+
+        <h3>Export Evidence</h3>
+        <p>Evidence export saves selected images as standalone files. Choose format (JPEG/PNG), quality, original or edited output, and optional watermark settings.</p>
+      </section>
+
+      <section id="slideshow">
+        <h2>Slideshow Builder</h2>
+        <p>The Slideshow Builder creates MP4 presentations from saved evidence frames.</p>
+
+        <h3>Projects</h3>
+        <p>Each slideshow is saved as a named project. You can have multiple projects per session.</p>
+        <ul>
+          <li><strong>New:</strong> Opens a naming dialog. Every project requires a name.</li>
+          <li><strong>Save:</strong> Persists the current project configuration.</li>
+          <li><strong>Saved Projects:</strong> Dropdown lists all projects for the active session. Select one to load it.</li>
+        </ul>
+        <p>Projects track dirty state. If you have unsaved changes, the status indicator shows "Unsaved Changes" in yellow.</p>
+
+        <h3>Frame Selection</h3>
+        <ul>
+          <li><strong>Select All:</strong> Selects all evidence frames</li>
+          <li><strong>Clear:</strong> Deselects all frames</li>
+          <li><strong>Chronological:</strong> Arranges selected frames in recording order</li>
+        </ul>
+
+        <h3>Slide Settings</h3>
+        <div class="grid">
+          <div class="card"><h3>Slide Duration</h3><p>3.0, 5.0 (default), or 8.0 seconds per slide.</p></div>
+          <div class="card"><h3>Transition</h3><p>Cross Fade, Fade In / Out, Dissolve, Horizontal Wipe, Vertical Wipe.</p></div>
+          <div class="card"><h3>Transition Duration</h3><p>0.75, 1.00, or 1.50 seconds.</p></div>
+          <div class="card"><h3>Resolution</h3><p>720p (1280 x 720) or 1080p (1920 x 1080).</p></div>
+          <div class="card"><h3>Frame Rate</h3><p>24 or 30 FPS (default).</p></div>
+        </div>
+
+        <h3>Transitions</h3>
+        <div class="grid">
+          <div class="card"><h3>Cross Fade</h3><p>Both images visible simultaneously. Outgoing fades out while incoming fades in.</p></div>
+          <div class="card"><h3>Fade In / Out</h3><p>Outgoing fades to black, then incoming fades in. No simultaneous overlap.</p></div>
+          <div class="card"><h3>Dissolve</h3><p>Per-pixel noise mask. Pixels transition at different times based on a deterministic hash.</p></div>
+          <div class="card"><h3>Horizontal Wipe</h3><p>Incoming image revealed left-to-right via clipping.</p></div>
+          <div class="card"><h3>Vertical Wipe</h3><p>Incoming image revealed top-to-bottom via clipping.</p></div>
+        </div>
+
+        <h3>Ken Burns Pan/Zoom</h3>
+        <p>Ken Burns adds motion to still images by slowly zooming and panning. Select "Ken Burns Pan/Zoom" from the Motion dropdown. Adjust the Start and End zoom sliders (1.0 to 2.0). Six deterministic motion patterns rotate through the slide index to create visual variety.</p>
+        <p>Ken Burns motion continues through transitions. It works independently in Still mode as well.</p>
+
+        <h3>Watermark</h3>
+        <p>Enable a text or image watermark on slideshow frames.</p>
+        <h4>Text Watermark</h4>
+        <ul>
+          <li>Custom text with configurable color</li>
+          <li>Color picker with 10 preset colors: White, Blue, Amber, Red, Green, Purple, Cyan, Orange, Pink, Black</li>
+          <li>Position: Bottom Right, Bottom Left, Top Right, Top Left, Center</li>
+          <li>Opacity: 0&ndash;1 (default 0.5)</li>
+          <li>Size: 0.4&ndash;2.4 (default 1.0)</li>
+        </ul>
+        <h4>Image Watermark</h4>
+        <ul>
+          <li>Upload a PNG, JPEG, or WebP image</li>
+          <li>Scaled proportionally to base size &times; size slider</li>
+          <li>Same position and opacity controls as text</li>
+        </ul>
+
+        <h3>Preview</h3>
+        <p>Use <strong>Play Slideshow</strong> to preview the full slideshow with transitions, Ken Burns motion, and watermarks. Use <strong>Preview Transition</strong> to test just the transition between two slides. Use <strong>Stop</strong> to end playback.</p>
+
+        <h3>Export</h3>
+        <p><strong>Export MP4</strong> creates the slideshow video. The project is auto-saved before export. MP4 is preferred; WebM is used as fallback if MP4 MediaRecorder is not available. The exported file downloads to your device and is also saved in the session.</p>
+      </section>
+
+      <section id="capsule">
+        <h2>Session Capsule</h2>
+        <p>A Session Capsule is a portable archive of your research session. It packages everything needed to restore the session on another device or at a later time.</p>
+
+        <h3>Format</h3>
+        <p><code>&lt;Session Name&gt;.vitc.zip</code></p>
+        <p>The capsule is a standard ZIP archive with a <code>.vitc.zip</code> extension.</p>
+
+        <h3>Contents</h3>
+        <p>A capsule may contain:</p>
+        <ul>
+          <li><strong>Metadata/</strong> &mdash; Session configuration, frame metadata, evidence metadata, slideshow project metadata</li>
+          <li><strong>Images/</strong> &mdash; Extracted JPEG or PNG frames</li>
+          <li><strong>Evidence/</strong> &mdash; Saved evidence candidate images</li>
+          <li><strong>Markers/</strong> &mdash; Session markers</li>
+          <li><strong>Notes/</strong> &mdash; Session notes</li>
+          <li><strong>Video/</strong> &mdash; Source video (recorded or imported)</li>
+          <li><strong>Exports/Slideshows/</strong> &mdash; Rendered slideshow MP4/WebM files</li>
+          <li><strong>Slideshow/Projects/</strong> &mdash; Watermark image assets for slideshow projects</li>
+        </ul>
+        <p>Content depends on what was actually created in the session. If no slideshow was created, no slideshow files are included.</p>
+      </section>
+
+      <section id="capsule-export">
+        <h2>Capsule Export</h2>
+        <p>Export creates a complete portable archive of the current session.</p>
+        <h3>How to Export</h3>
+        <ol>
+          <li>Open the <strong>Export</strong> workspace</li>
+          <li>Review the session summary (name, type, frames, evidence, slideshows)</li>
+          <li>Press <strong>EXPORT SESSION CAPSULE</strong></li>
+        </ol>
+
+        <h3>Export Status</h3>
+        <p>During export, a prominent status overlay appears:</p>
+        <div class="status-example">
+          <div class="primary">CREATING SESSION CAPSULE</div>
+          <div class="secondary">Please Wait</div>
+          <div class="detail">Adding Frames... 1,842 / 3,600</div>
+        </div>
+        <p>Detailed progress stages appear beneath the primary status:</p>
+        <ul>
+          <li>Adding Metadata</li>
+          <li>Adding Frames (with count)</li>
+          <li>Adding Evidence</li>
+          <li>Adding Source Video</li>
+          <li>Adding Slideshows</li>
+          <li>Adding Slideshow Projects</li>
+          <li>Creating ZIP</li>
+        </ul>
+
+        <h3>Export Completion</h3>
+        <p>When the archive is generated successfully:</p>
+        <div class="status-example">
+          <div class="primary good">SESSION CAPSULE CREATED</div>
+          <div class="detail">Water_Test_002.vitc.zip</div>
+        </div>
+        <p>The file downloads automatically. The live Library session is not deleted by export.</p>
+
+        <h3>Large Archives</h3>
+        <p>If the estimated capsule size exceeds 200 MB, a confirmation dialog appears showing the estimated size and contents. You can cancel or continue.</p>
+      </section>
+
+      <section id="capsule-restore">
+        <h2>Capsule Restore</h2>
+        <p>Restore reconstructs a session from a <code>.vitc.zip</code> capsule into browser storage.</p>
+        <h3>How to Restore</h3>
+        <ol>
+          <li>Click <strong>Restore Capsule</strong> (available on Camera, Library, or Import pages)</li>
+          <li>Select a <code>.vitc.zip</code> file</li>
+          <li>Wait for the restore to complete</li>
+        </ol>
+
+        <h3>Restore Status</h3>
+        <p>During restore, a prominent status overlay appears:</p>
+        <div class="status-example">
+          <div class="primary">INSTALLING CAPSULE SESSION...</div>
+          <div class="secondary">Please Wait</div>
+          <div class="detail">Restoring Frames...</div>
+        </div>
+        <p>Large capsules containing thousands of frames may require noticeable time to restore. The status remains visible throughout the entire operation.</p>
+        <p>Detailed progress stages include:</p>
+        <ul>
+          <li>Restoring Session Metadata</li>
+          <li>Restoring Frames</li>
+          <li>Restoring Evidence</li>
+          <li>Restoring Source Video</li>
+          <li>Restoring Slideshow Projects</li>
+          <li>Restoring Slideshow Exports</li>
+          <li>Saving Session</li>
+        </ul>
+
+        <h3>Restore Completion</h3>
+        <p>When restore is successful:</p>
+        <div class="status-example">
+          <div class="primary good">CAPSULE SESSION INSTALLED</div>
+          <div class="detail">3,600 Frames / 4 Evidence / 1 Slideshow Project</div>
+        </div>
+
+        <h3>What Gets Restored</h3>
+        <p>A complete round-trip restore includes:</p>
+        <ul>
+          <li>Session metadata and configuration</li>
+          <li>All extracted frames</li>
+          <li>Evidence candidates with their edit state</li>
+          <li>Source video (when included in capsule)</li>
+          <li>Slideshow projects with all settings</li>
+          <li>Rendered slideshow MP4s</li>
+        </ul>
+        <p>Runtime object URLs are recreated as needed. They are browser-local references, not portable file paths.</p>
+      </section>
+
+      <section id="library">
+        <h2>Session Library</h2>
+        <p>The Library shows all sessions stored in your browser. Each session card displays:</p>
+        <ul>
+          <li>Session name</li>
+          <li>Experiment type</li>
+          <li>Date and time</li>
+          <li>Frame count</li>
+          <li>Evidence count</li>
+          <li>Source video availability</li>
+          <li>Slideshow count (when applicable)</li>
+        </ul>
+        <h3>Opening Sessions</h3>
+        <p>Click a session card to open it. The session loads into Analysis Lab for continued review.</p>
+        <h3>Deleting Sessions</h3>
+        <p>Deleting a Library session removes its browser-local session data permanently. <strong>Export a Session Capsule first if you want a portable backup.</strong></p>
+      </section>
+
+      <section id="storage">
+        <h2>Browser Storage & Session Capsule Backups</h2>
+        <p>The Browser Version stores working session information locally in your browser using IndexedDB.</p>
+        <h3>Important Facts</h3>
+        <ul>
+          <li>Refreshing the page does not normally remove persisted sessions.</li>
+          <li>Closing and reopening the browser usually preserves sessions.</li>
+          <li><strong>Clearing browser/site data can remove locally stored sessions.</strong></li>
+          <li>Using incognito/private mode does not persist sessions after the window closes.</li>
+        </ul>
+        <h3>Backup Recommendation</h3>
+        <p>For important research sessions, <strong>always export a Session Capsule</strong>. The capsule is a portable <code>.vitc.zip</code> file that you can store on your computer, external drive, or cloud storage. Browser-local data should not be treated as your only permanent archive.</p>
+      </section>
+
+      <section id="compatibility">
+        <h2>Browser Compatibility</h2>
+        <h3>Primary Tested Browser</h3>
+        <p><strong>Google Chrome / Chromium</strong></p>
+        <p>The Browser Version is developed and primarily tested in Chrome/Chromium. Beta testing should initially prioritize Chrome/Chromium.</p>
+        <h3>Other Browsers</h3>
+        <p>Browser APIs can differ across Safari, Firefox, Opera, Edge, and other Chromium/non-Chromium browsers. The following APIs may behave differently between browsers:</p>
+        <ul>
+          <li>Camera permissions and <code>getUserMedia</code></li>
+          <li>Recording codecs (<code>MediaRecorder</code>)</li>
+          <li>Video playback formats</li>
+          <li>IndexedDB behavior and storage limits</li>
+          <li><code>OffscreenCanvas</code> support</li>
+          <li>DecompressionStream for ZIP extraction</li>
+        </ul>
+        <p>Full compatibility outside Chrome/Chromium has not been verified. If you encounter issues in another browser, try Chrome/Chromium.</p>
+      </section>
+
+      <section id="privacy">
+        <h2>Privacy & Local Data Architecture</h2>
+        <p>All session media remains local to your browser. The Browser Version does not upload recordings, evidence, frames, or capsules to any server.</p>
+        <h3>What Is Hosted</h3>
+        <ul>
+          <li><strong>Application code:</strong> Hosted on the web (Cloudflare/GitHub Pages)</li>
+          <li><strong>Your research sessions:</strong> Stored locally in your browser (IndexedDB)</li>
+        </ul>
+        <p>Website hosting and application code hosting are separate from your locally stored research sessions. Your data stays on your device.</p>
+      </section>
+
+      <section id="method">
+        <h2>Recommended Working Method</h2>
+        <ol>
+          <li>Create a session with a clear, descriptive name before recording or importing.</li>
+          <li>Use 720p / 30 FPS unless you need a larger source.</li>
+          <li>Record or import your video.</li>
+          <li>Frames are extracted automatically.</li>
+          <li>Use Frame Skim playback (1&ndash;20 FPS) to move through setup or empty sections.</li>
+          <li>Use <strong>Mark Before</strong> to mark junk frames before the first useful frame.</li>
+          <li>Use <strong>Delete Marked</strong> to remove junk frames. Checked evidence frames are protected.</li>
+          <li>Review remaining frames. Use FIT, FOCUS, or MANUAL viewer modes as needed.</li>
+          <li>Apply effects only to test whether detail becomes clearer.</li>
+          <li>Check frames worth keeping.</li>
+          <li>Save checked frames as evidence.</li>
+          <li>Export evidence images if needed.</li>
+          <li>Build a slideshow from saved evidence.</li>
+          <li><strong>Export a Session Capsule</strong> for backup before closing.</li>
+        </ol>
+      </section>
+
+      <section id="troubleshooting">
+        <h2>Troubleshooting</h2>
+        <div class="grid">
+          <div class="card"><h3>Camera Does Not Start</h3><p>Create or open a session first. Check browser camera permission. Try the Refresh button. Use 1280 x 720 at 30 FPS. Close other apps using the camera.</p></div>
+          <div class="card"><h3>Microphone Does Not Start</h3><p>Create or open a session first. Check browser microphone permission. Try the Refresh button. Confirm the correct device is selected.</p></div>
+          <div class="card"><h3>Imported Video Does Not Extract</h3><p>Try MP4 or MOV if MKV fails. Confirm the file plays outside the browser. Make sure the file is not still being written.</p></div>
+          <div class="card"><h3>Frames Look Wrong</h3><p>Confirm Normal effect is selected. Use Fit to reset zoom/pan. Re-extract frames if the source was incomplete.</p></div>
+          <div class="card"><h3>Capsule Restore Is Slow</h3><p>Large capsules with thousands of frames take time. The "INSTALLING CAPSULE SESSION..." overlay shows progress. Wait for the "CAPSULE SESSION INSTALLED" confirmation.</p></div>
+          <div class="card"><h3>Slideshow Preview Is Black</h3><p>Confirm evidence frames are selected and exist. Try Still mode first, then test Ken Burns and transitions.</p></div>
+          <div class="card"><h3>I Lost My Session</h3><p>Sessions are stored in browser storage. If you cleared browser data, sessions are lost. Always export a Session Capsule for backup.</p></div>
+          <div class="card"><h3>Manual Does Not Open</h3><p>The Manual opens in a new browser tab. Allow pop-ups for this site if your browser blocks it.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
