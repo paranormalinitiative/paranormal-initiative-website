@@ -4481,12 +4481,12 @@ function updateCameraRecordTimer(forcedSeconds) {
 
 function bestCameraRecordingMimeType() {
   const candidates = [
-    { mime: 'video/mp4;codecs="avc1.42E01E,mp4a.40.2"', label: "H.264 MP4" },
-    { mime: "video/mp4;codecs=h264,aac", label: "H.264 MP4 (alt)" },
-    { mime: "video/mp4", label: "MP4 (browser default)" },
     { mime: "video/webm;codecs=vp8,opus", label: "VP8 WebM" },
     { mime: "video/webm;codecs=vp9,opus", label: "VP9 WebM" },
     { mime: "video/webm", label: "WebM (browser default)" },
+    { mime: 'video/mp4;codecs="avc1.42E01E,mp4a.40.2"', label: "H.264 MP4" },
+    { mime: "video/mp4;codecs=h264,aac", label: "H.264 MP4 (alt)" },
+    { mime: "video/mp4", label: "MP4 (browser default)" },
   ];
   for (const c of candidates) {
     const supported = MediaRecorder.isTypeSupported(c.mime);
