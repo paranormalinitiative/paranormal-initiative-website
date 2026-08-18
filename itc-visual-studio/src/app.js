@@ -3179,23 +3179,15 @@ async function importVideoFile(file, options = {}) {
     console.log("FFMPEG DIAG 6 - EXEC", JSON.stringify(execArgs));
     let execResult;
     let fullExtractFailed = false;
-    const extractionStart = performance.now();
     try {
       execResult = await ffmpeg.exec(execArgs);
     } catch (execErr) {
       fullExtractFailed = true;
       execResult = execErr;
     }
-    const extractionElapsed = ((performance.now() - extractionStart) / 1000).toFixed(1);
     const execCode = typeof execResult === "number" ? execResult : 0;
     lastFfmpegExitCode = execCode;
     console.log("  exec returned:", execResult);
-    // FULL FRAME EXTRACTION PERF - diagnostic timing
-    console.log("FULL FRAME EXTRACTION PERF");
-    console.log(`  inputMime=${lastRecordingMime || "?"}`);
-    console.log(`  elapsed=${extractionElapsed}s`);
-    console.log(`  execCode=${execCode}`);
-    console.log(`  failed=${fullExtractFailed}`);
 
     let batchedMode = false;
     if (fullExtractFailed || execCode !== 0) {
@@ -3348,8 +3340,6 @@ async function importVideoFile(file, options = {}) {
         console.log("  first frame:", entries[0].name);
         console.log("  last frame:", entries[entries.length - 1].name);
       }
-      // FULL FRAME EXTRACTION PERF - PNG count
-      console.log(`  extractedPngCount=${entries.length}`);
       if (isRecordingHandoff) setPipelineStage(`FRAME DIRECTORY LISTED | count=${entries.length}`);
       if (entries.length === 0) {
         throw new Error("FFmpeg completed but produced zero PNG frames.");
@@ -4079,17 +4069,6 @@ function startCameraRecording() {
     state.camera.recorder = new MediaRecorder(stream, mimeType ? { mimeType, videoBitsPerSecond: 8000000 } : { videoBitsPerSecond: 8000000 });
     lastRecordingMime = state.camera.recorder.mimeType;
     console.log("  MediaRecorder created, mimeType:", state.camera.recorder.mimeType);
-    // RECORDING FORMAT TEST diagnostics
-    const formatOverride = new URLSearchParams(window.location.search).get("recordingFormat") || "auto";
-    const vs = videoTracks[0]?.getSettings();
-    console.log("RECORDING FORMAT TEST");
-    console.log(`  requested=${formatOverride}`);
-    console.log(`  selected=${mimeType}`);
-    console.log(`  actual=${state.camera.recorder.mimeType}`);
-    console.log(`  videoTracks=${videoTracks.length}`);
-    console.log(`  audioTracks=${audioTracks.length}`);
-    console.log(`  resolution=${vs?.width || "?"}x${vs?.height || "?"}`);
-    console.log(`  fps=${vs?.frameRate || "?"}`);
     updateSettingsDiagnostics();
   } catch (e) {
     console.error("RECORD DIAG 1 FAIL - MediaRecorder constructor error:", e);
@@ -4304,14 +4283,6 @@ function finalizeCameraRecording(recorder, chunks, mimeType, sessionId) {
         const safeSession = safeName(state.session?.name || "Browser_Recording");
         const file = new File([blob], `${safeSession}_${timestampName()}.${ext}`, { type: mimeType });
 
-        // RECORDING FORMAT TEST - file result logging
-        const recordingElapsedSec = state.camera.recordingStartedAt ? ((Date.now() - state.camera.recordingStartedAt) / 1000).toFixed(1) : "?";
-        console.log("RECORDING FORMAT RESULT");
-        console.log(`  filename=${file.name}`);
-        console.log(`  mimeType=${mimeType}`);
-        console.log(`  blobBytes=${blob.size}`);
-        console.log(`  elapsedSeconds=${recordingElapsedSec}`);
-
         if (state.session) {
           state.session.recordingMimeType = mimeType;
           state.session.recordingLimitSeconds = Math.round(state.camera.activeRecordDurationMs / 1000);
@@ -4510,33 +4481,13 @@ function updateCameraRecordTimer(forcedSeconds) {
 
 function bestCameraRecordingMimeType() {
   const candidates = [
-    { mime: "video/webm;codecs=vp8,opus", label: "VP8 WebM" },
-    { mime: "video/webm;codecs=vp9,opus", label: "VP9 WebM" },
-    { mime: "video/webm", label: "WebM (browser default)" },
     { mime: 'video/mp4;codecs="avc1.42E01E,mp4a.40.2"', label: "H.264 MP4" },
     { mime: "video/mp4;codecs=h264,aac", label: "H.264 MP4 (alt)" },
     { mime: "video/mp4", label: "MP4 (browser default)" },
+    { mime: "video/webm;codecs=vp8,opus", label: "VP8 WebM" },
+    { mime: "video/webm;codecs=vp9,opus", label: "VP9 WebM" },
+    { mime: "video/webm", label: "WebM (browser default)" },
   ];
-
-  const requested = new URLSearchParams(window.location.search).get("recordingFormat");
-  if (requested && requested !== "auto") {
-    const overrideMap = {
-      vp8: "video/webm;codecs=vp8,opus",
-      vp9: "video/webm;codecs=vp9,opus",
-      webm: "video/webm",
-      mp4: 'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
-    };
-    const overrideMime = overrideMap[requested];
-    if (overrideMime) {
-      const supported = MediaRecorder.isTypeSupported(overrideMime);
-      console.log(`RECORDING FORMAT OVERRIDE: requested=${requested} mime=${overrideMime} supported=${supported}`);
-      if (supported) return overrideMime;
-      console.warn(`RECORDING FORMAT OVERRIDE: ${requested} (${overrideMime}) is not supported, falling back to default`);
-    } else {
-      console.warn(`RECORDING FORMAT OVERRIDE: unknown value "${requested}", falling back to default`);
-    }
-  }
-
   for (const c of candidates) {
     const supported = MediaRecorder.isTypeSupported(c.mime);
     console.log(`MIME CHECK: ${c.mime} => ${supported}`);
