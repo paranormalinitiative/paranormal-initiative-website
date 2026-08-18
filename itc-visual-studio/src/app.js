@@ -2188,6 +2188,7 @@ function bindElements() {
     "cameraRecordTimer", "recordCameraBtn", "audioDeviceSelect", "audioChannelSelect",
     "audioSampleRateSelect", "refreshAudioBtn", "audioRmsStatus", "audioPeakStatus", "audioStatus",
     "cameraDeviceStatus", "audioDeviceStatus", "countdownOverlay", "countdownNumber",
+    "activeCameraDisplay", "activeMicDisplay",
     "recordingProcessOverlay", "recordingProcessStage", "recordingProcessDetail", "recordingProcessBar", "recordingProcessInfo",
     "cameraSessionName", "cameraSessionMeta", "libraryGrid", "framesGrid", "framesCountLabel", "loadMoreFramesBtn",
     "autoStopDiagnostic",
@@ -3642,6 +3643,7 @@ async function refreshMediaDevices(options = {}) {
     populateDeviceSelect(el.cameraDeviceSelect, videoInputs, "camera");
     populateDeviceSelect(el.audioDeviceSelect, audioInputs, "microphone");
     updateDeviceDiagnostics(videoInputs, audioInputs);
+    updateActiveDeviceDisplay();
     setCameraStatus(state.camera.videoStream ? "CAMERA: ARMED" : videoInputs.length ? "Camera: Ready" : "Camera: no camera found");
     setAudioStatus(state.camera.audioStream ? activeAudioStatusText() : audioInputs.length ? "MIC: OFF" : "Mic: no microphone found");
   } catch (error) {
@@ -3679,7 +3681,12 @@ function populateDeviceSelect(select, devices, label) {
   select.innerHTML = "";
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
-  defaultOption.textContent = label === "camera" ? "System Default Camera" : "System Default Microphone";
+  const defaultDeviceLabel = devices.length > 0 && devices[0].label ? devices[0].label : "";
+  if (label === "camera") {
+    defaultOption.textContent = defaultDeviceLabel ? `System Default \u2014 ${defaultDeviceLabel}` : "System Default Camera";
+  } else {
+    defaultOption.textContent = defaultDeviceLabel ? `System Default \u2014 ${defaultDeviceLabel}` : "System Default Microphone";
+  }
   select.appendChild(defaultOption);
 
   if (devices.length === 0) {
@@ -3714,6 +3721,41 @@ function updateDeviceDiagnostics(videoInputs, audioInputs) {
     el.audioDeviceStatus.textContent = audioInputs.length
       ? `Detected microphones: ${audioInputs.length} - ${names}`
       : "Detected microphones: 0 - use System Default Microphone, then check browser and macOS microphone permissions.";
+  }
+}
+
+function updateActiveDeviceDisplay() {
+  if (el.activeCameraDisplay) {
+    const videoTrack = state.camera.videoStream?.getVideoTracks?.()?.[0];
+    if (videoTrack && videoTrack.readyState === "ended") {
+      el.activeCameraDisplay.textContent = "Active Camera: disconnected";
+      el.activeCameraDisplay.classList.add("no-device");
+    } else if (videoTrack && videoTrack.label) {
+      el.activeCameraDisplay.textContent = `Active Camera: ${videoTrack.label}`;
+      el.activeCameraDisplay.classList.remove("no-device");
+    } else if (state.camera.videoStream) {
+      el.activeCameraDisplay.textContent = "Active Camera: connected (label unavailable)";
+      el.activeCameraDisplay.classList.remove("no-device");
+    } else {
+      el.activeCameraDisplay.textContent = "Active Camera: \u2014";
+      el.activeCameraDisplay.classList.add("no-device");
+    }
+  }
+  if (el.activeMicDisplay) {
+    const audioTrack = state.camera.audioStream?.getAudioTracks?.()?.[0];
+    if (audioTrack && audioTrack.readyState === "ended") {
+      el.activeMicDisplay.textContent = "Active Microphone: disconnected";
+      el.activeMicDisplay.classList.add("no-device");
+    } else if (audioTrack && audioTrack.label) {
+      el.activeMicDisplay.textContent = `Active Microphone: ${audioTrack.label}`;
+      el.activeMicDisplay.classList.remove("no-device");
+    } else if (state.camera.audioStream) {
+      el.activeMicDisplay.textContent = "Active Microphone: connected (label unavailable)";
+      el.activeMicDisplay.classList.remove("no-device");
+    } else {
+      el.activeMicDisplay.textContent = "Active Microphone: \u2014";
+      el.activeMicDisplay.classList.add("no-device");
+    }
   }
 }
 
@@ -3840,6 +3882,7 @@ function attachConnectedStream(stream) {
     el.cameraPreviewVideo.hidden = false;
     setCameraStatus("Camera: Armed");
     updateCameraCaptureMetadata();
+    videoTracks.forEach((track) => track.addEventListener("ended", () => updateActiveDeviceDisplay()));
   } else {
     state.camera.videoStream = null;
     el.cameraPreviewVideo.srcObject = null;
@@ -3855,11 +3898,13 @@ function attachConnectedStream(stream) {
     state.camera.audioStream = new MediaStream(audioTracks);
     setupAudioMeter();
     setAudioStatus(activeAudioStatusText());
+    audioTracks.forEach((track) => track.addEventListener("ended", () => updateActiveDeviceDisplay()));
   } else {
     state.camera.audioStream = null;
     stopAudioMeter();
     setAudioStatus("MIC: OFF");
   }
+  updateActiveDeviceDisplay();
 }
 
 function buildCameraConstraints() {
@@ -3948,6 +3993,7 @@ async function toggleCameraArm() {
 
     updateCameraStartupOverlay();
     updateCameraCaptureMetadata();
+    updateActiveDeviceDisplay();
     await refreshMediaDevices({ afterPermission: true });
   } catch (error) {
     console.error(error);
@@ -4390,6 +4436,7 @@ function stopCameraStream() {
   // Update startup overlay and record button based on session + camera state
   updateCameraStartupOverlay();
   updateRecordButtonState();
+  updateActiveDeviceDisplay();
 }
 
 function stopAudioStream() {
@@ -4398,6 +4445,7 @@ function stopAudioStream() {
   state.camera.audioStream = null;
   stopAudioMeter();
   setAudioStatus("MIC: OFF");
+  updateActiveDeviceDisplay();
 }
 
 function updateCameraControls() {
@@ -4863,8 +4911,8 @@ async function updateSettingsDiagnostics() {
     const selMicId = el.audioDeviceSelect?.value;
     const camDevice = videoInputs.find((d) => d.deviceId === selCamId);
     const micDevice = audioInputs.find((d) => d.deviceId === selMicId);
-    selectedCameraName = camDevice?.label || (selCamId ? "Selected camera" : "System Default");
-    selectedMicName = micDevice?.label || (selMicId ? "Selected mic" : "System Default");
+    selectedCameraName = camDevice?.label || (selCamId ? "Selected camera" : (videoInputs[0]?.label ? `System Default \u2014 ${videoInputs[0].label}` : "System Default"));
+    selectedMicName = micDevice?.label || (selMicId ? "Selected mic" : (audioInputs[0]?.label ? `System Default \u2014 ${audioInputs[0].label}` : "System Default"));
   } catch {}
 
   el.settingsCameraCount.textContent = String(cameras);

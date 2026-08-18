@@ -52,6 +52,7 @@
           <strong>The Paranormal Initiative</strong>
           <span>ITC Visual Studio / Browser Version</span>
         </div>
+        <a class="return-to-tpi" href="https://paranormalinitiative.com/" target="_self">&#9664; Return to The Paranormal Initiative</a>
         <nav class="nav-strip" aria-label="Primary tools">
           <button class="nav-button active" data-panel="camera">Camera</button>
           <button class="nav-button" data-panel="analysis">Analysis</button>
@@ -229,6 +230,7 @@
               <h2>Camera</h2>
               <label class="field-label" for="cameraDeviceSelect">Device</label>
               <select id="cameraDeviceSelect" class="select-input"><option>Detecting cameras...</option></select>
+              <p id="activeCameraDisplay" class="active-device-display">Active Camera: —</p>
               <label class="field-label" for="cameraFormatSelect">Format</label>
               <select id="cameraFormatSelect" class="select-input">
                 <option value="640x480">640 x 480 - 480p</option>
@@ -286,6 +288,7 @@
               <h2>Microphone</h2>
               <label class="field-label" for="audioDeviceSelect">Device</label>
               <select id="audioDeviceSelect" class="select-input"><option>Detecting microphones...</option></select>
+              <p id="activeMicDisplay" class="active-device-display">Active Microphone: —</p>
               <label class="field-label" for="audioChannelSelect">Channels</label>
               <select id="audioChannelSelect" class="select-input">
                 <option value="1" selected>Mono</option>
@@ -661,6 +664,6 @@
 
     <script src="./assets/ffmpeg/ffmpeg.js"></script>
     <script src="./assets/ffmpeg/util.js"></script>
-    <script src="./src/app.js?v=33bc52f" defer></script>
+    <script src="./src/app.js?v=059" defer></script>
   </body>
 </html>
