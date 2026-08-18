@@ -1657,5 +1657,12 @@ window.TPI_SEARCH_INDEX = [
     "href": "water-itc.html",
     "description": "Water ITC experimentation — methodology, observations, and responsible documentation for water-based instrumental transcommunication research.",
     "text": "Water ITC | The Paranormal Initiative EVP / ITC Research Water ITC explores reflective surfaces, motion, light, and audio context as experimental session material. This page prepares a research area for documenting water-based ITC experiments. The method should be treated as exploratory and interpretive, with careful controls, original media preservation, and no claim that visual patterns prove communication. 01 Session Setup Document container type, water source, lighting, camera angle, surface movement, room conditions, audio sources, and participant positions. 02 Control Capture Record neutral baseline footage before prompts or experiments begin so ordinary reflections, ripples, shadows, and compression artifacts can be compared later. 03 Prompted Experiment Use consistent prompts, timed silence, and clear verbal markers. Avoid leading interpretation during capture. 04 Review Standards Preserve original video and audio, review frame context, note possible natural causes, and separate observation from interpretation. Research Caution Water ITC is experimental. Reflections, turbulence, lighting, camera sensors, and expectation bias can create meaningful-looking patterns. Findings should be logged as observations for further review, not proof."
+  },
+  {
+    "title": "TPI Videos",
+    "subtitle": "Applied Paranormal Research and Studies",
+    "href": "tpi-videos.html",
+    "description": "The Paranormal Initiative video programming, live streams, and archived research presentations from Applied Paranormal Research and Studies.",
+    "text": "TPI Videos | The Paranormal Initiative Applied Paranormal Research and Studies The Paranormal Initiative video programming, live streams, and archived research presentations. TPI video content includes paranormal research presentations, investigation documentation, EVP and ITC experimentation, equipment analysis, field methodology, educational programming, and community discussion. Live streams and archived recordings from The Paranormal Initiative."
   }
 ];
