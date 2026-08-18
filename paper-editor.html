@@ -11,6 +11,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=15">
+    <style>
+        .tpi-video-fields {
+            border-top: 1px solid #1e2230;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+        .tpi-video-fields .portal-kicker {
+            margin-bottom: 0.75rem;
+            color: #59a9dc;
+        }
+        .tpi-video-fields label {
+            margin-bottom: 0.75rem;
+        }
+        .tpi-video-fields small {
+            display: block;
+            font-size: 0.75rem;
+            color: #5a6070;
+            margin-top: 0.25rem;
+            line-height: 1.4;
+        }
+        .tpi-video-fields .access-checkbox small {
+            display: block;
+            margin-top: 0.25rem;
+        }
+    </style>
 </head>
 <body class="paper-editor-page editor-locked">
 <div id="site-header"></div>
@@ -122,6 +147,7 @@
                     <option value="Media Review">Media Review</option>
                     <option value="Method Exercise">Method Exercise</option>
                     <option value="Contributor Note">Contributor Note</option>
+                    <option value="TPI Video">TPI Video</option>
                 </select>
             </label>
             <label>
@@ -152,6 +178,66 @@
                 <span>Labels</span>
                 <input id="editor-labels" type="text" placeholder="Research, EVP, ITC">
             </label>
+            <div id="tpi-video-fields" class="tpi-video-fields" hidden>
+                <p class="portal-kicker">TPI Video Settings</p>
+                <label>
+                    <span>Video URL *</span>
+                    <input id="editor-video-url" type="url" placeholder="https://rumble.com/... or https://youtube.com/...">
+                </label>
+                <label>
+                    <span>Embed URL</span>
+                    <input id="editor-embed-url" type="url" placeholder="Optional embed URL">
+                    <small>Use the platform's approved embed URL when available.</small>
+                </label>
+                <label>
+                    <span>Thumbnail URL</span>
+                    <input id="editor-thumbnail-url" type="url" placeholder="https://... or /path/to/thumb.jpg">
+                    <small>Choose an image that clearly represents the program or stream.</small>
+                </label>
+                <label>
+                    <span>Video Category</span>
+                    <select id="editor-video-category">
+                        <option value="Applied Paranormal Research and Studies">Applied Paranormal Research and Studies</option>
+                        <option value="Live Streams">Live Streams</option>
+                        <option value="EVP & ITC">EVP &amp; ITC</option>
+                        <option value="Visual ITC & Scrying">Visual ITC &amp; Scrying</option>
+                        <option value="Paranormal Investigation">Paranormal Investigation</option>
+                        <option value="Equipment & Technology">Equipment &amp; Technology</option>
+                        <option value="Research Discussion">Research Discussion</option>
+                        <option value="Education">Education</option>
+                        <option value="Special Presentation">Special Presentation</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Tags</span>
+                    <input id="editor-video-tags" type="text" placeholder="EVP, ITC, water scrying, investigation">
+                    <small>Add useful search terms separated by commas.</small>
+                </label>
+                <label>
+                    <span>Series</span>
+                    <input id="editor-video-series" type="text" placeholder="Optional series name">
+                    <small>Use this when the video belongs to a recurring TPI program.</small>
+                </label>
+                <label>
+                    <span>Episode Number</span>
+                    <input id="editor-video-episode" type="text" placeholder="Optional episode number">
+                </label>
+                <label>
+                    <span>Duration</span>
+                    <input id="editor-video-duration" type="text" placeholder="45:20">
+                    <small>Enter the approximate video length.</small>
+                </label>
+                <label class="access-checkbox">
+                    <input id="editor-video-featured" type="checkbox">
+                    <span>Featured</span>
+                    <small>When enabled, this video may be highlighted in the featured area of the TPI Videos page when no live stream takes priority.</small>
+                </label>
+                <label class="access-checkbox">
+                    <input id="editor-video-live" type="checkbox">
+                    <span>Live Stream</span>
+                    <small>Enable only while the broadcast is currently live. Live streams receive priority in the featured area and display a LIVE NOW indicator.</small>
+                </label>
+            </div>
             <button type="button" class="settings-action" data-action="publish">Publish Article</button>
             <button type="button" class="settings-action" data-action="clear">Clear Draft</button>
         </aside>
@@ -257,6 +343,7 @@
                     <button type="button" data-guide-file="case-location-studies.md">Case / Location</button>
                     <button type="button" data-guide-file="review-papers.md">Review Paper</button>
                     <button type="button" data-guide-file="media-reviews.md">Media Review</button>
+                    <button type="button" data-guide-file="tpi-videos.md">TPI Video</button>
                 </div>
                 <article id="writing-guide-content" class="writing-guide-content">
                     <p class="access-note">Choose a writing guide above.</p>

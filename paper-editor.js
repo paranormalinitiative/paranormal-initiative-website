@@ -43,6 +43,17 @@
   const publishDestination = document.getElementById("publish-destination");
   const writingGuidesModal = document.getElementById("writing-guides-modal");
   const writingGuideContent = document.getElementById("writing-guide-content");
+  const tpiVideoFields = document.getElementById("tpi-video-fields");
+  const videoUrlEditorInput = document.getElementById("editor-video-url");
+  const embedUrlInput = document.getElementById("editor-embed-url");
+  const thumbnailUrlInput = document.getElementById("editor-thumbnail-url");
+  const videoCategoryInput = document.getElementById("editor-video-category");
+  const videoTagsInput = document.getElementById("editor-video-tags");
+  const videoSeriesInput = document.getElementById("editor-video-series");
+  const videoEpisodeInput = document.getElementById("editor-video-episode");
+  const videoDurationInput = document.getElementById("editor-video-duration");
+  const videoFeaturedInput = document.getElementById("editor-video-featured");
+  const videoLiveInput = document.getElementById("editor-video-live");
 
   let activeView = "compose";
   let savedSelection = null;
@@ -95,6 +106,10 @@
     "media-review": {
       label: "Media Review Template",
       html: "<h3>Title</h3><p>Replace this with the media review title or remove this heading if the title field above already covers it.</p><h3>Media Type Being Reviewed</h3><p>State whether this is audio, EVP, ITC, photo, video, screenshot, spectrogram, metadata, or another file type.</p><h3>Source, Date, and File Context</h3><p>Document where the file came from, when it was created, who provided it, and what surrounding context matters.</p><h3>Original-File Status</h3><p>State whether the original file is preserved, whether a copy was used, and whether edits or compression are known.</p><h3>Review Method</h3><p>Describe how the media was reviewed, including software, listening/viewing method, timestamps, blind review, comparisons, or controls.</p><h3>Observations</h3><p>Describe what was observed without telling readers what they must hear or see. Include timestamps where useful.</p><h3>Possible Contamination or Ordinary Explanations</h3><p>Consider voices, handling noise, compression, reflections, blur, radio, team movement, environmental sound, equipment behavior, or other ordinary causes.</p><h3>Classification</h3><p>Classify the material as explained, likely explained, unresolved, unusable, contamination suspected, or requiring further review.</p><h3>Limitations</h3><p>State what cannot be determined from the media and what context is missing.</p><h3>Conclusion</h3><p>Summarize the review carefully. Unresolved media is not proof; it is material for further analysis.</p><h3>Author Note</h3><p>Add the author note manually from the toolbar when ready, or replace this text with the final author information.</p>"
+    },
+    "tpi-video": {
+      label: "TPI Video Template",
+      html: "<h3>Video Description</h3><p>Summarize what viewers will see, hear, or learn in this video. Include the main topics, experiments, discussions, or presentations covered.</p><h3>Topics Covered</h3><p>List the key subjects, research areas, or discussion points featured in this video.</p><h3>Key Moments</h3><p>Note important timestamps, demonstrations, findings, or highlights viewers should pay attention to.</p><h3>Related Research</h3><p>Connect this video to related TPI research, articles, education materials, or previous broadcasts.</p><h3>Equipment or Methods Shown</h3><p>Describe any equipment, software, techniques, or experimental methods demonstrated in the video.</p><h3>Notes for Researchers</h3><p>Add any context, caveats, follow-up questions, or additional resources relevant to researchers watching this video.</p>"
     }
   };
 
@@ -106,7 +121,8 @@
     "field-articles.md": "field-article",
     "case-location-studies.md": "case-location-study",
     "review-papers.md": "review-paper",
-    "media-reviews.md": "media-review"
+    "media-reviews.md": "media-review",
+    "tpi-videos.md": "tpi-video"
   };
 
   function getDestinationLabel() {
@@ -115,6 +131,58 @@
 
   function getContributionType() {
     return contributionTypeInput?.value?.trim() || "Research Paper";
+  }
+
+  function isTpiVideoType() {
+    return getContributionType() === "TPI Video";
+  }
+
+  function updateVideoFieldsVisibility() {
+    if (tpiVideoFields) {
+      tpiVideoFields.hidden = !isTpiVideoType();
+    }
+    const publishBtn = document.querySelector('[data-action="publish"]');
+    if (publishBtn) {
+      publishBtn.textContent = isTpiVideoType() ? "Publish Video" : "Publish Article";
+    }
+  }
+
+  function detectPlatformFromUrl(url) {
+    const u = String(url || "").toLowerCase();
+    if (u.includes("rumble.com")) return "Rumble";
+    if (u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
+    return "";
+  }
+
+  function getVideoSlug() {
+    const title = titleInput.value.trim() || "untitled-video";
+    return title.trim().toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "untitled-video";
+  }
+
+  function buildVideoRecord() {
+    const title = titleInput.value.trim() || "Untitled Video";
+    const videoUrl = videoUrlEditorInput?.value?.trim() || "";
+    const tags = videoTagsInput?.value?.trim() || "";
+    return {
+      id: currentArticleId || crypto.randomUUID(),
+      slug: getVideoSlug(),
+      title,
+      description: buildArticleHtml(),
+      publishedAt: new Date().toISOString().slice(0, 10),
+      category: videoCategoryInput?.value || "Applied Paranormal Research and Studies",
+      tags: tags.split(",").map(t => t.trim()).filter(Boolean),
+      platform: detectPlatformFromUrl(videoUrl),
+      videoUrl,
+      embedUrl: embedUrlInput?.value?.trim() || "",
+      thumbnail: thumbnailUrlInput?.value?.trim() || "",
+      featured: videoFeaturedInput?.checked || false,
+      isLive: videoLiveInput?.checked || false,
+      liveStartedAt: videoLiveInput?.checked ? new Date().toISOString() : "",
+      series: videoSeriesInput?.value?.trim() || "",
+      episode: videoEpisodeInput?.value?.trim() || "",
+      duration: videoDurationInput?.value?.trim() || "",
+      status: "published"
+    };
   }
 
   function getArticleMediaLabelFromHtml(html) {
@@ -1680,6 +1748,12 @@ ${articleHtml}
       titleInput.focus();
       return;
     }
+
+    if (isTpiVideoType()) {
+      await publishTpiVideo();
+      return;
+    }
+
     const record = { ...buildPublishedRecord(), status: "published" };
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
       try {
@@ -1715,6 +1789,35 @@ ${articleHtml}
     setStatus("Published to destination");
     await renderContentLibraryList();
     window.open(record.destination, "_blank");
+  }
+
+  async function publishTpiVideo() {
+    const videoUrl = videoUrlEditorInput?.value?.trim();
+    if (!videoUrl) {
+      setStatus("Video URL is required");
+      videoUrlEditorInput?.focus();
+      return;
+    }
+
+    const record = buildVideoRecord();
+    try {
+      const res = await fetch("/api/tpi-videos", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Publish failed");
+      currentArticleId = data.id;
+      publishFilename.value = data.slug;
+      publishDestination.value = "tpi-videos.html";
+      setStatus("TPI Video published");
+      await renderContentLibraryList();
+      window.open("tpi-video.html?id=" + encodeURIComponent(data.slug), "_blank");
+    } catch (error) {
+      setStatus(error.message || "TPI Video publish failed");
+    }
   }
 
   function downloadArticle() {
@@ -1896,6 +1999,18 @@ ${articleHtml}
     labelsInput
   ].forEach(input => {
     input?.addEventListener("input", scheduleAutosave);
+    input?.addEventListener("change", scheduleAutosave);
+  });
+  contributionTypeInput?.addEventListener("change", updateVideoFieldsVisibility);
+  [
+    videoUrlEditorInput, embedUrlInput, thumbnailUrlInput,
+    videoCategoryInput, videoTagsInput, videoSeriesInput,
+    videoEpisodeInput, videoDurationInput
+  ].forEach(input => {
+    input?.addEventListener("input", scheduleAutosave);
+    input?.addEventListener("change", scheduleAutosave);
+  });
+  [videoFeaturedInput, videoLiveInput].forEach(input => {
     input?.addEventListener("change", scheduleAutosave);
   });
   imageFileInput.addEventListener("change", event => {

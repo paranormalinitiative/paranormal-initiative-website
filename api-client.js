@@ -93,6 +93,14 @@
     setForumReaction: (postId, reaction) => request(`/forum/posts/${encodeURIComponent(postId)}/reactions`, { method: "POST", body: { reaction } }),
     deleteForumPost: id => request(`/forum/posts/${encodeURIComponent(id)}`, { method: "DELETE" }),
     listComments: pageId => request(`/comments?pageId=${encodeURIComponent(pageId)}`),
-    createComment: payload => request("/comments", { method: "POST", body: payload })
+    createComment: payload => request("/comments", { method: "POST", body: payload }),
+    listTpiVideos: (params) => {
+      const qs = params ? "?" + new URLSearchParams(params).toString() : "";
+      return request(`/tpi-videos${qs}`);
+    },
+    getTpiVideo: slug => request(`/tpi-videos/${encodeURIComponent(slug)}`),
+    createTpiVideo: payload => request("/tpi-videos", { method: "POST", body: payload }),
+    updateTpiVideo: (slug, payload) => request(`/tpi-videos/${encodeURIComponent(slug)}`, { method: "PUT", body: payload }),
+    deleteTpiVideo: slug => request(`/tpi-videos/${encodeURIComponent(slug)}`, { method: "DELETE" })
   };
 })();

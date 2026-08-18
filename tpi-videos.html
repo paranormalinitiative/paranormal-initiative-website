@@ -452,10 +452,9 @@
 
 <div id="site-footer"></div>
 <script src="includes.js"></script>
-<script src="tpi-videos.js"></script>
 <script>
 (function () {
-    var videos = window.TPI_VIDEOS || [];
+    var videos = [];
     var featuredSection = document.getElementById("video-featured-section");
     var gridContainer = document.getElementById("video-grid-container");
     var categoryFilters = document.getElementById("video-category-filters");
@@ -466,6 +465,19 @@
     var activeTab = "latest";
     var activeCategory = "all";
     var searchQuery = "";
+
+    async function loadVideos() {
+        try {
+            var res = await fetch("/api/tpi-videos", { credentials: "same-origin" });
+            if (res.ok) {
+                var data = await res.json();
+                videos = data.videos || [];
+            }
+        } catch (e) {}
+        renderFeatured();
+        renderCategoryFilters(videos);
+        renderGrid();
+    }
 
     function escapeHtml(value) {
         return String(value || "").replace(/[&<>"']/g, function (char) {
@@ -723,9 +735,7 @@
     });
 
     // Initialize
-    renderFeatured();
-    renderCategoryFilters(videos);
-    renderGrid();
+    loadVideos();
 })();
 </script>
 </body>

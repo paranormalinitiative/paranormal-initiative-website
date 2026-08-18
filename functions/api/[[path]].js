@@ -57,6 +57,11 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
     if (request.method === "GET" && path === "/video-comments") return handleListVideoComments(request, env);
     if (request.method === "POST" && path === "/video-comments") return requireMember(request, env, user => handleCreateVideoComment(request, env, user));
+    if (request.method === "GET" && path === "/tpi-videos") return handleListTpiVideos(request, env);
+    if (request.method === "GET" && path.match(/^\/tpi-videos\/[^/]+$/)) return handleGetTpiVideo(path, env);
+    if (request.method === "POST" && path === "/tpi-videos") return requireContributor(request, env, user => handleCreateTpiVideo(request, env, user));
+    if (request.method === "PUT" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireContributor(request, env, user => handleUpdateTpiVideo(path, request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireContributor(request, env, user => handleDeleteTpiVideo(path, env, user));
 
     return json({ error: "Not found." }, 404);
   } catch (error) {
@@ -1167,6 +1172,213 @@ async function handleCreateVideoComment(request, env, user) {
   `).bind(id, videoId, user.id, body).run();
 
   return json({ ok: true, id });
+}
+
+async function handleListTpiVideos(request, env) {
+  const url = new URL(request.url);
+  const status = url.searchParams.get("status");
+  const category = url.searchParams.get("category");
+  const featured = url.searchParams.get("featured");
+  const isLive = url.searchParams.get("isLive");
+
+  let query = "SELECT * FROM tpi_videos WHERE 1=1";
+  const params = [];
+
+  if (status) {
+    query += " AND status = ?";
+    params.push(status);
+  } else {
+    query += " AND status = 'published'";
+  }
+  if (category) {
+    query += " AND category = ?";
+    params.push(category);
+  }
+  if (featured === "true") {
+    query += " AND featured = 1";
+  }
+  if (isLive === "true") {
+    query += " AND is_live = 1";
+  }
+
+  query += " ORDER BY published_at DESC";
+
+  const stmt = params.length
+    ? env.TPI_DB.prepare(query).bind(...params)
+    : env.TPI_DB.prepare(query);
+  const { results } = await stmt.all();
+
+  return json({
+    videos: results.map(row => ({
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      publishedAt: row.published_at,
+      category: row.category,
+      tags: row.tags ? row.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+      platform: row.platform,
+      videoUrl: row.video_url,
+      embedUrl: row.embed_url,
+      thumbnail: row.thumbnail,
+      featured: Boolean(row.featured),
+      isLive: Boolean(row.is_live),
+      liveStartedAt: row.live_started_at,
+      series: row.series,
+      episode: row.episode,
+      duration: row.duration,
+      status: row.status,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    }))
+  });
+}
+
+async function handleGetTpiVideo(path, env) {
+  const slug = clean(decodeURIComponent(path.replace(/^\/tpi-videos\//, "")));
+  if (!slug) return json({ error: "Video slug is required." }, 400);
+
+  const row = await env.TPI_DB.prepare("SELECT * FROM tpi_videos WHERE slug = ?").bind(slug).first();
+  if (!row) return json({ error: "Video not found." }, 404);
+
+  return json({
+    video: {
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      description: row.description,
+      publishedAt: row.published_at,
+      category: row.category,
+      tags: row.tags ? row.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+      platform: row.platform,
+      videoUrl: row.video_url,
+      embedUrl: row.embed_url,
+      thumbnail: row.thumbnail,
+      featured: Boolean(row.featured),
+      isLive: Boolean(row.is_live),
+      liveStartedAt: row.live_started_at,
+      series: row.series,
+      episode: row.episode,
+      duration: row.duration,
+      status: row.status,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    }
+  });
+}
+
+async function handleCreateTpiVideo(request, env, user) {
+  const data = await readJson(request);
+  const title = clean(data.title);
+  const videoUrl = clean(data.videoUrl);
+  if (!title) return json({ error: "Title is required." }, 400);
+  if (!videoUrl) return json({ error: "Video URL is required." }, 400);
+
+  const slug = clean(data.slug) || slugify(title);
+  const existing = await env.TPI_DB.prepare("SELECT id FROM tpi_videos WHERE slug = ?").bind(slug).first();
+  const finalSlug = existing ? `${slug}-${Date.now()}` : slug;
+
+  const id = clean(data.id) || crypto.randomUUID();
+  const now = new Date().toISOString();
+  const publishedAt = clean(data.publishedAt) || now;
+  const category = clean(data.category) || "Applied Paranormal Research and Studies";
+  const tags = Array.isArray(data.tags) ? data.tags.join(", ") : clean(data.tags);
+  const platform = clean(data.platform) || detectPlatform(videoUrl);
+  const status = data.status === "published" ? "published" : "draft";
+
+  await env.TPI_DB.prepare(`
+    INSERT INTO tpi_videos (id, slug, title, description, published_at, category, tags, platform, video_url, embed_url, thumbnail, featured, is_live, live_started_at, series, episode, duration, status, created_by, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    id, finalSlug, title,
+    clean(data.description),
+    publishedAt, category, tags, platform,
+    videoUrl, clean(data.embedUrl), clean(data.thumbnail),
+    data.featured ? 1 : 0,
+    data.isLive ? 1 : 0,
+    clean(data.liveStartedAt),
+    clean(data.series), clean(data.episode), clean(data.duration),
+    status, user.id, now, now
+  ).run();
+
+  return json({ ok: true, id, slug: finalSlug, status });
+}
+
+async function handleUpdateTpiVideo(path, request, env, user) {
+  const slug = clean(decodeURIComponent(path.replace(/^\/tpi-videos\//, "")));
+  if (!slug) return json({ error: "Video slug is required." }, 400);
+
+  const existing = await env.TPI_DB.prepare("SELECT * FROM tpi_videos WHERE slug = ?").bind(slug).first();
+  if (!existing) return json({ error: "Video not found." }, 404);
+
+  const data = await readJson(request);
+  const now = new Date().toISOString();
+  const title = clean(data.title) || existing.title;
+  const videoUrl = clean(data.videoUrl) || existing.video_url;
+  const category = clean(data.category) || existing.category;
+  const tags = data.tags !== undefined ? (Array.isArray(data.tags) ? data.tags.join(", ") : clean(data.tags)) : existing.tags;
+  const platform = clean(data.platform) || detectPlatform(videoUrl);
+  const status = data.status !== undefined ? (data.status === "published" ? "published" : "draft") : existing.status;
+
+  let newSlug = existing.slug;
+  if (data.slug && clean(data.slug) !== existing.slug) {
+    const desiredSlug = clean(data.slug);
+    const slugTaken = await env.TPI_DB.prepare("SELECT id FROM tpi_videos WHERE slug = ? AND id != ?").bind(desiredSlug, existing.id).first();
+    newSlug = slugTaken ? `${desiredSlug}-${Date.now()}` : desiredSlug;
+  }
+
+  await env.TPI_DB.prepare(`
+    UPDATE tpi_videos SET
+      slug = ?, title = ?, description = ?, published_at = ?, category = ?, tags = ?,
+      platform = ?, video_url = ?, embed_url = ?, thumbnail = ?, featured = ?,
+      is_live = ?, live_started_at = ?, series = ?, episode = ?, duration = ?,
+      status = ?, updated_at = ?
+    WHERE id = ?
+  `).bind(
+    newSlug, title,
+    clean(data.description) ?? existing.description,
+    clean(data.publishedAt) || existing.published_at,
+    category, tags, platform,
+    videoUrl,
+    clean(data.embedUrl) ?? existing.embed_url,
+    clean(data.thumbnail) ?? existing.thumbnail,
+    data.featured !== undefined ? (data.featured ? 1 : 0) : existing.featured,
+    data.isLive !== undefined ? (data.isLive ? 1 : 0) : existing.is_live,
+    clean(data.liveStartedAt) ?? existing.live_started_at,
+    clean(data.series) ?? existing.series,
+    clean(data.episode) ?? existing.episode,
+    clean(data.duration) ?? existing.duration,
+    status, now, existing.id
+  ).run();
+
+  return json({ ok: true, id: existing.id, slug: newSlug, status });
+}
+
+async function handleDeleteTpiVideo(path, env, user) {
+  const slug = clean(decodeURIComponent(path.replace(/^\/tpi-videos\//, "")));
+  if (!slug) return json({ error: "Video slug is required." }, 400);
+
+  const existing = await env.TPI_DB.prepare("SELECT id FROM tpi_videos WHERE slug = ?").bind(slug).first();
+  if (!existing) return json({ error: "Video not found." }, 404);
+
+  await env.TPI_DB.prepare("DELETE FROM tpi_videos WHERE id = ?").bind(existing.id).run();
+  return json({ ok: true, deleted: true, id: existing.id });
+}
+
+function slugify(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "untitled-video";
+}
+
+function detectPlatform(url) {
+  const u = String(url || "").toLowerCase();
+  if (u.includes("rumble.com")) return "Rumble";
+  if (u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
+  return "";
 }
 
 async function requireContributor(request, env, handler) {

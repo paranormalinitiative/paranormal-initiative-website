@@ -313,12 +313,22 @@
 
 <div id="site-footer"></div>
 <script src="includes.js"></script>
-<script src="tpi-videos.js"></script>
 <script>
 (function () {
-    var videos = window.TPI_VIDEOS || [];
+    var videos = [];
     var container = document.getElementById("video-detail-content");
     var videoId = new URLSearchParams(window.location.search).get("id");
+
+    async function loadVideoAndInit() {
+        try {
+            var res = await fetch("/api/tpi-videos", { credentials: "same-origin" });
+            if (res.ok) {
+                var data = await res.json();
+                videos = data.videos || [];
+            }
+        } catch (e) {}
+        init();
+    }
 
     function escapeHtml(value) {
         return String(value || "").replace(/[&<>"']/g, function (char) {
@@ -584,16 +594,29 @@
     }
 
     // === INIT ===
-    if (!videoId) {
-        renderNotFound();
-    } else {
-        var video = findVideo(videoId);
-        if (!video) {
+    async function init() {
+        if (!videoId) {
             renderNotFound();
         } else {
-            renderVideo(video);
+            var video = findVideo(videoId);
+            if (!video) {
+                // Try fetching directly by slug
+                try {
+                    var res = await fetch("/api/tpi-videos/" + encodeURIComponent(videoId), { credentials: "same-origin" });
+                    if (res.ok) {
+                        var data = await res.json();
+                        video = data.video;
+                    }
+                } catch (e) {}
+            }
+            if (!video) {
+                renderNotFound();
+            } else {
+                renderVideo(video);
+            }
         }
     }
+    loadVideoAndInit();
 })();
 </script>
 </body>
