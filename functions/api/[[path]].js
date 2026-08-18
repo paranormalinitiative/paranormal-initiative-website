@@ -62,6 +62,11 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/tpi-videos") return requireContributor(request, env, user => handleCreateTpiVideo(request, env, user));
     if (request.method === "PUT" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireContributor(request, env, user => handleUpdateTpiVideo(path, request, env, user));
     if (request.method === "DELETE" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireContributor(request, env, user => handleDeleteTpiVideo(path, env, user));
+    if (request.method === "GET" && path === "/video-reactions") return handleGetVideoReactions(request, env);
+    if (request.method === "POST" && path === "/video-reactions") return requireMember(request, env, user => handleSetVideoReaction(request, env, user));
+    if (request.method === "GET" && path === "/video-saves") return requireMember(request, env, user => handleGetVideoSaves(env, user));
+    if (request.method === "POST" && path === "/video-saves") return requireMember(request, env, user => handleToggleVideoSave(request, env, user));
+    if (request.method === "POST" && path === "/video-reports") return requireMember(request, env, user => handleCreateVideoReport(request, env, user));
 
     return json({ error: "Not found." }, 404);
   } catch (error) {
@@ -1227,6 +1232,7 @@ async function handleListTpiVideos(request, env) {
       series: row.series,
       episode: row.episode,
       duration: row.duration,
+      viewingAccess: row.viewing_access || "members",
       status: row.status,
       createdAt: row.created_at,
       updatedAt: row.updated_at
@@ -1260,6 +1266,7 @@ async function handleGetTpiVideo(path, env) {
       series: row.series,
       episode: row.episode,
       duration: row.duration,
+      viewingAccess: row.viewing_access || "members",
       status: row.status,
       createdAt: row.created_at,
       updatedAt: row.updated_at
@@ -1285,10 +1292,11 @@ async function handleCreateTpiVideo(request, env, user) {
   const tags = Array.isArray(data.tags) ? data.tags.join(", ") : clean(data.tags);
   const platform = clean(data.platform) || detectPlatform(videoUrl);
   const status = data.status === "published" ? "published" : "draft";
+  const viewingAccess = data.viewingAccess === "public" ? "public" : "members";
 
   await env.TPI_DB.prepare(`
-    INSERT INTO tpi_videos (id, slug, title, description, published_at, category, tags, platform, video_url, embed_url, thumbnail, featured, is_live, live_started_at, series, episode, duration, status, created_by, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tpi_videos (id, slug, title, description, published_at, category, tags, platform, video_url, embed_url, thumbnail, featured, is_live, live_started_at, series, episode, duration, viewing_access, status, created_by, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).bind(
     id, finalSlug, title,
     clean(data.description),
@@ -1298,6 +1306,7 @@ async function handleCreateTpiVideo(request, env, user) {
     data.isLive ? 1 : 0,
     clean(data.liveStartedAt),
     clean(data.series), clean(data.episode), clean(data.duration),
+    viewingAccess,
     status, user.id, now, now
   ).run();
 
@@ -1332,7 +1341,7 @@ async function handleUpdateTpiVideo(path, request, env, user) {
       slug = ?, title = ?, description = ?, published_at = ?, category = ?, tags = ?,
       platform = ?, video_url = ?, embed_url = ?, thumbnail = ?, featured = ?,
       is_live = ?, live_started_at = ?, series = ?, episode = ?, duration = ?,
-      status = ?, updated_at = ?
+      viewing_access = ?, status = ?, updated_at = ?
     WHERE id = ?
   `).bind(
     newSlug, title,
@@ -1348,6 +1357,7 @@ async function handleUpdateTpiVideo(path, request, env, user) {
     clean(data.series) ?? existing.series,
     clean(data.episode) ?? existing.episode,
     clean(data.duration) ?? existing.duration,
+    data.viewingAccess === "public" ? "public" : (data.viewingAccess === "members" ? "members" : existing.viewing_access),
     status, now, existing.id
   ).run();
 
@@ -1379,6 +1389,124 @@ function detectPlatform(url) {
   if (u.includes("rumble.com")) return "Rumble";
   if (u.includes("youtube.com") || u.includes("youtu.be")) return "YouTube";
   return "";
+}
+
+const VIDEO_REACTIONS = new Set(["like", "love", "care", "haha", "wow", "sad", "angry"]);
+
+async function handleGetVideoReactions(request, env) {
+  const url = new URL(request.url);
+  const videoId = clean(url.searchParams.get("videoId"));
+  if (!videoId) return json({ error: "videoId is required." }, 400);
+
+  const user = await getSessionUser(request, env);
+
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT reaction, COUNT(*) AS count
+    FROM video_reactions
+    WHERE video_id = ?
+    GROUP BY reaction
+  `).bind(videoId).all();
+
+  const reactionCounts = {};
+  (results || []).forEach(row => {
+    if (VIDEO_REACTIONS.has(row.reaction)) {
+      reactionCounts[row.reaction] = Number(row.count || 0);
+    }
+  });
+
+  let userReaction = null;
+  if (user) {
+    const row = await env.TPI_DB.prepare(`
+      SELECT reaction FROM video_reactions WHERE video_id = ? AND contributor_id = ? LIMIT 1
+    `).bind(videoId, user.id).first();
+    userReaction = row?.reaction || null;
+  }
+
+  return json({ videoId, reactionCounts, userReaction, signedIn: Boolean(user) });
+}
+
+async function handleSetVideoReaction(request, env, user) {
+  const data = await readJson(request);
+  const videoId = clean(data.videoId);
+  const reaction = clean(data.reaction).toLowerCase();
+  if (!videoId) return json({ error: "videoId is required." }, 400);
+  if (!VIDEO_REACTIONS.has(reaction)) return json({ error: "Reaction was not recognized." }, 400);
+
+  const existing = await env.TPI_DB.prepare(`
+    SELECT reaction FROM video_reactions WHERE video_id = ? AND contributor_id = ? LIMIT 1
+  `).bind(videoId, user.id).first();
+
+  await env.TPI_DB.prepare("DELETE FROM video_reactions WHERE video_id = ? AND contributor_id = ?")
+    .bind(videoId, user.id).run();
+
+  let userReaction = null;
+  if (existing?.reaction !== reaction) {
+    userReaction = reaction;
+    const now = new Date().toISOString();
+    await env.TPI_DB.prepare(`
+      INSERT INTO video_reactions (id, video_id, contributor_id, reaction, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(crypto.randomUUID(), videoId, user.id, reaction, now, now).run();
+  }
+
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT reaction, COUNT(*) AS count FROM video_reactions WHERE video_id = ? GROUP BY reaction
+  `).bind(videoId).all();
+  const reactionCounts = {};
+  (results || []).forEach(row => {
+    if (VIDEO_REACTIONS.has(row.reaction)) reactionCounts[row.reaction] = Number(row.count || 0);
+  });
+
+  return json({ videoId, reactionCounts, userReaction, signedIn: true });
+}
+
+async function handleGetVideoSaves(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT vs.video_id AS videoId, vs.created_at AS savedAt,
+           tv.title, tv.slug, tv.thumbnail, tv.category, tv.duration, tv.published_at AS publishedAt
+    FROM video_saves vs
+    JOIN tpi_videos tv ON tv.id = vs.video_id
+    WHERE vs.contributor_id = ? AND tv.status = 'published'
+    ORDER BY vs.created_at DESC
+  `).bind(user.id).all();
+  return json({ saves: results });
+}
+
+async function handleToggleVideoSave(request, env, user) {
+  const data = await readJson(request);
+  const videoId = clean(data.videoId);
+  if (!videoId) return json({ error: "videoId is required." }, 400);
+
+  const existing = await env.TPI_DB.prepare(`
+    SELECT id FROM video_saves WHERE video_id = ? AND contributor_id = ? LIMIT 1
+  `).bind(videoId, user.id).first();
+
+  if (existing) {
+    await env.TPI_DB.prepare("DELETE FROM video_saves WHERE id = ?").bind(existing.id).run();
+    return json({ videoId, saved: false });
+  } else {
+    await env.TPI_DB.prepare("INSERT INTO video_saves (id, video_id, contributor_id) VALUES (?, ?, ?)")
+      .bind(crypto.randomUUID(), videoId, user.id).run();
+    return json({ videoId, saved: true });
+  }
+}
+
+async function handleCreateVideoReport(request, env, user) {
+  const data = await readJson(request);
+  const videoId = clean(data.videoId);
+  const reason = clean(data.reason);
+  if (!videoId) return json({ error: "videoId is required." }, 400);
+  if (!reason) return json({ error: "Reason is required." }, 400);
+
+  const allowedReasons = ["inappropriate", "wrong-video", "broken", "copyright", "explicit", "spam", "other"];
+  if (!allowedReasons.includes(reason)) return json({ error: "Invalid reason." }, 400);
+
+  await env.TPI_DB.prepare(`
+    INSERT INTO video_reports (id, video_id, contributor_id, reason, details, status)
+    VALUES (?, ?, ?, ?, ?, 'open')
+  `).bind(crypto.randomUUID(), videoId, user.id, reason, clean(data.details)).run();
+
+  return json({ ok: true, message: "Report received. A TPI administrator will review it." });
 }
 
 async function requireContributor(request, env, handler) {

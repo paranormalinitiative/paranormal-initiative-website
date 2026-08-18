@@ -101,6 +101,11 @@
     getTpiVideo: slug => request(`/tpi-videos/${encodeURIComponent(slug)}`),
     createTpiVideo: payload => request("/tpi-videos", { method: "POST", body: payload }),
     updateTpiVideo: (slug, payload) => request(`/tpi-videos/${encodeURIComponent(slug)}`, { method: "PUT", body: payload }),
-    deleteTpiVideo: slug => request(`/tpi-videos/${encodeURIComponent(slug)}`, { method: "DELETE" })
+    deleteTpiVideo: slug => request(`/tpi-videos/${encodeURIComponent(slug)}`, { method: "DELETE" }),
+    getVideoReactions: videoId => request(`/video-reactions?videoId=${encodeURIComponent(videoId)}`),
+    setVideoReaction: (videoId, reaction) => request("/video-reactions", { method: "POST", body: { videoId, reaction } }),
+    getVideoSaves: () => request("/video-saves"),
+    toggleVideoSave: videoId => request("/video-saves", { method: "POST", body: { videoId } }),
+    createVideoReport: payload => request("/video-reports", { method: "POST", body: payload })
   };
 })();

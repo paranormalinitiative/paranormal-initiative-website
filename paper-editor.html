@@ -132,6 +132,7 @@
                     <option value="evp-itc-lessons.html">EVP / ITC Research Notes</option>
                     <option value="field-articles.html">Field Articles</option>
                     <option value="method-exercises.html">Method Exercises</option>
+                    <option value="tpi-videos.html">TPI Videos</option>
                 </select>
             </label>
             <label>
@@ -236,6 +237,14 @@
                     <input id="editor-video-live" type="checkbox">
                     <span>Live Stream</span>
                     <small>Enable only while the broadcast is currently live. Live streams receive priority in the featured area and display a LIVE NOW indicator.</small>
+                </label>
+                <label>
+                    <span>Viewing Access</span>
+                    <select id="editor-video-access">
+                        <option value="members" selected>Members</option>
+                        <option value="public">Public</option>
+                    </select>
+                    <small>Members: Anyone may discover the video page, but a TPI member account is required to watch and participate. Public: Anyone may watch this video without signing in.</small>
                 </label>
             </div>
             <button type="button" class="settings-action" data-action="publish">Publish Article</button>

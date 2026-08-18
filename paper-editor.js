@@ -54,6 +54,7 @@
   const videoDurationInput = document.getElementById("editor-video-duration");
   const videoFeaturedInput = document.getElementById("editor-video-featured");
   const videoLiveInput = document.getElementById("editor-video-live");
+  const videoAccessInput = document.getElementById("editor-video-access");
 
   let activeView = "compose";
   let savedSelection = null;
@@ -137,13 +138,27 @@
     return getContributionType() === "TPI Video";
   }
 
+  const TPI_VIDEOS_DESTINATION = "tpi-videos.html";
+
   function updateVideoFieldsVisibility() {
+    const isVideo = isTpiVideoType();
     if (tpiVideoFields) {
-      tpiVideoFields.hidden = !isTpiVideoType();
+      tpiVideoFields.hidden = !isVideo;
     }
     const publishBtn = document.querySelector('[data-action="publish"]');
     if (publishBtn) {
-      publishBtn.textContent = isTpiVideoType() ? "Publish Video" : "Publish Article";
+      publishBtn.textContent = isVideo ? "Publish Video" : "Publish Article";
+    }
+    if (destinationInput) {
+      if (isVideo) {
+        destinationInput.value = TPI_VIDEOS_DESTINATION;
+        destinationInput.disabled = true;
+      } else {
+        destinationInput.disabled = false;
+        if (destinationInput.value === TPI_VIDEOS_DESTINATION) {
+          destinationInput.value = "education-area-investigation-science.html";
+        }
+      }
     }
   }
 
@@ -181,6 +196,7 @@
       series: videoSeriesInput?.value?.trim() || "",
       episode: videoEpisodeInput?.value?.trim() || "",
       duration: videoDurationInput?.value?.trim() || "",
+      viewingAccess: videoAccessInput?.value || "members",
       status: "published"
     };
   }

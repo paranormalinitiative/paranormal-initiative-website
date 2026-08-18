@@ -53,7 +53,13 @@ When enabled, this video may be highlighted in the featured area of the TPI Vide
 **Live Stream**
 Enable only while the broadcast is currently live. Live streams receive priority in the featured area and display a LIVE NOW indicator. When the stream ends, edit the entry and disable this option to keep the video as an archived recording.
 
+**Viewing Access**
+- **Members**: Anyone may discover the video page, but a TPI member account is required to watch and participate.
+- **Public**: Anyone may watch this video without signing in. Use for public announcements, welcome videos, or selected promotional programming.
+
 ## Publishing
+
+**Destination:** TPI Videos (automatically set when TPI Video is selected as Contribution Type)
 
 1. Fill in the required fields (Title, Video URL)
 2. Add a description and relevant details

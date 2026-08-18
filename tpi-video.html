@@ -5,305 +5,99 @@
     <title>TPI Video | The Paranormal Initiative</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Watch TPI video programming from The Paranormal Initiative — Applied Paranormal Research and Studies.">
+    <meta property="og:type" content="video.other">
+    <meta property="og:site_name" content="The Paranormal Initiative">
+    <meta property="og:title" content="TPI Video">
+    <meta property="og:description" content="Watch TPI video programming from The Paranormal Initiative.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=15">
     <style>
-        .video-player-area {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #0a0c10;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-        .video-player-area iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-        .video-player-area .video-thumb-fallback {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            padding: 3rem;
-            text-align: center;
-            width: 100%;
-            height: 100%;
-        }
-        .video-player-area .video-thumb-fallback-icon {
-            width: 100px;
-            height: 100px;
-            font-size: 2.5rem;
-        }
-        .video-player-area img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .video-detail-header {
-            margin-bottom: 1.5rem;
-        }
-        .video-detail-header h1 {
-            font-size: 1.6rem;
-            color: #e8ecf4;
-            line-height: 1.3;
-            margin-bottom: 0.75rem;
-        }
-        .video-detail-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-        .video-detail-meta span {
-            font-size: 0.82rem;
-            color: #5a6070;
-            font-weight: 600;
-        }
-        .video-detail-meta .video-card-category {
-            color: #59a9dc !important;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-        .video-detail-description {
-            background: #12151c;
-            border: 1px solid #1e2230;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .video-detail-description p {
-            color: #8d93a3;
-            font-size: 0.95rem;
-            line-height: 1.7;
-            white-space: pre-wrap;
-        }
-        .video-detail-series {
-            font-size: 0.85rem;
-            color: #59a9dc;
-            margin-bottom: 0.5rem;
-        }
-        .video-detail-actions {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-        .video-comments-section {
-            margin-bottom: 2rem;
-        }
-        .video-comments-section h2 {
-            font-size: 1.2rem;
-            color: #e8ecf4;
-            margin-bottom: 1rem;
-        }
-        .video-comment-form {
-            background: #12151c;
-            border: 1px solid #1e2230;
-            border-radius: 10px;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-        }
-        .video-comment-form textarea {
-            width: 100%;
-            background: #0a0c10;
-            border: 1px solid #1e2230;
-            color: #c8cdd8;
-            font-size: 0.9rem;
-            padding: 0.75rem;
-            border-radius: 6px;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 80px;
-            margin-bottom: 0.75rem;
-        }
-        .video-comment-form textarea:focus { outline: none; border-color: #59a9dc; }
-        .video-comment-form textarea::placeholder { color: #5a6070; }
-        .video-comment-login-prompt {
-            background: #12151c;
-            border: 1px solid #1e2230;
-            border-radius: 10px;
-            padding: 1.25rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        .video-comment-login-prompt p {
-            color: #8d93a3;
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-        }
-        .video-comment {
-            background: #12151c;
-            border: 1px solid #1e2230;
-            border-radius: 10px;
-            padding: 1.25rem;
-            margin-bottom: 0.75rem;
-        }
-        .video-comment-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-        .video-comment-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #1a2540, #0d1520);
-            border: 1px solid #2a3550;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            color: #59a9dc;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-        .video-comment-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
-        }
-        .video-comment-name {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #e8ecf4;
-        }
-        .video-comment-date {
-            font-size: 0.75rem;
-            color: #5a6070;
-        }
-        .video-comment-body {
-            font-size: 0.9rem;
-            color: #8d93a3;
-            line-height: 1.6;
-        }
-        .video-comment-status {
-            font-size: 0.85rem;
-            color: #5a6070;
-            margin-top: 0.5rem;
-        }
-        .video-related-section {
-            margin-bottom: 2rem;
-        }
-        .video-related-section h2 {
-            font-size: 1.2rem;
-            color: #e8ecf4;
-            margin-bottom: 1rem;
-        }
-        .video-related-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1rem;
-        }
-        .video-related-card {
-            background: #12151c;
-            border: 1px solid #1e2230;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: border-color 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-        .video-related-card:hover { border-color: #2a3550; }
-        .video-related-media {
-            position: relative;
-            background: #0a0c10;
-            aspect-ratio: 16 / 9;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .video-related-media img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .video-related-media .video-thumb-fallback { padding: 1rem; gap: 0.4rem; }
-        .video-related-media .video-thumb-fallback-icon { width: 36px; height: 36px; font-size: 1rem; }
-        .video-related-copy {
-            padding: 0.85rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            flex: 1;
-        }
-        .video-related-copy h3 {
-            font-size: 0.85rem;
-            color: #e8ecf4;
-            line-height: 1.4;
-        }
-        .video-related-copy span {
-            font-size: 0.72rem;
-            color: #5a6070;
-        }
-        .video-back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            color: #59a9dc;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-decoration: none;
-            margin-bottom: 1.5rem;
-        }
-        .video-back-link:hover { text-decoration: underline; }
-        .video-live-banner {
-            background: #dc2626;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 700;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .video-live-banner::before {
-            content: "";
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: #fff;
-            border-radius: 50%;
-            animation: live-pulse 1.5s ease-in-out infinite;
-        }
-        @keyframes live-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        .video-not-found {
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-        .video-not-found h2 {
-            color: #c8cdd8;
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-        }
-        .video-not-found p {
-            color: #5a6070;
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-        @media (max-width: 800px) {
-            .video-detail-header h1 { font-size: 1.3rem; }
-            .video-related-grid { grid-template-columns: 1fr; }
-        }
+        .video-player-area{position:relative;width:100%;aspect-ratio:16/9;background:#0a0c10;border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+        .video-player-area iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+        .video-player-area .video-thumb-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:3rem;text-align:center;width:100%;height:100%}
+        .video-player-area .video-thumb-fallback-icon{width:100px;height:100px;font-size:2.5rem}
+        .video-player-area img{width:100%;height:100%;object-fit:cover;display:block}
+        .video-detail-header{margin-bottom:1.5rem}
+        .video-detail-header h1{font-size:1.6rem;color:#e8ecf4;line-height:1.3;margin-bottom:0.75rem}
+        .video-channel-identity{font-size:0.85rem;color:#5a6070;margin-bottom:0.75rem}
+        .video-channel-identity strong{color:#c8cdd8;font-weight:600}
+        .video-detail-meta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+        .video-detail-meta span{font-size:0.82rem;color:#5a6070;font-weight:600}
+        .video-detail-meta .video-card-category{color:#59a9dc!important;text-transform:uppercase;letter-spacing:0.06em}
+        .video-action-bar{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:0.75rem 0;border-top:1px solid #1e2230;border-bottom:1px solid #1e2230}
+        .video-action-btn{display:inline-flex;align-items:center;gap:0.4rem;background:none;border:1px solid #1e2230;color:#8d93a3;font-size:0.82rem;font-weight:600;padding:0.45rem 0.9rem;border-radius:20px;cursor:pointer;transition:all 0.2s;font-family:inherit}
+        .video-action-btn:hover{border-color:#2a3550;color:#c8cdd8}
+        .video-action-btn.active{background:#1a2540;border-color:#59a9dc;color:#59a9dc}
+        .video-action-btn .emoji{font-size:1rem}
+        .video-reaction-popover{position:relative;display:inline-block}
+        .video-reaction-picker{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#12151c;border:1px solid #1e2230;border-radius:8px;padding:0.4rem;gap:0.2rem;display:none;z-index:10;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.4)}
+        .video-reaction-picker.open{display:flex}
+        .video-reaction-option{background:none;border:none;font-size:1.2rem;padding:0.3rem 0.5rem;cursor:pointer;border-radius:4px;transition:background 0.15s}
+        .video-reaction-option:hover{background:#1e2230}
+        .video-reaction-counts{display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+        .video-reaction-count{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.8rem;color:#5a6070}
+        .video-reaction-count .emoji{font-size:0.9rem}
+        .video-detail-description{background:#12151c;border:1px solid #1e2230;border-radius:10px;padding:1.5rem;margin-bottom:2rem}
+        .video-detail-description p{color:#8d93a3;font-size:0.95rem;line-height:1.7;white-space:pre-wrap}
+        .video-detail-series{font-size:0.85rem;color:#59a9dc;margin-bottom:0.5rem}
+        .video-detail-actions{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:2rem}
+        .video-comments-section{margin-bottom:2rem}
+        .video-comments-section h2{font-size:1.2rem;color:#e8ecf4;margin-bottom:1rem}
+        .video-comment-form{background:#12151c;border:1px solid #1e2230;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+        .video-comment-form textarea{width:100%;background:#0a0c10;border:1px solid #1e2230;color:#c8cdd8;font-size:0.9rem;padding:0.75rem;border-radius:6px;font-family:inherit;resize:vertical;min-height:80px;margin-bottom:0.75rem}
+        .video-comment-form textarea:focus{outline:none;border-color:#59a9dc}
+        .video-comment-form textarea::placeholder{color:#5a6070}
+        .video-comment-login-prompt{background:#12151c;border:1px solid #1e2230;border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.5rem}
+        .video-comment-login-prompt p{color:#8d93a3;font-size:0.9rem;margin-bottom:0.75rem}
+        .video-comment{background:#12151c;border:1px solid #1e2230;border-radius:10px;padding:1.25rem;margin-bottom:0.75rem}
+        .video-comment-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem}
+        .video-comment-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a2540,#0d1520);border:1px solid #2a3550;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:#59a9dc;font-weight:700;flex-shrink:0}
+        .video-comment-info{display:flex;flex-direction:column;gap:0.15rem}
+        .video-comment-name{font-size:0.9rem;font-weight:600;color:#e8ecf4}
+        .video-comment-date{font-size:0.75rem;color:#5a6070}
+        .video-comment-body{font-size:0.9rem;color:#8d93a3;line-height:1.6}
+        .video-comment-status{font-size:0.85rem;color:#5a6070;margin-top:0.5rem}
+        .video-related-section{margin-bottom:2rem}
+        .video-related-section h2{font-size:1.2rem;color:#e8ecf4;margin-bottom:1rem}
+        .video-related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+        .video-related-card{background:#12151c;border:1px solid #1e2230;border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color 0.2s;display:flex;flex-direction:column}
+        .video-related-card:hover{border-color:#2a3550}
+        .video-related-media{position:relative;background:#0a0c10;aspect-ratio:16/9;overflow:hidden;display:flex;align-items:center;justify-content:center}
+        .video-related-media img{width:100%;height:100%;object-fit:cover;display:block}
+        .video-related-media .video-thumb-fallback{padding:1rem;gap:0.4rem}
+        .video-related-media .video-thumb-fallback-icon{width:36px;height:36px;font-size:1rem}
+        .video-related-copy{padding:0.85rem;display:flex;flex-direction:column;gap:0.3rem;flex:1}
+        .video-related-copy h3{font-size:0.85rem;color:#e8ecf4;line-height:1.4}
+        .video-related-copy span{font-size:0.72rem;color:#5a6070}
+        .video-back-link{display:inline-flex;align-items:center;gap:0.4rem;color:#59a9dc;font-size:0.9rem;font-weight:600;text-decoration:none;margin-bottom:1.5rem}
+        .video-back-link:hover{text-decoration:underline}
+        .video-live-banner{background:#dc2626;color:#fff;font-size:0.9rem;font-weight:700;padding:0.75rem 1.25rem;border-radius:8px;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem}
+        .video-live-banner::before{content:"";display:inline-block;width:10px;height:10px;background:#fff;border-radius:50%;animation:live-pulse 1.5s ease-in-out infinite}
+        @keyframes live-pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+        .video-not-found{text-align:center;padding:4rem 2rem}
+        .video-not-found h2{color:#c8cdd8;font-size:1.4rem;margin-bottom:1rem}
+        .video-not-found p{color:#5a6070;font-size:0.95rem;margin-bottom:1.5rem}
+        .video-gate{background:#12151c;border:1px solid #1e2230;border-radius:12px;padding:2.5rem;text-align:center;margin-bottom:2rem}
+        .video-gate h2{font-size:1.3rem;color:#e8ecf4;margin-bottom:0.75rem}
+        .video-gate p{color:#8d93a3;font-size:0.95rem;line-height:1.6;max-width:500px;margin:0 auto 1.5rem}
+        .video-gate .portal-actions{justify-content:center}
+        .video-share-modal,.video-report-modal,.video-embed-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000}
+        .video-share-modal.hidden,.video-report-modal.hidden,.video-embed-modal.hidden{display:none}
+        .video-modal-card{background:#12151c;border:1px solid #1e2230;border-radius:12px;padding:1.5rem;max-width:420px;width:90%;max-height:80vh;overflow-y:auto}
+        .video-modal-card h3{color:#e8ecf4;margin-bottom:1rem}
+        .video-share-options{display:flex;flex-wrap:wrap;gap:0.5rem}
+        .video-share-btn{background:#1e2230;border:1px solid #2a3550;color:#c8cdd8;font-size:0.85rem;font-weight:600;padding:0.6rem 1rem;border-radius:6px;cursor:pointer;transition:all 0.2s;font-family:inherit;text-decoration:none;text-align:center}
+        .video-share-btn:hover{background:#252a3a;border-color:#59a9dc}
+        .video-report-form label{display:block;margin-bottom:0.75rem}
+        .video-report-form label span{display:block;font-size:0.85rem;color:#8d93a3;margin-bottom:0.3rem}
+        .video-report-form select,.video-report-form textarea{width:100%;background:#0a0c10;border:1px solid #1e2230;color:#c8cdd8;font-size:0.9rem;padding:0.6rem;border-radius:6px;font-family:inherit}
+        .video-report-form textarea{min-height:80px;resize:vertical;margin-top:0.5rem}
+        .video-report-form select:focus,.video-report-form textarea:focus{outline:none;border-color:#59a9dc}
+        .video-embed-code{width:100%;background:#0a0c10;border:1px solid #1e2230;color:#c8cdd8;font-size:0.82rem;padding:0.75rem;border-radius:6px;font-family:monospace;resize:none;margin-bottom:0.75rem}
+        .video-saved-badge{font-size:0.75rem;color:#59a9dc;margin-left:0.25rem}
+        @media(max-width:800px){.video-detail-header h1{font-size:1.3rem}.video-related-grid{grid-template-columns:1fr}.video-action-bar{gap:0.35rem}.video-action-btn{font-size:0.75rem;padding:0.35rem 0.7rem}}
     </style>
 </head>
 <body>
@@ -318,8 +112,29 @@
     var videos = [];
     var container = document.getElementById("video-detail-content");
     var videoId = new URLSearchParams(window.location.search).get("id");
+    var currentUser = null;
+    var userReaction = null;
+    var reactionCounts = {};
+    var isSaved = false;
+
+    var REACTIONS = [
+        { id: "like", emoji: "\uD83D\uDC4D", label: "Like" },
+        { id: "love", emoji: "\u2764\uFE0F", label: "Love" },
+        { id: "care", emoji: "\uD83E\uDD17", label: "Care" },
+        { id: "haha", emoji: "\uD83D\uDE02", label: "Haha" },
+        { id: "wow", emoji: "\uD83D\uDE32", label: "Wow" },
+        { id: "sad", emoji: "\uD83D\uDE22", label: "Sad" },
+        { id: "angry", emoji: "\uD83D\uDE21", label: "Angry" }
+    ];
 
     async function loadVideoAndInit() {
+        try {
+            var meRes = await fetch("/api/auth/me", { credentials: "same-origin" });
+            if (meRes.ok) {
+                var meData = await meRes.json();
+                currentUser = meData.user;
+            }
+        } catch (e) {}
         try {
             var res = await fetch("/api/tpi-videos", { credentials: "same-origin" });
             if (res.ok) {
@@ -345,13 +160,13 @@
 
     function getCategoryIcon(category) {
         var cat = String(category || "").toLowerCase();
-        if (cat.indexOf("live") !== -1) return "\u{1F4FA}";
-        if (cat.indexOf("evp") !== -1 || cat.indexOf("itc") !== -1) return "\u{1F3A4}";
-        if (cat.indexOf("visual") !== -1 || cat.indexOf("scry") !== -1) return "\u{1F3AC}";
-        if (cat.indexOf("investigation") !== -1) return "\u{1F50D}";
-        if (cat.indexOf("equipment") !== -1) return "\u{1F4E1}";
-        if (cat.indexOf("education") !== -1) return "\u{1F4DA}";
-        return "\u{1F3AC}";
+        if (cat.indexOf("live") !== -1) return "\uD83D\uDCFA";
+        if (cat.indexOf("evp") !== -1 || cat.indexOf("itc") !== -1) return "\uD83C\uDFA4";
+        if (cat.indexOf("visual") !== -1 || cat.indexOf("scry") !== -1) return "\uD83C\uDFAC";
+        if (cat.indexOf("investigation") !== -1) return "\uD83D\uDD0D";
+        if (cat.indexOf("equipment") !== -1) return "\uD83D\uDCE1";
+        if (cat.indexOf("education") !== -1) return "\uD83D\uDCDA";
+        return "\uD83C\uDFAC";
     }
 
     function renderThumbFallback(category) {
@@ -384,31 +199,109 @@
         }).slice(0, 6);
     }
 
-    function renderRelated(related) {
-        if (!related.length) return "";
-        var html = '<section class="video-related-section"><h2>Related Videos</h2><div class="video-related-grid">';
-        related.forEach(function (v) {
-            var hasThumb = v.thumbnail && v.thumbnail.trim();
-            var mediaHtml = hasThumb
-                ? '<img src="' + escapeHtml(v.thumbnail) + '" alt="' + escapeHtml(v.title) + ' thumbnail" loading="lazy">'
-                : renderThumbFallback(v.category);
-            html += '<article class="video-related-card" onclick="window.location.href=\'' + getVideoUrl(v) + '\'">' +
-                '<div class="video-related-media">' + mediaHtml + '</div>' +
-                '<div class="video-related-copy">' +
-                '<h3>' + escapeHtml(v.title) + '</h3>' +
-                '<span>' + escapeHtml(v.category || "") + (v.publishedAt ? ' &middot; ' + formatDate(v.publishedAt) : '') + '</span>' +
-                '</div></article>';
-        });
-        html += '</div></section>';
-        return html;
+    function getReactionEmoji(reactionId) {
+        var r = REACTIONS.find(function (x) { return x.id === reactionId; });
+        return r ? r.emoji : "";
     }
 
-    function renderCommentsSection(videoId) {
-        return '<section class="video-comments-section">' +
-            '<h2>Comments</h2>' +
-            '<div id="video-comment-form-area"></div>' +
-            '<div id="video-comments-list"></div>' +
-            '</section>';
+    function getTotalReactions() {
+        var total = 0;
+        Object.keys(reactionCounts).forEach(function (k) { total += reactionCounts[k]; });
+        return total;
+    }
+
+    function renderReactionBar() {
+        var currentEmoji = userReaction ? getReactionEmoji(userReaction) : "\uD83D\uDC4D";
+        var currentLabel = userReaction ? (REACTIONS.find(function (r) { return r.id === userReaction; }) || {}).label || "Like" : "Like";
+        var totalCount = getTotalReactions();
+
+        var countsHtml = "";
+        REACTIONS.forEach(function (r) {
+            if (reactionCounts[r.id]) {
+                countsHtml += '<span class="video-reaction-count"><span class="emoji">' + r.emoji + '</span>' + reactionCounts[r.id] + '</span>';
+            }
+        });
+
+        return '<div class="video-action-bar">' +
+            '<div class="video-reaction-popover">' +
+            '<button class="video-action-btn' + (userReaction ? ' active' : '') + '" id="reaction-main-btn">' +
+            '<span class="emoji">' + currentEmoji + '</span> ' + escapeHtml(currentLabel) +
+            (totalCount > 0 ? ' <span>' + totalCount + '</span>' : '') +
+            '</button>' +
+            '<div class="video-reaction-picker" id="reaction-picker">' +
+            REACTIONS.map(function (r) {
+                return '<button class="video-reaction-option" data-reaction="' + r.id + '" title="' + r.label + '">' + r.emoji + '</button>';
+            }).join("") +
+            '</div>' +
+            '</div>' +
+            '<button class="video-action-btn" id="comment-scroll-btn">\uD83D\uDCAC Comments</button>' +
+            '<button class="video-action-btn" id="share-btn">\u2197 Share</button>' +
+            '<button class="video-action-btn' + (isSaved ? ' active' : '') + '" id="save-btn">\uD83D\uDD16' + (isSaved ? ' Saved' : ' Save') + '</button>' +
+            '<button class="video-action-btn" id="embed-btn">&lt;/&gt; Embed</button>' +
+            '<button class="video-action-btn" id="report-btn">\u26A0 Report</button>' +
+            '</div>' +
+            (countsHtml ? '<div class="video-reaction-counts">' + countsHtml + '</div>' : '');
+    }
+
+    function renderShareModal(video) {
+        var url = window.location.href;
+        var title = video.title || "TPI Video";
+        var encodedUrl = encodeURIComponent(url);
+        var encodedTitle = encodeURIComponent(title);
+
+        return '<div class="video-share-modal hidden" id="share-modal">' +
+            '<div class="video-modal-card">' +
+            '<h3>Share This Video</h3>' +
+            '<div class="video-share-options">' +
+            '<a class="video-share-btn" href="https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl + '" target="_blank" rel="noopener noreferrer">Facebook</a>' +
+            '<a class="video-share-btn" href="https://twitter.com/intent/tweet?url=' + encodedUrl + '&text=' + encodedTitle + '" target="_blank" rel="noopener noreferrer">X</a>' +
+            '<a class="video-share-btn" href="https://wa.me/?text=' + encodedTitle + '%20' + encodedUrl + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
+            '<a class="video-share-btn" href="mailto:?subject=' + encodedTitle + '&body=' + encodedUrl + '">Email</a>' +
+            '<button class="video-share-btn" id="copy-link-btn">Copy Link</button>' +
+            '</div>' +
+            '<p id="share-status" style="font-size:0.82rem;color:#5a6070;margin-top:0.75rem"></p>' +
+            '<button class="portal-button portal-button-secondary" style="margin-top:0.75rem" id="close-share-modal">Close</button>' +
+            '</div></div>';
+    }
+
+    function renderReportModal() {
+        return '<div class="video-report-modal hidden" id="report-modal">' +
+            '<div class="video-modal-card">' +
+            '<h3>Report Video</h3>' +
+            '<form class="video-report-form" id="report-form">' +
+            '<label><span>Reason</span>' +
+            '<select id="report-reason" required>' +
+            '<option value="">Select a reason...</option>' +
+            '<option value="inappropriate">Inappropriate content</option>' +
+            '<option value="wrong-video">Wrong video</option>' +
+            '<option value="broken">Broken video</option>' +
+            '<option value="copyright">Copyright concern</option>' +
+            '<option value="explicit">Explicit material</option>' +
+            '<option value="spam">Spam</option>' +
+            '<option value="other">Other</option>' +
+            '</select></label>' +
+            '<label><span>Details (optional)</span>' +
+            '<textarea id="report-details" placeholder="Add any additional details..."></textarea></label>' +
+            '<button class="portal-button" type="submit">Submit Report</button>' +
+            '<p id="report-status" style="font-size:0.82rem;color:#5a6070;margin-top:0.5rem"></p>' +
+            '</form>' +
+            '<button class="portal-button portal-button-secondary" style="margin-top:0.75rem" id="close-report-modal">Close</button>' +
+            '</div></div>';
+    }
+
+    function renderEmbedModal(video) {
+        var url = window.location.href;
+        var embedCode = '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">Watch on The Paranormal Initiative</a>';
+
+        return '<div class="video-embed-modal hidden" id="embed-modal">' +
+            '<div class="video-modal-card">' +
+            '<h3>Embed / Link</h3>' +
+            '<p style="font-size:0.85rem;color:#8d93a3;margin-bottom:0.75rem">Share this video by copying the link below.</p>' +
+            '<textarea class="video-embed-code" id="embed-code" readonly>' + escapeHtml(embedCode) + '</textarea>' +
+            '<button class="portal-button" id="copy-embed-btn">Copy Link</button>' +
+            '<p id="embed-status" style="font-size:0.82rem;color:#5a6070;margin-top:0.5rem"></p>' +
+            '<button class="portal-button portal-button-secondary" style="margin-top:0.75rem" id="close-embed-modal">Close</button>' +
+            '</div></div>';
     }
 
     function renderNotFound() {
@@ -420,93 +313,383 @@
             '</section>';
     }
 
+    function renderMemberGate(video) {
+        return '<div class="video-gate">' +
+            '<h2>Join The Paranormal Initiative to Watch</h2>' +
+            '<p>This video is available to TPI members. Membership is free. Create an account or sign in to watch, comment, react, save videos, and participate in the TPI community.</p>' +
+            '<div class="portal-actions">' +
+            '<a class="portal-button" href="member-login.html">Create Free Account</a>' +
+            '<a class="portal-button portal-button-secondary" href="member-login.html">Member Login</a>' +
+            '</div></div>';
+    }
+
+    async function loadReactions(videoSlug) {
+        try {
+            var res = await fetch("/api/video-reactions?videoId=" + encodeURIComponent(videoSlug), { credentials: "same-origin" });
+            if (res.ok) {
+                var data = await res.json();
+                reactionCounts = data.reactionCounts || {};
+                userReaction = data.userReaction || null;
+            }
+        } catch (e) {}
+    }
+
+    async function loadSaveStatus(videoId) {
+        if (!currentUser) return;
+        try {
+            var res = await fetch("/api/video-saves", { credentials: "same-origin" });
+            if (res.ok) {
+                var data = await res.json();
+                isSaved = (data.saves || []).some(function (s) { return s.videoId === videoId; });
+            }
+        } catch (e) {}
+    }
+
     function renderVideo(video) {
         var hasEmbed = video.embedUrl && video.embedUrl.trim();
         var hasThumb = video.thumbnail && video.thumbnail.trim();
+        var isPublic = video.viewingAccess === "public";
+        var canWatch = isPublic || currentUser;
+
+        // Update meta tags
+        document.title = escapeHtml(video.title) + " | TPI Videos | The Paranormal Initiative";
+        var metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.content = video.description ? video.description.substring(0, 155) + "..." : "Watch " + video.title + " on TPI Videos from The Paranormal Initiative.";
+        var ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.content = video.title;
+        var ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) ogDesc.content = video.description ? video.description.substring(0, 200) : "Watch " + video.title + " on TPI Videos.";
+        if (hasThumb) {
+            var ogImage = document.querySelector('meta[property="og:image"]') || document.createElement("meta");
+            ogImage.setAttribute("property", "og:image");
+            ogImage.content = video.thumbnail;
+            if (!document.querySelector('meta[property="og:image"]')) document.head.appendChild(ogImage);
+        }
 
         // Player area
         var playerHtml;
-        if (hasEmbed) {
-            playerHtml = '<div class="video-player-area">' +
-                '<iframe src="' + escapeHtml(video.embedUrl) + '" title="' + escapeHtml(video.title) + '" allowfullscreen></iframe>' +
-                '</div>';
-        } else if (hasThumb) {
-            playerHtml = '<div class="video-player-area">' +
-                '<img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + '">' +
-                '</div>';
-        } else {
+        if (canWatch && hasEmbed) {
+            playerHtml = '<div class="video-player-area"><iframe src="' + escapeHtml(video.embedUrl) + '" title="' + escapeHtml(video.title) + '" allowfullscreen></iframe></div>';
+        } else if (canWatch && hasThumb) {
+            playerHtml = '<div class="video-player-area"><img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + '"></div>';
+        } else if (canWatch) {
             playerHtml = '<div class="video-player-area">' + renderThumbFallback(video.category) + '</div>';
+        } else {
+            playerHtml = hasThumb
+                ? '<div class="video-player-area"><img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + '"></div>'
+                : '<div class="video-player-area">' + renderThumbFallback(video.category) + '</div>';
         }
 
         // Live banner
-        var liveBanner = video.isLive
-            ? '<div class="video-live-banner">This stream is live now</div>'
-            : '';
+        var liveBanner = video.isLive ? '<div class="video-live-banner">This stream is live now</div>' : '';
 
         // Series info
-        var seriesHtml = video.series
-            ? '<div class="video-detail-series">' + escapeHtml(video.series) + (video.episode ? ' &middot; Episode ' + video.episode : '') + '</div>'
-            : '';
+        var seriesHtml = video.series ? '<div class="video-detail-series">' + escapeHtml(video.series) + (video.episode ? ' &middot; Episode ' + video.episode : '') + '</div>' : '';
 
-        // Actions
-        var watchLabel = hasEmbed ? "Watch on " + escapeHtml(video.platform || "External Site") : "Watch on " + escapeHtml(video.platform || "External Site");
-        var actionsHtml = '<div class="video-detail-actions">' +
-            (video.videoUrl ? '<a class="portal-button" href="' + escapeHtml(video.videoUrl) + '" target="_blank" rel="noopener noreferrer">' + watchLabel + '</a>' : '') +
-            '<a class="portal-button portal-button-secondary" href="tpi-videos.html">Back to TPI Videos</a>' +
-            '</div>';
+        // Channel identity
+        var channelHtml = '<div class="video-channel-identity"><strong>The Paranormal Initiative</strong> &middot; Applied Paranormal Research and Studies</div>';
 
-        // Related
-        var related = getRelated(video);
+        // Tags
+        var tagsHtml = '';
+        if (video.tags && video.tags.length) {
+            tagsHtml = '<div style="margin-bottom:1rem">' + video.tags.map(function (t) {
+                return '<span style="display:inline-block;background:#1a2540;color:#59a9dc;font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:12px;margin:0.15rem">' + escapeHtml(t) + '</span>';
+            }).join("") + '</div>';
+        }
 
-        // Title
-        document.title = escapeHtml(video.title) + " | TPI Videos | The Paranormal Initiative";
+        // Watch button for external
+        var watchBtn = '';
+        if (canWatch && video.videoUrl && !hasEmbed) {
+            watchBtn = '<div class="video-detail-actions"><a class="portal-button" href="' + escapeHtml(video.videoUrl) + '" target="_blank" rel="noopener noreferrer">Watch on ' + escapeHtml(video.platform || "External Site") + '</a></div>';
+        } else if (!canWatch && video.videoUrl) {
+            watchBtn = '<div class="video-detail-actions"><a class="portal-button" href="' + escapeHtml(video.videoUrl) + '" target="_blank" rel="noopener noreferrer">Watch on ' + escapeHtml(video.platform || "External Site") + '</a></div>';
+        }
 
-        // Meta description
-        var metaDesc = document.querySelector('meta[name="description"]');
-        if (metaDesc) metaDesc.content = video.description
-            ? video.description.substring(0, 155) + "..."
-            : "Watch " + video.title + " on TPI Videos from The Paranormal Initiative.";
-
-        container.innerHTML =
-            '<a class="video-back-link" href="tpi-videos.html">&larr; Back to TPI Videos</a>' +
+        // Build page
+        var html = '<a class="video-back-link" href="tpi-videos.html">&larr; Back to TPI Videos</a>' +
             liveBanner +
             playerHtml +
             '<div class="video-detail-header">' +
             seriesHtml +
             '<h1>' + escapeHtml(video.title) + '</h1>' +
+            channelHtml +
             '<div class="video-detail-meta">' +
             '<span class="video-card-category">' + escapeHtml(video.category || "Video") + '</span>' +
             (video.publishedAt ? '<span>' + formatDate(video.publishedAt) + '</span>' : "") +
             (video.duration ? '<span>' + escapeHtml(video.duration) + '</span>' : "") +
             (video.platform ? '<span>' + escapeHtml(video.platform) + '</span>' : "") +
             '</div>' +
-            '</div>' +
-            actionsHtml +
-            (video.description ? '<div class="video-detail-description"><p>' + escapeHtml(video.description) + '</p></div>' : '') +
-            renderCommentsSection(video.slug || video.id) +
-            renderRelated(related);
+            '</div>';
 
-        // Initialize comments
-        initComments(video.slug || video.id);
+        if (canWatch) {
+            html += renderReactionBar();
+        }
+
+        html += tagsHtml;
+        html += watchBtn;
+
+        if (!canWatch) {
+            html += renderMemberGate(video);
+        }
+
+        if (video.description) {
+            html += '<div class="video-detail-description"><p>' + escapeHtml(video.description) + '</p></div>';
+        }
+
+        if (canWatch) {
+            html += renderCommentsSection(video.slug || video.id);
+        }
+
+        html += renderRelated(getRelated(video));
+        html += renderShareModal(video);
+        html += renderReportModal();
+        html += renderEmbedModal(video);
+
+        container.innerHTML = html;
+
+        // Wire up event handlers
+        if (canWatch) {
+            wireUpReactionHandlers(video);
+            wireUpActionHandlers(video);
+            initComments(video.slug || video.id);
+        }
     }
 
-    // === COMMENTS SYSTEM ===
-    var currentUser = null;
+    function wireUpReactionHandlers(video) {
+        var mainBtn = document.getElementById("reaction-main-btn");
+        var picker = document.getElementById("reaction-picker");
+
+        if (mainBtn) {
+            mainBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                if (!currentUser) {
+                    window.location.href = "member-login.html";
+                    return;
+                }
+                picker.classList.toggle("open");
+            });
+        }
+
+        document.addEventListener("click", function () {
+            if (picker) picker.classList.remove("open");
+        });
+
+        if (picker) {
+            picker.addEventListener("click", async function (e) {
+                e.stopPropagation();
+                var btn = e.target.closest("[data-reaction]");
+                if (!btn || !currentUser) return;
+                var reaction = btn.dataset.reaction;
+                picker.classList.remove("open");
+
+                try {
+                    var res = await fetch("/api/video-reactions", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ videoId: video.slug || video.id, reaction: reaction })
+                    });
+                    if (res.ok) {
+                        var data = await res.json();
+                        reactionCounts = data.reactionCounts || {};
+                        userReaction = data.userReaction || null;
+                        updateReactionUI();
+                    }
+                } catch (e) {}
+            });
+        }
+    }
+
+    function updateReactionUI() {
+        var actionBar = document.querySelector(".video-action-bar");
+        var countsContainer = document.querySelector(".video-reaction-counts");
+        if (!actionBar) return;
+
+        var currentEmoji = userReaction ? getReactionEmoji(userReaction) : "\uD83D\uDC4D";
+        var currentLabel = userReaction ? (REACTIONS.find(function (r) { return r.id === userReaction; }) || {}).label || "Like" : "Like";
+        var totalCount = getTotalReactions();
+
+        var mainBtn = document.getElementById("reaction-main-btn");
+        if (mainBtn) {
+            mainBtn.className = "video-action-btn" + (userReaction ? " active" : "");
+            mainBtn.innerHTML = '<span class="emoji">' + currentEmoji + '</span> ' + escapeHtml(currentLabel) + (totalCount > 0 ? ' <span>' + totalCount + '</span>' : '');
+        }
+
+        // Update counts display
+        var existingCounts = actionBar.parentNode.querySelector(".video-reaction-counts");
+        var countsHtml = "";
+        REACTIONS.forEach(function (r) {
+            if (reactionCounts[r.id]) {
+                countsHtml += '<span class="video-reaction-count"><span class="emoji">' + r.emoji + '</span>' + reactionCounts[r.id] + '</span>';
+            }
+        });
+        if (existingCounts) {
+            if (countsHtml) {
+                existingCounts.innerHTML = countsHtml;
+            } else {
+                existingCounts.remove();
+            }
+        } else if (countsHtml) {
+            var div = document.createElement("div");
+            div.className = "video-reaction-counts";
+            div.innerHTML = countsHtml;
+            actionBar.parentNode.insertBefore(div, actionBar.nextSibling);
+        }
+    }
+
+    function wireUpActionHandlers(video) {
+        var commentBtn = document.getElementById("comment-scroll-btn");
+        if (commentBtn) {
+            commentBtn.addEventListener("click", function () {
+                var section = document.querySelector(".video-comments-section");
+                if (section) section.scrollIntoView({ behavior: "smooth" });
+            });
+        }
+
+        var shareBtn = document.getElementById("share-btn");
+        if (shareBtn) {
+            shareBtn.addEventListener("click", function () {
+                if (navigator.share) {
+                    navigator.share({ title: video.title, url: window.location.href }).catch(function () {});
+                } else {
+                    document.getElementById("share-modal").classList.remove("hidden");
+                }
+            });
+        }
+
+        var copyLinkBtn = document.getElementById("copy-link-btn");
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener("click", function () {
+                navigator.clipboard.writeText(window.location.href).then(function () {
+                    document.getElementById("share-status").textContent = "Link copied!";
+                });
+            });
+        }
+
+        var closeShareModal = document.getElementById("close-share-modal");
+        if (closeShareModal) {
+            closeShareModal.addEventListener("click", function () {
+                document.getElementById("share-modal").classList.add("hidden");
+            });
+        }
+
+        var saveBtn = document.getElementById("save-btn");
+        if (saveBtn) {
+            saveBtn.addEventListener("click", async function () {
+                if (!currentUser) {
+                    window.location.href = "member-login.html";
+                    return;
+                }
+                try {
+                    var res = await fetch("/api/video-saves", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ videoId: video.slug || video.id })
+                    });
+                    if (res.ok) {
+                        var data = await res.json();
+                        isSaved = data.saved;
+                        saveBtn.className = "video-action-btn" + (isSaved ? " active" : "");
+                        saveBtn.innerHTML = "\uD83D\uDD16" + (isSaved ? " Saved" : " Save");
+                    }
+                } catch (e) {}
+            });
+        }
+
+        var embedBtn = document.getElementById("embed-btn");
+        if (embedBtn) {
+            embedBtn.addEventListener("click", function () {
+                document.getElementById("embed-modal").classList.remove("hidden");
+            });
+        }
+
+        var copyEmbedBtn = document.getElementById("copy-embed-btn");
+        if (copyEmbedBtn) {
+            copyEmbedBtn.addEventListener("click", function () {
+                var textarea = document.getElementById("embed-code");
+                textarea.select();
+                navigator.clipboard.writeText(textarea.value).then(function () {
+                    document.getElementById("embed-status").textContent = "Link copied!";
+                });
+            });
+        }
+
+        var closeEmbedModal = document.getElementById("close-embed-modal");
+        if (closeEmbedModal) {
+            closeEmbedModal.addEventListener("click", function () {
+                document.getElementById("embed-modal").classList.add("hidden");
+            });
+        }
+
+        var reportBtn = document.getElementById("report-btn");
+        if (reportBtn) {
+            reportBtn.addEventListener("click", function () {
+                if (!currentUser) {
+                    window.location.href = "member-login.html";
+                    return;
+                }
+                document.getElementById("report-modal").classList.remove("hidden");
+            });
+        }
+
+        var reportForm = document.getElementById("report-form");
+        if (reportForm) {
+            reportForm.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                var reason = document.getElementById("report-reason").value;
+                var details = document.getElementById("report-details").value;
+                if (!reason) return;
+
+                try {
+                    var res = await fetch("/api/video-reports", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ videoId: video.slug || video.id, reason: reason, details: details })
+                    });
+                    if (res.ok) {
+                        document.getElementById("report-status").textContent = "Report received. A TPI administrator will review it.";
+                        reportForm.reset();
+                    } else {
+                        var data = await res.json();
+                        document.getElementById("report-status").textContent = data.error || "Could not submit report.";
+                    }
+                } catch (e) {
+                    document.getElementById("report-status").textContent = "Could not submit report.";
+                }
+            });
+        }
+
+        var closeReportModal = document.getElementById("close-report-modal");
+        if (closeReportModal) {
+            closeReportModal.addEventListener("click", function () {
+                document.getElementById("report-modal").classList.add("hidden");
+            });
+        }
+
+        // Close modals on backdrop click
+        ["share-modal", "report-modal", "embed-modal"].forEach(function (id) {
+            var modal = document.getElementById(id);
+            if (modal) {
+                modal.addEventListener("click", function (e) {
+                    if (e.target === modal) modal.classList.add("hidden");
+                });
+            }
+        });
+    }
+
+    function renderCommentsSection(videoId) {
+        return '<section class="video-comments-section">' +
+            '<h2 id="comments-heading">Comments</h2>' +
+            '<div id="video-comment-form-area"></div>' +
+            '<div id="video-comments-list"></div>' +
+            '</section>';
+    }
 
     async function initComments(videoId) {
         var formArea = document.getElementById("video-comment-form-area");
-        var listArea = document.getElementById("video-comments-list");
 
-        // Check auth status
-        try {
-            var res = await fetch("/api/auth/me", { credentials: "same-origin" });
-            if (res.ok) {
-                var data = await res.json();
-                currentUser = data.user;
-            }
-        } catch (e) {}
-
-        // Render comment form
         if (currentUser) {
             formArea.innerHTML =
                 '<form class="video-comment-form" id="video-comment-form">' +
@@ -523,7 +706,6 @@
                 '</div>';
         }
 
-        // Load comments
         await loadComments(videoId);
     }
 
@@ -533,7 +715,10 @@
             var res = await fetch("/api/video-comments?videoId=" + encodeURIComponent(videoId), { credentials: "same-origin" });
             if (res.ok) {
                 var data = await res.json();
-                renderCommentsList(data.comments || []);
+                var comments = data.comments || [];
+                renderCommentsList(comments);
+                var heading = document.getElementById("comments-heading");
+                if (heading) heading.textContent = "Comments (" + comments.length + ")";
             } else {
                 listArea.innerHTML = '<p class="video-comment-status">No comments yet. Be the first to join the discussion.</p>';
             }
@@ -557,8 +742,7 @@
                 '<div class="video-comment-info">' +
                 '<span class="video-comment-name">' + escapeHtml(c.displayName || c.username || "Member") + '</span>' +
                 '<span class="video-comment-date">' + formatDate(c.createdAt) + '</span>' +
-                '</div>' +
-                '</div>' +
+                '</div></div>' +
                 '<div class="video-comment-body">' + escapeHtml(c.body) + '</div>' +
                 '</article>';
         });
@@ -593,14 +777,31 @@
         }
     }
 
-    // === INIT ===
+    function renderRelated(related) {
+        if (!related.length) return "";
+        var html = '<section class="video-related-section"><h2>Related Videos</h2><div class="video-related-grid">';
+        related.forEach(function (v) {
+            var hasThumb = v.thumbnail && v.thumbnail.trim();
+            var mediaHtml = hasThumb
+                ? '<img src="' + escapeHtml(v.thumbnail) + '" alt="' + escapeHtml(v.title) + ' thumbnail" loading="lazy">'
+                : renderThumbFallback(v.category);
+            html += '<article class="video-related-card" onclick="window.location.href=\'' + getVideoUrl(v) + '\'">' +
+                '<div class="video-related-media">' + mediaHtml + '</div>' +
+                '<div class="video-related-copy">' +
+                '<h3>' + escapeHtml(v.title) + '</h3>' +
+                '<span>' + escapeHtml(v.category || "") + (v.publishedAt ? ' &middot; ' + formatDate(v.publishedAt) : '') + '</span>' +
+                '</div></article>';
+        });
+        html += '</div></section>';
+        return html;
+    }
+
     async function init() {
         if (!videoId) {
             renderNotFound();
         } else {
             var video = findVideo(videoId);
             if (!video) {
-                // Try fetching directly by slug
                 try {
                     var res = await fetch("/api/tpi-videos/" + encodeURIComponent(videoId), { credentials: "same-origin" });
                     if (res.ok) {
@@ -612,10 +813,13 @@
             if (!video) {
                 renderNotFound();
             } else {
+                await loadReactions(video.slug || video.id);
+                await loadSaveStatus(video.slug || video.id);
                 renderVideo(video);
             }
         }
     }
+
     loadVideoAndInit();
 })();
 </script>
