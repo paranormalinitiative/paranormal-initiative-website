@@ -201,9 +201,47 @@
       : contributionType;
   }
 
+  const UNTITLED_TITLE_MAP = {
+    "Research Paper": "Untitled Research Paper",
+    "Research Note": "Untitled Research Note",
+    "Experimental Report": "Untitled Experimental Report",
+    "Technical Note": "Untitled Technical Note",
+    "Field Article": "Untitled Article",
+    "Case / Location Study": "Untitled Case / Location",
+    "Review Paper": "Untitled Review",
+    "Media Review": "Untitled Media Review",
+    "Method Exercise": "Untitled Content",
+    "Contributor Note": "Untitled Content",
+    "TPI Video": "Untitled Video"
+  };
+  const DEFAULT_UNTITLED_TITLE = "Untitled Content";
+
+  function getUntitledTitleForType(type) {
+    return UNTITLED_TITLE_MAP[type] || DEFAULT_UNTITLED_TITLE;
+  }
+
+  function getCurrentUntitledTitle() {
+    return getUntitledTitleForType(getContributionType());
+  }
+
+  function isUntitledTitle(title) {
+    const t = String(title || "").trim();
+    if (!t) return true;
+    const lower = t.toLowerCase();
+    if (lower === "untitled content") return true;
+    return Object.values(UNTITLED_TITLE_MAP).some(v => lower === v.toLowerCase());
+  }
+
+  function updateTitleForContributionType() {
+    const current = titleInput.value.trim();
+    if (isUntitledTitle(current)) {
+      titleInput.value = getCurrentUntitledTitle();
+    }
+  }
+
   function getPublishableTitle() {
     const title = titleInput.value.trim();
-    if (!title || title.toLowerCase() === "untitled research paper") return "";
+    if (!title || isUntitledTitle(title)) return "";
     return title;
   }
 
@@ -213,7 +251,7 @@
       .toLowerCase()
       .replace(/&/g, "and")
       .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "untitled-research-paper";
+      .replace(/^-+|-+$/g, "") || "untitled-content";
   }
 
   function getSuggestedArticleHref() {
@@ -221,7 +259,7 @@
   }
 
   function getArticleId() {
-    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const title = titleInput.value.trim() || getCurrentUntitledTitle();
     const destination = destinationInput.value.replace(/\.html$/, "");
     return `${destination}-${slugify(title)}`;
   }
@@ -343,6 +381,7 @@
   }
 
   function setDefaultDraftBody() {
+    titleInput.value = getCurrentUntitledTitle();
     editor.innerHTML = "<p><br></p>";
     htmlView.value = cleanHtml(editor.innerHTML, true);
     focusEditorStart();
@@ -1161,7 +1200,7 @@
   }
 
   function buildFullArticleDocument(label) {
-    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const title = titleInput.value.trim() || getCurrentUntitledTitle();
     const subtitle = subtitleInput.value.trim();
     const author = authorInput.value.trim();
     const articleHtml = buildArticleHtml();
@@ -1234,7 +1273,7 @@ ${articleHtml}
   }
 
   function buildDestinationCard() {
-    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const title = titleInput.value.trim() || getCurrentUntitledTitle();
     const subtitle = subtitleInput.value.trim();
     const href = getSuggestedArticleHref();
     const destination = getDestinationLabel();
@@ -1450,7 +1489,7 @@ ${articleHtml}
         ${items.map(article => `
           <div class="content-library-row" data-article-id="${escapeHtml(article.id)}" ${article.legacy ? `data-legacy="true"` : ""}>
             <div>
-              <strong>${escapeHtml(article.title || "Untitled Research Paper")}</strong>
+              <strong>${escapeHtml(article.title || "Untitled Content")}</strong>
           <span>${escapeHtml([article.legacy ? "Legacy Conversion" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper", article.legacy ? article.contributionType : ""].filter(Boolean).join(" · "))}</span>
           ${article.legacy ? `<em class="legacy-archive-note">Needs conversion - open it as-is or convert it into an editable Content Editor article.</em>` : ""}
           ${!article.legacy && getLegacySourceTitle(article.source) ? `<em class="legacy-archive-note">Converted from legacy page: ${escapeHtml(getLegacySourceTitle(article.source))}</em>` : ""}
@@ -1473,7 +1512,7 @@ ${articleHtml}
 
   function loadArticleIntoEditor(article) {
     currentArticleId = article.id;
-    titleInput.value = article.title || "Untitled Research Paper";
+    titleInput.value = article.title || getCurrentUntitledTitle();
     subtitleInput.value = article.subtitle || "";
     if (article.destination) destinationInput.value = article.destination;
     if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
@@ -1679,13 +1718,13 @@ ${articleHtml}
 
   function hasStaleId() {
     if (!currentArticleId) return false;
-    return currentArticleId.includes("untitled-research-paper") &&
+    return currentArticleId.includes("untitled-") &&
       titleInput.value.trim() &&
-      titleInput.value.trim().toLowerCase() !== "untitled research paper";
+      !isUntitledTitle(titleInput.value.trim());
   }
 
   function buildPublishedRecord() {
-    const title = titleInput.value.trim() || "Untitled Research Paper";
+    const title = titleInput.value.trim() || getCurrentUntitledTitle();
     const id = (currentArticleId && !hasStaleId()) ? currentArticleId : getArticleId();
     const bodyHtml = buildArticleHtml();
     const mediaType = getArticleMediaLabelFromHtml(bodyHtml);
@@ -2001,7 +2040,10 @@ ${articleHtml}
     input?.addEventListener("input", scheduleAutosave);
     input?.addEventListener("change", scheduleAutosave);
   });
-  contributionTypeInput?.addEventListener("change", updateVideoFieldsVisibility);
+  contributionTypeInput?.addEventListener("change", function() {
+    updateVideoFieldsVisibility();
+    updateTitleForContributionType();
+  });
   [
     videoUrlEditorInput, embedUrlInput, thumbnailUrlInput,
     videoCategoryInput, videoTagsInput, videoSeriesInput,

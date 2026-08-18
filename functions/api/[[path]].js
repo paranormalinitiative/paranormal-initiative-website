@@ -640,8 +640,8 @@ async function handleCreateArticle(request, env, user) {
   const status = data.status === "published" ? "published" : "draft";
   const href = clean(data.href || `published-article.html?id=${encodeURIComponent(id)}`);
   const destination = clean(data.destination);
-  const title = clean(data.title || "Untitled Research Paper");
-  if (status === "published" && (!title || title.toLowerCase() === "untitled research paper")) {
+  const title = clean(data.title || "Untitled Content");
+  if (status === "published" && (!title || title.toLowerCase().startsWith("untitled"))) {
     return json({ error: "A real title is required before publishing." }, 400);
   }
   const subtitle = clean(data.subtitle);

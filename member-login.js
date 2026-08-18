@@ -93,7 +93,7 @@
 
   function getProfileContributions(profile, articles) {
     const dynamicArticles = (articles || []).map(article => ({
-      title: article.title || "Untitled Research Paper",
+      title: article.title || "Untitled Content",
       subtitle: [article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper"].filter(Boolean).join(" · "),
       href: article.href || `published-article.html?id=${encodeURIComponent(article.id)}`
     }));
