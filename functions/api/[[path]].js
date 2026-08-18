@@ -1,4 +1,4 @@
-const SESSION_COOKIE = "tpi_session";
+import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -1153,17 +1153,6 @@ async function requireAdmin(request, env, handler) {
   return handler(user);
 }
 
-async function getSessionUser(request, env) {
-  const token = getCookie(request, SESSION_COOKIE);
-  if (!token) return null;
-  const user = await env.TPI_DB.prepare(`
-    SELECT c.* FROM sessions s
-    JOIN contributors c ON c.id = s.contributor_id
-    WHERE s.token = ? AND s.expires_at > CURRENT_TIMESTAMP AND c.active = 1
-  `).bind(token).first();
-  return user || null;
-}
-
 async function getUserByUsername(env, username) {
   if (!username) return null;
   return env.TPI_DB.prepare("SELECT * FROM contributors WHERE username = ?").bind(username).first();
@@ -1446,11 +1435,6 @@ function publicUser(user) {
     active: user.active !== 0,
     createdAt: user.created_at
   };
-}
-
-function getCookie(request, name) {
-  const cookie = request.headers.get("Cookie") || "";
-  return cookie.split(";").map(part => part.trim()).find(part => part.startsWith(`${name}=`))?.slice(name.length + 1) || "";
 }
 
 function corsHeaders(extra = {}) {
