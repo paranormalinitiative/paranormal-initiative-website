@@ -1662,7 +1662,7 @@ window.TPI_SEARCH_INDEX = [
     "title": "TPI Videos",
     "subtitle": "Applied Paranormal Research and Studies",
     "href": "tpi-videos.html",
-    "description": "The Paranormal Initiative video programming, live streams, and archived research presentations from Applied Paranormal Research and Studies.",
-    "text": "TPI Videos | The Paranormal Initiative Applied Paranormal Research and Studies The Paranormal Initiative video programming, live streams, and archived research presentations. TPI video content includes paranormal research presentations, investigation documentation, EVP and ITC experimentation, equipment analysis, field methodology, educational programming, and community discussion. Live streams and archived recordings from The Paranormal Initiative."
+    "description": "The Paranormal Initiative video channel — live streams, research discussions, educational programs, experiments, presentations, and archived programming.",
+    "text": "TPI Videos | The Paranormal Initiative Applied Paranormal Research and Studies The Paranormal Initiative video channel, live streams, research discussions, educational programs, experiments, presentations, and archived programming. TPI video content includes paranormal research presentations, investigation documentation, EVP and ITC experimentation, visual ITC and scrying research, equipment analysis, field methodology, educational programming, research discussions, special broadcasts, and community discussion. Live streams and archived recordings from The Paranormal Initiative. Watch paranormal investigation videos, EVP experiments, ITC sessions, equipment reviews, and research presentations. Video library with categories including Applied Paranormal Research and Studies, Live Streams, EVP and ITC, Visual ITC and Scrying, Paranormal Investigation, Equipment and Technology, Research Discussion, Education, and Special Presentation."
   }
 ];

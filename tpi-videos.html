@@ -7,11 +7,380 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="pp:title" content="TPI Videos">
     <meta name="pp:subtitle" content="Applied Paranormal Research and Studies">
-    <meta name="description" content="The Paranormal Initiative video programming, live streams, and archived research presentations from Applied Paranormal Research and Studies.">
+    <meta name="description" content="The Paranormal Initiative video channel — live streams, research discussions, educational programs, experiments, presentations, and archived programming from Applied Paranormal Research and Studies.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=15">
+    <style>
+        .tpi-channel-tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #1e2230;
+            padding-bottom: 0;
+            flex-wrap: wrap;
+        }
+        .tpi-channel-tab {
+            background: none;
+            border: none;
+            color: #8d93a3;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .tpi-channel-tab:hover { color: #c8cdd8; }
+        .tpi-channel-tab.active {
+            color: #59a9dc;
+            border-bottom-color: #59a9dc;
+        }
+        .tpi-channel-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .tpi-channel-search {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        .tpi-channel-search input {
+            width: 100%;
+            background: #12151c;
+            border: 1px solid #1e2230;
+            color: #c8cdd8;
+            font-size: 0.9rem;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .tpi-channel-search input:focus {
+            outline: none;
+            border-color: #59a9dc;
+        }
+        .tpi-channel-search input::placeholder { color: #5a6070; }
+        .tpi-channel-search-icon {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5a6070;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+        .tpi-channel-sort {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tpi-channel-sort label {
+            font-size: 0.8rem;
+            color: #5a6070;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+        .tpi-channel-sort select {
+            background: #12151c;
+            border: 1px solid #1e2230;
+            color: #c8cdd8;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.75rem;
+            border-radius: 6px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .tpi-channel-sort select:focus { outline: none; border-color: #59a9dc; }
+        .video-featured-card {
+            background: #12151c;
+            border: 1px solid #1e2230;
+            border-radius: 12px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 0;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .video-featured-card:hover { border-color: #2a3550; }
+        .video-featured-media {
+            position: relative;
+            background: #0a0c10;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .video-featured-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .video-thumb-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+        }
+        .video-thumb-fallback-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a2540, #0d1520);
+            border: 2px solid #2a3550;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #59a9dc;
+        }
+        .video-thumb-fallback-label {
+            font-size: 0.8rem;
+            color: #5a6070;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+        .video-featured-copy {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .video-featured-copy .portal-kicker { margin-bottom: 0; }
+        .video-featured-copy h3 {
+            font-size: 1.4rem;
+            color: #e8ecf4;
+            line-height: 1.3;
+        }
+        .video-featured-copy p {
+            color: #8d93a3;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .video-featured-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .video-featured-meta span {
+            font-size: 0.8rem;
+            color: #5a6070;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .video-featured-actions { margin-top: 0.5rem; }
+        .video-live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #dc2626;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+        }
+        .video-live-badge::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: live-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .video-card {
+            background: #12151c;
+            border: 1px solid #1e2230;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.15s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .video-card:hover {
+            border-color: #2a3550;
+            transform: translateY(-2px);
+        }
+        .video-card-media {
+            position: relative;
+            background: #0a0c10;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-card-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .video-card-media .video-thumb-fallback {
+            padding: 1.5rem;
+            gap: 0.5rem;
+        }
+        .video-card-media .video-thumb-fallback-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 1.2rem;
+        }
+        .video-card-duration {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+        }
+        .video-card-copy {
+            padding: 1rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+        .video-card-copy h3 {
+            font-size: 0.95rem;
+            color: #e8ecf4;
+            line-height: 1.4;
+        }
+        .video-card-copy p {
+            font-size: 0.82rem;
+            color: #8d93a3;
+            line-height: 1.5;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .video-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .video-card-meta span {
+            font-size: 0.72rem;
+            color: #5a6070;
+            font-weight: 600;
+        }
+        .video-card-category {
+            color: #59a9dc !important;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .video-empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: #12151c;
+            border: 1px solid #1e2230;
+            border-radius: 12px;
+        }
+        .video-empty-state h3 {
+            color: #c8cdd8;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .video-empty-state p {
+            color: #5a6070;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .video-empty-state p + p { margin-top: 0.75rem; }
+        .video-section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .video-section-heading h2 {
+            font-size: 1.3rem;
+            color: #e8ecf4;
+        }
+        .video-results-count {
+            font-size: 0.82rem;
+            color: #5a6070;
+        }
+        .video-category-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .video-category-pill {
+            background: #12151c;
+            border: 1px solid #1e2230;
+            color: #8d93a3;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .video-category-pill:hover {
+            border-color: #2a3550;
+            color: #c8cdd8;
+        }
+        .video-category-pill.active {
+            background: #1a2540;
+            border-color: #59a9dc;
+            color: #59a9dc;
+        }
+        @media (max-width: 800px) {
+            .video-featured-card { grid-template-columns: 1fr; }
+            .video-featured-media { min-height: 200px; }
+            .video-grid { grid-template-columns: 1fr; }
+            .tpi-channel-tabs { gap: 0; }
+            .tpi-channel-tab { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+        }
+    </style>
 </head>
 <body>
 <div id="site-header"></div>
@@ -21,11 +390,343 @@
     <h2>The Paranormal Initiative</h2>
     <p>Applied Paranormal Research and Studies</p>
     <p>
-        TPI video programming, live streams, and archived research presentations will appear here.
+        Watch live streams, research discussions, educational programs, experiments,
+        presentations, and archived programming from The Paranormal Initiative.
     </p>
+</section>
+
+<section id="video-featured-section" hidden></section>
+
+<nav class="tpi-channel-tabs" aria-label="Video sections">
+    <button class="tpi-channel-tab active" data-tab="latest">Latest</button>
+    <button class="tpi-channel-tab" data-tab="live">Live Streams</button>
+    <button class="tpi-channel-tab" data-tab="all">All Videos</button>
+</nav>
+
+<div class="tpi-channel-controls">
+    <div class="tpi-channel-search">
+        <span class="tpi-channel-search-icon">&#128269;</span>
+        <input type="search" id="video-search" placeholder="Search videos..." autocomplete="off">
+    </div>
+    <div class="tpi-channel-sort">
+        <label for="video-sort">Sort</label>
+        <select id="video-sort">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+        </select>
+    </div>
+</div>
+
+<div id="video-category-filters" class="video-category-pills" hidden></div>
+
+<div class="video-section-heading">
+    <h2 id="video-section-title">Latest</h2>
+    <span id="video-results-count" class="video-results-count"></span>
+</div>
+
+<div id="video-grid-container"></div>
+
+<section class="study-hub-layout" style="margin-top:2rem;">
+    <article class="study-hub-card">
+        <h3>Continue Exploring</h3>
+        <p>
+            TPI video programming connects to the broader research, education, and investigation work
+            of The Paranormal Initiative. Explore more resources below.
+        </p>
+        <div class="portal-actions">
+            <a class="portal-button portal-button-secondary" href="education-center.html">Education Center</a>
+            <a class="portal-button portal-button-secondary" href="our-apps.html">Our Apps</a>
+        </div>
+    </article>
+    <aside class="study-hub-card">
+        <h3>Community &amp; Research</h3>
+        <p>
+            Join the discussion, explore the repository, and connect with other researchers and investigators.
+        </p>
+        <div class="portal-actions">
+            <a class="portal-button portal-button-secondary" href="community-forum.html">Community Forum</a>
+            <a class="portal-button portal-button-secondary" href="repository.html">Repository</a>
+        </div>
+    </aside>
 </section>
 
 <div id="site-footer"></div>
 <script src="includes.js"></script>
+<script src="tpi-videos.js"></script>
+<script>
+(function () {
+    var videos = window.TPI_VIDEOS || [];
+    var featuredSection = document.getElementById("video-featured-section");
+    var gridContainer = document.getElementById("video-grid-container");
+    var categoryFilters = document.getElementById("video-category-filters");
+    var searchInput = document.getElementById("video-search");
+    var sortSelect = document.getElementById("video-sort");
+    var sectionTitle = document.getElementById("video-section-title");
+    var resultsCount = document.getElementById("video-results-count");
+    var activeTab = "latest";
+    var activeCategory = "all";
+    var searchQuery = "";
+
+    function escapeHtml(value) {
+        return String(value || "").replace(/[&<>"']/g, function (char) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+        });
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        var d = new Date(dateStr + "T00:00:00");
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function getCategoryIcon(category) {
+        var cat = String(category || "").toLowerCase();
+        if (cat.indexOf("live") !== -1) return "\u{1F4FA}";
+        if (cat.indexOf("evp") !== -1 || cat.indexOf("itc") !== -1) return "\u{1F3A4}";
+        if (cat.indexOf("visual") !== -1 || cat.indexOf("scry") !== -1) return "\u{1F3AC}";
+        if (cat.indexOf("investigation") !== -1) return "\u{1F50D}";
+        if (cat.indexOf("equipment") !== -1) return "\u{1F4E1}";
+        if (cat.indexOf("education") !== -1) return "\u{1F4DA}";
+        if (cat.indexOf("research") !== -1) return "\u{1F52C}";
+        return "\u{1F3AC}";
+    }
+
+    function renderThumbFallback(category, small) {
+        var iconSize = small ? "48px" : "80px";
+        var fontSize = small ? "1.2rem" : "2rem";
+        return '<div class="video-thumb-fallback">' +
+            '<div class="video-thumb-fallback-icon" style="width:' + iconSize + ';height:' + iconSize + ';font-size:' + fontSize + ';">' + getCategoryIcon(category) + '</div>' +
+            '<span class="video-thumb-fallback-label">' + escapeHtml(category || "TPI Video") + '</span>' +
+            '</div>';
+    }
+
+    function getVideoUrl(video) {
+        return 'tpi-video.html?id=' + encodeURIComponent(video.slug || video.id);
+    }
+
+    function renderFeatured() {
+        var liveVideos = videos.filter(function (v) { return v.isLive; });
+        var featured = null;
+        var target = null;
+
+        if (liveVideos.length) {
+            target = liveVideos[0];
+        } else {
+            featured = videos.find(function (v) { return v.featured; });
+            target = featured || (videos.length ? videos[0] : null);
+        }
+
+        if (!target) {
+            featuredSection.hidden = true;
+            return;
+        }
+
+        var hasThumb = target.thumbnail && target.thumbnail.trim();
+        var mediaHtml = hasThumb
+            ? '<img src="' + escapeHtml(target.thumbnail) + '" alt="' + escapeHtml(target.title) + ' thumbnail">'
+            : renderThumbFallback(target.category, false);
+
+        var liveBadge = target.isLive ? '<span class="video-live-badge">Live Now</span>' : '';
+        var kickerText = target.isLive ? "Live Stream" : (target.category || "Featured");
+        var kickerStyle = target.isLive ? ' style="color:#dc2626;"' : '';
+        var watchText = target.isLive ? "Watch Live" : "Watch Now";
+        var borderColor = target.isLive ? ' style="border-color:#dc2626;"' : '';
+
+        var html = '<div class="video-featured-card"' + borderColor + ' onclick="window.location.href=\'' + getVideoUrl(target) + '\'">' +
+            '<div class="video-featured-media">' + mediaHtml + '</div>' +
+            '<div class="video-featured-copy">' +
+            '<p class="portal-kicker"' + kickerStyle + '>' + escapeHtml(kickerText) + '</p>' +
+            '<h3>' + escapeHtml(target.title) + '</h3>' +
+            (target.description ? '<p>' + escapeHtml(target.description).substring(0, 200) + (target.description.length > 200 ? '...' : '') + '</p>' : "") +
+            '<div class="video-featured-meta">' +
+            liveBadge +
+            (target.publishedAt ? '<span>' + formatDate(target.publishedAt) + '</span>' : "") +
+            (target.series ? '<span>' + escapeHtml(target.series) + '</span>' : "") +
+            '</div>' +
+            '<div class="video-featured-actions">' +
+            '<a class="portal-button" href="' + getVideoUrl(target) + '" onclick="event.stopPropagation()">' + watchText + '</a>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        featuredSection.innerHTML = html;
+        featuredSection.hidden = false;
+    }
+
+    function getCategories(videoList) {
+        var cats = {};
+        videoList.forEach(function (v) {
+            if (v.category) cats[v.category] = true;
+        });
+        return Object.keys(cats).sort();
+    }
+
+    function renderCategoryFilters(videoList) {
+        var cats = getCategories(videoList);
+        if (cats.length < 2) {
+            categoryFilters.hidden = true;
+            return;
+        }
+        var html = '<button class="video-category-pill active" data-category="all">All</button>';
+        cats.forEach(function (cat) {
+            html += '<button class="video-category-pill" data-category="' + escapeHtml(cat) + '">' + escapeHtml(cat) + '</button>';
+        });
+        categoryFilters.innerHTML = html;
+        categoryFilters.hidden = false;
+    }
+
+    function filterAndSort(videoList) {
+        var filtered = videoList.slice();
+
+        // Tab filter
+        if (activeTab === "latest") {
+            filtered = filtered.filter(function (v) { return !v.isLive; });
+        } else if (activeTab === "live") {
+            filtered = filtered.filter(function (v) { return v.isLive || String(v.category || "").toLowerCase().indexOf("live") !== -1; });
+        }
+
+        // Category filter
+        if (activeCategory !== "all") {
+            filtered = filtered.filter(function (v) { return v.category === activeCategory; });
+        }
+
+        // Search filter
+        if (searchQuery) {
+            var q = searchQuery.toLowerCase();
+            filtered = filtered.filter(function (v) {
+                var searchable = [
+                    v.title || "",
+                    v.description || "",
+                    v.category || "",
+                    (v.tags || []).join(" "),
+                    v.series || ""
+                ].join(" ").toLowerCase();
+                return searchable.indexOf(q) !== -1;
+            });
+        }
+
+        // Sort
+        var sortVal = sortSelect.value;
+        filtered.sort(function (a, b) {
+            if (sortVal === "oldest") {
+                return String(a.publishedAt || "").localeCompare(String(b.publishedAt || ""));
+            }
+            return String(b.publishedAt || "").localeCompare(String(a.publishedAt || ""));
+        });
+
+        return filtered;
+    }
+
+    function renderCard(video) {
+        var hasThumb = video.thumbnail && video.thumbnail.trim();
+        var mediaHtml = hasThumb
+            ? '<img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + ' thumbnail" loading="lazy">'
+            : renderThumbFallback(video.category, true);
+
+        var durationHtml = video.duration ? '<span class="video-card-duration">' + escapeHtml(video.duration) + '</span>' : '';
+        var liveBadge = video.isLive ? '<span class="video-live-badge">Live</span>' : '';
+
+        return '<article class="video-card" onclick="window.location.href=\'' + getVideoUrl(video) + '\'">' +
+            '<div class="video-card-media">' + mediaHtml + durationHtml + '</div>' +
+            '<div class="video-card-copy">' +
+            '<div class="video-card-meta">' +
+            '<span class="video-card-category">' + escapeHtml(video.category || "Video") + '</span>' +
+            (video.publishedAt ? '<span>' + formatDate(video.publishedAt) + '</span>' : "") +
+            liveBadge +
+            '</div>' +
+            '<h3>' + escapeHtml(video.title) + '</h3>' +
+            (video.description ? '<p>' + escapeHtml(video.description) + '</p>' : "") +
+            '</div>' +
+            '</article>';
+    }
+
+    function renderGrid() {
+        var filtered = filterAndSort(videos);
+
+        // Update section title
+        var titles = { latest: "Latest", live: "Live Streams", all: "All Videos" };
+        sectionTitle.textContent = titles[activeTab] || "Videos";
+
+        // Update results count
+        if (videos.length > 0) {
+            resultsCount.textContent = filtered.length + " video" + (filtered.length !== 1 ? "s" : "");
+        } else {
+            resultsCount.textContent = "";
+        }
+
+        if (!filtered.length) {
+            if (videos.length === 0) {
+                gridContainer.innerHTML =
+                    '<div class="video-empty-state">' +
+                    '<h3>TPI video programming is being added to the library.</h3>' +
+                    '<p>Live streams, research presentations, and archived programs will appear here as they are published.</p>' +
+                    '<p>Check back soon for video content from The Paranormal Initiative &mdash; Applied Paranormal Research and Studies.</p>' +
+                    '</div>';
+            } else if (activeTab === "live") {
+                gridContainer.innerHTML =
+                    '<div class="video-empty-state">' +
+                    '<h3>No TPI stream is live right now.</h3>' +
+                    '<p>Browse the latest programs and archived live streams below.</p>' +
+                    '</div>';
+            } else {
+                gridContainer.innerHTML =
+                    '<div class="video-empty-state">' +
+                    '<h3>No videos match your search.</h3>' +
+                    '<p>Try a different search term or browse all videos.</p>' +
+                    '</div>';
+            }
+            return;
+        }
+
+        var html = '<div class="video-grid">';
+        filtered.forEach(function (v) { html += renderCard(v); });
+        html += '</div>';
+        gridContainer.innerHTML = html;
+    }
+
+    // Tab click handler
+    document.querySelectorAll(".tpi-channel-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            activeTab = tab.dataset.tab;
+            document.querySelectorAll(".tpi-channel-tab").forEach(function (t) {
+                t.classList.toggle("active", t.dataset.tab === activeTab);
+            });
+            renderGrid();
+        });
+    });
+
+    // Category filter click handler
+    categoryFilters.addEventListener("click", function (e) {
+        var pill = e.target.closest(".video-category-pill");
+        if (!pill) return;
+        activeCategory = pill.dataset.category;
+        categoryFilters.querySelectorAll(".video-category-pill").forEach(function (p) {
+            p.classList.toggle("active", p.dataset.category === activeCategory);
+        });
+        renderGrid();
+    });
+
+    // Search handler
+    var searchTimeout;
+    searchInput.addEventListener("input", function () {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function () {
+            searchQuery = searchInput.value.trim();
+            renderGrid();
+        }, 200);
+    });
+
+    // Sort handler
+    sortSelect.addEventListener("change", function () {
+        renderGrid();
+    });
+
+    // Initialize
+    renderFeatured();
+    renderCategoryFilters(videos);
+    renderGrid();
+})();
+</script>
 </body>
 </html>

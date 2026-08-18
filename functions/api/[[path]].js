@@ -55,6 +55,8 @@ export async function onRequest(context) {
     if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireMember(request, env, user => handleDeleteForumPost(path, env, user));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
+    if (request.method === "GET" && path === "/video-comments") return handleListVideoComments(request, env);
+    if (request.method === "POST" && path === "/video-comments") return requireMember(request, env, user => handleCreateVideoComment(request, env, user));
 
     return json({ error: "Not found." }, 404);
   } catch (error) {
@@ -1130,6 +1132,41 @@ async function handleCreateComment(request, env) {
   ).run();
 
   return json({ ok: true, id, status });
+}
+
+async function handleListVideoComments(request, env) {
+  const url = new URL(request.url);
+  const videoId = clean(url.searchParams.get("videoId"));
+  if (!videoId) return json({ error: "videoId is required." }, 400);
+
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT vc.id, vc.video_id AS videoId, vc.body, vc.status, vc.created_at AS createdAt,
+           c.username, c.display_name AS displayName, c.role
+    FROM video_comments vc
+    JOIN contributors c ON c.id = vc.contributor_id
+    WHERE vc.video_id = ? AND vc.status = 'visible'
+    ORDER BY vc.created_at DESC
+  `).bind(videoId).all();
+
+  return json({ comments: results });
+}
+
+async function handleCreateVideoComment(request, env, user) {
+  const data = await readJson(request);
+  const videoId = clean(data.videoId);
+  const body = clean(data.body);
+
+  if (!videoId) return json({ error: "videoId is required." }, 400);
+  if (!body) return json({ error: "Comment body is required." }, 400);
+  if (body.length > 2000) return json({ error: "Comment must be 2000 characters or fewer." }, 400);
+
+  const id = crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO video_comments (id, video_id, contributor_id, body, status)
+    VALUES (?, ?, ?, ?, 'visible')
+  `).bind(id, videoId, user.id, body).run();
+
+  return json({ ok: true, id });
 }
 
 async function requireContributor(request, env, handler) {
