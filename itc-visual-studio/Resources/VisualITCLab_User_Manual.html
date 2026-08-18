@@ -284,12 +284,12 @@
       <a href="#privacy">Privacy & Local Data</a>
       <a href="#method">Recommended Method</a>
       <a href="#troubleshooting">Troubleshooting</a>
+      <a href="https://paranormalinitiative.com/" style="margin-top:12px;border-top:1px solid #2a2d3a;padding-top:10px">◀ Return to The Paranormal Initiative</a>
     </nav>
 
     <main>
       <h1>ITC Visual Studio / Browser Version</h1>
       <p class="version">User Manual</p>
-      <div class="beta-badge">Members-Only Beta</div>
       <p class="lead">ITC Visual Studio / Browser Version is a session-based image and video analysis tool for visual ITC and scrying experiments. It runs entirely in your web browser. It can record a session with a camera and microphone, or it can import outside videos for analysis.</p>
       <div class="notice">This software does not prove paranormal communication by itself. It is an experimental research tool. The investigator is responsible for context, controls, notes, comparison material, and final interpretation.</div>
 
@@ -340,6 +340,15 @@
         <h2>Camera & Recording</h2>
         <h3>Camera Selection</h3>
         <p>When a session is active, the Camera page shows available camera devices. Select your camera from the <strong>Device</strong> dropdown. The app automatically enumerates available cameras, including external USB cameras and Continuity Camera.</p>
+        <h4>Device Identity</h4>
+        <p>Instead of showing an ambiguous "System Default," the Camera dropdown displays the actual physical device name when the browser exposes it. For example:</p>
+        <ul>
+          <li><strong>System Default — MX Brio</strong></li>
+          <li><strong>System Default — FaceTime HD Camera</strong></li>
+        </ul>
+        <p>All available named cameras are listed below the default entry after browser permission is granted.</p>
+        <h4>Active Camera Display</h4>
+        <p>Below the camera dropdown, the <strong>Active Camera</strong> readout shows the actual device attached to the current media stream. This is derived from the browser's <code>MediaStreamTrack.label</code> and represents the physical device currently in use — not merely the dropdown selection.</p>
         <h3>Format & Frame Rate</h3>
         <p>Choose a resolution from the <strong>Format</strong> dropdown:</p>
         <p><span class="tag">640 x 480</span><span class="tag">960 x 540</span><span class="tag">1024 x 576</span><span class="tag">1280 x 720</span><span class="tag">1600 x 896</span><span class="tag">1920 x 1080</span></p>
@@ -354,6 +363,16 @@
         <p>The recording duration selector is disabled during recording and finalization.</p>
         <h3>Microphone</h3>
         <p>The microphone connects automatically when the camera starts. Select your microphone device, channel count (Mono/Stereo), and sample rate (48000 Hz or 44100 Hz) from the Microphone panel. Audio level meters show RMS and Peak levels during preview.</p>
+        <h4>Microphone Device Identity</h4>
+        <p>The microphone dropdown displays the actual physical device name, just like the camera dropdown. For example:</p>
+        <ul>
+          <li><strong>System Default — MX Brio</strong></li>
+          <li><strong>System Default — MacBook Pro Microphone</strong></li>
+        </ul>
+        <h4>Active Microphone Display</h4>
+        <p>Below the microphone dropdown, the <strong>Active Microphone</strong> readout shows the actual device attached to the current audio stream.</p>
+        <h4>Device Changes</h4>
+        <p>When you connect or disconnect a camera or microphone, the device lists refresh automatically. If the active device is disconnected, the status display updates to show "disconnected." Active recording is not interrupted for device list refreshes.</p>
         <h3>Live Preview</h3>
         <p>The camera preview starts automatically after a session becomes active. No manual "Connect Devices" or "Arm Camera" step is required. The preview updates when you change the camera device, format, or frame rate.</p>
         <h3>Recording</h3>
@@ -711,7 +730,7 @@
         <h2>Browser Compatibility</h2>
         <h3>Primary Tested Browser</h3>
         <p><strong>Google Chrome / Chromium</strong></p>
-        <p>The Browser Version is developed and primarily tested in Chrome/Chromium. Beta testing should initially prioritize Chrome/Chromium.</p>
+        <p>The Browser Version is developed and primarily tested in Chrome/Chromium.</p>
         <h3>Other Browsers</h3>
         <p>Browser APIs can differ across Safari, Firefox, Opera, Edge, and other Chromium/non-Chromium browsers. The following APIs may behave differently between browsers:</p>
         <ul>
@@ -741,6 +760,7 @@
         <ol>
           <li>Create a session with a clear, descriptive name before recording or importing.</li>
           <li>Use 720p / 30 FPS unless you need a larger source.</li>
+          <li>Confirm your <strong>Active Camera</strong> and <strong>Active Microphone</strong> are the intended devices.</li>
           <li>Record or import your video.</li>
           <li>Frames are extracted automatically.</li>
           <li>Use Frame Skim playback (1&ndash;20 FPS) to move through setup or empty sections.</li>
@@ -754,6 +774,17 @@
           <li>Build a slideshow from saved evidence.</li>
           <li><strong>Export a Session Capsule</strong> for backup before closing.</li>
         </ol>
+        <h3>Session Research Documentation</h3>
+        <p>Before beginning an experimental session, researchers should confirm and, where appropriate, record or document:</p>
+        <ul>
+          <li>Active camera device</li>
+          <li>Active microphone device</li>
+          <li>Recording resolution</li>
+          <li>Frame rate</li>
+          <li>Recording duration</li>
+          <li>Session name</li>
+        </ul>
+        <p>This is good practice for session reproducibility and research documentation. The Active Camera and Active Microphone readouts in the Camera panel provide the exact device names for your records.</p>
       </section>
 
       <section id="troubleshooting">
@@ -761,12 +792,15 @@
         <div class="grid">
           <div class="card"><h3>Camera Does Not Start</h3><p>Create or open a session first. Check browser camera permission. Try the Refresh button. Use 1280 x 720 at 30 FPS. Close other apps using the camera.</p></div>
           <div class="card"><h3>Microphone Does Not Start</h3><p>Create or open a session first. Check browser microphone permission. Try the Refresh button. Confirm the correct device is selected.</p></div>
+          <div class="card"><h3>Device Labels Show "System Default"</h3><p>Device names are not available until browser permission is granted. Allow camera and microphone access, then the actual device names will appear in the dropdowns and active device readouts.</p></div>
           <div class="card"><h3>Imported Video Does Not Extract</h3><p>Try MP4 or MOV if MKV fails. Confirm the file plays outside the browser. Make sure the file is not still being written.</p></div>
           <div class="card"><h3>Frames Look Wrong</h3><p>Confirm Normal effect is selected. Use Fit to reset zoom/pan. Re-extract frames if the source was incomplete.</p></div>
           <div class="card"><h3>Capsule Restore Is Slow</h3><p>Large capsules with thousands of frames take time. The "INSTALLING CAPSULE SESSION..." overlay shows progress. Wait for the "CAPSULE SESSION INSTALLED" confirmation.</p></div>
           <div class="card"><h3>Slideshow Preview Is Black</h3><p>Confirm evidence frames are selected and exist. Try Still mode first, then test Ken Burns and transitions.</p></div>
           <div class="card"><h3>I Lost My Session</h3><p>Sessions are stored in browser storage. If you cleared browser data, sessions are lost. Always export a Session Capsule for backup.</p></div>
           <div class="card"><h3>Manual Does Not Open</h3><p>The Manual opens in a new browser tab. Allow pop-ups for this site if your browser blocks it.</p></div>
+          <div class="card"><h3>Interface Shows Older Behavior After Update</h3><p>If the application appears to show older behavior after a production update, perform a hard refresh of your browser (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows). Production deployments use a version query on the app.js script to prevent stale cached JavaScript.</p></div>
+          <div class="card"><h3>FFmpeg Engine Takes Time to Load</h3><p>The browser loads the FFmpeg WASM processing engine when video processing is first required. The initial load may take longer than subsequent cached loads. This is normal — the engine is loaded on demand and does not affect camera preview or recording.</p></div>
         </div>
       </section>
     </main>

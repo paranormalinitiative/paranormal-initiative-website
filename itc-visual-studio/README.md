@@ -73,18 +73,24 @@ At 30 FPS this is about 3,600 frames, which is enough for water agitation and se
 
 Longer recording should be treated as an advanced option because browsers have stricter memory/storage limits than the native app.
 
+## Production Deployment
+
+ITC Visual Studio is live as a browser application at:
+
+**https://paranormalinitiative.com/itc-visual-studio/**
+
+Launch page: https://paranormalinitiative.com/app-itc-visual-studio
+
+The browser application is no longer a localhost prototype. It is deployed on The Paranormal Initiative website with Cloudflare R2 hosting the FFmpeg WASM binary.
+
 ## Suggested Browser Stack
 
-- TypeScript
-- Vite
-- React or a similarly simple component layer
-- Canvas/WebGL for image viewing and effects
-- Web Workers for frame extraction/export work
-- IndexedDB or OPFS for active session storage
-- File System Access API where available
-- JSZip for archive capsules
-- WebCodecs where available
-- ffmpeg.wasm only where needed
+- Dependency-free static HTML/CSS/JavaScript (no build step)
+- Canvas for image viewing and effects
+- IndexedDB for active session storage
+- FFmpeg/WASM for video frame extraction
+- Browser-native MediaRecorder for camera capture
+- Browser-native `createImageBitmap()` / `OffscreenCanvas` for PNG-to-JPEG conversion
 
 ## First Build Target
 
