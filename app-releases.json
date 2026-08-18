@@ -25,11 +25,11 @@
     {
       "id": "itc-visual-studio",
       "name": "ITC Visual Studio",
-      "status": "public-release-pending",
-      "version": "",
+      "status": "browser-live",
+      "version": "Browser Edition",
       "macDownload": "",
       "windowsDownload": "",
-      "releaseNotes": "",
+      "releaseNotes": "Live browser application available at /itc-visual-studio/",
       "updateFeedMac": "",
       "updateFeedWindows": ""
     },
