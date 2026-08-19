@@ -1079,7 +1079,8 @@
           const result = await window.TPIApi.login(identifier, password);
           if (result.user) saveUsers([{ ...result.user, active: true }]);
           localStorage.setItem(ACCESS_SESSION_KEY, result.user?.username || identifier);
-          window.location.href = "member-dashboard.html";
+          var loginUsername = result.user?.username || identifier;
+          window.location.href = "member-home.html?username=" + encodeURIComponent(loginUsername);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -1098,7 +1099,7 @@
         return;
       }
       localStorage.setItem(ACCESS_SESSION_KEY, user.username);
-      window.location.href = "member-dashboard.html";
+      window.location.href = "member-home.html?username=" + encodeURIComponent(user.username);
       return;
     }
 
@@ -1141,7 +1142,7 @@
           });
           await window.TPIApi.login(username, password);
           localStorage.setItem(ACCESS_SESSION_KEY, username);
-          window.location.href = "member-dashboard.html";
+          window.location.href = "member-home.html?username=" + encodeURIComponent(username);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -1168,7 +1169,7 @@
       });
       saveUsers(users);
       localStorage.setItem(ACCESS_SESSION_KEY, username);
-      window.location.href = "member-dashboard.html";
+      window.location.href = "member-home.html?username=" + encodeURIComponent(username);
       return;
     }
 
@@ -1284,7 +1285,7 @@
     saveUsers(users);
     saveInvites(invites);
     localStorage.setItem(ACCESS_SESSION_KEY, username);
-    window.location.href = "member-dashboard.html";
+    window.location.href = "member-home.html?username=" + encodeURIComponent(username);
   });
 
   document.addEventListener("click", async event => {

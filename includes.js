@@ -183,6 +183,8 @@
   }
 
   async function installMemberGreeting() {
+    // In member mode, the shell handles its own greeting
+    if (document.body.classList.contains("member-mode")) return;
     const header = document.querySelector(".command-header");
     if (!header || document.querySelector(".member-greeting")) return;
 
@@ -190,12 +192,15 @@
     if (!user) return;
 
     const firstName = String(user.displayName || user.username || "Member").trim().split(/\s+/)[0] || "Member";
+    const profileUrl = user.username
+      ? `member-home.html?username=${encodeURIComponent(user.username)}`
+      : "member-home.html";
     const badge = document.createElement("div");
     badge.className = "member-greeting";
     badge.innerHTML = `
-      <a class="member-dashboard-link" href="member-dashboard.html">
+      <a class="member-dashboard-link" href="${escapeGreeting(profileUrl)}">
         <span>Hello, ${escapeGreeting(firstName)}</span>
-        <strong>Member Dashboard</strong>
+        <strong>Member Home</strong>
       </a>
       <button type="button" data-header-logout>Sign Out</button>
     `;
@@ -248,6 +253,8 @@
   }
 
   function installHeaderSearch() {
+    // In member mode, search is available through the sidebar
+    if (document.body.classList.contains("member-mode")) return;
     const form = document.querySelector("[data-site-search-form]");
     const input = document.querySelector("[data-site-search-input]");
     if (!form || !input) return;

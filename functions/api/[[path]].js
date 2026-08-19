@@ -46,6 +46,8 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
+    if (request.method === "GET" && path === "/feed") return handleCommunityFeed(request, env);
+    if (request.method === "GET" && path === "/feed/user") return handleUserFeed(request, env);
     if (request.method === "GET" && path === "/forum") return handleForumIndex(request, env);
     if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, request, env);
     if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkForumTopicRead(path, env, user));
@@ -864,6 +866,258 @@ async function handleForumIndex(request, env) {
   });
 
   return json({ categories, topics });
+}
+
+async function handleCommunityFeed(request, env) {
+  const url = new URL(request.url);
+  const limit = Math.min(Number(url.searchParams.get("limit")) || 20, 50);
+  const offset = Number(url.searchParams.get("offset")) || 0;
+  const user = await getSessionUser(request, env);
+
+  const { results: forumItems } = await env.TPI_DB.prepare(`
+    SELECT
+      'forum_post' AS type,
+      fp.id,
+      fp.body,
+      fp.created_at AS createdAt,
+      ft.id AS topicId,
+      ft.title AS topicTitle,
+      fc.id AS categoryId,
+      fc.title AS categoryTitle,
+      c.username AS authorUsername,
+      c.display_name AS authorName,
+      c.title AS authorTitle,
+      c.photo_url AS authorPhotoUrl,
+      c.chat_color AS authorChatColor,
+      (SELECT COUNT(*) FROM forum_posts fp2 WHERE fp2.topic_id = ft.id AND fp2.status = 'visible') AS postCount
+    FROM forum_posts fp
+    JOIN forum_topics ft ON ft.id = fp.topic_id
+    JOIN forum_categories fc ON fc.id = ft.category_id
+    LEFT JOIN contributors c ON c.id = fp.contributor_id
+    WHERE fp.status = 'visible' AND ft.status NOT IN ('deleted', 'inactive') AND fp.id = (
+      SELECT fp3.id FROM forum_posts fp3 WHERE fp3.topic_id = ft.id AND fp3.status = 'visible' ORDER BY fp3.created_at DESC LIMIT 1
+    )
+    ORDER BY fp.created_at DESC
+    LIMIT 200
+  `).all().catch(function () { return { results: [] }; });
+
+  const { results: videoItems } = await env.TPI_DB.prepare(`
+    SELECT
+      'video' AS type,
+      id,
+      slug,
+      title,
+      description,
+      thumbnail,
+      published_at AS publishedAt,
+      is_live AS isLive,
+      category
+    FROM tpi_videos
+    WHERE status = 'published'
+    ORDER BY published_at DESC
+    LIMIT 50
+  `).all().catch(function () { return { results: [] }; });
+
+  const { results: articleItems } = await env.TPI_DB.prepare(`
+    SELECT
+      'article' AS type,
+      a.id,
+      a.title,
+      a.subtitle AS description,
+      a.href,
+      a.article_type AS contributionType,
+      a.created_at AS createdAt,
+      c.username AS authorUsername,
+      c.display_name AS authorName,
+      c.photo_url AS authorPhotoUrl
+    FROM articles a
+    LEFT JOIN contributors c ON c.id = a.created_by
+    WHERE a.status = 'published'
+    ORDER BY a.created_at DESC
+    LIMIT 50
+  `).all().catch(function () { return { results: [] }; });
+
+  const forumMapped = (forumItems || []).map(function(item) {
+    var postCount = Number(item.postCount || 0);
+    return {
+      type: "forum_post",
+      id: item.id,
+      topicId: item.topicId,
+      topicTitle: item.topicTitle,
+      categoryId: item.categoryId,
+      categoryTitle: item.categoryTitle,
+      body: item.body,
+      authorUsername: item.authorUsername,
+      authorName: item.authorName,
+      authorTitle: item.authorTitle,
+      authorPhotoUrl: item.authorPhotoUrl,
+      authorChatColor: item.authorChatColor || "#55c8ff",
+      replyCount: Math.max(0, postCount - 1),
+      createdAt: item.createdAt,
+      attachments: []
+    };
+  });
+
+  // Attach media to forum feed items
+  try {
+    const forumWithMedia = await attachForumPostMedia(env, forumMapped);
+    for (let i = 0; i < forumMapped.length; i++) {
+      forumMapped[i].attachments = forumWithMedia[i]?.attachments || [];
+    }
+  } catch (e) {
+    // Attachments optional; continue without them
+  }
+
+  const videoMapped = (videoItems || []).map(function(item) {
+    return {
+      type: "video",
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      description: item.description,
+      thumbnail: item.thumbnail,
+      publishedAt: item.publishedAt,
+      isLive: Boolean(Number(item.isLive)),
+      category: item.category
+    };
+  });
+
+  const articleMapped = (articleItems || []).map(function(item) {
+    return {
+      type: "article",
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      href: item.href,
+      contributionType: item.contributionType,
+      authorUsername: item.authorUsername,
+      authorName: item.authorName,
+      authorPhotoUrl: item.authorPhotoUrl,
+      createdAt: item.createdAt
+    };
+  });
+
+  var all = [].concat(forumMapped).concat(videoMapped).concat(articleMapped);
+  all.sort(function(a, b) {
+    var dateA = a.createdAt || a.publishedAt || "";
+    var dateB = b.createdAt || b.publishedAt || "";
+    return dateB.localeCompare(dateA);
+  });
+
+  var page = all.slice(offset, offset + limit);
+  return json({ items: page, total: all.length });
+}
+
+async function handleUserFeed(request, env) {
+  const url = new URL(request.url);
+  const username = clean(url.searchParams.get("username") || "");
+  const limit = Math.min(Number(url.searchParams.get("limit")) || 20, 50);
+  const offset = Number(url.searchParams.get("offset")) || 0;
+  if (!username) return json({ error: "Username is required." }, 400);
+
+  const contributor = await env.TPI_DB.prepare(
+    "SELECT id, username FROM contributors WHERE username = ? AND active = 1"
+  ).bind(username).first();
+  if (!contributor) return json({ error: "Member not found." }, 404);
+
+  const { results: forumItems } = await env.TPI_DB.prepare(`
+    SELECT
+      'forum_post' AS type,
+      fp.id,
+      fp.body,
+      fp.created_at AS createdAt,
+      ft.id AS topicId,
+      ft.title AS topicTitle,
+      fc.id AS categoryId,
+      fc.title AS categoryTitle,
+      c.username AS authorUsername,
+      c.display_name AS authorName,
+      c.title AS authorTitle,
+      c.photo_url AS authorPhotoUrl,
+      c.chat_color AS authorChatColor,
+      (SELECT COUNT(*) FROM forum_posts fp2 WHERE fp2.topic_id = ft.id AND fp2.status = 'visible') AS postCount
+    FROM forum_posts fp
+    JOIN forum_topics ft ON ft.id = fp.topic_id
+    JOIN forum_categories fc ON fc.id = ft.category_id
+    LEFT JOIN contributors c ON c.id = fp.contributor_id
+    WHERE fp.contributor_id = ? AND fp.status = 'visible' AND ft.status NOT IN ('deleted', 'inactive')
+    ORDER BY fp.created_at DESC
+    LIMIT 200
+  `).bind(contributor.id).all().catch(function () { return { results: [] }; });
+
+  const { results: articleItems } = await env.TPI_DB.prepare(`
+    SELECT
+      'article' AS type,
+      a.id,
+      a.title,
+      a.subtitle AS description,
+      a.href,
+      a.article_type AS contributionType,
+      a.created_at AS createdAt,
+      c.username AS authorUsername,
+      c.display_name AS authorName,
+      c.photo_url AS authorPhotoUrl
+    FROM articles a
+    LEFT JOIN contributors c ON c.id = a.created_by
+    WHERE a.created_by = ? AND a.status = 'published'
+    ORDER BY a.created_at DESC
+    LIMIT 50
+  `).bind(contributor.id).all().catch(function () { return { results: [] }; });
+
+  const forumMapped = (forumItems || []).map(function(item) {
+    var postCount = Number(item.postCount || 0);
+    return {
+      type: "forum_post",
+      id: item.id,
+      topicId: item.topicId,
+      topicTitle: item.topicTitle,
+      categoryId: item.categoryId,
+      categoryTitle: item.categoryTitle,
+      body: item.body,
+      authorUsername: item.authorUsername,
+      authorName: item.authorName,
+      authorTitle: item.authorTitle,
+      authorPhotoUrl: item.authorPhotoUrl,
+      authorChatColor: item.authorChatColor || "#55c8ff",
+      replyCount: Math.max(0, postCount - 1),
+      createdAt: item.createdAt,
+      attachments: []
+    };
+  });
+
+  try {
+    const forumWithMedia = await attachForumPostMedia(env, forumMapped);
+    for (let i = 0; i < forumMapped.length; i++) {
+      forumMapped[i].attachments = forumWithMedia[i]?.attachments || [];
+    }
+  } catch (e) {
+    // Attachments optional
+  }
+
+  const articleMapped = (articleItems || []).map(function(item) {
+    return {
+      type: "article",
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      href: item.href,
+      contributionType: item.contributionType,
+      authorUsername: item.authorUsername,
+      authorName: item.authorName,
+      authorPhotoUrl: item.authorPhotoUrl,
+      createdAt: item.createdAt
+    };
+  });
+
+  var all = [].concat(forumMapped).concat(articleMapped);
+  all.sort(function(a, b) {
+    var dateA = a.createdAt || "";
+    var dateB = b.createdAt || "";
+    return dateB.localeCompare(dateA);
+  });
+
+  var page = all.slice(offset, offset + limit);
+  return json({ items: page, total: all.length });
 }
 
 async function handleForumTopic(path, request, env) {

@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="member-shell.css">
     <style>
         .tpi-channel-tabs {
             display: flex;
@@ -385,6 +386,9 @@
 <body>
 <div id="site-header"></div>
 
+<div data-member-content hidden>
+<div class="member-main-inner">
+
 <section class="portal-hero">
     <p class="portal-kicker">Video Programming</p>
     <h2>The Paranormal Initiative</h2>
@@ -450,8 +454,12 @@
     </aside>
 </section>
 
+</div>
+</div>
+
 <div id="site-footer"></div>
 <script src="includes.js"></script>
+<script src="member-shell.js"></script>
 <script>
 (function () {
     var videos = [];

@@ -16,10 +16,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="content-protection.css">
     <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="member-shell.css">
 </head>
 <body class="content-protected">
 
 <div id="site-header"></div>
+
+<div data-member-content hidden>
+<div class="member-main-inner">
 
 <main class="repository-page">
     <div class="repository-shell">
@@ -146,9 +150,13 @@
     </div>
 </main>
 
+</div>
+</div>
+
 <div id="site-footer"></div>
 
 <script src="includes.js"></script>
+<script src="member-shell.js"></script>
 <script src="content-protection.js"></script>
 
 </body>

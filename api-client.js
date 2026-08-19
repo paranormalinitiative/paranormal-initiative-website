@@ -85,6 +85,8 @@
     deleteArticle: id => request(`/articles/${encodeURIComponent(id)}`, { method: "DELETE" }),
     articleReactions: pageId => request(`/articles/reactions?pageId=${encodeURIComponent(pageId)}`),
     setArticleReaction: (pageId, reaction) => request("/articles/reactions", { method: "POST", body: { pageId, reaction } }),
+    communityFeed: (limit, offset) => request(`/feed?limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}`),
+    userFeed: (username, limit, offset) => request(`/feed/user?username=${encodeURIComponent(username || "")}&limit=${encodeURIComponent(limit || 20)}&offset=${encodeURIComponent(offset || 0)}`),
     forumIndex: () => request("/forum"),
     forumTopic: id => request(`/forum/topics/${encodeURIComponent(id)}`),
     markForumTopicRead: id => request(`/forum/topics/${encodeURIComponent(id)}/read`, { method: "POST" }),

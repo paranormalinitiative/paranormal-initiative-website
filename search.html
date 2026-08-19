@@ -12,9 +12,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="member-shell.css">
 </head>
 <body>
 <div id="site-header"></div>
+
+<div data-member-content hidden>
+<div class="member-main-inner">
 
 <section class="site-search-shell">
     <p class="portal-kicker">Search The Paranormal Initiative</p>
@@ -27,9 +31,13 @@
     <div class="site-search-results" data-site-search-results></div>
 </section>
 
+</div>
+</div>
+
 <div id="site-footer"></div>
 <script src="search-index.js"></script>
 <script src="includes.js"></script>
+<script src="member-shell.js"></script>
 <script src="search.js?v=16"></script>
 </body>
 </html>

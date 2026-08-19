@@ -1,0 +1,1299 @@
+/* ===== TPI MEMBER SHELL — SHARED STYLES ===== */
+/* Used by all Member Mode pages. Loaded via member-shell.js or direct <link>. */
+
+/* ===== HIDE PUBLIC CHROME IN MEMBER MODE ===== */
+body.member-mode .site-search-band,
+body.member-mode .command-nav {
+    display: none;
+}
+
+/* ===== MEMBER SHELL LAYOUT ===== */
+.member-shell {
+    display: grid;
+    grid-template-columns: 270px 1fr;
+    min-height: calc(100vh - 200px);
+}
+
+/* ===== LEFT SIDEBAR ===== */
+.member-sidebar {
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding: 20px 0 20px 16px;
+    border-right: 1px solid #1f2a36;
+    background: #0b1016;
+}
+
+.member-sidebar-identity {
+    padding: 0 12px 16px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #1f2a36;
+}
+
+.member-sidebar-logo {
+    color: #55c8ff;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: block;
+    padding: 4px 0;
+}
+
+.member-sidebar-logo:hover {
+    color: #fff;
+}
+
+.member-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.member-sidebar::-webkit-scrollbar-thumb {
+    background: #263646;
+    border-radius: 4px;
+}
+
+/* ===== NAV SECTIONS ===== */
+.member-nav-section {
+    margin-bottom: 8px;
+}
+
+.member-nav-label {
+    display: block;
+    padding: 8px 12px 4px;
+    color: #55c8ff;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+/* ===== NAV LINKS ===== */
+.member-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    color: #9fb3c8;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.member-nav-link:hover {
+    color: #e6edf3;
+    background: rgba(85, 200, 255, 0.06);
+    border-color: rgba(85, 200, 255, 0.12);
+}
+
+.member-nav-link[aria-current="page"] {
+    color: #f4f8fb;
+    background: rgba(85, 200, 255, 0.1);
+    border-color: rgba(85, 200, 255, 0.4);
+    box-shadow: 0 0 12px rgba(85, 200, 255, 0.08);
+}
+
+.member-nav-link .nav-icon {
+    width: 18px;
+    text-align: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* ===== COMING NEXT ===== */
+.member-nav-link.is-coming {
+    color: #4a5d72;
+    cursor: default;
+}
+
+.member-nav-link.is-coming:hover {
+    color: #4a5d72;
+    background: transparent;
+    border-color: transparent;
+}
+
+.member-nav-coming-tag {
+    margin-left: auto;
+    padding: 1px 6px;
+    color: #3d5060;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px dashed #2a3a4a;
+    border-radius: 3px;
+}
+
+/* ===== MAIN CONTENT AREA ===== */
+.member-main {
+    padding: 24px 28px;
+    min-width: 0;
+}
+
+.member-main-inner {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+/* ===== PAGE HEADING ===== */
+.member-page-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #1f2a36;
+}
+
+.member-page-header h2 {
+    margin: 0;
+    color: #f4f8fb;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.member-greeting-inline {
+    color: #8aa0b6;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ===== MOBILE BOTTOM NAV ===== */
+.member-mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #0b1016;
+    border-top: 1px solid #1f2a36;
+    padding: 6px 0 env(safe-area-inset-bottom, 6px);
+}
+
+.member-mobile-nav-inner {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mobile-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 8px;
+    color: #6d8296;
+    text-decoration: none;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 6px;
+    transition: color 0.2s;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link[aria-current="page"] {
+    color: #55c8ff;
+}
+
+.mobile-nav-link .mobile-nav-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* ============================================================= */
+/* SHARED MEMBER CONTENT CLASSES                                  */
+/* Reusable across all member-mode pages. Reference: member-home */
+/* ============================================================= */
+
+/* Intro panel — compact description below page heading */
+.member-page-intro {
+    margin-bottom: 24px;
+    padding: 18px 20px;
+    background: #101820;
+    border: 1px solid #2b3d4f;
+    border-radius: 8px;
+}
+
+.member-page-intro h3 {
+    margin: 0 0 6px;
+    color: #f4f8fb;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.member-page-intro p {
+    margin: 0;
+    color: #8aa0b6;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* Section within a member page */
+.member-section {
+    margin-bottom: 28px;
+}
+
+.member-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1f2a36;
+    color: #55c8ff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* Panel — bordered content block */
+.member-panel {
+    padding: 20px;
+    background: #101820;
+    border: 1px solid #2b3d4f;
+    border-radius: 8px;
+}
+
+.member-panel h3 {
+    margin: 0 0 10px;
+    color: #f4f8fb;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.member-panel p {
+    margin: 0;
+    color: #8aa0b6;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* Card — interactive panel */
+.member-card {
+    padding: 18px;
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.member-card:hover {
+    border-color: #2b3d4f;
+}
+
+/* Card grid */
+.member-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* Toolbar row */
+.member-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Tabs */
+.member-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #1f2a36;
+}
+
+.member-tab {
+    padding: 10px 16px;
+    color: #6d8296;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: 2px solid transparent;
+    border-radius: 6px 6px 0 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.member-tab:hover {
+    color: #c7d5e2;
+    background: rgba(85, 200, 255, 0.04);
+}
+
+.member-tab.active {
+    color: #55c8ff;
+    border-bottom-color: #55c8ff;
+}
+
+/* Empty state */
+.member-empty-state {
+    text-align: center;
+    padding: 48px 28px;
+    border: 1px dashed rgba(85, 200, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(0, 194, 255, 0.03);
+}
+
+.member-empty-state h3 {
+    margin: 0 0 8px;
+    color: #f4f8fb;
+    font-size: 20px;
+}
+
+.member-empty-state p {
+    margin: 0;
+    color: #8aa0b6;
+    font-size: 14px;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Filter / search row */
+.member-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.member-search-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+/* Meta text */
+.member-meta {
+    color: #6d8296;
+    font-size: 12px;
+}
+
+/* Actions row */
+.member-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* ===== MEMBER-MODE BUTTONS ===== */
+body.member-mode .member-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 8px 18px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+    text-decoration: none;
+}
+
+body.member-mode .member-btn:active {
+    transform: scale(0.97);
+}
+
+body.member-mode .member-btn-primary {
+    color: #061018;
+    background: #55c8ff;
+    border: 1px solid #55c8ff;
+}
+
+body.member-mode .member-btn-primary:hover {
+    background: #3dbbf5;
+}
+
+body.member-mode .member-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+body.member-mode .member-btn-secondary {
+    color: #c7d5e2;
+    background: #090f14;
+    border: 1px solid #263646;
+}
+
+body.member-mode .member-btn-secondary:hover {
+    color: #f4f8fb;
+    border-color: rgba(85, 200, 255, 0.5);
+}
+
+body.member-mode .member-btn-danger {
+    color: #f4f8fb;
+    background: rgba(255, 68, 68, 0.15);
+    border: 1px solid rgba(255, 68, 68, 0.4);
+}
+
+body.member-mode .member-btn-danger:hover {
+    background: rgba(255, 68, 68, 0.25);
+    border-color: rgba(255, 68, 68, 0.6);
+}
+
+body.member-mode .member-btn-sm {
+    min-height: 30px;
+    padding: 5px 12px;
+    font-size: 11px;
+}
+
+/* ===== MEMBER-MODE FORM CONTROLS ===== */
+body.member-mode .member-input,
+body.member-mode .member-textarea,
+body.member-mode .member-select {
+    width: 100%;
+    padding: 10px 12px;
+    color: #e6edf3;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+body.member-mode .member-input:focus,
+body.member-mode .member-textarea:focus,
+body.member-mode .member-select:focus {
+    border-color: rgba(85, 200, 255, 0.6);
+    box-shadow: 0 0 0 3px rgba(85, 200, 255, 0.08);
+}
+
+body.member-mode .member-textarea {
+    min-height: 84px;
+    resize: vertical;
+}
+
+body.member-mode .member-input::placeholder,
+body.member-mode .member-textarea::placeholder {
+    color: #5a7086;
+}
+
+body.member-mode .member-label {
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    color: #8aa0b6;
+}
+
+/* ============================================================= */
+/* MEMBER-MODE OVERRIDES — PUBLIC PAGE ELEMENTS                   */
+/* ONLY apply inside body.member-mode. Public pages unaffected.   */
+/* ============================================================= */
+
+/* Compact public heroes — reduce but keep useful copy */
+body.member-mode .portal-hero {
+    padding: 0;
+    max-width: none;
+}
+
+body.member-mode .portal-hero h2 {
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+body.member-mode .portal-hero p {
+    font-size: 14px;
+}
+
+/* Hide heroes that duplicate the member heading */
+body.member-mode .forum-portal-hero,
+body.member-mode .education-study-intro {
+    display: none;
+}
+
+/* Restyle public sections into member panels */
+body.member-mode section {
+    padding: 0;
+    max-width: none;
+    opacity: 1;
+    transform: none;
+    animation: none;
+}
+
+body.member-mode section + section {
+    margin-top: 24px;
+}
+
+/* Restyle global h2 inside member mode */
+body.member-mode .member-main h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1f2a36;
+}
+
+/* Study hub layout — make it a card grid */
+body.member-mode .study-hub-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+body.member-mode .study-hub-card {
+    padding: 18px;
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .study-hub-card h3 {
+    margin-top: 0;
+    color: #f4f8fb;
+}
+
+/* Dashboard grid panels */
+body.member-mode .dashboard-grid,
+body.member-mode .portal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 0;
+    max-width: none;
+}
+
+body.member-mode .dashboard-grid::before {
+    display: none;
+}
+
+body.member-mode .dashboard-panel {
+    padding: 18px;
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .dashboard-panel-featured {
+    grid-column: 1 / -1;
+}
+
+body.member-mode .dashboard-panel h3 {
+    margin-top: 0;
+    color: #f4f8fb;
+    font-size: 16px;
+}
+
+/* Study area grid */
+body.member-mode .study-area-grid {
+    padding-top: 0;
+}
+
+body.member-mode .study-area-card {
+    min-height: auto;
+}
+
+/* Study content grid */
+body.member-mode .study-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* Study resource grid */
+body.member-mode .study-resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+/* Search page adjustments */
+body.member-mode .site-search-shell {
+    padding: 0;
+    max-width: none;
+}
+
+body.member-mode .site-search-shell h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+body.member-mode .site-search-result {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+/* Video page specific overrides */
+body.member-mode .tpi-channel-tabs {
+    background: transparent;
+    padding: 0;
+    border-bottom: 1px solid #1f2a36;
+    gap: 0;
+}
+
+body.member-mode .tpi-channel-tab {
+    font-size: 13px;
+    color: #6d8296;
+    padding: 10px 16px;
+    border-bottom: 2px solid transparent;
+    border-radius: 6px 6px 0 0;
+}
+
+body.member-mode .tpi-channel-tab:hover {
+    color: #c7d5e2;
+    background: rgba(85, 200, 255, 0.04);
+}
+
+body.member-mode .tpi-channel-tab.active {
+    color: #55c8ff;
+    border-bottom-color: #55c8ff;
+}
+
+/* Video controls — member search/toolbar style */
+body.member-mode .tpi-channel-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+body.member-mode .tpi-channel-search input {
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 6px;
+    color: #e6edf3;
+    font-size: 14px;
+    padding: 10px 12px 10px 2.5rem;
+}
+
+body.member-mode .tpi-channel-search input:focus {
+    border-color: rgba(85, 200, 255, 0.6);
+    box-shadow: 0 0 0 3px rgba(85, 200, 255, 0.08);
+    outline: none;
+}
+
+body.member-mode .tpi-channel-search input::placeholder {
+    color: #5a7086;
+}
+
+body.member-mode .tpi-channel-sort select {
+    background: #090f14;
+    border: 1px solid #263646;
+    color: #c7d5e2;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+body.member-mode .tpi-channel-sort select:focus {
+    border-color: rgba(85, 200, 255, 0.6);
+    outline: none;
+}
+
+/* Video cards — member card style */
+body.member-mode .video-card {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+body.member-mode .video-card:hover {
+    border-color: #2b3d4f;
+    transform: translateY(-2px);
+}
+
+body.member-mode .video-card-copy h3 {
+    color: #f4f8fb;
+}
+
+body.member-mode .video-card-copy p {
+    color: #8aa0b6;
+}
+
+body.member-mode .video-card-meta span {
+    color: #6d8296;
+}
+
+/* Featured card — member panel style */
+body.member-mode .video-featured-card {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .video-featured-card:hover {
+    border-color: #2b3d4f;
+}
+
+body.member-mode .video-featured-copy h3 {
+    color: #f4f8fb;
+}
+
+body.member-mode .video-featured-copy p {
+    color: #8aa0b6;
+}
+
+body.member-mode .video-featured-meta span {
+    color: #6d8296;
+}
+
+/* Video section heading — member section title style */
+body.member-mode .video-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1f2a36;
+}
+
+body.member-mode .video-section-heading h2 {
+    margin: 0;
+    color: #55c8ff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Video empty state — member empty state */
+body.member-mode .video-empty-state {
+    text-align: center;
+    padding: 48px 28px;
+    border: 1px dashed rgba(85, 200, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(0, 194, 255, 0.03);
+}
+
+body.member-mode .video-empty-state h3 {
+    color: #f4f8fb;
+    font-size: 20px;
+}
+
+body.member-mode .video-empty-state p {
+    color: #8aa0b6;
+    font-size: 14px;
+}
+
+/* Category pills — member filter style */
+body.member-mode .video-category-pill {
+    background: transparent;
+    border: 1px solid #263646;
+    color: #8aa0b6;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+body.member-mode .video-category-pill:hover {
+    border-color: rgba(85, 200, 255, 0.3);
+    color: #c7d5e2;
+}
+
+body.member-mode .video-category-pill.active {
+    background: rgba(85, 200, 255, 0.1);
+    border-color: rgba(85, 200, 255, 0.4);
+    color: #55c8ff;
+}
+
+/* Video grid — member card grid */
+body.member-mode .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* Results count — member meta */
+body.member-mode .video-results-count {
+    color: #6d8296;
+    font-size: 12px;
+}
+
+/* ===== INDIVIDUAL VIDEO VIEWER OVERRIDES ===== */
+
+/* Video detail panels — member style */
+body.member-mode .video-detail-description {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .video-detail-description p {
+    color: #8aa0b6;
+}
+
+/* Video comment form — member panel style */
+body.member-mode .video-comment-form {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .video-comment-form textarea {
+    background: #090f14;
+    border: 1px solid #263646;
+    color: #e6edf3;
+    border-radius: 6px;
+}
+
+body.member-mode .video-comment-form textarea:focus {
+    border-color: rgba(85, 200, 255, 0.6);
+    box-shadow: 0 0 0 3px rgba(85, 200, 255, 0.08);
+}
+
+/* Video comments — member card style */
+body.member-mode .video-comment {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .video-comment-name {
+    color: #f4f8fb;
+}
+
+body.member-mode .video-comment-body {
+    color: #8aa0b6;
+}
+
+/* Video comment login prompt */
+body.member-mode .video-comment-login-prompt {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+/* Video action bar — member style */
+body.member-mode .video-action-bar {
+    border-top-color: #1f2a36;
+    border-bottom-color: #1f2a36;
+}
+
+body.member-mode .video-action-btn {
+    border-color: #263646;
+    color: #8aa0b6;
+    border-radius: 6px;
+}
+
+body.member-mode .video-action-btn:hover {
+    border-color: rgba(85, 200, 255, 0.3);
+    color: #c7d5e2;
+}
+
+body.member-mode .video-action-btn.active {
+    background: rgba(85, 200, 255, 0.1);
+    border-color: rgba(85, 200, 255, 0.4);
+    color: #55c8ff;
+}
+
+/* Video reaction picker — member style */
+body.member-mode .video-reaction-picker {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+/* Video gate — member panel */
+body.member-mode .video-gate {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+/* Video modal — member style */
+body.member-mode .video-modal-card {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .video-share-btn {
+    background: #090f14;
+    border: 1px solid #263646;
+    color: #c7d5e2;
+    border-radius: 6px;
+}
+
+body.member-mode .video-share-btn:hover {
+    border-color: rgba(85, 200, 255, 0.5);
+    color: #f4f8fb;
+}
+
+/* Video report form — member form style */
+body.member-mode .video-report-form select,
+body.member-mode .video-report-form textarea {
+    background: #090f14;
+    border: 1px solid #263646;
+    color: #e6edf3;
+    border-radius: 6px;
+}
+
+body.member-mode .video-report-form select:focus,
+body.member-mode .video-report-form textarea:focus {
+    border-color: rgba(85, 200, 255, 0.6);
+    box-shadow: 0 0 0 3px rgba(85, 200, 255, 0.08);
+}
+
+/* Video embed code — member style */
+body.member-mode .video-embed-code {
+    background: #090f14;
+    border: 1px solid #263646;
+    color: #e6edf3;
+    border-radius: 6px;
+}
+
+/* Video not found — member empty style */
+body.member-mode .video-not-found {
+    text-align: center;
+    padding: 48px 28px;
+    border: 1px dashed rgba(85, 200, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(0, 194, 255, 0.03);
+}
+
+body.member-mode .video-not-found h2 {
+    color: #f4f8fb;
+    font-size: 20px;
+}
+
+body.member-mode .video-not-found p {
+    color: #8aa0b6;
+    font-size: 14px;
+}
+
+/* Related video cards — member card style */
+body.member-mode .video-related-card {
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .video-related-card:hover {
+    border-color: #2b3d4f;
+}
+
+body.member-mode .video-related-copy h3 {
+    color: #f4f8fb;
+}
+
+body.member-mode .video-related-copy span {
+    color: #6d8296;
+}
+
+/* Video detail meta — member meta */
+body.member-mode .video-detail-meta span {
+    color: #6d8296;
+}
+
+body.member-mode .video-channel-identity {
+    color: #6d8296;
+}
+
+body.member-mode .video-channel-identity strong {
+    color: #c3cfda;
+}
+
+/* Video back link */
+body.member-mode .video-back-link {
+    color: #55c8ff;
+}
+
+/* Forum adjustments — keep forum distinct but consistent */
+body.member-mode .discussion-portal {
+    max-width: none;
+}
+
+body.member-mode .discussion-portal section {
+    padding: 0;
+    max-width: none;
+    opacity: 1;
+    transform: none;
+    animation: none;
+}
+
+/* Highlight blocks */
+body.member-mode .highlight {
+    margin-top: 0;
+    padding: 16px;
+    background: #101820;
+    border: 1px solid #2b3d4f;
+    border-radius: 8px;
+}
+
+/* Operational summary — compact in member mode */
+body.member-mode .operational-summary {
+    text-align: left;
+    padding: 18px 20px;
+    max-width: none;
+}
+
+/* Advisory board / standards page adjustments */
+body.member-mode .board-closing-note {
+    max-width: none;
+    margin: 0;
+    text-align: left;
+}
+
+/* App detail hero — compact */
+body.member-mode .app-detail-hero {
+    display: block;
+    max-width: none;
+    padding: 0;
+}
+
+body.member-mode .app-detail-hero h2 {
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+/* Standards hero — single column */
+body.member-mode .standards-hero {
+    display: block;
+}
+
+/* Directory subpage hero */
+body.member-mode .directory-subpage-hero {
+    margin: 0;
+}
+
+/* Portal buttons — restyle for member context */
+body.member-mode .portal-button {
+    min-height: 38px;
+    padding: 8px 18px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+body.member-mode .portal-button-secondary {
+    background: #090f14;
+    border-color: #263646;
+}
+
+/* Education intro grid */
+body.member-mode .education-intro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* ===== HOME PAGE MEMBER-MODE OVERRIDES ===== */
+
+/* Compact homepage hero in member mode */
+body.member-mode .portal-hero {
+    padding: 0;
+    max-width: none;
+    text-align: left;
+}
+
+body.member-mode .portal-hero h2 {
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+body.member-mode .portal-hero p {
+    font-size: 14px;
+    color: #8aa0b6;
+}
+
+body.member-mode .portal-hero .portal-actions {
+    margin-top: 16px;
+}
+
+/* Home sections — reset public spacing */
+body.member-mode .home-mission-band,
+body.member-mode .home-section,
+body.member-mode .home-collaboration,
+body.member-mode .home-pathways {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+body.member-mode .home-section {
+    padding: 0;
+}
+
+body.member-mode .home-mission-band {
+    padding: 0;
+}
+
+body.member-mode .home-pathways {
+    padding: 0;
+}
+
+/* Home section headings — match member style */
+body.member-mode .home-mission-band h2,
+body.member-mode .home-section h2,
+body.member-mode .home-collaboration h2,
+body.member-mode .home-pathways h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: #f4f8fb;
+}
+
+body.member-mode .home-section > p,
+body.member-mode .home-pathways > p {
+    color: #8aa0b6;
+    font-size: 14px;
+}
+
+/* Home focus grid — card grid */
+body.member-mode .home-focus-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+body.member-mode .home-focus-grid .dashboard-panel {
+    min-height: auto;
+    padding: 18px;
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+/* Mission band — panel style */
+body.member-mode .home-mission-band article,
+body.member-mode .home-collaboration {
+    padding: 20px;
+    background: #101820;
+    border: 1px solid #243140;
+    border-radius: 8px;
+}
+
+body.member-mode .home-mission-band p,
+body.member-mode .home-collaboration p {
+    color: #8aa0b6;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* Collaboration layout — stack in member mode */
+body.member-mode .home-collaboration {
+    display: block;
+}
+
+body.member-mode .home-collaboration-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    min-width: auto;
+}
+
+/* Pathway groups — sections */
+body.member-mode .home-pathway-group {
+    margin-top: 24px;
+}
+
+body.member-mode .home-pathway-group > h3 {
+    font-size: 10px;
+    color: #55c8ff;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1f2a36;
+}
+
+/* Home card grid — match dashboard grid */
+body.member-mode .home-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 0;
+    max-width: none;
+}
+
+body.member-mode .home-card-grid::before {
+    display: none;
+}
+
+/* ============================== */
+/* RESPONSIVE — TABLET            */
+/* ============================== */
+@media (max-width: 900px) {
+    .member-shell {
+        grid-template-columns: 220px 1fr;
+    }
+
+    .member-sidebar {
+        padding: 16px 0 16px 8px;
+    }
+
+    .member-nav-link {
+        padding: 8px 10px;
+        font-size: 12px;
+        gap: 8px;
+    }
+
+    .member-main {
+        padding: 20px 18px;
+    }
+}
+
+/* ============================== */
+/* RESPONSIVE — MOBILE            */
+/* ============================== */
+@media (max-width: 700px) {
+    .member-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .member-sidebar {
+        display: none;
+    }
+
+    .member-mobile-nav {
+        display: block;
+    }
+
+    .member-main {
+        padding: 16px 14px 80px;
+    }
+
+    .member-page-header h2 {
+        font-size: 22px;
+    }
+
+    .member-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .member-search-row {
+        grid-template-columns: 1fr;
+    }
+
+    .member-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    body.member-mode .dashboard-grid,
+    body.member-mode .portal-grid,
+    body.member-mode .study-hub-layout,
+    body.member-mode .education-intro-grid {
+        grid-template-columns: 1fr;
+    }
+}

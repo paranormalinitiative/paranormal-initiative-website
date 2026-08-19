@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Member Home | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="The Paranormal Initiative">
+    <meta name="pp:subtitle" content="Paranormal Research, Field Investigation, Education, Exploration, and Technology">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="member-shell.css">
+    <style>
+        /* ===== MEMBER HOME HEADER ===== */
+        .member-home-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1f2a36;
+        }
+
+        .member-home-header h2 {
+            margin: 0;
+            color: #f4f8fb;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.2;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* ===== PROFILE IDENTITY ===== */
+        .member-profile-identity {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+            background: #101820;
+            border: 1px solid #2b3d4f;
+            border-radius: 8px;
+        }
+
+        .member-profile-photo-wrap {
+            width: 100px;
+            height: 100px;
+        }
+
+        .member-profile-photo-wrap img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #55c8ff;
+            object-fit: cover;
+            background: #071017;
+        }
+
+        .member-profile-photo-wrap .profile-photo-empty {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #55c8ff;
+            background: #55c8ff;
+            color: #061018;
+            font-size: 36px;
+            font-weight: 900;
+        }
+
+        .member-profile-info {
+            display: grid;
+            gap: 8px;
+            align-content: start;
+        }
+
+        .member-profile-name {
+            margin: 0;
+            color: #f4f8fb;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .member-profile-title-line {
+            color: #55c8ff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .member-profile-role {
+            color: #6d8296;
+            font-size: 12px;
+        }
+
+        .member-profile-bio {
+            color: #c3cfda;
+            font-size: 14px;
+            line-height: 1.55;
+            margin-top: 4px;
+        }
+
+        .member-profile-facts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+            margin-top: 8px;
+        }
+
+        .member-profile-facts span {
+            color: #6d8296;
+            font-size: 12px;
+        }
+
+        .member-profile-facts strong {
+            color: #c3cfda;
+            font-weight: 600;
+        }
+
+        .member-profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .member-profile-actions a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            color: #c7d5e2;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 5px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .member-profile-actions a:hover {
+            color: #f4f8fb;
+            border-color: rgba(85, 200, 255, 0.5);
+        }
+
+        /* ===== IDENTITY BLOCK ===== */
+        .member-identity-block {
+            text-align: center;
+            margin-bottom: 28px;
+            padding: 28px 20px;
+        }
+
+        .member-identity-title {
+            margin: 0 0 10px;
+            color: #55c8ff;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .member-identity-subtitle {
+            margin: 0;
+            color: #8aa0b6;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== COMPOSER ===== */
+        .member-composer {
+            display: grid;
+            gap: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+            background: #101820;
+            border: 1px solid #2b3d4f;
+            border-radius: 8px;
+        }
+
+        .composer-top {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .composer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #55c8ff;
+            object-fit: cover;
+            background: #071017;
+        }
+
+        .composer-avatar-placeholder {
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #55c8ff;
+            background: #55c8ff;
+            color: #061018;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .composer-textarea {
+            width: 100%;
+            min-height: 84px;
+            padding: 14px 16px;
+            color: #e6edf3;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .composer-textarea::placeholder {
+            color: #5a7086;
+        }
+
+        .composer-textarea:focus {
+            border-color: rgba(85, 200, 255, 0.6);
+            box-shadow: 0 0 0 3px rgba(85, 200, 255, 0.08);
+        }
+
+        .composer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding-left: 52px;
+        }
+
+        .composer-category-select {
+            padding: 8px 12px;
+            color: #c7d5e2;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 5px;
+            font: inherit;
+            font-size: 12px;
+            outline: none;
+            max-width: 300px;
+        }
+
+        .composer-category-select:focus {
+            border-color: rgba(85, 200, 255, 0.5);
+        }
+
+        .composer-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .composer-status {
+            margin: 0;
+            color: #8aa0b6;
+            font-size: 12px;
+        }
+
+        .composer-post-btn {
+            min-height: 38px;
+            padding: 8px 20px;
+            color: #061018;
+            background: #55c8ff;
+            border: 1px solid #55c8ff;
+            border-radius: 5px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .composer-post-btn:hover {
+            background: #3dbbf5;
+        }
+
+        .composer-post-btn:active {
+            transform: scale(0.97);
+        }
+
+        .composer-post-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* ===== COMPOSER MEDIA CONTROLS ===== */
+        .composer-media-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-top: 2px;
+            padding-left: 52px;
+        }
+
+        .composer-media-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            color: #8aa0b6;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+
+        .composer-media-btn:hover {
+            color: #c7d5e2;
+            background: rgba(85, 200, 255, 0.06);
+            border-color: rgba(85, 200, 255, 0.12);
+        }
+
+        .composer-media-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* ===== COMPOSER PREVIEW ===== */
+        .composer-preview-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-top: 4px;
+            padding-left: 52px;
+        }
+
+        .composer-preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #263646;
+            background: #071017;
+        }
+
+        .composer-preview-item img,
+        .composer-preview-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .composer-preview-item .preview-file-icon {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: 100%;
+            color: #8aa0b6;
+            font-size: 10px;
+            font-weight: 700;
+            text-align: center;
+            padding: 6px;
+            word-break: break-all;
+            line-height: 1.2;
+        }
+
+        .composer-preview-remove {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 20px;
+            height: 20px;
+            display: grid;
+            place-items: center;
+            background: rgba(2, 7, 10, 0.85);
+            border: 1px solid #263646;
+            border-radius: 50%;
+            color: #dce7ef;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .composer-preview-remove:hover {
+            background: #ff4444;
+            border-color: #ff4444;
+        }
+
+        /* ===== FEED TABS ===== */
+        .member-feed-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #1f2a36;
+            padding-bottom: 0;
+        }
+
+        .member-feed-tab {
+            padding: 10px 16px;
+            color: #6d8296;
+            background: transparent;
+            border: 1px solid transparent;
+            border-bottom: 2px solid transparent;
+            border-radius: 6px 6px 0 0;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+        }
+
+        .member-feed-tab:hover {
+            color: #c7d5e2;
+            background: rgba(85, 200, 255, 0.04);
+        }
+
+        .member-feed-tab.active {
+            color: #55c8ff;
+            border-bottom-color: #55c8ff;
+        }
+
+        /* ===== FEED ===== */
+        .member-feed {
+            display: grid;
+            gap: 16px;
+        }
+
+        .feed-card {
+            display: grid;
+            gap: 12px;
+            padding: 18px;
+            background: #101820;
+            border: 1px solid #243140;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .feed-card:hover {
+            border-color: #2b3d4f;
+        }
+
+        .feed-card-header {
+            display: grid;
+            grid-template-columns: 38px 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .feed-card-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid #55c8ff;
+            object-fit: cover;
+            background: #071017;
+        }
+
+        .feed-card-avatar-initial {
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid #55c8ff;
+            background: #55c8ff;
+            color: #061018;
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .feed-card-meta {
+            display: grid;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .feed-card-meta strong {
+            color: #f4f8fb;
+            font-size: 14px;
+        }
+
+        .feed-card-meta strong a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .feed-card-meta strong a:hover {
+            color: #55c8ff;
+        }
+
+        .feed-card-meta .feed-card-detail {
+            color: #6d8296;
+            font-size: 12px;
+        }
+
+        .feed-card-meta .feed-card-detail a {
+            color: #6d8296;
+            text-decoration: none;
+        }
+
+        .feed-card-meta .feed-card-detail a:hover {
+            color: #55c8ff;
+        }
+
+        .feed-card-badge {
+            padding: 3px 8px;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .badge-category {
+            color: #55c8ff;
+            background: rgba(85, 200, 255, 0.1);
+            border: 1px solid rgba(85, 200, 255, 0.25);
+        }
+
+        .badge-article {
+            color: #a78bfa;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.25);
+        }
+
+        .feed-card-body {
+            color: #c3cfda;
+            font-size: 14px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .feed-card-body a {
+            color: #55c8ff;
+            text-decoration: none;
+        }
+
+        .feed-card-body a:hover {
+            text-decoration: underline;
+        }
+
+        .feed-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            padding-top: 8px;
+            border-top: 1px solid #1a2530;
+        }
+
+        .feed-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            color: #8aa0b6;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            text-decoration: none;
+        }
+
+        .feed-action-btn:hover {
+            color: #e6edf3;
+            background: rgba(85, 200, 255, 0.08);
+            border-color: rgba(85, 200, 255, 0.15);
+        }
+
+        .feed-action-btn .action-count {
+            font-weight: 800;
+            color: #6d8296;
+        }
+
+        /* ===== FEED CARD ATTACHMENTS ===== */
+        .feed-card-attachments {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .feed-card-attachments img,
+        .feed-card-attachments video {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #071017;
+            border: 1px solid #263646;
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+
+        .feed-card-attachments img:hover,
+        .feed-card-attachments video:hover {
+            border-color: #55c8ff;
+        }
+
+        .feed-card-attachments .feed-attachment-single img,
+        .feed-card-attachments .feed-attachment-single video {
+            aspect-ratio: 16 / 10;
+            max-height: 360px;
+        }
+
+        /* ===== ARTICLE CARD ===== */
+        .feed-card-article-title {
+            margin: 0;
+            color: #f4f8fb;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .feed-card-article-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .feed-card-article-title a:hover {
+            color: #55c8ff;
+        }
+
+        .feed-card-article-preview {
+            color: #aebdcc;
+            font-size: 13px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .member-empty {
+            text-align: center;
+            padding: 48px 28px;
+            border: 1px dashed rgba(85, 200, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 194, 255, 0.03);
+        }
+
+        .member-empty h3 {
+            margin: 0 0 8px;
+            color: #f4f8fb;
+            font-size: 20px;
+        }
+
+        .member-empty p {
+            margin: 0;
+            color: #8aa0b6;
+            font-size: 14px;
+            max-width: 440px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== LOAD MORE ===== */
+        .feed-load-more {
+            text-align: center;
+            padding: 16px 0;
+        }
+
+        .feed-load-more button {
+            min-height: 40px;
+            padding: 9px 24px;
+            color: #c7d5e2;
+            background: #101820;
+            border: 1px solid #263646;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .feed-load-more button:hover {
+            color: #f4f8fb;
+            border-color: rgba(85, 200, 255, 0.5);
+        }
+
+        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css) ===== */
+        @media (max-width: 700px) {
+            .member-home-header h2 {
+                font-size: 22px;
+            }
+
+            .member-profile-identity {
+                grid-template-columns: 1fr;
+                justify-items: center;
+                text-align: center;
+            }
+
+            .member-profile-info {
+                justify-items: center;
+            }
+
+            .member-profile-facts {
+                justify-content: center;
+            }
+
+            .member-profile-actions {
+                justify-content: center;
+            }
+
+            .composer-top {
+                grid-template-columns: 1fr;
+            }
+
+            .composer-avatar,
+            .composer-avatar-placeholder {
+                display: none;
+            }
+
+            .composer-bottom {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .composer-category-select {
+                max-width: 100%;
+            }
+
+            .composer-actions {
+                justify-content: space-between;
+            }
+
+            .composer-media-row,
+            .composer-preview-area,
+            .composer-bottom {
+                padding-left: 0;
+            }
+
+            .composer-media-row {
+                flex-wrap: wrap;
+            }
+
+            .feed-card-header {
+                grid-template-columns: 32px 1fr auto;
+            }
+
+            .feed-card-avatar,
+            .feed-card-avatar-initial {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
+            }
+
+            .feed-card {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<div data-member-content hidden>
+        <div class="member-main-inner">
+            <!-- MEMBER HOME HEADER -->
+            <div class="member-home-header">
+                <h2>Member Home</h2>
+                <span data-member-greeting class="member-greeting-inline"></span>
+            </div>
+
+            <!-- PROFILE IDENTITY -->
+            <div class="member-profile-identity" data-member-profile>
+                <div class="member-profile-photo-wrap" data-member-photo></div>
+                <div class="member-profile-info">
+                    <h3 class="member-profile-name" data-member-name>Loading...</h3>
+                    <p class="member-profile-title-line" data-member-title></p>
+                    <p class="member-profile-role" data-member-role></p>
+                    <p class="member-profile-bio" data-member-bio></p>
+                    <div class="member-profile-facts" data-member-facts></div>
+                    <div class="member-profile-actions">
+                        <a href="member-dashboard.html">&#9881; Edit Profile / Settings</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMMUNITY IDENTITY -->
+            <div class="member-identity-block">
+                <h3 class="member-identity-title">You Are the Initiative</h3>
+                <p class="member-identity-subtitle">Share your research, experiences, questions, ideas, and discoveries with the community.</p>
+            </div>
+
+            <!-- COMPOSER -->
+            <div class="member-composer" data-member-composer>
+                <div class="composer-top">
+                    <div data-composer-avatar></div>
+                    <textarea class="composer-textarea" data-composer-body rows="3" maxlength="6000" placeholder="Share something with the TPI community..."></textarea>
+                </div>
+                <div class="composer-preview-area" data-composer-previews></div>
+                <div class="composer-media-row">
+                    <button type="button" class="composer-media-btn" data-media-photo title="Add photo">
+                        <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                        Photo
+                    </button>
+                    <button type="button" class="composer-media-btn" data-media-video title="Add video">
+                        <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                        Video
+                    </button>
+                    <button type="button" class="composer-media-btn" data-media-file title="Add file">
+                        <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+                        File
+                    </button>
+                    <input type="file" data-composer-file-input accept="image/*,video/*" multiple hidden>
+                </div>
+                <div class="composer-bottom">
+                    <select class="composer-category-select" data-composer-category>
+                        <option value="general">General Discussion</option>
+                    </select>
+                    <div class="composer-actions">
+                        <p class="composer-status" data-composer-status></p>
+                        <button class="composer-post-btn" type="button" data-composer-post disabled>Post</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEED TABS -->
+            <div class="member-feed-tabs">
+                <button type="button" class="member-feed-tab active" data-feed-tab="activity">Activity</button>
+                <button type="button" class="member-feed-tab" data-feed-tab="posts">Posts</button>
+                <button type="button" class="member-feed-tab" data-feed-tab="published">Published Content</button>
+            </div>
+
+            <!-- FEED -->
+            <div class="member-feed" data-member-feed>
+                <p class="access-note" style="text-align:center; padding:24px;">Loading activity...</p>
+            </div>
+            <div class="feed-load-more" data-feed-load-more hidden>
+                <button type="button" data-load-more-btn>Load More</button>
+            </div>
+        </div>
+</div>
+
+<div id="site-footer"></div>
+
+<script src="api-client.js"></script>
+<script src="includes.js"></script>
+<script src="member-shell.js"></script>
+<script>
+(function () {
+    var FEED_LIMIT = 20;
+    var feedOffset = 0;
+    var activeUser = null;
+    var profileUser = null;
+    var forumCategories = [];
+    var currentTab = "activity";
+
+    var greetingEl = document.querySelector("[data-member-greeting]");
+    var profilePhoto = document.querySelector("[data-member-photo]");
+    var profileName = document.querySelector("[data-member-name]");
+    var profileTitle = document.querySelector("[data-member-title]");
+    var profileRole = document.querySelector("[data-member-role]");
+    var profileBio = document.querySelector("[data-member-bio]");
+    var profileFacts = document.querySelector("[data-member-facts]");
+    var composerBody = document.querySelector("[data-composer-body]");
+    var composerCategory = document.querySelector("[data-composer-category]");
+    var composerPostBtn = document.querySelector("[data-composer-post]");
+    var composerStatus = document.querySelector("[data-composer-status]");
+    var composerAvatar = document.querySelector("[data-composer-avatar]");
+    var composerFileInput = document.querySelector("[data-composer-file-input]");
+    var composerPreviews = document.querySelector("[data-composer-previews]");
+    var feedContainer = document.querySelector("[data-member-feed]");
+    var loadMoreWrap = document.querySelector("[data-feed-load-more]");
+    var loadMoreBtn = document.querySelector("[data-load-more-btn]");
+    var pendingAttachments = [];
+
+    init();
+
+    async function init() {
+        activeUser = await getActiveUser();
+        if (!activeUser) {
+            window.location.href = "member-login.html";
+            return;
+        }
+
+        var requestedUsername = new URLSearchParams(window.location.search).get("username");
+        var isOwnProfile = !requestedUsername || requestedUsername === activeUser.username;
+
+        if (isOwnProfile) {
+            profileUser = activeUser;
+        } else {
+            try {
+                var data = await window.TPIApi.publicProfile(requestedUsername);
+                profileUser = data.profile || null;
+            } catch (e) {
+                profileUser = null;
+            }
+            if (!profileUser) {
+                profileUser = activeUser;
+            }
+        }
+
+        renderGreeting();
+        renderProfile();
+        setupProfileLinks();
+
+        var isOwn = profileUser.username === activeUser.username;
+
+        if (isOwn) {
+            renderComposerAvatar();
+            await loadForumCategories();
+            setupComposer();
+        } else {
+            var composerEl = document.querySelector("[data-member-composer]");
+            if (composerEl) composerEl.hidden = true;
+            var identityBlock = document.querySelector(".member-identity-block");
+            if (identityBlock) identityBlock.hidden = true;
+        }
+
+        await loadFeed();
+        setupLoadMore();
+        setupTabs();
+    }
+
+    async function getActiveUser() {
+        try {
+            var data = await window.TPIApi.me();
+            if (data.user) return data.user;
+        } catch (e) {}
+        var username = localStorage.getItem("tpiEditorSession");
+        if (!username) return null;
+        try {
+            var users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+            var user = users.find(function(u) { return u.username === username && u.active !== false; });
+            if (user) return { id: user.id, username: user.username, displayName: user.displayName || user.display_name || user.username, title: user.title, role: user.role, photoUrl: user.photoUrl || user.photo_url, bio: user.bio, affiliation: user.affiliation, organization: user.organization, correspondence: user.correspondence, website: user.website };
+        } catch (e) {}
+        return null;
+    }
+
+    function renderGreeting() {
+        var name = (activeUser.displayName || activeUser.username || "Member").trim().split(/\s+/)[0] || "Member";
+        if (greetingEl) greetingEl.textContent = "Hello, " + name;
+    }
+
+    function renderProfile() {
+        if (!profileUser) return;
+        var name = profileUser.displayName || profileUser.username || "Member";
+        document.title = name + " | The Paranormal Initiative";
+
+        if (profileName) profileName.textContent = name;
+        if (profileTitle) profileTitle.textContent = profileUser.title || "";
+        if (profileRole) profileRole.textContent = getRoleLabel(profileUser.role);
+        if (profileBio) profileBio.textContent = profileUser.bio || "";
+
+        if (profilePhoto) {
+            if (profileUser.photoUrl) {
+                profilePhoto.innerHTML = '<img src="' + escapeAttr(profileUser.photoUrl) + '" alt="' + escapeAttr(name) + '">';
+            } else {
+                profilePhoto.innerHTML = '<div class="profile-photo-empty">' + escapeHtml(name.charAt(0).toUpperCase()) + '</div>';
+            }
+        }
+
+        if (profileFacts) {
+            var facts = [];
+            if (profileUser.affiliation) facts.push('<span>Affiliation: <strong>' + escapeHtml(profileUser.affiliation) + '</strong></span>');
+            if (profileUser.organization) facts.push('<span>Organization: <strong>' + escapeHtml(profileUser.organization) + '</strong></span>');
+            if (profileUser.website) facts.push('<span>Website: <strong><a href="' + escapeAttr(profileUser.website) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(profileUser.website) + '</a></strong></span>');
+            profileFacts.innerHTML = facts.join("");
+        }
+    }
+
+    function getRoleLabel(role) {
+        return { owner: "Owner Access", admin: "Admin Access", contributor: "Contributor Access", member: "Member Access" }[role] || "Member Access";
+    }
+
+    function renderComposerAvatar() {
+        if (!composerAvatar) return;
+        if (activeUser.photoUrl) {
+            composerAvatar.innerHTML = '<img class="composer-avatar" src="' + escapeAttr(activeUser.photoUrl) + '" alt="' + escapeAttr(activeUser.displayName || "You") + '">';
+        } else {
+            var initial = (activeUser.displayName || activeUser.username || "M").trim().charAt(0).toUpperCase() || "M";
+            composerAvatar.innerHTML = '<div class="composer-avatar-placeholder">' + escapeHtml(initial) + '</div>';
+        }
+    }
+
+    function setupProfileLinks() {
+        // Profile links and logout are handled by member-shell.js
+        // This function is kept for any future page-specific profile link logic
+    }
+
+    async function loadForumCategories() {
+        try {
+            var data = await window.TPIApi.forumIndex();
+            forumCategories = data.categories || [];
+        } catch (e) {
+            forumCategories = [];
+        }
+        renderCategoryOptions();
+    }
+
+    function renderCategoryOptions() {
+        if (!composerCategory) return;
+        var options = '<option value="general">General Discussion</option>';
+        forumCategories.forEach(function(cat) {
+            if (cat.id !== "general") {
+                options += '<option value="' + escapeAttr(cat.id) + '">' + escapeHtml(cat.title) + '</option>';
+            }
+        });
+        composerCategory.innerHTML = options;
+    }
+
+    function setupComposer() {
+        if (!composerBody || !composerPostBtn) return;
+        composerBody.addEventListener("input", updatePostButtonState);
+        composerPostBtn.addEventListener("click", submitPost);
+
+        document.querySelectorAll("[data-media-photo]").forEach(function(btn) {
+            btn.addEventListener("click", function() { openFilePicker("image/*"); });
+        });
+        document.querySelectorAll("[data-media-video]").forEach(function(btn) {
+            btn.addEventListener("click", function() { openFilePicker("video/*"); });
+        });
+        document.querySelectorAll("[data-media-file]").forEach(function(btn) {
+            btn.addEventListener("click", function() { openFilePicker("image/*,video/*"); });
+        });
+
+        if (composerFileInput) {
+            composerFileInput.addEventListener("change", function() {
+                handleFileSelection(composerFileInput.files);
+                composerFileInput.value = "";
+            });
+        }
+    }
+
+    function openFilePicker(accept) {
+        if (!composerFileInput) return;
+        composerFileInput.setAttribute("accept", accept);
+        composerFileInput.click();
+    }
+
+    function handleFileSelection(files) {
+        if (!files || !files.length) return;
+        var images = pendingAttachments.filter(function(a) { return a.mediaType === "image"; });
+        var videos = pendingAttachments.filter(function(a) { return a.mediaType === "video"; });
+        var newFiles = Array.from(files);
+        for (var i = 0; i < newFiles.length; i++) {
+            var file = newFiles[i];
+            var isImage = file.type.startsWith("image/");
+            var isVideo = file.type.startsWith("video/");
+            if (!isImage && !isVideo) continue;
+            if (isImage && images.length >= 10) { composerStatus.textContent = "Maximum 10 images."; continue; }
+            if (isVideo && videos.length >= 2) { composerStatus.textContent = "Maximum 2 videos."; continue; }
+            var entry = { file: file, mediaType: isImage ? "image" : "video", preview: null };
+            pendingAttachments.push(entry);
+            if (isImage) images.push(entry); else videos.push(entry);
+        }
+        renderPreviews();
+        updatePostButtonState();
+    }
+
+    function renderPreviews() {
+        if (!composerPreviews) return;
+        composerPreviews.innerHTML = "";
+        pendingAttachments.forEach(function(att, index) {
+            var item = document.createElement("div");
+            item.className = "composer-preview-item";
+            if (att.mediaType === "image" && att.file) {
+                var img = document.createElement("img");
+                img.src = URL.createObjectURL(att.file);
+                img.alt = att.file.name;
+                item.appendChild(img);
+            } else if (att.mediaType === "video" && att.file) {
+                var vid = document.createElement("video");
+                vid.src = URL.createObjectURL(att.file);
+                vid.muted = true;
+                vid.preload = "metadata";
+                item.appendChild(vid);
+            } else {
+                var icon = document.createElement("div");
+                icon.className = "preview-file-icon";
+                icon.textContent = att.file ? att.file.name.split(".").pop().toUpperCase() : "FILE";
+                item.appendChild(icon);
+            }
+            var removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.className = "composer-preview-remove";
+            removeBtn.textContent = "\u00d7";
+            removeBtn.addEventListener("click", function() { removeAttachment(index); });
+            item.appendChild(removeBtn);
+            composerPreviews.appendChild(item);
+        });
+    }
+
+    function removeAttachment(index) {
+        pendingAttachments.splice(index, 1);
+        renderPreviews();
+        updatePostButtonState();
+    }
+
+    function clearComposer() {
+        if (composerBody) composerBody.value = "";
+        pendingAttachments = [];
+        renderPreviews();
+        updatePostButtonState();
+    }
+
+    function updatePostButtonState() {
+        var hasText = composerBody && composerBody.value.trim().length > 0;
+        var hasMedia = pendingAttachments.length > 0;
+        if (composerPostBtn) composerPostBtn.disabled = !hasText && !hasMedia;
+    }
+
+    async function submitPost() {
+        var body = composerBody ? composerBody.value.trim() : "";
+        var hasMedia = pendingAttachments.length > 0;
+        if (!body && !hasMedia) return;
+        var categoryId = composerCategory ? composerCategory.value : "general";
+        var title = autoTitle(body) || (hasMedia ? "Shared media" : "");
+        if (!title) { composerStatus.textContent = "Please write something first."; return; }
+
+        composerPostBtn.disabled = true;
+        composerStatus.textContent = "Posting...";
+
+        try {
+            var uploadedAttachments = [];
+            if (hasMedia) {
+                for (var i = 0; i < pendingAttachments.length; i++) {
+                    composerStatus.textContent = "Uploading " + (i + 1) + " of " + pendingAttachments.length + "...";
+                    var result = await window.TPIApi.uploadForumMedia(pendingAttachments[i].file);
+                    uploadedAttachments.push({
+                        url: result.url,
+                        key: result.key,
+                        name: result.name || pendingAttachments[i].file.name,
+                        contentType: result.contentType || pendingAttachments[i].file.type,
+                        mediaType: pendingAttachments[i].mediaType
+                    });
+                }
+            }
+
+            await window.TPIApi.createForumTopic({
+                categoryId: categoryId,
+                title: title,
+                body: body || title,
+                attachments: uploadedAttachments
+            });
+            clearComposer();
+            composerStatus.textContent = "Posted!";
+            setTimeout(function() { composerStatus.textContent = ""; }, 2500);
+            feedOffset = 0;
+            await loadFeed();
+        } catch (e) {
+            composerStatus.textContent = e.message || "Post could not be created.";
+        }
+        composerPostBtn.disabled = true;
+        updatePostButtonState();
+    }
+
+    function autoTitle(body) {
+        var clean = body.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+        if (!clean) return "";
+        if (clean.length <= 120) return clean;
+        var truncated = clean.substring(0, 120);
+        var lastSpace = truncated.lastIndexOf(" ");
+        if (lastSpace > 60) truncated = truncated.substring(0, lastSpace);
+        return truncated.replace(/[.,;:!?]+$/, "").trim() || clean.substring(0, 120);
+    }
+
+    function setupTabs() {
+        document.querySelectorAll("[data-feed-tab]").forEach(function(tab) {
+            tab.addEventListener("click", function() {
+                document.querySelectorAll("[data-feed-tab]").forEach(function(t) { t.classList.remove("active"); });
+                tab.classList.add("active");
+                currentTab = tab.dataset.feedTab;
+                feedOffset = 0;
+                loadFeed();
+            });
+        });
+    }
+
+    async function loadFeed() {
+        feedContainer.innerHTML = '<p class="access-note" style="text-align:center; padding:24px;">Loading...</p>';
+        feedOffset = 0;
+        var username = profileUser.username;
+
+        try {
+            if (currentTab === "published") {
+                var data = await window.TPIApi.publicProfile(username);
+                var articles = (data.articles || []).filter(function(a) { return a.status === "published"; });
+                renderPublishedContent(articles);
+                loadMoreWrap.hidden = true;
+            } else {
+                var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset);
+                var items = feedData.items || [];
+                renderFeed(items, false);
+                feedOffset = items.length;
+                loadMoreWrap.hidden = items.length < FEED_LIMIT;
+            }
+        } catch (e) {
+            feedContainer.innerHTML = '<div class="member-empty"><h3>No activity yet.</h3><p>When this member posts or publishes content, it will appear here.</p></div>';
+            loadMoreWrap.hidden = true;
+        }
+    }
+
+    function setupLoadMore() {
+        if (!loadMoreBtn) return;
+        loadMoreBtn.addEventListener("click", async function() {
+            loadMoreBtn.disabled = true;
+            loadMoreBtn.textContent = "Loading...";
+            try {
+                var feedData = await window.TPIApi.userFeed(profileUser.username, FEED_LIMIT, feedOffset);
+                var items = feedData.items || [];
+                renderFeed(items, true);
+                feedOffset += items.length;
+                loadMoreWrap.hidden = items.length < FEED_LIMIT;
+            } catch (e) {}
+            loadMoreBtn.disabled = false;
+            loadMoreBtn.textContent = "Load More";
+        });
+    }
+
+    function renderFeed(items, append) {
+        if (!items.length && !append) {
+            feedContainer.innerHTML = '<div class="member-empty"><h3>No activity yet.</h3><p>When this member posts or publishes content, it will appear here.</p></div>';
+            return;
+        }
+        var html = items.map(renderFeedCard).join("");
+        if (append) {
+            feedContainer.insertAdjacentHTML("beforeend", html);
+        } else {
+            feedContainer.innerHTML = html;
+        }
+    }
+
+    function renderPublishedContent(articles) {
+        if (!articles.length) {
+            feedContainer.innerHTML = '<div class="member-empty"><h3>No published content yet.</h3><p>Published papers and articles will appear here.</p></div>';
+            return;
+        }
+        var html = articles.map(function(article) {
+            return '<article class="feed-card">' +
+                '<div class="feed-card-header">' +
+                    '<div class="feed-card-avatar-initial" style="border-color:#a78bfa;background:#a78bfa">' + escapeHtml((profileUser.displayName || "M").charAt(0).toUpperCase()) + '</div>' +
+                    '<div class="feed-card-meta">' +
+                        '<strong>' + escapeHtml(profileUser.displayName || profileUser.username) + '</strong>' +
+                        '<span class="feed-card-detail">' + escapeHtml(formatDate(article.createdAt)) + '</span>' +
+                    '</div>' +
+                    '<span class="feed-card-badge badge-article">' + escapeHtml(article.contributionType || article.articleType || "Article") + '</span>' +
+                '</div>' +
+                (article.title ? '<h3 class="feed-card-article-title"><a href="' + escapeAttr(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) + '">' + escapeHtml(article.title) + '</a></h3>' : "") +
+                (article.subtitle ? '<p class="feed-card-article-preview">' + escapeHtml(article.subtitle) + '</p>' : "") +
+                '<div class="feed-card-actions">' +
+                    '<a class="feed-action-btn" href="' + escapeAttr(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) + '">Open</a>' +
+                '</div>' +
+            '</article>';
+        }).join("");
+        feedContainer.innerHTML = html;
+    }
+
+    function renderFeedCard(item) {
+        if (item.type === "forum_post") return renderForumCard(item);
+        if (item.type === "article") return renderArticleCard(item);
+        return "";
+    }
+
+    function renderForumCard(item) {
+        var avatar = item.authorPhotoUrl
+            ? '<img class="feed-card-avatar" src="' + escapeAttr(item.authorPhotoUrl) + '" alt="' + escapeAttr(item.authorName || "Member") + '">'
+            : '<div class="feed-card-avatar-initial" style="border-color:' + escapeAttr(item.authorChatColor || '#55c8ff') + ';background:' + escapeAttr(item.authorChatColor || '#55c8ff') + '">' + escapeHtml((item.authorName || "M").charAt(0).toUpperCase()) + '</div>';
+        var categoryBadge = item.categoryTitle ? '<span class="feed-card-badge badge-category">' + escapeHtml(item.categoryTitle) + '</span>' : "";
+        var replyCount = Number(item.replyCount || 0);
+        var reactionTotal = 0;
+        if (item.reactionCounts) {
+            Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
+        }
+        var topicUrl = "community-forum.html#topic=" + encodeURIComponent(item.topicId || "");
+        var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
+        var previewText = escapeHtml(item.body || "").substring(0, 400);
+        if ((item.body || "").length > 400) previewText += "...";
+
+        var attachmentsHtml = renderFeedAttachments(item.attachments);
+
+        return '<article class="feed-card" data-feed-type="forum" data-topic-id="' + escapeAttr(item.topicId) + '">' +
+            '<div class="feed-card-header">' +
+                avatar +
+                '<div class="feed-card-meta">' +
+                    '<strong><a href="' + escapeAttr(profileUrl) + '">' + escapeHtml(item.authorName || "Community Member") + '</a></strong>' +
+                    '<span class="feed-card-detail">' + (item.authorTitle ? escapeHtml(item.authorTitle) + " &middot; " : "") + escapeHtml(formatDate(item.createdAt)) + '</span>' +
+                '</div>' +
+                categoryBadge +
+            '</div>' +
+            (previewText ? '<div class="feed-card-body">' + previewText + '</div>' : "") +
+            attachmentsHtml +
+            '<div class="feed-card-actions">' +
+                '<a class="feed-action-btn" href="' + escapeAttr(topicUrl) + '">Open Discussion' + (replyCount > 0 ? ' <span class="action-count">' + replyCount + '</span>' : '') + '</a>' +
+                (reactionTotal > 0 ? '<span class="feed-action-btn" style="cursor:default;">&#128077; <span class="action-count">' + reactionTotal + '</span></span>' : "") +
+                '<button class="feed-action-btn" type="button" data-share-url="' + escapeAttr(topicUrl) + '" data-share-title="' + escapeAttr(item.topicTitle || "") + '">Share</button>' +
+            '</div>' +
+        '</article>';
+    }
+
+    function renderFeedAttachments(attachments) {
+        if (!attachments || !attachments.length) return "";
+        var images = attachments.filter(function(a) { return (a.mediaType || a.contentType || "").startsWith("image"); });
+        var videos = attachments.filter(function(a) { return (a.mediaType || a.contentType || "").startsWith("video"); });
+        if (!images.length && !videos.length) return "";
+        var media = images.concat(videos);
+        var singleClass = media.length === 1 ? " feed-attachment-single" : "";
+        var parts = ['<div class="feed-card-attachments' + singleClass + '">'];
+        media.forEach(function(att) {
+            var url = escapeAttr(att.url || "");
+            if (!url) return;
+            var isVid = (att.mediaType || att.contentType || "").startsWith("video");
+            if (isVid) {
+                parts.push('<video src="' + url + '" muted preload="metadata" playsinline></video>');
+            } else {
+                parts.push('<img src="' + url + '" alt="' + escapeAttr(att.name || "Image") + '" loading="lazy">');
+            }
+        });
+        parts.push('</div>');
+        return parts.join("");
+    }
+
+    function renderArticleCard(item) {
+        var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
+        var articleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
+        var typeBadge = item.contributionType || item.articleType || "Article";
+
+        return '<article class="feed-card" data-feed-type="article" data-article-id="' + escapeAttr(item.id) + '">' +
+            '<div class="feed-card-header">' +
+                '<div class="feed-card-avatar-initial" style="border-color:#a78bfa;background:#a78bfa">' + escapeHtml((item.authorName || "T").charAt(0).toUpperCase()) + '</div>' +
+                '<div class="feed-card-meta">' +
+                    '<strong><a href="' + escapeAttr(profileUrl) + '">' + escapeHtml(item.authorName || item.author || "The Paranormal Initiative") + '</a></strong>' +
+                    '<span class="feed-card-detail">' + escapeHtml(formatDate(item.createdAt)) + '</span>' +
+                '</div>' +
+                '<span class="feed-card-badge badge-article">' + escapeHtml(typeBadge) + '</span>' +
+            '</div>' +
+            (item.title ? '<h3 class="feed-card-article-title"><a href="' + escapeAttr(articleUrl) + '">' + escapeHtml(item.title) + '</a></h3>' : "") +
+            (item.subtitle || item.description ? '<p class="feed-card-article-preview">' + escapeHtml(item.subtitle || item.description || "") + '</p>' : "") +
+            '<div class="feed-card-actions">' +
+                '<a class="feed-action-btn" href="' + escapeAttr(articleUrl) + '">Open</a>' +
+            '</div>' +
+        '</article>';
+    }
+
+    document.addEventListener("click", function(e) {
+        var shareBtn = e.target.closest("[data-share-url]");
+        if (!shareBtn) return;
+        var url = new URL(shareBtn.dataset.shareUrl, window.location.href).href;
+        var title = shareBtn.dataset.shareTitle || "TPI Community";
+        if (navigator.share) {
+            navigator.share({ title: title, url: url }).catch(function() {});
+        } else {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(function() {
+                    shareBtn.textContent = "Copied!";
+                    setTimeout(function() { shareBtn.textContent = "Share"; }, 1500);
+                });
+            }
+        }
+    });
+
+    function formatDate(value) {
+        if (!value) return "";
+        var d = new Date(value);
+        if (isNaN(d.getTime())) return "";
+        var now = new Date();
+        var diffMs = now - d;
+        var diffMin = Math.floor(diffMs / 60000);
+        if (diffMin < 1) return "Just now";
+        if (diffMin < 60) return diffMin + "m ago";
+        var diffHr = Math.floor(diffMin / 60);
+        if (diffHr < 24) return diffHr + "h ago";
+        var diffDay = Math.floor(diffHr / 24);
+        if (diffDay < 7) return diffDay + "d ago";
+        return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: d.getFullYear() !== now.getFullYear() ? "numeric" : undefined });
+    }
+
+    function escapeHtml(v) {
+        return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
+    function escapeAttr(v) {
+        return escapeHtml(v).replace(/`/g, "&#96;");
+    }
+})();
+</script>
+
+</body>
+</html>

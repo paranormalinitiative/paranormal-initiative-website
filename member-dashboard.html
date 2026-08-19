@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
-    <title>Member Dashboard | The Paranormal Initiative</title>
+    <title>Settings | The Paranormal Initiative</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="pp:title" content="Member Dashboard">
-    <meta name="pp:subtitle" content="Contributor Home">
+    <meta name="pp:title" content="Settings">
+    <meta name="pp:subtitle" content="Account Settings">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="member-shell.css">
 </head>
 <body>
 <div id="site-header"></div>
+
+<div data-member-content hidden>
+<div class="member-main-inner">
 
 <section class="member-dashboard-shell">
     <div class="member-dashboard-header">
@@ -165,10 +169,14 @@
     <p id="member-login-status" class="access-note member-login-status"></p>
 </section>
 
+</div>
+</div>
+
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
 <script src="member-login.js?v=16"></script>
+<script src="member-shell.js"></script>
 </body>
 </html>
