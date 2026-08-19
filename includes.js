@@ -183,8 +183,6 @@
   }
 
   async function installMemberGreeting() {
-    // In member mode, the shell handles its own greeting
-    if (document.body.classList.contains("member-mode")) return;
     const header = document.querySelector(".command-header");
     if (!header || document.querySelector(".member-greeting")) return;
 
