@@ -1216,7 +1216,7 @@
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
         }
-        var topicUrl = "community-forum.html#topic=" + encodeURIComponent(item.topicId || "");
+        var topicUrl = window.preserveMemberMode ? window.preserveMemberMode("community-forum.html#topic=" + encodeURIComponent(item.topicId || "")) : "community-forum.html#topic=" + encodeURIComponent(item.topicId || "");
         var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
         var previewText = escapeHtml(item.body || "").substring(0, 400);
         if ((item.body || "").length > 400) previewText += "...";
@@ -1277,7 +1277,7 @@
         var isLive = item.isLive;
         var badge = isLive ? '<span class="feed-card-badge badge-live">&#9679; Live Now</span>' : '<span class="feed-card-badge badge-video">New Video</span>';
         var thumbnail = item.thumbnail ? '<img class="feed-card-thumbnail" src="' + escapeAttr(item.thumbnail) + '" alt="' + escapeAttr(item.title) + '" loading="lazy">' : "";
-        var watchUrl = "tpi-video.html?id=" + encodeURIComponent(item.slug || item.id);
+        var watchUrl = window.preserveMemberMode ? window.preserveMemberMode("tpi-video.html?id=" + encodeURIComponent(item.slug || item.id)) : "tpi-video.html?id=" + encodeURIComponent(item.slug || item.id);
         var videoReactionCount = 0;
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { videoReactionCount += Number(item.reactionCounts[k] || 0); });
@@ -1306,7 +1306,8 @@
 
     function renderArticleCard(item) {
         var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
-        var articleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
+        var rawArticleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
+        var articleUrl = window.preserveMemberMode ? window.preserveMemberMode(rawArticleUrl) : rawArticleUrl;
         var typeBadge = item.contributionType || item.articleType || "Article";
 
         return '<article class="feed-card" data-feed-type="article" data-article-id="' + escapeAttr(item.id) + '">' +

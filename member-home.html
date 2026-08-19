@@ -1269,10 +1269,10 @@
                     '</div>' +
                     '<span class="feed-card-badge badge-article">' + escapeHtml(article.contributionType || article.articleType || "Article") + '</span>' +
                 '</div>' +
-                (article.title ? '<h3 class="feed-card-article-title"><a href="' + escapeAttr(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) + '">' + escapeHtml(article.title) + '</a></h3>' : "") +
+                (article.title ? '<h3 class="feed-card-article-title"><a href="' + escapeAttr(window.preserveMemberMode ? window.preserveMemberMode(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) : (article.href || "published-article.html?id=" + encodeURIComponent(article.id))) + '">' + escapeHtml(article.title) + '</a></h3>' : "") +
                 (article.subtitle ? '<p class="feed-card-article-preview">' + escapeHtml(article.subtitle) + '</p>' : "") +
                 '<div class="feed-card-actions">' +
-                    '<a class="feed-action-btn" href="' + escapeAttr(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) + '">Open</a>' +
+                    '<a class="feed-action-btn" href="' + escapeAttr(window.preserveMemberMode ? window.preserveMemberMode(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) : (article.href || "published-article.html?id=" + encodeURIComponent(article.id))) + '">Open</a>' +
                 '</div>' +
             '</article>';
         }).join("");
@@ -1295,7 +1295,7 @@
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
         }
-        var topicUrl = "community-forum.html#topic=" + encodeURIComponent(item.topicId || "");
+        var topicUrl = window.preserveMemberMode ? window.preserveMemberMode("community-forum.html#topic=" + encodeURIComponent(item.topicId || "")) : "community-forum.html#topic=" + encodeURIComponent(item.topicId || "");
         var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
         var previewText = escapeHtml(item.body || "").substring(0, 400);
         if ((item.body || "").length > 400) previewText += "...";
@@ -1345,7 +1345,8 @@
 
     function renderArticleCard(item) {
         var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
-        var articleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
+        var rawArticleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
+        var articleUrl = window.preserveMemberMode ? window.preserveMemberMode(rawArticleUrl) : rawArticleUrl;
         var typeBadge = item.contributionType || item.articleType || "Article";
 
         return '<article class="feed-card" data-feed-type="article" data-article-id="' + escapeAttr(item.id) + '">' +

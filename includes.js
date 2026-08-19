@@ -808,7 +808,8 @@
       const cardBadge = contributionType.replace(/\s*\/\s*/g, " / ").split(/\s+/)[0] || "Field";
       const card = document.createElement("a");
       card.className = grid.classList.contains("series-post-grid") ? "study-resource-card tpi-published-card" : "study-resource-card tpi-published-card";
-      card.href = article.href || `published-article.html?id=${encodeURIComponent(article.id)}`;
+      var rawArticleUrl = article.href || `published-article.html?id=${encodeURIComponent(article.id)}`;
+      card.href = window.preserveMemberMode ? window.preserveMemberMode(rawArticleUrl) : rawArticleUrl;
       card.dataset.publishedId = article.id;
       card.innerHTML = `
         <div class="study-resource-card-media"><span>${escapeCard(cardBadge)}</span></div>

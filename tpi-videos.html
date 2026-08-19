@@ -522,7 +522,8 @@
     }
 
     function getVideoUrl(video) {
-        return 'tpi-video.html?id=' + encodeURIComponent(video.slug || video.id);
+        var url = 'tpi-video.html?id=' + encodeURIComponent(video.slug || video.id);
+        return window.preserveMemberMode ? window.preserveMemberMode(url) : url;
     }
 
     function renderFeatured() {

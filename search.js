@@ -60,7 +60,7 @@
     }).map(article => ({
       title: article.title || "Untitled Contribution",
       subtitle: [article.contributionType || article.articleType, article.destinationLabel].filter(Boolean).join(" · "),
-      href: article.href || `published-article.html?id=${encodeURIComponent(article.id)}`,
+      href: window.preserveMemberMode ? window.preserveMemberMode(article.href || `published-article.html?id=${encodeURIComponent(article.id)}`) : (article.href || `published-article.html?id=${encodeURIComponent(article.id)}`),
       description: article.subtitle || article.source || "Published contributor article.",
       text: [
         article.title,

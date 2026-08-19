@@ -312,4 +312,23 @@
   function delay(ms) {
     return new Promise(function (resolve) { setTimeout(resolve, ms); });
   }
+
+  // ---- Member Mode URL Preservation ----
+  // Expose globally so inline JS in dual-mode pages can preserve ?member=1
+  // when generating dynamic links to other dual-mode TPI pages.
+  window.preserveMemberMode = function (url) {
+    if (!url) return url;
+    if (!document.body.classList.contains("member-mode")) return url;
+    // Already has member param — leave it alone
+    if (/[?&]member=/.test(url)) return url;
+
+    // Separate fragment from URL
+    var hashIndex = url.indexOf("#");
+    var hash = hashIndex !== -1 ? url.substring(hashIndex) : "";
+    var base = hashIndex !== -1 ? url.substring(0, hashIndex) : url;
+
+    // Append member=1 preserving existing query string
+    var separator = base.indexOf("?") !== -1 ? "&" : "?";
+    return base + separator + "member=1" + hash;
+  };
 })();
