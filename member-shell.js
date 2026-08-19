@@ -18,8 +18,10 @@
   // These do NOT require ?member=1 — they check for a valid session directly.
   var INHERENT_MEMBER_PAGES = [
     "member-home",
-    "member-dashboard"
-    // Future: "live-video", "podcast", "activity", "chat", "saved"
+    "member-dashboard",
+    "live-video",
+    "podcast"
+    // Future: "activity", "chat", "saved"
   ];
 
   // Run on every page load. If not member mode, do nothing.

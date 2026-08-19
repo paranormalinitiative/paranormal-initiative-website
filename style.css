@@ -796,6 +796,54 @@ footer {
     opacity: 0.82;
 }
 
+.studio-launch-page {
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.studio-launch-card {
+    max-width: 520px;
+    width: 100%;
+    background: #12151c;
+    border: 1px solid #1e2230;
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+}
+
+.studio-launch-card h2 {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e8ecf4;
+}
+
+.studio-launch-card p {
+    color: #8d93a3;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.studio-launch-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.studio-launch-actions .portal-button-primary {
+    background: rgba(0, 194, 255, 0.2);
+    border-color: rgba(0, 194, 255, 0.6);
+    font-size: 13px;
+    padding: 14px 20px;
+}
+
+.studio-launch-actions .portal-button-primary:hover {
+    background: rgba(0, 194, 255, 0.3);
+    border-color: rgba(0, 194, 255, 0.8);
+}
+
 .portal-grid {
     padding-top: 105px;
 }
