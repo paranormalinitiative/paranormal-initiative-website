@@ -26,6 +26,7 @@
   const publicProfileLink = document.querySelector("[data-public-profile-link]");
   const publicProfileRoot = document.querySelector("[data-public-profile]");
   const profilePhotoPreview = document.querySelector("[data-profile-photo-preview]");
+  const memberNotificationsList = document.querySelector("[data-member-notifications]");
   const adminPanelRoot = document.querySelector("[data-admin-panel]");
   const adminSettingsPanel = document.querySelector("[data-admin-settings-panel]");
   const adminMemberSearchForm = document.querySelector("[data-admin-member-search-form]");
@@ -659,6 +660,7 @@
         </div>
         <div class="admin-member-profile-actions">
           <a class="portal-button portal-button-secondary" href="${escapeHtml(publicProfileUrl)}" target="_blank" rel="noopener noreferrer">View Profile</a>
+          <button type="button" class="portal-button portal-button-secondary" data-admin-profile-reminder="${escapeHtml(member.username || "")}"${!member.username ? " disabled" : ""}>Request Profile Update</button>
           <button type="button" class="admin-member-status-button ${activeButtonClass}" data-admin-member-active="${activeAction}" data-username="${escapeHtml(member.username || "")}" title="${escapeHtml(activeTitle)}"${isSelf || !member.username ? " disabled" : ""}>${activeLabel}</button>
         </div>
       </div>
@@ -816,6 +818,40 @@
           <p class="access-note access-error">Owner or Admin access is required to manage website settings.</p>
         </section>
       `;
+    }
+  }
+
+  function renderNotificationItem(notification) {
+    const actionHref = notification.actionHref || "member-dashboard.html";
+    return `
+      <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}">
+        <div>
+          <span>${escapeHtml(notification.read ? "Read" : "Unread")} · ${escapeHtml(notification.createdAt || "")}</span>
+          <strong>${escapeHtml(notification.title || "Notification")}</strong>
+          <p>${escapeHtml(notification.body || "")}</p>
+        </div>
+        <div class="member-notification-actions">
+          ${actionHref ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(actionHref)}">Open</a>` : ""}
+          ${notification.read ? "" : `<button type="button" data-notification-read="${escapeHtml(notification.id)}">Mark Read</button>`}
+        </div>
+      </article>
+    `;
+  }
+
+  async function initMemberNotifications() {
+    if (!memberNotificationsList) return;
+    if (!await cloudflareReady()) {
+      memberNotificationsList.innerHTML = `<p class="access-note">Notifications are available after signing in through Cloudflare.</p>`;
+      return;
+    }
+    try {
+      const data = await window.TPIApi.listNotifications();
+      const notifications = data.notifications || [];
+      memberNotificationsList.innerHTML = notifications.length
+        ? notifications.map(renderNotificationItem).join("")
+        : `<p class="access-note">No notifications right now.</p>`;
+    } catch (error) {
+      memberNotificationsList.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Could not load notifications.")}</p>`;
     }
   }
 
@@ -1780,6 +1816,46 @@
       return;
     }
 
+    const profileReminderButton = event.target.closest("[data-admin-profile-reminder]");
+    if (profileReminderButton) {
+      event.preventDefault();
+      const username = profileReminderButton.dataset.adminProfileReminder;
+      if (!username) return;
+      if (!await cloudflareReady()) {
+        setStatus("Profile notifications require the Cloudflare member database.", true);
+        return;
+      }
+      try {
+        profileReminderButton.disabled = true;
+        await window.TPIApi.sendMemberNotification(username, {
+          title: "Please complete your member profile",
+          body: "Please add your email address, phone number, and private contact information in Member Settings so the admin team can keep your account current.",
+          actionHref: "member-dashboard.html",
+          type: "profile-request"
+        });
+        setStatus(`Profile update notification sent to ${username}.`, false);
+      } catch (error) {
+        setStatus(error.message || "Notification could not be sent.", true);
+      } finally {
+        profileReminderButton.disabled = false;
+      }
+      return;
+    }
+
+    const notificationReadButton = event.target.closest("[data-notification-read]");
+    if (notificationReadButton) {
+      event.preventDefault();
+      const id = notificationReadButton.dataset.notificationRead;
+      if (!id || !await cloudflareReady()) return;
+      try {
+        await window.TPIApi.markNotificationRead(id);
+        await initMemberNotifications();
+      } catch (error) {
+        setStatus(error.message || "Notification could not be updated.", true);
+      }
+      return;
+    }
+
     const selectMemberButton = event.target.closest("[data-admin-select-member]");
     if (selectMemberButton) {
       event.preventDefault();
@@ -1853,6 +1929,7 @@
   initDashboard();
   initAdminPanel();
   initAdminSettingsPanel();
+  initMemberNotifications();
   initPublicProfile();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();

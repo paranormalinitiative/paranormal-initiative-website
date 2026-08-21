@@ -23,6 +23,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
     if (request.method === "GET" && path === "/admin/members") return requireAdmin(request, env, user => handleAdminListMembers(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/activity$/)) return requireAdmin(request, env, user => handleAdminMemberActivity(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/notifications$/)) return requireAdmin(request, env, user => handleAdminSendMemberNotification(path, request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
     if (request.method === "GET" && path === "/admin/forum/posts") return requireAdmin(request, env, user => handleAdminMemberForumPosts(request, env, user));
@@ -36,6 +37,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/contributors/me/username") return requireMember(request, env, user => handleUpdateUsername(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
+    if (request.method === "GET" && path === "/notifications") return requireMember(request, env, user => handleListNotifications(env, user));
+    if (request.method === "GET" && path === "/notifications/unread-count") return requireMember(request, env, user => handleNotificationUnreadCount(env, user));
+    if (request.method === "POST" && path.match(/^\/notifications\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkNotificationRead(path, env, user));
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
@@ -354,6 +358,54 @@ async function handleAdminSetMemberActive(path, env, actingUser, active) {
 
   const updated = await getUserByUsername(env, username);
   return json({ member: { username: updated.username, displayName: updated.display_name, title: updated.title, role: updated.role, active: Boolean(updated.active) } });
+}
+
+async function handleAdminSendMemberNotification(path, request, env, actingUser) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/notifications$/)?.[1] || ""));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const target = await getUserByUsername(env, username);
+  if (!target) return json({ error: "Member was not found." }, 404);
+  const data = await readJson(request);
+  const title = clean(data.title || "Please complete your member profile").slice(0, 160);
+  const body = clean(data.body || "Please add your email address, phone number, and private contact information in Member Settings so the admin team can keep your account current.").slice(0, 1000);
+  const actionHref = clean(data.actionHref || "member-dashboard.html").slice(0, 500);
+  const id = crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).bind(id, target.id, title, body, actionHref, clean(data.type || "profile-request"), actingUser.id).run();
+  return json({ notification: { id, username: target.username, title, body, actionHref, read: false } });
+}
+
+async function handleListNotifications(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id, title, body, action_href AS actionHref, type, read_at AS readAt, created_at AS createdAt
+    FROM member_notifications
+    WHERE contributor_id = ?
+    ORDER BY read_at IS NOT NULL ASC, created_at DESC
+    LIMIT 100
+  `).bind(user.id).all();
+  return json({ notifications: (results || []).map(notification => ({ ...notification, read: Boolean(notification.readAt) })) });
+}
+
+async function handleNotificationUnreadCount(env, user) {
+  const row = await env.TPI_DB.prepare(`
+    SELECT COUNT(*) AS unreadCount
+    FROM member_notifications
+    WHERE contributor_id = ? AND read_at IS NULL
+  `).bind(user.id).first();
+  return json({ unreadCount: Number(row?.unreadCount || 0) });
+}
+
+async function handleMarkNotificationRead(path, env, user) {
+  const id = clean(decodeURIComponent(path.match(/^\/notifications\/([^/]+)\/read$/)?.[1] || ""));
+  if (!id) return json({ error: "Notification id is required." }, 400);
+  await env.TPI_DB.prepare(`
+    UPDATE member_notifications
+    SET read_at = COALESCE(read_at, CURRENT_TIMESTAMP)
+    WHERE id = ? AND contributor_id = ?
+  `).bind(id, user.id).run();
+  return json({ ok: true, id });
 }
 
 async function handleAdminMemberActivity(path, env) {

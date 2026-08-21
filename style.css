@@ -3078,6 +3078,59 @@ footer {
     margin-bottom: 0;
 }
 
+.member-notifications-card {
+    width: 100%;
+}
+
+.member-notification-list {
+    display: grid;
+    gap: 12px;
+}
+
+.member-notification-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px;
+    background: rgba(9, 15, 20, 0.72);
+    border: 1px solid rgba(38, 54, 70, 0.9);
+    border-radius: 5px;
+}
+
+.member-notification-item.is-unread {
+    border-color: rgba(85, 200, 255, 0.48);
+    box-shadow: inset 3px 0 0 rgba(85, 200, 255, 0.72);
+}
+
+.member-notification-item span {
+    color: #7f95aa;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.member-notification-item strong {
+    display: block;
+    margin-top: 5px;
+    color: #f4f8fb;
+    font-size: 18px;
+}
+
+.member-notification-item p {
+    margin: 7px 0 0;
+    color: #b8c8d8;
+    line-height: 1.5;
+}
+
+.member-notification-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: start;
+    justify-content: end;
+    gap: 8px;
+}
+
 .member-profile-form label {
     display: grid;
     gap: 7px;
@@ -3307,6 +3360,10 @@ footer {
 
 .admin-member-status-button-locked {
     filter: grayscale(0.35);
+}
+
+.admin-member-profile-actions .portal-button {
+    min-height: 42px;
 }
 
 .admin-member-active,

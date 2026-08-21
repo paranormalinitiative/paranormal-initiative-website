@@ -19,6 +19,7 @@
   var INHERENT_MEMBER_PAGES = [
     "member-home",
     "member-dashboard",
+    "member-notifications",
     "admin-panel",
     "admin-advanced-settings",
     "live-video",
@@ -135,6 +136,9 @@
 
     // Set role-gated navigation
     setupRoleGatedNav(user);
+
+    // Set notification badge
+    setupNotificationBadge();
 
     // Set up logout
     setupLogout();
@@ -267,6 +271,8 @@
           '<span class="mobile-nav-icon">&#9783;</span>Forum</a>' +
         '<a class="mobile-nav-link" href="member-home.html" data-nav="profile" data-nav-profile-mobile>' +
           '<span class="mobile-nav-icon">&#9786;</span>Profile</a>' +
+        '<a class="mobile-nav-link" href="member-notifications.html" data-nav="member-notifications">' +
+          '<span class="mobile-nav-icon">&#128276;</span>Alerts</a>' +
         '<a class="mobile-nav-link" href="member-dashboard.html" data-nav="settings">' +
           '<span class="mobile-nav-icon">&#9881;</span>Settings</a>' +
       '</div>';
@@ -279,6 +285,19 @@
         link.setAttribute("aria-current", "page");
       }
     });
+  }
+
+  async function setupNotificationBadge() {
+    var badge = document.querySelector("[data-notification-count]");
+    if (!badge) return;
+    try {
+      var resp = await fetch("/api/notifications/unread-count", { credentials: "same-origin", cache: "no-store" });
+      if (!resp.ok) return;
+      var data = await resp.json();
+      var count = Number(data.unreadCount || 0);
+      badge.textContent = count > 99 ? "99+" : String(count);
+      badge.hidden = count <= 0;
+    } catch (e) {}
   }
 
   // ---- User Session ----
