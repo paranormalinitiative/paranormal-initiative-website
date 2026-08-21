@@ -4,8 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StudioFlow</title>
-    <script type="module" crossorigin src="/studio/assets/index-S0Sjtl1Q.js"></script>
-    <link rel="stylesheet" crossorigin href="/studio/assets/index-BFHgICJ-.css">
+    <script>
+      (() => {
+        const allowedHosts = new Set(["localhost", "127.0.0.1", "::1"]);
+        if (!allowedHosts.has(window.location.hostname)) {
+          window.location.replace("/member-home.html?member=1");
+        }
+      })();
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+    <script type="module" crossorigin src="/studio/assets/index-CtSYQMYv.js"></script>
+    <link rel="stylesheet" crossorigin href="/studio/assets/index-ExLWHB0k.css">
   </head>
   <body>
     <div id="root"></div>
