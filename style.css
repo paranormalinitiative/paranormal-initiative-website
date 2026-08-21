@@ -3168,6 +3168,75 @@ footer {
     gap: 8px;
 }
 
+.member-explore-card {
+    width: 100%;
+}
+
+.member-explore-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 22px 0;
+}
+
+.member-explore-feed {
+    display: grid;
+    gap: 14px;
+}
+
+.member-explore-item,
+.member-explore-empty {
+    display: grid;
+    gap: 12px;
+    padding: 18px;
+    color: #c7d5e2;
+    text-decoration: none;
+    background: rgba(9, 15, 20, 0.72);
+    border: 1px solid rgba(38, 54, 70, 0.9);
+    border-radius: 5px;
+}
+
+.member-explore-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+}
+
+.member-explore-item:hover {
+    border-color: rgba(85, 200, 255, 0.72);
+    box-shadow: 0 0 18px rgba(85, 200, 255, 0.1);
+}
+
+.member-explore-type {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #55c8ff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.member-explore-item h3,
+.member-explore-empty h3 {
+    margin: 0 0 8px;
+    color: #f4f8fb;
+    font-size: 17px;
+}
+
+.member-explore-item p,
+.member-explore-empty p {
+    margin: 0;
+    color: #9fb3c8;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.member-explore-item small {
+    color: #8aa0b6;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
 .member-profile-form label {
     display: grid;
     gap: 7px;

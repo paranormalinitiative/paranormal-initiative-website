@@ -105,6 +105,7 @@
     state.activeUser = await getActiveUser();
     await loadForum();
     renderCategories();
+    openInitialTopic();
     updateMemberAction();
     updateMemberToolsAccess();
     updateComposerState();
@@ -270,6 +271,14 @@
       await markTopicRead(topicId, state.activePosts);
     }
     updateComposerState();
+  }
+
+  function openInitialTopic() {
+    const params = new URLSearchParams(window.location.search);
+    const topicId = params.get("topic");
+    if (topicId && state.topics.some(item => item.id === topicId)) {
+      openTopic(topicId);
+    }
   }
 
   function renderHeaderTopicControls(topic) {
