@@ -427,6 +427,7 @@
     var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
     var pendingAttachments = [];
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+    currentChat.title = getCommunityChatTitle(user);
 
     renderOnline();
     renderMemberPicker();
@@ -522,8 +523,8 @@
       onlineEl.innerHTML = roster.map(function(member) {
         return '<button class="member-chat-online-person' + (member.online ? ' is-online' : '') + '" type="button" data-online-member="' + escapeHtml(member.username) + '">' +
           renderChatAvatar(member) +
-          '<strong>' + escapeHtml(member.displayName) + '</strong>' +
-          '<span class="member-chat-presence">' + escapeHtml(member.online ? "Online" : "Recently active") + '</span>' +
+          '<span class="member-chat-person-copy"><strong>' + escapeHtml(member.displayName) + '</strong>' +
+          '<span class="member-chat-presence">' + escapeHtml(member.online ? "Online" : "Offline") + '</span></span>' +
         '</button>';
       }).join("");
       onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
@@ -606,7 +607,7 @@
             photoUrl: item.authorPhotoUrl || "",
             chatColor: item.authorChatColor || "",
             active: true
-          }, true));
+          }, false));
         });
       }
     } catch (e) {}
@@ -614,7 +615,7 @@
       var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
       local.forEach(function(member) {
         if (member.developerOwner) return;
-        members.push(normalizeChatMember(member, Boolean(member.active !== false)));
+        members.push(normalizeChatMember(member, isCurrentChatUser(member, user)));
       });
     } catch (e) {}
     return dedupeChatMembers(members);
@@ -644,8 +645,7 @@
 
   function createChat(members, user) {
     var currentUsername = normalizeChatMember(user || {}, true).username || getStoredUsername();
-    var others = members.filter(function(member) { return member.username !== currentUsername; });
-    var title = others.length ? others.map(function(member) { return member.displayName; }).join(", ") : "General Chat";
+    var title = getCommunityChatTitle(user);
     return {
       id: "chat-" + Date.now(),
       title: title,
@@ -655,18 +655,32 @@
   }
 
   function loadCurrentChat(user, roster) {
+    var current = normalizeChatMember(user, true);
     try {
       var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
-      if (saved && Array.isArray(saved.members) && Array.isArray(saved.messages)) return saved;
+      if (saved && Array.isArray(saved.members) && Array.isArray(saved.messages)) {
+        saved.title = getCommunityChatTitle(user);
+        if (!saved.members.some(function(member) { return member.username === current.username; })) {
+          saved.members.unshift(current);
+        }
+        return saved;
+      }
     } catch (e) {}
-    var current = normalizeChatMember(user, true);
     var partner = roster.find(function(member) { return member.username !== current.username; });
     return {
       id: "chat-default",
-      title: partner ? partner.displayName : "General Chat",
+      title: getCommunityChatTitle(user),
       members: partner ? [current, partner] : [current],
       messages: []
     };
+  }
+
+  function getCommunityChatTitle(user) {
+    return normalizeChatMember(user || {}, true).displayName || "Community Chat";
+  }
+
+  function isCurrentChatUser(member, user) {
+    return normalizeChatMember(member || {}, false).username === normalizeChatMember(user || {}, true).username;
   }
 
   function saveCurrentChat(user, chat) {
@@ -721,7 +735,7 @@
     var image = member.photoUrl
       ? '<img src="' + escapeHtml(member.photoUrl) + '" alt="' + escapeHtml(name) + '">'
       : '<span>' + escapeHtml(initial) + '</span>';
-    return '<span class="member-chat-avatar">' + image + '<i aria-hidden="true"></i></span>';
+    return '<span class="member-chat-avatar">' + image + (member.online ? '<i aria-hidden="true"></i>' : '') + '</span>';
   }
 
   function setupFloatingChatDrag(chat) {
