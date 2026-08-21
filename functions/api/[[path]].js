@@ -48,11 +48,11 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
     if (request.method === "POST" && path === "/conversations") return requireMember(request, env, user => handleCreateConversation(request, env, user));
+    if (request.method === "GET" && path === "/conversations/unread-count") return requireMember(request, env, user => handleConversationUnreadCount(env, user));
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+$/)) return requireMember(request, env, user => handleGetConversation(path, env, user));
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleListMessages(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleCreateMessage(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkConversationRead(path, request, env, user));
-    if (request.method === "GET" && path === "/conversations/unread-count") return requireMember(request, env, user => handleConversationUnreadCount(env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
