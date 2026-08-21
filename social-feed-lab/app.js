@@ -52,20 +52,64 @@ let posts = [
   }
 ];
 
+const refreshSamples = [
+  {
+    type: "post",
+    author: members[3],
+    title: "Question about home investigation notes",
+    body: "When documenting a private residence, should we keep room names general until the homeowner approves the final version?",
+    media: "",
+    mediaType: ""
+  },
+  {
+    type: "chat",
+    author: members[1],
+    title: "Chat started in General Room",
+    body: "I am online for a bit if anyone wants to review the new contributor posts.",
+    media: "",
+    mediaType: ""
+  },
+  {
+    type: "media",
+    author: members[4],
+    title: "Reference photo added",
+    body: "Added a hallway reference still for equipment placement context before the next field review.",
+    media: "../professional-advisory-board-invitation.png",
+    mediaType: "image"
+  }
+];
+
+let chatMessages = [
+  { author: "Steve Glanz", body: "This floating chat could become the quick room for live forum discussion.", createdAt: Date.now() - 1000 * 60 * 18 },
+  { author: "Todd Wayne", body: "Exactly. Quick chat here, permanent discussion in the feed and forum.", createdAt: Date.now() - 1000 * 60 * 9 }
+];
+
 let activeFilter = "all";
 let selectedFile = null;
 
 const feedList = document.querySelector("[data-feed-list]");
 const onlineList = document.querySelector("[data-online-list]");
 const feedCount = document.querySelector("[data-feed-count]");
+const composerCard = document.querySelector(".composer-card");
+const composerExpanded = document.querySelector("[data-composer-expanded]");
+const openComposerButton = document.querySelector("[data-open-composer]");
+const closeComposerButton = document.querySelector("[data-close-composer]");
 const titleInput = document.querySelector("[data-composer-title]");
 const bodyInput = document.querySelector("[data-composer-body]");
 const typeInput = document.querySelector("[data-composer-type]");
 const fileInput = document.querySelector("[data-composer-file]");
 const preview = document.querySelector("[data-composer-preview]");
+const refreshButton = document.querySelector("[data-refresh-feed]");
+const chatBox = document.querySelector("[data-floating-chat]");
+const chatBody = document.querySelector("[data-chat-body]");
+const chatForm = document.querySelector("[data-chat-form]");
+const chatInput = document.querySelector("[data-chat-input]");
+const chatDrag = document.querySelector("[data-chat-drag]");
+const toggleChatButton = document.querySelector("[data-toggle-chat]");
 
 renderOnline();
 renderFeed();
+renderChat();
 
 document.querySelectorAll("[data-filter]").forEach(button => {
   button.addEventListener("click", () => {
@@ -75,7 +119,10 @@ document.querySelectorAll("[data-filter]").forEach(button => {
   });
 });
 
+openComposerButton.addEventListener("click", openComposer);
+closeComposerButton.addEventListener("click", closeComposer);
 document.querySelector("[data-create-post]").addEventListener("click", createPost);
+refreshButton.addEventListener("click", refreshFeed);
 document.querySelector("[data-mark-all-read]").addEventListener("click", () => {
   posts = posts.map(post => ({ ...post, unread: false }));
   renderFeed();
@@ -94,6 +141,72 @@ fileInput.addEventListener("change", () => {
     ? `<video src="${url}" controls></video>`
     : `<img src="${url}" alt="Selected media preview">`;
 });
+
+chatForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const body = chatInput.value.trim();
+  if (!body) return;
+  chatMessages.push({ author: "Todd Wayne", body, createdAt: Date.now() });
+  posts.unshift({
+    id: `chat-${Date.now()}`,
+    type: "chat",
+    author: members[0],
+    title: "Chat update from General Room",
+    body,
+    media: "",
+    mediaType: "",
+    createdAt: Date.now(),
+    unread: true,
+    reactions: { useful: 0, follow: 0 },
+    comments: []
+  });
+  chatInput.value = "";
+  renderChat();
+  renderFeed();
+  feedList.scrollTop = 0;
+});
+
+toggleChatButton.addEventListener("click", () => {
+  chatBox.classList.toggle("is-collapsed");
+  toggleChatButton.textContent = chatBox.classList.contains("is-collapsed") ? "Show" : "Hide";
+});
+
+let draggingChat = false;
+let chatDragOffset = { x: 0, y: 0 };
+
+chatDrag.addEventListener("pointerdown", event => {
+  if (event.target.closest("button")) return;
+  draggingChat = true;
+  chatDrag.setPointerCapture(event.pointerId);
+  const rect = chatBox.getBoundingClientRect();
+  chatDragOffset = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+});
+
+chatDrag.addEventListener("pointermove", event => {
+  if (!draggingChat) return;
+  const width = chatBox.offsetWidth;
+  const height = chatBox.offsetHeight;
+  const left = Math.min(Math.max(12, event.clientX - chatDragOffset.x), window.innerWidth - width - 12);
+  const top = Math.min(Math.max(12, event.clientY - chatDragOffset.y), window.innerHeight - height - 12);
+  chatBox.style.left = `${left}px`;
+  chatBox.style.top = `${top}px`;
+});
+
+chatDrag.addEventListener("pointerup", event => {
+  draggingChat = false;
+  chatDrag.releasePointerCapture(event.pointerId);
+});
+
+function openComposer() {
+  composerExpanded.hidden = false;
+  composerCard.classList.add("is-open");
+  titleInput.focus();
+}
+
+function closeComposer() {
+  composerExpanded.hidden = true;
+  composerCard.classList.remove("is-open");
+}
 
 function createPost() {
   const title = titleInput.value.trim();
@@ -118,7 +231,27 @@ function createPost() {
   selectedFile = null;
   preview.hidden = true;
   preview.innerHTML = "";
+  closeComposer();
   renderFeed();
+  feedList.scrollTop = 0;
+}
+
+function refreshFeed() {
+  const sample = refreshSamples[Math.floor(Math.random() * refreshSamples.length)];
+  posts.unshift({
+    id: `refresh-${Date.now()}`,
+    ...sample,
+    createdAt: Date.now(),
+    unread: true,
+    reactions: { useful: 0, follow: 0 },
+    comments: []
+  });
+  renderFeed();
+  feedList.scrollTop = 0;
+  refreshButton.textContent = "Feed Updated";
+  window.setTimeout(() => {
+    refreshButton.textContent = "Refresh Feed";
+  }, 1300);
 }
 
 function renderOnline() {
@@ -180,6 +313,16 @@ function renderFeed() {
   });
 }
 
+function renderChat() {
+  chatBody.innerHTML = chatMessages.slice(-8).map(message => `
+    <article class="chat-message">
+      <strong>${escapeHtml(message.author)} <span class="post-meta">${formatTime(message.createdAt)}</span></strong>
+      <p>${escapeHtml(message.body)}</p>
+    </article>
+  `).join("");
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
 function renderPost(post) {
   return `
     <article class="post-card${post.unread ? " is-unread" : ""}">
@@ -226,6 +369,7 @@ function renderMedia(post) {
 function formatType(type) {
   return {
     post: "Post",
+    chat: "Chat",
     evidence: "Investigation",
     media: "Media",
     research: "Research"

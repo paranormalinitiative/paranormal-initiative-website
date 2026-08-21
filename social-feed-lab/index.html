@@ -18,6 +18,7 @@
         <nav class="lab-nav">
             <button class="is-active" type="button" data-filter="all">Your Feed</button>
             <button type="button" data-filter="post">Posts</button>
+            <button type="button" data-filter="chat">Chat</button>
             <button type="button" data-filter="evidence">Investigation Notes</button>
             <button type="button" data-filter="media">Photos & Videos</button>
             <button type="button" data-filter="research">Research</button>
@@ -42,28 +43,35 @@
         </header>
 
         <section class="composer-card" aria-label="Create a feed post">
-            <div class="composer-user">
+            <button class="composer-collapsed" type="button" data-open-composer>
                 <span class="avatar avatar-owner">TW</span>
-                <div>
-                    <strong>Todd Wayne</strong>
-                    <small>Founder / Director</small>
+                <span>What's on your mind?</span>
+            </button>
+            <div class="composer-expanded" data-composer-expanded hidden>
+                <div class="composer-user">
+                    <span class="avatar avatar-owner">TW</span>
+                    <div>
+                        <strong>Todd Wayne</strong>
+                        <small>Founder / Director</small>
+                    </div>
                 </div>
-            </div>
-            <input data-composer-title type="text" placeholder="Post title">
-            <textarea data-composer-body rows="4" placeholder="Share an investigation update, question, research note, photo/video context, or community announcement."></textarea>
-            <div class="composer-preview" data-composer-preview hidden></div>
-            <div class="composer-actions">
-                <label class="file-action">
-                    <input data-composer-file type="file" accept="image/*,video/*">
-                    Add Photo / Video
-                </label>
-                <select data-composer-type aria-label="Post type">
-                    <option value="post">Community Post</option>
-                    <option value="evidence">Investigation Note</option>
-                    <option value="media">Media Share</option>
-                    <option value="research">Research Note</option>
-                </select>
-                <button type="button" data-create-post>Share</button>
+                <input data-composer-title type="text" placeholder="Post title">
+                <textarea data-composer-body rows="4" placeholder="Share an investigation update, question, research note, photo/video context, or community announcement."></textarea>
+                <div class="composer-preview" data-composer-preview hidden></div>
+                <div class="composer-actions">
+                    <label class="file-action">
+                        <input data-composer-file type="file" accept="image/*,video/*">
+                        Add Photo / Video
+                    </label>
+                    <select data-composer-type aria-label="Post type">
+                        <option value="post">Community Post</option>
+                        <option value="evidence">Investigation Note</option>
+                        <option value="media">Media Share</option>
+                        <option value="research">Research Note</option>
+                    </select>
+                    <button type="button" data-create-post>Share</button>
+                    <button class="quiet-button" type="button" data-close-composer>Cancel</button>
+                </div>
             </div>
         </section>
 
@@ -71,11 +79,15 @@
             <div class="feed-tabs" data-feed-tabs>
                 <button class="is-active" type="button" data-filter="all">All</button>
                 <button type="button" data-filter="post">Posts</button>
+                <button type="button" data-filter="chat">Chat</button>
                 <button type="button" data-filter="evidence">Investigation</button>
                 <button type="button" data-filter="media">Media</button>
                 <button type="button" data-filter="research">Research</button>
             </div>
-            <button class="quiet-button" type="button" data-mark-all-read>Mark All Viewed</button>
+            <div class="feed-tool-actions">
+                <button class="quiet-button" type="button" data-refresh-feed>Refresh Feed</button>
+                <button class="quiet-button" type="button" data-mark-all-read>Mark All Viewed</button>
+            </div>
         </section>
 
         <section class="feed-list" data-feed-list aria-label="Community feed"></section>
@@ -104,6 +116,21 @@
             </div>
         </section>
     </aside>
+
+    <section class="floating-chat" data-floating-chat style="left: 58vw; top: 58vh;" aria-label="Floating community chat">
+        <header data-chat-drag>
+            <div>
+                <p class="lab-kicker">Community Chat</p>
+                <strong>General Room</strong>
+            </div>
+            <button type="button" data-toggle-chat>Hide</button>
+        </header>
+        <div class="floating-chat-body" data-chat-body></div>
+        <form class="floating-chat-form" data-chat-form>
+            <input type="text" data-chat-input placeholder="Write a quick chat">
+            <button type="submit">Send</button>
+        </form>
+    </section>
 
     <script src="app.js"></script>
 </body>

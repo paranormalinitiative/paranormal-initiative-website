@@ -186,8 +186,12 @@ select {
     min-width: 0;
     max-width: 980px;
     width: 100%;
+    height: 100vh;
     margin: 0 auto;
     padding: 28px 26px 70px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .feed-header {
@@ -234,6 +238,36 @@ select {
     gap: 12px;
     margin: 22px 0;
     padding: 18px;
+    flex: 0 0 auto;
+}
+
+.composer-collapsed {
+    width: 100%;
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 8px 12px;
+    color: var(--muted);
+    text-align: left;
+    background: #081018;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.composer-collapsed:hover,
+.floating-chat header button:hover,
+.quiet-button:hover,
+.post-action:hover {
+    border-color: var(--cyan);
+    color: var(--text);
+}
+
+.composer-expanded {
+    display: grid;
+    gap: 12px;
 }
 
 .composer-user {
@@ -288,9 +322,11 @@ select {
     align-items: center;
     padding: 12px;
     margin-bottom: 16px;
+    flex: 0 0 auto;
 }
 
-.feed-tabs {
+.feed-tabs,
+.feed-tool-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -299,6 +335,28 @@ select {
 .feed-list {
     display: grid;
     gap: 16px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-color: rgba(85, 200, 255, 0.5) rgba(8, 16, 24, 0.9);
+}
+
+.feed-list::-webkit-scrollbar,
+.floating-chat-body::-webkit-scrollbar {
+    width: 9px;
+}
+
+.feed-list::-webkit-scrollbar-track,
+.floating-chat-body::-webkit-scrollbar-track {
+    background: rgba(8, 16, 24, 0.9);
+    border-radius: 999px;
+}
+
+.feed-list::-webkit-scrollbar-thumb,
+.floating-chat-body::-webkit-scrollbar-thumb {
+    background: rgba(85, 200, 255, 0.5);
+    border-radius: 999px;
 }
 
 .post-card {
@@ -430,6 +488,95 @@ select {
     font-size: 12px;
 }
 
+.floating-chat {
+    position: fixed;
+    z-index: 20;
+    width: min(360px, calc(100vw - 24px));
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid rgba(85, 200, 255, 0.34);
+    border-radius: 10px;
+    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
+    overflow: hidden;
+}
+
+.floating-chat header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    background: #101c27;
+    border-bottom: 1px solid var(--line);
+    cursor: move;
+    user-select: none;
+}
+
+.floating-chat .lab-kicker {
+    margin: 0 0 4px;
+}
+
+.floating-chat header button,
+.floating-chat-form button {
+    min-height: 34px;
+    padding: 7px 10px;
+    color: var(--muted);
+    background: #081018;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.floating-chat-body {
+    display: grid;
+    gap: 9px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.chat-message {
+    display: grid;
+    gap: 4px;
+    padding: 10px;
+    background: rgba(8, 16, 24, 0.72);
+    border: 1px solid rgba(85, 200, 255, 0.14);
+    border-radius: 8px;
+}
+
+.chat-message strong {
+    font-size: 13px;
+}
+
+.chat-message p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.floating-chat-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.floating-chat-form input {
+    min-height: 36px;
+    padding: 8px 10px;
+    color: var(--text);
+    background: #081018;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+}
+
+.floating-chat.is-collapsed .floating-chat-body,
+.floating-chat.is-collapsed .floating-chat-form {
+    display: none;
+}
+
 @media (max-width: 1120px) {
     body {
         grid-template-columns: 220px minmax(0, 1fr);
@@ -458,6 +605,8 @@ select {
     }
 
     .feed-shell {
+        height: auto;
+        overflow: visible;
         padding: 22px 16px 50px;
     }
 
@@ -473,5 +622,18 @@ select {
     .post-type {
         justify-self: start;
         grid-column: 2;
+    }
+
+    .feed-list {
+        overflow: visible;
+        padding-right: 0;
+    }
+
+    .floating-chat {
+        right: 12px;
+        bottom: 12px;
+        left: 12px !important;
+        top: auto !important;
+        width: auto;
     }
 }
