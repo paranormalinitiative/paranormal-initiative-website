@@ -3678,8 +3678,8 @@ footer {
 }
 
 .admin-panel-invites h2:not(:first-of-type) {
-    margin: 20px -30px 0;
-    padding: 22px 30px 0;
+    margin: 20px 0 0;
+    padding: 22px 0 0;
     border-top: 1px solid rgba(38, 54, 70, 0.9);
 }
 
@@ -3995,6 +3995,27 @@ footer {
     color: #8aa0b6;
     font-size: 12px;
     text-transform: capitalize;
+}
+
+.admin-panel-page .admin-panel-invites {
+    box-sizing: border-box;
+    padding: 34px 36px 36px !important;
+}
+
+.admin-panel-page .admin-panel-invites > .portal-kicker,
+.admin-panel-page .admin-panel-invites > h2,
+.admin-panel-page .admin-panel-invites > p,
+.admin-panel-page .admin-panel-invites > form,
+.admin-panel-page .admin-panel-invites > .invite-link-list,
+.admin-panel-page .admin-panel-invites > .moderation-toolbar,
+.admin-panel-page .admin-panel-invites > .comment-moderation-list {
+    width: 100%;
+    min-width: 0;
+}
+
+.admin-panel-page .admin-panel-invites > h2:not(:first-of-type) {
+    margin-top: 24px;
+    padding-top: 24px;
 }
 
 .invite-link-row input {
