@@ -139,7 +139,7 @@ async function handleLogin(request, env) {
     .bind(token, user.id, expires)
     .run();
 
-  return json({ user: publicUser(user) }, 200, {
+  return json({ user: privateMemberUser(user) }, 200, {
     "Set-Cookie": `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 14}`
   });
 }
@@ -177,7 +177,7 @@ async function handleLogout() {
 
 async function handleMe(request, env) {
   const user = await getSessionUser(request, env);
-  return json({ user: user ? publicUser(user) : null });
+  return json({ user: user ? privateMemberUser(user) : null });
 }
 
 async function handleMemberRegister(request, env) {
@@ -197,8 +197,12 @@ async function handleMemberRegister(request, env) {
 
   const id = crypto.randomUUID();
   await env.TPI_DB.prepare(`
-    INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, affiliation, organization, website, bio, photo_url, comment_signature_enabled, active)
-    VALUES (?, ?, ?, ?, ?, 'member', ?, ?, ?, ?, ?, ?, ?, 1)
+    INSERT INTO contributors (
+      id, username, password_hash, display_name, title, role, correspondence,
+      contact_name, phone, address_line1, address_line2, city, state, postal_code,
+      affiliation, organization, website, bio, photo_url, comment_signature_enabled, active
+    )
+    VALUES (?, ?, ?, ?, ?, 'member', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
   `).bind(
     id,
     username,
@@ -206,6 +210,13 @@ async function handleMemberRegister(request, env) {
     displayName,
     clean(data.title || "Member"),
     email,
+    clean(data.contactName || displayName),
+    clean(data.phone),
+    clean(data.addressLine1),
+    clean(data.addressLine2),
+    clean(data.city),
+    clean(data.state),
+    clean(data.postalCode),
     clean(data.affiliation),
     clean(data.organization),
     clean(data.website),
@@ -411,7 +422,7 @@ async function handleAdminMemberActivity(path, env) {
     .map(item => ({ ...item, postId: post.id, topicTitle: post.topicTitle, createdAt: post.createdAt })));
 
   return json({
-    member: publicUser(member),
+    member: privateMemberUser(member),
     posts,
     photos,
     forumVideos,
@@ -530,8 +541,12 @@ async function handleRegister(request, env) {
   const id = crypto.randomUUID();
   await env.TPI_DB.batch([
     env.TPI_DB.prepare(`
-      INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, affiliation, organization, website, bio, photo_url, comment_signature_enabled, active)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      INSERT INTO contributors (
+        id, username, password_hash, display_name, title, role, correspondence,
+        contact_name, phone, address_line1, address_line2, city, state, postal_code,
+        affiliation, organization, website, bio, photo_url, comment_signature_enabled, active
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `).bind(
       id,
       username,
@@ -540,6 +555,13 @@ async function handleRegister(request, env) {
       assignedTitle,
       inviteAssignment?.role || invite.role,
       email,
+      clean(data.contactName || data.displayName),
+      clean(data.phone),
+      clean(data.addressLine1),
+      clean(data.addressLine2),
+      clean(data.city),
+      clean(data.state),
+      clean(data.postalCode),
       clean(data.affiliation),
       clean(data.organization),
       clean(data.website),
@@ -570,6 +592,13 @@ async function handleUpdateProfile(request, env, user) {
       display_name = ?,
       title = ?,
       correspondence = ?,
+      contact_name = ?,
+      phone = ?,
+      address_line1 = ?,
+      address_line2 = ?,
+      city = ?,
+      state = ?,
+      postal_code = ?,
       affiliation = ?,
       organization = ?,
       website = ?,
@@ -582,6 +611,13 @@ async function handleUpdateProfile(request, env, user) {
     clean(data.displayName || user.display_name),
     clean(data.title).slice(0, 160),
     correspondence,
+    clean(data.contactName || data.displayName || user.display_name),
+    clean(data.phone),
+    clean(data.addressLine1),
+    clean(data.addressLine2),
+    clean(data.city),
+    clean(data.state),
+    clean(data.postalCode),
     clean(data.affiliation),
     clean(data.organization),
     clean(data.website),
@@ -597,6 +633,13 @@ async function handleUpdateProfile(request, env, user) {
         display_name = ?,
         title = ?,
         correspondence = ?,
+        contact_name = ?,
+        phone = ?,
+        address_line1 = ?,
+        address_line2 = ?,
+        city = ?,
+        state = ?,
+        postal_code = ?,
         affiliation = ?,
         organization = ?,
         website = ?,
@@ -608,6 +651,13 @@ async function handleUpdateProfile(request, env, user) {
       clean(data.displayName || user.display_name),
       clean(data.title).slice(0, 160),
       correspondence,
+      clean(data.contactName || data.displayName || user.display_name),
+      clean(data.phone),
+      clean(data.addressLine1),
+      clean(data.addressLine2),
+      clean(data.city),
+      clean(data.state),
+      clean(data.postalCode),
       clean(data.affiliation),
       clean(data.organization),
       clean(data.website),
@@ -618,7 +668,7 @@ async function handleUpdateProfile(request, env, user) {
     ).run();
   });
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
-  return json({ user: publicUser(updated) });
+  return json({ user: privateMemberUser(updated) });
 }
 
 async function handleUpdateUsername(request, env, user) {
@@ -627,7 +677,7 @@ async function handleUpdateUsername(request, env, user) {
   if (!isValidUsername(username)) {
     return json({ error: "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols." }, 400);
   }
-  if (username === user.username) return json({ user: publicUser(user) });
+  if (username === user.username) return json({ user: privateMemberUser(user) });
   const existing = await getUserByUsername(env, username);
   if (existing) return json({ error: "That username already exists." }, 409);
 
@@ -639,7 +689,7 @@ async function handleUpdateUsername(request, env, user) {
     .run();
 
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
-  return json({ user: publicUser(updated) });
+  return json({ user: privateMemberUser(updated) });
 }
 
 async function handleChangePassword(request, env, user) {
@@ -670,7 +720,7 @@ async function handleProfilePhotoUpload(request, env, user) {
   const url = `/api/media/${key}`;
   await env.TPI_DB.prepare("UPDATE contributors SET photo_url = ? WHERE id = ?").bind(url, user.id).run();
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
-  return json({ url, key, user: publicUser(updated) });
+  return json({ url, key, user: privateMemberUser(updated) });
 }
 
 async function handleArticleMediaUpload(request, env, user) {
@@ -2143,6 +2193,21 @@ function publicUser(user) {
     commentSignatureEnabled: Boolean(user.comment_signature_enabled),
     active: user.active !== 0,
     createdAt: user.created_at
+  };
+}
+
+function privateMemberUser(user) {
+  return {
+    ...publicUser(user),
+    contactName: user.contact_name,
+    phone: user.phone,
+    addressLine1: user.address_line1,
+    addressLine2: user.address_line2,
+    city: user.city,
+    state: user.state,
+    postalCode: user.postal_code,
+    emailVerified: Boolean(user.email_verified),
+    phoneVerified: Boolean(user.phone_verified)
   };
 }
 

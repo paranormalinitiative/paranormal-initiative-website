@@ -85,6 +85,18 @@
     return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55c8ff";
   }
 
+  function getContactPayload(data) {
+    return {
+      contactName: String(data.get("contactName") || data.get("displayName") || "").trim(),
+      phone: String(data.get("phone") || "").trim(),
+      addressLine1: String(data.get("addressLine1") || "").trim(),
+      addressLine2: String(data.get("addressLine2") || "").trim(),
+      city: String(data.get("city") || "").trim(),
+      state: String(data.get("state") || "").trim(),
+      postalCode: String(data.get("postalCode") || "").trim()
+    };
+  }
+
   function getLegacyContributions(profile) {
     return window.TPILegacyContributions?.forProfile(profile) || [];
   }
@@ -654,12 +666,27 @@
         <div><span>Username</span><strong>${escapeHtml(member.username || "")}</strong></div>
         <div><span>Role</span><strong>${escapeHtml(member.role || "member")}</strong></div>
         <div><span>Status</span><strong>${member.active === false ? "Blocked" : "Active"}</strong></div>
+        <div><span>Email Verified</span><strong>${member.emailVerified ? "Yes" : "No"}</strong></div>
+        <div><span>Phone Verified</span><strong>${member.phoneVerified ? "Yes" : "No"}</strong></div>
         <div><span>Forum Posts</span><strong>${posts.length}</strong></div>
         <div><span>Contributions</span><strong>${articles.length}</strong></div>
         <div><span>Comments</span><strong>${comments.length + videoComments.length}</strong></div>
         <div><span>Photos</span><strong>${photos.length}</strong></div>
         <div><span>Videos</span><strong>${forumVideos.length + tpiVideos.length}</strong></div>
       </div>
+      <section class="admin-activity-section">
+        <h4>Private Contact Information</h4>
+        <div class="admin-member-overview admin-member-contact-grid">
+          <div><span>Contact Name</span><strong>${escapeHtml(member.contactName || displayName)}</strong></div>
+          <div><span>Email</span><strong>${escapeHtml(member.correspondence || "Not provided")}</strong></div>
+          <div><span>Phone</span><strong>${escapeHtml(member.phone || "Not provided")}</strong></div>
+          <div><span>Street Address</span><strong>${escapeHtml(member.addressLine1 || "Not provided")}</strong></div>
+          <div><span>Address Line 2</span><strong>${escapeHtml(member.addressLine2 || "Not provided")}</strong></div>
+          <div><span>City</span><strong>${escapeHtml(member.city || "Not provided")}</strong></div>
+          <div><span>State</span><strong>${escapeHtml(member.state || "Not provided")}</strong></div>
+          <div><span>ZIP Code</span><strong>${escapeHtml(member.postalCode || "Not provided")}</strong></div>
+        </div>
+      </section>
       <section class="admin-activity-section">
         <h4>Contributed Posts</h4>
         <div class="admin-activity-list admin-contributed-posts-list">
@@ -875,6 +902,14 @@
           <span>Account Email</span>
           <strong>${escapeHtml(email || "Add an email for account recovery")}</strong>
         </div>
+        <div>
+          <span>Email Verification</span>
+          <strong>${user.emailVerified ? "Verified" : "Not verified yet"}</strong>
+        </div>
+        <div>
+          <span>Phone Verification</span>
+          <strong>${user.phoneVerified ? "Verified" : "Not verified yet"}</strong>
+        </div>
         <p>Password: protected and never displayed after saving.</p>
       `;
     }
@@ -916,6 +951,13 @@
       profileForm.organization.value = user.organization || "";
       profileForm.correspondence.value = user.correspondence || "";
       profileForm.website.value = user.website || "";
+      if (profileForm.contactName) profileForm.contactName.value = user.contactName || user.displayName || "";
+      if (profileForm.phone) profileForm.phone.value = user.phone || "";
+      if (profileForm.addressLine1) profileForm.addressLine1.value = user.addressLine1 || "";
+      if (profileForm.addressLine2) profileForm.addressLine2.value = user.addressLine2 || "";
+      if (profileForm.city) profileForm.city.value = user.city || "";
+      if (profileForm.state) profileForm.state.value = user.state || "";
+      if (profileForm.postalCode) profileForm.postalCode.value = user.postalCode || "";
       if (profileForm.chatColor) profileForm.chatColor.value = normalizeChatColor(user.chatColor || "#55c8ff");
       profileForm.photoUrl.value = user.photoUrl || "";
       profileForm.bio.value = user.bio || "";
@@ -1267,6 +1309,7 @@
         organization: String(data.get("organization") || "").trim(),
         correspondence: String(data.get("correspondence") || "").trim(),
         website: String(data.get("website") || "").trim(),
+        ...getContactPayload(data),
         chatColor: normalizeChatColor(String(data.get("chatColor") || "#55c8ff")),
         photoUrl,
         bio: String(data.get("bio") || "").trim(),
@@ -1486,6 +1529,7 @@
             password,
             displayName,
             email,
+            ...getContactPayload(data),
             title: "Member",
             commentSignatureEnabled: data.get("commentSignature") === "on"
           });
@@ -1511,6 +1555,7 @@
         password,
         displayName,
         correspondence: email,
+        ...getContactPayload(data),
         title: "Member",
         role: "member",
         commentSignatureEnabled: data.get("commentSignature") === "on",
@@ -1589,6 +1634,7 @@
           displayName: String(data.get("displayName") || username).trim(),
           title: assignedTitle,
           correspondence: String(data.get("correspondence") || "").trim(),
+          ...getContactPayload(data),
           affiliation: String(data.get("affiliation") || "").trim(),
           organization: String(data.get("organization") || "").trim(),
           website: String(data.get("website") || "").trim(),
@@ -1622,6 +1668,7 @@
       title: assignedTitle,
       role: inviteAssignment?.role || invite.role || "contributor",
       correspondence: String(data.get("correspondence") || "").trim(),
+      ...getContactPayload(data),
       affiliation: String(data.get("affiliation") || "").trim(),
       organization: String(data.get("organization") || "").trim(),
       website: String(data.get("website") || "").trim(),

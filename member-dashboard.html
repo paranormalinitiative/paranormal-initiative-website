@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="style.css?v=17">
     <link rel="stylesheet" href="member-shell.css">
 </head>
 <body>
@@ -80,6 +80,17 @@
                 <label><span>Organization</span><input name="organization" type="text"></label>
                 <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
                 <label><span>Website</span><input name="website" type="url"></label>
+                <div class="member-contact-settings">
+                    <p class="portal-kicker">Private Contact Information</p>
+                    <p class="access-note">Visible to authorized administrators only. This is separate from the public contributor profile.</p>
+                </div>
+                <label><span>Contact Name</span><input name="contactName" type="text" autocomplete="name"></label>
+                <label><span>Phone Number</span><input name="phone" type="tel" autocomplete="tel"></label>
+                <label><span>Street Address</span><input name="addressLine1" type="text" autocomplete="address-line1"></label>
+                <label><span>Address Line 2</span><input name="addressLine2" type="text" autocomplete="address-line2"></label>
+                <label><span>City</span><input name="city" type="text" autocomplete="address-level2"></label>
+                <label><span>State</span><input name="state" type="text" autocomplete="address-level1"></label>
+                <label><span>ZIP Code</span><input name="postalCode" type="text" autocomplete="postal-code"></label>
                 <label class="chat-color-field"><span>Chat Box Color</span><input name="chatColor" type="color" value="#55c8ff"></label>
                 <div class="profile-photo-editor">
                     <div class="profile-photo-preview" data-profile-photo-preview></div>
@@ -131,7 +142,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=16"></script>
+<script src="member-login.js?v=17"></script>
 <script src="member-shell.js"></script>
 </body>
 </html>

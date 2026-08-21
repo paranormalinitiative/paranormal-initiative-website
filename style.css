@@ -3065,6 +3065,19 @@ footer {
     border-top: 1px solid #263646;
 }
 
+.member-contact-settings {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #263646;
+}
+
+.member-contact-settings .portal-kicker {
+    margin-bottom: 0;
+}
+
 .member-profile-form label {
     display: grid;
     gap: 7px;
@@ -3593,6 +3606,10 @@ footer {
     overflow-wrap: anywhere;
     color: #f4f8fb;
     font-size: 16px;
+}
+
+.admin-member-contact-grid {
+    margin-bottom: 0;
 }
 
 .admin-activity-section {
