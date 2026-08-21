@@ -53,6 +53,8 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleListMessages(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleCreateMessage(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkConversationRead(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/hide$/)) return requireMember(request, env, user => handleHideConversation(path, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unhide$/)) return requireMember(request, env, user => handleUnhideConversation(path, env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
@@ -515,6 +517,11 @@ async function handleMarkNotificationRead(path, env, user) {
         last_read_message_id = excluded.last_read_message_id,
         last_read_at = excluded.last_read_at
     `).bind(conversationId, user.id, latest ? latest.id : null, now).run();
+    // Clear hidden state so conversation reappears in CHATS when notification is opened
+    await env.TPI_DB.prepare(`
+      UPDATE conversation_participants SET hidden_at = NULL
+      WHERE conversation_id = ? AND contributor_id = ?
+    `).bind(conversationId, user.id).run();
     return json({ ok: true, id });
   }
 
@@ -2200,6 +2207,7 @@ async function handleListConversations(request, env, user) {
     FROM conversations c
     JOIN conversation_participants cp ON cp.conversation_id = c.id
     WHERE cp.contributor_id = ?
+      AND cp.hidden_at IS NULL
     ORDER BY c.updated_at DESC
     LIMIT 100
   `).bind(user.id, user.id, user.id).all();
@@ -2260,6 +2268,11 @@ async function handleCreateConversation(request, env, user) {
     const other = members.find(m => m.id !== user.id);
     const existingId = await getDirectConversation(env, user, other);
     if (existingId) {
+      // Clear hidden state for current user so conversation reappears in CHATS
+      await env.TPI_DB.prepare(`
+        UPDATE conversation_participants SET hidden_at = NULL
+        WHERE conversation_id = ? AND contributor_id = ?
+      `).bind(existingId, user.id).run();
       const members = await getConversationMembers(env, existingId);
       return json({ conversation: { id: existingId, direct: true, members } }, 200, { "Cache-Control": "no-store" });
     }
@@ -2349,6 +2362,12 @@ async function handleCreateMessage(path, request, env, user) {
     UPDATE conversations SET updated_at = ? WHERE id = ?
   `).bind(now, conversationId).run();
 
+  // Clear hidden state for other participants so conversation reappears in their CHATS
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants SET hidden_at = NULL
+    WHERE conversation_id = ? AND contributor_id != ?
+  `).bind(conversationId, user.id).run();
+
   return json({
     message: {
       id: messageId,
@@ -2389,12 +2408,40 @@ async function handleMarkConversationRead(path, request, env, user) {
   return json({ ok: true }, 200, { "Cache-Control": "no-store" });
 }
 
+async function handleHideConversation(path, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/hide$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants SET hidden_at = ?
+    WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(now, conversationId, user.id).run();
+
+  return json({ ok: true, hiddenAt: now }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleUnhideConversation(path, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/unhide$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants SET hidden_at = NULL
+    WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, user.id).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
 async function handleConversationUnreadCount(env, user) {
   const { results } = await env.TPI_DB.prepare(`
     SELECT COUNT(*) AS count
     FROM conversations c
     JOIN conversation_participants cp ON cp.conversation_id = c.id
     WHERE cp.contributor_id = ?
+      AND cp.hidden_at IS NULL
       AND EXISTS (
         SELECT 1 FROM messages m
         WHERE m.conversation_id = c.id AND m.deleted_at IS NULL AND m.contributor_id != ?

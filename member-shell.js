@@ -2426,8 +2426,8 @@
             '</div>' +
             '<input type="file" data-chat-media-input accept="image/*,video/*" multiple hidden>' +
             '<input type="text" data-chat-input placeholder="Send a message">' +
-            '<button type="button" data-chat-like title="Send thumbs up">Like</button>' +
-            '<button type="submit">Send</button>' +
+              '<button type="button" data-chat-like title="Send thumbs up">Like</button>' +
+              '<button type="submit" data-chat-send>Send</button>' +
           '</form>' +
         '</section>' +
       '</div>' +
@@ -2446,6 +2446,7 @@
     var messagesEl = chat.querySelector("[data-chat-messages]");
     var titleEl = chat.querySelector("[data-chat-title]");
     var inputEl = chat.querySelector("[data-chat-input]");
+    var sendButton = chat.querySelector("[data-chat-send]");
     var attachmentPreviewEl = chat.querySelector("[data-chat-attachments]");
     var mediaInputEl = chat.querySelector("[data-chat-media-input]");
     var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
@@ -2744,7 +2745,7 @@
     function renderChatList() {
       if (!chatListEl) return;
       if (!chatList.length) {
-        chatListEl.innerHTML = '<p class="member-chat-list-empty">No chats yet.</p>';
+        chatListEl.innerHTML = '<p class="member-chat-list-empty">Select a chat or start a new conversation.</p>';
         return;
       }
       chatListEl.innerHTML = chatList.map(function(savedChat) {
@@ -2785,15 +2786,18 @@
         });
       });
       chatListEl.querySelectorAll("[data-chat-remove]").forEach(function(button) {
-        button.addEventListener("click", function() {
+        button.addEventListener("click", async function() {
           var saved = chatList.find(function(item) { return item.id === button.dataset.chatRemove; });
-          if (!saved || !window.confirm("Remove this chat from your visible chat list? The visible shortcut will be removed, but this action is not a server-side audit delete.")) return;
+          if (!saved || !window.confirm("Remove this chat from your visible chat list? The conversation will be hidden from you but retained on the server.")) return;
+          // Server-side hide: mark this participant's hidden_at
+          if (isRemoteConversation(saved)) {
+            await apiFetch("POST", "/api/conversations/" + encodeURIComponent(saved.id) + "/hide");
+          }
           archiveRemovedChat(user, saved);
           chatList = chatList.filter(function(item) { return item.id !== saved.id; });
           replaceStoredChats(user, chatList);
           if (currentChat.id === saved.id) {
-            currentChat = loadCurrentChat(user, roster);
-            if (currentChat.id === saved.id) currentChat = createEmptyChat(user);
+            currentChat = createEmptyChat(user);
             selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
             saveCurrentChat(user, currentChat);
           }
@@ -2846,6 +2850,16 @@
         ? currentChat.messages.map(function(message, index) { return renderChatMessage(message, index); }).join("")
         : "";
       messagesEl.scrollTop = messagesEl.scrollHeight;
+      updateSendButtonState();
+    }
+
+    function updateSendButtonState() {
+      var isValid = currentChat && currentChat.id && currentChat.id !== "chat-default";
+      if (sendButton) sendButton.disabled = !isValid;
+      if (inputEl) {
+        inputEl.disabled = !isValid;
+        if (!isValid) inputEl.value = "";
+      }
     }
 
     function syncChatMinimizeButton() {
