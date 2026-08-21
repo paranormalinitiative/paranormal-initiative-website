@@ -19,6 +19,7 @@
   const composeStatus = document.querySelector("[data-explore-compose-status]");
   const membersEl = document.querySelector("[data-feed-members]");
   const refreshButton = document.querySelector("[data-explore-refresh]");
+  const bulkActions = document.querySelector("[data-explore-actions]");
 
   renderComposerIdentity();
 
@@ -504,6 +505,7 @@
     const selectedCount = keys.filter(key => selectedItems.has(key)).length;
     selectAllBox.checked = keys.length > 0 && selectedCount === keys.length;
     selectAllBox.indeterminate = selectedCount > 0 && selectedCount < keys.length;
+    bulkActions?.classList.toggle("has-selection", selectedCount > 0);
   }
 
   function setComposeStatus(message) {
