@@ -160,7 +160,18 @@
     try {
       var res = await fetch(SIDEBAR_URL, { cache: "no-store" });
       if (!res.ok) return;
-      sidebar.innerHTML = await res.text();
+      var html = await res.text();
+      var template = document.createElement("template");
+      template.innerHTML = html.trim();
+      var loadedSidebar = template.content.querySelector(".member-sidebar");
+      if (loadedSidebar) {
+        sidebar.innerHTML = loadedSidebar.innerHTML;
+        Array.prototype.forEach.call(loadedSidebar.attributes, function(attr) {
+          if (attr.name !== "class") sidebar.setAttribute(attr.name, attr.value);
+        });
+      } else {
+        sidebar.innerHTML = html;
+      }
     } catch (e) {
       console.error("Failed to load member sidebar:", e);
       return;
