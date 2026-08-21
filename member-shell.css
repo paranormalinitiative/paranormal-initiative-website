@@ -553,11 +553,11 @@ body.member-mode {
     width: min(100%, 560px);
     max-width: 100%;
     display: block;
-    align-self: flex-start;
+    align-self: center;
 }
 
 .member-chat-message.is-own {
-    align-self: flex-end;
+    align-self: center;
 }
 
 .member-chat-bubble {
