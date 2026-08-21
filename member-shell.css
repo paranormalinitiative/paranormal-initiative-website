@@ -4,9 +4,7 @@
 /* ===== HIDE PUBLIC CHROME IN MEMBER MODE ===== */
 body.member-mode .command-header,
 body.member-mode .site-search-band,
-body.member-mode .command-nav,
-body.member-mode #site-footer,
-body.member-mode footer {
+body.member-mode .command-nav {
     display: none;
 }
 
@@ -183,6 +181,10 @@ body.member-mode {
     min-width: 0;
     min-height: 100vh;
     overflow: visible;
+}
+
+body.member-mode #site-footer {
+    margin-left: 270px;
 }
 
 .member-main-inner {
@@ -1169,6 +1171,10 @@ body.member-mode .portal-hero .portal-actions {
     margin-top: 16px;
 }
 
+body.member-mode .portal-hero + .home-section {
+    margin-top: 34px;
+}
+
 /* Home sections — reset public spacing */
 body.member-mode .home-mission-band,
 body.member-mode .home-section,
@@ -1234,7 +1240,12 @@ body.member-mode .home-collaboration {
 }
 
 body.member-mode .home-mission-band {
-    margin-top: 0;
+    margin-top: 6px;
+}
+
+body.member-mode .home-mission-band + .home-section,
+body.member-mode .home-collaboration + .home-pathways {
+    margin-top: 40px;
 }
 
 body.member-mode .home-mission-band p,
@@ -1258,7 +1269,7 @@ body.member-mode .home-collaboration-actions {
 
 /* Pathway groups — sections */
 body.member-mode .home-pathway-group {
-    margin-top: 24px;
+    margin-top: 32px;
 }
 
 body.member-mode .home-pathway-group > h3 {
@@ -1276,13 +1287,25 @@ body.member-mode .home-pathway-group > h3 {
 body.member-mode .home-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    gap: 18px;
     padding: 0;
     max-width: none;
 }
 
 body.member-mode .home-card-grid::before {
     display: none;
+}
+
+body.member-mode .home-pathway-group-balanced .home-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.member-mode .home-pathway-group-balanced .dashboard-panel-featured {
+    grid-column: 1 / -1;
+}
+
+body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel:not(.dashboard-panel-featured) {
+    min-height: 180px;
 }
 
 /* ============================== */
@@ -1303,6 +1326,10 @@ body.member-mode .home-card-grid::before {
     .member-main {
         margin-left: 220px;
         padding: 20px 18px;
+    }
+
+    body.member-mode #site-footer {
+        margin-left: 220px;
     }
 }
 
@@ -1342,6 +1369,11 @@ body.member-mode .home-card-grid::before {
         overflow: visible;
     }
 
+    body.member-mode #site-footer {
+        margin-left: 0;
+        padding-bottom: 74px;
+    }
+
     .member-page-header h2 {
         font-size: 22px;
     }
@@ -1363,6 +1395,7 @@ body.member-mode .home-card-grid::before {
     body.member-mode .portal-grid,
     body.member-mode .study-hub-layout,
     body.member-mode .home-focus-grid,
+    body.member-mode .home-pathway-group-balanced .home-card-grid,
     body.member-mode .education-intro-grid {
         grid-template-columns: 1fr;
     }
