@@ -3179,7 +3179,7 @@ footer {
 }
 
 body.feed-app-page.member-mode {
-    overflow: hidden;
+    overflow: auto;
     background: #070b10;
 }
 
@@ -3210,6 +3210,8 @@ body.feed-app-page.member-mode .member-floating-chat {
 
 .member-feed-app-sidebar,
 .member-feed-app-rail {
+    position: sticky;
+    top: 0;
     height: 100vh;
     overflow-y: auto;
     padding: 22px 18px;
@@ -3290,12 +3292,12 @@ body.feed-app-page.member-mode .member-floating-chat {
 .member-feed-app-main {
     width: min(100%, 980px);
     min-width: 0;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0 auto;
     padding: 28px 26px 72px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .member-feed-app-header {
@@ -3632,9 +3634,10 @@ body.feed-app-page .member-feed-member span {
 }
 
 body.feed-app-page .member-explore-feed {
-    flex: 1;
+    flex: 0 0 auto;
     min-height: 0;
     max-height: none;
+    overflow-y: visible;
     padding: 0 6px 18px 0;
 }
 

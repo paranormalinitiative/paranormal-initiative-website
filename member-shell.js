@@ -740,7 +740,7 @@
     handle.addEventListener("pointermove", function(event) {
       if (!resizing) return;
       var rect = chat.getBoundingClientRect();
-      var width = Math.min(Math.max(430, event.clientX - rect.left), 920);
+      var width = Math.min(Math.max(620, event.clientX - rect.left), 980);
       var height = Math.min(Math.max(360, event.clientY - rect.top), 780);
       chat.style.width = width + "px";
       chat.style.height = height + "px";
@@ -755,7 +755,7 @@
   function applyStoredChatFrame(chat) {
     var frame = null;
     try { frame = JSON.parse(localStorage.getItem("tpiFloatingChatFrame") || "null"); } catch (e) {}
-    chat.style.width = frame && frame.width ? Math.max(430, frame.width) + "px" : "620px";
+    chat.style.width = frame && frame.width ? Math.max(620, frame.width) + "px" : "680px";
     chat.style.height = frame && frame.height ? Math.max(360, frame.height) + "px" : "520px";
     if (frame && frame.left && frame.top) {
       chat.style.left = frame.left + "px";
