@@ -4006,6 +4006,21 @@ footer {
     padding: 34px 36px 36px !important;
 }
 
+.admin-panel-page .admin-panel-hero {
+    box-sizing: border-box;
+    padding: 34px 36px !important;
+}
+
+.admin-panel-page .admin-panel-hero > div {
+    min-width: 0;
+}
+
+.admin-panel-page .admin-panel-hero h2 {
+    margin: 0 0 10px !important;
+    padding-bottom: 0 !important;
+    border-bottom: 0 !important;
+}
+
 .admin-panel-page .admin-panel-invites > .portal-kicker,
 .admin-panel-page .admin-panel-invites > h2,
 .admin-panel-page .admin-panel-invites > p,
