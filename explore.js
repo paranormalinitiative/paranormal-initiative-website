@@ -26,7 +26,9 @@
     button.addEventListener("click", () => {
       activeFilter = button.dataset.exploreFilter || "all";
       document.querySelectorAll("[data-explore-filter]").forEach(filterButton => {
-        filterButton.classList.toggle("portal-button-secondary", filterButton !== button);
+        const isActive = filterButton.dataset.exploreFilter === activeFilter;
+        filterButton.classList.toggle("portal-button-secondary", !isActive);
+        filterButton.classList.toggle("is-active", isActive);
       });
       renderFeed();
     });
@@ -251,7 +253,7 @@
     }
     membersEl.hidden = false;
     membersEl.innerHTML = `
-      <span class="member-feed-members-label">Active in feed</span>
+      <span class="member-feed-members-label">Online Now</span>
       <div class="member-feed-member-list">
         ${members.slice(0, 12).map(renderActiveMember).join("")}
       </div>
@@ -267,6 +269,7 @@
           ? `<img src="${escapeAttr(member.photoUrl)}" alt="${escapeAttr(member.name)}" loading="lazy">`
           : `<span>${initial}</span>`}
         <strong>${escapeHtml(member.name)}</strong>
+        ${member.title ? `<small>${escapeHtml(member.title)}</small>` : ""}
       </a>
     `;
   }

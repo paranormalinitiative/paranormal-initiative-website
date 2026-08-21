@@ -10,18 +10,41 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="stylesheet" href="style.css?v=27">
     <link rel="stylesheet" href="member-shell.css?v=4">
 </head>
-<body>
+<body class="feed-app-page">
 <div id="site-header"></div>
 
 <div data-member-content hidden>
-<div class="member-main-inner">
-    <section class="editor-access-card member-explore-card">
-        <p class="portal-kicker">Your Community Feed</p>
-        <h2>Your Feed</h2>
-        <p class="access-note">A chronological community feed for new posts, contributed articles, videos, photos, and live activity.</p>
+<div class="member-feed-app-shell">
+    <aside class="member-feed-app-sidebar" aria-label="Community feed navigation">
+        <a class="member-feed-app-brand" href="index.html?member=1">
+            <span>TPI</span>
+            <strong>Community Feed</strong>
+        </a>
+        <nav class="member-feed-app-nav" aria-label="Feed sections">
+            <a class="member-feed-home-link" href="index.html?member=1">Home</a>
+            <button class="portal-button" type="button" data-explore-filter="all">Your Feed</button>
+            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="forum_post">Posts</button>
+            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="chat">Chat</button>
+            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="article">Contributions</button>
+            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="photo">Photos</button>
+            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="video">Videos</button>
+        </nav>
+        <div class="member-feed-members" data-feed-members hidden></div>
+    </aside>
+
+    <main class="member-feed-app-main">
+        <header class="member-feed-app-header">
+            <div>
+                <p class="portal-kicker">Your Community Feed</p>
+                <h1>Your Feed</h1>
+                <p>A chronological community feed for new posts, contributed articles, videos, photos, and live activity.</p>
+            </div>
+            <button class="portal-button portal-button-secondary member-explore-refresh" type="button" data-explore-refresh>Refresh Feed</button>
+        </header>
+
         <form class="member-explore-composer" data-explore-composer>
             <div class="member-explore-composer-person">
                 <div class="member-explore-composer-avatar" data-explore-composer-avatar>TW</div>
@@ -52,16 +75,7 @@
                 </div>
             </div>
         </form>
-        <div class="member-feed-members" data-feed-members hidden></div>
-        <div class="member-explore-toolbar">
-            <button class="portal-button" type="button" data-explore-filter="all">All</button>
-            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="forum_post">Posts</button>
-            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="chat">Chats</button>
-            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="article">Contributions</button>
-            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="photo">Photos</button>
-            <button class="portal-button portal-button-secondary" type="button" data-explore-filter="video">Videos</button>
-            <button class="portal-button portal-button-secondary member-explore-refresh" type="button" data-explore-refresh>Refresh Feed</button>
-        </div>
+
         <div class="member-explore-actions">
             <label class="member-explore-select-all">
                 <input type="checkbox" data-explore-select-all>
@@ -73,7 +87,29 @@
         <div class="member-explore-feed" data-explore-feed>
             <p class="access-note">Loading community activity...</p>
         </div>
-    </section>
+    </main>
+
+    <aside class="member-feed-app-rail" aria-label="Community feed context">
+        <section class="member-feed-app-panel">
+            <p class="portal-kicker">Feed Direction</p>
+            <h2>What This Shows</h2>
+            <ul>
+                <li>Member identity and presence</li>
+                <li>Newest posts and chats first</li>
+                <li>Contribution, photo, and video previews</li>
+                <li>Read and unread review state</li>
+            </ul>
+        </section>
+        <section class="member-feed-app-panel">
+            <p class="portal-kicker">Community Tools</p>
+            <div class="member-feed-concepts">
+                <span>Groups</span>
+                <span>Live chat</span>
+                <span>Follow members</span>
+                <span>Investigation rooms</span>
+            </div>
+        </section>
+    </aside>
 </div>
 </div>
 
@@ -82,6 +118,6 @@
 <script src="api-client.js"></script>
 <script src="member-login.js?v=24"></script>
 <script src="member-shell.js?v=4"></script>
-<script src="explore.js?v=4"></script>
+<script src="explore.js?v=5"></script>
 </body>
 </html>
