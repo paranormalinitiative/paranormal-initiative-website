@@ -3205,10 +3205,14 @@ body.feed-app-page.member-mode .member-floating-chat {
     bottom: 24px;
 }
 
+body.feed-app-page.member-mode .member-feed-app-main {
+    max-width: 1180px;
+}
+
 .member-feed-app-shell {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 290px;
+    grid-template-columns: minmax(0, 1fr);
     padding-left: 270px;
     color: #c7d5e2;
     background: #070b10;

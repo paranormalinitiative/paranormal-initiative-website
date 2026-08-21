@@ -536,13 +536,14 @@ body.member-mode {
     min-height: 0;
     width: 100% !important;
     max-width: none !important;
-    display: grid;
-    align-content: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
     overflow-y: auto;
     overflow-x: hidden;
     margin: 0;
-    padding: 14px;
+    padding: 18px max(16px, calc((100% - 720px) / 2));
     background: #020305;
     border: 0;
     border-radius: 0;
@@ -552,11 +553,11 @@ body.member-mode {
     width: min(100%, 560px);
     max-width: 100%;
     display: block;
-    justify-self: start;
+    align-self: flex-start;
 }
 
 .member-chat-message.is-own {
-    justify-self: end;
+    align-self: flex-end;
 }
 
 .member-chat-bubble {
