@@ -97,12 +97,15 @@
     var contentEl = document.querySelector("[data-member-content]");
     if (!contentEl) return;
 
-    // Set body class — hides search band and public nav via CSS
+    // Set shell classes — hides public chrome and locks root page scroll via CSS
+    document.documentElement.classList.add("member-mode-root");
     document.body.classList.add("member-mode");
 
     var user = await getSignedInUser();
     if (!user) {
       // Not signed in — exit member mode and redirect to login
+      document.documentElement.classList.remove("member-mode-root");
+      document.body.classList.remove("member-mode");
       try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
       window.location.href = "member-login.html";
       return;

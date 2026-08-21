@@ -10,6 +10,12 @@ body.member-mode footer {
     display: none;
 }
 
+html.member-mode-root,
+html.member-mode-root body.member-mode {
+    height: 100%;
+    overflow: hidden;
+}
+
 body.member-mode {
     overflow: hidden;
 }
@@ -1285,6 +1291,12 @@ body.member-mode .home-card-grid::before {
 /* RESPONSIVE — MOBILE            */
 /* ============================== */
 @media (max-width: 700px) {
+    html.member-mode-root,
+    html.member-mode-root body.member-mode {
+        height: auto;
+        overflow: auto;
+    }
+
     body.member-mode {
         overflow: auto;
     }
