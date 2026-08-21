@@ -382,10 +382,22 @@
           '<div class="member-chat-emoji-picker" data-chat-emoji-picker hidden>' +
             '<button type="button" data-chat-emoji-value="😀">😀</button>' +
             '<button type="button" data-chat-emoji-value="😂">😂</button>' +
+            '<button type="button" data-chat-emoji-value="😊">😊</button>' +
+            '<button type="button" data-chat-emoji-value="😍">😍</button>' +
             '<button type="button" data-chat-emoji-value="❤️">❤️</button>' +
             '<button type="button" data-chat-emoji-value="🙏">🙏</button>' +
             '<button type="button" data-chat-emoji-value="👻">👻</button>' +
             '<button type="button" data-chat-emoji-value="👍">👍</button>' +
+            '<button type="button" data-chat-emoji-value="🙌">🙌</button>' +
+            '<button type="button" data-chat-emoji-value="🔥">🔥</button>' +
+            '<button type="button" data-chat-emoji-value="✨">✨</button>' +
+            '<button type="button" data-chat-emoji-value="😮">😮</button>' +
+            '<button type="button" data-chat-emoji-value="😢">😢</button>' +
+            '<button type="button" data-chat-emoji-value="😆">😆</button>' +
+            '<button type="button" data-chat-emoji-value="🤔">🤔</button>' +
+            '<button type="button" data-chat-emoji-value="💙">💙</button>' +
+            '<button type="button" data-chat-emoji-value="📷">📷</button>' +
+            '<button type="button" data-chat-emoji-value="🎙️">🎙️</button>' +
           '</div>' +
           '<form class="member-chat-form" data-chat-form>' +
             '<div class="member-chat-tools" aria-label="Message tools">' +
@@ -414,6 +426,8 @@
     var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
     var minimizeButton = chat.querySelector("[data-chat-minimize]");
     var pendingAttachments = [];
+    var voiceRecorder = null;
+    var voiceChunks = [];
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
     currentChat.title = getCommunityChatTitle(user);
     syncChatMinimizeButton();
@@ -465,16 +479,47 @@
       pendingAttachments = Array.from(mediaInputEl.files || []).slice(0, 6).map(function(file) {
         return {
           name: file.name,
-          type: file.type && file.type.startsWith("video/") ? "video" : "photo"
+          type: file.type && file.type.startsWith("video/") ? "video" : "photo",
+          url: URL.createObjectURL(file)
         };
       });
       renderAttachmentPreview();
     });
 
-    chat.querySelector("[data-chat-voice]").addEventListener("click", function () {
-      pendingAttachments.push({ name: "Voice message", type: "voice" });
-      renderAttachmentPreview();
-      inputEl.focus();
+    chat.querySelector("[data-chat-voice]").addEventListener("click", async function (event) {
+      var button = event.currentTarget;
+      if (voiceRecorder && voiceRecorder.state === "recording") {
+        voiceRecorder.stop();
+        button.textContent = "Voice";
+        return;
+      }
+      if (!navigator.mediaDevices || !window.MediaRecorder) {
+        pendingAttachments.push({ name: "Voice message", type: "voice" });
+        renderAttachmentPreview();
+        inputEl.focus();
+        return;
+      }
+      try {
+        var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        voiceChunks = [];
+        voiceRecorder = new MediaRecorder(stream);
+        voiceRecorder.addEventListener("dataavailable", function(recordEvent) {
+          if (recordEvent.data && recordEvent.data.size) voiceChunks.push(recordEvent.data);
+        });
+        voiceRecorder.addEventListener("stop", function() {
+          stream.getTracks().forEach(function(track) { track.stop(); });
+          var blob = new Blob(voiceChunks, { type: "audio/webm" });
+          pendingAttachments.push({ name: "Voice message", type: "voice", url: URL.createObjectURL(blob) });
+          renderAttachmentPreview();
+          inputEl.focus();
+        });
+        voiceRecorder.start();
+        button.textContent = "Stop";
+      } catch (e) {
+        pendingAttachments.push({ name: "Voice message", type: "voice" });
+        renderAttachmentPreview();
+        inputEl.focus();
+      }
     });
 
     chat.querySelector("[data-chat-emoji]").addEventListener("click", function () {
@@ -492,7 +537,17 @@
       sendChatMessage("👍", []);
     });
 
-    messagesEl.addEventListener("click", function () {
+    messagesEl.addEventListener("click", function (event) {
+      var deleteButton = event.target.closest("[data-chat-delete]");
+      if (deleteButton) {
+        var index = Number(deleteButton.dataset.chatDelete);
+        if (Number.isInteger(index) && index >= 0 && index < currentChat.messages.length && window.confirm("Delete this message?")) {
+          currentChat.messages.splice(index, 1);
+          saveCurrentChat(user, currentChat);
+          renderMessages();
+        }
+        return;
+      }
       markLocalChatRead();
       setupNotificationBadge();
     });
@@ -540,7 +595,7 @@
     function renderMessages() {
       titleEl.textContent = currentChat.title;
       messagesEl.innerHTML = currentChat.messages.length
-        ? currentChat.messages.map(renderChatMessage).join("")
+        ? currentChat.messages.map(function(message, index) { return renderChatMessage(message, index); }).join("")
         : "";
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }
@@ -677,13 +732,14 @@
     try { return localStorage.getItem("tpiEditorSession") || ""; } catch (e) { return ""; }
   }
 
-  function renderChatMessage(message) {
+  function renderChatMessage(message, index) {
     var author = normalizeChatMember(message.author || {}, true);
     var currentUsername = normalizeChatUsername(getStoredUsername());
     var isOwn = currentUsername && author.username === currentUsername;
     return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
       renderChatAvatar(message.author || {}) +
       '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
+      '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' +
       '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
       (message.body ? '<p>' + escapeHtml(message.body) + '</p>' : '') +
       renderChatAttachments(message.attachments) + '</div>' +
@@ -693,7 +749,17 @@
   function renderChatAttachments(attachments) {
     if (!Array.isArray(attachments) || !attachments.length) return "";
     return '<div class="member-chat-attachments">' + attachments.map(function(attachment) {
-      return '<span>' + escapeHtml(getAttachmentLabel(attachment)) + '</span>';
+      var label = escapeHtml(getAttachmentLabel(attachment));
+      if (attachment && attachment.url && attachment.type === "photo") {
+        return '<figure><img src="' + escapeHtml(attachment.url) + '" alt="' + label + '"><figcaption>' + label + '</figcaption></figure>';
+      }
+      if (attachment && attachment.url && attachment.type === "video") {
+        return '<figure><video src="' + escapeHtml(attachment.url) + '" controls></video><figcaption>' + label + '</figcaption></figure>';
+      }
+      if (attachment && attachment.url && attachment.type === "voice") {
+        return '<figure><audio src="' + escapeHtml(attachment.url) + '" controls></audio><figcaption>' + label + '</figcaption></figure>';
+      }
+      return '<span>' + label + '</span>';
     }).join("") + '</div>';
   }
 
