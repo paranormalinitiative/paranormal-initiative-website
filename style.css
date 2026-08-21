@@ -3184,8 +3184,8 @@ body.feed-app-page.member-mode {
 }
 
 body.feed-app-page.member-mode .command-header {
-    width: 100%;
-    margin-left: 0;
+    width: auto;
+    margin-left: 270px;
 }
 
 body.feed-app-page.member-mode .member-sidebar,
@@ -3208,7 +3208,8 @@ body.feed-app-page.member-mode .member-floating-chat {
 .member-feed-app-shell {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 270px minmax(0, 1fr) 290px;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    padding-left: 270px;
     color: #c7d5e2;
     background: #070b10;
 }
@@ -3225,6 +3226,13 @@ body.feed-app-page.member-mode .member-floating-chat {
 }
 
 .member-feed-app-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 80;
+    width: 270px;
+    height: 100vh;
+    max-height: 100vh;
+    padding-top: 20px;
     border-right: 1px solid rgba(38, 54, 70, 0.95);
 }
 
@@ -3849,6 +3857,7 @@ body.feed-app-page .member-explore-item-shell {
 
     .member-feed-app-shell {
         grid-template-columns: 1fr;
+        padding-left: 0;
     }
 
     .member-feed-app-sidebar,
@@ -3856,6 +3865,13 @@ body.feed-app-page .member-explore-item-shell {
     .member-feed-app-main {
         height: auto;
         overflow: visible;
+    }
+
+    .member-feed-app-sidebar {
+        position: static;
+        width: auto;
+        max-height: none;
+        padding-top: 18px;
     }
 
     .member-feed-app-main {
