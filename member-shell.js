@@ -27,15 +27,16 @@
     // Future: "activity", "chat", "saved"
   ];
 
-  // Run on every page load. If not member mode, do nothing.
-  var memberMode = await detectMemberMode();
-  if (!memberMode) return;
-
   if (document.readyState === "loading") {
     await new Promise(function (resolve) {
       document.addEventListener("DOMContentLoaded", resolve, { once: true });
     });
   }
+
+  // Run on pages that use the shared shell. Public visitors should see the
+  // same navigation chrome; only member-only actions stay protected.
+  var shellMode = await detectMemberMode();
+  if (!shellMode) return;
 
   // Wait briefly for includes.js to finish injecting header/footer
   await delay(150);
@@ -47,6 +48,7 @@
     var params = new URLSearchParams(window.location.search);
     var slug = getPageSlug();
     var isInherentMemberPage = INHERENT_MEMBER_PAGES.indexOf(slug) !== -1;
+    var hasShellContent = Boolean(document.querySelector("[data-member-content]"));
 
     // 1. Inherent member-only pages: activate if authenticated
     if (isInherentMemberPage) {
@@ -65,7 +67,13 @@
       return true;
     }
 
-    // 3. Persisted member mode from a previous ?member=1 visit (dual-mode pages)
+    // 3. Pages that already opted into the shared shell use it publicly too.
+    // This keeps Opera/Safari/Chrome from seeing a different "old" site.
+    if (hasShellContent) {
+      return true;
+    }
+
+    // 4. Persisted member mode from a previous ?member=1 visit (legacy support)
     try {
       if (localStorage.getItem(STORAGE_KEY) === "1") {
         var sessionUser = await quickSessionCheck();
@@ -96,6 +104,7 @@
   async function initMemberShell() {
     var contentEl = document.querySelector("[data-member-content]");
     if (!contentEl) return;
+    var requiresAuth = INHERENT_MEMBER_PAGES.indexOf(getPageSlug()) !== -1;
 
     // Set shell classes — hides public chrome and locks root page scroll via CSS
     document.documentElement.classList.add("member-mode-root");
@@ -103,12 +112,20 @@
 
     var user = await getSignedInUser();
     if (!user) {
-      // Not signed in — exit member mode and redirect to login
-      document.documentElement.classList.remove("member-mode-root");
-      document.body.classList.remove("member-mode");
-      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-      window.location.href = "member-login.html";
-      return;
+      if (requiresAuth) {
+        // Not signed in on a protected page — redirect to login.
+        document.documentElement.classList.remove("member-mode-root");
+        document.body.classList.remove("member-mode");
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        window.location.href = "member-login.html";
+        return;
+      }
+      user = {
+        username: "guest",
+        displayName: "Visitor",
+        role: "guest",
+        guest: true
+      };
     }
 
     // Build shell structure: sidebar + main
@@ -131,7 +148,7 @@
     await injectSidebar(sidebar);
 
     // Set up page heading
-    var greeting = getFirstName(user);
+    var greeting = user.guest ? "" : getFirstName(user);
     setupPageHeading(main, greeting);
 
     // Set profile link
@@ -149,9 +166,13 @@
 
     // Set up mobile nav
     injectMobileNav();
+    setupProfileLink(user);
+    setupRoleGatedNav(user);
 
-    // Set up floating community chat
-    await initFloatingChat(user);
+    // Set up floating community chat for signed-in members only.
+    if (!user.guest) {
+      await initFloatingChat(user);
+    }
 
     // Mark ready
     document.body.classList.add("member-ready");
@@ -200,7 +221,11 @@
       // Just set greeting in existing elements
       var existingGreeting = main.querySelector("[data-member-greeting], .member-greeting-inline, .community-greeting-inline");
       if (existingGreeting) {
-        existingGreeting.textContent = "Hello, " + firstName;
+        if (firstName) {
+          existingGreeting.textContent = "Hello, " + firstName;
+        } else {
+          existingGreeting.remove();
+        }
       }
       return;
     }
@@ -211,7 +236,7 @@
     header.className = "member-page-header";
     header.innerHTML =
       '<h2>' + escapeHtml(pageTitle) + '</h2>' +
-      '<span class="member-greeting-inline">Hello, ' + escapeHtml(firstName) + '</span>';
+      (firstName ? '<span class="member-greeting-inline">Hello, ' + escapeHtml(firstName) + '</span>' : "");
 
     // Insert at top of main content
     var firstChild = main.firstChild;
@@ -236,6 +261,12 @@
   // ---- Profile Link ----
 
   function setupProfileLink(user) {
+    if (user && user.guest) {
+      document.querySelectorAll('[data-nav="profile"], [data-nav="settings"], [data-nav="logout"], [data-nav="member-notifications"], [data-nav="explore"], [data-nav="paper-editor"]').forEach(function(link) {
+        link.href = "member-login.html";
+      });
+      return;
+    }
     var href = "member-home.html?username=" + encodeURIComponent(user.username);
     var profileLink = document.querySelector('[data-nav-profile]');
     if (profileLink) profileLink.href = href;
@@ -249,6 +280,21 @@
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
       element.hidden = !canUseAdminPanel;
     });
+    document.body.classList.toggle("member-guest-mode", Boolean(user && user.guest));
+    if (user && user.guest) {
+      document.querySelectorAll('[data-nav="logout"]').forEach(function (element) {
+        element.innerHTML = '<span class="nav-icon">&#8594;</span> Member Login';
+      });
+      document.querySelectorAll('[data-nav="profile"]').forEach(function (element) {
+        element.innerHTML = '<span class="nav-icon">&#9786;</span> Free Membership';
+      });
+      document.querySelectorAll('[data-nav="settings"], [data-nav="saved"]').forEach(function (element) {
+        element.hidden = true;
+      });
+      document.querySelectorAll('[data-nav="member-notifications"], [data-nav="explore"], [data-nav="paper-editor"]').forEach(function (element) {
+        element.classList.add("is-member-protected");
+      });
+    }
   }
 
   // ---- Logout ----
