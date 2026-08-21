@@ -3062,7 +3062,7 @@
   }
 
   function dockCollapsedChat(chat) {
-    var left = document.body.classList.contains("feed-app-page") ? 278 : 18;
+    var left = document.body.classList.contains("member-mode") || document.body.classList.contains("feed-app-page") ? 278 : 18;
     left = Math.max(left, 18);
     chat.style.left = left + "px";
     chat.style.top = "10px";

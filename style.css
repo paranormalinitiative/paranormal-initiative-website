@@ -3122,11 +3122,12 @@ footer {
 
 .member-notifications-card {
     width: 100%;
-    padding: 28px;
+    padding: 28px !important;
+    box-sizing: border-box;
 }
 
 .member-notifications-card > .access-note {
-    padding-bottom: 18px;
+    padding: 0 0 18px;
     border-bottom: 1px solid #263646;
 }
 

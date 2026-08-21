@@ -950,7 +950,7 @@
         ? renderNotificationSummary(notifications) + notifications.map(renderNotificationItem).join("")
         : renderNotificationGuide();
     } catch (error) {
-      memberNotificationsList.innerHTML = renderNotificationGuide(error.message || "Could not load notifications.");
+      memberNotificationsList.innerHTML = renderNotificationGuide("Notifications could not be loaded right now, but these are the notification types this page will show.");
     }
   }
 
