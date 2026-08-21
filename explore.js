@@ -10,12 +10,14 @@
   const composer = document.querySelector("[data-explore-composer]");
   const composerOpen = document.querySelector("[data-explore-composer-open]");
   const composerCancel = document.querySelector("[data-explore-composer-cancel]");
+  const composerDelete = document.querySelector("[data-explore-composer-delete]");
   const composerExpanded = document.querySelector("[data-explore-composer-expanded]");
   const composerAvatar = document.querySelector("[data-explore-composer-avatar]");
   const composerName = document.querySelector("[data-explore-composer-name]");
   const composerRole = document.querySelector("[data-explore-composer-role]");
   const composeStatus = document.querySelector("[data-explore-compose-status]");
   const membersEl = document.querySelector("[data-feed-members]");
+  const refreshButton = document.querySelector("[data-explore-refresh]");
 
   renderComposerIdentity();
 
@@ -39,6 +41,15 @@
     getSelectedKeys().forEach(key => readItems.delete(key));
     saveReadItems();
     renderFeed();
+  });
+
+  refreshButton?.addEventListener("click", async () => {
+    refreshButton.textContent = "Refreshing...";
+    await loadFeed();
+    refreshButton.textContent = "Feed Updated";
+    window.setTimeout(() => {
+      refreshButton.textContent = "Refresh Feed";
+    }, 1300);
   });
 
   selectAllBox?.addEventListener("change", () => {
@@ -84,6 +95,12 @@
 
   composerOpen?.addEventListener("click", openComposer);
   composerCancel?.addEventListener("click", () => {
+    clearComposer();
+    closeComposer();
+    setComposeStatus("");
+  });
+
+  composerDelete?.addEventListener("click", () => {
     clearComposer();
     closeComposer();
     setComposeStatus("");
@@ -256,22 +273,29 @@
     const checked = selectedItems.has(key) ? " checked" : "";
     const absoluteHref = new URL(href, window.location.href).href;
     return `
-      <article class="member-explore-row${readClass}">
+      <article class="member-explore-row member-feed-post-card${readClass}">
         <label class="member-explore-check">
           <input type="checkbox" value="${escapeAttr(key)}" data-explore-check${checked}>
           <span>Select item</span>
         </label>
         <div class="member-explore-item-shell">
           <a class="member-explore-item" href="${escapeAttr(href)}" data-explore-item="${escapeAttr(key)}">
-            ${renderMediaPreview(item)}
-            <div>
+            <header class="member-feed-post-head">
+              ${renderFeedAvatar(meta)}
+              <div class="member-feed-post-author">
+                <strong>${escapeHtml(meta.author)}</strong>
+                <span>${escapeHtml(meta.authorTitle || meta.typeLabel)} · ${escapeHtml(formatDate(meta.date))}</span>
+              </div>
               <span class="member-explore-type">${escapeHtml(meta.typeLabel)}</span>
+            </header>
+            <div class="member-feed-post-preview">
               <h3>${escapeHtml(meta.title)}</h3>
               <p>${escapeHtml(meta.description)}</p>
+              ${renderMediaPreview(item)}
             </div>
-            <small>${escapeHtml(meta.author)} · ${escapeHtml(formatDate(meta.date))}</small>
           </a>
           <div class="member-explore-share-row">
+            <a class="portal-button portal-button-secondary" href="${escapeAttr(href)}">Open</a>
             <button class="portal-button portal-button-secondary" type="button" data-explore-share data-share-url="${escapeAttr(absoluteHref)}" data-share-title="${escapeAttr(meta.title)}">Share</button>
           </div>
         </div>
@@ -285,7 +309,10 @@
         typeLabel: item.categoryTitle || "Community Post",
         title: item.topicTitle || "Forum Topic",
         description: item.body || "Join the conversation.",
-        author: item.authorName || "Community Member",
+        author: getAuthorName(item, "Community Member"),
+        authorTitle: item.authorTitle || "Community Member",
+        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorUsername: item.authorUsername || "",
         date: item.topicCreatedAt || item.createdAt
       };
     }
@@ -294,7 +321,10 @@
         typeLabel: "Chat",
         title: item.title || "Community Chat",
         description: item.description || item.body || "Join the live conversation.",
-        author: item.authorName || "Community Member",
+        author: getAuthorName(item, "Community Member"),
+        authorTitle: item.authorTitle || "Chat",
+        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorUsername: item.authorUsername || "",
         date: item.startedAt || item.createdAt
       };
     }
@@ -303,7 +333,10 @@
         typeLabel: item.contributionType || "Contribution",
         title: item.title || "Published Contribution",
         description: item.description || "Read the contributed work.",
-        author: item.authorName || "Contributor",
+        author: getAuthorName(item, "Contributor"),
+        authorTitle: item.authorTitle || item.contributionType || "Contributor",
+        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorUsername: item.authorUsername || "",
         date: item.createdAt
       };
     }
@@ -313,6 +346,9 @@
         title: item.title || "TPI Video",
         description: item.description || "Watch the latest video activity.",
         author: "TPI Videos",
+        authorTitle: item.isLive ? "Live Video" : "Video",
+        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorUsername: "",
         date: item.publishedAt
       };
     }
@@ -321,7 +357,10 @@
         typeLabel: "Photo",
         title: item.title || "Community Photo",
         description: item.description || "View the shared photo activity.",
-        author: item.authorName || "Community Member",
+        author: getAuthorName(item, "Community Member"),
+        authorTitle: item.authorTitle || "Photo",
+        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorUsername: item.authorUsername || "",
         date: item.createdAt || item.publishedAt
       };
     }
@@ -329,7 +368,10 @@
       typeLabel: "Activity",
       title: item.title || "Community Activity",
       description: item.description || "",
-      author: item.authorName || "TPI",
+      author: getAuthorName(item, "TPI"),
+      authorTitle: item.authorTitle || "Activity",
+      authorPhotoUrl: item.authorPhotoUrl || "",
+      authorUsername: item.authorUsername || "",
       date: item.createdAt || item.publishedAt
     };
   }
@@ -395,6 +437,19 @@
         }).join("")}
       </div>
     `;
+  }
+
+  function renderFeedAvatar(meta) {
+    const name = meta.author || "Member";
+    const initial = escapeHtml(name.trim().charAt(0) || "M");
+    if (meta.authorPhotoUrl) {
+      return `<span class="member-feed-post-avatar"><img src="${escapeAttr(meta.authorPhotoUrl)}" alt="${escapeAttr(name)}" loading="lazy"></span>`;
+    }
+    return `<span class="member-feed-post-avatar">${initial}</span>`;
+  }
+
+  function getAuthorName(item, fallback) {
+    return item.authorName || item.authorDisplayName || item.displayName || item.username || fallback;
   }
 
   async function shareItem(url, title) {
