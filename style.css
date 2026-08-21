@@ -3239,6 +3239,62 @@ footer {
     align-items: center;
 }
 
+.member-feed-members {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    background: rgba(9, 15, 20, 0.62);
+    border: 1px solid rgba(85, 200, 255, 0.16);
+    border-radius: 6px;
+}
+
+.member-feed-members-label {
+    color: #55c8ff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.member-feed-member-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.member-feed-member {
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+    min-width: 74px;
+    color: #c7d5e2;
+    text-align: center;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.member-feed-member img,
+.member-feed-member span {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    object-fit: cover;
+    color: #061018;
+    background: #55c8ff;
+    border: 2px solid rgba(85, 200, 255, 0.7);
+    border-radius: 50%;
+}
+
+.member-feed-member strong {
+    max-width: 82px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .member-explore-select-all,
 .member-explore-check {
     display: inline-flex;

@@ -9,6 +9,7 @@
   const selectAllBox = document.querySelector("[data-explore-select-all]");
   const composer = document.querySelector("[data-explore-composer]");
   const composeStatus = document.querySelector("[data-explore-compose-status]");
+  const membersEl = document.querySelector("[data-feed-members]");
 
   document.querySelectorAll("[data-explore-filter]").forEach(button => {
     button.addEventListener("click", () => {
@@ -80,6 +81,7 @@
     try {
       const data = await window.TPIApi.communityFeed(40, 0);
       items = Array.isArray(data.items) ? data.items : [];
+      renderActiveMembers();
       renderFeed();
     } catch (error) {
       feedEl.innerHTML = `
@@ -129,6 +131,50 @@
         shareItem(button.dataset.shareUrl, button.dataset.shareTitle);
       });
     });
+  }
+
+  function renderActiveMembers() {
+    if (!membersEl) return;
+    const members = [];
+    const seen = new Set();
+    items.forEach(item => {
+      const username = item.authorUsername || "";
+      const name = item.authorName || item.authorDisplayName || "";
+      const key = username || name;
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      members.push({
+        username,
+        name: name || username,
+        photoUrl: item.authorPhotoUrl || "",
+        title: item.authorTitle || ""
+      });
+    });
+    if (!members.length) {
+      membersEl.hidden = true;
+      membersEl.innerHTML = "";
+      return;
+    }
+    membersEl.hidden = false;
+    membersEl.innerHTML = `
+      <span class="member-feed-members-label">Active in feed</span>
+      <div class="member-feed-member-list">
+        ${members.slice(0, 12).map(renderActiveMember).join("")}
+      </div>
+    `;
+  }
+
+  function renderActiveMember(member) {
+    const href = member.username ? `contributor-profile.html?username=${encodeURIComponent(member.username)}` : "community-forum.html?member=1";
+    const initial = escapeHtml((member.name || "M").trim().charAt(0) || "M");
+    return `
+      <a class="member-feed-member" href="${escapeAttr(href)}">
+        ${member.photoUrl
+          ? `<img src="${escapeAttr(member.photoUrl)}" alt="${escapeAttr(member.name)}" loading="lazy">`
+          : `<span>${initial}</span>`}
+        <strong>${escapeHtml(member.name)}</strong>
+      </a>
+    `;
   }
 
   function renderItem(item) {
