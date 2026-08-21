@@ -498,7 +498,6 @@
     const role = member.role || "member";
     const title = member.title || "";
     const active = member.active !== false;
-    const isSelf = username === currentUser?.username;
     const currentUserRole = currentUser?.role || "";
     const canChangeLeadershipAccess = currentUserRole === "owner";
     const changingLeadershipLocked = !canChangeLeadershipAccess && ["owner", "admin"].includes(role);
@@ -520,8 +519,8 @@
           <div class="admin-member-actions">
             <button type="submit">Save Access</button>
             ${active
-              ? `<button type="button" class="admin-member-status-button admin-member-status-button-danger" data-admin-member-active="deactivate" data-username="${escapeHtml(username)}"${isSelf ? " disabled" : ""} title="Block this member until restored">Block</button>`
-              : `<button type="button" class="admin-member-status-button admin-member-status-button-restore" data-admin-member-active="restore" data-username="${escapeHtml(username)}" title="Restore this member's account access">Restore</button>`}
+              ? `<button type="button" class="admin-member-status-button admin-member-status-button-danger admin-member-status-button-locked" disabled title="Open this member's profile to block the account">Block</button>`
+              : `<button type="button" class="admin-member-status-button admin-member-status-button-restore admin-member-status-button-locked" disabled title="Open this member's profile to restore the account">Restore</button>`}
           </div>
         </form>
       </article>

@@ -3292,6 +3292,10 @@ footer {
     cursor: not-allowed;
 }
 
+.admin-member-status-button-locked {
+    filter: grayscale(0.35);
+}
+
 .admin-member-active,
 .admin-member-inactive {
     padding: 4px 7px;
