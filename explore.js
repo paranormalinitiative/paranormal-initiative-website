@@ -8,8 +8,16 @@
   const selectedItems = new Set();
   const selectAllBox = document.querySelector("[data-explore-select-all]");
   const composer = document.querySelector("[data-explore-composer]");
+  const composerOpen = document.querySelector("[data-explore-composer-open]");
+  const composerCancel = document.querySelector("[data-explore-composer-cancel]");
+  const composerExpanded = document.querySelector("[data-explore-composer-expanded]");
+  const composerAvatar = document.querySelector("[data-explore-composer-avatar]");
+  const composerName = document.querySelector("[data-explore-composer-name]");
+  const composerRole = document.querySelector("[data-explore-composer-role]");
   const composeStatus = document.querySelector("[data-explore-compose-status]");
   const membersEl = document.querySelector("[data-feed-members]");
+
+  renderComposerIdentity();
 
   document.querySelectorAll("[data-explore-filter]").forEach(button => {
     button.addEventListener("click", () => {
@@ -63,6 +71,7 @@
       titleInput.value = "";
       bodyInput.value = "";
       if (fileInput) fileInput.value = "";
+      closeComposer();
       setComposeStatus("Posted to your feed.");
       await loadFeed();
       if (response?.topic?.id) {
@@ -71,6 +80,13 @@
     } catch (error) {
       setComposeStatus(error.message || "Post could not be created.");
     }
+  });
+
+  composerOpen?.addEventListener("click", openComposer);
+  composerCancel?.addEventListener("click", () => {
+    clearComposer();
+    closeComposer();
+    setComposeStatus("");
   });
 
   loadFeed();
@@ -92,6 +108,61 @@
         </article>
       `;
     }
+  }
+
+  function openComposer() {
+    if (!composerExpanded) return;
+    composerExpanded.hidden = false;
+    composer?.classList.add("is-open");
+    document.querySelector("[data-explore-title]")?.focus();
+  }
+
+  function closeComposer() {
+    if (!composerExpanded) return;
+    composerExpanded.hidden = true;
+    composer?.classList.remove("is-open");
+  }
+
+  function clearComposer() {
+    const titleInput = document.querySelector("[data-explore-title]");
+    const bodyInput = document.querySelector("[data-explore-body]");
+    const fileInput = document.querySelector("[data-explore-files]");
+    if (titleInput) titleInput.value = "";
+    if (bodyInput) bodyInput.value = "";
+    if (fileInput) fileInput.value = "";
+  }
+
+  async function renderComposerIdentity() {
+    const user = await getActiveUser();
+    const displayName = user?.displayName || user?.display_name || user?.username || "Todd Wayne";
+    const role = user?.title || getRoleLabel(user?.role) || "Member";
+    if (composerName) composerName.textContent = displayName;
+    if (composerRole) composerRole.textContent = role;
+    if (!composerAvatar) return;
+    if (user?.photoUrl || user?.photo_url) {
+      composerAvatar.innerHTML = `<img src="${escapeAttr(user.photoUrl || user.photo_url)}" alt="${escapeAttr(displayName)}">`;
+      return;
+    }
+    composerAvatar.textContent = (displayName.trim().charAt(0) || "M").toUpperCase();
+  }
+
+  async function getActiveUser() {
+    try {
+      const data = await window.TPIApi.me();
+      if (data.user) return data.user;
+    } catch (error) {}
+    const username = localStorage.getItem("tpiEditorSession");
+    if (!username) return null;
+    try {
+      const users = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+      return users.find(user => user.username === username && user.active !== false) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function getRoleLabel(role) {
+    return { owner: "Owner Access", admin: "Admin Access", contributor: "Contributor Access", member: "Member Access" }[role] || "";
   }
 
   function renderFeed() {

@@ -3203,6 +3203,67 @@ footer {
     border-radius: 6px;
 }
 
+.member-explore-composer-person {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+}
+
+.member-explore-composer-avatar {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: #061018;
+    background: #55c8ff;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.member-explore-composer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.member-explore-composer-person strong,
+.member-explore-composer-person small {
+    display: block;
+}
+
+.member-explore-composer-person small {
+    margin-top: 3px;
+    color: #8aa0b6;
+    font-size: 12px;
+}
+
+.member-explore-composer-prompt {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    color: #8aa0b6;
+    text-align: left;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.member-explore-composer-prompt:hover,
+.member-explore-composer-prompt:focus {
+    color: #e6edf3;
+    border-color: #55c8ff;
+    outline: none;
+}
+
+.member-explore-composer-expanded {
+    display: grid;
+    gap: 12px;
+}
+
 .member-explore-composer label {
     display: grid;
     gap: 7px;

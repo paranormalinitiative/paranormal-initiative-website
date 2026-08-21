@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="style.css?v=24">
     <link rel="stylesheet" href="member-shell.css?v=2">
 </head>
 <body>
@@ -23,21 +23,32 @@
         <h2>Your Feed</h2>
         <p class="access-note">A chronological community feed for new posts, contributed articles, videos, photos, and live activity.</p>
         <form class="member-explore-composer" data-explore-composer>
-            <label>
-                <span>Share a community post</span>
-                <input type="text" data-explore-title placeholder="Post title" maxlength="160">
-            </label>
-            <label>
-                <span>Message</span>
-                <textarea data-explore-body rows="4" placeholder="Share an update, question, investigation note, or community thought."></textarea>
-            </label>
-            <label>
-                <span>Add photos or videos</span>
-                <input type="file" data-explore-files accept="image/*,video/*" multiple>
-            </label>
-            <div class="member-explore-composer-actions">
-                <button class="portal-button" type="submit">Post To Your Feed</button>
-                <p class="access-note" data-explore-compose-status></p>
+            <div class="member-explore-composer-person">
+                <div class="member-explore-composer-avatar" data-explore-composer-avatar>TW</div>
+                <div>
+                    <strong data-explore-composer-name>Todd Wayne</strong>
+                    <small data-explore-composer-role>Founder / Director</small>
+                </div>
+            </div>
+            <button class="member-explore-composer-prompt" type="button" data-explore-composer-open>What's on your mind?</button>
+            <div class="member-explore-composer-expanded" data-explore-composer-expanded hidden>
+                <label>
+                    <span>Share a community post</span>
+                    <input type="text" data-explore-title placeholder="Post title" maxlength="160">
+                </label>
+                <label>
+                    <span>Message</span>
+                    <textarea data-explore-body rows="4" placeholder="Share an update, question, investigation note, or community thought."></textarea>
+                </label>
+                <label>
+                    <span>Add photos or videos</span>
+                    <input type="file" data-explore-files accept="image/*,video/*" multiple>
+                </label>
+                <div class="member-explore-composer-actions">
+                    <button class="portal-button" type="submit">Share</button>
+                    <button class="portal-button portal-button-secondary" type="button" data-explore-composer-cancel>Cancel</button>
+                    <p class="access-note" data-explore-compose-status></p>
+                </div>
             </div>
         </form>
         <div class="member-feed-members" data-feed-members hidden></div>
@@ -69,6 +80,6 @@
 <script src="api-client.js"></script>
 <script src="member-login.js?v=24"></script>
 <script src="member-shell.js?v=2"></script>
-<script src="explore.js"></script>
+<script src="explore.js?v=2"></script>
 </body>
 </html>
