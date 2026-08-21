@@ -6,6 +6,8 @@ const members = [
   { name: "Rick Hale", initials: "RH", title: "Historian", online: true }
 ];
 
+const commentEmojis = ["👍", "❤️", "😂", "🔥", "👻", "📷", "🎧", "🔎"];
+
 let posts = [
   {
     id: "p1",
@@ -19,7 +21,7 @@ let posts = [
     unread: true,
     reactions: { useful: 4, follow: 2 },
     comments: [
-      { author: "Steve Glanz", body: "I can compare this against the baseline notes and add a timeline." }
+      { author: "Steve Glanz", body: "I can compare this against the baseline notes and add a timeline.", media: "", mediaType: "" }
     ]
   },
   {
@@ -34,7 +36,7 @@ let posts = [
     unread: true,
     reactions: { useful: 7, follow: 5 },
     comments: [
-      { author: "Todd Wayne", body: "This should be tied into the Education Center after review." }
+      { author: "Todd Wayne", body: "This should be tied into the Education Center after review.", media: "", mediaType: "" }
     ]
   },
   {
@@ -289,12 +291,52 @@ function renderFeed() {
     form.addEventListener("submit", event => {
       event.preventDefault();
       const input = form.querySelector("input");
+      const preview = form.querySelector("[data-comment-preview]");
+      const fileInput = form.querySelector("[data-comment-file]");
       const post = posts.find(item => item.id === form.dataset.postId);
-      if (!post || !input.value.trim()) return;
-      post.comments.push({ author: "Todd Wayne", body: input.value.trim() });
+      const attachment = form.__commentAttachment || null;
+      if (!post || (!input.value.trim() && !attachment)) return;
+      post.comments.push({
+        author: "Todd Wayne",
+        body: input.value.trim(),
+        media: attachment?.url || "",
+        mediaType: attachment?.type || ""
+      });
       post.unread = false;
       input.value = "";
+      fileInput.value = "";
+      form.__commentAttachment = null;
+      preview.hidden = true;
+      preview.innerHTML = "";
       renderFeed();
+    });
+  });
+
+  feedList.querySelectorAll("[data-comment-emoji]").forEach(button => {
+    button.addEventListener("click", () => {
+      const form = button.closest("[data-comment-form]");
+      const input = form.querySelector("input");
+      input.value = `${input.value}${button.dataset.commentEmoji}`;
+      input.focus();
+    });
+  });
+
+  feedList.querySelectorAll("[data-comment-file]").forEach(input => {
+    input.addEventListener("change", () => {
+      const form = input.closest("[data-comment-form]");
+      const preview = form.querySelector("[data-comment-preview]");
+      const file = input.files?.[0];
+      form.__commentAttachment = null;
+      preview.hidden = true;
+      preview.innerHTML = "";
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      const type = file.type.startsWith("video/") ? "video" : "image";
+      form.__commentAttachment = { url, type };
+      preview.hidden = false;
+      preview.innerHTML = type === "video"
+        ? `<video src="${url}" controls></video>`
+        : `<img src="${url}" alt="Comment media preview">`;
     });
   });
 
@@ -345,13 +387,43 @@ function renderPost(post) {
         </div>
       </div>
       <section class="comments">
-        ${post.comments.map(comment => `<p class="comment"><strong>${escapeHtml(comment.author)}:</strong> ${escapeHtml(comment.body)}</p>`).join("")}
+        ${post.comments.map(renderComment).join("")}
         <form class="comment-form" data-comment-form data-post-id="${post.id}">
           <input type="text" placeholder="Add a comment">
+          <div class="comment-tools" aria-label="Comment tools">
+            <div class="comment-emojis">
+              ${commentEmojis.map(emoji => `<button class="emoji-button" type="button" data-comment-emoji="${emoji}" aria-label="Add ${emoji}">${emoji}</button>`).join("")}
+            </div>
+            <label class="comment-upload">
+              <input data-comment-file type="file" accept="image/gif,image/*,video/*">
+              Upload Photo / GIF
+            </label>
+          </div>
+          <div class="comment-preview" data-comment-preview hidden></div>
           <button class="post-action" type="submit">Reply</button>
         </form>
       </section>
     </article>
+  `;
+}
+
+function renderComment(comment) {
+  return `
+    <article class="comment">
+      <p><strong>${escapeHtml(comment.author)}:</strong> ${escapeHtml(comment.body)}</p>
+      ${renderCommentMedia(comment)}
+    </article>
+  `;
+}
+
+function renderCommentMedia(comment) {
+  if (!comment.media) return "";
+  return `
+    <div class="comment-media">
+      ${comment.mediaType === "video"
+        ? `<video src="${comment.media}" controls></video>`
+        : `<img src="${comment.media}" alt="Comment attachment">`}
+    </div>
   `;
 }
 
