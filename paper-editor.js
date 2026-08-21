@@ -425,7 +425,7 @@
 
   function getEditorAccessMessage(user) {
     if (user && !hasContributorAccess(user)) {
-      return "Please subscribe to access the Content Editor. A Director or Admin can also grant Content Editor access from the Admin Panel.";
+      return "Content Editor access has not been enabled for this account yet. A Director or Admin can grant access from the Admin Panel.";
     }
     return "Contributor access is required to open the Content Editor.";
   }
@@ -469,7 +469,7 @@
       <form class="editor-access-card" data-access-form="login">
         <p class="portal-kicker">Contributor Access</p>
         <h2>Sign In</h2>
-        <p>Use your contributor username and password to open the Content Editor. If your membership does not include editor access, please subscribe to access the Content Editor.</p>
+        <p>Use your contributor username and password to open the Content Editor. Free members can use the community; editor access is enabled by a Director or Admin while paid membership is being prepared.</p>
         <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
         <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
         <button type="submit">Open Editor</button>
