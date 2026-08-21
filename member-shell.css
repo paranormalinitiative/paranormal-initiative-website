@@ -898,8 +898,10 @@ body.member-mode {
 }
 
 .member-floating-chat.is-collapsed {
+    min-width: 420px;
     min-height: 0;
     height: auto !important;
+    max-width: calc(100vw - 300px);
 }
 
 .member-floating-chat.is-collapsed .member-floating-chat-content,

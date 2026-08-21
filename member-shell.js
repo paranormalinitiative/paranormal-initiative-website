@@ -2434,7 +2434,15 @@
     });
 
     minimizeButton.addEventListener("click", function () {
-      chat.classList.toggle("is-collapsed");
+      var willCollapse = !chat.classList.contains("is-collapsed");
+      if (willCollapse) {
+        storeChatFrame(chat);
+        chat.classList.add("is-collapsed");
+        dockCollapsedChat(chat);
+      } else {
+        chat.classList.remove("is-collapsed");
+        applyStoredChatFrame(chat, true);
+      }
       syncChatMinimizeButton();
       storeChatFrame(chat);
     });
@@ -2998,30 +3006,56 @@
     });
   }
 
-  function applyStoredChatFrame(chat) {
-    var frame = null;
-    try { frame = JSON.parse(localStorage.getItem("tpiFloatingChatFrame") || "null"); } catch (e) {}
+  function applyStoredChatFrame(chat, forceOpen) {
+    var frame = getStoredChatFrame();
     chat.style.width = frame && frame.width ? Math.max(420, frame.width) + "px" : "520px";
     chat.style.height = frame && frame.height ? Math.max(360, frame.height) + "px" : "520px";
     if (frame && frame.left && frame.top) {
       chat.style.left = frame.left + "px";
       chat.style.top = frame.top + "px";
+      chat.style.right = "auto";
+      chat.style.bottom = "auto";
     } else {
+      chat.style.left = "auto";
+      chat.style.top = "auto";
       chat.style.right = "24px";
       chat.style.bottom = "24px";
     }
-    if (frame && frame.collapsed) chat.classList.add("is-collapsed");
+    if (!forceOpen && frame && frame.collapsed) {
+      chat.classList.add("is-collapsed");
+      dockCollapsedChat(chat);
+    }
+  }
+
+  function dockCollapsedChat(chat) {
+    var left = document.body.classList.contains("feed-app-page") ? 278 : 18;
+    chat.style.left = left + "px";
+    chat.style.top = "10px";
+    chat.style.right = "auto";
+    chat.style.bottom = "auto";
+    chat.style.width = "420px";
+    chat.style.height = "auto";
+  }
+
+  function getStoredChatFrame() {
+    try { return JSON.parse(localStorage.getItem("tpiFloatingChatFrame") || "null"); } catch (e) { return null; }
   }
 
   function storeChatFrame(chat) {
     try {
+      var existing = getStoredChatFrame() || {};
+      if (chat.classList.contains("is-collapsed")) {
+        existing.collapsed = true;
+        localStorage.setItem("tpiFloatingChatFrame", JSON.stringify(existing));
+        return;
+      }
       var rect = chat.getBoundingClientRect();
       localStorage.setItem("tpiFloatingChatFrame", JSON.stringify({
         left: Math.round(rect.left),
         top: Math.round(rect.top),
         width: Math.round(rect.width),
         height: Math.round(rect.height),
-        collapsed: chat.classList.contains("is-collapsed")
+        collapsed: false
       }));
     } catch (e) {}
   }
