@@ -3183,6 +3183,11 @@ body.feed-app-page.member-mode {
     background: #070b10;
 }
 
+body.feed-app-page.member-mode .command-header {
+    width: 100%;
+    margin-left: 0;
+}
+
 body.feed-app-page.member-mode .member-sidebar,
 body.feed-app-page.member-mode .member-page-header,
 body.feed-app-page.member-mode #site-footer {
@@ -3638,7 +3643,27 @@ body.feed-app-page .member-explore-feed {
     min-height: 0;
     max-height: none;
     overflow-y: visible;
-    padding: 0 6px 18px 0;
+    padding: 0 0 18px;
+}
+
+body.feed-app-page .member-explore-row {
+    position: relative;
+    display: block;
+}
+
+body.feed-app-page .member-explore-check {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 1;
+}
+
+body.feed-app-page .member-explore-item {
+    padding-left: 58px;
+}
+
+body.feed-app-page .member-explore-item-shell {
+    width: 100%;
 }
 
 .member-explore-row {
