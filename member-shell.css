@@ -281,6 +281,8 @@ body.member-mode {
     min-height: 0;
     display: grid;
     grid-template-columns: clamp(118px, 30%, 190px) minmax(0, 1fr);
+    align-items: stretch;
+    justify-items: stretch;
     overflow: hidden;
 }
 
@@ -426,16 +428,37 @@ body.member-mode {
 .member-chat-thread {
     min-width: 0;
     min-height: 0;
+    width: 100% !important;
+    max-width: none !important;
     height: 100%;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    justify-self: stretch;
+    align-self: stretch;
+    margin: 0 !important;
     background: #020305;
     border-left: 1px solid rgba(85, 200, 255, 0.1);
+}
+
+.member-chat-thread > * {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.member-chat-thread-header,
+.member-chat-empty {
+    display: none !important;
 }
 
 .member-chat-messages {
     flex: 1 1 auto;
     min-height: 0;
+    width: 100% !important;
+    max-width: none !important;
     display: grid;
     align-content: start;
     gap: 10px;
@@ -445,16 +468,6 @@ body.member-mode {
     background: #020305;
     border: 0;
     border-radius: 0;
-}
-
-.member-chat-empty {
-    align-self: start;
-    width: fit-content;
-    max-width: 100%;
-    padding: 8px 12px;
-    background: #081018;
-    border: 1px solid #263646;
-    border-radius: 999px;
 }
 
 .member-chat-message {
@@ -572,6 +585,9 @@ body.member-mode {
 
 .member-chat-form {
     flex: 0 0 auto;
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: auto;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto auto;
     gap: 8px;
