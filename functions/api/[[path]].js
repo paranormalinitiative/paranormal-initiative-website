@@ -417,7 +417,57 @@ async function handleListNotifications(env, user) {
     ORDER BY read_at IS NOT NULL ASC, created_at DESC
     LIMIT 100
   `).bind(user.id).all();
-  return json({ notifications: (results || []).map(notification => ({ ...notification, read: Boolean(notification.readAt) })) });
+  const notifications = (results || []).map(notification => ({ ...notification, read: Boolean(notification.readAt) }));
+
+  const chatNotifications = await getChatNotifications(env, user);
+  const allNotifications = notifications.concat(chatNotifications).sort((a, b) => {
+    const aTime = a.createdAt || "";
+    const bTime = b.createdAt || "";
+    if (a.read !== b.read) return a.read ? 1 : -1;
+    return aTime > bTime ? -1 : (aTime < bTime ? 1 : 0);
+  }).slice(0, 100);
+
+  return json({ notifications: allNotifications });
+}
+
+async function getChatNotifications(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id AS conversationId, c.title, c.direct,
+           m.id AS messageId, m.body, m.created_at AS createdAt,
+           sender.id AS senderId, sender.username AS senderUsername, sender.display_name AS senderDisplayName,
+           rs.last_read_at AS lastReadAt
+    FROM conversations c
+    JOIN conversation_participants cp ON cp.conversation_id = c.id
+    JOIN messages m ON m.conversation_id = c.id AND m.deleted_at IS NULL
+    JOIN contributors sender ON sender.id = m.contributor_id
+    LEFT JOIN message_read_state rs ON rs.conversation_id = c.id AND rs.contributor_id = ?
+    WHERE cp.contributor_id = ?
+      AND m.contributor_id != ?
+      AND m.created_at > COALESCE(rs.last_read_at, '1970-01-01')
+    ORDER BY m.created_at DESC
+  `).bind(user.id, user.id, user.id).all();
+
+  const seen = new Set();
+  const notifications = [];
+  for (const row of results || []) {
+    const conversationId = row.conversationId;
+    if (seen.has(conversationId)) continue;
+    seen.add(conversationId);
+    const preview = String(row.body || "").slice(0, 120);
+    const senderName = row.senderDisplayName || row.senderUsername || "Someone";
+    notifications.push({
+      id: `chat-${conversationId}`,
+      title: `${senderName} sent you a message`,
+      body: preview ? `"${preview}"` : "New chat message",
+      actionHref: "#messenger",
+      type: "chat",
+      read: false,
+      createdAt: row.createdAt,
+      conversationId: conversationId,
+      chat: true
+    });
+  }
+  return notifications;
 }
 
 async function handleNotificationUnreadCount(env, user) {
@@ -426,12 +476,48 @@ async function handleNotificationUnreadCount(env, user) {
     FROM member_notifications
     WHERE contributor_id = ? AND read_at IS NULL
   `).bind(user.id).first();
-  return json({ unreadCount: Number(row?.unreadCount || 0) });
+  const tableCount = Number(row?.unreadCount || 0);
+  const chatCount = await getChatUnreadCount(env, user);
+  return json({ unreadCount: tableCount + chatCount });
+}
+
+async function getChatUnreadCount(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT COUNT(DISTINCT c.id) AS count
+    FROM conversations c
+    JOIN conversation_participants cp ON cp.conversation_id = c.id
+    WHERE cp.contributor_id = ?
+      AND EXISTS (
+        SELECT 1 FROM messages m
+        WHERE m.conversation_id = c.id AND m.deleted_at IS NULL AND m.contributor_id != ?
+          AND m.created_at > COALESCE((SELECT last_read_at FROM message_read_state WHERE conversation_id = c.id AND contributor_id = ?), '1970-01-01')
+      )
+  `).bind(user.id, user.id, user.id).all();
+  return Number((results && results[0] && results[0].count) || 0);
 }
 
 async function handleMarkNotificationRead(path, env, user) {
   const id = clean(decodeURIComponent(path.match(/^\/notifications\/([^/]+)\/read$/)?.[1] || ""));
   if (!id) return json({ error: "Notification id is required." }, 400);
+
+  if (String(id).startsWith("chat-")) {
+    const conversationId = id.slice(5);
+    const access = await requireConversationAccess(env, conversationId, user);
+    if (!access) return json({ error: "Conversation not found." }, 404);
+    const latest = await env.TPI_DB.prepare(`
+      SELECT id FROM messages WHERE conversation_id = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1
+    `).bind(conversationId).first();
+    const now = new Date().toISOString();
+    await env.TPI_DB.prepare(`
+      INSERT INTO message_read_state (conversation_id, contributor_id, last_read_message_id, last_read_at)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(conversation_id, contributor_id) DO UPDATE SET
+        last_read_message_id = excluded.last_read_message_id,
+        last_read_at = excluded.last_read_at
+    `).bind(conversationId, user.id, latest ? latest.id : null, now).run();
+    return json({ ok: true, id });
+  }
+
   await env.TPI_DB.prepare(`
     UPDATE member_notifications
     SET read_at = COALESCE(read_at, CURRENT_TIMESTAMP)

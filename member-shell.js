@@ -172,6 +172,16 @@
     // Set up floating community chat for signed-in members only.
     if (!user.guest) {
       await initFloatingChat(user);
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var openChatId = params.get("openChat");
+        if (openChatId && window.TPIMessenger && typeof window.TPIMessenger.openConversation === "function") {
+          await window.TPIMessenger.openConversation(openChatId);
+          params.delete("openChat");
+          var newUrl = window.location.pathname + (params.toString() ? "?" + params.toString() : "") + window.location.hash;
+          window.history.replaceState({}, "", newUrl);
+        }
+      } catch (e) {}
     }
 
     // Mark ready
@@ -2886,6 +2896,33 @@
         return '<span>' + escapeHtml(getAttachmentLabel(attachment)) + '</span>';
       }).join("");
     }
+
+    window.TPIMessenger = {
+      isReady: function() { return true; },
+      openConversation: async function(conversationId) {
+        if (!conversationId) return;
+        if (chat.classList.contains("is-collapsed")) {
+          chat.classList.remove("is-collapsed");
+          applyStoredChatFrame(chat, true);
+          syncChatMinimizeButton();
+        }
+        var existing = chatList.find(function(c) { return c.id === conversationId; });
+        if (existing) {
+          await openChat(existing);
+        } else {
+          try {
+            var res = await apiFetch("GET", "/api/conversations/" + encodeURIComponent(conversationId));
+            if (res.ok && res.data.conversation) {
+              var remote = normalizeRemoteConversation(res.data.conversation);
+              chatList.push(remote);
+              replaceStoredChats(user, chatList);
+              await openChat(remote);
+            }
+          } catch (e) {}
+        }
+        if (inputEl) inputEl.focus();
+      }
+    };
   }
 
   async function loadChatRoster(user) {

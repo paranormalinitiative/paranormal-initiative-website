@@ -897,6 +897,10 @@
     const meta = getNotificationTypeMeta(notification);
     const actionHref = notification.actionHref || meta.href || "member-dashboard.html";
     const createdAt = notification.createdAt ? new Date(notification.createdAt).toLocaleString() : "";
+    const isChat = notification.chat || notification.type === "chat" || notification.type === "message";
+    const openAction = isChat && notification.conversationId
+      ? `<button type="button" class="portal-button portal-button-secondary" data-notification-chat="${escapeHtml(notification.conversationId)}">Open</button>`
+      : (actionHref ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(actionHref)}">Open</a>` : "");
     return `
       <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}" data-notification-type="${escapeHtml(meta.tone)}">
         <div>
@@ -905,7 +909,7 @@
           <p>${escapeHtml(notification.body || "")}</p>
         </div>
         <div class="member-notification-actions">
-          ${actionHref ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(actionHref)}">Open</a>` : ""}
+          ${openAction}
           ${notification.read ? "" : `<button type="button" data-notification-read="${escapeHtml(notification.id)}">Mark Read</button>`}
         </div>
       </article>
@@ -1993,6 +1997,24 @@
         await initMemberNotifications();
       } catch (error) {
         setStatus(error.message || "Notification could not be updated.", true);
+      }
+      return;
+    }
+
+    const notificationChatButton = event.target.closest("[data-notification-chat]");
+    if (notificationChatButton) {
+      event.preventDefault();
+      const conversationId = notificationChatButton.dataset.notificationChat;
+      if (!conversationId) return;
+      if (window.TPIMessenger && typeof window.TPIMessenger.openConversation === "function") {
+        window.TPIMessenger.openConversation(conversationId).then(async function() {
+          try {
+            await window.TPIApi.markNotificationRead("chat-" + conversationId);
+            await initMemberNotifications();
+          } catch (e) {}
+        });
+      } else {
+        window.location.href = "member-explore.html?openChat=" + encodeURIComponent(conversationId);
       }
       return;
     }
