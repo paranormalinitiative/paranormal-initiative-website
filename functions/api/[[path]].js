@@ -2291,13 +2291,14 @@ async function handleMarkConversationRead(path, request, env, user) {
     ORDER BY created_at DESC LIMIT 1
   `).bind(conversationId).first();
 
+  const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
     INSERT INTO message_read_state (conversation_id, contributor_id, last_read_message_id, last_read_at)
-    VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+    VALUES (?, ?, ?, ?)
     ON CONFLICT(conversation_id, contributor_id) DO UPDATE SET
       last_read_message_id = excluded.last_read_message_id,
       last_read_at = excluded.last_read_at
-  `).bind(conversationId, user.id, latest ? latest.id : null).run();
+  `).bind(conversationId, user.id, latest ? latest.id : null, now).run();
 
   return json({ ok: true }, 200, { "Cache-Control": "no-store" });
 }
