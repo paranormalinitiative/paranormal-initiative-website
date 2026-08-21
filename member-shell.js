@@ -150,6 +150,9 @@
     // Set up mobile nav
     injectMobileNav();
 
+    // Set up floating community chat
+    await initFloatingChat(user);
+
     // Mark ready
     document.body.classList.add("member-ready");
   }
@@ -305,14 +308,22 @@
   async function setupNotificationBadge() {
     var badge = document.querySelector("[data-notification-count]");
     if (!badge) return;
+    var count = getLocalChatUnreadCount();
     try {
       var resp = await fetch("/api/notifications/unread-count", { credentials: "same-origin", cache: "no-store" });
-      if (!resp.ok) return;
+      if (!resp.ok) {
+        renderNotificationBadge(badge, count);
+        return;
+      }
       var data = await resp.json();
-      var count = Number(data.unreadCount || 0);
-      badge.textContent = count > 99 ? "99+" : String(count);
-      badge.hidden = count <= 0;
+      count += Number(data.unreadCount || 0);
     } catch (e) {}
+    renderNotificationBadge(badge, count);
+  }
+
+  function renderNotificationBadge(badge, count) {
+    badge.textContent = count > 99 ? "99+" : String(count);
+    badge.hidden = count <= 0;
   }
 
   async function setupExploreBadge() {
@@ -335,6 +346,352 @@
   function getExploreItemDate(item) {
     if (!item) return "";
     return item.createdAt || item.publishedAt || item.startedAt || item.topicCreatedAt || "";
+  }
+
+  async function initFloatingChat(user) {
+    if (document.querySelector("[data-member-floating-chat]")) return;
+    var roster = await loadChatRoster(user);
+    var currentChat = loadCurrentChat(user, roster);
+    var chat = document.createElement("section");
+    chat.className = "member-floating-chat";
+    chat.setAttribute("data-member-floating-chat", "");
+    chat.setAttribute("aria-label", "Floating community chat");
+    applyStoredChatFrame(chat);
+    chat.innerHTML =
+      '<header class="member-floating-chat-header" data-chat-drag>' +
+        '<div><span class="member-chat-kicker">Community Chat</span><strong data-chat-title>' + escapeHtml(currentChat.title) + '</strong></div>' +
+        '<div class="member-chat-header-actions">' +
+          '<button type="button" data-chat-new>New Chat</button>' +
+          '<button type="button" data-chat-minimize>Hide</button>' +
+        '</div>' +
+      '</header>' +
+      '<div class="member-floating-chat-content">' +
+        '<section class="member-chat-online" aria-label="Online now">' +
+          '<span class="member-chat-section-label">Online Now</span>' +
+          '<div class="member-chat-online-list" data-chat-online></div>' +
+        '</section>' +
+        '<section class="member-chat-create" data-chat-create hidden>' +
+          '<span class="member-chat-section-label">Create Chat</span>' +
+          '<p>Add members you want in this chat.</p>' +
+          '<div class="member-chat-member-list" data-chat-members></div>' +
+          '<button type="button" data-chat-start>Start Chat</button>' +
+        '</section>' +
+        '<section class="member-chat-messages" data-chat-messages aria-label="Chat messages"></section>' +
+        '<form class="member-chat-form" data-chat-form>' +
+          '<input type="text" data-chat-input placeholder="Send a message">' +
+          '<button type="submit">Send</button>' +
+        '</form>' +
+      '</div>' +
+      '<span class="member-chat-resize" data-chat-resize aria-hidden="true"></span>';
+    document.body.appendChild(chat);
+
+    var onlineEl = chat.querySelector("[data-chat-online]");
+    var membersEl = chat.querySelector("[data-chat-members]");
+    var createEl = chat.querySelector("[data-chat-create]");
+    var messagesEl = chat.querySelector("[data-chat-messages]");
+    var titleEl = chat.querySelector("[data-chat-title]");
+    var inputEl = chat.querySelector("[data-chat-input]");
+    var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+
+    renderOnline();
+    renderMemberPicker();
+    renderMessages();
+    setupNotificationBadge();
+
+    chat.querySelector("[data-chat-new]").addEventListener("click", function () {
+      createEl.hidden = !createEl.hidden;
+    });
+
+    chat.querySelector("[data-chat-start]").addEventListener("click", function () {
+      var members = roster.filter(function(member) {
+        return selectedMembers.has(member.username) || member.username === user.username;
+      });
+      if (!members.some(function(member) { return member.username === user.username; })) {
+        members.unshift(normalizeChatMember(user, true));
+      }
+      currentChat = createChat(members, user);
+      createEl.hidden = true;
+      titleEl.textContent = currentChat.title;
+      saveCurrentChat(user, currentChat);
+      renderMessages();
+    });
+
+    chat.querySelector("[data-chat-minimize]").addEventListener("click", function (event) {
+      chat.classList.toggle("is-collapsed");
+      event.currentTarget.textContent = chat.classList.contains("is-collapsed") ? "Show" : "Hide";
+      storeChatFrame(chat);
+    });
+
+    chat.querySelector("[data-chat-form]").addEventListener("submit", function (event) {
+      event.preventDefault();
+      var body = inputEl.value.trim();
+      if (!body) return;
+      currentChat.messages.push({
+        author: normalizeChatMember(user, true),
+        body: body,
+        createdAt: new Date().toISOString()
+      });
+      inputEl.value = "";
+      saveCurrentChat(user, currentChat);
+      bumpLocalChatUnread();
+      renderMessages();
+      setupNotificationBadge();
+    });
+
+    messagesEl.addEventListener("click", function () {
+      markLocalChatRead();
+      setupNotificationBadge();
+    });
+
+    chat.querySelector("[data-chat-members]").addEventListener("change", function (event) {
+      var checkbox = event.target.closest("[data-chat-member]");
+      if (!checkbox) return;
+      if (checkbox.checked) selectedMembers.add(checkbox.value);
+      else selectedMembers.delete(checkbox.value);
+    });
+
+    setupFloatingChatDrag(chat);
+    setupFloatingChatResize(chat);
+
+    function renderOnline() {
+      onlineEl.innerHTML = roster.map(function(member) {
+        return '<button class="member-chat-online-person' + (member.online ? ' is-online' : '') + '" type="button" data-online-member="' + escapeHtml(member.username) + '">' +
+          renderChatAvatar(member) +
+          '<strong>' + escapeHtml(member.displayName) + '</strong>' +
+          '<span class="member-chat-presence">' + escapeHtml(member.online ? "Online" : "Recently active") + '</span>' +
+        '</button>';
+      }).join("");
+      onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          selectedMembers.add(button.dataset.onlineMember);
+          createEl.hidden = false;
+          renderMemberPicker();
+        });
+      });
+    }
+
+    function renderMemberPicker() {
+      membersEl.innerHTML = roster.filter(function(member) {
+        return member.username !== user.username;
+      }).map(function(member) {
+        var checked = selectedMembers.has(member.username) ? " checked" : "";
+        return '<label class="member-chat-member-option">' +
+          '<input type="checkbox" value="' + escapeHtml(member.username) + '" data-chat-member' + checked + '>' +
+          renderChatAvatar(member) +
+          '<span><strong>' + escapeHtml(member.displayName) + '</strong><small>' + escapeHtml(member.title || member.role || "Member") + '</small></span>' +
+        '</label>';
+      }).join("");
+    }
+
+    function renderMessages() {
+      titleEl.textContent = currentChat.title;
+      messagesEl.innerHTML = currentChat.messages.length
+        ? currentChat.messages.map(renderChatMessage).join("")
+        : '<p class="member-chat-empty">Start the conversation with the selected members.</p>';
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+  }
+
+  async function loadChatRoster(user) {
+    var members = [normalizeChatMember(user, true)];
+    try {
+      var feedResp = await fetch("/api/feed?limit=20&offset=0", { credentials: "same-origin", cache: "no-store" });
+      if (feedResp.ok) {
+        var feedData = await feedResp.json();
+        (feedData.items || []).forEach(function(item) {
+          if (!item.authorUsername && !item.authorName) return;
+          members.push(normalizeChatMember({
+            username: item.authorUsername || item.authorName,
+            displayName: item.authorName || item.authorDisplayName || item.authorUsername,
+            title: item.authorTitle || "Member",
+            photoUrl: item.authorPhotoUrl || "",
+            active: true
+          }, true));
+        });
+      }
+    } catch (e) {}
+    try {
+      var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+      local.forEach(function(member) {
+        if (member.developerOwner) return;
+        members.push(normalizeChatMember(member, Boolean(member.active !== false)));
+      });
+    } catch (e) {}
+    return dedupeChatMembers(members);
+  }
+
+  function normalizeChatMember(member, online) {
+    var name = member.displayName || member.display_name || member.name || member.username || "Member";
+    return {
+      username: String(member.username || name).toLowerCase().replace(/\s+/g, "_"),
+      displayName: name,
+      title: member.title || "",
+      role: member.role || "",
+      photoUrl: member.photoUrl || member.photo_url || "",
+      online: Boolean(online)
+    };
+  }
+
+  function dedupeChatMembers(members) {
+    var seen = {};
+    return members.filter(function(member) {
+      if (!member.username || seen[member.username]) return false;
+      seen[member.username] = true;
+      return true;
+    });
+  }
+
+  function createChat(members, user) {
+    var currentUsername = normalizeChatMember(user || {}, true).username || getStoredUsername();
+    var others = members.filter(function(member) { return member.username !== currentUsername; });
+    var title = others.length ? others.map(function(member) { return member.displayName; }).join(", ") : "General Chat";
+    return {
+      id: "chat-" + Date.now(),
+      title: title,
+      members: members,
+      messages: []
+    };
+  }
+
+  function loadCurrentChat(user, roster) {
+    try {
+      var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
+      if (saved && Array.isArray(saved.members) && Array.isArray(saved.messages)) return saved;
+    } catch (e) {}
+    var current = normalizeChatMember(user, true);
+    var partner = roster.find(function(member) { return member.username !== current.username; });
+    return {
+      id: "chat-default",
+      title: partner ? partner.displayName : "General Chat",
+      members: partner ? [current, partner] : [current],
+      messages: []
+    };
+  }
+
+  function saveCurrentChat(user, chat) {
+    try { localStorage.setItem("tpiFloatingChat", JSON.stringify(chat)); } catch (e) {}
+  }
+
+  function getStoredUsername() {
+    try { return localStorage.getItem("tpiEditorSession") || ""; } catch (e) { return ""; }
+  }
+
+  function renderChatMessage(message) {
+    return '<article class="member-chat-message">' +
+      renderChatAvatar(message.author || {}) +
+      '<div><strong>' + escapeHtml(message.author && message.author.displayName || "Member") + '</strong>' +
+      '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
+      '<p>' + escapeHtml(message.body) + '</p></div>' +
+    '</article>';
+  }
+
+  function renderChatAvatar(member) {
+    var name = member.displayName || member.username || "Member";
+    var initial = name.trim().charAt(0).toUpperCase() || "M";
+    var image = member.photoUrl
+      ? '<img src="' + escapeHtml(member.photoUrl) + '" alt="' + escapeHtml(name) + '">'
+      : '<span>' + escapeHtml(initial) + '</span>';
+    return '<span class="member-chat-avatar">' + image + '<i aria-hidden="true"></i></span>';
+  }
+
+  function setupFloatingChatDrag(chat) {
+    var handle = chat.querySelector("[data-chat-drag]");
+    var dragging = false;
+    var offset = { x: 0, y: 0 };
+    handle.addEventListener("pointerdown", function(event) {
+      if (event.target.closest("button")) return;
+      dragging = true;
+      handle.setPointerCapture(event.pointerId);
+      var rect = chat.getBoundingClientRect();
+      offset = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    });
+    handle.addEventListener("pointermove", function(event) {
+      if (!dragging) return;
+      var left = Math.min(Math.max(12, event.clientX - offset.x), window.innerWidth - chat.offsetWidth - 12);
+      var top = Math.min(Math.max(12, event.clientY - offset.y), window.innerHeight - chat.offsetHeight - 12);
+      chat.style.left = left + "px";
+      chat.style.top = top + "px";
+      chat.style.right = "auto";
+      chat.style.bottom = "auto";
+    });
+    handle.addEventListener("pointerup", function(event) {
+      dragging = false;
+      try { handle.releasePointerCapture(event.pointerId); } catch (e) {}
+      storeChatFrame(chat);
+    });
+  }
+
+  function setupFloatingChatResize(chat) {
+    var handle = chat.querySelector("[data-chat-resize]");
+    var resizing = false;
+    handle.addEventListener("pointerdown", function(event) {
+      resizing = true;
+      handle.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+    handle.addEventListener("pointermove", function(event) {
+      if (!resizing) return;
+      var rect = chat.getBoundingClientRect();
+      var width = Math.min(Math.max(320, event.clientX - rect.left), 620);
+      var height = Math.min(Math.max(360, event.clientY - rect.top), 720);
+      chat.style.width = width + "px";
+      chat.style.height = height + "px";
+    });
+    handle.addEventListener("pointerup", function(event) {
+      resizing = false;
+      try { handle.releasePointerCapture(event.pointerId); } catch (e) {}
+      storeChatFrame(chat);
+    });
+  }
+
+  function applyStoredChatFrame(chat) {
+    var frame = null;
+    try { frame = JSON.parse(localStorage.getItem("tpiFloatingChatFrame") || "null"); } catch (e) {}
+    chat.style.width = frame && frame.width ? frame.width + "px" : "380px";
+    chat.style.height = frame && frame.height ? frame.height + "px" : "520px";
+    if (frame && frame.left && frame.top) {
+      chat.style.left = frame.left + "px";
+      chat.style.top = frame.top + "px";
+    } else {
+      chat.style.right = "24px";
+      chat.style.bottom = "24px";
+    }
+    if (frame && frame.collapsed) chat.classList.add("is-collapsed");
+  }
+
+  function storeChatFrame(chat) {
+    try {
+      var rect = chat.getBoundingClientRect();
+      localStorage.setItem("tpiFloatingChatFrame", JSON.stringify({
+        left: Math.round(rect.left),
+        top: Math.round(rect.top),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        collapsed: chat.classList.contains("is-collapsed")
+      }));
+    } catch (e) {}
+  }
+
+  function bumpLocalChatUnread() {
+    try {
+      var count = Number(localStorage.getItem("tpiChatUnreadCount") || "0") || 0;
+      localStorage.setItem("tpiChatUnreadCount", String(count + 1));
+    } catch (e) {}
+  }
+
+  function markLocalChatRead() {
+    try { localStorage.removeItem("tpiChatUnreadCount"); } catch (e) {}
+  }
+
+  function getLocalChatUnreadCount() {
+    try { return Number(localStorage.getItem("tpiChatUnreadCount") || "0") || 0; } catch (e) { return 0; }
+  }
+
+  function formatChatTime(value) {
+    if (!value) return "";
+    var date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   }
 
   // ---- User Session ----
