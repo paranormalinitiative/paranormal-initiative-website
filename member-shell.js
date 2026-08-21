@@ -353,7 +353,7 @@
     var roster = await loadChatRoster(user);
     var currentChat = loadCurrentChat(user, roster);
     var chat = document.createElement("section");
-    var emojiValues = "😀 😃 😄 😁 😆 😅 😂 🙂 😉 😊 😇 😍 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤭 🤫 🤔 🤐 😐 😑 😶 🙄 😏 😴 🤤 😪 😮 😯 😲 😳 🥺 😢 😭 😤 😠 😡 🤯 😬 😰 😱 😨 😓 🤩 🥳 😎 🤓 🧐 👍 👎 👏 🙌 👐 🤝 🙏 💪 ✌️ 🤞 🤟 🤘 👌 👋 ❤️ 🧡 💛 💚 💙 💜 🤍 💔 💕 💞 💓 💗 💖 ✨ ⭐ 🌙 🔥 📷 🎥 🎙️ 🎧 📎 ✅ ❌".split(" ");
+    var emojiValues = "😀 😃 😄 😁 😆 😅 😂 🤣 🙂 😉 😊 😇 😍 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤭 🤫 🤔 🤐 😐 😑 😶 🙄 😏 😴 🤤 😪 😮 😯 😲 😳 🥺 😢 😭 😤 😠 😡 🤯 😬 😰 😱 😨 😓 🤩 🥳 😎 🤓 🧐 👍 👎 👏 🙌 👐 🤝 🙏 💪 ✌️ 🤞 🤟 🤘 👌 👋 ❤️ 🧡 💛 💚 💙 💜 🤍 💔 💕 💞 💓 💗 💖 ✨ ⭐ 🌙 ☀️ 🌈 🔥 💧 ⚡ 🌊 🌲 🌹 🍀 🎉 🎊 🎈 🎁 🏆 🥇 🎵 🎶 🎧 🎙️ 🎥 📷 📎 📝 ✅ ❌ ⚠️ ❗ ❓ 💡 🔍 🔒 🔓 🛠️ ⚙️ 🧭 ⏰ 📅 💬 📞 💻 📱 🚗 🚕 🚙 🚌 🚎 🏎️ 🚓 🚑 🚒 🚐 🛻 🚚 🚛 🚜 🛵 🏍️ 🚲 ✈️ 🚁 🚂 🚆 🚇 🚀 🛸 ⛵ 🚢 ⚓ 🏠 🏢 🏫 🏥 🏕️ ⛰️ 🌌 🌃".split(" ");
     chat.className = "member-floating-chat";
     chat.setAttribute("data-member-floating-chat", "");
     chat.setAttribute("aria-label", "Floating community chat");
@@ -401,7 +401,11 @@
           '</form>' +
         '</section>' +
       '</div>' +
-      '<span class="member-chat-resize" data-chat-resize aria-hidden="true"></span>';
+      '<span class="member-chat-resize" data-chat-resize aria-hidden="true"></span>' +
+      '<div class="member-chat-lightbox" data-chat-lightbox hidden>' +
+        '<button type="button" data-chat-lightbox-close>Close</button>' +
+        '<img src="" alt="" data-chat-lightbox-image>' +
+      '</div>';
     document.body.appendChild(chat);
 
     var onlineEl = chat.querySelector("[data-chat-online]");
@@ -416,6 +420,8 @@
     var mediaInputEl = chat.querySelector("[data-chat-media-input]");
     var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
     var minimizeButton = chat.querySelector("[data-chat-minimize]");
+    var lightboxEl = chat.querySelector("[data-chat-lightbox]");
+    var lightboxImageEl = chat.querySelector("[data-chat-lightbox-image]");
     var pendingAttachments = [];
     var voiceRecorder = null;
     var voiceChunks = [];
@@ -555,6 +561,13 @@
     messagesEl.addEventListener("click", function (event) {
       var deleteButton = event.target.closest("[data-chat-delete]");
       var editButton = event.target.closest("[data-chat-edit]");
+      var previewButton = event.target.closest("[data-chat-preview-image]");
+      if (previewButton && lightboxEl && lightboxImageEl) {
+        lightboxImageEl.src = previewButton.dataset.chatPreviewImage || "";
+        lightboxImageEl.alt = previewButton.dataset.chatPreviewAlt || "Chat image";
+        lightboxEl.hidden = false;
+        return;
+      }
       if (editButton) {
         var editIndex = Number(editButton.dataset.chatEdit);
         if (Number.isInteger(editIndex) && currentChat.messages[editIndex]) {
@@ -578,6 +591,13 @@
       }
       markLocalChatRead();
       setupNotificationBadge();
+    });
+
+    chat.querySelector("[data-chat-lightbox-close]").addEventListener("click", function () {
+      if (!lightboxEl || !lightboxImageEl) return;
+      lightboxEl.hidden = true;
+      lightboxImageEl.src = "";
+      lightboxImageEl.alt = "";
     });
 
     chat.querySelector("[data-chat-members]").addEventListener("change", function (event) {
@@ -870,7 +890,7 @@
     return '<div class="member-chat-attachments">' + attachments.map(function(attachment) {
       var label = escapeHtml(getAttachmentLabel(attachment));
       if (attachment && attachment.url && attachment.type === "photo") {
-        return '<figure><img src="' + escapeHtml(attachment.url) + '" alt="' + label + '"><figcaption>' + label + '</figcaption></figure>';
+        return '<figure><button type="button" class="member-chat-image-preview" data-chat-preview-image="' + escapeHtml(attachment.url) + '" data-chat-preview-alt="' + label + '"><img src="' + escapeHtml(attachment.url) + '" alt="' + label + '"></button><figcaption>' + label + '</figcaption></figure>';
       }
       if (attachment && attachment.url && attachment.type === "video") {
         return '<figure><video src="' + escapeHtml(attachment.url) + '" controls></video><figcaption>' + label + '</figcaption></figure>';
@@ -939,23 +959,35 @@
   function setupFloatingChatResize(chat) {
     var handle = chat.querySelector("[data-chat-resize]");
     var resizing = false;
+    var start = null;
     handle.addEventListener("pointerdown", function(event) {
       resizing = true;
+      var rect = chat.getBoundingClientRect();
+      start = {
+        x: event.clientX,
+        y: event.clientY,
+        width: rect.width,
+        height: rect.height
+      };
       handle.setPointerCapture(event.pointerId);
       event.preventDefault();
+      event.stopPropagation();
     });
     handle.addEventListener("pointermove", function(event) {
-      if (!resizing) return;
-      var rect = chat.getBoundingClientRect();
-      var width = Math.min(Math.max(420, event.clientX - rect.left), 980);
-      var height = Math.min(Math.max(360, event.clientY - rect.top), 780);
+      if (!resizing || !start) return;
+      var width = Math.min(Math.max(420, start.width + (event.clientX - start.x)), 980);
+      var height = Math.min(Math.max(360, start.height + (event.clientY - start.y)), 780);
       chat.style.width = width + "px";
       chat.style.height = height + "px";
+      event.preventDefault();
+      event.stopPropagation();
     });
     handle.addEventListener("pointerup", function(event) {
       resizing = false;
+      start = null;
       try { handle.releasePointerCapture(event.pointerId); } catch (e) {}
       storeChatFrame(chat);
+      event.stopPropagation();
     });
   }
 
