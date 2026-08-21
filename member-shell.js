@@ -378,8 +378,24 @@
         '</aside>' +
         '<section class="member-chat-thread">' +
           '<section class="member-chat-messages" data-chat-messages aria-label="Chat messages"></section>' +
+          '<div class="member-chat-attachment-preview" data-chat-attachments hidden></div>' +
+          '<div class="member-chat-emoji-picker" data-chat-emoji-picker hidden>' +
+            '<button type="button" data-chat-emoji-value="😀">😀</button>' +
+            '<button type="button" data-chat-emoji-value="😂">😂</button>' +
+            '<button type="button" data-chat-emoji-value="❤️">❤️</button>' +
+            '<button type="button" data-chat-emoji-value="🙏">🙏</button>' +
+            '<button type="button" data-chat-emoji-value="👻">👻</button>' +
+            '<button type="button" data-chat-emoji-value="👍">👍</button>' +
+          '</div>' +
           '<form class="member-chat-form" data-chat-form>' +
+            '<div class="member-chat-tools" aria-label="Message tools">' +
+              '<button type="button" data-chat-media title="Add photos or videos">Photo</button>' +
+              '<button type="button" data-chat-voice title="Add a voice message">Voice</button>' +
+              '<button type="button" data-chat-emoji title="Open emojis">Emoji</button>' +
+            '</div>' +
+            '<input type="file" data-chat-media-input accept="image/*,video/*" multiple hidden>' +
             '<input type="text" data-chat-input placeholder="Send a message">' +
+            '<button type="button" data-chat-like title="Send thumbs up">Like</button>' +
             '<button type="submit">Send</button>' +
           '</form>' +
         '</section>' +
@@ -393,6 +409,10 @@
     var messagesEl = chat.querySelector("[data-chat-messages]");
     var titleEl = chat.querySelector("[data-chat-title]");
     var inputEl = chat.querySelector("[data-chat-input]");
+    var attachmentPreviewEl = chat.querySelector("[data-chat-attachments]");
+    var mediaInputEl = chat.querySelector("[data-chat-media-input]");
+    var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
+    var pendingAttachments = [];
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
 
     renderOnline();
@@ -427,17 +447,46 @@
     chat.querySelector("[data-chat-form]").addEventListener("submit", function (event) {
       event.preventDefault();
       var body = inputEl.value.trim();
-      if (!body) return;
-      currentChat.messages.push({
-        author: normalizeChatMember(user, true),
-        body: body,
-        createdAt: new Date().toISOString()
-      });
+      if (!body && !pendingAttachments.length) return;
+      sendChatMessage(body, pendingAttachments);
       inputEl.value = "";
-      saveCurrentChat(user, currentChat);
-      bumpLocalChatUnread();
-      renderMessages();
-      setupNotificationBadge();
+      pendingAttachments = [];
+      renderAttachmentPreview();
+    });
+
+    chat.querySelector("[data-chat-media]").addEventListener("click", function () {
+      mediaInputEl.click();
+    });
+
+    mediaInputEl.addEventListener("change", function () {
+      pendingAttachments = Array.from(mediaInputEl.files || []).slice(0, 6).map(function(file) {
+        return {
+          name: file.name,
+          type: file.type && file.type.startsWith("video/") ? "video" : "photo"
+        };
+      });
+      renderAttachmentPreview();
+    });
+
+    chat.querySelector("[data-chat-voice]").addEventListener("click", function () {
+      pendingAttachments.push({ name: "Voice message", type: "voice" });
+      renderAttachmentPreview();
+      inputEl.focus();
+    });
+
+    chat.querySelector("[data-chat-emoji]").addEventListener("click", function () {
+      emojiPickerEl.hidden = !emojiPickerEl.hidden;
+    });
+
+    emojiPickerEl.addEventListener("click", function (event) {
+      var emojiButton = event.target.closest("[data-chat-emoji-value]");
+      if (!emojiButton) return;
+      inputEl.value += emojiButton.dataset.chatEmojiValue || "";
+      inputEl.focus();
+    });
+
+    chat.querySelector("[data-chat-like]").addEventListener("click", function () {
+      sendChatMessage("👍", []);
     });
 
     messagesEl.addEventListener("click", function () {
@@ -489,8 +538,34 @@
       titleEl.textContent = currentChat.title;
       messagesEl.innerHTML = currentChat.messages.length
         ? currentChat.messages.map(renderChatMessage).join("")
-        : '<p class="member-chat-empty">Start the conversation with the selected members.</p>';
+        : '<p class="member-chat-empty">No messages yet.</p>';
       messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function sendChatMessage(body, attachments) {
+      currentChat.messages.push({
+        author: normalizeChatMember(user, true),
+        body: body,
+        attachments: attachments || [],
+        createdAt: new Date().toISOString()
+      });
+      saveCurrentChat(user, currentChat);
+      bumpLocalChatUnread();
+      renderMessages();
+      setupNotificationBadge();
+    }
+
+    function renderAttachmentPreview() {
+      if (!attachmentPreviewEl) return;
+      if (!pendingAttachments.length) {
+        attachmentPreviewEl.hidden = true;
+        attachmentPreviewEl.innerHTML = "";
+        return;
+      }
+      attachmentPreviewEl.hidden = false;
+      attachmentPreviewEl.innerHTML = pendingAttachments.map(function(attachment) {
+        return '<span>' + escapeHtml(getAttachmentLabel(attachment)) + '</span>';
+      }).join("");
     }
   }
 
@@ -582,19 +657,40 @@
 
   function renderChatMessage(message) {
     var author = normalizeChatMember(message.author || {}, true);
-    var currentUsername = getStoredUsername();
+    var currentUsername = normalizeChatUsername(getStoredUsername());
     var isOwn = currentUsername && author.username === currentUsername;
     return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
       renderChatAvatar(message.author || {}) +
       '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
       '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
-      '<p>' + escapeHtml(message.body) + '</p></div>' +
+      (message.body ? '<p>' + escapeHtml(message.body) + '</p>' : '') +
+      renderChatAttachments(message.attachments) + '</div>' +
     '</article>';
+  }
+
+  function renderChatAttachments(attachments) {
+    if (!Array.isArray(attachments) || !attachments.length) return "";
+    return '<div class="member-chat-attachments">' + attachments.map(function(attachment) {
+      return '<span>' + escapeHtml(getAttachmentLabel(attachment)) + '</span>';
+    }).join("") + '</div>';
+  }
+
+  function getAttachmentLabel(attachment) {
+    var type = attachment && attachment.type ? attachment.type : "file";
+    var name = attachment && attachment.name ? attachment.name : type;
+    if (type === "photo") return "Photo: " + name;
+    if (type === "video") return "Video: " + name;
+    if (type === "voice") return "Voice message";
+    return name;
   }
 
   function normalizeChatBubbleColor(value) {
     var color = String(value || "").trim();
     return /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#55c8ff";
+  }
+
+  function normalizeChatUsername(value) {
+    return String(value || "").toLowerCase().replace(/\s+/g, "_");
   }
 
   function renderChatAvatar(member) {
