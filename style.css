@@ -6266,6 +6266,55 @@ body.feed-app-page .member-explore-item-shell {
     .contributor-manager {
         grid-template-columns: 1fr;
     }
+
+    body.member-mode .member-login-shell {
+        width: 100%;
+        max-width: 100%;
+        gap: 14px;
+        padding-bottom: 20px;
+    }
+
+    body.member-mode .member-login-shell .editor-access-card {
+        width: 100%;
+        min-width: 0;
+        padding: 18px 16px;
+        gap: 12px;
+        box-sizing: border-box;
+    }
+
+    body.member-mode .member-login-shell .editor-access-card h2 {
+        font-size: 20px;
+    }
+
+    body.member-mode .member-login-shell .editor-access-card input,
+    body.member-mode .member-login-shell .editor-access-card select,
+    body.member-mode .member-login-shell .editor-access-card button {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    body.member-mode .member-login-shell .editor-access-card button {
+        justify-self: stretch;
+    }
+
+    body.member-mode .member-login-status {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 420px) {
+    body.member-mode .member-login-shell .editor-access-card {
+        padding: 16px 14px;
+    }
+
+    body.member-mode .member-login-shell .editor-access-card h2 {
+        font-size: 18px;
+    }
+
+    body.member-mode .member-login-shell .portal-kicker {
+        font-size: 10px;
+    }
 }
 
 .directory-subpage-hero {

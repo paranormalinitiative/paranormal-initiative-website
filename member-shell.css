@@ -2191,7 +2191,7 @@ body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel
 
     .member-main {
         margin-left: 0;
-        padding: 16px 14px 80px;
+        padding: 16px 14px calc(116px + env(safe-area-inset-bottom, 0px));
         height: auto;
         overflow: visible;
     }
