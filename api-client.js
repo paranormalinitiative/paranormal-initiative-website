@@ -62,6 +62,7 @@
     listContributors: () => request("/admin/contributors"),
     updateContributorTitle: payload => request("/admin/contributors/title", { method: "POST", body: payload }),
     searchMembers: search => request(`/admin/members?search=${encodeURIComponent(search || "")}`),
+    listMemberActivity: username => request(`/admin/members/${encodeURIComponent(username || "")}/activity`),
     blockMember: username => request(`/admin/members/${encodeURIComponent(username)}/block`, { method: "POST" }),
     unblockMember: username => request(`/admin/members/${encodeURIComponent(username)}/unblock`, { method: "POST" }),
     memberForumPosts: username => request(`/admin/forum/posts?username=${encodeURIComponent(username || "")}`),

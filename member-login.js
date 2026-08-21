@@ -26,6 +26,13 @@
   const publicProfileLink = document.querySelector("[data-public-profile-link]");
   const publicProfileRoot = document.querySelector("[data-public-profile]");
   const profilePhotoPreview = document.querySelector("[data-profile-photo-preview]");
+  const adminPanelRoot = document.querySelector("[data-admin-panel]");
+  const adminMemberSearchForm = document.querySelector("[data-admin-member-search-form]");
+  const adminMemberResults = document.querySelector("[data-admin-member-results]");
+  const adminMemberDetail = document.querySelector("[data-admin-member-detail]");
+  const adminSelectedTitle = document.querySelector("[data-admin-selected-title]");
+  let currentAdminUser = null;
+  let selectedAdminUsername = "";
 
   function setStatus(message, isError) {
     if (!status) return;
@@ -473,6 +480,198 @@
       : `<p class="access-note">No member accounts have been created yet.</p>`;
   }
 
+  function getAdminRoleOptions(currentRole, currentUserRole) {
+    const canChangeLeadershipAccess = currentUserRole === "owner";
+    const lockLeadershipOptions = !canChangeLeadershipAccess;
+    return `
+      ${option("member", currentRole, "Member Access")}
+      ${option("contributor", currentRole, "Contributor Access")}
+      <option value="admin"${currentRole === "admin" ? " selected" : ""}${lockLeadershipOptions ? " disabled" : ""}>Admin Access</option>
+      <option value="owner"${currentRole === "owner" ? " selected" : ""}${lockLeadershipOptions ? " disabled" : ""}>Owner Access</option>
+    `;
+  }
+
+  function renderAdminMemberRow(member, currentUser) {
+    const username = member.username || "";
+    const name = member.displayName || member.display_name || username || "Member";
+    const role = member.role || "member";
+    const title = member.title || "";
+    const active = member.active !== false;
+    const isSelf = username === currentUser?.username;
+    const currentUserRole = currentUser?.role || "";
+    const canChangeLeadershipAccess = currentUserRole === "owner";
+    const changingLeadershipLocked = !canChangeLeadershipAccess && ["owner", "admin"].includes(role);
+    return `
+      <article class="admin-member-result ${selectedAdminUsername === username ? "selected" : ""}">
+        <button type="button" class="admin-member-select" data-admin-select-member="${escapeHtml(username)}">
+          <strong>${escapeHtml(name)}</strong>
+          <span>${escapeHtml(username)} · ${escapeHtml(role)}${title ? ` · ${escapeHtml(title)}` : ""}</span>
+          <em class="${active ? "admin-member-active" : "admin-member-inactive"}">${active ? "Active" : "Inactive"}</em>
+        </button>
+        <form class="admin-member-access-form" data-admin-title-form>
+          <input name="username" type="hidden" value="${escapeHtml(username)}">
+          <select name="title" aria-label="Public organization title for ${escapeHtml(name)}">
+            ${renderPublicTitleOptions(title)}
+          </select>
+          <select name="role" aria-label="Account access for ${escapeHtml(name)}"${changingLeadershipLocked ? " disabled" : ""}>
+            ${getAdminRoleOptions(role, currentUserRole)}
+          </select>
+          <div class="admin-member-actions">
+            <button type="submit">Save Access</button>
+            ${active
+              ? `<button type="button" class="portal-button-secondary" data-admin-member-active="deactivate" data-username="${escapeHtml(username)}"${isSelf ? " disabled" : ""}>Block</button>`
+              : `<button type="button" class="portal-button-secondary" data-admin-member-active="restore" data-username="${escapeHtml(username)}">Restore</button>`}
+          </div>
+        </form>
+      </article>
+    `;
+  }
+
+  async function getAdminSessionUser() {
+    if (currentAdminUser) return currentAdminUser;
+    if (await cloudflareReady()) {
+      const session = await window.TPIApi.me();
+      currentAdminUser = session.user || null;
+      return currentAdminUser;
+    }
+    currentAdminUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false) || null;
+    return currentAdminUser;
+  }
+
+  async function loadAdminMembers(search = "") {
+    if (!adminMemberResults) return;
+    const currentUser = await getAdminSessionUser();
+    if (!["owner", "admin"].includes(currentUser?.role)) {
+      adminMemberResults.innerHTML = `<p class="access-note access-error">Owner or Admin access is required.</p>`;
+      return;
+    }
+    adminMemberResults.innerHTML = `<p class="access-note">Loading members...</p>`;
+    try {
+      let members = [];
+      if (await cloudflareReady()) {
+        const data = await window.TPIApi.searchMembers(search);
+        members = data.members || [];
+      } else {
+        const needle = String(search || "").trim().toLowerCase();
+        members = getUsers()
+          .filter(user => !user.developerOwner)
+          .filter(user => !needle || [user.username, user.displayName, user.title, user.role].some(value => String(value || "").toLowerCase().includes(needle)));
+      }
+      adminMemberResults.innerHTML = members.length
+        ? members.map(member => renderAdminMemberRow(member, currentUser)).join("")
+        : `<p class="access-note">No members matched that search.</p>`;
+      if (!selectedAdminUsername && members[0]?.username) {
+        await selectAdminMember(members[0].username);
+      }
+    } catch (error) {
+      adminMemberResults.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Could not load members.")}</p>`;
+    }
+  }
+
+  function renderAttachmentList(items, emptyText) {
+    if (!items || !items.length) return `<p class="access-note">${escapeHtml(emptyText)}</p>`;
+    return items.map(item => `
+      <a class="admin-media-item" href="${escapeHtml(item.url || "#")}" target="_blank" rel="noopener noreferrer">
+        <strong>${escapeHtml(item.name || item.topicTitle || "Media")}</strong>
+        <span>${escapeHtml(item.topicTitle || item.contentType || "Uploaded media")}</span>
+      </a>
+    `).join("");
+  }
+
+  function getAdminSearchValue() {
+    return adminMemberSearchForm?.querySelector("input[name='search']")?.value || "";
+  }
+
+  function renderAdminActivity(data) {
+    const member = data.member || {};
+    const posts = data.posts || [];
+    const photos = data.photos || [];
+    const forumVideos = data.forumVideos || [];
+    const tpiVideos = data.tpiVideos || [];
+    const displayName = member.displayName || member.username || "Member";
+    if (adminSelectedTitle) adminSelectedTitle.textContent = displayName;
+    if (!adminMemberDetail) return;
+    adminMemberDetail.innerHTML = `
+      <div class="admin-member-overview">
+        <div><span>Username</span><strong>${escapeHtml(member.username || "")}</strong></div>
+        <div><span>Role</span><strong>${escapeHtml(member.role || "member")}</strong></div>
+        <div><span>Status</span><strong>${member.active === false ? "Blocked" : "Active"}</strong></div>
+        <div><span>Posts</span><strong>${posts.length}</strong></div>
+        <div><span>Photos</span><strong>${photos.length}</strong></div>
+        <div><span>Videos</span><strong>${forumVideos.length + tpiVideos.length}</strong></div>
+      </div>
+      <section class="admin-activity-section">
+        <h4>Forum Posts</h4>
+        <div class="admin-activity-list">
+          ${posts.length ? posts.map(post => `
+            <article class="admin-activity-item">
+              <strong>${escapeHtml(post.topicTitle || "Forum topic")}</strong>
+              <span>${escapeHtml(post.categoryTitle || "Forum")} · ${escapeHtml(post.status || "visible")} · ${escapeHtml(post.createdAt || "")}</span>
+              <p>${escapeHtml(post.body || "").slice(0, 420)}</p>
+              ${(post.attachments || []).length ? `<em>${post.attachments.length} attachment${post.attachments.length === 1 ? "" : "s"}</em>` : ""}
+            </article>
+          `).join("") : `<p class="access-note">No forum posts found for this member.</p>`}
+        </div>
+      </section>
+      <section class="admin-activity-section">
+        <h4>Photos Posted</h4>
+        <div class="admin-media-grid">${renderAttachmentList(photos, "No forum photos found for this member.")}</div>
+      </section>
+      <section class="admin-activity-section">
+        <h4>Videos Posted</h4>
+        <div class="admin-media-grid">
+          ${forumVideos.length || !tpiVideos.length ? renderAttachmentList(forumVideos, "No video posts found for this member.") : ""}
+          ${tpiVideos.map(video => `
+            <a class="admin-media-item" href="tpi-video.html?id=${escapeHtml(video.slug || "")}" target="_blank" rel="noopener noreferrer">
+              <strong>${escapeHtml(video.title || "TPI Video")}</strong>
+              <span>${escapeHtml(video.category || "TPI Video")} · ${escapeHtml(video.status || "published")}</span>
+            </a>
+          `).join("")}
+        </div>
+      </section>
+      <section class="admin-activity-section">
+        <h4>Chat Logs</h4>
+        <p class="access-note">Member chat logging is not connected yet. This panel is reserved for the chat moderation endpoint when Chat launches.</p>
+      </section>
+    `;
+  }
+
+  async function selectAdminMember(username) {
+    selectedAdminUsername = username;
+    if (adminMemberDetail) adminMemberDetail.innerHTML = `<p class="access-note">Loading member activity...</p>`;
+    try {
+      if (await cloudflareReady()) {
+        const data = await window.TPIApi.listMemberActivity(username);
+        renderAdminActivity(data);
+      } else {
+        const user = getUsers().find(member => member.username === username);
+        renderAdminActivity({ member: user, posts: [], photos: [], forumVideos: [], tpiVideos: [] });
+      }
+      await loadAdminMembers(getAdminSearchValue());
+    } catch (error) {
+      if (adminMemberDetail) adminMemberDetail.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Could not load member activity.")}</p>`;
+    }
+  }
+
+  async function initAdminPanel() {
+    if (!adminPanelRoot) return;
+    const currentUser = await getAdminSessionUser();
+    if (!["owner", "admin"].includes(currentUser?.role)) {
+      adminPanelRoot.innerHTML = `
+        <section class="editor-access-card">
+          <p class="portal-kicker">Admin Panel</p>
+          <h2>Access Required</h2>
+          <p class="access-note access-error">Owner or Admin access is required to manage member accounts.</p>
+        </section>
+      `;
+      return;
+    }
+    if (dashboardAdmin) dashboardAdmin.hidden = false;
+    await loadAdminMembers("");
+    const renderedCloudflare = await renderCloudflareOwnerInvites();
+    if (!renderedCloudflare) renderOwnerInvites();
+  }
+
   function renderModerationComment(comment, statusFilter) {
     const author = [comment.name || "Anonymous Contributor", comment.authorTitle].filter(Boolean).join(" - ");
     const pageUrl = comment.pageId || "";
@@ -764,11 +963,17 @@
     const usernameSubmitForm = event.target.closest("[data-username-form]");
     const passwordForm = event.target.closest("[data-password-form]");
     const adminTitleForm = event.target.closest("[data-admin-title-form]");
-    if (!loginForm && !resetRequestForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !usernameSubmitForm && !passwordForm && !adminTitleForm) return;
+    const adminSearchForm = event.target.closest("[data-admin-member-search-form]");
+    if (!loginForm && !resetRequestForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !usernameSubmitForm && !passwordForm && !adminTitleForm && !adminSearchForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
     const users = getUsers();
+
+    if (adminSearchForm) {
+      await loadAdminMembers(String(data.get("search") || "").trim());
+      return;
+    }
 
     if (resetRequestForm) {
       const email = String(data.get("email") || "").trim();
@@ -803,7 +1008,12 @@
       if (await cloudflareReady()) {
         try {
           await window.TPIApi.updateContributorTitle(payload);
-          await renderCloudflareOwnerInvites();
+          if (adminPanelRoot) {
+            await loadAdminMembers(getAdminSearchValue());
+            if (selectedAdminUsername) await selectAdminMember(selectedAdminUsername);
+          } else {
+            await renderCloudflareOwnerInvites();
+          }
           setStatus("Member access saved.", false);
         } catch (error) {
           setStatus(error.message, true);
@@ -828,7 +1038,12 @@
         const nextRole = requestedRole;
         users[targetIndex] = { ...users[targetIndex], title: payload.title, role: nextRole };
         saveUsers(users);
-        renderLocalContributorTitles(currentUser);
+        if (adminPanelRoot) {
+          await loadAdminMembers(getAdminSearchValue());
+          if (selectedAdminUsername) await selectAdminMember(selectedAdminUsername);
+        } else {
+          renderLocalContributorTitles(currentUser);
+        }
         setStatus("Member access saved locally.", false);
       }
       return;
@@ -1349,7 +1564,12 @@
             await window.TPIApi.unblockMember(username);
             setStatus("Member account restored.", false);
           }
-          await renderCloudflareOwnerInvites();
+          if (adminPanelRoot) {
+            await loadAdminMembers(getAdminSearchValue());
+            if (selectedAdminUsername) await selectAdminMember(selectedAdminUsername);
+          } else {
+            await renderCloudflareOwnerInvites();
+          }
         } catch (error) {
           setStatus(error.message || "Member status could not be changed.", true);
         }
@@ -1369,8 +1589,20 @@
       }
       localUsers[targetIndex].active = action !== "deactivate";
       saveUsers(localUsers);
-      renderLocalContributorTitles(currentUser);
+      if (adminPanelRoot) {
+        await loadAdminMembers(getAdminSearchValue());
+        if (selectedAdminUsername) await selectAdminMember(selectedAdminUsername);
+      } else {
+        renderLocalContributorTitles(currentUser);
+      }
       setStatus(action === "deactivate" ? "Member account deactivated locally." : "Member account restored locally.", false);
+      return;
+    }
+
+    const selectMemberButton = event.target.closest("[data-admin-select-member]");
+    if (selectMemberButton) {
+      event.preventDefault();
+      await selectAdminMember(selectMemberButton.dataset.adminSelectMember);
       return;
     }
 
@@ -1427,6 +1659,7 @@
   importInviteFromUrl();
   showOwnerToolsForSetupOnly();
   initDashboard();
+  initAdminPanel();
   initPublicProfile();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();

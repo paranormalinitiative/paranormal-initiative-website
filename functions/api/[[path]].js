@@ -22,6 +22,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
     if (request.method === "GET" && path === "/admin/members") return requireAdmin(request, env, user => handleAdminListMembers(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/activity$/)) return requireAdmin(request, env, user => handleAdminMemberActivity(path, env, user));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
     if (request.method === "GET" && path === "/admin/forum/posts") return requireAdmin(request, env, user => handleAdminMemberForumPosts(request, env, user));
@@ -342,6 +343,55 @@ async function handleAdminSetMemberActive(path, env, actingUser, active) {
 
   const updated = await getUserByUsername(env, username);
   return json({ member: { username: updated.username, displayName: updated.display_name, title: updated.title, role: updated.role, active: Boolean(updated.active) } });
+}
+
+async function handleAdminMemberActivity(path, env) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/activity$/)?.[1] || ""));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const member = await getUserByUsername(env, username);
+  if (!member) return json({ error: "Member was not found." }, 404);
+
+  const { results: postResults } = await env.TPI_DB.prepare(`
+    SELECT
+      fp.id,
+      fp.topic_id AS topicId,
+      fp.body,
+      fp.status,
+      fp.created_at AS createdAt,
+      ft.title AS topicTitle,
+      ft.status AS topicStatus,
+      fc.title AS categoryTitle
+    FROM forum_posts fp
+    JOIN forum_topics ft ON ft.id = fp.topic_id
+    JOIN forum_categories fc ON fc.id = ft.category_id
+    WHERE fp.contributor_id = ?
+    ORDER BY fp.created_at DESC
+    LIMIT 100
+  `).bind(member.id).all();
+
+  const { results: videoResults } = await env.TPI_DB.prepare(`
+    SELECT id, slug, title, category, status, published_at AS publishedAt, created_at AS createdAt, thumbnail, video_url AS videoUrl
+    FROM tpi_videos
+    WHERE created_by = ?
+    ORDER BY created_at DESC
+    LIMIT 100
+  `).bind(member.id).all();
+
+  const posts = await attachForumPostMedia(env, postResults || []);
+  const photos = posts.flatMap(post => (post.attachments || [])
+    .filter(item => item.mediaType === "image")
+    .map(item => ({ ...item, postId: post.id, topicTitle: post.topicTitle, createdAt: post.createdAt })));
+  const forumVideos = posts.flatMap(post => (post.attachments || [])
+    .filter(item => item.mediaType === "video")
+    .map(item => ({ ...item, postId: post.id, topicTitle: post.topicTitle, createdAt: post.createdAt })));
+
+  return json({
+    member: publicUser(member),
+    posts,
+    photos,
+    forumVideos,
+    tpiVideos: videoResults || []
+  });
 }
 
 async function handleAdminMemberForumPosts(request, env) {

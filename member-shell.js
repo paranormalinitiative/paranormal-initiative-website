@@ -19,6 +19,7 @@
   var INHERENT_MEMBER_PAGES = [
     "member-home",
     "member-dashboard",
+    "admin-panel",
     "live-video",
     "podcast"
     // Future: "activity", "chat", "saved"

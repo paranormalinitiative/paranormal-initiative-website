@@ -119,51 +119,6 @@
             </div>
         </article>
 
-        <article id="admin-panel" class="editor-access-card invite-owner-tools" data-dashboard-admin hidden>
-            <p class="portal-kicker">Admin Panel</p>
-            <h2>Contributor Invites</h2>
-            <p>Generate invite links for approved contributors and grant Content Editor access to trusted members. Public visitors and regular members do not see this panel.</p>
-            <form data-owner-invite-form>
-                <label>
-                    <span>Invite Type</span>
-                    <select name="inviteAssignment">
-                        <option value="standard">Standard Contributor</option>
-                        <option value="D">Director</option>
-                        <option value="AD">Assistant Director</option>
-                        <option value="ABM">Advisory Board Member</option>
-                    </select>
-                </label>
-                <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Leave blank to auto-generate"></label>
-                <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label>
-                <button type="submit">Generate Invite Link</button>
-            </form>
-            <div class="invite-link-list" data-invite-link-list></div>
-
-            <h2>Member & Contributor Access</h2>
-            <!-- Static honorary member profiles are listed here separately from live login accounts. -->
-            <p>Review free member accounts, assign contributor/editor access, and deactivate or restore accounts when needed. Paid member tracking is coming soon. Director-only advanced settings control Admin and Owner access.</p>
-            <div class="invite-link-list major-contributor-admin-list">
-                <article class="invite-link-row major-contributor-admin-row">
-                    <div>
-                        <strong>Anabela Cardoso</strong>
-                        <span>Honorary Member - EVP / ITC Research - Public profile only, no login account</span>
-                    </div>
-                    <div class="invite-link-actions">
-                        <a class="portal-button portal-button-secondary" href="anabela-cardoso-profile.html">Open Profile</a>
-                        <a class="portal-button" href="anabela-cardoso-papers.html">Open Papers</a>
-                    </div>
-                </article>
-            </div>
-            <div class="invite-link-list" data-admin-contributor-list><p class="access-note">Loading contributors...</p></div>
-
-            <h2>Comment Moderation</h2>
-            <p>Review public comments before they appear on article pages. Contributor-signed comments can publish immediately.</p>
-            <div class="moderation-toolbar">
-                <button type="button" data-moderation-filter="pending">Pending</button>
-                <button type="button" data-moderation-filter="approved">Approved</button>
-            </div>
-            <div class="comment-moderation-list" data-comment-moderation-list><p class="access-note">Loading comments...</p></div>
-        </article>
     </div>
 
     <p id="member-login-status" class="access-note member-login-status"></p>

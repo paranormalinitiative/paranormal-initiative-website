@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Panel | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Admin Panel">
+    <meta name="pp:subtitle" content="Member Administration">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="member-shell.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<div data-member-content hidden>
+<div class="member-main-inner admin-panel-page" data-admin-panel>
+    <section class="admin-panel-hero">
+        <div>
+            <p class="portal-kicker">Admin Panel</p>
+            <h2>Member Administration</h2>
+            <p>Review members, grant feature access, and moderate community activity from one protected workspace.</p>
+        </div>
+        <a class="portal-button portal-button-secondary" href="member-dashboard.html">Open Settings</a>
+    </section>
+
+    <section class="admin-control-grid">
+        <article class="editor-access-card admin-members-card">
+            <div class="admin-section-header">
+                <div>
+                    <p class="portal-kicker">Members</p>
+                    <h3>Search Accounts</h3>
+                </div>
+                <span class="admin-access-note">Owner/Admin only</span>
+            </div>
+            <form class="admin-search-form" data-admin-member-search-form>
+                <label>
+                    <span>Search members</span>
+                    <input name="search" type="search" placeholder="Name, username, role, or title">
+                </label>
+                <button type="submit">Search</button>
+            </form>
+            <div class="admin-member-results" data-admin-member-results>
+                <p class="access-note">Loading members...</p>
+            </div>
+        </article>
+
+        <article class="editor-access-card admin-detail-card">
+            <div class="admin-section-header">
+                <div>
+                    <p class="portal-kicker">Activity Review</p>
+                    <h3 data-admin-selected-title>Select a member</h3>
+                </div>
+            </div>
+            <div data-admin-member-detail>
+                <p class="access-note">Choose a member to view account details, forum posts, uploaded forum media, and TPI videos connected to that account.</p>
+            </div>
+        </article>
+    </section>
+
+    <section class="editor-access-card invite-owner-tools admin-panel-invites" data-dashboard-admin data-invite-owner-tools hidden>
+        <p class="portal-kicker">Access Control</p>
+        <h2>Contributor Invites</h2>
+        <p>Generate invite links for approved contributors and grant Content Editor access to trusted members. Public visitors and regular members do not see this panel.</p>
+        <form data-owner-invite-form>
+            <label>
+                <span>Invite Type</span>
+                <select name="inviteAssignment">
+                    <option value="standard">Standard Contributor</option>
+                    <option value="D">Director</option>
+                    <option value="AD">Assistant Director</option>
+                    <option value="ABM">Advisory Board Member</option>
+                </select>
+            </label>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" placeholder="Leave blank to auto-generate"></label>
+            <label><span>Access Level</span><select name="inviteRole"><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label>
+            <button type="submit">Generate Invite Link</button>
+        </form>
+        <div class="invite-link-list" data-invite-link-list></div>
+
+        <h2>Comment Moderation</h2>
+        <p>Review public comments before they appear on article pages. Contributor-signed comments can publish immediately.</p>
+        <div class="moderation-toolbar">
+            <button type="button" data-moderation-filter="pending">Pending</button>
+            <button type="button" data-moderation-filter="approved">Approved</button>
+        </div>
+        <div class="comment-moderation-list" data-comment-moderation-list><p class="access-note">Loading comments...</p></div>
+    </section>
+
+    <p id="member-login-status" class="access-note member-login-status"></p>
+</div>
+</div>
+
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="api-client.js"></script>
+<script src="legacy-contributions.js"></script>
+<script src="member-login.js?v=17"></script>
+<script src="member-shell.js"></script>
+</body>
+</html>
