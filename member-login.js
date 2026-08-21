@@ -662,7 +662,7 @@
       </div>
       <section class="admin-activity-section">
         <h4>Contributed Posts</h4>
-        <div class="admin-activity-list">
+        <div class="admin-activity-list admin-contributed-posts-list">
           ${articles.length ? articles.map(article => `
             <article class="admin-activity-item">
               <strong>${escapeHtml(article.title || "Untitled contribution")}</strong>

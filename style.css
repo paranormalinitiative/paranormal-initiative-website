@@ -3605,6 +3605,12 @@ footer {
     text-transform: uppercase;
 }
 
+.admin-contributed-posts-list {
+    max-height: 360px;
+    overflow: auto;
+    padding-right: 6px;
+}
+
 .admin-activity-item,
 .admin-media-item {
     display: grid;
@@ -3651,6 +3657,8 @@ footer {
 
 .admin-panel-invites {
     margin-top: 18px;
+    padding: 28px 30px 30px;
+    gap: 18px;
 }
 
 .admin-panel-invites form {
@@ -3670,9 +3678,14 @@ footer {
 }
 
 .admin-panel-invites h2:not(:first-of-type) {
-    margin-top: 24px;
-    padding-top: 20px;
+    margin: 20px -30px 0;
+    padding: 22px 30px 0;
     border-top: 1px solid rgba(38, 54, 70, 0.9);
+}
+
+.admin-panel-invites .moderation-toolbar,
+.admin-panel-invites .comment-moderation-list {
+    margin-top: 4px;
 }
 
 @media (max-width: 1120px) {
