@@ -2447,6 +2447,14 @@
       storeChatFrame(chat);
     });
 
+    chat.addEventListener("click", function () {
+      if (chat.classList.contains("is-collapsed")) dockCollapsedChat(chat);
+    });
+
+    window.addEventListener("resize", function () {
+      if (chat.classList.contains("is-collapsed")) dockCollapsedChat(chat);
+    });
+
     chat.querySelector("[data-chat-form]").addEventListener("submit", function (event) {
       event.preventDefault();
       var body = inputEl.value.trim();
@@ -2949,6 +2957,10 @@
     var dragging = false;
     var offset = { x: 0, y: 0 };
     handle.addEventListener("pointerdown", function(event) {
+      if (chat.classList.contains("is-collapsed")) {
+        dockCollapsedChat(chat);
+        return;
+      }
       if (event.target.closest("button")) return;
       dragging = true;
       handle.setPointerCapture(event.pointerId);
@@ -2956,6 +2968,11 @@
       offset = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     });
     handle.addEventListener("pointermove", function(event) {
+      if (chat.classList.contains("is-collapsed")) {
+        dragging = false;
+        dockCollapsedChat(chat);
+        return;
+      }
       if (!dragging) return;
       var left = Math.min(Math.max(12, event.clientX - offset.x), window.innerWidth - chat.offsetWidth - 12);
       var top = Math.min(Math.max(12, event.clientY - offset.y), window.innerHeight - chat.offsetHeight - 12);
@@ -2967,6 +2984,11 @@
     handle.addEventListener("pointerup", function(event) {
       dragging = false;
       try { handle.releasePointerCapture(event.pointerId); } catch (e) {}
+      if (chat.classList.contains("is-collapsed")) {
+        dockCollapsedChat(chat);
+        storeChatFrame(chat);
+        return;
+      }
       storeChatFrame(chat);
     });
   }
@@ -2976,6 +2998,12 @@
     var resizing = false;
     var start = null;
     handle.addEventListener("pointerdown", function(event) {
+      if (chat.classList.contains("is-collapsed")) {
+        dockCollapsedChat(chat);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       resizing = true;
       var rect = chat.getBoundingClientRect();
       start = {
@@ -2989,6 +3017,12 @@
       event.stopPropagation();
     });
     handle.addEventListener("pointermove", function(event) {
+      if (chat.classList.contains("is-collapsed")) {
+        resizing = false;
+        start = null;
+        dockCollapsedChat(chat);
+        return;
+      }
       if (!resizing || !start) return;
       var width = Math.min(Math.max(420, start.width + (event.clientX - start.x)), 980);
       var height = Math.min(Math.max(360, start.height + (event.clientY - start.y)), 780);
@@ -3029,11 +3063,12 @@
 
   function dockCollapsedChat(chat) {
     var left = document.body.classList.contains("feed-app-page") ? 278 : 18;
+    left = Math.max(left, 18);
     chat.style.left = left + "px";
     chat.style.top = "10px";
     chat.style.right = "auto";
     chat.style.bottom = "auto";
-    chat.style.width = "420px";
+    chat.style.width = Math.min(420, Math.max(320, window.innerWidth - left - 18)) + "px";
     chat.style.height = "auto";
   }
 
