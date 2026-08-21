@@ -366,21 +366,23 @@
         '</div>' +
       '</header>' +
       '<div class="member-floating-chat-content">' +
-        '<section class="member-chat-online" aria-label="Online now">' +
+        '<aside class="member-chat-contacts" aria-label="Online now">' +
           '<span class="member-chat-section-label">Online Now</span>' +
           '<div class="member-chat-online-list" data-chat-online></div>' +
+          '<section class="member-chat-create" data-chat-create hidden>' +
+            '<span class="member-chat-section-label">Create Chat</span>' +
+            '<p>Add members you want in this chat.</p>' +
+            '<div class="member-chat-member-list" data-chat-members></div>' +
+            '<button type="button" data-chat-start>Start Chat</button>' +
+          '</section>' +
+        '</aside>' +
+        '<section class="member-chat-thread">' +
+          '<section class="member-chat-messages" data-chat-messages aria-label="Chat messages"></section>' +
+          '<form class="member-chat-form" data-chat-form>' +
+            '<input type="text" data-chat-input placeholder="Send a message">' +
+            '<button type="submit">Send</button>' +
+          '</form>' +
         '</section>' +
-        '<section class="member-chat-create" data-chat-create hidden>' +
-          '<span class="member-chat-section-label">Create Chat</span>' +
-          '<p>Add members you want in this chat.</p>' +
-          '<div class="member-chat-member-list" data-chat-members></div>' +
-          '<button type="button" data-chat-start>Start Chat</button>' +
-        '</section>' +
-        '<section class="member-chat-messages" data-chat-messages aria-label="Chat messages"></section>' +
-        '<form class="member-chat-form" data-chat-form>' +
-          '<input type="text" data-chat-input placeholder="Send a message">' +
-          '<button type="submit">Send</button>' +
-        '</form>' +
       '</div>' +
       '<span class="member-chat-resize" data-chat-resize aria-hidden="true"></span>';
     document.body.appendChild(chat);
