@@ -48,6 +48,7 @@
     event.preventDefault();
     const titleInput = document.querySelector("[data-explore-title]");
     const bodyInput = document.querySelector("[data-explore-body]");
+    const fileInput = document.querySelector("[data-explore-files]");
     const title = titleInput?.value.trim() || "";
     const body = bodyInput?.value.trim() || "";
     if (!title || !body) {
@@ -56,10 +57,12 @@
     }
     try {
       setComposeStatus("Posting...");
-      const response = await window.TPIApi.createForumTopic({ categoryId: "general", title, body, attachments: [] });
+      const attachments = await uploadFeedAttachments(fileInput?.files);
+      const response = await window.TPIApi.createForumTopic({ categoryId: "general", title, body, attachments });
       titleInput.value = "";
       bodyInput.value = "";
-      setComposeStatus("Posted to Explore.");
+      if (fileInput) fileInput.value = "";
+      setComposeStatus("Posted to your feed.");
       await loadFeed();
       if (response?.topic?.id) {
         window.location.href = `community-forum.html?member=1&topic=${encodeURIComponent(response.topic.id)}${response.post?.id ? `&post=${encodeURIComponent(response.post.id)}` : ""}`;
@@ -119,6 +122,13 @@
         saveReadItems();
       });
     });
+    feedEl.querySelectorAll("[data-explore-share]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        shareItem(button.dataset.shareUrl, button.dataset.shareTitle);
+      });
+    });
   }
 
   function renderItem(item) {
@@ -127,20 +137,27 @@
     const key = getItemKey(item);
     const readClass = readItems.has(key) ? " is-read" : " is-unread";
     const checked = selectedItems.has(key) ? " checked" : "";
+    const absoluteHref = new URL(href, window.location.href).href;
     return `
       <article class="member-explore-row${readClass}">
         <label class="member-explore-check">
           <input type="checkbox" value="${escapeAttr(key)}" data-explore-check${checked}>
           <span>Select item</span>
         </label>
-        <a class="member-explore-item" href="${escapeAttr(href)}" data-explore-item="${escapeAttr(key)}">
-          <div>
-            <span class="member-explore-type">${escapeHtml(meta.typeLabel)}</span>
-            <h3>${escapeHtml(meta.title)}</h3>
-            <p>${escapeHtml(meta.description)}</p>
+        <div class="member-explore-item-shell">
+          <a class="member-explore-item" href="${escapeAttr(href)}" data-explore-item="${escapeAttr(key)}">
+            ${renderMediaPreview(item)}
+            <div>
+              <span class="member-explore-type">${escapeHtml(meta.typeLabel)}</span>
+              <h3>${escapeHtml(meta.title)}</h3>
+              <p>${escapeHtml(meta.description)}</p>
+            </div>
+            <small>${escapeHtml(meta.author)} · ${escapeHtml(formatDate(meta.date))}</small>
+          </a>
+          <div class="member-explore-share-row">
+            <button class="portal-button portal-button-secondary" type="button" data-explore-share data-share-url="${escapeAttr(absoluteHref)}" data-share-title="${escapeAttr(meta.title)}">Share</button>
           </div>
-          <small>${escapeHtml(meta.author)} · ${escapeHtml(formatDate(meta.date))}</small>
-        </a>
+        </div>
       </article>
     `;
   }
@@ -210,6 +227,68 @@
     if (item.type === "photo") return item.href || "community-forum.html?member=1";
     if (item.type === "video" && item.slug) return `tpi-video.html?slug=${encodeURIComponent(item.slug)}&member=1`;
     return "community-forum.html?member=1";
+  }
+
+  async function uploadFeedAttachments(files) {
+    const selected = validateFeedFiles(files);
+    if (!selected.length) return [];
+    if (!window.TPIApi?.uploadForumMedia) throw new Error("Feed media upload is not available yet.");
+    const uploaded = [];
+    for (let index = 0; index < selected.length; index += 1) {
+      const file = selected[index];
+      setComposeStatus(`Uploading ${index + 1} of ${selected.length}...`);
+      const result = await window.TPIApi.uploadForumMedia(file);
+      uploaded.push({
+        url: result.url,
+        key: result.key,
+        name: result.name || file.name,
+        contentType: result.contentType || file.type,
+        mediaType: file.type.startsWith("video/") ? "video" : "image"
+      });
+    }
+    return uploaded;
+  }
+
+  function validateFeedFiles(files) {
+    const selected = Array.from(files || []);
+    const images = selected.filter(file => file.type.startsWith("image/"));
+    const videos = selected.filter(file => file.type.startsWith("video/"));
+    const unsupported = selected.filter(file => !file.type.startsWith("image/") && !file.type.startsWith("video/"));
+    if (unsupported.length) throw new Error("Feed uploads can only include photos and videos.");
+    if (images.length > 10) throw new Error("Please choose 10 images or fewer.");
+    if (videos.length > 2) throw new Error("Please choose 2 videos or fewer.");
+    return selected;
+  }
+
+  function renderMediaPreview(item) {
+    const attachments = Array.isArray(item.attachments) ? item.attachments : [];
+    if (item.type === "video" && item.thumbnail) {
+      return `<div class="member-explore-media"><img src="${escapeAttr(item.thumbnail)}" alt="${escapeAttr(item.title || "Video preview")}" loading="lazy"></div>`;
+    }
+    if (!attachments.length) return "";
+    return `
+      <div class="member-explore-media">
+        ${attachments.slice(0, 3).map(attachment => {
+          const url = escapeAttr(attachment.url || "");
+          if (!url) return "";
+          const isVideo = String(attachment.mediaType || attachment.contentType || "").startsWith("video");
+          return isVideo
+            ? `<video src="${url}" muted preload="metadata"></video>`
+            : `<img src="${url}" alt="${escapeAttr(attachment.name || "Feed attachment")}" loading="lazy">`;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  async function shareItem(url, title) {
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: title || "TPI Feed", url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setComposeStatus("Feed link copied.");
+      }
+    } catch (error) {}
   }
 
   function getItemKey(item) {

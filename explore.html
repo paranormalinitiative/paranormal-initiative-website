@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
-    <title>Explore | The Paranormal Initiative</title>
+    <title>Your Feed | The Paranormal Initiative</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="pp:title" content="Explore">
-    <meta name="pp:subtitle" content="Community Activity">
+    <meta name="pp:title" content="Your Feed">
+    <meta name="pp:subtitle" content="Community Feed">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -19,9 +19,9 @@
 <div data-member-content hidden>
 <div class="member-main-inner">
     <section class="editor-access-card member-explore-card">
-        <p class="portal-kicker">Community Activity</p>
-        <h2>Explore</h2>
-        <p class="access-note">See recent community posts, contributed articles, videos, photos, and live activity as it starts.</p>
+        <p class="portal-kicker">Your Community Feed</p>
+        <h2>Your Feed</h2>
+        <p class="access-note">A chronological community feed for new posts, contributed articles, videos, photos, and live activity.</p>
         <form class="member-explore-composer" data-explore-composer>
             <label>
                 <span>Share a community post</span>
@@ -31,8 +31,12 @@
                 <span>Message</span>
                 <textarea data-explore-body rows="4" placeholder="Share an update, question, investigation note, or community thought."></textarea>
             </label>
+            <label>
+                <span>Add photos or videos</span>
+                <input type="file" data-explore-files accept="image/*,video/*" multiple>
+            </label>
             <div class="member-explore-composer-actions">
-                <button class="portal-button" type="submit">Post To Explore</button>
+                <button class="portal-button" type="submit">Post To Your Feed</button>
                 <p class="access-note" data-explore-compose-status></p>
             </div>
         </form>
