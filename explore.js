@@ -5,6 +5,7 @@
   let items = [];
   let activeFilter = "all";
   let readItems = loadReadItems();
+  let memberProfiles = new Map();
   const selectedItems = new Set();
   const selectAllBox = document.querySelector("[data-explore-select-all]");
   const composer = document.querySelector("[data-explore-composer]");
@@ -131,6 +132,7 @@
     if (!composerExpanded) return;
     composerExpanded.hidden = false;
     composer?.classList.add("is-open");
+    composerOpen?.setAttribute("aria-expanded", "true");
     document.querySelector("[data-explore-title]")?.focus();
   }
 
@@ -138,6 +140,7 @@
     if (!composerExpanded) return;
     composerExpanded.hidden = true;
     composer?.classList.remove("is-open");
+    composerOpen?.setAttribute("aria-expanded", "false");
   }
 
   function clearComposer() {
@@ -225,18 +228,21 @@
     if (!membersEl) return;
     const members = [];
     const seen = new Set();
+    memberProfiles = new Map();
     items.forEach(item => {
       const username = item.authorUsername || "";
       const name = item.authorName || item.authorDisplayName || "";
       const key = username || name;
       if (!key || seen.has(key)) return;
       seen.add(key);
-      members.push({
+      const member = {
         username,
         name: name || username,
         photoUrl: item.authorPhotoUrl || "",
         title: item.authorTitle || ""
-      });
+      };
+      members.push(member);
+      memberProfiles.set(getMemberProfileKey(username, name), member);
     });
     if (!members.length) {
       membersEl.hidden = true;
@@ -308,10 +314,10 @@
       return {
         typeLabel: item.categoryTitle || "Community Post",
         title: item.topicTitle || "Forum Topic",
-        description: item.body || "Join the conversation.",
+        description: getItemDescription(item, "Join the conversation."),
         author: getAuthorName(item, "Community Member"),
         authorTitle: item.authorTitle || "Community Member",
-        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorPhotoUrl: getAuthorPhotoUrl(item),
         authorUsername: item.authorUsername || "",
         date: item.topicCreatedAt || item.createdAt
       };
@@ -320,10 +326,10 @@
       return {
         typeLabel: "Chat",
         title: item.title || "Community Chat",
-        description: item.description || item.body || "Join the live conversation.",
+        description: getItemDescription(item, "Join the live conversation."),
         author: getAuthorName(item, "Community Member"),
         authorTitle: item.authorTitle || "Chat",
-        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorPhotoUrl: getAuthorPhotoUrl(item),
         authorUsername: item.authorUsername || "",
         date: item.startedAt || item.createdAt
       };
@@ -332,10 +338,10 @@
       return {
         typeLabel: item.contributionType || "Contribution",
         title: item.title || "Published Contribution",
-        description: item.description || "Read the contributed work.",
+        description: getItemDescription(item, "Read the contributed work."),
         author: getAuthorName(item, "Contributor"),
         authorTitle: item.authorTitle || item.contributionType || "Contributor",
-        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorPhotoUrl: getAuthorPhotoUrl(item),
         authorUsername: item.authorUsername || "",
         date: item.createdAt
       };
@@ -344,10 +350,10 @@
       return {
         typeLabel: item.isLive ? "Live Video" : "TPI Video",
         title: item.title || "TPI Video",
-        description: item.description || "Watch the latest video activity.",
+        description: getItemDescription(item, "Watch the latest video activity."),
         author: "TPI Videos",
         authorTitle: item.isLive ? "Live Video" : "Video",
-        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorPhotoUrl: getAuthorPhotoUrl(item),
         authorUsername: "",
         date: item.publishedAt
       };
@@ -356,10 +362,10 @@
       return {
         typeLabel: "Photo",
         title: item.title || "Community Photo",
-        description: item.description || "View the shared photo activity.",
+        description: getItemDescription(item, "View the shared photo activity."),
         author: getAuthorName(item, "Community Member"),
         authorTitle: item.authorTitle || "Photo",
-        authorPhotoUrl: item.authorPhotoUrl || "",
+        authorPhotoUrl: getAuthorPhotoUrl(item),
         authorUsername: item.authorUsername || "",
         date: item.createdAt || item.publishedAt
       };
@@ -367,10 +373,10 @@
     return {
       typeLabel: "Activity",
       title: item.title || "Community Activity",
-      description: item.description || "",
+      description: getItemDescription(item, ""),
       author: getAuthorName(item, "TPI"),
       authorTitle: item.authorTitle || "Activity",
-      authorPhotoUrl: item.authorPhotoUrl || "",
+      authorPhotoUrl: getAuthorPhotoUrl(item),
       authorUsername: item.authorUsername || "",
       date: item.createdAt || item.publishedAt
     };
@@ -450,6 +456,19 @@
 
   function getAuthorName(item, fallback) {
     return item.authorName || item.authorDisplayName || item.displayName || item.username || fallback;
+  }
+
+  function getAuthorPhotoUrl(item) {
+    const profile = memberProfiles.get(getMemberProfileKey(item.authorUsername || "", item.authorName || item.authorDisplayName || ""));
+    return item.authorPhotoUrl || profile?.photoUrl || "";
+  }
+
+  function getItemDescription(item, fallback) {
+    return item.body || item.description || item.excerpt || item.summary || item.content || fallback;
+  }
+
+  function getMemberProfileKey(username, name) {
+    return String(username || name || "").trim().toLowerCase();
   }
 
   async function shareItem(url, title) {

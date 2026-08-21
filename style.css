@@ -3506,6 +3506,10 @@ footer {
     border-radius: 8px;
 }
 
+.member-feed-post-preview p {
+    white-space: pre-wrap;
+}
+
 .member-explore-media {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
