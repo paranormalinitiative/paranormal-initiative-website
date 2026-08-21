@@ -1159,6 +1159,10 @@ body.member-mode .portal-button-secondary {
     border-color: #263646;
 }
 
+body.member-mode .member-explore-card {
+    padding: 28px;
+}
+
 /* Education intro grid */
 body.member-mode .education-intro-grid {
     display: grid;

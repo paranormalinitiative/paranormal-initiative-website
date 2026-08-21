@@ -3175,13 +3175,30 @@ footer {
 
 .member-explore-card {
     width: 100%;
+    padding: 28px;
 }
 
-.member-explore-toolbar {
+.member-explore-toolbar,
+.member-explore-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.member-explore-toolbar {
     margin: 22px 0;
+}
+
+.member-explore-actions {
+    margin: -6px 0 22px;
+}
+
+.member-explore-card .portal-button {
+    color: #061018;
+}
+
+.member-explore-card .portal-button-secondary {
+    color: #c7d5e2;
 }
 
 .member-explore-feed {
@@ -3209,6 +3226,18 @@ footer {
 .member-explore-item:hover {
     border-color: rgba(85, 200, 255, 0.72);
     box-shadow: 0 0 18px rgba(85, 200, 255, 0.1);
+}
+
+.member-explore-item.is-unread {
+    background:
+        linear-gradient(90deg, rgba(85, 200, 255, 0.09), rgba(9, 15, 20, 0.72) 34%),
+        rgba(9, 15, 20, 0.72);
+    border-color: rgba(85, 200, 255, 0.38);
+    box-shadow: inset 4px 0 0 rgba(85, 200, 255, 0.72);
+}
+
+.member-explore-item.is-read {
+    opacity: 0.78;
 }
 
 .member-explore-type {
@@ -3240,6 +3269,20 @@ footer {
     color: #8aa0b6;
     font-size: 12px;
     white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+    .member-explore-card {
+        padding: 20px;
+    }
+
+    .member-explore-item {
+        grid-template-columns: 1fr;
+    }
+
+    .member-explore-item small {
+        white-space: normal;
+    }
 }
 
 .member-profile-form label {

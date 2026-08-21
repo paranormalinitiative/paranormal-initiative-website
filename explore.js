@@ -4,6 +4,7 @@
 
   let items = [];
   let activeFilter = "all";
+  let readItems = loadReadItems();
 
   document.querySelectorAll("[data-explore-filter]").forEach(button => {
     button.addEventListener("click", () => {
@@ -13,6 +14,18 @@
       });
       renderFeed();
     });
+  });
+
+  document.querySelector("[data-explore-mark-read]")?.addEventListener("click", () => {
+    items.forEach(item => readItems.add(getItemKey(item)));
+    saveReadItems();
+    renderFeed();
+  });
+
+  document.querySelector("[data-explore-mark-unread]")?.addEventListener("click", () => {
+    items.forEach(item => readItems.delete(getItemKey(item)));
+    saveReadItems();
+    renderFeed();
   });
 
   loadFeed();
@@ -47,13 +60,21 @@
       return;
     }
     feedEl.innerHTML = visible.map(renderItem).join("");
+    feedEl.querySelectorAll("[data-explore-item]").forEach(link => {
+      link.addEventListener("click", () => {
+        readItems.add(link.dataset.exploreItem);
+        saveReadItems();
+      });
+    });
   }
 
   function renderItem(item) {
     const meta = getItemMeta(item);
     const href = getItemHref(item);
+    const key = getItemKey(item);
+    const readClass = readItems.has(key) ? " is-read" : " is-unread";
     return `
-      <a class="member-explore-item" href="${escapeAttr(href)}">
+      <a class="member-explore-item${readClass}" href="${escapeAttr(href)}" data-explore-item="${escapeAttr(key)}">
         <div>
           <span class="member-explore-type">${escapeHtml(meta.typeLabel)}</span>
           <h3>${escapeHtml(meta.title)}</h3>
@@ -101,6 +122,15 @@
         date: item.publishedAt
       };
     }
+    if (item.type === "photo") {
+      return {
+        typeLabel: "Photo",
+        title: item.title || "Community Photo",
+        description: item.description || "View the shared photo activity.",
+        author: item.authorName || "Community Member",
+        date: item.createdAt || item.publishedAt
+      };
+    }
     return {
       typeLabel: "Activity",
       title: item.title || "Community Activity",
@@ -117,8 +147,27 @@
     }
     if (item.type === "chat") return item.href || "community-forum.html?member=1";
     if (item.type === "article") return item.href || "education-center.html?member=1";
+    if (item.type === "photo") return item.href || "community-forum.html?member=1";
     if (item.type === "video" && item.slug) return `tpi-video.html?slug=${encodeURIComponent(item.slug)}&member=1`;
     return "community-forum.html?member=1";
+  }
+
+  function getItemKey(item) {
+    return `${item.type || "activity"}:${item.id || item.topicId || item.slug || item.href || item.title || ""}`;
+  }
+
+  function loadReadItems() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem("tpiExploreReadItems") || "[]"));
+    } catch (error) {
+      return new Set();
+    }
+  }
+
+  function saveReadItems() {
+    try {
+      localStorage.setItem("tpiExploreReadItems", JSON.stringify(Array.from(readItems)));
+    } catch (error) {}
   }
 
   function formatDate(value) {
