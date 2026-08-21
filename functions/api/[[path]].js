@@ -223,8 +223,8 @@ async function handleCreateInvite(request, env, user) {
   const assignment = getInviteAssignment(code);
   const role = assignment?.role || (["owner", "admin", "contributor", "member"].includes(data.role) ? data.role : "contributor");
   if (!code) return json({ error: "Invite code is required." }, 400);
-  if (role === "owner" && user.role !== "owner") {
-    return json({ error: "Only the owner can create a Director invite." }, 403);
+  if (["owner", "admin"].includes(role) && user.role !== "owner") {
+    return json({ error: "Only the Director can create Director, Assistant Director, or Admin invites." }, 403);
   }
 
   await env.TPI_DB.prepare("INSERT INTO invite_codes (code, role, created_by) VALUES (?, ?, ?)")

@@ -527,6 +527,20 @@
     `;
   }
 
+  function lockAdvancedAdminControls(currentUser) {
+    const isDirector = currentUser?.role === "owner";
+    document.querySelectorAll("select[name='inviteAssignment']").forEach(select => {
+      select.querySelector("option[value='D']")?.toggleAttribute("disabled", !isDirector);
+      select.querySelector("option[value='AD']")?.toggleAttribute("disabled", !isDirector);
+      if (!isDirector && ["D", "AD"].includes(select.value)) select.value = "standard";
+    });
+    document.querySelectorAll("select[name='inviteRole']").forEach(select => {
+      select.querySelector("option[value='admin']")?.toggleAttribute("disabled", !isDirector);
+      select.querySelector("option[value='owner']")?.toggleAttribute("disabled", !isDirector);
+      if (!isDirector && ["admin", "owner"].includes(select.value)) select.value = "contributor";
+    });
+  }
+
   async function getAdminSessionUser() {
     if (currentAdminUser) return currentAdminUser;
     if (await cloudflareReady()) {
@@ -667,6 +681,7 @@
       return;
     }
     if (dashboardAdmin) dashboardAdmin.hidden = false;
+    lockAdvancedAdminControls(currentUser);
     await loadAdminMembers("");
     const renderedCloudflare = await renderCloudflareOwnerInvites();
     if (!renderedCloudflare) renderOwnerInvites();
@@ -1249,6 +1264,20 @@
         ? (inviteAssignment && !typedCode.toUpperCase().startsWith(`${inviteAssignment.prefix}-`) ? `${inviteAssignment.prefix}-${typedCode}` : typedCode)
         : makeInviteCode(inviteAssignment?.prefix || "TPI");
       const inviteRole = inviteAssignment?.role || String(data.get("inviteRole") || "contributor");
+      if (["owner", "admin"].includes(inviteRole)) {
+        let currentRole = localUser?.role || "";
+        if (await cloudflareReady()) {
+          try {
+            currentRole = (await window.TPIApi.me()).user?.role || "";
+          } catch (error) {
+            currentRole = "";
+          }
+        }
+        if (currentRole !== "owner") {
+          setStatus("Only the Director can create Director, Assistant Director, or Admin invites.", true);
+          return;
+        }
+      }
       if (hasCloudflareInviteAccess) {
         try {
           const result = await window.TPIApi.createInvite({ code, role: inviteRole });
