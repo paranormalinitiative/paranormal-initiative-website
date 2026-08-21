@@ -1388,6 +1388,11 @@ footer {
     --member-chat-color: #55c8ff;
 }
 
+.discussion-message.is-linked-post .discussion-bubble {
+    border-color: #f2d45c;
+    box-shadow: 0 0 0 2px rgba(242, 212, 92, 0.22), 0 14px 30px rgba(0, 0, 0, 0.2);
+}
+
 .discussion-message-meta {
     display: grid;
     grid-template-columns: 34px minmax(0, 1fr);

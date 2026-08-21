@@ -67,7 +67,8 @@
     expandedCategories: new Set(),
     selectedAdminUsername: "",
     previewMode: false,
-    activePosts: []
+    activePosts: [],
+    pendingPostId: ""
   };
 
   const topicList = portal.querySelector("[data-topic-list]");
@@ -263,11 +264,13 @@
       const data = state.previewMode ? { posts: fallbackPosts[topicId] || [] } : await window.TPIApi.forumTopic(topicId);
       state.activePosts = data.posts || [];
       renderMessages(state.activePosts);
+      scrollToPendingPost();
       await markTopicRead(topicId, state.activePosts);
     } catch (error) {
       const posts = fallbackPosts[topicId] || [];
       state.activePosts = posts;
       renderMessages(state.activePosts);
+      scrollToPendingPost();
       await markTopicRead(topicId, state.activePosts);
     }
     updateComposerState();
@@ -276,6 +279,7 @@
   function openInitialTopic() {
     const params = new URLSearchParams(window.location.search);
     const topicId = params.get("topic");
+    state.pendingPostId = params.get("post") || "";
     if (topicId && state.topics.some(item => item.id === topicId)) {
       openTopic(topicId);
     }
@@ -305,7 +309,7 @@
       const chatColor = normalizeChatColor(post.authorChatColor || "#55c8ff");
       const authorInitial = escapeHtml((post.authorName || post.authorUsername || "M").trim().charAt(0) || "M");
       return `
-        <article class="discussion-message" style="--member-chat-color: ${escapeAttr(chatColor)};">
+        <article class="discussion-message" id="post-${escapeAttr(post.id)}" data-post-anchor="${escapeAttr(post.id)}" style="--member-chat-color: ${escapeAttr(chatColor)};">
           <div class="discussion-message-meta">
             ${post.authorPhotoUrl ? `<img class="discussion-author-avatar" src="${escapeAttr(post.authorPhotoUrl)}" alt="${escapeAttr(post.authorName || "Community Member")}">` : `<span class="discussion-author-avatar discussion-author-initial">${authorInitial}</span>`}
             <span class="discussion-author-text">
@@ -322,6 +326,16 @@
       `;
     }).join("");
     messageList.scrollTop = messageList.scrollHeight;
+  }
+
+  function scrollToPendingPost() {
+    if (!state.pendingPostId) return;
+    const target = messageList.querySelector(`[data-post-anchor="${cssEscape(state.pendingPostId)}"]`);
+    if (!target) return;
+    target.classList.add("is-linked-post");
+    target.scrollIntoView({ block: "center", behavior: "smooth" });
+    window.setTimeout(() => target.classList.remove("is-linked-post"), 5000);
+    state.pendingPostId = "";
   }
 
   function renderReactionControls(post) {

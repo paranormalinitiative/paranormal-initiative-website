@@ -142,6 +142,7 @@
 
     // Set notification badge
     setupNotificationBadge();
+    setupExploreBadge();
 
     // Set up logout
     setupLogout();
@@ -312,6 +313,28 @@
       badge.textContent = count > 99 ? "99+" : String(count);
       badge.hidden = count <= 0;
     } catch (e) {}
+  }
+
+  async function setupExploreBadge() {
+    var badge = document.querySelector("[data-explore-new]");
+    if (!badge) return;
+    try {
+      var resp = await fetch("/api/feed?limit=1&offset=0", { credentials: "same-origin", cache: "no-store" });
+      if (!resp.ok) return;
+      var data = await resp.json();
+      var item = Array.isArray(data.items) ? data.items[0] : null;
+      var latest = getExploreItemDate(item);
+      var lastSeen = localStorage.getItem("tpiExploreLastSeen") || "";
+      var hasNew = latest && (!lastSeen || new Date(latest).getTime() > new Date(lastSeen).getTime());
+      badge.hidden = !hasNew;
+      var link = document.querySelector('[data-nav="explore"]');
+      if (link) link.classList.toggle("has-new-content", Boolean(hasNew));
+    } catch (e) {}
+  }
+
+  function getExploreItemDate(item) {
+    if (!item) return "";
+    return item.createdAt || item.publishedAt || item.startedAt || item.topicCreatedAt || "";
   }
 
   // ---- User Session ----

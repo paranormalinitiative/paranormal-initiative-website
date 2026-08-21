@@ -161,6 +161,25 @@ body.member-mode {
     border-radius: 3px;
 }
 
+.member-nav-new-tag {
+    margin-left: auto;
+    padding: 2px 7px;
+    color: #061018;
+    background: #f2d45c;
+    border-radius: 999px;
+    box-shadow: 0 0 10px rgba(242, 212, 92, 0.22);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.member-nav-link.has-new-content {
+    color: #f4f8fb;
+    border-color: rgba(242, 212, 92, 0.42);
+    background: rgba(242, 212, 92, 0.08);
+}
+
 .member-nav-badge {
     margin-left: auto;
     min-width: 20px;

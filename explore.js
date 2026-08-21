@@ -16,6 +16,7 @@
   });
 
   loadFeed();
+  markExploreSeen();
   window.setInterval(loadFeed, 45000);
 
   async function loadFeed() {
@@ -111,7 +112,8 @@
 
   function getItemHref(item) {
     if (item.type === "forum_post" && item.topicId) {
-      return `community-forum.html?member=1&topic=${encodeURIComponent(item.topicId)}`;
+      const postParam = item.id ? `&post=${encodeURIComponent(item.id)}` : "";
+      return `community-forum.html?member=1&topic=${encodeURIComponent(item.topicId)}${postParam}`;
     }
     if (item.type === "chat") return item.href || "community-forum.html?member=1";
     if (item.type === "article") return item.href || "education-center.html?member=1";
@@ -132,5 +134,11 @@
 
   function escapeAttr(value) {
     return escapeHtml(value);
+  }
+
+  function markExploreSeen() {
+    try {
+      localStorage.setItem("tpiExploreLastSeen", new Date().toISOString());
+    } catch (error) {}
   }
 })();
