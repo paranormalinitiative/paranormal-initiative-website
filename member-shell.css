@@ -202,7 +202,7 @@ body.member-mode {
     z-index: 120;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    min-width: 520px;
+    min-width: 430px;
     min-height: 360px;
     max-width: calc(100vw - 24px);
     max-height: calc(100vh - 24px);
@@ -269,7 +269,7 @@ body.member-mode {
 .member-floating-chat-content {
     min-height: 0;
     display: grid;
-    grid-template-columns: 160px minmax(0, 1fr);
+    grid-template-columns: clamp(168px, 34%, 240px) minmax(0, 1fr);
     overflow: hidden;
 }
 
@@ -283,7 +283,9 @@ body.member-mode {
 .member-chat-contacts {
     align-content: start;
     min-height: 0;
+    min-width: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     background: rgba(5, 8, 11, 0.22);
     border-right: 1px solid #263646;
 }
@@ -315,6 +317,7 @@ body.member-mode {
     gap: 8px;
     align-items: center;
     justify-items: start;
+    min-width: 0;
     color: #c7d5e2;
     text-align: left;
     background: transparent;
@@ -330,7 +333,7 @@ body.member-mode {
 
 .member-chat-online-person strong,
 .member-chat-member-option strong {
-    max-width: 78px;
+    max-width: 100%;
     overflow: hidden;
     color: #f4f8fb;
     text-overflow: ellipsis;
@@ -340,15 +343,16 @@ body.member-mode {
 
 .member-chat-presence,
 .member-chat-member-option small {
+    grid-column: 2;
     color: #8aa0b6;
     font-size: 10px;
 }
 
 .member-chat-member-option {
-    grid-template-columns: 18px 42px minmax(78px, 1fr);
+    grid-template-columns: 18px 36px minmax(0, 1fr);
     justify-items: start;
     align-items: center;
-    min-width: 210px;
+    min-width: 0;
     padding: 8px;
     background: #081018;
     border: 1px solid #263646;
@@ -360,6 +364,12 @@ body.member-mode {
     width: 16px;
     height: 16px;
     accent-color: #55c8ff;
+}
+
+.member-chat-member-option > span {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
 }
 
 .member-chat-avatar {
@@ -414,14 +424,42 @@ body.member-mode {
 }
 
 .member-chat-message {
+    width: min(100%, 88%);
     display: grid;
-    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-columns: 34px minmax(0, max-content);
     gap: 10px;
     align-items: start;
-    padding: 10px;
-    background: #081018;
-    border: 1px solid rgba(85, 200, 255, 0.14);
-    border-radius: 8px;
+    justify-self: start;
+}
+
+.member-chat-message.is-own {
+    grid-template-columns: minmax(0, max-content) 34px;
+    justify-self: end;
+}
+
+.member-chat-message.is-own .member-chat-avatar {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.member-chat-bubble {
+    min-width: 0;
+    max-width: 100%;
+    padding: 10px 12px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+        #081018;
+    border: 1px solid color-mix(in srgb, var(--member-chat-color, #55c8ff) 42%, rgba(85, 200, 255, 0.14));
+    border-radius: 14px 14px 14px 5px;
+}
+
+.member-chat-message.is-own .member-chat-bubble {
+    grid-column: 1;
+    grid-row: 1;
+    color: #061018;
+    background: var(--member-chat-color, #55c8ff);
+    border-color: transparent;
+    border-radius: 14px 14px 5px 14px;
 }
 
 .member-chat-message small {
@@ -433,9 +471,15 @@ body.member-mode {
 
 .member-chat-message p {
     margin: 6px 0 0;
-    color: #c7d5e2;
+    color: inherit;
     font-size: 13px;
     line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.member-chat-message.is-own strong,
+.member-chat-message.is-own small {
+    color: rgba(6, 16, 24, 0.82);
 }
 
 .member-chat-form {
@@ -497,7 +541,13 @@ body.member-mode {
     }
 
     .member-floating-chat-content {
-        grid-template-columns: 118px minmax(0, 1fr);
+        grid-template-columns: 1fr;
+    }
+
+    .member-chat-contacts {
+        max-height: 210px;
+        border-right: 0;
+        border-bottom: 1px solid #263646;
     }
 }
 

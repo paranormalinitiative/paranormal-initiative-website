@@ -507,6 +507,7 @@
             displayName: item.authorName || item.authorDisplayName || item.authorUsername,
             title: item.authorTitle || "Member",
             photoUrl: item.authorPhotoUrl || "",
+            chatColor: item.authorChatColor || "",
             active: true
           }, true));
         });
@@ -530,6 +531,7 @@
       title: member.title || "",
       role: member.role || "",
       photoUrl: member.photoUrl || member.photo_url || "",
+      chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#55c8ff"),
       online: Boolean(online)
     };
   }
@@ -579,12 +581,20 @@
   }
 
   function renderChatMessage(message) {
-    return '<article class="member-chat-message">' +
+    var author = normalizeChatMember(message.author || {}, true);
+    var currentUsername = getStoredUsername();
+    var isOwn = currentUsername && author.username === currentUsername;
+    return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
       renderChatAvatar(message.author || {}) +
-      '<div><strong>' + escapeHtml(message.author && message.author.displayName || "Member") + '</strong>' +
+      '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
       '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
       '<p>' + escapeHtml(message.body) + '</p></div>' +
     '</article>';
+  }
+
+  function normalizeChatBubbleColor(value) {
+    var color = String(value || "").trim();
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#55c8ff";
   }
 
   function renderChatAvatar(member) {
@@ -634,8 +644,8 @@
     handle.addEventListener("pointermove", function(event) {
       if (!resizing) return;
       var rect = chat.getBoundingClientRect();
-      var width = Math.min(Math.max(320, event.clientX - rect.left), 620);
-      var height = Math.min(Math.max(360, event.clientY - rect.top), 720);
+      var width = Math.min(Math.max(430, event.clientX - rect.left), 920);
+      var height = Math.min(Math.max(360, event.clientY - rect.top), 780);
       chat.style.width = width + "px";
       chat.style.height = height + "px";
     });
@@ -649,8 +659,8 @@
   function applyStoredChatFrame(chat) {
     var frame = null;
     try { frame = JSON.parse(localStorage.getItem("tpiFloatingChatFrame") || "null"); } catch (e) {}
-    chat.style.width = frame && frame.width ? frame.width + "px" : "380px";
-    chat.style.height = frame && frame.height ? frame.height + "px" : "520px";
+    chat.style.width = frame && frame.width ? Math.max(430, frame.width) + "px" : "620px";
+    chat.style.height = frame && frame.height ? Math.max(360, frame.height) + "px" : "520px";
     if (frame && frame.left && frame.top) {
       chat.style.left = frame.left + "px";
       chat.style.top = frame.top + "px";
