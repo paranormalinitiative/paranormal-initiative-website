@@ -356,6 +356,10 @@
     if (!badge) return;
     var count = getLocalChatUnreadCount();
     try {
+      var remoteChatCount = await getRemoteUnreadCount();
+      count += remoteChatCount;
+    } catch (e) {}
+    try {
       var resp = await fetch("/api/notifications/unread-count", { credentials: "same-origin", cache: "no-store" });
       if (!resp.ok) {
         renderNotificationBadge(badge, count);
@@ -397,7 +401,9 @@
   async function initFloatingChat(user) {
     if (document.querySelector("[data-member-floating-chat]")) return;
     var roster = await loadChatRoster(user);
-    var currentChat = loadCurrentChat(user, roster);
+    var chatState = await loadChatState(user, roster);
+    var currentChat = chatState.currentChat;
+    var chatList = chatState.chatList;
     var chat = document.createElement("section");
     var emojiGroups = [
       {
@@ -2442,9 +2448,7 @@
     var voiceRecorder = null;
     var voiceChunks = [];
     var editingMessageIndex = -1;
-    var chatList = loadStoredChats(user);
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
-    currentChat.title = getCommunityChatTitle(user);
     syncChatMinimizeButton();
 
     renderOnline();
@@ -2452,6 +2456,46 @@
     renderMemberPicker();
     renderMessages();
     setupNotificationBadge();
+
+    async function syncActiveChatMessages() {
+      if (!isRemoteConversation(currentChat)) return;
+      try {
+        var messages = await loadRemoteMessages(currentChat.id);
+        if (messages.length && JSON.stringify(messages) !== JSON.stringify(currentChat.messages)) {
+          currentChat.messages = messages;
+          renderMessages();
+        }
+      } catch (e) {}
+    }
+
+    async function syncConversationList() {
+      try {
+        var remote = await loadConversationList();
+        var changed = false;
+        remote.forEach(function(conv) {
+          var existing = chatList.find(function(c) { return c.id === conv.id; });
+          if (!existing) {
+            chatList.push(normalizeRemoteConversation(conv));
+            changed = true;
+          } else if (conv.updatedAt && conv.updatedAt > (existing.updatedAt || "")) {
+            existing.updatedAt = conv.updatedAt;
+            existing.unreadCount = Number(conv.unreadCount || 0);
+            changed = true;
+          }
+        });
+        if (changed) {
+          replaceStoredChats(user, chatList);
+          renderChatList();
+        }
+      } catch (e) {}
+    }
+
+    var chatSyncInterval = setInterval(function() {
+      syncActiveChatMessages();
+      syncConversationList();
+    }, 15000);
+
+    window.addEventListener("beforeunload", function() { clearInterval(chatSyncInterval); });
 
     chat.querySelector("[data-chat-new]").addEventListener("click", function () {
       createEl.hidden = !createEl.hidden;
@@ -2461,22 +2505,24 @@
       createEl.hidden = true;
     });
 
-    chat.querySelector("[data-chat-start]").addEventListener("click", function () {
+    chat.querySelector("[data-chat-start]").addEventListener("click", async function () {
       var members = roster.filter(function(member) {
         return selectedMembers.has(member.username) || member.username === user.username;
       });
       if (!members.some(function(member) { return member.username === user.username; })) {
         members.unshift(normalizeChatMember(user, true));
       }
-      currentChat = createChat(members, user, chatNameEl ? chatNameEl.value : "");
+      var title = chatNameEl ? chatNameEl.value : "";
+      var usernames = members.filter(function(member) { return member.username !== user.username; }).map(function(member) { return member.username; });
+      var remote = await createRemoteConversation(title, usernames, usernames.length === 1);
+      if (remote) {
+        currentChat = normalizeRemoteConversation(remote);
+      } else {
+        currentChat = createChat(members, user, title);
+      }
       createEl.hidden = true;
       if (chatNameEl) chatNameEl.value = "";
-      titleEl.textContent = currentChat.title;
-      saveCurrentChat(user, currentChat);
-      upsertStoredChat(user, currentChat);
-      chatList = loadStoredChats(user);
-      renderChatList();
-      renderMessages();
+      await openChat(currentChat);
     });
 
     minimizeButton.addEventListener("click", function () {
@@ -2501,7 +2547,7 @@
       if (chat.classList.contains("is-collapsed")) dockCollapsedChat(chat);
     });
 
-    chat.querySelector("[data-chat-form]").addEventListener("submit", function (event) {
+    chat.querySelector("[data-chat-form]").addEventListener("submit", async function (event) {
       event.preventDefault();
       var body = inputEl.value.trim();
       if (editingMessageIndex >= 0) {
@@ -2518,7 +2564,7 @@
         return;
       }
       if (!body && !pendingAttachments.length) return;
-      sendChatMessage(body, pendingAttachments);
+      await sendChatMessage(body, pendingAttachments);
       inputEl.value = "";
       pendingAttachments = [];
       renderAttachmentPreview();
@@ -2600,8 +2646,8 @@
       inputEl.focus();
     });
 
-    chat.querySelector("[data-chat-like]").addEventListener("click", function () {
-      sendChatMessage("👍", []);
+    chat.querySelector("[data-chat-like]").addEventListener("click", async function () {
+      await sendChatMessage("👍", []);
     });
 
     messagesEl.addEventListener("click", function (event) {
@@ -2665,18 +2711,21 @@
         '</button>';
       }).join("");
       onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
-        button.addEventListener("click", function() {
+        button.addEventListener("click", async function() {
           var member = roster.find(function(candidate) { return candidate.username === button.dataset.onlineMember; });
           if (!member) return;
-          currentChat = findDirectChat(chatList, member, user) || createDirectChat(member, user);
-          selectedMembers = new Set(currentChat.members.map(function(chatMember) { return chatMember.username; }));
-          createEl.hidden = true;
-          saveCurrentChat(user, currentChat);
-          upsertStoredChat(user, currentChat);
-          chatList = loadStoredChats(user);
-          renderChatList();
-          renderMemberPicker();
-          renderMessages();
+          var existing = findDirectChat(chatList, member, user);
+          if (existing && isRemoteConversation(existing)) {
+            currentChat = existing;
+          } else {
+            var remote = await createRemoteConversation("", [member.username], true);
+            if (remote) {
+              currentChat = normalizeRemoteConversation(remote);
+            } else {
+              currentChat = existing || createDirectChat(member, user);
+            }
+          }
+          await openChat(currentChat);
           inputEl.focus();
         });
       });
@@ -2745,13 +2794,26 @@
       });
     }
 
-    function openSavedChat(saved) {
-      currentChat = saved;
+    async function openChat(chat) {
+      currentChat = chat;
       selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
       saveCurrentChat(user, currentChat);
+      upsertStoredChat(user, currentChat);
+      chatList = loadStoredChats(user);
+      if (isRemoteConversation(currentChat)) {
+        var messages = await loadRemoteMessages(currentChat.id);
+        if (messages.length) {
+          currentChat.messages = messages;
+        }
+        markRemoteConversationRead(currentChat.id);
+      }
       renderChatList();
       renderMemberPicker();
       renderMessages();
+    }
+
+    function openSavedChat(saved) {
+      openChat(saved);
       inputEl.focus();
     }
 
@@ -2782,18 +2844,32 @@
       minimizeButton.setAttribute("aria-expanded", chat.classList.contains("is-collapsed") ? "false" : "true");
     }
 
-    function sendChatMessage(body, attachments) {
-      currentChat.messages.push({
+    async function sendChatMessage(body, attachments) {
+      var safeAttachments = (attachments || []).slice(0, 20).map(function(att) {
+        return { name: att.name || "", type: att.type || "photo", url: att.url || "" };
+      });
+      if (!body && !safeAttachments.length) return;
+      var localMessage = {
         author: normalizeChatMember(user, true),
         body: body,
-        attachments: attachments || [],
-        createdAt: new Date().toISOString()
-      });
+        attachments: safeAttachments,
+        createdAt: new Date().toISOString(),
+        pending: true
+      };
+      currentChat.messages.push(localMessage);
+      renderMessages();
+      if (isRemoteConversation(currentChat)) {
+        var remoteMessage = await sendRemoteMessage(currentChat.id, body, safeAttachments);
+        if (remoteMessage) {
+          localMessage.pending = false;
+          localMessage.id = remoteMessage.id;
+          localMessage.createdAt = remoteMessage.createdAt;
+        }
+      }
       saveCurrentChat(user, currentChat);
       upsertStoredChat(user, currentChat);
       chatList = loadStoredChats(user);
-      renderChatList();
-      bumpLocalChatUnread();
+      if (!isRemoteConversation(currentChat)) bumpLocalChatUnread();
       renderMessages();
       setupNotificationBadge();
     }
@@ -2815,19 +2891,11 @@
   async function loadChatRoster(user) {
     var members = [normalizeChatMember(user, true)];
     try {
-      var feedResp = await fetch("/api/feed?limit=20&offset=0", { credentials: "same-origin", cache: "no-store" });
-      if (feedResp.ok) {
-        var feedData = await feedResp.json();
-        (feedData.items || []).forEach(function(item) {
-          if (!item.authorUsername && !item.authorName) return;
-          members.push(normalizeChatMember({
-            username: item.authorUsername || item.authorName,
-            displayName: item.authorName || item.authorDisplayName || item.authorUsername,
-            title: item.authorTitle || "Member",
-            photoUrl: item.authorPhotoUrl || "",
-            chatColor: item.authorChatColor || "",
-            active: true
-          }, false));
+      var directoryResp = await fetch("/api/members/directory", { credentials: "same-origin", cache: "no-store" });
+      if (directoryResp.ok) {
+        var directoryData = await directoryResp.json();
+        (directoryData.members || []).forEach(function(member) {
+          members.push(normalizeChatMember(member, false));
         });
       }
     } catch (e) {}
@@ -2896,12 +2964,68 @@
   }
 
   function findDirectChat(chats, member, user) {
-    var id = getDirectChatId(normalizeChatMember(member || {}, false), normalizeChatMember(user || {}, true));
-    return (chats || []).find(function(chat) { return chat.id === id; });
+    var current = normalizeChatMember(user || {}, true);
+    var other = normalizeChatMember(member || {}, false);
+    return (chats || []).find(function(chat) {
+      if (!chat.direct) return false;
+      var usernames = (chat.members || []).map(function(m) { return m.username; });
+      return usernames.indexOf(current.username) !== -1 && usernames.indexOf(other.username) !== -1 && usernames.length === 2;
+    });
   }
 
   function getDirectChatId(member, current) {
     return "direct-" + [member.username, current.username].filter(Boolean).sort().join("-");
+  }
+
+  async function loadChatState(user, roster) {
+    var current = normalizeChatMember(user, true);
+    var remoteConversations = [];
+    try { remoteConversations = await loadConversationList(); } catch (e) {}
+    var localChats = loadStoredChats(user);
+    var merged = [];
+
+    remoteConversations.forEach(function(conv) {
+      var local = localChats.find(function(c) { return c.id === conv.id; });
+      merged.push(local && local.messages && local.messages.length > (conv.messages || []).length
+        ? local
+        : normalizeRemoteConversation(conv));
+    });
+
+    localChats.forEach(function(local) {
+      if (!merged.some(function(c) { return c.id === local.id; })) {
+        merged.push(local);
+      }
+    });
+
+    var active = null;
+    try {
+      var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
+      if (saved && saved.id && merged.some(function(c) { return c.id === saved.id; })) {
+        active = merged.find(function(c) { return c.id === saved.id; });
+      }
+    } catch (e) {}
+
+    if (!active && merged.length) {
+      active = merged[0];
+    }
+    if (!active) {
+      var partner = roster.find(function(member) { return member.username !== current.username; });
+      active = partner ? createDirectChat(partner, user) : createEmptyChat(user);
+    }
+
+    return { currentChat: active, chatList: merged };
+  }
+
+  function normalizeRemoteConversation(conv) {
+    return {
+      id: conv.id,
+      title: conv.title || "Community Chat",
+      direct: Boolean(conv.direct),
+      members: Array.isArray(conv.members) ? conv.members.map(function(m) { return normalizeChatMember(m, false); }) : [],
+      messages: [],
+      unreadCount: Number(conv.unreadCount || 0),
+      updatedAt: conv.updatedAt || new Date().toISOString()
+    };
   }
 
   function loadCurrentChat(user, roster) {
@@ -2991,6 +3115,57 @@
     if (latest && latest.body) return latest.body.slice(0, 38);
     if (count === 1) return "Direct chat";
     return count + " members";
+  }
+
+  async function apiFetch(method, path, body) {
+    var options = { method: method, credentials: "same-origin", cache: "no-store" };
+    if (body !== undefined) {
+      options.headers = { "Content-Type": "application/json" };
+      options.body = JSON.stringify(body);
+    }
+    var resp = await fetch(path, options);
+    var data = {};
+    try { data = await resp.json(); } catch (e) {}
+    return { ok: resp.ok, status: resp.status, data: data };
+  }
+
+  async function loadConversationList() {
+    var res = await apiFetch("GET", "/api/conversations");
+    return res.ok && Array.isArray(res.data.conversations) ? res.data.conversations : [];
+  }
+
+  async function createRemoteConversation(title, usernames, isDirect) {
+    var res = await apiFetch("POST", "/api/conversations", { title: title, usernames: usernames, direct: isDirect });
+    if (!res.ok) return null;
+    return res.data.conversation || null;
+  }
+
+  async function loadRemoteMessages(conversationId) {
+    var res = await apiFetch("GET", "/api/conversations/" + encodeURIComponent(conversationId) + "/messages");
+    return res.ok && Array.isArray(res.data.messages) ? res.data.messages : [];
+  }
+
+  async function sendRemoteMessage(conversationId, body, attachments) {
+    var res = await apiFetch("POST", "/api/conversations/" + encodeURIComponent(conversationId) + "/messages", {
+      body: body,
+      attachments: attachments
+    });
+    return res.ok ? res.data.message : null;
+  }
+
+  async function markRemoteConversationRead(conversationId) {
+    await apiFetch("POST", "/api/conversations/" + encodeURIComponent(conversationId) + "/read");
+  }
+
+  async function getRemoteUnreadCount() {
+    var res = await apiFetch("GET", "/api/conversations/unread-count");
+    return res.ok ? Number(res.data.count || 0) : 0;
+  }
+
+  function isRemoteConversation(chat) {
+    if (!chat || !chat.id) return false;
+    var id = String(chat.id);
+    return !id.startsWith("chat-") && !id.startsWith("direct-");
   }
 
   function getStoredUsername() {

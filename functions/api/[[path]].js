@@ -45,6 +45,14 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/notifications\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkNotificationRead(path, env, user));
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
+    if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
+    if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
+    if (request.method === "POST" && path === "/conversations") return requireMember(request, env, user => handleCreateConversation(request, env, user));
+    if (request.method === "GET" && path.match(/^\/conversations\/[^/]+$/)) return requireMember(request, env, user => handleGetConversation(path, env, user));
+    if (request.method === "GET" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleListMessages(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleCreateMessage(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkConversationRead(path, request, env, user));
+    if (request.method === "GET" && path === "/conversations/unread-count") return requireMember(request, env, user => handleConversationUnreadCount(env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
@@ -2006,6 +2014,322 @@ async function handleCreateVideoReport(request, env, user) {
   `).bind(crypto.randomUUID(), videoId, user.id, reason, clean(data.details)).run();
 
   return json({ ok: true, message: "Report received. A TPI administrator will review it." });
+}
+
+// ---- Messenger member directory ----
+
+function directoryMember(user) {
+  return {
+    username: user.username,
+    displayName: user.display_name,
+    title: user.title || "",
+    role: user.role,
+    photoUrl: user.photo_url || "",
+    chatColor: normalizeChatColor(user.chat_color || "#55c8ff"),
+    canMessage: user.can_message !== 0,
+    active: user.active !== 0
+  };
+}
+
+async function handleMemberDirectory(request, env, user) {
+  const url = new URL(request.url);
+  const search = clean(url.searchParams.get("search")).slice(0, 80).toLowerCase();
+  const like = `%${search}%`;
+  const stmt = search
+    ? env.TPI_DB.prepare(`
+        SELECT id, username, display_name, title, role, photo_url, chat_color, can_message, active
+        FROM contributors
+        WHERE active = 1
+          AND (lower(username) LIKE ? OR lower(display_name) LIKE ?)
+        ORDER BY display_name COLLATE NOCASE, username COLLATE NOCASE
+        LIMIT 200
+      `).bind(like, like)
+    : env.TPI_DB.prepare(`
+        SELECT id, username, display_name, title, role, photo_url, chat_color, can_message, active
+        FROM contributors
+        WHERE active = 1
+        ORDER BY display_name COLLATE NOCASE, username COLLATE NOCASE
+        LIMIT 200
+      `);
+  const { results } = await stmt.all();
+  const members = (results || [])
+    .map(directoryMember)
+    .filter(member => member.username !== user.username);
+  return json({ members }, 200, { "Cache-Control": "no-store" });
+}
+
+// ---- Messenger conversations and messages ----
+
+async function requireConversationAccess(env, conversationId, user) {
+  if (!conversationId) return null;
+  const participant = await env.TPI_DB.prepare(`
+    SELECT cp.*, c.direct, c.title, c.created_by, c.created_at, c.updated_at
+    FROM conversation_participants cp
+    JOIN conversations c ON c.id = cp.conversation_id
+    WHERE cp.conversation_id = ? AND cp.contributor_id = ?
+  `).bind(conversationId, user.id).first();
+  return participant || null;
+}
+
+async function getConversationMembers(env, conversationId) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.username, c.display_name AS displayName, c.title, c.role, c.photo_url AS photoUrl, c.chat_color AS chatColor, cp.can_message AS canMessage
+    FROM conversation_participants cp
+    JOIN contributors c ON c.id = cp.contributor_id
+    WHERE cp.conversation_id = ?
+    ORDER BY c.display_name COLLATE NOCASE
+  `).bind(conversationId).all();
+  return (results || []).map(row => ({
+    id: row.id,
+    username: row.username,
+    displayName: row.displayName,
+    title: row.title || "",
+    role: row.role,
+    photoUrl: row.photoUrl || "",
+    chatColor: normalizeChatColor(row.chatColor || "#55c8ff"),
+    canMessage: row.canMessage !== 0
+  }));
+}
+
+async function getDirectConversation(env, userA, userB) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id
+    FROM conversations c
+    JOIN conversation_participants p ON p.conversation_id = c.id
+    WHERE c.direct = 1
+    GROUP BY c.id
+    HAVING SUM(CASE WHEN p.contributor_id = ? THEN 1 ELSE 0 END) = 1
+       AND SUM(CASE WHEN p.contributor_id = ? THEN 1 ELSE 0 END) = 1
+       AND COUNT(DISTINCT p.contributor_id) = 2
+  `).bind(userA.id, userB.id).all();
+  return results && results[0] ? results[0].id : null;
+}
+
+async function handleListConversations(request, env, user) {
+    const { results } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.title, c.direct, c.created_at AS createdAt, c.updated_at AS updatedAt,
+           (SELECT body FROM messages WHERE conversation_id = c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1) AS lastMessageBody,
+           (SELECT created_at FROM messages WHERE conversation_id = c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1) AS lastMessageAt,
+           (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.deleted_at IS NULL AND m.contributor_id != ? AND m.created_at > COALESCE((SELECT last_read_at FROM message_read_state WHERE conversation_id = c.id AND contributor_id = ?), '1970-01-01')) AS unreadCount
+    FROM conversations c
+    JOIN conversation_participants cp ON cp.conversation_id = c.id
+    WHERE cp.contributor_id = ?
+    ORDER BY c.updated_at DESC
+    LIMIT 100
+  `).bind(user.id, user.id, user.id).all();
+
+  const conversations = [];
+  for (const row of results || []) {
+    const members = await getConversationMembers(env, row.id);
+    conversations.push({
+      id: row.id,
+      title: row.title,
+      direct: Boolean(row.direct),
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      members,
+      lastMessage: row.lastMessageBody ? { body: row.lastMessageBody, createdAt: row.lastMessageAt } : null,
+      unreadCount: Number(row.unreadCount || 0)
+    });
+  }
+  return json({ conversations }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleGetConversation(path, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+  const members = await getConversationMembers(env, conversationId);
+  return json({
+    conversation: {
+      id: access.conversation_id,
+      title: access.title,
+      direct: Boolean(access.direct),
+      createdAt: access.created_at,
+      updatedAt: access.updated_at,
+      members
+    }
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleCreateConversation(request, env, user) {
+  const data = await readJson(request);
+  const title = clean(data.title).slice(0, 160);
+  const usernames = Array.isArray(data.usernames) ? data.usernames.filter(Boolean).map(clean) : [];
+  const isDirect = data.direct === true || usernames.length === 1;
+
+  const accessError = await getMemberActionAccessError(env, user, "message");
+  if (accessError) return json({ error: accessError }, 403);
+
+  const members = [];
+  for (const username of usernames) {
+    const member = await getUserByUsername(env, username);
+    if (!member || !member.active) return json({ error: `Member ${username} was not found.` }, 404);
+    members.push(member);
+  }
+  members.push(user);
+
+  let conversationId = crypto.randomUUID();
+  if (isDirect && members.length === 2) {
+    const other = members.find(m => m.id !== user.id);
+    const existingId = await getDirectConversation(env, user, other);
+    if (existingId) {
+      const members = await getConversationMembers(env, existingId);
+      return json({ conversation: { id: existingId, direct: true, members } }, 200, { "Cache-Control": "no-store" });
+    }
+  }
+
+  const finalTitle = title || getDefaultConversationTitle(members, user);
+  await env.TPI_DB.prepare(`
+    INSERT INTO conversations (id, title, created_by, direct, created_at, updated_at)
+    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  `).bind(conversationId, finalTitle, user.id, isDirect ? 1 : 0).run();
+
+  const inserts = members.map(member => env.TPI_DB.prepare(`
+    INSERT INTO conversation_participants (conversation_id, contributor_id, can_message)
+    VALUES (?, ?, ?)
+  `).bind(conversationId, member.id, member.can_message === 0 ? 0 : 1));
+  await env.TPI_DB.batch(inserts);
+
+  const responseMembers = await getConversationMembers(env, conversationId);
+  return json({ conversation: { id: conversationId, title: finalTitle, direct: isDirect, members: responseMembers } }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleListMessages(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/messages$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const url = new URL(request.url);
+  const before = clean(url.searchParams.get("before"));
+  const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get("limit") || "50", 10)));
+  let sql = `
+    SELECT m.id, m.body, m.attachments, m.created_at AS createdAt, m.edited_at AS editedAt,
+           c.id AS authorId, c.username AS authorUsername, c.display_name AS authorDisplayName,
+           c.photo_url AS authorPhotoUrl, c.chat_color AS authorChatColor
+    FROM messages m
+    LEFT JOIN contributors c ON c.id = m.contributor_id
+    WHERE m.conversation_id = ? AND m.deleted_at IS NULL
+  `;
+  const params = [conversationId];
+  if (before) {
+    sql += " AND m.created_at < ?";
+    params.push(before);
+  }
+  sql += " ORDER BY m.created_at DESC LIMIT ?";
+  params.push(limit);
+
+  const { results } = await env.TPI_DB.prepare(sql).bind(...params).all();
+  const messages = (results || []).map(row => ({
+    id: row.id,
+    body: row.body,
+    attachments: safeJsonParse(row.attachments),
+    createdAt: row.createdAt,
+    editedAt: row.editedAt || null,
+    author: row.authorId ? {
+      id: row.authorId,
+      username: row.authorUsername,
+      displayName: row.authorDisplayName,
+      photoUrl: row.authorPhotoUrl || "",
+      chatColor: normalizeChatColor(row.authorChatColor || "#55c8ff")
+    } : null
+  })).reverse();
+
+  return json({ messages }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleCreateMessage(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/messages$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+  if (access.can_message === 0) return json({ error: "Messaging is currently disabled for your account in this conversation." }, 403);
+
+  const accessError = await getMemberActionAccessError(env, user, "message");
+  if (accessError) return json({ error: accessError }, 403);
+
+  const data = await readJson(request);
+  const body = clean(data.body).slice(0, 4000);
+  const attachments = Array.isArray(data.attachments) ? data.attachments.slice(0, 20) : [];
+  if (!body && !attachments.length) return json({ error: "Message cannot be empty." }, 400);
+
+  const messageId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO messages (id, conversation_id, contributor_id, body, attachments, created_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).bind(messageId, conversationId, user.id, body, JSON.stringify(attachments), now).run();
+
+  await env.TPI_DB.prepare(`
+    UPDATE conversations SET updated_at = ? WHERE id = ?
+  `).bind(now, conversationId).run();
+
+  return json({
+    message: {
+      id: messageId,
+      body,
+      attachments,
+      createdAt: now,
+      author: {
+        id: user.id,
+        username: user.username,
+        displayName: user.display_name,
+        photoUrl: user.photo_url || "",
+        chatColor: normalizeChatColor(user.chat_color || "#55c8ff")
+      }
+    }
+  }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleMarkConversationRead(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/read$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const latest = await env.TPI_DB.prepare(`
+    SELECT id, created_at FROM messages
+    WHERE conversation_id = ? AND deleted_at IS NULL
+    ORDER BY created_at DESC LIMIT 1
+  `).bind(conversationId).first();
+
+  await env.TPI_DB.prepare(`
+    INSERT INTO message_read_state (conversation_id, contributor_id, last_read_message_id, last_read_at)
+    VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+    ON CONFLICT(conversation_id, contributor_id) DO UPDATE SET
+      last_read_message_id = excluded.last_read_message_id,
+      last_read_at = excluded.last_read_at
+  `).bind(conversationId, user.id, latest ? latest.id : null).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleConversationUnreadCount(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT COUNT(*) AS count
+    FROM conversations c
+    JOIN conversation_participants cp ON cp.conversation_id = c.id
+    WHERE cp.contributor_id = ?
+      AND EXISTS (
+        SELECT 1 FROM messages m
+        WHERE m.conversation_id = c.id AND m.deleted_at IS NULL AND m.contributor_id != ?
+          AND m.created_at > COALESCE((SELECT last_read_at FROM message_read_state WHERE conversation_id = c.id AND contributor_id = ?), '1970-01-01')
+      )
+  `).bind(user.id, user.id, user.id).all();
+  return json({ count: Number((results && results[0] && results[0].count) || 0) }, 200, { "Cache-Control": "no-store" });
+}
+
+function getDefaultConversationTitle(members, currentUser) {
+  const others = (members || []).filter(m => m.id !== currentUser.id);
+  if (others.length === 1) return others[0].display_name || others[0].username || "Chat";
+  const names = others.slice(0, 2).map(m => m.display_name || m.username);
+  return names.join(", ") + (others.length > 2 ? ` +${others.length - 2}` : "");
+}
+
+function safeJsonParse(value) {
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return null;
+  }
 }
 
 async function requireContributor(request, env, handler) {
