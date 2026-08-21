@@ -29,6 +29,7 @@
   const adminPanelRoot = document.querySelector("[data-admin-panel]");
   const adminMemberSearchForm = document.querySelector("[data-admin-member-search-form]");
   const adminMemberResults = document.querySelector("[data-admin-member-results]");
+  const adminDetailCard = document.querySelector("[data-admin-detail-card]");
   const adminMemberDetail = document.querySelector("[data-admin-member-detail]");
   const adminSelectedTitle = document.querySelector("[data-admin-selected-title]");
   let currentAdminUser = null;
@@ -519,8 +520,8 @@
           <div class="admin-member-actions">
             <button type="submit">Save Access</button>
             ${active
-              ? `<button type="button" class="portal-button-secondary" data-admin-member-active="deactivate" data-username="${escapeHtml(username)}"${isSelf ? " disabled" : ""}>Block</button>`
-              : `<button type="button" class="portal-button-secondary" data-admin-member-active="restore" data-username="${escapeHtml(username)}">Restore</button>`}
+              ? `<button type="button" class="admin-member-status-button admin-member-status-button-danger" data-admin-member-active="deactivate" data-username="${escapeHtml(username)}"${isSelf ? " disabled" : ""} title="Block this member until restored">Block</button>`
+              : `<button type="button" class="admin-member-status-button admin-member-status-button-restore" data-admin-member-active="restore" data-username="${escapeHtml(username)}" title="Restore this member's account access">Restore</button>`}
           </div>
         </form>
       </article>
@@ -574,9 +575,6 @@
       adminMemberResults.innerHTML = members.length
         ? members.map(member => renderAdminMemberRow(member, currentUser)).join("")
         : `<p class="access-note">No members matched that search.</p>`;
-      if (!selectedAdminUsername && members[0]?.username) {
-        await selectAdminMember(members[0].username);
-      }
     } catch (error) {
       adminMemberResults.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Could not load members.")}</p>`;
     }
@@ -596,6 +594,31 @@
     return adminMemberSearchForm?.querySelector("input[name='search']")?.value || "";
   }
 
+  function getAdminMemberFromHash() {
+    const hash = window.location.hash.replace(/^#/, "");
+    const params = new URLSearchParams(hash);
+    return params.get("member") || "";
+  }
+
+  function setAdminDetailVisible(visible) {
+    if (adminDetailCard) adminDetailCard.hidden = !visible;
+    if (!visible) {
+      selectedAdminUsername = "";
+      if (adminSelectedTitle) adminSelectedTitle.textContent = "Select a member";
+      if (adminMemberDetail) {
+        adminMemberDetail.innerHTML = `<p class="access-note">Choose a member to view account details, forum posts, uploaded forum media, and TPI videos connected to that account.</p>`;
+      }
+    }
+  }
+
+  function pushAdminMemberHash(username) {
+    if (!username) return;
+    const nextHash = `#member=${encodeURIComponent(username)}`;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState({ adminMember: username }, "", nextHash);
+    }
+  }
+
   function renderAdminActivity(data) {
     const member = data.member || {};
     const posts = data.posts || [];
@@ -609,8 +632,11 @@
     const isSelf = member.username === currentAdminUser?.username;
     const activeAction = member.active === false ? "restore" : "deactivate";
     const activeLabel = member.active === false ? "Unblock / Restore Member" : "Block Member";
+    const activeButtonClass = activeAction === "restore" ? "admin-member-status-button-restore" : "admin-member-status-button-danger";
+    const activeTitle = activeAction === "restore" ? "Restore this member's account access" : "Block this member from login and posting until restored";
     const publicProfileUrl = member.username ? `contributor-profile.html?username=${encodeURIComponent(member.username)}` : "#";
     if (adminSelectedTitle) adminSelectedTitle.textContent = displayName;
+    setAdminDetailVisible(true);
     if (!adminMemberDetail) return;
     adminMemberDetail.innerHTML = `
       <div class="admin-member-profile-head">
@@ -621,7 +647,7 @@
         </div>
         <div class="admin-member-profile-actions">
           <a class="portal-button portal-button-secondary" href="${escapeHtml(publicProfileUrl)}" target="_blank" rel="noopener noreferrer">View Profile</a>
-          <button type="button" class="portal-button-secondary" data-admin-member-active="${activeAction}" data-username="${escapeHtml(member.username || "")}"${isSelf || !member.username ? " disabled" : ""}>${activeLabel}</button>
+          <button type="button" class="admin-member-status-button ${activeButtonClass}" data-admin-member-active="${activeAction}" data-username="${escapeHtml(member.username || "")}" title="${escapeHtml(activeTitle)}"${isSelf || !member.username ? " disabled" : ""}>${activeLabel}</button>
         </div>
       </div>
       <div class="admin-member-overview">
@@ -704,8 +730,15 @@
     `;
   }
 
-  async function selectAdminMember(username) {
+  async function selectAdminMember(username, options = {}) {
+    if (!username) {
+      setAdminDetailVisible(false);
+      await loadAdminMembers(getAdminSearchValue());
+      return;
+    }
     selectedAdminUsername = username;
+    setAdminDetailVisible(true);
+    if (options.pushHash !== false) pushAdminMemberHash(username);
     if (adminMemberDetail) adminMemberDetail.innerHTML = `<p class="access-note">Loading member activity...</p>`;
     try {
       if (await cloudflareReady()) {
@@ -736,7 +769,11 @@
     }
     if (dashboardAdmin) dashboardAdmin.hidden = false;
     lockAdvancedAdminControls(currentUser);
+    const initialAdminMember = getAdminMemberFromHash();
+    selectedAdminUsername = initialAdminMember;
+    setAdminDetailVisible(Boolean(initialAdminMember));
     await loadAdminMembers("");
+    if (initialAdminMember) await selectAdminMember(initialAdminMember, { pushHash: false });
     const renderedCloudflare = await renderCloudflareOwnerInvites();
     if (!renderedCloudflare) renderOwnerInvites();
   }
@@ -1636,13 +1673,13 @@
       const username = activeButton.dataset.username;
       const action = activeButton.dataset.adminMemberActive;
       if (!username || !action) return;
-      if (action === "deactivate" && !window.confirm(`Deactivate ${username}? They will not be able to log in or post until restored.`)) return;
+      if (action === "deactivate" && !window.confirm(`Block ${username}? They will not be able to log in or post until restored.`)) return;
 
       if (await cloudflareReady()) {
         try {
           if (action === "deactivate") {
             await window.TPIApi.blockMember(username);
-            setStatus("Member account deactivated.", false);
+            setStatus("Member account blocked.", false);
           } else {
             await window.TPIApi.unblockMember(username);
             setStatus("Member account restored.", false);
@@ -1667,7 +1704,7 @@
         return;
       }
       if (username === currentUser.username) {
-        setStatus("You cannot deactivate your own account.", true);
+        setStatus("You cannot block your own account.", true);
         return;
       }
       localUsers[targetIndex].active = action !== "deactivate";
@@ -1678,7 +1715,7 @@
       } else {
         renderLocalContributorTitles(currentUser);
       }
-      setStatus(action === "deactivate" ? "Member account deactivated locally." : "Member account restored locally.", false);
+      setStatus(action === "deactivate" ? "Member account blocked locally." : "Member account restored locally.", false);
       return;
     }
 
@@ -1735,6 +1772,17 @@
     }
     const previewUrl = URL.createObjectURL(file);
     profilePhotoPreview.innerHTML = `<img class="member-profile-photo" src="${previewUrl}" alt="Selected profile photo preview">`;
+  });
+
+  window.addEventListener("hashchange", async () => {
+    if (!adminPanelRoot) return;
+    const username = getAdminMemberFromHash();
+    if (username) {
+      if (username !== selectedAdminUsername) await selectAdminMember(username, { pushHash: false });
+      return;
+    }
+    setAdminDetailVisible(false);
+    await loadAdminMembers(getAdminSearchValue());
   });
 
   if (inviteSetupPanel) inviteSetupPanel.hidden = true;

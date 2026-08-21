@@ -3256,6 +3256,42 @@ footer {
     justify-content: space-between;
 }
 
+.admin-member-status-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 14px;
+    color: #f4f8fb;
+    background: rgba(9, 15, 20, 0.72);
+    border: 1px solid #263646;
+    border-radius: 4px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.admin-member-status-button-danger {
+    color: #ffd9df;
+    background: rgba(255, 84, 112, 0.1);
+    border-color: rgba(255, 84, 112, 0.52);
+}
+
+.admin-member-status-button-restore {
+    color: #caffdf;
+    background: rgba(50, 220, 128, 0.1);
+    border-color: rgba(50, 220, 128, 0.5);
+}
+
+.admin-member-status-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .admin-member-active,
 .admin-member-inactive {
     padding: 4px 7px;
@@ -3525,6 +3561,11 @@ footer {
     flex-wrap: wrap;
     justify-content: end;
     gap: 10px;
+}
+
+.admin-member-profile-actions .portal-button,
+.admin-member-profile-actions .admin-member-status-button {
+    min-width: 138px;
 }
 
 .admin-member-overview div {
