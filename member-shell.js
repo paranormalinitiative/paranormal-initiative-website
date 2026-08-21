@@ -353,6 +353,7 @@
     var roster = await loadChatRoster(user);
     var currentChat = loadCurrentChat(user, roster);
     var chat = document.createElement("section");
+    var emojiValues = "😀 😃 😄 😁 😆 😅 😂 🙂 😉 😊 😇 😍 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤭 🤫 🤔 🤐 😐 😑 😶 🙄 😏 😴 🤤 😪 😮 😯 😲 😳 🥺 😢 😭 😤 😠 😡 🤯 😬 😰 😱 😨 😓 🤩 🥳 😎 🤓 🧐 👍 👎 👏 🙌 👐 🤝 🙏 💪 ✌️ 🤞 🤟 🤘 👌 👋 ❤️ 🧡 💛 💚 💙 💜 🤍 💔 💕 💞 💓 💗 💖 ✨ ⭐ 🌙 🔥 📷 🎥 🎙️ 🎧 📎 ✅ ❌".split(" ");
     chat.className = "member-floating-chat";
     chat.setAttribute("data-member-floating-chat", "");
     chat.setAttribute("aria-label", "Floating community chat");
@@ -380,24 +381,9 @@
           '<section class="member-chat-messages" data-chat-messages aria-label="Chat messages"></section>' +
           '<div class="member-chat-attachment-preview" data-chat-attachments hidden></div>' +
           '<div class="member-chat-emoji-picker" data-chat-emoji-picker hidden>' +
-            '<button type="button" data-chat-emoji-value="😀">😀</button>' +
-            '<button type="button" data-chat-emoji-value="😂">😂</button>' +
-            '<button type="button" data-chat-emoji-value="😊">😊</button>' +
-            '<button type="button" data-chat-emoji-value="😍">😍</button>' +
-            '<button type="button" data-chat-emoji-value="❤️">❤️</button>' +
-            '<button type="button" data-chat-emoji-value="🙏">🙏</button>' +
-            '<button type="button" data-chat-emoji-value="👻">👻</button>' +
-            '<button type="button" data-chat-emoji-value="👍">👍</button>' +
-            '<button type="button" data-chat-emoji-value="🙌">🙌</button>' +
-            '<button type="button" data-chat-emoji-value="🔥">🔥</button>' +
-            '<button type="button" data-chat-emoji-value="✨">✨</button>' +
-            '<button type="button" data-chat-emoji-value="😮">😮</button>' +
-            '<button type="button" data-chat-emoji-value="😢">😢</button>' +
-            '<button type="button" data-chat-emoji-value="😆">😆</button>' +
-            '<button type="button" data-chat-emoji-value="🤔">🤔</button>' +
-            '<button type="button" data-chat-emoji-value="💙">💙</button>' +
-            '<button type="button" data-chat-emoji-value="📷">📷</button>' +
-            '<button type="button" data-chat-emoji-value="🎙️">🎙️</button>' +
+            emojiValues.map(function(emoji) {
+              return '<button type="button" data-chat-emoji-value="' + escapeHtml(emoji) + '">' + escapeHtml(emoji) + '</button>';
+            }).join("") +
           '</div>' +
           '<form class="member-chat-form" data-chat-form>' +
             '<div class="member-chat-tools" aria-label="Message tools">' +
@@ -428,6 +414,7 @@
     var pendingAttachments = [];
     var voiceRecorder = null;
     var voiceChunks = [];
+    var editingMessageIndex = -1;
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
     currentChat.title = getCommunityChatTitle(user);
     syncChatMinimizeButton();
@@ -464,6 +451,16 @@
     chat.querySelector("[data-chat-form]").addEventListener("submit", function (event) {
       event.preventDefault();
       var body = inputEl.value.trim();
+      if (editingMessageIndex >= 0) {
+        if (!body) return;
+        currentChat.messages[editingMessageIndex].body = body;
+        currentChat.messages[editingMessageIndex].editedAt = new Date().toISOString();
+        editingMessageIndex = -1;
+        inputEl.value = "";
+        saveCurrentChat(user, currentChat);
+        renderMessages();
+        return;
+      }
       if (!body && !pendingAttachments.length) return;
       sendChatMessage(body, pendingAttachments);
       inputEl.value = "";
@@ -539,6 +536,16 @@
 
     messagesEl.addEventListener("click", function (event) {
       var deleteButton = event.target.closest("[data-chat-delete]");
+      var editButton = event.target.closest("[data-chat-edit]");
+      if (editButton) {
+        var editIndex = Number(editButton.dataset.chatEdit);
+        if (Number.isInteger(editIndex) && currentChat.messages[editIndex]) {
+          editingMessageIndex = editIndex;
+          inputEl.value = currentChat.messages[editIndex].body || "";
+          inputEl.focus();
+        }
+        return;
+      }
       if (deleteButton) {
         var index = Number(deleteButton.dataset.chatDelete);
         if (Number.isInteger(index) && index >= 0 && index < currentChat.messages.length && window.confirm("Delete this message?")) {
@@ -572,9 +579,15 @@
       }).join("");
       onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
         button.addEventListener("click", function() {
-          selectedMembers.add(button.dataset.onlineMember);
-          createEl.hidden = false;
+          var member = roster.find(function(candidate) { return candidate.username === button.dataset.onlineMember; });
+          if (!member) return;
+          currentChat = createDirectChat(member, user);
+          selectedMembers = new Set(currentChat.members.map(function(chatMember) { return chatMember.username; }));
+          createEl.hidden = true;
+          saveCurrentChat(user, currentChat);
           renderMemberPicker();
+          renderMessages();
+          inputEl.focus();
         });
       });
     }
@@ -695,6 +708,16 @@
     };
   }
 
+  function createDirectChat(member, user) {
+    var current = normalizeChatMember(user || {}, true);
+    return {
+      id: "chat-" + member.username,
+      title: member.displayName || "Community Chat",
+      members: [current, member],
+      messages: []
+    };
+  }
+
   function loadCurrentChat(user, roster) {
     var current = normalizeChatMember(user, true);
     try {
@@ -737,10 +760,13 @@
     var currentUsername = normalizeChatUsername(getStoredUsername());
     var isOwn = currentUsername && author.username === currentUsername;
     return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
-      renderChatAvatar(message.author || {}) +
       '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
-      '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' +
+      '<span class="member-chat-message-actions">' +
+        (isOwn ? '<button class="member-chat-edit" type="button" data-chat-edit="' + escapeHtml(String(index)) + '" title="Edit message">Edit</button>' : '') +
+        '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' +
+      '</span>' +
       '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
+      (message.editedAt ? '<small>Edited</small>' : '') +
       (message.body ? '<p>' + escapeHtml(message.body) + '</p>' : '') +
       renderChatAttachments(message.attachments) + '</div>' +
     '</article>';
