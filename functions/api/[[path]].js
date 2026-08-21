@@ -377,6 +377,31 @@ async function handleAdminMemberActivity(path, env) {
     LIMIT 100
   `).bind(member.id).all();
 
+  const { results: articleResults } = await env.TPI_DB.prepare(`
+    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, labels, status, created_at AS createdAt, updated_at AS updatedAt
+    FROM articles
+    WHERE created_by = ? OR lower(author) IN (lower(?), lower(?))
+    ORDER BY COALESCE(updated_at, created_at) DESC
+    LIMIT 200
+  `).bind(member.id, member.display_name || "", member.username || "").all();
+
+  const { results: commentResults } = await env.TPI_DB.prepare(`
+    SELECT id, page_id AS pageId, parent_id AS parentId, name, author_title AS authorTitle, text, status, created_at AS createdAt
+    FROM comments
+    WHERE contributor_id = ?
+    ORDER BY created_at DESC
+    LIMIT 100
+  `).bind(member.id).all();
+
+  const { results: videoCommentResults } = await env.TPI_DB.prepare(`
+    SELECT vc.id, vc.video_id AS videoId, vc.body, vc.status, vc.created_at AS createdAt, tv.slug AS videoSlug, tv.title AS videoTitle
+    FROM video_comments vc
+    LEFT JOIN tpi_videos tv ON tv.id = vc.video_id
+    WHERE vc.contributor_id = ?
+    ORDER BY vc.created_at DESC
+    LIMIT 100
+  `).bind(member.id).all();
+
   const posts = await attachForumPostMedia(env, postResults || []);
   const photos = posts.flatMap(post => (post.attachments || [])
     .filter(item => item.mediaType === "image")
@@ -390,7 +415,10 @@ async function handleAdminMemberActivity(path, env) {
     posts,
     photos,
     forumVideos,
-    tpiVideos: videoResults || []
+    tpiVideos: videoResults || [],
+    articles: articleResults || [],
+    comments: commentResults || [],
+    videoComments: videoCommentResults || []
   });
 }
 

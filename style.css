@@ -3331,9 +3331,19 @@ footer {
 
 .admin-control-grid {
     display: grid;
-    grid-template-columns: minmax(360px, 0.9fr) minmax(520px, 1.35fr);
+    grid-template-columns: minmax(620px, 1.45fr) minmax(340px, 0.8fr);
     gap: 18px;
     align-items: start;
+}
+
+.admin-detail-card {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.admin-members-card {
+    grid-column: 2;
+    grid-row: 1;
 }
 
 .admin-section-header {
@@ -3406,6 +3416,12 @@ footer {
     gap: 10px;
 }
 
+.admin-member-results {
+    max-height: 680px;
+    overflow: auto;
+    padding-right: 4px;
+}
+
 .admin-member-result {
     display: grid;
     gap: 10px;
@@ -3466,9 +3482,40 @@ footer {
 
 .admin-member-overview {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
     margin-bottom: 16px;
+}
+
+.admin-member-profile-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: rgba(9, 15, 20, 0.82);
+    border: 1px solid rgba(85, 200, 255, 0.2);
+    border-radius: 5px;
+}
+
+.admin-member-profile-head h3 {
+    margin: 0;
+    color: #f4f8fb;
+    font-size: 24px;
+}
+
+.admin-member-profile-head span {
+    display: block;
+    margin-top: 5px;
+    color: #9fb1c3;
+}
+
+.admin-member-profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 10px;
 }
 
 .admin-member-overview div {
@@ -3530,6 +3577,12 @@ footer {
     line-height: 1.5;
 }
 
+.admin-activity-item a {
+    color: #bfeeff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
 .admin-activity-item em {
     color: #55c8ff;
     font-size: 12px;
@@ -3548,6 +3601,26 @@ footer {
 
 .admin-panel-invites {
     margin-top: 18px;
+}
+
+@media (max-width: 1120px) {
+    .admin-control-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-detail-card,
+    .admin-members-card {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .admin-member-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-media-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .profile-photo-editor {

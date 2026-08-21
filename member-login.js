@@ -602,18 +602,51 @@
     const photos = data.photos || [];
     const forumVideos = data.forumVideos || [];
     const tpiVideos = data.tpiVideos || [];
+    const articles = data.articles || [];
+    const comments = data.comments || [];
+    const videoComments = data.videoComments || [];
     const displayName = member.displayName || member.username || "Member";
+    const isSelf = member.username === currentAdminUser?.username;
+    const activeAction = member.active === false ? "restore" : "deactivate";
+    const activeLabel = member.active === false ? "Unblock / Restore Member" : "Block Member";
+    const publicProfileUrl = member.username ? `contributor-profile.html?username=${encodeURIComponent(member.username)}` : "#";
     if (adminSelectedTitle) adminSelectedTitle.textContent = displayName;
     if (!adminMemberDetail) return;
     adminMemberDetail.innerHTML = `
+      <div class="admin-member-profile-head">
+        <div>
+          <p class="portal-kicker">Selected Member</p>
+          <h3>${escapeHtml(displayName)}</h3>
+          <span>${escapeHtml(member.title || "No public title")} · ${escapeHtml(member.role || "member")}</span>
+        </div>
+        <div class="admin-member-profile-actions">
+          <a class="portal-button portal-button-secondary" href="${escapeHtml(publicProfileUrl)}" target="_blank" rel="noopener noreferrer">View Profile</a>
+          <button type="button" class="portal-button-secondary" data-admin-member-active="${activeAction}" data-username="${escapeHtml(member.username || "")}"${isSelf || !member.username ? " disabled" : ""}>${activeLabel}</button>
+        </div>
+      </div>
       <div class="admin-member-overview">
         <div><span>Username</span><strong>${escapeHtml(member.username || "")}</strong></div>
         <div><span>Role</span><strong>${escapeHtml(member.role || "member")}</strong></div>
         <div><span>Status</span><strong>${member.active === false ? "Blocked" : "Active"}</strong></div>
-        <div><span>Posts</span><strong>${posts.length}</strong></div>
+        <div><span>Forum Posts</span><strong>${posts.length}</strong></div>
+        <div><span>Contributions</span><strong>${articles.length}</strong></div>
+        <div><span>Comments</span><strong>${comments.length + videoComments.length}</strong></div>
         <div><span>Photos</span><strong>${photos.length}</strong></div>
         <div><span>Videos</span><strong>${forumVideos.length + tpiVideos.length}</strong></div>
       </div>
+      <section class="admin-activity-section">
+        <h4>Contributed Posts</h4>
+        <div class="admin-activity-list">
+          ${articles.length ? articles.map(article => `
+            <article class="admin-activity-item">
+              <strong>${escapeHtml(article.title || "Untitled contribution")}</strong>
+              <span>${escapeHtml(article.contributionType || "Content")} · ${escapeHtml(article.status || "draft")} · ${escapeHtml(article.updatedAt || article.createdAt || "")}</span>
+              <p>${escapeHtml(article.subtitle || article.destination || "No subtitle provided.")}</p>
+              ${article.href ? `<a href="${escapeHtml(article.href)}" target="_blank" rel="noopener noreferrer">Open contribution</a>` : ""}
+            </article>
+          `).join("") : `<p class="access-note">No Content Editor contributions found for this member.</p>`}
+        </div>
+      </section>
       <section class="admin-activity-section">
         <h4>Forum Posts</h4>
         <div class="admin-activity-list">
@@ -641,6 +674,27 @@
               <span>${escapeHtml(video.category || "TPI Video")} · ${escapeHtml(video.status || "published")}</span>
             </a>
           `).join("")}
+        </div>
+      </section>
+      <section class="admin-activity-section">
+        <h4>Comments</h4>
+        <div class="admin-activity-list">
+          ${comments.length || videoComments.length ? `
+            ${comments.map(comment => `
+              <article class="admin-activity-item">
+                <strong>${escapeHtml(comment.pageId || "Article comment")}</strong>
+                <span>${escapeHtml(comment.status || "pending")} · ${escapeHtml(comment.createdAt || "")}</span>
+                <p>${escapeHtml(comment.text || "").slice(0, 420)}</p>
+              </article>
+            `).join("")}
+            ${videoComments.map(comment => `
+              <article class="admin-activity-item">
+                <strong>${escapeHtml(comment.videoTitle || "Video comment")}</strong>
+                <span>${escapeHtml(comment.status || "visible")} · ${escapeHtml(comment.createdAt || "")}</span>
+                <p>${escapeHtml(comment.body || "").slice(0, 420)}</p>
+              </article>
+            `).join("")}
+          ` : `<p class="access-note">No comments found for this member.</p>`}
         </div>
       </section>
       <section class="admin-activity-section">
