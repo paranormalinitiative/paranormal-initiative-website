@@ -3298,12 +3298,12 @@ body.feed-app-page.member-mode .member-floating-chat {
 .member-feed-app-main {
     width: min(100%, 980px);
     min-width: 0;
-    min-height: 100vh;
+    height: 100vh;
     margin: 0 auto;
     padding: 28px 26px 72px;
     display: flex;
     flex-direction: column;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .member-feed-app-header {
@@ -3640,11 +3640,11 @@ body.feed-app-page .member-feed-member span {
 }
 
 body.feed-app-page .member-explore-feed {
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     min-height: 0;
     max-height: none;
-    overflow-y: visible;
-    padding: 0 0 18px;
+    overflow-y: auto;
+    padding: 0 6px 18px 0;
 }
 
 body.feed-app-page .member-explore-row {
@@ -3765,10 +3765,12 @@ body.feed-app-page .member-explore-item-shell {
 .member-feed-post-preview {
     display: grid;
     gap: 10px;
-    padding: 12px;
-    background: rgba(8, 16, 24, 0.48);
-    border: 1px solid rgba(85, 200, 255, 0.12);
-    border-radius: 8px;
+    max-height: 190px;
+    overflow-y: auto;
+    padding: 0 4px 0 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
 }
 
 .member-feed-post-preview p {

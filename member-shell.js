@@ -412,9 +412,11 @@
     var attachmentPreviewEl = chat.querySelector("[data-chat-attachments]");
     var mediaInputEl = chat.querySelector("[data-chat-media-input]");
     var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
+    var minimizeButton = chat.querySelector("[data-chat-minimize]");
     var pendingAttachments = [];
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
     currentChat.title = getCommunityChatTitle(user);
+    syncChatMinimizeButton();
 
     renderOnline();
     renderMemberPicker();
@@ -439,9 +441,9 @@
       renderMessages();
     });
 
-    chat.querySelector("[data-chat-minimize]").addEventListener("click", function (event) {
+    minimizeButton.addEventListener("click", function () {
       chat.classList.toggle("is-collapsed");
-      event.currentTarget.textContent = chat.classList.contains("is-collapsed") ? "Show" : "Hide";
+      syncChatMinimizeButton();
       storeChatFrame(chat);
     });
 
@@ -541,6 +543,12 @@
         ? currentChat.messages.map(renderChatMessage).join("")
         : "";
       messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function syncChatMinimizeButton() {
+      if (!minimizeButton) return;
+      minimizeButton.textContent = chat.classList.contains("is-collapsed") ? "Show" : "Hide";
+      minimizeButton.setAttribute("aria-expanded", chat.classList.contains("is-collapsed") ? "false" : "true");
     }
 
     function sendChatMessage(body, attachments) {
