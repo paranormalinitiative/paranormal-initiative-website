@@ -202,7 +202,7 @@ body.member-mode {
     z-index: 120;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    min-width: 360px;
+    min-width: 420px;
     min-height: 360px;
     max-width: calc(100vw - 24px);
     max-height: calc(100vh - 24px);
