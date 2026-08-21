@@ -2994,7 +2994,7 @@
     var current = normalizeChatMember(user || {}, true);
     return {
       id: "chat-default",
-      title: getCommunityChatTitle(user),
+      title: "Community Chat",
       members: [current],
       messages: []
     };
@@ -3046,8 +3046,7 @@
       active = merged[0];
     }
     if (!active) {
-      var partner = roster.find(function(member) { return member.username !== current.username; });
-      active = partner ? createDirectChat(partner, user) : createEmptyChat(user);
+      active = createEmptyChat(user);
     }
 
     return { currentChat: active, chatList: merged };
