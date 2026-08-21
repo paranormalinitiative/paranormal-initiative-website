@@ -27,6 +27,7 @@
   const publicProfileRoot = document.querySelector("[data-public-profile]");
   const profilePhotoPreview = document.querySelector("[data-profile-photo-preview]");
   const adminPanelRoot = document.querySelector("[data-admin-panel]");
+  const adminSettingsPanel = document.querySelector("[data-admin-settings-panel]");
   const adminMemberSearchForm = document.querySelector("[data-admin-member-search-form]");
   const adminMemberResults = document.querySelector("[data-admin-member-results]");
   const adminDetailCard = document.querySelector("[data-admin-detail-card]");
@@ -775,6 +776,20 @@
     if (initialAdminMember) await selectAdminMember(initialAdminMember, { pushHash: false });
     const renderedCloudflare = await renderCloudflareOwnerInvites();
     if (!renderedCloudflare) renderOwnerInvites();
+  }
+
+  async function initAdminSettingsPanel() {
+    if (!adminSettingsPanel) return;
+    const currentUser = await getAdminSessionUser();
+    if (!["owner", "admin"].includes(currentUser?.role)) {
+      adminSettingsPanel.innerHTML = `
+        <section class="editor-access-card">
+          <p class="portal-kicker">Advanced Page Settings</p>
+          <h2>Access Required</h2>
+          <p class="access-note access-error">Owner or Admin access is required to manage website settings.</p>
+        </section>
+      `;
+    }
   }
 
   function renderModerationComment(comment, statusFilter) {
@@ -1790,6 +1805,7 @@
   showOwnerToolsForSetupOnly();
   initDashboard();
   initAdminPanel();
+  initAdminSettingsPanel();
   initPublicProfile();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();

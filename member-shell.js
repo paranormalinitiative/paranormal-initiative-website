@@ -20,6 +20,7 @@
     "member-home",
     "member-dashboard",
     "admin-panel",
+    "admin-advanced-settings",
     "live-video",
     "podcast"
     // Future: "activity", "chat", "saved"
