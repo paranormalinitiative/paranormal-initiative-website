@@ -12,29 +12,32 @@ body.member-mode footer {
 
 html.member-mode-root,
 html.member-mode-root body.member-mode {
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
+    overflow: auto;
 }
 
 body.member-mode {
-    overflow: hidden;
+    overflow: auto;
 }
 
 /* ===== MEMBER SHELL LAYOUT ===== */
 .member-shell {
-    display: grid;
-    grid-template-columns: 270px 1fr;
-    height: 100vh;
+    display: block;
     min-height: 100vh;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* ===== LEFT SIDEBAR ===== */
 .member-sidebar {
-    position: relative;
+    position: fixed;
     top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 80;
+    width: 270px;
     height: 100vh;
     max-height: 100vh;
+    box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 20px 0 20px 16px;
@@ -163,11 +166,11 @@ body.member-mode {
 
 /* ===== MAIN CONTENT AREA ===== */
 .member-main {
+    margin-left: 270px;
     padding: 24px 28px;
     min-width: 0;
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+    min-height: 100vh;
+    overflow: visible;
 }
 
 .member-main-inner {
@@ -1150,6 +1153,7 @@ body.member-mode .portal-hero p {
 }
 
 body.member-mode .portal-hero .portal-actions {
+    justify-content: center;
     margin-top: 16px;
 }
 
@@ -1194,13 +1198,14 @@ body.member-mode .home-pathways > p {
 /* Home focus grid — card grid */
 body.member-mode .home-focus-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-top: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 18px;
+    margin-bottom: 30px;
 }
 
 body.member-mode .home-focus-grid .dashboard-panel {
-    min-height: auto;
+    min-height: 170px;
     padding: 18px;
     background: #101820;
     border: 1px solid #243140;
@@ -1214,6 +1219,10 @@ body.member-mode .home-collaboration {
     background: #101820;
     border: 1px solid #243140;
     border-radius: 8px;
+}
+
+body.member-mode .home-mission-band {
+    margin-top: 0;
 }
 
 body.member-mode .home-mission-band p,
@@ -1268,11 +1277,8 @@ body.member-mode .home-card-grid::before {
 /* RESPONSIVE — TABLET            */
 /* ============================== */
 @media (max-width: 900px) {
-    .member-shell {
-        grid-template-columns: 220px 1fr;
-    }
-
     .member-sidebar {
+        width: 220px;
         padding: 16px 0 16px 8px;
     }
 
@@ -1283,6 +1289,7 @@ body.member-mode .home-card-grid::before {
     }
 
     .member-main {
+        margin-left: 220px;
         padding: 20px 18px;
     }
 }
@@ -1317,6 +1324,7 @@ body.member-mode .home-card-grid::before {
     }
 
     .member-main {
+        margin-left: 0;
         padding: 16px 14px 80px;
         height: auto;
         overflow: visible;
@@ -1342,6 +1350,7 @@ body.member-mode .home-card-grid::before {
     body.member-mode .dashboard-grid,
     body.member-mode .portal-grid,
     body.member-mode .study-hub-layout,
+    body.member-mode .home-focus-grid,
     body.member-mode .education-intro-grid {
         grid-template-columns: 1fr;
     }
