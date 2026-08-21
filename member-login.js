@@ -29,6 +29,7 @@
   const memberNotificationsList = document.querySelector("[data-member-notifications]");
   const adminPanelRoot = document.querySelector("[data-admin-panel]");
   const adminSettingsPanel = document.querySelector("[data-admin-settings-panel]");
+  const adminSettingsForm = document.querySelector("[data-admin-settings-form]");
   const adminMemberSearchForm = document.querySelector("[data-admin-member-search-form]");
   const adminMemberResults = document.querySelector("[data-admin-member-results]");
   const adminDetailCard = document.querySelector("[data-admin-detail-card]");
@@ -690,6 +691,25 @@
         </div>
       </section>
       <section class="admin-activity-section">
+        <h4>${escapeHtml(displayName)} Access Control</h4>
+        <form class="admin-member-permission-form" data-admin-member-access-form>
+          <input name="username" type="hidden" value="${escapeHtml(member.username || "")}">
+          <label class="access-checkbox">
+            <input name="canPost" type="checkbox"${member.canPost !== false ? " checked" : ""}>
+            <span>Can post in the community forum.</span>
+          </label>
+          <label class="access-checkbox">
+            <input name="canComment" type="checkbox"${member.canComment !== false ? " checked" : ""}>
+            <span>Can comment on articles and videos.</span>
+          </label>
+          <label class="access-checkbox">
+            <input name="canMessage" type="checkbox"${member.canMessage !== false ? " checked" : ""}>
+            <span>Can message when member messaging launches.</span>
+          </label>
+          <button type="submit">Save Member Access</button>
+        </form>
+      </section>
+      <section class="admin-activity-section">
         <h4>Contributed Posts</h4>
         <div class="admin-activity-list admin-contributed-posts-list">
           ${articles.length ? articles.map(article => `
@@ -818,6 +838,18 @@
           <p class="access-note access-error">Owner or Admin access is required to manage website settings.</p>
         </section>
       `;
+      return;
+    }
+    if (!adminSettingsForm || !await cloudflareReady()) return;
+    try {
+      const data = await window.TPIApi.getAdminSettings();
+      const settings = data.settings || {};
+      adminSettingsForm.autoRestrictUnverifiedEmail.checked = Boolean(settings.autoRestrictUnverifiedEmail);
+      adminSettingsForm.requireVerifiedEmailToPost.checked = Boolean(settings.requireVerifiedEmailToPost);
+      adminSettingsForm.requireVerifiedEmailToComment.checked = Boolean(settings.requireVerifiedEmailToComment);
+      adminSettingsForm.requireVerifiedEmailToMessage.checked = Boolean(settings.requireVerifiedEmailToMessage);
+    } catch (error) {
+      setStatus(error.message || "Advanced settings could not be loaded.", true);
     }
   }
 
@@ -1162,7 +1194,9 @@
     const passwordForm = event.target.closest("[data-password-form]");
     const adminTitleForm = event.target.closest("[data-admin-title-form]");
     const adminSearchForm = event.target.closest("[data-admin-member-search-form]");
-    if (!loginForm && !resetRequestForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !usernameSubmitForm && !passwordForm && !adminTitleForm && !adminSearchForm) return;
+    const adminMemberAccessForm = event.target.closest("[data-admin-member-access-form]");
+    const adminSettingsSubmitForm = event.target.closest("[data-admin-settings-form]");
+    if (!loginForm && !resetRequestForm && !memberRegisterForm && !inviteCheckForm && !registerForm && !ownerInviteForm && !ownerBootstrapForm && !profileSubmitForm && !usernameSubmitForm && !passwordForm && !adminTitleForm && !adminSearchForm && !adminMemberAccessForm && !adminSettingsSubmitForm) return;
     event.preventDefault();
 
     const data = new FormData(event.target);
@@ -1170,6 +1204,46 @@
 
     if (adminSearchForm) {
       await loadAdminMembers(String(data.get("search") || "").trim());
+      return;
+    }
+
+    if (adminSettingsSubmitForm) {
+      if (!await cloudflareReady()) {
+        setStatus("Advanced settings require the Cloudflare member database.", true);
+        return;
+      }
+      try {
+        await window.TPIApi.updateAdminSettings({
+          autoRestrictUnverifiedEmail: data.get("autoRestrictUnverifiedEmail") === "on",
+          requireVerifiedEmailToPost: data.get("requireVerifiedEmailToPost") === "on",
+          requireVerifiedEmailToComment: data.get("requireVerifiedEmailToComment") === "on",
+          requireVerifiedEmailToMessage: data.get("requireVerifiedEmailToMessage") === "on"
+        });
+        setStatus("Advanced settings saved.", false);
+      } catch (error) {
+        setStatus(error.message || "Advanced settings could not be saved.", true);
+      }
+      return;
+    }
+
+    if (adminMemberAccessForm) {
+      const username = String(data.get("username") || "").trim();
+      if (!username) return;
+      if (!await cloudflareReady()) {
+        setStatus("Member access controls require the Cloudflare member database.", true);
+        return;
+      }
+      try {
+        await window.TPIApi.updateMemberAccess(username, {
+          canPost: data.get("canPost") === "on",
+          canComment: data.get("canComment") === "on",
+          canMessage: data.get("canMessage") === "on"
+        });
+        setStatus(`${username} access control saved.`, false);
+        await selectAdminMember(username, { pushHash: false });
+      } catch (error) {
+        setStatus(error.message || "Member access could not be saved.", true);
+      }
       return;
     }
 

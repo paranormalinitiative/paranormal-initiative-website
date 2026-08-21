@@ -4144,6 +4144,26 @@ footer {
     color: #f4f8fb;
 }
 
+.admin-settings-form,
+.admin-member-permission-form {
+    display: grid;
+    gap: 12px;
+}
+
+.admin-settings-form .access-checkbox,
+.admin-member-permission-form .access-checkbox {
+    padding: 13px;
+    background: rgba(9, 15, 20, 0.72);
+    border: 1px solid rgba(38, 54, 70, 0.9);
+    border-radius: 4px;
+}
+
+.admin-settings-form button,
+.admin-member-permission-form button {
+    justify-self: start;
+    min-height: 42px;
+}
+
 .invite-link-row input {
     width: 100%;
     padding: 9px 10px;

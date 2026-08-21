@@ -23,6 +23,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
     if (request.method === "GET" && path === "/admin/members") return requireAdmin(request, env, user => handleAdminListMembers(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/activity$/)) return requireAdmin(request, env, user => handleAdminMemberActivity(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/access$/)) return requireAdmin(request, env, user => handleAdminUpdateMemberAccess(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/notifications$/)) return requireAdmin(request, env, user => handleAdminSendMemberNotification(path, request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
@@ -31,6 +32,8 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
+    if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
+    if (request.method === "POST" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminUpdateSettings(request, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
     if (request.method === "POST" && path === "/contributors/me/profile") return requireMember(request, env, user => handleUpdateProfile(request, env, user));
@@ -360,6 +363,27 @@ async function handleAdminSetMemberActive(path, env, actingUser, active) {
   return json({ member: { username: updated.username, displayName: updated.display_name, title: updated.title, role: updated.role, active: Boolean(updated.active) } });
 }
 
+async function handleAdminUpdateMemberAccess(path, request, env, actingUser) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/access$/)?.[1] || ""));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const target = await getUserByUsername(env, username);
+  if (!target) return json({ error: "Member was not found." }, 404);
+  if (target.role === "owner" && actingUser.role !== "owner") return json({ error: "Only the owner can change a director account." }, 403);
+  const data = await readJson(request);
+  await env.TPI_DB.prepare(`
+    UPDATE contributors
+    SET can_post = ?, can_comment = ?, can_message = ?
+    WHERE username = ?
+  `).bind(
+    data.canPost === false ? 0 : 1,
+    data.canComment === false ? 0 : 1,
+    data.canMessage === false ? 0 : 1,
+    username
+  ).run();
+  const updated = await getUserByUsername(env, username);
+  return json({ member: privateMemberUser(updated) });
+}
+
 async function handleAdminSendMemberNotification(path, request, env, actingUser) {
   const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/notifications$/)?.[1] || ""));
   if (!username) return json({ error: "Member username is required." }, 400);
@@ -406,6 +430,35 @@ async function handleMarkNotificationRead(path, env, user) {
     WHERE id = ? AND contributor_id = ?
   `).bind(id, user.id).run();
   return json({ ok: true, id });
+}
+
+async function handleAdminGetSettings(env) {
+  return json({ settings: await getSiteSettings(env) });
+}
+
+async function handleAdminUpdateSettings(request, env, user) {
+  const data = await readJson(request);
+  const allowed = [
+    "autoRestrictUnverifiedEmail",
+    "requireVerifiedEmailToPost",
+    "requireVerifiedEmailToComment",
+    "requireVerifiedEmailToMessage"
+  ];
+  const pairs = {
+    autoRestrictUnverifiedEmail: "auto_restrict_unverified_email",
+    requireVerifiedEmailToPost: "require_verified_email_to_post",
+    requireVerifiedEmailToComment: "require_verified_email_to_comment",
+    requireVerifiedEmailToMessage: "require_verified_email_to_message"
+  };
+  for (const key of allowed) {
+    if (!(key in data)) continue;
+    await env.TPI_DB.prepare(`
+      INSERT INTO site_settings (key, value, updated_by, updated_at)
+      VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_by = excluded.updated_by, updated_at = CURRENT_TIMESTAMP
+    `).bind(pairs[key], data[key] ? "1" : "0", user.id).run();
+  }
+  return json({ settings: await getSiteSettings(env) });
 }
 
 async function handleAdminMemberActivity(path, env) {
@@ -1370,6 +1423,8 @@ async function handleForumTopic(path, request, env) {
 }
 
 async function handleCreateForumTopic(request, env, user) {
+  const accessError = await getMemberActionAccessError(env, user, "post");
+  if (accessError) return json({ error: accessError }, 403);
   const data = await readJson(request);
   const categoryId = clean(data.categoryId);
   const title = clean(data.title).slice(0, 160);
@@ -1394,6 +1449,8 @@ async function handleCreateForumTopic(request, env, user) {
 }
 
 async function handleCreateForumPost(path, request, env, user) {
+  const accessError = await getMemberActionAccessError(env, user, "post");
+  if (accessError) return json({ error: accessError }, 403);
   const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)\/posts$/)?.[1] || ""));
   const data = await readJson(request);
   const body = clean(data.body).slice(0, 6000);
@@ -1554,6 +1611,10 @@ async function handleListComments(request, env) {
 async function handleCreateComment(request, env) {
   const data = await readJson(request);
   const user = await getSessionUser(request, env);
+  if (user) {
+    const accessError = await getMemberActionAccessError(env, user, "comment");
+    if (accessError) return json({ error: accessError }, 403);
+  }
   const id = crypto.randomUUID();
   const pageId = clean(data.pageId);
   const text = clean(data.text);
@@ -1596,6 +1657,8 @@ async function handleListVideoComments(request, env) {
 }
 
 async function handleCreateVideoComment(request, env, user) {
+  const accessError = await getMemberActionAccessError(env, user, "comment");
+  if (accessError) return json({ error: accessError }, 403);
   const data = await readJson(request);
   const videoId = clean(data.videoId);
   const body = clean(data.body);
@@ -1964,6 +2027,47 @@ async function requireAdmin(request, env, handler) {
   return handler(user);
 }
 
+async function getSiteSettings(env) {
+  const defaults = {
+    autoRestrictUnverifiedEmail: false,
+    requireVerifiedEmailToPost: false,
+    requireVerifiedEmailToComment: false,
+    requireVerifiedEmailToMessage: false
+  };
+  try {
+    const { results } = await env.TPI_DB.prepare("SELECT key, value FROM site_settings").all();
+    (results || []).forEach(row => {
+      const enabled = row.value === "1" || row.value === "true";
+      if (row.key === "auto_restrict_unverified_email") defaults.autoRestrictUnverifiedEmail = enabled;
+      if (row.key === "require_verified_email_to_post") defaults.requireVerifiedEmailToPost = enabled;
+      if (row.key === "require_verified_email_to_comment") defaults.requireVerifiedEmailToComment = enabled;
+      if (row.key === "require_verified_email_to_message") defaults.requireVerifiedEmailToMessage = enabled;
+    });
+  } catch (error) {
+    return defaults;
+  }
+  return defaults;
+}
+
+async function getMemberActionAccessError(env, user, action) {
+  if (!user || ["owner", "admin"].includes(user.role)) return "";
+  const settings = await getSiteSettings(env);
+  const needsVerifiedEmail = settings.autoRestrictUnverifiedEmail || (
+    action === "post" && settings.requireVerifiedEmailToPost
+  ) || (
+    action === "comment" && settings.requireVerifiedEmailToComment
+  ) || (
+    action === "message" && settings.requireVerifiedEmailToMessage
+  );
+  if (needsVerifiedEmail && !user.email_verified) {
+    return "Please verify your email address before using this feature.";
+  }
+  if (action === "post" && user.can_post === 0) return "Posting is currently disabled for your account.";
+  if (action === "comment" && user.can_comment === 0) return "Commenting is currently disabled for your account.";
+  if (action === "message" && user.can_message === 0) return "Messaging is currently disabled for your account.";
+  return "";
+}
+
 async function getUserByUsername(env, username) {
   if (!username) return null;
   return env.TPI_DB.prepare("SELECT * FROM contributors WHERE username = ?").bind(username).first();
@@ -2259,7 +2363,10 @@ function privateMemberUser(user) {
     state: user.state,
     postalCode: user.postal_code,
     emailVerified: Boolean(user.email_verified),
-    phoneVerified: Boolean(user.phone_verified)
+    phoneVerified: Boolean(user.phone_verified),
+    canPost: user.can_post !== 0,
+    canComment: user.can_comment !== 0,
+    canMessage: user.can_message !== 0
   };
 }
 
