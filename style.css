@@ -3304,6 +3304,10 @@ footer {
     max-width: 1380px;
 }
 
+.admin-panel-page .editor-access-card {
+    width: 100%;
+}
+
 .admin-panel-hero {
     display: flex;
     align-items: center;
@@ -3331,19 +3335,19 @@ footer {
 
 .admin-control-grid {
     display: grid;
-    grid-template-columns: minmax(620px, 1.45fr) minmax(340px, 0.8fr);
+    grid-template-columns: 1fr;
     gap: 18px;
     align-items: start;
 }
 
 .admin-detail-card {
-    grid-column: 1;
-    grid-row: 1;
+    grid-column: auto;
+    grid-row: auto;
 }
 
 .admin-members-card {
-    grid-column: 2;
-    grid-row: 1;
+    grid-column: auto;
+    grid-row: auto;
 }
 
 .admin-section-header {
@@ -3417,7 +3421,7 @@ footer {
 }
 
 .admin-member-results {
-    max-height: 680px;
+    max-height: 360px;
     overflow: auto;
     padding-right: 4px;
 }
@@ -3429,6 +3433,11 @@ footer {
     background: rgba(9, 15, 20, 0.72);
     border: 1px solid rgba(38, 54, 70, 0.9);
     border-radius: 5px;
+}
+
+.admin-members-card .admin-member-results {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: start;
 }
 
 .admin-member-result.selected {
@@ -3603,22 +3612,38 @@ footer {
     margin-top: 18px;
 }
 
+.admin-panel-invites form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.admin-panel-invites form label {
+    display: grid;
+    gap: 7px;
+}
+
+.admin-panel-invites form button {
+    min-height: 42px;
+}
+
+.admin-panel-invites h2:not(:first-of-type) {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(38, 54, 70, 0.9);
+}
+
 @media (max-width: 1120px) {
-    .admin-control-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .admin-detail-card,
-    .admin-members-card {
-        grid-column: auto;
-        grid-row: auto;
-    }
-
     .admin-member-overview {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .admin-media-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-panel-invites form {
         grid-template-columns: 1fr;
     }
 }
