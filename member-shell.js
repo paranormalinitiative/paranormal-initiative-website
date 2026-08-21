@@ -131,6 +131,9 @@
     // Set profile link
     setupProfileLink(user);
 
+    // Set role-gated navigation
+    setupRoleGatedNav(user);
+
     // Set up logout
     setupLogout();
 
@@ -214,6 +217,14 @@
     if (profileLink) profileLink.href = href;
     var profileLinkMobile = document.querySelector('[data-nav-profile-mobile]');
     if (profileLinkMobile) profileLinkMobile.href = href;
+  }
+
+  function setupRoleGatedNav(user) {
+    var role = String(user && user.role || "").toLowerCase();
+    var canUseAdminPanel = role === "owner" || role === "admin";
+    document.querySelectorAll("[data-admin-only]").forEach(function (element) {
+      element.hidden = !canUseAdminPanel;
+    });
   }
 
   // ---- Logout ----

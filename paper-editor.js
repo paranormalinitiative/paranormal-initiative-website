@@ -423,6 +423,13 @@
     return ["owner", "admin", "contributor"].includes(String(user?.role || "").toLowerCase());
   }
 
+  function getEditorAccessMessage(user) {
+    if (user && !hasContributorAccess(user)) {
+      return "Please subscribe to access the Content Editor. A Director or Admin can also grant Content Editor access from the Admin Panel.";
+    }
+    return "Contributor access is required to open the Content Editor.";
+  }
+
   function isEditorBlank() {
     return !editor.textContent.trim() && !editor.querySelector("img, video, audio, iframe, figure");
   }
@@ -462,14 +469,25 @@
       <form class="editor-access-card" data-access-form="login">
         <p class="portal-kicker">Contributor Access</p>
         <h2>Sign In</h2>
-        <p>Use your contributor username and password to open the Content Editor. Dev copy mode also unlocks this page for site work.</p>
+        <p>Use your contributor username and password to open the Content Editor. If your membership does not include editor access, please subscribe to access the Content Editor.</p>
         <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
         <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
         <button type="submit">Open Editor</button>
-        <p class="access-note">Need access? Use your invite code on the Contributor Invite page. Returning contributors can sign in from Member Login.</p>
+        <p class="access-note">A Director or Admin can grant Content Editor access to an approved member from the Admin Panel.</p>
       </form>
     `;
     document.body.appendChild(gate);
+  }
+
+  function showEditorAccessDenied(user) {
+    showAccessGate();
+    const form = document.querySelector('[data-access-form="login"]');
+    if (!form) return;
+    form.querySelector(".access-note")?.remove();
+    const note = document.createElement("p");
+    note.className = "access-note access-error";
+    note.textContent = getEditorAccessMessage(user);
+    form.appendChild(note);
   }
 
   async function handleAccessSubmit(event) {
@@ -486,7 +504,7 @@
       try {
         const result = await window.TPIApi.login(username, password);
         if (!hasContributorAccess(result.user)) {
-          throw new Error("Contributor access is required to open the Content Editor.");
+          throw new Error(getEditorAccessMessage(result.user));
         }
         unlockEditor({
           username: result.user.username,
@@ -515,7 +533,7 @@
       form.querySelector(".access-note")?.remove();
       const note = document.createElement("p");
       note.className = "access-note access-error";
-      note.textContent = !user ? "Username or password did not match." : "Contributor access is required to open the Content Editor.";
+      note.textContent = !user ? "Username or password did not match." : getEditorAccessMessage(user);
       form.appendChild(note);
       return;
     }
@@ -2114,6 +2132,10 @@ ${articleHtml}
       try {
         const result = await window.TPIApi.me();
         if (result.user) {
+          if (!hasContributorAccess(result.user)) {
+            showEditorAccessDenied(result.user);
+            return;
+          }
           unlockEditor({
             username: result.user.username,
             displayName: result.user.displayName,
