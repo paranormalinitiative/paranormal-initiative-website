@@ -2622,7 +2622,7 @@
         button.addEventListener("click", function() {
           var member = roster.find(function(candidate) { return candidate.username === button.dataset.onlineMember; });
           if (!member) return;
-          currentChat = chatList.find(function(chatItem) { return chatItem.id === "chat-" + member.username; }) || createDirectChat(member, user);
+          currentChat = findDirectChat(chatList, member, user) || createDirectChat(member, user);
           selectedMembers = new Set(currentChat.members.map(function(chatMember) { return chatMember.username; }));
           createEl.hidden = true;
           saveCurrentChat(user, currentChat);
@@ -2644,25 +2644,68 @@
       }
       chatListEl.innerHTML = chatList.map(function(savedChat) {
         var active = savedChat.id === currentChat.id ? " is-active" : "";
-        return '<button class="member-chat-list-item' + active + '" type="button" data-chat-open="' + escapeHtml(savedChat.id) + '">' +
-          '<span class="member-chat-stack">' + savedChat.members.slice(0, 3).map(renderChatAvatar).join("") + '</span>' +
-          '<span class="member-chat-person-copy"><strong>' + escapeHtml(savedChat.title || "Community Chat") + '</strong>' +
-          '<span class="member-chat-presence">' + escapeHtml(getChatListSubtitle(savedChat)) + '</span></span>' +
-        '</button>';
+        return '<article class="member-chat-list-item' + active + '">' +
+          '<button class="member-chat-list-open" type="button" data-chat-open="' + escapeHtml(savedChat.id) + '">' +
+            '<span class="member-chat-stack">' + savedChat.members.slice(0, 3).map(renderChatAvatar).join("") + '</span>' +
+            '<span class="member-chat-person-copy"><strong>' + escapeHtml(savedChat.title || "Community Chat") + '</strong>' +
+            '<span class="member-chat-presence">' + escapeHtml(getChatListSubtitle(savedChat)) + '</span></span>' +
+          '</button>' +
+          '<span class="member-chat-list-actions">' +
+            '<button type="button" data-chat-rename="' + escapeHtml(savedChat.id) + '">Rename</button>' +
+            '<button type="button" data-chat-remove="' + escapeHtml(savedChat.id) + '">Delete</button>' +
+          '</span>' +
+        '</article>';
       }).join("");
       chatListEl.querySelectorAll("[data-chat-open]").forEach(function(button) {
         button.addEventListener("click", function() {
           var saved = chatList.find(function(item) { return item.id === button.dataset.chatOpen; });
           if (!saved) return;
-          currentChat = saved;
-          selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+          openSavedChat(saved);
+        });
+      });
+      chatListEl.querySelectorAll("[data-chat-rename]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          var saved = chatList.find(function(item) { return item.id === button.dataset.chatRename; });
+          if (!saved) return;
+          var nextTitle = window.prompt("Chat name", saved.title || "Community Chat");
+          if (nextTitle === null) return;
+          nextTitle = nextTitle.trim();
+          if (!nextTitle) return;
+          saved.title = nextTitle;
+          if (currentChat.id === saved.id) currentChat.title = nextTitle;
           saveCurrentChat(user, currentChat);
+          replaceStoredChats(user, chatList);
+          renderChatList();
+          renderMessages();
+        });
+      });
+      chatListEl.querySelectorAll("[data-chat-remove]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          var saved = chatList.find(function(item) { return item.id === button.dataset.chatRemove; });
+          if (!saved || !window.confirm("Delete this saved chat?")) return;
+          chatList = chatList.filter(function(item) { return item.id !== saved.id; });
+          replaceStoredChats(user, chatList);
+          if (currentChat.id === saved.id) {
+            currentChat = loadCurrentChat(user, roster);
+            if (currentChat.id === saved.id) currentChat = createEmptyChat(user);
+            selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+            saveCurrentChat(user, currentChat);
+          }
           renderChatList();
           renderMemberPicker();
           renderMessages();
-          inputEl.focus();
         });
       });
+    }
+
+    function openSavedChat(saved) {
+      currentChat = saved;
+      selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+      saveCurrentChat(user, currentChat);
+      renderChatList();
+      renderMemberPicker();
+      renderMessages();
+      inputEl.focus();
     }
 
     function renderMemberPicker() {
@@ -2785,12 +2828,33 @@
 
   function createDirectChat(member, user) {
     var current = normalizeChatMember(user || {}, true);
+    var normalizedMember = normalizeChatMember(member || {}, false);
     return {
-      id: "chat-" + member.username,
-      title: member.displayName || "Community Chat",
-      members: [current, member],
+      id: getDirectChatId(normalizedMember, current),
+      title: normalizedMember.displayName || "Community Chat",
+      members: dedupeChatMembers([current, normalizedMember]),
+      messages: [],
+      direct: true
+    };
+  }
+
+  function createEmptyChat(user) {
+    var current = normalizeChatMember(user || {}, true);
+    return {
+      id: "chat-default",
+      title: getCommunityChatTitle(user),
+      members: [current],
       messages: []
     };
+  }
+
+  function findDirectChat(chats, member, user) {
+    var id = getDirectChatId(normalizeChatMember(member || {}, false), normalizeChatMember(user || {}, true));
+    return (chats || []).find(function(chat) { return chat.id === id; });
+  }
+
+  function getDirectChatId(member, current) {
+    return "direct-" + [member.username, current.username].filter(Boolean).sort().join("-");
   }
 
   function loadCurrentChat(user, roster) {
@@ -2806,12 +2870,7 @@
       }
     } catch (e) {}
     var partner = roster.find(function(member) { return member.username !== current.username; });
-    return {
-      id: "chat-default",
-      title: getCommunityChatTitle(user),
-      members: partner ? [current, partner] : [current],
-      messages: []
-    };
+    return partner ? createDirectChat(partner, user) : createEmptyChat(user);
   }
 
   function getCommunityChatTitle(user) {
@@ -2853,7 +2912,11 @@
     if (!chat || !chat.id) return;
     var chats = loadStoredChats(user).filter(function(item) { return item.id !== chat.id; });
     chats.unshift(chat);
-    try { localStorage.setItem(getChatStorageKey(user), JSON.stringify(chats.slice(0, 24))); } catch (e) {}
+    replaceStoredChats(user, chats.slice(0, 24));
+  }
+
+  function replaceStoredChats(user, chats) {
+    try { localStorage.setItem(getChatStorageKey(user), JSON.stringify((chats || []).slice(0, 24))); } catch (e) {}
   }
 
   function getChatListSubtitle(chat) {

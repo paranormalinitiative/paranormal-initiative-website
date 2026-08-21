@@ -333,8 +333,7 @@ body.member-mode {
 }
 
 .member-chat-online-person,
-.member-chat-member-option,
-.member-chat-list-item {
+.member-chat-member-option {
     position: relative;
     width: 100%;
     display: grid;
@@ -352,6 +351,36 @@ body.member-mode {
     cursor: pointer;
 }
 
+.member-chat-list-item {
+    position: relative;
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+    min-width: 0;
+    color: #c7d5e2;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    padding: 7px;
+}
+
+.member-chat-list-open {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 7px;
+    align-items: center;
+    justify-items: start;
+    min-width: 0;
+    color: inherit;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
 .member-chat-online-person:hover {
     background: rgba(85, 200, 255, 0.08);
 }
@@ -361,9 +390,34 @@ body.member-mode {
     background: rgba(85, 200, 255, 0.1);
 }
 
+.member-chat-list-actions {
+    display: none;
+    gap: 5px;
+    padding-left: 41px;
+}
+
+.member-chat-list-item:hover .member-chat-list-actions,
+.member-chat-list-item:focus-within .member-chat-list-actions,
+.member-chat-list-item.is-active .member-chat-list-actions {
+    display: flex;
+}
+
+.member-chat-list-actions button {
+    min-height: 0;
+    padding: 2px 6px;
+    color: #9fb3c8;
+    background: rgba(85, 200, 255, 0.08);
+    border: 1px solid rgba(85, 200, 255, 0.18);
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
 .member-chat-online-person strong,
 .member-chat-member-option strong,
-.member-chat-list-item strong {
+.member-chat-list-item strong,
+.member-chat-list-open strong {
     max-width: 100%;
     overflow: hidden;
     color: #f4f8fb;
