@@ -2652,7 +2652,7 @@
           '</button>' +
           '<span class="member-chat-list-actions">' +
             '<button type="button" data-chat-rename="' + escapeHtml(savedChat.id) + '">Rename</button>' +
-            '<button type="button" data-chat-remove="' + escapeHtml(savedChat.id) + '">Delete</button>' +
+            '<button type="button" data-chat-remove="' + escapeHtml(savedChat.id) + '">Remove</button>' +
           '</span>' +
         '</article>';
       }).join("");
@@ -2682,7 +2682,8 @@
       chatListEl.querySelectorAll("[data-chat-remove]").forEach(function(button) {
         button.addEventListener("click", function() {
           var saved = chatList.find(function(item) { return item.id === button.dataset.chatRemove; });
-          if (!saved || !window.confirm("Delete this saved chat?")) return;
+          if (!saved || !window.confirm("Remove this chat from your visible chat list? The visible shortcut will be removed, but this action is not a server-side audit delete.")) return;
+          archiveRemovedChat(user, saved);
           chatList = chatList.filter(function(item) { return item.id !== saved.id; });
           replaceStoredChats(user, chatList);
           if (currentChat.id === saved.id) {
@@ -2897,6 +2898,10 @@
     return "tpiFloatingChats:" + normalizeChatMember(user || {}, true).username;
   }
 
+  function getChatArchiveStorageKey(user) {
+    return "tpiFloatingChatArchive:" + normalizeChatMember(user || {}, true).username;
+  }
+
   function loadStoredChats(user) {
     try {
       var stored = JSON.parse(localStorage.getItem(getChatStorageKey(user)) || "[]");
@@ -2917,6 +2922,21 @@
 
   function replaceStoredChats(user, chats) {
     try { localStorage.setItem(getChatStorageKey(user), JSON.stringify((chats || []).slice(0, 24))); } catch (e) {}
+  }
+
+  function archiveRemovedChat(user, chat) {
+    if (!chat || !chat.id) return;
+    try {
+      var archive = JSON.parse(localStorage.getItem(getChatArchiveStorageKey(user)) || "[]");
+      if (!Array.isArray(archive)) archive = [];
+      var copy = Object.assign({}, chat, {
+        removedAt: new Date().toISOString(),
+        removedFromVisibleList: true
+      });
+      archive = archive.filter(function(item) { return item.id !== copy.id; });
+      archive.unshift(copy);
+      localStorage.setItem(getChatArchiveStorageKey(user), JSON.stringify(archive.slice(0, 100)));
+    } catch (e) {}
   }
 
   function getChatListSubtitle(chat) {
