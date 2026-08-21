@@ -853,13 +853,55 @@
     }
   }
 
+  const notificationTypeMap = {
+    admin: { label: "Administration Notice", tone: "admin", href: "member-dashboard.html" },
+    "profile-request": { label: "Administration Notice", tone: "admin", href: "member-dashboard.html" },
+    warning: { label: "Administration Warning", tone: "admin", href: "member-dashboard.html" },
+    post: { label: "New Post", tone: "community", href: "community-forum.html?member=1" },
+    forum_post: { label: "New Forum Post", tone: "community", href: "community-forum.html?member=1" },
+    contribution: { label: "New Contribution", tone: "content", href: "explore.html" },
+    article: { label: "New Contribution", tone: "content", href: "explore.html" },
+    video: { label: "New Video", tone: "media", href: "tpi-videos.html?member=1" },
+    photo: { label: "New Photo", tone: "media", href: "explore.html" },
+    chat: { label: "New Chat Message", tone: "chat", href: "explore.html" },
+    message: { label: "New Message", tone: "chat", href: "explore.html" }
+  };
+
+  const notificationGuide = [
+    { type: "admin", title: "Administration notices", body: "Profile requests, account warnings, membership access changes, and direct messages from authorized admins appear here.", href: "member-dashboard.html" },
+    { type: "forum_post", title: "New posts", body: "Forum posts and community discussion updates will show here when new activity is available.", href: "community-forum.html?member=1" },
+    { type: "video", title: "New videos", body: "TPI video and live content alerts will appear here when video notifications are enabled.", href: "tpi-videos.html?member=1" },
+    { type: "photo", title: "New photos", body: "Photo/media updates from the community feed will appear here when media notifications are enabled.", href: "explore.html" },
+    { type: "chat", title: "Messages and chat", body: "Chat and direct-message alerts will appear here and also update the notification badge.", href: "explore.html" }
+  ];
+
+  function getNotificationTypeMeta(notification) {
+    return notificationTypeMap[notification.type] || notificationTypeMap[String(notification.type || "").replace(/-/g, "_")] || { label: "Member Notice", tone: "default", href: "member-dashboard.html" };
+  }
+
+  function renderNotificationSummary(notifications) {
+    const counts = notifications.reduce((summary, notification) => {
+      const meta = getNotificationTypeMeta(notification);
+      summary[meta.label] = (summary[meta.label] || 0) + 1;
+      return summary;
+    }, {});
+    const entries = Object.entries(counts);
+    return entries.length ? `
+      <div class="member-notification-summary" aria-label="Notification categories">
+        ${entries.map(([label, count]) => `<span><strong>${count}</strong>${escapeHtml(label)}</span>`).join("")}
+      </div>
+    ` : "";
+  }
+
   function renderNotificationItem(notification) {
-    const actionHref = notification.actionHref || "member-dashboard.html";
+    const meta = getNotificationTypeMeta(notification);
+    const actionHref = notification.actionHref || meta.href || "member-dashboard.html";
+    const createdAt = notification.createdAt ? new Date(notification.createdAt).toLocaleString() : "";
     return `
-      <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}">
+      <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}" data-notification-type="${escapeHtml(meta.tone)}">
         <div>
-          <span>${escapeHtml(notification.read ? "Read" : "Unread")} · ${escapeHtml(notification.createdAt || "")}</span>
-          <strong>${escapeHtml(notification.title || "Notification")}</strong>
+          <span><em>${escapeHtml(meta.label)}</em> ${escapeHtml(notification.read ? "Read" : "Unread")} ${createdAt ? `· ${escapeHtml(createdAt)}` : ""}</span>
+          <strong>${escapeHtml(notification.title || meta.label || "Notification")}</strong>
           <p>${escapeHtml(notification.body || "")}</p>
         </div>
         <div class="member-notification-actions">
@@ -870,20 +912,45 @@
     `;
   }
 
+  function renderNotificationGuide(message = "No notifications right now.") {
+    return `
+      <div class="member-notification-empty">
+        <p class="access-note">${escapeHtml(message)}</p>
+        <div class="member-notification-guide">
+          ${notificationGuide.map(item => {
+            const meta = getNotificationTypeMeta(item);
+            return `
+              <article class="member-notification-item is-read" data-notification-type="${escapeHtml(meta.tone)}">
+                <div>
+                  <span><em>${escapeHtml(meta.label)}</em> Notification type</span>
+                  <strong>${escapeHtml(item.title)}</strong>
+                  <p>${escapeHtml(item.body)}</p>
+                </div>
+                <div class="member-notification-actions">
+                  <a class="portal-button portal-button-secondary" href="${escapeHtml(item.href)}">Open</a>
+                </div>
+              </article>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `;
+  }
+
   async function initMemberNotifications() {
     if (!memberNotificationsList) return;
     if (!await cloudflareReady()) {
-      memberNotificationsList.innerHTML = `<p class="access-note">Notifications are available after signing in through Cloudflare.</p>`;
+      memberNotificationsList.innerHTML = renderNotificationGuide("Notifications are available after signing in through Cloudflare.");
       return;
     }
     try {
       const data = await window.TPIApi.listNotifications();
       const notifications = data.notifications || [];
       memberNotificationsList.innerHTML = notifications.length
-        ? notifications.map(renderNotificationItem).join("")
-        : `<p class="access-note">No notifications right now.</p>`;
+        ? renderNotificationSummary(notifications) + notifications.map(renderNotificationItem).join("")
+        : renderNotificationGuide();
     } catch (error) {
-      memberNotificationsList.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Could not load notifications.")}</p>`;
+      memberNotificationsList.innerHTML = renderNotificationGuide(error.message || "Could not load notifications.");
     }
   }
 

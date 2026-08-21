@@ -3122,11 +3122,42 @@ footer {
 
 .member-notifications-card {
     width: 100%;
+    padding: 28px;
 }
 
-.member-notification-list {
+.member-notifications-card > .access-note {
+    padding-bottom: 18px;
+    border-bottom: 1px solid #263646;
+}
+
+.member-notification-list,
+.member-notification-empty,
+.member-notification-guide {
     display: grid;
     gap: 12px;
+}
+
+.member-notification-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.member-notification-summary span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 10px;
+    color: #b8c8d8;
+    background: rgba(85, 200, 255, 0.08);
+    border: 1px solid rgba(85, 200, 255, 0.22);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.member-notification-summary strong {
+    color: #55c8ff;
 }
 
 .member-notification-item {
@@ -3144,6 +3175,22 @@ footer {
     box-shadow: inset 3px 0 0 rgba(85, 200, 255, 0.72);
 }
 
+.member-notification-item[data-notification-type="admin"] {
+    border-color: rgba(255, 213, 74, 0.36);
+}
+
+.member-notification-item[data-notification-type="community"] {
+    border-color: rgba(85, 200, 255, 0.36);
+}
+
+.member-notification-item[data-notification-type="media"] {
+    border-color: rgba(117, 255, 184, 0.28);
+}
+
+.member-notification-item[data-notification-type="chat"] {
+    border-color: rgba(173, 128, 255, 0.32);
+}
+
 .member-notification-item span {
     color: #7f95aa;
     font-size: 10px;
@@ -3152,9 +3199,32 @@ footer {
     text-transform: uppercase;
 }
 
+.member-notification-item span em {
+    display: inline-flex;
+    margin-right: 8px;
+    padding: 3px 7px;
+    color: #061018;
+    background: #55c8ff;
+    border-radius: 999px;
+    font-style: normal;
+}
+
+.member-notification-item[data-notification-type="admin"] span em {
+    background: #ffd54a;
+}
+
+.member-notification-item[data-notification-type="media"] span em {
+    background: #75ffb8;
+}
+
+.member-notification-item[data-notification-type="chat"] span em {
+    color: #f4f8fb;
+    background: #6e5bd8;
+}
+
 .member-notification-item strong {
     display: block;
-    margin-top: 5px;
+    margin-top: 8px;
     color: #f4f8fb;
     font-size: 18px;
 }
