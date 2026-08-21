@@ -309,21 +309,32 @@ body.member-mode {
     border-top: 1px solid #263646;
 }
 
+.member-chat-list-label {
+    margin-top: 8px;
+}
+
 .member-chat-create p,
-.member-chat-empty {
+.member-chat-empty,
+.member-chat-list-empty {
     margin: 0;
     color: #9fb3c8;
     font-size: 13px;
 }
 
 .member-chat-online-list,
-.member-chat-member-list {
+.member-chat-member-list,
+.member-chat-list {
     display: grid;
     gap: 10px;
 }
 
+.member-chat-list-empty {
+    font-size: 11px;
+}
+
 .member-chat-online-person,
-.member-chat-member-option {
+.member-chat-member-option,
+.member-chat-list-item {
     position: relative;
     width: 100%;
     display: grid;
@@ -345,8 +356,14 @@ body.member-mode {
     background: rgba(85, 200, 255, 0.08);
 }
 
+.member-chat-list-item:hover,
+.member-chat-list-item.is-active {
+    background: rgba(85, 200, 255, 0.1);
+}
+
 .member-chat-online-person strong,
-.member-chat-member-option strong {
+.member-chat-member-option strong,
+.member-chat-list-item strong {
     max-width: 100%;
     overflow: hidden;
     color: #f4f8fb;
@@ -383,6 +400,28 @@ body.member-mode {
     width: 16px;
     height: 16px;
     accent-color: #55c8ff;
+}
+
+.member-chat-create input[type="text"] {
+    width: 100%;
+    min-height: 34px;
+    padding: 8px 10px;
+    color: #e6edf3;
+    background: #081018;
+    border: 1px solid #263646;
+    border-radius: 6px;
+}
+
+.member-chat-section-label button {
+    float: right;
+    min-height: 0;
+    padding: 1px 5px;
+    color: #9fb3c8;
+    background: rgba(85, 200, 255, 0.08);
+    border: 1px solid rgba(85, 200, 255, 0.18);
+    border-radius: 999px;
+    font-size: 9px;
+    cursor: pointer;
 }
 
 .member-chat-member-option > span {
@@ -423,6 +462,44 @@ body.member-mode {
     background: #54d38a;
     border: 2px solid #0f1720;
     border-radius: 50%;
+}
+
+.member-chat-stack {
+    width: 38px;
+    height: 34px;
+    position: relative;
+    display: block;
+}
+
+.member-chat-stack .member-chat-avatar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+}
+
+.member-chat-stack .member-chat-avatar:nth-child(2) {
+    left: 12px;
+    top: 5px;
+}
+
+.member-chat-stack .member-chat-avatar:nth-child(3) {
+    left: 22px;
+    top: 9px;
+}
+
+.member-chat-stack .member-chat-avatar img,
+.member-chat-stack .member-chat-avatar span {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+}
+
+.member-chat-stack .member-chat-avatar i {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
 }
 
 .member-chat-thread {

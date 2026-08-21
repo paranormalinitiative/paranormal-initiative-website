@@ -370,9 +370,12 @@
         '<aside class="member-chat-contacts" aria-label="Online now">' +
           '<span class="member-chat-section-label">Online Now</span>' +
           '<div class="member-chat-online-list" data-chat-online></div>' +
+          '<span class="member-chat-section-label member-chat-list-label">Chats</span>' +
+          '<div class="member-chat-list" data-chat-list></div>' +
           '<section class="member-chat-create" data-chat-create hidden>' +
-            '<span class="member-chat-section-label">Create Chat</span>' +
+            '<span class="member-chat-section-label">Create Chat <button type="button" data-chat-create-close>Hide</button></span>' +
             '<p>Add members you want in this chat.</p>' +
+            '<input type="text" data-chat-name placeholder="Chat name, optional">' +
             '<div class="member-chat-member-list" data-chat-members></div>' +
             '<button type="button" data-chat-start>Start Chat</button>' +
           '</section>' +
@@ -402,8 +405,10 @@
     document.body.appendChild(chat);
 
     var onlineEl = chat.querySelector("[data-chat-online]");
+    var chatListEl = chat.querySelector("[data-chat-list]");
     var membersEl = chat.querySelector("[data-chat-members]");
     var createEl = chat.querySelector("[data-chat-create]");
+    var chatNameEl = chat.querySelector("[data-chat-name]");
     var messagesEl = chat.querySelector("[data-chat-messages]");
     var titleEl = chat.querySelector("[data-chat-title]");
     var inputEl = chat.querySelector("[data-chat-input]");
@@ -415,17 +420,23 @@
     var voiceRecorder = null;
     var voiceChunks = [];
     var editingMessageIndex = -1;
+    var chatList = loadStoredChats(user);
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
     currentChat.title = getCommunityChatTitle(user);
     syncChatMinimizeButton();
 
     renderOnline();
+    renderChatList();
     renderMemberPicker();
     renderMessages();
     setupNotificationBadge();
 
     chat.querySelector("[data-chat-new]").addEventListener("click", function () {
       createEl.hidden = !createEl.hidden;
+    });
+
+    chat.querySelector("[data-chat-create-close]").addEventListener("click", function () {
+      createEl.hidden = true;
     });
 
     chat.querySelector("[data-chat-start]").addEventListener("click", function () {
@@ -435,10 +446,14 @@
       if (!members.some(function(member) { return member.username === user.username; })) {
         members.unshift(normalizeChatMember(user, true));
       }
-      currentChat = createChat(members, user);
+      currentChat = createChat(members, user, chatNameEl ? chatNameEl.value : "");
       createEl.hidden = true;
+      if (chatNameEl) chatNameEl.value = "";
       titleEl.textContent = currentChat.title;
       saveCurrentChat(user, currentChat);
+      upsertStoredChat(user, currentChat);
+      chatList = loadStoredChats(user);
+      renderChatList();
       renderMessages();
     });
 
@@ -458,6 +473,9 @@
         editingMessageIndex = -1;
         inputEl.value = "";
         saveCurrentChat(user, currentChat);
+        upsertStoredChat(user, currentChat);
+        chatList = loadStoredChats(user);
+        renderChatList();
         renderMessages();
         return;
       }
@@ -551,6 +569,9 @@
         if (Number.isInteger(index) && index >= 0 && index < currentChat.messages.length && window.confirm("Delete this message?")) {
           currentChat.messages.splice(index, 1);
           saveCurrentChat(user, currentChat);
+          upsertStoredChat(user, currentChat);
+          chatList = loadStoredChats(user);
+          renderChatList();
           renderMessages();
         }
         return;
@@ -581,10 +602,42 @@
         button.addEventListener("click", function() {
           var member = roster.find(function(candidate) { return candidate.username === button.dataset.onlineMember; });
           if (!member) return;
-          currentChat = createDirectChat(member, user);
+          currentChat = chatList.find(function(chatItem) { return chatItem.id === "chat-" + member.username; }) || createDirectChat(member, user);
           selectedMembers = new Set(currentChat.members.map(function(chatMember) { return chatMember.username; }));
           createEl.hidden = true;
           saveCurrentChat(user, currentChat);
+          upsertStoredChat(user, currentChat);
+          chatList = loadStoredChats(user);
+          renderChatList();
+          renderMemberPicker();
+          renderMessages();
+          inputEl.focus();
+        });
+      });
+    }
+
+    function renderChatList() {
+      if (!chatListEl) return;
+      if (!chatList.length) {
+        chatListEl.innerHTML = '<p class="member-chat-list-empty">No chats yet.</p>';
+        return;
+      }
+      chatListEl.innerHTML = chatList.map(function(savedChat) {
+        var active = savedChat.id === currentChat.id ? " is-active" : "";
+        return '<button class="member-chat-list-item' + active + '" type="button" data-chat-open="' + escapeHtml(savedChat.id) + '">' +
+          '<span class="member-chat-stack">' + savedChat.members.slice(0, 3).map(renderChatAvatar).join("") + '</span>' +
+          '<span class="member-chat-person-copy"><strong>' + escapeHtml(savedChat.title || "Community Chat") + '</strong>' +
+          '<span class="member-chat-presence">' + escapeHtml(getChatListSubtitle(savedChat)) + '</span></span>' +
+        '</button>';
+      }).join("");
+      chatListEl.querySelectorAll("[data-chat-open]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          var saved = chatList.find(function(item) { return item.id === button.dataset.chatOpen; });
+          if (!saved) return;
+          currentChat = saved;
+          selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+          saveCurrentChat(user, currentChat);
+          renderChatList();
           renderMemberPicker();
           renderMessages();
           inputEl.focus();
@@ -627,6 +680,9 @@
         createdAt: new Date().toISOString()
       });
       saveCurrentChat(user, currentChat);
+      upsertStoredChat(user, currentChat);
+      chatList = loadStoredChats(user);
+      renderChatList();
       bumpLocalChatUnread();
       renderMessages();
       setupNotificationBadge();
@@ -697,9 +753,8 @@
     });
   }
 
-  function createChat(members, user) {
-    var currentUsername = normalizeChatMember(user || {}, true).username || getStoredUsername();
-    var title = getCommunityChatTitle(user);
+  function createChat(members, user, requestedTitle) {
+    var title = String(requestedTitle || "").trim() || getDefaultChatTitle(members, user);
     return {
       id: "chat-" + Date.now(),
       title: title,
@@ -723,7 +778,7 @@
     try {
       var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
       if (saved && Array.isArray(saved.members) && Array.isArray(saved.messages)) {
-        saved.title = getCommunityChatTitle(user);
+        saved.title = saved.title || getDefaultChatTitle(saved.members, user);
         if (!saved.members.some(function(member) { return member.username === current.username; })) {
           saved.members.unshift(current);
         }
@@ -743,12 +798,50 @@
     return normalizeChatMember(user || {}, true).displayName || "Community Chat";
   }
 
+  function getDefaultChatTitle(members, user) {
+    var current = normalizeChatMember(user || {}, true);
+    var others = (members || []).filter(function(member) { return member.username !== current.username; });
+    if (!others.length) return getCommunityChatTitle(user);
+    if (others.length === 1) return others[0].displayName || "Community Chat";
+    return others.slice(0, 2).map(function(member) { return member.displayName; }).join(", ") + (others.length > 2 ? " +" + (others.length - 2) : "");
+  }
+
   function isCurrentChatUser(member, user) {
     return normalizeChatMember(member || {}, false).username === normalizeChatMember(user || {}, true).username;
   }
 
   function saveCurrentChat(user, chat) {
     try { localStorage.setItem("tpiFloatingChat", JSON.stringify(chat)); } catch (e) {}
+  }
+
+  function getChatStorageKey(user) {
+    return "tpiFloatingChats:" + normalizeChatMember(user || {}, true).username;
+  }
+
+  function loadStoredChats(user) {
+    try {
+      var stored = JSON.parse(localStorage.getItem(getChatStorageKey(user)) || "[]");
+      return Array.isArray(stored) ? stored.filter(function(chat) {
+        return chat && chat.id && Array.isArray(chat.members) && Array.isArray(chat.messages);
+      }) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function upsertStoredChat(user, chat) {
+    if (!chat || !chat.id) return;
+    var chats = loadStoredChats(user).filter(function(item) { return item.id !== chat.id; });
+    chats.unshift(chat);
+    try { localStorage.setItem(getChatStorageKey(user), JSON.stringify(chats.slice(0, 24))); } catch (e) {}
+  }
+
+  function getChatListSubtitle(chat) {
+    var count = Array.isArray(chat.members) ? chat.members.length : 0;
+    var latest = Array.isArray(chat.messages) && chat.messages.length ? chat.messages[chat.messages.length - 1] : null;
+    if (latest && latest.body) return latest.body.slice(0, 38);
+    if (count === 1) return "Direct chat";
+    return count + " members";
   }
 
   function getStoredUsername() {
