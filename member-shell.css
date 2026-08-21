@@ -2,10 +2,13 @@
 /* Used by all Member Mode pages. Loaded via member-shell.js or direct <link>. */
 
 /* ===== HIDE PUBLIC CHROME IN MEMBER MODE ===== */
-body.member-mode .command-header,
 body.member-mode .site-search-band,
 body.member-mode .command-nav {
     display: none;
+}
+
+body.member-mode .command-header {
+    margin-left: 270px;
 }
 
 html.member-mode-root,
@@ -1354,6 +1357,10 @@ body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel
     body.member-mode #site-footer {
         margin-left: 220px;
     }
+
+    body.member-mode .command-header {
+        margin-left: 220px;
+    }
 }
 
 /* ============================== */
@@ -1395,6 +1402,10 @@ body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel
     body.member-mode #site-footer {
         margin-left: 0;
         padding-bottom: 74px;
+    }
+
+    body.member-mode .command-header {
+        margin-left: 0;
     }
 
     .member-page-header h2 {

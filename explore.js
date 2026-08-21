@@ -5,6 +5,10 @@
   let items = [];
   let activeFilter = "all";
   let readItems = loadReadItems();
+  const selectedItems = new Set();
+  const selectAllBox = document.querySelector("[data-explore-select-all]");
+  const composer = document.querySelector("[data-explore-composer]");
+  const composeStatus = document.querySelector("[data-explore-compose-status]");
 
   document.querySelectorAll("[data-explore-filter]").forEach(button => {
     button.addEventListener("click", () => {
@@ -17,15 +21,52 @@
   });
 
   document.querySelector("[data-explore-mark-read]")?.addEventListener("click", () => {
-    items.forEach(item => readItems.add(getItemKey(item)));
+    getSelectedKeys().forEach(key => readItems.add(key));
     saveReadItems();
     renderFeed();
   });
 
   document.querySelector("[data-explore-mark-unread]")?.addEventListener("click", () => {
-    items.forEach(item => readItems.delete(getItemKey(item)));
+    getSelectedKeys().forEach(key => readItems.delete(key));
     saveReadItems();
     renderFeed();
+  });
+
+  selectAllBox?.addEventListener("change", () => {
+    getVisibleItems().forEach(item => {
+      const key = getItemKey(item);
+      if (selectAllBox.checked) {
+        selectedItems.add(key);
+      } else {
+        selectedItems.delete(key);
+      }
+    });
+    renderFeed();
+  });
+
+  composer?.addEventListener("submit", async event => {
+    event.preventDefault();
+    const titleInput = document.querySelector("[data-explore-title]");
+    const bodyInput = document.querySelector("[data-explore-body]");
+    const title = titleInput?.value.trim() || "";
+    const body = bodyInput?.value.trim() || "";
+    if (!title || !body) {
+      setComposeStatus("Add a title and message before posting.");
+      return;
+    }
+    try {
+      setComposeStatus("Posting...");
+      const response = await window.TPIApi.createForumTopic({ categoryId: "general", title, body, attachments: [] });
+      titleInput.value = "";
+      bodyInput.value = "";
+      setComposeStatus("Posted to Explore.");
+      await loadFeed();
+      if (response?.topic?.id) {
+        window.location.href = `community-forum.html?member=1&topic=${encodeURIComponent(response.topic.id)}${response.post?.id ? `&post=${encodeURIComponent(response.post.id)}` : ""}`;
+      }
+    } catch (error) {
+      setComposeStatus(error.message || "Post could not be created.");
+    }
   });
 
   loadFeed();
@@ -49,7 +90,7 @@
   }
 
   function renderFeed() {
-    const visible = items.filter(item => activeFilter === "all" || item.type === activeFilter);
+    const visible = getVisibleItems();
     if (!visible.length) {
       feedEl.innerHTML = `
         <article class="member-explore-empty">
@@ -57,9 +98,21 @@
           <p>New community posts, contributed work, and videos will appear here when members add them.</p>
         </article>
       `;
+      updateSelectAllState([]);
       return;
     }
     feedEl.innerHTML = visible.map(renderItem).join("");
+    updateSelectAllState(visible);
+    feedEl.querySelectorAll("[data-explore-check]").forEach(checkbox => {
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          selectedItems.add(checkbox.value);
+        } else {
+          selectedItems.delete(checkbox.value);
+        }
+        updateSelectAllState(getVisibleItems());
+      });
+    });
     feedEl.querySelectorAll("[data-explore-item]").forEach(link => {
       link.addEventListener("click", () => {
         readItems.add(link.dataset.exploreItem);
@@ -73,15 +126,22 @@
     const href = getItemHref(item);
     const key = getItemKey(item);
     const readClass = readItems.has(key) ? " is-read" : " is-unread";
+    const checked = selectedItems.has(key) ? " checked" : "";
     return `
-      <a class="member-explore-item${readClass}" href="${escapeAttr(href)}" data-explore-item="${escapeAttr(key)}">
-        <div>
-          <span class="member-explore-type">${escapeHtml(meta.typeLabel)}</span>
-          <h3>${escapeHtml(meta.title)}</h3>
-          <p>${escapeHtml(meta.description)}</p>
-        </div>
-        <small>${escapeHtml(meta.author)} · ${escapeHtml(formatDate(meta.date))}</small>
-      </a>
+      <article class="member-explore-row${readClass}">
+        <label class="member-explore-check">
+          <input type="checkbox" value="${escapeAttr(key)}" data-explore-check${checked}>
+          <span>Select item</span>
+        </label>
+        <a class="member-explore-item" href="${escapeAttr(href)}" data-explore-item="${escapeAttr(key)}">
+          <div>
+            <span class="member-explore-type">${escapeHtml(meta.typeLabel)}</span>
+            <h3>${escapeHtml(meta.title)}</h3>
+            <p>${escapeHtml(meta.description)}</p>
+          </div>
+          <small>${escapeHtml(meta.author)} · ${escapeHtml(formatDate(meta.date))}</small>
+        </a>
+      </article>
     `;
   }
 
@@ -154,6 +214,27 @@
 
   function getItemKey(item) {
     return `${item.type || "activity"}:${item.id || item.topicId || item.slug || item.href || item.title || ""}`;
+  }
+
+  function getVisibleItems() {
+    return items.filter(item => activeFilter === "all" || item.type === activeFilter);
+  }
+
+  function getSelectedKeys() {
+    const visibleKeys = new Set(getVisibleItems().map(getItemKey));
+    return Array.from(selectedItems).filter(key => visibleKeys.has(key));
+  }
+
+  function updateSelectAllState(visible) {
+    if (!selectAllBox) return;
+    const keys = visible.map(getItemKey);
+    const selectedCount = keys.filter(key => selectedItems.has(key)).length;
+    selectAllBox.checked = keys.length > 0 && selectedCount === keys.length;
+    selectAllBox.indeterminate = selectedCount > 0 && selectedCount < keys.length;
+  }
+
+  function setComposeStatus(message) {
+    if (composeStatus) composeStatus.textContent = message || "";
   }
 
   function loadReadItems() {

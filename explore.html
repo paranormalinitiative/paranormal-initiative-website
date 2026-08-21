@@ -22,6 +22,20 @@
         <p class="portal-kicker">Community Activity</p>
         <h2>Explore</h2>
         <p class="access-note">See recent community posts, contributed articles, videos, photos, and live activity as it starts.</p>
+        <form class="member-explore-composer" data-explore-composer>
+            <label>
+                <span>Share a community post</span>
+                <input type="text" data-explore-title placeholder="Post title" maxlength="160">
+            </label>
+            <label>
+                <span>Message</span>
+                <textarea data-explore-body rows="4" placeholder="Share an update, question, investigation note, or community thought."></textarea>
+            </label>
+            <div class="member-explore-composer-actions">
+                <button class="portal-button" type="submit">Post To Explore</button>
+                <p class="access-note" data-explore-compose-status></p>
+            </div>
+        </form>
         <div class="member-explore-toolbar">
             <button class="portal-button" type="button" data-explore-filter="all">All</button>
             <button class="portal-button portal-button-secondary" type="button" data-explore-filter="forum_post">Posts</button>
@@ -31,8 +45,12 @@
             <button class="portal-button portal-button-secondary" type="button" data-explore-filter="video">Videos</button>
         </div>
         <div class="member-explore-actions">
-            <button class="portal-button portal-button-secondary" type="button" data-explore-mark-read>Mark All Read</button>
-            <button class="portal-button portal-button-secondary" type="button" data-explore-mark-unread>Mark All Unread</button>
+            <label class="member-explore-select-all">
+                <input type="checkbox" data-explore-select-all>
+                <span>Select all visible</span>
+            </label>
+            <button class="portal-button portal-button-secondary" type="button" data-explore-mark-read>Mark Selected Read</button>
+            <button class="portal-button portal-button-secondary" type="button" data-explore-mark-unread>Mark Selected Unread</button>
         </div>
         <div class="member-explore-feed" data-explore-feed>
             <p class="access-note">Loading community activity...</p>

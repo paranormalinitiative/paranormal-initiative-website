@@ -3190,7 +3190,75 @@ footer {
 }
 
 .member-explore-actions {
+    align-items: center;
     margin: -6px 0 22px;
+}
+
+.member-explore-composer {
+    display: grid;
+    gap: 12px;
+    padding: 18px;
+    background: rgba(9, 15, 20, 0.72);
+    border: 1px solid rgba(85, 200, 255, 0.2);
+    border-radius: 6px;
+}
+
+.member-explore-composer label {
+    display: grid;
+    gap: 7px;
+}
+
+.member-explore-composer span,
+.member-explore-select-all span {
+    color: #8aa0b6;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.member-explore-composer input,
+.member-explore-composer textarea {
+    width: 100%;
+    padding: 10px 12px;
+    color: #e6edf3;
+    background: #090f14;
+    border: 1px solid #263646;
+    border-radius: 4px;
+    font: inherit;
+}
+
+.member-explore-composer textarea {
+    resize: vertical;
+}
+
+.member-explore-composer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.member-explore-select-all,
+.member-explore-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.member-explore-select-all input,
+.member-explore-check input {
+    width: 16px;
+    height: 16px;
+    accent-color: #55c8ff;
+}
+
+.member-explore-check span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
 }
 
 .member-explore-card .portal-button {
@@ -3204,6 +3272,16 @@ footer {
 .member-explore-feed {
     display: grid;
     gap: 14px;
+    max-height: min(70vh, 920px);
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.member-explore-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
 }
 
 .member-explore-item,
@@ -3228,7 +3306,7 @@ footer {
     box-shadow: 0 0 18px rgba(85, 200, 255, 0.1);
 }
 
-.member-explore-item.is-unread {
+.member-explore-row.is-unread .member-explore-item {
     background:
         linear-gradient(90deg, rgba(85, 200, 255, 0.09), rgba(9, 15, 20, 0.72) 34%),
         rgba(9, 15, 20, 0.72);
@@ -3236,7 +3314,7 @@ footer {
     box-shadow: inset 4px 0 0 rgba(85, 200, 255, 0.72);
 }
 
-.member-explore-item.is-read {
+.member-explore-row.is-read .member-explore-item {
     opacity: 0.78;
 }
 
@@ -3277,6 +3355,10 @@ footer {
     }
 
     .member-explore-item {
+        grid-template-columns: 1fr;
+    }
+
+    .member-explore-row {
         grid-template-columns: 1fr;
     }
 
