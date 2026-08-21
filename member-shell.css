@@ -741,12 +741,14 @@ body.member-mode {
 }
 
 .member-chat-emoji-picker {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
-    gap: 6px;
-    max-height: 170px;
-    overflow-y: auto;
-    padding: 0 14px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: min(280px, 36vh);
+    overflow: hidden;
+    padding: 12px 14px 10px;
+    border-top: 1px solid #263646;
+    background: rgba(4, 9, 14, 0.96);
 }
 
 .member-chat-attachment-preview[hidden],
@@ -754,15 +756,65 @@ body.member-mode {
     display: none;
 }
 
-.member-chat-emoji-picker button {
-    width: 32px;
-    height: 32px;
-    display: grid;
-    place-items: center;
+.member-chat-emoji-picker input {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    color: #e6edf3;
+    background: #071019;
+    border: 1px solid #2d789e;
+    border-radius: 999px;
+    outline: none;
+}
+
+.member-chat-emoji-picker input:focus {
+    border-color: #55c8ff;
+    box-shadow: 0 0 0 2px rgba(85, 200, 255, 0.2);
+}
+
+.member-chat-emoji-categories {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.member-chat-emoji-categories button {
+    flex: 0 0 auto;
+    min-height: 28px;
+    padding: 0 10px;
+    color: #b8c9d9;
     background: #081018;
     border: 1px solid #263646;
     border-radius: 999px;
     cursor: pointer;
+}
+
+.member-chat-emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+    gap: 7px;
+    overflow-y: auto;
+    padding: 2px 2px 4px;
+}
+
+.member-chat-emoji-grid button {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    line-height: 1;
+    background: #081018;
+    border: 1px solid #263646;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.member-chat-emoji-grid button:hover,
+.member-chat-emoji-categories button:hover {
+    border-color: #55c8ff;
+    background: rgba(85, 200, 255, 0.12);
 }
 
 .member-chat-form {
