@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPI Social Feed Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <aside class="lab-sidebar" aria-label="Feed lab navigation">
+        <a class="lab-brand" href="#">
+            <span>TPI</span>
+            <strong>Community Lab</strong>
+        </a>
+        <nav class="lab-nav">
+            <button class="is-active" type="button" data-filter="all">Your Feed</button>
+            <button type="button" data-filter="post">Posts</button>
+            <button type="button" data-filter="evidence">Investigation Notes</button>
+            <button type="button" data-filter="media">Photos & Videos</button>
+            <button type="button" data-filter="research">Research</button>
+        </nav>
+        <section class="lab-panel">
+            <p class="lab-kicker">Online Now</p>
+            <div class="online-list" data-online-list></div>
+        </section>
+    </aside>
+
+    <main class="feed-shell">
+        <header class="feed-header">
+            <div>
+                <p class="lab-kicker">Prototype Only</p>
+                <h1>Your Community Feed</h1>
+                <p>A chronological TPI social feed experiment for posts, photos, videos, research notes, comments, reactions, and member presence.</p>
+            </div>
+            <div class="feed-status">
+                <span class="status-dot"></span>
+                <strong data-feed-count>0 updates</strong>
+            </div>
+        </header>
+
+        <section class="composer-card" aria-label="Create a feed post">
+            <div class="composer-user">
+                <span class="avatar avatar-owner">TW</span>
+                <div>
+                    <strong>Todd Wayne</strong>
+                    <small>Founder / Director</small>
+                </div>
+            </div>
+            <input data-composer-title type="text" placeholder="Post title">
+            <textarea data-composer-body rows="4" placeholder="Share an investigation update, question, research note, photo/video context, or community announcement."></textarea>
+            <div class="composer-preview" data-composer-preview hidden></div>
+            <div class="composer-actions">
+                <label class="file-action">
+                    <input data-composer-file type="file" accept="image/*,video/*">
+                    Add Photo / Video
+                </label>
+                <select data-composer-type aria-label="Post type">
+                    <option value="post">Community Post</option>
+                    <option value="evidence">Investigation Note</option>
+                    <option value="media">Media Share</option>
+                    <option value="research">Research Note</option>
+                </select>
+                <button type="button" data-create-post>Share</button>
+            </div>
+        </section>
+
+        <section class="feed-tools" aria-label="Feed controls">
+            <div class="feed-tabs" data-feed-tabs>
+                <button class="is-active" type="button" data-filter="all">All</button>
+                <button type="button" data-filter="post">Posts</button>
+                <button type="button" data-filter="evidence">Investigation</button>
+                <button type="button" data-filter="media">Media</button>
+                <button type="button" data-filter="research">Research</button>
+            </div>
+            <button class="quiet-button" type="button" data-mark-all-read>Mark All Viewed</button>
+        </section>
+
+        <section class="feed-list" data-feed-list aria-label="Community feed"></section>
+    </main>
+
+    <aside class="right-rail" aria-label="Community context">
+        <section class="lab-panel">
+            <p class="lab-kicker">Feed Direction</p>
+            <h2>What This Is Testing</h2>
+            <ul>
+                <li>Member identity and presence</li>
+                <li>Chronological posts</li>
+                <li>Media previews</li>
+                <li>Comments and reactions</li>
+                <li>Read/unread state</li>
+            </ul>
+        </section>
+        <section class="lab-panel">
+            <p class="lab-kicker">Next Concepts</p>
+            <div class="concept-list">
+                <span>Groups</span>
+                <span>Profile flair</span>
+                <span>Live chat</span>
+                <span>Follow members</span>
+                <span>Investigation rooms</span>
+            </div>
+        </section>
+    </aside>
+
+    <script src="app.js"></script>
+</body>
+</html>
