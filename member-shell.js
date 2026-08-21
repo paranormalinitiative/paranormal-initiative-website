@@ -377,6 +377,17 @@
           '</section>' +
         '</aside>' +
         '<section class="member-chat-thread">' +
+          '<header class="member-chat-thread-header">' +
+            '<div class="member-chat-thread-identity">' +
+              '<span class="member-chat-thread-avatar" data-chat-thread-avatar></span>' +
+              '<div><strong data-chat-thread-title>' + escapeHtml(currentChat.title) + '</strong><small>Active now</small></div>' +
+            '</div>' +
+            '<div class="member-chat-thread-actions" aria-label="Chat actions">' +
+              '<button type="button" title="Voice call">Call</button>' +
+              '<button type="button" title="Video call">Video</button>' +
+              '<button type="button" title="More options">More</button>' +
+            '</div>' +
+          '</header>' +
           '<section class="member-chat-messages" data-chat-messages aria-label="Chat messages"></section>' +
           '<div class="member-chat-attachment-preview" data-chat-attachments hidden></div>' +
           '<div class="member-chat-emoji-picker" data-chat-emoji-picker hidden>' +
@@ -408,6 +419,8 @@
     var createEl = chat.querySelector("[data-chat-create]");
     var messagesEl = chat.querySelector("[data-chat-messages]");
     var titleEl = chat.querySelector("[data-chat-title]");
+    var threadTitleEl = chat.querySelector("[data-chat-thread-title]");
+    var threadAvatarEl = chat.querySelector("[data-chat-thread-avatar]");
     var inputEl = chat.querySelector("[data-chat-input]");
     var attachmentPreviewEl = chat.querySelector("[data-chat-attachments]");
     var mediaInputEl = chat.querySelector("[data-chat-media-input]");
@@ -435,6 +448,7 @@
       createEl.hidden = true;
       titleEl.textContent = currentChat.title;
       saveCurrentChat(user, currentChat);
+      renderThreadHeader();
       renderMessages();
     });
 
@@ -536,10 +550,18 @@
 
     function renderMessages() {
       titleEl.textContent = currentChat.title;
+      renderThreadHeader();
       messagesEl.innerHTML = currentChat.messages.length
         ? currentChat.messages.map(renderChatMessage).join("")
         : '<p class="member-chat-empty">No messages yet.</p>';
       messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function renderThreadHeader() {
+      var currentUsername = normalizeChatMember(user, true).username;
+      var partner = currentChat.members.find(function(member) { return member.username !== currentUsername; }) || currentChat.members[0] || normalizeChatMember(user, true);
+      if (threadTitleEl) threadTitleEl.textContent = currentChat.title || partner.displayName || "Community Chat";
+      if (threadAvatarEl) threadAvatarEl.innerHTML = renderChatAvatar(partner);
     }
 
     function sendChatMessage(body, attachments) {
