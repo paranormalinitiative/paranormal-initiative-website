@@ -43,18 +43,17 @@
         </header>
 
         <section class="composer-card" aria-label="Create a feed post">
+            <div class="composer-user">
+                <span class="avatar avatar-owner"><img src="../todd-wayne-board.png" alt="Todd Wayne"></span>
+                <div>
+                    <strong>Todd Wayne</strong>
+                    <small>Founder / Director</small>
+                </div>
+            </div>
             <button class="composer-collapsed" type="button" data-open-composer>
-                <span class="avatar avatar-owner">TW</span>
                 <span>What's on your mind?</span>
             </button>
             <div class="composer-expanded" data-composer-expanded hidden>
-                <div class="composer-user">
-                    <span class="avatar avatar-owner">TW</span>
-                    <div>
-                        <strong>Todd Wayne</strong>
-                        <small>Founder / Director</small>
-                    </div>
-                </div>
                 <input data-composer-title type="text" placeholder="Post title">
                 <textarea data-composer-body rows="4" placeholder="Share an investigation update, question, research note, photo/video context, or community announcement."></textarea>
                 <div class="composer-preview" data-composer-preview hidden></div>
@@ -71,6 +70,7 @@
                     </select>
                     <button type="button" data-create-post>Share</button>
                     <button class="quiet-button" type="button" data-close-composer>Cancel</button>
+                    <button class="quiet-button danger-button" type="button" data-delete-draft>Delete Draft</button>
                 </div>
             </div>
         </section>

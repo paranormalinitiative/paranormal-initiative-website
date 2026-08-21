@@ -1,9 +1,9 @@
 const members = [
-  { name: "Todd Wayne", initials: "TW", title: "Founder / Director", online: true },
-  { name: "Steve Glanz", initials: "SG", title: "Researcher", online: true },
-  { name: "Michelle", initials: "M", title: "Investigator", online: true },
-  { name: "Roni", initials: "R", title: "Contributor", online: false },
-  { name: "Rick Hale", initials: "RH", title: "Historian", online: true }
+  { name: "Todd Wayne", initials: "TW", title: "Founder / Director", online: true, photo: "../todd-wayne-board.png" },
+  { name: "Steve Glanz", initials: "SG", title: "Researcher", online: true, photo: "" },
+  { name: "Michelle", initials: "M", title: "Investigator", online: true, photo: "../michelle-board.jpg" },
+  { name: "Roni", initials: "R", title: "Contributor", online: false, photo: "../roni-board.png" },
+  { name: "Rick Hale", initials: "RH", title: "Historian", online: true, photo: "" }
 ];
 
 const commentEmojis = ["👍", "❤️", "😂", "🔥", "👻", "📷", "🎧", "🔎"];
@@ -96,6 +96,7 @@ const composerCard = document.querySelector(".composer-card");
 const composerExpanded = document.querySelector("[data-composer-expanded]");
 const openComposerButton = document.querySelector("[data-open-composer]");
 const closeComposerButton = document.querySelector("[data-close-composer]");
+const deleteDraftButton = document.querySelector("[data-delete-draft]");
 const titleInput = document.querySelector("[data-composer-title]");
 const bodyInput = document.querySelector("[data-composer-body]");
 const typeInput = document.querySelector("[data-composer-type]");
@@ -123,6 +124,7 @@ document.querySelectorAll("[data-filter]").forEach(button => {
 
 openComposerButton.addEventListener("click", openComposer);
 closeComposerButton.addEventListener("click", closeComposer);
+deleteDraftButton.addEventListener("click", deleteDraft);
 document.querySelector("[data-create-post]").addEventListener("click", createPost);
 refreshButton.addEventListener("click", refreshFeed);
 document.querySelector("[data-mark-all-read]").addEventListener("click", () => {
@@ -210,6 +212,16 @@ function closeComposer() {
   composerCard.classList.remove("is-open");
 }
 
+function deleteDraft() {
+  titleInput.value = "";
+  bodyInput.value = "";
+  fileInput.value = "";
+  selectedFile = null;
+  preview.hidden = true;
+  preview.innerHTML = "";
+  closeComposer();
+}
+
 function createPost() {
   const title = titleInput.value.trim();
   const body = bodyInput.value.trim();
@@ -227,13 +239,7 @@ function createPost() {
     reactions: { useful: 0, follow: 0 },
     comments: []
   });
-  titleInput.value = "";
-  bodyInput.value = "";
-  fileInput.value = "";
-  selectedFile = null;
-  preview.hidden = true;
-  preview.innerHTML = "";
-  closeComposer();
+  deleteDraft();
   renderFeed();
   feedList.scrollTop = 0;
 }
@@ -261,7 +267,7 @@ function renderOnline() {
     .filter(member => member.online)
     .map(member => `
       <div class="online-person">
-        <span class="avatar">${member.initials}</span>
+        ${renderAvatar(member)}
         <div>
           <strong>${member.name}</strong>
           <small>${member.title}</small>
@@ -369,7 +375,7 @@ function renderPost(post) {
   return `
     <article class="post-card${post.unread ? " is-unread" : ""}">
       <header class="post-head">
-        <span class="avatar">${post.author.initials}</span>
+        ${renderAvatar(post.author)}
         <div class="post-author">
           <strong>${post.author.name}</strong>
           <span class="post-meta">${post.author.title} · ${formatTime(post.createdAt)}</span>
@@ -377,8 +383,10 @@ function renderPost(post) {
         <span class="post-type">${formatType(post.type)}</span>
       </header>
       <div class="post-body">
-        <h2>${escapeHtml(post.title)}</h2>
-        <p>${escapeHtml(post.body)}</p>
+        <div class="post-preview-copy">
+          <h2>${escapeHtml(post.title)}</h2>
+          <p>${escapeHtml(post.body)}</p>
+        </div>
         ${renderMedia(post)}
         <div class="post-actions">
           <button class="post-action" type="button" data-reaction="useful" data-post-id="${post.id}">Useful ${post.reactions.useful}</button>
@@ -425,6 +433,13 @@ function renderCommentMedia(comment) {
         : `<img src="${comment.media}" alt="Comment attachment">`}
     </div>
   `;
+}
+
+function renderAvatar(member) {
+  if (member.photo) {
+    return `<span class="avatar"><img src="${escapeHtml(member.photo)}" alt="${escapeHtml(member.name)}"></span>`;
+  }
+  return `<span class="avatar">${escapeHtml(member.initials || member.name?.charAt(0) || "M")}</span>`;
 }
 
 function renderMedia(post) {

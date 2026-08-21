@@ -157,6 +157,13 @@ select {
     font-weight: 900;
 }
 
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
 .online-person .avatar {
     width: 34px;
     height: 34px;
@@ -244,10 +251,7 @@ select {
 .composer-collapsed {
     width: 100%;
     min-height: 58px;
-    display: grid;
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 12px;
-    align-items: center;
+    display: block;
     padding: 8px 12px;
     color: var(--muted);
     text-align: left;
@@ -275,6 +279,15 @@ select {
     grid-template-columns: 42px minmax(0, 1fr);
     gap: 11px;
     align-items: center;
+}
+
+.danger-button {
+    color: var(--coral);
+}
+
+.danger-button:hover {
+    border-color: var(--coral);
+    color: var(--text);
 }
 
 .composer-card input,
@@ -401,6 +414,15 @@ select {
     display: grid;
     gap: 12px;
     padding: 14px 18px 18px;
+}
+
+.post-preview-copy {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(8, 16, 24, 0.48);
+    border: 1px solid rgba(85, 200, 255, 0.12);
+    border-radius: 8px;
 }
 
 .post-card h2,
