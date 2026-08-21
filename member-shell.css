@@ -2,27 +2,39 @@
 /* Used by all Member Mode pages. Loaded via member-shell.js or direct <link>. */
 
 /* ===== HIDE PUBLIC CHROME IN MEMBER MODE ===== */
+body.member-mode .command-header,
 body.member-mode .site-search-band,
-body.member-mode .command-nav {
+body.member-mode .command-nav,
+body.member-mode #site-footer,
+body.member-mode footer {
     display: none;
+}
+
+body.member-mode {
+    overflow: hidden;
 }
 
 /* ===== MEMBER SHELL LAYOUT ===== */
 .member-shell {
     display: grid;
     grid-template-columns: 270px 1fr;
-    min-height: calc(100vh - 200px);
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
 }
 
 /* ===== LEFT SIDEBAR ===== */
 .member-sidebar {
-    position: sticky;
+    position: relative;
     top: 0;
-    height: calc(100vh - 200px);
+    height: 100vh;
+    max-height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 20px 0 20px 16px;
     border-right: 1px solid #1f2a36;
     background: #0b1016;
+    scrollbar-gutter: stable;
 }
 
 .member-sidebar-identity {
@@ -147,6 +159,9 @@ body.member-mode .command-nav {
 .member-main {
     padding: 24px 28px;
     min-width: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .member-main-inner {
@@ -1270,8 +1285,15 @@ body.member-mode .home-card-grid::before {
 /* RESPONSIVE — MOBILE            */
 /* ============================== */
 @media (max-width: 700px) {
+    body.member-mode {
+        overflow: auto;
+    }
+
     .member-shell {
         grid-template-columns: 1fr;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
     }
 
     .member-sidebar {
@@ -1284,6 +1306,8 @@ body.member-mode .home-card-grid::before {
 
     .member-main {
         padding: 16px 14px 80px;
+        height: auto;
+        overflow: visible;
     }
 
     .member-page-header h2 {
