@@ -55,6 +55,8 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkConversationRead(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/hide$/)) return requireMember(request, env, user => handleHideConversation(path, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unhide$/)) return requireMember(request, env, user => handleUnhideConversation(path, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/archive$/)) return requireMember(request, env, user => handleArchiveConversation(path, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unarchive$/)) return requireMember(request, env, user => handleUnarchiveConversation(path, env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
@@ -429,7 +431,7 @@ async function handleListNotifications(env, user) {
     return aTime > bTime ? -1 : (aTime < bTime ? 1 : 0);
   }).slice(0, 100);
 
-  return json({ notifications: allNotifications });
+  return json({ notifications: allNotifications }, 200, { "Cache-Control": "no-store" });
 }
 
 async function getChatNotifications(env, user) {
@@ -2199,7 +2201,11 @@ async function getDirectConversation(env, userA, userB) {
 }
 
 async function handleListConversations(request, env, user) {
-    const { results } = await env.TPI_DB.prepare(`
+  const url = new URL(request.url);
+  const showArchived = url.searchParams.get("archived") === "1";
+  const archivedFilter = showArchived ? "AND cp.archived_at IS NOT NULL" : "AND (cp.archived_at IS NULL OR cp.archived_at = '')";
+  const hiddenFilter = showArchived ? "" : "AND cp.hidden_at IS NULL";
+  const { results } = await env.TPI_DB.prepare(`
     SELECT c.id, c.title, c.direct, c.created_at AS createdAt, c.updated_at AS updatedAt,
            (SELECT body FROM messages WHERE conversation_id = c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1) AS lastMessageBody,
            (SELECT created_at FROM messages WHERE conversation_id = c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1) AS lastMessageAt,
@@ -2207,7 +2213,8 @@ async function handleListConversations(request, env, user) {
     FROM conversations c
     JOIN conversation_participants cp ON cp.conversation_id = c.id
     WHERE cp.contributor_id = ?
-      AND cp.hidden_at IS NULL
+      ${hiddenFilter}
+      ${archivedFilter}
     ORDER BY c.updated_at DESC
     LIMIT 100
   `).bind(user.id, user.id, user.id).all();
@@ -2429,6 +2436,33 @@ async function handleUnhideConversation(path, env, user) {
 
   await env.TPI_DB.prepare(`
     UPDATE conversation_participants SET hidden_at = NULL
+    WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, user.id).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleArchiveConversation(path, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/archive$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants SET archived_at = ?
+    WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(now, conversationId, user.id).run();
+
+  return json({ ok: true, archivedAt: now }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleUnarchiveConversation(path, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/unarchive$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants SET archived_at = NULL
     WHERE conversation_id = ? AND contributor_id = ?
   `).bind(conversationId, user.id).run();
 

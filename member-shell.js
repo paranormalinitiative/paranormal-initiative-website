@@ -364,21 +364,17 @@
   async function setupNotificationBadge() {
     var badge = document.querySelector("[data-notification-count]");
     if (!badge) return;
-    var count = getLocalChatUnreadCount();
-    try {
-      var remoteChatCount = await getRemoteUnreadCount();
-      count += remoteChatCount;
-    } catch (e) {}
     try {
       var resp = await fetch("/api/notifications/unread-count", { credentials: "same-origin", cache: "no-store" });
       if (!resp.ok) {
-        renderNotificationBadge(badge, count);
+        renderNotificationBadge(badge, 0);
         return;
       }
       var data = await resp.json();
-      count += Number(data.unreadCount || 0);
-    } catch (e) {}
-    renderNotificationBadge(badge, count);
+      renderNotificationBadge(badge, Number(data.unreadCount || 0));
+    } catch (e) {
+      renderNotificationBadge(badge, 0);
+    }
   }
 
   function renderNotificationBadge(badge, count) {
@@ -2382,27 +2378,39 @@
     applyStoredChatFrame(chat);
     chat.innerHTML =
       '<header class="member-floating-chat-header" data-chat-drag>' +
-        '<div><span class="member-chat-kicker">Community Chat</span><strong data-chat-title>' + escapeHtml(currentChat.title) + '</strong></div>' +
+        '<button type="button" class="member-chat-identity" data-chat-identity aria-haspopup="true" aria-expanded="false" aria-label="Conversation menu">' + renderChatIdentity(currentChat, user) + '</button>' +
         '<div class="member-chat-header-actions">' +
           '<button type="button" data-chat-new>New Chat</button>' +
           '<button type="button" data-chat-minimize>Hide</button>' +
         '</div>' +
       '</header>' +
+      '<div class="member-chat-identity-menu" data-chat-identity-menu hidden>' +
+        '<div role="menu"></div>' +
+      '</div>' +
       '<div class="member-floating-chat-content">' +
-        '<aside class="member-chat-contacts" aria-label="Online now">' +
-          '<span class="member-chat-section-label">Online Now</span>' +
+        '<aside class="member-chat-contacts" aria-label="Members">' +
+          '<span class="member-chat-section-label">Members</span>' +
+          '<input type="search" class="member-chat-member-search" data-chat-member-search placeholder="Search members" aria-label="Search members">' +
           '<div class="member-chat-online-list" data-chat-online></div>' +
-          '<span class="member-chat-section-label member-chat-list-label">Chats</span>' +
+          '<div class="member-chat-section-label member-chat-list-label"><span data-chat-list-label>Chats</span><button type="button" data-chat-archived-toggle>Archived</button></div>' +
           '<div class="member-chat-list" data-chat-list></div>' +
           '<section class="member-chat-create" data-chat-create hidden>' +
             '<span class="member-chat-section-label">Create Chat <button type="button" data-chat-create-close>Hide</button></span>' +
             '<p>Add members you want in this chat.</p>' +
             '<input type="text" data-chat-name placeholder="Chat name, optional">' +
+            '<input type="search" class="member-chat-member-search" data-chat-create-search placeholder="Search members" aria-label="Search members">' +
             '<div class="member-chat-member-list" data-chat-members></div>' +
             '<button type="button" data-chat-start>Start Chat</button>' +
           '</section>' +
         '</aside>' +
         '<section class="member-chat-thread">' +
+          '<div class="member-chat-thread-search" data-chat-thread-search hidden>' +
+            '<input type="search" data-chat-search-input placeholder="Search in conversation" aria-label="Search in conversation">' +
+            '<span data-chat-search-count></span>' +
+            '<button type="button" data-chat-search-prev>Prev</button>' +
+            '<button type="button" data-chat-search-next>Next</button>' +
+            '<button type="button" data-chat-search-close>Close</button>' +
+          '</div>' +
           '<section class="member-chat-messages" data-chat-messages aria-label="Chat messages"></section>' +
           '<div class="member-chat-attachment-preview" data-chat-attachments hidden></div>' +
           '<div class="member-chat-emoji-picker" data-chat-emoji-picker hidden>' +
@@ -2444,7 +2452,18 @@
     var createEl = chat.querySelector("[data-chat-create]");
     var chatNameEl = chat.querySelector("[data-chat-name]");
     var messagesEl = chat.querySelector("[data-chat-messages]");
-    var titleEl = chat.querySelector("[data-chat-title]");
+    var identityEl = chat.querySelector("[data-chat-identity]");
+    var identityMenuEl = chat.querySelector("[data-chat-identity-menu]");
+    var memberSearchEl = chat.querySelector("[data-chat-member-search]");
+    var archivedToggleEl = chat.querySelector("[data-chat-archived-toggle]");
+    var archivedLabelEl = chat.querySelector("[data-chat-list-label]");
+    var createSearchEl = chat.querySelector("[data-chat-create-search]");
+    var threadSearchEl = chat.querySelector("[data-chat-thread-search]");
+    var searchInputEl = chat.querySelector("[data-chat-search-input]");
+    var searchCountEl = chat.querySelector("[data-chat-search-count]");
+    var searchPrevEl = chat.querySelector("[data-chat-search-prev]");
+    var searchNextEl = chat.querySelector("[data-chat-search-next]");
+    var searchCloseEl = chat.querySelector("[data-chat-search-close]");
     var inputEl = chat.querySelector("[data-chat-input]");
     var sendButton = chat.querySelector("[data-chat-send]");
     var attachmentPreviewEl = chat.querySelector("[data-chat-attachments]");
@@ -2460,6 +2479,12 @@
     var voiceChunks = [];
     var editingMessageIndex = -1;
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+    var memberSearchQuery = "";
+    var createSearchQuery = "";
+    var activeSearchIndex = -1;
+    var activeSearchMatches = [];
+    var activeMessageSyncTimer = null;
+    var conversationListSyncTimer = null;
     syncChatMinimizeButton();
 
     renderOnline();
@@ -2470,43 +2495,66 @@
 
     async function syncActiveChatMessages() {
       if (!isRemoteConversation(currentChat)) return;
+      if (activeMessageSyncInFlight) return;
+      activeMessageSyncInFlight = true;
       try {
         var messages = await loadRemoteMessages(currentChat.id);
-        if (messages.length && JSON.stringify(messages) !== JSON.stringify(currentChat.messages)) {
+        if (!messages.length) return;
+        var changed = messages.length !== currentChat.messages.length ||
+          messages[messages.length - 1].id !== (currentChat.messages[currentChat.messages.length - 1] || {}).id;
+        if (changed) {
           currentChat.messages = messages;
           renderMessages();
+          updateChatListPreview(currentChat);
+          renderChatList();
+          setupNotificationBadge();
         }
       } catch (e) {}
+      activeMessageSyncInFlight = false;
     }
 
     async function syncConversationList() {
-      try {
-        var remote = await loadConversationList();
-        var changed = false;
-        remote.forEach(function(conv) {
-          var existing = chatList.find(function(c) { return c.id === conv.id; });
-          if (!existing) {
-            chatList.push(normalizeRemoteConversation(conv));
-            changed = true;
-          } else if (conv.updatedAt && conv.updatedAt > (existing.updatedAt || "")) {
-            existing.updatedAt = conv.updatedAt;
-            existing.unreadCount = Number(conv.unreadCount || 0);
-            changed = true;
-          }
-        });
-        if (changed) {
-          replaceStoredChats(user, chatList);
-          renderChatList();
-        }
-      } catch (e) {}
+      await loadChatListFromRemote(showingArchived);
     }
 
-    var chatSyncInterval = setInterval(function() {
+    var activeMessageSyncInFlight = false;
+    function startActiveSync() {
+      stopActiveSync();
+      activeMessageSyncTimer = setInterval(syncActiveChatMessages, 4000);
       syncActiveChatMessages();
+    }
+    function stopActiveSync() {
+      if (activeMessageSyncTimer) {
+        clearInterval(activeMessageSyncTimer);
+        activeMessageSyncTimer = null;
+      }
+    }
+    function startListSync() {
+      stopListSync();
+      conversationListSyncTimer = setInterval(syncConversationList, 12000);
       syncConversationList();
-    }, 15000);
+    }
+    function stopListSync() {
+      if (conversationListSyncTimer) {
+        clearInterval(conversationListSyncTimer);
+        conversationListSyncTimer = null;
+      }
+    }
+    function setSyncForVisibility() {
+      if (chat.classList.contains("is-collapsed")) {
+        stopActiveSync();
+        startListSync();
+      } else {
+        startActiveSync();
+        startListSync();
+      }
+    }
+    setSyncForVisibility();
 
-    window.addEventListener("beforeunload", function() { clearInterval(chatSyncInterval); });
+    window.addEventListener("beforeunload", function() {
+      stopActiveSync();
+      stopListSync();
+    });
 
     chat.querySelector("[data-chat-new]").addEventListener("click", function () {
       createEl.hidden = !createEl.hidden;
@@ -2548,6 +2596,8 @@
       }
       syncChatMinimizeButton();
       storeChatFrame(chat);
+      closeIdentityMenu();
+      setSyncForVisibility();
     });
 
     chat.addEventListener("click", function () {
@@ -2671,6 +2721,10 @@
         lightboxEl.hidden = false;
         return;
       }
+      if (isRemoteConversation(currentChat)) {
+        // Editing and deleting D1-backed messages is not supported in this directive.
+        if (editButton || deleteButton) return;
+      }
       if (editButton) {
         var editIndex = Number(editButton.dataset.chatEdit);
         if (Number.isInteger(editIndex) && currentChat.messages[editIndex]) {
@@ -2714,32 +2768,78 @@
     setupFloatingChatResize(chat);
 
     function renderOnline() {
-      onlineEl.innerHTML = roster.map(function(member) {
-        return '<button class="member-chat-online-person' + (member.online ? ' is-online' : '') + '" type="button" data-online-member="' + escapeHtml(member.username) + '">' +
+      var query = String(memberSearchQuery || "").trim().toLowerCase();
+      var filtered = roster.filter(function(member) {
+        if (!query) return true;
+        return String(member.displayName || "").toLowerCase().indexOf(query) !== -1 ||
+          String(member.username || "").toLowerCase().indexOf(query) !== -1;
+      });
+      onlineEl.innerHTML = filtered.length ? filtered.map(function(member) {
+        return '<button class="member-chat-online-person" type="button" data-online-member="' + escapeHtml(member.username) + '">' +
           renderChatAvatar(member) +
           '<span class="member-chat-person-copy"><strong>' + escapeHtml(member.displayName) + '</strong>' +
-          '<span class="member-chat-presence">' + escapeHtml(member.online ? "Online" : "Offline") + '</span></span>' +
+          '<span class="member-chat-presence">' + escapeHtml(member.title || "Member") + '</span></span>' +
         '</button>';
-      }).join("");
+      }).join("") : '<p class="member-chat-list-empty">No members found.</p>';
       onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
         button.addEventListener("click", async function() {
           var member = roster.find(function(candidate) { return candidate.username === button.dataset.onlineMember; });
           if (!member) return;
-          var existing = findDirectChat(chatList, member, user);
-          if (existing && isRemoteConversation(existing)) {
-            currentChat = existing;
-          } else {
-            var remote = await createRemoteConversation("", [member.username], true);
-            if (remote) {
-              currentChat = normalizeRemoteConversation(remote);
-            } else {
-              currentChat = existing || createDirectChat(member, user);
-            }
-          }
-          await openChat(currentChat);
-          inputEl.focus();
+          await openOrCreateDirectConversation(member);
         });
       });
+    }
+
+    if (memberSearchEl) {
+      memberSearchEl.addEventListener("input", function() {
+        memberSearchQuery = memberSearchEl.value;
+        renderOnline();
+      });
+    }
+
+    var showingArchived = false;
+    if (archivedToggleEl) {
+      archivedToggleEl.addEventListener("click", async function() {
+        showingArchived = !showingArchived;
+        if (archivedLabelEl) archivedLabelEl.textContent = showingArchived ? "Archived Chats" : "Chats";
+        archivedToggleEl.textContent = showingArchived ? "Back to Chats" : "Archived";
+        await loadChatListFromRemote(showingArchived);
+      });
+    }
+
+    async function loadChatListFromRemote(archived) {
+      try {
+        var path = "/api/conversations" + (archived ? "?archived=1" : "");
+        var res = await apiFetch("GET", path);
+        var remote = res.ok && Array.isArray(res.data.conversations) ? res.data.conversations : [];
+        chatList = remote.map(function(conv) {
+          var c = normalizeRemoteConversation(conv);
+          if (archived) c.archived = true;
+          return c;
+        }).sort(function(a, b) {
+          return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
+        });
+        replaceStoredChats(user, chatList);
+        renderChatList();
+      } catch (e) {}
+    }
+
+    async function openOrCreateDirectConversation(member) {
+      closeIdentityMenu();
+      if (!member || !member.username) return;
+      var remote = await createRemoteConversation("", [member.username], true);
+      if (remote) {
+        currentChat = normalizeRemoteConversation(remote);
+      } else {
+        currentChat = createDirectChat(member, user);
+      }
+      await refreshChatListFromRemote();
+      await openChat(currentChat);
+      if (inputEl) inputEl.focus();
+    }
+
+    async function refreshChatListFromRemote() {
+      await loadChatListFromRemote(showingArchived);
     }
 
     function renderChatList() {
@@ -2750,16 +2850,18 @@
       }
       chatListEl.innerHTML = chatList.map(function(savedChat) {
         var active = savedChat.id === currentChat.id ? " is-active" : "";
-        return '<article class="member-chat-list-item' + active + '">' +
+        var unread = Number(savedChat.unreadCount || 0);
+        var title = getConversationDisplayTitle(savedChat, user);
+        var time = savedChat.lastMessage && savedChat.lastMessage.createdAt ? formatChatTime(savedChat.lastMessage.createdAt) : "";
+        var preview = (savedChat.lastMessage && savedChat.lastMessage.body) ? savedChat.lastMessage.body : getChatListSubtitle(savedChat);
+        var unreadBadge = unread > 0 ? '<span class="member-chat-unread-badge">' + (unread > 99 ? "99+" : String(unread)) + '</span>' : "";
+        return '<article class="member-chat-list-item' + active + (unread > 0 ? ' is-unread' : '') + '">' +
           '<button class="member-chat-list-open" type="button" data-chat-open="' + escapeHtml(savedChat.id) + '">' +
-            '<span class="member-chat-stack">' + savedChat.members.slice(0, 3).map(renderChatAvatar).join("") + '</span>' +
-            '<span class="member-chat-person-copy"><strong>' + escapeHtml(savedChat.title || "Community Chat") + '</strong>' +
-            '<span class="member-chat-presence">' + escapeHtml(getChatListSubtitle(savedChat)) + '</span></span>' +
+            getConversationAvatarHtml(savedChat, user) +
+            '<span class="member-chat-person-copy"><strong>' + escapeHtml(title) + '</strong>' +
+            '<span class="member-chat-presence">' + escapeHtml(preview.slice(0, 38)) + (time ? ' · ' + escapeHtml(time) : "") + '</span></span>' +
+            unreadBadge +
           '</button>' +
-          '<span class="member-chat-list-actions">' +
-            '<button type="button" data-chat-rename="' + escapeHtml(savedChat.id) + '">Rename</button>' +
-            '<button type="button" data-chat-remove="' + escapeHtml(savedChat.id) + '">Remove</button>' +
-          '</span>' +
         '</article>';
       }).join("");
       chatListEl.querySelectorAll("[data-chat-open]").forEach(function(button) {
@@ -2769,71 +2871,40 @@
           openSavedChat(saved);
         });
       });
-      chatListEl.querySelectorAll("[data-chat-rename]").forEach(function(button) {
-        button.addEventListener("click", function() {
-          var saved = chatList.find(function(item) { return item.id === button.dataset.chatRename; });
-          if (!saved) return;
-          var nextTitle = window.prompt("Chat name", saved.title || "Community Chat");
-          if (nextTitle === null) return;
-          nextTitle = nextTitle.trim();
-          if (!nextTitle) return;
-          saved.title = nextTitle;
-          if (currentChat.id === saved.id) currentChat.title = nextTitle;
-          saveCurrentChat(user, currentChat);
-          replaceStoredChats(user, chatList);
-          renderChatList();
-          renderMessages();
-        });
-      });
-      chatListEl.querySelectorAll("[data-chat-remove]").forEach(function(button) {
-        button.addEventListener("click", async function() {
-          var saved = chatList.find(function(item) { return item.id === button.dataset.chatRemove; });
-          if (!saved || !window.confirm("Remove this chat from your visible chat list? The conversation will be hidden from you but retained on the server.")) return;
-          // Server-side hide: mark this participant's hidden_at
-          if (isRemoteConversation(saved)) {
-            await apiFetch("POST", "/api/conversations/" + encodeURIComponent(saved.id) + "/hide");
-          }
-          archiveRemovedChat(user, saved);
-          chatList = chatList.filter(function(item) { return item.id !== saved.id; });
-          replaceStoredChats(user, chatList);
-          if (currentChat.id === saved.id) {
-            currentChat = createEmptyChat(user);
-            selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
-            saveCurrentChat(user, currentChat);
-          }
-          renderChatList();
-          renderMemberPicker();
-          renderMessages();
-        });
-      });
     }
 
     async function openChat(chat) {
+      closeIdentityMenu();
       currentChat = chat;
       selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
       saveCurrentChat(user, currentChat);
       upsertStoredChat(user, currentChat);
-      chatList = loadStoredChats(user);
       if (isRemoteConversation(currentChat)) {
         var messages = await loadRemoteMessages(currentChat.id);
-        if (messages.length) {
-          currentChat.messages = messages;
-        }
+        currentChat.messages = messages;
         markRemoteConversationRead(currentChat.id);
+        currentChat.unreadCount = 0;
       }
+      renderIdentity();
       renderChatList();
       renderMemberPicker();
       renderMessages();
+      setupNotificationBadge();
     }
 
     function openSavedChat(saved) {
       openChat(saved);
-      inputEl.focus();
+      if (inputEl) inputEl.focus();
     }
 
     function renderMemberPicker() {
+      var query = String(createSearchQuery || "").trim().toLowerCase();
       membersEl.innerHTML = roster.filter(function(member) {
         return member.username !== user.username;
+      }).filter(function(member) {
+        if (!query) return true;
+        return String(member.displayName || "").toLowerCase().indexOf(query) !== -1 ||
+          String(member.username || "").toLowerCase().indexOf(query) !== -1;
       }).map(function(member) {
         var checked = selectedMembers.has(member.username) ? " checked" : "";
         return '<label class="member-chat-member-option">' +
@@ -2844,13 +2915,31 @@
       }).join("");
     }
 
+    if (createSearchEl) {
+      createSearchEl.addEventListener("input", function() {
+        createSearchQuery = createSearchEl.value;
+        renderMemberPicker();
+      });
+    }
+
     function renderMessages() {
-      titleEl.textContent = currentChat.title;
+      renderIdentity();
+      if (!currentChat || currentChat.id === "chat-default") {
+        messagesEl.innerHTML = '<p class="member-chat-empty">Select a chat or choose a member to start a conversation.</p>';
+        updateSendButtonState();
+        return;
+      }
       messagesEl.innerHTML = currentChat.messages.length
         ? currentChat.messages.map(function(message, index) { return renderChatMessage(message, index); }).join("")
-        : "";
+        : '<p class="member-chat-empty">No messages yet. Send the first message.</p>';
       messagesEl.scrollTop = messagesEl.scrollHeight;
       updateSendButtonState();
+    }
+
+    function renderIdentity() {
+      if (!identityEl) return;
+      identityEl.innerHTML = renderChatIdentity(currentChat, user);
+      identityEl.setAttribute("aria-expanded", String(identityMenuEl && !identityMenuEl.hidden));
     }
 
     function updateSendButtonState() {
@@ -2873,6 +2962,7 @@
         return { name: att.name || "", type: att.type || "photo", url: att.url || "" };
       });
       if (!body && !safeAttachments.length) return;
+      if (!currentChat || currentChat.id === "chat-default") return;
       var localMessage = {
         author: normalizeChatMember(user, true),
         body: body,
@@ -2881,6 +2971,8 @@
         pending: true
       };
       currentChat.messages.push(localMessage);
+      currentChat.lastMessage = { body: body, createdAt: localMessage.createdAt };
+      currentChat.updatedAt = localMessage.createdAt;
       renderMessages();
       if (isRemoteConversation(currentChat)) {
         var remoteMessage = await sendRemoteMessage(currentChat.id, body, safeAttachments);
@@ -2888,12 +2980,14 @@
           localMessage.pending = false;
           localMessage.id = remoteMessage.id;
           localMessage.createdAt = remoteMessage.createdAt;
+          currentChat.lastMessage = { body: body, createdAt: remoteMessage.createdAt };
+          currentChat.updatedAt = remoteMessage.createdAt;
         }
       }
       saveCurrentChat(user, currentChat);
       upsertStoredChat(user, currentChat);
       chatList = loadStoredChats(user);
-      if (!isRemoteConversation(currentChat)) bumpLocalChatUnread();
+      renderChatList();
       renderMessages();
       setupNotificationBadge();
     }
@@ -2915,11 +3009,14 @@
       isReady: function() { return true; },
       openConversation: async function(conversationId) {
         if (!conversationId) return;
+        closeIdentityMenu();
         if (chat.classList.contains("is-collapsed")) {
           chat.classList.remove("is-collapsed");
           applyStoredChatFrame(chat, true);
           syncChatMinimizeButton();
+          setSyncForVisibility();
         }
+        await refreshChatListFromRemote();
         var existing = chatList.find(function(c) { return c.id === conversationId; });
         if (existing) {
           await openChat(existing);
@@ -2928,7 +3025,7 @@
             var res = await apiFetch("GET", "/api/conversations/" + encodeURIComponent(conversationId));
             if (res.ok && res.data.conversation) {
               var remote = normalizeRemoteConversation(res.data.conversation);
-              chatList.push(remote);
+              chatList.unshift(remote);
               replaceStoredChats(user, chatList);
               await openChat(remote);
             }
@@ -2940,7 +3037,7 @@
   }
 
   async function loadChatRoster(user) {
-    var members = [normalizeChatMember(user, true)];
+    var members = [];
     try {
       var directoryResp = await fetch("/api/members/directory", { credentials: "same-origin", cache: "no-store" });
       if (directoryResp.ok) {
@@ -2954,10 +3051,13 @@
       var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
       local.forEach(function(member) {
         if (member.developerOwner) return;
-        members.push(normalizeChatMember(member, isCurrentChatUser(member, user)));
+        members.push(normalizeChatMember(member, false));
       });
     } catch (e) {}
-    return dedupeChatMembers(members);
+    var currentUsername = normalizeChatUsername(user && user.username);
+    return dedupeChatMembers(members).filter(function(member) {
+      return member.username !== currentUsername;
+    });
   }
 
   function normalizeChatMember(member, online) {
@@ -3029,41 +3129,28 @@
   }
 
   async function loadChatState(user, roster) {
-    var current = normalizeChatMember(user, true);
     var remoteConversations = [];
     try { remoteConversations = await loadConversationList(); } catch (e) {}
-    var localChats = loadStoredChats(user);
-    var merged = [];
-
-    remoteConversations.forEach(function(conv) {
-      var local = localChats.find(function(c) { return c.id === conv.id; });
-      merged.push(local && local.messages && local.messages.length > (conv.messages || []).length
-        ? local
-        : normalizeRemoteConversation(conv));
-    });
-
-    localChats.forEach(function(local) {
-      if (!merged.some(function(c) { return c.id === local.id; })) {
-        merged.push(local);
-      }
+    var chatList = remoteConversations.map(normalizeRemoteConversation).sort(function(a, b) {
+      return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
     });
 
     var active = null;
     try {
       var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
-      if (saved && saved.id && merged.some(function(c) { return c.id === saved.id; })) {
-        active = merged.find(function(c) { return c.id === saved.id; });
+      if (saved && saved.id && chatList.some(function(c) { return c.id === saved.id; })) {
+        active = chatList.find(function(c) { return c.id === saved.id; });
       }
     } catch (e) {}
 
-    if (!active && merged.length) {
-      active = merged[0];
+    if (!active && chatList.length) {
+      active = chatList[0];
     }
     if (!active) {
       active = createEmptyChat(user);
     }
 
-    return { currentChat: active, chatList: merged };
+    return { currentChat: active, chatList: chatList };
   }
 
   function normalizeRemoteConversation(conv) {
@@ -3074,7 +3161,8 @@
       members: Array.isArray(conv.members) ? conv.members.map(function(m) { return normalizeChatMember(m, false); }) : [],
       messages: [],
       unreadCount: Number(conv.unreadCount || 0),
-      updatedAt: conv.updatedAt || new Date().toISOString()
+      updatedAt: conv.updatedAt || new Date().toISOString(),
+      lastMessage: conv.lastMessage || null
     };
   }
 
@@ -3161,10 +3249,272 @@
 
   function getChatListSubtitle(chat) {
     var count = Array.isArray(chat.members) ? chat.members.length : 0;
-    var latest = Array.isArray(chat.messages) && chat.messages.length ? chat.messages[chat.messages.length - 1] : null;
-    if (latest && latest.body) return latest.body.slice(0, 38);
-    if (count === 1) return "Direct chat";
+    if (chat.direct) return "Direct chat";
+    if (count <= 2) return "Direct chat";
     return count + " members";
+  }
+
+  function getOtherParticipant(chat, user) {
+    var currentUsername = normalizeChatUsername(user && user.username);
+    return (chat && Array.isArray(chat.members) ? chat.members : []).find(function(member) {
+      return member.username !== currentUsername;
+    });
+  }
+
+    function isGroupConversation(chat) {
+      return Boolean(chat && !chat.direct && Array.isArray(chat.members) && chat.members.length > 2);
+    }
+
+    function renderIdentityMenu() {
+      if (!identityMenuEl) return;
+      var menu = identityMenuEl.querySelector('[role="menu"]');
+      var items = [];
+      var other = getOtherParticipant(currentChat, user);
+      if (currentChat && currentChat.id !== "chat-default" && other && !isGroupConversation(currentChat)) {
+        items.push({ action: "view-profile", label: "View Profile", username: other.username });
+      }
+      if (currentChat && currentChat.id !== "chat-default") {
+        items.push({ action: "search", label: "Search in Conversation" });
+      }
+      // Mute Notifications, Read Receipts, Block Member, Restrict Member, Report intentionally hidden until backend support exists.
+      if (currentChat && currentChat.id !== "chat-default") {
+        if (showingArchived) {
+          items.push({ action: "unarchive", label: "Unarchive Chat" });
+        } else {
+          items.push({ action: "archive", label: "Archive Chat" });
+        }
+        items.push({ action: "remove", label: "Remove Chat" });
+      }
+      menu.innerHTML = items.map(function(item) {
+        return '<button type="button" role="menuitem" data-identity-action="' + escapeHtml(item.action) + '"' +
+          (item.username ? ' data-identity-username="' + escapeHtml(item.username) + '"' : '') + '>' +
+          escapeHtml(item.label) + '</button>';
+      }).join("");
+      menu.querySelectorAll("[data-identity-action]").forEach(function(button) {
+        button.addEventListener("click", handleIdentityAction);
+      });
+    }
+
+    function openIdentityMenu() {
+      if (!identityMenuEl || !identityEl) return;
+      renderIdentityMenu();
+      identityMenuEl.hidden = false;
+      identityEl.setAttribute("aria-expanded", "true");
+      var first = identityMenuEl.querySelector('[role="menuitem"]');
+      if (first) first.focus();
+    }
+
+    function closeIdentityMenu() {
+      if (!identityMenuEl || !identityEl) return;
+      identityMenuEl.hidden = true;
+      identityEl.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleIdentityMenu() {
+      if (!identityMenuEl) return;
+      if (identityMenuEl.hidden) openIdentityMenu();
+      else closeIdentityMenu();
+    }
+
+    async function handleIdentityAction(event) {
+      var button = event.currentTarget;
+      var action = button.dataset.identityAction;
+      if (action === "view-profile") {
+        var username = button.dataset.identityUsername;
+        if (username) window.open("contributor-profile.html?username=" + encodeURIComponent(username), "_blank");
+      } else if (action === "search") {
+        openThreadSearch();
+      } else if (action === "archive") {
+        if (!currentChat || currentChat.id === "chat-default") return;
+        if (!window.confirm("Archive this chat? It will be moved out of your main Chats list but can be restored later.")) return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/archive");
+        chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
+        replaceStoredChats(user, chatList);
+        currentChat = createEmptyChat(user);
+        selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+        saveCurrentChat(user, currentChat);
+        renderChatList();
+        renderMessages();
+        renderIdentity();
+      } else if (action === "unarchive") {
+        if (!currentChat || currentChat.id === "chat-default") return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/unarchive");
+        if (showingArchived) {
+          chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
+          replaceStoredChats(user, chatList);
+          currentChat = createEmptyChat(user);
+          selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+          saveCurrentChat(user, currentChat);
+          renderChatList();
+          renderMessages();
+          renderIdentity();
+        } else {
+          await loadChatListFromRemote(false);
+        }
+      } else if (action === "remove") {
+        if (!currentChat || currentChat.id === "chat-default") return;
+        if (!window.confirm("Remove this chat from your visible chat list? The conversation will be hidden from you but retained on the server.")) return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/hide");
+        archiveRemovedChat(user, currentChat);
+        chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
+        replaceStoredChats(user, chatList);
+        currentChat = createEmptyChat(user);
+        selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+        saveCurrentChat(user, currentChat);
+        renderChatList();
+        renderMessages();
+        renderIdentity();
+      }
+      closeIdentityMenu();
+    }
+
+    if (identityEl) {
+      identityEl.addEventListener("click", function(event) {
+        if (event.target.closest("button") !== identityEl) return;
+        toggleIdentityMenu();
+      });
+    }
+
+    document.addEventListener("click", function(event) {
+      if (!identityMenuEl || identityMenuEl.hidden) return;
+      if (!identityMenuEl.contains(event.target) && event.target !== identityEl && !identityEl.contains(event.target)) {
+        closeIdentityMenu();
+      }
+    });
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape") closeIdentityMenu();
+    });
+
+    // Thread search
+    function openThreadSearch() {
+      if (!threadSearchEl) return;
+      threadSearchEl.hidden = false;
+      if (searchInputEl) searchInputEl.focus();
+      activeSearchMatches = [];
+      activeSearchIndex = -1;
+      updateSearchUi();
+    }
+
+    function closeThreadSearch() {
+      if (!threadSearchEl) return;
+      threadSearchEl.hidden = true;
+      messagesEl.querySelectorAll(".member-chat-message-search-highlight").forEach(function(el) {
+        var parent = el.parentNode;
+        parent.replaceChild(document.createTextNode(el.textContent), el);
+        parent.normalize();
+      });
+      activeSearchMatches = [];
+      activeSearchIndex = -1;
+    }
+
+    function runThreadSearch() {
+      var query = String(searchInputEl ? searchInputEl.value : "").trim().toLowerCase();
+      activeSearchMatches = [];
+      activeSearchIndex = -1;
+      messagesEl.querySelectorAll(".member-chat-message-search-highlight").forEach(function(el) {
+        var parent = el.parentNode;
+        parent.replaceChild(document.createTextNode(el.textContent), el);
+        parent.normalize();
+      });
+      if (!query) {
+        updateSearchUi();
+        return;
+      }
+      var messageEls = messagesEl.querySelectorAll(".member-chat-message");
+      messageEls.forEach(function(messageEl) {
+        var p = messageEl.querySelector("p");
+        if (!p) return;
+        var text = p.textContent;
+        var lower = text.toLowerCase();
+        var index = lower.indexOf(query);
+        if (index === -1) return;
+        var before = text.slice(0, index);
+        var match = text.slice(index, index + query.length);
+        var after = text.slice(index + query.length);
+        p.innerHTML = escapeHtml(before) + '<mark class="member-chat-message-search-highlight">' + escapeHtml(match) + '</mark>' + escapeHtml(after);
+        activeSearchMatches.push({ el: messageEl, mark: p.querySelector("mark") });
+      });
+      if (activeSearchMatches.length) {
+        activeSearchIndex = 0;
+        scrollToSearchMatch(0);
+      }
+      updateSearchUi();
+    }
+
+    function scrollToSearchMatch(index) {
+      if (!activeSearchMatches[index]) return;
+      var mark = activeSearchMatches[index].mark;
+      if (mark) mark.scrollIntoView({ block: "center" });
+    }
+
+    function updateSearchUi() {
+      if (!searchCountEl) return;
+      if (!activeSearchMatches.length) {
+        searchCountEl.textContent = "No matches";
+      } else {
+        searchCountEl.textContent = (activeSearchIndex + 1) + " / " + activeSearchMatches.length;
+      }
+    }
+
+    if (searchInputEl) {
+      searchInputEl.addEventListener("input", runThreadSearch);
+    }
+    if (searchPrevEl) {
+      searchPrevEl.addEventListener("click", function() {
+        if (!activeSearchMatches.length) return;
+        activeSearchIndex = (activeSearchIndex - 1 + activeSearchMatches.length) % activeSearchMatches.length;
+        scrollToSearchMatch(activeSearchIndex);
+        updateSearchUi();
+      });
+    }
+    if (searchNextEl) {
+      searchNextEl.addEventListener("click", function() {
+        if (!activeSearchMatches.length) return;
+        activeSearchIndex = (activeSearchIndex + 1) % activeSearchMatches.length;
+        scrollToSearchMatch(activeSearchIndex);
+        updateSearchUi();
+      });
+    }
+    if (searchCloseEl) {
+      searchCloseEl.addEventListener("click", closeThreadSearch);
+    }
+
+    renderIdentity();
+
+  // ---- Shared messenger helpers (inside initFloatingChat) ----
+
+  function getConversationDisplayTitle(chat, user) {
+    if (!chat || chat.id === "chat-default") return "Community Chat";
+    if (!chat.direct) return chat.title || getDefaultChatTitle(chat.members, user);
+    var other = getOtherParticipant(chat, user);
+    return other ? (other.displayName || other.username || "Member") : (chat.title || "Community Chat");
+  }
+
+  function getConversationAvatarHtml(chat, user, sizeClass) {
+    sizeClass = sizeClass || "";
+    if (!chat || chat.id === "chat-default") {
+      return '<span class="member-chat-avatar ' + sizeClass + '"><span>?</span></span>';
+    }
+    if (chat.direct) {
+      var other = getOtherParticipant(chat, user);
+      return renderChatAvatar(other || { displayName: chat.title });
+    }
+    return '<span class="member-chat-stack">' + (chat.members || []).slice(0, 3).map(renderChatAvatar).join("") + '</span>';
+  }
+
+  function renderChatIdentity(chat, user) {
+    var title = getConversationDisplayTitle(chat, user);
+    var avatar = getConversationAvatarHtml(chat, user, "member-chat-identity-avatar");
+    return avatar +
+      '<span class="member-chat-identity-copy"><strong>' + escapeHtml(title) + '</strong></span>' +
+      '<span class="member-chat-identity-chevron" aria-hidden="true">▼</span>';
+  }
+
+  function updateChatListPreview(chat) {
+    if (!chat || !chat.messages || !chat.messages.length) return;
+    var latest = chat.messages[chat.messages.length - 1];
+    chat.lastMessage = { body: latest.body, createdAt: latest.createdAt };
   }
 
   async function apiFetch(method, path, body) {
@@ -3249,11 +3599,12 @@
     var author = normalizeChatMember(message.author || {}, true);
     var currentUsername = normalizeChatUsername(getStoredUsername());
     var isOwn = currentUsername && author.username === currentUsername;
-    return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
+      var canEditDelete = !isRemoteConversation(currentChat) && !message.id;
+      return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
       '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
       '<span class="member-chat-message-actions">' +
-        (isOwn ? '<button class="member-chat-edit" type="button" data-chat-edit="' + escapeHtml(String(index)) + '" title="Edit message">Edit</button>' : '') +
-        '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' +
+        (isOwn && canEditDelete ? '<button class="member-chat-edit" type="button" data-chat-edit="' + escapeHtml(String(index)) + '" title="Edit message">Edit</button>' : '') +
+        (canEditDelete ? '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' : '') +
       '</span>' +
       '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
       (message.editedAt ? '<small>Edited</small>' : '') +

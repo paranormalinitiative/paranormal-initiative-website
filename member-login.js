@@ -958,6 +958,42 @@
     }
   }
 
+  function openMessengerConversation(conversationId) {
+    if (!conversationId) return;
+    if (window.TPIMessenger && typeof window.TPIMessenger.openConversation === "function") {
+      window.TPIMessenger.openConversation(conversationId);
+    } else {
+      var url = new URL(window.location.href);
+      url.searchParams.set("openChat", conversationId);
+      window.location.href = url.href;
+    }
+  }
+
+  if (memberNotificationsList) {
+    memberNotificationsList.addEventListener("click", async function(event) {
+      var chatButton = event.target.closest("[data-notification-chat]");
+      var readButton = event.target.closest("[data-notification-read]");
+      if (chatButton) {
+        event.preventDefault();
+        var conversationId = chatButton.dataset.notificationChat;
+        try {
+          await window.TPIApi.markNotificationRead("chat-" + conversationId);
+        } catch (e) {}
+        openMessengerConversation(conversationId);
+        initMemberNotifications();
+        return;
+      }
+      if (readButton) {
+        event.preventDefault();
+        var id = readButton.dataset.notificationRead;
+        try {
+          await window.TPIApi.markNotificationRead(id);
+          initMemberNotifications();
+        } catch (e) {}
+      }
+    });
+  }
+
   function renderModerationComment(comment, statusFilter) {
     const author = [comment.name || "Anonymous Contributor", comment.authorTitle].filter(Boolean).join(" - ");
     const pageUrl = comment.pageId || "";
