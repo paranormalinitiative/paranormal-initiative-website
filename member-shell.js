@@ -2378,14 +2378,20 @@
     applyStoredChatFrame(chat);
     chat.innerHTML =
       '<header class="member-floating-chat-header" data-chat-drag>' +
-        '<button type="button" class="member-chat-identity" data-chat-identity aria-haspopup="true" aria-expanded="false" aria-label="Conversation menu">' + renderChatIdentity(currentChat, user) + '</button>' +
+        '<button type="button" class="member-chat-owner" data-chat-owner aria-haspopup="true" aria-expanded="false" aria-label="Messenger menu">' + renderOwnerIdentity(user) + '</button>' +
         '<div class="member-chat-header-actions">' +
           '<button type="button" data-chat-new>New Chat</button>' +
           '<button type="button" data-chat-minimize>Hide</button>' +
         '</div>' +
       '</header>' +
-      '<div class="member-chat-identity-menu" data-chat-identity-menu hidden>' +
+      '<div class="member-chat-identity-menu member-chat-owner-menu" data-chat-owner-menu hidden>' +
         '<div role="menu"></div>' +
+      '</div>' +
+      '<div class="member-chat-settings" data-chat-settings hidden>' +
+        '<span class="member-chat-section-label">Messenger Settings</span>' +
+        '<p>Signed in as <strong data-chat-settings-account></strong></p>' +
+        '<button type="button" data-chat-settings-reset>Reset window size & position</button>' +
+        '<button type="button" data-chat-settings-close>Done</button>' +
       '</div>' +
       '<div class="member-floating-chat-content">' +
         '<aside class="member-chat-contacts" aria-label="Members">' +
@@ -2404,6 +2410,12 @@
           '</section>' +
         '</aside>' +
         '<section class="member-chat-thread">' +
+          '<div class="member-chat-conversation-bar" data-chat-conversation-bar>' +
+            '<button type="button" class="member-chat-identity" data-chat-identity aria-haspopup="true" aria-expanded="false" aria-label="Conversation menu">' + renderChatIdentity(currentChat, user) + '</button>' +
+            '<div class="member-chat-identity-menu member-chat-conversation-menu" data-chat-identity-menu hidden>' +
+              '<div role="menu"></div>' +
+            '</div>' +
+          '</div>' +
           '<div class="member-chat-thread-search" data-chat-thread-search hidden>' +
             '<input type="search" data-chat-search-input placeholder="Search in conversation" aria-label="Search in conversation">' +
             '<span data-chat-search-count></span>' +
@@ -2454,6 +2466,11 @@
     var messagesEl = chat.querySelector("[data-chat-messages]");
     var identityEl = chat.querySelector("[data-chat-identity]");
     var identityMenuEl = chat.querySelector("[data-chat-identity-menu]");
+    var ownerEl = chat.querySelector("[data-chat-owner]");
+    var ownerMenuEl = chat.querySelector("[data-chat-owner-menu]");
+    var conversationBarEl = chat.querySelector("[data-chat-conversation-bar]");
+    var settingsEl = chat.querySelector("[data-chat-settings]");
+    var settingsAccountEl = chat.querySelector("[data-chat-settings-account]");
     var memberSearchEl = chat.querySelector("[data-chat-member-search]");
     var archivedToggleEl = chat.querySelector("[data-chat-archived-toggle]");
     var archivedLabelEl = chat.querySelector("[data-chat-list-label]");
@@ -2584,9 +2601,8 @@
       await openChat(currentChat);
     });
 
-    minimizeButton.addEventListener("click", function () {
-      var willCollapse = !chat.classList.contains("is-collapsed");
-      if (willCollapse) {
+    function setMessengerCollapsed(collapsed) {
+      if (collapsed) {
         storeChatFrame(chat);
         chat.classList.add("is-collapsed");
         dockCollapsedChat(chat);
@@ -2597,7 +2613,13 @@
       syncChatMinimizeButton();
       storeChatFrame(chat);
       closeIdentityMenu();
+      closeOwnerMenu();
+      closeMessengerSettings();
       setSyncForVisibility();
+    }
+
+    minimizeButton.addEventListener("click", function () {
+      setMessengerCollapsed(!chat.classList.contains("is-collapsed"));
     });
 
     chat.addEventListener("click", function () {
@@ -2826,6 +2848,7 @@
 
     async function openOrCreateDirectConversation(member) {
       closeIdentityMenu();
+      closeOwnerMenu();
       if (!member || !member.username) return;
       var remote = await createRemoteConversation("", [member.username], true);
       if (remote) {
@@ -2875,6 +2898,7 @@
 
     async function openChat(chat) {
       closeIdentityMenu();
+      closeOwnerMenu();
       currentChat = chat;
       selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
       saveCurrentChat(user, currentChat);
@@ -2937,6 +2961,8 @@
     }
 
     function renderIdentity() {
+      var hasConversation = Boolean(currentChat && currentChat.id && currentChat.id !== "chat-default");
+      if (conversationBarEl) conversationBarEl.hidden = !hasConversation;
       if (!identityEl) return;
       identityEl.innerHTML = renderChatIdentity(currentChat, user);
       identityEl.setAttribute("aria-expanded", String(identityMenuEl && !identityMenuEl.hidden));
@@ -3010,6 +3036,7 @@
       openConversation: async function(conversationId) {
         if (!conversationId) return;
         closeIdentityMenu();
+        closeOwnerMenu();
         if (chat.classList.contains("is-collapsed")) {
           chat.classList.remove("is-collapsed");
           applyStoredChatFrame(chat, true);
@@ -3067,7 +3094,7 @@
       displayName: name,
       title: member.title || "",
       role: member.role || "",
-      photoUrl: member.photoUrl || member.photo_url || "",
+      photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
       chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#55c8ff"),
       online: Boolean(online)
     };
@@ -3297,6 +3324,7 @@
 
     function openIdentityMenu() {
       if (!identityMenuEl || !identityEl) return;
+      closeOwnerMenu();
       renderIdentityMenu();
       identityMenuEl.hidden = false;
       identityEl.setAttribute("aria-expanded", "true");
@@ -3314,6 +3342,80 @@
       if (!identityMenuEl) return;
       if (identityMenuEl.hidden) openIdentityMenu();
       else closeIdentityMenu();
+    }
+
+    // ---- Owner (signed-in member) Messenger-wide menu ----
+
+    function renderOwnerMenu() {
+      if (!ownerMenuEl) return;
+      var menu = ownerMenuEl.querySelector('[role="menu"]');
+      var items = [
+        { action: "archived", label: showingArchived ? "Back to Chats" : "Archived Chats" },
+        { action: "settings", label: "Messenger Settings" },
+        { action: "close", label: "Close Messenger" }
+      ];
+      menu.innerHTML = items.map(function(item) {
+        return '<button type="button" role="menuitem" data-owner-action="' + escapeHtml(item.action) + '">' +
+          escapeHtml(item.label) + '</button>';
+      }).join("");
+      menu.querySelectorAll("[data-owner-action]").forEach(function(button) {
+        button.addEventListener("click", handleOwnerAction);
+      });
+    }
+
+    function openOwnerMenu() {
+      if (!ownerMenuEl || !ownerEl) return;
+      closeIdentityMenu();
+      closeMessengerSettings();
+      renderOwnerMenu();
+      ownerMenuEl.hidden = false;
+      ownerEl.setAttribute("aria-expanded", "true");
+      var first = ownerMenuEl.querySelector('[role="menuitem"]');
+      if (first) first.focus();
+    }
+
+    function closeOwnerMenu() {
+      if (!ownerMenuEl || !ownerEl) return;
+      ownerMenuEl.hidden = true;
+      ownerEl.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleOwnerMenu() {
+      if (!ownerMenuEl) return;
+      if (ownerMenuEl.hidden) openOwnerMenu();
+      else closeOwnerMenu();
+    }
+
+    async function handleOwnerAction(event) {
+      var button = event.currentTarget;
+      var action = button.dataset.ownerAction;
+      if (action === "archived") {
+        showingArchived = !showingArchived;
+        if (archivedLabelEl) archivedLabelEl.textContent = showingArchived ? "Archived Chats" : "Chats";
+        if (archivedToggleEl) archivedToggleEl.textContent = showingArchived ? "Back to Chats" : "Archived";
+        await loadChatListFromRemote(showingArchived);
+      } else if (action === "settings") {
+        openMessengerSettings();
+      } else if (action === "close") {
+        setMessengerCollapsed(true);
+      }
+      closeOwnerMenu();
+    }
+
+    // ---- Lightweight Messenger settings (real local actions only) ----
+
+    function openMessengerSettings() {
+      if (!settingsEl) return;
+      closeIdentityMenu();
+      if (settingsAccountEl) settingsAccountEl.textContent = normalizeChatMember(user, true).displayName || "Member";
+      settingsEl.hidden = false;
+      var done = settingsEl.querySelector("[data-chat-settings-close]");
+      if (done) done.focus();
+    }
+
+    function closeMessengerSettings() {
+      if (!settingsEl) return;
+      settingsEl.hidden = true;
     }
 
     async function handleIdentityAction(event) {
@@ -3375,7 +3477,36 @@
       });
     }
 
+    if (ownerEl) {
+      ownerEl.addEventListener("click", function() {
+        toggleOwnerMenu();
+      });
+    }
+
+    if (settingsEl) {
+      settingsEl.querySelector("[data-chat-settings-reset]").addEventListener("click", function() {
+        try { localStorage.removeItem("tpiFloatingChatFrame"); } catch (e) {}
+        if (chat.classList.contains("is-collapsed")) {
+          dockCollapsedChat(chat);
+        } else {
+          applyStoredChatFrame(chat, true);
+        }
+        storeChatFrame(chat);
+      });
+      settingsEl.querySelector("[data-chat-settings-close]").addEventListener("click", closeMessengerSettings);
+    }
+
     document.addEventListener("click", function(event) {
+      if (ownerMenuEl && !ownerMenuEl.hidden &&
+          !ownerMenuEl.contains(event.target) && !(ownerEl && ownerEl.contains(event.target))) {
+        closeOwnerMenu();
+      }
+      if (settingsEl && !settingsEl.hidden &&
+          !settingsEl.contains(event.target) &&
+          !(ownerEl && ownerEl.contains(event.target)) &&
+          !(ownerMenuEl && ownerMenuEl.contains(event.target))) {
+        closeMessengerSettings();
+      }
       if (!identityMenuEl || identityMenuEl.hidden) return;
       if (!identityMenuEl.contains(event.target) && event.target !== identityEl && !identityEl.contains(event.target)) {
         closeIdentityMenu();
@@ -3383,7 +3514,19 @@
     });
 
     document.addEventListener("keydown", function(event) {
-      if (event.key === "Escape") closeIdentityMenu();
+      if (event.key !== "Escape") return;
+      if (ownerMenuEl && !ownerMenuEl.hidden) {
+        closeOwnerMenu();
+        if (ownerEl) ownerEl.focus();
+      }
+      if (settingsEl && !settingsEl.hidden) {
+        closeMessengerSettings();
+        if (ownerEl) ownerEl.focus();
+      }
+      if (identityMenuEl && !identityMenuEl.hidden) {
+        closeIdentityMenu();
+        if (identityEl) identityEl.focus();
+      }
     });
 
     // Thread search
@@ -3494,11 +3637,12 @@
   function getConversationAvatarHtml(chat, user, sizeClass) {
     sizeClass = sizeClass || "";
     if (!chat || chat.id === "chat-default") {
-      return '<span class="member-chat-avatar ' + sizeClass + '"><span>?</span></span>';
+      // No active conversation: neutral glyph instead of a misleading "?" participant.
+      return '<span class="member-chat-avatar ' + sizeClass + '"><span>💬</span></span>';
     }
     if (chat.direct) {
       var other = getOtherParticipant(chat, user);
-      return renderChatAvatar(other || { displayName: chat.title });
+      return renderChatAvatar(other || { displayName: chat.title }, sizeClass);
     }
     return '<span class="member-chat-stack">' + (chat.members || []).slice(0, 3).map(renderChatAvatar).join("") + '</span>';
   }
@@ -3648,13 +3792,31 @@
     return String(value || "").toLowerCase().replace(/\s+/g, "_");
   }
 
-  function renderChatAvatar(member) {
+  function getMemberInitials(name) {
+    var parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  function renderChatAvatar(member, sizeClass) {
     var name = member.displayName || member.username || "Member";
-    var initial = name.trim().charAt(0).toUpperCase() || "M";
+    var initials = getMemberInitials(name) || "M";
     var image = member.photoUrl
       ? '<img src="' + escapeHtml(member.photoUrl) + '" alt="' + escapeHtml(name) + '">'
-      : '<span>' + escapeHtml(initial) + '</span>';
-    return '<span class="member-chat-avatar">' + image + (member.online ? '<i aria-hidden="true"></i>' : '') + '</span>';
+      : '<span>' + escapeHtml(initials) + '</span>';
+    return '<span class="member-chat-avatar' + (sizeClass ? " " + sizeClass : "") + '">' + image + (member.online ? '<i aria-hidden="true"></i>' : '') + '</span>';
+  }
+
+  // Identity A — persistent signed-in Messenger owner.
+  // Derived ONLY from the authenticated user; never from currentChat/conversation state.
+  function renderOwnerIdentity(user) {
+    var member = normalizeChatMember(user || {}, true);
+    var name = member.displayName || member.username || "Member";
+    var avatar = renderChatAvatar({ displayName: name, username: member.username, photoUrl: member.photoUrl }, "member-chat-identity-avatar");
+    return avatar +
+      '<span class="member-chat-identity-copy"><strong>' + escapeHtml(name) + '</strong></span>' +
+      '<span class="member-chat-identity-chevron" aria-hidden="true">▼</span>';
   }
 
   function setupFloatingChatDrag(chat) {
