@@ -373,27 +373,17 @@ body.member-mode {
     max-width: 100%;
 }
 
-/* Owner (Messenger-wide) menu anchored under the main header */
-.member-chat-owner-menu {
-    top: 50px;
-    left: 12px;
-}
-
-/* Conversation menu anchored under the conversation bar */
-.member-chat-conversation-menu {
-    top: calc(100% + 6px);
-    left: 8px;
-}
-
-/* Lightweight Messenger settings — real local actions only */
+/* Lightweight Messenger settings — real local actions only.
+   Viewport-anchored (fixed) so the Messenger frame's overflow:hidden can
+   never clip it; left/top are set by JS below the owner identity control. */
 .member-chat-settings {
-    position: absolute;
-    top: 50px;
-    left: 12px;
+    position: fixed;
     z-index: 130;
+    pointer-events: auto;
     display: grid;
     gap: 8px;
     min-width: 250px;
+    max-width: min(280px, calc(100vw - 24px));
     padding: 12px;
     background: #0b1016;
     border: 1px solid rgba(85, 200, 255, 0.34);
@@ -446,6 +436,7 @@ body.member-mode {
     top: 46px;
     left: 12px;
     z-index: 130;
+    pointer-events: auto;
     min-width: 220px;
     padding: 6px;
     background: #0b1016;
@@ -479,6 +470,29 @@ body.member-mode {
     background: rgba(85, 200, 255, 0.1);
     color: #f4f8fb;
     outline: none;
+}
+
+/* Owner (Messenger-wide) menu — viewport-anchored via JS beneath the
+   signed-in member identity; never clipped by the Messenger frame. */
+.member-chat-owner-menu {
+    position: fixed;
+    top: auto;
+    left: auto;
+    max-width: min(260px, calc(100vw - 24px));
+}
+
+/* Subtle separator above the destructive "Close Messenger" action */
+.member-chat-owner-menu [data-owner-action="close"] {
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px solid #263646;
+}
+
+/* Conversation menu stays anchored inside the relative conversation bar */
+.member-chat-conversation-menu {
+    top: calc(100% + 6px);
+    left: 8px;
+    max-width: calc(100% - 16px);
 }
 
 .member-chat-unread-badge {

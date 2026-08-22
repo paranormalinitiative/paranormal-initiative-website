@@ -2378,7 +2378,7 @@
     applyStoredChatFrame(chat);
     chat.innerHTML =
       '<header class="member-floating-chat-header" data-chat-drag>' +
-        '<button type="button" class="member-chat-owner" data-chat-owner aria-haspopup="true" aria-expanded="false" aria-label="Messenger menu">' + renderOwnerIdentity(user) + '</button>' +
+        '<button type="button" class="member-chat-owner" data-chat-owner aria-haspopup="menu" aria-expanded="false" aria-label="Messenger menu">' + renderOwnerIdentity(user) + '</button>' +
         '<div class="member-chat-header-actions">' +
           '<button type="button" data-chat-new>New Chat</button>' +
           '<button type="button" data-chat-minimize>Hide</button>' +
@@ -2411,7 +2411,7 @@
         '</aside>' +
         '<section class="member-chat-thread">' +
           '<div class="member-chat-conversation-bar" data-chat-conversation-bar>' +
-            '<button type="button" class="member-chat-identity" data-chat-identity aria-haspopup="true" aria-expanded="false" aria-label="Conversation menu">' + renderChatIdentity(currentChat, user) + '</button>' +
+            '<button type="button" class="member-chat-identity" data-chat-identity aria-haspopup="menu" aria-expanded="false" aria-label="Conversation menu">' + renderChatIdentity(currentChat, user) + '</button>' +
             '<div class="member-chat-identity-menu member-chat-conversation-menu" data-chat-identity-menu hidden>' +
               '<div role="menu"></div>' +
             '</div>' +
@@ -2628,6 +2628,9 @@
 
     window.addEventListener("resize", function () {
       if (chat.classList.contains("is-collapsed")) dockCollapsedChat(chat);
+      closeIdentityMenu();
+      closeOwnerMenu();
+      closeMessengerSettings();
     });
 
     chat.querySelector("[data-chat-form]").addEventListener("submit", async function (event) {
@@ -3349,6 +3352,7 @@
     function renderOwnerMenu() {
       if (!ownerMenuEl) return;
       var menu = ownerMenuEl.querySelector('[role="menu"]');
+      if (!menu) return;
       var items = [
         { action: "archived", label: showingArchived ? "Back to Chats" : "Archived Chats" },
         { action: "settings", label: "Messenger Settings" },
@@ -3363,12 +3367,46 @@
       });
     }
 
+    // Expand a collapsed/docked Messenger so owner-menu follow-up actions are visible.
+    function expandMessenger() {
+      if (!chat.classList.contains("is-collapsed")) return;
+      chat.classList.remove("is-collapsed");
+      applyStoredChatFrame(chat, true);
+      syncChatMinimizeButton();
+      storeChatFrame(chat);
+      setSyncForVisibility();
+    }
+
+    // Viewport-anchored positioning: immune to overflow:hidden clipping on the
+    // Messenger frame and to any transformed ancestor.
+    function positionPanelBelowOwner(panel) {
+      if (!panel || !ownerEl) return;
+      var rect = ownerEl.getBoundingClientRect();
+      var left = Math.max(12, Math.min(rect.left, window.innerWidth - 252));
+      panel.style.left = left + "px";
+      panel.style.top = (rect.bottom + 6) + "px";
+    }
+
+    function clampPanelToViewport(panel) {
+      if (!panel) return;
+      var rect = panel.getBoundingClientRect();
+      var maxLeft = Math.max(12, window.innerWidth - rect.width - 12);
+      var maxTop = Math.max(12, window.innerHeight - rect.height - 12);
+      var left = parseFloat(panel.style.left || "0");
+      var top = parseFloat(panel.style.top || "0");
+      panel.style.left = Math.min(left, maxLeft) + "px";
+      panel.style.top = Math.min(top, maxTop) + "px";
+    }
+
     function openOwnerMenu() {
       if (!ownerMenuEl || !ownerEl) return;
+      expandMessenger();
       closeIdentityMenu();
       closeMessengerSettings();
       renderOwnerMenu();
+      positionPanelBelowOwner(ownerMenuEl);
       ownerMenuEl.hidden = false;
+      clampPanelToViewport(ownerMenuEl);
       ownerEl.setAttribute("aria-expanded", "true");
       var first = ownerMenuEl.querySelector('[role="menuitem"]');
       if (first) first.focus();
@@ -3406,9 +3444,12 @@
 
     function openMessengerSettings() {
       if (!settingsEl) return;
+      expandMessenger();
       closeIdentityMenu();
       if (settingsAccountEl) settingsAccountEl.textContent = normalizeChatMember(user, true).displayName || "Member";
+      positionPanelBelowOwner(settingsEl);
       settingsEl.hidden = false;
+      clampPanelToViewport(settingsEl);
       var done = settingsEl.querySelector("[data-chat-settings-close]");
       if (done) done.focus();
     }
@@ -3484,18 +3525,25 @@
     }
 
     if (settingsEl) {
-      settingsEl.querySelector("[data-chat-settings-reset]").addEventListener("click", function() {
-        try { localStorage.removeItem("tpiFloatingChatFrame"); } catch (e) {}
-        if (chat.classList.contains("is-collapsed")) {
-          dockCollapsedChat(chat);
-        } else {
-          applyStoredChatFrame(chat, true);
-        }
-        storeChatFrame(chat);
-      });
-      settingsEl.querySelector("[data-chat-settings-close]").addEventListener("click", closeMessengerSettings);
+      var settingsResetBtn = settingsEl.querySelector("[data-chat-settings-reset]");
+      if (settingsResetBtn) {
+        settingsResetBtn.addEventListener("click", function() {
+          try { localStorage.removeItem("tpiFloatingChatFrame"); } catch (e) {}
+          if (chat.classList.contains("is-collapsed")) {
+            dockCollapsedChat(chat);
+          } else {
+            applyStoredChatFrame(chat, true);
+          }
+          storeChatFrame(chat);
+        });
+      }
+      var settingsDoneBtn = settingsEl.querySelector("[data-chat-settings-close]");
+      if (settingsDoneBtn) settingsDoneBtn.addEventListener("click", closeMessengerSettings);
     }
 
+    // Capture phase: the closer evaluates BEFORE any target/bubble handlers, so the
+    // same click that opens a menu can never immediately close it, and genuine
+    // outside clicks close menus regardless of event retargeting.
     document.addEventListener("click", function(event) {
       if (ownerMenuEl && !ownerMenuEl.hidden &&
           !ownerMenuEl.contains(event.target) && !(ownerEl && ownerEl.contains(event.target))) {
@@ -3511,7 +3559,7 @@
       if (!identityMenuEl.contains(event.target) && event.target !== identityEl && !identityEl.contains(event.target)) {
         closeIdentityMenu();
       }
-    });
+    }, true);
 
     document.addEventListener("keydown", function(event) {
       if (event.key !== "Escape") return;
