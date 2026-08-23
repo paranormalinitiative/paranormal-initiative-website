@@ -2410,7 +2410,7 @@
           '</section>' +
         '</aside>' +
         '<section class="member-chat-thread">' +
-          '<div class="member-chat-conversation-bar" data-chat-conversation-bar>' +
+          '<div class="member-chat-conversation-bar" data-chat-conversation-bar hidden>' +
             '<button type="button" class="member-chat-identity" data-chat-identity aria-haspopup="menu" aria-expanded="false" aria-label="Conversation menu">' + renderChatIdentity(currentChat, user) + '</button>' +
             '<div class="member-chat-identity-menu member-chat-conversation-menu" data-chat-identity-menu hidden>' +
               '<div role="menu"></div>' +
@@ -3064,233 +3064,12 @@
         if (inputEl) inputEl.focus();
       }
     };
-  }
 
-  async function loadChatRoster(user) {
-    var members = [];
-    try {
-      var directoryResp = await fetch("/api/members/directory", { credentials: "same-origin", cache: "no-store" });
-      if (directoryResp.ok) {
-        var directoryData = await directoryResp.json();
-        (directoryData.members || []).forEach(function(member) {
-          members.push(normalizeChatMember(member, false));
-        });
-      }
-    } catch (e) {}
-    try {
-      var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
-      local.forEach(function(member) {
-        if (member.developerOwner) return;
-        members.push(normalizeChatMember(member, false));
-      });
-    } catch (e) {}
-    var currentUsername = normalizeChatUsername(user && user.username);
-    return dedupeChatMembers(members).filter(function(member) {
-      return member.username !== currentUsername;
-    });
-  }
-
-  function normalizeChatMember(member, online) {
-    var name = member.displayName || member.display_name || member.name || member.username || "Member";
-    return {
-      username: String(member.username || name).toLowerCase().replace(/\s+/g, "_"),
-      displayName: name,
-      title: member.title || "",
-      role: member.role || "",
-      photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
-      chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#55c8ff"),
-      online: Boolean(online)
-    };
-  }
-
-  function dedupeChatMembers(members) {
-    var seen = {};
-    return members.filter(function(member) {
-      if (!member.username || seen[member.username]) return false;
-      seen[member.username] = true;
-      return true;
-    });
-  }
-
-  function createChat(members, user, requestedTitle) {
-    var title = String(requestedTitle || "").trim() || getDefaultChatTitle(members, user);
-    return {
-      id: "chat-" + Date.now(),
-      title: title,
-      members: members,
-      messages: []
-    };
-  }
-
-  function createDirectChat(member, user) {
-    var current = normalizeChatMember(user || {}, true);
-    var normalizedMember = normalizeChatMember(member || {}, false);
-    return {
-      id: getDirectChatId(normalizedMember, current),
-      title: normalizedMember.displayName || "Community Chat",
-      members: dedupeChatMembers([current, normalizedMember]),
-      messages: [],
-      direct: true
-    };
-  }
-
-  function createEmptyChat(user) {
-    var current = normalizeChatMember(user || {}, true);
-    return {
-      id: "chat-default",
-      title: "Community Chat",
-      members: [current],
-      messages: []
-    };
-  }
-
-  function findDirectChat(chats, member, user) {
-    var current = normalizeChatMember(user || {}, true);
-    var other = normalizeChatMember(member || {}, false);
-    return (chats || []).find(function(chat) {
-      if (!chat.direct) return false;
-      var usernames = (chat.members || []).map(function(m) { return m.username; });
-      return usernames.indexOf(current.username) !== -1 && usernames.indexOf(other.username) !== -1 && usernames.length === 2;
-    });
-  }
-
-  function getDirectChatId(member, current) {
-    return "direct-" + [member.username, current.username].filter(Boolean).sort().join("-");
-  }
-
-  async function loadChatState(user, roster) {
-    var remoteConversations = [];
-    try { remoteConversations = await loadConversationList(); } catch (e) {}
-    var chatList = remoteConversations.map(normalizeRemoteConversation).sort(function(a, b) {
-      return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
-    });
-
-    var active = null;
-    try {
-      var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
-      if (saved && saved.id && chatList.some(function(c) { return c.id === saved.id; })) {
-        active = chatList.find(function(c) { return c.id === saved.id; });
-      }
-    } catch (e) {}
-
-    if (!active && chatList.length) {
-      active = chatList[0];
-    }
-    if (!active) {
-      active = createEmptyChat(user);
-    }
-
-    return { currentChat: active, chatList: chatList };
-  }
-
-  function normalizeRemoteConversation(conv) {
-    return {
-      id: conv.id,
-      title: conv.title || "Community Chat",
-      direct: Boolean(conv.direct),
-      members: Array.isArray(conv.members) ? conv.members.map(function(m) { return normalizeChatMember(m, false); }) : [],
-      messages: [],
-      unreadCount: Number(conv.unreadCount || 0),
-      updatedAt: conv.updatedAt || new Date().toISOString(),
-      lastMessage: conv.lastMessage || null
-    };
-  }
-
-  function loadCurrentChat(user, roster) {
-    var current = normalizeChatMember(user, true);
-    try {
-      var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
-      if (saved && Array.isArray(saved.members) && Array.isArray(saved.messages)) {
-        saved.title = saved.title || getDefaultChatTitle(saved.members, user);
-        if (!saved.members.some(function(member) { return member.username === current.username; })) {
-          saved.members.unshift(current);
-        }
-        return saved;
-      }
-    } catch (e) {}
-    var partner = roster.find(function(member) { return member.username !== current.username; });
-    return partner ? createDirectChat(partner, user) : createEmptyChat(user);
-  }
-
-  function getCommunityChatTitle(user) {
-    return normalizeChatMember(user || {}, true).displayName || "Community Chat";
-  }
-
-  function getDefaultChatTitle(members, user) {
-    var current = normalizeChatMember(user || {}, true);
-    var others = (members || []).filter(function(member) { return member.username !== current.username; });
-    if (!others.length) return getCommunityChatTitle(user);
-    if (others.length === 1) return others[0].displayName || "Community Chat";
-    return others.slice(0, 2).map(function(member) { return member.displayName; }).join(", ") + (others.length > 2 ? " +" + (others.length - 2) : "");
-  }
-
-  function isCurrentChatUser(member, user) {
-    return normalizeChatMember(member || {}, false).username === normalizeChatMember(user || {}, true).username;
-  }
-
-  function saveCurrentChat(user, chat) {
-    try { localStorage.setItem("tpiFloatingChat", JSON.stringify(chat)); } catch (e) {}
-  }
-
-  function getChatStorageKey(user) {
-    return "tpiFloatingChats:" + normalizeChatMember(user || {}, true).username;
-  }
-
-  function getChatArchiveStorageKey(user) {
-    return "tpiFloatingChatArchive:" + normalizeChatMember(user || {}, true).username;
-  }
-
-  function loadStoredChats(user) {
-    try {
-      var stored = JSON.parse(localStorage.getItem(getChatStorageKey(user)) || "[]");
-      return Array.isArray(stored) ? stored.filter(function(chat) {
-        return chat && chat.id && Array.isArray(chat.members) && Array.isArray(chat.messages);
-      }) : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function upsertStoredChat(user, chat) {
-    if (!chat || !chat.id) return;
-    var chats = loadStoredChats(user).filter(function(item) { return item.id !== chat.id; });
-    chats.unshift(chat);
-    replaceStoredChats(user, chats.slice(0, 24));
-  }
-
-  function replaceStoredChats(user, chats) {
-    try { localStorage.setItem(getChatStorageKey(user), JSON.stringify((chats || []).slice(0, 24))); } catch (e) {}
-  }
-
-  function archiveRemovedChat(user, chat) {
-    if (!chat || !chat.id) return;
-    try {
-      var archive = JSON.parse(localStorage.getItem(getChatArchiveStorageKey(user)) || "[]");
-      if (!Array.isArray(archive)) archive = [];
-      var copy = Object.assign({}, chat, {
-        removedAt: new Date().toISOString(),
-        removedFromVisibleList: true
-      });
-      archive = archive.filter(function(item) { return item.id !== copy.id; });
-      archive.unshift(copy);
-      localStorage.setItem(getChatArchiveStorageKey(user), JSON.stringify(archive.slice(0, 100)));
-    } catch (e) {}
-  }
-
-  function getChatListSubtitle(chat) {
-    var count = Array.isArray(chat.members) ? chat.members.length : 0;
-    if (chat.direct) return "Direct chat";
-    if (count <= 2) return "Direct chat";
-    return count + " members";
-  }
-
-  function getOtherParticipant(chat, user) {
-    var currentUsername = normalizeChatUsername(user && user.username);
-    return (chat && Array.isArray(chat.members) ? chat.members : []).find(function(member) {
-      return member.username !== currentUsername;
-    });
-  }
-
+    // ---- Identity menus, owner menu, settings, thread search ----
+    // Must live INSIDE initFloatingChat: these closures read identityEl,
+    // ownerEl, currentChat, user, chatList, etc. They previously sat outside
+    // the function (misplaced brace), threw ReferenceError at load, and left
+    // every menu listener unattached.
     function isGroupConversation(chat) {
       return Boolean(chat && !chat.direct && Array.isArray(chat.members) && chat.members.length > 2);
     }
@@ -3400,7 +3179,6 @@
 
     function openOwnerMenu() {
       if (!ownerMenuEl || !ownerEl) return;
-      expandMessenger();
       closeIdentityMenu();
       closeMessengerSettings();
       renderOwnerMenu();
@@ -3428,6 +3206,7 @@
       var button = event.currentTarget;
       var action = button.dataset.ownerAction;
       if (action === "archived") {
+        expandMessenger();
         showingArchived = !showingArchived;
         if (archivedLabelEl) archivedLabelEl.textContent = showingArchived ? "Archived Chats" : "Chats";
         if (archivedToggleEl) archivedToggleEl.textContent = showingArchived ? "Back to Chats" : "Archived";
@@ -3444,7 +3223,6 @@
 
     function openMessengerSettings() {
       if (!settingsEl) return;
-      expandMessenger();
       closeIdentityMenu();
       if (settingsAccountEl) settingsAccountEl.textContent = normalizeChatMember(user, true).displayName || "Member";
       positionPanelBelowOwner(settingsEl);
@@ -3672,6 +3450,251 @@
     }
 
     renderIdentity();
+  function renderChatMessage(message, index) {
+    var author = normalizeChatMember(message.author || {}, true);
+    var currentUsername = normalizeChatUsername(getStoredUsername());
+    var isOwn = currentUsername && author.username === currentUsername;
+      var canEditDelete = !isRemoteConversation(currentChat) && !message.id;
+      return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
+      '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
+      '<span class="member-chat-message-actions">' +
+        (isOwn && canEditDelete ? '<button class="member-chat-edit" type="button" data-chat-edit="' + escapeHtml(String(index)) + '" title="Edit message">Edit</button>' : '') +
+        (canEditDelete ? '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' : '') +
+      '</span>' +
+      '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
+      (message.editedAt ? '<small>Edited</small>' : '') +
+      (message.body ? '<p>' + escapeHtml(message.body) + '</p>' : '') +
+      renderChatAttachments(message.attachments) + '</div>' +
+    '</article>';
+  }
+
+  }
+
+  async function loadChatRoster(user) {
+    var members = [];
+    try {
+      var directoryResp = await fetch("/api/members/directory", { credentials: "same-origin", cache: "no-store" });
+      if (directoryResp.ok) {
+        var directoryData = await directoryResp.json();
+        (directoryData.members || []).forEach(function(member) {
+          members.push(normalizeChatMember(member, false));
+        });
+      }
+    } catch (e) {}
+    try {
+      var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+      local.forEach(function(member) {
+        if (member.developerOwner) return;
+        members.push(normalizeChatMember(member, false));
+      });
+    } catch (e) {}
+    var currentUsername = normalizeChatUsername(user && user.username);
+    return dedupeChatMembers(members).filter(function(member) {
+      return member.username !== currentUsername;
+    });
+  }
+
+  function normalizeChatMember(member, online) {
+    var name = member.displayName || member.display_name || member.name || member.username || "Member";
+    return {
+      username: String(member.username || name).toLowerCase().replace(/\s+/g, "_"),
+      displayName: name,
+      title: member.title || "",
+      role: member.role || "",
+      photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
+      chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#55c8ff"),
+      online: Boolean(online)
+    };
+  }
+
+  function dedupeChatMembers(members) {
+    var seen = {};
+    return members.filter(function(member) {
+      if (!member.username || seen[member.username]) return false;
+      seen[member.username] = true;
+      return true;
+    });
+  }
+
+  function createChat(members, user, requestedTitle) {
+    var title = String(requestedTitle || "").trim() || getDefaultChatTitle(members, user);
+    return {
+      id: "chat-" + Date.now(),
+      title: title,
+      members: members,
+      messages: []
+    };
+  }
+
+  function createDirectChat(member, user) {
+    var current = normalizeChatMember(user || {}, true);
+    var normalizedMember = normalizeChatMember(member || {}, false);
+    return {
+      id: getDirectChatId(normalizedMember, current),
+      title: normalizedMember.displayName || "Community Chat",
+      members: dedupeChatMembers([current, normalizedMember]),
+      messages: [],
+      direct: true
+    };
+  }
+
+  function createEmptyChat(user) {
+    var current = normalizeChatMember(user || {}, true);
+    return {
+      id: "chat-default",
+      title: "Community Chat",
+      members: [current],
+      messages: []
+    };
+  }
+
+  function findDirectChat(chats, member, user) {
+    var current = normalizeChatMember(user || {}, true);
+    var other = normalizeChatMember(member || {}, false);
+    return (chats || []).find(function(chat) {
+      if (!chat.direct) return false;
+      var usernames = (chat.members || []).map(function(m) { return m.username; });
+      return usernames.indexOf(current.username) !== -1 && usernames.indexOf(other.username) !== -1 && usernames.length === 2;
+    });
+  }
+
+  function getDirectChatId(member, current) {
+    return "direct-" + [member.username, current.username].filter(Boolean).sort().join("-");
+  }
+
+  async function loadChatState(user, roster) {
+    var remoteConversations = [];
+    try { remoteConversations = await loadConversationList(); } catch (e) {}
+    var chatList = remoteConversations.map(normalizeRemoteConversation).sort(function(a, b) {
+      return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
+    });
+
+    var active = null;
+    try {
+      var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
+      if (saved && saved.id && chatList.some(function(c) { return c.id === saved.id; })) {
+        active = chatList.find(function(c) { return c.id === saved.id; });
+      }
+    } catch (e) {}
+
+    if (!active && chatList.length) {
+      active = chatList[0];
+    }
+    if (!active) {
+      active = createEmptyChat(user);
+    }
+
+    return { currentChat: active, chatList: chatList };
+  }
+
+  function normalizeRemoteConversation(conv) {
+    return {
+      id: conv.id,
+      title: conv.title || "Community Chat",
+      direct: Boolean(conv.direct),
+      members: Array.isArray(conv.members) ? conv.members.map(function(m) { return normalizeChatMember(m, false); }) : [],
+      messages: [],
+      unreadCount: Number(conv.unreadCount || 0),
+      updatedAt: conv.updatedAt || new Date().toISOString(),
+      lastMessage: conv.lastMessage || null
+    };
+  }
+
+  function loadCurrentChat(user, roster) {
+    var current = normalizeChatMember(user, true);
+    try {
+      var saved = JSON.parse(localStorage.getItem("tpiFloatingChat") || "null");
+      if (saved && Array.isArray(saved.members) && Array.isArray(saved.messages)) {
+        saved.title = saved.title || getDefaultChatTitle(saved.members, user);
+        if (!saved.members.some(function(member) { return member.username === current.username; })) {
+          saved.members.unshift(current);
+        }
+        return saved;
+      }
+    } catch (e) {}
+    var partner = roster.find(function(member) { return member.username !== current.username; });
+    return partner ? createDirectChat(partner, user) : createEmptyChat(user);
+  }
+
+  function getCommunityChatTitle(user) {
+    return normalizeChatMember(user || {}, true).displayName || "Community Chat";
+  }
+
+  function getDefaultChatTitle(members, user) {
+    var current = normalizeChatMember(user || {}, true);
+    var others = (members || []).filter(function(member) { return member.username !== current.username; });
+    if (!others.length) return getCommunityChatTitle(user);
+    if (others.length === 1) return others[0].displayName || "Community Chat";
+    return others.slice(0, 2).map(function(member) { return member.displayName; }).join(", ") + (others.length > 2 ? " +" + (others.length - 2) : "");
+  }
+
+  function isCurrentChatUser(member, user) {
+    return normalizeChatMember(member || {}, false).username === normalizeChatMember(user || {}, true).username;
+  }
+
+  function saveCurrentChat(user, chat) {
+    try { localStorage.setItem("tpiFloatingChat", JSON.stringify(chat)); } catch (e) {}
+  }
+
+  function getChatStorageKey(user) {
+    return "tpiFloatingChats:" + normalizeChatMember(user || {}, true).username;
+  }
+
+  function getChatArchiveStorageKey(user) {
+    return "tpiFloatingChatArchive:" + normalizeChatMember(user || {}, true).username;
+  }
+
+  function loadStoredChats(user) {
+    try {
+      var stored = JSON.parse(localStorage.getItem(getChatStorageKey(user)) || "[]");
+      return Array.isArray(stored) ? stored.filter(function(chat) {
+        return chat && chat.id && Array.isArray(chat.members) && Array.isArray(chat.messages);
+      }) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function upsertStoredChat(user, chat) {
+    if (!chat || !chat.id) return;
+    var chats = loadStoredChats(user).filter(function(item) { return item.id !== chat.id; });
+    chats.unshift(chat);
+    replaceStoredChats(user, chats.slice(0, 24));
+  }
+
+  function replaceStoredChats(user, chats) {
+    try { localStorage.setItem(getChatStorageKey(user), JSON.stringify((chats || []).slice(0, 24))); } catch (e) {}
+  }
+
+  function archiveRemovedChat(user, chat) {
+    if (!chat || !chat.id) return;
+    try {
+      var archive = JSON.parse(localStorage.getItem(getChatArchiveStorageKey(user)) || "[]");
+      if (!Array.isArray(archive)) archive = [];
+      var copy = Object.assign({}, chat, {
+        removedAt: new Date().toISOString(),
+        removedFromVisibleList: true
+      });
+      archive = archive.filter(function(item) { return item.id !== copy.id; });
+      archive.unshift(copy);
+      localStorage.setItem(getChatArchiveStorageKey(user), JSON.stringify(archive.slice(0, 100)));
+    } catch (e) {}
+  }
+
+  function getChatListSubtitle(chat) {
+    var count = Array.isArray(chat.members) ? chat.members.length : 0;
+    if (chat.direct) return "Direct chat";
+    if (count <= 2) return "Direct chat";
+    return count + " members";
+  }
+
+  function getOtherParticipant(chat, user) {
+    var currentUsername = normalizeChatUsername(user && user.username);
+    return (chat && Array.isArray(chat.members) ? chat.members : []).find(function(member) {
+      return member.username !== currentUsername;
+    });
+  }
+
 
   // ---- Shared messenger helpers (inside initFloatingChat) ----
 
@@ -3787,24 +3810,6 @@
     return Array.from(new Set(matches));
   }
 
-  function renderChatMessage(message, index) {
-    var author = normalizeChatMember(message.author || {}, true);
-    var currentUsername = normalizeChatUsername(getStoredUsername());
-    var isOwn = currentUsername && author.username === currentUsername;
-      var canEditDelete = !isRemoteConversation(currentChat) && !message.id;
-      return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
-      '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
-      '<span class="member-chat-message-actions">' +
-        (isOwn && canEditDelete ? '<button class="member-chat-edit" type="button" data-chat-edit="' + escapeHtml(String(index)) + '" title="Edit message">Edit</button>' : '') +
-        (canEditDelete ? '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' : '') +
-      '</span>' +
-      '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
-      (message.editedAt ? '<small>Edited</small>' : '') +
-      (message.body ? '<p>' + escapeHtml(message.body) + '</p>' : '') +
-      renderChatAttachments(message.attachments) + '</div>' +
-    '</article>';
-  }
-
   function renderChatAttachments(attachments) {
     if (!Array.isArray(attachments) || !attachments.length) return "";
     return '<div class="member-chat-attachments">' + attachments.map(function(attachment) {
@@ -3861,7 +3866,13 @@
   function renderOwnerIdentity(user) {
     var member = normalizeChatMember(user || {}, true);
     var name = member.displayName || member.username || "Member";
-    var avatar = renderChatAvatar({ displayName: name, username: member.username, photoUrl: member.photoUrl }, "member-chat-identity-avatar");
+    var initials = getMemberInitials(name) || "?";
+    var photoUrl = member.photoUrl || "";
+    var avatar = '<span class="member-chat-avatar member-chat-identity-avatar">' +
+      (photoUrl
+        ? '<img src="' + escapeHtml(photoUrl) + '" alt="' + escapeHtml(name) + '">'
+        : '<span>' + escapeHtml(initials) + '</span>') +
+      '</span>';
     return avatar +
       '<span class="member-chat-identity-copy"><strong>' + escapeHtml(name) + '</strong></span>' +
       '<span class="member-chat-identity-chevron" aria-hidden="true">▼</span>';
