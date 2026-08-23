@@ -3079,13 +3079,49 @@
       var menu = identityMenuEl.querySelector('[role="menu"]');
       var items = [];
       var other = getOtherParticipant(currentChat, user);
-      if (currentChat && currentChat.id !== "chat-default" && other && !isGroupConversation(currentChat)) {
+      var isDirect = currentChat && currentChat.direct && !isGroupConversation(currentChat);
+
+      // Section 1: Basic conversation actions
+      if (currentChat && currentChat.id !== "chat-default" && other && isDirect) {
         items.push({ action: "view-profile", label: "View Profile", username: other.username });
       }
       if (currentChat && currentChat.id !== "chat-default") {
         items.push({ action: "search", label: "Search in Conversation" });
       }
-      // Mute Notifications, Read Receipts, Block Member, Restrict Member, Report intentionally hidden until backend support exists.
+
+      items.push({ type: "separator" });
+
+      // Section 2: Conversation customization
+      if (currentChat && currentChat.id !== "chat-default") {
+        items.push({ action: "theme", label: "Change Theme" });
+        items.push({ action: "emoji", label: "Conversation Emoji" });
+        if (isDirect) {
+          items.push({ action: "nicknames", label: "Nicknames" });
+        }
+        items.push({ action: "create-group", label: "Create Group" });
+      }
+
+      items.push({ type: "separator" });
+
+      // Section 3: Notification & Privacy controls
+      if (currentChat && currentChat.id !== "chat-default") {
+        // Mute - check current state
+        var isMuted = currentChat.mutedUntil && new Date(currentChat.mutedUntil) > new Date();
+        items.push({ action: isMuted ? "unmute" : "mute", label: isMuted ? "Unmute Notifications" : "Mute Notifications" });
+
+        // Block/Restrict - only for direct conversations
+        if (isDirect && other) {
+          items.push({ action: "block", label: "Block " + escapeHtml(other.displayName) });
+          items.push({ action: "restrict", label: "Restrict " + escapeHtml(other.displayName) });
+        }
+
+        // Read Receipts
+        items.push({ action: "read-receipts", label: "Read Receipts" });
+      }
+
+      items.push({ type: "separator" });
+
+      // Section 4: Archive/Remove
       if (currentChat && currentChat.id !== "chat-default") {
         if (showingArchived) {
           items.push({ action: "unarchive", label: "Unarchive Chat" });
@@ -3094,7 +3130,18 @@
         }
         items.push({ action: "remove", label: "Remove Chat" });
       }
+
+      items.push({ type: "separator" });
+
+      // Section 5: Report
+      if (currentChat && currentChat.id !== "chat-default") {
+        items.push({ action: "report", label: "Report Conversation" });
+      }
+
       menu.innerHTML = items.map(function(item) {
+        if (item.type === "separator") {
+          return '<hr class="member-chat-menu-separator">';
+        }
         return '<button type="button" role="menuitem" data-identity-action="' + escapeHtml(item.action) + '"' +
           (item.username ? ' data-identity-username="' + escapeHtml(item.username) + '"' : '') + '>' +
           escapeHtml(item.label) + '</button>';
@@ -3285,6 +3332,49 @@
         renderChatList();
         renderMessages();
         renderIdentity();
+      } else if (action === "theme") {
+        openThemePicker();
+      } else if (action === "emoji") {
+        openEmojiPicker();
+      } else if (action === "nicknames") {
+        openNicknameEditor();
+      } else if (action === "create-group") {
+        openCreateGroupFromDirect();
+      } else if (action === "mute") {
+        openMutePicker();
+      } else if (action === "unmute") {
+        if (!currentChat || currentChat.id === "chat-default") return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/unmute");
+        currentChat.mutedUntil = null;
+        renderIdentity();
+      } else if (action === "block") {
+        var other = getOtherParticipant(currentChat, user);
+        if (!other) return;
+        if (!window.confirm("Block " + other.displayName + "?\nThey will no longer be able to send you direct messages.\nExisting conversation history will be retained.")) return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/block", { targetUsername: other.username });
+        // Blocking also removes the conversation from view
+        chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
+        replaceStoredChats(user, chatList);
+        currentChat = createEmptyChat(user);
+        selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
+        saveCurrentChat(user, currentChat);
+        renderChatList();
+        renderMessages();
+        renderIdentity();
+      } else if (action === "restrict") {
+        var other = getOtherParticipant(currentChat, user);
+        if (!other) return;
+        if (!window.confirm("Restrict " + other.displayName + "?\nMessages will still be received, but notifications from this member will be limited.\nThey will not be told that you restricted them.")) return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/restrict", { targetUsername: other.username });
+        // Restrict is a soft action - keep conversation visible but may suppress notifications
+        currentChat.restricted = true;
+        renderIdentity();
+      } else if (action === "read-receipts") {
+        openReadReceiptsPicker();
+      } else if (action === "report") {
+        openReportDialog();
+      } else if (action === "create-group") {
+        openCreateGroupFromDirect();
       }
       closeIdentityMenu();
     }
@@ -3449,7 +3539,271 @@
       searchCloseEl.addEventListener("click", closeThreadSearch);
     }
 
-    renderIdentity();
+    // ---- Conversation menu action helpers ----
+
+    function openThemePicker() {
+      if (!identityMenuEl) return;
+      var menu = identityMenuEl.querySelector('[role="menu"]');
+      var themes = [
+        { id: 'default', label: 'TPI Default', colors: ['#0b1016', '#55c8ff'] },
+        { id: 'midnight', label: 'Midnight', colors: ['#06080c', '#4a90d9'] },
+        { id: 'slate', label: 'Slate', colors: ['#0e151c', '#5c8db5'] },
+        { id: 'deep-blue', label: 'Deep Blue', colors: ['#081220', '#3b82c7'] },
+        { id: 'purple', label: 'Purple', colors: ['#12081c', '#8b5cf6'] },
+        { id: 'green', label: 'Green', colors: ['#081810', '#22c55e'] },
+        { id: 'warm', label: 'Warm', colors: ['#1c1008', '#f59e0b'] }
+      ];
+      var currentTheme = currentChat && currentChat.theme ? currentChat.theme : 'default';
+
+      menu.innerHTML = themes.map(function(t) {
+        var isActive = t.id === currentTheme;
+        return '<button type="button" role="menuitem" data-theme-action="' + escapeHtml(t.id) + '"' +
+          (isActive ? ' aria-current="true"' : '') + '>' +
+          '<span class="theme-swatch" style="background: linear-gradient(90deg, ' + t.colors[0] + ', ' + t.colors[1] + ');"></span>' +
+          escapeHtml(t.label) + (isActive ? ' ✓' : '') + '</button>';
+      }).join("");
+
+      menu.querySelectorAll("[data-theme-action]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          var themeId = button.dataset.themeAction;
+          applyTheme(themeId);
+          closeIdentityMenu();
+        });
+      });
+    }
+
+    function applyTheme(themeId) {
+      if (!currentChat || currentChat.id === "chat-default") return;
+      currentChat.theme = themeId;
+      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/preferences", { theme: themeId });
+      // Apply immediately to UI
+      renderIdentity();
+      renderChatList();
+      renderMessages();
+    }
+
+    function openEmojiPicker() {
+      if (!identityMenuEl) return;
+      var menu = identityMenuEl.querySelector('[role="menu"]');
+      var emojis = ['👍', '❤️', '👻', '🔮', '😂', '🔥', '🎉', '🤔', '🎯', '💯', '👻', '🦄', '🚀', '✨', '💫'];
+      var currentEmoji = currentChat && currentChat.quickEmoji ? currentChat.quickEmoji : '👍';
+
+      menu.innerHTML = emojis.map(function(emoji) {
+        var isActive = emoji === (currentChat && currentChat.quickEmoji ? currentChat.quickEmoji : '👍');
+        return '<button type="button" role="menuitem" data-emoji-action="' + escapeHtml(emoji) + '"' +
+          (emoji === currentEmoji ? ' aria-current="true"' : '') + ' style="font-size: 1.5em;">' +
+          emoji + (emoji === currentEmoji ? ' ✓' : '') + '</button>';
+      }).join("");
+
+      menu.querySelectorAll("[data-emoji-action]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          var emoji = button.dataset.emojiAction;
+          applyQuickEmoji(emoji);
+          closeIdentityMenu();
+        });
+      });
+    }
+
+    function applyQuickEmoji(emoji) {
+      if (!currentChat || currentChat.id === "chat-default") return;
+      currentChat.quickEmoji = emoji;
+      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/preferences", { quickEmoji: emoji });
+      // Update the quick-send button
+      var likeBtn = chat.querySelector("[data-chat-like]");
+      if (likeBtn) likeBtn.textContent = emoji;
+      renderIdentity();
+    }
+
+    function openNicknameEditor() {
+      if (!identityMenuEl) return;
+      var menu = identityMenuEl.querySelector('[role="menu"]');
+      var other = getOtherParticipant(currentChat, user);
+      if (!other) return;
+
+      // Get existing nickname if any
+      var existingNickname = "";
+      if (currentChat && currentChat.nicknames) {
+        var nick = currentChat.nicknames.find(function(n) { return n.target_id === other.id; });
+        if (nick) existingNickname = nick.nickname;
+      }
+
+      menu.innerHTML =
+        '<div class="nickname-editor" style="padding: 12px; min-width: 280px;">' +
+          '<label style="display: block; margin-bottom: 8px; color: #c7d5e2; font-size: 12px;">Nickname for ' + escapeHtml(other.displayName) + '</label>' +
+          '<input type="text" data-nickname-input value="' + escapeHtml(existingNickname) + '" placeholder="Enter nickname" style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 13px;">' +
+          '<div style="display: flex; gap: 8px; margin-top: 12px;">' +
+            '<button type="button" data-nickname-save style="flex: 1; padding: 8px; background: #55c8ff; color: #061018; border: none; border-radius: 6px; font-weight: 900;">Save</button>' +
+            '<button type="button" data-nickname-cancel style="flex: 1; padding: 8px; background: #081018; color: #c7d5e2; border: 1px solid #263646; border-radius: 6px;">Cancel</button>' +
+          '</div>' +
+        '</div>';
+
+      var input = menu.querySelector('[data-nickname-input]');
+      if (input) input.focus();
+      menu.querySelector('[data-nickname-save]').addEventListener("click", function() {
+        var nickname = input.value.trim();
+        if (!nickname) return;
+        saveNickname(other.username, nickname);
+        closeIdentityMenu();
+      });
+      menu.querySelector('[data-nickname-cancel]').addEventListener("click", closeIdentityMenu);
+    }
+
+    function saveNickname(targetUsername, nickname) {
+      if (!currentChat || currentChat.id === "chat-default") return;
+      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/nickname", { targetUsername: targetUsername, nickname: nickname })
+        .then(function() {
+          // Refresh nicknames
+          return apiFetch("GET", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/nicknames");
+        })
+        .then(function(res) {
+          if (res.ok && res.data.nicknames) {
+            currentChat.nicknames = res.data.nicknames;
+            renderIdentity();
+            renderChatList();
+          }
+        });
+    }
+
+    function openCreateGroupFromDirect() {
+      closeIdentityMenu();
+      // Open the create chat panel with current direct chat participant pre-selected
+      var createEl = chat.querySelector("[data-chat-create]");
+      var other = getOtherParticipant(currentChat, user);
+      if (!createEl || !other) return;
+      createEl.hidden = false;
+      selectedMembers.clear();
+      selectedMembers.add(other.username);
+      selectedMembers.add(user.username);
+      renderMemberPicker();
+    }
+
+    function openMutePicker() {
+      if (!identityMenuEl) return;
+      var menu = identityMenuEl.querySelector('[role="menu"]');
+      var options = [
+        { value: '1h', label: '1 hour' },
+        { value: '8h', label: '8 hours' },
+        { value: '24h', label: '24 hours' },
+        { value: 'indefinite', label: 'Until I turn it back on' }
+      ];
+
+      menu.innerHTML = '<div class="mute-picker" style="padding: 12px; min-width: 220px;">' +
+        '<div style="color: #c7d5e2; font-size: 12px; margin-bottom: 8px;">Mute notifications for</div>' +
+        options.map(function(opt) {
+          return '<button type="button" role="menuitem" data-mute-duration="' + escapeHtml(opt.value) + '" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: #c7d5e2; font-size: 13px; border-radius: 6px;">' + escapeHtml(opt.label) + '</button>';
+        }).join('') +
+        '<button type="button" data-mute-cancel style="display: block; width: 100%; text-align: left; padding: 8px; margin-top: 8px; background: transparent; border: none; color: #8aa0b6; font-size: 13px; border-radius: 6px;">Cancel</button>' +
+        '</div>';
+
+      menu.querySelectorAll('[data-mute-duration]').forEach(function(button) {
+        button.addEventListener("click", function() {
+          var duration = button.dataset.muteDuration;
+          muteConversation(duration);
+          closeIdentityMenu();
+        });
+      });
+      menu.querySelector('[data-mute-cancel]').addEventListener("click", closeIdentityMenu);
+    }
+
+    function muteConversation(duration) {
+      if (!currentChat || currentChat.id === "chat-default") return;
+      var until = duration === 'indefinite' ? '9999-12-31T23:59:59.999Z' : new Date(Date.now() + parseDuration(duration)).toISOString();
+      currentChat.mutedUntil = until;
+      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/mute", { until: duration === 'indefinite' ? 'indefinite' : until });
+      currentChat.mutedUntil = duration === 'indefinite' ? '9999-12-31T23:59:59.999Z' : until;
+      renderIdentity();
+    }
+
+    function parseDuration(str) {
+      var match = str.match(/^(\d+)([h])$/);
+      if (!match) return 0;
+      var value = parseInt(match[1], 10);
+      var unit = match[2];
+      if (unit === 'h') return value * 60 * 60 * 1000;
+      return 0;
+    }
+
+    function openReadReceiptsPicker() {
+      if (!identityMenuEl) return;
+      var menu = identityMenuEl.querySelector('[role="menu"]');
+      var current = currentChat && currentChat.readReceiptsEnabled !== false;
+
+      menu.innerHTML = '<div class="read-receipts-picker" style="padding: 12px; min-width: 200px;">' +
+        '<div style="color: #c7d5e2; font-size: 12px; margin-bottom: 8px;">Read Receipts</div>' +
+        '<button type="button" role="menuitem" data-read-receipts="on" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (current ? '#55c8ff' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (current ? '✓ ' : '') + 'On</button>' +
+        '<button type="button" role="menuitem" data-read-receipts="off" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (!current ? '#55c8ff' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (!current ? '✓ ' : '') + 'Off</button>' +
+        '</div>';
+
+      menu.querySelectorAll('[data-read-receipts]').forEach(function(button) {
+        button.addEventListener("click", function() {
+          var value = button.dataset.readReceipts === 'on';
+          toggleReadReceipts(value);
+          closeIdentityMenu();
+        });
+      });
+    }
+
+    function toggleReadReceipts(enabled) {
+      if (!currentChat || currentChat.id === "chat-default") return;
+      currentChat.readReceiptsEnabled = enabled;
+      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/preferences", { readReceiptsEnabled: enabled });
+      renderIdentity();
+    }
+
+    function openReportDialog() {
+      if (!identityMenuEl) return;
+      var menu = identityMenuEl.querySelector('[role="menu"]');
+      var reasons = [
+        'Harassment',
+        'Threats',
+        'Spam',
+        'Impersonation',
+        'Inappropriate Content',
+        'Scam / Fraud',
+        'Other'
+      ];
+
+      menu.innerHTML = '<div class="report-dialog" style="padding: 12px; min-width: 280px;">' +
+        '<div style="color: #c7d5e2; font-size: 12px; margin-bottom: 8px;">Report Conversation</div>' +
+        '<div style="margin-bottom: 12px;">' +
+          '<label style="display: block; color: #c7d5e2; font-size: 11px; margin-bottom: 4px;">Reason</label>' +
+          '<select data-report-reason style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 12px;">' +
+            reasons.map(function(r) { return '<option value="' + escapeHtml(r) + '">' + escapeHtml(r) + '</option>'; }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div style="margin-bottom: 12px;">' +
+          '<label style="display: block; color: #c7d5e2; font-size: 11px; margin-bottom: 4px;">Details (optional)</label>' +
+          '<textarea data-report-details style="width: 100%; min-height: 60px; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 12px; resize: vertical;"></textarea>' +
+        '</div>' +
+        '<div style="display: flex; gap: 8px;">' +
+          '<button type="button" data-report-submit style="flex: 1; padding: 8px; background: #dc3545; color: white; border: none; border-radius: 6px; font-weight: 900;">Submit Report</button>' +
+          '<button type="button" data-report-cancel style="flex: 1; padding: 8px; background: #081018; color: #c7d5e2; border: 1px solid #263646; border-radius: 6px;">Cancel</button>' +
+        '</div>' +
+        '</div>';
+
+      menu.querySelector('[data-report-submit]').addEventListener("click", function() {
+        var reason = menu.querySelector('[data-report-reason]').value;
+        var details = menu.querySelector('[data-report-details]').value;
+        submitReport(reason, details);
+        closeIdentityMenu();
+      });
+      menu.querySelector('[data-report-cancel]').addEventListener("click", closeIdentityMenu);
+    }
+
+    function submitReport(reason, details) {
+      if (!currentChat || currentChat.id === "chat-default") return;
+      var other = getOtherParticipant(currentChat, user);
+      if (!other) return;
+      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/report", { reason: reason, details: details })
+        .then(function(res) {
+          if (res.ok) {
+            // Show confirmation
+            var menu = identityMenuEl.querySelector('[role="menu"]');
+            menu.innerHTML = '<div style="padding: 16px; text-align: center; color: #55c8ff;">Report submitted. Thank you.</div>';
+            setTimeout(closeIdentityMenu, 2000);
+          }
+        });
+    }
   function renderChatMessage(message, index) {
     var author = normalizeChatMember(message.author || {}, true);
     var currentUsername = normalizeChatUsername(getStoredUsername());

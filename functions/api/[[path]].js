@@ -57,6 +57,16 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unhide$/)) return requireMember(request, env, user => handleUnhideConversation(path, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/archive$/)) return requireMember(request, env, user => handleArchiveConversation(path, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unarchive$/)) return requireMember(request, env, user => handleUnarchiveConversation(path, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/preferences$/)) return requireMember(request, env, user => handleUpdateConversationPreferences(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/nickname$/)) return requireMember(request, env, user => handleSetNickname(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/conversations\/[^/]+\/nicknames$/)) return requireMember(request, env, user => handleGetNicknames(path, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/mute$/)) return requireMember(request, env, user => handleMuteConversation(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unmute$/)) return requireMember(request, env, user => handleUnmuteConversation(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/block$/)) return requireMember(request, env, user => handleBlockMember(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unblock$/)) return requireMember(request, env, user => handleUnblockMember(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/restrict$/)) return requireMember(request, env, user => handleRestrictMember(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unrestrict$/)) return requireMember(request, env, user => handleUnrestrictMember(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/report$/)) return requireMember(request, env, user => handleReportConversation(path, request, env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
@@ -2266,6 +2276,11 @@ async function handleCreateConversation(request, env, user) {
   for (const username of usernames) {
     const member = await getUserByUsername(env, username);
     if (!member || !member.active) return json({ error: `Member ${username} was not found.` }, 404);
+    // Check if the target member has blocked the current user
+    const isBlocked = await env.TPI_DB.prepare(`
+      SELECT 1 FROM member_blocks WHERE blocker_id = ? AND blocked_id = ?
+    `).bind(member.id, user.id).first();
+    if (isBlocked) return json({ error: `Cannot start a conversation with ${username}.` }, 403);
     members.push(member);
   }
   members.push(user);
@@ -2352,6 +2367,16 @@ async function handleCreateMessage(path, request, env, user) {
 
   const accessError = await getMemberActionAccessError(env, user, "message");
   if (accessError) return json({ error: accessError }, 403);
+
+  // Check if any other participant has blocked the sender
+  const isBlocked = await env.TPI_DB.prepare(`
+    SELECT 1 FROM member_blocks
+    WHERE blocker_id = (
+      SELECT cp.contributor_id FROM conversation_participants cp
+      WHERE cp.conversation_id = ? AND cp.contributor_id != ?
+    ) AND blocked_id = ?
+  `).bind(conversationId, user.id, user.id).first();
+  if (isBlocked) return json({ error: "You cannot send messages to this conversation." }, 403);
 
   const data = await readJson(request);
   const body = clean(data.body).slice(0, 4000);
@@ -2467,6 +2492,232 @@ async function handleUnarchiveConversation(path, env, user) {
   `).bind(conversationId, user.id).run();
 
   return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+// ===== Conversation Preferences & Controls =====
+
+async function handleUpdateConversationPreferences(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/preferences$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const updates = [];
+  const params = [];
+
+  if (data.theme !== undefined) {
+    updates.push("theme = ?");
+    params.push(data.theme);
+  }
+  if (data.quickEmoji !== undefined) {
+    updates.push("quick_emoji = ?");
+    params.push(data.quickEmoji);
+  }
+  if (data.readReceiptsEnabled !== undefined) {
+    updates.push("read_receipts_enabled = ?");
+    params.push(data.readReceiptsEnabled ? 1 : 0);
+  }
+
+  if (updates.length === 0) return json({ error: "No valid preferences provided." }, 400);
+
+  params.push(conversationId, user.id);
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants
+    SET ${updates.join(", ")}
+    WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(...params).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleSetNickname(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/nickname$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const { targetUsername, nickname } = data;
+  if (!targetUsername || !nickname) return json({ error: "Target username and nickname are required." }, 400);
+
+  const target = await env.TPI_DB.prepare("SELECT id FROM contributors WHERE username = ?").bind(targetUsername).first();
+  if (!target) return json({ error: "Target member not found." }, 404);
+
+  // Verify target is a participant
+  const targetParticipant = await env.TPI_DB.prepare(`
+    SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, target.id).first();
+  if (!targetParticipant) return json({ error: "Target member is not a participant in this conversation." }, 403);
+
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO conversation_nicknames (conversation_id, setter_id, target_id, nickname, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(conversation_id, setter_id, target_id) DO UPDATE SET
+      nickname = excluded.nickname,
+      updated_at = excluded.updated_at
+  `).bind(conversationId, user.id, target.id, nickname, now, now).run();
+
+  return json({ ok: true, nickname }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleGetNicknames(path, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/nicknames$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT cn.target_id, cn.nickname, c.username, c.display_name
+    FROM conversation_nicknames cn
+    JOIN contributors c ON c.id = cn.target_id
+    WHERE cn.conversation_id = ? AND cn.setter_id = ?
+  `).bind(conversationId, user.id).all();
+
+  return json({ nicknames: results || [] }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleMuteConversation(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/mute$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const { until } = data; // ISO timestamp or "indefinite"
+  const mutedUntil = until === "indefinite" ? "9999-12-31T23:59:59.999Z" : until;
+  if (!mutedUntil) return json({ error: "Mute duration required." }, 400);
+
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants SET muted_until = ? WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(mutedUntil, conversationId, user.id).run();
+
+  return json({ ok: true, mutedUntil }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleUnmuteConversation(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/unmute$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  await env.TPI_DB.prepare(`
+    UPDATE conversation_participants SET muted_until = NULL WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, user.id).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleBlockMember(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/block$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const { targetUsername } = data;
+  if (!targetUsername) return json({ error: "Target username required." }, 400);
+
+  const target = await env.TPI_DB.prepare("SELECT id FROM contributors WHERE username = ?").bind(targetUsername).first();
+  if (!target) return json({ error: "Target member not found." }, 404);
+  if (target.id === user.id) return json({ error: "You cannot block yourself." }, 400);
+
+  // Verify target is a participant
+  const targetParticipant = await env.TPI_DB.prepare(`
+    SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, target.id).first();
+  if (!targetParticipant) return json({ error: "Target member is not a participant in this conversation." }, 403);
+
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_blocks (blocker_id, blocked_id, created_at)
+    VALUES (?, ?, ?)
+    ON CONFLICT(blocker_id, blocked_id) DO NOTHING
+  `).bind(user.id, target.id, now).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleUnblockMember(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/unblock$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const { targetUsername } = data;
+  if (!targetUsername) return json({ error: "Target username required." }, 400);
+
+  const target = await env.TPI_DB.prepare("SELECT id FROM contributors WHERE username = ?").bind(targetUsername).first();
+  if (!target) return json({ error: "Target member not found." }, 404);
+
+  await env.TPI_DB.prepare(`
+    DELETE FROM member_blocks WHERE blocker_id = ? AND blocked_id = ?
+  `).bind(user.id, target.id).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleRestrictMember(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/restrict$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const { targetUsername } = data;
+  if (!targetUsername) return json({ error: "Target username required." }, 400);
+
+  const target = await env.TPI_DB.prepare("SELECT id FROM contributors WHERE username = ?").bind(targetUsername).first();
+  if (!target) return json({ error: "Target member not found." }, 404);
+  if (target.id === user.id) return json({ error: "You cannot restrict yourself." }, 400);
+
+  // Verify target is a participant
+  const targetParticipant = await env.TPI_DB.prepare(`
+    SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, target.id).first();
+  if (!targetParticipant) return json({ error: "Target member is not a participant in this conversation." }, 403);
+
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_restrictions (restrictor_id, restricted_id, created_at)
+    VALUES (?, ?, ?)
+    ON CONFLICT(restrictor_id, restricted_id) DO NOTHING
+  `).bind(user.id, target.id, now).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleUnrestrictMember(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/unrestrict$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const { targetUsername } = data;
+  if (!targetUsername) return json({ error: "Target username required." }, 400);
+
+  const target = await env.TPI_DB.prepare("SELECT id FROM contributors WHERE username = ?").bind(targetUsername).first();
+  if (!target) return json({ error: "Target member not found." }, 404);
+
+  await env.TPI_DB.prepare(`
+    DELETE FROM member_restrictions WHERE restrictor_id = ? AND restricted_id = ?
+  `).bind(user.id, target.id).run();
+
+  return json({ ok: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleReportConversation(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/report$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+
+  const data = await readJson(request);
+  const { reason, details } = data;
+  if (!reason) return json({ error: "Report reason is required." }, 400);
+
+  const reportId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO messenger_reports (id, reporter_id, reported_contributor_id, conversation_id, reason, details, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).bind(reportId, user.id, access.contributor_id, conversationId, reason, details || "", now).run();
+
+  return json({ ok: true, reportId }, 201, { "Cache-Control": "no-store" });
 }
 
 async function handleConversationUnreadCount(env, user) {
@@ -2848,6 +3099,7 @@ function publicUser(user) {
 
 function privateMemberUser(user) {
   return {
+    id: user.id,
     ...publicUser(user),
     contactName: user.contact_name,
     phone: user.phone,
