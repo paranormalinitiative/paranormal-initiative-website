@@ -46,6 +46,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
+    if (request.method === "POST" && path === "/messenger/presence") return requireMember(request, env, user => handlePresenceHeartbeat(request, env, user));
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
     if (request.method === "POST" && path === "/conversations") return requireMember(request, env, user => handleCreateConversation(request, env, user));
     if (request.method === "GET" && path === "/conversations/unread-count") return requireMember(request, env, user => handleConversationUnreadCount(env, user));
@@ -2124,6 +2125,9 @@ async function handleCreateVideoReport(request, env, user) {
 // ---- Messenger member directory ----
 
 function directoryMember(user) {
+  const now = new Date();
+  const lastSeen = user.last_seen_at ? new Date(user.last_seen_at) : null;
+  const isOnline = lastSeen && (now - lastSeen) <= 90 * 1000 && user.status === 'online';
   return {
     username: user.username,
     displayName: user.display_name,
@@ -2132,7 +2136,10 @@ function directoryMember(user) {
     photoUrl: user.photo_url || "",
     chatColor: normalizeChatColor(user.chat_color || "#55c8ff"),
     canMessage: user.can_message !== 0,
-    active: user.active !== 0
+    active: user.active !== 0,
+    online: isOnline,
+    lastSeenAt: user.last_seen_at || null,
+    status: isOnline ? 'online' : 'offline'
   };
 }
 
@@ -2142,18 +2149,22 @@ async function handleMemberDirectory(request, env, user) {
   const like = `%${search}%`;
   const stmt = search
     ? env.TPI_DB.prepare(`
-        SELECT id, username, display_name, title, role, photo_url, chat_color, can_message, active
-        FROM contributors
-        WHERE active = 1
-          AND (lower(username) LIKE ? OR lower(display_name) LIKE ?)
-        ORDER BY display_name COLLATE NOCASE, username COLLATE NOCASE
+        SELECT c.id, c.username, c.display_name, c.title, c.role, c.photo_url, c.chat_color, c.can_message, c.active,
+               mp.last_seen_at, mp.status
+        FROM contributors c
+        LEFT JOIN member_presence mp ON mp.contributor_id = c.id
+        WHERE c.active = 1
+          AND (lower(c.username) LIKE ? OR lower(c.display_name) LIKE ?)
+        ORDER BY c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
         LIMIT 200
       `).bind(like, like)
     : env.TPI_DB.prepare(`
-        SELECT id, username, display_name, title, role, photo_url, chat_color, can_message, active
-        FROM contributors
-        WHERE active = 1
-        ORDER BY display_name COLLATE NOCASE, username COLLATE NOCASE
+        SELECT c.id, c.username, c.display_name, c.title, c.role, c.photo_url, c.chat_color, c.can_message, c.active,
+               mp.last_seen_at, mp.status
+        FROM contributors c
+        LEFT JOIN member_presence mp ON mp.contributor_id = c.id
+        WHERE c.active = 1
+        ORDER BY c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
         LIMIT 200
       `);
   const { results } = await stmt.all();
@@ -2178,22 +2189,32 @@ async function requireConversationAccess(env, conversationId, user) {
 
 async function getConversationMembers(env, conversationId) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT c.id, c.username, c.display_name AS displayName, c.title, c.role, c.photo_url AS photoUrl, c.chat_color AS chatColor, cp.can_message AS canMessage
+    SELECT c.id, c.username, c.display_name AS displayName, c.title, c.role, c.photo_url AS photoUrl, c.chat_color AS chatColor, cp.can_message AS canMessage,
+           mp.last_seen_at AS lastSeenAt, mp.status AS presenceStatus
     FROM conversation_participants cp
     JOIN contributors c ON c.id = cp.contributor_id
+    LEFT JOIN member_presence mp ON mp.contributor_id = c.id
     WHERE cp.conversation_id = ?
     ORDER BY c.display_name COLLATE NOCASE
   `).bind(conversationId).all();
-  return (results || []).map(row => ({
-    id: row.id,
-    username: row.username,
-    displayName: row.displayName,
-    title: row.title || "",
-    role: row.role,
-    photoUrl: row.photoUrl || "",
-    chatColor: normalizeChatColor(row.chatColor || "#55c8ff"),
-    canMessage: row.canMessage !== 0
-  }));
+  return (results || []).map(row => {
+    const now = new Date();
+    const lastSeen = row.lastSeenAt ? new Date(row.lastSeenAt) : null;
+    const isOnline = lastSeen && (now - lastSeen) <= 90 * 1000 && row.presenceStatus === 'online';
+    return {
+      id: row.id,
+      username: row.username,
+      displayName: row.displayName,
+      title: row.title || "",
+      role: row.role,
+      photoUrl: row.photoUrl || "",
+      chatColor: normalizeChatColor(row.chatColor || "#55c8ff"),
+      canMessage: row.canMessage !== 0,
+      online: isOnline,
+      lastSeenAt: row.lastSeenAt || null,
+      status: isOnline ? 'online' : 'offline'
+    };
+  });
 }
 
 async function getDirectConversation(env, userA, userB) {
@@ -2734,6 +2755,18 @@ async function handleConversationUnreadCount(env, user) {
       )
   `).bind(user.id, user.id, user.id).all();
   return json({ count: Number((results && results[0] && results[0].count) || 0) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handlePresenceHeartbeat(request, env, user) {
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO member_presence (contributor_id, last_seen_at, status)
+    VALUES (?, ?, 'online')
+    ON CONFLICT(contributor_id) DO UPDATE SET
+      last_seen_at = excluded.last_seen_at,
+      status = 'online'
+  `).bind(user.id, now).run();
+  return json({ ok: true, lastSeenAt: now }, 200, { "Cache-Control": "no-store" });
 }
 
 function getDefaultConversationTitle(members, currentUser) {

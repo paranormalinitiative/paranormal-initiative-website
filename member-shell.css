@@ -328,7 +328,20 @@ body.member-mode {
     margin-left: 4px;
     color: #8aa0b6;
     font-size: 10px;
-}
+  }
+
+  .member-chat-identity-presence {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .member-chat-identity-presence.is-online {
+    color: #22c55e;
+  }
+
+  .member-chat-identity-presence.is-offline {
+    color: #8aa0b6;
+  }
 
 /* Identity A — signed-in Messenger owner control in the main header */
 .member-chat-owner {
@@ -432,12 +445,11 @@ body.member-mode {
 }
 
 .member-chat-identity-menu {
-    position: absolute;
-    top: 46px;
-    left: 12px;
+    position: fixed;
     z-index: 130;
     pointer-events: auto;
     min-width: 220px;
+    max-width: min(280px, calc(100vw - 24px));
     padding: 6px;
     background: #0b1016;
     border: 1px solid rgba(85, 200, 255, 0.34);
@@ -754,7 +766,15 @@ body.member-mode {
 .member-chat-member-option small {
     color: #8aa0b6;
     font-size: 10px;
-}
+  }
+
+  .member-chat-presence.is-online {
+    color: #22c55e;
+  }
+
+  .member-chat-presence.is-offline {
+    color: #8aa0b6;
+  }
 
 .member-chat-member-option {
     grid-template-columns: 18px 36px minmax(0, 1fr);

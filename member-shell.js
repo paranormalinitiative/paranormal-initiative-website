@@ -2557,6 +2557,23 @@
         conversationListSyncTimer = null;
       }
     }
+    var presenceHeartbeatTimer = null;
+    function startPresenceHeartbeat() {
+      stopPresenceHeartbeat();
+      sendPresenceHeartbeat();
+      presenceHeartbeatTimer = setInterval(sendPresenceHeartbeat, 30000);
+    }
+    function stopPresenceHeartbeat() {
+      if (presenceHeartbeatTimer) {
+        clearInterval(presenceHeartbeatTimer);
+        presenceHeartbeatTimer = null;
+      }
+    }
+    async function sendPresenceHeartbeat() {
+      try {
+        await apiFetch("POST", "/api/messenger/presence");
+      } catch (e) {}
+    }
     function setSyncForVisibility() {
       if (chat.classList.contains("is-collapsed")) {
         stopActiveSync();
@@ -2565,12 +2582,20 @@
         startActiveSync();
         startListSync();
       }
+      startPresenceHeartbeat();
     }
     setSyncForVisibility();
 
     window.addEventListener("beforeunload", function() {
       stopActiveSync();
       stopListSync();
+      stopPresenceHeartbeat();
+    });
+
+    document.addEventListener("visibilitychange", function() {
+      if (document.visibilityState === "visible") {
+        sendPresenceHeartbeat();
+      }
     });
 
     chat.querySelector("[data-chat-new]").addEventListener("click", function () {
@@ -2800,10 +2825,13 @@
           String(member.username || "").toLowerCase().indexOf(query) !== -1;
       });
       onlineEl.innerHTML = filtered.length ? filtered.map(function(member) {
+        var online = Boolean(member.online);
+        var presenceText = online ? "Online" : "Offline";
+        var presenceClass = online ? "is-online" : "is-offline";
         return '<button class="member-chat-online-person" type="button" data-online-member="' + escapeHtml(member.username) + '">' +
           renderChatAvatar(member) +
           '<span class="member-chat-person-copy"><strong>' + escapeHtml(member.displayName) + '</strong>' +
-          '<span class="member-chat-presence">' + escapeHtml(member.title || "Member") + '</span></span>' +
+          '<span class="member-chat-presence ' + presenceClass + '">' + escapeHtml(presenceText) + '</span></span>' +
         '</button>';
       }).join("") : '<p class="member-chat-list-empty">No members found.</p>';
       onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
@@ -3156,6 +3184,7 @@
       closeOwnerMenu();
       renderIdentityMenu();
       identityMenuEl.hidden = false;
+      positionIdentityMenu();
       identityEl.setAttribute("aria-expanded", "true");
       var first = identityMenuEl.querySelector('[role="menuitem"]');
       if (first) first.focus();
@@ -3222,6 +3251,15 @@
       var top = parseFloat(panel.style.top || "0");
       panel.style.left = Math.min(left, maxLeft) + "px";
       panel.style.top = Math.min(top, maxTop) + "px";
+    }
+
+    function positionIdentityMenu() {
+      if (!identityMenuEl || !identityEl) return;
+      var rect = identityEl.getBoundingClientRect();
+      var left = Math.max(12, Math.min(rect.left, window.innerWidth - 252));
+      identityMenuEl.style.left = left + "px";
+      identityMenuEl.style.top = (rect.bottom + 6) + "px";
+      clampPanelToViewport(identityMenuEl);
     }
 
     function openOwnerMenu() {
@@ -4075,8 +4113,18 @@
   function renderChatIdentity(chat, user) {
     var title = getConversationDisplayTitle(chat, user);
     var avatar = getConversationAvatarHtml(chat, user, "member-chat-identity-avatar");
+    var presenceHtml = "";
+    if (chat && chat.direct && !isGroupConversation(chat)) {
+      var other = getOtherParticipant(chat, user);
+      if (other) {
+        var online = Boolean(other.online);
+        var presenceText = online ? "Online" : "Offline";
+        var presenceClass = online ? "is-online" : "is-offline";
+        presenceHtml = '<span class="member-chat-identity-presence ' + presenceClass + '">' + escapeHtml(presenceText) + '</span>';
+      }
+    }
     return avatar +
-      '<span class="member-chat-identity-copy"><strong>' + escapeHtml(title) + '</strong></span>' +
+      '<span class="member-chat-identity-copy"><strong>' + escapeHtml(title) + '</strong>' + presenceHtml + '</span>' +
       '<span class="member-chat-identity-chevron" aria-hidden="true">▼</span>';
   }
 
