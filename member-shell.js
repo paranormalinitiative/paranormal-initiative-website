@@ -2384,9 +2384,6 @@
           '<button type="button" data-chat-minimize>Hide</button>' +
         '</div>' +
       '</header>' +
-      '<div class="member-chat-identity-menu member-chat-owner-menu" data-chat-owner-menu hidden>' +
-        '<div role="menu"></div>' +
-      '</div>' +
       '<div class="member-chat-settings" data-chat-settings hidden>' +
         '<span class="member-chat-section-label">Messenger Settings</span>' +
         '<p>Signed in as <strong data-chat-settings-account></strong></p>' +
@@ -2411,7 +2408,7 @@
         '</aside>' +
         '<section class="member-chat-thread">' +
           '<div class="member-chat-conversation-bar" data-chat-conversation-bar hidden>' +
-            '<button type="button" class="member-chat-identity" data-chat-identity aria-haspopup="menu" aria-expanded="false" aria-label="Conversation menu">' + renderChatIdentity(currentChat, user) + '</button>' +
+            '<div class="member-chat-identity member-chat-active-identity" data-chat-identity aria-label="Active conversation">' + renderChatIdentity(currentChat, user) + '</div>' +
             '<div class="member-chat-identity-menu member-chat-conversation-menu" data-chat-identity-menu hidden>' +
               '<div role="menu"></div>' +
             '</div>' +
@@ -2468,7 +2465,6 @@
     var identityEl = chat.querySelector("[data-chat-identity]");
     var identityMenuEl = chat.querySelector("[data-chat-identity-menu]");
     var ownerEl = chat.querySelector("[data-chat-owner]");
-    var ownerMenuEl = chat.querySelector("[data-chat-owner-menu]");
     var conversationBarEl = chat.querySelector("[data-chat-conversation-bar]");
     var settingsEl = chat.querySelector("[data-chat-settings]");
     var settingsAccountEl = chat.querySelector("[data-chat-settings-account]");
@@ -3004,7 +3000,6 @@
       if (conversationBarEl) conversationBarEl.hidden = !hasConversation;
       if (!identityEl) return;
       identityEl.innerHTML = renderChatIdentity(currentChat, user);
-      identityEl.setAttribute("aria-expanded", String(identityMenuEl && !identityMenuEl.hidden));
     }
 
     function updateSendButtonState() {
@@ -3103,7 +3098,7 @@
       }
     };
 
-    // ---- Identity menus, owner menu, settings, thread search ----
+    // ---- Unified Messenger menu, settings, thread search ----
     // Must live INSIDE initFloatingChat: these closures read identityEl,
     // ownerEl, currentChat, user, chatList, etc. They previously sat outside
     // the function (misplaced brace), threw ReferenceError at load, and left
@@ -3111,22 +3106,32 @@
     function renderIdentityMenu() {
       if (!identityMenuEl) return;
       var menu = identityMenuEl.querySelector('[role="menu"]');
-      var items = [];
+      var items = [
+        { type: "label", label: "Messenger" },
+        { scope: "owner", action: "archived", label: showingArchived ? "Back to Chats" : "Archived Chats" },
+        { scope: "owner", action: "settings", label: "Messenger Settings" }
+      ];
       var other = getOtherParticipant(currentChat, user);
       var isDirect = currentChat && currentChat.direct && !isGroupConversation(currentChat);
+      var hasConversation = currentChat && currentChat.id !== "chat-default";
+
+      if (hasConversation) {
+        items.push({ type: "separator" });
+        items.push({ type: "label", label: "Conversation: " + getConversationDisplayTitle(currentChat, user) });
+      }
 
       // Section 1: Basic conversation actions
-      if (currentChat && currentChat.id !== "chat-default" && other && isDirect) {
+      if (hasConversation && other && isDirect) {
         items.push({ action: "view-profile", label: "View Profile", username: other.username });
       }
-      if (currentChat && currentChat.id !== "chat-default") {
+      if (hasConversation) {
         items.push({ action: "search", label: "Search in Conversation" });
       }
 
-      items.push({ type: "separator" });
+      if (hasConversation) items.push({ type: "separator" });
 
       // Section 2: Conversation customization
-      if (currentChat && currentChat.id !== "chat-default") {
+      if (hasConversation) {
         items.push({ action: "theme", label: "Change Theme" });
         items.push({ action: "emoji", label: "Conversation Emoji" });
         if (isDirect) {
@@ -3135,28 +3140,28 @@
         items.push({ action: "create-group", label: "Create Group" });
       }
 
-      items.push({ type: "separator" });
+      if (hasConversation) items.push({ type: "separator" });
 
       // Section 3: Notification & Privacy controls
-      if (currentChat && currentChat.id !== "chat-default") {
+      if (hasConversation) {
         // Mute - check current state
         var isMuted = currentChat.mutedUntil && new Date(currentChat.mutedUntil) > new Date();
         items.push({ action: isMuted ? "unmute" : "mute", label: isMuted ? "Unmute Notifications" : "Mute Notifications" });
 
         // Block/Restrict - only for direct conversations
         if (isDirect && other) {
-          items.push({ action: "block", label: "Block " + escapeHtml(other.displayName) });
-          items.push({ action: "restrict", label: "Restrict " + escapeHtml(other.displayName) });
+          items.push({ action: "block", label: "Block " + other.displayName });
+          items.push({ action: "restrict", label: "Restrict " + other.displayName });
         }
 
         // Read Receipts
         items.push({ action: "read-receipts", label: "Read Receipts" });
       }
 
-      items.push({ type: "separator" });
+      if (hasConversation) items.push({ type: "separator" });
 
       // Section 4: Archive/Remove
-      if (currentChat && currentChat.id !== "chat-default") {
+      if (hasConversation) {
         if (showingArchived) {
           items.push({ action: "unarchive", label: "Unarchive Chat" });
         } else {
@@ -3165,16 +3170,26 @@
         items.push({ action: "remove", label: "Remove Chat" });
       }
 
-      items.push({ type: "separator" });
+      if (hasConversation) items.push({ type: "separator" });
 
       // Section 5: Report
-      if (currentChat && currentChat.id !== "chat-default") {
+      if (hasConversation) {
         items.push({ action: "report", label: "Report Conversation" });
       }
+
+      items.push({ type: "separator" });
+      items.push({ scope: "owner", action: "close", label: "Close Messenger" });
 
       menu.innerHTML = items.map(function(item) {
         if (item.type === "separator") {
           return '<hr class="member-chat-menu-separator">';
+        }
+        if (item.type === "label") {
+          return '<span class="member-chat-menu-label">' + escapeHtml(item.label) + '</span>';
+        }
+        if (item.scope === "owner") {
+          return '<button type="button" role="menuitem" data-owner-action="' + escapeHtml(item.action) + '">' +
+            escapeHtml(item.label) + '</button>';
         }
         return '<button type="button" role="menuitem" data-identity-action="' + escapeHtml(item.action) + '"' +
           (item.username ? ' data-identity-username="' + escapeHtml(item.username) + '"' : '') + '>' +
@@ -3183,49 +3198,20 @@
       menu.querySelectorAll("[data-identity-action]").forEach(function(button) {
         button.addEventListener("click", handleIdentityAction);
       });
-    }
-
-    function openIdentityMenu() {
-      if (!identityMenuEl || !identityEl) return;
-      closeOwnerMenu();
-      renderIdentityMenu();
-      identityMenuEl.hidden = false;
-      positionIdentityMenu();
-      identityEl.setAttribute("aria-expanded", "true");
-      var first = identityMenuEl.querySelector('[role="menuitem"]');
-      if (first) first.focus();
+      menu.querySelectorAll("[data-owner-action]").forEach(function(button) {
+        button.addEventListener("click", handleOwnerAction);
+      });
     }
 
     function closeIdentityMenu() {
-      if (!identityMenuEl || !identityEl) return;
-      identityMenuEl.hidden = true;
-      identityEl.setAttribute("aria-expanded", "false");
-    }
-
-    function toggleIdentityMenu() {
-      if (!identityMenuEl) return;
-      if (identityMenuEl.hidden) openIdentityMenu();
-      else closeIdentityMenu();
+      if (identityMenuEl) identityMenuEl.hidden = true;
+      if (ownerEl) ownerEl.setAttribute("aria-expanded", "false");
     }
 
     // ---- Owner (signed-in member) Messenger-wide menu ----
 
     function renderOwnerMenu() {
-      if (!ownerMenuEl) return;
-      var menu = ownerMenuEl.querySelector('[role="menu"]');
-      if (!menu) return;
-      var items = [
-        { action: "archived", label: showingArchived ? "Back to Chats" : "Archived Chats" },
-        { action: "settings", label: "Messenger Settings" },
-        { action: "close", label: "Close Messenger" }
-      ];
-      menu.innerHTML = items.map(function(item) {
-        return '<button type="button" role="menuitem" data-owner-action="' + escapeHtml(item.action) + '">' +
-          escapeHtml(item.label) + '</button>';
-      }).join("");
-      menu.querySelectorAll("[data-owner-action]").forEach(function(button) {
-        button.addEventListener("click", handleOwnerAction);
-      });
+      renderIdentityMenu();
     }
 
     // Expand a collapsed/docked Messenger so owner-menu follow-up actions are visible.
@@ -3246,6 +3232,7 @@
       var left = Math.max(12, Math.min(rect.left, window.innerWidth - 252));
       panel.style.left = left + "px";
       panel.style.top = (rect.bottom + 6) + "px";
+      panel.style.maxHeight = Math.max(180, window.innerHeight - rect.bottom - 18) + "px";
     }
 
     function clampPanelToViewport(panel) {
@@ -3259,37 +3246,25 @@
       panel.style.top = Math.min(top, maxTop) + "px";
     }
 
-    function positionIdentityMenu() {
-      if (!identityMenuEl || !identityEl) return;
-      var rect = identityEl.getBoundingClientRect();
-      var left = Math.max(12, Math.min(rect.left, window.innerWidth - 252));
-      identityMenuEl.style.left = left + "px";
-      identityMenuEl.style.top = (rect.bottom + 6) + "px";
-      clampPanelToViewport(identityMenuEl);
-    }
-
     function openOwnerMenu() {
-      if (!ownerMenuEl || !ownerEl) return;
-      closeIdentityMenu();
+      if (!identityMenuEl || !ownerEl) return;
       closeMessengerSettings();
       renderOwnerMenu();
-      positionPanelBelowOwner(ownerMenuEl);
-      ownerMenuEl.hidden = false;
-      clampPanelToViewport(ownerMenuEl);
+      positionPanelBelowOwner(identityMenuEl);
+      identityMenuEl.hidden = false;
+      clampPanelToViewport(identityMenuEl);
       ownerEl.setAttribute("aria-expanded", "true");
-      var first = ownerMenuEl.querySelector('[role="menuitem"]');
+      var first = identityMenuEl.querySelector('[role="menuitem"]');
       if (first) first.focus();
     }
 
     function closeOwnerMenu() {
-      if (!ownerMenuEl || !ownerEl) return;
-      ownerMenuEl.hidden = true;
-      ownerEl.setAttribute("aria-expanded", "false");
+      closeIdentityMenu();
     }
 
     function toggleOwnerMenu() {
-      if (!ownerMenuEl) return;
-      if (ownerMenuEl.hidden) openOwnerMenu();
+      if (!identityMenuEl) return;
+      if (identityMenuEl.hidden) openOwnerMenu();
       else closeOwnerMenu();
     }
 
@@ -3331,6 +3306,7 @@
     async function handleIdentityAction(event) {
       var button = event.currentTarget;
       var action = button.dataset.identityAction;
+      var keepMenuOpen = false;
       if (action === "view-profile") {
         var username = button.dataset.identityUsername;
         if (username) window.open("contributor-profile.html?username=" + encodeURIComponent(username), "_blank");
@@ -3377,14 +3353,18 @@
         renderMessages();
         renderIdentity();
       } else if (action === "theme") {
+        keepMenuOpen = true;
         openThemePicker();
       } else if (action === "emoji") {
+        keepMenuOpen = true;
         openEmojiPicker();
       } else if (action === "nicknames") {
+        keepMenuOpen = true;
         openNicknameEditor();
       } else if (action === "create-group") {
         openCreateGroupFromDirect();
       } else if (action === "mute") {
+        keepMenuOpen = true;
         openMutePicker();
       } else if (action === "unmute") {
         if (!currentChat || currentChat.id === "chat-default") return;
@@ -3414,20 +3394,15 @@
         currentChat.restricted = true;
         renderIdentity();
       } else if (action === "read-receipts") {
+        keepMenuOpen = true;
         openReadReceiptsPicker();
       } else if (action === "report") {
+        keepMenuOpen = true;
         openReportDialog();
       } else if (action === "create-group") {
         openCreateGroupFromDirect();
       }
-      closeIdentityMenu();
-    }
-
-    if (identityEl) {
-      identityEl.addEventListener("click", function(event) {
-        if (event.target.closest("button") !== identityEl) return;
-        toggleIdentityMenu();
-      });
+      if (!keepMenuOpen) closeOwnerMenu();
     }
 
     if (ownerEl) {
@@ -3457,35 +3432,27 @@
     // same click that opens a menu can never immediately close it, and genuine
     // outside clicks close menus regardless of event retargeting.
     document.addEventListener("click", function(event) {
-      if (ownerMenuEl && !ownerMenuEl.hidden &&
-          !ownerMenuEl.contains(event.target) && !(ownerEl && ownerEl.contains(event.target))) {
-        closeOwnerMenu();
-      }
       if (settingsEl && !settingsEl.hidden &&
           !settingsEl.contains(event.target) &&
           !(ownerEl && ownerEl.contains(event.target)) &&
-          !(ownerMenuEl && ownerMenuEl.contains(event.target))) {
+          !(identityMenuEl && identityMenuEl.contains(event.target))) {
         closeMessengerSettings();
       }
       if (!identityMenuEl || identityMenuEl.hidden) return;
-      if (!identityMenuEl.contains(event.target) && event.target !== identityEl && !identityEl.contains(event.target)) {
-        closeIdentityMenu();
+      if (!identityMenuEl.contains(event.target) && !(ownerEl && ownerEl.contains(event.target))) {
+        closeOwnerMenu();
       }
     }, true);
 
     document.addEventListener("keydown", function(event) {
       if (event.key !== "Escape") return;
-      if (ownerMenuEl && !ownerMenuEl.hidden) {
+      if (identityMenuEl && !identityMenuEl.hidden) {
         closeOwnerMenu();
         if (ownerEl) ownerEl.focus();
       }
       if (settingsEl && !settingsEl.hidden) {
         closeMessengerSettings();
         if (ownerEl) ownerEl.focus();
-      }
-      if (identityMenuEl && !identityMenuEl.hidden) {
-        closeIdentityMenu();
-        if (identityEl) identityEl.focus();
       }
     });
 
@@ -4134,8 +4101,7 @@
       }
     }
     return avatar +
-      '<span class="member-chat-identity-copy"><strong>' + escapeHtml(title) + '</strong>' + presenceHtml + '</span>' +
-      '<span class="member-chat-identity-chevron" aria-hidden="true">▼</span>';
+      '<span class="member-chat-identity-copy"><strong>' + escapeHtml(title) + '</strong>' + presenceHtml + '</span>';
   }
 
   function updateChatListPreview(chat) {
