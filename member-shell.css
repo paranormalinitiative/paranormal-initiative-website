@@ -395,58 +395,6 @@ body.member-mode {
     border-color: transparent;
 }
 
-/* Lightweight Messenger settings — real local actions only.
-   Viewport-anchored (fixed) so the Messenger frame's overflow:hidden can
-   never clip it; left/top are set by JS below the owner identity control. */
-.member-chat-settings {
-    position: fixed;
-    z-index: 130;
-    pointer-events: auto;
-    display: grid;
-    gap: 8px;
-    min-width: 250px;
-    max-width: min(280px, calc(100vw - 24px));
-    padding: 12px;
-    background: #0b1016;
-    border: 1px solid rgba(85, 200, 255, 0.34);
-    border-radius: 10px;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
-}
-
-.member-chat-settings[hidden] {
-    display: none;
-}
-
-.member-chat-settings p {
-    margin: 0;
-    color: #9fb3c8;
-    font-size: 12px;
-}
-
-.member-chat-settings strong {
-    color: #f4f8fb;
-}
-
-.member-chat-settings button {
-    min-height: 32px;
-    padding: 6px 10px;
-    color: #c7d5e2;
-    background: #081018;
-    border: 1px solid #263646;
-    border-radius: 6px;
-    cursor: pointer;
-    font: inherit;
-    font-size: 12px;
-    text-align: left;
-}
-
-.member-chat-settings button:hover,
-.member-chat-settings button:focus {
-    color: #f4f8fb;
-    border-color: #55c8ff;
-    outline: none;
-}
-
 @media (max-width: 480px) {
     .member-chat-owner {
         max-width: 52%;
@@ -518,13 +466,6 @@ body.member-mode {
     margin-top: 4px;
     padding-top: 10px;
     border-top: 1px solid #263646;
-}
-
-/* Conversation menu stays anchored inside the relative conversation bar */
-.member-chat-conversation-menu {
-    top: calc(100% + 6px);
-    left: 8px;
-    max-width: calc(100% - 16px);
 }
 
 .member-chat-unread-badge {

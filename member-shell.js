@@ -2384,18 +2384,15 @@
           '<button type="button" data-chat-minimize>Hide</button>' +
         '</div>' +
       '</header>' +
-      '<div class="member-chat-settings" data-chat-settings hidden>' +
-        '<span class="member-chat-section-label">Messenger Settings</span>' +
-        '<p>Signed in as <strong data-chat-settings-account></strong></p>' +
-        '<button type="button" data-chat-settings-reset>Reset window size & position</button>' +
-        '<button type="button" data-chat-settings-close>Done</button>' +
+      '<div class="member-chat-identity-menu" data-chat-identity-menu hidden>' +
+        '<div role="menu"></div>' +
       '</div>' +
       '<div class="member-floating-chat-content">' +
         '<aside class="member-chat-contacts" aria-label="Members">' +
           '<span class="member-chat-section-label">Members</span>' +
           '<input type="search" class="member-chat-member-search" data-chat-member-search placeholder="Search members" aria-label="Search members">' +
           '<div class="member-chat-online-list" data-chat-online></div>' +
-          '<div class="member-chat-section-label member-chat-list-label"><span data-chat-list-label>Chats</span><button type="button" data-chat-archived-toggle>Archived</button></div>' +
+          '<div class="member-chat-section-label member-chat-list-label"><span>Chats</span></div>' +
           '<div class="member-chat-list" data-chat-list></div>' +
           '<section class="member-chat-create" data-chat-create hidden>' +
             '<span class="member-chat-section-label">Create Chat <button type="button" data-chat-create-close>Hide</button></span>' +
@@ -2409,9 +2406,6 @@
         '<section class="member-chat-thread">' +
           '<div class="member-chat-conversation-bar" data-chat-conversation-bar hidden>' +
             '<div class="member-chat-identity member-chat-active-identity" data-chat-identity aria-label="Active conversation">' + renderChatIdentity(currentChat, user) + '</div>' +
-            '<div class="member-chat-identity-menu member-chat-conversation-menu" data-chat-identity-menu hidden>' +
-              '<div role="menu"></div>' +
-            '</div>' +
           '</div>' +
           '<div class="member-chat-thread-search" data-chat-thread-search hidden>' +
             '<input type="search" data-chat-search-input placeholder="Search in conversation" aria-label="Search in conversation">' +
@@ -2466,11 +2460,7 @@
     var identityMenuEl = chat.querySelector("[data-chat-identity-menu]");
     var ownerEl = chat.querySelector("[data-chat-owner]");
     var conversationBarEl = chat.querySelector("[data-chat-conversation-bar]");
-    var settingsEl = chat.querySelector("[data-chat-settings]");
-    var settingsAccountEl = chat.querySelector("[data-chat-settings-account]");
     var memberSearchEl = chat.querySelector("[data-chat-member-search]");
-    var archivedToggleEl = chat.querySelector("[data-chat-archived-toggle]");
-    var archivedLabelEl = chat.querySelector("[data-chat-list-label]");
     var createSearchEl = chat.querySelector("[data-chat-create-search]");
     var threadSearchEl = chat.querySelector("[data-chat-thread-search]");
     var searchInputEl = chat.querySelector("[data-chat-search-input]");
@@ -2529,7 +2519,36 @@
     }
 
     async function syncConversationList() {
-      await loadChatListFromRemote(showingArchived);
+      await loadChatListFromRemote();
+      await syncRosterPresence();
+    }
+
+    async function syncRosterPresence() {
+      var nextRoster = await loadChatRoster(user);
+      if (!Array.isArray(nextRoster)) return;
+      roster = nextRoster;
+      var presenceByUsername = {};
+      roster.forEach(function(member) {
+        presenceByUsername[normalizeChatUsername(member.username)] = member;
+      });
+      function applyPresence(members) {
+        return (members || []).map(function(member) {
+          var fresh = presenceByUsername[normalizeChatUsername(member.username)];
+          return fresh ? Object.assign({}, member, {
+            online: Boolean(fresh.online),
+            lastSeenAt: fresh.lastSeenAt || null,
+            status: fresh.status || (fresh.online ? "online" : "offline")
+          }) : member;
+        });
+      }
+      currentChat.members = applyPresence(currentChat.members);
+      chatList.forEach(function(conversation) {
+        conversation.members = applyPresence(conversation.members);
+      });
+      renderOnline();
+      renderMemberPicker();
+      renderIdentity();
+      renderChatList();
     }
 
     var activeMessageSyncInFlight = false;
@@ -2639,7 +2658,6 @@
       storeChatFrame(chat);
       closeIdentityMenu();
       closeOwnerMenu();
-      closeMessengerSettings();
       setSyncForVisibility();
     }
 
@@ -2655,7 +2673,6 @@
       if (chat.classList.contains("is-collapsed")) dockCollapsedChat(chat);
       closeIdentityMenu();
       closeOwnerMenu();
-      closeMessengerSettings();
     });
 
     chat.querySelector("[data-chat-form]").addEventListener("submit", async function (event) {
@@ -2852,25 +2869,12 @@
       });
     }
 
-    var showingArchived = false;
-    if (archivedToggleEl) {
-      archivedToggleEl.addEventListener("click", async function() {
-        showingArchived = !showingArchived;
-        if (archivedLabelEl) archivedLabelEl.textContent = showingArchived ? "Archived Chats" : "Chats";
-        archivedToggleEl.textContent = showingArchived ? "Back to Chats" : "Archived";
-        await loadChatListFromRemote(showingArchived);
-      });
-    }
-
-    async function loadChatListFromRemote(archived) {
+    async function loadChatListFromRemote() {
       try {
-        var path = "/api/conversations" + (archived ? "?archived=1" : "");
-        var res = await apiFetch("GET", path);
+        var res = await apiFetch("GET", "/api/conversations");
         var remote = res.ok && Array.isArray(res.data.conversations) ? res.data.conversations : [];
         chatList = remote.map(function(conv) {
-          var c = normalizeRemoteConversation(conv);
-          if (archived) c.archived = true;
-          return c;
+          return normalizeRemoteConversation(conv);
         }).sort(function(a, b) {
           return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
         });
@@ -2897,7 +2901,7 @@
     }
 
     async function refreshChatListFromRemote() {
-      await loadChatListFromRemote(showingArchived);
+      await loadChatListFromRemote();
     }
 
     function renderChatList() {
@@ -3107,9 +3111,7 @@
       if (!identityMenuEl) return;
       var menu = identityMenuEl.querySelector('[role="menu"]');
       var items = [
-        { type: "label", label: "Messenger" },
-        { scope: "owner", action: "archived", label: showingArchived ? "Back to Chats" : "Archived Chats" },
-        { scope: "owner", action: "settings", label: "Messenger Settings" }
+        { type: "label", label: "Messenger" }
       ];
       var other = getOtherParticipant(currentChat, user);
       var isDirect = currentChat && currentChat.direct && !isGroupConversation(currentChat);
@@ -3160,14 +3162,9 @@
 
       if (hasConversation) items.push({ type: "separator" });
 
-      // Section 4: Archive/Remove
+      // Section 4: Non-destructive hide
       if (hasConversation) {
-        if (showingArchived) {
-          items.push({ action: "unarchive", label: "Unarchive Chat" });
-        } else {
-          items.push({ action: "archive", label: "Archive Chat" });
-        }
-        items.push({ action: "remove", label: "Remove Chat" });
+        items.push({ action: "remove", label: "Hide Chat" });
       }
 
       if (hasConversation) items.push({ type: "separator" });
@@ -3214,16 +3211,6 @@
       renderIdentityMenu();
     }
 
-    // Expand a collapsed/docked Messenger so owner-menu follow-up actions are visible.
-    function expandMessenger() {
-      if (!chat.classList.contains("is-collapsed")) return;
-      chat.classList.remove("is-collapsed");
-      applyStoredChatFrame(chat, true);
-      syncChatMinimizeButton();
-      storeChatFrame(chat);
-      setSyncForVisibility();
-    }
-
     // Viewport-anchored positioning: immune to overflow:hidden clipping on the
     // Messenger frame and to any transformed ancestor.
     function positionPanelBelowOwner(panel) {
@@ -3248,7 +3235,6 @@
 
     function openOwnerMenu() {
       if (!identityMenuEl || !ownerEl) return;
-      closeMessengerSettings();
       renderOwnerMenu();
       positionPanelBelowOwner(identityMenuEl);
       identityMenuEl.hidden = false;
@@ -3271,36 +3257,10 @@
     async function handleOwnerAction(event) {
       var button = event.currentTarget;
       var action = button.dataset.ownerAction;
-      if (action === "archived") {
-        expandMessenger();
-        showingArchived = !showingArchived;
-        if (archivedLabelEl) archivedLabelEl.textContent = showingArchived ? "Archived Chats" : "Chats";
-        if (archivedToggleEl) archivedToggleEl.textContent = showingArchived ? "Back to Chats" : "Archived";
-        await loadChatListFromRemote(showingArchived);
-      } else if (action === "settings") {
-        openMessengerSettings();
-      } else if (action === "close") {
+      if (action === "close") {
         setMessengerCollapsed(true);
       }
       closeOwnerMenu();
-    }
-
-    // ---- Lightweight Messenger settings (real local actions only) ----
-
-    function openMessengerSettings() {
-      if (!settingsEl) return;
-      closeIdentityMenu();
-      if (settingsAccountEl) settingsAccountEl.textContent = normalizeChatMember(user, true).displayName || "Member";
-      positionPanelBelowOwner(settingsEl);
-      settingsEl.hidden = false;
-      clampPanelToViewport(settingsEl);
-      var done = settingsEl.querySelector("[data-chat-settings-close]");
-      if (done) done.focus();
-    }
-
-    function closeMessengerSettings() {
-      if (!settingsEl) return;
-      settingsEl.hidden = true;
     }
 
     async function handleIdentityAction(event) {
@@ -3312,38 +3272,10 @@
         if (username) window.open("contributor-profile.html?username=" + encodeURIComponent(username), "_blank");
       } else if (action === "search") {
         openThreadSearch();
-      } else if (action === "archive") {
-        if (!currentChat || currentChat.id === "chat-default") return;
-        if (!window.confirm("Archive this chat? It will be moved out of your main Chats list but can be restored later.")) return;
-        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/archive");
-        chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
-        replaceStoredChats(user, chatList);
-        currentChat = createEmptyChat(user);
-        selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
-        saveCurrentChat(user, currentChat);
-        renderChatList();
-        renderMessages();
-        renderIdentity();
-      } else if (action === "unarchive") {
-        if (!currentChat || currentChat.id === "chat-default") return;
-        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/unarchive");
-        if (showingArchived) {
-          chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
-          replaceStoredChats(user, chatList);
-          currentChat = createEmptyChat(user);
-          selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
-          saveCurrentChat(user, currentChat);
-          renderChatList();
-          renderMessages();
-          renderIdentity();
-        } else {
-          await loadChatListFromRemote(false);
-        }
       } else if (action === "remove") {
         if (!currentChat || currentChat.id === "chat-default") return;
-        if (!window.confirm("Remove this chat from your visible chat list? The conversation will be hidden from you but retained on the server.")) return;
+        if (!window.confirm("Hide this chat from your Messenger? Its complete history will be retained securely and a new message will make it visible again.")) return;
         await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/hide");
-        archiveRemovedChat(user, currentChat);
         chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
         replaceStoredChats(user, chatList);
         currentChat = createEmptyChat(user);
@@ -3411,33 +3343,10 @@
       });
     }
 
-    if (settingsEl) {
-      var settingsResetBtn = settingsEl.querySelector("[data-chat-settings-reset]");
-      if (settingsResetBtn) {
-        settingsResetBtn.addEventListener("click", function() {
-          try { localStorage.removeItem("tpiFloatingChatFrame"); } catch (e) {}
-          if (chat.classList.contains("is-collapsed")) {
-            dockCollapsedChat(chat);
-          } else {
-            applyStoredChatFrame(chat, true);
-          }
-          storeChatFrame(chat);
-        });
-      }
-      var settingsDoneBtn = settingsEl.querySelector("[data-chat-settings-close]");
-      if (settingsDoneBtn) settingsDoneBtn.addEventListener("click", closeMessengerSettings);
-    }
-
     // Capture phase: the closer evaluates BEFORE any target/bubble handlers, so the
     // same click that opens a menu can never immediately close it, and genuine
     // outside clicks close menus regardless of event retargeting.
     document.addEventListener("click", function(event) {
-      if (settingsEl && !settingsEl.hidden &&
-          !settingsEl.contains(event.target) &&
-          !(ownerEl && ownerEl.contains(event.target)) &&
-          !(identityMenuEl && identityMenuEl.contains(event.target))) {
-        closeMessengerSettings();
-      }
       if (!identityMenuEl || identityMenuEl.hidden) return;
       if (!identityMenuEl.contains(event.target) && !(ownerEl && ownerEl.contains(event.target))) {
         closeOwnerMenu();
@@ -3448,10 +3357,6 @@
       if (event.key !== "Escape") return;
       if (identityMenuEl && !identityMenuEl.hidden) {
         closeOwnerMenu();
-        if (ownerEl) ownerEl.focus();
-      }
-      if (settingsEl && !settingsEl.hidden) {
-        closeMessengerSettings();
         if (ownerEl) ownerEl.focus();
       }
     });
@@ -3818,7 +3723,7 @@
   function renderChatMessage(message, index) {
     var author = normalizeChatMember(message.author || {}, true);
     var currentUsername = normalizeChatUsername(getStoredUsername());
-    var isOwn = currentUsername && author.username === currentUsername;
+    var isOwn = currentUsername && normalizeChatUsername(author.username) === currentUsername;
       var canEditDelete = !isRemoteConversation(currentChat) && !message.id;
       return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
       '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
@@ -3837,6 +3742,7 @@
 
   async function loadChatRoster(user) {
     var members = [];
+    var loadedRemoteDirectory = false;
     try {
       var directoryResp = await fetch("/api/members/directory", { credentials: "same-origin", cache: "no-store" });
       if (directoryResp.ok) {
@@ -3844,39 +3750,45 @@
         (directoryData.members || []).forEach(function(member) {
           members.push(normalizeChatMember(member, Boolean(member.online)));
         });
+        loadedRemoteDirectory = true;
       }
     } catch (e) {}
-    try {
-      var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
-      local.forEach(function(member) {
-        if (member.developerOwner) return;
-        members.push(normalizeChatMember(member, false));
-      });
-    } catch (e) {}
+    if (!loadedRemoteDirectory) {
+      try {
+        var local = JSON.parse(localStorage.getItem("tpiEditorContributors") || "[]");
+        local.forEach(function(member) {
+          if (member.developerOwner) return;
+          members.push(normalizeChatMember(member, false));
+        });
+      } catch (e) {}
+    }
     var currentUsername = normalizeChatUsername(user && user.username);
     return dedupeChatMembers(members).filter(function(member) {
-      return member.username !== currentUsername;
+      return normalizeChatUsername(member.username) !== currentUsername;
     });
   }
 
   function normalizeChatMember(member, online) {
     var name = member.displayName || member.display_name || member.name || member.username || "Member";
     return {
-      username: String(member.username || name).toLowerCase().replace(/\s+/g, "_"),
+      username: String(member.username || name).trim().replace(/\s+/g, "_"),
       displayName: name,
       title: member.title || "",
       role: member.role || "",
       photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
       chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#55c8ff"),
-      online: typeof online === "boolean" ? online : Boolean(member.online)
+      online: typeof online === "boolean" ? online : Boolean(member.online),
+      lastSeenAt: member.lastSeenAt || member.last_seen_at || null,
+      status: member.status || (online ? "online" : "offline")
     };
   }
 
   function dedupeChatMembers(members) {
     var seen = {};
     return members.filter(function(member) {
-      if (!member.username || seen[member.username]) return false;
-      seen[member.username] = true;
+      var key = normalizeChatUsername(member.username);
+      if (!key || seen[key]) return false;
+      seen[key] = true;
       return true;
     });
   }
@@ -4005,10 +3917,6 @@
     return "tpiFloatingChats:" + normalizeChatMember(user || {}, true).username;
   }
 
-  function getChatArchiveStorageKey(user) {
-    return "tpiFloatingChatArchive:" + normalizeChatMember(user || {}, true).username;
-  }
-
   function loadStoredChats(user) {
     try {
       var stored = JSON.parse(localStorage.getItem(getChatStorageKey(user)) || "[]");
@@ -4031,21 +3939,6 @@
     try { localStorage.setItem(getChatStorageKey(user), JSON.stringify((chats || []).slice(0, 24))); } catch (e) {}
   }
 
-  function archiveRemovedChat(user, chat) {
-    if (!chat || !chat.id) return;
-    try {
-      var archive = JSON.parse(localStorage.getItem(getChatArchiveStorageKey(user)) || "[]");
-      if (!Array.isArray(archive)) archive = [];
-      var copy = Object.assign({}, chat, {
-        removedAt: new Date().toISOString(),
-        removedFromVisibleList: true
-      });
-      archive = archive.filter(function(item) { return item.id !== copy.id; });
-      archive.unshift(copy);
-      localStorage.setItem(getChatArchiveStorageKey(user), JSON.stringify(archive.slice(0, 100)));
-    } catch (e) {}
-  }
-
   function getChatListSubtitle(chat) {
     var count = Array.isArray(chat.members) ? chat.members.length : 0;
     if (chat.direct) return "Direct chat";
@@ -4056,7 +3949,7 @@
   function getOtherParticipant(chat, user) {
     var currentUsername = normalizeChatUsername(user && user.username);
     return (chat && Array.isArray(chat.members) ? chat.members : []).find(function(member) {
-      return member.username !== currentUsername;
+      return normalizeChatUsername(member.username) !== currentUsername;
     });
   }
 

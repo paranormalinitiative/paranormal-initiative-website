@@ -642,6 +642,7 @@
     const articles = data.articles || [];
     const comments = data.comments || [];
     const videoComments = data.videoComments || [];
+    const conversations = data.conversations || [];
     const displayName = member.displayName || member.username || "Member";
     const isSelf = member.username === currentAdminUser?.username;
     const activeAction = member.active === false ? "restore" : "deactivate";
@@ -704,7 +705,7 @@
           </label>
           <label class="access-checkbox">
             <input name="canMessage" type="checkbox"${member.canMessage !== false ? " checked" : ""}>
-            <span>Can message when member messaging launches.</span>
+            <span>Can use Messenger.</span>
           </label>
           <button type="submit">Save Member Access</button>
         </form>
@@ -773,8 +774,30 @@
         </div>
       </section>
       <section class="admin-activity-section">
-        <h4>Chat Logs</h4>
-        <p class="access-note">Member chat logging is not connected yet. This panel is reserved for the chat moderation endpoint when Chat launches.</p>
+        <h4>Retained Messenger History</h4>
+        <p class="access-note">Visible only to authorized administrators. Hidden chats remain stored here and are never deleted by a member action.</p>
+        <div class="admin-activity-list">
+          ${conversations.length ? conversations.map(conversation => {
+            const names = (conversation.members || []).map(participant => participant.displayName || participant.username).filter(Boolean).join(", ");
+            const state = conversation.hidden ? "Hidden by this member" : "Visible in Messenger";
+            return `
+              <article class="admin-activity-item admin-chat-history-item">
+                <strong>${escapeHtml(conversation.title || names || "Messenger conversation")}</strong>
+                <span>${escapeHtml(state)} · ${escapeHtml(conversation.updatedAt || conversation.createdAt || "")}</span>
+                <p>Participants: ${escapeHtml(names || "Unknown")}</p>
+                <div class="admin-chat-history-messages">
+                  ${(conversation.messages || []).length ? conversation.messages.map(message => `
+                    <div class="admin-chat-history-message${message.deleted ? " is-deleted" : ""}">
+                      <strong>${escapeHtml(message.authorDisplayName || message.authorUsername || "Former member")}</strong>
+                      <span>${escapeHtml(message.createdAt || "")}${message.deleted ? " · Deleted message retained" : ""}</span>
+                      <p>${escapeHtml(message.body || ((message.attachments || []).length ? "Attachment" : "Empty message"))}</p>
+                    </div>
+                  `).join("") : `<p class="access-note">No messages were sent in this conversation.</p>`}
+                </div>
+              </article>
+            `;
+          }).join("") : `<p class="access-note">No Messenger conversations found for this member.</p>`}
+        </div>
       </section>
     `;
   }
@@ -1081,10 +1104,6 @@
           <span>Email Verification</span>
           <strong>${user.emailVerified ? "Verified" : "Not verified yet"}</strong>
         </div>
-        <div>
-          <span>Phone Verification</span>
-          <strong>${user.phoneVerified ? "Verified" : "Not verified yet"}</strong>
-        </div>
         <p>Password: protected and never displayed after saving.</p>
       `;
     }
@@ -1260,7 +1279,6 @@
             <div class="public-profile-details">
               ${profile.affiliation ? `<div><span>Affiliation</span><strong>${escapeHtml(profile.affiliation)}</strong></div>` : ""}
               ${profile.organization ? `<div><span>Organization</span><strong>${escapeHtml(profile.organization)}</strong></div>` : ""}
-              ${profile.correspondence ? `<div><span>Correspondence</span><strong>${escapeHtml(profile.correspondence)}</strong></div>` : ""}
               ${profile.website ? `<div><span>Website</span><strong><a href="${escapeHtml(profile.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.website)}</a></strong></div>` : ""}
             </div>
             <section class="public-profile-bio">
@@ -1532,6 +1550,10 @@
         bio: String(data.get("bio") || "").trim(),
         commentSignatureEnabled: data.get("commentSignature") === "on"
       };
+      if (!payload.correspondence || !payload.correspondence.includes("@")) {
+        setStatus("A valid account email address is required.", true);
+        return;
+      }
       if (isProtectedOrgTitle(payload.title)) {
         let currentRole = "";
         if (await cloudflareReady()) {
@@ -1746,7 +1768,6 @@
             password,
             displayName,
             email,
-            ...getContactPayload(data),
             title: "Member",
             commentSignatureEnabled: data.get("commentSignature") === "on"
           });
@@ -1772,7 +1793,6 @@
         password,
         displayName,
         correspondence: email,
-        ...getContactPayload(data),
         title: "Member",
         role: "member",
         commentSignatureEnabled: data.get("commentSignature") === "on",
@@ -1826,12 +1846,17 @@
     const inviteAssignment = getInviteAssignment(inviteCode);
     const requestedTitle = String(data.get("title") || "").trim();
     const assignedTitle = inviteAssignment?.title || requestedTitle;
+    const accountEmail = String(data.get("correspondence") || "").trim();
     if (isProtectedOrgTitle(requestedTitle) && !inviteAssignment) {
       setStatus("That leadership title is assigned by site leadership. Please choose a contributor title.", true);
       return;
     }
     if (!isValidUsername(username)) {
       setStatus(usernameErrorMessage(), true);
+      return;
+    }
+    if (!accountEmail || !accountEmail.includes("@")) {
+      setStatus("A valid email address is required.", true);
       return;
     }
     if (password.length < 8) {
@@ -1850,7 +1875,7 @@
           password,
           displayName: String(data.get("displayName") || username).trim(),
           title: assignedTitle,
-          correspondence: String(data.get("correspondence") || "").trim(),
+          correspondence: accountEmail,
           ...getContactPayload(data),
           affiliation: String(data.get("affiliation") || "").trim(),
           organization: String(data.get("organization") || "").trim(),
@@ -1884,7 +1909,7 @@
       displayName: String(data.get("displayName") || username).trim(),
       title: assignedTitle,
       role: inviteAssignment?.role || invite.role || "contributor",
-      correspondence: String(data.get("correspondence") || "").trim(),
+      correspondence: accountEmail,
       ...getContactPayload(data),
       affiliation: String(data.get("affiliation") || "").trim(),
       organization: String(data.get("organization") || "").trim(),
@@ -2009,8 +2034,8 @@
       try {
         profileReminderButton.disabled = true;
         await window.TPIApi.sendMemberNotification(username, {
-          title: "Please complete your member profile",
-          body: "Please add your email address, phone number, and private contact information in Member Settings so the admin team can keep your account current.",
+          title: "Please verify your account email",
+          body: "Please confirm that your account email is current. Phone and address information are optional and private.",
           actionHref: "member-dashboard.html",
           type: "profile-request"
         });

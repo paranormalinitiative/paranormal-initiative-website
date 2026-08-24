@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=24">
-    <link rel="stylesheet" href="member-shell.css?v=31">
+    <link rel="stylesheet" href="member-shell.css?v=32">
 </head>
 <body>
 <div id="site-header"></div>
@@ -42,12 +42,6 @@
         <form data-member-register>
             <label><span>Display Name</span><input name="displayName" type="text" autocomplete="name" required></label>
             <label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
-            <label><span>Phone Number</span><input name="phone" type="tel" autocomplete="tel"></label>
-            <label><span>Street Address</span><input name="addressLine1" type="text" autocomplete="address-line1"></label>
-            <label><span>Address Line 2</span><input name="addressLine2" type="text" autocomplete="address-line2"></label>
-            <label><span>City</span><input name="city" type="text" autocomplete="address-level2"></label>
-            <label><span>State</span><input name="state" type="text" autocomplete="address-level1"></label>
-            <label><span>ZIP Code</span><input name="postalCode" type="text" autocomplete="postal-code"></label>
             <label><span>Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces." required></label>
             <p class="access-note">Usernames are login handles. Use letters, numbers, dashes, underscores, periods, or symbols. No spaces.</p>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
@@ -101,13 +95,7 @@
             <p class="access-note">Usernames are login handles. Use letters, numbers, dashes, underscores, periods, or symbols. No spaces.</p>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
             <label><span>Confirm Password</span><input name="confirmPassword" type="password" autocomplete="new-password" required></label>
-            <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
-            <label><span>Phone Number</span><input name="phone" type="tel" autocomplete="tel"></label>
-            <label><span>Street Address</span><input name="addressLine1" type="text" autocomplete="address-line1"></label>
-            <label><span>Address Line 2</span><input name="addressLine2" type="text" autocomplete="address-line2"></label>
-            <label><span>City</span><input name="city" type="text" autocomplete="address-level2"></label>
-            <label><span>State</span><input name="state" type="text" autocomplete="address-level1"></label>
-            <label><span>ZIP Code</span><input name="postalCode" type="text" autocomplete="postal-code"></label>
+            <label><span>Email</span><input name="correspondence" type="email" autocomplete="email" required></label>
             <label><span>Affiliation</span><input name="affiliation" type="text"></label>
             <label><span>Organization</span><input name="organization" type="text"></label>
             <label><span>Website</span><input name="website" type="url"></label>
@@ -139,7 +127,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=26"></script>
-<script src="member-shell.js?v=31"></script>
+<script src="member-login.js?v=27"></script>
+<script src="member-shell.js?v=32"></script>
 </body>
 </html>

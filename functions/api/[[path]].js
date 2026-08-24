@@ -285,7 +285,7 @@ async function handleListContributors(env) {
     FROM contributors
     ORDER BY active DESC, display_name COLLATE NOCASE, username COLLATE NOCASE
   `).all();
-  return json({ contributors: results.map(publicUser) });
+  return json({ contributors: results.map(user => ({ ...publicUser(user), correspondence: user.correspondence })) });
 }
 
 async function handleUpdateContributorTitle(request, env, actingUser) {
@@ -413,8 +413,8 @@ async function handleAdminSendMemberNotification(path, request, env, actingUser)
   const target = await getUserByUsername(env, username);
   if (!target) return json({ error: "Member was not found." }, 404);
   const data = await readJson(request);
-  const title = clean(data.title || "Please complete your member profile").slice(0, 160);
-  const body = clean(data.body || "Please add your email address, phone number, and private contact information in Member Settings so the admin team can keep your account current.").slice(0, 1000);
+  const title = clean(data.title || "Please verify your account email").slice(0, 160);
+  const body = clean(data.body || "Please confirm that your account email is current. Phone and address information are optional and private.").slice(0, 1000);
   const actionHref = clean(data.actionHref || "member-dashboard.html").slice(0, 500);
   const id = crypto.randomUUID();
   await env.TPI_DB.prepare(`
@@ -532,7 +532,7 @@ async function handleMarkNotificationRead(path, env, user) {
     `).bind(conversationId, user.id, latest ? latest.id : null, now).run();
     // Clear hidden state so conversation reappears in CHATS when notification is opened
     await env.TPI_DB.prepare(`
-      UPDATE conversation_participants SET hidden_at = NULL
+      UPDATE conversation_participants SET hidden_at = NULL, archived_at = NULL
       WHERE conversation_id = ? AND contributor_id = ?
     `).bind(conversationId, user.id).run();
     return json({ ok: true, id });
@@ -640,6 +640,39 @@ async function handleAdminMemberActivity(path, env) {
     .filter(item => item.mediaType === "video")
     .map(item => ({ ...item, postId: post.id, topicTitle: post.topicTitle, createdAt: post.createdAt })));
 
+  const { results: conversationRows } = await env.TPI_DB.prepare(`
+    SELECT c.id, c.title, c.direct, c.created_at AS createdAt, c.updated_at AS updatedAt,
+           cp.hidden_at AS hiddenAt, cp.archived_at AS archivedAt
+    FROM conversations c
+    JOIN conversation_participants cp ON cp.conversation_id = c.id
+    WHERE cp.contributor_id = ?
+    ORDER BY c.updated_at DESC
+    LIMIT 100
+  `).bind(member.id).all();
+  const conversations = [];
+  for (const conversation of conversationRows || []) {
+    const { results: messageRows } = await env.TPI_DB.prepare(`
+      SELECT m.id, m.body, m.attachments, m.created_at AS createdAt, m.edited_at AS editedAt, m.deleted_at AS deletedAt,
+             author.username AS authorUsername, author.display_name AS authorDisplayName
+      FROM messages m
+      LEFT JOIN contributors author ON author.id = m.contributor_id
+      WHERE m.conversation_id = ?
+      ORDER BY m.created_at ASC
+      LIMIT 500
+    `).bind(conversation.id).all();
+    conversations.push({
+      ...conversation,
+      direct: Boolean(conversation.direct),
+      hidden: Boolean(conversation.hiddenAt),
+      members: await getConversationMembers(env, conversation.id),
+      messages: (messageRows || []).map(message => ({
+        ...message,
+        attachments: safeJsonParse(message.attachments),
+        deleted: Boolean(message.deletedAt)
+      }))
+    });
+  }
+
   return json({
     member: privateMemberUser(member),
     posts,
@@ -648,7 +681,8 @@ async function handleAdminMemberActivity(path, env) {
     tpiVideos: videoResults || [],
     articles: articleResults || [],
     comments: commentResults || [],
-    videoComments: videoCommentResults || []
+    videoComments: videoCommentResults || [],
+    conversations
   });
 }
 
@@ -750,6 +784,7 @@ async function handleRegister(request, env) {
   if (!isValidUsername(username)) return json({ error: "Username cannot contain spaces. Use letters, numbers, dashes, underscores, periods, or symbols." }, 400);
   if (await getUserByUsername(env, username)) return json({ error: "That username already exists." }, 409);
   const email = clean(data.correspondence || data.email).toLowerCase();
+  if (!email || !email.includes("@")) return json({ error: "A valid email address is required." }, 400);
   if (email && await getUserByEmail(env, email)) return json({ error: "That email is already connected to an account." }, 409);
   const inviteAssignment = getInviteAssignment(invite.code);
   const assignedTitle = inviteAssignment?.title || clean(data.title);
@@ -800,11 +835,12 @@ async function handleUpdateProfile(request, env, user) {
     return json({ error: "That leadership title is assigned by site leadership." }, 403);
   }
   const correspondence = clean(data.correspondence).toLowerCase();
-  if (correspondence && correspondence.includes("@")) {
-    const existingEmailUser = await getUserByEmail(env, correspondence);
-    if (existingEmailUser && existingEmailUser.id !== user.id) {
-      return json({ error: "That email is already connected to another account." }, 409);
-    }
+  if (!correspondence || !correspondence.includes("@")) {
+    return json({ error: "A valid account email address is required." }, 400);
+  }
+  const existingEmailUser = await getUserByEmail(env, correspondence);
+  if (existingEmailUser && existingEmailUser.id !== user.id) {
+    return json({ error: "That email is already connected to another account." }, 409);
   }
   await env.TPI_DB.prepare(`
     UPDATE contributors SET
@@ -886,6 +922,9 @@ async function handleUpdateProfile(request, env, user) {
       user.id
     ).run();
   });
+  if (correspondence !== clean(user.correspondence).toLowerCase()) {
+    await env.TPI_DB.prepare("UPDATE contributors SET email_verified = 0 WHERE id = ?").bind(user.id).run();
+  }
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
   return json({ user: privateMemberUser(updated) });
 }
@@ -2232,10 +2271,6 @@ async function getDirectConversation(env, userA, userB) {
 }
 
 async function handleListConversations(request, env, user) {
-  const url = new URL(request.url);
-  const showArchived = url.searchParams.get("archived") === "1";
-  const archivedFilter = showArchived ? "AND cp.archived_at IS NOT NULL" : "AND (cp.archived_at IS NULL OR cp.archived_at = '')";
-  const hiddenFilter = showArchived ? "" : "AND cp.hidden_at IS NULL";
   const { results } = await env.TPI_DB.prepare(`
     SELECT c.id, c.title, c.direct, c.created_at AS createdAt, c.updated_at AS updatedAt,
            (SELECT body FROM messages WHERE conversation_id = c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1) AS lastMessageBody,
@@ -2244,8 +2279,7 @@ async function handleListConversations(request, env, user) {
     FROM conversations c
     JOIN conversation_participants cp ON cp.conversation_id = c.id
     WHERE cp.contributor_id = ?
-      ${hiddenFilter}
-      ${archivedFilter}
+      AND cp.hidden_at IS NULL
     ORDER BY c.updated_at DESC
     LIMIT 100
   `).bind(user.id, user.id, user.id).all();
@@ -2313,7 +2347,7 @@ async function handleCreateConversation(request, env, user) {
     if (existingId) {
       // Clear hidden state for current user so conversation reappears in CHATS
       await env.TPI_DB.prepare(`
-        UPDATE conversation_participants SET hidden_at = NULL
+        UPDATE conversation_participants SET hidden_at = NULL, archived_at = NULL
         WHERE conversation_id = ? AND contributor_id = ?
       `).bind(existingId, user.id).run();
       const members = await getConversationMembers(env, existingId);
@@ -2417,7 +2451,7 @@ async function handleCreateMessage(path, request, env, user) {
 
   // Clear hidden state for other participants so conversation reappears in their CHATS
   await env.TPI_DB.prepare(`
-    UPDATE conversation_participants SET hidden_at = NULL
+    UPDATE conversation_participants SET hidden_at = NULL, archived_at = NULL
     WHERE conversation_id = ? AND contributor_id != ?
   `).bind(conversationId, user.id).run();
 
@@ -2468,7 +2502,7 @@ async function handleHideConversation(path, env, user) {
 
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
-    UPDATE conversation_participants SET hidden_at = ?
+    UPDATE conversation_participants SET hidden_at = ?, archived_at = NULL
     WHERE conversation_id = ? AND contributor_id = ?
   `).bind(now, conversationId, user.id).run();
 
@@ -2481,7 +2515,7 @@ async function handleUnhideConversation(path, env, user) {
   if (!access) return json({ error: "Conversation not found." }, 404);
 
   await env.TPI_DB.prepare(`
-    UPDATE conversation_participants SET hidden_at = NULL
+    UPDATE conversation_participants SET hidden_at = NULL, archived_at = NULL
     WHERE conversation_id = ? AND contributor_id = ?
   `).bind(conversationId, user.id).run();
 
@@ -2495,11 +2529,11 @@ async function handleArchiveConversation(path, env, user) {
 
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
-    UPDATE conversation_participants SET archived_at = ?
+    UPDATE conversation_participants SET hidden_at = ?, archived_at = NULL
     WHERE conversation_id = ? AND contributor_id = ?
   `).bind(now, conversationId, user.id).run();
 
-  return json({ ok: true, archivedAt: now }, 200, { "Cache-Control": "no-store" });
+  return json({ ok: true, hiddenAt: now }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleUnarchiveConversation(path, env, user) {
@@ -2508,7 +2542,7 @@ async function handleUnarchiveConversation(path, env, user) {
   if (!access) return json({ error: "Conversation not found." }, 404);
 
   await env.TPI_DB.prepare(`
-    UPDATE conversation_participants SET archived_at = NULL
+    UPDATE conversation_participants SET hidden_at = NULL, archived_at = NULL
     WHERE conversation_id = ? AND contributor_id = ?
   `).bind(conversationId, user.id).run();
 
@@ -2848,7 +2882,7 @@ async function getMemberActionAccessError(env, user, action) {
 
 async function getUserByUsername(env, username) {
   if (!username) return null;
-  return env.TPI_DB.prepare("SELECT * FROM contributors WHERE username = ?").bind(username).first();
+  return env.TPI_DB.prepare("SELECT * FROM contributors WHERE lower(username) = lower(?) LIMIT 1").bind(username).first();
 }
 
 async function getUserByLoginIdentifier(env, identifier) {
@@ -3117,7 +3151,6 @@ function publicUser(user) {
     displayName: user.display_name,
     title: user.title,
     role: user.role,
-    correspondence: user.correspondence,
     affiliation: user.affiliation,
     organization: user.organization,
     website: user.website,
@@ -3134,6 +3167,7 @@ function privateMemberUser(user) {
   return {
     id: user.id,
     ...publicUser(user),
+    correspondence: user.correspondence,
     contactName: user.contact_name,
     phone: user.phone,
     addressLine1: user.address_line1,
