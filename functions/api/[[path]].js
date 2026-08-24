@@ -2127,7 +2127,7 @@ async function handleCreateVideoReport(request, env, user) {
 function directoryMember(user) {
   const now = new Date();
   const lastSeen = user.last_seen_at ? new Date(user.last_seen_at) : null;
-  const isOnline = lastSeen && (now - lastSeen) <= 90 * 1000 && user.status === 'online';
+  const isOnline = Boolean(lastSeen && (now - lastSeen) <= 90 * 1000 && user.status === 'online');
   return {
     username: user.username,
     displayName: user.display_name,
@@ -2200,7 +2200,7 @@ async function getConversationMembers(env, conversationId) {
   return (results || []).map(row => {
     const now = new Date();
     const lastSeen = row.lastSeenAt ? new Date(row.lastSeenAt) : null;
-    const isOnline = lastSeen && (now - lastSeen) <= 90 * 1000 && row.presenceStatus === 'online';
+    const isOnline = Boolean(lastSeen && (now - lastSeen) <= 90 * 1000 && row.presenceStatus === 'online');
     return {
       id: row.id,
       username: row.username,

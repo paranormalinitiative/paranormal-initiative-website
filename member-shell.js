@@ -2439,6 +2439,7 @@
             '</div>' +
           '</div>' +
           '<form class="member-chat-form" data-chat-form>' +
+            '<p class="member-chat-status" data-chat-status role="status" aria-live="polite" hidden></p>' +
             '<div class="member-chat-tools" aria-label="Message tools">' +
               '<button type="button" data-chat-media title="Add photos or videos">Photo</button>' +
               '<button type="button" data-chat-voice title="Add a voice message">Voice</button>' +
@@ -2483,6 +2484,7 @@
     var searchCloseEl = chat.querySelector("[data-chat-search-close]");
     var inputEl = chat.querySelector("[data-chat-input]");
     var sendButton = chat.querySelector("[data-chat-send]");
+    var chatStatusEl = chat.querySelector("[data-chat-status]");
     var attachmentPreviewEl = chat.querySelector("[data-chat-attachments]");
     var mediaInputEl = chat.querySelector("[data-chat-media-input]");
     var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
@@ -2615,11 +2617,13 @@
       }
       var title = chatNameEl ? chatNameEl.value : "";
       var usernames = members.filter(function(member) { return member.username !== user.username; }).map(function(member) { return member.username; });
-      var remote = await createRemoteConversation(title, usernames, usernames.length === 1);
-      if (remote) {
+      setChatStatus("");
+      try {
+        var remote = await createRemoteConversation(title, usernames, usernames.length === 1);
         currentChat = normalizeRemoteConversation(remote);
-      } else {
-        currentChat = createChat(members, user, title);
+      } catch (error) {
+        setChatStatus(error.message || "The conversation could not be created. Please try again.", true);
+        return;
       }
       createEl.hidden = true;
       if (chatNameEl) chatNameEl.value = "";
@@ -2675,10 +2679,12 @@
         return;
       }
       if (!body && !pendingAttachments.length) return;
-      await sendChatMessage(body, pendingAttachments);
-      inputEl.value = "";
-      pendingAttachments = [];
-      renderAttachmentPreview();
+      var sent = await sendChatMessage(body, pendingAttachments);
+      if (sent) {
+        inputEl.value = "";
+        pendingAttachments = [];
+        renderAttachmentPreview();
+      }
     });
 
     chat.querySelector("[data-chat-media]").addEventListener("click", function () {
@@ -2881,11 +2887,13 @@
       closeIdentityMenu();
       closeOwnerMenu();
       if (!member || !member.username) return;
-      var remote = await createRemoteConversation("", [member.username], true);
-      if (remote) {
+      setChatStatus("");
+      try {
+        var remote = await createRemoteConversation("", [member.username], true);
         currentChat = normalizeRemoteConversation(remote);
-      } else {
-        currentChat = createDirectChat(member, user);
+      } catch (error) {
+        setChatStatus(error.message || "That conversation could not be opened. Please try again.", true);
+        return;
       }
       await refreshChatListFromRemote();
       await openChat(currentChat);
@@ -3020,26 +3028,19 @@
       });
       if (!body && !safeAttachments.length) return;
       if (!currentChat || currentChat.id === "chat-default") return;
-      var localMessage = {
-        author: normalizeChatMember(user, true),
-        body: body,
-        attachments: safeAttachments,
-        createdAt: new Date().toISOString(),
-        pending: true
-      };
-      currentChat.messages.push(localMessage);
-      currentChat.lastMessage = { body: body, createdAt: localMessage.createdAt };
-      currentChat.updatedAt = localMessage.createdAt;
-      renderMessages();
-      if (isRemoteConversation(currentChat)) {
+      if (!isRemoteConversation(currentChat)) {
+        setChatStatus("This conversation is not connected to Messenger. Choose the member again to reopen it.", true);
+        return false;
+      }
+      setChatStatus("Sending...");
+      try {
         var remoteMessage = await sendRemoteMessage(currentChat.id, body, safeAttachments);
-        if (remoteMessage) {
-          localMessage.pending = false;
-          localMessage.id = remoteMessage.id;
-          localMessage.createdAt = remoteMessage.createdAt;
-          currentChat.lastMessage = { body: body, createdAt: remoteMessage.createdAt };
-          currentChat.updatedAt = remoteMessage.createdAt;
-        }
+        currentChat.messages.push(remoteMessage);
+        currentChat.lastMessage = { body: remoteMessage.body, createdAt: remoteMessage.createdAt };
+        currentChat.updatedAt = remoteMessage.createdAt;
+      } catch (error) {
+        setChatStatus(error.message || "Message could not be sent. Please try again.", true);
+        return false;
       }
       saveCurrentChat(user, currentChat);
       upsertStoredChat(user, currentChat);
@@ -3047,6 +3048,15 @@
       renderChatList();
       renderMessages();
       setupNotificationBadge();
+      setChatStatus("");
+      return true;
+    }
+
+    function setChatStatus(message, isError) {
+      if (!chatStatusEl) return;
+      chatStatusEl.textContent = message || "";
+      chatStatusEl.hidden = !message;
+      chatStatusEl.classList.toggle("is-error", Boolean(isError));
     }
 
     function renderAttachmentPreview() {
@@ -3098,10 +3108,6 @@
     // ownerEl, currentChat, user, chatList, etc. They previously sat outside
     // the function (misplaced brace), threw ReferenceError at load, and left
     // every menu listener unattached.
-    function isGroupConversation(chat) {
-      return Boolean(chat && !chat.direct && Array.isArray(chat.members) && chat.members.length > 2);
-    }
-
     function renderIdentityMenu() {
       if (!identityMenuEl) return;
       var menu = identityMenuEl.querySelector('[role="menu"]');
@@ -3869,7 +3875,7 @@
       if (directoryResp.ok) {
         var directoryData = await directoryResp.json();
         (directoryData.members || []).forEach(function(member) {
-          members.push(normalizeChatMember(member, false));
+          members.push(normalizeChatMember(member, Boolean(member.online)));
         });
       }
     } catch (e) {}
@@ -3895,7 +3901,7 @@
       role: member.role || "",
       photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
       chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#55c8ff"),
-      online: Boolean(online)
+      online: typeof online === "boolean" ? online : Boolean(member.online)
     };
   }
 
@@ -3984,7 +3990,7 @@
       id: conv.id,
       title: conv.title || "Community Chat",
       direct: Boolean(conv.direct),
-      members: Array.isArray(conv.members) ? conv.members.map(function(m) { return normalizeChatMember(m, false); }) : [],
+      members: Array.isArray(conv.members) ? conv.members.map(function(m) { return normalizeChatMember(m, Boolean(m.online)); }) : [],
       messages: [],
       unreadCount: Number(conv.unreadCount || 0),
       updatedAt: conv.updatedAt || new Date().toISOString(),
@@ -4087,6 +4093,10 @@
     });
   }
 
+  function isGroupConversation(chat) {
+    return Boolean(chat && !chat.direct && Array.isArray(chat.members) && chat.members.length > 2);
+  }
+
 
   // ---- Shared messenger helpers (inside initFloatingChat) ----
 
@@ -4153,8 +4163,10 @@
 
   async function createRemoteConversation(title, usernames, isDirect) {
     var res = await apiFetch("POST", "/api/conversations", { title: title, usernames: usernames, direct: isDirect });
-    if (!res.ok) return null;
-    return res.data.conversation || null;
+    if (!res.ok || !res.data.conversation) {
+      throw new Error(res.data.error || "The conversation could not be created.");
+    }
+    return res.data.conversation;
   }
 
   async function loadRemoteMessages(conversationId) {
@@ -4167,7 +4179,10 @@
       body: body,
       attachments: attachments
     });
-    return res.ok ? res.data.message : null;
+    if (!res.ok || !res.data.message) {
+      throw new Error(res.data.error || "Message could not be sent.");
+    }
+    return res.data.message;
   }
 
   async function markRemoteConversationRead(conversationId) {
