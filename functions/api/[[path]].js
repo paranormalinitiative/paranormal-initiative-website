@@ -285,7 +285,7 @@ async function handleListContributors(env) {
     FROM contributors
     ORDER BY active DESC, display_name COLLATE NOCASE, username COLLATE NOCASE
   `).all();
-  return json({ contributors: results.map(user => ({ ...publicUser(user), correspondence: user.correspondence })) });
+  return json({ contributors: results.map(publicUser) });
 }
 
 async function handleUpdateContributorTitle(request, env, actingUser) {
