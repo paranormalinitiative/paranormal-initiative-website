@@ -2460,11 +2460,10 @@ async function handleCreateConversation(request, env, user) {
   const usernames = Array.from(new Set(Array.isArray(data.usernames)
     ? data.usernames.filter(Boolean).map(clean).filter(username => username && username !== user.username)
     : [])).slice(0, 49);
-  const isDirect = usernames.length === 1;
+  const isDirect = data.direct === true;
 
   if (!usernames.length) return json({ error: "Choose at least one member." }, 400);
-  if (data.direct === true && usernames.length !== 1) return json({ error: "A direct chat can include only one other member." }, 400);
-  if (!isDirect && usernames.length < 2) return json({ error: "A room needs at least two other members." }, 400);
+  if (isDirect && usernames.length !== 1) return json({ error: "A direct chat can include only one other member." }, 400);
   if (!isDirect && !title) return json({ error: "A room name is required." }, 400);
 
   const accessError = await getMemberActionAccessError(env, user, "message");

@@ -2447,7 +2447,7 @@
               '<div><span class="member-chat-kicker">Messenger rooms</span><strong id="messenger-room-builder-title" data-chat-create-title>Create Room</strong></div>' +
               '<button type="button" data-chat-create-close aria-label="Close room builder">Close</button>' +
             '</header>' +
-            '<p data-chat-create-description>Click members in the left column to add or remove them.</p>' +
+            '<p data-chat-create-description>Name the room, then add at least one member from the left. You are included automatically.</p>' +
             '<label class="member-chat-create-name"><span>Room name</span><input type="text" data-chat-name maxlength="160" placeholder="Example: Investigation Team"></label>' +
             '<span class="member-chat-create-count" data-chat-create-count>0 members selected</span>' +
             '<div class="member-chat-member-list" data-chat-members aria-label="Selected room members"></div>' +
@@ -2688,10 +2688,6 @@
       var creatingRoom = conversationBuilderMode === "room" || usernames.length > 1;
       if (!usernames.length) {
         setConversationBuilderStatus("Choose at least one member.", true);
-        return;
-      }
-      if (creatingRoom && usernames.length < 2) {
-        setConversationBuilderStatus("A room needs at least two other members.", true);
         return;
       }
       if (creatingRoom && !title) {
@@ -3077,7 +3073,10 @@
       var selectedCount = roster.filter(function(member) {
         return selectedMembers.has(member.username);
       }).length;
-      createCountEl.textContent = selectedCount + (selectedCount === 1 ? " member selected" : " members selected");
+      var selectedLabel = selectedCount + (selectedCount === 1 ? " member selected" : " members selected");
+      createCountEl.textContent = conversationBuilderMode === "room"
+        ? selectedLabel + " · " + (selectedCount + 1) + " people total including you"
+        : selectedLabel;
     }
 
     function openConversationBuilder(mode, membersToPreselect) {
@@ -3091,7 +3090,7 @@
       if (chatNameEl) chatNameEl.value = "";
       if (createTitleEl) createTitleEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start a Chat";
       if (createDescriptionEl) createDescriptionEl.textContent = conversationBuilderMode === "room"
-        ? "Name the room, then click members in the left column to add or remove them."
+        ? "Name the room, then add at least one member from the left. You are included automatically."
         : "Click one member in the left column for a direct chat, or select several people and name the room.";
       if (createSubmitEl) {
         createSubmitEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start Chat";
@@ -4142,7 +4141,6 @@
   function getChatListSubtitle(chat) {
     var count = Array.isArray(chat.members) ? chat.members.length : 0;
     if (chat.direct) return "Direct chat";
-    if (count <= 2) return "Direct chat";
     return count + " members";
   }
 
@@ -4154,7 +4152,7 @@
   }
 
   function isGroupConversation(chat) {
-    return Boolean(chat && !chat.direct && Array.isArray(chat.members) && chat.members.length > 2);
+    return Boolean(chat && !chat.direct && Array.isArray(chat.members) && chat.members.length >= 2);
   }
 
 
