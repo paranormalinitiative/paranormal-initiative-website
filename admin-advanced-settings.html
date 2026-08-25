@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=24">
-    <link rel="stylesheet" href="member-shell.css?v=32">
+    <link rel="stylesheet" href="member-shell.css?v=37">
 </head>
 <body>
 <div id="site-header"></div>
@@ -30,27 +30,8 @@
     <section class="admin-control-grid">
         <article class="editor-access-card admin-settings-card">
             <p class="portal-kicker">Website Settings</p>
-            <h3>Advanced Controls</h3>
-            <p class="access-note">Control site-wide member restrictions. These settings are separate from each member's individual access controls.</p>
-            <form class="admin-settings-form" data-admin-settings-form>
-                <label class="access-checkbox">
-                    <input name="autoRestrictUnverifiedEmail" type="checkbox">
-                    <span>Automatically restrict unverified-email accounts from posting, commenting, and messaging.</span>
-                </label>
-                <label class="access-checkbox">
-                    <input name="requireVerifiedEmailToPost" type="checkbox">
-                    <span>Require verified email before members can post in the community forum.</span>
-                </label>
-                <label class="access-checkbox">
-                    <input name="requireVerifiedEmailToComment" type="checkbox">
-                    <span>Require verified email before members can comment on articles or videos.</span>
-                </label>
-                <label class="access-checkbox">
-                    <input name="requireVerifiedEmailToMessage" type="checkbox">
-                    <span>Require verified email before members can send messages when messaging launches.</span>
-                </label>
-                <button type="submit">Save Advanced Settings</button>
-            </form>
+            <h3>Email Login Is Active</h3>
+            <p class="access-note">Members can sign in with their account email and password. Email verification and two-step verification are intentionally deferred until the site and Messenger are complete.</p>
         </article>
     </section>
 
@@ -62,7 +43,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=27"></script>
-<script src="member-shell.js?v=32"></script>
+<script src="member-login.js?v=28"></script>
+<script src="member-shell.js?v=37"></script>
 </body>
 </html>

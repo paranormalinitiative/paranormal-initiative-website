@@ -85,6 +85,7 @@
     changePassword: payload => request("/contributors/me/password", { method: "POST", body: payload }),
     uploadProfilePhoto: file => upload("/uploads/profile-photo", file),
     uploadForumMedia: file => upload("/uploads/forum-media", file),
+    uploadMessengerMedia: file => upload("/uploads/messenger-media", file),
     uploadArticleMedia: file => upload("/uploads/article-media", file),
     contributorArticles: () => request("/contributors/me/articles"),
     publicProfile: username => request(`/contributors/profile?username=${encodeURIComponent(username)}`),

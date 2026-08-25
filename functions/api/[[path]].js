@@ -70,6 +70,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/report$/)) return requireMember(request, env, user => handleReportConversation(path, request, env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
+    if (request.method === "POST" && path === "/uploads/messenger-media") return requireMember(request, env, user => handleMessengerMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
@@ -459,8 +460,13 @@ async function getChatNotifications(env, user) {
     WHERE cp.contributor_id = ?
       AND m.contributor_id != ?
       AND m.created_at > COALESCE(rs.last_read_at, '1970-01-01')
+      AND (cp.muted_until IS NULL OR cp.muted_until <= CURRENT_TIMESTAMP)
+      AND NOT EXISTS (
+        SELECT 1 FROM member_restrictions mr
+        WHERE mr.restrictor_id = ? AND mr.restricted_id = m.contributor_id
+      )
     ORDER BY m.created_at DESC
-  `).bind(user.id, user.id, user.id).all();
+  `).bind(user.id, user.id, user.id, user.id).all();
 
   const seen = new Set();
   const notifications = [];
@@ -502,12 +508,17 @@ async function getChatUnreadCount(env, user) {
     FROM conversations c
     JOIN conversation_participants cp ON cp.conversation_id = c.id
     WHERE cp.contributor_id = ?
+      AND (cp.muted_until IS NULL OR cp.muted_until <= CURRENT_TIMESTAMP)
       AND EXISTS (
         SELECT 1 FROM messages m
         WHERE m.conversation_id = c.id AND m.deleted_at IS NULL AND m.contributor_id != ?
           AND m.created_at > COALESCE((SELECT last_read_at FROM message_read_state WHERE conversation_id = c.id AND contributor_id = ?), '1970-01-01')
+          AND NOT EXISTS (
+            SELECT 1 FROM member_restrictions mr
+            WHERE mr.restrictor_id = ? AND mr.restricted_id = m.contributor_id
+          )
       )
-  `).bind(user.id, user.id, user.id).all();
+  `).bind(user.id, user.id, user.id, user.id).all();
   return Number((results && results[0] && results[0].count) || 0);
 }
 
@@ -989,6 +1000,10 @@ async function handleForumMediaUpload(request, env, user) {
   return handleMediaUpload(request, env, user, "forum", "forum-media", ["image/", "video/"]);
 }
 
+async function handleMessengerMediaUpload(request, env, user) {
+  return handleMediaUpload(request, env, user, "messenger", "messenger-media", ["image/", "video/", "audio/"]);
+}
+
 async function handleMediaUpload(request, env, user, area, purpose, allowedTypes) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const upload = await readUploadFile(request);
@@ -1004,6 +1019,10 @@ async function handleMediaUpload(request, env, user, area, purpose, allowedTypes
   ];
   if (!allowed.some(prefix => upload.type === prefix || upload.type.startsWith(prefix))) {
     return json({ error: "That file type is not allowed for this upload." }, 400);
+  }
+  const maxBytes = upload.type.startsWith("audio/") ? 10 * 1024 * 1024 : 25 * 1024 * 1024;
+  if (upload.size > maxBytes) {
+    return json({ error: upload.type.startsWith("audio/") ? "Voice messages must be 10 MB or smaller." : "Messenger photos and videos must be 25 MB or smaller." }, 413);
   }
 
   const key = makeMediaKey(area, user.username, upload.name, upload.type);
@@ -2273,6 +2292,18 @@ async function getDirectConversation(env, userA, userB) {
 async function handleListConversations(request, env, user) {
   const { results } = await env.TPI_DB.prepare(`
     SELECT c.id, c.title, c.direct, c.created_at AS createdAt, c.updated_at AS updatedAt,
+           cp.theme, cp.quick_emoji AS quickEmoji, cp.muted_until AS mutedUntil,
+           cp.read_receipts_enabled AS readReceiptsEnabled,
+           CASE WHEN c.direct = 1 AND EXISTS (
+             SELECT 1 FROM member_blocks mb
+             JOIN conversation_participants other_cp ON other_cp.conversation_id = c.id AND other_cp.contributor_id = mb.blocked_id
+             WHERE mb.blocker_id = ? AND mb.blocked_id != ?
+           ) THEN 1 ELSE 0 END AS blocked,
+           CASE WHEN c.direct = 1 AND EXISTS (
+             SELECT 1 FROM member_restrictions mr
+             JOIN conversation_participants other_cp ON other_cp.conversation_id = c.id AND other_cp.contributor_id = mr.restricted_id
+             WHERE mr.restrictor_id = ? AND mr.restricted_id != ?
+           ) THEN 1 ELSE 0 END AS restricted,
            (SELECT body FROM messages WHERE conversation_id = c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1) AS lastMessageBody,
            (SELECT created_at FROM messages WHERE conversation_id = c.id AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1) AS lastMessageAt,
            (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.deleted_at IS NULL AND m.contributor_id != ? AND m.created_at > COALESCE((SELECT last_read_at FROM message_read_state WHERE conversation_id = c.id AND contributor_id = ?), '1970-01-01')) AS unreadCount
@@ -2282,11 +2313,12 @@ async function handleListConversations(request, env, user) {
       AND cp.hidden_at IS NULL
     ORDER BY c.updated_at DESC
     LIMIT 100
-  `).bind(user.id, user.id, user.id).all();
+  `).bind(user.id, user.id, user.id, user.id, user.id, user.id, user.id).all();
 
   const conversations = [];
   for (const row of results || []) {
     const members = await getConversationMembers(env, row.id);
+    const nicknames = await getConversationNicknames(env, row.id, user.id);
     conversations.push({
       id: row.id,
       title: row.title,
@@ -2294,8 +2326,15 @@ async function handleListConversations(request, env, user) {
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       members,
+      nicknames,
       lastMessage: row.lastMessageBody ? { body: row.lastMessageBody, createdAt: row.lastMessageAt } : null,
       unreadCount: Number(row.unreadCount || 0)
+      ,theme: row.theme || "default"
+      ,quickEmoji: row.quickEmoji || "👍"
+      ,mutedUntil: row.mutedUntil || null
+      ,readReceiptsEnabled: row.readReceiptsEnabled !== 0
+      ,blocked: Boolean(row.blocked)
+      ,restricted: Boolean(row.restricted)
     });
   }
   return json({ conversations }, 200, { "Cache-Control": "no-store" });
@@ -2306,6 +2345,8 @@ async function handleGetConversation(path, env, user) {
   const access = await requireConversationAccess(env, conversationId, user);
   if (!access) return json({ error: "Conversation not found." }, 404);
   const members = await getConversationMembers(env, conversationId);
+  const preferences = await getConversationParticipantState(env, conversationId, user.id, Boolean(access.direct));
+  const nicknames = await getConversationNicknames(env, conversationId, user.id);
   return json({
     conversation: {
       id: access.conversation_id,
@@ -2313,7 +2354,9 @@ async function handleGetConversation(path, env, user) {
       direct: Boolean(access.direct),
       createdAt: access.created_at,
       updatedAt: access.updated_at,
-      members
+      members,
+      nicknames,
+      ...preferences
     }
   }, 200, { "Cache-Control": "no-store" });
 }
@@ -2351,7 +2394,9 @@ async function handleCreateConversation(request, env, user) {
         WHERE conversation_id = ? AND contributor_id = ?
       `).bind(existingId, user.id).run();
       const members = await getConversationMembers(env, existingId);
-      return json({ conversation: { id: existingId, direct: true, members } }, 200, { "Cache-Control": "no-store" });
+      const preferences = await getConversationParticipantState(env, existingId, user.id, true);
+      const nicknames = await getConversationNicknames(env, existingId, user.id);
+      return json({ conversation: { id: existingId, direct: true, members, nicknames, ...preferences } }, 200, { "Cache-Control": "no-store" });
     }
   }
 
@@ -2396,12 +2441,25 @@ async function handleListMessages(path, request, env, user) {
   params.push(limit);
 
   const { results } = await env.TPI_DB.prepare(sql).bind(...params).all();
+  const { results: readStates } = await env.TPI_DB.prepare(`
+    SELECT rs.contributor_id AS contributorId, rs.last_read_at AS lastReadAt,
+           c.username, c.display_name AS displayName
+    FROM message_read_state rs
+    JOIN conversation_participants cp ON cp.conversation_id = rs.conversation_id
+      AND cp.contributor_id = rs.contributor_id
+    JOIN contributors c ON c.id = rs.contributor_id
+    WHERE rs.conversation_id = ? AND cp.read_receipts_enabled = 1
+  `).bind(conversationId).all();
   const messages = (results || []).map(row => ({
     id: row.id,
     body: row.body,
     attachments: safeJsonParse(row.attachments),
     createdAt: row.createdAt,
     editedAt: row.editedAt || null,
+    readBy: (readStates || []).filter(reader => reader.contributorId !== row.authorId && reader.lastReadAt >= row.createdAt).map(reader => ({
+      username: reader.username,
+      displayName: reader.displayName || reader.username
+    })),
     author: row.authorId ? {
       id: row.authorId,
       username: row.authorUsername,
@@ -2423,19 +2481,18 @@ async function handleCreateMessage(path, request, env, user) {
   const accessError = await getMemberActionAccessError(env, user, "message");
   if (accessError) return json({ error: accessError }, 403);
 
-  // Check if any other participant has blocked the sender
-  const isBlocked = await env.TPI_DB.prepare(`
-    SELECT 1 FROM member_blocks
-    WHERE blocker_id = (
-      SELECT cp.contributor_id FROM conversation_participants cp
-      WHERE cp.conversation_id = ? AND cp.contributor_id != ?
-    ) AND blocked_id = ?
-  `).bind(conversationId, user.id, user.id).first();
+  // A block pauses direct messaging in both directions until the blocker reverses it.
+  const isBlocked = access.direct ? await env.TPI_DB.prepare(`
+    SELECT 1 FROM member_blocks mb
+    JOIN conversation_participants blocker ON blocker.conversation_id = ? AND blocker.contributor_id = mb.blocker_id
+    JOIN conversation_participants blocked ON blocked.conversation_id = ? AND blocked.contributor_id = mb.blocked_id
+    WHERE mb.blocker_id = ? OR mb.blocked_id = ? LIMIT 1
+  `).bind(conversationId, conversationId, user.id, user.id).first() : null;
   if (isBlocked) return json({ error: "You cannot send messages to this conversation." }, 403);
 
   const data = await readJson(request);
   const body = clean(data.body).slice(0, 4000);
-  const attachments = Array.isArray(data.attachments) ? data.attachments.slice(0, 20) : [];
+  const attachments = sanitizeMessengerAttachments(data.attachments);
   if (!body && !attachments.length) return json({ error: "Message cannot be empty." }, 400);
 
   const messageId = crypto.randomUUID();
@@ -2762,15 +2819,31 @@ async function handleReportConversation(path, request, env, user) {
   if (!access) return json({ error: "Conversation not found." }, 404);
 
   const data = await readJson(request);
-  const { reason, details } = data;
+  const { reason, details, targetUsername } = data;
   if (!reason) return json({ error: "Report reason is required." }, 400);
+
+  let reported = null;
+  if (targetUsername) reported = await getUserByUsername(env, targetUsername);
+  if (!reported) {
+    reported = await env.TPI_DB.prepare(`
+      SELECT c.id FROM conversation_participants cp
+      JOIN contributors c ON c.id = cp.contributor_id
+      WHERE cp.conversation_id = ? AND cp.contributor_id != ?
+      ORDER BY cp.joined_at ASC LIMIT 1
+    `).bind(conversationId, user.id).first();
+  }
+  if (!reported) return json({ error: "Choose a member to report." }, 400);
+  const isParticipant = await env.TPI_DB.prepare(`
+    SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, reported.id).first();
+  if (!isParticipant || reported.id === user.id) return json({ error: "That member is not part of this conversation." }, 400);
 
   const reportId = crypto.randomUUID();
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
     INSERT INTO messenger_reports (id, reporter_id, reported_contributor_id, conversation_id, reason, details, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).bind(reportId, user.id, access.contributor_id, conversationId, reason, details || "", now).run();
+  `).bind(reportId, user.id, reported.id, conversationId, reason, details || "", now).run();
 
   return json({ ok: true, reportId }, 201, { "Cache-Control": "no-store" });
 }
@@ -2863,21 +2936,51 @@ async function getSiteSettings(env) {
 
 async function getMemberActionAccessError(env, user, action) {
   if (!user || ["owner", "admin"].includes(user.role)) return "";
-  const settings = await getSiteSettings(env);
-  const needsVerifiedEmail = settings.autoRestrictUnverifiedEmail || (
-    action === "post" && settings.requireVerifiedEmailToPost
-  ) || (
-    action === "comment" && settings.requireVerifiedEmailToComment
-  ) || (
-    action === "message" && settings.requireVerifiedEmailToMessage
-  );
-  if (needsVerifiedEmail && !user.email_verified) {
-    return "Please verify your email address before using this feature.";
-  }
+  // Email verification is deliberately deferred until the site and Messenger
+  // are complete. Individual account access controls still apply.
   if (action === "post" && user.can_post === 0) return "Posting is currently disabled for your account.";
   if (action === "comment" && user.can_comment === 0) return "Commenting is currently disabled for your account.";
   if (action === "message" && user.can_message === 0) return "Messaging is currently disabled for your account.";
   return "";
+}
+
+async function getConversationParticipantState(env, conversationId, userId, isDirect) {
+  const row = await env.TPI_DB.prepare(`
+    SELECT theme, quick_emoji AS quickEmoji, muted_until AS mutedUntil,
+           read_receipts_enabled AS readReceiptsEnabled
+    FROM conversation_participants WHERE conversation_id = ? AND contributor_id = ?
+  `).bind(conversationId, userId).first();
+  let blocked = false;
+  let restricted = false;
+  if (isDirect) {
+    const relationship = await env.TPI_DB.prepare(`
+      SELECT
+        EXISTS(SELECT 1 FROM member_blocks mb JOIN conversation_participants cp ON cp.contributor_id = mb.blocked_id
+          WHERE mb.blocker_id = ? AND cp.conversation_id = ? AND cp.contributor_id != ?) AS blocked,
+        EXISTS(SELECT 1 FROM member_restrictions mr JOIN conversation_participants cp ON cp.contributor_id = mr.restricted_id
+          WHERE mr.restrictor_id = ? AND cp.conversation_id = ? AND cp.contributor_id != ?) AS restricted
+    `).bind(userId, conversationId, userId, userId, conversationId, userId).first();
+    blocked = Boolean(relationship?.blocked);
+    restricted = Boolean(relationship?.restricted);
+  }
+  return {
+    theme: row?.theme || "default",
+    quickEmoji: row?.quickEmoji || "👍",
+    mutedUntil: row?.mutedUntil || null,
+    readReceiptsEnabled: row?.readReceiptsEnabled !== 0,
+    blocked,
+    restricted
+  };
+}
+
+async function getConversationNicknames(env, conversationId, setterId) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT cn.target_id, cn.nickname, c.username, c.display_name
+    FROM conversation_nicknames cn
+    JOIN contributors c ON c.id = cn.target_id
+    WHERE cn.conversation_id = ? AND cn.setter_id = ?
+  `).bind(conversationId, setterId).all();
+  return results || [];
 }
 
 async function getUserByUsername(env, username) {
@@ -3077,8 +3180,17 @@ async function readUploadFile(request) {
   return {
     name: clean(file.name || "upload"),
     type: clean(file.type || "application/octet-stream"),
+    size: Number(file.size || 0),
     body: await file.arrayBuffer()
   };
+}
+
+function sanitizeMessengerAttachments(value) {
+  return (Array.isArray(value) ? value : []).slice(0, 6).map(item => ({
+    name: clean(item?.name).slice(0, 180),
+    type: ["photo", "video", "voice"].includes(clean(item?.type)) ? clean(item.type) : "",
+    url: clean(item?.url).slice(0, 1000)
+  })).filter(item => item.type && item.url.startsWith("/api/media/messenger/"));
 }
 
 function clean(value) {

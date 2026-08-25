@@ -2709,7 +2709,8 @@
         return {
           name: file.name,
           type: file.type && file.type.startsWith("video/") ? "video" : "photo",
-          url: URL.createObjectURL(file)
+          url: URL.createObjectURL(file),
+          file: file
         };
       });
       renderAttachmentPreview();
@@ -2723,9 +2724,7 @@
         return;
       }
       if (!navigator.mediaDevices || !window.MediaRecorder) {
-        pendingAttachments.push({ name: "Voice message", type: "voice" });
-        renderAttachmentPreview();
-        inputEl.focus();
+        setChatStatus("Voice recording is not supported in this browser.", true);
         return;
       }
       try {
@@ -2738,16 +2737,15 @@
         voiceRecorder.addEventListener("stop", function() {
           stream.getTracks().forEach(function(track) { track.stop(); });
           var blob = new Blob(voiceChunks, { type: "audio/webm" });
-          pendingAttachments.push({ name: "Voice message", type: "voice", url: URL.createObjectURL(blob) });
+          var voiceFile = new File([blob], "voice-message.webm", { type: "audio/webm" });
+          pendingAttachments.push({ name: "Voice message", type: "voice", url: URL.createObjectURL(blob), file: voiceFile });
           renderAttachmentPreview();
           inputEl.focus();
         });
         voiceRecorder.start();
         button.textContent = "Stop";
       } catch (e) {
-        pendingAttachments.push({ name: "Voice message", type: "voice" });
-        renderAttachmentPreview();
-        inputEl.focus();
+        setChatStatus("Microphone access is needed to record a voice message.", true);
       }
     });
 
@@ -2777,7 +2775,7 @@
     });
 
     chat.querySelector("[data-chat-like]").addEventListener("click", async function () {
-      await sendChatMessage("👍", []);
+      await sendChatMessage(currentChat && currentChat.quickEmoji ? currentChat.quickEmoji : "👍", []);
     });
 
     messagesEl.addEventListener("click", function (event) {
@@ -3002,6 +3000,12 @@
     function renderIdentity() {
       var hasConversation = Boolean(currentChat && currentChat.id && currentChat.id !== "chat-default");
       if (conversationBarEl) conversationBarEl.hidden = !hasConversation;
+      chat.setAttribute("data-conversation-theme", currentChat && currentChat.theme ? currentChat.theme : "default");
+      var quickButton = chat.querySelector("[data-chat-like]");
+      if (quickButton) {
+        quickButton.textContent = currentChat && currentChat.quickEmoji ? currentChat.quickEmoji : "👍";
+        quickButton.setAttribute("aria-label", "Send " + quickButton.textContent);
+      }
       if (!identityEl) return;
       identityEl.innerHTML = renderChatIdentity(currentChat, user);
     }
@@ -3022,9 +3026,23 @@
     }
 
     async function sendChatMessage(body, attachments) {
-      var safeAttachments = (attachments || []).slice(0, 20).map(function(att) {
-        return { name: att.name || "", type: att.type || "photo", url: att.url || "" };
-      });
+      var safeAttachments = [];
+      try {
+        var selectedAttachments = (attachments || []).slice(0, 6);
+        for (var attachmentIndex = 0; attachmentIndex < selectedAttachments.length; attachmentIndex += 1) {
+          var att = selectedAttachments[attachmentIndex];
+          if (att.file) {
+            setChatStatus("Uploading attachment " + (attachmentIndex + 1) + " of " + selectedAttachments.length + "...");
+            var uploaded = await uploadMessengerAttachment(att.file);
+            safeAttachments.push({ name: uploaded.name || att.name || "", type: att.type || "photo", url: uploaded.url || "" });
+          } else if (att.url && String(att.url).indexOf("/api/media/messenger/") === 0) {
+            safeAttachments.push({ name: att.name || "", type: att.type || "photo", url: att.url });
+          }
+        }
+      } catch (uploadError) {
+        setChatStatus(uploadError.message || "The attachment could not be uploaded.", true);
+        return false;
+      }
       if (!body && !safeAttachments.length) return;
       if (!currentChat || currentChat.id === "chat-default") return;
       if (!isRemoteConversation(currentChat)) {
@@ -3152,8 +3170,8 @@
 
         // Block/Restrict - only for direct conversations
         if (isDirect && other) {
-          items.push({ action: "block", label: "Block " + other.displayName });
-          items.push({ action: "restrict", label: "Restrict " + other.displayName });
+          items.push({ action: currentChat.blocked ? "unblock" : "block", label: (currentChat.blocked ? "Unblock " : "Block ") + other.displayName });
+          items.push({ action: currentChat.restricted ? "unrestrict" : "restrict", label: (currentChat.restricted ? "Unrestrict " : "Restrict ") + other.displayName });
         }
 
         // Read Receipts
@@ -3308,14 +3326,13 @@
         if (!other) return;
         if (!window.confirm("Block " + other.displayName + "?\nThey will no longer be able to send you direct messages.\nExisting conversation history will be retained.")) return;
         await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/block", { targetUsername: other.username });
-        // Blocking also removes the conversation from view
-        chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
-        replaceStoredChats(user, chatList);
-        currentChat = createEmptyChat(user);
-        selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
-        saveCurrentChat(user, currentChat);
-        renderChatList();
-        renderMessages();
+        currentChat.blocked = true;
+        renderIdentity();
+      } else if (action === "unblock") {
+        var blockedMember = getOtherParticipant(currentChat, user);
+        if (!blockedMember) return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/unblock", { targetUsername: blockedMember.username });
+        currentChat.blocked = false;
         renderIdentity();
       } else if (action === "restrict") {
         var other = getOtherParticipant(currentChat, user);
@@ -3325,14 +3342,18 @@
         // Restrict is a soft action - keep conversation visible but may suppress notifications
         currentChat.restricted = true;
         renderIdentity();
+      } else if (action === "unrestrict") {
+        var restrictedMember = getOtherParticipant(currentChat, user);
+        if (!restrictedMember) return;
+        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/unrestrict", { targetUsername: restrictedMember.username });
+        currentChat.restricted = false;
+        renderIdentity();
       } else if (action === "read-receipts") {
         keepMenuOpen = true;
         openReadReceiptsPicker();
       } else if (action === "report") {
         keepMenuOpen = true;
         openReportDialog();
-      } else if (action === "create-group") {
-        openCreateGroupFromDirect();
       }
       if (!keepMenuOpen) closeOwnerMenu();
     }
@@ -3582,14 +3603,12 @@
 
     function openCreateGroupFromDirect() {
       closeIdentityMenu();
-      // Open the create chat panel with current direct chat participant pre-selected
+      // Open the room builder with every member of the current conversation pre-selected.
       var createEl = chat.querySelector("[data-chat-create]");
-      var other = getOtherParticipant(currentChat, user);
-      if (!createEl || !other) return;
+      if (!createEl || !currentChat || currentChat.id === "chat-default") return;
       createEl.hidden = false;
       selectedMembers.clear();
-      selectedMembers.add(other.username);
-      selectedMembers.add(user.username);
+      (currentChat.members || []).forEach(function(member) { selectedMembers.add(member.username); });
       renderMemberPicker();
     }
 
@@ -3681,6 +3700,7 @@
 
       menu.innerHTML = '<div class="report-dialog" style="padding: 12px; min-width: 280px;">' +
         '<div style="color: #c7d5e2; font-size: 12px; margin-bottom: 8px;">Report Conversation</div>' +
+        (isGroupConversation(currentChat) ? '<div style="margin-bottom: 12px;"><label style="display: block; color: #c7d5e2; font-size: 11px; margin-bottom: 4px;">Member</label><select data-report-member style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 12px;">' + (currentChat.members || []).filter(function(member) { return !isCurrentChatUser(member, user); }).map(function(member) { return '<option value="' + escapeHtml(member.username) + '">' + escapeHtml(member.displayName) + '</option>'; }).join('') + '</select></div>' : '') +
         '<div style="margin-bottom: 12px;">' +
           '<label style="display: block; color: #c7d5e2; font-size: 11px; margin-bottom: 4px;">Reason</label>' +
           '<select data-report-reason style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 12px;">' +
@@ -3700,17 +3720,18 @@
       menu.querySelector('[data-report-submit]').addEventListener("click", function() {
         var reason = menu.querySelector('[data-report-reason]').value;
         var details = menu.querySelector('[data-report-details]').value;
-        submitReport(reason, details);
+        var memberSelect = menu.querySelector('[data-report-member]');
+        submitReport(reason, details, memberSelect ? memberSelect.value : "");
         closeIdentityMenu();
       });
       menu.querySelector('[data-report-cancel]').addEventListener("click", closeIdentityMenu);
     }
 
-    function submitReport(reason, details) {
+    function submitReport(reason, details, targetUsername) {
       if (!currentChat || currentChat.id === "chat-default") return;
       var other = getOtherParticipant(currentChat, user);
       if (!other) return;
-      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/report", { reason: reason, details: details })
+      apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/report", { reason: reason, details: details, targetUsername: targetUsername || other.username })
         .then(function(res) {
           if (res.ok) {
             // Show confirmation
@@ -3734,7 +3755,8 @@
       '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
       (message.editedAt ? '<small>Edited</small>' : '') +
       (message.body ? '<p>' + escapeHtml(message.body) + '</p>' : '') +
-      renderChatAttachments(message.attachments) + '</div>' +
+      renderChatAttachments(message.attachments) +
+      (isOwn && Array.isArray(message.readBy) && message.readBy.length ? '<span class="member-chat-read-receipt">Seen by ' + escapeHtml(message.readBy.map(function(reader) { return reader.displayName || reader.username; }).join(", ")) + '</span>' : '') + '</div>' +
     '</article>';
   }
 
@@ -3771,6 +3793,7 @@
   function normalizeChatMember(member, online) {
     var name = member.displayName || member.display_name || member.name || member.username || "Member";
     return {
+      id: member.id || member.contributorId || member.contributor_id || "",
       username: String(member.username || name).trim().replace(/\s+/g, "_"),
       displayName: name,
       title: member.title || "",
@@ -3873,7 +3896,14 @@
       messages: [],
       unreadCount: Number(conv.unreadCount || 0),
       updatedAt: conv.updatedAt || new Date().toISOString(),
-      lastMessage: conv.lastMessage || null
+      lastMessage: conv.lastMessage || null,
+      theme: conv.theme || "default",
+      quickEmoji: conv.quickEmoji || "👍",
+      mutedUntil: conv.mutedUntil || null,
+      readReceiptsEnabled: conv.readReceiptsEnabled !== false,
+      blocked: Boolean(conv.blocked),
+      restricted: Boolean(conv.restricted),
+      nicknames: Array.isArray(conv.nicknames) ? conv.nicknames : []
     };
   }
 
@@ -3964,7 +3994,8 @@
     if (!chat || chat.id === "chat-default") return "Community Chat";
     if (!chat.direct) return chat.title || getDefaultChatTitle(chat.members, user);
     var other = getOtherParticipant(chat, user);
-    return other ? (other.displayName || other.username || "Member") : (chat.title || "Community Chat");
+    var nickname = other && Array.isArray(chat.nicknames) ? chat.nicknames.find(function(item) { return item.target_id === other.id; }) : null;
+    return nickname ? nickname.nickname : (other ? (other.displayName || other.username || "Member") : (chat.title || "Community Chat"));
   }
 
   function getConversationAvatarHtml(chat, user, sizeClass) {
@@ -4042,6 +4073,20 @@
       throw new Error(res.data.error || "Message could not be sent.");
     }
     return res.data.message;
+  }
+
+  async function uploadMessengerAttachment(file) {
+    var formData = new FormData();
+    formData.append("file", file);
+    var response = await fetch("/api/uploads/messenger-media", {
+      method: "POST",
+      credentials: "same-origin",
+      body: formData
+    });
+    var data = {};
+    try { data = await response.json(); } catch (e) {}
+    if (!response.ok || !data.url) throw new Error(data.error || "The attachment could not be uploaded.");
+    return data;
   }
 
   async function markRemoteConversationRead(conversationId) {

@@ -1100,10 +1100,6 @@
           <span>Account Email</span>
           <strong>${escapeHtml(email || "Add an email for account recovery")}</strong>
         </div>
-        <div>
-          <span>Email Verification</span>
-          <strong>${user.emailVerified ? "Verified" : "Not verified yet"}</strong>
-        </div>
         <p>Password: protected and never displayed after saving.</p>
       `;
     }
