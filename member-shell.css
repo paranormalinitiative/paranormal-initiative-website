@@ -2826,8 +2826,13 @@ body.member-mode .member-explore-card {
 /* Education intro grid */
 body.member-mode .education-intro-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+}
+
+body.member-mode .balanced-two-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
 }
 
 /* ===== HOME PAGE MEMBER-MODE OVERRIDES ===== */
@@ -3085,6 +3090,7 @@ body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel
     body.member-mode .dashboard-grid,
     body.member-mode .portal-grid,
     body.member-mode .study-hub-layout,
+    body.member-mode .balanced-two-card-grid,
     body.member-mode .home-focus-grid,
     body.member-mode .home-pathway-group-balanced .home-card-grid,
     body.member-mode .education-intro-grid {
