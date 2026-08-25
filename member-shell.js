@@ -172,6 +172,7 @@
     // Set up floating community chat for signed-in members only.
     if (!user.guest) {
       await initFloatingChat(user);
+      setupMessengerNavigation();
       try {
         var params = new URLSearchParams(window.location.search);
         var openChatId = params.get("openChat");
@@ -186,6 +187,25 @@
 
     // Mark ready
     document.body.classList.add("member-ready");
+  }
+
+  function setupMessengerNavigation() {
+    function openMessenger() {
+      if (window.TPIMessenger && typeof window.TPIMessenger.show === "function") {
+        window.TPIMessenger.show();
+      }
+    }
+    document.querySelectorAll('a[href="#messenger"], [data-nav="chat"]').forEach(function(link) {
+      link.addEventListener("click", function(event) {
+        event.preventDefault();
+        openMessenger();
+        window.history.replaceState({}, "", window.location.pathname + window.location.search + "#messenger");
+      });
+    });
+    if (window.location.hash === "#messenger") openMessenger();
+    window.addEventListener("hashchange", function() {
+      if (window.location.hash === "#messenger") openMessenger();
+    });
   }
 
   // ---- Sidebar Injection ----
@@ -3091,6 +3111,10 @@
 
     window.TPIMessenger = {
       isReady: function() { return true; },
+      show: function() {
+        setMessengerCollapsed(false);
+        if (ownerEl) ownerEl.focus();
+      },
       openConversation: async function(conversationId) {
         if (!conversationId) return;
         closeIdentityMenu();
