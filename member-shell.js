@@ -2505,6 +2505,7 @@
     var membersEl = chat.querySelector("[data-chat-members]");
     var createEl = chat.querySelector("[data-chat-create]");
     var chatNameEl = chat.querySelector("[data-chat-name]");
+    var chatNameLabelEl = chatNameEl ? chatNameEl.closest("label") : null;
     var createTitleEl = chat.querySelector("[data-chat-create-title]");
     var createDescriptionEl = chat.querySelector("[data-chat-create-description]");
     var createCountEl = chat.querySelector("[data-chat-create-count]");
@@ -2685,25 +2686,28 @@
         return selectedMembers.has(member.username);
       }).map(function(member) { return member.username; });
       var title = chatNameEl ? chatNameEl.value.trim() : "";
+      var managingRoom = conversationBuilderMode === "manage";
       var creatingRoom = conversationBuilderMode === "room" || usernames.length > 1;
       if (!usernames.length) {
-        setConversationBuilderStatus("Choose at least one member.", true);
+        setConversationBuilderStatus(managingRoom ? "A room must keep at least two people. Add one member before saving." : "Choose at least one member.", true);
         return;
       }
-      if (creatingRoom && !title) {
+      if (!managingRoom && creatingRoom && !title) {
         setConversationBuilderStatus("Give this room a name before creating it.", true);
         if (chatNameEl) chatNameEl.focus();
         return;
       }
       setChatStatus("");
-      setConversationBuilderStatus("Creating " + (creatingRoom ? "room" : "chat") + "...");
+      setConversationBuilderStatus(managingRoom ? "Saving room members..." : "Creating " + (creatingRoom ? "room" : "chat") + "...");
       if (createSubmitEl) createSubmitEl.disabled = true;
       var createdChat = null;
       try {
-        var remote = await createRemoteConversation(title, usernames, !creatingRoom);
+        var remote = managingRoom
+          ? await replaceRemoteConversationMembers(currentChat.id, usernames)
+          : await createRemoteConversation(title, usernames, !creatingRoom);
         createdChat = normalizeRemoteConversation(remote);
       } catch (error) {
-        setConversationBuilderStatus(error.message || "The conversation could not be created. Please try again.", true);
+        setConversationBuilderStatus(error.message || (managingRoom ? "The room members could not be saved." : "The conversation could not be created. Please try again."), true);
         if (createSubmitEl) createSubmitEl.disabled = false;
         return;
       }
@@ -2945,22 +2949,26 @@
           '<span class="member-chat-presence ' + presenceClass + '">' + escapeHtml(selectedForRoom ? "Added to room" : presenceText) + '</span></span>' +
         '</button>';
       }).join("") : '<p class="member-chat-list-empty">No members found.</p>';
-      onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
-        button.addEventListener("click", async function() {
-          var member = roster.find(function(candidate) { return candidate.username === button.dataset.onlineMember; });
-          if (!member) return;
-          if (createEl && !createEl.hidden) {
-            if (selectedMembers.has(member.username)) selectedMembers.delete(member.username);
-            else selectedMembers.add(member.username);
-            setConversationBuilderStatus("");
-            renderOnline();
-            renderMemberPicker();
-            return;
-          }
-          await openOrCreateDirectConversation(member);
-        });
-      });
     }
+
+    onlineEl.addEventListener("click", async function(event) {
+      var button = event.target.closest("[data-online-member]");
+      if (!button || !onlineEl.contains(button)) return;
+      var requestedUsername = button.getAttribute("data-online-member") || "";
+      var member = roster.find(function(candidate) {
+        return normalizeChatUsername(candidate.username) === normalizeChatUsername(requestedUsername);
+      });
+      if (!member) return;
+      if (createEl && !createEl.hidden) {
+        if (selectedMembers.has(member.username)) selectedMembers.delete(member.username);
+        else selectedMembers.add(member.username);
+        setConversationBuilderStatus("");
+        renderOnline();
+        renderMemberPicker();
+        return;
+      }
+      await openOrCreateDirectConversation(member);
+    });
 
     if (memberSearchEl) {
       memberSearchEl.addEventListener("input", function() {
@@ -3074,26 +3082,30 @@
         return selectedMembers.has(member.username);
       }).length;
       var selectedLabel = selectedCount + (selectedCount === 1 ? " member selected" : " members selected");
-      createCountEl.textContent = conversationBuilderMode === "room"
-        ? selectedLabel + " · " + (selectedCount + 1) + " people total including you"
+      var totalCount = selectedCount + 1;
+      createCountEl.textContent = conversationBuilderMode === "room" || conversationBuilderMode === "manage"
+        ? selectedLabel + " · " + totalCount + (totalCount === 1 ? " person" : " people") + " total including you"
         : selectedLabel;
     }
 
     function openConversationBuilder(mode, membersToPreselect) {
       if (!createEl) return;
       if (chat.classList.contains("is-collapsed")) setMessengerCollapsed(false);
-      conversationBuilderMode = mode === "chat" ? "chat" : "room";
+      conversationBuilderMode = mode === "chat" ? "chat" : (mode === "manage" ? "manage" : "room");
       selectedMembers.clear();
       (membersToPreselect || []).forEach(function(member) {
         if (member && member.username && member.username !== user.username) selectedMembers.add(member.username);
       });
-      if (chatNameEl) chatNameEl.value = "";
-      if (createTitleEl) createTitleEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start a Chat";
-      if (createDescriptionEl) createDescriptionEl.textContent = conversationBuilderMode === "room"
-        ? "Name the room, then add at least one member from the left. You are included automatically."
-        : "Click one member in the left column for a direct chat, or select several people and name the room.";
+      if (chatNameEl) chatNameEl.value = conversationBuilderMode === "manage" && currentChat ? currentChat.title : "";
+      if (chatNameLabelEl) chatNameLabelEl.hidden = conversationBuilderMode === "manage";
+      if (createTitleEl) createTitleEl.textContent = conversationBuilderMode === "manage" ? "Manage People" : (conversationBuilderMode === "room" ? "Create Room" : "Start a Chat");
+      if (createDescriptionEl) createDescriptionEl.textContent = conversationBuilderMode === "manage"
+        ? "Click members in the left column to add or remove them from this room. Then save your changes."
+        : (conversationBuilderMode === "room"
+          ? "Name the room, then add at least one member from the left. You are included automatically."
+          : "Click one member in the left column for a direct chat, or select several people and name the room.");
       if (createSubmitEl) {
-        createSubmitEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start Chat";
+        createSubmitEl.textContent = conversationBuilderMode === "manage" ? "Save People" : (conversationBuilderMode === "room" ? "Create Room" : "Start Chat");
         createSubmitEl.disabled = false;
       }
       setConversationBuilderStatus("");
@@ -3113,6 +3125,7 @@
       chat.classList.remove("is-building-room");
       selectedMembers.clear();
       if (chatNameEl) chatNameEl.value = "";
+      if (chatNameLabelEl) chatNameLabelEl.hidden = false;
       setConversationBuilderStatus("");
       if (createSubmitEl) createSubmitEl.disabled = false;
       renderOnline();
@@ -3326,8 +3339,10 @@
         items.push({ action: "emoji", label: "Conversation Emoji" });
         if (isDirect) {
           items.push({ action: "nicknames", label: "Nicknames" });
+          items.push({ action: "create-group", label: "Create Room" });
+        } else if (currentChat.canManageMembers) {
+          items.push({ action: "manage-members", label: "Manage People" });
         }
-        items.push({ action: "create-group", label: "Create Room" });
       }
 
       if (hasConversation) items.push({ type: "separator" });
@@ -3483,6 +3498,8 @@
         openNicknameEditor();
       } else if (action === "create-group") {
         openCreateGroupFromDirect();
+      } else if (action === "manage-members") {
+        openManageRoomMembers();
       } else if (action === "mute") {
         keepMenuOpen = true;
         openMutePicker();
@@ -3781,6 +3798,12 @@
       openConversationBuilder("room", currentChat.members || []);
     }
 
+    function openManageRoomMembers() {
+      closeIdentityMenu();
+      if (!currentChat || currentChat.id === "chat-default" || currentChat.direct || !currentChat.canManageMembers) return;
+      openConversationBuilder("manage", currentChat.members || []);
+    }
+
     function openMutePicker() {
       if (!identityMenuEl) return;
       var menu = identityMenuEl.querySelector('[role="menu"]');
@@ -4061,6 +4084,8 @@
       id: conv.id,
       title: conv.title || "Community Chat",
       direct: Boolean(conv.direct),
+      createdById: conv.createdById || "",
+      canManageMembers: Boolean(conv.canManageMembers),
       members: Array.isArray(conv.members) ? conv.members.map(function(m) { return normalizeChatMember(m, Boolean(m.online)); }) : [],
       messages: [],
       unreadCount: Number(conv.unreadCount || 0),
@@ -4231,6 +4256,14 @@
     var res = await apiFetch("POST", "/api/conversations", { title: title, usernames: usernames, direct: isDirect });
     if (!res.ok || !res.data.conversation) {
       throw new Error(res.data.error || "The conversation could not be created.");
+    }
+    return res.data.conversation;
+  }
+
+  async function replaceRemoteConversationMembers(conversationId, usernames) {
+    var res = await apiFetch("PUT", "/api/conversations/" + encodeURIComponent(conversationId) + "/members", { usernames: usernames });
+    if (!res.ok || !res.data.conversation) {
+      throw new Error(res.data.error || "The room members could not be saved.");
     }
     return res.data.conversation;
   }

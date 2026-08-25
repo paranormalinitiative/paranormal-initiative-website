@@ -809,7 +809,7 @@ body.member-mode .member-floating-chat .member-chat-create {
 }
 
 .member-chat-online-list {
-    min-height: 0;
+    height: max-content;
     max-height: min(40vh, 240px);
     overflow-x: hidden;
     overflow-y: auto;

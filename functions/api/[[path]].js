@@ -50,6 +50,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
     if (request.method === "POST" && path === "/conversations") return requireMember(request, env, user => handleCreateConversation(request, env, user));
     if (request.method === "GET" && path === "/conversations/unread-count") return requireMember(request, env, user => handleConversationUnreadCount(env, user));
+    if (request.method === "PUT" && path.match(/^\/conversations\/[^/]+\/members$/)) return requireMember(request, env, user => handleReplaceConversationMembers(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+$/)) return requireMember(request, env, user => handleGetConversation(path, env, user));
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleListMessages(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleCreateMessage(path, request, env, user));
@@ -2384,7 +2385,7 @@ async function getDirectConversation(env, userA, userB) {
 
 async function handleListConversations(request, env, user) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT c.id, c.title, c.direct, c.created_at AS createdAt, c.updated_at AS updatedAt,
+    SELECT c.id, c.title, c.direct, c.created_by AS createdById, c.created_at AS createdAt, c.updated_at AS updatedAt,
            cp.theme, cp.quick_emoji AS quickEmoji, cp.muted_until AS mutedUntil,
            cp.read_receipts_enabled AS readReceiptsEnabled,
            CASE WHEN c.direct = 1 AND EXISTS (
@@ -2416,6 +2417,8 @@ async function handleListConversations(request, env, user) {
       id: row.id,
       title: row.title,
       direct: Boolean(row.direct),
+      createdById: row.createdById,
+      canManageMembers: !Boolean(row.direct) && (row.createdById === user.id || ["owner", "admin"].includes(user.role)),
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       members,
@@ -2445,6 +2448,8 @@ async function handleGetConversation(path, env, user) {
       id: access.conversation_id,
       title: access.title,
       direct: Boolean(access.direct),
+      createdById: access.created_by,
+      canManageMembers: !Boolean(access.direct) && (access.created_by === user.id || ["owner", "admin"].includes(user.role)),
       createdAt: access.created_at,
       updatedAt: access.updated_at,
       members,
@@ -2512,7 +2517,102 @@ async function handleCreateConversation(request, env, user) {
   await env.TPI_DB.batch(inserts);
 
   const responseMembers = await getConversationMembers(env, conversationId);
-  return json({ conversation: { id: conversationId, title: finalTitle, direct: isDirect, members: responseMembers } }, 201, { "Cache-Control": "no-store" });
+  return json({ conversation: {
+    id: conversationId,
+    title: finalTitle,
+    direct: isDirect,
+    createdById: user.id,
+    canManageMembers: !isDirect,
+    members: responseMembers
+  } }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleReplaceConversationMembers(path, request, env, user) {
+  const conversationId = path.replace(/^\/conversations\//, "").replace(/\/members$/, "");
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+  if (Boolean(access.direct)) return json({ error: "Direct-chat membership cannot be changed." }, 400);
+  const canManage = access.created_by === user.id || ["owner", "admin"].includes(user.role);
+  if (!canManage) return json({ error: "Only the room creator or an administrator can manage its members." }, 403);
+
+  const data = await readJson(request);
+  const usernames = Array.from(new Set(Array.isArray(data.usernames)
+    ? data.usernames.filter(Boolean).map(clean).filter(Boolean)
+    : [])).slice(0, 49);
+  const desiredMembers = [];
+  for (const username of usernames) {
+    const member = await getUserByUsername(env, username);
+    if (!member || !member.active) return json({ error: `Member ${username} was not found.` }, 404);
+    desiredMembers.push(member);
+  }
+
+  const desiredIds = new Set(desiredMembers.map(member => member.id));
+  desiredIds.add(access.created_by);
+  desiredIds.add(user.id);
+  if (desiredIds.size < 2) return json({ error: "A room must keep at least two people." }, 400);
+  if (desiredIds.size > 50) return json({ error: "A room can include up to 50 people." }, 400);
+
+  const { results: existingRows } = await env.TPI_DB.prepare(`
+    SELECT contributor_id AS contributorId
+    FROM conversation_participants
+    WHERE conversation_id = ?
+  `).bind(conversationId).all();
+  const existingIds = new Set((existingRows || []).map(row => row.contributorId));
+  const addedMembers = desiredMembers.filter(member => !existingIds.has(member.id));
+  const removedIds = Array.from(existingIds).filter(id => !desiredIds.has(id) && id !== access.created_by && id !== user.id);
+
+  for (const member of addedMembers) {
+    const isBlocked = await env.TPI_DB.prepare(`
+      SELECT 1 FROM member_blocks WHERE blocker_id = ? AND blocked_id = ?
+    `).bind(member.id, user.id).first();
+    if (isBlocked) return json({ error: `Cannot add ${member.username} to this room.` }, 403);
+  }
+
+  const statements = addedMembers.map(member => env.TPI_DB.prepare(`
+    INSERT OR IGNORE INTO conversation_participants (conversation_id, contributor_id, can_message)
+    VALUES (?, ?, ?)
+  `).bind(conversationId, member.id, member.can_message === 0 ? 0 : 1));
+  for (const contributorId of removedIds) {
+    statements.push(env.TPI_DB.prepare(`
+      DELETE FROM conversation_nicknames
+      WHERE conversation_id = ? AND (setter_id = ? OR target_id = ?)
+    `).bind(conversationId, contributorId, contributorId));
+    statements.push(env.TPI_DB.prepare(`
+      DELETE FROM message_read_state WHERE conversation_id = ? AND contributor_id = ?
+    `).bind(conversationId, contributorId));
+    statements.push(env.TPI_DB.prepare(`
+      DELETE FROM conversation_participants WHERE conversation_id = ? AND contributor_id = ?
+    `).bind(conversationId, contributorId));
+  }
+  statements.push(env.TPI_DB.prepare(`UPDATE conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = ?`).bind(conversationId));
+  await env.TPI_DB.batch(statements);
+
+  if (addedMembers.length) {
+    const actorName = user.display_name || user.username || "A member";
+    await env.TPI_DB.batch(addedMembers.map(member => env.TPI_DB.prepare(`
+      INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
+      VALUES (?, ?, ?, ?, ?, 'chat', ?)
+    `).bind(
+      crypto.randomUUID(),
+      member.id,
+      `Added to ${access.title || "a Messenger room"}`,
+      `${actorName} added you to this Messenger room.`,
+      `member-notifications.html?openChat=${encodeURIComponent(conversationId)}#messenger`,
+      user.id
+    )));
+  }
+
+  const members = await getConversationMembers(env, conversationId);
+  return json({ conversation: {
+    id: conversationId,
+    title: access.title,
+    direct: false,
+    createdById: access.created_by,
+    canManageMembers: true,
+    createdAt: access.created_at,
+    updatedAt: new Date().toISOString(),
+    members
+  } }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleListMessages(path, request, env, user) {
