@@ -3312,7 +3312,9 @@
       if (!identityMenuEl) return;
       var menu = identityMenuEl.querySelector('[role="menu"]');
       var items = [
-        { type: "label", label: "Messenger" }
+        { type: "label", label: "Messenger" },
+        { scope: "owner", action: "new-chat", label: "New Chat" },
+        { scope: "owner", action: "create-room", label: "Create Room" }
       ];
       var other = getOtherParticipant(currentChat, user);
       var isDirect = currentChat && currentChat.direct && !isGroupConversation(currentChat);
@@ -3339,7 +3341,6 @@
         items.push({ action: "emoji", label: "Conversation Emoji" });
         if (isDirect) {
           items.push({ action: "nicknames", label: "Nicknames" });
-          items.push({ action: "create-group", label: "Create Room" });
         } else if (currentChat.canManageMembers) {
           items.push({ action: "manage-members", label: "Manage People" });
         }
@@ -3460,7 +3461,11 @@
     async function handleOwnerAction(event) {
       var button = event.currentTarget;
       var action = button.dataset.ownerAction;
-      if (action === "close") {
+      if (action === "new-chat") {
+        openConversationBuilder("chat");
+      } else if (action === "create-room") {
+        openConversationBuilder("room");
+      } else if (action === "close") {
         setMessengerCollapsed(true);
       }
       closeOwnerMenu();
@@ -3501,8 +3506,6 @@
       } else if (action === "nicknames") {
         keepMenuOpen = true;
         openNicknameEditor();
-      } else if (action === "create-group") {
-        openCreateGroupFromDirect();
       } else if (action === "manage-members") {
         openManageRoomMembers();
       } else if (action === "mute") {
@@ -3793,14 +3796,6 @@
             renderChatList();
           }
         });
-    }
-
-    function openCreateGroupFromDirect() {
-      closeIdentityMenu();
-      if (!currentChat || currentChat.id === "chat-default") return;
-      // Carry the current participants into a clearly visible room builder;
-      // the creator can add more people and must give the new room a name.
-      openConversationBuilder("room", currentChat.members || []);
     }
 
     function openManageRoomMembers() {
