@@ -2441,20 +2441,19 @@
           '<div class="member-chat-section-label member-chat-list-label"><span>Chats</span></div>' +
           '<div class="member-chat-list" data-chat-list></div>' +
         '</aside>' +
-        '<section class="member-chat-create" data-chat-create role="dialog" aria-modal="true" aria-labelledby="messenger-room-builder-title" hidden>' +
+        '<section class="member-chat-thread">' +
+          '<section class="member-chat-create" data-chat-create role="dialog" aria-labelledby="messenger-room-builder-title" hidden>' +
             '<header class="member-chat-create-header">' +
               '<div><span class="member-chat-kicker">Messenger rooms</span><strong id="messenger-room-builder-title" data-chat-create-title>Create Room</strong></div>' +
               '<button type="button" data-chat-create-close aria-label="Close room builder">Close</button>' +
             '</header>' +
-            '<p data-chat-create-description>Name the room and choose at least two people to add.</p>' +
+            '<p data-chat-create-description>Click members in the left column to add or remove them.</p>' +
             '<label class="member-chat-create-name"><span>Room name</span><input type="text" data-chat-name maxlength="160" placeholder="Example: Investigation Team"></label>' +
-            '<input type="search" class="member-chat-member-search" data-chat-create-search placeholder="Search members" aria-label="Search members">' +
             '<span class="member-chat-create-count" data-chat-create-count>0 members selected</span>' +
-            '<div class="member-chat-member-list" data-chat-members></div>' +
+            '<div class="member-chat-member-list" data-chat-members aria-label="Selected room members"></div>' +
             '<p class="member-chat-create-status" data-chat-create-status role="status" aria-live="polite" hidden></p>' +
             '<button type="button" class="member-chat-create-submit" data-chat-start>Create Room</button>' +
-        '</section>' +
-        '<section class="member-chat-thread">' +
+          '</section>' +
           '<div class="member-chat-conversation-bar" data-chat-conversation-bar hidden>' +
             '<div class="member-chat-identity member-chat-active-identity" data-chat-identity aria-label="Active conversation">' + renderChatIdentity(currentChat, user) + '</div>' +
           '</div>' +
@@ -2517,7 +2516,6 @@
     var ownerEl = chat.querySelector("[data-chat-owner]");
     var conversationBarEl = chat.querySelector("[data-chat-conversation-bar]");
     var memberSearchEl = chat.querySelector("[data-chat-member-search]");
-    var createSearchEl = chat.querySelector("[data-chat-create-search]");
     var threadSearchEl = chat.querySelector("[data-chat-thread-search]");
     var searchInputEl = chat.querySelector("[data-chat-search-input]");
     var searchCountEl = chat.querySelector("[data-chat-search-count]");
@@ -2542,7 +2540,6 @@
     var conversationBuilderMode = "room";
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
     var memberSearchQuery = "";
-    var createSearchQuery = "";
     var activeSearchIndex = -1;
     var activeSearchMatches = [];
     var activeMessageSyncTimer = null;
@@ -2705,9 +2702,10 @@
       setChatStatus("");
       setConversationBuilderStatus("Creating " + (creatingRoom ? "room" : "chat") + "...");
       if (createSubmitEl) createSubmitEl.disabled = true;
+      var createdChat = null;
       try {
         var remote = await createRemoteConversation(title, usernames, !creatingRoom);
-        currentChat = normalizeRemoteConversation(remote);
+        createdChat = normalizeRemoteConversation(remote);
       } catch (error) {
         setConversationBuilderStatus(error.message || "The conversation could not be created. Please try again.", true);
         if (createSubmitEl) createSubmitEl.disabled = false;
@@ -2715,7 +2713,11 @@
       }
       closeConversationBuilder();
       await refreshChatListFromRemote();
-      await openChat(currentChat);
+      var savedCreatedChat = chatList.find(function(conversation) { return conversation.id === createdChat.id; }) || createdChat;
+      await openChat(savedCreatedChat);
+      saveCurrentChat(user, savedCreatedChat);
+      renderChatList();
+      if (inputEl) inputEl.focus();
     });
 
     function setMessengerCollapsed(collapsed) {
@@ -2924,15 +2926,6 @@
       lightboxImageEl.alt = "";
     });
 
-    chat.querySelector("[data-chat-members]").addEventListener("change", function (event) {
-      var checkbox = event.target.closest("[data-chat-member]");
-      if (!checkbox) return;
-      if (checkbox.checked) selectedMembers.add(checkbox.value);
-      else selectedMembers.delete(checkbox.value);
-      updateConversationBuilderCount();
-      setConversationBuilderStatus("");
-    });
-
     setupFloatingChatDrag(chat);
     setupFloatingChatResize(chat);
 
@@ -2945,18 +2938,29 @@
       });
       onlineEl.innerHTML = filtered.length ? filtered.map(function(member) {
         var online = Boolean(member.online);
+        var selectingForRoom = createEl && !createEl.hidden;
+        var selectedForRoom = selectingForRoom && selectedMembers.has(member.username);
         var presenceText = online ? "Online" : "Offline";
         var presenceClass = online ? "is-online" : "is-offline";
-        return '<button class="member-chat-online-person" type="button" data-online-member="' + escapeHtml(member.username) + '">' +
+        return '<button class="member-chat-online-person' + (selectedForRoom ? ' is-room-selected' : '') + '" type="button" data-online-member="' + escapeHtml(member.username) + '"' +
+          (selectingForRoom ? ' aria-pressed="' + (selectedForRoom ? 'true' : 'false') + '"' : '') + '>' +
           renderChatAvatar(member) +
           '<span class="member-chat-person-copy"><strong>' + escapeHtml(member.displayName) + '</strong>' +
-          '<span class="member-chat-presence ' + presenceClass + '">' + escapeHtml(presenceText) + '</span></span>' +
+          '<span class="member-chat-presence ' + presenceClass + '">' + escapeHtml(selectedForRoom ? "Added to room" : presenceText) + '</span></span>' +
         '</button>';
       }).join("") : '<p class="member-chat-list-empty">No members found.</p>';
       onlineEl.querySelectorAll("[data-online-member]").forEach(function(button) {
         button.addEventListener("click", async function() {
           var member = roster.find(function(candidate) { return candidate.username === button.dataset.onlineMember; });
           if (!member) return;
+          if (createEl && !createEl.hidden) {
+            if (selectedMembers.has(member.username)) selectedMembers.delete(member.username);
+            else selectedMembers.add(member.username);
+            setConversationBuilderStatus("");
+            renderOnline();
+            renderMemberPicker();
+            return;
+          }
           await openOrCreateDirectConversation(member);
         });
       });
@@ -3056,6 +3060,7 @@
     }
 
     function openSavedChat(saved) {
+      if (createEl && !createEl.hidden) closeConversationBuilder();
       openChat(saved);
       if (inputEl) inputEl.focus();
     }
@@ -3083,61 +3088,57 @@
       (membersToPreselect || []).forEach(function(member) {
         if (member && member.username && member.username !== user.username) selectedMembers.add(member.username);
       });
-      createSearchQuery = "";
-      if (createSearchEl) createSearchEl.value = "";
       if (chatNameEl) chatNameEl.value = "";
       if (createTitleEl) createTitleEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start a Chat";
       if (createDescriptionEl) createDescriptionEl.textContent = conversationBuilderMode === "room"
-        ? "Name the room and choose at least two people to add."
-        : "Choose one person for a direct chat, or choose several people and name the room.";
+        ? "Name the room, then click members in the left column to add or remove them."
+        : "Click one member in the left column for a direct chat, or select several people and name the room.";
       if (createSubmitEl) {
         createSubmitEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start Chat";
         createSubmitEl.disabled = false;
       }
       setConversationBuilderStatus("");
-      renderMemberPicker();
       createEl.hidden = false;
+      chat.classList.add("is-building-room");
+      renderOnline();
+      renderMemberPicker();
       window.setTimeout(function() {
         if (conversationBuilderMode === "room" && chatNameEl) chatNameEl.focus();
-        else if (createSearchEl) createSearchEl.focus();
+        else if (memberSearchEl) memberSearchEl.focus();
       }, 0);
     }
 
     function closeConversationBuilder() {
       if (!createEl) return;
       createEl.hidden = true;
+      chat.classList.remove("is-building-room");
       selectedMembers.clear();
       if (chatNameEl) chatNameEl.value = "";
-      if (createSearchEl) createSearchEl.value = "";
-      createSearchQuery = "";
       setConversationBuilderStatus("");
       if (createSubmitEl) createSubmitEl.disabled = false;
+      renderOnline();
     }
 
     function renderMemberPicker() {
-      var query = String(createSearchQuery || "").trim().toLowerCase();
-      membersEl.innerHTML = roster.filter(function(member) {
-        return member.username !== user.username;
-      }).filter(function(member) {
-        if (!query) return true;
-        return String(member.displayName || "").toLowerCase().indexOf(query) !== -1 ||
-          String(member.username || "").toLowerCase().indexOf(query) !== -1;
-      }).map(function(member) {
-        var checked = selectedMembers.has(member.username) ? " checked" : "";
-        return '<label class="member-chat-member-option">' +
-          '<input type="checkbox" value="' + escapeHtml(member.username) + '" data-chat-member' + checked + '>' +
+      var selectedRoster = roster.filter(function(member) {
+        return selectedMembers.has(member.username);
+      });
+      membersEl.innerHTML = selectedRoster.length ? selectedRoster.map(function(member) {
+        return '<div class="member-chat-member-option is-room-selected">' +
           renderChatAvatar(member) +
           '<span><strong>' + escapeHtml(member.displayName) + '</strong><small>' + escapeHtml(member.title || member.role || "Member") + '</small></span>' +
-        '</label>';
-      }).join("");
-      updateConversationBuilderCount();
-    }
-
-    if (createSearchEl) {
-      createSearchEl.addEventListener("input", function() {
-        createSearchQuery = createSearchEl.value;
-        renderMemberPicker();
+          '<button type="button" data-chat-member-remove="' + escapeHtml(member.username) + '" aria-label="Remove ' + escapeHtml(member.displayName) + ' from room">Remove</button>' +
+        '</div>';
+      }).join("") : '<p class="member-chat-list-empty">No members added yet. Click names in the left column.</p>';
+      membersEl.querySelectorAll("[data-chat-member-remove]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          selectedMembers.delete(button.dataset.chatMemberRemove);
+          setConversationBuilderStatus("");
+          renderOnline();
+          renderMemberPicker();
+        });
       });
+      updateConversationBuilderCount();
     }
 
     function renderMessages() {
