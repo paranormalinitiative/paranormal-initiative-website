@@ -3320,6 +3320,25 @@
       var isDirect = currentChat && currentChat.direct && !isGroupConversation(currentChat);
       var hasConversation = currentChat && currentChat.id !== "chat-default";
 
+      if (!hasConversation) {
+        var unavailableTitle = "Select a chat or room first.";
+        items.push({ type: "separator" });
+        items.push({ type: "label", label: "Conversation" });
+        items.push({ action: "search", label: "Search in Conversation", disabled: true, title: unavailableTitle });
+        items.push({ type: "separator" });
+        items.push({ action: "theme", label: "Change Theme", disabled: true, title: unavailableTitle });
+        items.push({ action: "emoji", label: "Conversation Emoji", disabled: true, title: unavailableTitle });
+        items.push({ action: "nicknames", label: "Nicknames", disabled: true, title: unavailableTitle });
+        items.push({ action: "manage-members", label: "Manage People", disabled: true, title: unavailableTitle });
+        items.push({ type: "separator" });
+        items.push({ action: "mute", label: "Mute Notifications", disabled: true, title: unavailableTitle });
+        items.push({ action: "read-receipts", label: "Read Receipts", disabled: true, title: unavailableTitle });
+        items.push({ type: "separator" });
+        items.push({ action: "remove", label: "Remove Chat or Room", disabled: true, title: unavailableTitle });
+        items.push({ type: "separator" });
+        items.push({ action: "report", label: "Report Conversation", disabled: true, title: unavailableTitle });
+      }
+
       if (hasConversation) {
         items.push({ type: "separator" });
         items.push({ type: "label", label: "Conversation: " + getConversationDisplayTitle(currentChat, user) });
@@ -3393,7 +3412,9 @@
             escapeHtml(item.label) + '</button>';
         }
         return '<button type="button" role="menuitem" data-identity-action="' + escapeHtml(item.action) + '"' +
-          (item.username ? ' data-identity-username="' + escapeHtml(item.username) + '"' : '') + '>' +
+          (item.username ? ' data-identity-username="' + escapeHtml(item.username) + '"' : '') +
+          (item.disabled ? ' disabled aria-disabled="true"' : '') +
+          (item.title ? ' title="' + escapeHtml(item.title) + '"' : '') + '>' +
           escapeHtml(item.label) + '</button>';
       }).join("");
       menu.querySelectorAll("[data-identity-action]").forEach(function(button) {

@@ -493,6 +493,15 @@ body.member-mode {
     outline: none;
 }
 
+.member-chat-identity-menu button:disabled,
+.member-chat-identity-menu button:disabled:hover,
+.member-chat-identity-menu button:disabled:focus {
+    color: #6f8294;
+    background: transparent;
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
 .member-chat-identity-menu [data-owner-action="close"] {
     margin-top: 4px;
     padding-top: 10px;
