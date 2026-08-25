@@ -958,6 +958,10 @@
     });
   }
 
+  function refreshNotificationAlert() {
+    window.dispatchEvent(new Event("tpi:notifications-changed"));
+  }
+
   function renderNotificationGuide(message = "No notifications right now.") {
     return `
       <div class="member-notification-empty">
@@ -2060,6 +2064,7 @@
       try {
         await window.TPIApi.markNotificationRead(id);
         await initMemberNotifications();
+        refreshNotificationAlert();
       } catch (error) {
         setStatus(error.message || "Notification could not be updated.", true);
       }
@@ -2076,6 +2081,7 @@
           try {
             await window.TPIApi.markNotificationRead("chat-" + conversationId);
             await initMemberNotifications();
+            refreshNotificationAlert();
           } catch (e) {}
         });
       } else {

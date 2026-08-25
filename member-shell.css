@@ -187,13 +187,32 @@ body.member-mode {
     margin-left: auto;
     min-width: 20px;
     padding: 2px 6px;
-    color: #061018;
-    background: #55c8ff;
+    color: #fff;
+    background: #ff4968;
     border-radius: 999px;
+    box-shadow: 0 0 0 2px #0b1016, 0 0 15px rgba(255, 73, 104, 0.78);
     font-size: 10px;
     font-weight: 900;
     line-height: 1.3;
     text-align: center;
+}
+
+.member-nav-link.has-unread-notifications {
+    color: #fff;
+    border-color: rgba(255, 73, 104, 0.72);
+    background: linear-gradient(90deg, rgba(255, 73, 104, 0.18), rgba(85, 200, 255, 0.08));
+    box-shadow: inset 3px 0 0 #ff4968, 0 0 18px rgba(255, 73, 104, 0.16);
+    animation: member-notification-pulse 1.8s ease-in-out infinite;
+}
+
+.member-nav-link.has-unread-notifications .nav-icon {
+    color: #ffd15c;
+    filter: drop-shadow(0 0 7px rgba(255, 209, 92, 0.9));
+}
+
+@keyframes member-notification-pulse {
+    0%, 100% { box-shadow: inset 3px 0 0 #ff4968, 0 0 10px rgba(255, 73, 104, 0.1); }
+    50% { box-shadow: inset 3px 0 0 #ff4968, 0 0 22px rgba(255, 73, 104, 0.38); }
 }
 
 /* ===== FLOATING COMMUNITY CHAT ===== */
@@ -1497,6 +1516,50 @@ body.member-mode #site-footer {
 .mobile-nav-link .mobile-nav-icon {
     font-size: 18px;
     line-height: 1;
+}
+
+.mobile-nav-link[data-nav="member-notifications"] {
+    position: relative;
+}
+
+.member-mobile-notification-badge {
+    position: absolute;
+    top: 0;
+    right: 3px;
+    min-width: 17px;
+    padding: 1px 5px;
+    color: #fff;
+    background: #ff4968;
+    border: 2px solid #0b1016;
+    border-radius: 999px;
+    box-shadow: 0 0 12px rgba(255, 73, 104, 0.85);
+    font-size: 9px;
+    line-height: 1.3;
+}
+
+.mobile-nav-link.has-unread-notifications {
+    color: #fff;
+}
+
+.mobile-nav-link.has-unread-notifications .mobile-nav-icon {
+    color: #ffd15c;
+    filter: drop-shadow(0 0 7px rgba(255, 209, 92, 0.9));
+    animation: member-notification-bell 1.8s ease-in-out infinite;
+}
+
+@keyframes member-notification-bell {
+    0%, 55%, 100% { transform: rotate(0); }
+    62% { transform: rotate(12deg); }
+    69% { transform: rotate(-12deg); }
+    76% { transform: rotate(7deg); }
+    83% { transform: rotate(-7deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .member-nav-link.has-unread-notifications,
+    .mobile-nav-link.has-unread-notifications .mobile-nav-icon {
+        animation: none;
+    }
 }
 
 /* ============================================================= */

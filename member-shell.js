@@ -157,15 +157,18 @@
     // Set role-gated navigation
     setupRoleGatedNav(user);
 
+    // Set up mobile nav before badges so desktop and mobile alerts update together.
+    injectMobileNav();
+
     // Set notification badge
     setupNotificationBadge();
+    startNotificationBadgePolling();
     setupExploreBadge();
 
     // Set up logout
     setupLogout();
 
-    // Set up mobile nav
-    injectMobileNav();
+    // Finish mobile navigation identity and role access.
     setupProfileLink(user);
     setupRoleGatedNav(user);
 
@@ -366,7 +369,8 @@
         '<a class="mobile-nav-link" href="member-home.html" data-nav="profile" data-nav-profile-mobile>' +
           '<span class="mobile-nav-icon">&#9786;</span>Profile</a>' +
         '<a class="mobile-nav-link" href="member-notifications.html" data-nav="member-notifications">' +
-          '<span class="mobile-nav-icon">&#128276;</span>Alerts</a>' +
+          '<span class="mobile-nav-icon">&#128276;</span>Alerts' +
+          '<span class="member-mobile-notification-badge" data-notification-count hidden>0</span></a>' +
         '<a class="mobile-nav-link" href="member-dashboard.html" data-nav="settings">' +
           '<span class="mobile-nav-icon">&#9881;</span>Settings</a>' +
       '</div>';
@@ -381,25 +385,47 @@
     });
   }
 
+  var notificationBadgeRefreshInFlight = false;
+  var notificationBadgeTimer = null;
+
   async function setupNotificationBadge() {
-    var badge = document.querySelector("[data-notification-count]");
-    if (!badge) return;
+    var badges = Array.from(document.querySelectorAll("[data-notification-count]"));
+    if (!badges.length || notificationBadgeRefreshInFlight) return;
+    notificationBadgeRefreshInFlight = true;
     try {
       var resp = await fetch("/api/notifications/unread-count", { credentials: "same-origin", cache: "no-store" });
       if (!resp.ok) {
-        renderNotificationBadge(badge, 0);
+        renderNotificationBadges(badges, 0);
         return;
       }
       var data = await resp.json();
-      renderNotificationBadge(badge, Number(data.unreadCount || 0));
+      renderNotificationBadges(badges, Number(data.unreadCount || 0));
     } catch (e) {
-      renderNotificationBadge(badge, 0);
+      renderNotificationBadges(badges, 0);
+    } finally {
+      notificationBadgeRefreshInFlight = false;
     }
   }
 
-  function renderNotificationBadge(badge, count) {
-    badge.textContent = count > 99 ? "99+" : String(count);
-    badge.hidden = count <= 0;
+  function renderNotificationBadges(badges, count) {
+    badges.forEach(function(badge) {
+      badge.textContent = count > 99 ? "99+" : String(count);
+      badge.hidden = count <= 0;
+      var link = badge.closest("a");
+      if (!link) return;
+      link.classList.toggle("has-unread-notifications", count > 0);
+      link.setAttribute("aria-label", count > 0 ? "Notifications, " + count + " unread" : "Notifications");
+    });
+  }
+
+  function startNotificationBadgePolling() {
+    if (notificationBadgeTimer) return;
+    notificationBadgeTimer = window.setInterval(setupNotificationBadge, 15000);
+    window.addEventListener("focus", setupNotificationBadge);
+    window.addEventListener("tpi:notifications-changed", setupNotificationBadge);
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden) setupNotificationBadge();
+    });
   }
 
   async function setupExploreBadge() {
