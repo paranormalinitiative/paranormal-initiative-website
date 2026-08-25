@@ -3367,7 +3367,7 @@
 
       // Section 4: Non-destructive hide
       if (hasConversation) {
-        items.push({ action: "remove", label: "Hide Chat" });
+        items.push({ action: "remove", label: isDirect ? "Remove Chat" : "Remove Room" });
       }
 
       if (hasConversation) items.push({ type: "separator" });
@@ -3477,8 +3477,13 @@
         openThreadSearch();
       } else if (action === "remove") {
         if (!currentChat || currentChat.id === "chat-default") return;
-        if (!window.confirm("Hide this chat from your Messenger? Its complete history will be retained securely and a new message will make it visible again.")) return;
-        await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/hide");
+        var conversationKind = currentChat.direct ? "chat" : "room";
+        if (!window.confirm("Remove this " + conversationKind + " from your Messenger? Its complete history will be retained securely and a new message will make it visible again.")) return;
+        var removeResult = await apiFetch("POST", "/api/conversations/" + encodeURIComponent(currentChat.id) + "/hide");
+        if (!removeResult.ok) {
+          setChatStatus(removeResult.data.error || "The " + conversationKind + " could not be removed.", true);
+          return;
+        }
         chatList = chatList.filter(function(item) { return item.id !== currentChat.id; });
         replaceStoredChats(user, chatList);
         currentChat = createEmptyChat(user);
