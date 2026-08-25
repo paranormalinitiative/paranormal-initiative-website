@@ -2457,8 +2457,15 @@ async function handleGetConversation(path, env, user) {
 async function handleCreateConversation(request, env, user) {
   const data = await readJson(request);
   const title = clean(data.title).slice(0, 160);
-  const usernames = Array.isArray(data.usernames) ? data.usernames.filter(Boolean).map(clean) : [];
-  const isDirect = data.direct === true || usernames.length === 1;
+  const usernames = Array.from(new Set(Array.isArray(data.usernames)
+    ? data.usernames.filter(Boolean).map(clean).filter(username => username && username !== user.username)
+    : [])).slice(0, 49);
+  const isDirect = usernames.length === 1;
+
+  if (!usernames.length) return json({ error: "Choose at least one member." }, 400);
+  if (data.direct === true && usernames.length !== 1) return json({ error: "A direct chat can include only one other member." }, 400);
+  if (!isDirect && usernames.length < 2) return json({ error: "A room needs at least two other members." }, 400);
+  if (!isDirect && !title) return json({ error: "A room name is required." }, 400);
 
   const accessError = await getMemberActionAccessError(env, user, "message");
   if (accessError) return json({ error: accessError }, 403);
@@ -2775,8 +2782,11 @@ async function handleUpdateConversationPreferences(path, request, env, user) {
   const params = [];
 
   if (data.theme !== undefined) {
+    const allowedThemes = ["default", "midnight", "slate", "deep-blue", "purple", "green", "amber", "warm", "flame"];
+    const theme = clean(data.theme);
+    if (!allowedThemes.includes(theme)) return json({ error: "That Messenger theme is not available." }, 400);
     updates.push("theme = ?");
-    params.push(data.theme);
+    params.push(theme);
   }
   if (data.quickEmoji !== undefined) {
     updates.push("quick_emoji = ?");

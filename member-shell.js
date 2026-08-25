@@ -2440,15 +2440,20 @@
           '<div class="member-chat-online-list" data-chat-online></div>' +
           '<div class="member-chat-section-label member-chat-list-label"><span>Chats</span></div>' +
           '<div class="member-chat-list" data-chat-list></div>' +
-          '<section class="member-chat-create" data-chat-create hidden>' +
-            '<span class="member-chat-section-label">Create Chat <button type="button" data-chat-create-close>Hide</button></span>' +
-            '<p>Add members you want in this chat.</p>' +
-            '<input type="text" data-chat-name placeholder="Chat name, optional">' +
-            '<input type="search" class="member-chat-member-search" data-chat-create-search placeholder="Search members" aria-label="Search members">' +
-            '<div class="member-chat-member-list" data-chat-members></div>' +
-            '<button type="button" data-chat-start>Start Chat</button>' +
-          '</section>' +
         '</aside>' +
+        '<section class="member-chat-create" data-chat-create role="dialog" aria-modal="true" aria-labelledby="messenger-room-builder-title" hidden>' +
+            '<header class="member-chat-create-header">' +
+              '<div><span class="member-chat-kicker">Messenger rooms</span><strong id="messenger-room-builder-title" data-chat-create-title>Create Room</strong></div>' +
+              '<button type="button" data-chat-create-close aria-label="Close room builder">Close</button>' +
+            '</header>' +
+            '<p data-chat-create-description>Name the room and choose at least two people to add.</p>' +
+            '<label class="member-chat-create-name"><span>Room name</span><input type="text" data-chat-name maxlength="160" placeholder="Example: Investigation Team"></label>' +
+            '<input type="search" class="member-chat-member-search" data-chat-create-search placeholder="Search members" aria-label="Search members">' +
+            '<span class="member-chat-create-count" data-chat-create-count>0 members selected</span>' +
+            '<div class="member-chat-member-list" data-chat-members></div>' +
+            '<p class="member-chat-create-status" data-chat-create-status role="status" aria-live="polite" hidden></p>' +
+            '<button type="button" class="member-chat-create-submit" data-chat-start>Create Room</button>' +
+        '</section>' +
         '<section class="member-chat-thread">' +
           '<div class="member-chat-conversation-bar" data-chat-conversation-bar hidden>' +
             '<div class="member-chat-identity member-chat-active-identity" data-chat-identity aria-label="Active conversation">' + renderChatIdentity(currentChat, user) + '</div>' +
@@ -2501,6 +2506,11 @@
     var membersEl = chat.querySelector("[data-chat-members]");
     var createEl = chat.querySelector("[data-chat-create]");
     var chatNameEl = chat.querySelector("[data-chat-name]");
+    var createTitleEl = chat.querySelector("[data-chat-create-title]");
+    var createDescriptionEl = chat.querySelector("[data-chat-create-description]");
+    var createCountEl = chat.querySelector("[data-chat-create-count]");
+    var createStatusEl = chat.querySelector("[data-chat-create-status]");
+    var createSubmitEl = chat.querySelector("[data-chat-start]");
     var messagesEl = chat.querySelector("[data-chat-messages]");
     var identityEl = chat.querySelector("[data-chat-identity]");
     var identityMenuEl = chat.querySelector("[data-chat-identity-menu]");
@@ -2529,6 +2539,7 @@
     var voiceRecorder = null;
     var voiceChunks = [];
     var editingMessageIndex = -1;
+    var conversationBuilderMode = "room";
     var selectedMembers = new Set(currentChat.members.map(function(member) { return member.username; }));
     var memberSearchQuery = "";
     var createSearchQuery = "";
@@ -2667,32 +2678,43 @@
     });
 
     chat.querySelector("[data-chat-new]").addEventListener("click", function () {
-      createEl.hidden = !createEl.hidden;
+      openConversationBuilder("chat");
     });
 
-    chat.querySelector("[data-chat-create-close]").addEventListener("click", function () {
-      createEl.hidden = true;
-    });
+    chat.querySelector("[data-chat-create-close]").addEventListener("click", closeConversationBuilder);
 
     chat.querySelector("[data-chat-start]").addEventListener("click", async function () {
-      var members = roster.filter(function(member) {
-        return selectedMembers.has(member.username) || member.username === user.username;
-      });
-      if (!members.some(function(member) { return member.username === user.username; })) {
-        members.unshift(normalizeChatMember(user, true));
-      }
-      var title = chatNameEl ? chatNameEl.value : "";
-      var usernames = members.filter(function(member) { return member.username !== user.username; }).map(function(member) { return member.username; });
-      setChatStatus("");
-      try {
-        var remote = await createRemoteConversation(title, usernames, usernames.length === 1);
-        currentChat = normalizeRemoteConversation(remote);
-      } catch (error) {
-        setChatStatus(error.message || "The conversation could not be created. Please try again.", true);
+      var usernames = roster.filter(function(member) {
+        return selectedMembers.has(member.username);
+      }).map(function(member) { return member.username; });
+      var title = chatNameEl ? chatNameEl.value.trim() : "";
+      var creatingRoom = conversationBuilderMode === "room" || usernames.length > 1;
+      if (!usernames.length) {
+        setConversationBuilderStatus("Choose at least one member.", true);
         return;
       }
-      createEl.hidden = true;
-      if (chatNameEl) chatNameEl.value = "";
+      if (creatingRoom && usernames.length < 2) {
+        setConversationBuilderStatus("A room needs at least two other members.", true);
+        return;
+      }
+      if (creatingRoom && !title) {
+        setConversationBuilderStatus("Give this room a name before creating it.", true);
+        if (chatNameEl) chatNameEl.focus();
+        return;
+      }
+      setChatStatus("");
+      setConversationBuilderStatus("Creating " + (creatingRoom ? "room" : "chat") + "...");
+      if (createSubmitEl) createSubmitEl.disabled = true;
+      try {
+        var remote = await createRemoteConversation(title, usernames, !creatingRoom);
+        currentChat = normalizeRemoteConversation(remote);
+      } catch (error) {
+        setConversationBuilderStatus(error.message || "The conversation could not be created. Please try again.", true);
+        if (createSubmitEl) createSubmitEl.disabled = false;
+        return;
+      }
+      closeConversationBuilder();
+      await refreshChatListFromRemote();
       await openChat(currentChat);
     });
 
@@ -2907,6 +2929,8 @@
       if (!checkbox) return;
       if (checkbox.checked) selectedMembers.add(checkbox.value);
       else selectedMembers.delete(checkbox.value);
+      updateConversationBuilderCount();
+      setConversationBuilderStatus("");
     });
 
     setupFloatingChatDrag(chat);
@@ -3036,6 +3060,60 @@
       if (inputEl) inputEl.focus();
     }
 
+    function setConversationBuilderStatus(message, isError) {
+      if (!createStatusEl) return;
+      createStatusEl.textContent = message || "";
+      createStatusEl.hidden = !message;
+      createStatusEl.classList.toggle("is-error", Boolean(isError));
+    }
+
+    function updateConversationBuilderCount() {
+      if (!createCountEl) return;
+      var selectedCount = roster.filter(function(member) {
+        return selectedMembers.has(member.username);
+      }).length;
+      createCountEl.textContent = selectedCount + (selectedCount === 1 ? " member selected" : " members selected");
+    }
+
+    function openConversationBuilder(mode, membersToPreselect) {
+      if (!createEl) return;
+      if (chat.classList.contains("is-collapsed")) setMessengerCollapsed(false);
+      conversationBuilderMode = mode === "chat" ? "chat" : "room";
+      selectedMembers.clear();
+      (membersToPreselect || []).forEach(function(member) {
+        if (member && member.username && member.username !== user.username) selectedMembers.add(member.username);
+      });
+      createSearchQuery = "";
+      if (createSearchEl) createSearchEl.value = "";
+      if (chatNameEl) chatNameEl.value = "";
+      if (createTitleEl) createTitleEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start a Chat";
+      if (createDescriptionEl) createDescriptionEl.textContent = conversationBuilderMode === "room"
+        ? "Name the room and choose at least two people to add."
+        : "Choose one person for a direct chat, or choose several people and name the room.";
+      if (createSubmitEl) {
+        createSubmitEl.textContent = conversationBuilderMode === "room" ? "Create Room" : "Start Chat";
+        createSubmitEl.disabled = false;
+      }
+      setConversationBuilderStatus("");
+      renderMemberPicker();
+      createEl.hidden = false;
+      window.setTimeout(function() {
+        if (conversationBuilderMode === "room" && chatNameEl) chatNameEl.focus();
+        else if (createSearchEl) createSearchEl.focus();
+      }, 0);
+    }
+
+    function closeConversationBuilder() {
+      if (!createEl) return;
+      createEl.hidden = true;
+      selectedMembers.clear();
+      if (chatNameEl) chatNameEl.value = "";
+      if (createSearchEl) createSearchEl.value = "";
+      createSearchQuery = "";
+      setConversationBuilderStatus("");
+      if (createSubmitEl) createSubmitEl.disabled = false;
+    }
+
     function renderMemberPicker() {
       var query = String(createSearchQuery || "").trim().toLowerCase();
       membersEl.innerHTML = roster.filter(function(member) {
@@ -3052,6 +3130,7 @@
           '<span><strong>' + escapeHtml(member.displayName) + '</strong><small>' + escapeHtml(member.title || member.role || "Member") + '</small></span>' +
         '</label>';
       }).join("");
+      updateConversationBuilderCount();
     }
 
     if (createSearchEl) {
@@ -3248,7 +3327,7 @@
         if (isDirect) {
           items.push({ action: "nicknames", label: "Nicknames" });
         }
-        items.push({ action: "create-group", label: "Create Group" });
+        items.push({ action: "create-group", label: "Create Room" });
       }
 
       if (hasConversation) items.push({ type: "separator" });
@@ -3573,22 +3652,24 @@
       if (!identityMenuEl) return;
       var menu = identityMenuEl.querySelector('[role="menu"]');
       var themes = [
-        { id: 'default', label: 'TPI Default', colors: ['#0b1016', '#55c8ff'] },
-        { id: 'midnight', label: 'Midnight', colors: ['#06080c', '#4a90d9'] },
-        { id: 'slate', label: 'Slate', colors: ['#0e151c', '#5c8db5'] },
-        { id: 'deep-blue', label: 'Deep Blue', colors: ['#081220', '#3b82c7'] },
-        { id: 'purple', label: 'Purple', colors: ['#12081c', '#8b5cf6'] },
-        { id: 'green', label: 'Green', colors: ['#081810', '#22c55e'] },
-        { id: 'warm', label: 'Warm', colors: ['#1c1008', '#f59e0b'] }
+        { id: 'default', label: 'TPI Command', description: 'Original black and electric blue', colors: ['#05070a', '#55c8ff'] },
+        { id: 'midnight', label: 'Midnight Signal', description: 'Deep navy and spectral blue', colors: ['#030711', '#397dcc'] },
+        { id: 'slate', label: 'Storm Watch', description: 'Charcoal, steel, and cool light', colors: ['#111820', '#7798b8'] },
+        { id: 'deep-blue', label: 'Abyss Current', description: 'Dark ocean blue and cyan', colors: ['#020b17', '#16b8e6'] },
+        { id: 'purple', label: 'Violet Veil', description: 'Black violet and luminous purple', colors: ['#12051d', '#a855f7'] },
+        { id: 'green', label: 'Ectoplasm Glow', description: 'Black green and vivid emerald', colors: ['#031109', '#34d173'] },
+        { id: 'amber', label: 'Golden Lantern', description: 'Burnished gold and warm amber', colors: ['#1a0e02', '#ffc247'] },
+        { id: 'warm', label: 'Ember Watch', description: 'Smoldering orange and copper', colors: ['#1c0802', '#f47b20'] },
+        { id: 'flame', label: 'Burning Flame', description: 'Blackened red, orange, and firelight', colors: ['#170202', '#ff4d00'] }
       ];
       var currentTheme = currentChat && currentChat.theme ? currentChat.theme : 'default';
 
-      menu.innerHTML = themes.map(function(t) {
+      menu.innerHTML = '<span class="member-chat-menu-label">Change Theme</span><p class="member-chat-theme-help">Changes the complete Messenger appearance for you.</p>' + themes.map(function(t) {
         var isActive = t.id === currentTheme;
-        return '<button type="button" role="menuitem" data-theme-action="' + escapeHtml(t.id) + '"' +
+        return '<button class="member-chat-theme-choice" type="button" role="menuitem" data-theme-action="' + escapeHtml(t.id) + '"' +
           (isActive ? ' aria-current="true"' : '') + '>' +
           '<span class="theme-swatch" style="background: linear-gradient(90deg, ' + t.colors[0] + ', ' + t.colors[1] + ');"></span>' +
-          escapeHtml(t.label) + (isActive ? ' ✓' : '') + '</button>';
+          '<span><strong>' + escapeHtml(t.label) + (isActive ? ' ✓' : '') + '</strong><small>' + escapeHtml(t.description) + '</small></span></button>';
       }).join("");
 
       menu.querySelectorAll("[data-theme-action]").forEach(function(button) {
@@ -3694,13 +3775,10 @@
 
     function openCreateGroupFromDirect() {
       closeIdentityMenu();
-      // Open the room builder with every member of the current conversation pre-selected.
-      var createEl = chat.querySelector("[data-chat-create]");
-      if (!createEl || !currentChat || currentChat.id === "chat-default") return;
-      createEl.hidden = false;
-      selectedMembers.clear();
-      (currentChat.members || []).forEach(function(member) { selectedMembers.add(member.username); });
-      renderMemberPicker();
+      if (!currentChat || currentChat.id === "chat-default") return;
+      // Carry the current participants into a clearly visible room builder;
+      // the creator can add more people and must give the new room a name.
+      openConversationBuilder("room", currentChat.members || []);
     }
 
     function openMutePicker() {
