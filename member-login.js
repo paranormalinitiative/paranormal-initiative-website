@@ -882,9 +882,9 @@
     warning: { label: "Administration Warning", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
     post: { label: "New Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "community-forum.html?member=1" },
     forum_post: { label: "New Forum Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "community-forum.html?member=1" },
-    contribution: { label: "Educational Content", categoryLabel: "Forum & Educational Content", category: "education", tone: "content", href: "education-center.html" },
-    article: { label: "Educational Content", categoryLabel: "Forum & Educational Content", category: "education", tone: "content", href: "education-center.html" },
-    education: { label: "Educational Content", categoryLabel: "Forum & Educational Content", category: "education", tone: "content", href: "education-center.html" },
+    contribution: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
+    article: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
+    education: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
     video: { label: "New Video", categoryLabel: "New Videos", category: "videos", tone: "media", href: "tpi-videos.html?member=1" },
     photo: { label: "New Photo", categoryLabel: "New Photos", category: "photos", tone: "media", href: "explore.html" },
     chat: { label: "New Chat Message", categoryLabel: "Messages & Chat", category: "chat", tone: "chat", href: "#messenger" },
@@ -894,7 +894,7 @@
   const notificationGuide = [
     { type: "admin", title: "Administration notices", body: "Profile requests, account warnings, membership access changes, and direct messages from authorized admins appear here.", href: "member-dashboard.html" },
     { type: "forum_post", title: "New posts", body: "Forum posts open the exact topic and reply that created the notice.", href: "community-forum.html?member=1" },
-    { type: "education", title: "Forum & educational content", body: "Educational papers and contributed content open directly at the published item.", href: "education-center.html" },
+    { type: "education", title: "Educational content", body: "Educational papers and contributed content open directly at the published item.", href: "education-center.html" },
     { type: "video", title: "New videos", body: "TPI video and live content alerts will appear here when video notifications are enabled.", href: "tpi-videos.html?member=1" },
     { type: "photo", title: "New photos", body: "Photo/media updates from the community feed will appear here when media notifications are enabled.", href: "explore.html" },
     { type: "chat", title: "Messages and chat", body: "Message notices open the exact direct chat or group room.", href: "#messenger" }
