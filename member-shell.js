@@ -4176,7 +4176,15 @@
       var other = getOtherParticipant(chat, user);
       return renderChatAvatar(other || { displayName: chat.title }, sizeClass);
     }
-    return '<span class="member-chat-stack">' + (chat.members || []).slice(0, 3).map(renderChatAvatar).join("") + '</span>';
+    var roomMembers = Array.isArray(chat.members) ? chat.members : [];
+    var visibleMembers = roomMembers.slice(0, 2).map(function(member) {
+      return renderChatAvatar(member, "", false);
+    }).join("");
+    var remainingCount = Math.max(0, roomMembers.length - 2);
+    var remainingBadge = remainingCount
+      ? '<span class="member-chat-stack-count" aria-label="' + remainingCount + ' more ' + (remainingCount === 1 ? 'member' : 'members') + '">+' + remainingCount + '</span>'
+      : '';
+    return '<span class="member-chat-stack" aria-label="Room with ' + roomMembers.length + ' members">' + visibleMembers + remainingBadge + '</span>';
   }
 
   function renderChatIdentity(chat, user) {
@@ -4376,13 +4384,14 @@
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 
-  function renderChatAvatar(member, sizeClass) {
+  function renderChatAvatar(member, sizeClass, showPresence) {
     var name = member.displayName || member.username || "Member";
     var initials = getMemberInitials(name) || "M";
     var image = member.photoUrl
       ? '<img src="' + escapeHtml(member.photoUrl) + '" alt="' + escapeHtml(name) + '">'
       : '<span>' + escapeHtml(initials) + '</span>';
-    return '<span class="member-chat-avatar' + (sizeClass ? " " + sizeClass : "") + '">' + image + (member.online ? '<i aria-hidden="true"></i>' : '') + '</span>';
+    var presenceVisible = showPresence !== false && member.online;
+    return '<span class="member-chat-avatar' + (sizeClass ? " " + sizeClass : "") + '">' + image + (presenceVisible ? '<i aria-hidden="true"></i>' : '') + '</span>';
   }
 
   // Identity A — persistent signed-in Messenger owner.
