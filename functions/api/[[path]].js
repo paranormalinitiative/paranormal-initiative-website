@@ -53,6 +53,8 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+$/)) return requireMember(request, env, user => handleGetConversation(path, env, user));
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleListMessages(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleCreateMessage(path, request, env, user));
+    if (request.method === "PUT" && path.match(/^\/conversations\/[^/]+\/messages\/[^/]+$/)) return requireMember(request, env, user => handleUpdateMessage(path, request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/conversations\/[^/]+\/messages\/[^/]+$/)) return requireMember(request, env, user => handleRemoveMessage(path, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkConversationRead(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/hide$/)) return requireMember(request, env, user => handleHideConversation(path, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unhide$/)) return requireMember(request, env, user => handleUnhideConversation(path, env, user));
@@ -425,6 +427,61 @@ async function handleAdminSendMemberNotification(path, request, env, actingUser)
   return json({ notification: { id, username: target.username, title, body, actionHref, read: false } });
 }
 
+async function notifyActiveMembers(env, notification) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id FROM contributors WHERE active = 1 AND id != ?
+  `).bind(notification.excludeContributorId || "").all();
+  const recipients = results || [];
+  if (!recipients.length) return 0;
+  await env.TPI_DB.batch(recipients.map(recipient => env.TPI_DB.prepare(`
+    INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    crypto.randomUUID(),
+    recipient.id,
+    clean(notification.title).slice(0, 160),
+    clean(notification.body).slice(0, 500),
+    clean(notification.actionHref).slice(0, 500),
+    clean(notification.type).slice(0, 60),
+    notification.createdBy || null
+  )));
+  return recipients.length;
+}
+
+async function createForumContentNotifications(env, user, content) {
+  const actionHref = `community-forum.html?member=1&topic=${encodeURIComponent(content.topicId)}&post=${encodeURIComponent(content.postId)}`;
+  const authorName = user.display_name || user.username || "A member";
+  await notifyActiveMembers(env, {
+    title: `${authorName} posted in ${content.topicTitle || "the forum"}`,
+    body: clean(content.body).slice(0, 180),
+    actionHref,
+    type: "forum_post",
+    createdBy: user.id,
+    excludeContributorId: user.id
+  });
+  const attachments = Array.isArray(content.attachments) ? content.attachments : [];
+  if (attachments.some(item => item.mediaType === "image")) {
+    await notifyActiveMembers(env, {
+      title: `${authorName} added new photos`,
+      body: `Open the exact forum post in ${content.topicTitle || "the community"}.`,
+      actionHref,
+      type: "photo",
+      createdBy: user.id,
+      excludeContributorId: user.id
+    });
+  }
+  if (attachments.some(item => item.mediaType === "video")) {
+    await notifyActiveMembers(env, {
+      title: `${authorName} added a new video`,
+      body: `Open the exact forum post in ${content.topicTitle || "the community"}.`,
+      actionHref,
+      type: "video",
+      createdBy: user.id,
+      excludeContributorId: user.id
+    });
+  }
+}
+
 async function handleListNotifications(env, user) {
   const { results } = await env.TPI_DB.prepare(`
     SELECT id, title, body, action_href AS actionHref, type, read_at AS readAt, created_at AS createdAt
@@ -437,10 +494,10 @@ async function handleListNotifications(env, user) {
 
   const chatNotifications = await getChatNotifications(env, user);
   const allNotifications = notifications.concat(chatNotifications).sort((a, b) => {
-    const aTime = a.createdAt || "";
-    const bTime = b.createdAt || "";
+    const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
     if (a.read !== b.read) return a.read ? 1 : -1;
-    return aTime > bTime ? -1 : (aTime < bTime ? 1 : 0);
+    return bTime - aTime;
   }).slice(0, 100);
 
   return json({ notifications: allNotifications }, 200, { "Cache-Control": "no-store" });
@@ -1061,6 +1118,7 @@ async function handleCreateArticle(request, env, user) {
   const author = clean(data.author);
   const source = clean(data.source);
   const labels = clean(data.labels);
+  const existingArticle = await env.TPI_DB.prepare("SELECT status FROM articles WHERE id = ?").bind(id).first();
   await env.TPI_DB.prepare(`
     INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
@@ -1092,6 +1150,17 @@ async function handleCreateArticle(request, env, user) {
     status,
     user.id
   ).run();
+
+  if (status === "published" && existingArticle?.status !== "published") {
+    await notifyActiveMembers(env, {
+      title: `New educational content: ${title}`,
+      body: subtitle || `${contributionType} by ${author || user.display_name || user.username}`,
+      actionHref: href,
+      type: "education",
+      createdBy: user.id,
+      excludeContributorId: user.id
+    });
+  }
 
   return json({ article: { id, href, destination, title, subtitle, contributionType, author, source, labels, status } });
 }
@@ -1618,6 +1687,7 @@ async function handleCreateForumTopic(request, env, user) {
       .bind(postId, topicId, user.id, body)
   ]);
   await insertForumAttachments(env, postId, attachments);
+  await createForumContentNotifications(env, user, { topicId, postId, topicTitle: title, body, attachments });
 
   return json({ topic: { id: topicId, categoryId, title, status: "open" }, post: { id: postId, topicId, body, attachments } });
 }
@@ -1631,7 +1701,7 @@ async function handleCreateForumPost(path, request, env, user) {
   const attachments = sanitizeForumAttachments(data.attachments);
   if (!topicId || !body) return json({ error: "Topic id and message are required." }, 400);
 
-  const topic = await env.TPI_DB.prepare("SELECT id, status FROM forum_topics WHERE id = ? AND status NOT IN ('deleted', 'inactive')").bind(topicId).first();
+  const topic = await env.TPI_DB.prepare("SELECT id, title, status FROM forum_topics WHERE id = ? AND status NOT IN ('deleted', 'inactive')").bind(topicId).first();
   if (!topic) return json({ error: "Topic was not found." }, 404);
   if (topic.status === "locked" && !["owner", "admin"].includes(user.role)) {
     return json({ error: "This topic is locked." }, 403);
@@ -1645,6 +1715,7 @@ async function handleCreateForumPost(path, request, env, user) {
       .bind(topicId)
   ]);
   await insertForumAttachments(env, postId, attachments);
+  await createForumContentNotifications(env, user, { topicId, postId, topicTitle: topic.title, body, attachments });
 
   return json({ post: { id: postId, topicId, body, attachments } });
 }
@@ -1981,6 +2052,17 @@ async function handleCreateTpiVideo(request, env, user) {
     status, user.id, now, now
   ).run();
 
+  if (status === "published") {
+    await notifyActiveMembers(env, {
+      title: `New video: ${title}`,
+      body: clean(data.description) || category,
+      actionHref: `tpi-video.html?id=${encodeURIComponent(finalSlug)}`,
+      type: "video",
+      createdBy: user.id,
+      excludeContributorId: user.id
+    });
+  }
+
   return json({ ok: true, id, slug: finalSlug, status });
 }
 
@@ -2031,6 +2113,17 @@ async function handleUpdateTpiVideo(path, request, env, user) {
     data.viewingAccess === "public" ? "public" : (data.viewingAccess === "members" ? "members" : existing.viewing_access),
     status, now, existing.id
   ).run();
+
+  if (status === "published" && existing.status !== "published") {
+    await notifyActiveMembers(env, {
+      title: `New video: ${title}`,
+      body: clean(data.description) || existing.description || category,
+      actionHref: `tpi-video.html?id=${encodeURIComponent(newSlug)}`,
+      type: "video",
+      createdBy: user.id,
+      excludeContributorId: user.id
+    });
+  }
 
   return json({ ok: true, id: existing.id, slug: newSlug, status });
 }
@@ -2527,6 +2620,70 @@ async function handleCreateMessage(path, request, env, user) {
       }
     }
   }, 201, { "Cache-Control": "no-store" });
+}
+
+function getMessageRouteIds(path) {
+  const match = path.match(/^\/conversations\/([^/]+)\/messages\/([^/]+)$/);
+  return match ? { conversationId: clean(decodeURIComponent(match[1])), messageId: clean(decodeURIComponent(match[2])) } : { conversationId: "", messageId: "" };
+}
+
+async function handleUpdateMessage(path, request, env, user) {
+  const { conversationId, messageId } = getMessageRouteIds(path);
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+  const existing = await env.TPI_DB.prepare(`
+    SELECT id, contributor_id, created_at FROM messages
+    WHERE id = ? AND conversation_id = ? AND deleted_at IS NULL
+  `).bind(messageId, conversationId).first();
+  if (!existing) return json({ error: "Message not found." }, 404);
+  if (existing.contributor_id !== user.id) return json({ error: "You can only edit your own messages." }, 403);
+
+  const data = await readJson(request);
+  const body = clean(data.body).slice(0, 4000);
+  const attachments = sanitizeMessengerAttachments(data.attachments);
+  if (!body && !attachments.length) return json({ error: "A message must contain text or media." }, 400);
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    UPDATE messages SET body = ?, attachments = ?, edited_at = ?
+    WHERE id = ? AND conversation_id = ? AND contributor_id = ? AND deleted_at IS NULL
+  `).bind(body, JSON.stringify(attachments), now, messageId, conversationId, user.id).run();
+  await env.TPI_DB.prepare("UPDATE conversations SET updated_at = ? WHERE id = ?").bind(now, conversationId).run();
+
+  return json({ message: {
+    id: messageId,
+    body,
+    attachments,
+    createdAt: existing.created_at,
+    editedAt: now,
+    readBy: [],
+    author: {
+      id: user.id,
+      username: user.username,
+      displayName: user.display_name,
+      photoUrl: user.photo_url || "",
+      chatColor: normalizeChatColor(user.chat_color || "#55c8ff")
+    }
+  } }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleRemoveMessage(path, env, user) {
+  const { conversationId, messageId } = getMessageRouteIds(path);
+  const access = await requireConversationAccess(env, conversationId, user);
+  if (!access) return json({ error: "Conversation not found." }, 404);
+  const existing = await env.TPI_DB.prepare(`
+    SELECT id, contributor_id FROM messages
+    WHERE id = ? AND conversation_id = ? AND deleted_at IS NULL
+  `).bind(messageId, conversationId).first();
+  if (!existing) return json({ error: "Message not found." }, 404);
+  if (existing.contributor_id !== user.id) return json({ error: "You can only remove your own messages." }, 403);
+
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    UPDATE messages SET deleted_at = ?
+    WHERE id = ? AND conversation_id = ? AND contributor_id = ? AND deleted_at IS NULL
+  `).bind(now, messageId, conversationId, user.id).run();
+  await env.TPI_DB.prepare("UPDATE conversations SET updated_at = ? WHERE id = ?").bind(now, conversationId).run();
+  return json({ ok: true, messageId, retained: true }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleMarkConversationRead(path, request, env, user) {

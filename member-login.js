@@ -877,41 +877,45 @@
   }
 
   const notificationTypeMap = {
-    admin: { label: "Administration Notice", tone: "admin", href: "member-dashboard.html" },
-    "profile-request": { label: "Administration Notice", tone: "admin", href: "member-dashboard.html" },
-    warning: { label: "Administration Warning", tone: "admin", href: "member-dashboard.html" },
-    post: { label: "New Post", tone: "community", href: "community-forum.html?member=1" },
-    forum_post: { label: "New Forum Post", tone: "community", href: "community-forum.html?member=1" },
-    contribution: { label: "New Contribution", tone: "content", href: "explore.html" },
-    article: { label: "New Contribution", tone: "content", href: "explore.html" },
-    video: { label: "New Video", tone: "media", href: "tpi-videos.html?member=1" },
-    photo: { label: "New Photo", tone: "media", href: "explore.html" },
-    chat: { label: "New Chat Message", tone: "chat", href: "explore.html" },
-    message: { label: "New Message", tone: "chat", href: "explore.html" }
+    admin: { label: "Administration Notice", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
+    "profile-request": { label: "Administration Notice", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
+    warning: { label: "Administration Warning", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
+    post: { label: "New Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "community-forum.html?member=1" },
+    forum_post: { label: "New Forum Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "community-forum.html?member=1" },
+    contribution: { label: "Educational Content", categoryLabel: "Forum & Educational Content", category: "education", tone: "content", href: "education-center.html" },
+    article: { label: "Educational Content", categoryLabel: "Forum & Educational Content", category: "education", tone: "content", href: "education-center.html" },
+    education: { label: "Educational Content", categoryLabel: "Forum & Educational Content", category: "education", tone: "content", href: "education-center.html" },
+    video: { label: "New Video", categoryLabel: "New Videos", category: "videos", tone: "media", href: "tpi-videos.html?member=1" },
+    photo: { label: "New Photo", categoryLabel: "New Photos", category: "photos", tone: "media", href: "explore.html" },
+    chat: { label: "New Chat Message", categoryLabel: "Messages & Chat", category: "chat", tone: "chat", href: "#messenger" },
+    message: { label: "New Message", categoryLabel: "Messages & Chat", category: "chat", tone: "chat", href: "#messenger" }
   };
 
   const notificationGuide = [
     { type: "admin", title: "Administration notices", body: "Profile requests, account warnings, membership access changes, and direct messages from authorized admins appear here.", href: "member-dashboard.html" },
-    { type: "forum_post", title: "New posts", body: "Forum posts and community discussion updates will show here when new activity is available.", href: "community-forum.html?member=1" },
+    { type: "forum_post", title: "New posts", body: "Forum posts open the exact topic and reply that created the notice.", href: "community-forum.html?member=1" },
+    { type: "education", title: "Forum & educational content", body: "Educational papers and contributed content open directly at the published item.", href: "education-center.html" },
     { type: "video", title: "New videos", body: "TPI video and live content alerts will appear here when video notifications are enabled.", href: "tpi-videos.html?member=1" },
     { type: "photo", title: "New photos", body: "Photo/media updates from the community feed will appear here when media notifications are enabled.", href: "explore.html" },
-    { type: "chat", title: "Messages and chat", body: "Chat and direct-message alerts will appear here and also update the notification badge.", href: "explore.html" }
+    { type: "chat", title: "Messages and chat", body: "Message notices open the exact direct chat or group room.", href: "#messenger" }
   ];
 
   function getNotificationTypeMeta(notification) {
-    return notificationTypeMap[notification.type] || notificationTypeMap[String(notification.type || "").replace(/-/g, "_")] || { label: "Member Notice", tone: "default", href: "member-dashboard.html" };
+    return notificationTypeMap[notification.type] || notificationTypeMap[String(notification.type || "").replace(/-/g, "_")] || { label: "Member Notice", categoryLabel: "Other", category: "other", tone: "default", href: "member-dashboard.html" };
   }
 
   function renderNotificationSummary(notifications) {
     const counts = notifications.reduce((summary, notification) => {
       const meta = getNotificationTypeMeta(notification);
-      summary[meta.label] = (summary[meta.label] || 0) + 1;
+      summary[meta.category] = summary[meta.category] || { label: meta.categoryLabel, count: 0 };
+      summary[meta.category].count += 1;
       return summary;
     }, {});
     const entries = Object.entries(counts);
     return entries.length ? `
       <div class="member-notification-summary" aria-label="Notification categories">
-        ${entries.map(([label, count]) => `<span><strong>${count}</strong>${escapeHtml(label)}</span>`).join("")}
+        <button type="button" data-notification-filter="all" aria-pressed="true"><strong>${notifications.length}</strong>All</button>
+        ${entries.map(([category, item]) => `<button type="button" data-notification-filter="${escapeHtml(category)}" aria-pressed="false"><strong>${item.count}</strong>${escapeHtml(item.label)}</button>`).join("")}
       </div>
     ` : "";
   }
@@ -923,9 +927,9 @@
     const isChat = notification.chat || notification.type === "chat" || notification.type === "message";
     const openAction = isChat && notification.conversationId
       ? `<button type="button" class="portal-button portal-button-secondary" data-notification-chat="${escapeHtml(notification.conversationId)}">Open</button>`
-      : (actionHref ? `<a class="portal-button portal-button-secondary" href="${escapeHtml(actionHref)}">Open</a>` : "");
+      : (actionHref ? `<button type="button" class="portal-button portal-button-secondary" data-notification-open="${escapeHtml(notification.id)}" data-notification-href="${escapeHtml(actionHref)}">Open</button>` : "");
     return `
-      <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}" data-notification-type="${escapeHtml(meta.tone)}">
+      <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}" data-notification-type="${escapeHtml(meta.tone)}" data-notification-category="${escapeHtml(meta.category)}">
         <div>
           <span><em>${escapeHtml(meta.label)}</em> ${escapeHtml(notification.read ? "Read" : "Unread")} ${createdAt ? `· ${escapeHtml(createdAt)}` : ""}</span>
           <strong>${escapeHtml(notification.title || meta.label || "Notification")}</strong>
@@ -937,6 +941,21 @@
         </div>
       </article>
     `;
+  }
+
+  function bindNotificationFilters() {
+    if (!memberNotificationsList) return;
+    const buttons = Array.from(memberNotificationsList.querySelectorAll("[data-notification-filter]"));
+    const items = Array.from(memberNotificationsList.querySelectorAll("[data-notification-category]"));
+    buttons.forEach(button => {
+      button.addEventListener("click", () => {
+        const category = button.dataset.notificationFilter || "all";
+        buttons.forEach(option => option.setAttribute("aria-pressed", option === button ? "true" : "false"));
+        items.forEach(item => {
+          item.hidden = category !== "all" && item.dataset.notificationCategory !== category;
+        });
+      });
+    });
   }
 
   function renderNotificationGuide(message = "No notifications right now.") {
@@ -976,6 +995,7 @@
       memberNotificationsList.innerHTML = notifications.length
         ? renderNotificationSummary(notifications) + notifications.map(renderNotificationItem).join("")
         : renderNotificationGuide();
+      bindNotificationFilters();
     } catch (error) {
       memberNotificationsList.innerHTML = renderNotificationGuide("Notifications could not be loaded right now, but these are the notification types this page will show.");
     }
@@ -990,31 +1010,6 @@
       url.searchParams.set("openChat", conversationId);
       window.location.href = url.href;
     }
-  }
-
-  if (memberNotificationsList) {
-    memberNotificationsList.addEventListener("click", async function(event) {
-      var chatButton = event.target.closest("[data-notification-chat]");
-      var readButton = event.target.closest("[data-notification-read]");
-      if (chatButton) {
-        event.preventDefault();
-        var conversationId = chatButton.dataset.notificationChat;
-        try {
-          await window.TPIApi.markNotificationRead("chat-" + conversationId);
-        } catch (e) {}
-        openMessengerConversation(conversationId);
-        initMemberNotifications();
-        return;
-      }
-      if (readButton) {
-        event.preventDefault();
-        var id = readButton.dataset.notificationRead;
-        try {
-          await window.TPIApi.markNotificationRead(id);
-          initMemberNotifications();
-        } catch (e) {}
-      }
-    });
   }
 
   function renderModerationComment(comment, statusFilter) {
@@ -1923,6 +1918,19 @@
   });
 
   document.addEventListener("click", async event => {
+    const notificationOpenButton = event.target.closest("[data-notification-open]");
+    if (notificationOpenButton) {
+      event.preventDefault();
+      const notificationId = notificationOpenButton.dataset.notificationOpen;
+      const notificationHref = notificationOpenButton.dataset.notificationHref;
+      if (!notificationHref || !await cloudflareReady()) return;
+      try {
+        await window.TPIApi.markNotificationRead(notificationId);
+      } catch (error) {}
+      window.location.href = notificationHref;
+      return;
+    }
+
     const logoutButton = event.target.closest("[data-member-logout]");
     if (logoutButton) {
       event.preventDefault();

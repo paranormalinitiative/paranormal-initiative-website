@@ -815,6 +815,55 @@ body.member-mode {
     background: #54d38a;
     border: 2px solid #0f1720;
     border-radius: 50%;
+    z-index: 3;
+    box-shadow: 0 0 0 1px rgba(84, 211, 138, 0.28), 0 0 8px rgba(84, 211, 138, 0.72);
+}
+
+.member-chat-attachment-preview span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.member-chat-attachment-preview [data-chat-attachment-remove] {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    color: #f4f8fb;
+    background: #263646;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+}
+
+.member-notification-summary button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 10px;
+    color: #b8c8d8;
+    background: rgba(85, 200, 255, 0.08);
+    border: 1px solid rgba(85, 200, 255, 0.22);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.member-notification-summary button[aria-pressed="true"] {
+    color: #061018;
+    background: #55c8ff;
+    border-color: #55c8ff;
+}
+
+.member-notification-summary button strong {
+    color: inherit;
+}
+
+.member-notification-item[hidden] {
+    display: none;
 }
 
 .member-chat-stack {

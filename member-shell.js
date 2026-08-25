@@ -2525,8 +2525,13 @@
       try {
         var messages = await loadRemoteMessages(currentChat.id);
         if (!messages.length) return;
-        var changed = messages.length !== currentChat.messages.length ||
-          messages[messages.length - 1].id !== (currentChat.messages[currentChat.messages.length - 1] || {}).id;
+        var remoteSignature = JSON.stringify(messages.map(function(message) {
+          return [message.id, message.body, message.editedAt || "", JSON.stringify(message.attachments || []), JSON.stringify(message.readBy || [])];
+        }));
+        var currentSignature = JSON.stringify((currentChat.messages || []).map(function(message) {
+          return [message.id, message.body, message.editedAt || "", JSON.stringify(message.attachments || []), JSON.stringify(message.readBy || [])];
+        }));
+        var changed = remoteSignature !== currentSignature;
         if (changed) {
           currentChat.messages = messages;
           renderMessages();
@@ -2699,16 +2704,30 @@
       event.preventDefault();
       var body = inputEl.value.trim();
       if (editingMessageIndex >= 0) {
-        if (!body) return;
-        currentChat.messages[editingMessageIndex].body = body;
-        currentChat.messages[editingMessageIndex].editedAt = new Date().toISOString();
-        editingMessageIndex = -1;
-        inputEl.value = "";
+        if (!body && !pendingAttachments.length) return;
+        var editingMessage = currentChat.messages[editingMessageIndex];
+        try {
+          if (isRemoteConversation(currentChat) && editingMessage.id) {
+            setChatStatus("Saving edit...");
+            var editedAttachments = await prepareMessengerAttachments(pendingAttachments);
+            var updatedMessage = await updateRemoteMessage(currentChat.id, editingMessage.id, body, editedAttachments);
+            currentChat.messages[editingMessageIndex] = updatedMessage;
+          } else {
+            editingMessage.body = body;
+            editingMessage.attachments = pendingAttachments.slice();
+            editingMessage.editedAt = new Date().toISOString();
+          }
+        } catch (editError) {
+          setChatStatus(editError.message || "The message could not be updated.", true);
+          return;
+        }
+        finishEditingMessage();
         saveCurrentChat(user, currentChat);
         upsertStoredChat(user, currentChat);
         chatList = loadStoredChats(user);
         renderChatList();
         renderMessages();
+        setChatStatus("");
         return;
       }
       if (!body && !pendingAttachments.length) return;
@@ -2725,7 +2744,7 @@
     });
 
     mediaInputEl.addEventListener("change", function () {
-      pendingAttachments = Array.from(mediaInputEl.files || []).slice(0, 6).map(function(file) {
+      var chosenAttachments = Array.from(mediaInputEl.files || []).map(function(file) {
         return {
           name: file.name,
           type: file.type && file.type.startsWith("video/") ? "video" : "photo",
@@ -2733,6 +2752,8 @@
           file: file
         };
       });
+      pendingAttachments = (editingMessageIndex >= 0 ? pendingAttachments.concat(chosenAttachments) : chosenAttachments).slice(0, 6);
+      mediaInputEl.value = "";
       renderAttachmentPreview();
     });
 
@@ -2798,7 +2819,7 @@
       await sendChatMessage(currentChat && currentChat.quickEmoji ? currentChat.quickEmoji : "👍", []);
     });
 
-    messagesEl.addEventListener("click", function (event) {
+    messagesEl.addEventListener("click", async function (event) {
       var deleteButton = event.target.closest("[data-chat-delete]");
       var editButton = event.target.closest("[data-chat-edit]");
       var previewButton = event.target.closest("[data-chat-preview-image]");
@@ -2808,23 +2829,34 @@
         lightboxEl.hidden = false;
         return;
       }
-      if (isRemoteConversation(currentChat)) {
-        // Editing and deleting D1-backed messages is not supported in this directive.
-        if (editButton || deleteButton) return;
-      }
       if (editButton) {
         var editIndex = Number(editButton.dataset.chatEdit);
         if (Number.isInteger(editIndex) && currentChat.messages[editIndex]) {
           editingMessageIndex = editIndex;
-          inputEl.value = currentChat.messages[editIndex].body || "";
+          var messageToEdit = currentChat.messages[editIndex];
+          inputEl.value = messageToEdit.body || "";
+          pendingAttachments = Array.isArray(messageToEdit.attachments) ? messageToEdit.attachments.map(function(item) { return Object.assign({}, item); }) : [];
+          renderAttachmentPreview();
+          if (sendButton) sendButton.textContent = "Save Edit";
+          setChatStatus("Editing your message. Remove or add media, then save.");
           inputEl.focus();
         }
         return;
       }
       if (deleteButton) {
         var index = Number(deleteButton.dataset.chatDelete);
-        if (Number.isInteger(index) && index >= 0 && index < currentChat.messages.length && window.confirm("Delete this message?")) {
+        if (Number.isInteger(index) && index >= 0 && index < currentChat.messages.length && window.confirm("Remove this message from the conversation? Its retained record will remain available to authorized administration.")) {
+          var messageToRemove = currentChat.messages[index];
+          try {
+            if (isRemoteConversation(currentChat) && messageToRemove.id) {
+              await removeRemoteMessage(currentChat.id, messageToRemove.id);
+            }
+          } catch (removeError) {
+            setChatStatus(removeError.message || "The message could not be removed.", true);
+            return;
+          }
           currentChat.messages.splice(index, 1);
+          if (editingMessageIndex === index) finishEditingMessage();
           saveCurrentChat(user, currentChat);
           upsertStoredChat(user, currentChat);
           chatList = loadStoredChats(user);
@@ -3046,19 +3078,8 @@
     }
 
     async function sendChatMessage(body, attachments) {
-      var safeAttachments = [];
       try {
-        var selectedAttachments = (attachments || []).slice(0, 6);
-        for (var attachmentIndex = 0; attachmentIndex < selectedAttachments.length; attachmentIndex += 1) {
-          var att = selectedAttachments[attachmentIndex];
-          if (att.file) {
-            setChatStatus("Uploading attachment " + (attachmentIndex + 1) + " of " + selectedAttachments.length + "...");
-            var uploaded = await uploadMessengerAttachment(att.file);
-            safeAttachments.push({ name: uploaded.name || att.name || "", type: att.type || "photo", url: uploaded.url || "" });
-          } else if (att.url && String(att.url).indexOf("/api/media/messenger/") === 0) {
-            safeAttachments.push({ name: att.name || "", type: att.type || "photo", url: att.url });
-          }
-        }
+        var safeAttachments = await prepareMessengerAttachments(attachments);
       } catch (uploadError) {
         setChatStatus(uploadError.message || "The attachment could not be uploaded.", true);
         return false;
@@ -3104,9 +3125,29 @@
         return;
       }
       attachmentPreviewEl.hidden = false;
-      attachmentPreviewEl.innerHTML = pendingAttachments.map(function(attachment) {
-        return '<span>' + escapeHtml(getAttachmentLabel(attachment)) + '</span>';
+      attachmentPreviewEl.innerHTML = pendingAttachments.map(function(attachment, index) {
+        return '<span>' + escapeHtml(getAttachmentLabel(attachment)) + '<button type="button" data-chat-attachment-remove="' + escapeHtml(String(index)) + '" aria-label="Remove ' + escapeHtml(getAttachmentLabel(attachment)) + '">×</button></span>';
       }).join("");
+    }
+
+    attachmentPreviewEl.addEventListener("click", function(event) {
+      var removeAttachmentButton = event.target.closest("[data-chat-attachment-remove]");
+      if (!removeAttachmentButton) return;
+      var attachmentIndex = Number(removeAttachmentButton.dataset.chatAttachmentRemove);
+      if (!Number.isInteger(attachmentIndex) || attachmentIndex < 0 || attachmentIndex >= pendingAttachments.length) return;
+      var removedAttachment = pendingAttachments.splice(attachmentIndex, 1)[0];
+      if (removedAttachment && removedAttachment.file && removedAttachment.url && String(removedAttachment.url).startsWith("blob:")) {
+        try { URL.revokeObjectURL(removedAttachment.url); } catch (e) {}
+      }
+      renderAttachmentPreview();
+    });
+
+    function finishEditingMessage() {
+      editingMessageIndex = -1;
+      inputEl.value = "";
+      pendingAttachments = [];
+      renderAttachmentPreview();
+      if (sendButton) sendButton.textContent = "Send";
     }
 
     window.TPIMessenger = {
@@ -3769,12 +3810,12 @@
     var author = normalizeChatMember(message.author || {}, true);
     var currentUsername = normalizeChatUsername(getStoredUsername());
     var isOwn = currentUsername && normalizeChatUsername(author.username) === currentUsername;
-      var canEditDelete = !isRemoteConversation(currentChat) && !message.id;
+      var canEditDelete = Boolean(isOwn && ((!isRemoteConversation(currentChat) && !message.id) || (isRemoteConversation(currentChat) && message.id)));
       return '<article class="member-chat-message' + (isOwn ? ' is-own' : '') + '" style="--member-chat-color: ' + escapeHtml(author.chatColor) + ';">' +
       '<div class="member-chat-bubble"><strong>' + escapeHtml(author.displayName || "Member") + '</strong>' +
       '<span class="member-chat-message-actions">' +
         (isOwn && canEditDelete ? '<button class="member-chat-edit" type="button" data-chat-edit="' + escapeHtml(String(index)) + '" title="Edit message">Edit</button>' : '') +
-        (canEditDelete ? '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Delete message">Delete</button>' : '') +
+        (canEditDelete ? '<button class="member-chat-delete" type="button" data-chat-delete="' + escapeHtml(String(index)) + '" title="Remove message">Remove</button>' : '') +
       '</span>' +
       '<small>' + escapeHtml(formatChatTime(message.createdAt)) + '</small>' +
       (message.editedAt ? '<small>Edited</small>' : '') +
@@ -4099,6 +4140,41 @@
     return res.data.message;
   }
 
+  async function updateRemoteMessage(conversationId, messageId, body, attachments) {
+    var res = await apiFetch("PUT", "/api/conversations/" + encodeURIComponent(conversationId) + "/messages/" + encodeURIComponent(messageId), {
+      body: body,
+      attachments: attachments
+    });
+    if (!res.ok || !res.data.message) throw new Error(res.data.error || "The message could not be updated.");
+    return res.data.message;
+  }
+
+  async function removeRemoteMessage(conversationId, messageId) {
+    var res = await apiFetch("DELETE", "/api/conversations/" + encodeURIComponent(conversationId) + "/messages/" + encodeURIComponent(messageId));
+    if (!res.ok) throw new Error(res.data.error || "The message could not be removed.");
+    return res.data;
+  }
+
+  async function prepareMessengerAttachments(attachments) {
+    var safeAttachments = [];
+    var selectedAttachments = (attachments || []).slice(0, 6);
+    for (var attachmentIndex = 0; attachmentIndex < selectedAttachments.length; attachmentIndex += 1) {
+      var att = selectedAttachments[attachmentIndex];
+      if (att.file) {
+        var statusElement = document.querySelector("[data-chat-status]");
+        if (statusElement) {
+          statusElement.textContent = "Uploading attachment " + (attachmentIndex + 1) + " of " + selectedAttachments.length + "...";
+          statusElement.hidden = false;
+        }
+        var uploaded = await uploadMessengerAttachment(att.file);
+        safeAttachments.push({ name: uploaded.name || att.name || "", type: att.type || "photo", url: uploaded.url || "" });
+      } else if (att.url && String(att.url).indexOf("/api/media/messenger/") === 0) {
+        safeAttachments.push({ name: att.name || "", type: att.type || "photo", url: att.url });
+      }
+    }
+    return safeAttachments;
+  }
+
   async function uploadMessengerAttachment(file) {
     var formData = new FormData();
     formData.append("file", file);
@@ -4217,6 +4293,7 @@
       (photoUrl
         ? '<img src="' + escapeHtml(photoUrl) + '" alt="' + escapeHtml(name) + '">'
         : '<span>' + escapeHtml(initials) + '</span>') +
+      '<i class="is-online" aria-hidden="true"></i>' +
       '</span>';
     return avatar +
       '<span class="member-chat-identity-copy"><strong>' + escapeHtml(name) + '</strong></span>' +
