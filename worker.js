@@ -99,6 +99,28 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
+    // StudioFlow uses a public, unguessable guest invitation route while keeping
+    // the host workspace behind the existing TPI member session.
+    if (url.pathname.startsWith("/studio/assets/")) {
+      return env.ASSETS.fetch(request);
+    }
+
+    if (url.pathname.startsWith("/studio/guest/")) {
+      const appUrl = new URL("/studio/index.html", url.origin);
+      return env.ASSETS.fetch(new Request(appUrl, request));
+    }
+
+    if (url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
+      const user = await getSessionUser(request, env);
+      if (!user) {
+        return new Response(MEMBER_GATE_HTML.replaceAll("ITC Visual Studio", "StudioFlow"), {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8" }
+        });
+      }
+      return env.ASSETS.fetch(request);
+    }
+
     // Default: serve normal website static assets
     return env.ASSETS.fetch(request);
   }

@@ -75,6 +75,11 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/messenger-media") return requireMember(request, env, user => handleMessengerMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
+    if (request.method === "POST" && path === "/studio/rooms") return requireContributor(request, env, user => handleCreateStudioRoom(request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return handleStudioGuestToken(path, request, env);
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireContributor(request, env, user => handleCloseStudioRoom(path, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/start$/)) return requireContributor(request, env, user => handleStartStudioLivestream(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/stop$/)) return requireContributor(request, env, user => handleStopStudioLivestream(path, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
@@ -2272,6 +2277,230 @@ async function handleCreateVideoReport(request, env, user) {
   `).bind(crypto.randomUUID(), videoId, user.id, reason, clean(data.details)).run();
 
   return json({ ok: true, message: "Report received. A TPI administrator will review it." });
+}
+
+// ---- StudioFlow Cloudflare RealtimeKit rooms ----
+
+function studioRoomIdFromPath(path) {
+  return clean(decodeURIComponent(path.match(/^\/studio\/rooms\/([^/]+)\//)?.[1] || ""));
+}
+
+function assertRealtimeKitConfigured(env) {
+  const missing = [
+    ["CLOUDFLARE_ACCOUNT_ID", env.CLOUDFLARE_ACCOUNT_ID],
+    ["REALTIMEKIT_APP_ID", env.REALTIMEKIT_APP_ID],
+    ["REALTIMEKIT_API_TOKEN", env.REALTIMEKIT_API_TOKEN],
+    ["REALTIMEKIT_HOST_PRESET", env.REALTIMEKIT_HOST_PRESET],
+    ["REALTIMEKIT_GUEST_PRESET", env.REALTIMEKIT_GUEST_PRESET]
+  ].filter(([, value]) => !clean(value)).map(([name]) => name);
+  if (missing.length) throw new Error(`StudioFlow RealtimeKit is not configured. Missing: ${missing.join(", ")}.`);
+}
+
+async function realtimeKitRequest(env, apiPath, options = {}) {
+  assertRealtimeKitConfigured(env);
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(env.CLOUDFLARE_ACCOUNT_ID)}/realtime/kit/${encodeURIComponent(env.REALTIMEKIT_APP_ID)}${apiPath}`,
+    {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${env.REALTIMEKIT_API_TOKEN}`,
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      }
+    }
+  );
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || payload.success === false) {
+    const detail = payload.errors?.[0]?.message || payload.error || payload.message || `RealtimeKit request failed (${response.status}).`;
+    throw new Error(detail);
+  }
+  return payload.data || payload;
+}
+
+async function createRealtimeKitParticipant(env, meetingId, { customParticipantId, name, picture, presetName }) {
+  return realtimeKitRequest(env, `/meetings/${encodeURIComponent(meetingId)}/participants`, {
+    method: "POST",
+    body: JSON.stringify({
+      custom_participant_id: customParticipantId,
+      name,
+      picture: picture || undefined,
+      preset_name: presetName
+    })
+  });
+}
+
+async function refreshRealtimeKitParticipantToken(env, meetingId, participantId) {
+  return realtimeKitRequest(env, `/meetings/${encodeURIComponent(meetingId)}/participants/${encodeURIComponent(participantId)}/token`, {
+    method: "POST",
+    body: "{}"
+  });
+}
+
+async function handleCreateStudioRoom(request, env, user) {
+  assertRealtimeKitConfigured(env);
+  const data = await readJson(request);
+  const broadcastKey = clean(data.broadcastId).slice(0, 180);
+  const title = clean(data.title || "StudioFlow session").slice(0, 180);
+  if (!broadcastKey) return json({ error: "A broadcast ID is required." }, 400);
+
+  let room = await env.TPI_DB.prepare(`
+    SELECT * FROM studio_rooms
+    WHERE host_id = ? AND broadcast_key = ? AND status = 'open'
+    LIMIT 1
+  `).bind(user.id, broadcastKey).first();
+
+  if (room) {
+    let participant;
+    if (room.host_participant_id) {
+      participant = await refreshRealtimeKitParticipantToken(env, room.realtimekit_meeting_id, room.host_participant_id);
+    } else {
+      participant = await createRealtimeKitParticipant(env, room.realtimekit_meeting_id, {
+        customParticipantId: `${user.id}:host:${room.id}`,
+        name: user.display_name || user.username || "StudioFlow Host",
+        picture: user.photo_url,
+        presetName: env.REALTIMEKIT_HOST_PRESET
+      });
+      await env.TPI_DB.prepare("UPDATE studio_rooms SET host_participant_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+        .bind(participant.id, room.id).run();
+    }
+    return json({
+      authToken: participant.token || participant.authToken,
+      inviteToken: room.invite_token,
+      meetingId: room.realtimekit_meeting_id,
+      roomId: room.id
+    }, 200, { "Cache-Control": "no-store" });
+  }
+
+  const meeting = await realtimeKitRequest(env, "/meetings", {
+    method: "POST",
+    body: JSON.stringify({ title, persist_chat: true })
+  });
+  const roomId = crypto.randomUUID();
+  const inviteToken = `${crypto.randomUUID()}${crypto.randomUUID()}`.replaceAll("-", "");
+  const participant = await createRealtimeKitParticipant(env, meeting.id, {
+    customParticipantId: `${user.id}:host:${roomId}`,
+    name: user.display_name || user.username || "StudioFlow Host",
+    picture: user.photo_url,
+    presetName: env.REALTIMEKIT_HOST_PRESET
+  });
+
+  await env.TPI_DB.prepare(`
+    INSERT INTO studio_rooms
+      (id, broadcast_key, title, host_id, realtimekit_meeting_id, host_participant_id, invite_token)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).bind(roomId, broadcastKey, title, user.id, meeting.id, participant.id, inviteToken).run();
+
+  return json({
+    authToken: participant.token || participant.authToken,
+    inviteToken,
+    meetingId: meeting.id,
+    roomId
+  }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleStudioGuestToken(path, request, env) {
+  assertRealtimeKitConfigured(env);
+  const roomId = studioRoomIdFromPath(path);
+  const data = await readJson(request);
+  const inviteToken = clean(data.inviteToken);
+  const name = clean(data.name || "Guest").slice(0, 100);
+  if (!roomId || !inviteToken) return json({ error: "This StudioFlow invitation is incomplete." }, 400);
+  const room = await env.TPI_DB.prepare(`
+    SELECT * FROM studio_rooms
+    WHERE id = ? AND invite_token = ? AND status = 'open'
+    LIMIT 1
+  `).bind(roomId, inviteToken).first();
+  if (!room) return json({ error: "This StudioFlow invitation is invalid or the room has closed." }, 403);
+
+  const participant = await createRealtimeKitParticipant(env, room.realtimekit_meeting_id, {
+    customParticipantId: `guest:${crypto.randomUUID()}`,
+    name,
+    presetName: env.REALTIMEKIT_GUEST_PRESET
+  });
+  return json({
+    authToken: participant.token || participant.authToken,
+    meetingId: room.realtimekit_meeting_id,
+    roomId: room.id
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function getOwnedStudioRoom(env, roomId, user) {
+  const room = await env.TPI_DB.prepare("SELECT * FROM studio_rooms WHERE id = ? LIMIT 1").bind(roomId).first();
+  if (!room) return null;
+  if (room.host_id !== user.id && !["owner", "admin"].includes(user.role)) return false;
+  return room;
+}
+
+async function handleCloseStudioRoom(path, env, user) {
+  const roomId = studioRoomIdFromPath(path);
+  const room = await getOwnedStudioRoom(env, roomId, user);
+  if (room === false) return json({ error: "Only the room host can close this studio." }, 403);
+  if (!room) return json({ error: "Studio room not found." }, 404);
+  await env.TPI_DB.prepare(`
+    UPDATE studio_rooms
+    SET status = 'closed', closed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).bind(roomId).run();
+  return json({ ok: true });
+}
+
+async function handleStartStudioLivestream(path, request, env, user) {
+  assertRealtimeKitConfigured(env);
+  const roomId = studioRoomIdFromPath(path);
+  const room = await getOwnedStudioRoom(env, roomId, user);
+  if (room === false) return json({ error: "Only the room host can start this livestream." }, 403);
+  if (!room || room.status !== "open") return json({ error: "Open StudioFlow room not found." }, 404);
+  const data = await readJson(request);
+  const rtmpUrl = clean(data.rtmpUrl);
+  if (rtmpUrl && !/^rtmps?:\/\//i.test(rtmpUrl)) return json({ error: "The RTMP destination must start with rtmp:// or rtmps://." }, 400);
+  const livestream = rtmpUrl
+    ? await realtimeKitRequest(env, "/recordings", {
+        method: "POST",
+        body: JSON.stringify({
+          meeting_id: room.realtimekit_meeting_id,
+          file_name_prefix: clean(data.name || room.title).replace(/[^a-z0-9_-]+/gi, "-").slice(0, 100),
+          max_seconds: 86400,
+          video_config: { codec: "H264" },
+          audio_config: { codec: "AAC", channel: "stereo" },
+          rtmp_out_config: { rtmp_url: rtmpUrl }
+        })
+      })
+    : await realtimeKitRequest(env, `/meetings/${encodeURIComponent(room.realtimekit_meeting_id)}/livestreams`, {
+        method: "POST",
+        body: JSON.stringify({
+          name: clean(data.name || room.title).slice(0, 180),
+          video_config: { width: 1280, height: 720 }
+        })
+      });
+  await env.TPI_DB.prepare(`
+    UPDATE studio_rooms
+    SET livestream_id = ?, livestream_kind = ?, livestream_playback_url = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).bind(livestream.id || livestream.recording?.id || null, rtmpUrl ? "rtmp" : "cloudflare", livestream.playback_url || null, room.id).run();
+  return json({ livestream, mode: rtmpUrl ? "rtmp" : "cloudflare" }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleStopStudioLivestream(path, env, user) {
+  assertRealtimeKitConfigured(env);
+  const roomId = studioRoomIdFromPath(path);
+  const room = await getOwnedStudioRoom(env, roomId, user);
+  if (room === false) return json({ error: "Only the room host can stop this livestream." }, 403);
+  if (!room) return json({ error: "Studio room not found." }, 404);
+  const result = room.livestream_kind === "rtmp" && room.livestream_id
+    ? await realtimeKitRequest(env, `/recordings/${encodeURIComponent(room.livestream_id)}`, {
+        method: "PUT",
+        body: JSON.stringify({ action: "stop" })
+      })
+    : await realtimeKitRequest(env, `/meetings/${encodeURIComponent(room.realtimekit_meeting_id)}/active-livestream/stop`, {
+        method: "POST",
+        body: "{}"
+      });
+  await env.TPI_DB.prepare(`
+    UPDATE studio_rooms
+    SET livestream_id = NULL, livestream_kind = NULL, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).bind(room.id).run();
+  return json({ ok: true, result });
 }
 
 // ---- Messenger member directory ----
