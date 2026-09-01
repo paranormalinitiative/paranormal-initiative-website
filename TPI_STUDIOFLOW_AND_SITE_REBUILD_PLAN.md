@@ -73,6 +73,8 @@ The redesign must consolidate rather than merely restyle this complexity.
 7. A green build is not completion. Physical-browser, two-device, audio, recording, and livestream tests are required.
 8. Do not migrate the whole website to Next.js during the repair. The visual and structural redesign can be completed on the current Cloudflare stack. Re-platforming is a later, separate decision supported by evidence.
 9. Keep TPI evidence-aware. Do not present paranormal claims, EVP, or ITC results as established proof.
+10. Preserve the member area’s left-hand navigation. Its grouped sections and persistent access are part of the successful TPI member experience; streamline and visually upgrade it rather than replacing it.
+11. Repository guides and reference pages must use the same design system as the public and member website. They should feel like deeper TPI content, not a separate website.
 
 ---
 
@@ -278,6 +280,8 @@ One item can be found through all three axes without creating duplicate pages.
 ## B3. Visual System
 
 - Create one TPI design system for typography, spacing, page widths, colors, buttons, cards, imagery, forms, status indicators, and responsive behavior.
+- Preserve the existing left navigation structure in Member Mode while improving its visual finish, spacing, active states, section hierarchy, icons, responsive behavior, and relationship to page content.
+- Keep the navigation visually calm and dependable. Add atmosphere and stronger imagery primarily to page headers, feature areas, content cards, and empty states rather than making the sidebar decorative or distracting.
 - Use an atmospheric, cinematic public presentation without copying another organization’s branding, assets, text, or page implementation.
 - Retain TPI’s identity and evidence-aware research tone.
 - Use large purposeful imagery and fewer, stronger sections instead of grids of equally weighted small cards.
@@ -307,12 +311,15 @@ Create consistent templates for:
 - Public landing pages.
 - Subject and method hubs.
 - Educational/research articles.
+- Repository landing pages, shelves, reference guides, terminology pages, and long-form technical resources.
 - Video and media pages.
 - Applications.
 - Member/community pages.
 - Administrative pages.
 
 Migrate one family at a time and validate links, permissions, responsive layout, and live behavior before moving to the next.
+
+Repository content such as the Paranormal Terminology Reference Guide must inherit the shared TPI shell, typography, page width, headings, callouts, tables, navigation cues, and mobile behavior. Repository documents may remain denser than public landing pages, but they must no longer look like a disconnected product.
 
 ## B6. Community Completion
 
