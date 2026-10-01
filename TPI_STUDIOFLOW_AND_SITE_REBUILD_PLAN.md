@@ -1,6 +1,6 @@
 # TPI StudioFlow and Website Rebuild Plan
 
-Last updated: September 1, 2026
+Last updated: October 1, 2026
 
 ## Purpose
 
@@ -65,7 +65,7 @@ The redesign must consolidate rather than merely restyle this complexity.
 ## Locked Decisions
 
 1. Finish StudioFlow before beginning a broad visual rebuild of the public website.
-2. Preserve the existing StudioFlow visual direction unless a usability defect requires a focused change.
+2. Follow the StreamYard UI (https://www.streamyard.com — see First Steps: https://support.streamyard.com/hc/en-us/articles/360043291252-First-Steps) as the interface parity target until StudioFlow works like StreamYard. Match its flows and layout: Home with broadcast cards, Setup (camera/mic/scene check), the Studio with stage, left participants/backstage rail, right Brand/Destinations/Comments/Chat panels, and bottom action bar. While parity is incomplete, do not invent divergent UI. Once a StreamYard-parity feature works in StudioFlow, keep only the parts that earn their place for StudioFlow's own workflow and remove the StreamYard scaffolding that does not apply. Preserve TPI branding and the evidence-aware tone throughout.
 3. Treat `/Users/toddknipple/Documents/StudioFlow/web` as source. Never edit compiled `studio/` files as source.
 4. Local recording must continue if livestreaming disconnects.
 5. Backstage recordings must never enter the public program output.

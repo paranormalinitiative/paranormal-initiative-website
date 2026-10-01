@@ -99,24 +99,30 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    // StudioFlow uses a public, unguessable guest invitation route while keeping
-    // the host workspace behind the existing TPI member session.
-    if (url.pathname.startsWith("/studio/assets/")) {
-      return env.ASSETS.fetch(request);
-    }
-
-    if (url.pathname.startsWith("/studio/guest/")) {
-      const appUrl = new URL("/studio/index.html", url.origin);
-      return env.ASSETS.fetch(new Request(appUrl, request));
-    }
-
+    // StudioFlow is in private build testing: owner access only until guest rooms
+    // and livestreaming pass their production tests (see STUDIOFLOW_MASTER_TODO.md
+    // Phase 3). Revisit this gate when RealtimeKit guests go into testing.
     if (url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
       const user = await getSessionUser(request, env);
-      if (!user) {
-        return new Response(MEMBER_GATE_HTML.replaceAll("ITC Visual Studio", "StudioFlow"), {
+      if (!user || user.role !== "owner") {
+        // Asset requests get a bare 403; page requests get the branded gate.
+        if (url.pathname.startsWith("/studio/assets/")) {
+          return new Response("Forbidden", { status: 403 });
+        }
+        const gateHtml = MEMBER_GATE_HTML
+          .replaceAll("ITC Visual Studio", "StudioFlow")
+          .replaceAll(
+            "StudioFlow is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
+            "StudioFlow is in private build testing and is not open to member access yet. Please check back soon."
+          );
+        return new Response(gateHtml, {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8" }
         });
+      }
+      if (url.pathname.startsWith("/studio/guest/")) {
+        const appUrl = new URL("/studio/index.html", url.origin);
+        return env.ASSETS.fetch(new Request(appUrl, request));
       }
       return env.ASSETS.fetch(request);
     }
