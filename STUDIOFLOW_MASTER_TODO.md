@@ -13,7 +13,7 @@
 
 ## Where We Are (status snapshot)
 
-**Date: Oct 1, 2026 — Phase 0 ✅ complete (deployed). Phase 1 (Honesty Pass) is next. Phases 2–7 not started.**
+**Date: Oct 1, 2026 — Phase 0 ✅ complete (deployed). Phase 1 next, as BUILD work (direction corrected: nothing gets removed — every control gets built until it works).**
 
 - **Source of truth:** `/Users/toddknipple/Documents/StudioFlow/web` — React/Vite/TS, latest commit `130275c` "Make StudioFlow views control program layouts" (Sep 2, 2026), working tree clean. Never edit compiled `studio/` files directly; build there, copy `dist/` output here.
 - **Deployed:** `studio/` in this repo → live at `https://paranormalinitiative.com/studio/`. Verified byte-identical to source build (hash `2b91bcb3a4973c72ba87f8262881a9b8`).
@@ -35,7 +35,8 @@
 8. Keep it evidence-aware; no paranormal claims presented as proof.
 9. **Owner-only during build.** `/studio` is restricted to Todd Wayne's owner account until guest rooms are in testing (revisit at Phase 3). No other members see the studio yet.
 10. **No trial/limited features.** Everything in StudioFlow is fully functioning with no limits — no watermarks, caps, locked tiers, or "upgrade to unlock."
-11. **Every session ends with commit → push → Cloudflare deploy** so Todd can test live as we go. Wrangler is authenticated (`paranormalsomerset@gmail.com`).
+11. **Every session ends with commit → push → Cloudflare deploy** so Todd can test live as we go. Wrangler is authenticated (`paranormalsomerset@gmail.com` / paranormalinitiative.com).
+12. **Never remove UI.** Every card, panel, button, and setting in StudioFlow is a feature in development — placeholders are things needing completed, not things needing deleted. The only exceptions are explicit Todd decisions. When unsure, ask, don't remove.
 
 ---
 
@@ -50,21 +51,24 @@
 
 ---
 
-## Phase 1 — Honesty Pass (remove or connect every fake control)
+## Phase 1 — Make Everything Real (build out every control — nothing gets removed)
 
-Every visible control must either perform its stated action or disappear. StreamYard placement noted where it matters.
+**Direction from Todd (Oct 1, 2026): do not remove anything.** The webinar card, YouTube/Facebook/Rumble destinations, Drive upload, hotkeys, visual effects, guest settings — all of it stays and gets built until it fully works. Phase 1 = wire every currently-fake control to real behavior.
 
-- [ ] **Remove "On-Air webinar" creation card** — no workflow exists behind it. *AC: gone from Home.*
-- [ ] **Fix Home storage display** — currently says "Unlimited." Show real local usage (IndexedDB estimate via `navigator.storage.estimate()`) labeled "Local storage," or remove the block. *AC: number is real or block is gone.*
-- [ ] **Google Drive upload** — decide: configure `VITE_GOOGLE_CLIENT_ID` and test a real upload, **or** remove the Drive buttons. (R2 becomes the cloud library in Phase 6; Drive may simply go.) *AC: works with real upload or control removed.*
-- [ ] **Remove placeholder destinations** — YouTube/Facebook/Rumble entries that haven't been tested stay out until Phase 5 proves them; keep only Custom RTMP. *AC: Destinations shows only what works.*
-- [ ] **Settings → General:** wire resolution/orientation to real constraints + compositor output, or remove the selectors. Output currently fixed 1920×1080 landscape. *AC: choosing 720p produces a 720p file.*
-- [ ] **Settings → Audio:** dead Speaker Test button (`App.tsx` ~line 6669), hardcoded "Echo cancellation" checkbox, inert noise/auto-gain/stereo/mic-volume controls. Wire to real constraints (`echoCancellation`, `noiseSuppression`, `autoGainControl`, `setSinkId` where supported) or remove. *AC: every remaining toggle changes actual behavior; Speaker Test plays a tone to the selected output.*
-- [ ] **Settings → Visual effects:** decorative background/filter controls. Implement or replace panel with an honest "not available yet" state. *AC: no decorative-only controls.*
-- [ ] **Settings → Hotkeys:** read-only labels, zero keyboard handlers in source. Either implement core shortcuts (mute, camera toggle, record, scene switch — editable + conflict-safe) or remove the tab. *AC: listed shortcuts fire in-studio, or tab gone.*
-- [ ] **Settings → Guests:** StreamYard-style switches not connected to anything. Connect to real room permissions when Phase 4 lands, or remove now. *AC: no unconnected switches.*
-- [ ] **Comments widget:** relabel "Manual comments (host-only)" until real platform comments exist. *AC: honestly labeled.*
-- [ ] **Private chat:** relabel "Private host notes" until a real room chat exists (Phase 4). *AC: honestly labeled.*
+- [ ] **Build the "On-Air webinar" flow** — the creation card stays; give it a real workflow (private webinar room with guests via Phase 3 RealtimeKit, no public broadcast). *AC: creating a webinar and hosting one end to end works.*
+- [ ] **Google Drive upload works for real** — the code exists; supply and set `VITE_GOOGLE_CLIENT_ID`, test a real upload, fix whatever breaks. *AC: a library recording uploads to Drive and plays back from Drive.*
+- [ ] **Destinations become real** — keep YouTube/Facebook/Rumble/Custom RTMP cards; make each destination verifiable (via Phase 4 livestream work: real RTMP presets per platform, private/unlisted test instructions, saved per-destination settings). *AC: each destination can be configured and pass a private test when Phase 4 lands.*
+- [ ] **Settings → General: real resolution/orientation** — *Batch 1 done Oct 1: selectors now drive the actual program compositor (720p/1080p/4K-beta × landscape/portrait), persisted, with a real resolution badge drawn on stage. Remaining: physical test that a 720p choice produces a 720p file and portrait renders portrait.*
+- [ ] **Settings → General checkboxes become real:** *Batch 1: resolution badge is real. Remaining: informative messages, shift-videos-for-comments, audio avatars, auto-add presented media — connect each to compositor/UI behavior.*
+- [ ] **Settings → Audio: full audio processing** — *Batch 1 done Oct 1: echo cancellation / noise suppression / auto gain now drive real getUserMedia constraints (re-acquires on change), mic volume scales the program mic gain node (0–200%), Speaker Test plays a 440Hz tone through setSinkId to the selected output. Remaining: physical audio test.*
+- [ ] **Settings → Visual effects: real processing** — not started. Backgrounds/filters/sliders become real canvas/WebGL processing on the camera feed.
+- [ ] **Settings → Hotkeys: real shortcuts** — *Batch 1 done Oct 1: mute CMD+D, camera CMD+E, screen share SHIFT+S, record start CMD+SHIFT+R, stop CMD+SHIFT+X, speaker layout SHIFT+1, group layout SHIFT+3, cycle layout L — all live in-studio with typing-target guard. Remaining: editable rebinding + conflict handling + physical test.*
+- [ ] **Settings → Guests: real permissions** — *Batch 1 done Oct 1: all five switches persist to localStorage under `studioflow.guestPermissionSettings`, ready for the Phase 3 room layer to enforce. Remaining: enforcement when guests exist.*
+- [ ] **Settings → Camera: real resolution + firewall mode** — *Batch 1: resolution selector now drives real camera constraints (720p/1080p). Firewall mode is honestly labeled "in development" pending Phase 3 relay policy.*
+- [ ] **Make storage display real** — *Batch 1 done Oct 1: Home now shows real `navigator.storage.estimate()` usage + quota, refreshed every 30s. Extends to cloud usage in Phase 5.*
+- [ ] **Comments widget: real comments** — currently manual host-only test comments; build toward real platform comment ingestion (YouTube/Facebook Live comments) in a later phase; until then keep it functional as manual comments and label the platform integration as in development. *AC: manual comments work fully; roadmap label visible.*
+- [ ] **Private chat: real room chat** — build real host↔guest chat through the Phase 3 room layer (messages delivered to guests, persisted per session). Until guests exist it remains host-side; do not strip it. *AC: host and a guest exchange messages in a live room.*
+- [ ] **Gate-page title nit** — production gate page still says "StudioFlow — Member Access"; adjust wording to fit the private-build state. *AC: gate copy matches private-build status.*
 
 ---
 
@@ -169,8 +173,8 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 | 11 | Stale `dist/worker.js` (Jul 25) missing studio handlers | repo root | 0 |
 | 12 | Resolution/orientation selectors decorative; output fixed 1080p | Settings → General | 1 |
 | 13 | Webinar card advertises nothing that exists | Home | 1 |
-| 14 | Private chat is localStorage host-only; guests see nothing | chat widget | 1 (relabel) → 3 (real chat) |
-| 15 | Comments widget is manual test comments only | comments widget | 1 (relabel) |
+| 14 | Private chat is localStorage host-only; guests see nothing | chat widget | 1 (build real chat) → 3 (room layer) |
+| 15 | Comments widget is manual test comments only | comments widget | 1 (works manually; platform ingestion later) |
 
 ---
 
@@ -191,3 +195,5 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 
 - **Oct 1, 2026** — Full audit completed ([STUDIOFLOW_FULL_AUDIT.md](STUDIOFLOW_FULL_AUDIT.md)). Verified: deployed bundle matches source, all builds green, live `/studio/` gate working on production. Locked: StreamYard parity as UI target; site rebuild cancelled. Created this master TODO. Next: Phase 0 + Phase 1.
 - **Oct 1, 2026 (session 2)** — Phase 0 complete: owner-only gate in `worker.js`, launch buttons wired, robots.txt updated, migration 0023 applied to production D1 (was missing), stale `dist/` removed, internal .md files excluded from public assets. New ground rules locked: owner-only access during build, fully-functioning-no-limits, commit/push/deploy every session. Committed, pushed, deployed to Cloudflare. Next: Phase 1 honesty pass.
+- **Oct 1, 2026 (session 3)** — **Direction corrected by Todd: DO NOT REMOVE ANY UI.** All cards/panels/settings are features in development; Phase 1 rewritten from "honesty pass (remove or fake-label)" to "Make Everything Real (build out every control)." No StudioFlow UI had been edited yet, so nothing to revert. Ground rule 12 added. Phase 1 build not yet started.
+- **Oct 1, 2026 (session 4)** — Phase 1 batch 1 built, committed (`ff54671`), pushed, deployed (version `262f72b0`): real audio processing constraints + mic volume in program mix + working Speaker Test tone, real hotkeys (8 bindings live), real program resolution/orientation driving the compositor + resolution badge, real camera resolution, persisted guest permission settings, real local-storage usage display. **Build only — not physically tested yet. Todd to test live:** Settings → Audio toggles change mic behavior, Speaker Test plays tone, mic volume slider changes recording loudness, hotkeys fire in studio (not while typing), General 720p/portrait changes output, storage shows real number. Gate page title nit still open.
