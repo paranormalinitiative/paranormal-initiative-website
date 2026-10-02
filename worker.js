@@ -99,18 +99,21 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    // StudioFlow is in private build testing: owner access only until guest rooms
-    // and livestreaming pass their production tests (see STUDIOFLOW_MASTER_TODO.md
-    // Phase 3). Revisit this gate when RealtimeKit guests go into testing.
+    // StudioFlow is in private build testing: leadership access only (owner or
+    // admin, matching member-shell.js) until guest rooms and livestreaming pass
+    // their production tests (see STUDIOFLOW_MASTER_TODO.md Phase 3). Revisit
+    // this gate when RealtimeKit guests go into testing.
     if (url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
       const user = await getSessionUser(request, env);
-      if (!user || user.role !== "owner") {
+      const hasStudioAccess = user && (user.role === "owner" || user.role === "admin");
+      if (!hasStudioAccess) {
         // Asset requests get a bare 403; page requests get the branded gate.
         if (url.pathname.startsWith("/studio/assets/")) {
           return new Response("Forbidden", { status: 403 });
         }
         const gateHtml = MEMBER_GATE_HTML
           .replaceAll("ITC Visual Studio", "StudioFlow")
+          .replaceAll("StudioFlow — Member Access", "StudioFlow — Private Build Testing")
           .replaceAll(
             "StudioFlow is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
             "StudioFlow is in private build testing and is not open to member access yet. Please check back soon."

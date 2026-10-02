@@ -1,6 +1,6 @@
 # StudioFlow Master TODO
 
-**Last updated:** October 1, 2026
+**Last updated:** October 2, 2026
 **This file controls all StudioFlow work.** Work top-to-bottom by phase. Check items off only when their acceptance criteria are met and physically tested where noted. Update the "Where We Are" status line every session.
 
 **How to use this file:**
@@ -13,7 +13,7 @@
 
 ## Where We Are (status snapshot)
 
-**Date: Oct 1, 2026 — Phase 0 ✅ complete (deployed). Phase 1 next, as BUILD work (direction corrected: nothing gets removed — every control gets built until it works).**
+**Date: Oct 2, 2026 — Phase 0 ✅ complete (deployed). Phase 1 batch 1 built + deployed (NOT yet physically tested). Studio access gate fixed — Todd was locked out by his own owner gate (see Phase 0). Todd to physically test batch 1 live, then batch 2.**
 
 - **Source of truth:** `/Users/toddknipple/Documents/StudioFlow/web` — React/Vite/TS, latest commit `130275c` "Make StudioFlow views control program layouts" (Sep 2, 2026), working tree clean. Never edit compiled `studio/` files directly; build there, copy `dist/` output here.
 - **Deployed:** `studio/` in this repo → live at `https://paranormalinitiative.com/studio/`. Verified byte-identical to source build (hash `2b91bcb3a4973c72ba87f8262881a9b8`).
@@ -33,7 +33,7 @@
 6. Guests join through a browser link and install nothing.
 7. **A green build is not completion.** Every feature needs a physical browser test before its box gets checked.
 8. Keep it evidence-aware; no paranormal claims presented as proof.
-9. **Owner-only during build.** `/studio` is restricted to Todd Wayne's owner account until guest rooms are in testing (revisit at Phase 3). No other members see the studio yet.
+9. **Leadership-only during build.** `/studio` is restricted to leadership accounts (`owner` OR `admin`, matching the site's member-shell convention). Todd Wayne is the only such account today. Note: Todd's D1 account role is `admin` (title "Founder / Director"); the site has **zero** `owner`-role accounts, so a literal `role === "owner"` gate locks out everyone. Do not gate StudioFlow on the literal `owner` string. Revisit at Phase 3.
 10. **No trial/limited features.** Everything in StudioFlow is fully functioning with no limits — no watermarks, caps, locked tiers, or "upgrade to unlock."
 11. **Every session ends with commit → push → Cloudflare deploy** so Todd can test live as we go. Wrangler is authenticated (`paranormalsomerset@gmail.com` / paranormalinitiative.com).
 12. **Never remove UI.** Every card, panel, button, and setting in StudioFlow is a feature in development — placeholders are things needing completed, not things needing deleted. The only exceptions are explicit Todd decisions. When unsure, ask, don't remove.
@@ -47,6 +47,7 @@
 - [x] **Add `/studio` to `robots.txt` Disallow list** — Oct 1, 2026.
 - [x] **Apply migration `0023_studioflow_realtimekit.sql` to production D1** — Oct 1, 2026. It was **never applied** (verified via wrangler); applied with `wrangler d1 execute --remote`, verified `studio_rooms` table now exists.
 - [x] **Owner-only studio gate** — Oct 1, 2026. `worker.js` now requires `user.role === "owner"` for all `/studio/*`; everyone else (including signed-in non-owner members) gets the gate page reading "StudioFlow is in private build testing and is not open to member access yet." asset requests get bare 403. Revisit at Phase 3.
+- [x] **FIX: gate locked Todd out** — Oct 2, 2026. Root cause: gate required literal `role === "owner"`, but Todd's production D1 role is `admin` (title "Founder / Director") and **no account has role `owner`** — hard lockout for everyone. Fix: gate now accepts `owner` OR `admin` (site leadership convention, `member-shell.js:312`). Verified on production with Todd's live session: `/studio/` → 200 (app HTML), `/studio/assets/*` → 200; anonymous still 403 with gate page. Gate page title/h1 fixed to "StudioFlow — Private Build Testing". Deploy version `378676fa`.
 - [x] **Internal build .md files removed from public site assets** — Oct 1, 2026. Added all internal plan/audit/TODO docs to `.assetsignore` (they were publicly downloadable before).
 
 ---
@@ -175,6 +176,7 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 | 13 | Webinar card advertises nothing that exists | Home | 1 |
 | 14 | Private chat is localStorage host-only; guests see nothing | chat widget | 1 (build real chat) → 3 (room layer) |
 | 15 | Comments widget is manual test comments only | comments widget | 1 (works manually; platform ingestion later) |
+| 16 | `/studio/guest/<room>` auth'd request 307-redirects to `/studio/` (Cloudflare assets clean-URL redirect on `/studio/index.html`); query string survives but the room path context is lost — must serve guest HTML without redirect when RealtimeKit guest links land | `worker.js` guest route | 3 |
 
 ---
 
@@ -197,3 +199,4 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 - **Oct 1, 2026 (session 2)** — Phase 0 complete: owner-only gate in `worker.js`, launch buttons wired, robots.txt updated, migration 0023 applied to production D1 (was missing), stale `dist/` removed, internal .md files excluded from public assets. New ground rules locked: owner-only access during build, fully-functioning-no-limits, commit/push/deploy every session. Committed, pushed, deployed to Cloudflare. Next: Phase 1 honesty pass.
 - **Oct 1, 2026 (session 3)** — **Direction corrected by Todd: DO NOT REMOVE ANY UI.** All cards/panels/settings are features in development; Phase 1 rewritten from "honesty pass (remove or fake-label)" to "Make Everything Real (build out every control)." No StudioFlow UI had been edited yet, so nothing to revert. Ground rule 12 added. Phase 1 build not yet started.
 - **Oct 1, 2026 (session 4)** — Phase 1 batch 1 built, committed (`ff54671`), pushed, deployed (version `262f72b0`): real audio processing constraints + mic volume in program mix + working Speaker Test tone, real hotkeys (8 bindings live), real program resolution/orientation driving the compositor + resolution badge, real camera resolution, persisted guest permission settings, real local-storage usage display. **Build only — not physically tested yet. Todd to test live:** Settings → Audio toggles change mic behavior, Speaker Test plays tone, mic volume slider changes recording loudness, hotkeys fire in studio (not while typing), General 720p/portrait changes output, storage shows real number. Gate page title nit still open.
+- **Oct 2, 2026 (session 5)** — **Fixed Todd's studio access (was hard-locked out).** Diagnosed in production D1: Todd's account `Todd_Wayne` (id `5d9e7ec6-9507-487a-96fd-00441f7f7570`, correspondence `paranormalinitiative@yahoo.com`) has role `admin`, title "Founder / Director", active; **zero accounts have role `owner`**, so the Oct 1 literal-`owner` gate blocked everyone including Todd. Fix: `worker.js` studio gate accepts `owner` OR `admin` (leadership, matching `member-shell.js`/`community-forum.js`); gate page title+h1 → "StudioFlow — Private Build Testing". Verified live with Todd's active session token: `/studio/` → 200 serving the app, `/studio/assets/index-Dp5SOot5.js` → 200, `/studio` → 307 → `/studio/`; anonymous: 403 gate + 403 assets. Guest-route 307 issue recorded as known bug #16 (Phase 3). Ground rule 9 reworded to leadership-only + "never gate on literal `owner`". Committed, pushed, deployed version `378676fa`. Next: Todd physically tests batch 1, then batch 2 (visual effects, remaining General checkboxes, webinar build-out).
