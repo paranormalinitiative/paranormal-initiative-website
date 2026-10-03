@@ -77,7 +77,11 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
     // StudioFlow room relay: guest invite links carry the roomId as the
     // credential (no website account). Same API shape as the local dev
-    // room server so the frontend uses one code path.
+    // room server so the frontend uses one code-scoped room id
+    // (`show-<code>`; see 0024_studioflow_invite_codes.sql).
+    if (request.method === "GET" && path === "/room-codes/current") return handleRoomCodeCurrent(env);
+    if (request.method === "POST" && path === "/room-codes/current/close") return handleRoomCodeClose(env);
+    if (request.method === "GET" && path.match(/^\/room-codes\/[^/]+$/)) return handleRoomCodeValidate(path, env);
     if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return handleRoomListGuests(path, env);
     if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return handleRoomUpsertGuest(path, request, env);
     if (request.method === "DELETE" && path.match(/^\/rooms\/([^/]+)\/guests\/[^/]+$/)) return handleRoomRemoveGuest(path, env);
@@ -2397,6 +2401,76 @@ async function handleRoomStatus(path, env) {
     recentSignals,
     signalCount: Number(countRow?.count ?? 0)
   });
+}
+
+// ---- StudioFlow per-show invite codes (guest links expire when the show ends) ----
+// Todd schedules several shows a month; every broadcast must get its own guest
+// code so links from an earlier show stop working. The code is created (and
+// re-created if the previous show ended) the first time the host's invite
+// modal opens, stays valid for the whole show, and is closed when the host
+// exits. Codes persist in D1 across host refreshes and scheduled shows.
+
+const ROOM_CODE_ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789"; // no i/l/o/0/1 look-alikes
+
+function generateRoomCode(length = 8) {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  let code = "";
+  for (let index = 0; index < length; index += 1) code += ROOM_CODE_ALPHABET[bytes[index] % ROOM_CODE_ALPHABET.length];
+  return code;
+}
+
+async function ensureActiveRoomCode(env) {
+  // Reuse the still-open code for an in-progress show; create a fresh one
+  // when the previous show was closed (its links stay expired).
+  const existing = await env.TPI_DB.prepare(
+    "SELECT * FROM studio_room_codes WHERE status = 'active' ORDER BY created_at DESC LIMIT 1"
+  ).first();
+  if (existing) return existing;
+  const code = generateRoomCode();
+  const now = Date.now();
+  await env.TPI_DB.prepare(
+    "INSERT INTO studio_room_codes (code, room_id, status, created_at) VALUES (?, ?, 'active', ?)"
+  ).bind(code, `show-${code}`, now).run();
+  return { code, room_id: `show-${code}`, status: "active", created_at: now, activated_at: null, ended_at: null };
+}
+
+async function handleRoomCodeCurrent(env) {
+  const row = await ensureActiveRoomCode(env);
+  return json({ code: row.code, roomId: row.room_id, status: row.status, createdAt: Number(row.created_at) });
+}
+
+async function handleRoomCodeValidate(path, env) {
+  const code = roomRelayId(path, /^\/room-codes\/([^/]+)$/);
+  if (!code) return json({ error: "Code is required." }, 400);
+  const row = await env.TPI_DB.prepare("SELECT * FROM studio_room_codes WHERE code = ? LIMIT 1").bind(code).first();
+  if (!row || row.status !== "active") {
+    return json({ valid: false, reason: row ? "show-ended" : "not-found" });
+  }
+  return json({ valid: true, code: row.code, roomId: row.room_id });
+}
+
+async function handleRoomCodeClose(env) {
+  const now = Date.now();
+  const result = await env.TPI_DB.prepare(
+    "UPDATE studio_room_codes SET status = 'ended', ended_at = ? WHERE status = 'active'"
+  ).bind(now).run();
+  const closed = Number(result.meta?.changes ?? 0);
+  if (closed) {
+    // Show is over: tell anyone still polling the room, then sweep presence
+    // and signals so the room relay stays clean.
+    const rows = await env.TPI_DB.prepare(
+      "SELECT room_id FROM studio_room_codes WHERE ended_at = ?"
+    ).bind(now).all();
+    for (const row of rows.results ?? []) {
+      await env.TPI_DB.prepare("INSERT INTO studio_room_signals (room_id, type, payload, created_at) VALUES (?, 'show-ended', ?, ?)")
+        .bind(row.room_id, JSON.stringify({ type: "show-ended", roomId: row.room_id }), now).run();
+      await env.TPI_DB.prepare("DELETE FROM studio_room_guests WHERE room_id = ?").bind(row.room_id).run();
+      await env.TPI_DB.prepare("DELETE FROM studio_room_signals WHERE room_id = ? AND created_at < ?")
+        .bind(row.room_id, now).run();
+    }
+  }
+  return json({ ok: true, closed });
 }
 
 async function handleRoomPostSignal(path, request, env) {

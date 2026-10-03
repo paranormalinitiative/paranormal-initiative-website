@@ -111,8 +111,11 @@ export default {
       if (url.pathname.startsWith("/studio/guest/")) {
         // Fetch the clean directory URL: /studio/index.html would 307 to
         // /studio/ (assets clean-URL handling, known bug #16) and guests
-        // would bounce into the gated host page.
+        // would bounce into the gated host page. The query string must
+        // survive the rewrite: guest invite links carry ?code=<showCode>
+        // (per-show invite codes; see functions/api room-codes endpoints).
         const appUrl = new URL("/studio/", url.origin);
+        appUrl.search = url.search;
         return env.ASSETS.fetch(new Request(appUrl, request));
       }
       if (url.pathname.startsWith("/studio/assets/")) {
