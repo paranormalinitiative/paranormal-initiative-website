@@ -75,6 +75,15 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/messenger-media") return requireMember(request, env, user => handleMessengerMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
+    // StudioFlow room relay: guest invite links carry the roomId as the
+    // credential (no website account). Same API shape as the local dev
+    // room server so the frontend uses one code path.
+    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return handleRoomListGuests(path, env);
+    if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return handleRoomUpsertGuest(path, request, env);
+    if (request.method === "DELETE" && path.match(/^\/rooms\/([^/]+)\/guests\/[^/]+$/)) return handleRoomRemoveGuest(path, env);
+    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/status$/)) return handleRoomStatus(path, env);
+    if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return handleRoomPostSignal(path, request, env);
+    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return handleRoomGetSignals(path, request, env);
     if (request.method === "POST" && path === "/studio/rooms") return requireContributor(request, env, user => handleCreateStudioRoom(request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return handleStudioGuestToken(path, request, env);
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireContributor(request, env, user => handleCloseStudioRoom(path, env, user));
@@ -2277,6 +2286,160 @@ async function handleCreateVideoReport(request, env, user) {
   `).bind(crypto.randomUUID(), videoId, user.id, reason, clean(data.details)).run();
 
   return json({ ok: true, message: "Report received. A TPI administrator will review it." });
+}
+
+// ---- StudioFlow room relay (guest invite links; roomId is the credential) ----
+
+const ROOM_GUEST_TTL_MS = 20000;
+const ROOM_SIGNAL_TTL_MS = 120000;
+
+function roomRelayId(path, pattern) {
+  return clean(decodeURIComponent(path.match(pattern)?.[1] || ""));
+}
+
+function roomRelayGuestRow(row) {
+  return {
+    id: row.guest_id,
+    displayName: row.display_name ?? "",
+    headline: row.headline ?? "",
+    cameraEnabled: Boolean(row.camera_enabled),
+    micEnabled: Boolean(row.mic_enabled),
+    screenSharing: Boolean(row.screen_sharing),
+    joinedAt: Number(row.joined_at),
+    lastSeen: Number(row.last_seen),
+    waiting: Boolean(row.waiting)
+  };
+}
+
+async function handleRoomListGuests(path, env) {
+  const roomId = roomRelayId(path, /^\/rooms\/([^/]+)\/guests$/);
+  if (!roomId) return json({ error: "Room id is required." }, 400);
+  const cutoff = Date.now() - ROOM_GUEST_TTL_MS;
+  await env.TPI_DB.prepare("DELETE FROM studio_room_guests WHERE room_id = ? AND last_seen < ?").bind(roomId, cutoff).run();
+  const result = await env.TPI_DB.prepare(
+    "SELECT * FROM studio_room_guests WHERE room_id = ? AND last_seen >= ? ORDER BY joined_at DESC"
+  ).bind(roomId, cutoff).all();
+  return json({ guests: (result.results ?? []).map(roomRelayGuestRow) });
+}
+
+async function handleRoomUpsertGuest(path, request, env) {
+  const roomId = roomRelayId(path, /^\/rooms\/([^/]+)\/guests$/);
+  if (!roomId) return json({ error: "Room id is required." }, 400);
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body." }, 400);
+  }
+  const guestId = clean(String(body?.id ?? ""));
+  if (!guestId) return json({ error: "Guest id is required." }, 400);
+  const now = Date.now();
+  await env.TPI_DB.prepare(
+    `INSERT INTO studio_room_guests
+       (room_id, guest_id, display_name, headline, camera_enabled, mic_enabled, screen_sharing, joined_at, last_seen, waiting)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT (room_id, guest_id) DO UPDATE SET
+       display_name = excluded.display_name,
+       headline = excluded.headline,
+       camera_enabled = excluded.camera_enabled,
+       mic_enabled = excluded.mic_enabled,
+       screen_sharing = excluded.screen_sharing,
+       last_seen = excluded.last_seen,
+       waiting = excluded.waiting`
+  ).bind(
+    roomId,
+    guestId,
+    clean(String(body?.displayName ?? "")),
+    clean(String(body?.headline ?? "")),
+    body?.cameraEnabled ? 1 : 0,
+    body?.micEnabled ? 1 : 0,
+    body?.screenSharing ? 1 : 0,
+    Number(body?.joinedAt) || now,
+    Number(body?.lastSeen) || now,
+    body?.waiting === false ? 0 : 1
+  ).run();
+  return json({ ok: true });
+}
+
+async function handleRoomRemoveGuest(path, env) {
+  const match = path.match(/^\/rooms\/([^/]+)\/guests\/([^/]+)$/);
+  const roomId = match ? clean(decodeURIComponent(match[1])) : "";
+  const guestId = match ? clean(decodeURIComponent(match[2])) : "";
+  if (!roomId || !guestId) return json({ error: "Room id and guest id are required." }, 400);
+  await env.TPI_DB.prepare("DELETE FROM studio_room_guests WHERE room_id = ? AND guest_id = ?").bind(roomId, guestId).run();
+  return json({ ok: true });
+}
+
+async function handleRoomStatus(path, env) {
+  const roomId = roomRelayId(path, /^\/rooms\/([^/]+)\/status$/);
+  if (!roomId) return json({ error: "Room id is required." }, 400);
+  const guestRows = await env.TPI_DB.prepare(
+    "SELECT * FROM studio_room_guests WHERE room_id = ? AND last_seen >= ? ORDER BY joined_at DESC"
+  ).bind(roomId, Date.now() - ROOM_GUEST_TTL_MS).all();
+  const guests = (guestRows.results ?? []).map(roomRelayGuestRow);
+  const signalRows = await env.TPI_DB.prepare(
+    "SELECT payload FROM studio_room_signals WHERE room_id = ? AND created_at >= ? ORDER BY id DESC LIMIT 10"
+  ).bind(roomId, Date.now() - ROOM_SIGNAL_TTL_MS).all();
+  const countRow = await env.TPI_DB.prepare("SELECT COUNT(*) AS count FROM studio_room_signals WHERE room_id = ?").bind(roomId).first();
+  const recentSignals = (signalRows.results ?? []).map((row) => {
+    try {
+      const parsed = JSON.parse(row.payload);
+      return { guestId: parsed?.guestId ?? "", type: parsed?.type ?? "" };
+    } catch {
+      return { guestId: "", type: "" };
+    }
+  });
+  return json({
+    roomId,
+    clientCount: guests.length,
+    guestCount: guests.length,
+    guests,
+    recentSignals,
+    signalCount: Number(countRow?.count ?? 0)
+  });
+}
+
+async function handleRoomPostSignal(path, request, env) {
+  const roomId = roomRelayId(path, /^\/rooms\/([^/]+)\/signals$/);
+  if (!roomId) return json({ error: "Room id is required." }, 400);
+  let message;
+  try {
+    message = await request.json();
+  } catch {
+    return json({ error: "Invalid JSON body." }, 400);
+  }
+  if (!message || typeof message.type !== "string" || !message.type) {
+    return json({ error: "Signal type is required." }, 400);
+  }
+  const payload = JSON.stringify(message);
+  if (payload.length > 65536) return json({ error: "Signal payload is too large." }, 413);
+  await env.TPI_DB.prepare("INSERT INTO studio_room_signals (room_id, type, payload, created_at) VALUES (?, ?, ?, ?)")
+    .bind(roomId, clean(message.type), payload, Date.now()).run();
+  if (Math.random() < 0.08) {
+    await env.TPI_DB.prepare("DELETE FROM studio_room_signals WHERE room_id = ? AND created_at < ?")
+      .bind(roomId, Date.now() - ROOM_SIGNAL_TTL_MS).run();
+  }
+  return json({ ok: true });
+}
+
+async function handleRoomGetSignals(path, request, env) {
+  const roomId = roomRelayId(path, /^\/rooms\/([^/]+)\/signals$/);
+  if (!roomId) return json({ error: "Room id is required." }, 400);
+  const url = new URL(request.url);
+  const since = Math.max(0, Number(url.searchParams.get("since") ?? 0) || 0);
+  const result = await env.TPI_DB.prepare(
+    "SELECT id, payload FROM studio_room_signals WHERE room_id = ? AND id > ? AND created_at >= ? ORDER BY id ASC LIMIT 100"
+  ).bind(roomId, since, Date.now() - ROOM_SIGNAL_TTL_MS).all();
+  const rows = result.results ?? [];
+  const signals = rows.map((row) => {
+    try {
+      return JSON.parse(row.payload);
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
+  const cursor = rows.length ? Number(rows[rows.length - 1].id) : since;
+  return json({ signals, cursor });
 }
 
 // ---- StudioFlow Cloudflare RealtimeKit rooms ----

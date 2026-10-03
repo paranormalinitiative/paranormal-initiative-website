@@ -104,13 +104,23 @@ export default {
     // their production tests (see STUDIOFLOW_MASTER_TODO.md Phase 3). Revisit
     // this gate when RealtimeKit guests go into testing.
     if (url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
+      // Guest invite links are the guest's credential (ground rule 6: guests
+      // join via browser link — no website account needed). The app boots in
+      // guest mode from the /studio/guest/<room> URL. App assets are public so
+      // guests can load the same bundle; the host studio itself stays gated.
+      if (url.pathname.startsWith("/studio/guest/")) {
+        // Fetch the clean directory URL: /studio/index.html would 307 to
+        // /studio/ (assets clean-URL handling, known bug #16) and guests
+        // would bounce into the gated host page.
+        const appUrl = new URL("/studio/", url.origin);
+        return env.ASSETS.fetch(new Request(appUrl, request));
+      }
+      if (url.pathname.startsWith("/studio/assets/")) {
+        return env.ASSETS.fetch(request);
+      }
       const user = await getSessionUser(request, env);
       const hasStudioAccess = user && (user.role === "owner" || user.role === "admin");
       if (!hasStudioAccess) {
-        // Asset requests get a bare 403; page requests get the branded gate.
-        if (url.pathname.startsWith("/studio/assets/")) {
-          return new Response("Forbidden", { status: 403 });
-        }
         const gateHtml = MEMBER_GATE_HTML
           .replaceAll("ITC Visual Studio", "StudioFlow")
           .replaceAll("StudioFlow — Member Access", "StudioFlow — Private Build Testing")
@@ -122,10 +132,6 @@ export default {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8" }
         });
-      }
-      if (url.pathname.startsWith("/studio/guest/")) {
-        const appUrl = new URL("/studio/index.html", url.origin);
-        return env.ASSETS.fetch(new Request(appUrl, request));
       }
       return env.ASSETS.fetch(request);
     }
