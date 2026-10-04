@@ -96,7 +96,17 @@ a:hover { color: var(--ptd-blue-strong); }
   padding: 2.25rem 1.25rem 3.5rem;
 }
 
-.ptd-hero { margin-bottom: 2rem; }
+.ptd-hero {
+  margin-bottom: 2rem;
+  border: 1px solid var(--ptd-border);
+  border-radius: 16px;
+  padding: 1.9rem 1.75rem;
+  background:
+    radial-gradient(560px 280px at 78% 0%, rgba(89, 169, 220, 0.10), transparent 70%),
+    radial-gradient(420px 260px at 8% 100%, rgba(88, 185, 138, 0.08), transparent 70%),
+    var(--ptd-surface);
+  overflow: hidden;
+}
 .ptd-kicker {
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -112,7 +122,33 @@ a:hover { color: var(--ptd-blue-strong); }
   color: var(--ptd-heading);
 }
 .ptd-hero .ptd-lede { max-width: 46rem; color: var(--ptd-muted); margin: 0 0 1.25rem; }
-.ptd-h2 { font-size: 1.3rem; color: var(--ptd-heading); margin: 2.25rem 0 1rem; }
+.ptd-h2 {
+  font-size: 1.3rem;
+  color: var(--ptd-heading);
+  margin: 2.25rem 0 1rem;
+  border-left: 3px solid var(--ptd-blue);
+  padding-left: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ptd-h2-icon {
+  height: 0.92em;
+  width: auto;
+  flex: 0 0 auto;
+  fill: rgba(89, 169, 220, 0.12);
+  stroke: var(--ptd-blue);
+  stroke-width: 1.6px;
+  filter: drop-shadow(0 0 4px rgba(89, 169, 220, 0.45));
+}
+.ptd-h2-icon-intl {
+  fill: rgba(88, 185, 138, 0.12);
+  stroke: var(--ptd-green);
+  filter: drop-shadow(0 0 4px rgba(88, 185, 138, 0.45));
+}
+.ptd-h2-icon-intl circle,
+.ptd-h2-icon-intl ellipse,
+.ptd-h2-icon-intl line { stroke-width: 1.2px; }
 
 .ptd-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 1.25rem; }
 .ptd-button {
@@ -165,6 +201,84 @@ a:hover { color: var(--ptd-blue-strong); }
   flex: 1;
   min-width: 220px;
 }
+
+/* ---------- Visual link cards (map / globe) ---------- */
+
+.ptd-visual-grid,
+.ptd-scope-chooser {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.ptd-visual-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-align: center;
+  background:
+    radial-gradient(120% 85% at 50% 0%, rgba(89, 169, 220, 0.08), transparent 62%),
+    var(--ptd-surface);
+  border: 1px solid var(--ptd-border);
+  border-radius: 14px;
+  padding: 1.9rem 1.5rem 1.6rem;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.ptd-visual-card.is-intl {
+  background:
+    radial-gradient(120% 85% at 50% 0%, rgba(88, 185, 138, 0.08), transparent 62%),
+    var(--ptd-surface);
+}
+.ptd-visual-card:hover {
+  border-color: var(--ptd-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 0 26px rgba(89, 169, 220, 0.20);
+}
+.ptd-visual-card.is-intl:hover {
+  border-color: var(--ptd-green);
+  box-shadow: 0 0 26px rgba(88, 185, 138, 0.20);
+}
+.ptd-visual-card.is-active { border-color: var(--ptd-blue); box-shadow: 0 0 22px rgba(89, 169, 220, 0.22); }
+.ptd-visual-card.is-intl.is-active { border-color: var(--ptd-green); box-shadow: 0 0 22px rgba(88, 185, 138, 0.22); }
+
+.ptd-visual-art {
+  height: 185px;
+  width: auto;
+  max-width: 100%;
+  margin-bottom: 0.55rem;
+  fill: rgba(89, 169, 220, 0.09);
+  stroke: var(--ptd-blue);
+  stroke-width: 2px;
+  animation: ptd-glow-blue 3.4s ease-in-out infinite;
+}
+.ptd-visual-card.is-intl .ptd-visual-art {
+  fill: rgba(88, 185, 138, 0.09);
+  stroke: var(--ptd-green);
+  animation: ptd-glow-green 3.4s ease-in-out infinite;
+}
+.ptd-visual-art-globe { height: 175px; }
+.ptd-visual-art-globe circle,
+.ptd-visual-art-globe ellipse,
+.ptd-visual-art-globe line { stroke-width: 2.5px; }
+
+@keyframes ptd-glow-blue {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(89, 169, 220, 0.28)); }
+  50% { filter: drop-shadow(0 0 16px rgba(89, 169, 220, 0.60)); }
+}
+@keyframes ptd-glow-green {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(88, 185, 138, 0.28)); }
+  50% { filter: drop-shadow(0 0 16px rgba(88, 185, 138, 0.60)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ptd-visual-art { animation: none; filter: drop-shadow(0 0 10px rgba(89, 169, 220, 0.40)); }
+  .ptd-visual-card.is-intl .ptd-visual-art { filter: drop-shadow(0 0 10px rgba(88, 185, 138, 0.40)); }
+}
+
+.ptd-visual-title { color: var(--ptd-heading); font-size: 1.18rem; font-weight: 700; margin-top: 0.2rem; }
+.ptd-visual-note { color: var(--ptd-muted); font-size: 0.88rem; margin: 0; max-width: 26rem; }
+.ptd-visual-cta { color: var(--ptd-blue); font-weight: 600; font-size: 0.92rem; letter-spacing: 0.02em; margin-top: 0.35rem; }
+.ptd-visual-card.is-intl .ptd-visual-cta { color: var(--ptd-green); }
 
 /* ---------- State / country grids ---------- */
 
@@ -436,6 +550,9 @@ a:hover { color: var(--ptd-blue-strong); }
 .ptd-footer a { margin: 0 0.4rem; }
 
 @media (max-width: 720px) {
+  .ptd-hero { padding: 1.4rem 1.15rem; }
+  .ptd-visual-art { height: 150px; }
+  .ptd-visual-art-globe { height: 142px; }
   .ptd-field { flex-direction: column; gap: 0.25rem; }
   .ptd-field > label { flex-basis: auto; padding-top: 0; }
   .ptd-detail-label { flex-basis: 100%; }
