@@ -4169,6 +4169,100 @@ body.feed-app-page .member-explore-item-shell {
     margin-top: 18px;
 }
 
+.member-verify-email {
+    margin-top: 18px;
+    padding: 14px;
+    background: rgba(9, 15, 20, 0.72);
+    border: 1px solid rgba(38, 54, 70, 0.9);
+    border-radius: 4px;
+    display: grid;
+    gap: 8px;
+}
+
+.member-verify-email strong {
+    color: #58b98a;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.member-verify-email.is-pending strong {
+    color: #d9a441;
+}
+
+.member-verify-email p {
+    margin: 0;
+    color: #c8cdd8;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.member-verify-email-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.member-verify-email form {
+    display: grid;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.member-verify-email form[hidden] {
+    display: none;
+}
+
+.member-verify-email label {
+    display: grid;
+    gap: 4px;
+}
+
+.member-verify-email label span {
+    color: #7f95aa;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.member-verify-email input {
+    background: rgba(4, 8, 12, 0.9);
+    border: 1px solid rgba(38, 54, 70, 0.9);
+    border-radius: 4px;
+    color: #e8ecf4;
+    padding: 9px 10px;
+    font-family: inherit;
+}
+
+.member-verify-email [data-verify-email-status] {
+    color: #7f95aa;
+    font-size: 12px;
+}
+
+.account-recovery-step {
+    display: grid;
+    gap: 4px;
+}
+
+.account-recovery-step span {
+    color: #7f95aa;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.account-recovery-step input {
+    background: rgba(4, 8, 12, 0.9);
+    border: 1px solid rgba(38, 54, 70, 0.9);
+    border-radius: 4px;
+    color: #e8ecf4;
+    padding: 9px 10px;
+    font-family: inherit;
+}
+
 .member-profile-facts p {
     display: grid;
     gap: 3px;

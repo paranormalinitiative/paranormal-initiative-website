@@ -1083,6 +1083,63 @@
     }
   }
 
+  function renderEmailVerificationPanel(user) {
+    if (user.emailVerified) {
+      return `<div class="member-verify-email" data-verify-email-panel data-verified="true"><strong>Email Verified</strong><p>${escapeHtml(user.correspondence || "Your email")} is confirmed.</p></div>`;
+    }
+    return `<div class="member-verify-email is-pending" data-verify-email-panel data-verified="false">
+      <strong>Email Not Verified</strong>
+      <p>Verify ${escapeHtml(user.correspondence || "your email")} to keep your account recoverable.</p>
+      <div class="member-verify-email-actions">
+        <button type="button" class="portal-button portal-button-secondary" data-verify-email-send>Send Code</button>
+      </div>
+      <form data-verify-email-form hidden>
+        <label><span>Code from your email</span><input name="code" type="text" inputmode="numeric" maxlength="8" autocomplete="one-time-code" placeholder="00000000"></label>
+        <button type="submit" class="portal-button">Verify</button>
+        <span data-verify-email-status aria-live="polite"></span>
+      </form>
+    </div>`;
+  }
+
+  function bindEmailVerificationPanel() {
+    const panel = document.querySelector("[data-verify-email-panel]");
+    if (!panel || panel.dataset.verified === "true") return;
+    const sendButton = panel.querySelector("[data-verify-email-send]");
+    const form = panel.querySelector("[data-verify-email-form]");
+    const statusEl = panel.querySelector("[data-verify-email-status]");
+    if (!sendButton || !form) return;
+    sendButton.addEventListener("click", async () => {
+      sendButton.disabled = true;
+      statusEl.textContent = "Sending...";
+      try {
+        await window.TPIApi.requestEmailVerification();
+        form.hidden = false;
+        statusEl.textContent = "Code sent — check your email.";
+      } catch (error) {
+        statusEl.textContent = error.message || "Could not send the code.";
+        sendButton.disabled = false;
+      }
+    });
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      const code = String(new FormData(form).get("code") || "").trim();
+      if (!code) {
+        statusEl.textContent = "Enter the code from your email.";
+        return;
+      }
+      try {
+        await window.TPIApi.confirmEmailVerification({ code });
+        statusEl.textContent = "Email verified. Thank you!";
+        form.hidden = true;
+        panel.dataset.verified = "true";
+        panel.classList.remove("is-pending");
+        panel.querySelector("strong").textContent = "Email Verified";
+      } catch (error) {
+        statusEl.textContent = error.message || "Verification failed.";
+      }
+    });
+  }
+
   function renderDashboardProfile(user) {
     if (!dashboardProfile || !user) return;
     updateDashboardToolVisibility(user);
@@ -1130,6 +1187,7 @@
         <strong>Biography</strong>
         <p>${user.bio ? escapeHtml(user.bio).replace(/\n/g, "<br>") : "Biography coming soon."}</p>
       </div>
+      ${renderEmailVerificationPanel(user)}
     `;
     if (profilePhotoPreview) {
       profilePhotoPreview.innerHTML = photoMarkup;
@@ -1224,6 +1282,7 @@
         return;
       }
       renderDashboardProfile(session.user);
+      bindEmailVerificationPanel();
       await renderDashboardArticles(session.user);
       await renderCloudflareOwnerInvites();
       return;
@@ -1370,15 +1429,35 @@
 
     if (resetRequestForm) {
       const email = String(data.get("email") || "").trim();
+      const code = String(data.get("code") || "").trim();
+      const password = String(data.get("password") || "");
+      const confirmPassword = String(data.get("confirmPassword") || "");
       if (!email || !email.includes("@")) {
         setStatus("Enter the email address on the account.", true);
         return;
       }
       if (await cloudflareReady()) {
         try {
+          if (code) {
+            // Step 2: complete the reset with the emailed code.
+            if (password.length < 8) {
+              setStatus("Password must be at least 8 characters.", true);
+              return;
+            }
+            if (password !== confirmPassword) {
+              setStatus("Passwords do not match.", true);
+              return;
+            }
+            await window.TPIApi.confirmPasswordReset({ code, password });
+            resetRequestForm.reset();
+            setStatus("Password updated. You can sign in with your new password now.", false);
+            return;
+          }
+          // Step 1: request the emailed code.
           const response = await window.TPIApi.requestPasswordReset({ email });
-          resetRequestForm.reset();
-          setStatus(response.message || "If that email is on an account, reset instructions will be sent.", false);
+          const codeInput = resetRequestForm.querySelector("input[name='code']");
+          if (codeInput) codeInput.focus();
+          setStatus(response.message || "Reset code sent — check your email.", false);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -1386,8 +1465,8 @@
       }
       const localUser = users.find(user => String(user.correspondence || user.email || "").toLowerCase() === email.toLowerCase());
       setStatus(localUser
-        ? "Local preview found that email. Cloudflare email delivery is needed for live reset instructions."
-        : "If that email is on an account, reset instructions will be sent when email delivery is connected.", false);
+        ? "Local preview found that email. Live email delivery needs the Cloudflare backend."
+        : "If that email is on an account, reset instructions will be sent.", false);
       return;
     }
 

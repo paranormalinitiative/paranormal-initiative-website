@@ -5,3 +5,6 @@ npm-debug.log*
 
 # Local database backups - never commit
 backups/
+
+# Local dev secrets
+.dev.vars

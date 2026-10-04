@@ -30,7 +30,11 @@
         <button class="portal-button portal-button-secondary account-toggle-button" type="button" data-forgot-password-toggle>Forgot Password?</button>
         <form class="account-recovery-form" data-password-reset-request hidden>
             <label><span>Account Email</span><input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
-            <button type="submit">Send Reset Instructions</button>
+            <button type="submit">Send Reset Code</button>
+            <p class="access-note">We'll email an 8-digit code. Enter it below with a new password to finish the reset.</p>
+            <label class="account-recovery-step"><span>Reset Code</span><input name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="00000000"></label>
+            <label class="account-recovery-step"><span>New Password</span><input name="password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></label>
+            <label class="account-recovery-step"><span>Confirm New Password</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8"></label>
         </form>
         <p class="access-note">Members can join discussions. Contributors can also use the Content Editor after approval.</p>
     </div>

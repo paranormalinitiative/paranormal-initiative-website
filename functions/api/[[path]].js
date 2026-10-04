@@ -1,4 +1,5 @@
 import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
+import { sendEmail, randomCode, verificationEmail, passwordResetEmail, teamSubmissionAlertEmail } from "../../lib/email.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -15,6 +16,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
     if (request.method === "POST" && path === "/auth/logout") return handleLogout();
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
+    if (request.method === "POST" && path === "/auth/password-reset/confirm") return handlePasswordResetConfirm(request, env);
+    if (request.method === "POST" && path === "/auth/verify-email/request") return requireMember(request, env, user => handleVerifyEmailRequest(request, env, user));
+    if (request.method === "POST" && path === "/auth/verify-email/confirm") return requireMember(request, env, user => handleVerifyEmailConfirm(request, env, user));
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
@@ -213,23 +217,86 @@ async function handlePasswordResetRequest(request, env) {
   if (!email || !email.includes("@")) return json({ error: "Enter the email address on the account." }, 400);
 
   const user = await getUserByEmail(env, email);
+  let emailed = false;
   if (user) {
-    try {
-      const token = crypto.randomUUID();
-      const expires = new Date(Date.now() + 1000 * 60 * 60).toISOString();
-      await env.TPI_DB.prepare(`
-        INSERT INTO password_reset_tokens (token, contributor_id, expires_at)
-        VALUES (?, ?, ?)
-      `).bind(token, user.id, expires).run();
-    } catch (error) {
-      // The reset-token table and outbound email provider can be enabled after the UI is live.
-    }
+    const code = randomCode();
+    const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
+    await env.TPI_DB.prepare(`
+      INSERT INTO password_reset_tokens (token, contributor_id, expires_at)
+      VALUES (?, ?, ?)
+    `).bind(code, user.id, expires).run();
+    const content = passwordResetEmail(code);
+    const result = await sendEmail(env, { to: email, subject: content.subject, html: content.html, text: content.text });
+    emailed = Boolean(result.ok);
   }
 
   return json({
     ok: true,
-    message: "If that email is on a member account, reset instructions will be sent when email delivery is connected."
+    emailed,
+    message: emailed
+      ? "Reset code sent. Check your email for an 8-digit code, then enter it below to choose a new password."
+      : "If that email is on a member account, reset instructions will be sent."
   });
+}
+
+async function handlePasswordResetConfirm(request, env) {
+  const data = await readJson(request);
+  const code = clean(data.code).replace(/\s+/g, "");
+  const password = String(data.password || "");
+  if (!code) return json({ error: "Enter the code from your email." }, 400);
+  if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
+
+  const row = await env.TPI_DB.prepare(`
+    SELECT token, contributor_id FROM password_reset_tokens
+    WHERE token = ? AND used = 0 AND expires_at > CURRENT_TIMESTAMP
+    LIMIT 1
+  `).bind(code).first();
+  if (!row) return json({ error: "That code is invalid or has expired. Request a new one." }, 400);
+
+  await env.TPI_DB.prepare("UPDATE contributors SET password_hash = ? WHERE id = ?")
+    .bind(await hashPassword(password), row.contributor_id).run();
+  await env.TPI_DB.prepare("UPDATE password_reset_tokens SET used = 1 WHERE token = ?")
+    .bind(code).run();
+
+  // Invalidate existing sessions for the recovered account.
+  await env.TPI_DB.prepare("DELETE FROM sessions WHERE contributor_id = ?")
+    .bind(row.contributor_id).run();
+
+  return json({ ok: true });
+}
+
+async function handleVerifyEmailRequest(request, env, user) {
+  const email = clean(user.correspondence).toLowerCase();
+  if (!email || !email.includes("@")) return json({ error: "No email address is set on your account." }, 400);
+  if (user.email_verified) return json({ ok: true, alreadyVerified: true });
+
+  const code = randomCode();
+  const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO email_verification_tokens (token, contributor_id, expires_at)
+    VALUES (?, ?, ?)
+  `).bind(code, user.id, expires).run();
+  const content = verificationEmail(code);
+  const result = await sendEmail(env, { to: email, subject: content.subject, html: content.html, text: content.text });
+  if (!result.ok) return json({ error: "Email delivery is not configured yet. Please try again later." }, 503);
+  return json({ ok: true, sentTo: email });
+}
+
+async function handleVerifyEmailConfirm(request, env, user) {
+  const data = await readJson(request);
+  const code = clean(data.code).replace(/\s+/g, "");
+  if (!code) return json({ error: "Enter the verification code from your email." }, 400);
+
+  const row = await env.TPI_DB.prepare(`
+    SELECT token FROM email_verification_tokens
+    WHERE token = ? AND contributor_id = ? AND used = 0 AND expires_at > CURRENT_TIMESTAMP
+    LIMIT 1
+  `).bind(code, user.id).first();
+  if (!row) return json({ error: "That code is invalid or has expired. Request a new one." }, 400);
+
+  await env.TPI_DB.prepare("UPDATE contributors SET email_verified = 1 WHERE id = ?").bind(user.id).run();
+  await env.TPI_DB.prepare("UPDATE email_verification_tokens SET used = 1 WHERE token = ?").bind(code).run();
+  return json({ ok: true, emailVerified: true });
 }
 
 async function handleLogout() {
@@ -287,6 +354,20 @@ async function handleMemberRegister(request, env) {
     clean(data.photoUrl),
     data.commentSignatureEnabled === false ? 0 : 1
   ).run();
+
+  // Fire-and-forget welcome/verification email — never blocks registration.
+  try {
+    const code = randomCode();
+    const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
+    await env.TPI_DB.prepare(`
+      INSERT INTO email_verification_tokens (token, contributor_id, expires_at)
+      VALUES (?, ?, ?)
+    `).bind(code, id, expires).run();
+    const content = verificationEmail(code);
+    await sendEmail(env, { to: email, subject: content.subject, html: content.html, text: content.text });
+  } catch (error) {
+    console.error("verification email failed", error);
+  }
 
   return json({ ok: true });
 }
@@ -4214,6 +4295,26 @@ async function handleCreateTeamSubmission(request, env) {
     country: scope === "international" ? country : "",
     submitterName
   });
+
+  // Email alert to leadership (Resend) — fire-and-forget with the same
+  // never-block-a-submission guarantee as the in-site notification.
+  try {
+    const { results: alertRecipients } = await env.TPI_DB.prepare(`
+      SELECT correspondence FROM contributors WHERE active = 1 AND role IN ('owner', 'admin')
+        AND correspondence IS NOT NULL AND correspondence LIKE '%@%'
+    `).all();
+    if (alertRecipients && alertRecipients.length) {
+      const content = teamSubmissionAlertEmail({ name, city, state: scope === "us" ? state : "", country: scope === "international" ? country : "", submitterName });
+      await sendEmail(env, {
+        to: alertRecipients.map(recipient => recipient.correspondence),
+        subject: content.subject,
+        html: content.html,
+        text: content.text
+      });
+    }
+  } catch (error) {
+    console.error("team submission email failed", error);
+  }
 
   return json({ ok: true, id, status: "pending" });
 }
