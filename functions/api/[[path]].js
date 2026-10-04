@@ -278,7 +278,11 @@ async function handleVerifyEmailRequest(request, env, user) {
   `).bind(code, user.id, expires).run();
   const content = verificationEmail(code);
   const result = await sendEmail(env, { to: email, subject: content.subject, html: content.html, text: content.text });
-  if (!result.ok) return json({ error: "Email delivery is not configured yet. Please try again later." }, 503);
+  if (!result.ok) {
+    if (result.error === "email-not-configured") return json({ error: "Email delivery is not configured yet. Please try again later." }, 503);
+    console.error("verify-email send failed", result.error);
+    return json({ error: "The verification email could not be sent right now. Please try again later." }, 502);
+  }
   return json({ ok: true, sentTo: email });
 }
 
