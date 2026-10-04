@@ -58,7 +58,7 @@
 ParaPost's layout patterns are worth studying, but TPI must never read as a ParaPost copy:
 
 - **Dark theme stays** — Todd: dark is easy on the eyes; both platforms agree there.
-- **Colors must be distinctly TPI.** ParaPost ships `parapost-purple` (their own CSS token) — our current `--accent: #a855f7` sits in the same violet family. To avoid twin-brand confusion we pick our own accent identity (palette decision pending Todd) and pair it with unique secondary glows/gradients so screenshots of the two sites are never mistakable.
+- **Colors are distinctly TPI — DECIDED & SHIPPED (Oct 4, 2026).** Todd supplied four palettes; **Cryptid & Folklore** (deep forest `#1a221e` base, eerie slime-green `#32cd32` accent) is the site default, with Gothic Séance, Cosmic Horror, and Asylum & Investigation shipped as member-selectable themes (dashboard Appearance picker, saved to the member's account). Every ParaPost-purple literal has been tokenized out of the stylesheets.
 - **Our own names and structure.** Keep TPI naming (TPI Reels, Teams Directory, Education Center, TPI Studio) — organize the dashboard around *our* pillars (Learn / Investigate / Share / Teams), not their Hub taxonomy.
 - **Borrow mechanics, not look.** Right-rail discovery, trending categories, bottom mobile nav are UX patterns, not ParaPost property — implement them in TPI's visual language.
 
