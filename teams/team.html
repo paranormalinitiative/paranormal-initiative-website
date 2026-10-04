@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Paranormal team listing in the TPI Paranormal Teams Directory.">
+    <title>Team Listing | TPI Paranormal Teams Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="teams.css">
+</head>
+<body data-ptd-page="find">
+
+<main class="ptd-main">
+    <div id="ptd-team-content">
+        <p class="ptd-status">Loading team...</p>
+    </div>
+</main>
+
+<script src="teams.js"></script>
+<script>
+(async function () {
+    const id = (new URLSearchParams(window.location.search).get("id") || "").trim();
+    const content = document.getElementById("ptd-team-content");
+
+    function row(label, valueHtml) {
+        if (!valueHtml) return "";
+        return `<div class="ptd-detail-row">
+            <div class="ptd-detail-label">${label}</div>
+            <div class="ptd-detail-value">${valueHtml}</div>
+        </div>`;
+    }
+
+    function link(value) {
+        const safe = PTD.escapeHtml(value);
+        const href = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+        return `<a href="${PTD.escapeHtml(href)}" target="_blank" rel="noopener nofollow">${safe}</a>`;
+    }
+
+    function paragraphs(value) {
+        return String(value || "").trim()
+            .split(/\n{2,}|\r\n\r\n/)
+            .map(part => `<p>${PTD.escapeHtml(part.trim())}</p>`)
+            .join("");
+    }
+
+    if (!id) {
+        content.innerHTML = `<p class="ptd-status is-error">No team was requested. <a href="find.html">Browse the directory</a>.</p>`;
+        return;
+    }
+
+    try {
+        const data = await PTD.api(`/teams/${encodeURIComponent(id)}`);
+        const team = data.team;
+        if (!team) throw new Error("not found");
+
+        document.title = `${team.name} | TPI Paranormal Teams Directory`;
+
+        const location = team.scope === "us"
+            ? `${team.city || ""}${team.city && team.state ? ", " : ""}${team.state || ""}${team.zip ? ` ${team.zip}` : ""}`
+            : `${team.city || ""}${team.city && team.country ? ", " : ""}${team.country || ""}`;
+
+        const backHref = team.scope === "us"
+            ? `browse.html?state=${encodeURIComponent(team.state || "")}`
+            : `browse.html?country=${encodeURIComponent(team.country || "")}`;
+        const backLabel = team.scope === "us" ? `&larr; Back to ${PTD.escapeHtml(team.state || "")} teams` : `&larr; Back to ${PTD.escapeHtml(team.country || "")} teams`;
+
+        const additionalStates = Array.isArray(team.additionalStates) ? team.additionalStates.filter(Boolean) : [];
+
+        content.innerHTML = `
+            <article class="ptd-detail">
+                <div class="ptd-detail-head">
+                    <h1>${PTD.escapeHtml(team.name)}</h1>
+                    <p class="ptd-detail-location">${PTD.escapeHtml(location.trim()) || "&nbsp;"}</p>
+                </div>
+
+                <div class="ptd-detail-grid">
+                    ${row("Contact Name", PTD.escapeHtml(team.contactName || ""))}
+                    ${row("Phone", team.phone ? PTD.escapeHtml(team.phone) : "")}
+                    ${row("Alternate Phone", team.phoneAlt ? PTD.escapeHtml(team.phoneAlt) : "")}
+                    ${row("Email", team.email ? `<a href="mailto:${PTD.escapeHtml(team.email)}">${PTD.escapeHtml(team.email)}</a>` : "")}
+                    ${row("Alternate Email", team.emailAlt ? `<a href="mailto:${PTD.escapeHtml(team.emailAlt)}">${PTD.escapeHtml(team.emailAlt)}</a>` : "")}
+                    ${row("Website", team.website ? link(team.website) : "")}
+                    ${row("Facebook", team.facebook ? link(team.facebook) : "")}
+                    ${row("Twitter", team.twitter ? `<a href="https://twitter.com/${PTD.escapeHtml(String(team.twitter).replace(/^@/, ""))}" target="_blank" rel="noopener nofollow">${PTD.escapeHtml(team.twitter)}</a>` : "")}
+                    ${row("Youtube", team.youtube ? link(team.youtube) : "")}
+                    ${row("Founder", PTD.escapeHtml(team.founder || ""))}
+                    ${row("Year Founded", PTD.escapeHtml(team.yearFounded || ""))}
+                    ${row("Number of Members", PTD.escapeHtml(team.members || ""))}
+                    ${additionalStates.length ? row("Also Listed In", PTD.escapeHtml(additionalStates.join(", "))) : ""}
+                </div>
+
+                ${team.areasServed ? `<div class="ptd-detail-section"><h3>Areas Served</h3>${paragraphs(team.areasServed)}</div>` : ""}
+                ${team.specialties ? `<div class="ptd-detail-section"><h3>Specialties</h3>${paragraphs(team.specialties)}</div>` : ""}
+                ${team.details ? `<div class="ptd-detail-section"><h3>Details</h3>${paragraphs(team.details)}</div>` : ""}
+
+                <div class="ptd-backlinks">
+                    <a class="ptd-button ptd-button-secondary" href="${backHref}">${backLabel}</a>
+                    <a class="ptd-button ptd-button-secondary" href="index.html">Directory Home</a>
+                </div>
+            </article>
+        `;
+    } catch (error) {
+        content.innerHTML = `
+            <p class="ptd-status is-error">This team listing was not found. It may have been removed.</p>
+            <div class="ptd-actions">
+                <a class="ptd-button ptd-button-secondary" href="find.html">Browse the directory</a>
+            </div>`;
+    }
+})();
+</script>
+
+</body>
+</html>

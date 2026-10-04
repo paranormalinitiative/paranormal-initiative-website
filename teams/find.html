@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Find a paranormal investigation team in your area — browse the TPI Paranormal Teams Directory by U.S. state or country.">
+    <link rel="canonical" href="https://paranormalinitiative.com/teams/find.html">
+    <title>Find a Team | TPI Paranormal Teams Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="teams.css">
+</head>
+<body data-ptd-page="find">
+
+<main class="ptd-main">
+    <section class="ptd-hero">
+        <p class="ptd-kicker">TPI Paranormal Teams Directory</p>
+        <h1>Find a Paranormal Team in your area:</h1>
+        <p class="ptd-lede">Every listing was submitted by the team and reviewed by TPI leadership before appearing here.</p>
+    </section>
+
+    <h2 class="ptd-h2" id="us">United States</h2>
+    <div class="ptd-region-grid" id="ptd-states-grid">
+        <p class="ptd-status">Loading states...</p>
+    </div>
+
+    <h2 class="ptd-h2" id="international">International</h2>
+    <div class="ptd-region-grid" id="ptd-countries-grid">
+        <p class="ptd-status">Loading countries...</p>
+    </div>
+</main>
+
+<script src="teams.js"></script>
+<script>
+(async function () {
+    const stateGrid = document.getElementById("ptd-states-grid");
+    const countryGrid = document.getElementById("ptd-countries-grid");
+
+    function regionLink(label, count, href) {
+        return `<a class="ptd-region-link" href="${href}">
+            <strong>${PTD.escapeHtml(label)}</strong>
+            <span>${count ? `${count} team${count === 1 ? "" : "s"}` : "No teams listed yet"}</span>
+        </a>`;
+    }
+
+    try {
+        const data = await PTD.api("/teams/counts");
+        const states = data.states || {};
+        const countries = data.countries || {};
+
+        const stateNames = [...PTD.US_STATES];
+        Object.keys(states).forEach(name => {
+            if (!stateNames.some(candidate => candidate.toLowerCase() === name.toLowerCase())) stateNames.push(name);
+        });
+        stateNames.sort((a, b) => a.localeCompare(b));
+
+        const countryNames = [...PTD.COUNTRIES];
+        Object.keys(countries).forEach(name => {
+            if (!countryNames.some(candidate => candidate.toLowerCase() === name.toLowerCase())) countryNames.push(name);
+        });
+        countryNames.sort((a, b) => a.localeCompare(b));
+
+        stateGrid.innerHTML = stateNames
+            .map(name => regionLink(name, states[name] || 0, `browse.html?state=${encodeURIComponent(name)}`))
+            .join("");
+        countryGrid.innerHTML = countryNames
+            .map(name => regionLink(name, countries[name] || 0, `browse.html?country=${encodeURIComponent(name)}`))
+            .join("");
+    } catch (error) {
+        stateGrid.innerHTML = `<p class="ptd-status is-error">Could not load the directory right now. Please try again.</p>`;
+        countryGrid.innerHTML = "";
+    }
+})();
+</script>
+
+</body>
+</html>

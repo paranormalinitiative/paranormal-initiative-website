@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Add your paranormal team or society to the TPI Paranormal Teams Directory. Submissions are reviewed by TPI leadership before publication.">
+    <link rel="canonical" href="https://paranormalinitiative.com/teams/add.html">
+    <title>Add a Team | TPI Paranormal Teams Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="teams.css">
+</head>
+<body data-ptd-page="add">
+
+<main class="ptd-main">
+    <section class="ptd-hero">
+        <p class="ptd-kicker">TPI Paranormal Teams Directory</p>
+        <h1 id="ptd-add-title">Add a Paranormal Team - United States</h1>
+        <p class="ptd-lede" id="ptd-add-switch">
+            Outside the United States? <a href="?scope=international">Use the International (Non-US) form</a> — it asks for the same information.
+        </p>
+    </section>
+
+    <div class="ptd-success-panel" id="ptd-success" hidden>
+        <h3>Thank you — your team was submitted.</h3>
+        <p>Your listing is now pending review by Paranormal Initiative leadership. Once it is approved, your team will appear in
+        the directory under your state or country, listed alphabetically.</p>
+        <p class="ptd-form-status is-ok" id="ptd-success-note"></p>
+        <div class="ptd-actions">
+            <a class="ptd-button ptd-button-secondary" href="index.html">Back to the Directory Home</a>
+            <a class="ptd-button ptd-button-primary" href="find.html">Browse Teams</a>
+        </div>
+    </div>
+
+    <form class="ptd-form-panel" id="ptd-add-form" novalidate>
+        <p class="ptd-form-note-required"><span class="ptd-required">Red text</span> indicates a required field.</p>
+
+        <div class="ptd-field">
+            <label for="f-submitter-name"><span class="ptd-required">*</span> Your Name</label>
+            <div class="ptd-input-host"><input id="f-submitter-name" name="submitterName" type="text" autocomplete="name" maxlength="150" required></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-submitter-email"><span class="ptd-required">*</span> Your Email</label>
+            <div class="ptd-input-host"><input id="f-submitter-email" name="submitterEmail" type="email" autocomplete="email" maxlength="200" required></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-heard-about">Where did you hear about us?</label>
+            <div class="ptd-input-host"><input id="f-heard-about" name="heardAbout" type="text" maxlength="300"></div>
+        </div>
+
+        <div class="ptd-attention">
+            <strong>ATTENTION!</strong>
+            <p>Pending review, the information you provide in the following fields will be published on our public site.
+            Please only enter information that you are willing to have appear on our site.</p>
+        </div>
+
+        <div class="ptd-field">
+            <label for="f-name"><span class="ptd-required">*</span> Team Name</label>
+            <div class="ptd-input-host"><input id="f-name" name="name" type="text" maxlength="200" required></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-acronym">Acronym</label>
+            <div class="ptd-input-host"><input id="f-acronym" name="acronym" type="text" maxlength="60"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-address">Address</label>
+            <div class="ptd-input-host"><input id="f-address" name="address" type="text" maxlength="300" autocomplete="street-address"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-city"><span class="ptd-required">*</span> City</label>
+            <div class="ptd-input-host"><input id="f-city" name="city" type="text" maxlength="120" required></div>
+        </div>
+        <div class="ptd-field" id="f-row-state">
+            <label for="f-state"><span class="ptd-required">*</span> State</label>
+            <div class="ptd-input-host"><select id="f-state" name="state" required></select></div>
+        </div>
+        <div class="ptd-field" id="f-row-country" hidden>
+            <label for="f-country"><span class="ptd-required">*</span> Country</label>
+            <div class="ptd-input-host"><select id="f-country" name="country"></select></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-zip">Zip / Postal Code</label>
+            <div class="ptd-input-host"><input id="f-zip" name="zip" type="text" maxlength="20" autocomplete="postal-code"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-contact-name">Contact Name</label>
+            <div class="ptd-input-host"><input id="f-contact-name" name="contactName" type="text" maxlength="150"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-phone">Phone</label>
+            <div class="ptd-input-host"><input id="f-phone" name="phone" type="tel" maxlength="40" autocomplete="tel"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-phone-alt">Alternate Phone</label>
+            <div class="ptd-input-host"><input id="f-phone-alt" name="phoneAlt" type="tel" maxlength="40"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-fax">Fax</label>
+            <div class="ptd-input-host"><input id="f-fax" name="fax" type="text" maxlength="40"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-email"><span class="ptd-required">*</span> Email</label>
+            <div class="ptd-input-host"><input id="f-email" name="email" type="email" maxlength="200" required></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-email-alt">Alternate Email</label>
+            <div class="ptd-input-host"><input id="f-email-alt" name="emailAlt" type="email" maxlength="200"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-website">Website</label>
+            <div class="ptd-input-host"><input id="f-website" name="website" type="url" maxlength="400" placeholder="www.example.com"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-facebook">Facebook (Full Link)</label>
+            <div class="ptd-input-host"><input id="f-facebook" name="facebook" type="url" maxlength="400" placeholder="https://facebook.com/..."></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-twitter">Twitter Handle (@username)</label>
+            <div class="ptd-input-host"><input id="f-twitter" name="twitter" type="text" maxlength="100" placeholder="@"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-youtube">Youtube Channel (Full Link)</label>
+            <div class="ptd-input-host"><input id="f-youtube" name="youtube" type="url" maxlength="400" placeholder="https://youtube.com/..."></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-founder">Founder</label>
+            <div class="ptd-input-host"><input id="f-founder" name="founder" type="text" maxlength="150"></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-year-founded"><span class="ptd-required">*</span> Year Founded</label>
+            <div class="ptd-input-host"><select id="f-year-founded" name="yearFounded"></select></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-members">Number of Members</label>
+            <div class="ptd-input-host"><select id="f-members" name="members"></select></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-areas-served">Areas Served</label>
+            <div class="ptd-input-host"><textarea id="f-areas-served" name="areasServed" maxlength="2000"></textarea></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-specialties">Specialties</label>
+            <div class="ptd-input-host"><textarea id="f-specialties" name="specialties" maxlength="4000"></textarea></div>
+        </div>
+        <div class="ptd-field">
+            <label for="f-details">Details</label>
+            <div class="ptd-input-host"><textarea id="f-details" name="details" maxlength="6000"></textarea></div>
+        </div>
+
+        <fieldset class="ptd-fieldset" id="f-additional-states">
+            <legend>Additional states you would like to be listed in, if any (you must be willing to travel to any states selected):</legend>
+            <p class="ptd-fieldset-note">Do NOT select your home state!</p>
+            <div class="ptd-field">
+                <label for="f-additional-1">Additional State 1</label>
+                <div class="ptd-input-host"><select id="f-additional-1" name="additionalState1" data-additional-state="1"></select></div>
+            </div>
+            <div class="ptd-field">
+                <label for="f-additional-2">Additional State 2</label>
+                <div class="ptd-input-host"><select id="f-additional-2" name="additionalState2" data-additional-state="2"></select></div>
+            </div>
+            <div class="ptd-field">
+                <label for="f-additional-3">Additional State 3</label>
+                <div class="ptd-input-host"><select id="f-additional-3" name="additionalState3" data-additional-state="3"></select></div>
+            </div>
+            <div class="ptd-field">
+                <label for="f-additional-4">Additional State 4</label>
+                <div class="ptd-input-host"><select id="f-additional-4" name="additionalState4" data-additional-state="4"></select></div>
+            </div>
+        </fieldset>
+
+        <div class="ptd-hp" aria-hidden="true">
+            <label>Company URL (leave blank) <input name="company_url" type="text" tabindex="-1" autocomplete="off"></label>
+        </div>
+
+        <p class="ptd-certify">By clicking submit you certify that you are 18 years or older and are authorized to enter the above listed information on behalf of this paranormal team.</p>
+
+        <div class="ptd-form-actions">
+            <button class="ptd-button ptd-button-primary" type="submit" id="ptd-submit">Submit</button>
+            <span class="ptd-form-status" id="ptd-form-status" aria-live="polite"></span>
+        </div>
+    </form>
+</main>
+
+<script src="teams.js"></script>
+<script>
+(async function () {
+    const international = new URLSearchParams(window.location.search).get("scope") === "international";
+    const form = document.getElementById("ptd-add-form");
+    const status = document.getElementById("ptd-form-status");
+    const success = document.getElementById("ptd-success");
+
+    document.getElementById("ptd-add-title").textContent = international
+        ? "Add a Paranormal Team - International (Non-US)"
+        : "Add a Paranormal Team - United States";
+    document.title = international
+        ? "Add an International Team | TPI Paranormal Teams Directory"
+        : "Add a Team | TPI Paranormal Teams Directory";
+    document.getElementById("ptd-add-switch").innerHTML = international
+        ? `Inside the United States? <a href="add.html">Use the United States form</a>.`
+        : `Outside the United States? <a href="?scope=international">Use the International (Non-US) form</a> — it asks for the same information.`;
+
+    document.getElementById("f-row-state").hidden = international;
+    document.getElementById("f-row-country").hidden = !international;
+    document.getElementById("f-additional-states").hidden = international;
+    document.getElementById("f-state").required = !international;
+    document.getElementById("f-country").required = international;
+
+    function fillSelect(select, values, blankLabel) {
+        select.innerHTML = `<option value="">${blankLabel}</option>` +
+            values.map(value => `<option value="${PTD.escapeHtml(value)}">${PTD.escapeHtml(value)}</option>`).join("");
+    }
+
+    fillSelect(document.getElementById("f-state"), PTD.US_STATES, "Select a state");
+    fillSelect(document.getElementById("f-country"), PTD.COUNTRIES, "Select a country");
+    ["1", "2", "3", "4"].forEach(index => {
+        fillSelect(document.querySelector(`[data-additional-state="${index}"]`), PTD.US_STATES, "None");
+    });
+
+    const yearSelect = document.getElementById("f-year-founded");
+    const currentYear = new Date().getFullYear();
+    let yearOptions = `<option value="">Select a year</option>`;
+    for (let year = currentYear; year >= 1600; year -= 1) yearOptions += `<option value="${year}">${year}</option>`;
+    yearSelect.innerHTML = yearOptions;
+
+    const memberSelect = document.getElementById("f-members");
+    let memberOptions = `<option value="">Select</option>`;
+    for (let count = 1; count <= 100; count += 1) memberOptions += `<option value="${count}">${count}</option>`;
+    memberOptions += `<option value="100+">100+</option>`;
+    memberSelect.innerHTML = memberOptions;
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        status.className = "ptd-form-status";
+        status.textContent = "Submitting...";
+
+        const data = new FormData(form);
+        const payload = {
+            scope: international ? "international" : "us",
+            submitterName: data.get("submitterName"),
+            submitterEmail: data.get("submitterEmail"),
+            heardAbout: data.get("heardAbout"),
+            name: data.get("name"),
+            acronym: data.get("acronym"),
+            address: data.get("address"),
+            city: data.get("city"),
+            state: data.get("state"),
+            country: data.get("country"),
+            zip: data.get("zip"),
+            contactName: data.get("contactName"),
+            phone: data.get("phone"),
+            phoneAlt: data.get("phoneAlt"),
+            fax: data.get("fax"),
+            email: data.get("email"),
+            emailAlt: data.get("emailAlt"),
+            website: data.get("website"),
+            facebook: data.get("facebook"),
+            twitter: data.get("twitter"),
+            youtube: data.get("youtube"),
+            founder: data.get("founder"),
+            yearFounded: data.get("yearFounded"),
+            members: data.get("members"),
+            areasServed: data.get("areasServed"),
+            specialties: data.get("specialties"),
+            details: data.get("details"),
+            additionalStates: international ? [] : ["1", "2", "3", "4"]
+                .map(index => data.get(`additionalState${index}`) || "")
+                .filter(Boolean),
+            company_url: data.get("company_url")
+        };
+
+        if (!payload.submitterName || !payload.name || !payload.city || !payload.email || !payload.email.includes("@") || !payload.submitterEmail.includes("@")) {
+            status.className = "ptd-form-status is-error";
+            status.textContent = "Please fill in every required field (red labels).";
+            return;
+        }
+        if (!international && !payload.state) {
+            status.className = "ptd-form-status is-error";
+            status.textContent = "Please choose your state.";
+            return;
+        }
+        if (international && !payload.country) {
+            status.className = "ptd-form-status is-error";
+            status.textContent = "Please choose your country.";
+            return;
+        }
+
+        try {
+            await PTD.api("/teams", { method: "POST", body: payload });
+            form.hidden = true;
+            success.hidden = false;
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch (error) {
+            status.className = "ptd-form-status is-error";
+            status.textContent = error.status === 429
+                ? "Too many submissions from this connection right now. Please try again later."
+                : (error.message || "Your submission could not be sent. Please try again.");
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

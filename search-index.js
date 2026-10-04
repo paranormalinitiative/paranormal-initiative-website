@@ -1664,5 +1664,26 @@ window.TPI_SEARCH_INDEX = [
     "href": "tpi-videos.html",
     "description": "The Paranormal Initiative video channel — live streams, research discussions, educational programs, experiments, presentations, and archived programming.",
     "text": "TPI Videos | The Paranormal Initiative Applied Paranormal Research and Studies The Paranormal Initiative video channel, live streams, research discussions, educational programs, experiments, presentations, and archived programming. TPI video content includes paranormal research presentations, investigation documentation, EVP and ITC experimentation, visual ITC and scrying research, equipment analysis, field methodology, educational programming, research discussions, special broadcasts, and community discussion. Live streams and archived recordings from The Paranormal Initiative. Watch paranormal investigation videos, EVP experiments, ITC sessions, equipment reviews, and research presentations. Video library with categories including Applied Paranormal Research and Studies, Live Streams, EVP and ITC, Visual ITC and Scrying, Paranormal Investigation, Equipment and Technology, Research Discussion, Education, and Special Presentation."
+  },
+  {
+    "title": "TPI Paranormal Teams Directory",
+    "subtitle": "Find a team or add yours",
+    "href": "teams/index.html",
+    "description": "The Paranormal Initiative Paranormal Teams Directory — find paranormal investigation teams and societies by U.S. state or country, or add your team to the directory.",
+    "text": "TPI Paranormal Teams Directory find a paranormal team in your area add your team paranormal societies directory. Find paranormal investigation teams and societies by state and country, browse teams state by state from Alabama to Wyoming, international teams across Canada, the UK, Australia, Europe and beyond. Search teams by name, acronym, city, or keyword. Submissions reviewed by TPI leadership before publication. Paranormal team listings include contact information, areas served, specialties, founder, year founded, and member count."
+  },
+  {
+    "title": "Find a Paranormal Team",
+    "subtitle": "TPI Paranormal Teams Directory",
+    "href": "teams/find.html",
+    "description": "Browse paranormal investigation teams by U.S. state or country in the TPI Paranormal Teams Directory.",
+    "text": "Find a paranormal team in your area browse by state Alabama Alaska Arizona Arkansas California Colorado Connecticut Delaware DC Florida Georgia Hawaii Idaho Illinois Indiana Iowa Kansas Kentucky Louisiana Maine Maryland Massachusetts Michigan Minnesota Mississippi Missouri Montana Nebraska Nevada New Hampshire New Jersey New Mexico New York North Carolina North Dakota Ohio Oklahoma Oregon Pennsylvania Rhode Island South Carolina South Dakota Tennessee Texas Utah Vermont Virginia Washington West Virginia Wisconsin Wyoming international teams Australia Canada England Scotland Wales Ireland Germany France and more countries."
+  },
+  {
+    "title": "Add a Paranormal Team",
+    "subtitle": "TPI Paranormal Teams Directory",
+    "href": "teams/add.html",
+    "description": "Add your paranormal team or society to the TPI Paranormal Teams Directory — United States and international submissions.",
+    "text": "Add a paranormal team add a paranormal society United States international non-US form. Submit your paranormal investigation team or society to the directory with team name, acronym, city, state, contact information, email, website, Facebook, Twitter, YouTube, founder, year founded, number of members, areas served, specialties, and details. Submissions are reviewed by Paranormal Initiative leadership before appearing in the directory."
   }
 ];

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Browse paranormal teams and societies in a U.S. state or country, listed alphabetically.">
+    <link rel="canonical" href="https://paranormalinitiative.com/teams/browse.html">
+    <title>Browse Teams | TPI Paranormal Teams Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="teams.css">
+</head>
+<body data-ptd-page="find">
+
+<main class="ptd-main">
+    <section class="ptd-hero">
+        <p class="ptd-kicker">TPI Paranormal Teams Directory</p>
+        <h1 id="ptd-browse-title">Paranormal Teams</h1>
+        <p class="ptd-lede" id="ptd-browse-lede">Listed alphabetically.</p>
+    </section>
+
+    <div id="ptd-browse-content">
+        <p class="ptd-status">Loading teams...</p>
+    </div>
+
+    <div class="ptd-actions">
+        <a class="ptd-button ptd-button-secondary" href="find.html">&larr; All states &amp; countries</a>
+        <a class="ptd-button ptd-button-primary" href="add.html">Add Your Team</a>
+    </div>
+</main>
+
+<script src="teams.js"></script>
+<script>
+(async function () {
+    const params = new URLSearchParams(window.location.search);
+    const state = (params.get("state") || "").trim();
+    const country = (params.get("country") || "").trim();
+    const title = document.getElementById("ptd-browse-title");
+    const lede = document.getElementById("ptd-browse-lede");
+    const content = document.getElementById("ptd-browse-content");
+
+    const regionLabel = state || country;
+    if (!regionLabel) {
+        window.location.href = "find.html";
+        return;
+    }
+
+    const query = state
+        ? `scope=us&state=${encodeURIComponent(state)}`
+        : `scope=international&country=${encodeURIComponent(country)}`;
+    document.title = `${regionLabel} Teams | TPI Paranormal Teams Directory`;
+    title.textContent = state ? `Paranormal Teams in ${regionLabel}` : `Paranormal Teams in ${regionLabel}`;
+    lede.textContent = state
+        ? `Teams headquartered in or serving ${regionLabel}, listed alphabetically.`
+        : `Teams listed in ${regionLabel}, alphabetical.`;
+
+    try {
+        const data = await PTD.api(`/teams?${query}`);
+        const teams = data.teams || [];
+        if (!teams.length) {
+            content.innerHTML = `
+                <div class="ptd-empty">
+                    <p>No teams are listed here yet.</p>
+                    <p><a href="add.html">Add your team</a> to the TPI Paranormal Teams Directory.</p>
+                </div>`;
+            return;
+        }
+        content.innerHTML = `<div class="ptd-team-list">${
+            teams.map(team => {
+                const location = team.scope === "us"
+                    ? `${team.city || ""}${team.city && team.state ? ", " : ""}${team.state || ""}`
+                    : `${team.city || ""}${team.city && team.country ? ", " : ""}${team.country || ""}`;
+                const snippet = String(team.specialties || "").split(/\n+/)[0].slice(0, 140);
+                return `<article class="ptd-team-row">
+                    <div class="ptd-team-row-main">
+                        <a href="team.html?id=${encodeURIComponent(team.id)}">${PTD.escapeHtml(team.name)}</a>
+                        ${team.acronym ? `<span class="ptd-team-acronym">${PTD.escapeHtml(team.acronym)}</span>` : ""}
+                        <div class="ptd-team-row-meta">${PTD.escapeHtml(location)}${snippet ? ` — ${PTD.escapeHtml(snippet)}${String(team.specialties || "").length > 140 ? "…" : ""}` : ""}</div>
+                    </div>
+                </article>`;
+            }).join("")
+        }</div>`;
+    } catch (error) {
+        content.innerHTML = `<p class="ptd-status is-error">Could not load teams right now. Please try again.</p>`;
+    }
+})();
+</script>
+
+</body>
+</html>

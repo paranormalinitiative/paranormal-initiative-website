@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Team Approvals | TPI Paranormal Teams Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="teams.css">
+</head>
+<body data-ptd-page="admin">
+
+<main class="ptd-main">
+    <section class="ptd-hero">
+        <p class="ptd-kicker">Leadership Only</p>
+        <h1>Team Submission Approvals</h1>
+        <p class="ptd-lede">Review submissions to the Paranormal Teams Directory. Approved listings appear immediately
+        in their state or country page, sorted alphabetically.</p>
+    </section>
+
+    <div id="ptd-admin-content">
+        <p class="ptd-status">Checking access...</p>
+    </div>
+</main>
+
+<script src="teams.js"></script>
+<script>
+(async function () {
+    const content = document.getElementById("ptd-admin-content");
+    let currentStatus = "pending";
+
+    function fieldValue(value) {
+        return PTD.escapeHtml(String(value == null ? "" : value).trim());
+    }
+
+    function metaItem(label, value) {
+        if (!String(value || "").trim()) return "";
+        return `<div><span>${label}:</span> ${fieldValue(value)}</div>`;
+    }
+
+    function block(title, value) {
+        if (!String(value || "").trim()) return "";
+        return `<div class="ptd-admin-block"><h4>${title}</h4><p>${fieldValue(value)}</p></div>`;
+    }
+
+    function teamCard(team, statusMode) {
+        const location = team.scope === "us"
+            ? `${team.city || ""}${team.city && team.state ? ", " : ""}${team.state || ""}${team.zip ? ` ${team.zip}` : ""}`
+            : `${team.city || ""}${team.city && team.country ? ", " : ""}${team.country || ""}`;
+        const additional = Array.isArray(team.additionalStates) ? team.additionalStates.filter(Boolean) : [];
+        return `
+        <article class="ptd-admin-card" data-team-id="${fieldValue(team.id)}">
+            <div class="ptd-admin-card-head">
+                <h3>${fieldValue(team.name)}${team.acronym ? ` <span class="ptd-team-acronym">${fieldValue(team.acronym)}</span>` : ""}</h3>
+                <span class="ptd-admin-when">Submitted ${fieldValue(team.createdAt || "")}</span>
+            </div>
+            <div class="ptd-admin-meta">
+                ${metaItem("Scope", team.scope === "us" ? "United States" : "International")}
+                ${metaItem("Location", location)}
+                ${metaItem("Address", team.address)}
+                ${metaItem("Contact Name", team.contactName)}
+                ${metaItem("Phone", team.phone)}
+                ${metaItem("Alternate Phone", team.phoneAlt)}
+                ${metaItem("Fax", team.fax)}
+                ${metaItem("Email", team.email)}
+                ${metaItem("Alternate Email", team.emailAlt)}
+                ${metaItem("Website", team.website)}
+                ${metaItem("Facebook", team.facebook)}
+                ${metaItem("Twitter", team.twitter)}
+                ${metaItem("Youtube", team.youtube)}
+                ${metaItem("Founder", team.founder)}
+                ${metaItem("Year Founded", team.yearFounded)}
+                ${metaItem("Members", team.members)}
+                ${additional.length ? metaItem("Additional States", additional.join(", ")) : ""}
+            </div>
+            ${block("Areas Served", team.areasServed)}
+            ${block("Specialties", team.specialties)}
+            ${block("Details", team.details)}
+            <div class="ptd-admin-block">
+                <h4>Submitter (not published)</h4>
+                <div class="ptd-admin-meta">
+                    ${metaItem("Name", team.submitterName)}
+                    ${metaItem("Email", team.submitterEmail)}
+                    ${metaItem("Heard about us", team.heardAbout)}
+                </div>
+            </div>
+            ${statusMode === "approved" && team.reviewedAt ? `
+            <div class="ptd-admin-block"><h4>Review</h4>
+                <div class="ptd-admin-meta">${metaItem("Reviewed at", team.reviewedAt)}${metaItem("Reviewed by", team.reviewedBy)}</div>
+            </div>` : ""}
+            <div class="ptd-admin-actions" style="margin-top: 1rem;">
+                ${statusMode !== "approved" ? `<button class="ptd-button ptd-button-approve" data-action="approve">Approve</button>` : ""}
+                ${statusMode === "pending" ? `<button class="ptd-button ptd-button-reject" data-action="reject">Reject</button>` : ""}
+                ${statusMode !== "pending" ? `<button class="ptd-button ptd-button-secondary" data-action="pending">Move back to Pending</button>` : ""}
+                <button class="ptd-button ptd-button-danger" data-action="delete">Delete</button>
+            </div>
+        </article>`;
+    }
+
+    function tabRow(counts) {
+        return `<div class="ptd-admin-tabs">
+            <button class="ptd-admin-tab ${currentStatus === "pending" ? "is-active" : ""}" data-status="pending">Pending (${counts.pending})</button>
+            <button class="ptd-admin-tab ${currentStatus === "approved" ? "is-active" : ""}" data-status="approved">Approved (${counts.approved})</button>
+            <button class="ptd-admin-tab ${currentStatus === "rejected" ? "is-active" : ""}" data-status="rejected">Rejected (${counts.rejected})</button>
+            <a class="ptd-button ptd-button-secondary" style="margin-left: auto;" href="index.html">View Directory</a>
+        </div>`;
+    }
+
+    async function load() {
+        content.innerHTML = `<p class="ptd-status">Loading submissions...</p>`;
+        try {
+            const me = await PTD.api("/auth/me");
+            const role = String(me.user?.role || "").toLowerCase();
+            if (!me.user || !(role === "owner" || role === "admin")) {
+                content.innerHTML = `<div class="ptd-empty"><p><strong>Leadership access only.</strong></p>
+                    <p>Sign in with an owner or admin account to review team submissions.</p>
+                    <p><a class="ptd-button ptd-button-primary" href="../member-login.html">Member Login</a></p></div>`;
+                return;
+            }
+
+            const statuses = ["pending", "approved", "rejected"];
+            const lists = await Promise.all(statuses.map(status =>
+                PTD.api(`/admin/teams?status=${status}`).then(data => data.teams || []).catch(() => [])
+            ));
+            const counts = { pending: lists[0].length, approved: lists[1].length, rejected: lists[2].length };
+            const teams = lists[statuses.indexOf(currentStatus)];
+
+            content.innerHTML = `
+                ${tabRow(counts)}
+                <div id="ptd-admin-list">${
+                    teams.length
+                        ? teams.map(team => teamCard(team, currentStatus)).join("")
+                        : `<div class="ptd-empty"><p>No ${currentStatus} submissions.</p></div>`
+                }</div>
+            `;
+
+            content.querySelectorAll(".ptd-admin-tab").forEach(tab => {
+                tab.addEventListener("click", () => {
+                    currentStatus = tab.dataset.status;
+                    load();
+                });
+            });
+
+            content.querySelectorAll(".ptd-admin-card").forEach(card => {
+                card.querySelectorAll("[data-action]").forEach(button => {
+                    button.addEventListener("click", async () => {
+                        const id = card.dataset.teamId;
+                        const action = button.dataset.action;
+                        button.disabled = true;
+                        try {
+                            if (action === "delete") {
+                                if (!window.confirm("Delete this submission permanently?")) {
+                                    button.disabled = false;
+                                    return;
+                                }
+                                await PTD.api(`/admin/teams/${encodeURIComponent(id)}`, { method: "DELETE" });
+                            } else if (action === "pending") {
+                                await PTD.api(`/admin/teams/${encodeURIComponent(id)}/status`, { method: "POST", body: { status: "pending" } });
+                            } else {
+                                await PTD.api(`/admin/teams/${encodeURIComponent(id)}/${action}`, { method: "POST", body: {} });
+                            }
+                            load();
+                        } catch (error) {
+                            button.disabled = false;
+                            window.alert(error.message || "Action failed.");
+                        }
+                    });
+                });
+            });
+        } catch (error) {
+            content.innerHTML = `<p class="ptd-status is-error">Could not load the approval queue: ${PTD.escapeHtml(error.message || "unknown error")}</p>`;
+        }
+    }
+
+    load();
+})();
+</script>
+
+</body>
+</html>

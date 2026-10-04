@@ -139,6 +139,28 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
+    // Paranormal Teams Directory approval queue: leadership only (same rule
+    // as the studio gate — owner or admin). Public directory pages stay open;
+    // only /teams/admin* is gated.
+    if (url.pathname.startsWith("/teams/admin")) {
+      const user = await getSessionUser(request, env);
+      const hasAccess = user && (user.role === "owner" || user.role === "admin");
+      if (!hasAccess) {
+        const gateHtml = MEMBER_GATE_HTML
+          .replaceAll("ITC Visual Studio", "Paranormal Teams Directory")
+          .replaceAll("Paranormal Teams Directory — Member Access", "Paranormal Teams Directory — Leadership Access")
+          .replaceAll(
+            "Paranormal Teams Directory is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
+            "Team submission approvals are limited to Paranormal Initiative leadership. Sign in with a leadership account to continue."
+          );
+        return new Response(gateHtml, {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8" }
+        });
+      }
+      return env.ASSETS.fetch(request);
+    }
+
     // Default: serve normal website static assets
     return env.ASSETS.fetch(request);
   }

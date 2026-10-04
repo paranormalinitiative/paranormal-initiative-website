@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="The Paranormal Initiative Paranormal Teams Directory — find paranormal investigation teams and societies by state and country, or add your team to the directory.">
+    <link rel="canonical" href="https://paranormalinitiative.com/teams/index.html">
+    <title>Paranormal Teams Directory | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="teams.css">
+</head>
+<body data-ptd-page="home">
+
+<main class="ptd-main">
+    <section class="ptd-hero">
+        <p class="ptd-kicker">The Paranormal Initiative</p>
+        <h1>TPI Paranormal Teams Directory</h1>
+        <p class="ptd-lede">
+            Find paranormal investigation teams and societies in your area, or add your own team to the
+            directory. Listings are reviewed by Paranormal Initiative leadership before they appear.
+        </p>
+        <div class="ptd-actions">
+            <a class="ptd-button ptd-button-primary" href="find.html">Find a Team</a>
+            <a class="ptd-button ptd-button-secondary" href="add.html">Add Your Team</a>
+        </div>
+        <form class="ptd-quick-search" action="search.html" method="get">
+            <input type="search" name="q" placeholder="Search teams by name, city, or keyword..." aria-label="Search teams">
+            <button class="ptd-button ptd-button-secondary" type="submit">Search</button>
+        </form>
+    </section>
+
+    <h2 class="ptd-h2">Find a team in your area:</h2>
+    <div class="ptd-card-grid">
+        <a class="ptd-card" href="find.html#us">
+            <h3>U.S. Teams</h3>
+            <p>Browse paranormal teams state by state, from Alabama to Wyoming.</p>
+            <span class="ptd-card-go">Browse states &rarr;</span>
+        </a>
+        <a class="ptd-card" href="find.html#international">
+            <h3>International Teams</h3>
+            <p>Find teams across Canada, the UK, Australia, Europe, and beyond.</p>
+            <span class="ptd-card-go">Browse countries &rarr;</span>
+        </a>
+    </div>
+
+    <h2 class="ptd-h2">Run a paranormal team?</h2>
+    <div class="ptd-card-grid">
+        <div class="ptd-card">
+            <h3>Add your team</h3>
+            <p>Submit your team to the directory. Submissions are reviewed by TPI leadership before being published.</p>
+            <a class="ptd-card-go" href="add.html">Open the submission form &rarr;</a>
+        </div>
+        <div class="ptd-card">
+            <h3 id="ptd-directory-stats">Directory at a glance</h3>
+            <p id="ptd-stats-copy">Loading directory totals...</p>
+        </div>
+    </div>
+</main>
+
+<script src="teams.js"></script>
+<script>
+(async function () {
+    const copy = document.getElementById("ptd-stats-copy");
+    try {
+        const data = await PTD.api("/teams/counts");
+        const stateCount = Object.keys(data.states || {}).length;
+        const teamCountUs = Object.values(data.states || {}).reduce((sum, n) => sum + n, 0);
+        const teamCountIntl = Object.values(data.countries || {}).reduce((sum, n) => sum + n, 0);
+        const parts = [];
+        if (teamCountUs) parts.push(`${teamCountUs} U.S. team${teamCountUs === 1 ? "" : "s"} across ${stateCount} state${stateCount === 1 ? "" : "s"}`);
+        if (teamCountIntl) parts.push(`${teamCountIntl} international team${teamCountIntl === 1 ? "" : "s"}`);
+        copy.textContent = parts.length ? parts.join(" · ") + " listed so far." : "The directory is just getting started — be one of the first teams listed.";
+    } catch (error) {
+        copy.textContent = "Directory totals are unavailable right now.";
+    }
+})();
+</script>
+
+</body>
+</html>

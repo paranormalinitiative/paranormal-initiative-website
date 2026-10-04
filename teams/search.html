@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Search the TPI Paranormal Teams Directory by team name, acronym, city, or keyword.">
+    <link rel="canonical" href="https://paranormalinitiative.com/teams/search.html">
+    <title>Search | TPI Paranormal Teams Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="teams.css">
+</head>
+<body data-ptd-page="search">
+
+<main class="ptd-main">
+    <section class="ptd-hero">
+        <p class="ptd-kicker">TPI Paranormal Teams Directory</p>
+        <h1>Search</h1>
+        <p class="ptd-lede">Search approved teams across the whole directory — United States and international.</p>
+    </section>
+
+    <form class="ptd-search-panel" id="ptd-search-form">
+        <div class="ptd-search-row">
+            <label for="s-name">By Team Name</label>
+            <input id="s-name" type="text" autocomplete="off">
+            <button type="submit" data-search-field="name">Search Name</button>
+        </div>
+        <div class="ptd-search-row">
+            <label for="s-acronym">By Acronym</label>
+            <input id="s-acronym" type="text" autocomplete="off">
+            <button type="submit" data-search-field="acronym">Search Acronym</button>
+        </div>
+        <div class="ptd-search-row">
+            <label for="s-city">By City</label>
+            <input id="s-city" type="text" autocomplete="off">
+            <button type="submit" data-search-field="city">Search City</button>
+        </div>
+        <div class="ptd-search-row">
+            <label for="s-keyword">By Keyword</label>
+            <input id="s-keyword" type="text" autocomplete="off">
+            <button type="submit" data-search-field="keyword">Search Keyword</button>
+        </div>
+    </form>
+
+    <p class="ptd-search-note" style="margin-top: 1.25rem;">
+        Note: If your initial search does not return any results, try modifying your search. The team name may
+        have been entered slightly differently from what you initially tried.
+    </p>
+
+    <h2 class="ptd-h2" id="ptd-results-title" hidden>Results</h2>
+    <div id="ptd-search-results"><p class="ptd-status">Enter a search above to look through the directory.</p></div>
+</main>
+
+<script src="teams.js"></script>
+<script>
+(async function () {
+    const results = document.getElementById("ptd-search-results");
+    const resultsTitle = document.getElementById("ptd-results-title");
+    const form = document.getElementById("ptd-search-form");
+    const inputs = {
+        name: document.getElementById("s-name"),
+        acronym: document.getElementById("s-acronym"),
+        city: document.getElementById("s-city"),
+        keyword: document.getElementById("s-keyword")
+    };
+
+    function renderTeams(teams, heading) {
+        resultsTitle.textContent = heading;
+        resultsTitle.hidden = false;
+        if (!teams.length) {
+            results.innerHTML = `<div class="ptd-empty"><p>No teams matched your search.</p><p><a href="add.html">Add your team</a> to the directory.</p></div>`;
+            return;
+        }
+        results.innerHTML = `<div class="ptd-team-list">${
+            teams.map(team => {
+                const location = team.scope === "us"
+                    ? `${team.city || ""}${team.city && team.state ? ", " : ""}${team.state || ""}`
+                    : `${team.city || ""}${team.city && team.country ? ", " : ""}${team.country || ""}`;
+                return `<article class="ptd-team-row">
+                    <div class="ptd-team-row-main">
+                        <a href="team.html?id=${encodeURIComponent(team.id)}">${PTD.escapeHtml(team.name)}</a>
+                        ${team.acronym ? `<span class="ptd-team-acronym">${PTD.escapeHtml(team.acronym)}</span>` : ""}
+                        <div class="ptd-team-row-meta">${PTD.escapeHtml(location)}</div>
+                    </div>
+                </article>`;
+            }).join("")
+        }</div>`;
+    }
+
+    async function runSearch(field, value) {
+        resultsTitle.hidden = false;
+        resultsTitle.textContent = "Searching...";
+        results.innerHTML = `<p class="ptd-status">Searching...</p>`;
+        try {
+            const params = new URLSearchParams();
+            params.set(field, value);
+            const data = await PTD.api(`/teams?${params.toString()}`);
+            const label = { name: "team name", acronym: "acronym", city: "city", keyword: "keyword" }[field] || field;
+            renderTeams(data.teams || [], `${(data.teams || []).length} result${(data.teams || []).length === 1 ? "" : "s"} for ${label} “${value}”`);
+        } catch (error) {
+            results.innerHTML = `<p class="ptd-status is-error">Search failed. Please try again.</p>`;
+        }
+    }
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+        const field = event.submitter?.dataset.searchField || "keyword";
+        const value = (inputs[field]?.value || "").trim();
+        if (!value) return;
+        runSearch(field, value);
+    });
+
+    const quickQuery = (new URLSearchParams(window.location.search).get("q") || "").trim();
+    if (quickQuery) {
+        inputs.keyword.value = quickQuery;
+        runSearch("keyword", quickQuery);
+    }
+})();
+</script>
+
+</body>
+</html>

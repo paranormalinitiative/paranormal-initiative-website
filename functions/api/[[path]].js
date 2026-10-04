@@ -32,6 +32,17 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
+    // Paranormal Teams Directory: public submissions wait as `pending` until
+    // leadership approves them (same moderation shape as comments).
+    if (request.method === "POST" && path === "/teams") return handleCreateTeamSubmission(request, env);
+    if (request.method === "GET" && path === "/teams") return handleListTeams(request, env);
+    if (request.method === "GET" && path === "/teams/counts") return handleTeamCounts(env);
+    if (request.method === "GET" && path.match(/^\/teams\/[^/]+$/)) return handleGetTeam(path, env);
+    if (request.method === "GET" && path === "/admin/teams") return requireAdmin(request, env, user => handleAdminListTeams(request, env, user));
+    if (request.method === "POST" && path.startsWith("/admin/teams/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminReviewTeam(path, env, user, "approved"));
+    if (request.method === "POST" && path.startsWith("/admin/teams/") && path.endsWith("/reject")) return requireAdmin(request, env, user => handleAdminReviewTeam(path, env, user, "rejected"));
+    if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetTeamStatus(path, request, env, user));
+    if (request.method === "DELETE" && path.startsWith("/admin/teams/")) return requireAdmin(request, env, user => handleAdminDeleteTeam(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
     if (request.method === "POST" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminUpdateSettings(request, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
@@ -4045,4 +4056,283 @@ function json(body, status = 200, headers = {}) {
       ...headers
     }
   });
+}
+
+// ---------- Paranormal Teams Directory ----------
+
+const TEAM_FIELD_LIMITS = {
+  name: 200, acronym: 60, address: 300, city: 120, state: 100, country: 100,
+  zip: 20, contactName: 150, phone: 40, phoneAlt: 40, fax: 40, email: 200,
+  emailAlt: 200, website: 400, facebook: 400, twitter: 100, youtube: 400,
+  founder: 150, yearFounded: 10, members: 20, areasServed: 2000,
+  specialties: 4000, details: 6000, submitterName: 150, submitterEmail: 200,
+  heardAbout: 300
+};
+
+function teamText(value, field) {
+  return clean(value).slice(0, TEAM_FIELD_LIMITS[field] || 200);
+}
+
+function teamLink(value, field) {
+  const value2 = teamText(value, field);
+  if (!value2) return "";
+  return /^https?:\/\//i.test(value2) ? value2 : `https://${value2.replace(/^\/+/, "")}`;
+}
+
+function requestIp(request) {
+  return request.headers.get("CF-Connecting-IP") || request.headers.get("X-Forwarded-For") || "unknown";
+}
+
+function parseJsonArray(value) {
+  try {
+    const parsed = JSON.parse(value || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function likePattern(value) {
+  return `%${String(value || "").replace(/[\\%_]/g, match => `\\${match}`)}%`;
+}
+
+async function handleCreateTeamSubmission(request, env) {
+  const data = await readJson(request);
+
+  // Honeypot: hidden field real visitors never fill. Pretend success.
+  if (teamText(data.company_url, 200) || teamText(data.website_url, 200)) {
+    return json({ ok: true, status: "pending" });
+  }
+
+  const scope = clean(data.scope).toLowerCase() === "international" ? "international" : "us";
+  const name = teamText(data.name, "name");
+  const city = teamText(data.city, "city");
+  const state = teamText(data.state, "state");
+  const country = teamText(data.country, "country");
+  const email = teamText(data.email, "email");
+  const submitterName = teamText(data.submitterName, "submitterName");
+  const submitterEmail = teamText(data.submitterEmail, "submitterEmail");
+
+  if (!submitterName || !submitterEmail.includes("@")) return json({ error: "Your name and a valid email address are required." }, 400);
+  if (!name) return json({ error: "Team name is required." }, 400);
+  if (!city) return json({ error: "City is required." }, 400);
+  if (scope === "us" && !state) return json({ error: "State is required." }, 400);
+  if (scope === "international" && !country) return json({ error: "Country is required." }, 400);
+  if (!email.includes("@")) return json({ error: "A valid contact email for the listing is required." }, 400);
+
+  const ip = requestIp(request);
+  const recent = await env.TPI_DB.prepare(
+    "SELECT COUNT(*) AS n FROM paranormal_teams WHERE submitted_ip = ? AND created_at > datetime('now', '-1 hour')"
+  ).bind(ip).first();
+  if ((recent?.n || 0) >= 5) {
+    return json({ error: "Too many submissions from this connection right now. Please try again later." }, 429);
+  }
+
+  const duplicate = await env.TPI_DB.prepare(
+    "SELECT id FROM paranormal_teams WHERE status = 'pending' AND lower(name) = lower(?) AND lower(city) = lower(?) LIMIT 1"
+  ).bind(name, city).first();
+  if (duplicate) {
+    return json({ ok: true, status: "pending", duplicate: true });
+  }
+
+  const additionalStates = Array.isArray(data.additionalStates)
+    ? [...new Set(data.additionalStates.map(value => teamText(value, "state")).filter(Boolean))].slice(0, 4)
+    : [];
+
+  const id = crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO paranormal_teams (
+      id, status, scope, name, acronym, address, city, state, country, zip,
+      contact_name, phone, phone_alt, fax, email, email_alt, website, facebook,
+      twitter, youtube, founder, year_founded, members, areas_served,
+      specialties, details, additional_states, submitter_name, submitter_email,
+      heard_about, submitted_ip
+    )
+    VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    id,
+    scope,
+    name,
+    teamText(data.acronym, "acronym"),
+    teamText(data.address, "address"),
+    city,
+    scope === "us" ? state : "",
+    scope === "international" ? country : "",
+    teamText(data.zip, "zip"),
+    teamText(data.contactName, "contactName"),
+    teamText(data.phone, "phone"),
+    teamText(data.phoneAlt, "phoneAlt"),
+    teamText(data.fax, "fax"),
+    email,
+    teamText(data.emailAlt, "emailAlt"),
+    teamLink(data.website, "website"),
+    teamLink(data.facebook, "facebook"),
+    (() => { const h = teamText(data.twitter, "twitter"); return h && !h.startsWith("@") ? `@${h}` : h; })(),
+    teamLink(data.youtube, "youtube"),
+    teamText(data.founder, "founder"),
+    teamText(data.yearFounded, "yearFounded"),
+    teamText(data.members, "members"),
+    teamText(data.areasServed, "areasServed"),
+    teamText(data.specialties, "specialties"),
+    teamText(data.details, "details"),
+    JSON.stringify(additionalStates),
+    submitterName,
+    submitterEmail,
+    teamText(data.heardAbout, "heardAbout"),
+    ip
+  ).run();
+
+  return json({ ok: true, id, status: "pending" });
+}
+
+async function handleListTeams(request, env) {
+  const params = new URL(request.url).searchParams;
+  const scope = clean(params.get("scope")).toLowerCase();
+  const state = clean(params.get("state"));
+  const country = clean(params.get("country"));
+  const name = clean(params.get("name"));
+  const acronym = clean(params.get("acronym"));
+  const city = clean(params.get("city"));
+  const keyword = clean(params.get("keyword") || params.get("q"));
+
+  const where = ["status = 'approved'"];
+  const binds = [];
+  if (scope === "us" || scope === "international") {
+    where.push("scope = ?");
+    binds.push(scope);
+  }
+  if (state) {
+    where.push("(state = ? COLLATE NOCASE OR additional_states LIKE ? ESCAPE '\\')");
+    binds.push(state, likePattern(`"${state}"`));
+  }
+  if (country) {
+    where.push("country = ? COLLATE NOCASE");
+    binds.push(country);
+  }
+  if (name) {
+    where.push("name LIKE ? ESCAPE '\\'");
+    binds.push(likePattern(name));
+  }
+  if (acronym) {
+    where.push("acronym LIKE ? ESCAPE '\\'");
+    binds.push(likePattern(acronym));
+  }
+  if (city) {
+    where.push("city LIKE ? ESCAPE '\\'");
+    binds.push(likePattern(city));
+  }
+  if (keyword) {
+    where.push("(name LIKE ? ESCAPE '\\' OR acronym LIKE ? ESCAPE '\\' OR city LIKE ? ESCAPE '\\' OR areas_served LIKE ? ESCAPE '\\' OR specialties LIKE ? ESCAPE '\\' OR details LIKE ? ESCAPE '\\')");
+    binds.push(likePattern(keyword), likePattern(keyword), likePattern(keyword), likePattern(keyword), likePattern(keyword), likePattern(keyword));
+  }
+
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT
+      id, scope, name, acronym, city, state, country, zip,
+      contact_name AS contactName, phone, email, email_alt AS emailAlt,
+      website, facebook, twitter, youtube, founder,
+      year_founded AS yearFounded, members,
+      areas_served AS areasServed, specialties, details,
+      additional_states AS additionalStates
+    FROM paranormal_teams
+    WHERE ${where.join(" AND ")}
+    ORDER BY name COLLATE NOCASE ASC
+    LIMIT 300
+  `).bind(...binds).all();
+
+  return json({
+    teams: (results || []).map(team => ({
+      ...team,
+      additionalStates: parseJsonArray(team.additionalStates)
+    }))
+  });
+}
+
+async function handleTeamCounts(env) {
+  const { results } = await env.TPI_DB.prepare(
+    "SELECT scope, state, country, additional_states AS additionalStates FROM paranormal_teams WHERE status = 'approved'"
+  ).all();
+  const states = {};
+  const countries = {};
+  for (const row of results || []) {
+    if (row.scope === "international") {
+      if (row.country) countries[row.country] = (countries[row.country] || 0) + 1;
+      continue;
+    }
+    if (row.state) states[row.state] = (states[row.state] || 0) + 1;
+    for (const extra of parseJsonArray(row.additionalStates)) {
+      if (extra) states[extra] = (states[extra] || 0) + 1;
+    }
+  }
+  return json({ states, countries });
+}
+
+async function handleGetTeam(path, env) {
+  const id = clean(decodeURIComponent(path.replace(/^\/teams\//, "")));
+  if (!id) return json({ error: "Team id is required." }, 400);
+  const team = await env.TPI_DB.prepare(`
+    SELECT
+      id, scope, name, acronym, address, city, state, country, zip,
+      contact_name AS contactName, phone, phone_alt AS phoneAlt, fax, email,
+      email_alt AS emailAlt, website, facebook, twitter, youtube, founder,
+      year_founded AS yearFounded, members, areas_served AS areasServed,
+      specialties, details, additional_states AS additionalStates,
+      created_at AS createdAt
+    FROM paranormal_teams
+    WHERE id = ? AND status = 'approved'
+  `).bind(id).first();
+  if (!team) return json({ error: "Team was not found." }, 404);
+  return json({ team: { ...team, additionalStates: parseJsonArray(team.additionalStates) } });
+}
+
+async function handleAdminListTeams(request, env, user) {
+  const status = clean(new URL(request.url).searchParams.get("status") || "pending");
+  const allowedStatus = ["pending", "approved", "rejected"].includes(status) ? status : "pending";
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT *
+    FROM paranormal_teams
+    WHERE status = ?
+    ORDER BY created_at DESC
+    LIMIT 300
+  `).bind(allowedStatus).all();
+  return json({
+    teams: (results || []).map(team => ({
+      ...team,
+      additionalStates: parseJsonArray(team.additionalStates)
+    }))
+  });
+}
+
+async function handleAdminReviewTeam(path, env, user, status) {
+  const id = clean(decodeURIComponent(path.replace(/^\/admin\/teams\//, "").replace(/\/(approve|reject)$/, "")));
+  if (!id) return json({ error: "Team id is required." }, 400);
+  const existing = await env.TPI_DB.prepare("SELECT id FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!existing) return json({ error: "Team was not found." }, 404);
+  await env.TPI_DB.prepare(
+    "UPDATE paranormal_teams SET status = ?, reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
+  ).bind(status, user?.username || "", id).run();
+  return json({ ok: true, id, status });
+}
+
+async function handleAdminSetTeamStatus(path, request, env, user) {
+  const id = clean(decodeURIComponent(path.replace(/^\/admin\/teams\//, "").replace(/\/status$/, "")));
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  if (!id) return json({ error: "Team id is required." }, 400);
+  if (!["pending", "approved", "rejected"].includes(status)) {
+    return json({ error: "Team status was not recognized." }, 400);
+  }
+  const existing = await env.TPI_DB.prepare("SELECT id FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!existing) return json({ error: "Team was not found." }, 404);
+  await env.TPI_DB.prepare(
+    "UPDATE paranormal_teams SET status = ?, reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
+  ).bind(status, user?.username || "", id).run();
+  return json({ ok: true, id, status });
+}
+
+async function handleAdminDeleteTeam(path, env, user) {
+  const id = clean(decodeURIComponent(path.replace(/^\/admin\/teams\//, "")));
+  if (!id) return json({ error: "Team id is required." }, 400);
+  await env.TPI_DB.prepare("DELETE FROM paranormal_teams WHERE id = ?").bind(id).run();
+  return json({ deleted: true, id });
 }
