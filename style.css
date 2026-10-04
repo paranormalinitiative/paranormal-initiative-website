@@ -2,62 +2,62 @@
 /* PARANORMAL INITIATIVE – DESIGN SYSTEM    */
 /* ========================================= */
 
-/* ===== COLOR SYSTEM – BLACK & PURPLE ===== */
+/* ===== COLOR SYSTEM — CRYPTID & FOLKLORE (TPI default, Todd's palette #1) ===== */
 :root {
     /* Backgrounds */
-    --bg-primary: #09090b;
-    --bg-secondary: #0f0f14;
-    --bg-card: #13131a;
-    --bg-card-hover: #1a1a24;
-    --bg-elevated: #1c1c28;
-    --bg-surface: #111118;
+    --bg-primary: #1a221e;
+    --bg-secondary: #161d19;
+    --bg-card: #2a3430;
+    --bg-card-hover: #323d38;
+    --bg-elevated: #34403a;
+    --bg-surface: #1f2824;
 
-    /* Purple Accent Scale */
-    --purple-50: #faf5ff;
-    --purple-100: #f3e8ff;
-    --purple-200: #e9d5ff;
-    --purple-300: #d8b4fe;
-    --purple-400: #c084fc;
-    --purple-500: #a855f7;
-    --purple-600: #9333ea;
-    --purple-700: #7e22ce;
-    --purple-800: #6b21a8;
-    --purple-900: #581c87;
+    /* Accent Scale (kept under legacy --purple-* names for compatibility) */
+    --purple-50: #edfff0;
+    --purple-100: #d6ffdc;
+    --purple-200: #aff8b8;
+    --purple-300: #7def8c;
+    --purple-400: #52e052;
+    --purple-500: #32cd32;
+    --purple-600: #1fa31f;
+    --purple-700: #178019;
+    --purple-800: #126313;
+    --purple-900: #0d4a0e;
 
     /* Primary Accent */
-    --accent: #a855f7;
-    --accent-hover: #c084fc;
-    --accent-muted: rgba(168, 85, 247, 0.15);
-    --accent-border: rgba(168, 85, 247, 0.3);
-    --accent-glow: rgba(168, 85, 247, 0.25);
+    --accent: #32cd32;
+    --accent-hover: #52e052;
+    --accent-muted: rgba(50, 205, 50, 0.15);
+    --accent-border: rgba(50, 205, 50, 0.3);
+    --accent-glow: rgba(50, 205, 50, 0.25);
 
     /* Text */
-    --text-primary: #f4f4f5;
-    --text-secondary: #a1a1aa;
-    --text-tertiary: #71717a;
-    --text-accent: #c084fc;
-    --text-on-accent: #09090b;
+    --text-primary: #f2f7f3;
+    --text-secondary: #cfd6d3;
+    --text-tertiary: #9ba8a0;
+    --text-accent: #52e052;
+    --text-on-accent: #0b140b;
 
     /* Borders */
-    --border-subtle: rgba(168, 85, 247, 0.12);
-    --border-default: rgba(168, 85, 247, 0.18);
-    --border-strong: rgba(168, 85, 247, 0.25);
-    --border-accent: rgba(168, 85, 247, 0.3);
+    --border-subtle: rgba(50, 205, 50, 0.12);
+    --border-default: rgba(50, 205, 50, 0.18);
+    --border-strong: rgba(50, 205, 50, 0.25);
+    --border-accent: rgba(50, 205, 50, 0.3);
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, #09090b 0%, #1a0a2e 50%, #09090b 100%);
-    --gradient-card: linear-gradient(145deg, #13131a 0%, #1a1a28 100%);
-    --gradient-accent: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
-    --gradient-accent-soft: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(126, 34, 206, 0.1) 100%);
-    --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+    --gradient-hero: linear-gradient(135deg, #1a221e 0%, #15281c 50%, #1a221e 100%);
+    --gradient-card: linear-gradient(145deg, #2a3430 0%, #313c36 100%);
+    --gradient-accent: linear-gradient(135deg, #32cd32 0%, #1fa31f 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(50, 205, 50, 0.2) 0%, rgba(31, 163, 31, 0.1) 100%);
+    --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(50, 205, 50, 0.15) 0%, transparent 60%);
 
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
     --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 24px rgba(168, 85, 247, 0.25);
-    --shadow-glow-strong: 0 0 40px rgba(168, 85, 247, 0.35);
+    --shadow-glow: 0 0 24px rgba(50, 205, 50, 0.25);
+    --shadow-glow-strong: 0 0 40px rgba(50, 205, 50, 0.35);
 
     /* Spacing */
     --space-xs: 4px;
@@ -82,7 +82,133 @@
 
     /* Sidebar */
     --sidebar-width: 270px;
-    --sidebar-bg: #0a0a0f;
+    --sidebar-bg: #141b17;
+}
+
+/* ===== MEMBER THEME — GOTHIC SÉANCE (Todd's palette #2) ===== */
+html[data-theme="seance"] {
+    --bg-primary: #120c1f;
+    --bg-secondary: #0e0918;
+    --bg-card: #1e162d;
+    --bg-card-hover: #251b37;
+    --bg-elevated: #28203c;
+    --bg-surface: #171126;
+    --sidebar-bg: #0d0816;
+    --purple-50: #fbe9ec;
+    --purple-100: #f5c6cd;
+    --purple-200: #e894a1;
+    --purple-300: #d46a7e;
+    --purple-400: #b01e37;
+    --purple-500: #8f152a;
+    --purple-600: #72101f;
+    --purple-700: #5e0d1c;
+    --purple-800: #450a15;
+    --purple-900: #2e0610;
+    --accent: #8f152a;
+    --accent-hover: #b01e37;
+    --accent-muted: rgba(143, 21, 42, 0.18);
+    --accent-border: rgba(143, 21, 42, 0.35);
+    --accent-glow: rgba(143, 21, 42, 0.3);
+    --text-primary: #f9f6ee;
+    --text-secondary: #b9b3a9;
+    --text-tertiary: #8a857c;
+    --text-accent: #d46a7e;
+    --text-on-accent: #f9f6ee;
+    --border-subtle: rgba(143, 21, 42, 0.12);
+    --border-default: rgba(143, 21, 42, 0.2);
+    --border-strong: rgba(143, 21, 42, 0.28);
+    --border-accent: rgba(143, 21, 42, 0.35);
+    --gradient-hero: linear-gradient(135deg, #120c1f 0%, #241026 50%, #120c1f 100%);
+    --gradient-card: linear-gradient(145deg, #1e162d 0%, #241b36 100%);
+    --gradient-accent: linear-gradient(135deg, #8f152a 0%, #5e0d1c 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(143, 21, 42, 0.22) 0%, rgba(94, 13, 28, 0.12) 100%);
+    --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(143, 21, 42, 0.18) 0%, transparent 60%);
+    --shadow-glow: 0 0 24px rgba(143, 21, 42, 0.3);
+    --shadow-glow-strong: 0 0 40px rgba(143, 21, 42, 0.4);
+}
+
+/* ===== MEMBER THEME — COSMIC HORROR (Todd's palette #3) ===== */
+html[data-theme="cosmic"] {
+    --bg-primary: #0d0c28;
+    --bg-secondary: #0a0920;
+    --bg-card: #161537;
+    --bg-card-hover: #1d1c44;
+    --bg-elevated: #20204e;
+    --bg-surface: #12112e;
+    --sidebar-bg: #0b0a1f;
+    --purple-50: #e0fbff;
+    --purple-100: #b3f4ff;
+    --purple-200: #80ebff;
+    --purple-300: #4debff;
+    --purple-400: #22e2ff;
+    --purple-500: #00e5ff;
+    --purple-600: #00b8cc;
+    --purple-700: #0088b8;
+    --purple-800: #005f80;
+    --purple-900: #003d52;
+    --accent: #00e5ff;
+    --accent-hover: #4debff;
+    --accent-muted: rgba(0, 229, 255, 0.15);
+    --accent-border: rgba(0, 229, 255, 0.3);
+    --accent-glow: rgba(0, 229, 255, 0.25);
+    --text-primary: #f0f2fa;
+    --text-secondary: #b8bbd0;
+    --text-tertiary: #8a8da8;
+    --text-accent: #4debff;
+    --text-on-accent: #04141a;
+    --border-subtle: rgba(0, 229, 255, 0.12);
+    --border-default: rgba(0, 229, 255, 0.18);
+    --border-strong: rgba(0, 229, 255, 0.25);
+    --border-accent: rgba(0, 229, 255, 0.3);
+    --gradient-hero: linear-gradient(135deg, #0d0c28 0%, #131042 50%, #0d0c28 100%);
+    --gradient-card: linear-gradient(145deg, #161537 0%, #1b1a42 100%);
+    --gradient-accent: linear-gradient(135deg, #00e5ff 0%, #0088b8 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 136, 184, 0.1) 100%);
+    --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(0, 229, 255, 0.15) 0%, transparent 60%);
+    --shadow-glow: 0 0 24px rgba(0, 229, 255, 0.25);
+    --shadow-glow-strong: 0 0 40px rgba(0, 229, 255, 0.35);
+}
+
+/* ===== MEMBER THEME — ASYLUM & INVESTIGATION (Todd's palette #4) ===== */
+html[data-theme="asylum"] {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #191919;
+    --bg-card: #2d2d2d;
+    --bg-card-hover: #353535;
+    --bg-elevated: #3a3a3a;
+    --bg-surface: #242424;
+    --sidebar-bg: #171717;
+    --purple-50: #fff4e0;
+    --purple-100: #ffe4b8;
+    --purple-200: #ffd48f;
+    --purple-300: #ffb733;
+    --purple-400: #ffab1a;
+    --purple-500: #ff9f00;
+    --purple-600: #d68600;
+    --purple-700: #c77a00;
+    --purple-800: #8f5800;
+    --purple-900: #5c3a00;
+    --accent: #ff9f00;
+    --accent-hover: #ffb733;
+    --accent-muted: rgba(255, 159, 0, 0.15);
+    --accent-border: rgba(255, 159, 0, 0.3);
+    --accent-glow: rgba(255, 159, 0, 0.25);
+    --text-primary: #f2eee6;
+    --text-secondary: #e5e0d8;
+    --text-tertiary: #a39e94;
+    --text-accent: #ffb733;
+    --text-on-accent: #1c1200;
+    --border-subtle: rgba(255, 159, 0, 0.12);
+    --border-default: rgba(255, 159, 0, 0.18);
+    --border-strong: rgba(255, 159, 0, 0.25);
+    --border-accent: rgba(255, 159, 0, 0.3);
+    --gradient-hero: linear-gradient(135deg, #1e1e1e 0%, #2a2115 50%, #1e1e1e 100%);
+    --gradient-card: linear-gradient(145deg, #2d2d2d 0%, #333333 100%);
+    --gradient-accent: linear-gradient(135deg, #ff9f00 0%, #c77a00 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(255, 159, 0, 0.2) 0%, rgba(199, 122, 0, 0.1) 100%);
+    --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(255, 159, 0, 0.15) 0%, transparent 60%);
+    --shadow-glow: 0 0 24px rgba(255, 159, 0, 0.25);
+    --shadow-glow-strong: 0 0 40px rgba(255, 159, 0, 0.35);
 }
 
 /* ===== GLOBAL RESET ===== */
@@ -8490,7 +8616,7 @@ a:hover {
         90deg,
         transparent 0%,
         var(--accent) 20%,
-        #7e22ce 50%,
+        var(--accent-hover) 50%,
         var(--accent) 80%,
         transparent 100%
     );

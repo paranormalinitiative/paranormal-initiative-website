@@ -10,6 +10,45 @@
  *   <script src="member-shell.js"></script>
  */
 (async function () {
+  // ===== Site theme (member-selectable; Cryptid is the TPI default) =====
+  var SITE_THEMES = ["cryptid", "seance", "cosmic", "asylum"];
+  var SITE_THEME_KEY = "tpiSiteTheme";
+  function validSiteTheme(t) { return SITE_THEMES.indexOf(t) !== -1; }
+  function currentSiteTheme() {
+    try {
+      var t = localStorage.getItem(SITE_THEME_KEY);
+      return validSiteTheme(t) ? t : "cryptid";
+    } catch (e) { return "cryptid"; }
+  }
+  function applySiteTheme(theme) {
+    document.documentElement.setAttribute("data-theme", validSiteTheme(theme) ? theme : "cryptid");
+  }
+  applySiteTheme(currentSiteTheme());
+  function syncThemePicker(theme) {
+    var picker = document.querySelector("[data-theme-picker]");
+    if (!picker) return;
+    picker.querySelectorAll("[data-theme-option]").forEach(function (btn) {
+      var active = btn.getAttribute("data-theme-option") === theme;
+      btn.classList.toggle("is-active", active);
+      if (active) btn.setAttribute("aria-current", "true"); else btn.removeAttribute("aria-current");
+    });
+  }
+  function saveSiteTheme(theme) {
+    if (!validSiteTheme(theme)) return;
+    applySiteTheme(theme);
+    try { localStorage.setItem(SITE_THEME_KEY, theme); } catch (e) {}
+    syncThemePicker(theme);
+    try { apiFetch("POST", "/api/contributors/me/theme", { theme: theme }); } catch (e) {}
+  }
+  function initThemePicker() {
+    var picker = document.querySelector("[data-theme-picker]");
+    if (!picker || picker.getAttribute("data-theme-bound")) return;
+    picker.setAttribute("data-theme-bound", "1");
+    picker.querySelectorAll("[data-theme-option]").forEach(function (btn) {
+      btn.addEventListener("click", function () { saveSiteTheme(btn.getAttribute("data-theme-option")); });
+    });
+    syncThemePicker(currentSiteTheme());
+  }
   var MEMBER_PARAM = "member";
   var STORAGE_KEY = "tpiMemberMode";
   var SIDEBAR_URL = "member-sidebar.html";
@@ -127,6 +166,13 @@
         guest: true
       };
     }
+
+    // Adopt the account's saved theme when it differs from this browser (cross-device sync).
+    if (user && !user.guest && user.theme && validSiteTheme(user.theme) && user.theme !== currentSiteTheme()) {
+      applySiteTheme(user.theme);
+      try { localStorage.setItem(SITE_THEME_KEY, user.theme); } catch (e) {}
+    }
+    initThemePicker();
 
     // Build shell structure: sidebar + main
     var shell = document.createElement("div");

@@ -52,6 +52,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
     if (request.method === "POST" && path === "/contributors/me/profile") return requireMember(request, env, user => handleUpdateProfile(request, env, user));
+    if (request.method === "POST" && path === "/contributors/me/theme") return requireMember(request, env, user => handleSetTheme(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/username") return requireMember(request, env, user => handleUpdateUsername(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
@@ -1035,6 +1036,24 @@ async function handleRegister(request, env) {
   ]);
 
   return json({ ok: true });
+}
+
+const MEMBER_THEMES = ["cryptid", "seance", "cosmic", "asylum"];
+
+async function handleSetTheme(request, env, user) {
+  const data = await readJson(request);
+  const theme = String(data.theme || "").toLowerCase();
+  if (!MEMBER_THEMES.includes(theme)) {
+    return json({ error: "Unknown theme." }, 400);
+  }
+  try {
+    await env.TPI_DB.prepare("UPDATE contributors SET theme = ? WHERE id = ?").bind(theme, user.id).run();
+    return json({ ok: true, theme, persisted: true });
+  } catch (error) {
+    // Graceful fallback when migration 0027 has not been applied yet.
+    if (!String(error.message || "").includes("theme")) throw error;
+    return json({ ok: true, theme, persisted: false });
+  }
 }
 
 async function handleUpdateProfile(request, env, user) {
@@ -4122,6 +4141,7 @@ function publicUser(user) {
     bio: user.bio,
     photoUrl: user.photo_url,
     chatColor: user.chat_color || "#a855f7",
+    theme: user.theme || "cryptid",
     commentSignatureEnabled: Boolean(user.comment_signature_enabled),
     active: user.active !== 0,
     createdAt: user.created_at

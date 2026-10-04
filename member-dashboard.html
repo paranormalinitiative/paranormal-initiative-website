@@ -25,8 +25,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=80">
-    <link rel="stylesheet" href="member-shell.css?v=50">
+    <link rel="stylesheet" href="style.css?v=81">
+    <link rel="stylesheet" href="member-shell.css?v=51">
 </head>
 <body>
 <div id="site-header"></div>
@@ -145,6 +145,34 @@
             </div>
         </article>
 
+        <article class="editor-access-card" data-theme-picker>
+            <p class="portal-kicker">Appearance</p>
+            <h2>Color Theme</h2>
+            <p class="access-note">Pick the look of your member area. Cryptid &amp; Folklore is the TPI default. Saved to your account and this browser.</p>
+            <div class="theme-picker-grid">
+                <button type="button" class="theme-picker-option" data-theme-option="cryptid">
+                    <span class="theme-picker-swatch" style="background:linear-gradient(135deg,#1a221e 55%,#32cd32)"></span>
+                    <strong>Cryptid &amp; Folklore</strong>
+                    <small>Deep forest · eerie green glow (default)</small>
+                </button>
+                <button type="button" class="theme-picker-option" data-theme-option="seance">
+                    <span class="theme-picker-swatch" style="background:linear-gradient(135deg,#120c1f 55%,#b01e37)"></span>
+                    <strong>Gothic Séance</strong>
+                    <small>Midnight violet · cursed crimson</small>
+                </button>
+                <button type="button" class="theme-picker-option" data-theme-option="cosmic">
+                    <span class="theme-picker-swatch" style="background:linear-gradient(135deg,#0d0c28 55%,#00e5ff)"></span>
+                    <strong>Cosmic Horror</strong>
+                    <small>Witching-hour navy · neon cyan</small>
+                </button>
+                <button type="button" class="theme-picker-option" data-theme-option="asylum">
+                    <span class="theme-picker-swatch" style="background:linear-gradient(135deg,#1e1e1e 55%,#ff9f00)"></span>
+                    <strong>Asylum &amp; Investigation</strong>
+                    <small>Soot charcoal · hazmat amber</small>
+                </button>
+            </div>
+        </article>
+
     </div>
 
     <p id="member-login-status" class="access-note member-login-status"></p>
@@ -158,6 +186,6 @@
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
 <script src="member-login.js?v=33"></script>
-<script src="member-shell.js?v=48"></script>
+<script src="member-shell.js?v=49"></script>
 </body>
 </html>
