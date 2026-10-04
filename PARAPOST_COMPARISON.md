@@ -48,10 +48,19 @@
 
 1. **Social shell polish.** Our member dashboard lacks their right rail (people discovery, trending), feed tabs, activity stats bar, and bottom mobile nav — exactly Phase 9 of SITE_STREAMLINING_PLAN, not yet started.
 2. **Reels is a shell.** Theirs uploads/plays; ours is a static page until we build D1+R2+API behind it.
-3. **No native apps.** They're on both stores. (Mitigation: excellent mobile web + later PWA/install prompt.)
+3. **No native app-store apps.** Mitigated: TPI ships real installable browser apps — Visual ITC Lab (ffmpeg pipeline, LUTs, full user manual), ACS, Aether Spectra SLS, and the Paranormal Initiative app — plus StudioFlow. These are unique *instruments* no rival has. (Future option: PWA manifests + install prompts for app-store-like presence without store fees.)
 4. **No friend/follow graph.** We have a member directory and forum, but not friendships/following like theirs.
 5. **No events/groups.** Their placeholders at least promise them; we have neither yet (Teams Directory is our differentiator, not a substitute).
 6. **Momentum marketing.** They're actively posting on socials; our public-facing growth content (socials, app-store-style pitch) lags.
+
+## 5b. Identity rule — ours, not a clone (Todd's direction)
+
+ParaPost's layout patterns are worth studying, but TPI must never read as a ParaPost copy:
+
+- **Dark theme stays** — Todd: dark is easy on the eyes; both platforms agree there.
+- **Colors must be distinctly TPI.** ParaPost ships `parapost-purple` (their own CSS token) — our current `--accent: #a855f7` sits in the same violet family. To avoid twin-brand confusion we pick our own accent identity (palette decision pending Todd) and pair it with unique secondary glows/gradients so screenshots of the two sites are never mistakable.
+- **Our own names and structure.** Keep TPI naming (TPI Reels, Teams Directory, Education Center, TPI Studio) — organize the dashboard around *our* pillars (Learn / Investigate / Share / Teams), not their Hub taxonomy.
+- **Borrow mechanics, not look.** Right-rail discovery, trending categories, bottom mobile nav are UX patterns, not ParaPost property — implement them in TPI's visual language.
 
 ## 6. Head-to-head scorecard
 
@@ -67,16 +76,16 @@
 | Teams / orgs | 0/10 | 8/10 (Directory live) | **TPI** |
 | Events / Groups / Case files | 1/10 ("Soon") | 2/10 (neither) | tie-for-last |
 | Trust (email, moderation, policies) | 3/10 | 8/10 | **TPI** |
-| Mobile | 8/10 (native apps) | 6/10 (responsive; bottom nav pending) | ParaPost |
+| Dedicated tools / apps | 8/10 (native social apps) | 8/10 (Visual ITC Lab w/ ffmpeg+LUTs, ACS, Aether Spectra SLS, Paranormal Initiative app — all installable browser apps + native-grade StudioFlow) | **tie, but TPI's are unique instruments, theirs are commodity social** |
 | Growth engine | 6/10 (app stores + socials) | 7/10 (SEO + content + shares) | **TPI** |
 
 **Verdict:** TPI is the *substance* leader (content, SEO, ops, live streaming, teams). ParaPost is the *form* leader (social-app shell, native apps, buzz). Their product is a polished empty room; ours is a library with a plain reading room. The fastest path to "way better" is closing the form gap while pressing every substance advantage they can't copy quickly.
 
 ## 7. The playbook — make TPI's community the best
 
-**P0 — Finish TPI Studio (already green-lit).** Native live shows with guests, backstage recording, replays, multi-platform push. Their Live is a YouTube link; ours becomes a studio. Ship it, then add public show/replay pages with OG previews so every broadcast is a shareable, crawlable artifact.
+**P0 — Finish TPI Studio (already green-lit).** Native live shows with guests, backstage recording, replays, multi-platform push. Their Live is a YouTube link; ours becomes a studio. Ship it, then add public show/replay pages with OG previews so every broadcast is a shareable, crawlable artifact. The Visual ITC Lab / ACS / SLS browser apps stay a unique TPI instrument layer ParaPost cannot match.
 
-**P1 — Phase 9 dashboard enhancements (steal their best, outdo it).** Right rail with **People to Discover** (powered by our real member directory), **Trending in TPI** with named categories (New Posts, Education, Evidence, Teams), activity stats bar, feed tabs, and the **bottom mobile nav with center + create**. Their layout ideas + our live data = instant parity, then superiority.
+**P1 — Phase 9 dashboard, in TPI's own skin (steal mechanics, not the look).** Right rail with **People to Discover** (powered by our real member directory), **Trending in TPI** with named categories (New Posts, Education, Evidence, Teams), activity stats bar, feed tabs, and the **bottom mobile nav with center + create** — all restyled in whatever distinct accent identity Todd picks, organized around TPI pillars (Learn / Investigate / Share / Teams), never their Hub taxonomy.
 
 **P2 — Reels for real.** D1 + R2 + API behind reels.html: upload (members), feed, likes, per-reel permalink pages with OG tags and sitemap inclusion. Their reels can't be crawled or shared richly; ours will be. Launch the feed with TPI-produced seed content (studio clips, field clips) so day one isn't a ghost town.
 
