@@ -878,6 +878,7 @@
 
   const notificationTypeMap = {
     admin: { label: "Administration Notice", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
+    team_submission: { label: "Team Submission", categoryLabel: "Team Submissions", category: "admin", tone: "admin", href: "teams/admin.html" },
     "profile-request": { label: "Administration Notice", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
     warning: { label: "Administration Warning", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
     post: { label: "New Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "community-forum.html?member=1" },

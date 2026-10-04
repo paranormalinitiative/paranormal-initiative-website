@@ -512,6 +512,31 @@ async function createForumContentNotifications(env, user, content) {
   }
 }
 
+async function notifyTeamSubmissionAdmins(env, team) {
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT id FROM contributors WHERE active = 1 AND role IN ('owner', 'admin')
+    `).all();
+    const recipients = results || [];
+    if (!recipients.length) return 0;
+    const place = [team.city, team.state || team.country].filter(Boolean).join(", ");
+    await env.TPI_DB.batch(recipients.map(recipient => env.TPI_DB.prepare(`
+      INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
+      VALUES (?, ?, ?, ?, ?, 'team_submission', NULL)
+    `).bind(
+      crypto.randomUUID(),
+      recipient.id,
+      clean(`New team submission: ${team.name}`).slice(0, 160),
+      clean(`${place} — submitted by ${team.submitterName}. Open the directory admin queue to approve or reject it.`).slice(0, 500),
+      "teams/admin.html"
+    )));
+    return recipients.length;
+  } catch (error) {
+    console.error("team submission notification failed", error);
+    return 0;
+  }
+}
+
 async function handleListNotifications(env, user) {
   const { results } = await env.TPI_DB.prepare(`
     SELECT id, title, body, action_href AS actionHref, type, read_at AS readAt, created_at AS createdAt
@@ -4181,6 +4206,14 @@ async function handleCreateTeamSubmission(request, env) {
     teamText(data.heardAbout, "heardAbout"),
     ip
   ).run();
+
+  await notifyTeamSubmissionAdmins(env, {
+    name,
+    city,
+    state: scope === "us" ? state : "",
+    country: scope === "international" ? country : "",
+    submitterName
+  });
 
   return json({ ok: true, id, status: "pending" });
 }
