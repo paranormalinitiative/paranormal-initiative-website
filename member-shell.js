@@ -3698,7 +3698,7 @@
       if (!identityMenuEl) return;
       var menu = identityMenuEl.querySelector('[role="menu"]');
       var themes = [
-        { id: 'default', label: 'TPI Command', description: 'Original black and electric blue', colors: ['#05070a', '#55c8ff'] },
+        { id: 'default', label: 'TPI Command', description: 'Original black and purple', colors: ['#05070a', '#a855f7'] },
         { id: 'midnight', label: 'Midnight Signal', description: 'Deep navy and spectral blue', colors: ['#030711', '#397dcc'] },
         { id: 'slate', label: 'Storm Watch', description: 'Charcoal, steel, and cool light', colors: ['#111820', '#7798b8'] },
         { id: 'deep-blue', label: 'Abyss Current', description: 'Dark ocean blue and cyan', colors: ['#020b17', '#16b8e6'] },
@@ -3787,7 +3787,7 @@
           '<label style="display: block; margin-bottom: 8px; color: #c7d5e2; font-size: 12px;">Nickname for ' + escapeHtml(other.displayName) + '</label>' +
           '<input type="text" data-nickname-input value="' + escapeHtml(existingNickname) + '" placeholder="Enter nickname" style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 13px;">' +
           '<div style="display: flex; gap: 8px; margin-top: 12px;">' +
-            '<button type="button" data-nickname-save style="flex: 1; padding: 8px; background: #55c8ff; color: #061018; border: none; border-radius: 6px; font-weight: 900;">Save</button>' +
+            '<button type="button" data-nickname-save style="flex: 1; padding: 8px; background: #a855f7; color: #061018; border: none; border-radius: 6px; font-weight: 900;">Save</button>' +
             '<button type="button" data-nickname-cancel style="flex: 1; padding: 8px; background: #081018; color: #c7d5e2; border: 1px solid #263646; border-radius: 6px;">Cancel</button>' +
           '</div>' +
         '</div>';
@@ -3878,8 +3878,8 @@
 
       menu.innerHTML = '<div class="read-receipts-picker" style="padding: 12px; min-width: 200px;">' +
         '<div style="color: #c7d5e2; font-size: 12px; margin-bottom: 8px;">Read Receipts</div>' +
-        '<button type="button" role="menuitem" data-read-receipts="on" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (current ? '#55c8ff' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (current ? '✓ ' : '') + 'On</button>' +
-        '<button type="button" role="menuitem" data-read-receipts="off" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (!current ? '#55c8ff' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (!current ? '✓ ' : '') + 'Off</button>' +
+        '<button type="button" role="menuitem" data-read-receipts="on" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (current ? '#a855f7' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (current ? '✓ ' : '') + 'On</button>' +
+        '<button type="button" role="menuitem" data-read-receipts="off" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (!current ? '#a855f7' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (!current ? '✓ ' : '') + 'Off</button>' +
         '</div>';
 
       menu.querySelectorAll('[data-read-receipts]').forEach(function(button) {
@@ -3949,7 +3949,7 @@
           if (res.ok) {
             // Show confirmation
             var menu = identityMenuEl.querySelector('[role="menu"]');
-            menu.innerHTML = '<div style="padding: 16px; text-align: center; color: #55c8ff;">Report submitted. Thank you.</div>';
+            menu.innerHTML = '<div style="padding: 16px; text-align: center; color: #a855f7;">Report submitted. Thank you.</div>';
             setTimeout(closeIdentityMenu, 2000);
           }
         });
@@ -4012,7 +4012,7 @@
       title: member.title || "",
       role: member.role || "",
       photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
-      chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#55c8ff"),
+      chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#a855f7"),
       online: typeof online === "boolean" ? online : Boolean(member.online),
       lastSeenAt: member.lastSeenAt || member.last_seen_at || null,
       status: member.status || (online ? "online" : "offline")
@@ -4424,7 +4424,7 @@
 
   function normalizeChatBubbleColor(value) {
     var color = String(value || "").trim();
-    return /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#55c8ff";
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#a855f7";
   }
 
   function normalizeChatUsername(value) {

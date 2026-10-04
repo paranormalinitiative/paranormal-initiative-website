@@ -6,7 +6,7 @@
     --line: #263646;
     --text: #eef5fb;
     --muted: #9fb3c8;
-    --cyan: #55c8ff;
+    --cyan: var(--accent);
     --green: #54d38a;
     --gold: #f2d45c;
     --coral: #ff8f70;
@@ -324,7 +324,7 @@ select {
     width: 100%;
     max-height: 280px;
     object-fit: cover;
-    border: 1px solid rgba(85, 200, 255, 0.2);
+    border: 1px solid rgba(168, 85, 247, 0.2);
     border-radius: 8px;
 }
 
@@ -352,7 +352,7 @@ select {
     min-height: 0;
     overflow-y: auto;
     padding-right: 8px;
-    scrollbar-color: rgba(85, 200, 255, 0.5) rgba(8, 16, 24, 0.9);
+    scrollbar-color: rgba(168, 85, 247, 0.5) rgba(8, 16, 24, 0.9);
 }
 
 .feed-list::-webkit-scrollbar,
@@ -368,7 +368,7 @@ select {
 
 .feed-list::-webkit-scrollbar-thumb,
 .floating-chat-body::-webkit-scrollbar-thumb {
-    background: rgba(85, 200, 255, 0.5);
+    background: rgba(168, 85, 247, 0.5);
     border-radius: 999px;
 }
 
@@ -377,7 +377,7 @@ select {
 }
 
 .post-card.is-unread {
-    border-color: rgba(85, 200, 255, 0.62);
+    border-color: rgba(168, 85, 247, 0.62);
     box-shadow: inset 4px 0 0 var(--cyan);
 }
 
@@ -421,7 +421,7 @@ select {
     gap: 8px;
     padding: 12px;
     background: rgba(8, 16, 24, 0.48);
-    border: 1px solid rgba(85, 200, 255, 0.12);
+    border: 1px solid rgba(168, 85, 247, 0.12);
     border-radius: 8px;
 }
 
@@ -437,7 +437,7 @@ select {
 .post-media {
     display: grid;
     overflow: hidden;
-    border: 1px solid rgba(85, 200, 255, 0.18);
+    border: 1px solid rgba(168, 85, 247, 0.18);
     border-radius: 8px;
     background: #05080b;
 }
@@ -552,7 +552,7 @@ select {
 .comment-media {
     display: grid;
     overflow: hidden;
-    border: 1px solid rgba(85, 200, 255, 0.18);
+    border: 1px solid rgba(168, 85, 247, 0.18);
     border-radius: 8px;
     background: #05080b;
 }
@@ -596,7 +596,7 @@ select {
     width: min(360px, calc(100vw - 24px));
     color: var(--text);
     background: var(--panel);
-    border: 1px solid rgba(85, 200, 255, 0.34);
+    border: 1px solid rgba(168, 85, 247, 0.34);
     border-radius: 10px;
     box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
     overflow: hidden;
@@ -642,7 +642,7 @@ select {
     gap: 4px;
     padding: 10px;
     background: rgba(8, 16, 24, 0.72);
-    border: 1px solid rgba(85, 200, 255, 0.14);
+    border: 1px solid rgba(168, 85, 247, 0.14);
     border-radius: 8px;
 }
 

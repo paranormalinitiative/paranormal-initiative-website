@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>TPI Reels | The Paranormal Initiative</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="pp:title" content="TPI Reels">
+    <meta name="pp:subtitle" content="Short Paranormal Videos">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=80">
+    <link rel="stylesheet" href="member-shell.css?v=50">
+    <style>
+        /* ===== REELS PAGE LAYOUT ===== */
+        body.reels-page {
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+        }
+
+        body.reels-page .member-sidebar {
+            display: none;
+        }
+
+        body.reels-page #site-header {
+            display: none;
+        }
+
+        body.reels-page #site-footer {
+            display: none;
+        }
+
+        .reels-shell {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        /* ===== REELS FEED ===== */
+        .reels-feed {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .reels-feed::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* ===== SINGLE REEL ===== */
+        .reel-item {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .reel-video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 480px;
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reel-video-container video,
+        .reel-video-container iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000;
+        }
+
+        /* ===== REEL OVERLAY ===== */
+        .reel-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.85) 0%,
+                rgba(0, 0, 0, 0.4) 30%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.3) 100%
+            );
+            pointer-events: none;
+        }
+
+        .reel-overlay > * {
+            pointer-events: auto;
+        }
+
+        /* ===== REEL TOP BAR ===== */
+        .reel-top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            z-index: 10;
+        }
+
+        .reel-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all var(--transition-base);
+        }
+
+        .reel-back-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+            border-color: var(--accent-border);
+        }
+
+        .reel-category-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .reel-category-tab {
+            padding: 6px 14px;
+            color: var(--text-secondary);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .reel-category-tab:hover,
+        .reel-category-tab.active {
+            color: var(--text-on-accent);
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* ===== REEL INFO (Bottom Left) ===== */
+        .reel-info {
+            display: grid;
+            gap: 12px;
+            max-width: 75%;
+        }
+
+        .reel-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reel-author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            object-fit: cover;
+            background: var(--bg-card);
+        }
+
+        .reel-author-avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: var(--accent);
+            color: var(--text-on-accent);
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .reel-author-info {
+            display: grid;
+            gap: 2px;
+        }
+
+        .reel-author-name {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .reel-author-title {
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .reel-follow-btn {
+            padding: 6px 16px;
+            color: var(--text-on-accent);
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .reel-follow-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        .reel-title {
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .reel-description {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .reel-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .reel-tag {
+            padding: 4px 10px;
+            color: var(--accent);
+            background: var(--accent-muted);
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius-full);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .reel-music {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .reel-music-icon {
+            display: inline-flex;
+            animation: reelMusicSpin 3s linear infinite;
+        }
+
+        @keyframes reelMusicSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== REEL ACTIONS (Right Side) ===== */
+        .reel-actions {
+            position: absolute;
+            right: 16px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .reel-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform var(--transition-base);
+        }
+
+        .reel-action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .reel-action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .reel-action-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            font-size: 20px;
+            transition: all var(--transition-base);
+        }
+
+        .reel-action-btn:hover .reel-action-icon {
+            background: var(--accent-muted);
+        }
+
+        .reel-action-btn.liked .reel-action-icon {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .reel-action-count {
+            color: var(--text-primary);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ===== REEL PROGRESS BAR ===== */
+        .reel-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 20;
+        }
+
+        .reel-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* ===== REEL SWIPE HINT ===== */
+        .reel-swipe-hint {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-tertiary);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: reelSwipeHint 2s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        @keyframes reelSwipeHint {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+            50% { transform: translateX(-50%) translateY(-8px); opacity: 1; }
+        }
+
+        .reel-swipe-arrow {
+            font-size: 16px;
+            animation: reelArrowBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes reelArrowBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .reels-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .reels-empty-icon {
+            width: 80px;
+            height: 80px;
+            display: grid;
+            place-items: center;
+            background: var(--accent-muted);
+            border: 2px solid var(--accent-border);
+            border-radius: 50%;
+            font-size: 36px;
+        }
+
+        .reels-empty h2 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .reels-empty p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .reel-category-tabs {
+                display: none;
+            }
+
+            .reel-info {
+                max-width: 85%;
+            }
+
+            .reel-actions {
+                right: 12px;
+                bottom: 100px;
+                gap: 16px;
+            }
+
+            .reel-action-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body class="reels-page">
+<div class="reels-shell">
+    <div class="reels-feed" data-reels-feed>
+        <!-- Reels will be loaded here -->
+        <div class="reel-item">
+            <div class="reel-video-container">
+                <div style="width: 100%; height: 100%; display: grid; place-items: center; background: linear-gradient(135deg, var(--bg-primary), var(--bg-card));">
+                    <div class="reels-empty">
+                        <div class="reels-empty-icon">▶</div>
+                        <h2>TPI Reels</h2>
+                        <p>Short paranormal investigation clips, EVP evidence, location tours, and field tips from the TPI community.</p>
+                        <a class="portal-button" href="explore.html?member=1">Back to Feed</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reel-overlay">
+                <div class="reel-top-bar">
+                    <a class="reel-back-btn" href="explore.html?member=1">← Back</a>
+                    <div class="reel-category-tabs">
+                        <button class="reel-category-tab active" type="button">For You</button>
+                        <button class="reel-category-tab" type="button">Following</button>
+                        <button class="reel-category-tab" type="button">New</button>
+                    </div>
+                </div>
+
+                <div class="reel-info">
+                    <div class="reel-author">
+                        <span class="reel-author-avatar-placeholder">T</span>
+                        <div class="reel-author-info">
+                            <span class="reel-author-name">The Paranormal Initiative</span>
+                            <span class="reel-author-title">Official Account</span>
+                        </div>
+                        <button class="reel-follow-btn" type="button">Follow</button>
+                    </div>
+                    <div class="reel-title">Welcome to TPI Reels</div>
+                    <div class="reel-description">Short investigation clips, EVP evidence, location tours, equipment demos, and field tips from the paranormal community.</div>
+                    <div class="reel-tags">
+                        <span class="reel-tag">#Paranormal</span>
+                        <span class="reel-tag">#EVP</span>
+                        <span class="reel-tag">#Investigation</span>
+                    </div>
+                    <div class="reel-music">
+                        <span class="reel-music-icon">♫</span>
+                        <span>Original Audio — TPI</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reel-actions">
+                <button class="reel-action-btn" type="button" data-reel-like>
+                    <span class="reel-action-icon">♡</span>
+                    <span class="reel-action-count">0</span>
+                </button>
+                <button class="reel-action-btn" type="button" data-reel-comment>
+                    <span class="reel-action-icon">💬</span>
+                    <span class="reel-action-count">0</span>
+                </button>
+                <button class="reel-action-btn" type="button" data-reel-share>
+                    <span class="reel-action-icon">↗</span>
+                    <span class="reel-action-count">Share</span>
+                </button>
+                <button class="reel-action-btn" type="button" data-reel-save>
+                    <span class="reel-action-icon">🔖</span>
+                    <span class="reel-action-count">Save</span>
+                </button>
+            </div>
+
+            <div class="reel-swipe-hint">
+                <span class="reel-swipe-arrow">↑</span>
+                <span>Swipe up for more</span>
+            </div>
+
+            <div class="reel-progress">
+                <div class="reel-progress-bar" data-reel-progress></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const feed = document.querySelector('[data-reels-feed]');
+    if (!feed) return;
+
+    // Like button toggle
+    document.querySelectorAll('[data-reel-like]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('liked');
+            const icon = btn.querySelector('.reel-action-icon');
+            const count = btn.querySelector('.reel-action-count');
+            if (btn.classList.contains('liked')) {
+                icon.textContent = '♥';
+                count.textContent = '1';
+            } else {
+                icon.textContent = '♡';
+                count.textContent = '0';
+            }
+        });
+    });
+
+    // Progress bar animation (demo)
+    const progressBar = document.querySelector('[data-reel-progress]');
+    if (progressBar) {
+        let progress = 0;
+        const animate = () => {
+            progress += 0.5;
+            if (progress > 100) progress = 0;
+            progressBar.style.width = progress + '%';
+            requestAnimationFrame(animate);
+        };
+        animate();
+    }
+
+    // Category tab switching
+    document.querySelectorAll('.reel-category-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.reel-category-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+})();
+</script>
+
+<script src="includes.js"></script>
+<script src="api-client.js"></script>
+<script src="member-login.js?v=33"></script>
+<script src="member-shell.js?v=48"></script>
+</body>
+</html>

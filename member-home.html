@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=17">
-    <link rel="stylesheet" href="member-shell.css?v=46">
+    <link rel="stylesheet" href="style.css?v=80">
+    <link rel="stylesheet" href="member-shell.css?v=50">
     <style>
         /* ===== MEMBER HOME HEADER ===== */
         .member-home-header {
@@ -40,7 +40,7 @@
             gap: 24px;
             padding: 24px;
             margin-bottom: 24px;
-            background: #101820;
+            background: #131318;
             border: 1px solid #2b3d4f;
             border-radius: 8px;
         }
@@ -54,7 +54,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 3px solid #55c8ff;
+            border: 3px solid var(--accent);
             object-fit: cover;
             background: #071017;
         }
@@ -65,8 +65,8 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 3px solid #55c8ff;
-            background: #55c8ff;
+            border: 3px solid var(--accent);
+            background: var(--accent);
             color: #061018;
             font-size: 36px;
             font-weight: 900;
@@ -86,7 +86,7 @@
         }
 
         .member-profile-title-line {
-            color: #55c8ff;
+            color: var(--accent);
             font-size: 13px;
             font-weight: 600;
         }
@@ -144,7 +144,7 @@
 
         .member-profile-actions a:hover {
             color: #f4f8fb;
-            border-color: rgba(85, 200, 255, 0.5);
+            border-color: rgba(168, 85, 247, 0.5);
         }
 
         /* ===== IDENTITY BLOCK ===== */
@@ -156,7 +156,7 @@
 
         .member-identity-title {
             margin: 0 0 10px;
-            color: #55c8ff;
+            color: var(--accent);
             font-size: 18px;
             font-weight: 900;
             letter-spacing: 0.18em;
@@ -179,7 +179,7 @@
             gap: 14px;
             padding: 22px;
             margin-bottom: 24px;
-            background: #101820;
+            background: #131318;
             border: 1px solid #2b3d4f;
             border-radius: 8px;
         }
@@ -195,7 +195,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            border: 2px solid #55c8ff;
+            border: 2px solid var(--accent);
             object-fit: cover;
             background: #071017;
         }
@@ -206,8 +206,8 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            border: 2px solid #55c8ff;
-            background: #55c8ff;
+            border: 2px solid var(--accent);
+            background: var(--accent);
             color: #061018;
             font-size: 16px;
             font-weight: 900;
@@ -233,8 +233,8 @@
         }
 
         .composer-textarea:focus {
-            border-color: rgba(85, 200, 255, 0.6);
-            box-shadow: 0 0 0 3px rgba(85, 200, 255, 0.08);
+            border-color: rgba(168, 85, 247, 0.6);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.08);
         }
 
         .composer-bottom {
@@ -259,7 +259,7 @@
         }
 
         .composer-category-select:focus {
-            border-color: rgba(85, 200, 255, 0.5);
+            border-color: rgba(168, 85, 247, 0.5);
         }
 
         .composer-actions {
@@ -278,8 +278,8 @@
             min-height: 38px;
             padding: 8px 20px;
             color: #061018;
-            background: #55c8ff;
-            border: 1px solid #55c8ff;
+            background: var(--accent);
+            border: 1px solid var(--accent);
             border-radius: 5px;
             font: inherit;
             font-size: 12px;
@@ -330,8 +330,8 @@
 
         .composer-media-btn:hover {
             color: #c7d5e2;
-            background: rgba(85, 200, 255, 0.06);
-            border-color: rgba(85, 200, 255, 0.12);
+            background: rgba(168, 85, 247, 0.06);
+            border-color: rgba(168, 85, 247, 0.12);
         }
 
         .composer-media-btn svg {
@@ -431,12 +431,12 @@
 
         .member-feed-tab:hover {
             color: #c7d5e2;
-            background: rgba(85, 200, 255, 0.04);
+            background: rgba(168, 85, 247, 0.04);
         }
 
         .member-feed-tab.active {
-            color: #55c8ff;
-            border-bottom-color: #55c8ff;
+            color: var(--accent);
+            border-bottom-color: var(--accent);
         }
 
         /* ===== FEED ===== */
@@ -449,7 +449,7 @@
             display: grid;
             gap: 12px;
             padding: 18px;
-            background: #101820;
+            background: #131318;
             border: 1px solid #243140;
             border-radius: 8px;
             transition: border-color 0.2s;
@@ -470,7 +470,7 @@
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            border: 2px solid #55c8ff;
+            border: 2px solid var(--accent);
             object-fit: cover;
             background: #071017;
         }
@@ -481,8 +481,8 @@
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            border: 2px solid #55c8ff;
-            background: #55c8ff;
+            border: 2px solid var(--accent);
+            background: var(--accent);
             color: #061018;
             font-size: 15px;
             font-weight: 900;
@@ -505,7 +505,7 @@
         }
 
         .feed-card-meta strong a:hover {
-            color: #55c8ff;
+            color: var(--accent);
         }
 
         .feed-card-meta .feed-card-detail {
@@ -519,7 +519,7 @@
         }
 
         .feed-card-meta .feed-card-detail a:hover {
-            color: #55c8ff;
+            color: var(--accent);
         }
 
         .feed-card-badge {
@@ -533,9 +533,9 @@
         }
 
         .badge-category {
-            color: #55c8ff;
-            background: rgba(85, 200, 255, 0.1);
-            border: 1px solid rgba(85, 200, 255, 0.25);
+            color: var(--accent);
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.25);
         }
 
         .badge-article {
@@ -553,7 +553,7 @@
         }
 
         .feed-card-body a {
-            color: #55c8ff;
+            color: var(--accent);
             text-decoration: none;
         }
 
@@ -589,8 +589,8 @@
 
         .feed-action-btn:hover {
             color: #e6edf3;
-            background: rgba(85, 200, 255, 0.08);
-            border-color: rgba(85, 200, 255, 0.15);
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.15);
         }
 
         .feed-action-btn .action-count {
@@ -621,7 +621,7 @@
 
         .feed-card-attachments img:hover,
         .feed-card-attachments video:hover {
-            border-color: #55c8ff;
+            border-color: var(--accent);
         }
 
         .feed-card-attachments .feed-attachment-single img,
@@ -644,7 +644,7 @@
         }
 
         .feed-card-article-title a:hover {
-            color: #55c8ff;
+            color: var(--accent);
         }
 
         .feed-card-article-preview {
@@ -661,9 +661,9 @@
         .member-empty {
             text-align: center;
             padding: 48px 28px;
-            border: 1px dashed rgba(85, 200, 255, 0.2);
+            border: 1px dashed rgba(168, 85, 247, 0.2);
             border-radius: 8px;
-            background: rgba(0, 194, 255, 0.03);
+            background: var(--accent-muted);
         }
 
         .member-empty h3 {
@@ -691,7 +691,7 @@
             min-height: 40px;
             padding: 9px 24px;
             color: #c7d5e2;
-            background: #101820;
+            background: #131318;
             border: 1px solid #263646;
             border-radius: 6px;
             font: inherit;
@@ -705,10 +705,10 @@
 
         .feed-load-more button:hover {
             color: #f4f8fb;
-            border-color: rgba(85, 200, 255, 0.5);
+            border-color: rgba(168, 85, 247, 0.5);
         }
 
-        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=46) ===== */
+        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=50) ===== */
         @media (max-width: 700px) {
             .member-home-header h2 {
                 font-size: 22px;
@@ -1288,7 +1288,7 @@
     function renderForumCard(item) {
         var avatar = item.authorPhotoUrl
             ? '<img class="feed-card-avatar" src="' + escapeAttr(item.authorPhotoUrl) + '" alt="' + escapeAttr(item.authorName || "Member") + '">'
-            : '<div class="feed-card-avatar-initial" style="border-color:' + escapeAttr(item.authorChatColor || '#55c8ff') + ';background:' + escapeAttr(item.authorChatColor || '#55c8ff') + '">' + escapeHtml((item.authorName || "M").charAt(0).toUpperCase()) + '</div>';
+            : '<div class="feed-card-avatar-initial" style="border-color:' + escapeAttr(item.authorChatColor || 'var(--accent)') + ';background:' + escapeAttr(item.authorChatColor || 'var(--accent)') + '">' + escapeHtml((item.authorName || "M").charAt(0).toUpperCase()) + '</div>';
         var categoryBadge = item.categoryTitle ? '<span class="feed-card-badge badge-category">' + escapeHtml(item.categoryTitle) + '</span>' : "";
         var replyCount = Number(item.replyCount || 0);
         var reactionTotal = 0;

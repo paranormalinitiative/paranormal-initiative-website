@@ -1567,7 +1567,7 @@ async function handleCommunityFeed(request, env) {
       authorName: item.authorName,
       authorTitle: item.authorTitle,
       authorPhotoUrl: item.authorPhotoUrl,
-      authorChatColor: item.authorChatColor || "#55c8ff",
+      authorChatColor: item.authorChatColor || "#a855f7",
       replyCount: Math.max(0, postCount - 1),
       createdAt: item.createdAt,
       attachments: []
@@ -1694,7 +1694,7 @@ async function handleUserFeed(request, env) {
       authorName: item.authorName,
       authorTitle: item.authorTitle,
       authorPhotoUrl: item.authorPhotoUrl,
-      authorChatColor: item.authorChatColor || "#55c8ff",
+      authorChatColor: item.authorChatColor || "#a855f7",
       replyCount: Math.max(0, postCount - 1),
       createdAt: item.createdAt,
       attachments: []
@@ -2873,7 +2873,7 @@ function directoryMember(user) {
     title: user.title || "",
     role: user.role,
     photoUrl: user.photo_url || "",
-    chatColor: normalizeChatColor(user.chat_color || "#55c8ff"),
+    chatColor: normalizeChatColor(user.chat_color || "#a855f7"),
     canMessage: user.can_message !== 0,
     active: user.active !== 0,
     online: isOnline,
@@ -2947,7 +2947,7 @@ async function getConversationMembers(env, conversationId) {
       title: row.title || "",
       role: row.role,
       photoUrl: row.photoUrl || "",
-      chatColor: normalizeChatColor(row.chatColor || "#55c8ff"),
+      chatColor: normalizeChatColor(row.chatColor || "#a855f7"),
       canMessage: row.canMessage !== 0,
       online: isOnline,
       lastSeenAt: row.lastSeenAt || null,
@@ -3251,7 +3251,7 @@ async function handleListMessages(path, request, env, user) {
       username: row.authorUsername,
       displayName: row.authorDisplayName,
       photoUrl: row.authorPhotoUrl || "",
-      chatColor: normalizeChatColor(row.authorChatColor || "#55c8ff")
+      chatColor: normalizeChatColor(row.authorChatColor || "#a855f7")
     } : null
   })).reverse();
 
@@ -3309,7 +3309,7 @@ async function handleCreateMessage(path, request, env, user) {
         username: user.username,
         displayName: user.display_name,
         photoUrl: user.photo_url || "",
-        chatColor: normalizeChatColor(user.chat_color || "#55c8ff")
+        chatColor: normalizeChatColor(user.chat_color || "#a855f7")
       }
     }
   }, 201, { "Cache-Control": "no-store" });
@@ -3354,7 +3354,7 @@ async function handleUpdateMessage(path, request, env, user) {
       username: user.username,
       displayName: user.display_name,
       photoUrl: user.photo_url || "",
-      chatColor: normalizeChatColor(user.chat_color || "#55c8ff")
+      chatColor: normalizeChatColor(user.chat_color || "#a855f7")
     }
   } }, 200, { "Cache-Control": "no-store" });
 }
@@ -4052,7 +4052,7 @@ function clean(value) {
 
 function normalizeChatColor(value) {
   const color = clean(value);
-  return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55c8ff";
+  return /^#[0-9a-f]{6}$/i.test(color) ? color : "#a855f7";
 }
 
 function isValidUsername(value) {
@@ -4121,7 +4121,7 @@ function publicUser(user) {
     website: user.website,
     bio: user.bio,
     photoUrl: user.photo_url,
-    chatColor: user.chat_color || "#55c8ff",
+    chatColor: user.chat_color || "#a855f7",
     commentSignatureEnabled: Boolean(user.comment_signature_enabled),
     active: user.active !== 0,
     createdAt: user.created_at

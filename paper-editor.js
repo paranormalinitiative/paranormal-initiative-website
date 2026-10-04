@@ -1253,14 +1253,14 @@
 <style>
 body{margin:0;background:#0f1419;color:#d7e2ec;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.65}
 main{max-width:900px;margin:0 auto;padding:46px 24px 72px}
-.kicker{color:#55c8ff;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.kicker{color:#a855f7;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
 h1{margin:12px 0 8px;color:#f4f8fb;font-size:42px;line-height:1.1}
 .subtitle{margin:0;color:#c7d3de;font-size:18px}
 .meta{margin:12px 0 34px;color:#8aa0b6;font-size:13px}
 h3{margin:34px 0 12px;color:#f4f8fb;font-size:23px;line-height:1.25}
 p{margin:0 0 16px}
-a{color:#55c8ff}
-blockquote{margin:20px 0;padding:4px 0 4px 18px;border-left:3px solid #55c8ff}
+a{color:#a855f7}
+blockquote{margin:20px 0;padding:4px 0 4px 18px;border-left:3px solid #a855f7}
 .embedded-media{margin:26px 0}.embedded-media iframe,.embedded-media video,.embedded-media img{display:block;width:100%;max-width:100%;background:#05080c;border:1px solid #243140;border-radius:6px}.embedded-media iframe,.embedded-media video{aspect-ratio:16/9;height:auto}.embedded-media img{height:auto}.embedded-media figcaption{margin-top:8px;color:#8aa0b6;font-size:13px}
 </style>
 </head>

@@ -84,7 +84,7 @@
 
   function normalizeChatColor(value) {
     const color = String(value || "").trim();
-    return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55c8ff";
+    return /^#[0-9a-f]{6}$/i.test(color) ? color : "#a855f7";
   }
 
   function getContactPayload(data) {
@@ -1206,7 +1206,7 @@
       if (profileForm.city) profileForm.city.value = user.city || "";
       if (profileForm.state) profileForm.state.value = user.state || "";
       if (profileForm.postalCode) profileForm.postalCode.value = user.postalCode || "";
-      if (profileForm.chatColor) profileForm.chatColor.value = normalizeChatColor(user.chatColor || "#55c8ff");
+      if (profileForm.chatColor) profileForm.chatColor.value = normalizeChatColor(user.chatColor || "#a855f7");
       profileForm.photoUrl.value = user.photoUrl || "";
       profileForm.bio.value = user.bio || "";
       profileForm.commentSignature.checked = user.commentSignatureEnabled !== false;
@@ -1620,7 +1620,7 @@
         correspondence: String(data.get("correspondence") || "").trim(),
         website: String(data.get("website") || "").trim(),
         ...getContactPayload(data),
-        chatColor: normalizeChatColor(String(data.get("chatColor") || "#55c8ff")),
+        chatColor: normalizeChatColor(String(data.get("chatColor") || "#a855f7")),
         photoUrl,
         bio: String(data.get("bio") || "").trim(),
         commentSignatureEnabled: data.get("commentSignature") === "on"

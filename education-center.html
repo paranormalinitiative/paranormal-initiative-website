@@ -7,12 +7,199 @@
     <title>Education Center | The Paranormal Initiative</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="pp:title" content="Education Center">
-    <meta name="pp:subtitle" content="Investigation Development, Field Papers, Applied Articles, and Field Reference">
+    <meta name="pp:subtitle" content="Research Library & Field Papers">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=17">
-    <link rel="stylesheet" href="member-shell.css?v=46">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=80">
+    <link rel="stylesheet" href="member-shell.css?v=50">
+    <style>
+        /* Education Center Accordion */
+        .edu-accordion {
+            display: grid;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .edu-accordion-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .edu-accordion-item:hover {
+            border-color: var(--accent-border);
+        }
+
+        .edu-accordion-header {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all var(--transition-base);
+        }
+
+        .edu-accordion-header:hover {
+            background: var(--accent-muted);
+        }
+
+        .edu-accordion-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .edu-accordion-icon {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            background: var(--accent-muted);
+            border-radius: 12px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .edu-accordion-count {
+            padding: 4px 10px;
+            background: var(--accent-muted);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .edu-accordion-arrow {
+            font-size: 18px;
+            color: var(--text-tertiary);
+            transition: transform var(--transition-base);
+        }
+
+        .edu-accordion-item.is-open .edu-accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        .edu-accordion-content {
+            display: none;
+            padding: 0 24px 24px;
+        }
+
+        .edu-accordion-item.is-open .edu-accordion-content {
+            display: block;
+        }
+
+        .edu-accordion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .edu-article-card {
+            display: grid;
+            gap: 10px;
+            padding: 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            text-decoration: none;
+            color: inherit;
+            transition: all var(--transition-base);
+        }
+
+        .edu-article-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-border);
+            transform: translateY(-2px);
+        }
+
+        .edu-article-card h4 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .edu-article-card p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .edu-article-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .edu-article-tag {
+            padding: 3px 8px;
+            background: var(--accent-muted);
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Ensure 3 cards in a row on desktop */
+        @media (min-width: 769px) {
+            .home-focus-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+
+        /* Search */
+        .edu-search {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .edu-search input {
+            flex: 1;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: all var(--transition-base);
+        }
+
+        .edu-search input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-muted);
+        }
+
+        .edu-search input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        @media (max-width: 768px) {
+            .edu-accordion-header {
+                padding: 16px 18px;
+            }
+
+            .edu-accordion-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body class="education-center-page">
 <div id="site-header"></div>
@@ -20,197 +207,431 @@
 <div data-member-content hidden>
 <div class="member-main-inner">
 
+<!-- HERO -->
 <section class="portal-hero">
     <p class="portal-kicker">Research Library</p>
-    <h2>The Paranormal Initiative Research Library is built for field papers and applied inquiry.</h2>
+    <h2>Field papers, investigation guides, and EVP/ITC research.</h2>
     <p>
-        The Research Library hosts field papers, investigation development material, EVP/ITC experimentation, applied articles, method notes, and pathways through the repository.
+        The Education Center is your library for paranormal investigation. Browse by topic, search for specific subjects, or start with one of our recommended paths.
     </p>
-    <p>
-        If you are new here, think of this area as the library table: short articles, full papers,
-        field notes, lessons, and research topics are organized so you can start simply and go deeper
-        when you are ready.
-    </p>
+    <div class="edu-search">
+        <input type="text" placeholder="Search articles, guides, and research..." data-edu-search>
+    </div>
 </section>
 
-<section class="study-hub-layout education-intro-grid">
-    <article class="study-hub-card">
-        <h3>How This Area Works</h3>
-        <p>
-            The Education Center is the publishing and study side of The Paranormal Initiative.
-            Main navigation pages introduce major subjects; these shelves hold the papers,
-            research notes, lessons, experiments, videos, and contributor materials connected
-            to those subjects.
-        </p>
-        <p>
-            You can read casually, follow a topic, or use the material as a working reference during
-            investigations.
-        </p>
-    </article>
-    <aside class="study-hub-card">
-        <h3>Contributor Publishing</h3>
-        <p>
-            Approved contributors can use the Content Editor to draft full papers,
-            save unpublished work, add media, and publish to the correct topic shelf.
-        </p>
-    </aside>
+<!-- QUICK START -->
+<section class="home-section">
+    <p class="portal-kicker">Quick Start</p>
+    <h2>Begin here if you're new.</h2>
+    <div class="home-focus-grid">
+        <a class="dashboard-panel dashboard-panel-link" href="investigation-development-series.html">
+            <span class="category-badge category-badge-investigation" style="margin-bottom: 12px;">Start Here</span>
+            <h3>Investigation Development</h3>
+            <p>62 field-focused articles covering everything from basic methodology to advanced techniques.</p>
+            <span class="dashboard-panel-cta">Open Series ›</span>
+        </a>
+        <a class="dashboard-panel dashboard-panel-link" href="ghostology-101.html">
+            <span class="category-badge category-badge-education" style="margin-bottom: 12px;">Foundation</span>
+            <h3>Ghostology 101</h3>
+            <p>21 foundational lessons on paranormal investigation, terminology, and field practices.</p>
+            <span class="dashboard-panel-cta">Open Reference ›</span>
+        </a>
+        <a class="dashboard-panel dashboard-panel-link" href="evp-itc-lessons.html">
+            <span class="category-badge category-badge-evp" style="margin-bottom: 12px;">EVP / ITC</span>
+            <h3>EVP & ITC Research</h3>
+            <p>Audio experiments, contamination controls, source-material awareness, and review language.</p>
+            <span class="dashboard-panel-cta">Open Research ›</span>
+        </a>
+    </div>
 </section>
 
-<section class="study-hub-layout education-intro-grid">
-    <article class="study-hub-card">
-        <h3>Find What You Need</h3>
-        <p>
-            Use search when you already know the subject you want, or browse the shelves below
-            when you want to explore by topic.
-        </p>
-        <div class="portal-actions">
-            <a class="portal-button" href="search.html">Search The Site</a>
-            <a class="portal-button portal-button-secondary" href="repository-pathways.html">Use Repository Pathways</a>
-        </div>
-    </article>
-    <aside class="study-hub-card">
-        <h3>Recommended Starting Points</h3>
-        <p>
-            New visitors should begin with Investigation Development, Ghostology Reference,
-            or the Research Topics section. Contributors can access publishing tools near
-            the bottom of this page.
-        </p>
-    </aside>
-</section>
-
-<section class="dashboard-grid portal-grid">
-    <a class="dashboard-panel dashboard-panel-link" href="investigation-development-series.html">
-        <h3>Investigation Development Series</h3>
-        <p>Field-focused articles built from The Paranormal Initiative posts, graphics, and practical investigation guidance.</p>
-        <span class="dashboard-panel-cta">Open Series ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link" href="ghostology-101.html">
-        <h3>Ghostology Reference</h3>
-        <p>Foundational reference material adapted into public reference notes.</p>
-        <span class="dashboard-panel-cta">Open Reference ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link" href="evp-itc-lessons.html">
-        <h3>EVP / ITC Research Notes</h3>
-        <p>Audio experiments, controls, source-material awareness, contamination risks, and careful review language.</p>
-        <span class="dashboard-panel-cta">Open Experimentation ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link" href="honorary-member-collections.html">
-        <h3>Honorary Member Collections</h3>
-        <p>Professional profile and paper collections for major EVP, ITC, psychical research, and historical research figures.</p>
-        <span class="dashboard-panel-cta">Open Collections ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link" href="field-articles.html">
-        <h3>Field Articles</h3>
-        <p>Readable field pieces on haunted locations, equipment, environmental factors, folklore, and field habits.</p>
-        <span class="dashboard-panel-cta">Open Articles ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link" href="method-exercises.html">
-        <h3>Method Exercises</h3>
-        <p>Applied prompts for documentation, debunking, controlled observation, review notes, and final summaries.</p>
-        <span class="dashboard-panel-cta">Open Exercises ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link" href="repository-pathways.html">
-        <h3>Repository Pathways</h3>
-        <p>Reading paths through the five core repository references for investigators and contributors.</p>
-        <span class="dashboard-panel-cta">Open Pathways ›</span>
-    </a>
-</section>
-
-<section class="portal-hero education-study-intro">
+<!-- RESEARCH TOPICS (Accordion) -->
+<section class="home-section">
     <p class="portal-kicker">Research Topics</p>
-    <h2>Explore The Paranormal Initiative by research topic.</h2>
-    <p>
-        These topic areas organize field papers, research notes, documented experiments, references, and future updates under the major subjects The Paranormal Initiative investigates.
-    </p>
+    <h2>Browse by subject area.</h2>
+    <div class="edu-accordion">
+
+        <!-- Investigation Science -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">🔍</span>
+                    <div>
+                        <div>Investigation Science</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">Practice, planning, methodology, techniques, and workflows</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">6 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-investigation-science.html">
+                        <h4>Investigation Science Overview</h4>
+                        <p>Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">Methodology</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-intake-most-important-step.html">
+                        <h4>Intake: The Most Important Step</h4>
+                        <p>Why proper intake is critical to investigation success.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-walkthrough-first-investigation.html">
+                        <h4>Walkthrough: First Investigation</h4>
+                        <p>Guide to your first field investigation.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-baseline-readings.html">
+                        <h4>Baseline Readings</h4>
+                        <p>How to take and use baseline environmental readings.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-role-of-the-investigator.html">
+                        <h4>Role of the Investigator</h4>
+                        <p>Responsibilities and ethics of paranormal investigators.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-why-investigations-fail.html">
+                        <h4>Why Investigations Fail</h4>
+                        <p>Common mistakes and how to avoid them.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence Science -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">📋</span>
+                    <div>
+                        <div>Evidence Science & Analysis</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">Collection, preservation, review, and evidence-based findings</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">5 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-evidence-science-analysis.html">
+                        <h4>Evidence Science Overview</h4>
+                        <p>Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">Evidence</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-claims-vs-evidence.html">
+                        <h4>Claims vs Evidence</h4>
+                        <p>Understanding the difference between claims and evidence.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-faked-evidence-misinterpretation.html">
+                        <h4>Faked Evidence & Misinterpretation</h4>
+                        <p>How to identify and avoid false evidence.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-not-every-evp-is-obvious.html">
+                        <h4>Not Every EVP Is Obvious</h4>
+                        <p>Subtle audio phenomena and careful review.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-personal-experiences-not-proof.html">
+                        <h4>Personal Experiences Are Not Proof</h4>
+                        <p>Why personal experiences need corroboration.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVP & ITC Research -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">🎙️</span>
+                    <div>
+                        <div>EVP & ITC Research</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">Audio experiments, phonetic review, and voice phenomena</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">8 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-evp-itc-research.html">
+                        <h4>EVP & ITC Research Overview</h4>
+                        <p>EVP methodology, ITC experimentation, controls, source-material transparency, ACS, phonemes, and allophones.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">EVP</span>
+                            <span class="edu-article-tag">ITC</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="evp-itc-lesson-evp-basics.html">
+                        <h4>EVP Basics</h4>
+                        <p>Introduction to Electronic Voice Phenomena.</p>
+                    </a>
+                    <a class="edu-article-card" href="evp-itc-lesson-itc-basics.html">
+                        <h4>ITC Basics</h4>
+                        <p>Introduction to Instrumental Transcommunication.</p>
+                    </a>
+                    <a class="edu-article-card" href="evp-itc-lesson-contamination-controls.html">
+                        <h4>Contamination Controls</h4>
+                        <p>How to prevent contamination in audio experiments.</p>
+                    </a>
+                    <a class="edu-article-card" href="evp-itc-lesson-review-language.html">
+                        <h4>Review Language</h4>
+                        <p>How to describe and classify audio findings.</p>
+                    </a>
+                    <a class="edu-article-card" href="evp-itc-lesson-acs-philosophy.html">
+                        <h4>ACS Philosophy</h4>
+                        <p>The Aetheric Communication System approach.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-ghost-boxes-radio-scanning-phoneme-systems.html">
+                        <h4>Ghost Boxes & Radio Scanning</h4>
+                        <p>Understanding phoneme-based systems.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-original-goal-of-itc-research.html">
+                        <h4>Original Goal of ITC Research</h4>
+                        <p>History and purpose of ITC experimentation.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consciousness & Experience -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">🧠</span>
+                    <div>
+                        <div>Consciousness & Human Experience</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">NDE research, parapsychology, psi, and witness experiences</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">4 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-consciousness-human-experience.html">
+                        <h4>Consciousness Overview</h4>
+                        <p>NDE research, parapsychology, psi and psionics, consciousness studies, and witness-centered experiences.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">Consciousness</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-energy-consciousness-soul-remembers.html">
+                        <h4>Energy, Consciousness & Soul</h4>
+                        <p>Exploring consciousness-related phenomena.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-why-some-people-see-ghosts.html">
+                        <h4>Why Some People See Ghosts</h4>
+                        <p>Perception and sensitivity factors.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-psychological-triggers-paranormal-experiences.html">
+                        <h4>Psychological Triggers</h4>
+                        <p>How psychology influences paranormal experiences.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Environmental Research -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">🌡️</span>
+                    <div>
+                        <div>Environmental Research</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">Weather, buildings, sound, atmospheric conditions, and human factors</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">5 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-environmental-research.html">
+                        <h4>Environmental Research Overview</h4>
+                        <p>Baseline studies, weather, buildings, sound, atmospheric conditions, human factors, and correlation.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">Environment</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-weather-environment-building-science-causes.html">
+                        <h4>Weather & Building Science</h4>
+                        <p>Environmental factors that mimic paranormal activity.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-environmental-red-flags.html">
+                        <h4>Environmental Red Flags</h4>
+                        <p>Warning signs to check before investigating.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-thunderstorms-paranormal-activity.html">
+                        <h4>Thunderstorms & Activity</h4>
+                        <p>How weather affects investigation results.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-k2-meters-mobile-devices.html">
+                        <h4>K2 Meters & Mobile Devices</h4>
+                        <p>Understanding EMF readings and interference.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ethics & Standards -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">⚖️</span>
+                    <div>
+                        <div>Ethics & Professional Standards</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">Client care, witness respect, confidentiality, and accountability</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">4 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-ethics-professional-standards.html">
+                        <h4>Ethics Overview</h4>
+                        <p>Client care, witness respect, confidentiality, responsible disclosure, professional conduct, and accountability.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">Ethics</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-investigation-ethics-professional-conduct.html">
+                        <h4>Investigation Ethics</h4>
+                        <p>Professional conduct in the field.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-entertainment-vs-investigation.html">
+                        <h4>Entertainment vs Investigation</h4>
+                        <p>Drawing the line between entertainment and research.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-not-here-to-change-how-you-investigate.html">
+                        <h4>Not Here To Change You</h4>
+                        <p>Respecting different investigation approaches.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historical & Cultural -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">📚</span>
+                    <div>
+                        <div>Historical & Cultural Research</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">Haunted locations, folklore, legends, and archival studies</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">5 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-historical-cultural-research.html">
+                        <h4>Historical Research Overview</h4>
+                        <p>Haunted locations, local legends, folklore, public records, archival studies, and historical context.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">History</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-haunted-locations-why-they-matter.html">
+                        <h4>Why Haunted Locations Matter</h4>
+                        <p>The importance of location research.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-historical-records-local-legends-cemeteries-oral-history.html">
+                        <h4>Historical Records & Legends</h4>
+                        <p>How to research location history.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-history-hauntings-folklore-psychical-research.html">
+                        <h4>History of Hauntings</h4>
+                        <p>Folklore and psychical research history.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-canoe-creek-limestone-kilns-could-talk.html">
+                        <h4>Case Study: Canoe Creek</h4>
+                        <p>Historical investigation example.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporting & Documentation -->
+        <div class="edu-accordion-item">
+            <button class="edu-accordion-header" data-accordion-toggle>
+                <div class="edu-accordion-header-left">
+                    <span class="edu-accordion-icon">📝</span>
+                    <div>
+                        <div>Reporting & Documentation</div>
+                        <div style="font-size: 13px; font-weight: 400; color: var(--text-secondary); margin-top: 2px;">Case reports, evidence logs, and file preservation</div>
+                    </div>
+                </div>
+                <span class="edu-accordion-count">4 articles</span>
+                <span class="edu-accordion-arrow">▼</span>
+            </button>
+            <div class="edu-accordion-content">
+                <div class="edu-accordion-grid">
+                    <a class="edu-article-card" href="education-area-reporting-documentation.html">
+                        <h4>Reporting Overview</h4>
+                        <p>Case reports, careful language, research transparency, evidence presentation, logs, and file preservation.</p>
+                        <div class="edu-article-meta">
+                            <span class="edu-article-tag">Documentation</span>
+                        </div>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-professional-documentation-reporting.html">
+                        <h4>Professional Documentation</h4>
+                        <p>How to document investigations properly.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-observation-note-taking.html">
+                        <h4>Observation & Note-Taking</h4>
+                        <p>Field observation techniques.</p>
+                    </a>
+                    <a class="edu-article-card" href="investigation-development-burden-of-proof.html">
+                        <h4>Burden of Proof</h4>
+                        <p>Understanding evidence standards.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </section>
 
-<section class="dashboard-grid portal-grid study-area-grid">
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-investigation-science.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Investigation Science</h3>
-        <p>Practice, planning, field methodology, responsible techniques, mentorship, and investigative workflows.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-evidence-science-analysis.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Evidence Science &amp; Analysis</h3>
-        <p>Collection, preservation, source files, audio, photo, video review, context, and evidence-based findings.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-instrumentation-technology.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Instrumentation &amp; Technology</h3>
-        <p>Equipment literacy, sensor behavior, EMF, environmental tools, recording systems, and limitations.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-environmental-research.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Environmental Research</h3>
-        <p>Baseline studies, weather, buildings, sound, atmospheric conditions, human factors, and correlation.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-evp-itc-research.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>EVP &amp; ITC Research</h3>
-        <p>EVP methodology, ITC experimentation, controls, source-material transparency, ACS, phonemes, and allophones.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-consciousness-human-experience.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Consciousness &amp; Human Experience</h3>
-        <p>NDE research, parapsychology, psi and psionics, consciousness studies, and witness-centered experiences.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-ethics-professional-standards.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Ethics &amp; Professional Standards</h3>
-        <p>Client care, witness respect, confidentiality, responsible disclosure, professional conduct, and accountability.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-reporting-documentation.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Reporting &amp; Documentation</h3>
-        <p>Case reports, careful language, research transparency, evidence presentation, logs, and file preservation.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-education-community-development.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Community Development &amp; Publication</h3>
-        <p>Contributor resources, mentorship, publication, public outreach, respectful discussion, and ongoing field development.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-technology-development-ai.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Technology Development</h3>
-        <p>App workflows, research software, digital evidence management, platform planning, and responsible tool development.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-artificial-intelligence.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Artificial Intelligence</h3>
-        <p>AI literacy, responsible use, source verification, research support, disclosure, safeguards, and investigator judgment.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
-    <a class="dashboard-panel dashboard-panel-link study-area-card" href="education-area-historical-cultural-research.html">
-        <p class="dashboard-panel-kicker">Research Topic</p>
-        <h3>Historical &amp; Cultural Research</h3>
-        <p>Haunted locations, local legends, folklore, public records, archival studies, and historical context.</p>
-        <span class="dashboard-panel-cta">Open Topic ›</span>
-    </a>
+<!-- MORE RESOURCES -->
+<section class="home-section" style="margin-top: 64px;">
+    <p class="portal-kicker">More Resources</p>
+    <h2>Additional study materials.</h2>
+    <div class="home-focus-grid">
+        <a class="dashboard-panel dashboard-panel-link" href="honorary-member-collections.html">
+            <span class="category-badge category-badge-community" style="margin-bottom: 12px;">Profiles</span>
+            <h3>Honorary Member Collections</h3>
+            <p>Professional profile and paper collections for major EVP, ITC, and psychical research figures.</p>
+        </a>
+        <a class="dashboard-panel dashboard-panel-link" href="field-articles.html">
+            <span class="category-badge category-badge-research" style="margin-bottom: 12px;">Articles</span>
+            <h3>Field Articles</h3>
+            <p>Readable field pieces on haunted locations, equipment, environmental factors, and folklore.</p>
+        </a>
+        <a class="dashboard-panel dashboard-panel-link" href="method-exercises.html">
+            <span class="category-badge category-badge-education" style="margin-bottom: 12px;">Exercises</span>
+            <h3>Method Exercises</h3>
+            <p>Applied prompts for documentation, debunking, controlled observation, and review notes.</p>
+        </a>
+    </div>
 </section>
 
-<section class="portal-hero education-study-intro">
-    <p class="portal-kicker">Contribute To The Mission</p>
-    <h2>Help build the applied research library.</h2>
-    <p>
-        The Paranormal Initiative is seeking thoughtful contributors interested in field papers, documented experiments, methodology reports, historical research, equipment analysis, EVP/ITC research, videos, and professional resources.
-    </p>
-    <p>
-        Contributor accounts are invite-only. If you are interested in contributing research material, start with the contributor invitation information rather than trying to create a public membership account.
-    </p>
-    <div class="portal-actions">
-        <a class="portal-button" href="advisory-board-invitation.html">Contributor Invitation</a>
-        <a class="portal-button portal-button-secondary" href="advisory-board.html">Advisory Board</a>
+<!-- CONTRIBUTE -->
+<section class="home-section">
+    <div class="home-collaboration">
+        <div>
+            <p class="portal-kicker">Contribute</p>
+            <h2>Help build the research library.</h2>
+            <p>
+                The Paranormal Initiative is seeking contributors interested in field papers, experiments, methodology reports, historical research, and professional resources.
+            </p>
+        </div>
+        <div class="home-collaboration-actions">
+            <a class="portal-button" href="advisory-board-invitation.html">Contributor Invitation</a>
+            <a class="portal-button portal-button-secondary" href="advisory-board.html">Advisory Board</a>
+        </div>
     </div>
 </section>
 
@@ -220,5 +641,34 @@
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="member-shell.js?v=48"></script>
+<script>
+// Accordion functionality
+document.querySelectorAll('[data-accordion-toggle]').forEach(button => {
+    button.addEventListener('click', () => {
+        const item = button.closest('.edu-accordion-item');
+        const isOpen = item.classList.contains('is-open');
+        
+        // Close all other items
+        document.querySelectorAll('.edu-accordion-item').forEach(other => {
+            if (other !== item) other.classList.remove('is-open');
+        });
+        
+        // Toggle current item
+        item.classList.toggle('is-open', !isOpen);
+    });
+});
+
+// Search functionality
+const searchInput = document.querySelector('[data-edu-search]');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.edu-article-card').forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+}
+</script>
 </body>
 </html>

@@ -306,7 +306,7 @@
     }
 
     messageList.innerHTML = posts.map(post => {
-      const chatColor = normalizeChatColor(post.authorChatColor || "#55c8ff");
+      const chatColor = normalizeChatColor(post.authorChatColor || "#a855f7");
       const authorInitial = escapeHtml((post.authorName || post.authorUsername || "M").trim().charAt(0) || "M");
       return `
         <article class="discussion-message" id="post-${escapeAttr(post.id)}" data-post-anchor="${escapeAttr(post.id)}" style="--member-chat-color: ${escapeAttr(chatColor)};">
@@ -1048,7 +1048,7 @@
 
   function normalizeChatColor(value) {
     const color = String(value || "").trim();
-    return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55c8ff";
+    return /^#[0-9a-f]{6}$/i.test(color) ? color : "#a855f7";
   }
 
   function escapeHtml(value) {
