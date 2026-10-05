@@ -28,6 +28,284 @@
     <link rel="stylesheet" href="style.css?v=85">
     <link rel="stylesheet" href="member-shell.css?v=59">
     <style>
+        /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
+        .member-home-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 300px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .member-home-main { min-width: 0; }
+
+        .member-home-rail {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: sticky;
+            top: 80px;
+        }
+
+        .rail-card {
+            background: #10141c;
+            border: 1px solid #263646;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .rail-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .rail-card-head h4 {
+            margin: 0;
+            color: #f4f8fb;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .rail-card-link {
+            color: #a855f7;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .rail-card-link:hover { color: #bd7ef9; text-decoration: underline; }
+
+        .rail-loading {
+            margin: 0;
+            color: #8aa0b6;
+            font-size: 12px;
+        }
+
+        .rail-empty {
+            margin: 0;
+            color: #8aa0b6;
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+
+        /* My Pulse */
+        .rail-pulse-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .rail-pulse-avatar,
+        .rail-pulse-avatar-initial {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent, #a855f7);
+            flex-shrink: 0;
+        }
+
+        .rail-pulse-avatar-initial {
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .rail-pulse-name {
+            margin: 0;
+            color: #f4f8fb;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+
+        .rail-pulse-role {
+            margin: 2px 0 0;
+            color: #8aa0b6;
+            font-size: 12px;
+        }
+
+        .rail-pulse-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .rail-pulse-stat {
+            padding: 8px 10px;
+            background: #0d1017;
+            border: 1px solid #1f2d3d;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .rail-pulse-stat strong {
+            display: block;
+            color: #f4f8fb;
+            font-size: 16px;
+        }
+
+        .rail-pulse-stat span {
+            color: #8aa0b6;
+            font-size: 10.5px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .rail-pulse-link {
+            display: block;
+            text-align: center;
+            padding: 8px 12px;
+            color: #c7d5e2;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .rail-pulse-link:hover { color: #f4f8fb; border-color: rgba(168, 85, 247, 0.5); }
+
+        /* Upcoming Events */
+        .rail-event {
+            display: block;
+            padding: 9px 10px;
+            margin-bottom: 8px;
+            background: #0d1017;
+            border: 1px solid #1f2d3d;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: border-color 0.15s;
+        }
+
+        .rail-event:hover { border-color: rgba(168, 85, 247, 0.5); }
+
+        .rail-event-title {
+            margin: 0;
+            color: #e8eef5;
+            font-size: 12.5px;
+            font-weight: 700;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rail-event-meta {
+            margin: 3px 0 0;
+            color: #8aa0b6;
+            font-size: 11.5px;
+        }
+
+        /* Active Members */
+        .rail-member {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 8px;
+            margin: 0 -8px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .rail-member:hover { background: rgba(168, 85, 247, 0.07); }
+
+        .rail-member-avatar,
+        .rail-member-initial {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .rail-member-initial {
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+            border: 1.5px solid;
+        }
+
+        .rail-member-name {
+            margin: 0;
+            color: #e8eef5;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.25;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .rail-member-sub {
+            margin: 0;
+            color: #8aa0b6;
+            font-size: 11px;
+        }
+
+        /* Active Discussions */
+        .rail-topic {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid #1a2531;
+            text-decoration: none;
+        }
+
+        .rail-topic:last-child { border-bottom: none; }
+
+        .rail-topic-rank {
+            color: #a855f7;
+            font-size: 13px;
+            font-weight: 800;
+            min-width: 14px;
+        }
+
+        .rail-topic-title {
+            flex: 1;
+            margin: 0;
+            color: #e8eef5;
+            font-size: 12.5px;
+            font-weight: 600;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rail-topic:hover .rail-topic-title { color: #bd7ef9; }
+
+        .rail-topic-count {
+            color: #8aa0b6;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 1020px) {
+            .member-home-layout { grid-template-columns: 1fr; }
+            .member-home-rail { position: static; }
+        }
+
         /* ===== MEMBER HOME HEADER ===== */
         .member-home-header {
             display: flex;
@@ -985,6 +1263,8 @@
 
 <div data-member-content hidden>
         <div class="member-main-inner">
+            <div class="member-home-layout">
+            <div class="member-home-main">
             <!-- MEMBER HOME HEADER -->
             <div class="member-home-header">
                 <h2>Home</h2>
@@ -1069,6 +1349,53 @@
                     <div class="member-notification-stat" role="listitem"><span>Published</span><strong data-my-published>–</strong></div>
                 </div>
             </section>
+            </div><!-- /member-home-main -->
+
+            <!-- RIGHT RAIL -->
+            <aside class="member-home-rail" data-home-rail>
+                <!-- MY PULSE -->
+                <section class="rail-card" data-rail-pulse>
+                    <div class="rail-card-head">
+                        <h4>My Pulse</h4>
+                    </div>
+                    <div class="rail-pulse-body" data-pulse-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- UPCOMING EVENTS -->
+                <section class="rail-card" data-rail-events>
+                    <div class="rail-card-head">
+                        <h4>Upcoming Events</h4>
+                        <a class="rail-card-link" href="events.html">All</a>
+                    </div>
+                    <div data-events-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- ACTIVE MEMBERS -->
+                <section class="rail-card" data-rail-members>
+                    <div class="rail-card-head">
+                        <h4>Active Members</h4>
+                    </div>
+                    <div data-members-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- ACTIVE DISCUSSIONS -->
+                <section class="rail-card" data-rail-discussions>
+                    <div class="rail-card-head">
+                        <h4>Active Discussions</h4>
+                        <a class="rail-card-link" href="community-forum.html">Forum</a>
+                    </div>
+                    <div data-discussions-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+            </aside>
+            </div><!-- /member-home-layout -->
         </div>
 </div>
 
@@ -1158,6 +1485,151 @@
         await loadFeed();
         setupLoadMore();
         setupTabs();
+        if (viewingOwnProfile) {
+            loadRightRail();
+        } else {
+            var rail = document.querySelector("[data-home-rail]");
+            if (rail) rail.hidden = true;
+        }
+    }
+
+    // ===== RIGHT RAIL =====
+    async function loadRightRail() {
+        renderPulse();
+        loadRailEvents();
+        loadRailMembers();
+        loadRailDiscussions();
+    }
+
+    function renderPulse() {
+        var body = document.querySelector("[data-pulse-body]");
+        if (!body || !activeUser) return;
+        var initial = (activeUser.displayName || activeUser.username || "M").trim().charAt(0).toUpperCase() || "M";
+        var avatar = activeUser.photoUrl
+            ? '<img class="rail-pulse-avatar" src="' + escapeAttr(activeUser.photoUrl) + '" alt="' + escapeAttr(activeUser.displayName || "You") + '">'
+            : '<div class="rail-pulse-avatar-initial" style="background:' + escapeAttr(activeUser.chatColor || "#a855f7") + '">' + escapeHtml(initial) + '</div>';
+        body.innerHTML =
+            '<div class="rail-pulse-top">' +
+                avatar +
+                '<div>' +
+                    '<p class="rail-pulse-name">' + escapeHtml(activeUser.displayName || activeUser.username) + '</p>' +
+                    '<p class="rail-pulse-role">' + escapeHtml(getRoleLabel(activeUser.role)) + '</p>' +
+                '</div>' +
+            '</div>' +
+            '<div class="rail-pulse-stats">' +
+                '<div class="rail-pulse-stat"><strong id="pulse-posts">–</strong><span>Posts</span></div>' +
+                '<div class="rail-pulse-stat"><strong id="pulse-replies">–</strong><span>Replies</span></div>' +
+            '</div>' +
+            '<a class="rail-pulse-link" href="member-profile.html">View Profile</a>';
+        // Counts derive from the user feed (forum topics + articles by this member)
+        window.TPIApi.userFeed(activeUser.username, 100, 0).then(function(data) {
+            var items = data.items || [];
+            var posts = 0, replies = 0;
+            items.forEach(function(item) {
+                if (item.type === "forum_post") {
+                    if (item.isTopicStart) posts++; else replies++;
+                }
+            });
+            var postsEl = document.getElementById("pulse-posts");
+            var repliesEl = document.getElementById("pulse-replies");
+            if (postsEl) postsEl.textContent = String(posts);
+            if (repliesEl) repliesEl.textContent = String(replies);
+        }).catch(function() {
+            var postsEl = document.getElementById("pulse-posts");
+            var repliesEl = document.getElementById("pulse-replies");
+            if (postsEl) postsEl.textContent = "0";
+            if (repliesEl) repliesEl.textContent = "0";
+        });
+    }
+
+    async function loadRailEvents() {
+        var body = document.querySelector("[data-events-body]");
+        if (!body) return;
+        try {
+            var res = await fetch("/api/events?limit=60");
+            if (!res.ok) throw new Error("events unavailable");
+            var data = await res.json();
+            var now = new Date();
+            var upcoming = (data.events || []).filter(function(ev) {
+                var d = ev.date_display || ev.start_date;
+                if (!d) return false;
+                var date = new Date(d);
+                return !isNaN(date.getTime()) && date >= new Date(now.getTime() - 86400000);
+            }).slice(0, 4);
+            if (!upcoming.length) {
+                body.innerHTML = '<p class="rail-empty">No upcoming events right now. <a href="submit-event.html" style="color:#a855f7;">Submit one</a>.</p>';
+                return;
+            }
+            body.innerHTML = upcoming.map(function(ev) {
+                var d = new Date(ev.date_display || ev.start_date);
+                var when = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                var where = ev.is_virtual === 1 ? "Online" : [ev.city, ev.state].filter(Boolean).join(", ") || ev.location_name || "TBA";
+                return '<a class="rail-event" href="' + escapeAttr(ev.source_url || ev.url || "events.html") + '"' + (ev.source_url || ev.url ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
+                    '<p class="rail-event-title">' + escapeHtml(ev.title || "Untitled event") + '</p>' +
+                    '<p class="rail-event-meta">' + escapeHtml(when + " \u00b7 " + where) + '</p>' +
+                '</a>';
+            }).join("");
+        } catch (e) {
+            body.innerHTML = '<p class="rail-empty">Events could not be loaded. <a href="events.html" style="color:#a855f7;">Browse all events</a>.</p>';
+        }
+    }
+
+    function loadRailMembers() {
+        var body = document.querySelector("[data-members-body]");
+        if (!body) return;
+        window.TPIApi.communityFeed(20, 0).then(function(data) {
+            var seen = {};
+            var members = [];
+            (data.items || []).forEach(function(item) {
+                var name = item.authorName;
+                if (!name || !item.authorUsername || seen[item.authorUsername] || item.authorUsername === activeUser.username) return;
+                seen[item.authorUsername] = true;
+                members.push(item);
+            });
+            members = members.slice(0, 5);
+            if (!members.length) {
+                body.innerHTML = '<p class="rail-empty">Be the first to post — the community grid starts with you.</p>';
+                return;
+            }
+            body.innerHTML = members.map(function(m) {
+                var initial = (m.authorName || "M").charAt(0).toUpperCase();
+                var avatar = m.authorPhotoUrl
+                    ? '<img class="rail-member-avatar" src="' + escapeAttr(m.authorPhotoUrl) + '" alt="' + escapeAttr(m.authorName) + '">'
+                    : '<div class="rail-member-initial" style="border-color:' + escapeAttr(m.authorChatColor || "#a855f7") + ';background:' + escapeAttr(m.authorChatColor || "#a855f7") + '">' + escapeHtml(initial) + '</div>';
+                var sub = m.type === "article" ? "Published content" : (m.categoryTitle || "Forum post");
+                return '<a class="rail-member" href="member-home.html?username=' + encodeURIComponent(m.authorUsername) + '">' +
+                    avatar +
+                    '<div style="min-width:0;">' +
+                        '<p class="rail-member-name">' + escapeHtml(m.authorName || "Member") + '</p>' +
+                        '<p class="rail-member-sub">' + escapeHtml(sub) + '</p>' +
+                    '</div>' +
+                '</a>';
+            }).join("");
+        }).catch(function() {
+            body.innerHTML = '<p class="rail-empty">Could not load members right now.</p>';
+        });
+    }
+
+    function loadRailDiscussions() {
+        var body = document.querySelector("[data-discussions-body]");
+        if (!body) return;
+        window.TPIApi.forumIndex().then(function(data) {
+            var topics = (data.topics || []).slice(0, 5);
+            if (!topics.length) {
+                body.innerHTML = '<p class="rail-empty">No discussions yet. <a href="community-forum.html" style="color:#a855f7;">Start one</a>.</p>';
+                return;
+            }
+            body.innerHTML = topics.map(function(t, i) {
+                var href = "community-forum.html#topic=" + encodeURIComponent(t.id);
+                return '<a class="rail-topic" href="' + escapeAttr(href) + '">' +
+                    '<span class="rail-topic-rank">' + (i + 1) + '</span>' +
+                    '<p class="rail-topic-title">' + escapeHtml(t.title || "Untitled") + '</p>' +
+                    '<span class="rail-topic-count">' + Number(t.replyCount || 0) + '</span>' +
+                '</a>';
+            }).join("");
+        }).catch(function() {
+            body.innerHTML = '<p class="rail-empty">Could not load discussions right now.</p>';
+        });
     }
 
     async function getActiveUser() {
