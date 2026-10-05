@@ -55,24 +55,86 @@
 <div class="member-main-inner">
 
 <!-- HERO — explore-before-you-join landing pitch -->
-<section class="portal-hero">
-    <div class="tpi-logo-mark" style="margin-bottom: 24px;">
-        <img src="assets/tpi-logo.png" alt="The Paranormal Initiative" style="height: 80px; width: auto;">
+<style>
+    .landing-hero {
+        position: relative;
+        border-radius: 14px;
+        overflow: hidden;
+        margin: 20px auto 28px;
+        max-width: 1100px;
+        background:
+            linear-gradient(180deg, rgba(6, 10, 16, 0.55) 0%, rgba(6, 10, 16, 0.82) 62%, var(--bg) 100%),
+            url('assets/landing-banner.jpg') center 30% / cover no-repeat;
+        padding: 72px 28px 56px;
+        text-align: center;
+        border: 1px solid var(--border);
+    }
+    .landing-hero .tpi-logo-mark img { height: 96px; width: auto; filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.6)); }
+    .landing-hero h2 { max-width: 720px; margin: 18px auto 14px; }
+    .landing-teaser-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 14px;
+        margin: 28px auto 0;
+        max-width: 940px;
+    }
+    .landing-teaser {
+        display: block;
+        background: rgba(10, 14, 20, 0.78);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px 16px;
+        text-decoration: none;
+        transition: border-color 0.2s, transform 0.2s;
+    }
+    .landing-teaser:hover { border-color: color-mix(in srgb, var(--accent) 60%, transparent); transform: translateY(-2px); }
+    .landing-teaser .teaser-icon { font-size: 26px; }
+    .landing-teaser h3 { margin: 8px 0 6px; font-size: 15px; color: var(--text); }
+    .landing-teaser p { margin: 0; font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+    .landing-teaser .teaser-cta { display: inline-block; margin-top: 10px; font-size: 11.5px; font-weight: 700; color: var(--accent); letter-spacing: 0.4px; }
+    .landing-teaser .teaser-cta.is-member-only::after { content: " · Members"; color: var(--text-muted); font-weight: 600; }
+    @media (max-width: 700px) { .landing-hero { padding: 48px 18px 40px; } }
+</style>
+<section class="landing-hero">
+    <div class="tpi-logo-mark">
+        <img src="assets/tpi-logo.png" alt="The Paranormal Initiative" loading="eager">
     </div>
     <p class="portal-kicker">Explore before you join</p>
     <h2>Responsible research and investigation into the unexplained.</h2>
-    <p>
+    <p style="max-width: 640px; margin: 0 auto 26px; color: var(--text-muted); font-size: 14px;">
         A community for investigators, ITC and EVP researchers, experiencers, historians, and curious people
-        who want to take unusual experiences seriously without rushing to easy answers.
-    </p>
-    <p style="max-width: 640px; margin: 0 auto 28px; color: var(--text-muted); font-size: 14px;">
-        Look around freely — the Education Center, videos, teams directory, and events are open to everyone.
-        Member posts, profiles, and messages stay behind the sign-in.
+        who want to take unusual experiences seriously — without rushing to easy answers.
     </p>
     <div class="portal-actions">
         <a class="portal-button" href="member-login.html">Join Free</a>
         <a class="portal-button portal-button-secondary" href="member-login.html">Sign In</a>
         <a class="portal-button portal-button-secondary" href="education-center.html">Start Exploring</a>
+    </div>
+    <div class="landing-teaser-grid">
+        <a class="landing-teaser" href="education-center.html">
+            <span class="teaser-icon">🎓</span>
+            <h3>Education Center</h3>
+            <p>Field guides, Ghostology 101, and EVP/ITC study material.</p>
+            <span class="teaser-cta">Explore</span>
+        </a>
+        <a class="landing-teaser" href="community-forum.html">
+            <span class="teaser-icon">💬</span>
+            <h3>Community Feed</h3>
+            <p>Research, experiences, and discussion with the TPI community.</p>
+            <span class="teaser-cta is-member-only">Sign in to post</span>
+        </a>
+        <a class="landing-teaser" href="events.html">
+            <span class="teaser-icon">📅</span>
+            <h3>Events</h3>
+            <p>Investigations, conferences, meetups, and live streams.</p>
+            <span class="teaser-cta">Browse</span>
+        </a>
+        <a class="landing-teaser" href="reels.html">
+            <span class="teaser-icon">▶</span>
+            <h3>Reels &amp; Videos</h3>
+            <p>Investigation clips, EVP evidence, and field footage.</p>
+            <span class="teaser-cta">Watch</span>
+        </a>
     </div>
 </section>
 

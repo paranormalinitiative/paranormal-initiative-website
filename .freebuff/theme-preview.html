@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="current">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPI Theme Lab — pick with your eyes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-primary:#09090b; --bg-secondary:#0f0f14; --bg-card:#13131a; --bg-card-hover:#1a1a24;
+  --bg-elevated:#1c1c28; --bg-surface:#111118; --sidebar-bg:#0a0a0f;
+  --accent:#a855f7; --accent-hover:#c084fc; --accent-muted:rgba(168,85,247,.15);
+  --accent-border:rgba(168,85,247,.3); --accent-glow:rgba(168,85,247,.25);
+  --text-primary:#f4f4f5; --text-secondary:#a1a1aa; --text-tertiary:#71717a;
+  --text-accent:#c084fc; --text-on-accent:#09090b;
+  --border-subtle:rgba(168,85,247,.12); --border-default:rgba(168,85,247,.18);
+  --border-strong:rgba(168,85,247,.25); --border-accent:rgba(168,85,247,.3);
+  --gradient-hero:linear-gradient(135deg,#09090b 0%,#1a0a2e 50%,#09090b 100%);
+  --gradient-card:linear-gradient(145deg,#13131a 0%,#1a1a28 100%);
+  --gradient-accent:linear-gradient(135deg,#a855f7 0%,#7e22ce 100%);
+  --gradient-accent-soft:linear-gradient(135deg,rgba(168,85,247,.2) 0%,rgba(126,34,206,.1) 100%);
+  --gradient-glow:radial-gradient(ellipse at 50% 0%,rgba(168,85,247,.15) 0%,transparent 60%);
+  --shadow-glow:0 0 24px rgba(168,85,247,.25); --shadow-glow-strong:0 0 40px rgba(168,85,247,.35);
+  --radius-sm:10px; --radius-md:16px; --radius-lg:24px; --radius-full:9999px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:"Inter",-apple-system,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;transition:background .3s,color .3s}
+h1,h2,h3{line-height:1.2}
+.lab-bar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 20px;background:var(--sidebar-bg);border-bottom:1px solid var(--border-subtle)}
+.lab-bar .brand{font-weight:900;letter-spacing:.14em;font-size:12px;color:var(--accent)}
+.tab{border:1px solid var(--border-default);background:var(--bg-card);color:var(--text-secondary);padding:8px 14px;border-radius:var(--radius-full);font:600 13px Inter,sans-serif;cursor:pointer;transition:all .2s}
+.tab:hover{color:var(--text-primary);border-color:var(--border-strong)}
+.tab.active{background:var(--gradient-accent);color:var(--text-on-accent);border-color:transparent;box-shadow:var(--shadow-glow)}
+.altwrap{display:flex;align-items:center;gap:8px;font:600 12px Inter,sans-serif;color:var(--text-tertiary)}
+.altbtn{border:1px solid var(--border-accent);background:var(--accent-muted);color:var(--text-accent);padding:6px 12px;border-radius:var(--radius-full);font:600 12px Inter,sans-serif;cursor:pointer}
+.note{font:500 12px Inter,sans-serif;color:var(--text-tertiary);margin-left:auto}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px 80px}
+.hero{margin:26px 0;padding:56px 40px;border-radius:var(--radius-lg);background:var(--gradient-hero),var(--gradient-glow);border:1px solid var(--border-subtle);position:relative;overflow:hidden}
+.hero .kicker{color:var(--text-accent);font-weight:800;letter-spacing:.22em;font-size:12px;text-transform:uppercase}
+.hero h1{margin:10px 0 12px;font-size:40px;font-weight:900}
+.hero p{margin:0 0 24px;color:var(--text-secondary);max-width:560px}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap}
+.btn{padding:12px 22px;border-radius:var(--radius-full);font:700 14px Inter,sans-serif;border:0;cursor:pointer}
+.btn-primary{background:var(--gradient-accent);color:var(--text-on-accent);box-shadow:var(--shadow-glow)}
+.btn-secondary{background:var(--accent-muted);color:var(--text-accent);border:1px solid var(--accent-border)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border-default)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:22px 0}
+.card{background:var(--gradient-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px}
+.card:hover{border-color:var(--border-accent);box-shadow:var(--shadow-glow)}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:0 0 14px;color:var(--text-secondary);font-size:14px}
+.chip{display:inline-block;padding:4px 12px;border-radius:var(--radius-full);background:var(--accent-muted);color:var(--text-accent);font:700 11px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.meta{display:flex;justify-content:space-between;align-items:center;font:600 12px Inter,sans-serif;color:var(--text-tertiary)}
+.bar{height:6px;border-radius:var(--radius-full);background:var(--bg-elevated);margin:12px 0 6px;overflow:hidden}
+.bar i{display:block;height:100%;width:68%;background:var(--gradient-accent);border-radius:var(--radius-full)}
+</style>
+</head>
+<body>
+<div class="lab-bar">
+  <span class="brand">TPI THEME LAB</span>
+  <button class="tab active" data-theme-set="current">Current purple</button>
+  <button class="tab" data-theme-set="cryptid">1 · Cryptid &amp; Folklore</button>
+  <button class="tab" data-theme-set="seance">2 · Gothic Séance</button>
+  <button class="tab" data-theme-set="cosmic">3 · Cosmic Horror</button>
+  <button class="tab" data-theme-set="asylum">4 · Asylum &amp; Investigation</button>
+  <span class="altwrap" id="altwrap" hidden><span>Accent:</span><button class="altbtn" id="altbtn"></button></span>
+  <span class="note">Preview only — live site untouched until you choose</span>
+</div>
+<div class="wrap">
+<section class="hero">
+  <div class="kicker">EST. 2019 · RESPONSIBLE PARANORMAL RESEARCH</div>
+  <h1>The Paranormal Initiative</h1>
+  <p>Field investigation, education, EVP &amp; ITC experimentation, and evidence-aware inquiry — with a community of teams and researchers.</p>
+  <div class="btnrow"><button class="btn btn-primary">Start Exploring</button><button class="btn btn-secondary">Education Center</button><button class="btn btn-ghost">Teams Directory</button></div>
+</section>
+<div class="grid">
+  <div class="card"><span class="chip">Ghostology 101</span><h3>Lesson 12: Types of Hauntings</h3><p>Residual, intelligent, and poltergeist classifications — what the field data actually supports.</p><div class="bar"><i></i></div><div class="meta"><span>14 lessons</span><span>68% complete</span></div></div>
+  <div class="card"><span class="chip">Evidence</span><h3>EVP Session — Canoe Creek</h3><p>Class-A phonetic capture from the limestone kilns, reviewed against contamination controls.</p><div class="meta"><span>Audio · 4:12</span><button class="btn btn-primary" style="padding:8px 16px">Listen</button></div></div>
+  <div class="card"><span class="chip">Teams Directory</span><h3>Pasco Paranormal Research Society</h3><p>Florida · Est. 2016 — investigating residential and historic locations across Pasco County.</p><div class="meta"><span>124 members</span><button class="btn btn-secondary" style="padding:8px 16px">View Team</button></div></div>
+</div>
+<div class="grid">
+  <div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--accent-muted);border:1px solid var(--accent-border);color:var(--text-accent);font:700 14px Inter,sans-serif">&#9679; Community Home <span style="margin-left:auto;background:var(--gradient-accent);color:var(--text-on-accent);border-radius:var(--radius-full);font-size:11px;padding:2px 8px">3</span></div>
+    <div style="padding:12px 14px;border-radius:var(--radius-sm);color:var(--text-secondary);font:600 14px Inter,sans-serif">Paranormal Teams</div>
+    <div style="padding:12px 14px;border-radius:var(--radius-sm);color:var(--text-secondary);font:600 14px Inter,sans-serif">TPI Reels</div>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:12px">
+    <span class="chip">Activity</span>
+    <div class="meta" style="font-size:13px"><span style="color:var(--text-primary);font-size:20px;font-weight:800">1,284</span><span>Posts this week</span></div>
+    <div class="meta" style="font-size:13px"><span style="color:var(--text-primary);font-size:20px;font-weight:800">312</span><span>Evidence files</span></div>
+    <div class="meta" style="font-size:13px"><span style="color:var(--text-primary);font-size:20px;font-weight:800">87</span><span>Teams listed</span></div>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px">
+    <span class="chip">Notifications</span>
+    <div style="display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:var(--radius-sm);background:var(--bg-elevated)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:var(--shadow-glow)"></span><span style="font:600 13px Inter,sans-serif">New team submission: North Texas Ghost Seekers</span></div>
+    <div style="display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:var(--radius-sm)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></span><span style="font:600 13px Inter,sans-serif;color:var(--text-secondary)">Welcome email verified &#10003;</span></div>
+  </div>
+</div>
+<div class="card" style="margin:22px 0">
+  <div style="display:flex;gap:14px;align-items:flex-start">
+    <div style="width:44px;height:44px;border-radius:50%;background:var(--gradient-accent);flex:none"></div>
+    <div style="flex:1">
+      <div style="padding:14px 16px;border-radius:var(--radius-md);background:var(--bg-elevated);border:1px solid var(--border-subtle);color:var(--text-tertiary);font:500 14px Inter,sans-serif">What's happening in the community, Todd?</div>
+      <div class="btnrow" style="margin-top:12px"><span class="chip">&#9635; Photo</span><span class="chip">&#9654; Reel</span><span class="chip">&#9678; Live</span><button class="btn btn-primary" style="margin-left:auto;padding:9px 18px">Publish post</button></div>
+    </div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <span class="chip">Parachat</span>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <div style="align-self:flex-start;max-width:75%;padding:10px 14px;border-radius:var(--radius-md);background:var(--bg-elevated);font:500 13px Inter,sans-serif;color:var(--text-primary)">Did you catch the EVP at 41:20? Full sentence.</div>
+      <div style="align-self:flex-end;max-width:75%;padding:10px 14px;border-radius:var(--radius-md);background:var(--gradient-accent);color:var(--text-on-accent);font:500 13px Inter,sans-serif">Playing it now — that's the clearest capture this season.</div>
+    </div>
+  </div>
+  <div class="card">
+    <span class="chip">Sign in</span>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <div style="padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg-elevated);border:1px solid var(--border-default);color:var(--text-tertiary);font:500 13px Inter,sans-serif">you@paranormalinitiative.com</div>
+      <div style="padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg-elevated);border:2px solid var(--accent-border);box-shadow:var(--shadow-glow);color:var(--text-tertiary);font:500 13px Inter,sans-serif">&#9679; focus ring on password field</div>
+      <button class="btn btn-primary">Sign In</button>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+const THEMES={
+ current:{label:'Current purple',tokens:{'--bg-primary':'#09090b','--bg-secondary':'#0f0f14','--bg-card':'#13131a','--bg-card-hover':'#1a1a24','--bg-elevated':'#1c1c28','--bg-surface':'#111118','--sidebar-bg':'#0a0a0f','--accent':'#a855f7','--accent-hover':'#c084fc','--accent-muted':'rgba(168,85,247,.15)','--accent-border':'rgba(168,85,247,.3)','--accent-glow':'rgba(168,85,247,.25)','--text-primary':'#f4f4f5','--text-secondary':'#a1a1aa','--text-tertiary':'#71717a','--text-accent':'#c084fc','--text-on-accent':'#09090b','--border-subtle':'rgba(168,85,247,.12)','--border-default':'rgba(168,85,247,.18)','--border-strong':'rgba(168,85,247,.25)','--border-accent':'rgba(168,85,247,.3)','--gradient-hero':'linear-gradient(135deg,#09090b 0%,#1a0a2e 50%,#09090b 100%)','--gradient-card':'linear-gradient(145deg,#13131a 0%,#1a1a28 100%)','--gradient-accent':'linear-gradient(135deg,#a855f7 0%,#7e22ce 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(168,85,247,.2) 0%,rgba(126,34,206,.1) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(168,85,247,.15) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(168,85,247,.25)','--shadow-glow-strong':'0 0 40px rgba(168,85,247,.35)'},alts:[]},
+ cryptid:{label:'Cryptid & Folklore',tokens:{'--bg-primary':'#1A221E','--bg-secondary':'#161D19','--bg-card':'#2A3430','--bg-card-hover':'#323D38','--bg-elevated':'#34403A','--bg-surface':'#1F2824','--sidebar-bg':'#141B17','--text-primary':'#F2F7F3','--text-secondary':'#CFD6D3','--text-tertiary':'#9BA8A0','--gradient-hero':'linear-gradient(135deg,#1A221E 0%,#15281C 50%,#1A221E 100%)','--gradient-card':'linear-gradient(145deg,#2A3430 0%,#313C36 100%)'},alts:[{label:'Slime Green',t:{'--accent':'#32CD32','--accent-hover':'#52E052','--accent-muted':'rgba(50,205,50,.15)','--accent-border':'rgba(50,205,50,.3)','--accent-glow':'rgba(50,205,50,.25)','--text-accent':'#52E052','--text-on-accent':'#0B140B','--border-subtle':'rgba(50,205,50,.12)','--border-default':'rgba(50,205,50,.18)','--border-strong':'rgba(50,205,50,.25)','--border-accent':'rgba(50,205,50,.3)','--gradient-accent':'linear-gradient(135deg,#32CD32 0%,#1FA31F 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(50,205,50,.2) 0%,rgba(31,163,31,.1) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(50,205,50,.15) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(50,205,50,.25)','--shadow-glow-strong':'0 0 40px rgba(50,205,50,.35)'}},{label:'Ecto Cyan',t:{'--accent':'#00F0FF','--accent-hover':'#4DF4FF','--accent-muted':'rgba(0,240,255,.14)','--accent-border':'rgba(0,240,255,.3)','--accent-glow':'rgba(0,240,255,.25)','--text-accent':'#4DF4FF','--text-on-accent':'#021418','--border-subtle':'rgba(0,240,255,.12)','--border-default':'rgba(0,240,255,.18)','--border-strong':'rgba(0,240,255,.25)','--border-accent':'rgba(0,240,255,.3)','--gradient-accent':'linear-gradient(135deg,#00F0FF 0%,#00A8B8 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(0,240,255,.2) 0%,rgba(0,168,184,.1) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(0,240,255,.15) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(0,240,255,.25)','--shadow-glow-strong':'0 0 40px rgba(0,240,255,.35)'}}]},
+ seance:{label:'Gothic Séance',tokens:{'--bg-primary':'#120C1F','--bg-secondary':'#0E0918','--bg-card':'#1E162D','--bg-card-hover':'#251B37','--bg-elevated':'#28203C','--bg-surface':'#171126','--sidebar-bg':'#0D0816','--text-primary':'#F9F6EE','--text-secondary':'#B9B3A9','--text-tertiary':'#8A857C','--gradient-hero':'linear-gradient(135deg,#120C1F 0%,#241026 50%,#120C1F 100%)','--gradient-card':'linear-gradient(145deg,#1E162D 0%,#241B36 100%)'},alts:[{label:'Cursed Crimson',t:{'--accent':'#8F152A','--accent-hover':'#B01E37','--accent-muted':'rgba(143,21,42,.18)','--accent-border':'rgba(143,21,42,.35)','--accent-glow':'rgba(143,21,42,.3)','--text-accent':'#D46A7E','--text-on-accent':'#F9F6EE','--border-subtle':'rgba(143,21,42,.12)','--border-default':'rgba(143,21,42,.2)','--border-strong':'rgba(143,21,42,.28)','--border-accent':'rgba(143,21,42,.35)','--gradient-accent':'linear-gradient(135deg,#8F152A 0%,#5E0D1C 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(143,21,42,.22) 0%,rgba(94,13,28,.12) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(143,21,42,.18) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(143,21,42,.3)','--shadow-glow-strong':'0 0 40px rgba(143,21,42,.4)'}},{label:'Twilight Lavender',t:{'--accent':'#9D72E2','--accent-hover':'#B695EE','--accent-muted':'rgba(157,114,226,.16)','--accent-border':'rgba(157,114,226,.32)','--accent-glow':'rgba(157,114,226,.28)','--text-accent':'#B695EE','--text-on-accent':'#120C1F','--border-subtle':'rgba(157,114,226,.12)','--border-default':'rgba(157,114,226,.18)','--border-strong':'rgba(157,114,226,.25)','--border-accent':'rgba(157,114,226,.32)','--gradient-accent':'linear-gradient(135deg,#9D72E2 0%,#6B3FC4 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(157,114,226,.2) 0%,rgba(107,63,196,.1) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(157,114,226,.16) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(157,114,226,.28)','--shadow-glow-strong':'0 0 40px rgba(157,114,226,.38)'}}]},
+ cosmic:{label:'Cosmic Horror',tokens:{'--bg-primary':'#0D0C28','--bg-secondary':'#0A0920','--bg-card':'#161537','--bg-card-hover':'#1D1C44','--bg-elevated':'#20204E','--bg-surface':'#12112E','--sidebar-bg':'#0B0A1F','--text-primary':'#F0F2FA','--text-secondary':'#B8BBD0','--text-tertiary':'#8A8DA8','--gradient-hero':'linear-gradient(135deg,#0D0C28 0%,#131042 50%,#0D0C28 100%)','--gradient-card':'linear-gradient(145deg,#161537 0%,#1B1A42 100%)'},alts:[{label:'Neon Cyan',t:{'--accent':'#00E5FF','--accent-hover':'#4DEBFF','--accent-muted':'rgba(0,229,255,.15)','--accent-border':'rgba(0,229,255,.3)','--accent-glow':'rgba(0,229,255,.25)','--text-accent':'#4DEBFF','--text-on-accent':'#04141A','--border-subtle':'rgba(0,229,255,.12)','--border-default':'rgba(0,229,255,.18)','--border-strong':'rgba(0,229,255,.25)','--border-accent':'rgba(0,229,255,.3)','--gradient-accent':'linear-gradient(135deg,#00E5FF 0%,#0088B8 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(0,229,255,.2) 0%,rgba(0,136,184,.1) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(0,229,255,.15) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(0,229,255,.25)','--shadow-glow-strong':'0 0 40px rgba(0,229,255,.35)'}},{label:'Spectral Mint',t:{'--accent':'#5CCDAF','--accent-hover':'#7EDCC5','--accent-muted':'rgba(92,205,175,.15)','--accent-border':'rgba(92,205,175,.3)','--accent-glow':'rgba(92,205,175,.25)','--text-accent':'#7EDCC5','--text-on-accent':'#06120E','--border-subtle':'rgba(92,205,175,.12)','--border-default':'rgba(92,205,175,.18)','--border-strong':'rgba(92,205,175,.25)','--border-accent':'rgba(92,205,175,.3)','--gradient-accent':'linear-gradient(135deg,#5CCDAF 0%,#2E9C82 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(92,205,175,.2) 0%,rgba(46,156,130,.1) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(92,205,175,.15) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(92,205,175,.25)','--shadow-glow-strong':'0 0 40px rgba(92,205,175,.35)'}}]},
+ asylum:{label:'Asylum & Investigation',tokens:{'--bg-primary':'#1E1E1E','--bg-secondary':'#191919','--bg-card':'#2D2D2D','--bg-card-hover':'#353535','--bg-elevated':'#3A3A3A','--bg-surface':'#242424','--sidebar-bg':'#171717','--text-primary':'#F2EEE6','--text-secondary':'#E5E0D8','--text-tertiary':'#A39E94','--gradient-hero':'linear-gradient(135deg,#1E1E1E 0%,#2A2115 50%,#1E1E1E 100%)','--gradient-card':'linear-gradient(145deg,#2D2D2D 0%,#333333 100%)'},alts:[{label:'Hazmat Amber',t:{'--accent':'#FF9F00','--accent-hover':'#FFB733','--accent-muted':'rgba(255,159,0,.15)','--accent-border':'rgba(255,159,0,.3)','--accent-glow':'rgba(255,159,0,.25)','--text-accent':'#FFB733','--text-on-accent':'#1C1200','--border-subtle':'rgba(255,159,0,.12)','--border-default':'rgba(255,159,0,.18)','--border-strong':'rgba(255,159,0,.25)','--border-accent':'rgba(255,159,0,.3)','--gradient-accent':'linear-gradient(135deg,#FF9F00 0%,#C77A00 100%)','--gradient-accent-soft':'linear-gradient(135deg,rgba(255,159,0,.2) 0%,rgba(199,122,0,.1) 100%)','--gradient-glow':'radial-gradient(ellipse at 50% 0%,rgba(255,159,0,.15) 0%,transparent 60%)','--shadow-glow':'0 0 24px rgba(255,159,0,.25)','--shadow-glow-strong':'0 0 40px rgba(255,159,0,.35)'}}]}
+};
+let curTheme='current',curAlt=0;
+function apply(themeKey,altIdx){
+  const th=THEMES[themeKey];if(!th)return;
+  const merged=Object.assign({},th.tokens,(th.alts&&th.alts[altIdx]&&th.alts[altIdx].t)||{});
+  for(const[k,v]of Object.entries(merged))document.documentElement.style.setProperty(k,v);
+  document.documentElement.setAttribute('data-theme',themeKey);
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.themeSet===themeKey));
+  const w=document.getElementById('altwrap'),b=document.getElementById('altbtn');
+  if(th.alts&&th.alts.length>1){w.hidden=false;const next=th.alts[(altIdx+1)%th.alts.length];b.textContent='Switch to '+next.label;}else{w.hidden=true;}
+  curTheme=themeKey;curAlt=altIdx||0;
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>apply(b.dataset.themeSet,0)));
+document.getElementById('altbtn').addEventListener('click',()=>{const th=THEMES[curTheme];apply(curTheme,(curAlt+1)%th.alts.length);});
+apply('current',0);
+</script>
+</body>
+</html>
