@@ -17,11 +17,24 @@ exist so neither of you destroys the other's work.
 3. **Deploy = last-write-wins on the whole worker.** `npx wrangler deploy` ships the ENTIRE repo state.
    If the other agent pushed work you don't have, your deploy erases it from production. So:
    pull immediately before deploying, and confirm the Version ID printed (see §3).
-4. **Stay in your lane.** Your task is the EVENTS system (events.html, submit-event.html,
-   admin-events.html, event scrapers, D1 events tables). Do not "fix" things outside it — especially
-   NOT the member portal (member-home, member-profile, member-dashboard, member-login, member-shell.*),
-   the landing page (index.html hero), or the themes. If you see a bug elsewhere, REPORT it in your
-   handoff note instead of touching it.
+4. **Stay in your lane.** Your assignment comes from a per-task DIRECTIVE (see "How you get
+   tasks" below). The standing default is the EVENTS system (events.html, submit-event.html,
+   admin-events.html, event scrapers, D1 events tables). Do not "fix" things outside your current
+   directive — especially NOT the member portal (member-home, member-profile, member-dashboard,
+   member-login, member-shell.*), the landing page (index.html hero), or the themes. If you see a
+   bug elsewhere, REPORT it in your handoff note instead of touching it.
+
+### How you get tasks
+
+Todd runs a two-agent workflow: **Codebuff (the other agent) writes a per-task directive; Todd hands
+it to you with the sync.** When one is in force:
+
+- That directive is your assignment for the session — do ONLY what it says, exactly as scoped.
+- The standing default lane above applies only when no per-task directive is in force.
+- Do not expand scope, do not "improve" adjacent things you happen to notice — report them instead.
+- If a directive and this file conflict, the directive wins; if a directive seems to break an Iron
+  Rule (§1), stop and ask Todd instead of following it.
+
 5. **Check `git log --oneline -10` before every commit** to see what the other agent landed. Never
    stage files you didn't change.
 
