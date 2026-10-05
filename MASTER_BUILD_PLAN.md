@@ -68,6 +68,10 @@ Rules:
 
 ## 📜 CHANGELOG (newest first)
 
+- **[BUFFY] 2026-10-05 — Member home remake: composer links, video cards, share modal, one home page** — member-home.html is now the full creator+feed hub per Todd's direction (posts, photos, videos, shared links, community feed): (1) composer Link button + paste-URL row (validated http(s), max 5/post); (2) backend `sanitizeForumAttachments` accepts mediaType "link" (URL-validated, persisted, limit 5) in `functions/api/[[path]].js`; (3) feed now renders link chips AND TPI video cards (previously dropped); (4) full share modal (Copy Link / Facebook / X / Email) ported from community-home onto every feed card; (5) community-home.html retired to a 0s redirect → member-home (one home page, noindex). Verified locally in browser: link add/reject/remove flows, Post button state, share modal open/close, redirect target. **Deploy pending sign-off at time of writing — Version ID to follow.**
+
+- **[BUFFY] 2026-10-05 — Landing hero CTA alignment fix**
+
 - **[BUFFY] 2026-10-05 — Landing hero CTA alignment fix** — Join Free / Sign In / Start Exploring row now centered under the hero text (`.landing-hero .portal-actions { justify-content: center; }` in index.html). Verified locally via browser screenshots at desktop + mobile widths; deployed to prod, Version ID `877da5f6-d6a6-4c72-aa76-c1b3832d472e`. [TODD] granted standing commit/pull/deploy permission this session. Commit `be0860b`.
 
 - **[BUFFY] 2026-10-05 — Two-workspace playground system stood up** — verified master plan + directive files present in BOTH folders via git; fresh Desktop clone created after Todd removed the stale copy; sync script rewritten for dual-folder pulls with unpushed warnings. **[TODD] approved.**

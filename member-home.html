@@ -349,6 +349,112 @@
             border-color: rgba(168, 85, 247, 0.12);
         }
 
+        /* ===== LINK SHARE ROW ===== */
+        .composer-link-row {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0 0;
+            padding-left: 52px;
+        }
+
+        .composer-link-input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 12px;
+            color: #e8eef5;
+            background: #0d1017;
+            border: 1px solid #263646;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .composer-link-input:focus {
+            outline: none;
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        .composer-link-add,
+        .composer-link-cancel {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+
+        .composer-link-add {
+            color: #0a0c10;
+            background: #a855f7;
+            border: 1px solid #a855f7;
+        }
+
+        .composer-link-add:hover { background: #bd7ef9; border-color: #bd7ef9; }
+
+        .composer-link-cancel {
+            color: #8aa0b6;
+            background: transparent;
+            border: 1px solid #263646;
+        }
+
+        .composer-link-cancel:hover { color: #c7d5e2; border-color: #3a4c60; }
+
+        /* ===== LINK ATTACHMENTS (feed cards) ===== */
+        .feed-card-links {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin: 10px 0 0;
+        }
+
+        .feed-link-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            color: #c7d5e2;
+            background: #0d1017;
+            border: 1px solid #263646;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12.5px;
+            transition: border-color 0.15s, color 0.15s;
+            overflow-wrap: anywhere;
+        }
+
+        .feed-link-chip:hover {
+            color: #f4f8fb;
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        .feed-link-chip .feed-link-host {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            color: #a855f7;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .feed-link-chip .feed-link-host svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .feed-link-chip .feed-link-url {
+            color: #8aa0b6;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .composer-media-btn svg {
             width: 16px;
             height: 16px;
@@ -723,6 +829,78 @@
             border-color: rgba(168, 85, 247, 0.5);
         }
 
+        /* ===== SHARE MODAL ===== */
+        .share-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: grid;
+            place-items: center;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .share-modal-card {
+            width: min(400px, 90vw);
+            padding: 24px;
+            background: #131318;
+            border: 1px solid #2b3d4f;
+            border-radius: 8px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .share-modal-card h3 {
+            margin: 0;
+            color: #f4f8fb;
+            font-size: 18px;
+        }
+
+        .share-modal-options {
+            display: grid;
+            gap: 8px;
+        }
+
+        .share-modal-options button,
+        .share-modal-options a {
+            display: block;
+            padding: 10px 14px;
+            color: #c7d5e2;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 5px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .share-modal-options button:hover,
+        .share-modal-options a:hover {
+            color: #f4f8fb;
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        .share-modal-close {
+            justify-self: end;
+            padding: 6px 12px;
+            color: #8aa0b6;
+            background: transparent;
+            border: 1px solid #263646;
+            border-radius: 4px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .share-modal-close:hover {
+            color: #e6edf3;
+            border-color: var(--accent);
+        }
+
         /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=55) ===== */
         @media (max-width: 700px) {
             .member-home-header h2 {
@@ -776,6 +954,11 @@
             }
 
             .composer-media-row {
+                flex-wrap: wrap;
+            }
+
+            .composer-link-row {
+                padding-left: 0;
                 flex-wrap: wrap;
             }
 
@@ -834,7 +1017,16 @@
                         <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
                         File
                     </button>
+                    <button type="button" class="composer-media-btn" data-media-link title="Add a link">
+                        <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                        Link
+                    </button>
                     <input type="file" data-composer-file-input accept="image/*,video/*" multiple hidden>
+                </div>
+                <div class="composer-link-row" data-composer-link-row hidden>
+                    <input type="url" class="composer-link-input" data-composer-link-input placeholder="Paste a link to share (https://...)" inputmode="url">
+                    <button type="button" class="composer-link-add" data-composer-link-add>Add</button>
+                    <button type="button" class="composer-link-cancel" data-composer-link-cancel>Cancel</button>
                 </div>
                 <div class="composer-bottom">
                     <select class="composer-category-select" data-composer-category>
@@ -909,6 +1101,10 @@
     var composerAvatar = document.querySelector("[data-composer-avatar]");
     var composerFileInput = document.querySelector("[data-composer-file-input]");
     var composerPreviews = document.querySelector("[data-composer-previews]");
+    var composerLinkRow = document.querySelector("[data-composer-link-row]");
+    var composerLinkInput = document.querySelector("[data-composer-link-input]");
+    var composerLinkAdd = document.querySelector("[data-composer-link-add]");
+    var composerLinkCancel = document.querySelector("[data-composer-link-cancel]");
     var feedContainer = document.querySelector("[data-member-feed]");
     var loadMoreWrap = document.querySelector("[data-feed-load-more]");
     var loadMoreBtn = document.querySelector("[data-load-more-btn]");
@@ -1083,6 +1279,24 @@
             btn.addEventListener("click", function() { openFilePicker("image/*,video/*"); });
         });
 
+        if (composerLinkRow && composerLinkInput && composerLinkAdd && composerLinkCancel) {
+            document.querySelectorAll("[data-media-link]").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    composerLinkRow.hidden = !composerLinkRow.hidden;
+                    if (!composerLinkRow.hidden) composerLinkInput.focus();
+                });
+            });
+            composerLinkAdd.addEventListener("click", addComposerLink);
+            composerLinkCancel.addEventListener("click", function() {
+                composerLinkInput.value = "";
+                composerLinkRow.hidden = true;
+            });
+            composerLinkInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") { e.preventDefault(); addComposerLink(); }
+                if (e.key === "Escape") { composerLinkInput.value = ""; composerLinkRow.hidden = true; }
+            });
+        }
+
         if (composerFileInput) {
             composerFileInput.addEventListener("change", function() {
                 handleFileSelection(composerFileInput.files);
@@ -1134,6 +1348,12 @@
                 vid.muted = true;
                 vid.preload = "metadata";
                 item.appendChild(vid);
+            } else if (att.mediaType === "link") {
+                var linkChip = document.createElement("div");
+                linkChip.className = "preview-file-icon";
+                linkChip.textContent = "\ud83d\udd17 LINK";
+                linkChip.title = att.url || "";
+                item.appendChild(linkChip);
             } else {
                 var icon = document.createElement("div");
                 icon.className = "preview-file-icon";
@@ -1156,9 +1376,41 @@
         updatePostButtonState();
     }
 
+    function isValidLinkUrl(value) {
+        try {
+            var u = new URL(value);
+            return u.protocol === "http:" || u.protocol === "https:";
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function addComposerLink() {
+        if (!composerLinkInput) return;
+        var value = composerLinkInput.value.trim();
+        if (!value) return;
+        if (!isValidLinkUrl(value)) {
+            composerStatus.textContent = "Enter a full URL starting with https://";
+            return;
+        }
+        var links = pendingAttachments.filter(function(a) { return a.mediaType === "link"; });
+        if (links.length >= 5) {
+            composerStatus.textContent = "Maximum 5 links per post.";
+            return;
+        }
+        var host = "";
+        try { host = new URL(value).hostname.replace(/^www\./, ""); } catch (e) {}
+        pendingAttachments.push({ mediaType: "link", url: value, name: host || value });
+        composerLinkInput.value = "";
+        composerStatus.textContent = "";
+        renderPreviews();
+        updatePostButtonState();
+    }
+
     function clearComposer() {
         if (composerBody) composerBody.value = "";
         pendingAttachments = [];
+        if (composerLinkRow) composerLinkRow.hidden = true;
         renderPreviews();
         updatePostButtonState();
     }
@@ -1200,7 +1452,9 @@
                 categoryId: categoryId,
                 title: title,
                 body: body || title,
-                attachments: uploadedAttachments
+                attachments: uploadedAttachments.concat(pendingAttachments.filter(function(a) { return a.mediaType === "link"; }).map(function(a) {
+                    return { url: a.url, key: "", name: a.name || a.url, contentType: "text/html", mediaType: "link" };
+                }))
             });
             clearComposer();
             composerStatus.textContent = "Posted!";
@@ -1342,6 +1596,7 @@
     function renderFeedCard(item) {
         if (item.type === "forum_post") return renderForumCard(item);
         if (item.type === "article") return renderArticleCard(item);
+        if (item.type === "video") return renderVideoCard(item);
         return "";
     }
 
@@ -1361,6 +1616,7 @@
         if ((item.body || "").length > 400) previewText += "...";
 
         var attachmentsHtml = renderFeedAttachments(item.attachments);
+        var linksHtml = renderFeedLinks(item.attachments);
 
         return '<article class="feed-card" data-feed-type="forum" data-topic-id="' + escapeAttr(item.topicId) + '">' +
             '<div class="feed-card-header">' +
@@ -1373,6 +1629,7 @@
             '</div>' +
             (previewText ? '<div class="feed-card-body">' + previewText + '</div>' : "") +
             attachmentsHtml +
+            linksHtml +
             '<div class="feed-card-actions">' +
                 '<a class="feed-action-btn" href="' + escapeAttr(topicUrl) + '">Open Discussion' + (replyCount > 0 ? ' <span class="action-count">' + replyCount + '</span>' : '') + '</a>' +
                 (reactionTotal > 0 ? '<span class="feed-action-btn" style="cursor:default;">&#128077; <span class="action-count">' + reactionTotal + '</span></span>' : "") +
@@ -1401,6 +1658,58 @@
         });
         parts.push('</div>');
         return parts.join("");
+    }
+
+    var LINK_ICON_SVG = '<svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>';
+
+    function renderFeedLinks(attachments) {
+        var links = (attachments || []).filter(function(a) { return (a.mediaType || "") === "link"; });
+        if (!links.length) return "";
+        var parts = ['<div class="feed-card-links">'];
+        links.forEach(function(att) {
+            var url = att.url || "";
+            if (!url || !/^https?:\/\//i.test(url)) return;
+            var host = "";
+            try { host = new URL(url).hostname.replace(/^www\./, ""); } catch (e) {}
+            parts.push(
+                '<a class="feed-link-chip" href="' + escapeAttr(url) + '" target="_blank" rel="noopener noreferrer ugc">' +
+                    '<span class="feed-link-host">' + LINK_ICON_SVG + escapeHtml(host || "Link") + '</span>' +
+                    '<span class="feed-link-url">' + escapeHtml(url) + '</span>' +
+                '</a>'
+            );
+        });
+        parts.push('</div>');
+        return parts.join("");
+    }
+
+    function renderVideoCard(item) {
+        var isLive = item.isLive;
+        var badge = isLive ? '<span class="feed-card-badge badge-live">&#9679; Live Now</span>' : '<span class="feed-card-badge badge-video">New Video</span>';
+        var thumbnail = item.thumbnail ? '<img class="feed-card-thumbnail" src="' + escapeAttr(item.thumbnail) + '" alt="' + escapeAttr(item.title) + '" loading="lazy">' : "";
+        var watchUrl = window.preserveMemberMode ? window.preserveMemberMode("tpi-video.html?id=" + encodeURIComponent(item.slug || item.id)) : "tpi-video.html?id=" + encodeURIComponent(item.slug || item.id);
+        var videoReactionCount = 0;
+        if (item.reactionCounts) {
+            Object.keys(item.reactionCounts).forEach(function(k) { videoReactionCount += Number(item.reactionCounts[k] || 0); });
+        }
+
+        return '<article class="feed-card" data-feed-type="video" data-video-id="' + escapeAttr(item.id) + '">' +
+            '<div class="feed-card-header">' +
+                '<div class="feed-card-avatar-initial" style="border-color:#ff6b6b;background:#ff6b6b">T</div>' +
+                '<div class="feed-card-meta">' +
+                    '<strong>The Paranormal Initiative</strong>' +
+                    '<span class="feed-card-detail">' + escapeHtml(formatDate(item.publishedAt)) + '</span>' +
+                '</div>' +
+                badge +
+            '</div>' +
+            (item.title ? '<h3 class="feed-card-article-title">' + escapeHtml(item.title) + '</h3>' : "") +
+            (item.description ? '<p class="feed-card-article-preview">' + escapeHtml(item.description) + '</p>' : "") +
+            (thumbnail ? '<div class="feed-card-attachments feed-attachment-single">' + thumbnail + '</div>' : "") +
+            '<div class="feed-card-actions">' +
+                '<a class="feed-action-btn" href="' + escapeAttr(watchUrl) + '">&#9654; Watch</a>' +
+                (videoReactionCount > 0 ? '<span class="feed-action-btn" style="cursor:default;">&#128077; <span class="action-count">' + videoReactionCount + '</span></span>' : "") +
+                '<button class="feed-action-btn" type="button" data-share-url="' + escapeAttr(watchUrl) + '" data-share-title="' + escapeAttr(item.title || "") + '">Share</button>' +
+            '</div>' +
+        '</article>';
     }
 
     function renderArticleCard(item) {
@@ -1434,12 +1743,63 @@
         if (navigator.share) {
             navigator.share({ title: title, url: url }).catch(function() {});
         } else {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(url).then(function() {
-                    shareBtn.textContent = "Copied!";
-                    setTimeout(function() { shareBtn.textContent = "Share"; }, 1500);
+            showShareModal(url, title);
+        }
+    });
+
+    function showShareModal(url, title) {
+        var existing = document.querySelector(".share-modal-overlay");
+        if (existing) existing.remove();
+        var encodedUrl = encodeURIComponent(url);
+        var encodedTitle = encodeURIComponent(title);
+        var overlay = document.createElement("div");
+        overlay.className = "share-modal-overlay";
+        overlay.innerHTML = '<div class="share-modal-card">' +
+            '<h3>Share</h3>' +
+            '<div class="share-modal-options">' +
+                '<button type="button" data-copy-share="' + escapeAttr(url) + '">Copy Link</button>' +
+                '<a href="https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl + '" target="_blank" rel="noopener noreferrer">Facebook</a>' +
+                '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '&text=' + encodedTitle + '" target="_blank" rel="noopener noreferrer">X</a>' +
+                '<a href="mailto:?subject=' + encodedTitle + '&body=' + encodedUrl + '">Email</a>' +
+            '</div>' +
+            '<button class="share-modal-close" type="button" data-close-share>Close</button>' +
+        '</div>';
+        document.body.appendChild(overlay);
+        overlay.querySelector("[data-close-share]").focus();
+    }
+
+    document.addEventListener("click", function(e) {
+        var closeBtn = e.target.closest("[data-close-share]");
+        var overlay = e.target.closest(".share-modal-overlay");
+        if (closeBtn || (overlay && e.target === overlay)) {
+            var modal = document.querySelector(".share-modal-overlay");
+            if (modal) modal.remove();
+        }
+        var copyBtn = e.target.closest("[data-copy-share]");
+        if (copyBtn) {
+            var text = copyBtn.dataset.copyShare;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function() {
+                    copyBtn.textContent = "Copied!";
+                    setTimeout(function() { copyBtn.textContent = "Copy Link"; }, 1500);
                 });
+            } else {
+                var ta = document.createElement("textarea");
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                ta.remove();
+                copyBtn.textContent = "Copied!";
+                setTimeout(function() { copyBtn.textContent = "Copy Link"; }, 1500);
             }
+        }
+    });
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            var modal = document.querySelector(".share-modal-overlay");
+            if (modal) modal.remove();
         }
     });
 

@@ -3875,15 +3875,19 @@ function sanitizeForumAttachments(value) {
       key: clean(item.key).slice(0, 1000),
       name: clean(item.name).slice(0, 180),
       contentType: contentType.slice(0, 120),
-      mediaType: mediaType === "video" ? "video" : "image",
+      mediaType: mediaType === "video" ? "video" : mediaType === "link" ? "link" : "image",
       sortOrder: index
     };
-  }).filter(item => item.url && ["image", "video"].includes(item.mediaType));
+  }).filter(item => item.url && ["image", "video", "link"].includes(item.mediaType))
+    // Links must be real http(s) URLs; uploaded media keys are only meaningful for image/video
+    .filter(item => item.mediaType !== "link" || /^https?:\/\//i.test(item.url));
 
   const images = cleaned.filter(item => item.mediaType === "image");
   const videos = cleaned.filter(item => item.mediaType === "video");
+  const links = cleaned.filter(item => item.mediaType === "link");
   if (images.length > 10) throw new Error("Forum posts can include up to 10 images.");
   if (videos.length > 2) throw new Error("Forum posts can include up to 2 videos.");
+  if (links.length > 5) throw new Error("Forum posts can include up to 5 links.");
   return cleaned;
 }
 
