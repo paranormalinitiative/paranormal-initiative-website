@@ -624,18 +624,22 @@
 <script>
 // Leadership gate: only owner/admin can use the event manager.
 (async function () {
+    let isLeadership = false;
     try {
-        const user = await getSignedInUser();
-        const isLeadership = user && (user.role === 'owner' || user.role === 'admin');
-        document.getElementById('admin-form-card').hidden = !isLeadership;
-        document.getElementById('admin-gate-note').hidden = isLeadership;
-        document.querySelectorAll('[data-preview-event], [data-save-event], [data-clear-event]').forEach(btn => {
-            btn.disabled = !isLeadership;
-        });
+        const response = await fetch('/api/auth/me', { credentials: 'same-origin' });
+        if (response.ok) {
+            const data = await response.json();
+            const role = String(data.user && data.user.role || '').toLowerCase();
+            isLeadership = role === 'owner' || role === 'admin';
+        }
     } catch (error) {
-        document.getElementById('admin-form-card').hidden = true;
-        document.getElementById('admin-gate-note').hidden = false;
+        isLeadership = false;
     }
+    document.getElementById('admin-form-card').hidden = !isLeadership;
+    document.getElementById('admin-gate-note').hidden = isLeadership;
+    document.querySelectorAll('[data-preview-event], [data-save-event], [data-clear-event]').forEach(btn => {
+        btn.disabled = !isLeadership;
+    });
 })();
 
 // Toggle virtual link field
