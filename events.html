@@ -298,6 +298,25 @@
             margin-bottom: 24px;
         }
 
+        /* Show More Button */
+        .events-show-more {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 32px 0;
+        }
+
+        .events-show-more .portal-button {
+            min-width: 200px;
+        }
+
+        .events-show-more-count {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
         .events-filter-btn {
             padding: 8px 16px;
             background: var(--bg-card);
@@ -968,6 +987,14 @@
         </div>
 
     </div>
+
+    <!-- Show More Button -->
+    <div class="events-show-more" id="show-more-container" style="display: none;">
+        <button class="portal-button" type="button" id="show-more-btn">
+            Show More Events
+        </button>
+        <p class="events-show-more-count" id="events-remaining"></p>
+    </div>
 </section>
 
 <!-- SUBMIT EVENT CTA -->
@@ -1130,25 +1157,66 @@ async function initEvents() {
     });
     
     let allEvents = sortedEvents;
+    let currentCount = 0;
+    const PAGE_SIZE = 12;
+    
+    // Show More elements
+    const showMoreContainer = document.getElementById('show-more-container');
+    const showMoreBtn = document.getElementById('show-more-btn');
+    const eventsRemaining = document.getElementById('events-remaining');
     
     // Display events
-    function displayEvents(eventsToShow) {
+    function displayEvents(eventsToShow, append = false) {
         if (eventsToShow.length > 0 && eventsGrid) {
-            eventsGrid.innerHTML = eventsToShow.map(renderEventCard).join('');
+            if (append) {
+                eventsGrid.innerHTML += eventsToShow.map(renderEventCard).join('');
+            } else {
+                eventsGrid.innerHTML = eventsToShow.map(renderEventCard).join('');
+            }
             
             // Update event count
             const countEl = document.querySelector('[data-event-count]');
-            if (countEl) countEl.textContent = eventsToShow.length;
+            if (countEl) countEl.textContent = currentCount;
             
             // Re-attach RSVP handlers
             attachRsvpHandlers();
-        } else if (eventsGrid) {
+        } else if (!append && eventsGrid) {
             eventsGrid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary);">No events found matching your criteria.</div>';
+        }
+        
+        // Update Show More button
+        updateShowMore();
+    }
+    
+    // Update Show More visibility
+    function updateShowMore() {
+        if (!showMoreContainer || !showMoreBtn || !eventsRemaining) return;
+        
+        const remaining = allEvents.length - currentCount;
+        if (remaining > 0) {
+            showMoreContainer.style.display = '';
+            showMoreBtn.textContent = `Show More Events`;
+            eventsRemaining.textContent = `${remaining} more events available`;
+        } else {
+            showMoreContainer.style.display = 'none';
         }
     }
     
-    // Initial display - show first 12 events
-    displayEvents(allEvents.slice(0, 12));
+    // Load more events
+    function loadMore() {
+        const nextBatch = allEvents.slice(currentCount, currentCount + PAGE_SIZE);
+        currentCount += nextBatch.length;
+        displayEvents(nextBatch, true);
+    }
+    
+    // Initial display
+    currentCount = Math.min(PAGE_SIZE, allEvents.length);
+    displayEvents(allEvents.slice(0, currentCount));
+    
+    // Show More button handler
+    if (showMoreBtn) {
+        showMoreBtn.addEventListener('click', loadMore);
+    }
     
     // Geolocation
     if (locationBtn) {
