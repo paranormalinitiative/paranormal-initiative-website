@@ -512,6 +512,7 @@ When continuing this work:
 42. ⬜ Connect forms to database API
 43. ⬜ TPI Creator Studio (video reels + photo editing)
 44. ✅ Members Home / Feed merge (Oct 4, 2026) — Your Feed merged into the HOME page: composer front and center ("You Are the Initiative"), community feed with Activity / Posts / Published Content tabs, sidebar Home renamed and Your Feed item removed (explore.html kept for deep links)
+45. ✅ Settings / Profile split (Oct 4, 2026) — member-dashboard.html is Settings-only (Login Settings + full-width Color Theme card, hero "⚙ Edit Profile" button); new member-profile.html is the Profile page (identity card, email verification, full profile form); sidebar Profile → member-profile.html; Members Home / Feed renamed back to "Home" and the upper-right header button returns to member-home.html; Home gained a My Content strip (unpublished/published counts + Content Editor link)
 
 ---
 
