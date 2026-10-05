@@ -38,6 +38,8 @@ Rules:
 
 ## ✅ COMPLETED (approved and live)
 
+- ✅ [BUFFY] **Fixed the dead Eventbrite scraper (Todd approved 2026-10-05 "go ahead and fix it")** — cron AND /api/events/refresh had matched 0 cards (Eventbrite changed markup); both now share lib/event-scraper.js. Live-verified on prod: refresh returns 358 scraped / 300 inserted, all 300 rows have real ISO start_date (was 0% dates), external_id `eb_*` populated, scraped_at stamped, chronological sort works, hex entities decoded, Meetup/community rows untouched. "Other" down ~55% → 37%. Deploys `6cd1f547` + `40a8bdcf`.
+
 - ✅ [TODD] **Approved 2026-10-05** — Two-workspace system: fresh playground clone at `~/Desktop/paranormal-initiative-website` (git, clean at `d395b5f`), dual-workspace sync script v2 (`~/Desktop/sync-tpi-workspace.command`, --ff-only pulls both folders, unpushed-commit warnings); Opencode's home = the Desktop path
 - ✅ [TODD] Site concept, design language, six member themes, section structure
 - ✅ [BUFFY] Member portal: Home (composer + community feed + My Content), Profile page (identity summary + edit form), Settings (login + color themes)
@@ -63,8 +65,8 @@ Rules:
 ## 🛠️ NEEDS MODIFICATION (known issues awaiting a decision or slot)
 
 - 🛠️ Floating chat widget causes mobile horizontal overflow (420px inside 390px) — pre-existing, parked
-- 🛠️ Events: ~47 of scraped events classify as "Other" (Meetup data thin) — [OPENCODE] lane
-- 🛠️ Scraper dedup: reruns append, no dedup by URL yet — [OPENCODE] lane
+- 🛠️ Events: ~111 of 300 scraped events still classify as "Other" (vague titles; classification is best-effort) — [OPENCODE] lane if a smarter pass is wanted
+- 🛠️ Meetup rows (44) are imported once and never refreshed by cron (cron only manages eventbrite) — [OPENCODE] lane
 
 ## 📜 CHANGELOG (newest first)
 
