@@ -302,6 +302,141 @@
             color: var(--text-on-accent);
         }
 
+        /* Location Filter */
+        .events-location-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+        }
+
+        .events-location-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .events-location-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .events-location-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all var(--transition-base);
+        }
+
+        .events-location-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-muted);
+        }
+
+        .events-location-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .events-location-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            background: var(--accent-muted);
+            border: 1px solid var(--accent-border);
+            border-radius: 12px;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition-base);
+        }
+
+        .events-location-btn:hover {
+            background: var(--accent);
+            color: var(--text-on-accent);
+        }
+
+        .events-location-btn.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .events-distance-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .events-distance-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .events-distance-select {
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            transition: all var(--transition-base);
+        }
+
+        .events-distance-select:focus {
+            border-color: var(--accent);
+        }
+
+        .events-location-status {
+            width: 100%;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            padding-top: 4px;
+        }
+
+        .events-location-status.success {
+            color: #34d399;
+        }
+
+        .events-location-status.error {
+            color: #f87171;
+        }
+
+        @media (max-width: 768px) {
+            .events-location-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .events-location-input-group {
+                min-width: auto;
+            }
+
+            .events-distance-filter {
+                justify-content: space-between;
+            }
+        }
+
         /* Event Filters */
         .events-filters {
             display: flex;
@@ -602,6 +737,31 @@
 <section class="home-section">
     <p class="portal-kicker">Browse Events</p>
     <h2>Find what interests you.</h2>
+    
+    <!-- Location Filter -->
+    <div class="events-location-filter">
+        <div class="events-location-input-group">
+            <span class="events-location-icon">📍</span>
+            <input type="text" class="events-location-input" id="location-input" placeholder="Enter city, state, or zip code...">
+            <button class="events-location-btn" id="use-my-location" type="button" title="Use my location">
+                <span>⦿</span> My Location
+            </button>
+        </div>
+        <div class="events-distance-filter">
+            <label class="events-distance-label">Distance:</label>
+            <select class="events-distance-select" id="distance-select">
+                <option value="25">25 miles</option>
+                <option value="50" selected>50 miles</option>
+                <option value="100">100 miles</option>
+                <option value="250">250 miles</option>
+                <option value="500">500 miles</option>
+                <option value="all">All distances</option>
+            </select>
+        </div>
+        <div class="events-location-status" id="location-status"></div>
+    </div>
+    
+    <!-- Type Filters -->
     <div class="events-filters">
         <button class="events-filter-btn active" type="button" data-filter="all">All Events</button>
         <button class="events-filter-btn" type="button" data-filter="investigation">Investigations</button>
@@ -829,41 +989,237 @@
 <script src="includes.js"></script>
 <script src="member-shell.js?v=54"></script>
 <script>
-// Filter functionality
-document.querySelectorAll('[data-filter]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Update active state
-        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+// Load events from JSON
+async function loadEvents() {
+    try {
+        const response = await fetch('events-data.json');
+        const data = await response.json();
+        return data.events || [];
+    } catch (error) {
+        console.log('Could not load events data:', error);
+        return [];
+    }
+}
+
+// Render event card
+function renderEventCard(event) {
+    const startDate = event.startDate ? new Date(event.startDate) : null;
+    const month = startDate ? startDate.toLocaleString('default', { month: 'short' }).toUpperCase() : 'TBD';
+    const day = startDate ? startDate.getDate() : '?';
+    const time = startDate ? startDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+    
+    const typeBadge = event.type ? event.type.charAt(0).toUpperCase() + event.type.slice(1) : 'Event';
+    const imageUrl = event.imageUrl || '';
+    const location = event.isVirtual ? 'Online (Virtual)' : [event.locationName, event.city, event.state].filter(Boolean).join(', ') || 'Location TBD';
+    
+    return `
+        <div class="event-card" data-type="${event.type || 'other'}">
+            <div class="event-card-image">
+                ${imageUrl 
+                    ? `<img src="${imageUrl}" alt="${event.title}" loading="lazy">`
+                    : `<div style="width:100%;height:100%;background:linear-gradient(135deg, var(--accent-muted), var(--bg-card));"></div>`
+                }
+                <div class="event-card-date-badge">
+                    <span class="event-card-date-month">${month}</span>
+                    <span class="event-card-date-day">${day}</span>
+                </div>
+                <span class="event-card-type-badge">${typeBadge}</span>
+            </div>
+            <div class="event-card-content">
+                <h3 class="event-card-title">${event.title}</h3>
+                <div class="event-card-location">
+                    <span>📍</span> ${location}
+                </div>
+                ${time ? `<div class="event-card-time"><span>🕐</span> ${time}</div>` : ''}
+                <div class="event-card-footer">
+                    <div class="event-card-attendees">
+                        <span class="event-card-count">${event.source === 'eventbrite' ? 'via Eventbrite' : event.source === 'meetup' ? 'via Meetup' : 'TPI Event'}</span>
+                    </div>
+                    ${event.url 
+                        ? `<a class="event-card-rsvp" href="${event.url}" target="_blank" rel="noopener">View Event</a>`
+                        : `<button class="event-card-rsvp" type="button">RSVP</button>`
+                    }
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Initialize events
+async function initEvents() {
+    const events = await loadEvents();
+    const eventsGrid = document.querySelector('.events-grid');
+    const locationInput = document.getElementById('location-input');
+    const locationBtn = document.getElementById('use-my-location');
+    const distanceSelect = document.getElementById('distance-select');
+    const locationStatus = document.getElementById('location-status');
+    
+    if (!eventsGrid) return;
+    
+    // Sort events: events with dates and locations first
+    const sortedEvents = events.sort((a, b) => {
+        const aHasDate = a.startDate ? 1 : 0;
+        const bHasDate = b.startDate ? 1 : 0;
+        const aHasLocation = (a.city || (a.locationName && a.locationName !== 'online')) ? 1 : 0;
+        const bHasLocation = (b.city || (b.locationName && b.locationName !== 'online')) ? 1 : 0;
         
-        const filter = btn.dataset.filter;
-        document.querySelectorAll('.event-card').forEach(card => {
-            if (filter === 'all' || card.dataset.type === filter) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
+        const aScore = aHasDate * 2 + aHasLocation;
+        const bScore = bHasDate * 2 + bHasLocation;
+        
+        return bScore - aScore;
+    });
+    
+    let allEvents = sortedEvents;
+    let userLat = null;
+    let userLon = null;
+    
+    // Display events
+    function displayEvents(eventsToShow) {
+        if (eventsToShow.length > 0) {
+            eventsGrid.innerHTML = eventsToShow.map(renderEventCard).join('');
+            attachRsvpHandlers();
+        } else {
+            eventsGrid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary);">No events found matching your criteria.</div>';
+        }
+    }
+    
+    // Initial display - show first 12 events
+    displayEvents(allEvents.slice(0, 12));
+    
+    // Geolocation
+    if (locationBtn) {
+        locationBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                if (locationStatus) {
+                    locationStatus.textContent = 'Geolocation is not supported by your browser';
+                    locationStatus.className = 'events-location-status error';
+                }
+                return;
             }
+            
+            locationBtn.classList.add('loading');
+            locationBtn.innerHTML = '<span>⏳</span> Getting location...';
+            if (locationStatus) {
+                locationStatus.textContent = 'Requesting your location...';
+                locationStatus.className = 'events-location-status';
+            }
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    userLat = position.coords.latitude;
+                    userLon = position.coords.longitude;
+                    locationBtn.classList.remove('loading');
+                    locationBtn.innerHTML = '<span>✓</span> Location Set';
+                    if (locationStatus) {
+                        locationStatus.textContent = `Location found: ${userLat.toFixed(2)}, ${userLon.toFixed(2)}`;
+                        locationStatus.className = 'events-location-status success';
+                    }
+                    reverseGeocode(userLat, userLon);
+                },
+                (error) => {
+                    locationBtn.classList.remove('loading');
+                    locationBtn.innerHTML = '<span>⦿</span> My Location';
+                    if (locationStatus) {
+                        locationStatus.textContent = 'Unable to get location. Please enter manually.';
+                        locationStatus.className = 'events-location-status error';
+                    }
+                }
+            );
+        });
+    }
+    
+    // Reverse geocode
+    async function reverseGeocode(lat, lon) {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const data = await response.json();
+            if (data.address && locationInput) {
+                const city = data.address.city || data.address.town || data.address.village || '';
+                const state = data.address.state || '';
+                locationInput.value = [city, state].filter(Boolean).join(', ');
+            }
+        } catch (e) {
+            console.log('Reverse geocode failed:', e);
+        }
+    }
+    
+    // Location input search
+    if (locationInput) {
+        let searchTimeout;
+        locationInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const query = locationInput.value.trim();
+                if (query.length > 2) {
+                    geocodeAndFilter(query);
+                }
+            }, 500);
+        });
+    }
+    
+    async function geocodeAndFilter(query) {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+            const data = await response.json();
+            
+            if (data.length > 0) {
+                userLat = parseFloat(data[0].lat);
+                userLon = parseFloat(data[0].lon);
+                if (locationStatus) {
+                    locationStatus.textContent = `Location set: ${data[0].display_name}`;
+                    locationStatus.className = 'events-location-status success';
+                }
+            }
+        } catch (e) {
+            console.log('Geocode failed:', e);
+        }
+    }
+    
+    // Filter functionality
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const filter = btn.dataset.filter;
+            document.querySelectorAll('.event-card').forEach(card => {
+                if (filter === 'all' || card.dataset.type === filter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         });
     });
-});
+    
+    // RSVP button toggle
+    function attachRsvpHandlers() {
+        document.querySelectorAll('.event-card-rsvp').forEach(btn => {
+            if (btn.tagName === 'BUTTON' && !btn.dataset.handlerAttached) {
+                btn.dataset.handlerAttached = 'true';
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (btn.textContent === 'RSVP' || btn.textContent === 'Set Reminder') {
+                        btn.textContent = 'Going ✓';
+                        btn.style.background = 'var(--accent)';
+                        btn.style.color = 'var(--text-on-accent)';
+                        btn.style.borderColor = 'var(--accent)';
+                    } else {
+                        btn.textContent = 'RSVP';
+                        btn.style.background = '';
+                        btn.style.color = '';
+                        btn.style.borderColor = '';
+                    }
+                });
+            }
+        });
+    }
+    
+    attachRsvpHandlers();
+}
 
-// RSVP button toggle
-document.querySelectorAll('.event-card-rsvp').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (btn.textContent === 'RSVP' || btn.textContent === 'Set Reminder') {
-            btn.textContent = 'Going ✓';
-            btn.style.background = 'var(--accent)';
-            btn.style.color = 'var(--text-on-accent)';
-            btn.style.borderColor = 'var(--accent)';
-        } else {
-            btn.textContent = 'RSVP';
-            btn.style.background = '';
-            btn.style.color = '';
-            btn.style.borderColor = '';
-        }
-    });
-});
+// Run on load
+initEvents();
 </script>
 </body>
 </html>
