@@ -363,6 +363,21 @@
     document.querySelectorAll("[data-coming-soon]").forEach(function (element) {
       element.hidden = canUseAdminPanel;
     });
+    // TPI Studio is Coming Soon: non-leadership gets a disabled nav item they
+    // cannot click through; leadership keeps the working link.
+    document.querySelectorAll('[data-nav="studio"]').forEach(function (element) {
+      if (canUseAdminPanel) {
+        element.classList.remove("is-nav-disabled");
+        element.removeAttribute("aria-disabled");
+        element.removeAttribute("title");
+        if (!element.getAttribute("href")) element.setAttribute("href", "/studio/");
+        return;
+      }
+      element.classList.add("is-nav-disabled");
+      element.setAttribute("aria-disabled", "true");
+      element.setAttribute("title", "TPI Studio — Coming Soon");
+      element.removeAttribute("href");
+    });
     document.body.classList.toggle("member-guest-mode", Boolean(user && user.guest));
     if (user && user.guest) {
       document.querySelectorAll('[data-nav="logout"]').forEach(function (element) {

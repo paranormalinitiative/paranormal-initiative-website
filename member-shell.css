@@ -3109,6 +3109,11 @@ body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel
 .theme-picker-grid .theme-picker-option:hover small{color:var(--text-tertiary)}
 .theme-picker-swatch{width:100%;height:44px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.08)}
 
+/* ===== Disabled nav item (TPI Studio Coming Soon) ===== */
+.member-nav-link.is-nav-disabled{opacity:.55;cursor:not-allowed}
+.member-nav-link.is-nav-disabled:hover{background:transparent;color:var(--text-secondary);transform:none}
+.member-nav-link.is-nav-disabled .member-nav-new-tag{box-shadow:none;opacity:.9}
+
 /* ===== Notification items: unread dot + meta line ===== */
 .member-notification-item{position:relative}
 .member-notification-dot{position:absolute;left:-14px;top:24px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
