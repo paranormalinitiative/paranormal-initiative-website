@@ -74,6 +74,8 @@
     notificationUnreadCount: () => request("/notifications/unread-count"),
     markNotificationRead: id => request(`/notifications/${encodeURIComponent(id)}/read`, { method: "POST" }),
     markAllNotificationsRead: () => request("/notifications/read-all", { method: "POST" }),
+    getNotificationPreferences: () => request("/notifications/preferences"),
+    saveNotificationPreferences: prefs => request("/notifications/preferences", { method: "POST", body: { prefs } }),
     memberForumPosts: username => request(`/admin/forum/posts?username=${encodeURIComponent(username || "")}`),
     setForumTopicStatus: (id, status) => request(`/admin/forum/topics/${encodeURIComponent(id)}/status`, { method: "POST", body: { status } }),
     deleteForumTopic: id => request(`/admin/forum/topics/${encodeURIComponent(id)}/status`, { method: "POST", body: { status: "deleted" } }),

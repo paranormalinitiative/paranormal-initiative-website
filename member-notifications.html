@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=85">
-    <link rel="stylesheet" href="member-shell.css?v=55">
+    <link rel="stylesheet" href="member-shell.css?v=56">
 </head>
 <body>
 <div id="site-header"></div>
@@ -42,6 +42,17 @@
         </div>
     </section>
 
+    <section class="editor-access-card" data-notification-settings-card hidden>
+        <p class="portal-kicker">Preferences</p>
+        <h2>Notification Settings</h2>
+        <p class="access-note">Choose which notifications you receive. Changes apply to future notifications and save instantly.</p>
+        <div class="member-notification-settings" data-notification-settings></div>
+        <div class="member-notification-settings-footer">
+            <span class="member-notification-save-state" data-notification-save-state aria-live="polite"></span>
+            <button type="button" class="member-notification-reset" data-notification-reset>Reset Defaults</button>
+        </div>
+    </section>
+
     <p id="member-login-status" class="access-note member-login-status"></p>
 </div>
 </div>
@@ -50,7 +61,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=34"></script>
+<script src="member-login.js?v=35"></script>
 <script src="member-shell.js?v=51"></script>
 </body>
 </html>

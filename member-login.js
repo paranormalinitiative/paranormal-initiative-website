@@ -27,6 +27,8 @@
   const publicProfileRoot = document.querySelector("[data-public-profile]");
   const profilePhotoPreview = document.querySelector("[data-profile-photo-preview]");
   const memberNotificationsList = document.querySelector("[data-member-notifications]");
+  const notificationSettingsCard = document.querySelector("[data-notification-settings-card]");
+  const notificationSettingsHost = document.querySelector("[data-notification-settings]");
   const adminPanelRoot = document.querySelector("[data-admin-panel]");
   const adminSettingsPanel = document.querySelector("[data-admin-settings-panel]");
   const adminSettingsForm = document.querySelector("[data-admin-settings-form]");
@@ -984,6 +986,109 @@
         });
       });
     });
+  }
+
+  // ===== Per-category notification settings (ParaPost-style; saves instantly) =====
+
+  function renderNotificationSettings(payload) {
+    if (!notificationSettingsHost) return;
+    notificationSettingsHost.innerHTML = `
+      <div class="member-notification-settings-head">
+        <span class="member-notification-oncount" data-notification-oncount><strong>${payload.onCount}</strong>/${payload.total} On</span>
+      </div>
+      <div class="member-notification-setting-rows">
+        ${payload.categories.map(category => `
+          <label class="member-notification-setting-row">
+            <span class="member-notification-setting-text">
+              <strong>${escapeHtml(category.label)}</strong>
+              <small>${escapeHtml(category.description)}</small>
+            </span>
+            <input type="checkbox" class="member-notification-toggle" data-notification-pref="${escapeHtml(category.key)}" ${category.enabled ? "checked" : ""} aria-label="Receive ${escapeHtml(category.label)}">
+            <span class="member-notification-switch" aria-hidden="true"></span>
+          </label>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  function bindNotificationSettings(payload) {
+    if (!notificationSettingsHost) return;
+    const saveState = document.querySelector("[data-notification-save-state]");
+    let saveTimer = null;
+    const currentPrefs = () => {
+      const prefs = {};
+      payload.categories.forEach(category => {
+        const input = notificationSettingsHost.querySelector(`[data-notification-pref="${category.key}"]`);
+        prefs[category.key] = Boolean(input && input.checked);
+      });
+      return prefs;
+    };
+    const updateCount = () => {
+      const onCount = payload.categories.filter(category => category.enabled).length;
+      const counter = notificationSettingsHost.querySelector("[data-notification-oncount]");
+      if (counter) counter.innerHTML = `<strong>${onCount}</strong>/${payload.total} On`;
+    };
+    const showState = (message, isError) => {
+      if (!saveState) return;
+      saveState.textContent = message;
+      saveState.classList.toggle("is-error", Boolean(isError));
+      saveState.classList.add("is-visible");
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => saveState.classList.remove("is-visible"), 2400);
+    };
+    const commit = async () => {
+      const data = await window.TPIApi.saveNotificationPreferences(currentPrefs());
+      (data.categories || []).forEach(savedCategory => {
+        const category = payload.categories.find(item => item.key === savedCategory.key);
+        if (category) category.enabled = savedCategory.enabled;
+      });
+      payload.onCount = data.onCount;
+      updateCount();
+      showState("Saved ✓", false);
+      refreshNotificationAlert();
+    };
+    notificationSettingsHost.querySelectorAll("[data-notification-pref]").forEach(input => {
+      input.addEventListener("change", async () => {
+        input.disabled = true;
+        try {
+          await commit();
+        } catch (error) {
+          input.checked = !input.checked;
+          showState(error.message || "Could not save — try again.", true);
+        } finally {
+          input.disabled = false;
+        }
+      });
+    });
+    const resetButton = document.querySelector("[data-notification-reset]");
+    if (resetButton) {
+      resetButton.addEventListener("click", async () => {
+        resetButton.disabled = true;
+        notificationSettingsHost.querySelectorAll("[data-notification-pref]").forEach(input => { input.disabled = true; input.checked = true; });
+        try {
+          await commit();
+        } catch (error) {
+          showState(error.message || "Could not reset — try again.", true);
+        } finally {
+          notificationSettingsHost.querySelectorAll("[data-notification-pref]").forEach(input => { input.disabled = false; });
+          resetButton.disabled = false;
+        }
+      });
+    }
+  }
+
+  async function initNotificationSettings() {
+    if (!notificationSettingsCard || !notificationSettingsHost) return;
+    if (!await cloudflareReady()) return;
+    try {
+      const payload = await window.TPIApi.getNotificationPreferences();
+      if (!payload || !Array.isArray(payload.categories) || !payload.categories.length) return;
+      renderNotificationSettings(payload);
+      notificationSettingsCard.removeAttribute("hidden");
+      bindNotificationSettings(payload);
+    } catch (error) {
+      // Leave the settings card hidden if preferences can't be loaded.
+    }
   }
 
   function refreshNotificationAlert() {
@@ -2148,13 +2253,15 @@
       }
       try {
         profileReminderButton.disabled = true;
-        await window.TPIApi.sendMemberNotification(username, {
+        const result = await window.TPIApi.sendMemberNotification(username, {
           title: "Please verify your account email",
           body: "Please confirm that your account email is current. Phone and address information are optional and private.",
           actionHref: "member-dashboard.html",
           type: "profile-request"
         });
-        setStatus(`Profile update notification sent to ${username}.`, false);
+        setStatus(result && result.suppressed
+          ? `${username} has Administration Notices muted — no notification delivered.`
+          : `Profile update notification sent to ${username}.`, false);
       } catch (error) {
         setStatus(error.message || "Notification could not be sent.", true);
       } finally {
@@ -2287,6 +2394,7 @@
   initAdminPanel();
   initAdminSettingsPanel();
   initMemberNotifications();
+  initNotificationSettings();
   initPublicProfile();
   renderCloudflareOwnerInvites().then(renderedCloudflare => {
     if (!renderedCloudflare) renderOwnerInvites();
