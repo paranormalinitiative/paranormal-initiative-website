@@ -353,7 +353,7 @@ No Phase 5 items shipped with the Oct 4 live deploy; they remain future work.
 
 ### Phase 6: Public Landing & Discovery (New — Based on Paranormal Country Comparison)
 - [x] Events page created with featured event, filters, and event cards
-- [x] Event card design with actual images (date badge, type badge, location, time, RSVP)
+- [x] Event card design with actual images (date badge, type badge, location, distance, time, RSVP)
 - [x] Filter system (All, Investigations, Conferences, Meetups, Workshops, Live Streams)
 - [x] RSVP functionality with toggle
 - [x] Submit Event CTA linked to submission form
@@ -370,17 +370,18 @@ No Phase 5 items shipped with the Oct 4 live deploy; they remain future work.
 - [ ] Add seasonal content (Halloween features, investigation season guides)
 - [ ] Add "Free to join" messaging (lower barrier to entry)
 - [ ] Add Games/Quizzes (location puzzles, case-file quizzes)
+- [x] **Eventbrite/Meetup scraper built + events data refreshed (Oct 5, 2026)** — `scripts/scrape-events.py` pulled **82 unique events** into `events-data.json` (40 with dates, 42 with locations, 66 virtual; 52 Eventbrite / 30 Meetup); events page sorts dated events first, shows date/location/virtual badges, links out to source pages; Eventbrite rate-limited mid-run (resets 1–2 h, rerun `python3 scripts/scrape-events.py`). **Full technical handoff: "TPI Event System — Technical Handoff" section at the bottom of UI_REDESIGN_LOG.md** (scraper lives in the desktop working copy `~/Desktop/paranormal-initiative-website/`, not yet in the repo; live events.html not yet fetching the data file)
 
 ### Phase 7: API Integration (Planned — Not Started)
 - [ ] Eventbrite API for paranormal events
 - [ ] Meetup API for paranormal groups
+- [x] ~~Eventbrite/Meetup scraping~~ **Superseded (Oct 5, 2026):** public-page scrapers shipped first — `scripts/scrape-events.py` (Eventbrite ×7 URLs + Meetup ×4 URLs) → `events-data.json`, 82 events; official APIs still recommended for reliability (scrapers fragile + rate-limited); spec in the Technical Handoff section of UI_REDESIGN_LOG.md
 - [ ] Facebook Events API (requires app review)
 - [ ] D1 database schema for events
 - [ ] API endpoints for events CRUD
 - [ ] Connect admin form to database
 - [ ] Connect community form to database
 - [ ] Automated daily/weekly event scraping
-
 ### Phase 8: Live Site Deployment
 - [x] Apply all UI/CSS/HTML changes to live site (GitHub/Cloudflare) — **DONE Oct 4, 2026**: full redesign merged onto the live repo via git 3-way merge (test base commit existed in live history, so no live-only work was lost), all 39 touched files + reels.html + tpi-banner/logo assets
 - [x] Add TPI Reels page to live site — reels.html deployed with sidebar link + NEW tag

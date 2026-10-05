@@ -342,7 +342,7 @@ When working on the live site (GitHub/Cloudflare):
 
 ### ✅ Phase 10: Events Section (Based on Paranormal Country Comparison) — DEPLOYED TO LIVE
 - [x] Events page created with featured event, filters, and event cards
-- [x] Event card design with actual images (date badge, type badge, location, time, RSVP)
+- [x] Event card design with actual images (date badge, type badge, location, distance, time, RSVP)
 - [x] Filter system (All, Investigations, Conferences, Meetups, Workshops, Live Streams)
 - [x] RSVP functionality with toggle
 - [x] Submit Event CTA linked to submission form
@@ -351,10 +351,12 @@ When working on the live site (GitHub/Cloudflare):
 - [x] Community event submission form (submit-event.html)
 - [x] Form formatting fixed and polished
 - [x] **Deployed to live site (Oct 4, 2026)** — all three pages migrated from this desktop copy; hardcoded purple literals converted to theme tokens (`color-mix(in srgb, var(--accent) …)` + `var(--purple-700)`) so all six member themes tint the Events pages; events.html + submit-event.html made public/indexable with OG tags + sitemap + search index; admin-events.html kept noindex with an owner/admin gate; sidebar gained Events + Manage Events (admin-only)
+- [x] **Eventbrite/Meetup scraper built + events data refreshed (Oct 5, 2026)** — `scripts/scrape-events.py` pulled **82 unique events** into `events-data.json` (40 with dates, 42 with locations, 66 virtual; sources: 52 Eventbrite / 30 Meetup); events page now sorts dated events first, shows date/location/virtual badges, and links out to the original Eventbrite/Meetup pages. Eventbrite rate-limited the scraper mid-run (resets in 1–2 hours; rerun `python3 scripts/scrape-events.py`). **Full technical handoff for this system: see "TPI Event System — Technical Handoff" at the bottom of this file.**
 
 ### Phase 11: API Integration (Planned — Not Started)
 - [ ] Eventbrite API for paranormal events
 - [ ] Meetup API for paranormal groups
+- [x] ~~Eventbrite/Meetup scraping~~ **Superseded (Oct 5, 2026):** public-page scrapers shipped first — `scripts/scrape-events.py` (Eventbrite ×7 URLs + Meetup ×4 URLs) → `events-data.json`, 82 events. Official APIs still worth doing for reliability (scrapers are fragile + rate-limited); scraper spec in the Technical Handoff section below
 - [ ] Facebook Events API (requires app review)
 - [ ] Automated daily/weekly event scraping
 - [ ] D1 database schema for events
@@ -507,7 +509,7 @@ When continuing this work:
 37. ✅ Event form formatting fixed and polished
 38. ✅ Events section deployed to live site (Oct 4, 2026) — theme-token adapted, sidebar + search index + sitemap updated
 39. ⬜ Interactive map integration
-40. ⬜ Eventbrite/Meetup API integration
+40. ✅ Eventbrite/Meetup integration, phase 1 (Oct 5, 2026) — public-page scrapers (`scripts/scrape-events.py`) feed `events-data.json` (82 events: 40 dated, 42 located, 66 virtual); events page sorts dated-first with date/location/virtual badges and outbound links; official APIs still pending (fragile scraper + Eventbrite rate limits) — full spec in the Technical Handoff section
 41. ⬜ D1 database schema for events
 42. ⬜ Connect forms to database API
 43. ⬜ TPI Creator Studio (video reels + photo editing)
@@ -516,6 +518,47 @@ When continuing this work:
 46. ✅ Profile card + hero actions consolidated (Oct 5, 2026) — the member-home identity card moved to the top of member-profile.html (its self-linking Edit Profile button dropped, ⚙ Settings kept), and the dashboard hero beneath it now carries a single "☺ Edit Profile" button on the right that smooth-scrolls to the profile form — Settings / Open Content Editor / Sign Out removed from that hero (Sign Out stays in the top bar)
 47. ✅ Profile page simplified + Settings hero trimmed (Oct 5, 2026, supersedes 46's card placement) — the top identity card was removed at Todd's direction; the Profile page is now the hero (single ☺ Edit Profile button, scrolls to the form) plus one card holding the profile summary (photo, role badge, facts, Biography) and the editable form with Save Profile / View Public Profile; the Settings hero lost its ☺ Edit Profile button (Open Content Editor + Sign Out remain)
 48. ✅ Edit Profile button moved to the form footer (Oct 5, 2026) — the Profile hero now carries no action buttons; ☺ Edit Profile sits at the bottom of the profile card, ordered above Save Profile and View Public Profile
+
+---
+
+## TPI Event System — Technical Handoff (Oct 5, 2026)
+
+> **For the next agent:** this is the complete state of the events data pipeline. The events UI (events.html / submit-event.html / admin-events.html) is LIVE on the production site; the **scraper + data file currently live only in the desktop working copy** `~/Desktop/paranormal-initiative-website/` and are NOT yet in the GitHub repo. Everything below is verified against the actual files, not from memory.
+
+### Where things live
+| Piece | Location (desktop working copy `~/Desktop/paranormal-initiative-website/`) | In GitHub repo? |
+|---|---|---|
+| Scraper | `scripts/scrape-events.py` | NO — copy to repo before relying on it |
+| Data | `events-data.json` (82 events) | NO |
+| Events UI | `events.html`, `submit-event.html`, `admin-events.html` | YES — deployed Oct 4 (commit `31d55f9`, docs `7a996a4`)
+| Extra scripts | `scripts/fetch-events.py` (older query-based fetcher, same output file), `scripts/update-events.sh` (wrapper: cd + run scraper) | NO |
+
+### Scraper: `scripts/scrape-events.py`
+- **Deps:** `requests`, `beautifulsoup4` (`pip3 install requests beautifulsoup4`). Run: `python3 scripts/scrape-events.py` from the desktop copy root. `scripts/update-events.sh` is a thin wrapper that just cds + runs it.
+- **Headers:** mimics Chrome 120 on macOS (User-Agent/Accept/Accept-Language) — required, Eventbrite 429s plain requests.
+- **Eventbrite (7 search URLs)** — `/d/online/paranormal-events/`, `/d/online/ghost-hunting/`, `/d/online/haunted-events/`, `/d/online/ufo-events/`, `/d/online/supernatural-events/`, `/d/united-states/paranormal-events/`, `/d/united-states/ghost-hunting/`; selector `a.event-card-link` (≤30 per URL), fields from link attrs: `aria-label` (title, `View ` prefix stripped), `data-event-location` ("City, ST" or "Online"), `data-event-id` (→ id `eb_<id>`), card text (date regex + venue regex), `img src` → imageUrl, `href` → outbound url. **Eventbrite rate-limits aggressively (HTTP 429); resets in ~1–2 h — the scraper prints `Status: 429` and moves on.**
+- **Meetup (4 search URLs)** — `find/?keywords=paranormal|ghost+hunting|ufo|haunted&location=us`; selector `a[href*="/events/"]` (≤30 each), title = first line of link text cleaned with 3 regexes (date/time/weekday stripping), URL prefixed with `https://www.meetup.com` if relative, virtual if text contains "online"/"virtual". **Meetup's anti-scraping means data is thinner: no reliable dates/locations/images → most Meetup rows land in "Other" type with no startDate.**
+- **Facebook source exists in the scraper but yields nothing** (login-walled) — left in place, harmless.
+- **Rate limit:** the scraper is polite (no retries, single pass). On 429, wait 1–2 hours and rerun; results merge into the same JSON.
+- **Classification:** `classify_event_type(title)` keyword-matches title → `investigation / conference / meetup / workshop / livestream / lecture / festival / tour / other`; `classify_category(title)` → category. 47 of 82 events classify to `"other"` — Meetup's thin data is the main cause; tightening title cleaning improves classification more than adding keywords.
+- **Dedup:** none — reruns append; if a rerun duplicates rows, dedup on `url` or `id` before committing.
+
+### Data: `events-data.json`
+- **Counts (verified Oct 5, 2026):** 82 total · 40 with `startDate` · 42 with `city` or `locationName` · 66 `isVirtual:true` · sources: Eventbrite 52 / Meetup 30.
+- **Schema per event:** `id` (`eb_<eventbrite-id>` / `mu_<n>` / `fb_<n>`), `title`, `description` (always ""), `type` (classified), `category` (classified), `startDate` (parsed "Mon, Oct 31, 7:00 PM" → stored "2026-10-31"; empty for most Meetup rows), `endDate`, `locationName` (venue, Eventbrite non-virtual only), `address` (always ""), `city`, `state`, `country` ("United States"), `isVirtual` (bool — location "Online", or title contains online/virtual/live stream), `imageUrl` (Eventbrite only), `organizer`/`organizerUrl` (always ""), `url` (outbound to source page), `source` (`eventbrite`/`meetup`/`facebook`), `status` ("approved").
+- **events.html consumes it:** `fetch('events-data.json')` (line ~995) → date filters + type filter + distance filter (Any/10/25/50/100 mi) using `navigator.geolocation` + Nominatim reverse geocode + Haversine; cards render date badge, type badge, location, distance, Virtual badge when `isVirtual`, and "View Event" → original Eventbrite/Meetup URL; **sorting: dated events first, then located ones, virtual last**.
+
+### Display rules (Todd-approved, Oct 5)
+1. Events **with dates** first (40), most important signal.
+2. Events **with locations** prominent (42).
+3. **Virtual/online events lower** in the list.
+4. Cards show: 📅 date (when available), 📍 location (city, state or venue), **Virtual** badge for online events, "View Event" → original Eventbrite page.
+5. Scraper rerun after rate-limit reset (1–2 h): `python3 scripts/scrape-events.py`.
+
+### Not wired yet (Phase 11 remainder)
+- `events-data.json` is NOT deployed to the live site (live events.html still uses static cards) — **next step: deploy `events-data.json` + the fetch/sort/badge/distance JS into the live repo's events.html**, then wire submit-event.html + admin-events.html to D1 (schema/endpoints still pending).
+- Official APIs (Eventbrite/Meetup) not integrated; scrapers are the interim solution.
+- No automated scheduling; run the scraper manually (update-events.sh) or add cron/worker cron later.
 
 ---
 
