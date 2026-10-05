@@ -1,5 +1,10 @@
 # MIMO DIRECTIVE — TPI Website (read this before every session)
 
+> **Naming:** this file keeps its historical name, but "MiMo" = **Opencode**, Todd's coder/assistant
+> agent. You implement directives written by **Buffy (Codebuff)**, the architect agent. Todd approves
+> everything. Team roster + project state live in **MASTER_BUILD_PLAN.md** — log your work there
+> (mark: `[OPENCODE]`) as well as the handoff note in §6.
+
 You are working on **github.com/paranormalinitiative/paranormal-initiative-website** (branch `main`),
 live at **https://paranormalinitiative.com** via Cloudflare Workers (`npx wrangler deploy`).
 Owner: **Todd** (Todd_Wayne, admin, paranormalinitiative@yahoo.com).
