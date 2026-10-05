@@ -1718,7 +1718,7 @@
                 return;
             }
             body.innerHTML = upcoming.map(function(ev) {
-                var d = new Date(ev.date_display || ev.start_date);
+                var d = new Date(ev.start_date);
                 var when = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
                 var where = ev.is_virtual === 1 ? "Online" : [ev.city, ev.state].filter(Boolean).join(", ") || ev.location_name || "TBA";
                 return '<a class="rail-event" href="' + escapeAttr(ev.source_url || ev.url || "events.html") + '"' + (ev.source_url || ev.url ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
