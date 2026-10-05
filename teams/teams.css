@@ -161,8 +161,8 @@ a:hover { color: var(--ptd-blue-strong); }
   cursor: pointer;
   font-family: inherit;
 }
-.ptd-button-primary { background: var(--ptd-blue); color: #0a0c10; }
-.ptd-button-primary:hover { background: var(--ptd-blue-strong); color: #0a0c10; }
+.ptd-button-primary { background: var(--ptd-blue); color: var(--ptd-on-accent, #0a0c10); }
+.ptd-button-primary:hover { background: var(--ptd-blue-strong); color: var(--ptd-on-accent, #0a0c10); }
 .ptd-button-secondary { background: var(--ptd-surface-2); color: var(--ptd-text); border-color: var(--ptd-border-soft); }
 .ptd-button-secondary:hover { color: var(--ptd-heading); }
 .ptd-button-danger { background: transparent; border-color: rgba(224, 122, 122, 0.5); color: var(--ptd-red); }
@@ -390,7 +390,7 @@ a:hover { color: var(--ptd-blue-strong); }
 .ptd-input-host select,
 .ptd-input-host textarea {
   width: 100%;
-  background: #0d1017;
+  background: var(--ptd-bg);
   border: 1px solid var(--ptd-border-soft);
   border-radius: 8px;
   color: var(--ptd-heading);
@@ -405,7 +405,7 @@ a:hover { color: var(--ptd-blue-strong); }
   outline: none;
   border-color: var(--ptd-blue);
 }
-.ptd-input-host select option { background: #12151c; }
+.ptd-input-host select option { background: var(--ptd-surface); }
 .ptd-input-host input[type="number"] { max-width: 120px; }
 
 .ptd-fieldset {
@@ -459,7 +459,7 @@ a:hover { color: var(--ptd-blue-strong); }
 .ptd-search-row input {
   flex: 1;
   min-width: 200px;
-  background: #0d1017;
+  background: var(--ptd-bg);
   border: 1px solid var(--ptd-border-soft);
   border-radius: 8px;
   color: var(--ptd-heading);
@@ -558,3 +558,12 @@ a:hover { color: var(--ptd-blue-strong); }
   .ptd-detail-label { flex-basis: 100%; }
   .ptd-search-row > label { flex-basis: 100%; }
 }
+
+/* ===== Site theme integration (member theme picker; Todd request) ===== */
+/* Field Operations (default directory look) = the :root --ptd-* values above;
+   the blocks below retint the directory to the member's chosen site theme. */
+html[data-theme="cryptid"]{--ptd-bg:#1a221e;--ptd-surface:#2a3430;--ptd-surface-2:#323d38;--ptd-border:#34403a;--ptd-border-soft:#2e3a34;--ptd-text:#cfd6d3;--ptd-heading:#f2f7f3;--ptd-muted:#9ba8a0;--ptd-blue:#2f9e44;--ptd-blue-strong:#4bb263;--ptd-on-accent:#0b140b}
+html[data-theme="seance"]{--ptd-bg:#120c1f;--ptd-surface:#1e162d;--ptd-surface-2:#251b37;--ptd-border:#28203c;--ptd-border-soft:#332a47;--ptd-text:#b9b3a9;--ptd-heading:#f9f6ee;--ptd-muted:#8a857c;--ptd-blue:#8f152a;--ptd-blue-strong:#b01e37;--ptd-on-accent:#f9f6ee}
+html[data-theme="cosmic"]{--ptd-bg:#0d0c28;--ptd-surface:#161537;--ptd-surface-2:#1d1c44;--ptd-border:#20204e;--ptd-border-soft:#2b2a58;--ptd-text:#b8bbd0;--ptd-heading:#f0f2fa;--ptd-muted:#8a8da8;--ptd-blue:#14b8d4;--ptd-blue-strong:#3fcfe6;--ptd-on-accent:#04141a}
+html[data-theme="asylum"]{--ptd-bg:#1e1e1e;--ptd-surface:#2d2d2d;--ptd-surface-2:#353535;--ptd-border:#3a3a3a;--ptd-border-soft:#454545;--ptd-text:#e5e0d8;--ptd-heading:#f2eee6;--ptd-muted:#a39e94;--ptd-blue:#e08600;--ptd-blue-strong:#f39c1a;--ptd-on-accent:#1c1200}
+html[data-theme="fieldops"]{--ptd-bg:#0a0c10;--ptd-surface:#12151c;--ptd-surface-2:#171b24;--ptd-border:#1e2230;--ptd-border-soft:#2a2f3e;--ptd-text:#c8cdd8;--ptd-heading:#e8ecf4;--ptd-muted:#8d93a3;--ptd-blue:#59a9dc;--ptd-blue-strong:#6db8e8;--ptd-on-accent:#081018}

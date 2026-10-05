@@ -1061,29 +1061,20 @@ body.member-mode .member-floating-chat .member-chat-create {
     line-height: 1;
 }
 
-.member-notification-summary button {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 8px 10px;
-    color: #b8c8d8;
-    background: color-mix(in srgb, var(--accent) 8%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.member-notification-summary button[aria-pressed="true"] {
-    color: #061018;
-    background: var(--accent);
-    border-color: var(--accent);
-}
-
-.member-notification-summary button strong {
-    color: inherit;
-}
+.member-notification-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 12px}
+.member-notification-stat{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:var(--radius-md);background:var(--bg-card);border:1px solid var(--border-subtle)}
+.member-notification-stat span{color:var(--text-tertiary);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.member-notification-stat strong{color:var(--text-primary);font-size:22px;font-weight:800;line-height:1.1}
+.member-notification-stat-wide strong{font-size:15px;line-height:1.3}
+.member-notification-toolbar{display:flex;justify-content:flex-end;margin:0 0 12px}
+.member-notification-read-all{padding:9px 18px;border-radius:var(--radius-full);border:1px solid transparent;background:var(--gradient-accent);color:var(--text-on-accent);font-family:Inter,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-glow)}
+.member-notification-read-all:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.member-notification-summary{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.member-notification-summary button{display:inline-flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--radius-full);cursor:pointer;font-family:Inter,sans-serif;font-size:12.5px;font-weight:700;transition:border-color .2s,background .2s,color .2s}
+.member-notification-summary button:hover{border-color:var(--border-strong);color:var(--text-primary)}
+.member-notification-summary button[aria-pressed="true"]{color:var(--text-on-accent);background:var(--gradient-accent);border-color:transparent;box-shadow:var(--shadow-glow)}
+.member-notification-summary button em{font-style:normal;min-width:22px;padding:2px 7px;border-radius:var(--radius-full);text-align:center;font-size:11px;font-weight:800;background:color-mix(in srgb, var(--accent) 18%, transparent);color:var(--text-accent)}
+.member-notification-summary button[aria-pressed="true"] em{background:color-mix(in srgb, var(--text-on-accent) 22%, transparent);color:var(--text-on-accent)}
 
 .member-notification-item[hidden] {
     display: none;
@@ -3117,3 +3108,11 @@ body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel
 .theme-picker-grid .theme-picker-option:hover strong{color:var(--text-primary)}
 .theme-picker-grid .theme-picker-option:hover small{color:var(--text-tertiary)}
 .theme-picker-swatch{width:100%;height:44px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.08)}
+
+/* ===== Notification items: unread dot + meta line ===== */
+.member-notification-item{position:relative}
+.member-notification-dot{position:absolute;left:-14px;top:24px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
+.member-notification-item.is-read .member-notification-dot{background:var(--bg-elevated);box-shadow:none}
+.member-notification-meta{display:block;color:var(--text-tertiary);font-size:12px;font-weight:600}
+.member-notification-meta em{font-style:normal;color:var(--text-accent);font-weight:800}
+@media (max-width:640px){.member-notification-stats{grid-template-columns:1fr 1fr}.member-notification-stat-wide{grid-column:1/-1}.member-notification-dot{left:-8px}}

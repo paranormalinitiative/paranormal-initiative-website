@@ -11,7 +11,7 @@
  */
 (async function () {
   // ===== Site theme (member-selectable; Cryptid is the TPI default) =====
-  var SITE_THEMES = ["cryptid", "seance", "cosmic", "asylum"];
+  var SITE_THEMES = ["cryptid", "seance", "cosmic", "asylum", "fieldops"];
   var SITE_THEME_KEY = "tpiSiteTheme";
   function validSiteTheme(t) { return SITE_THEMES.indexOf(t) !== -1; }
   function currentSiteTheme() {

@@ -905,6 +905,19 @@
     return notificationTypeMap[notification.type] || notificationTypeMap[String(notification.type || "").replace(/-/g, "_")] || { label: "Member Notice", categoryLabel: "Other", category: "other", tone: "default", href: "member-dashboard.html" };
   }
 
+  function timeAgo(value) {
+    if (!value) return "";
+    const seconds = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 1000));
+    if (seconds < 60) return "just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return minutes + "m ago";
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return hours + "h ago";
+    const days = Math.floor(hours / 24);
+    if (days < 7) return days + "d ago";
+    return new Date(value).toLocaleDateString();
+  }
+
   function renderNotificationSummary(notifications) {
     const counts = notifications.reduce((summary, notification) => {
       const meta = getNotificationTypeMeta(notification);
@@ -913,12 +926,23 @@
       return summary;
     }, {});
     const entries = Object.entries(counts);
-    return entries.length ? `
-      <div class="member-notification-summary" aria-label="Notification categories">
-        <button type="button" data-notification-filter="all" aria-pressed="true"><strong>${notifications.length}</strong>All</button>
-        ${entries.map(([category, item]) => `<button type="button" data-notification-filter="${escapeHtml(category)}" aria-pressed="false"><strong>${item.count}</strong>${escapeHtml(item.label)}</button>`).join("")}
+    const unread = notifications.filter(notification => !notification.read).length;
+    const latest = notifications.length ? timeAgo(notifications[0].createdAt) : "No activity yet";
+    return `
+      <div class="member-notification-stats" role="list" aria-label="Notification summary">
+        <div class="member-notification-stat" role="listitem"><span>Total</span><strong>${notifications.length}</strong></div>
+        <div class="member-notification-stat" role="listitem"><span>Unread</span><strong>${unread}</strong></div>
+        <div class="member-notification-stat member-notification-stat-wide" role="listitem"><span>Latest</span><strong>${escapeHtml(latest)}</strong></div>
       </div>
-    ` : "";
+      <div class="member-notification-toolbar">
+        <button type="button" class="member-notification-read-all" data-notification-read-all ${unread ? "" : "disabled"}>Mark all read</button>
+      </div>
+      <div class="member-notification-summary" aria-label="Notification filters">
+        <button type="button" data-notification-filter="all" aria-pressed="true"><span>All</span><em>${notifications.length}</em></button>
+        <button type="button" data-notification-filter="unread" aria-pressed="false"><span>Unread</span><em>${unread}</em></button>
+        ${entries.map(([category, item]) => `<button type="button" data-notification-filter="${escapeHtml(category)}" aria-pressed="false"><span>${escapeHtml(item.label)}</span><em>${item.count}</em></button>`).join("")}
+      </div>
+    `;
   }
 
   function renderNotificationItem(notification) {
@@ -931,8 +955,9 @@
       : (actionHref ? `<button type="button" class="portal-button portal-button-secondary" data-notification-open="${escapeHtml(notification.id)}" data-notification-href="${escapeHtml(actionHref)}">Open</button>` : "");
     return `
       <article class="member-notification-item ${notification.read ? "is-read" : "is-unread"}" data-notification-type="${escapeHtml(meta.tone)}" data-notification-category="${escapeHtml(meta.category)}">
-        <div>
-          <span><em>${escapeHtml(meta.label)}</em> ${escapeHtml(notification.read ? "Read" : "Unread")} ${createdAt ? `· ${escapeHtml(createdAt)}` : ""}</span>
+        <span class="member-notification-dot" aria-hidden="true"></span>
+        <div class="member-notification-content">
+          <span class="member-notification-meta"><em>${escapeHtml(meta.label)}</em> ${createdAt ? `· ${escapeHtml(timeAgo(notification.createdAt))}` : ""}</span>
           <strong>${escapeHtml(notification.title || meta.label || "Notification")}</strong>
           <p>${escapeHtml(notification.body || "")}</p>
         </div>
@@ -950,10 +975,12 @@
     const items = Array.from(memberNotificationsList.querySelectorAll("[data-notification-category]"));
     buttons.forEach(button => {
       button.addEventListener("click", () => {
-        const category = button.dataset.notificationFilter || "all";
+        const filter = button.dataset.notificationFilter || "all";
         buttons.forEach(option => option.setAttribute("aria-pressed", option === button ? "true" : "false"));
         items.forEach(item => {
-          item.hidden = category !== "all" && item.dataset.notificationCategory !== category;
+          if (filter === "all") { item.hidden = false; return; }
+          if (filter === "unread") { item.hidden = !item.classList.contains("is-unread"); return; }
+          item.hidden = item.dataset.notificationCategory !== filter;
         });
       });
     });
@@ -2132,6 +2159,22 @@
         setStatus(error.message || "Notification could not be sent.", true);
       } finally {
         profileReminderButton.disabled = false;
+      }
+      return;
+    }
+
+    const notificationReadAllButton = event.target.closest("[data-notification-read-all]");
+    if (notificationReadAllButton) {
+      event.preventDefault();
+      if (notificationReadAllButton.disabled || !await cloudflareReady()) return;
+      notificationReadAllButton.disabled = true;
+      try {
+        await window.TPIApi.markAllNotificationsRead();
+        await initMemberNotifications();
+        refreshNotificationAlert();
+      } catch (error) {
+        notificationReadAllButton.disabled = false;
+        setStatus(error.message || "Notifications could not be updated.", true);
       }
       return;
     }

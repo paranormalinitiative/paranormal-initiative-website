@@ -6,6 +6,31 @@
     <title>StudioFlow</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://apis.google.com/js/api.js" async defer></script>
+    <script>
+      /* TPI site-theme bridge: retints StudioFlow to the member's chosen site theme (Todd request). */
+      (function () {
+        try {
+          var T = {
+            cryptid:  { blue: "#4bb263", deep: "#257e37", bg: "#1a221e", panel: "#2a3430", panel2: "#323d38", line: "#34403a", lineSoft: "#2e3a34", text: "#f2f7f3", muted: "#9ba8a0" },
+            seance:   { blue: "#d46a7e", deep: "#5e0d1c", bg: "#120c1f", panel: "#1e162d", panel2: "#251b37", line: "#28203c", lineSoft: "#332a47", text: "#f9f6ee", muted: "#8a857c" },
+            cosmic:   { blue: "#3fcfe6", deep: "#0e93aa", bg: "#0d0c28", panel: "#161537", panel2: "#1d1c44", line: "#20204e", lineSoft: "#2b2a58", text: "#f0f2fa", muted: "#8a8da8" },
+            asylum:   { blue: "#f39c1a", deep: "#b06e05", bg: "#1e1e1e", panel: "#2d2d2d", panel2: "#353535", line: "#3a3a3a", lineSoft: "#454545", text: "#f2eee6", muted: "#a39e94" },
+            fieldops: { blue: "#6db8e8", deep: "#3576a3", bg: "#0a0c10", panel: "#12151c", panel2: "#171b24", line: "#1e2230", lineSoft: "#2a2f3e", text: "#e8ecf4", muted: "#8d93a3" }
+          };
+          var c = T[localStorage.getItem("tpiSiteTheme")] || T.cryptid;
+          var r = document.documentElement.style;
+          r.setProperty("--blue", c.blue);
+          r.setProperty("--blue-deep", c.deep);
+          r.setProperty("--bg", c.bg);
+          r.setProperty("--panel", c.panel);
+          r.setProperty("--panel-2", c.panel2);
+          r.setProperty("--line", c.line);
+          r.setProperty("--line-soft", c.lineSoft);
+          r.setProperty("--text", c.text);
+          r.setProperty("--muted", c.muted);
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" crossorigin src="/studio/assets/index-BnVhfqg-.js"></script>
     <link rel="stylesheet" crossorigin href="/studio/assets/index-BdUF5pZO.css">
   </head>

@@ -211,6 +211,48 @@ html[data-theme="asylum"] {
     --shadow-glow-strong: 0 0 40px rgba(224, 134, 0, 0.35);
 }
 
+/* ===== MEMBER THEME — FIELD OPERATIONS (Teams Directory palette; Todd request) ===== */
+html[data-theme="fieldops"] {
+    --bg-primary: #0a0c10;
+    --bg-secondary: #0d1017;
+    --bg-card: #12151c;
+    --bg-card-hover: #171b24;
+    --bg-elevated: #1e2230;
+    --bg-surface: #10131a;
+    --sidebar-bg: #08090d;
+    --purple-50: #eaf4fb;
+    --purple-100: #d3e8f6;
+    --purple-200: #a9d2ee;
+    --purple-300: #7fbce6;
+    --purple-400: #6db8e8;
+    --purple-500: #59a9dc;
+    --purple-600: #4390c4;
+    --purple-700: #3576a3;
+    --purple-800: #2a5d80;
+    --purple-900: #1d4159;
+    --accent: #59a9dc;
+    --accent-hover: #6db8e8;
+    --accent-muted: rgba(89, 169, 220, 0.15);
+    --accent-border: rgba(89, 169, 220, 0.3);
+    --accent-glow: rgba(89, 169, 220, 0.25);
+    --text-primary: #e8ecf4;
+    --text-secondary: #c8cdd8;
+    --text-tertiary: #8d93a3;
+    --text-accent: #6db8e8;
+    --text-on-accent: #081018;
+    --border-subtle: rgba(89, 169, 220, 0.12);
+    --border-default: rgba(89, 169, 220, 0.18);
+    --border-strong: rgba(89, 169, 220, 0.25);
+    --border-accent: rgba(89, 169, 220, 0.3);
+    --gradient-hero: linear-gradient(135deg, #0a0c10 0%, #0d2033 48%, #0c2420 100%);
+    --gradient-card: linear-gradient(145deg, #12151c 0%, #161b25 100%);
+    --gradient-accent: linear-gradient(135deg, #59a9dc 0%, #3576a3 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(89, 169, 220, 0.2) 0%, rgba(53, 118, 163, 0.1) 100%);
+    --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(89, 169, 220, 0.15) 0%, transparent 60%);
+    --shadow-glow: 0 0 24px rgba(89, 169, 220, 0.25);
+    --shadow-glow-strong: 0 0 40px rgba(89, 169, 220, 0.35);
+}
+
 /* ===== GLOBAL RESET ===== */
 
 * {

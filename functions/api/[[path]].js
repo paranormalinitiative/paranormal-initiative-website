@@ -59,6 +59,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/notifications") return requireMember(request, env, user => handleListNotifications(env, user));
     if (request.method === "GET" && path === "/notifications/unread-count") return requireMember(request, env, user => handleNotificationUnreadCount(env, user));
     if (request.method === "POST" && path.match(/^\/notifications\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkNotificationRead(path, env, user));
+    if (request.method === "POST" && path === "/notifications/read-all") return requireMember(request, env, user => handleMarkAllNotificationsRead(request, env, user));
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
@@ -621,6 +622,13 @@ async function notifyTeamSubmissionAdmins(env, team) {
     console.error("team submission notification failed", error);
     return 0;
   }
+}
+
+async function handleMarkAllNotificationsRead(request, env, user) {
+  const result = await env.TPI_DB.prepare(
+    "UPDATE member_notifications SET read_at = datetime('now') WHERE contributor_id = ? AND read_at IS NULL"
+  ).bind(user.id).run();
+  return json({ ok: true, updated: (result.meta && result.meta.changes) || 0 }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleListNotifications(env, user) {
