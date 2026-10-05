@@ -1046,7 +1046,7 @@ async function handleRegister(request, env) {
   return json({ ok: true });
 }
 
-const MEMBER_THEMES = ["cryptid", "seance", "cosmic", "asylum"];
+const MEMBER_THEMES = ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"];
 
 async function handleSetTheme(request, env, user) {
   const data = await readJson(request);

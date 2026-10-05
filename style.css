@@ -253,6 +253,48 @@ html[data-theme="fieldops"] {
     --shadow-glow-strong: 0 0 40px rgba(89, 169, 220, 0.35);
 }
 
+/* ===== MEMBER THEME — GOTHIC NIGHT (Todd's palette #6; Vampire-Lestat purple + candlelight gold) ===== */
+html[data-theme="gothicnight"] {
+    --bg-primary: #0e0a1a;
+    --bg-secondary: #0b0715;
+    --bg-card: #1a1228;
+    --bg-card-hover: #211736;
+    --bg-elevated: #261b3f;
+    --bg-surface: #140d24;
+    --sidebar-bg: #0a0612;
+    --purple-50: #f9f0ff;
+    --purple-100: #f2e0fe;
+    --purple-200: #e8cbfe;
+    --purple-300: #dcb3fd;
+    --purple-400: #d0a4fd;
+    --purple-500: #c084fc;
+    --purple-600: #a45ce8;
+    --purple-700: #8b46cc;
+    --purple-800: #6b32a3;
+    --purple-900: #4a216e;
+    --accent: #c084fc;
+    --accent-hover: #d0a4fd;
+    --accent-muted: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.3);
+    --accent-glow: rgba(192, 132, 252, 0.25);
+    --text-primary: #f5f1fa;
+    --text-secondary: #cfc4dd;
+    --text-tertiary: #9c8fb0;
+    --text-accent: #e0b45c;
+    --text-on-accent: #1a0b2e;
+    --border-subtle: rgba(192, 132, 252, 0.12);
+    --border-default: rgba(192, 132, 252, 0.18);
+    --border-strong: rgba(192, 132, 252, 0.25);
+    --border-accent: rgba(192, 132, 252, 0.3);
+    --gradient-hero: linear-gradient(135deg, #0e0a1a 0%, #221138 50%, #2e1c0e 100%);
+    --gradient-card: linear-gradient(145deg, #1a1228 0%, #201634 100%);
+    --gradient-accent: linear-gradient(135deg, #c084fc 0%, #8b46cc 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(192, 132, 252, 0.2) 0%, rgba(139, 70, 204, 0.1) 100%);
+    --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(224, 180, 92, 0.14) 0%, transparent 60%);
+    --shadow-glow: 0 0 24px rgba(224, 180, 92, 0.22);
+    --shadow-glow-strong: 0 0 40px rgba(224, 180, 92, 0.32);
+}
+
 /* ===== GLOBAL RESET ===== */
 
 * {
