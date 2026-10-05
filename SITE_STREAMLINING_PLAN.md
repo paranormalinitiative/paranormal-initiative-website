@@ -363,7 +363,7 @@ No Phase 5 items shipped with the Oct 4 live deploy; they remain future work.
 - [x] Form formatting fixed and polished
 - [x] **Members Home / Feed merged (Oct 4, 2026)** — Your Feed folded into the HOME page: composer front and center, community feed (Activity / Posts / Published Content tabs), sidebar Home renamed "Members Home / Feed" and the separate Your Feed item removed; explore.html kept for deep links
 - [x] **Settings / Profile split + Home rename (Oct 4, 2026)** — member-dashboard.html is Settings-only (Login Settings + Color Theme); new member-profile.html holds the profile (identity, email verification, full form); sidebar Profile rewired, header greeting button → Home, nav label back to "Home", and Home gained a My Content counts strip; page-header/identity hooks fixed so the Profile page no longer inherits "Settings" labels
-- [x] **Profile card + hero actions consolidated (Oct 5, 2026)** — the member-home identity card now tops member-profile.html; the hero beneath it carries a single ☺ Edit Profile button that smooth-scrolls to the profile form, replacing the Settings / Open Content Editor / Sign Out cluster
+- [x] **Profile card + hero actions consolidated (Oct 5, 2026)** — the Profile page was reduced to the hero (single ☺ Edit Profile button that smooth-scrolls to the form) plus one card holding the profile summary (Biography / Save Profile / View Public Profile) and the editable form; the top identity card and the Settings hero's Edit Profile button were removed the same day
 - [ ] Redesign public landing page (match Paranormal Country polish)
 - [ ] Add interactive haunt map (map-based location directory)
 - [ ] Add Press/Media page (showcase coverage, press kit)
