@@ -68,7 +68,7 @@ Rules:
 
 ## 📜 CHANGELOG (newest first)
 
-- **[BUFFY] 2026-10-05 — Landing hero CTA alignment fix** — Join Free / Sign In / Start Exploring row now centered under the hero text (`.landing-hero .portal-actions { justify-content: center; }` in index.html). Verified locally via browser screenshots at desktop + mobile widths. [TODD] granted standing commit/pull/deploy permission this session. Commit `be0860b`.
+- **[BUFFY] 2026-10-05 — Landing hero CTA alignment fix** — Join Free / Sign In / Start Exploring row now centered under the hero text (`.landing-hero .portal-actions { justify-content: center; }` in index.html). Verified locally via browser screenshots at desktop + mobile widths; deployed to prod, Version ID `877da5f6-d6a6-4c72-aa76-c1b3832d472e`. [TODD] granted standing commit/pull/deploy permission this session. Commit `be0860b`.
 
 - **[BUFFY] 2026-10-05 — Two-workspace playground system stood up** — verified master plan + directive files present in BOTH folders via git; fresh Desktop clone created after Todd removed the stale copy; sync script rewritten for dual-folder pulls with unpushed warnings. **[TODD] approved.**
 
