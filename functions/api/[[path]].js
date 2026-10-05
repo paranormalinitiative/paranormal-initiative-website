@@ -142,6 +142,18 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/video-saves") return requireMember(request, env, user => handleToggleVideoSave(request, env, user));
     if (request.method === "POST" && path === "/video-reports") return requireMember(request, env, user => handleCreateVideoReport(request, env, user));
 
+    // Events API
+    if (request.method === "GET" && path === "/events") return handleListEvents(request, env);
+    if (request.method === "GET" && path.match(/^\/events\/[^/]+$/)) return handleGetEvent(path, env);
+    if (request.method === "POST" && path === "/events") return requireAdmin(request, env, user => handleCreateEvent(request, env, user));
+    if (request.method === "PUT" && path.match(/^\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleUpdateEvent(path, request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleDeleteEvent(path, env, user));
+    if (request.method === "POST" && path === "/events/submit") return handleCommunityEventSubmit(request, env);
+    if (request.method === "POST" && path.match(/^\/events\/[^/]+\/rsvp$/)) return handleEventRsvp(path, request, env);
+    if (request.method === "GET" && path === "/admin/events") return requireAdmin(request, env, user => handleAdminListEvents(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/events\/[^/]+\/approve$/)) return requireAdmin(request, env, user => handleAdminApproveEvent(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/events\/[^/]+\/reject$/)) return requireAdmin(request, env, user => handleAdminRejectEvent(path, env, user));
+
     return json({ error: "Not found." }, 404);
   } catch (error) {
     return json({ error: error.message || "Request failed." }, 500);
@@ -4574,4 +4586,254 @@ async function handleAdminDeleteTeam(path, env, user) {
   if (!id) return json({ error: "Team id is required." }, 400);
   await env.TPI_DB.prepare("DELETE FROM paranormal_teams WHERE id = ?").bind(id).run();
   return json({ deleted: true, id });
+}
+
+// ============================================================
+// EVENTS API HANDLERS
+// ============================================================
+
+async function handleListEvents(request, env) {
+  const url = new URL(request.url);
+  const type = clean(url.searchParams.get("type") || "");
+  const category = clean(url.searchParams.get("category") || "");
+  const city = clean(url.searchParams.get("city") || "");
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
+  const offset = parseInt(url.searchParams.get("offset") || "0");
+
+  let query = "SELECT * FROM events WHERE status = 'approved'";
+  const binds = [];
+
+  if (type) {
+    query += " AND type = ?";
+    binds.push(type);
+  }
+  if (category) {
+    query += " AND category = ?";
+    binds.push(category);
+  }
+  if (city) {
+    query += " AND (city LIKE ? OR location_name LIKE ?)";
+    binds.push(`%${city}%`, `%${city}%`);
+  }
+
+  query += " ORDER BY featured DESC, start_date ASC LIMIT ? OFFSET ?";
+  binds.push(limit, offset);
+
+  const { results } = await env.TPI_DB.prepare(query).bind(...binds).all();
+  return json({ events: results || [] });
+}
+
+async function handleGetEvent(path, env) {
+  const id = clean(decodeURIComponent(path.replace(/^\/events\//, "")));
+  if (!id) return json({ error: "Event id is required." }, 400);
+
+  const event = await env.TPI_DB.prepare("SELECT * FROM events WHERE id = ? AND status = 'approved'").bind(id).first();
+  if (!event) return json({ error: "Event not found." }, 404);
+
+  // Get RSVP count
+  const { count } = await env.TPI_DB.prepare("SELECT COUNT(*) as count FROM event_rsvps WHERE event_id = ? AND status = 'going'").bind(id).first();
+
+  return json({ event: { ...event, current_attendees: count || 0 } });
+}
+
+async function handleCreateEvent(request, env, user) {
+  const data = await readJson(request);
+  if (!data.title) return json({ error: "Title is required." }, 400);
+
+  const result = await env.TPI_DB.prepare(`
+    INSERT INTO events (title, description, type, category, start_date, end_date, date_display,
+      location_name, address, city, state, country, is_virtual, virtual_link, platform,
+      organizer_name, organizer_url, image_url, max_attendees, price, source, status, featured)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    clean(data.title),
+    clean(data.description || ""),
+    clean(data.type || "other"),
+    clean(data.category || "general"),
+    clean(data.startDate || ""),
+    clean(data.endDate || ""),
+    clean(data.dateDisplay || ""),
+    clean(data.locationName || ""),
+    clean(data.address || ""),
+    clean(data.city || ""),
+    clean(data.state || ""),
+    clean(data.country || "United States"),
+    data.isVirtual ? 1 : 0,
+    clean(data.virtualLink || ""),
+    clean(data.platform || ""),
+    clean(data.organizerName || ""),
+    clean(data.organizerUrl || ""),
+    clean(data.imageUrl || ""),
+    parseInt(data.maxAttendees) || null,
+    clean(data.price || "Free"),
+    clean(data.source || "admin"),
+    "approved",
+    data.featured ? 1 : 0
+  ).run();
+
+  return json({ ok: true, id: result.meta?.last_row_id });
+}
+
+async function handleUpdateEvent(path, request, env, user) {
+  const id = clean(decodeURIComponent(path.replace(/^\/events\//, "")));
+  if (!id) return json({ error: "Event id is required." }, 400);
+
+  const data = await readJson(request);
+  const existing = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ?").bind(id).first();
+  if (!existing) return json({ error: "Event not found." }, 404);
+
+  await env.TPI_DB.prepare(`
+    UPDATE events SET
+      title = COALESCE(?, title),
+      description = COALESCE(?, description),
+      type = COALESCE(?, type),
+      category = COALESCE(?, category),
+      start_date = COALESCE(?, start_date),
+      end_date = COALESCE(?, end_date),
+      location_name = COALESCE(?, location_name),
+      city = COALESCE(?, city),
+      state = COALESCE(?, state),
+      is_virtual = COALESCE(?, is_virtual),
+      virtual_link = COALESCE(?, virtual_link),
+      image_url = COALESCE(?, image_url),
+      status = COALESCE(?, status),
+      featured = COALESCE(?, featured),
+      updated_at = datetime('now')
+    WHERE id = ?
+  `).bind(
+    data.title ? clean(data.title) : null,
+    data.description ? clean(data.description) : null,
+    data.type ? clean(data.type) : null,
+    data.category ? clean(data.category) : null,
+    data.startDate ? clean(data.startDate) : null,
+    data.endDate ? clean(data.endDate) : null,
+    data.locationName ? clean(data.locationName) : null,
+    data.city ? clean(data.city) : null,
+    data.state ? clean(data.state) : null,
+    data.isVirtual !== undefined ? (data.isVirtual ? 1 : 0) : null,
+    data.virtualLink ? clean(data.virtualLink) : null,
+    data.imageUrl ? clean(data.imageUrl) : null,
+    data.status ? clean(data.status) : null,
+    data.featured !== undefined ? (data.featured ? 1 : 0) : null,
+    id
+  ).run();
+
+  return json({ ok: true, id });
+}
+
+async function handleDeleteEvent(path, env, user) {
+  const id = clean(decodeURIComponent(path.replace(/^\/events\//, "")));
+  if (!id) return json({ error: "Event id is required." }, 400);
+  await env.TPI_DB.prepare("DELETE FROM events WHERE id = ?").bind(id).run();
+  return json({ deleted: true, id });
+}
+
+async function handleCommunityEventSubmit(request, env) {
+  const data = await readJson(request);
+  if (!data.title || !data.type || !data.email) {
+    return json({ error: "Title, type, and email are required." }, 400);
+  }
+
+  const result = await env.TPI_DB.prepare(`
+    INSERT INTO events (title, description, type, category, start_date, end_date,
+      location_name, address, city, state, country, is_virtual, virtual_link, platform,
+      organizer_name, organizer_url, organizer_email, image_url, max_attendees, price,
+      source, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'community', 'pending')
+  `).bind(
+    clean(data.title),
+    clean(data.description || ""),
+    clean(data.type),
+    clean(data.category || "general"),
+    clean(data.startDate || ""),
+    clean(data.endDate || ""),
+    clean(data.locationName || ""),
+    clean(data.address || ""),
+    clean(data.city || ""),
+    clean(data.state || ""),
+    clean(data.country || "United States"),
+    data.isVirtual ? 1 : 0,
+    clean(data.virtualLink || ""),
+    clean(data.platform || ""),
+    clean(data.organizer || ""),
+    clean(data.organizerUrl || ""),
+    clean(data.email),
+    clean(data.imageUrl || ""),
+    parseInt(data.maxAttendees) || null,
+    clean(data.price || "Free")
+  ).run();
+
+  return json({ ok: true, id: result.meta?.last_row_id, message: "Event submitted for review." });
+}
+
+async function handleEventRsvp(path, request, env) {
+  const eventId = clean(decodeURIComponent(path.replace(/^\/events\//, "").replace(/\/rsvp$/, "")));
+  if (!eventId) return json({ error: "Event id is required." }, 400);
+
+  const data = await readJson(request);
+  const status = clean(data.status || "going");
+
+  if (!["going", "maybe", "not_going"].includes(status)) {
+    return json({ error: "Invalid RSVP status." }, 400);
+  }
+
+  // Check if event exists
+  const event = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ? AND status = 'approved'").bind(eventId).first();
+  if (!event) return json({ error: "Event not found." }, 404);
+
+  // Upsert RSVP
+  await env.TPI_DB.prepare(`
+    INSERT INTO event_rsvps (event_id, user_id, guest_email, guest_name, status)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(event_id, user_id) DO UPDATE SET status = ?, updated_at = datetime('now')
+  `).bind(
+    eventId,
+    data.userId || null,
+    clean(data.email || ""),
+    clean(data.name || ""),
+    status,
+    status
+  ).run();
+
+  return json({ ok: true, status });
+}
+
+async function handleAdminListEvents(request, env, user) {
+  const url = new URL(request.url);
+  const status = clean(url.searchParams.get("status") || "all");
+
+  let query = "SELECT * FROM events";
+  const binds = [];
+
+  if (status !== "all") {
+    query += " WHERE status = ?";
+    binds.push(status);
+  }
+
+  query += " ORDER BY created_at DESC LIMIT 200";
+
+  const { results } = await env.TPI_DB.prepare(query).bind(...binds).all();
+  return json({ events: results || [] });
+}
+
+async function handleAdminApproveEvent(path, env, user) {
+  const id = clean(decodeURIComponent(path.replace(/^\/admin\/events\//, "").replace(/\/approve$/, "")));
+  if (!id) return json({ error: "Event id is required." }, 400);
+
+  const existing = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ?").bind(id).first();
+  if (!existing) return json({ error: "Event not found." }, 404);
+
+  await env.TPI_DB.prepare("UPDATE events SET status = 'approved', updated_at = datetime('now') WHERE id = ?").bind(id).run();
+  return json({ ok: true, id, status: "approved" });
+}
+
+async function handleAdminRejectEvent(path, env, user) {
+  const id = clean(decodeURIComponent(path.replace(/^\/admin\/events\//, "").replace(/\/reject$/, "")));
+  if (!id) return json({ error: "Event id is required." }, 400);
+
+  const existing = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ?").bind(id).first();
+  if (!existing) return json({ error: "Event not found." }, 404);
+
+  await env.TPI_DB.prepare("UPDATE events SET status = 'rejected', updated_at = datetime('now') WHERE id = ?").bind(id).run();
+  return json({ ok: true, id, status: "rejected" });
 }

@@ -989,8 +989,42 @@
 <script src="includes.js"></script>
 <script src="member-shell.js?v=55"></script>
 <script>
-// Load events from JSON
+// Load events from API or JSON fallback
 async function loadEvents() {
+    try {
+        // Try API first
+        const apiResponse = await fetch('/api/events?limit=50');
+        if (apiResponse.ok) {
+            const apiData = await apiResponse.json();
+            if (apiData.events && apiData.events.length > 0) {
+                return apiData.events.map(e => ({
+                    id: e.id,
+                    title: e.title,
+                    description: e.description,
+                    type: e.type,
+                    category: e.category,
+                    startDate: e.date_display || e.start_date,
+                    endDate: e.end_date,
+                    locationName: e.location_name,
+                    address: e.address,
+                    city: e.city,
+                    state: e.state,
+                    country: e.country,
+                    isVirtual: e.is_virtual === 1,
+                    imageUrl: e.image_url,
+                    organizer: e.organizer_name,
+                    organizerUrl: e.organizer_url,
+                    url: e.source_url,
+                    source: e.source,
+                    status: e.status
+                }));
+            }
+        }
+    } catch (error) {
+        console.log('API not available, falling back to JSON:', error);
+    }
+
+    // Fallback to JSON file
     try {
         const response = await fetch('events-data.json');
         const data = await response.json();
@@ -1083,8 +1117,8 @@ async function initEvents() {
         }
     }
     
-    // Initial display - show first 12 events
-    displayEvents(allEvents.slice(0, 12));
+    // Initial display - show all events
+    displayEvents(allEvents);
     
     // Geolocation
     if (locationBtn) {
