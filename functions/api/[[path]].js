@@ -1,4 +1,5 @@
 import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
+import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -4172,95 +4173,7 @@ async function handleEventRsvp(path, request, env) {
 }
 
 async function handleRefreshEvents(env) {
-  // Scrape Eventbrite for paranormal events
-  const EVENTBRITE_URLS = [
-    "https://www.eventbrite.com/d/online/paranormal-investigation/",
-    "https://www.eventbrite.com/d/online/ghost-hunting/",
-    "https://www.eventbrite.com/d/united-states/paranormal-investigation/",
-    "https://www.eventbrite.com/d/united-states/ghost-hunting/",
-  ];
-
-  const PARANORMAL_KEYWORDS = [
-    "paranormal", "ghost", "haunt", "spirit", "supernatural", "evp", "itc",
-    "investigation", "hunt", "entity", "apparition", "poltergeist",
-    "ufo", "uap", "alien", "cryptid", "bigfoot", "psychic", "medium",
-    "seance", "seance", "witch", "occult", "metaphysical", "mystery",
-  ];
-
-  const events = [];
-
-  for (const url of EVENTBRITE_URLS) {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; TPI-EventBot/1.0)",
-          "Accept": "text/html",
-        },
-      });
-
-      if (!response.ok) continue;
-      const html = await response.text();
-
-      // Extract events using regex
-      const linkRegex = /class="event-card-link"[^>]*aria-label="View ([^"]*)"[^>]*data-event-location="([^"]*)"[^>]*href="([^"]*)"[^>]*data-event-id="([^"]*)"/g;
-      let match;
-
-      while ((match = linkRegex.exec(html)) !== null) {
-        const [, titleRaw, location, eventUrl, eventId] = match;
-        const title = titleRaw.replace(/^View\s+/, "").trim();
-
-        // Check if paranormal
-        const isParanormal = PARANORMAL_KEYWORDS.some(kw => title.toLowerCase().includes(kw));
-        if (!isParanormal) continue;
-
-        // Parse location
-        let city = "", state = "", isVirtual = false;
-        if (location.toLowerCase() === "online") {
-          isVirtual = true;
-        } else {
-          const parts = location.split(",");
-          city = (parts[0] || "").trim();
-          state = (parts[1] || "").trim();
-        }
-
-        events.push({
-          externalId: `eb_${eventId}`,
-          title: title.substring(0, 200),
-          city,
-          state,
-          isVirtual: isVirtual ? 1 : 0,
-          sourceUrl: eventUrl,
-        });
-      }
-    } catch (e) {
-      // Continue with next URL
-    }
-  }
-
-  // Update database
-  let inserted = 0;
-  if (events.length > 0) {
-    await env.TPI_DB.prepare("DELETE FROM events WHERE source = 'eventbrite'").run();
-    
-    for (const event of events) {
-      try {
-        await env.TPI_DB.prepare(`
-          INSERT INTO events (external_id, title, city, state, is_virtual, source_url, source, status, scraped_at)
-          VALUES (?, ?, ?, ?, ?, ?, 'eventbrite', 'approved', datetime('now'))
-        `).bind(
-          event.externalId,
-          event.title,
-          event.city,
-          event.state,
-          event.isVirtual,
-          event.sourceUrl
-        ).run();
-        inserted++;
-      } catch (e) {
-        // Skip duplicates
-      }
-    }
-  }
-
-  return json({ ok: true, scraped: events.length, inserted });
+  // Shared scraper (same code path as the daily cron) — see lib/event-scraper.js
+  const result = await scrapeAndUpdateEvents(env);
+  return json({ ok: true, scraped: result.scraped, inserted: result.inserted });
 }
