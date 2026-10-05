@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>
+        // Signed-in members hitting the homepage in member mode go straight to their one home page.
+        if (new URLSearchParams(location.search).has("member")) {
+            location.replace("member-home.html" + location.hash);
+        }
+    </script>
     <link rel="canonical" href="https://paranormalinitiative.com/">
     <title>The Paranormal Initiative | Research, Investigation, Education, and Technology</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,20 +54,25 @@
 <div data-member-content>
 <div class="member-main-inner">
 
-<!-- HERO -->
+<!-- HERO — explore-before-you-join landing pitch -->
 <section class="portal-hero">
     <div class="tpi-logo-mark" style="margin-bottom: 24px;">
         <img src="assets/tpi-logo.png" alt="The Paranormal Initiative" style="height: 80px; width: auto;">
     </div>
+    <p class="portal-kicker">Explore before you join</p>
     <h2>Responsible research and investigation into the unexplained.</h2>
     <p>
         A community for investigators, ITC and EVP researchers, experiencers, historians, and curious people
         who want to take unusual experiences seriously without rushing to easy answers.
     </p>
+    <p style="max-width: 640px; margin: 0 auto 28px; color: var(--text-muted); font-size: 14px;">
+        Look around freely — the Education Center, videos, teams directory, and events are open to everyone.
+        Member posts, profiles, and messages stay behind the sign-in.
+    </p>
     <div class="portal-actions">
-        <a class="portal-button" href="about.html">Start With The Basics</a>
-        <a class="portal-button" href="education-center.html">Open Education Center</a>
-        <a class="portal-button" href="search.html">Search The Site</a>
+        <a class="portal-button" href="member-login.html">Join Free</a>
+        <a class="portal-button portal-button-secondary" href="member-login.html">Sign In</a>
+        <a class="portal-button portal-button-secondary" href="education-center.html">Start Exploring</a>
     </div>
 </section>
 
@@ -215,7 +226,7 @@
 <div id="site-footer"></div>
 
 <script src="includes.js"></script>
-<script src="member-shell.js?v=54"></script>
+<script src="member-shell.js?v=55"></script>
 <script>
 (function() {
     // Featured carousel
