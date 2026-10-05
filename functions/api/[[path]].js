@@ -1,5 +1,6 @@
 import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
 import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
+import { scrapeNews } from "../../lib/news-scraper.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -127,6 +128,8 @@ export async function onRequest(context) {
     // Events API
     if (request.method === "GET" && path === "/events") return handleListEvents(request, env);
     if (request.method === "GET" && path === "/events/refresh") return handleRefreshEvents(env);
+    if (request.method === "GET" && path === "/news") return handleListNews(request, env);
+    if (request.method === "GET" && path === "/news/refresh") return handleRefreshNews(env);
     if (request.method === "GET" && path.match(/^\/events\/[^/]+$/)) return handleGetEvent(path, env);
     if (request.method === "POST" && path === "/events") return requireAdmin(request, env, user => handleCreateEvent(request, env, user));
     if (request.method === "POST" && path === "/events/submit") return handleCommunityEventSubmit(request, env);
@@ -4176,4 +4179,29 @@ async function handleRefreshEvents(env) {
   // Shared scraper (same code path as the daily cron) — see lib/event-scraper.js
   const result = await scrapeAndUpdateEvents(env);
   return json({ ok: true, scraped: result.scraped, inserted: result.inserted });
+}
+
+async function handleListNews(request, env) {
+  const url = new URL(request.url);
+  const category = clean(url.searchParams.get("category")).toLowerCase();
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "30"), 60);
+  const offset = Math.max(parseInt(url.searchParams.get("offset") || "0"), 0);
+
+  let query = "SELECT id, title, excerpt, image_url AS imageUrl, source_url AS sourceUrl, source_name AS sourceName, category, published_at AS publishedAt FROM news_articles WHERE status = 'approved'";
+  const binds = [];
+  if (category && category !== "all") {
+    query += " AND category = ?";
+    binds.push(category);
+  }
+  query += " ORDER BY COALESCE(NULLIF(published_at, ''), scraped_at) DESC LIMIT ? OFFSET ?";
+  binds.push(limit, offset);
+
+  const { results } = await env.TPI_DB.prepare(query).bind(...binds).all();
+  return json({ news: results || [] });
+}
+
+async function handleRefreshNews(env) {
+  // Shared scraper (same code path as the cron) — see lib/news-scraper.js
+  const result = await scrapeNews(env);
+  return json({ ok: true, ...result });
 }

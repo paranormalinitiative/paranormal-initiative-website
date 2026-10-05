@@ -1,6 +1,7 @@
 import { onRequest as handleApiRequest } from "./functions/api/[[path]].js";
 import { getSessionUser } from "./lib/auth.js";
 import { scrapeAndUpdateEvents } from "./lib/event-scraper.js";
+import { scrapeNews } from "./lib/news-scraper.js";
 
 const MEMBER_GATE_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -144,14 +145,21 @@ export default {
     return env.ASSETS.fetch(request);
   },
 
-  // Cron trigger: runs daily at 6 AM UTC
+  // Cron trigger: every 6 hours (see wrangler.toml crons). Events refresh
+  // each run; ParaNews accumulates and prunes on each run.
   async scheduled(event, env, ctx) {
-    console.log("Running scheduled event scrape...");
+    console.log("Running scheduled scrapes...");
     try {
       const result = await scrapeAndUpdateEvents(env);
       console.log(`Events updated: ${result.scraped} scraped, ${result.inserted} inserted`);
     } catch (e) {
       console.error("Scheduled event scrape failed:", e.message);
+    }
+    try {
+      const news = await scrapeNews(env);
+      console.log(`News updated: ${news.collected} collected, ${news.inserted} inserted, feeds ${news.feedsOk}/${news.feedsTotal}`);
+    } catch (e) {
+      console.error("Scheduled news scrape failed:", e.message);
     }
   },
 };
