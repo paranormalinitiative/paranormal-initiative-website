@@ -261,6 +261,79 @@
             font-size: 11px;
         }
 
+        /* ParaNews Spotlight + Featured Video */
+        .rail-feature {
+            display: block;
+            text-decoration: none;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #1f2d3d;
+            background: #0d1017;
+            transition: border-color 0.15s;
+        }
+
+        .rail-feature:hover { border-color: rgba(168, 85, 247, 0.5); }
+
+        .rail-feature-media {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #090c11;
+        }
+
+        .rail-feature-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .rail-feature-media.no-image {
+            display: grid;
+            place-items: center;
+            font-size: 26px;
+            opacity: 0.45;
+        }
+
+        .rail-feature-tag {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 2px 8px;
+            background: rgba(10, 12, 16, 0.85);
+            border: 1px solid var(--accent, #a855f7);
+            border-radius: 999px;
+            color: var(--accent, #a855f7);
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .rail-feature-body { padding: 10px 12px 12px; }
+
+        .rail-feature-title {
+            margin: 0;
+            color: #e8eef5;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rail-feature-meta {
+            margin: 5px 0 0;
+            color: #8aa0b6;
+            font-size: 11px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .rail-feature + .rail-feature { margin-top: 10px; }
+
         /* Active Discussions */
         .rail-topic {
             display: flex;
@@ -1363,6 +1436,28 @@
                     </div>
                 </section>
 
+                <!-- PARANEWS SPOTLIGHT -->
+                <section class="rail-card" data-rail-news>
+                    <div class="rail-card-head">
+                        <h4>ParaNews Spotlight</h4>
+                        <a class="rail-card-link" href="news.html">All</a>
+                    </div>
+                    <div data-news-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- FEATURED VIDEO -->
+                <section class="rail-card" data-rail-video>
+                    <div class="rail-card-head">
+                        <h4>Featured Video</h4>
+                        <a class="rail-card-link" href="tpi-videos.html">All</a>
+                    </div>
+                    <div data-video-body>
+                        <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
                 <!-- UPCOMING EVENTS -->
                 <section class="rail-card" data-rail-events>
                     <div class="rail-card-head">
@@ -1499,6 +1594,66 @@
         loadRailEvents();
         loadRailMembers();
         loadRailDiscussions();
+        loadRailNews();
+        loadRailVideo();
+    }
+
+    async function loadRailNews() {
+        var body = document.querySelector("[data-news-body]");
+        if (!body) return;
+        try {
+            var res = await fetch("/api/news?limit=12");
+            if (!res.ok) throw new Error("news unavailable");
+            var data = await res.json();
+            var items = data.news || [];
+            if (!items.length) {
+                body.innerHTML = '<p class="rail-empty">No headlines yet — <a href="news.html" style="color:#a855f7;">browse ParaNews</a>.</p>';
+                return;
+            }
+            // Prefer the newest story that has an image; fall back to the newest.
+            var story = items.find(function(n) { return n.imageUrl; }) || items[0];
+            body.innerHTML =
+                '<a class="rail-feature" href="' + escapeAttr(story.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' +
+                    '<div class="rail-feature-media' + (story.imageUrl ? '' : ' no-image') + '">' +
+                        (story.imageUrl ? '<img src="' + escapeAttr(story.imageUrl) + '" alt="" loading="lazy" onerror="this.remove(); this.parentElement.classList.add(\'no-image\'); this.parentElement.textContent = \"\uD83D\uDCF0\";">' : "\uD83D\uDCF0") +
+                        '<span class="rail-feature-tag">' + escapeHtml((story.category || "News").replace(/^./, function(c) { return c.toUpperCase(); })) + '</span>' +
+                    '</div>' +
+                    '<div class="rail-feature-body">' +
+                        '<p class="rail-feature-title">' + escapeHtml(story.title) + '</p>' +
+                        '<p class="rail-feature-meta">' + escapeHtml(story.sourceName || "ParaNews") + '</p>' +
+                    '</div>' +
+                '</a>';
+        } catch (e) {
+            body.innerHTML = '<p class="rail-empty">Headlines unavailable right now.</p>';
+        }
+    }
+
+    function loadRailVideo() {
+        var body = document.querySelector("[data-video-body]");
+        if (!body) return;
+        window.TPIApi.communityFeed(20, 0).then(function(data) {
+            var video = (data.items || []).find(function(item) { return item.type === "video"; });
+            if (!video) {
+                var section = document.querySelector("[data-rail-video]");
+                if (section) section.hidden = true;
+                return;
+            }
+            var watchUrl = window.preserveMemberMode ? window.preserveMemberMode("tpi-video.html?id=" + encodeURIComponent(video.slug || video.id)) : "tpi-video.html?id=" + encodeURIComponent(video.slug || video.id);
+            body.innerHTML =
+                '<a class="rail-feature" href="' + escapeAttr(watchUrl) + '">' +
+                    '<div class="rail-feature-media' + (video.thumbnail ? '' : ' no-image') + '">' +
+                        (video.thumbnail ? '<img src="' + escapeAttr(video.thumbnail) + '" alt="" loading="lazy">' : "\u25B6") +
+                        (video.isLive ? '<span class="rail-feature-tag">&#9679; Live</span>' : '<span class="rail-feature-tag">TPI Video</span>') +
+                    '</div>' +
+                    '<div class="rail-feature-body">' +
+                        '<p class="rail-feature-title">' + escapeHtml(video.title || "Featured video") + '</p>' +
+                        '<p class="rail-feature-meta">The Paranormal Initiative</p>' +
+                    '</div>' +
+                '</a>';
+        }).catch(function() {
+            var section = document.querySelector("[data-rail-video]");
+            if (section) section.hidden = true;
+        });
     }
 
     function renderPulse() {
@@ -1546,15 +1701,18 @@
         var body = document.querySelector("[data-events-body]");
         if (!body) return;
         try {
-            var res = await fetch("/api/events?limit=60");
+            var res = await fetch("/api/events?limit=100");
             if (!res.ok) throw new Error("events unavailable");
             var data = await res.json();
             var now = new Date();
             var upcoming = (data.events || []).filter(function(ev) {
+                // Skip dateless rows (e.g. legacy Meetup imports) entirely.
                 var d = ev.date_display || ev.start_date;
                 if (!d) return false;
                 var date = new Date(d);
-                return !isNaN(date.getTime()) && date >= new Date(now.getTime() - 86400000);
+                if (isNaN(date.getTime())) return false;
+                // Only true ISO dates are trustworthy for upcoming filtering.
+                return /^\d{4}-\d{2}-\d{2}/.test(d) && date >= new Date(now.getTime() - 3600000);
             }).slice(0, 4);
             if (!upcoming.length) {
                 body.innerHTML = '<p class="rail-empty">No upcoming events right now. <a href="submit-event.html" style="color:#a855f7;">Submit one</a>.</p>';
