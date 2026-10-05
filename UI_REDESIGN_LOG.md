@@ -513,7 +513,8 @@ When continuing this work:
 43. ⬜ TPI Creator Studio (video reels + photo editing)
 44. ✅ Members Home / Feed merge (Oct 4, 2026) — Your Feed merged into the HOME page: composer front and center ("You Are the Initiative"), community feed with Activity / Posts / Published Content tabs, sidebar Home renamed and Your Feed item removed (explore.html kept for deep links)
 45. ✅ Settings / Profile split (Oct 4, 2026) — member-dashboard.html is Settings-only (Login Settings + full-width Color Theme card, hero "⚙ Edit Profile" button); new member-profile.html is the Profile page (identity card, email verification, full profile form); sidebar Profile → member-profile.html; Members Home / Feed renamed back to "Home" and the upper-right header button returns to member-home.html; Home gained a My Content strip (unpublished/published counts + Content Editor link)
+46. ✅ Profile card + hero actions consolidated (Oct 5, 2026) — the member-home identity card moved to the top of member-profile.html (its self-linking Edit Profile button dropped, ⚙ Settings kept), and the dashboard hero beneath it now carries a single "☺ Edit Profile" button on the right that smooth-scrolls to the profile form — Settings / Open Content Editor / Sign Out removed from that hero (Sign Out stays in the top bar)
 
 ---
 
-*Last updated: October 4, 2026*
+*Last updated: October 5, 2026*

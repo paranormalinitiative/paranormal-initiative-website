@@ -192,9 +192,7 @@
             <p data-dashboard-role>Loading contributor profile...</p>
         </div>
         <div class="portal-actions">
-            <a class="portal-button portal-button-secondary" href="member-dashboard.html">&#9881; Settings</a>
-            <a class="portal-button" href="paper-editor.html" data-contributor-tool hidden>Open Content Editor</a>
-            <button class="portal-button portal-button-secondary" type="button" data-member-logout>Sign Out</button>
+            <a class="portal-button" href="#profile-editor">&#9786; Edit Profile</a>
         </div>
     </div>
 
@@ -203,7 +201,7 @@
             <p class="portal-kicker">Profile</p>
             <div data-dashboard-profile></div>
             <div data-dashboard-level></div>
-            <form class="member-profile-form" data-profile-form>
+            <form class="member-profile-form" id="profile-editor" data-profile-form>
                 <label><span>Display Name</span><input name="displayName" type="text"></label>
                 <label>
                     <span>Public Title / Credentials</span>
