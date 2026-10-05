@@ -1685,5 +1685,19 @@ window.TPI_SEARCH_INDEX = [
     "href": "teams/add.html",
     "description": "Add your paranormal team or society to the TPI Paranormal Teams Directory — United States and international submissions.",
     "text": "Add a paranormal team add a paranormal society United States international non-US form. Submit your paranormal investigation team or society to the directory with team name, acronym, city, state, contact information, email, website, Facebook, Twitter, YouTube, founder, year founded, number of members, areas served, specialties, and details. Submissions are reviewed by Paranormal Initiative leadership before appearing in the directory."
+  },
+  {
+    "title": "Events",
+    "subtitle": "Investigations, Conferences & Meetups",
+    "href": "events.html",
+    "description": "Paranormal events from the TPI community — investigations, conferences, meetups, workshops, and live streams.",
+    "text": "TPI events paranormal events directory investigations conferences meetups workshops live streams ghost hunts paranormal country events RSVP submit your event featured event event cards date location time attending hosting a paranormal event list your event paranormal enthusiasts."
+  },
+  {
+    "title": "Submit an Event",
+    "subtitle": "TPI Events Directory",
+    "href": "submit-event.html",
+    "description": "Submit your paranormal investigation, conference, meetup, or workshop to the TPI Events directory.",
+    "text": "Submit an event submit your event paranormal investigation conference meetup workshop livestream event submission form event title type category description date time location city state country virtual event online event organizer contact email website max attendees. Submissions are reviewed by Paranormal Initiative leadership before appearing in the events directory."
   }
 ];

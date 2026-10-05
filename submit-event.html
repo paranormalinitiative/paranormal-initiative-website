@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submit Event | The Paranormal Initiative</title>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="The Paranormal Initiative">
+    <meta property="og:title" content="Submit an Event">
+    <meta property="og:description" content="Submit your paranormal investigation, conference, meetup, or workshop to the TPI Events directory.">
+    <meta property="og:url" content="https://paranormalinitiative.com/submit-event.html">
+    <meta property="og:image" content="https://paranormalinitiative.com/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Submit an Event">
+    <meta name="twitter:description" content="Submit your paranormal investigation, conference, meetup, or workshop to the TPI Events directory.">
+    <meta name="twitter:image" content="https://paranormalinitiative.com/assets/og-image.png">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Submit Event">
+    <meta name="pp:subtitle" content="Share Your Paranormal Event">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=85">
+    <link rel="stylesheet" href="member-shell.css?v=59">
+    <style>
+        .submit-event-shell {
+            max-width: 700px;
+            margin: 0 auto;
+            padding-bottom: 80px;
+        }
+
+        .submit-event-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 32px;
+            margin-top: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 15px color-mix(in srgb, var(--accent) 5%, transparent);
+        }
+
+        .submit-event-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .submit-event-icon {
+            width: 72px;
+            height: 72px;
+            display: grid;
+            place-items: center;
+            background: var(--accent-muted);
+            border-radius: 20px;
+            font-size: 32px;
+            margin: 0 auto 16px;
+        }
+
+        .submit-event-title {
+            margin: 0 0 8px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .submit-event-subtitle {
+            margin: 0;
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all var(--transition-base);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-muted);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            line-height: 1.5;
+        }
+
+        .form-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+        }
+
+        .form-checkbox-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-section-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-top: 8px;
+            color: var(--text-tertiary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .form-section-divider::before,
+        .form-section-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .form-info-box {
+            padding: 20px;
+            background: var(--accent-muted);
+            border: 1px solid var(--accent-border);
+            border-radius: 16px;
+            margin-bottom: 28px;
+        }
+
+        .form-info-box p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .form-info-box strong {
+            color: var(--text-primary);
+        }
+
+        .form-success {
+            display: none;
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .form-success-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .form-success h3 {
+            margin: 0 0 12px;
+            font-size: 24px;
+            color: var(--text-primary);
+        }
+
+        .form-success p {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .form-success .portal-button {
+            margin-top: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .submit-event-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<div data-member-content hidden>
+<div class="member-main-inner">
+
+<div class="submit-event-shell">
+
+    <!-- HERO -->
+    <section class="portal-hero">
+        <p class="portal-kicker">Community</p>
+        <h2>Submit Your Event</h2>
+        <p>Share your paranormal investigation, livestream, meetup, or event with the TPI community.</p>
+    </section>
+
+    <!-- FORM CARD -->
+    <div class="submit-event-card">
+        <div class="submit-event-header">
+            <div class="submit-event-icon">📅</div>
+            <h3 class="submit-event-title">Event Submission</h3>
+            <p class="submit-event-subtitle">
+                Fill out the form below to submit your event. All submissions are reviewed before being published.
+            </p>
+        </div>
+
+        <div class="form-info-box">
+            <p>
+                <strong>What can you submit?</strong><br>
+                Investigations, livestreams, conferences, meetups, workshops, hunting trips, lectures,
+                and any paranormal-related events. Your event will be reviewed and published within 24-48 hours.
+            </p>
+        </div>
+
+        <form id="submit-event-form" class="form-grid">
+
+            <!-- Basic Info -->
+            <div class="form-group">
+                <label class="form-label" for="submit-title">Event Title *</label>
+                <input type="text" id="submit-title" class="form-input" placeholder="e.g., Ghost Hunt at My Local Haunted House" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="submit-type">Event Type *</label>
+                    <select id="submit-type" class="form-select" required>
+                        <option value="">Select type...</option>
+                        <option value="investigation">Investigation</option>
+                        <option value="livestream">Live Stream</option>
+                        <option value="conference">Conference</option>
+                        <option value="meetup">Meetup</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="lecture">Lecture</option>
+                        <option value="hunting_trip">Hunting Trip</option>
+                        <option value="festival">Festival</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="submit-category">Category</label>
+                    <select id="submit-category" class="form-select">
+                        <option value="">Select category...</option>
+                        <option value="ghosts">Ghosts & Hauntings</option>
+                        <option value="ufo">UFO / UAP</option>
+                        <option value="cryptid">Cryptids</option>
+                        <option value="evp">EVP / ITC</option>
+                        <option value="metaphysical">Metaphysical</option>
+                        <option value="history">Historical</option>
+                        <option value="general">General Paranormal</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="submit-description">Description *</label>
+                <textarea id="submit-description" class="form-textarea" placeholder="Tell people about your event. What will happen? What should they expect? Any requirements?" required></textarea>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="form-section-divider">Date & Time</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="submit-start-date">Start Date & Time *</label>
+                    <input type="datetime-local" id="submit-start-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="submit-end-date">End Date & Time</label>
+                    <input type="datetime-local" id="submit-end-date" class="form-input">
+                    <span class="form-hint">Optional for single-day events.</span>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="form-section-divider">Location</div>
+
+            <div class="form-group">
+                <label class="form-checkbox-group">
+                    <input type="checkbox" id="submit-virtual" class="form-checkbox">
+                    <span class="form-checkbox-label">This is a virtual/online event</span>
+                </label>
+            </div>
+
+            <div id="physical-location">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="submit-location-name">Location Name</label>
+                        <input type="text" id="submit-location-name" class="form-input" placeholder="e.g., Waverly Hills Sanatorium">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="submit-address">Address</label>
+                        <input type="text" id="submit-address" class="form-input" placeholder="e.g., 4400 Paralee Dr">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="submit-city">City</label>
+                        <input type="text" id="submit-city" class="form-input" placeholder="e.g., Louisville">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="submit-state">State / Region</label>
+                        <input type="text" id="submit-state" class="form-input" placeholder="e.g., KY">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="submit-country">Country</label>
+                    <input type="text" id="submit-country" class="form-input" placeholder="e.g., United States" value="United States">
+                </div>
+            </div>
+
+            <div id="virtual-location" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label" for="submit-virtual-link">Streaming Link</label>
+                    <input type="url" id="submit-virtual-link" class="form-input" placeholder="https://youtube.com/..., https://twitch.tv/..., https://zoom.us/...">
+                    <span class="form-hint">YouTube, Twitch, Zoom, Facebook Live, or other streaming link.</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="submit-platform">Platform</label>
+                    <select id="submit-platform" class="form-select">
+                        <option value="">Select platform...</option>
+                        <option value="youtube">YouTube Live</option>
+                        <option value="twitch">Twitch</option>
+                        <option value="facebook">Facebook Live</option>
+                        <option value="zoom">Zoom</option>
+                        <option value="discord">Discord</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Organizer -->
+            <div class="form-section-divider">About You</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="submit-organizer">Your Name / Group Name *</label>
+                    <input type="text" id="submit-organizer" class="form-input" placeholder="e.g., John's Ghost Hunters" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="submit-email">Email *</label>
+                    <input type="email" id="submit-email" class="form-input" placeholder="you@example.com" required>
+                    <span class="form-hint">We'll contact you if we have questions. Not displayed publicly.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="submit-organizer-url">Your Website / Social Media</label>
+                <input type="url" id="submit-organizer-url" class="form-input" placeholder="https://...">
+                <span class="form-hint">Optional. Link to your group's website or social media page.</span>
+            </div>
+
+            <!-- Image -->
+            <div class="form-section-divider">Event Image</div>
+
+            <div class="form-group">
+                <label class="form-label" for="submit-image">Event Image URL</label>
+                <input type="url" id="submit-image" class="form-input" placeholder="https://...">
+                <span class="form-hint">Paste a link to your event image. Recommended: 1200x630px.</span>
+            </div>
+
+            <!-- Capacity -->
+            <div class="form-section-divider">Capacity & Cost</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="submit-max-attendees">Max Attendees</label>
+                    <input type="number" id="submit-max-attendees" class="form-input" placeholder="Leave blank for unlimited">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="submit-price">Price</label>
+                    <input type="text" id="submit-price" class="form-input" placeholder="e.g., Free, $25, Donation">
+                </div>
+            </div>
+
+            <!-- Terms -->
+            <div class="form-group">
+                <label class="form-checkbox-group">
+                    <input type="checkbox" id="submit-terms" class="form-checkbox" required>
+                    <span class="form-checkbox-label">I confirm this event is real and I have permission to list it. I understand TPI will review before publishing.</span>
+                </label>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" class="portal-button">Submit Event for Review</button>
+            </div>
+        </form>
+
+        <!-- Success Message -->
+        <div class="form-success" id="submit-success">
+            <div class="form-success-icon">✅</div>
+            <h3>Event Submitted!</h3>
+            <p>Your event has been submitted for review. We'll publish it within 24-48 hours.</p>
+            <a class="portal-button" href="events.html">View Events</a>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+
+<div id="site-footer"></div>
+
+<script src="includes.js"></script>
+<script src="member-shell.js?v=53"></script>
+<script>
+// Toggle virtual/physical location
+const virtualCheckbox = document.getElementById('submit-virtual');
+const physicalLocation = document.getElementById('physical-location');
+const virtualLocation = document.getElementById('virtual-location');
+
+virtualCheckbox?.addEventListener('change', () => {
+    physicalLocation.style.display = virtualCheckbox.checked ? 'none' : '';
+    virtualLocation.style.display = virtualCheckbox.checked ? '' : 'none';
+});
+
+// Form submission
+const form = document.getElementById('submit-event-form');
+const successMessage = document.getElementById('submit-success');
+
+form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const formData = {
+        title: document.getElementById('submit-title').value,
+        type: document.getElementById('submit-type').value,
+        category: document.getElementById('submit-category').value,
+        description: document.getElementById('submit-description').value,
+        startDate: document.getElementById('submit-start-date').value,
+        endDate: document.getElementById('submit-end-date').value,
+        locationName: document.getElementById('submit-location-name').value,
+        address: document.getElementById('submit-address').value,
+        city: document.getElementById('submit-city').value,
+        state: document.getElementById('submit-state').value,
+        country: document.getElementById('submit-country').value,
+        isVirtual: document.getElementById('submit-virtual').checked,
+        virtualLink: document.getElementById('submit-virtual-link').value,
+        platform: document.getElementById('submit-platform').value,
+        organizer: document.getElementById('submit-organizer').value,
+        email: document.getElementById('submit-email').value,
+        organizerUrl: document.getElementById('submit-organizer-url').value,
+        imageUrl: document.getElementById('submit-image').value,
+        maxAttendees: document.getElementById('submit-max-attendees').value,
+        price: document.getElementById('submit-price').value,
+        status: 'pending',
+        source: 'community'
+    };
+
+    // TODO: Send to API
+    console.log('Community event submission:', formData);
+
+    // Show success
+    form.style.display = 'none';
+    successMessage.style.display = '';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Events | The Paranormal Initiative</title>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="The Paranormal Initiative">
+    <meta property="og:title" content="Events">
+    <meta property="og:description" content="Paranormal Events — investigations, conferences, meetups, workshops, and live streams from The Paranormal Initiative community.">
+    <meta property="og:url" content="https://paranormalinitiative.com/events.html">
+    <meta property="og:image" content="https://paranormalinitiative.com/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Events">
+    <meta name="twitter:description" content="Paranormal Events — investigations, conferences, meetups, workshops, and live streams from The Paranormal Initiative community.">
+    <meta name="twitter:image" content="https://paranormalinitiative.com/assets/og-image.png">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Events">
+    <meta name="pp:subtitle" content="Paranormal Investigations, Conferences & Meetups">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=85">
+    <link rel="stylesheet" href="member-shell.css?v=59">
+    <style>
+        /* Events Page Styles */
+        .events-page {
+            padding-bottom: 80px;
+        }
+
+        /* Event Hero Card */
+        .event-hero-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, color-mix(in srgb, var(--accent) 10%, transparent) 100%);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 48px;
+        }
+
+        .event-hero-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .event-hero-content {
+            padding: 32px;
+        }
+
+        .event-hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .event-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--accent-muted);
+            border: 1px solid var(--accent-border);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .event-hero-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: color-mix(in srgb, var(--accent) 10%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .event-hero-title {
+            margin: 0 0 12px;
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .event-hero-description {
+            margin: 0 0 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-width: 700px;
+        }
+
+        .event-hero-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .event-hero-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .event-hero-detail-icon {
+            font-size: 18px;
+        }
+
+        .event-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* Event Cards Grid */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .event-card {
+            display: grid;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 20px color-mix(in srgb, var(--accent) 15%, transparent);
+            border-color: var(--accent-border);
+        }
+
+        .event-card-image {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .event-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-base);
+        }
+
+        .event-card:hover .event-card-image img {
+            transform: scale(1.05);
+        }
+
+        .event-card-date-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .event-card-date-month {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+        }
+
+        .event-card-date-day {
+            display: block;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .event-card-type-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            background: var(--accent);
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-on-accent);
+            text-transform: uppercase;
+        }
+
+        .event-card-content {
+            padding: 20px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .event-card-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .event-card-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .event-card-time {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .event-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .event-card-attendees {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-card-avatars {
+            display: flex;
+        }
+
+        .event-card-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+            background: var(--accent-muted);
+            display: grid;
+            place-items: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-left: -8px;
+        }
+
+        .event-card-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .event-card-avatar-more {
+            background: var(--accent);
+            color: var(--text-on-accent);
+        }
+
+        .event-card-count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .event-card-rsvp {
+            padding: 6px 14px;
+            background: var(--accent-muted);
+            border: 1px solid var(--accent-border);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .event-card-rsvp:hover {
+            background: var(--accent);
+            color: var(--text-on-accent);
+        }
+
+        /* Event Filters */
+        .events-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .events-filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-default);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .events-filter-btn:hover,
+        .events-filter-btn.active {
+            background: var(--accent-muted);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+
+        /* Event Map Placeholder */
+        .events-map {
+            height: 300px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .events-map::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 40%, color-mix(in srgb, var(--accent) 10%, transparent) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--purple-700) 8%, transparent) 0%, transparent 50%);
+        }
+
+        .events-map-content {
+            position: relative;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .events-map-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .events-map-title {
+            margin: 0 0 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .events-map-text {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Submit Event CTA */
+        .events-submit {
+            text-align: center;
+            padding: 48px;
+            background: linear-gradient(135deg, var(--accent-muted) 0%, var(--bg-card) 100%);
+            border: 1px solid var(--accent-border);
+            border-radius: 24px;
+            margin-top: 48px;
+        }
+
+        .events-submit-title {
+            margin: 0 0 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .events-submit-text {
+            margin: 0 0 24px;
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Featured Event */
+        .event-featured {
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, transparent) 0%, var(--bg-card) 50%, color-mix(in srgb, var(--purple-700) 10%, transparent) 100%);
+            border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+            padding: 40px;
+            margin-bottom: 48px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px color-mix(in srgb, var(--accent) 10%, transparent);
+        }
+
+        .event-featured::before {
+            content: "";
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .event-featured-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .event-featured-info {
+            display: grid;
+            gap: 16px;
+        }
+
+        .event-featured-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: color-mix(in srgb, var(--accent) 20%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            width: fit-content;
+        }
+
+        .event-featured-title {
+            margin: 0;
+            font-size: clamp(24px, 3vw, 32px);
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .event-featured-description {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .event-featured-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .event-featured-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .event-featured-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .event-featured-image {
+            position: relative;
+            height: 280px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+        }
+
+        .event-featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .event-featured {
+                padding: 24px;
+            }
+
+            .event-featured-content {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .event-featured-image {
+                height: 200px;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-hero-image {
+                height: 200px;
+            }
+
+            .event-hero-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="events-page">
+<div id="site-header"></div>
+
+<div data-member-content hidden>
+<div class="member-main-inner">
+
+<!-- HERO -->
+<section class="portal-hero">
+    <p class="portal-kicker">Events</p>
+    <h2>Find paranormal events near you.</h2>
+    <p>
+        Discover investigations, conferences, meetups, workshops, and live streams from the TPI community and paranormal organizations worldwide.
+    </p>
+    <div class="portal-actions">
+        <a class="portal-button" href="#upcoming">Upcoming Events</a>
+        <a class="portal-button portal-button-secondary" href="submit-event.html">Submit Event</a>
+    </div>
+</section>
+
+<!-- FEATURED EVENT -->
+<section class="home-section">
+    <div class="event-featured">
+        <div class="event-featured-content">
+            <div class="event-featured-info">
+                <span class="event-featured-badge">★ Featured Event</span>
+                <h3 class="event-featured-title">Paranormal Research Symposium 2026</h3>
+                <p class="event-featured-description">
+                    Join investigators, researchers, and educators for a three-day conference on paranormal methodology, 
+                    evidence analysis, EVP/ITC research, and field investigation techniques.
+                </p>
+                <div class="event-featured-details">
+                    <div class="event-featured-detail">
+                        <span>📅</span> October 24-26, 2026
+                    </div>
+                    <div class="event-featured-detail">
+                        <span>📍</span> Louisville, KY
+                    </div>
+                    <div class="event-featured-detail">
+                        <span>👥</span> 250+ attending
+                    </div>
+                </div>
+                <div class="event-featured-actions">
+                    <a class="portal-button" href="#">RSVP Now</a>
+                    <a class="portal-button portal-button-secondary" href="#">Share Event</a>
+                </div>
+            </div>
+            <div class="event-featured-image">
+                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=400&fit=crop" alt="Paranormal Research Symposium" loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAP SECTION -->
+<section class="home-section" id="upcoming">
+    <p class="portal-kicker">Event Map</p>
+    <h2>Explore events worldwide.</h2>
+    <div class="events-map">
+        <div class="events-map-content">
+            <div class="events-map-icon">🗺️</div>
+            <h3 class="events-map-title">Interactive Map Coming Soon</h3>
+            <p class="events-map-text">Browse paranormal events on an interactive map with pins for investigations, conferences, and meetups.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FILTERS -->
+<section class="home-section">
+    <p class="portal-kicker">Browse Events</p>
+    <h2>Find what interests you.</h2>
+    <div class="events-filters">
+        <button class="events-filter-btn active" type="button" data-filter="all">All Events</button>
+        <button class="events-filter-btn" type="button" data-filter="investigation">Investigations</button>
+        <button class="events-filter-btn" type="button" data-filter="conference">Conferences</button>
+        <button class="events-filter-btn" type="button" data-filter="meetup">Meetups</button>
+        <button class="events-filter-btn" type="button" data-filter="workshop">Workshops</button>
+        <button class="events-filter-btn" type="button" data-filter="livestream">Live Streams</button>
+    </div>
+
+    <!-- EVENT CARDS -->
+    <div class="events-grid">
+        
+        <!-- Event 1 -->
+        <div class="event-card" data-type="investigation">
+            <div class="event-card-image">
+                <img src="https://images.unsplash.com/photo-1509557965875-b88c97052f0e?w=600&h=300&fit=crop" alt="Ghost Hunt at Waverly Hills" loading="lazy">
+                <div class="event-card-date-badge">
+                    <span class="event-card-date-month">Oct</span>
+                    <span class="event-card-date-day">15</span>
+                </div>
+                <span class="event-card-type-badge">Investigation</span>
+            </div>
+            <div class="event-card-content">
+                <h3 class="event-card-title">Ghost Hunt at Waverly Hills Sanatorium</h3>
+                <div class="event-card-location">
+                    <span>📍</span> Louisville, KY
+                </div>
+                <div class="event-card-time">
+                    <span>🕐</span> 8:00 PM - 2:00 AM EST
+                </div>
+                <div class="event-card-footer">
+                    <div class="event-card-attendees">
+                        <div class="event-card-avatars">
+                            <span class="event-card-avatar">T</span>
+                            <span class="event-card-avatar">M</span>
+                            <span class="event-card-avatar">J</span>
+                            <span class="event-card-avatar event-card-avatar-more">+12</span>
+                        </div>
+                        <span class="event-card-count">15 attending</span>
+                    </div>
+                    <button class="event-card-rsvp" type="button">RSVP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event 2 -->
+        <div class="event-card" data-type="conference">
+            <div class="event-card-image">
+                <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&h=300&fit=crop" alt="National Paranormal Conference" loading="lazy">
+                <div class="event-card-date-badge">
+                    <span class="event-card-date-month">Nov</span>
+                    <span class="event-card-date-day">8</span>
+                </div>
+                <span class="event-card-type-badge">Conference</span>
+            </div>
+            <div class="event-card-content">
+                <h3 class="event-card-title">National Paranormal Conference 2026</h3>
+                <div class="event-card-location">
+                    <span>📍</span> Online (Virtual)
+                </div>
+                <div class="event-card-time">
+                    <span>🕐</span> 10:00 AM - 6:00 PM EST
+                </div>
+                <div class="event-card-footer">
+                    <div class="event-card-attendees">
+                        <div class="event-card-avatars">
+                            <span class="event-card-avatar">A</span>
+                            <span class="event-card-avatar">R</span>
+                            <span class="event-card-avatar">S</span>
+                            <span class="event-card-avatar event-card-avatar-more">+89</span>
+                        </div>
+                        <span class="event-card-count">92 registered</span>
+                    </div>
+                    <button class="event-card-rsvp" type="button">RSVP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event 3 -->
+        <div class="event-card" data-type="meetup">
+            <div class="event-card-image">
+                <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=300&fit=crop" alt="Chicago Paranormal Meetup" loading="lazy">
+                <div class="event-card-date-badge">
+                    <span class="event-card-date-month">Oct</span>
+                    <span class="event-card-date-day">20</span>
+                </div>
+                <span class="event-card-type-badge">Meetup</span>
+            </div>
+            <div class="event-card-content">
+                <h3 class="event-card-title">Chicago Paranormal Meetup Group</h3>
+                <div class="event-card-location">
+                    <span>📍</span> Chicago, IL
+                </div>
+                <div class="event-card-time">
+                    <span>🕐</span> 7:00 PM - 9:00 PM CST
+                </div>
+                <div class="event-card-footer">
+                    <div class="event-card-attendees">
+                        <div class="event-card-avatars">
+                            <span class="event-card-avatar">D</span>
+                            <span class="event-card-avatar">K</span>
+                            <span class="event-card-avatar event-card-avatar-more">+8</span>
+                        </div>
+                        <span class="event-card-count">10 attending</span>
+                    </div>
+                    <button class="event-card-rsvp" type="button">RSVP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event 4 -->
+        <div class="event-card" data-type="workshop">
+            <div class="event-card-image">
+                <img src="https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=600&h=300&fit=crop" alt="EVP Analysis Workshop" loading="lazy">
+                <div class="event-card-date-badge">
+                    <span class="event-card-date-month">Oct</span>
+                    <span class="event-card-date-day">25</span>
+                </div>
+                <span class="event-card-type-badge">Workshop</span>
+            </div>
+            <div class="event-card-content">
+                <h3 class="event-card-title">EVP Analysis Workshop</h3>
+                <div class="event-card-location">
+                    <span>📍</span> Online (Virtual)
+                </div>
+                <div class="event-card-time">
+                    <span>🕐</span> 2:00 PM - 4:00 PM EST
+                </div>
+                <div class="event-card-footer">
+                    <div class="event-card-attendees">
+                        <div class="event-card-avatars">
+                            <span class="event-card-avatar">L</span>
+                            <span class="event-card-avatar">B</span>
+                            <span class="event-card-avatar event-card-avatar-more">+23</span>
+                        </div>
+                        <span class="event-card-count">25 registered</span>
+                    </div>
+                    <button class="event-card-rsvp" type="button">RSVP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event 5 -->
+        <div class="event-card" data-type="livestream">
+            <div class="event-card-image">
+                <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=600&h=300&fit=crop" alt="Live Investigation: Gettysburg" loading="lazy">
+                <div class="event-card-date-badge">
+                    <span class="event-card-date-month">Oct</span>
+                    <span class="event-card-date-day">18</span>
+                </div>
+                <span class="event-card-type-badge">Live Stream</span>
+            </div>
+            <div class="event-card-content">
+                <h3 class="event-card-title">Live Investigation: Gettysburg Battlefield</h3>
+                <div class="event-card-location">
+                    <span>📍</span> Online (TPI Live)
+                </div>
+                <div class="event-card-time">
+                    <span>🕐</span> 9:00 PM - 12:00 AM EST
+                </div>
+                <div class="event-card-footer">
+                    <div class="event-card-attendees">
+                        <div class="event-card-avatars">
+                            <span class="event-card-avatar">T</span>
+                            <span class="event-card-avatar event-card-avatar-more">+156</span>
+                        </div>
+                        <span class="event-card-count">158 watching</span>
+                    </div>
+                    <button class="event-card-rsvp" type="button">Set Reminder</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event 6 -->
+        <div class="event-card" data-type="investigation">
+            <div class="event-card-image">
+                <img src="https://images.unsplash.com/photo-1503891617560-5b8c2e28cbf6?w=600&h=300&fit=crop" alt="Eastern State Penitentiary" loading="lazy">
+                <div class="event-card-date-badge">
+                    <span class="event-card-date-month">Nov</span>
+                    <span class="event-card-date-day">1</span>
+                </div>
+                <span class="event-card-type-badge">Investigation</span>
+            </div>
+            <div class="event-card-content">
+                <h3 class="event-card-title">Eastern State Penitentiary Night Tour</h3>
+                <div class="event-card-location">
+                    <span>📍</span> Philadelphia, PA
+                </div>
+                <div class="event-card-time">
+                    <span>🕐</span> 7:00 PM - 11:00 PM EST
+                </div>
+                <div class="event-card-footer">
+                    <div class="event-card-attendees">
+                        <div class="event-card-avatars">
+                            <span class="event-card-avatar">M</span>
+                            <span class="event-card-avatar">C</span>
+                            <span class="event-card-avatar event-card-avatar-more">+18</span>
+                        </div>
+                        <span class="event-card-count">20 attending</span>
+                    </div>
+                    <button class="event-card-rsvp" type="button">RSVP</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- SUBMIT EVENT CTA -->
+<section class="home-section" id="submit">
+    <div class="events-submit">
+        <h3 class="events-submit-title">Hosting a Paranormal Event?</h3>
+        <p class="events-submit-text">
+            List your investigation, conference, meetup, or workshop in the TPI Events directory. 
+            Reach thousands of paranormal enthusiasts and investigators.
+        </p>
+        <a class="portal-button" href="submit-event.html">Submit Your Event</a>
+    </div>
+</section>
+
+</div>
+</div>
+
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="member-shell.js?v=53"></script>
+<script>
+// Filter functionality
+document.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Update active state
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.event-card').forEach(card => {
+            if (filter === 'all' || card.dataset.type === filter) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+
+// RSVP button toggle
+document.querySelectorAll('.event-card-rsvp').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (btn.textContent === 'RSVP' || btn.textContent === 'Set Reminder') {
+            btn.textContent = 'Going ✓';
+            btn.style.background = 'var(--accent)';
+            btn.style.color = 'var(--text-on-accent)';
+            btn.style.borderColor = 'var(--accent)';
+        } else {
+            btn.textContent = 'RSVP';
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+        }
+    });
+});
+</script>
+</body>
+</html>

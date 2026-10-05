@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Manage Events | The Paranormal Initiative</title>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="The Paranormal Initiative">
+    <meta property="og:title" content="Manage Events">
+    <meta property="og:description" content="Leadership tools for managing TPI Events.">
+    <meta property="og:url" content="https://paranormalinitiative.com/admin-events.html">
+    <meta property="og:image" content="https://paranormalinitiative.com/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Manage Events">
+    <meta name="twitter:description" content="Leadership tools for managing TPI Events.">
+    <meta name="twitter:image" content="https://paranormalinitiative.com/assets/og-image.png">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="Manage Events">
+    <meta name="pp:subtitle" content="Admin Event Management">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=85">
+    <link rel="stylesheet" href="member-shell.css?v=59">
+    <style>
+        .event-form-page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .event-form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 15px color-mix(in srgb, var(--accent) 5%, transparent);
+        }
+
+        .event-form-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .event-form-icon {
+            width: 56px;
+            height: 56px;
+            display: grid;
+            place-items: center;
+            background: var(--accent-muted);
+            border-radius: 16px;
+            font-size: 24px;
+        }
+
+        .event-form-title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .event-form-subtitle {
+            margin: 4px 0 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all var(--transition-base);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-muted);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            line-height: 1.5;
+        }
+
+        .form-section-title {
+            margin: 0 0 16px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            padding-top: 16px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .form-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+        }
+
+        .form-checkbox-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .form-preview {
+            display: grid;
+            gap: 16px;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border-default);
+            border-radius: 16px;
+            margin-top: 24px;
+        }
+
+        .form-preview-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .form-preview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .form-preview-image {
+            height: 160px;
+            background: linear-gradient(135deg, var(--accent-muted), var(--bg-card));
+            display: grid;
+            place-items: center;
+            font-size: 36px;
+            opacity: 0.5;
+        }
+
+        .form-preview-content {
+            padding: 16px;
+        }
+
+        .form-preview-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .form-preview-badge {
+            padding: 4px 10px;
+            background: var(--accent-muted);
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .form-preview h4 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .form-preview p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Events List */
+        .events-list {
+            display: grid;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .events-list-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 16px;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            transition: all var(--transition-base);
+        }
+
+        .events-list-item:hover {
+            border-color: var(--accent-border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .events-list-date {
+            text-align: center;
+            padding: 12px;
+            background: var(--accent-muted);
+            border-radius: 12px;
+        }
+
+        .events-list-month {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .events-list-day {
+            display: block;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .events-list-info h4 {
+            margin: 0 0 4px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .events-list-info p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .events-list-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .events-list-btn {
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .events-list-btn:hover {
+            background: var(--accent-muted);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+
+        .events-list-btn-danger {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .events-list-btn-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .event-form-card {
+                padding: 20px;
+            }
+
+            .events-list-item {
+                grid-template-columns: 60px 1fr;
+            }
+
+            .events-list-actions {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+</head>
+<body class="events-page">
+<div id="site-header"></div>
+
+<div data-member-content hidden>
+<div class="member-main-inner">
+<div class="event-form-page">
+
+<!-- HERO -->
+<section class="portal-hero">
+    <p class="portal-kicker">Admin</p>
+    <h2>Manage Events</h2>
+    <p>Add, edit, and manage paranormal events, investigations, conferences, meetups, and livestreams.</p>
+</section>
+
+<!-- LEADERSHIP GATE NOTE (shown to non-leadership) -->
+<section class="event-form-card" id="admin-gate-note" hidden>
+    <div class="event-form-header">
+        <div class="event-form-icon">🔒</div>
+        <div>
+            <h3 class="event-form-title">Leadership access required</h3>
+            <p class="event-form-subtitle">Managing events is limited to TPI leadership. If you believe you should have access, contact the site administrator.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ADD NEW EVENT FORM -->
+<section class="event-form-card" id="admin-form-card">
+    <div class="event-form-header">
+        <div class="event-form-icon">📅</div>
+        <div>
+            <h3 class="event-form-title">Add New Event</h3>
+            <p class="event-form-subtitle">Fill out the form below to add a new event to the TPI Events directory.</p>
+        </div>
+    </div>
+
+    <form id="event-form" class="form-grid">
+        <!-- Basic Info -->
+        <div class="form-group">
+            <label class="form-label" for="event-title">Event Title *</label>
+            <input type="text" id="event-title" class="form-input" placeholder="e.g., Ghost Hunt at Waverly Hills" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-type">Event Type *</label>
+                <select id="event-type" class="form-select" required>
+                    <option value="">Select type...</option>
+                    <option value="investigation">Investigation</option>
+                    <option value="conference">Conference</option>
+                    <option value="meetup">Meetup</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="livestream">Live Stream</option>
+                    <option value="lecture">Lecture</option>
+                    <option value="festival">Festival</option>
+                    <option value="hunting_trip">Hunting Trip</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="event-category">Category</label>
+                <select id="event-category" class="form-select">
+                    <option value="">Select category...</option>
+                    <option value="ghosts">Ghosts & Hauntings</option>
+                    <option value="ufo">UFO / UAP</option>
+                    <option value="cryptid">Cryptids</option>
+                    <option value="evp">EVP / ITC</option>
+                    <option value="metaphysical">Metaphysical</option>
+                    <option value="history">Historical</option>
+                    <option value="education">Education</option>
+                    <option value="general">General Paranormal</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="event-description">Description *</label>
+            <textarea id="event-description" class="form-textarea" placeholder="Describe the event, what attendees can expect, requirements, etc." required></textarea>
+        </div>
+
+        <!-- Date & Time -->
+        <h4 class="form-section-title">Date & Time</h4>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-start-date">Start Date *</label>
+                <input type="datetime-local" id="event-start-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="event-end-date">End Date</label>
+                <input type="datetime-local" id="event-end-date" class="form-input">
+                <span class="form-hint">Optional. Leave blank for single-day events.</span>
+            </div>
+        </div>
+
+        <!-- Location -->
+        <h4 class="form-section-title">Location</h4>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-location-name">Location Name</label>
+                <input type="text" id="event-location-name" class="form-input" placeholder="e.g., Waverly Hills Sanatorium">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="event-address">Address</label>
+                <input type="text" id="event-address" class="form-input" placeholder="e.g., 4400 Paralee Dr">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-city">City</label>
+                <input type="text" id="event-city" class="form-input" placeholder="e.g., Louisville">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="event-state">State / Region</label>
+                <input type="text" id="event-state" class="form-input" placeholder="e.g., KY">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-country">Country</label>
+                <input type="text" id="event-country" class="form-input" placeholder="e.g., United States" value="United States">
+            </div>
+            <div class="form-group">
+                <label class="form-checkbox-group">
+                    <input type="checkbox" id="event-virtual" class="form-checkbox">
+                    <span class="form-checkbox-label">This is a virtual/online event</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group" id="virtual-link-group" style="display: none;">
+            <label class="form-label" for="event-virtual-link">Virtual Event Link</label>
+            <input type="url" id="event-virtual-link" class="form-input" placeholder="https://...">
+            <span class="form-hint">YouTube, Twitch, Zoom, or other streaming link.</span>
+        </div>
+
+        <!-- Organizer -->
+        <h4 class="form-section-title">Organizer</h4>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-organizer">Organizer Name</label>
+                <input type="text" id="event-organizer" class="form-input" placeholder="e.g., TPI Investigation Team">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="event-organizer-url">Organizer URL</label>
+                <input type="url" id="event-organizer-url" class="form-input" placeholder="https://...">
+            </div>
+        </div>
+
+        <!-- Media -->
+        <h4 class="form-section-title">Event Image</h4>
+
+        <div class="form-group">
+            <label class="form-label" for="event-image">Image URL</label>
+            <input type="url" id="event-image" class="form-input" placeholder="https://...">
+            <span class="form-hint">Paste a URL to the event image, or upload to media library first.</span>
+        </div>
+
+        <!-- Capacity -->
+        <h4 class="form-section-title">Capacity</h4>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="event-max-attendees">Max Attendees</label>
+                <input type="number" id="event-max-attendees" class="form-input" placeholder="Leave blank for unlimited">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="event-price">Price</label>
+                <input type="text" id="event-price" class="form-input" placeholder="e.g., Free, $25, Donation">
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="form-actions">
+            <button type="button" class="portal-button portal-button-secondary" data-preview-event>Preview</button>
+            <button type="submit" class="portal-button">Save Event</button>
+        </div>
+    </form>
+
+    <!-- Preview -->
+    <div class="form-preview" id="event-preview" style="display: none;">
+        <h4 class="form-preview-title">Event Preview</h4>
+        <div class="form-preview-card">
+            <div class="form-preview-image">📅</div>
+            <div class="form-preview-content">
+                <div class="form-preview-meta">
+                    <span class="form-preview-badge" id="preview-type">Type</span>
+                    <span class="form-preview-badge" id="preview-category">Category</span>
+                </div>
+                <h4 id="preview-title">Event Title</h4>
+                <p id="preview-description">Event description will appear here...</p>
+                <p id="preview-location" style="margin-top: 8px;">📍 Location</p>
+                <p id="preview-date">📅 Date</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EXISTING EVENTS -->
+<section class="event-form-card">
+    <div class="event-form-header">
+        <div class="event-form-icon">📋</div>
+        <div>
+            <h3 class="event-form-title">Existing Events</h3>
+            <p class="event-form-subtitle">Manage events you've already created.</p>
+        </div>
+    </div>
+
+    <div class="events-list" id="events-list">
+        <!-- Sample events -->
+        <div class="events-list-item">
+            <div class="events-list-date">
+                <span class="events-list-month">Oct</span>
+                <span class="events-list-day">15</span>
+            </div>
+            <div class="events-list-info">
+                <h4>Ghost Hunt at Waverly Hills Sanatorium</h4>
+                <p>📍 Louisville, KY · 🔍 Investigation · 15 attending</p>
+            </div>
+            <div class="events-list-actions">
+                <button class="events-list-btn" type="button">Edit</button>
+                <button class="events-list-btn events-list-btn-danger" type="button">Delete</button>
+            </div>
+        </div>
+
+        <div class="events-list-item">
+            <div class="events-list-date">
+                <span class="events-list-month">Nov</span>
+                <span class="events-list-day">8</span>
+            </div>
+            <div class="events-list-info">
+                <h4>National Paranormal Conference 2026</h4>
+                <p>📍 Online (Virtual) · 🎤 Conference · 92 registered</p>
+            </div>
+            <div class="events-list-actions">
+                <button class="events-list-btn" type="button">Edit</button>
+                <button class="events-list-btn events-list-btn-danger" type="button">Delete</button>
+            </div>
+        </div>
+
+        <div class="events-list-item">
+            <div class="events-list-date">
+                <span class="events-list-month">Oct</span>
+                <span class="events-list-day">18</span>
+            </div>
+            <div class="events-list-info">
+                <h4>Live Investigation: Gettysburg Battlefield</h4>
+                <p>📍 Online (TPI Live) · 📡 Live Stream · 158 watching</p>
+            </div>
+            <div class="events-list-actions">
+                <button class="events-list-btn" type="button">Edit</button>
+                <button class="events-list-btn events-list-btn-danger" type="button">Delete</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+</div>
+</div>
+</div>
+
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="member-shell.js?v=53"></script>
+<script>
+// Leadership gate: only owner/admin can use the event manager.
+(async function () {
+    try {
+        const user = await getSignedInUser();
+        const isLeadership = user && (user.role === 'owner' || user.role === 'admin');
+        document.getElementById('admin-form-card').hidden = !isLeadership;
+        document.getElementById('admin-gate-note').hidden = isLeadership;
+        document.querySelectorAll('[data-preview-event], [data-save-event], [data-clear-event]').forEach(btn => {
+            btn.disabled = !isLeadership;
+        });
+    } catch (error) {
+        document.getElementById('admin-form-card').hidden = true;
+        document.getElementById('admin-gate-note').hidden = false;
+    }
+})();
+
+// Toggle virtual link field
+const virtualCheckbox = document.getElementById('event-virtual');
+const virtualLinkGroup = document.getElementById('virtual-link-group');
+virtualCheckbox?.addEventListener('change', () => {
+    virtualLinkGroup.style.display = virtualCheckbox.checked ? '' : 'none';
+});
+
+// Preview functionality
+const previewBtn = document.querySelector('[data-preview-event]');
+const previewSection = document.getElementById('event-preview');
+previewBtn?.addEventListener('click', () => {
+    const title = document.getElementById('event-title').value || 'Event Title';
+    const type = document.getElementById('event-type').value || 'Type';
+    const category = document.getElementById('event-category').value || 'Category';
+    const description = document.getElementById('event-description').value || 'Event description will appear here...';
+    const locationName = document.getElementById('event-location-name').value;
+    const city = document.getElementById('event-city').value;
+    const startDate = document.getElementById('event-start-date').value;
+
+    document.getElementById('preview-title').textContent = title;
+    document.getElementById('preview-type').textContent = type;
+    document.getElementById('preview-category').textContent = category;
+    document.getElementById('preview-description').textContent = description;
+    document.getElementById('preview-location').textContent = locationName ? `📍 ${locationName}${city ? ', ' + city : ''}` : '';
+    document.getElementById('preview-date').textContent = startDate ? `📅 ${new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}` : '';
+
+    previewSection.style.display = '';
+    previewSection.scrollIntoView({ behavior: 'smooth' });
+});
+
+// Form submission
+const form = document.getElementById('event-form');
+form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Collect form data
+    const formData = {
+        title: document.getElementById('event-title').value,
+        type: document.getElementById('event-type').value,
+        category: document.getElementById('event-category').value,
+        description: document.getElementById('event-description').value,
+        startDate: document.getElementById('event-start-date').value,
+        endDate: document.getElementById('event-end-date').value,
+        locationName: document.getElementById('event-location-name').value,
+        address: document.getElementById('event-address').value,
+        city: document.getElementById('event-city').value,
+        state: document.getElementById('event-state').value,
+        country: document.getElementById('event-country').value,
+        isVirtual: document.getElementById('event-virtual').checked,
+        virtualLink: document.getElementById('event-virtual-link').value,
+        organizer: document.getElementById('event-organizer').value,
+        organizerUrl: document.getElementById('event-organizer-url').value,
+        imageUrl: document.getElementById('event-image').value,
+        maxAttendees: document.getElementById('event-max-attendees').value,
+        price: document.getElementById('event-price').value,
+        status: 'approved',
+        source: 'admin'
+    };
+
+    // TODO: Send to API
+    console.log('Event data:', formData);
+    alert('Event saved! (This will connect to the database API)');
+
+    // Add to list
+    const eventsList = document.getElementById('events-list');
+    const date = new Date(formData.startDate);
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    
+    const newItem = document.createElement('div');
+    newItem.className = 'events-list-item';
+    newItem.innerHTML = `
+        <div class="events-list-date">
+            <span class="events-list-month">${month}</span>
+            <span class="events-list-day">${day}</span>
+        </div>
+        <div class="events-list-info">
+            <h4>${formData.title}</h4>
+            <p>📍 ${formData.locationName || 'Online'} · ${formData.type} · New</p>
+        </div>
+        <div class="events-list-actions">
+            <button class="events-list-btn" type="button">Edit</button>
+            <button class="events-list-btn events-list-btn-danger" type="button">Delete</button>
+        </div>
+    `;
+    eventsList.insertBefore(newItem, eventsList.firstChild);
+
+    // Reset form
+    form.reset();
+    previewSection.style.display = 'none';
+});
+
+// Delete buttons
+document.querySelectorAll('.events-list-btn-danger').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete this event?')) {
+            btn.closest('.events-list-item').remove();
+        }
+    });
+});
+</script>
+</body>
+</html>
