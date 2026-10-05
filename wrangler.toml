@@ -19,3 +19,6 @@ database_id = "f36b9161-b517-4634-9857-bef4147cefe3"
 [[r2_buckets]]
 binding = "TPI_MEDIA"
 bucket_name = "tpi-contributor-media"
+
+[triggers]
+crons = ["0 6 * * *"]

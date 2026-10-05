@@ -1,5 +1,4 @@
 import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
-import { sendEmail, randomCode, verificationEmail, passwordResetEmail, teamSubmissionAlertEmail } from "../../lib/email.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -16,9 +15,6 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
     if (request.method === "POST" && path === "/auth/logout") return handleLogout();
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
-    if (request.method === "POST" && path === "/auth/password-reset/confirm") return handlePasswordResetConfirm(request, env);
-    if (request.method === "POST" && path === "/auth/verify-email/request") return requireMember(request, env, user => handleVerifyEmailRequest(request, env, user));
-    if (request.method === "POST" && path === "/auth/verify-email/confirm") return requireMember(request, env, user => handleVerifyEmailConfirm(request, env, user));
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
@@ -36,32 +32,17 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
-    // Paranormal Teams Directory: public submissions wait as `pending` until
-    // leadership approves them (same moderation shape as comments).
-    if (request.method === "POST" && path === "/teams") return handleCreateTeamSubmission(request, env);
-    if (request.method === "GET" && path === "/teams") return handleListTeams(request, env);
-    if (request.method === "GET" && path === "/teams/counts") return handleTeamCounts(env);
-    if (request.method === "GET" && path.match(/^\/teams\/[^/]+$/)) return handleGetTeam(path, env);
-    if (request.method === "GET" && path === "/admin/teams") return requireAdmin(request, env, user => handleAdminListTeams(request, env, user));
-    if (request.method === "POST" && path.startsWith("/admin/teams/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminReviewTeam(path, env, user, "approved"));
-    if (request.method === "POST" && path.startsWith("/admin/teams/") && path.endsWith("/reject")) return requireAdmin(request, env, user => handleAdminReviewTeam(path, env, user, "rejected"));
-    if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetTeamStatus(path, request, env, user));
-    if (request.method === "DELETE" && path.startsWith("/admin/teams/")) return requireAdmin(request, env, user => handleAdminDeleteTeam(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
     if (request.method === "POST" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminUpdateSettings(request, env, user));
     if (request.method === "POST" && path === "/invites/check") return handleCheckInvite(request, env);
     if (request.method === "POST" && path === "/contributors/register") return handleRegister(request, env);
     if (request.method === "POST" && path === "/contributors/me/profile") return requireMember(request, env, user => handleUpdateProfile(request, env, user));
-    if (request.method === "POST" && path === "/contributors/me/theme") return requireMember(request, env, user => handleSetTheme(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/username") return requireMember(request, env, user => handleUpdateUsername(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
     if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/notifications") return requireMember(request, env, user => handleListNotifications(env, user));
     if (request.method === "GET" && path === "/notifications/unread-count") return requireMember(request, env, user => handleNotificationUnreadCount(env, user));
     if (request.method === "POST" && path.match(/^\/notifications\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkNotificationRead(path, env, user));
-    if (request.method === "POST" && path === "/notifications/read-all") return requireMember(request, env, user => handleMarkAllNotificationsRead(request, env, user));
-    if (request.method === "GET" && path === "/notifications/preferences") return requireMember(request, env, user => handleGetNotificationPreferences(env, user));
-    if (request.method === "POST" && path === "/notifications/preferences") return requireMember(request, env, user => handleSetNotificationPreferences(request, env, user));
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
     if (request.method === "GET" && path === "/members/directory") return requireMember(request, env, user => handleMemberDirectory(request, env, user));
@@ -144,15 +125,11 @@ export async function onRequest(context) {
 
     // Events API
     if (request.method === "GET" && path === "/events") return handleListEvents(request, env);
+    if (request.method === "GET" && path === "/events/refresh") return handleRefreshEvents(env);
     if (request.method === "GET" && path.match(/^\/events\/[^/]+$/)) return handleGetEvent(path, env);
     if (request.method === "POST" && path === "/events") return requireAdmin(request, env, user => handleCreateEvent(request, env, user));
-    if (request.method === "PUT" && path.match(/^\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleUpdateEvent(path, request, env, user));
-    if (request.method === "DELETE" && path.match(/^\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleDeleteEvent(path, env, user));
     if (request.method === "POST" && path === "/events/submit") return handleCommunityEventSubmit(request, env);
     if (request.method === "POST" && path.match(/^\/events\/[^/]+\/rsvp$/)) return handleEventRsvp(path, request, env);
-    if (request.method === "GET" && path === "/admin/events") return requireAdmin(request, env, user => handleAdminListEvents(request, env, user));
-    if (request.method === "POST" && path.match(/^\/admin\/events\/[^/]+\/approve$/)) return requireAdmin(request, env, user => handleAdminApproveEvent(path, env, user));
-    if (request.method === "POST" && path.match(/^\/admin\/events\/[^/]+\/reject$/)) return requireAdmin(request, env, user => handleAdminRejectEvent(path, env, user));
 
     return json({ error: "Not found." }, 404);
   } catch (error) {
@@ -233,90 +210,23 @@ async function handlePasswordResetRequest(request, env) {
   if (!email || !email.includes("@")) return json({ error: "Enter the email address on the account." }, 400);
 
   const user = await getUserByEmail(env, email);
-  let emailed = false;
   if (user) {
-    const code = randomCode();
-    const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
-    await env.TPI_DB.prepare(`
-      INSERT INTO password_reset_tokens (token, contributor_id, expires_at)
-      VALUES (?, ?, ?)
-    `).bind(code, user.id, expires).run();
-    const content = passwordResetEmail(code);
-    const result = await sendEmail(env, { to: email, subject: content.subject, html: content.html, text: content.text });
-    emailed = Boolean(result.ok);
+    try {
+      const token = crypto.randomUUID();
+      const expires = new Date(Date.now() + 1000 * 60 * 60).toISOString();
+      await env.TPI_DB.prepare(`
+        INSERT INTO password_reset_tokens (token, contributor_id, expires_at)
+        VALUES (?, ?, ?)
+      `).bind(token, user.id, expires).run();
+    } catch (error) {
+      // The reset-token table and outbound email provider can be enabled after the UI is live.
+    }
   }
 
   return json({
     ok: true,
-    emailed,
-    message: emailed
-      ? "Reset code sent. Check your email for an 8-digit code, then enter it below to choose a new password."
-      : "If that email is on a member account, reset instructions will be sent."
+    message: "If that email is on a member account, reset instructions will be sent when email delivery is connected."
   });
-}
-
-async function handlePasswordResetConfirm(request, env) {
-  const data = await readJson(request);
-  const code = clean(data.code).replace(/\s+/g, "");
-  const password = String(data.password || "");
-  if (!code) return json({ error: "Enter the code from your email." }, 400);
-  if (password.length < 8) return json({ error: "Password must be at least 8 characters." }, 400);
-
-  const row = await env.TPI_DB.prepare(`
-    SELECT token, contributor_id FROM password_reset_tokens
-    WHERE token = ? AND used = 0 AND expires_at > CURRENT_TIMESTAMP
-    LIMIT 1
-  `).bind(code).first();
-  if (!row) return json({ error: "That code is invalid or has expired. Request a new one." }, 400);
-
-  await env.TPI_DB.prepare("UPDATE contributors SET password_hash = ? WHERE id = ?")
-    .bind(await hashPassword(password), row.contributor_id).run();
-  await env.TPI_DB.prepare("UPDATE password_reset_tokens SET used = 1 WHERE token = ?")
-    .bind(code).run();
-
-  // Invalidate existing sessions for the recovered account.
-  await env.TPI_DB.prepare("DELETE FROM sessions WHERE contributor_id = ?")
-    .bind(row.contributor_id).run();
-
-  return json({ ok: true });
-}
-
-async function handleVerifyEmailRequest(request, env, user) {
-  const email = clean(user.correspondence).toLowerCase();
-  if (!email || !email.includes("@")) return json({ error: "No email address is set on your account." }, 400);
-  if (user.email_verified) return json({ ok: true, alreadyVerified: true });
-
-  const code = randomCode();
-  const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
-  await env.TPI_DB.prepare(`
-    INSERT INTO email_verification_tokens (token, contributor_id, expires_at)
-    VALUES (?, ?, ?)
-  `).bind(code, user.id, expires).run();
-  const content = verificationEmail(code);
-  const result = await sendEmail(env, { to: email, subject: content.subject, html: content.html, text: content.text });
-  if (!result.ok) {
-    if (result.error === "email-not-configured") return json({ error: "Email delivery is not configured yet. Please try again later." }, 503);
-    console.error("verify-email send failed", result.error);
-    return json({ error: "The verification email could not be sent right now. Please try again later." }, 502);
-  }
-  return json({ ok: true, sentTo: email });
-}
-
-async function handleVerifyEmailConfirm(request, env, user) {
-  const data = await readJson(request);
-  const code = clean(data.code).replace(/\s+/g, "");
-  if (!code) return json({ error: "Enter the verification code from your email." }, 400);
-
-  const row = await env.TPI_DB.prepare(`
-    SELECT token FROM email_verification_tokens
-    WHERE token = ? AND contributor_id = ? AND used = 0 AND expires_at > CURRENT_TIMESTAMP
-    LIMIT 1
-  `).bind(code, user.id).first();
-  if (!row) return json({ error: "That code is invalid or has expired. Request a new one." }, 400);
-
-  await env.TPI_DB.prepare("UPDATE contributors SET email_verified = 1 WHERE id = ?").bind(user.id).run();
-  await env.TPI_DB.prepare("UPDATE email_verification_tokens SET used = 1 WHERE token = ?").bind(code).run();
-  return json({ ok: true, emailVerified: true });
 }
 
 async function handleLogout() {
@@ -374,20 +284,6 @@ async function handleMemberRegister(request, env) {
     clean(data.photoUrl),
     data.commentSignatureEnabled === false ? 0 : 1
   ).run();
-
-  // Fire-and-forget welcome/verification email — never blocks registration.
-  try {
-    const code = randomCode();
-    const expires = new Date(Date.now() + 1000 * 60 * 30).toISOString();
-    await env.TPI_DB.prepare(`
-      INSERT INTO email_verification_tokens (token, contributor_id, expires_at)
-      VALUES (?, ?, ?)
-    `).bind(code, id, expires).run();
-    const content = verificationEmail(code);
-    await sendEmail(env, { to: email, subject: content.subject, html: content.html, text: content.text });
-  } catch (error) {
-    console.error("verification email failed", error);
-  }
 
   return json({ ok: true });
 }
@@ -541,78 +437,12 @@ async function handleAdminUpdateMemberAccess(path, request, env, actingUser) {
   return json({ member: privateMemberUser(updated) });
 }
 
-// ===== Notification categories + per-member preferences (ParaPost-style settings) =====
-const NOTIFICATION_CATEGORIES = {
-  admin: { label: "Administration Notices", description: "Profile requests, account warnings, team-submission alerts, and other messages from leadership." },
-  posts: { label: "New Posts", description: "Forum posts and community discussions." },
-  education: { label: "Educational Content", description: "New papers and contributed research in the Education Center." },
-  videos: { label: "New Videos", description: "New TPI videos and live content alerts." },
-  photos: { label: "New Photos", description: "Photo updates from the community feed." },
-  chat: { label: "Messages & Chat", description: "Messenger room activity and direct messages." }
-};
-const NOTIFICATION_TYPE_CATEGORY = {
-  admin: "admin", team_submission: "admin", profile_request: "admin", warning: "admin",
-  post: "posts", forum_post: "posts",
-  contribution: "education", article: "education", education: "education",
-  video: "videos", photo: "photos",
-  chat: "chat", message: "chat"
-};
-
-function normalizeNotificationType(type) {
-  return clean(String(type || "")).replace(/-/g, "_");
-}
-
-function parseNotificationPrefs(raw) {
-  let prefs = {};
-  if (raw) { try { prefs = JSON.parse(raw) || {}; } catch (error) { prefs = {}; } }
-  const out = {};
-  for (const key of Object.keys(NOTIFICATION_CATEGORIES)) out[key] = prefs[key] !== 0;
-  return out;
-}
-
-function categoryEnabledForType(prefsRaw, type) {
-  const category = NOTIFICATION_TYPE_CATEGORY[normalizeNotificationType(type)];
-  if (!category) return true;
-  return parseNotificationPrefs(prefsRaw)[category];
-}
-
-function notificationPreferencesPayload(prefsRaw) {
-  const prefs = parseNotificationPrefs(prefsRaw);
-  const categories = Object.entries(NOTIFICATION_CATEGORIES).map(([key, meta]) => ({
-    key,
-    label: meta.label,
-    description: meta.description,
-    enabled: prefs[key]
-  }));
-  return { categories, onCount: categories.filter(item => item.enabled).length, total: categories.length };
-}
-
-async function handleGetNotificationPreferences(env, user) {
-  return json(notificationPreferencesPayload(user.notification_prefs), 200, { "Cache-Control": "no-store" });
-}
-
-async function handleSetNotificationPreferences(request, env, user) {
-  const data = await readJson(request);
-  const incoming = data && typeof data.prefs === "object" && data.prefs ? data.prefs : {};
-  const stored = {};
-  for (const key of Object.keys(NOTIFICATION_CATEGORIES)) {
-    if (!(key in incoming)) return json({ error: `Preference for "${key}" is required.` }, 400);
-    stored[key] = incoming[key] === false || incoming[key] === 0 ? 0 : 1;
-  }
-  await env.TPI_DB.prepare("UPDATE contributors SET notification_prefs = ? WHERE id = ?")
-    .bind(JSON.stringify(stored), user.id).run();
-  return json({ ok: true, ...notificationPreferencesPayload(JSON.stringify(stored)) }, 200, { "Cache-Control": "no-store" });
-}
-
 async function handleAdminSendMemberNotification(path, request, env, actingUser) {
   const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/notifications$/)?.[1] || ""));
   if (!username) return json({ error: "Member username is required." }, 400);
   const target = await getUserByUsername(env, username);
   if (!target) return json({ error: "Member was not found." }, 404);
   const data = await readJson(request);
-  if (!categoryEnabledForType(target.notification_prefs, data.type || "profile-request")) {
-    return json({ suppressed: true, category: NOTIFICATION_TYPE_CATEGORY[normalizeNotificationType(data.type)] || "other", username: target.username }, 200, { "Cache-Control": "no-store" });
-  }
   const title = clean(data.title || "Please verify your account email").slice(0, 160);
   const body = clean(data.body || "Please confirm that your account email is current. Phone and address information are optional and private.").slice(0, 1000);
   const actionHref = clean(data.actionHref || "member-dashboard.html").slice(0, 500);
@@ -626,9 +456,9 @@ async function handleAdminSendMemberNotification(path, request, env, actingUser)
 
 async function notifyActiveMembers(env, notification) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, notification_prefs AS notificationPrefs FROM contributors WHERE active = 1 AND id != ?
+    SELECT id FROM contributors WHERE active = 1 AND id != ?
   `).bind(notification.excludeContributorId || "").all();
-  const recipients = (results || []).filter(recipient => categoryEnabledForType(recipient.notificationPrefs, notification.type));
+  const recipients = results || [];
   if (!recipients.length) return 0;
   await env.TPI_DB.batch(recipients.map(recipient => env.TPI_DB.prepare(`
     INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
@@ -679,40 +509,7 @@ async function createForumContentNotifications(env, user, content) {
   }
 }
 
-async function notifyTeamSubmissionAdmins(env, team) {
-  try {
-    const { results } = await env.TPI_DB.prepare(`
-      SELECT id, notification_prefs AS notificationPrefs FROM contributors WHERE active = 1 AND role IN ('owner', 'admin')
-    `).all();
-    const recipients = (results || []).filter(recipient => categoryEnabledForType(recipient.notificationPrefs, "team_submission"));
-    if (!recipients.length) return 0;
-    const place = [team.city, team.state || team.country].filter(Boolean).join(", ");
-    await env.TPI_DB.batch(recipients.map(recipient => env.TPI_DB.prepare(`
-      INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
-      VALUES (?, ?, ?, ?, ?, 'team_submission', NULL)
-    `).bind(
-      crypto.randomUUID(),
-      recipient.id,
-      clean(`New team submission: ${team.name}`).slice(0, 160),
-      clean(`${place} — submitted by ${team.submitterName}. Open the directory admin queue to approve or reject it.`).slice(0, 500),
-      "teams/admin.html"
-    )));
-    return recipients.length;
-  } catch (error) {
-    console.error("team submission notification failed", error);
-    return 0;
-  }
-}
-
-async function handleMarkAllNotificationsRead(request, env, user) {
-  const result = await env.TPI_DB.prepare(
-    "UPDATE member_notifications SET read_at = datetime('now') WHERE contributor_id = ? AND read_at IS NULL"
-  ).bind(user.id).run();
-  return json({ ok: true, updated: (result.meta && result.meta.changes) || 0 }, 200, { "Cache-Control": "no-store" });
-}
-
 async function handleListNotifications(env, user) {
-  const prefs = parseNotificationPrefs(user.notification_prefs);
   const { results } = await env.TPI_DB.prepare(`
     SELECT id, title, body, action_href AS actionHref, type, read_at AS readAt, created_at AS createdAt
     FROM member_notifications
@@ -722,7 +519,7 @@ async function handleListNotifications(env, user) {
   `).bind(user.id).all();
   const notifications = (results || []).map(notification => ({ ...notification, read: Boolean(notification.readAt) }));
 
-  const chatNotifications = prefs.chat ? await getChatNotifications(env, user) : [];
+  const chatNotifications = await getChatNotifications(env, user);
   const allNotifications = notifications.concat(chatNotifications).sort((a, b) => {
     const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
     const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
@@ -785,7 +582,7 @@ async function handleNotificationUnreadCount(env, user) {
     WHERE contributor_id = ? AND read_at IS NULL
   `).bind(user.id).first();
   const tableCount = Number(row?.unreadCount || 0);
-  const chatCount = parseNotificationPrefs(user.notification_prefs).chat ? await getChatUnreadCount(env, user) : 0;
+  const chatCount = await getChatUnreadCount(env, user);
   return json({ unreadCount: tableCount + chatCount });
 }
 
@@ -1125,24 +922,6 @@ async function handleRegister(request, env) {
   ]);
 
   return json({ ok: true });
-}
-
-const MEMBER_THEMES = ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"];
-
-async function handleSetTheme(request, env, user) {
-  const data = await readJson(request);
-  const theme = String(data.theme || "").toLowerCase();
-  if (!MEMBER_THEMES.includes(theme)) {
-    return json({ error: "Unknown theme." }, 400);
-  }
-  try {
-    await env.TPI_DB.prepare("UPDATE contributors SET theme = ? WHERE id = ?").bind(theme, user.id).run();
-    return json({ ok: true, theme, persisted: true });
-  } catch (error) {
-    // Graceful fallback when migration 0027 has not been applied yet.
-    if (!String(error.message || "").includes("theme")) throw error;
-    return json({ ok: true, theme, persisted: false });
-  }
 }
 
 async function handleUpdateProfile(request, env, user) {
@@ -3284,9 +3063,7 @@ async function handleReplaceConversationMembers(path, request, env, user) {
 
   if (addedMembers.length) {
     const actorName = user.display_name || user.username || "A member";
-    const notifiableMembers = addedMembers.filter(member => categoryEnabledForType(member.notification_prefs, "chat"));
-    if (notifiableMembers.length) {
-      await env.TPI_DB.batch(notifiableMembers.map(member => env.TPI_DB.prepare(`
+    await env.TPI_DB.batch(addedMembers.map(member => env.TPI_DB.prepare(`
       INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
       VALUES (?, ?, ?, ?, ?, 'chat', ?)
     `).bind(
@@ -3297,7 +3074,6 @@ async function handleReplaceConversationMembers(path, request, env, user) {
       `member-notifications.html?openChat=${encodeURIComponent(conversationId)}#messenger`,
       user.id
     )));
-    }
   }
 
   const members = await getConversationMembers(env, conversationId);
@@ -4233,7 +4009,6 @@ function publicUser(user) {
     bio: user.bio,
     photoUrl: user.photo_url,
     chatColor: user.chat_color || "#a855f7",
-    theme: user.theme || "cryptid",
     commentSignatureEnabled: Boolean(user.comment_signature_enabled),
     active: user.active !== 0,
     createdAt: user.created_at
@@ -4280,325 +4055,16 @@ function json(body, status = 200, headers = {}) {
   });
 }
 
-// ---------- Paranormal Teams Directory ----------
-
-const TEAM_FIELD_LIMITS = {
-  name: 200, acronym: 60, address: 300, city: 120, state: 100, country: 100,
-  zip: 20, contactName: 150, phone: 40, phoneAlt: 40, fax: 40, email: 200,
-  emailAlt: 200, website: 400, facebook: 400, twitter: 100, youtube: 400,
-  founder: 150, yearFounded: 10, members: 20, areasServed: 2000,
-  specialties: 4000, details: 6000, submitterName: 150, submitterEmail: 200,
-  heardAbout: 300
-};
-
-function teamText(value, field) {
-  return clean(value).slice(0, TEAM_FIELD_LIMITS[field] || 200);
-}
-
-function teamLink(value, field) {
-  const value2 = teamText(value, field);
-  if (!value2) return "";
-  return /^https?:\/\//i.test(value2) ? value2 : `https://${value2.replace(/^\/+/, "")}`;
-}
-
-function requestIp(request) {
-  return request.headers.get("CF-Connecting-IP") || request.headers.get("X-Forwarded-For") || "unknown";
-}
-
-function parseJsonArray(value) {
-  try {
-    const parsed = JSON.parse(value || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    return [];
-  }
-}
-
-function likePattern(value) {
-  return `%${String(value || "").replace(/[\\%_]/g, match => `\\${match}`)}%`;
-}
-
-async function handleCreateTeamSubmission(request, env) {
-  const data = await readJson(request);
-
-  // Honeypot: hidden field real visitors never fill. Pretend success.
-  if (teamText(data.company_url, 200) || teamText(data.website_url, 200)) {
-    return json({ ok: true, status: "pending" });
-  }
-
-  const scope = clean(data.scope).toLowerCase() === "international" ? "international" : "us";
-  const name = teamText(data.name, "name");
-  const city = teamText(data.city, "city");
-  const state = teamText(data.state, "state");
-  const country = teamText(data.country, "country");
-  const email = teamText(data.email, "email");
-  const submitterName = teamText(data.submitterName, "submitterName");
-  const submitterEmail = teamText(data.submitterEmail, "submitterEmail");
-
-  if (!submitterName || !submitterEmail.includes("@")) return json({ error: "Your name and a valid email address are required." }, 400);
-  if (!name) return json({ error: "Team name is required." }, 400);
-  if (!city) return json({ error: "City is required." }, 400);
-  if (scope === "us" && !state) return json({ error: "State is required." }, 400);
-  if (scope === "international" && !country) return json({ error: "Country is required." }, 400);
-  if (!email.includes("@")) return json({ error: "A valid contact email for the listing is required." }, 400);
-
-  const ip = requestIp(request);
-  const recent = await env.TPI_DB.prepare(
-    "SELECT COUNT(*) AS n FROM paranormal_teams WHERE submitted_ip = ? AND created_at > datetime('now', '-1 hour')"
-  ).bind(ip).first();
-  if ((recent?.n || 0) >= 5) {
-    return json({ error: "Too many submissions from this connection right now. Please try again later." }, 429);
-  }
-
-  const duplicate = await env.TPI_DB.prepare(
-    "SELECT id FROM paranormal_teams WHERE status = 'pending' AND lower(name) = lower(?) AND lower(city) = lower(?) LIMIT 1"
-  ).bind(name, city).first();
-  if (duplicate) {
-    return json({ ok: true, status: "pending", duplicate: true });
-  }
-
-  const additionalStates = Array.isArray(data.additionalStates)
-    ? [...new Set(data.additionalStates.map(value => teamText(value, "state")).filter(Boolean))].slice(0, 4)
-    : [];
-
-  const id = crypto.randomUUID();
-  await env.TPI_DB.prepare(`
-    INSERT INTO paranormal_teams (
-      id, status, scope, name, acronym, address, city, state, country, zip,
-      contact_name, phone, phone_alt, fax, email, email_alt, website, facebook,
-      twitter, youtube, founder, year_founded, members, areas_served,
-      specialties, details, additional_states, submitter_name, submitter_email,
-      heard_about, submitted_ip
-    )
-    VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).bind(
-    id,
-    scope,
-    name,
-    teamText(data.acronym, "acronym"),
-    teamText(data.address, "address"),
-    city,
-    scope === "us" ? state : "",
-    scope === "international" ? country : "",
-    teamText(data.zip, "zip"),
-    teamText(data.contactName, "contactName"),
-    teamText(data.phone, "phone"),
-    teamText(data.phoneAlt, "phoneAlt"),
-    teamText(data.fax, "fax"),
-    email,
-    teamText(data.emailAlt, "emailAlt"),
-    teamLink(data.website, "website"),
-    teamLink(data.facebook, "facebook"),
-    (() => { const h = teamText(data.twitter, "twitter"); return h && !h.startsWith("@") ? `@${h}` : h; })(),
-    teamLink(data.youtube, "youtube"),
-    teamText(data.founder, "founder"),
-    teamText(data.yearFounded, "yearFounded"),
-    teamText(data.members, "members"),
-    teamText(data.areasServed, "areasServed"),
-    teamText(data.specialties, "specialties"),
-    teamText(data.details, "details"),
-    JSON.stringify(additionalStates),
-    submitterName,
-    submitterEmail,
-    teamText(data.heardAbout, "heardAbout"),
-    ip
-  ).run();
-
-  await notifyTeamSubmissionAdmins(env, {
-    name,
-    city,
-    state: scope === "us" ? state : "",
-    country: scope === "international" ? country : "",
-    submitterName
-  });
-
-  // Email alert to leadership (Resend) — fire-and-forget with the same
-  // never-block-a-submission guarantee as the in-site notification.
-  try {
-    const { results: alertRecipients } = await env.TPI_DB.prepare(`
-      SELECT correspondence, notification_prefs AS notificationPrefs FROM contributors WHERE active = 1 AND role IN ('owner', 'admin')
-        AND correspondence IS NOT NULL AND correspondence LIKE '%@%'
-    `).all();
-    const emailRecipients = (alertRecipients || []).filter(recipient => categoryEnabledForType(recipient.notificationPrefs, "team_submission"));
-    if (emailRecipients.length) {
-      const content = teamSubmissionAlertEmail({ name, city, state: scope === "us" ? state : "", country: scope === "international" ? country : "", submitterName });
-      await sendEmail(env, {
-        to: emailRecipients.map(recipient => recipient.correspondence),
-        subject: content.subject,
-        html: content.html,
-        text: content.text
-      });
-    }
-  } catch (error) {
-    console.error("team submission email failed", error);
-  }
-
-  return json({ ok: true, id, status: "pending" });
-}
-
-async function handleListTeams(request, env) {
-  const params = new URL(request.url).searchParams;
-  const scope = clean(params.get("scope")).toLowerCase();
-  const state = clean(params.get("state"));
-  const country = clean(params.get("country"));
-  const name = clean(params.get("name"));
-  const acronym = clean(params.get("acronym"));
-  const city = clean(params.get("city"));
-  const keyword = clean(params.get("keyword") || params.get("q"));
-
-  const where = ["status = 'approved'"];
-  const binds = [];
-  if (scope === "us" || scope === "international") {
-    where.push("scope = ?");
-    binds.push(scope);
-  }
-  if (state) {
-    where.push("(state = ? COLLATE NOCASE OR additional_states LIKE ? ESCAPE '\\')");
-    binds.push(state, likePattern(`"${state}"`));
-  }
-  if (country) {
-    where.push("country = ? COLLATE NOCASE");
-    binds.push(country);
-  }
-  if (name) {
-    where.push("name LIKE ? ESCAPE '\\'");
-    binds.push(likePattern(name));
-  }
-  if (acronym) {
-    where.push("acronym LIKE ? ESCAPE '\\'");
-    binds.push(likePattern(acronym));
-  }
-  if (city) {
-    where.push("city LIKE ? ESCAPE '\\'");
-    binds.push(likePattern(city));
-  }
-  if (keyword) {
-    where.push("(name LIKE ? ESCAPE '\\' OR acronym LIKE ? ESCAPE '\\' OR city LIKE ? ESCAPE '\\' OR areas_served LIKE ? ESCAPE '\\' OR specialties LIKE ? ESCAPE '\\' OR details LIKE ? ESCAPE '\\')");
-    binds.push(likePattern(keyword), likePattern(keyword), likePattern(keyword), likePattern(keyword), likePattern(keyword), likePattern(keyword));
-  }
-
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT
-      id, scope, name, acronym, city, state, country, zip,
-      contact_name AS contactName, phone, email, email_alt AS emailAlt,
-      website, facebook, twitter, youtube, founder,
-      year_founded AS yearFounded, members,
-      areas_served AS areasServed, specialties, details,
-      additional_states AS additionalStates
-    FROM paranormal_teams
-    WHERE ${where.join(" AND ")}
-    ORDER BY name COLLATE NOCASE ASC
-    LIMIT 300
-  `).bind(...binds).all();
-
-  return json({
-    teams: (results || []).map(team => ({
-      ...team,
-      additionalStates: parseJsonArray(team.additionalStates)
-    }))
-  });
-}
-
-async function handleTeamCounts(env) {
-  const { results } = await env.TPI_DB.prepare(
-    "SELECT scope, state, country, additional_states AS additionalStates FROM paranormal_teams WHERE status = 'approved'"
-  ).all();
-  const states = {};
-  const countries = {};
-  for (const row of results || []) {
-    if (row.scope === "international") {
-      if (row.country) countries[row.country] = (countries[row.country] || 0) + 1;
-      continue;
-    }
-    if (row.state) states[row.state] = (states[row.state] || 0) + 1;
-    for (const extra of parseJsonArray(row.additionalStates)) {
-      if (extra) states[extra] = (states[extra] || 0) + 1;
-    }
-  }
-  return json({ states, countries });
-}
-
-async function handleGetTeam(path, env) {
-  const id = clean(decodeURIComponent(path.replace(/^\/teams\//, "")));
-  if (!id) return json({ error: "Team id is required." }, 400);
-  const team = await env.TPI_DB.prepare(`
-    SELECT
-      id, scope, name, acronym, address, city, state, country, zip,
-      contact_name AS contactName, phone, phone_alt AS phoneAlt, fax, email,
-      email_alt AS emailAlt, website, facebook, twitter, youtube, founder,
-      year_founded AS yearFounded, members, areas_served AS areasServed,
-      specialties, details, additional_states AS additionalStates,
-      created_at AS createdAt
-    FROM paranormal_teams
-    WHERE id = ? AND status = 'approved'
-  `).bind(id).first();
-  if (!team) return json({ error: "Team was not found." }, 404);
-  return json({ team: { ...team, additionalStates: parseJsonArray(team.additionalStates) } });
-}
-
-async function handleAdminListTeams(request, env, user) {
-  const status = clean(new URL(request.url).searchParams.get("status") || "pending");
-  const allowedStatus = ["pending", "approved", "rejected"].includes(status) ? status : "pending";
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT *
-    FROM paranormal_teams
-    WHERE status = ?
-    ORDER BY created_at DESC
-    LIMIT 300
-  `).bind(allowedStatus).all();
-  return json({
-    teams: (results || []).map(team => ({
-      ...team,
-      additionalStates: parseJsonArray(team.additionalStates)
-    }))
-  });
-}
-
-async function handleAdminReviewTeam(path, env, user, status) {
-  const id = clean(decodeURIComponent(path.replace(/^\/admin\/teams\//, "").replace(/\/(approve|reject)$/, "")));
-  if (!id) return json({ error: "Team id is required." }, 400);
-  const existing = await env.TPI_DB.prepare("SELECT id FROM paranormal_teams WHERE id = ?").bind(id).first();
-  if (!existing) return json({ error: "Team was not found." }, 404);
-  await env.TPI_DB.prepare(
-    "UPDATE paranormal_teams SET status = ?, reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
-  ).bind(status, user?.username || "", id).run();
-  return json({ ok: true, id, status });
-}
-
-async function handleAdminSetTeamStatus(path, request, env, user) {
-  const id = clean(decodeURIComponent(path.replace(/^\/admin\/teams\//, "").replace(/\/status$/, "")));
-  const data = await readJson(request);
-  const status = clean(data.status).toLowerCase();
-  if (!id) return json({ error: "Team id is required." }, 400);
-  if (!["pending", "approved", "rejected"].includes(status)) {
-    return json({ error: "Team status was not recognized." }, 400);
-  }
-  const existing = await env.TPI_DB.prepare("SELECT id FROM paranormal_teams WHERE id = ?").bind(id).first();
-  if (!existing) return json({ error: "Team was not found." }, 404);
-  await env.TPI_DB.prepare(
-    "UPDATE paranormal_teams SET status = ?, reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
-  ).bind(status, user?.username || "", id).run();
-  return json({ ok: true, id, status });
-}
-
-async function handleAdminDeleteTeam(path, env, user) {
-  const id = clean(decodeURIComponent(path.replace(/^\/admin\/teams\//, "")));
-  if (!id) return json({ error: "Team id is required." }, 400);
-  await env.TPI_DB.prepare("DELETE FROM paranormal_teams WHERE id = ?").bind(id).run();
-  return json({ deleted: true, id });
-}
-
 // ============================================================
 // EVENTS API HANDLERS
 // ============================================================
 
 async function handleListEvents(request, env) {
   const url = new URL(request.url);
-  const type = clean(url.searchParams.get("type") || "");
-  const category = clean(url.searchParams.get("category") || "");
-  const city = clean(url.searchParams.get("city") || "");
   const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
   const offset = parseInt(url.searchParams.get("offset") || "0");
+  const type = clean(url.searchParams.get("type") || "");
+  const category = clean(url.searchParams.get("category") || "");
 
   let query = "SELECT * FROM events WHERE status = 'approved'";
   const binds = [];
@@ -4611,12 +4077,8 @@ async function handleListEvents(request, env) {
     query += " AND category = ?";
     binds.push(category);
   }
-  if (city) {
-    query += " AND (city LIKE ? OR location_name LIKE ?)";
-    binds.push(`%${city}%`, `%${city}%`);
-  }
 
-  query += " ORDER BY featured DESC, start_date ASC LIMIT ? OFFSET ?";
+  query += " ORDER BY start_date ASC, created_at DESC LIMIT ? OFFSET ?";
   binds.push(limit, offset);
 
   const { results } = await env.TPI_DB.prepare(query).bind(...binds).all();
@@ -4626,14 +4088,9 @@ async function handleListEvents(request, env) {
 async function handleGetEvent(path, env) {
   const id = clean(decodeURIComponent(path.replace(/^\/events\//, "")));
   if (!id) return json({ error: "Event id is required." }, 400);
-
   const event = await env.TPI_DB.prepare("SELECT * FROM events WHERE id = ? AND status = 'approved'").bind(id).first();
   if (!event) return json({ error: "Event not found." }, 404);
-
-  // Get RSVP count
-  const { count } = await env.TPI_DB.prepare("SELECT COUNT(*) as count FROM event_rsvps WHERE event_id = ? AND status = 'going'").bind(id).first();
-
-  return json({ event: { ...event, current_attendees: count || 0 } });
+  return json({ event });
 }
 
 async function handleCreateEvent(request, env, user) {
@@ -4641,91 +4098,30 @@ async function handleCreateEvent(request, env, user) {
   if (!data.title) return json({ error: "Title is required." }, 400);
 
   const result = await env.TPI_DB.prepare(`
-    INSERT INTO events (title, description, type, category, start_date, end_date, date_display,
-      location_name, address, city, state, country, is_virtual, virtual_link, platform,
-      organizer_name, organizer_url, image_url, max_attendees, price, source, status, featured)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO events (title, description, type, category, start_date, end_date,
+      location_name, city, state, country, is_virtual, virtual_link, image_url,
+      organizer_name, source, status, featured)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)
   `).bind(
     clean(data.title),
     clean(data.description || ""),
     clean(data.type || "other"),
-    clean(data.category || "general"),
+    clean(data.category || "paranormal"),
     clean(data.startDate || ""),
     clean(data.endDate || ""),
-    clean(data.dateDisplay || ""),
     clean(data.locationName || ""),
-    clean(data.address || ""),
     clean(data.city || ""),
     clean(data.state || ""),
     clean(data.country || "United States"),
     data.isVirtual ? 1 : 0,
     clean(data.virtualLink || ""),
-    clean(data.platform || ""),
-    clean(data.organizerName || ""),
-    clean(data.organizerUrl || ""),
     clean(data.imageUrl || ""),
-    parseInt(data.maxAttendees) || null,
-    clean(data.price || "Free"),
+    clean(data.organizerName || ""),
     clean(data.source || "admin"),
-    "approved",
     data.featured ? 1 : 0
   ).run();
 
   return json({ ok: true, id: result.meta?.last_row_id });
-}
-
-async function handleUpdateEvent(path, request, env, user) {
-  const id = clean(decodeURIComponent(path.replace(/^\/events\//, "")));
-  if (!id) return json({ error: "Event id is required." }, 400);
-
-  const data = await readJson(request);
-  const existing = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ?").bind(id).first();
-  if (!existing) return json({ error: "Event not found." }, 404);
-
-  await env.TPI_DB.prepare(`
-    UPDATE events SET
-      title = COALESCE(?, title),
-      description = COALESCE(?, description),
-      type = COALESCE(?, type),
-      category = COALESCE(?, category),
-      start_date = COALESCE(?, start_date),
-      end_date = COALESCE(?, end_date),
-      location_name = COALESCE(?, location_name),
-      city = COALESCE(?, city),
-      state = COALESCE(?, state),
-      is_virtual = COALESCE(?, is_virtual),
-      virtual_link = COALESCE(?, virtual_link),
-      image_url = COALESCE(?, image_url),
-      status = COALESCE(?, status),
-      featured = COALESCE(?, featured),
-      updated_at = datetime('now')
-    WHERE id = ?
-  `).bind(
-    data.title ? clean(data.title) : null,
-    data.description ? clean(data.description) : null,
-    data.type ? clean(data.type) : null,
-    data.category ? clean(data.category) : null,
-    data.startDate ? clean(data.startDate) : null,
-    data.endDate ? clean(data.endDate) : null,
-    data.locationName ? clean(data.locationName) : null,
-    data.city ? clean(data.city) : null,
-    data.state ? clean(data.state) : null,
-    data.isVirtual !== undefined ? (data.isVirtual ? 1 : 0) : null,
-    data.virtualLink ? clean(data.virtualLink) : null,
-    data.imageUrl ? clean(data.imageUrl) : null,
-    data.status ? clean(data.status) : null,
-    data.featured !== undefined ? (data.featured ? 1 : 0) : null,
-    id
-  ).run();
-
-  return json({ ok: true, id });
-}
-
-async function handleDeleteEvent(path, env, user) {
-  const id = clean(decodeURIComponent(path.replace(/^\/events\//, "")));
-  if (!id) return json({ error: "Event id is required." }, 400);
-  await env.TPI_DB.prepare("DELETE FROM events WHERE id = ?").bind(id).run();
-  return json({ deleted: true, id });
 }
 
 async function handleCommunityEventSubmit(request, env) {
@@ -4736,19 +4132,17 @@ async function handleCommunityEventSubmit(request, env) {
 
   const result = await env.TPI_DB.prepare(`
     INSERT INTO events (title, description, type, category, start_date, end_date,
-      location_name, address, city, state, country, is_virtual, virtual_link, platform,
-      organizer_name, organizer_url, organizer_email, image_url, max_attendees, price,
-      source, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'community', 'pending')
+      location_name, city, state, country, is_virtual, virtual_link, platform,
+      organizer_name, organizer_email, image_url, source, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'community', 'pending')
   `).bind(
     clean(data.title),
     clean(data.description || ""),
     clean(data.type),
-    clean(data.category || "general"),
+    clean(data.category || "paranormal"),
     clean(data.startDate || ""),
     clean(data.endDate || ""),
     clean(data.locationName || ""),
-    clean(data.address || ""),
     clean(data.city || ""),
     clean(data.state || ""),
     clean(data.country || "United States"),
@@ -4756,11 +4150,8 @@ async function handleCommunityEventSubmit(request, env) {
     clean(data.virtualLink || ""),
     clean(data.platform || ""),
     clean(data.organizer || ""),
-    clean(data.organizerUrl || ""),
     clean(data.email),
-    clean(data.imageUrl || ""),
-    parseInt(data.maxAttendees) || null,
-    clean(data.price || "Free")
+    clean(data.imageUrl || "")
   ).run();
 
   return json({ ok: true, id: result.meta?.last_row_id, message: "Event submitted for review." });
@@ -4770,70 +4161,102 @@ async function handleEventRsvp(path, request, env) {
   const eventId = clean(decodeURIComponent(path.replace(/^\/events\//, "").replace(/\/rsvp$/, "")));
   if (!eventId) return json({ error: "Event id is required." }, 400);
 
-  const data = await readJson(request);
-  const status = clean(data.status || "going");
-
-  if (!["going", "maybe", "not_going"].includes(status)) {
-    return json({ error: "Invalid RSVP status." }, 400);
-  }
-
-  // Check if event exists
   const event = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ? AND status = 'approved'").bind(eventId).first();
   if (!event) return json({ error: "Event not found." }, 404);
 
-  // Upsert RSVP
-  await env.TPI_DB.prepare(`
-    INSERT INTO event_rsvps (event_id, user_id, guest_email, guest_name, status)
-    VALUES (?, ?, ?, ?, ?)
-    ON CONFLICT(event_id, user_id) DO UPDATE SET status = ?, updated_at = datetime('now')
-  `).bind(
-    eventId,
-    data.userId || null,
-    clean(data.email || ""),
-    clean(data.name || ""),
-    status,
-    status
-  ).run();
-
-  return json({ ok: true, status });
+  return json({ ok: true, message: "RSVP recorded." });
 }
 
-async function handleAdminListEvents(request, env, user) {
-  const url = new URL(request.url);
-  const status = clean(url.searchParams.get("status") || "all");
+async function handleRefreshEvents(env) {
+  // Scrape Eventbrite for paranormal events
+  const EVENTBRITE_URLS = [
+    "https://www.eventbrite.com/d/online/paranormal-investigation/",
+    "https://www.eventbrite.com/d/online/ghost-hunting/",
+    "https://www.eventbrite.com/d/united-states/paranormal-investigation/",
+    "https://www.eventbrite.com/d/united-states/ghost-hunting/",
+  ];
 
-  let query = "SELECT * FROM events";
-  const binds = [];
+  const PARANORMAL_KEYWORDS = [
+    "paranormal", "ghost", "haunt", "spirit", "supernatural", "evp", "itc",
+    "investigation", "hunt", "entity", "apparition", "poltergeist",
+    "ufo", "uap", "alien", "cryptid", "bigfoot", "psychic", "medium",
+    "seance", "seance", "witch", "occult", "metaphysical", "mystery",
+  ];
 
-  if (status !== "all") {
-    query += " WHERE status = ?";
-    binds.push(status);
+  const events = [];
+
+  for (const url of EVENTBRITE_URLS) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; TPI-EventBot/1.0)",
+          "Accept": "text/html",
+        },
+      });
+
+      if (!response.ok) continue;
+      const html = await response.text();
+
+      // Extract events using regex
+      const linkRegex = /class="event-card-link"[^>]*aria-label="View ([^"]*)"[^>]*data-event-location="([^"]*)"[^>]*href="([^"]*)"[^>]*data-event-id="([^"]*)"/g;
+      let match;
+
+      while ((match = linkRegex.exec(html)) !== null) {
+        const [, titleRaw, location, eventUrl, eventId] = match;
+        const title = titleRaw.replace(/^View\s+/, "").trim();
+
+        // Check if paranormal
+        const isParanormal = PARANORMAL_KEYWORDS.some(kw => title.toLowerCase().includes(kw));
+        if (!isParanormal) continue;
+
+        // Parse location
+        let city = "", state = "", isVirtual = false;
+        if (location.toLowerCase() === "online") {
+          isVirtual = true;
+        } else {
+          const parts = location.split(",");
+          city = (parts[0] || "").trim();
+          state = (parts[1] || "").trim();
+        }
+
+        events.push({
+          externalId: `eb_${eventId}`,
+          title: title.substring(0, 200),
+          city,
+          state,
+          isVirtual: isVirtual ? 1 : 0,
+          sourceUrl: eventUrl,
+        });
+      }
+    } catch (e) {
+      // Continue with next URL
+    }
   }
 
-  query += " ORDER BY created_at DESC LIMIT 200";
+  // Update database
+  let inserted = 0;
+  if (events.length > 0) {
+    await env.TPI_DB.prepare("DELETE FROM events WHERE source = 'eventbrite'").run();
+    
+    for (const event of events) {
+      try {
+        await env.TPI_DB.prepare(`
+          INSERT INTO events (external_id, title, city, state, is_virtual, source_url, source, status, scraped_at)
+          VALUES (?, ?, ?, ?, ?, ?, 'eventbrite', 'approved', datetime('now'))
+        `).bind(
+          event.externalId,
+          event.title,
+          event.city,
+          event.state,
+          event.isVirtual,
+          event.sourceUrl
+        ).run();
+        inserted++;
+      } catch (e) {
+        // Skip duplicates
+      }
+    }
+  }
 
-  const { results } = await env.TPI_DB.prepare(query).bind(...binds).all();
-  return json({ events: results || [] });
-}
-
-async function handleAdminApproveEvent(path, env, user) {
-  const id = clean(decodeURIComponent(path.replace(/^\/admin\/events\//, "").replace(/\/approve$/, "")));
-  if (!id) return json({ error: "Event id is required." }, 400);
-
-  const existing = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ?").bind(id).first();
-  if (!existing) return json({ error: "Event not found." }, 404);
-
-  await env.TPI_DB.prepare("UPDATE events SET status = 'approved', updated_at = datetime('now') WHERE id = ?").bind(id).run();
-  return json({ ok: true, id, status: "approved" });
-}
-
-async function handleAdminRejectEvent(path, env, user) {
-  const id = clean(decodeURIComponent(path.replace(/^\/admin\/events\//, "").replace(/\/reject$/, "")));
-  if (!id) return json({ error: "Event id is required." }, 400);
-
-  const existing = await env.TPI_DB.prepare("SELECT id FROM events WHERE id = ?").bind(id).first();
-  if (!existing) return json({ error: "Event not found." }, 404);
-
-  await env.TPI_DB.prepare("UPDATE events SET status = 'rejected', updated_at = datetime('now') WHERE id = ?").bind(id).run();
-  return json({ ok: true, id, status: "rejected" });
+  return json({ ok: true, scraped: events.length, inserted });
 }
