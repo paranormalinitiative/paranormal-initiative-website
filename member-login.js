@@ -234,7 +234,6 @@
       element.hidden = !contributorAllowed;
     });
     if (dashboardAdmin && !canUseAdminTools(user)) dashboardAdmin.hidden = true;
-    if (dashboardKicker) dashboardKicker.textContent = "Settings";
   }
 
   function isValidUsername(value) {
@@ -1273,7 +1272,7 @@
   }
 
   function renderDashboardProfile(user) {
-    if (!dashboardProfile || !user) return;
+    if (!user) return;
     updateDashboardToolVisibility(user);
     if (dashboardName) dashboardName.textContent = user.displayName || user.username || "Contributor";
     if (dashboardRole) dashboardRole.textContent = [user.title, getAccountAccessLabel(user.role)].filter(Boolean).join(" - ");
@@ -1296,6 +1295,9 @@
       usernameForm.hidden = false;
       if (usernameForm.username) usernameForm.username.value = user.username || "";
     }
+    // Settings page (member-dashboard.html) reuses the shared identity hooks but
+    // has no profile summary card or profile form of its own.
+    if (!dashboardProfile) return;
     const profileName = user.displayName || user.username || "Contributor";
     const photoMarkup = user.photoUrl
       ? `<img class="member-profile-photo" src="${escapeHtml(user.photoUrl)}" alt="${escapeHtml(profileName)}">`
@@ -1406,7 +1408,8 @@
   }
 
   async function initDashboard() {
-    if (!dashboardProfile) return;
+    // Runs on the Profile page (profile card) and the Settings page (login settings identity).
+    if (!dashboardProfile && !accountIdentity && !usernameForm) return;
     if (await cloudflareReady()) {
       const session = await window.TPIApi.me();
       if (!session.user) {
