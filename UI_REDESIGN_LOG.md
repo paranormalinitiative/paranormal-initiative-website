@@ -511,6 +511,7 @@ When continuing this work:
 41. ⬜ D1 database schema for events
 42. ⬜ Connect forms to database API
 43. ⬜ TPI Creator Studio (video reels + photo editing)
+44. ✅ Members Home / Feed merge (Oct 4, 2026) — Your Feed merged into the HOME page: composer front and center ("You Are the Initiative"), community feed with Activity / Posts / Published Content tabs, sidebar Home renamed and Your Feed item removed (explore.html kept for deep links)
 
 ---
 

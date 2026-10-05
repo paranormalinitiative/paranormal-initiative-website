@@ -361,6 +361,7 @@ No Phase 5 items shipped with the Oct 4 live deploy; they remain future work.
 - [x] Admin event entry form (admin-events.html)
 - [x] Community event submission form (submit-event.html)
 - [x] Form formatting fixed and polished
+- [x] **Members Home / Feed merged (Oct 4, 2026)** — Your Feed folded into the HOME page: composer front and center, community feed (Activity / Posts / Published Content tabs), sidebar Home renamed "Members Home / Feed" and the separate Your Feed item removed; explore.html kept for deep links
 - [ ] Redesign public landing page (match Paranormal Country polish)
 - [ ] Add interactive haunt map (map-based location directory)
 - [ ] Add Press/Media page (showcase coverage, press kit)
