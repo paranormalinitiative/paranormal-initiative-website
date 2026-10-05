@@ -46,6 +46,48 @@ const MEMBER_GATE_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
+// TPI Studio is announced but not open yet: everyone without leadership access
+// gets this Coming Soon page (403). Leadership (owner/admin) passes the gate
+// below and keeps full build access; guest invite links stay credential-based.
+const STUDIO_GATE_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>TPI Studio — Coming Soon | The Paranormal Initiative</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0a0c10; color: #c8cdd8; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+    .gate-card { max-width: 520px; width: 100%; background: #12151c; border: 1px solid #1e2230; border-radius: 12px; padding: 2.5rem; text-align: center; }
+    .gate-kicker { text-transform: uppercase; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; color: #59a9dc; margin-bottom: 1rem; }
+    .gate-soon { display: inline-block; padding: 0.35rem 1rem; border-radius: 999px; background: #59a9dc; color: #0a0c10; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; }
+    h1 { font-size: 1.75rem; font-weight: 700; color: #e8ecf4; margin-bottom: 1rem; }
+    .gate-message { font-size: 0.95rem; line-height: 1.6; color: #8d93a3; margin-bottom: 2rem; }
+    .gate-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+    .gate-button { display: block; width: 100%; padding: 0.85rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; text-decoration: none; text-align: center; cursor: pointer; border: none; transition: background 0.2s, transform 0.1s; }
+    .gate-button:hover { transform: translateY(-1px); }
+    .gate-button:active { transform: translateY(0); }
+    .gate-button-secondary { background: #1e2230; color: #c8cdd8; border: 1px solid #2a2f3e; }
+    .gate-button-secondary:hover { background: #252a3a; }
+  </style>
+</head>
+<body>
+  <div class="gate-card">
+    <p class="gate-kicker">The Paranormal Initiative</p>
+    <span class="gate-soon">Coming Soon</span>
+    <h1>TPI Studio</h1>
+    <p class="gate-message">Our livestream and podcast production suite is in final development. TPI Studio opens to members soon — watch your notifications for the launch.</p>
+    <div class="gate-actions">
+      <a class="gate-button gate-button-secondary" href="/">Return to The Paranormal Initiative</a>
+    </div>
+  </div>
+</body>
+</html>`;
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -124,14 +166,7 @@ export default {
       const user = await getSessionUser(request, env);
       const hasStudioAccess = user && (user.role === "owner" || user.role === "admin");
       if (!hasStudioAccess) {
-        const gateHtml = MEMBER_GATE_HTML
-          .replaceAll("ITC Visual Studio", "StudioFlow")
-          .replaceAll("StudioFlow — Member Access", "StudioFlow — Private Build Testing")
-          .replaceAll(
-            "StudioFlow is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
-            "StudioFlow is in private build testing and is not open to member access yet. Please check back soon."
-          );
-        return new Response(gateHtml, {
+        return new Response(STUDIO_GATE_HTML, {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8" }
         });

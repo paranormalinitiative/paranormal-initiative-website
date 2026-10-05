@@ -359,6 +359,10 @@
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
       element.hidden = !canUseAdminPanel;
     });
+    // Coming Soon markers (TPI Studio) hide for leadership, who can still enter.
+    document.querySelectorAll("[data-coming-soon]").forEach(function (element) {
+      element.hidden = canUseAdminPanel;
+    });
     document.body.classList.toggle("member-guest-mode", Boolean(user && user.guest));
     if (user && user.guest) {
       document.querySelectorAll('[data-nav="logout"]').forEach(function (element) {
