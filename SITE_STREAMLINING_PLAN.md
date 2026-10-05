@@ -351,14 +351,42 @@ No Phase 5 items shipped with the Oct 4 live deploy; they remain future work.
 - [ ] Add trending topics section
 - [ ] Add bottom mobile navigation bar
 
-### Phase 6: Live Site Deployment
+### Phase 6: Public Landing & Discovery (New — Based on Paranormal Country Comparison)
+- [x] Events page created with featured event, filters, and event cards
+- [x] Event card design with actual images (date badge, type badge, location, time, RSVP)
+- [x] Filter system (All, Investigations, Conferences, Meetups, Workshops, Live Streams)
+- [x] RSVP functionality with toggle
+- [x] Submit Event CTA linked to submission form
+- [x] Added to sidebar navigation (Community section, "New" tag)
+- [x] Admin event entry form (admin-events.html)
+- [x] Community event submission form (submit-event.html)
+- [x] Form formatting fixed and polished
+- [ ] Redesign public landing page (match Paranormal Country polish)
+- [ ] Add interactive haunt map (map-based location directory)
+- [ ] Add Press/Media page (showcase coverage, press kit)
+- [ ] Add seasonal content (Halloween features, investigation season guides)
+- [ ] Add "Free to join" messaging (lower barrier to entry)
+- [ ] Add Games/Quizzes (location puzzles, case-file quizzes)
+
+### Phase 7: API Integration (Planned — Not Started)
+- [ ] Eventbrite API for paranormal events
+- [ ] Meetup API for paranormal groups
+- [ ] Facebook Events API (requires app review)
+- [ ] D1 database schema for events
+- [ ] API endpoints for events CRUD
+- [ ] Connect admin form to database
+- [ ] Connect community form to database
+- [ ] Automated daily/weekly event scraping
+
+### Phase 8: Live Site Deployment
 - [x] Apply all UI/CSS/HTML changes to live site (GitHub/Cloudflare) — **DONE Oct 4, 2026**: full redesign merged onto the live repo via git 3-way merge (test base commit existed in live history, so no live-only work was lost), all 39 touched files + reels.html + tpi-banner/logo assets
 - [x] Add TPI Reels page to live site — reels.html deployed with sidebar link + NEW tag
 - [x] DO NOT modify StudioFlow (TPI Studio) — studio/ bundle untouched; Teams Directory keeps its own blue/green theme by design
 - [x] Post-merge fixes applied on live: `body.member-mode .portal-button-secondary` was overriding the new button theme with old dark-on-dark colors (invisible buttons) — now uses design-system variables; style.css cache-bust unified to v=80 across all pages
 - [x] Live-only features preserved in the merge: Paranormal Teams Directory, member notifications, Resend email verification/reset, admin teams queue
+- [x] **Events section deployed to live (Oct 4, 2026)** — events.html / submit-event.html / admin-events.html migrated from the desktop copy with purple literals converted to the six-theme token system; sidebar Events + Manage Events (admin-only); OG tags, search index, sitemap; admin-events gated to owner/admin
 
-### Phase 7: TPI Creator Studio (Future Build)
+### Phase 9: TPI Creator Studio (Future Build)
 
 ---
 

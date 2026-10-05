@@ -340,7 +340,29 @@ When working on the live site (GitHub/Cloudflare):
 - [ ] Add trending topics section
 - [ ] Add bottom mobile navigation bar
 
-### 🔮 Phase 10: TPI Creator Studio (Future Build)
+### ✅ Phase 10: Events Section (Based on Paranormal Country Comparison) — DEPLOYED TO LIVE
+- [x] Events page created with featured event, filters, and event cards
+- [x] Event card design with actual images (date badge, type badge, location, time, RSVP)
+- [x] Filter system (All, Investigations, Conferences, Meetups, Workshops, Live Streams)
+- [x] RSVP functionality with toggle
+- [x] Submit Event CTA linked to submission form
+- [x] Added to sidebar navigation (Community section, "New" tag)
+- [x] Admin event entry form (admin-events.html) — leadership-gated on live
+- [x] Community event submission form (submit-event.html)
+- [x] Form formatting fixed and polished
+- [x] **Deployed to live site (Oct 4, 2026)** — all three pages migrated from this desktop copy; hardcoded purple literals converted to theme tokens (`color-mix(in srgb, var(--accent) …)` + `var(--purple-700)`) so all six member themes tint the Events pages; events.html + submit-event.html made public/indexable with OG tags + sitemap + search index; admin-events.html kept noindex with an owner/admin gate; sidebar gained Events + Manage Events (admin-only)
+
+### Phase 11: API Integration (Planned — Not Started)
+- [ ] Eventbrite API for paranormal events
+- [ ] Meetup API for paranormal groups
+- [ ] Facebook Events API (requires app review)
+- [ ] Automated daily/weekly event scraping
+- [ ] D1 database schema for events
+- [ ] API endpoints for events CRUD
+- [ ] Connect admin form to database
+- [ ] Connect community form to database
+
+### 🔮 Phase 12: TPI Creator Studio (Future Build)
 A dedicated creator studio for producing reels and photo content directly within TPI.
 
 **Planned Features:**
@@ -479,8 +501,16 @@ When continuing this work:
 31. ⬜ People discovery section (new members, suggested connections)
 32. ⬜ Trending topics section
 33. ⬜ Bottom mobile navigation bar
-34. ⬜ TPI Creator Studio (video reels + photo editing)
-35. ✅ Live site deployment — redesign merged to GitHub/Cloudflare (Oct 4, 2026), reels.html live, StudioFlow untouched, live-only features preserved
+34. ✅ Events page with featured event, filters, and event cards
+35. ✅ Admin event entry form (admin-events.html) — leadership-gated on live
+36. ✅ Community event submission form (submit-event.html)
+37. ✅ Event form formatting fixed and polished
+38. ✅ Events section deployed to live site (Oct 4, 2026) — theme-token adapted, sidebar + search index + sitemap updated
+39. ⬜ Interactive map integration
+40. ⬜ Eventbrite/Meetup API integration
+41. ⬜ D1 database schema for events
+42. ⬜ Connect forms to database API
+43. ⬜ TPI Creator Studio (video reels + photo editing)
 
 ---
 
