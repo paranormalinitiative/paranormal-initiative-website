@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
-    <title>Member Home | The Paranormal Initiative</title>
+    <title>Members Home / Feed | The Paranormal Initiative</title>
     <meta name="description" content="Research, field investigation, education, and technology from The Paranormal Initiative.">
 
     <meta property="og:type" content="website">
@@ -804,7 +804,7 @@
         <div class="member-main-inner">
             <!-- MEMBER HOME HEADER -->
             <div class="member-home-header">
-                <h2>Member Home</h2>
+                <h2>Members Home / Feed</h2>
                 <span data-member-greeting class="member-greeting-inline"></span>
             </div>
 
@@ -892,6 +892,7 @@
     var profileUser = null;
     var forumCategories = [];
     var currentTab = "activity";
+    var viewingOwnProfile = true;
 
     var greetingEl = document.querySelector("[data-member-greeting]");
     var profilePhoto = document.querySelector("[data-member-photo]");
@@ -943,6 +944,7 @@
         setupProfileLinks();
 
         var isOwn = profileUser.username === activeUser.username;
+        viewingOwnProfile = isOwn;
 
         if (isOwn) {
             renderComposerAvatar();
@@ -1226,6 +1228,27 @@
                 var articles = (data.articles || []).filter(function(a) { return a.status === "published"; });
                 renderPublishedContent(articles);
                 loadMoreWrap.hidden = true;
+            } else if (viewingOwnProfile) {
+                // Merged Your Feed: the HOME feed is the community feed.
+                // Activity = everything; Posts = forum posts only.
+                var items = [];
+                var allFetched = 0;
+                var hasMore = true;
+                for (var page = 0; page < 4 && hasMore; page++) {
+                    var feedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset);
+                    var allItems = feedData.items || [];
+                    allFetched += allItems.length;
+                    feedOffset += allItems.length;
+                    hasMore = allItems.length >= FEED_LIMIT;
+                    if (currentTab !== "posts") {
+                        items = allItems;
+                        break;
+                    }
+                    items = items.concat(allItems.filter(function(item) { return item.type === "forum_post"; }));
+                    if (items.length >= FEED_LIMIT) break;
+                }
+                loadMoreWrap.hidden = !hasMore;
+                renderFeed(items, false);
             } else {
                 var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset);
                 var items = feedData.items || [];
@@ -1258,7 +1281,10 @@
 
     function renderFeed(items, append) {
         if (!items.length && !append) {
-            feedContainer.innerHTML = '<div class="member-empty"><h3>No activity yet.</h3><p>When this member posts or publishes content, it will appear here.</p></div>';
+            var emptyCopy = viewingOwnProfile
+                ? '<div class="member-empty"><h3>No activity yet.</h3><p>Be the first — share something with the community above.</p></div>'
+                : '<div class="member-empty"><h3>No activity yet.</h3><p>When this member posts or publishes content, it will appear here.</p></div>';
+            feedContainer.innerHTML = emptyCopy;
             return;
         }
         var html = items.map(renderFeedCard).join("");
