@@ -68,6 +68,10 @@ Rules:
 
 ## 📜 CHANGELOG (newest first)
 
+- **[BUFFY] 2026-10-05 — Member home dashboard right rail (Parapost-inspired)** — Todd reviewed parapost.net/dashboard and approved the "full right rail" package: two-column layout (feed center, sticky 300px rail right, collapses ≤1020px). Widgets, all live from existing APIs: **My Pulse** (avatar, role, posts/replies counts, View Profile), **Upcoming Events** (D1 `/api/events`, next 4, date-filtered), **Active Members** (recent feed authors excluding self), **Active Discussions** (latest 5 forum topics with reply counts). Rail hides when viewing other members' profiles. Verified locally: grid side-by-side at 1450px, single-column stack at 390px with no horizontal overflow, sticky positioning, widget content rendering. Deployed, Version ID `a7598124-1ac1-42e3-bc70-164b2f1ef92d`. Commit `525cea6`.
+
+- **[BUFFY] 2026-10-05 — Member home remake: composer links, video cards, share modal, one home page**
+
 - **[BUFFY] 2026-10-05 — Member home remake: composer links, video cards, share modal, one home page** — member-home.html is now the full creator+feed hub per Todd's direction (posts, photos, videos, shared links, community feed): (1) composer Link button + paste-URL row (validated http(s), max 5/post); (2) backend `sanitizeForumAttachments` accepts mediaType "link" (URL-validated, persisted, limit 5) in `functions/api/[[path]].js`; (3) feed now renders link chips AND TPI video cards (previously dropped); (4) full share modal (Copy Link / Facebook / X / Email) ported from community-home onto every feed card; (5) community-home.html retired to a 0s redirect → member-home (one home page, noindex). Verified locally in browser: link add/reject/remove flows, Post button state, share modal open/close, redirect target. Deployed to prod, Version ID `a2f1c46b-20af-4092-a753-742c8cbfe73e`. Commit `3077a95`.
 
 - **[BUFFY] 2026-10-05 — Landing hero CTA alignment fix**
