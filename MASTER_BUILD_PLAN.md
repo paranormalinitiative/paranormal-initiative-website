@@ -38,6 +38,8 @@ Rules:
 
 ## ✅ COMPLETED (approved and live)
 
+- ✅ [BUFFY] **ParaNews launched — Todd approved the concept 2026-10-05 ("I want our site to have something like paranormalcountry.com/news")** — public news.html with 12 category tabs (Cryptozoology→Unexplained), article cards linking to original publishers; lib/news-scraper.js aggregates 10 Google News topic feeds + 9 verified paranormal site feeds (17/19 healthy), keyword-classifies into the 12 topics, dedupes by hashed URL, inserts idempotently, prunes at 30 days; cron now every 6h (`0 */6 * * *`) covering events + news; GET /api/news + /api/news/refresh; news_articles table (migration 0029) applied to remote D1; header + member-sidebar links. Live-verified: clean excerpts (0 junk), 75% image coverage from site feeds, page rendering on prod. Deploys `d987275b` → `11c46496`.
+
 - ✅ [BUFFY] **Fixed the dead Eventbrite scraper (Todd approved 2026-10-05 "go ahead and fix it")** — cron AND /api/events/refresh had matched 0 cards (Eventbrite changed markup); both now share lib/event-scraper.js. Live-verified on prod: refresh returns 358 scraped / 300 inserted, all 300 rows have real ISO start_date (was 0% dates), external_id `eb_*` populated, scraped_at stamped, chronological sort works, hex entities decoded, Meetup/community rows untouched. "Other" down ~55% → 37%. Deploys `6cd1f547` + `40a8bdcf`.
 
 - ✅ [TODD] **Approved 2026-10-05** — Two-workspace system: fresh playground clone at `~/Desktop/paranormal-initiative-website` (git, clean at `d395b5f`), dual-workspace sync script v2 (`~/Desktop/sync-tpi-workspace.command`, --ff-only pulls both folders, unpushed-commit warnings); Opencode's home = the Desktop path
