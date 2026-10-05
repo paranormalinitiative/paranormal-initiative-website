@@ -23,19 +23,63 @@ HEADERS = {
 
 # Eventbrite search URLs (paranormal-specific)
 EVENTBRITE_URLS = [
+    # Investigation & Ghost Hunting
     "https://www.eventbrite.com/d/online/paranormal-investigation/",
     "https://www.eventbrite.com/d/online/ghost-hunting/",
-    "https://www.eventbrite.com/d/online/paranormal-conference/",
-    "https://www.eventbrite.com/d/online/evp-spirit-box/",
+    "https://www.eventbrite.com/d/online/ghost-hunt/",
+    "https://www.eventbrite.com/d/online/haunted-investigation/",
     "https://www.eventbrite.com/d/united-states/paranormal-investigation/",
     "https://www.eventbrite.com/d/united-states/ghost-hunting/",
     "https://www.eventbrite.com/d/united-states/haunted-house-investigation/",
+    
+    # Conferences & Events
+    "https://www.eventbrite.com/d/online/paranormal-conference/",
+    "https://www.eventbrite.com/d/online/paranormal-expo/",
+    "https://www.eventbrite.com/d/online/paranormal-convention/",
+    "https://www.eventbrite.com/d/united-states/paranormal-conference/",
+    "https://www.eventbrite.com/d/united-states/paranormal-expo/",
+    
+    # EVP & ITC
+    "https://www.eventbrite.com/d/online/evp-spirit-box/",
+    "https://www.eventbrite.com/d/online/evp-session/",
+    "https://www.eventbrite.com/d/online/itc-research/",
+    
+    # Psychic & Metaphysical
+    "https://www.eventbrite.com/d/online/psychic-development/",
+    "https://www.eventbrite.com/d/online/mediumship/",
+    "https://www.eventbrite.com/d/online/psychic-fair/",
+    "https://www.eventbrite.com/d/online/metaphysical/",
+    "https://www.eventbrite.com/d/online/past-life-regression/",
+    "https://www.eventbrite.com/d/online/reiki/",
+    
+    # UFO & Cryptid
+    "https://www.eventbrite.com/d/online/ufo-conference/",
+    "https://www.eventbrite.com/d/online/ufo-sighting/",
+    "https://www.eventbrite.com/d/online/cryptid/",
+    "https://www.eventbrite.com/d/online/bigfoot/",
+    
+    # Witchcraft & Occult
+    "https://www.eventbrite.com/d/online/witchcraft/",
+    "https://www.eventbrite.com/d/online/wicca/",
+    "https://www.eventbrite.com/d/online/tarot/",
+    "https://www.eventbrite.com/d/online/astrology/",
+    
+    # Tours
+    "https://www.eventbrite.com/d/online/ghost-tour/",
+    "https://www.eventbrite.com/d/online/haunted-tour/",
+    "https://www.eventbrite.com/d/united-states/ghost-tour/",
+    "https://www.eventbrite.com/d/united-states/haunted-house-tour/",
 ]
 
 # Meetup search URLs
 MEETUP_URLS = [
     "https://www.meetup.com/find/?keywords=paranormal+investigation&location=us",
     "https://www.meetup.com/find/?keywords=ghost+hunting&location=us",
+    "https://www.meetup.com/find/?keywords=paranormal&location=us",
+    "https://www.meetup.com/find/?keywords=psychic+development&location=us",
+    "https://www.meetup.com/find/?keywords=ufo+sighting&location=us",
+    "https://www.meetup.com/find/?keywords=spiritual+awakening&location=us",
+    "https://www.meetup.com/find/?keywords=meditation+spiritual&location=us",
 ]
 
 # MUST match at least one to be considered paranormal
