@@ -1706,13 +1706,12 @@
             var data = await res.json();
             var now = new Date();
             var upcoming = (data.events || []).filter(function(ev) {
-                // Skip dateless rows (e.g. legacy Meetup imports) entirely.
-                var d = ev.date_display || ev.start_date;
-                if (!d) return false;
-                var date = new Date(d);
+                // Only true ISO start_date values are trustworthy for upcoming
+                // filtering; skip dateless rows (legacy Meetup imports) entirely.
+                if (!ev.start_date || !/^\d{4}-\d{2}-\d{2}/.test(ev.start_date)) return false;
+                var date = new Date(ev.start_date);
                 if (isNaN(date.getTime())) return false;
-                // Only true ISO dates are trustworthy for upcoming filtering.
-                return /^\d{4}-\d{2}-\d{2}/.test(d) && date >= new Date(now.getTime() - 3600000);
+                return date >= new Date(now.getTime() - 3600000);
             }).slice(0, 4);
             if (!upcoming.length) {
                 body.innerHTML = '<p class="rail-empty">No upcoming events right now. <a href="submit-event.html" style="color:#a855f7;">Submit one</a>.</p>';
