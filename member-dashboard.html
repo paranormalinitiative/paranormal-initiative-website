@@ -27,6 +27,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=85">
     <link rel="stylesheet" href="member-shell.css?v=59">
+    <style>
+        article[data-theme-picker] { width: 100%; }
+    </style>
 </head>
 <body>
 <div id="site-header"></div>
@@ -37,92 +40,19 @@
 <section class="member-dashboard-shell">
     <div class="member-dashboard-header">
         <div>
-            <p class="portal-kicker" data-dashboard-kicker>Member Home</p>
-            <h2 data-dashboard-name>Member Dashboard</h2>
+            <p class="portal-kicker" data-dashboard-kicker>Settings</p>
+            <h2 data-dashboard-name>Settings</h2>
             <p data-dashboard-role>Loading contributor profile...</p>
         </div>
         <div class="portal-actions">
+            <a class="portal-button portal-button-secondary" href="member-profile.html">&#9786; Edit Profile</a>
             <a class="portal-button" href="paper-editor.html" data-contributor-tool hidden>Open Content Editor</a>
             <button class="portal-button portal-button-secondary" type="button" data-member-logout>Sign Out</button>
         </div>
     </div>
 
     <div class="member-dashboard-grid">
-        <article class="editor-access-card member-profile-card">
-            <p class="portal-kicker">Profile</p>
-            <div data-dashboard-profile></div>
-            <div data-dashboard-level></div>
-            <section class="dashboard-profile-summary-strip" data-contributor-tool hidden>
-                <div>
-                    <p class="portal-kicker">Contributions</p>
-                    <h2>Content Summary</h2>
-                    <p class="access-note">Manage drafts, published work, and legacy archive pages from the Content Editor.</p>
-                </div>
-                <div class="dashboard-count-grid">
-                    <div class="dashboard-count-card">
-                        <span>Unpublished Drafts</span>
-                        <strong data-dashboard-drafts>0</strong>
-                    </div>
-                    <div class="dashboard-count-card">
-                        <span>Published Papers</span>
-                        <strong data-dashboard-articles>0</strong>
-                    </div>
-                </div>
-                <a class="portal-button portal-button-secondary" href="paper-editor.html" data-contributor-tool>Open Content Editor</a>
-            </section>
-            <form class="member-profile-form" data-profile-form>
-                <label><span>Display Name</span><input name="displayName" type="text"></label>
-                <label>
-                    <span>Public Title / Credentials</span>
-                    <input name="title" type="text" maxlength="160" list="public-title-options" placeholder="Paranormal Researcher & Investigator, EVP / ITC Researcher, Evidence Reviewer">
-                </label>
-                <datalist id="public-title-options">
-                    <option value="Founder / Director"></option>
-                    <option value="Assistant Director"></option>
-                    <option value="Advisory Board Member"></option>
-                    <option value="Paranormal Researcher & Investigator"></option>
-                    <option value="EVP / ITC Researcher"></option>
-                    <option value="Field Investigator"></option>
-                    <option value="Technical Researcher"></option>
-                    <option value="Historical Researcher"></option>
-                    <option value="Evidence Reviewer"></option>
-                    <option value="Education & Outreach"></option>
-                    <option value="Community Liaison"></option>
-                    <option value="Contributor"></option>
-                </datalist>
-                <p class="access-note">Leadership titles are assigned by site leadership. Contributors can choose a professional role label that best describes their work.</p>
-                <label><span>Affiliation</span><input name="affiliation" type="text"></label>
-                <label><span>Organization</span><input name="organization" type="text"></label>
-                <label><span>Account Email</span><input name="correspondence" type="email" autocomplete="email" required></label>
-                <label><span>Website</span><input name="website" type="url"></label>
-                <div class="member-contact-settings">
-                    <p class="portal-kicker">Optional Private Contact Information</p>
-                    <p class="access-note">These fields are optional. Only you and authorized administrators can view them; they never appear on your public profile.</p>
-                </div>
-                <label><span>Contact Name</span><input name="contactName" type="text" autocomplete="name"></label>
-                <label><span>Phone Number</span><input name="phone" type="tel" autocomplete="tel"></label>
-                <label><span>Street Address</span><input name="addressLine1" type="text" autocomplete="address-line1"></label>
-                <label><span>Address Line 2</span><input name="addressLine2" type="text" autocomplete="address-line2"></label>
-                <label><span>City</span><input name="city" type="text" autocomplete="address-level2"></label>
-                <label><span>State</span><input name="state" type="text" autocomplete="address-level1"></label>
-                <label><span>ZIP Code</span><input name="postalCode" type="text" autocomplete="postal-code"></label>
-                <label class="chat-color-field"><span>Chat Box Color</span><input name="chatColor" type="color" value="#2f9e44"></label>
-                <div class="profile-photo-editor">
-                    <div class="profile-photo-preview" data-profile-photo-preview></div>
-                    <div class="profile-photo-controls">
-                        <label><span>Profile Photo</span><input name="profilePhotoFile" type="file" accept="image/*"></label>
-                        <label><span>Or Use Image URL</span><input name="photoUrl" type="text" inputmode="url" placeholder="https://... or /api/media/..."></label>
-                    </div>
-                </div>
-                <label><span>Biography</span><textarea name="bio" rows="12" placeholder="Write a professional contributor biography. This is the public biography people will see when they click your name."></textarea></label>
-                <label class="access-checkbox">
-                    <input name="commentSignature" type="checkbox" checked>
-                    <span>Use my display name and title on comments and replies.</span>
-                </label>
-                <button type="submit">Save Profile</button>
-                <a class="portal-button portal-button-secondary" data-public-profile-link href="#">View Public Profile</a>
-            </form>
-        </article>
+        
 
         <article class="editor-access-card account-settings-card">
             <p class="portal-kicker">Account</p>
@@ -195,7 +125,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=35"></script>
-<script src="member-shell.js?v=53"></script>
+<script src="member-login.js?v=36"></script>
+<script src="member-shell.js?v=54"></script>
 </body>
 </html>

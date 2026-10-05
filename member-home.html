@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
-    <title>Members Home / Feed | The Paranormal Initiative</title>
+    <title>Home | The Paranormal Initiative</title>
     <meta name="description" content="Research, field investigation, education, and technology from The Paranormal Initiative.">
 
     <meta property="og:type" content="website">
@@ -804,7 +804,7 @@
         <div class="member-main-inner">
             <!-- MEMBER HOME HEADER -->
             <div class="member-home-header">
-                <h2>Members Home / Feed</h2>
+                <h2>Home</h2>
                 <span data-member-greeting class="member-greeting-inline"></span>
             </div>
 
@@ -862,6 +862,22 @@
                 <button type="button" data-load-more-btn>Load More</button>
             </div>
 
+            <!-- MY CONTENT (contributions) -->
+            <section class="event-form-card" id="my-content-card" hidden>
+                <div class="event-form-header">
+                    <div class="event-form-icon">📄</div>
+                    <div>
+                        <h3 class="event-form-title">My Content</h3>
+                        <p class="event-form-subtitle">Your published and unpublished papers and posts, at a glance.</p>
+                    </div>
+                    <a class="portal-button portal-button-secondary" href="paper-editor.html" style="margin-left:auto; white-space:nowrap;">Open Content Editor</a>
+                </div>
+                <div class="member-notification-stats" data-my-content-stats>
+                    <div class="member-notification-stat" role="listitem"><span>Unpublished drafts</span><strong data-my-drafts>–</strong></div>
+                    <div class="member-notification-stat" role="listitem"><span>Published</span><strong data-my-published>–</strong></div>
+                </div>
+            </section>
+
             <!-- PROFILE IDENTITY -->
             <div class="member-profile-identity" data-member-profile>
                 <div class="member-profile-photo-wrap" data-member-photo></div>
@@ -872,7 +888,8 @@
                     <p class="member-profile-bio" data-member-bio></p>
                     <div class="member-profile-facts" data-member-facts></div>
                     <div class="member-profile-actions">
-                        <a href="member-dashboard.html">&#9881; Edit Profile / Settings</a>
+                        <a href="member-profile.html">&#9786; Edit Profile</a>
+                        <a href="member-dashboard.html">&#9881; Settings</a>
                     </div>
                 </div>
             </div>
@@ -883,7 +900,7 @@
 
 <script src="api-client.js"></script>
 <script src="includes.js"></script>
-<script src="member-shell.js?v=53"></script>
+<script src="member-shell.js?v=54"></script>
 <script>
 (function () {
     var FEED_LIMIT = 20;
@@ -942,6 +959,7 @@
         renderGreeting();
         renderProfile();
         setupProfileLinks();
+        loadMyContent();
 
         var isOwn = profileUser.username === activeUser.username;
         viewingOwnProfile = isOwn;
@@ -1007,6 +1025,23 @@
             if (profileUser.website) facts.push('<span>Website: <strong><a href="' + escapeAttr(profileUser.website) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(profileUser.website) + '</a></strong></span>');
             profileFacts.innerHTML = facts.join("");
         }
+    }
+
+    async function loadMyContent() {
+        var card = document.getElementById("my-content-card");
+        if (!card || !window.TPIApi || !window.TPIApi.contributorArticles) return;
+        try {
+            var data = await window.TPIApi.contributorArticles();
+            var articles = data.articles || data.papers || [];
+            var drafts = 0, published = 0;
+            articles.forEach(function(a) {
+                if (a.status === "published" || a.published) published++;
+                else drafts++;
+            });
+            document.querySelector("[data-my-drafts]").textContent = String(drafts);
+            document.querySelector("[data-my-published]").textContent = String(published);
+            card.hidden = false;
+        } catch (e) { /* leave the card hidden */ }
     }
 
     function getRoleLabel(role) {

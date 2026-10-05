@@ -58,6 +58,7 @@
   var INHERENT_MEMBER_PAGES = [
     "member-home",
     "member-dashboard",
+    "member-profile",
     "member-notifications",
     "admin-panel",
     "admin-advanced-settings",
@@ -346,7 +347,7 @@
       });
       return;
     }
-    var href = "member-home.html?username=" + encodeURIComponent(user.username);
+    var href = "member-profile.html";
     var profileLink = document.querySelector('[data-nav-profile]');
     if (profileLink) profileLink.href = href;
     var profileLinkMobile = document.querySelector('[data-nav-profile-mobile]');

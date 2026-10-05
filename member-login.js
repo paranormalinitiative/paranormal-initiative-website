@@ -234,7 +234,7 @@
       element.hidden = !contributorAllowed;
     });
     if (dashboardAdmin && !canUseAdminTools(user)) dashboardAdmin.hidden = true;
-    if (dashboardKicker) dashboardKicker.textContent = contributorAllowed ? "Contributor Home" : "Member Home";
+    if (dashboardKicker) dashboardKicker.textContent = "Settings";
   }
 
   function isValidUsername(value) {

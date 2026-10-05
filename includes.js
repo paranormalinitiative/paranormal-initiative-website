@@ -190,15 +190,13 @@
     if (!user) return;
 
     const firstName = String(user.displayName || user.username || "Member").trim().split(/\s+/)[0] || "Member";
-    const profileUrl = user.username
-      ? `member-home.html?username=${encodeURIComponent(user.username)}`
-      : "member-home.html";
+    const profileUrl = "member-home.html";
     const badge = document.createElement("div");
     badge.className = "member-greeting";
     badge.innerHTML = `
       <a class="member-dashboard-link" href="${escapeGreeting(profileUrl)}">
         <span>Hello, ${escapeGreeting(firstName)}</span>
-        <strong>Member Home</strong>
+        <strong>Home</strong>
       </a>
       <button type="button" data-header-logout>Sign Out</button>
     `;
