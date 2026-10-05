@@ -38,6 +38,7 @@ Rules:
 
 ## ✅ COMPLETED (approved and live)
 
+- ✅ [TODD] **Approved 2026-10-05** — Two-workspace system: fresh playground clone at `~/Desktop/paranormal-initiative-website` (git, clean at `d395b5f`), dual-workspace sync script v2 (`~/Desktop/sync-tpi-workspace.command`, --ff-only pulls both folders, unpushed-commit warnings); Opencode's home = the Desktop path
 - ✅ [TODD] Site concept, design language, six member themes, section structure
 - ✅ [BUFFY] Member portal: Home (composer + community feed + My Content), Profile page (identity summary + edit form), Settings (login + color themes)
 - ✅ [BUFFY] Landing front door: "Explore before you join" hero + teaser cards; `?member=1` → member-home redirect (ONE home page)
@@ -66,6 +67,8 @@ Rules:
 - 🛠️ Scraper dedup: reruns append, no dedup by URL yet — [OPENCODE] lane
 
 ## 📜 CHANGELOG (newest first)
+
+- **[BUFFY] 2026-10-05 — Two-workspace playground system stood up** — verified master plan + directive files present in BOTH folders via git; fresh Desktop clone created after Todd removed the stale copy; sync script rewritten for dual-folder pulls with unpushed warnings. **[TODD] approved.**
 
 - **[BUFFY] 2026-10-05 — Two-agent workflow formalized** — MIMO_DIRECTIVE.md created + per-task directive mechanism; landing graphics pass shipped (banner hero + teaser cards); deploy `564afe21`.
 - **[OPENCODE] 2026-10-05 — Events pipeline to D1 + cron** — commits `e8833d6`…`964bf17`: real events into D1, paranormal-only filtering, 177 events, Show More, cron auto-scrape + refresh endpoint.
