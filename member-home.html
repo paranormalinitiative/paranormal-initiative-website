@@ -29,10 +29,17 @@
     <link rel="stylesheet" href="member-shell.css?v=59">
     <style>
         /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
+        /* Lift the shell's 1050px cap on this page only so the rail sits far
+           right and the feed column gets real width. */
+        .member-main-inner:has(.member-home-layout) {
+            max-width: 1680px;
+            padding: 0 40px 0 32px;
+        }
+
         .member-home-layout {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 300px;
-            gap: 20px;
+            grid-template-columns: minmax(0, 1fr) 348px;
+            gap: 28px;
             align-items: start;
         }
 
@@ -41,16 +48,19 @@
         .member-home-rail {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             position: sticky;
             top: 80px;
+            width: 100%;
         }
 
         .rail-card {
+            width: 100%;
+            box-sizing: border-box;
             background: #10141c;
             border: 1px solid #263646;
             border-radius: 10px;
-            padding: 16px;
+            padding: 16px 18px;
         }
 
         .rail-card-head {
@@ -372,6 +382,11 @@
             color: #8aa0b6;
             font-size: 11px;
             flex-shrink: 0;
+        }
+
+        @media (max-width: 1200px) {
+            .member-main-inner:has(.member-home-layout) { padding: 0 24px 0 20px; }
+            .member-home-layout { grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; }
         }
 
         @media (max-width: 1020px) {
