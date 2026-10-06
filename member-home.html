@@ -82,7 +82,7 @@
         }
 
         .rail-card-link {
-            color: #a855f7;
+            color: var(--accent);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.04em;
@@ -196,7 +196,7 @@
             transition: border-color 0.2s, color 0.2s;
         }
 
-        .rail-pulse-link:hover { color: #f4f8fb; border-color: rgba(168, 85, 247, 0.5); }
+        .rail-pulse-link:hover { color: #f4f8fb; border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 
         /* Upcoming Events */
         .rail-event {
@@ -210,7 +210,7 @@
             transition: border-color 0.15s;
         }
 
-        .rail-event:hover { border-color: rgba(168, 85, 247, 0.5); }
+        .rail-event:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 
         .rail-event-title {
             margin: 0;
@@ -242,7 +242,7 @@
             transition: background 0.15s;
         }
 
-        .rail-member:hover { background: rgba(168, 85, 247, 0.07); }
+        .rail-member:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
 
         .rail-member-avatar,
         .rail-member-initial {
@@ -290,7 +290,7 @@
             transition: border-color 0.15s;
         }
 
-        .rail-feature:hover { border-color: rgba(168, 85, 247, 0.5); }
+        .rail-feature:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 
         .rail-feature-media {
             position: relative;
@@ -367,7 +367,7 @@
             transition: border-color 0.15s;
         }
 
-        .rail-fc-block:hover { border-color: rgba(168, 85, 247, 0.5); }
+        .rail-fc-block:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 
         .rail-fc-block + .rail-fc-block { margin-top: 10px; }
 
@@ -475,7 +475,7 @@
         .rail-topic:last-child { border-bottom: none; }
 
         .rail-topic-rank {
-            color: #a855f7;
+            color: var(--accent);
             font-size: 13px;
             font-weight: 800;
             min-width: 14px;
@@ -644,7 +644,7 @@
 
         .member-profile-actions a:hover {
             color: #f4f8fb;
-            border-color: rgba(168, 85, 247, 0.5);
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
         /* ===== IDENTITY BLOCK ===== */
@@ -658,7 +658,7 @@
             background: #10141c;
             border: 1px solid #263646;
             border-radius: 24px;
-            box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05), 0 0 24px rgba(168, 85, 247, 0.07);
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 5%, transparent), 0 0 24px color-mix(in srgb, var(--accent) 7%, transparent);
         }
 
         .member-identity-title {
@@ -740,8 +740,8 @@
         }
 
         .composer-textarea:focus {
-            border-color: rgba(168, 85, 247, 0.6);
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.08);
+            border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 8%, transparent);
         }
 
         .composer-bottom {
@@ -766,7 +766,7 @@
         }
 
         .composer-category-select:focus {
-            border-color: rgba(168, 85, 247, 0.5);
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
         .composer-actions {
@@ -837,8 +837,8 @@
 
         .composer-media-btn:hover {
             color: #c7d5e2;
-            background: rgba(168, 85, 247, 0.06);
-            border-color: rgba(168, 85, 247, 0.12);
+            background: color-mix(in srgb, var(--accent) 6%, transparent);
+            border-color: color-mix(in srgb, var(--accent) 12%, transparent);
         }
 
         /* ===== LINK SHARE ROW ===== */
@@ -863,7 +863,7 @@
 
         .composer-link-input:focus {
             outline: none;
-            border-color: rgba(168, 85, 247, 0.5);
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
         .composer-link-add,
@@ -881,8 +881,8 @@
 
         .composer-link-add {
             color: #0a0c10;
-            background: #a855f7;
-            border: 1px solid #a855f7;
+            background: var(--accent);
+            border: 1px solid var(--accent);
         }
 
         .composer-link-add:hover { background: #bd7ef9; border-color: #bd7ef9; }
@@ -920,7 +920,7 @@
 
         .feed-link-chip:hover {
             color: #f4f8fb;
-            border-color: rgba(168, 85, 247, 0.5);
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
         .feed-link-chip .feed-link-host {
@@ -928,7 +928,7 @@
             align-items: center;
             gap: 6px;
             flex-shrink: 0;
-            color: #a855f7;
+            color: var(--accent);
             font-size: 11px;
             font-weight: 700;
         }
@@ -1044,7 +1044,7 @@
 
         .member-feed-tab:hover {
             color: #c7d5e2;
-            background: rgba(168, 85, 247, 0.04);
+            background: color-mix(in srgb, var(--accent) 4%, transparent);
         }
 
         .member-feed-tab.active {
@@ -1147,14 +1147,14 @@
 
         .badge-category {
             color: var(--accent);
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.25);
+            background: color-mix(in srgb, var(--accent) 10%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
         }
 
         .badge-article {
-            color: #a78bfa;
-            background: rgba(167, 139, 250, 0.1);
-            border: 1px solid rgba(167, 139, 250, 0.25);
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 10%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
         }
 
         .feed-card-body {
@@ -1202,8 +1202,8 @@
 
         .feed-action-btn:hover {
             color: #e6edf3;
-            background: rgba(168, 85, 247, 0.08);
-            border-color: rgba(168, 85, 247, 0.15);
+            background: color-mix(in srgb, var(--accent) 8%, transparent);
+            border-color: color-mix(in srgb, var(--accent) 15%, transparent);
         }
 
         .feed-action-btn .action-count {
@@ -1274,7 +1274,7 @@
         .member-empty {
             text-align: center;
             padding: 48px 28px;
-            border: 1px dashed rgba(168, 85, 247, 0.2);
+            border: 1px dashed color-mix(in srgb, var(--accent) 20%, transparent);
             border-radius: 16px;
             background: var(--accent-muted);
         }
@@ -1318,7 +1318,7 @@
 
         .feed-load-more button:hover {
             color: #f4f8fb;
-            border-color: rgba(168, 85, 247, 0.5);
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
         /* ===== SHARE MODAL ===== */
@@ -1372,7 +1372,7 @@
         .share-modal-options button:hover,
         .share-modal-options a:hover {
             color: #f4f8fb;
-            border-color: rgba(168, 85, 247, 0.5);
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
         .share-modal-close {
@@ -1493,7 +1493,7 @@
         .event-form-card,
         .member-profile-identity,
         .member-identity-block {
-            box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05), 0 0 22px rgba(168, 85, 247, 0.07);
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 5%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 7%, transparent);
         }
     </style>
 </head>
@@ -1982,7 +1982,7 @@
             var data = await res.json();
             var items = data.news || [];
             if (!items.length) {
-                body.innerHTML = '<p class="rail-empty">No headlines yet — <a href="news.html" style="color:#a855f7;">browse ParaNews</a>.</p>';
+                body.innerHTML = '<p class="rail-empty">No headlines yet — <a href="news.html" style="color:var(--accent);">browse ParaNews</a>.</p>';
                 return;
             }
             // Rotate the Spotlight instead of always pinning the newest
@@ -2040,7 +2040,7 @@
         var initial = (activeUser.displayName || activeUser.username || "M").trim().charAt(0).toUpperCase() || "M";
         var avatar = activeUser.photoUrl
             ? '<img class="rail-pulse-avatar" src="' + escapeAttr(activeUser.photoUrl) + '" alt="' + escapeAttr(activeUser.displayName || "You") + '">'
-            : '<div class="rail-pulse-avatar-initial" style="background:' + escapeAttr(activeUser.chatColor || "#a855f7") + '">' + escapeHtml(initial) + '</div>';
+            : '<div class="rail-pulse-avatar-initial" style="background:' + escapeAttr(activeUser.chatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
         body.innerHTML =
             '<div class="rail-pulse-top">' +
                 avatar +
@@ -2101,7 +2101,7 @@
                 return date >= new Date(now.getTime() - 3600000);
             }).slice(0, 4);
             if (!upcoming.length) {
-                body.innerHTML = '<p class="rail-empty">No upcoming events right now. <a href="submit-event.html" style="color:#a855f7;">Submit one</a>.</p>';
+                body.innerHTML = '<p class="rail-empty">No upcoming events right now. <a href="submit-event.html" style="color:var(--accent);">Submit one</a>.</p>';
                 return;
             }
             body.innerHTML = upcoming.map(function(ev) {
@@ -2114,7 +2114,7 @@
                 '</a>';
             }).join("");
         } catch (e) {
-            body.innerHTML = '<p class="rail-empty">Events could not be loaded. <a href="events.html" style="color:#a855f7;">Browse all events</a>.</p>';
+            body.innerHTML = '<p class="rail-empty">Events could not be loaded. <a href="events.html" style="color:var(--accent);">Browse all events</a>.</p>';
         }
     }
 
@@ -2139,7 +2139,7 @@
                 var initial = (m.authorName || "M").charAt(0).toUpperCase();
                 var avatar = m.authorPhotoUrl
                     ? '<img class="rail-member-avatar" src="' + escapeAttr(m.authorPhotoUrl) + '" alt="' + escapeAttr(m.authorName) + '">'
-                    : '<div class="rail-member-initial" style="border-color:' + escapeAttr(m.authorChatColor || "#a855f7") + ';background:' + escapeAttr(m.authorChatColor || "#a855f7") + '">' + escapeHtml(initial) + '</div>';
+                    : '<div class="rail-member-initial" style="border-color:' + escapeAttr(m.authorChatColor || "var(--accent)") + ';background:' + escapeAttr(m.authorChatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
                 var sub = m.type === "article" ? "Published content" : (m.categoryTitle || "Forum post");
                 return '<a class="rail-member" href="member-home.html?username=' + encodeURIComponent(m.authorUsername) + '">' +
                     avatar +
@@ -2160,7 +2160,7 @@
         window.TPIApi.forumIndex().then(function(data) {
             var topics = (data.topics || []).slice(0, 5);
             if (!topics.length) {
-                body.innerHTML = '<p class="rail-empty">No discussions yet. <a href="community-forum.html" style="color:#a855f7;">Start one</a>.</p>';
+                body.innerHTML = '<p class="rail-empty">No discussions yet. <a href="community-forum.html" style="color:var(--accent);">Start one</a>.</p>';
                 return;
             }
             body.innerHTML = topics.map(function(t, i) {
@@ -2590,9 +2590,12 @@
             return;
         }
         var html = articles.map(function(article) {
+            var avatar = profileUser.photoUrl
+                ? '<img class="feed-card-avatar" src="' + escapeAttr(profileUser.photoUrl) + '" alt="' + escapeAttr(profileUser.displayName || "Member") + '">'
+                : '<div class="feed-card-avatar-initial" style="border-color:var(--accent);background:var(--accent)">' + escapeHtml((profileUser.displayName || "M").charAt(0).toUpperCase()) + '</div>';
             return '<article class="feed-card">' +
                 '<div class="feed-card-header">' +
-                    '<div class="feed-card-avatar-initial" style="border-color:#a78bfa;background:#a78bfa">' + escapeHtml((profileUser.displayName || "M").charAt(0).toUpperCase()) + '</div>' +
+                    avatar +
                     '<div class="feed-card-meta">' +
                         '<strong>' + escapeHtml(profileUser.displayName || profileUser.username) + '</strong>' +
                         '<span class="feed-card-detail">' + escapeHtml(formatDate(article.createdAt)) + '</span>' +
@@ -2733,10 +2736,15 @@
         var rawArticleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
         var articleUrl = window.preserveMemberMode ? window.preserveMemberMode(rawArticleUrl) : rawArticleUrl;
         var typeBadge = item.contributionType || item.articleType || "Article";
+        // The author's real avatar shows on every article they wrote;
+        // falls back to their colored initial only when no photo exists.
+        var avatar = item.authorPhotoUrl
+            ? '<img class="feed-card-avatar" src="' + escapeAttr(item.authorPhotoUrl) + '" alt="' + escapeAttr(item.authorName || "Member") + '">'
+            : '<div class="feed-card-avatar-initial" style="border-color:var(--accent);background:var(--accent)">' + escapeHtml((item.authorName || "T").charAt(0).toUpperCase()) + '</div>';
 
         return '<article class="feed-card" data-feed-type="article" data-article-id="' + escapeAttr(item.id) + '">' +
             '<div class="feed-card-header">' +
-                '<div class="feed-card-avatar-initial" style="border-color:#a78bfa;background:#a78bfa">' + escapeHtml((item.authorName || "T").charAt(0).toUpperCase()) + '</div>' +
+                avatar +
                 '<div class="feed-card-meta">' +
                     '<strong><a href="' + escapeAttr(profileUrl) + '">' + escapeHtml(item.authorName || item.author || "The Paranormal Initiative") + '</a></strong>' +
                     '<span class="feed-card-detail">' + escapeHtml(formatDate(item.createdAt)) + '</span>' +
