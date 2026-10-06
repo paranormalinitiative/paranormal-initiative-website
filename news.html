@@ -51,7 +51,11 @@
         .pn-card { display: flex; flex-direction: column; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
         .pn-card:hover { border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); transform: translateY(-2px); }
         .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: var(--bg-secondary); }
-        .pn-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        /* The img is absolutely positioned so a tall source image can't
+           stretch the 16/9 media box (content min-size beats aspect-ratio
+           on an auto-height box). Every card media area renders the same
+           height — the Rabbit Hole card look, everywhere. */
+        .pn-card-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
         .pn-card-media.no-image { display: grid; place-items: center; font-size: 34px; opacity: 0.5; }
         .pn-badge { position: absolute; top: 10px; left: 10px; padding: 3px 9px; background: color-mix(in srgb, var(--bg-primary) 85%, transparent); border: 1px solid var(--pn-accent); border-radius: 999px; color: var(--pn-accent); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
         .pn-card-body { padding: 14px 15px 15px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
