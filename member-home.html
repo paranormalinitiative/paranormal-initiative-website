@@ -395,7 +395,7 @@
 
         .rail-fc-block:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
 
-        .rail-fc-block + .rail-fc-block { margin-top: 10px; }
+        .rail-fc-block + .rail-fc-block { margin-top: 16px; }
 
         .rail-fc-block-media {
             position: relative;
@@ -410,12 +410,14 @@
             display: block;
         }
 
+        /* Tag pill sits on its own line ABOVE the preview so it never
+           covers the artwork (per Todd). */
         .rail-fc-tag {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            padding: 2px 8px;
-            background: rgba(10, 12, 16, 0.85);
+            display: inline-flex;
+            align-items: center;
+            margin: 12px 12px 8px;
+            padding: 3px 9px;
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
             border: 1px solid var(--accent, #a855f7);
             border-radius: 999px;
             color: var(--accent, #a855f7);
@@ -1628,9 +1630,9 @@
                     <div data-featured-body>
                         <!-- Real content blocks (filled by loadRailFeatured()) -->
                         <a class="rail-fc-block" href="tpi-videos.html" data-fc-video-slot hidden>
+                            <span class="rail-fc-tag">TPI Investigation Series</span>
                             <div class="rail-fc-block-media">
                                 <img src="assets/investigation-development-series/welcome-to-the-paranormal-initiative.png" alt="" loading="lazy">
-                                <span class="rail-fc-tag">TPI Investigation Series</span>
                             </div>
                             <div class="rail-fc-block-body">
                                 <p class="rail-fc-block-title">Latest paranormal investigation videos from the field.</p>
@@ -1638,9 +1640,9 @@
                             </div>
                         </a>
                         <a class="rail-fc-block" href="evp-itc-research.html" data-fc-article-slot="evp" hidden>
+                            <span class="rail-fc-tag">EVP / ITC Research</span>
                             <div class="rail-fc-block-media">
                                 <img src="assets/acs/ar-lab.png" alt="" loading="lazy">
-                                <span class="rail-fc-tag">Audio Research Lab</span>
                             </div>
                             <div class="rail-fc-block-body">
                                 <p class="rail-fc-block-title">Anomalous voice phenomena and ITC research.</p>
@@ -1648,9 +1650,9 @@
                             </div>
                         </a>
                         <a class="rail-fc-block" href="field-articles.html" data-fc-article-slot="field" hidden>
+                            <span class="rail-fc-tag">Field Papers &amp; Articles</span>
                             <div class="rail-fc-block-media">
                                 <img src="assets/ghostology-101/1.jpg" alt="" loading="lazy">
-                                <span class="rail-fc-tag">Field Papers &amp; Articles</span>
                             </div>
                             <div class="rail-fc-block-body">
                                 <p class="rail-fc-block-title">Contributed research, methodology, and guides.</p>
@@ -1659,9 +1661,8 @@
                         </a>
                         <!-- ParaTube slot: featured video image from the aggregator -->
                         <a class="rail-fc-block" href="paratube.html" data-fc-paratube hidden>
-                            <div class="rail-fc-block-media">
-                                <span class="rail-fc-tag">ParaTube</span>
-                            </div>
+                            <span class="rail-fc-tag">ParaTube</span>
+                            <div class="rail-fc-block-media"></div>
                             <div class="rail-fc-block-body">
                                 <p class="rail-fc-block-title">Paranormal video aggregated from the open web.</p>
                                 <p class="rail-fc-block-meta">Watch now</p>
@@ -1896,7 +1897,7 @@
 
     // Featured Content: fills the Spotlight-sized blocks with real site
     // content — newest TPI video (Investigation Series), published article
-    // picks per section (Audio Research Lab / Field Papers) that rotate on
+    // picks per section (EVP / ITC Research / Field Papers) that rotate on
     // every refresh cycle, and the ParaTube slot takes its featured image
     // from the video aggregator.
     async function loadRailFeatured() {
@@ -1932,7 +1933,7 @@
                 slot.hidden = false;
             }
             fillArticleSlot("[data-fc-article-slot='field']", "Field Papers & Articles");
-            // Audio Research Lab: prefer EVP/ITC-labelled articles, else latest.
+            // EVP / ITC Research: prefer EVP/ITC-labelled articles, else latest.
             var evpSlot = document.querySelector("[data-fc-article-slot='evp']");
             if (evpSlot) {
                 var evp = articles.filter(function (a) {
@@ -1942,7 +1943,7 @@
                 if (evp) {
                     var titleEl = evpSlot.querySelector(".rail-fc-block-title");
                     var metaEl = evpSlot.querySelector(".rail-fc-block-meta");
-                    if (titleEl) titleEl.textContent = evp.title || "Audio Research Lab";
+                    if (titleEl) titleEl.textContent = evp.title || "EVP / ITC Research";
                     if (metaEl) metaEl.textContent = evp.author || "EVP / ITC";
                     var href = evp.href || ("published-article.html?id=" + encodeURIComponent(evp.id));
                     if (window.preserveMemberMode) href = window.preserveMemberMode(href);
@@ -1965,8 +1966,9 @@
                 if (slot && video) {
                     var media = slot.querySelector(".rail-fc-block-media");
                     if (media && video.thumbnailUrl) {
-                        media.innerHTML = '<img src="' + escapeAttr(video.thumbnailUrl) + '" alt="" loading="lazy">' +
-                            '<span class="rail-fc-tag">ParaTube</span>';
+                        // The tag pill lives above the media now — only the
+                        // image goes inside the media box.
+                        media.innerHTML = '<img src="' + escapeAttr(video.thumbnailUrl) + '" alt="" loading="lazy">';
                     }
                     var titleEl = slot.querySelector(".rail-fc-block-title");
                     var metaEl = slot.querySelector(".rail-fc-block-meta");
