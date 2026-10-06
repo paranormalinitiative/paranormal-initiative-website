@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — Uniform radius language on every page: swept all remaining hardcoded radii (cards/panels 10–20px → 24px Education look, small pills/chips 4–6px & 20px → fully round 999px, controls/inner tiles → 12–16px) across index, events, submit-event, admin-events, tpi-videos, member-home and the encyclopedia/glossary pages. Verified in-browser on home, events and tpi-videos. Deploy Version ID: 32764369-9576-4e42-b027-e0b6cf208a6c (commit f662e83).
+
 [BUFFY] 2026-10-06 — Global Education Center card/pill styling: remapped radius tokens (--radius-sm 10→16px, --radius-md 16→24px) so all token-driven cards/panels/inputs get the rounder look, plus hardcoded 10px card radii on news/paratube/member-home rail → 24px. Pills already fully round. Verified in-browser (news 24px, rail 24px, Education Center unchanged as reference). Deploy Version ID: 5dc8d03f-6637-48da-99bb-bf1fb462b632 (commit 5de20e8).
 
 [BUFFY] 2026-10-06 — Even trailing card rows on ParaNews/ParaTube: short final card rows widen their cards to span the grid (spans collapse on mobile), ParaNews promotes imageless rows into empty card slots first, and fixed a Load More bug where a page ending on a block boundary zeroed the quotas so the next page rendered nothing. Verified in-browser with short-remainder mocks on both pages. Deploy Version ID: f8e2e9a1-4b7e-4428-84af-0c7efc9d4337 (commit fb8c6b5).
