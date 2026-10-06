@@ -1880,7 +1880,11 @@ footer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
     margin-top: 10px;
-    max-width: 720px;
+}
+
+/* A single photo or video fills the whole post width, like the home feed */
+.discussion-attachments:has(> .discussion-attachment:only-child) {
+    grid-template-columns: 1fr;
 }
 
 .discussion-attachment {
@@ -1906,10 +1910,17 @@ footer {
 .discussion-attachment video {
     display: block;
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 16 / 10;
     height: auto;
     object-fit: cover;
     background: var(--bg-primary);
+}
+
+/* Single attachment plays at feed size: full width, 16:9 */
+.discussion-attachment:only-child img,
+.discussion-attachment:only-child video {
+    aspect-ratio: 16 / 9;
+    max-height: 460px;
 }
 
 .discussion-attachment button span {
