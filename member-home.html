@@ -1527,7 +1527,7 @@
             <div class="member-composer" data-member-composer>
                 <div class="composer-top">
                     <div data-composer-avatar></div>
-                    <textarea class="composer-textarea" data-composer-body rows="3" maxlength="6000" placeholder="Share something with the TPI community..."></textarea>
+                    <textarea class="composer-textarea" data-composer-body rows="3" maxlength="6000" placeholder="Share something with the TPI community..." spellcheck="true"></textarea>
                 </div>
                 <div class="composer-preview-area" data-composer-previews></div>
                 <div class="composer-media-row">
@@ -1868,6 +1868,12 @@
         loadRailNews();
         loadRailVideo();
         loadRailFeatured();
+        // The main Activity feed refreshes too, so anything posted by any
+        // member shows up for everyone without a reload.
+        if (viewingOwnProfile && currentTab === "activity") {
+            feedOffset = 0;
+            await loadFeed();
+        }
         // Fade back in after the swap window; loaders fill in whenever their
         // fetches resolve, the fade just softens the moment of replacement.
         setTimeout(endRailFade, 350);
@@ -1947,13 +1953,14 @@
         } catch (e) {
             // Blocks stay hidden on failure; fallback content already rendered.
         }
-        // ParaTube slot: newest aggregated video thumbnail, click through to
-        // the watch page when the video is on-site, else ParaTube itself.
+        // ParaTube slot: a rotating recent aggregated video thumbnail —
+        // picks a different one each refresh cycle so it never looks stale.
         try {
-            var vres = await fetch("/api/videos?limit=1");
+            var vres = await fetch("/api/videos?limit=6");
             if (vres.ok) {
                 var vdata = await vres.json();
-                var video = (vdata.videos || [])[0];
+                var vids = (vdata.videos || []);
+                var video = vids.length ? vids[Math.floor(Math.random() * vids.length)] : null;
                 var slot = document.querySelector("[data-fc-paratube]");
                 if (slot && video) {
                     var media = slot.querySelector(".rail-fc-block-media");

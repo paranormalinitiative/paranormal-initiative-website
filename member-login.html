@@ -38,7 +38,7 @@
         <h2>Contributor Access</h2>
         <p>Sign in with your member, contributor, admin, or owner username/email and password.</p>
         <form data-member-login>
-            <label><span>Username Or Email</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Username Or Email</span><input name="username" type="text" autocomplete="username" required spellcheck="true"></label>
             <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
             <button type="submit">Sign In</button>
         </form>
@@ -47,7 +47,7 @@
             <label><span>Account Email</span><input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
             <button type="submit">Send Reset Code</button>
             <p class="access-note">We'll email an 8-digit code. Enter it below with a new password to finish the reset.</p>
-            <label class="account-recovery-step"><span>Reset Code</span><input name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="00000000"></label>
+            <label class="account-recovery-step"><span>Reset Code</span><input name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="00000000" spellcheck="true"></label>
             <label class="account-recovery-step"><span>New Password</span><input name="password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></label>
             <label class="account-recovery-step"><span>Confirm New Password</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8"></label>
         </form>
@@ -59,9 +59,9 @@
         <h2>Create Member Account</h2>
         <p>Create a normal member account for the Discussion Portal. Contributor publishing access is approved separately.</p>
         <form data-member-register>
-            <label><span>Display Name</span><input name="displayName" type="text" autocomplete="name" required></label>
+            <label><span>Display Name</span><input name="displayName" type="text" autocomplete="name" required spellcheck="true"></label>
             <label><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
-            <label><span>Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces." required></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces." required spellcheck="true"></label>
             <p class="access-note">Usernames are login handles. Use letters, numbers, dashes, underscores, periods, or symbols. No spaces.</p>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
             <label><span>Confirm Password</span><input name="confirmPassword" type="password" autocomplete="new-password" required></label>
@@ -78,7 +78,7 @@
         <h2>Upgrade With Invite Code</h2>
         <p>Have a contributor invite code from The Paranormal Initiative? Enter it here to create approved contributor access.</p>
         <form data-invite-check>
-            <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required></label>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required spellcheck="true"></label>
             <button type="submit">Submit Invite Code</button>
         </form>
         <p class="access-note">Contributor access allows writing, drafts, and publishing tools. Normal membership does not require an invite.</p>
@@ -90,10 +90,10 @@
         <p>Create the approved contributor login you will use for the Discussion Portal and Content Editor.</p>
         <form data-invite-register>
             <input name="inviteCode" type="hidden">
-            <label><span>Display Name</span><input name="displayName" type="text" required></label>
+            <label><span>Display Name</span><input name="displayName" type="text" required spellcheck="true"></label>
             <label>
                 <span>Title / Role Label</span>
-                <input name="title" type="text" list="public-title-options" placeholder="Paranormal Researcher & Investigator">
+                <input name="title" type="text" list="public-title-options" placeholder="Paranormal Researcher & Investigator" spellcheck="true">
             </label>
             <datalist id="public-title-options">
                 <option value="Founder / Director"></option>
@@ -110,13 +110,13 @@
                 <option value="Contributor"></option>
             </datalist>
             <p class="access-note">Leadership titles are assigned by site leadership. Choose the professional role label that best describes your work.</p>
-            <label><span>Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces." required></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" pattern="[A-Za-z0-9._!#$%&'*+/=?^`{|}~-]+" title="Use letters, numbers, dashes, underscores, periods, or symbols. No spaces." required spellcheck="true"></label>
             <p class="access-note">Usernames are login handles. Use letters, numbers, dashes, underscores, periods, or symbols. No spaces.</p>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
             <label><span>Confirm Password</span><input name="confirmPassword" type="password" autocomplete="new-password" required></label>
             <label><span>Email</span><input name="correspondence" type="email" autocomplete="email" required></label>
-            <label><span>Affiliation</span><input name="affiliation" type="text"></label>
-            <label><span>Organization</span><input name="organization" type="text"></label>
+            <label><span>Affiliation</span><input name="affiliation" type="text" spellcheck="true"></label>
+            <label><span>Organization</span><input name="organization" type="text" spellcheck="true"></label>
             <label><span>Website</span><input name="website" type="url"></label>
             <label class="access-checkbox">
                 <input name="commentSignature" type="checkbox" checked>
@@ -132,7 +132,7 @@
         <p>First-time setup only. This appears when 10-click is enabled so you can create your real owner/admin login.</p>
         <form data-owner-bootstrap-form>
             <label><span>Owner Setup Key</span><input name="setupKey" type="password"></label>
-            <label><span>Owner Username</span><input name="username" type="text" value="tpi-owner"></label>
+            <label><span>Owner Username</span><input name="username" type="text" value="tpi-owner" spellcheck="true"></label>
             <label><span>Owner Password</span><input name="password" type="password"></label>
             <button type="submit">Create / Update Owner Login</button>
         </form>

@@ -36,7 +36,7 @@
         <h2>Enter Your Invite Code</h2>
         <p>This is for someone who has already received an invite from The Paranormal Initiative. They enter that code here to create their contributor login.</p>
         <form data-invite-check>
-            <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required></label>
+            <label><span>Invite Code</span><input name="inviteCode" type="text" autocomplete="off" required spellcheck="true"></label>
             <button type="submit">Submit Invite Code</button>
         </form>
         <p class="access-note">Already have a contributor account? <a href="member-login.html">Go to Member Login</a>.</p>
@@ -48,10 +48,10 @@
         <p>Create the login you will use when returning to the Content Editor.</p>
         <form data-invite-register>
             <input name="inviteCode" type="hidden">
-            <label><span>Display Name</span><input name="displayName" type="text" required></label>
+            <label><span>Display Name</span><input name="displayName" type="text" required spellcheck="true"></label>
             <label>
                 <span>Title / Role Label</span>
-                <input name="title" type="text" list="public-title-options" placeholder="Research Contributor">
+                <input name="title" type="text" list="public-title-options" placeholder="Research Contributor" spellcheck="true">
             </label>
             <datalist id="public-title-options">
                 <option value="Founder / Director"></option>
@@ -67,11 +67,11 @@
                 <option value="Investigator"></option>
             </datalist>
             <p class="access-note">Leadership titles are assigned by the Founder / Director or Assistant Director. Most contributors should choose a research, field, education, technical, or reviewer label.</p>
-            <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
+            <label><span>Username</span><input name="username" type="text" autocomplete="username" required spellcheck="true"></label>
             <label><span>Password</span><input name="password" type="password" autocomplete="new-password" required></label>
             <label><span>Correspondence Email</span><input name="correspondence" type="email"></label>
-            <label><span>Affiliation</span><input name="affiliation" type="text"></label>
-            <label><span>Organization</span><input name="organization" type="text"></label>
+            <label><span>Affiliation</span><input name="affiliation" type="text" spellcheck="true"></label>
+            <label><span>Organization</span><input name="organization" type="text" spellcheck="true"></label>
             <label><span>Website</span><input name="website" type="url"></label>
             <label class="access-checkbox">
                 <input name="commentSignature" type="checkbox" checked>

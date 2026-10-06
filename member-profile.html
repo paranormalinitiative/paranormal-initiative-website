@@ -50,10 +50,10 @@
             <div data-dashboard-profile></div>
             <div data-dashboard-level></div>
             <form class="member-profile-form" id="profile-editor" data-profile-form>
-                <label><span>Display Name</span><input name="displayName" type="text"></label>
+                <label><span>Display Name</span><input name="displayName" type="text" spellcheck="true"></label>
                 <label>
                     <span>Public Title / Credentials</span>
-                    <input name="title" type="text" maxlength="160" list="public-title-options" placeholder="Paranormal Researcher & Investigator, EVP / ITC Researcher, Evidence Reviewer">
+                    <input name="title" type="text" maxlength="160" list="public-title-options" placeholder="Paranormal Researcher & Investigator, EVP / ITC Researcher, Evidence Reviewer" spellcheck="true">
                 </label>
                 <datalist id="public-title-options">
                     <option value="Founder / Director"></option>
@@ -70,30 +70,30 @@
                     <option value="Contributor"></option>
                 </datalist>
                 <p class="access-note">Leadership titles are assigned by site leadership. Contributors can choose a professional role label that best describes their work.</p>
-                <label><span>Affiliation</span><input name="affiliation" type="text"></label>
-                <label><span>Organization</span><input name="organization" type="text"></label>
+                <label><span>Affiliation</span><input name="affiliation" type="text" spellcheck="true"></label>
+                <label><span>Organization</span><input name="organization" type="text" spellcheck="true"></label>
                 <label><span>Account Email</span><input name="correspondence" type="email" autocomplete="email" required></label>
                 <label><span>Website</span><input name="website" type="url"></label>
                 <div class="member-contact-settings">
                     <p class="portal-kicker">Optional Private Contact Information</p>
                     <p class="access-note">These fields are optional. Only you and authorized administrators can view them; they never appear on your public profile.</p>
                 </div>
-                <label><span>Contact Name</span><input name="contactName" type="text" autocomplete="name"></label>
+                <label><span>Contact Name</span><input name="contactName" type="text" autocomplete="name" spellcheck="true"></label>
                 <label><span>Phone Number</span><input name="phone" type="tel" autocomplete="tel"></label>
-                <label><span>Street Address</span><input name="addressLine1" type="text" autocomplete="address-line1"></label>
-                <label><span>Address Line 2</span><input name="addressLine2" type="text" autocomplete="address-line2"></label>
-                <label><span>City</span><input name="city" type="text" autocomplete="address-level2"></label>
-                <label><span>State</span><input name="state" type="text" autocomplete="address-level1"></label>
-                <label><span>ZIP Code</span><input name="postalCode" type="text" autocomplete="postal-code"></label>
+                <label><span>Street Address</span><input name="addressLine1" type="text" autocomplete="address-line1" spellcheck="true"></label>
+                <label><span>Address Line 2</span><input name="addressLine2" type="text" autocomplete="address-line2" spellcheck="true"></label>
+                <label><span>City</span><input name="city" type="text" autocomplete="address-level2" spellcheck="true"></label>
+                <label><span>State</span><input name="state" type="text" autocomplete="address-level1" spellcheck="true"></label>
+                <label><span>ZIP Code</span><input name="postalCode" type="text" autocomplete="postal-code" spellcheck="true"></label>
                 <label class="chat-color-field"><span>Chat Box Color</span><input name="chatColor" type="color" value="#2f9e44"></label>
                 <div class="profile-photo-editor">
                     <div class="profile-photo-preview" data-profile-photo-preview></div>
                     <div class="profile-photo-controls">
                         <label><span>Profile Photo</span><input name="profilePhotoFile" type="file" accept="image/*"></label>
-                        <label><span>Or Use Image URL</span><input name="photoUrl" type="text" inputmode="url" placeholder="https://... or /api/media/..."></label>
+                        <label><span>Or Use Image URL</span><input name="photoUrl" type="text" inputmode="url" placeholder="https://... or /api/media/..." spellcheck="true"></label>
                     </div>
                 </div>
-                <label><span>Biography</span><textarea name="bio" rows="12" placeholder="Write a professional contributor biography. This is the public biography people will see when they click your name."></textarea></label>
+                <label><span>Biography</span><textarea name="bio" rows="12" placeholder="Write a professional contributor biography. This is the public biography people will see when they click your name." spellcheck="true"></textarea></label>
                 <label class="access-checkbox">
                     <input name="commentSignature" type="checkbox" checked>
                     <span>Use my display name and title on comments and replies.</span>

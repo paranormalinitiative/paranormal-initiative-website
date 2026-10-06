@@ -289,7 +289,7 @@
             '<option value="other">Other</option>' +
             '</select></label>' +
             '<label><span>Details (optional)</span>' +
-            '<textarea id="report-details" placeholder="Add any additional details..."></textarea></label>' +
+            '<textarea id="report-details" placeholder="Add any additional details..." spellcheck="true"></textarea></label>' +
             '<button class="portal-button" type="submit">Submit Report</button>' +
             '<p id="report-status" style="font-size:0.82rem;color:#5a6070;margin-top:0.5rem"></p>' +
             '</form>' +
@@ -305,7 +305,7 @@
             '<div class="video-modal-card">' +
             '<h3>Embed / Link</h3>' +
             '<p style="font-size:0.85rem;color:#8d93a3;margin-bottom:0.75rem">Share this video by copying the link below.</p>' +
-            '<textarea class="video-embed-code" id="embed-code" readonly>' + escapeHtml(embedCode) + '</textarea>' +
+            '<textarea class="video-embed-code" id="embed-code" readonly spellcheck="true">' + escapeHtml(embedCode) + '</textarea>' +
             '<button class="portal-button" id="copy-embed-btn">Copy Link</button>' +
             '<p id="embed-status" style="font-size:0.82rem;color:#5a6070;margin-top:0.5rem"></p>' +
             '<button class="portal-button portal-button-secondary" style="margin-top:0.75rem" id="close-embed-modal">Close</button>' +
@@ -703,7 +703,7 @@
         if (currentUser) {
             formArea.innerHTML =
                 '<form class="video-comment-form" id="video-comment-form">' +
-                '<textarea id="video-comment-input" placeholder="Share your thoughts..." maxlength="2000" required></textarea>' +
+                '<textarea id="video-comment-input" placeholder="Share your thoughts..." maxlength="2000" required spellcheck="true"></textarea>' +
                 '<button class="portal-button" type="submit">Post Comment</button>' +
                 '<p class="video-comment-status" id="video-comment-status"></p>' +
                 '</form>';

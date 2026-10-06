@@ -323,5 +323,72 @@
 })();
 </script>
 
+<script>
+// Live Featured Content: the home page carousel pulls the latest videos
+// and published articles from the community (instead of static cards) and
+// shuffles them on every visit so returning visitors see fresh picks.
+// If the APIs are unavailable, the original static cards stay in place.
+(function() {
+    var track = document.querySelector('[data-featured-track]');
+    if (!track) return;
+
+    function esc(v) {
+        return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
+    function shuffle(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+        }
+        return arr;
+    }
+
+    function videoCard(v) {
+        var thumb = v.thumbnailUrl
+            ? '<img src="' + esc(v.thumbnailUrl) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">'
+            : '<span class="home-featured-icon">\u25B6</span>';
+        return '<a class="home-featured-card" href="' + esc(v.sourceUrl || "tpi-videos.html") + '" target="_blank" rel="noopener noreferrer">' +
+            '<div class="home-featured-thumb" style="padding:0;overflow:hidden;">' + thumb +
+            (v.isLive ? '<span class="home-featured-icon" style="position:absolute;top:10px;right:10px;">\u25CF Live</span>' : '') +
+            '</div>' +
+            '<div class="home-featured-info">' +
+                '<span class="home-featured-type">' + esc(v.category || "Video") + '</span>' +
+                '<h3>' + esc(v.title || "Community video") + '</h3>' +
+                '<p>' + esc(v.description || (v.sourceName || "From the open web")) + '</p>' +
+            '</div>' +
+        '</a>';
+    }
+
+    function articleCard(a) {
+        var href = a.href || ("published-article.html?id=" + encodeURIComponent(a.id));
+        var type = a.contributionType || a.articleType || "Research";
+        return '<a class="home-featured-card" href="' + esc(href) + '">' +
+            '<div class="home-featured-thumb" style="background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, transparent), var(--bg-card));">' +
+                '<span class="home-featured-icon">\u270E</span>' +
+            '</div>' +
+            '<div class="home-featured-info">' +
+                '<span class="home-featured-type">' + esc(type) + '</span>' +
+                '<h3>' + esc(a.title || "Community research") + '</h3>' +
+                '<p>' + esc(a.subtitle || a.description || (a.author || "From the community")) + '</p>' +
+            '</div>' +
+        '</a>';
+    }
+
+    Promise.all([
+        fetch("/api/videos?limit=6").then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; }),
+        fetch("/api/articles?limit=8").then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; })
+    ]).then(function(results) {
+        if (!results[0] && !results[1]) return; // APIs down — keep static cards
+        var cards = [];
+        (results[0] && results[0].videos || []).slice(0, 6).forEach(function(v) { cards.push(videoCard(v)); });
+        (results[1] && results[1].articles || []).slice(0, 8).forEach(function(a) { cards.push(articleCard(a)); });
+        if (!cards.length) return;
+        shuffle(cards);
+        track.innerHTML = cards.join("");
+    });
+})();
+</script>
+
 </body>
 </html>
