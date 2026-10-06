@@ -3853,7 +3853,7 @@
           '<label style="display: block; margin-bottom: 8px; color: #c7d5e2; font-size: 12px;">Nickname for ' + escapeHtml(other.displayName) + '</label>' +
           '<input type="text" data-nickname-input value="' + escapeHtml(existingNickname) + '" placeholder="Enter nickname" style="width: 100%; padding: 8px; background: #081018; border: 1px solid #263646; border-radius: 6px; color: #e6edf3; font-size: 13px;">' +
           '<div style="display: flex; gap: 8px; margin-top: 12px;">' +
-            '<button type="button" data-nickname-save style="flex: 1; padding: 8px; background: #a855f7; color: #061018; border: none; border-radius: 6px; font-weight: 900;">Save</button>' +
+            '<button type="button" data-nickname-save style="flex: 1; padding: 8px; background: var(--accent, #a855f7); color: #061018; border: none; border-radius: 6px; font-weight: 900;">Save</button>' +
             '<button type="button" data-nickname-cancel style="flex: 1; padding: 8px; background: #081018; color: #c7d5e2; border: 1px solid #263646; border-radius: 6px;">Cancel</button>' +
           '</div>' +
         '</div>';
@@ -3944,8 +3944,8 @@
 
       menu.innerHTML = '<div class="read-receipts-picker" style="padding: 12px; min-width: 200px;">' +
         '<div style="color: #c7d5e2; font-size: 12px; margin-bottom: 8px;">Read Receipts</div>' +
-        '<button type="button" role="menuitem" data-read-receipts="on" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (current ? '#a855f7' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (current ? '✓ ' : '') + 'On</button>' +
-        '<button type="button" role="menuitem" data-read-receipts="off" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (!current ? '#a855f7' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (!current ? '✓ ' : '') + 'Off</button>' +
+        '<button type="button" role="menuitem" data-read-receipts="on" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (current ? 'var(--accent, #a855f7)' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (current ? '✓ ' : '') + 'On</button>' +
+        '<button type="button" role="menuitem" data-read-receipts="off" style="display: block; width: 100%; text-align: left; padding: 8px; background: transparent; border: none; color: ' + (!current ? 'var(--accent, #a855f7)' : '#c7d5e2') + '; font-size: 13px; border-radius: 6px;">' + (!current ? '✓ ' : '') + 'Off</button>' +
         '</div>';
 
       menu.querySelectorAll('[data-read-receipts]').forEach(function(button) {
@@ -4015,7 +4015,7 @@
           if (res.ok) {
             // Show confirmation
             var menu = identityMenuEl.querySelector('[role="menu"]');
-            menu.innerHTML = '<div style="padding: 16px; text-align: center; color: #a855f7;">Report submitted. Thank you.</div>';
+            menu.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--accent, #a855f7);">Report submitted. Thank you.</div>';
             setTimeout(closeIdentityMenu, 2000);
           }
         });
@@ -4078,7 +4078,7 @@
       title: member.title || "",
       role: member.role || "",
       photoUrl: member.photoUrl || member.photo_url || member.avatar || member.avatarUrl || "",
-      chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || "#a855f7"),
+      chatColor: normalizeChatBubbleColor(member.chatColor || member.chat_color || defaultChatBubbleColor()),
       online: typeof online === "boolean" ? online : Boolean(member.online),
       lastSeenAt: member.lastSeenAt || member.last_seen_at || null,
       status: member.status || (online ? "online" : "offline")
@@ -4488,9 +4488,19 @@
     return name;
   }
 
+  // Default chat bubble color follows the active theme accent (asylum =
+  // dark orange, etc.) so member bubbles never clash with the theme.
+  function defaultChatBubbleColor() {
+    try {
+      var themed = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+      if (/^#[0-9a-fA-F]{6}$/.test(themed)) return themed;
+    } catch (e) { /* fall through to the classic default */ }
+    return "#a855f7";
+  }
+
   function normalizeChatBubbleColor(value) {
     var color = String(value || "").trim();
-    return /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#a855f7";
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color : defaultChatBubbleColor();
   }
 
   function normalizeChatUsername(value) {
