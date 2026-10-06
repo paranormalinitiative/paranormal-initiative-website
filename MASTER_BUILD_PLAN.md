@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — Member-home themed: all 23 hardcoded purple values (rgba 168,85,247 / #a855f7 / #a78bfa) now derive from var(--accent), so highlights, hovers, glows, badges and avatar fallbacks follow the active theme. Author photo avatars now render on article feed cards and the Published Content tab (was hardcoded initial) — every article shows its author's real avatar. Verified under asylum theme in-browser. Deploy Version ID: 9a7f5235-026e-4a8b-9d7e-77eae6c5d497 (commit 1f16694).
+
 [BUFFY] 2026-10-06 — Member-home items 2-4: (2) identity avatar ring now pulses with a slow accent-colored breathing animation on the member chip — unique TPI visual, prefers-reduced-motion respected; (3) You Are the Initiative statement moved into its own rounded card matching the page family; (4) soft light highlight halo added across member-home cards, pills, composer and empty states. member-shell.css cache bumped to v=60 across 28 pages. Verified in-browser. Deploy Version ID: 68d3c01e-17aa-4b6d-9a73-2ecc6fe98f67 (commit b3be22f).
 
 [BUFFY] 2026-10-06 — My Pulse rebuilt per Todd: ParaPost-style card with six stat pills (Likes | Following, Posts | Comments, Uploads | Live Streams) backed by a new truthful /me/pulse endpoint counting real DB rows — reactions given (forum+article+video), forum topics started, article+video comments, R2 media uploads. Following and Live Streams honestly 0 until those features ship. Verified in-browser. Deploy Version ID: 543ef59c-15d4-44de-aa82-181127135041 (commit e74006b).
