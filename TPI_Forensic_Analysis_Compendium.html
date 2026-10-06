@@ -64,9 +64,9 @@ body {
 .brand-emblem svg { width: 17px; height: 17px; }
 .brand-name { font-family:'Cinzel',serif; font-size:10.5px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; color:var(--gold); line-height:1.35; }
 .brand-series { font-family:'Raleway',sans-serif; font-size:9.5px; font-weight:300; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-secondary); margin-top:1px; }
-.doc-badge { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue); border:0.5px solid rgba(74,143,196,0.3); padding:3px 10px; border-radius:20px; background:var(--blue-dim); white-space:nowrap; }
+.doc-badge { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue); border:0.5px solid rgba(74,143,196,0.3); padding:3px 10px; border-radius:999px; background:var(--blue-dim); white-space:nowrap; }
 .search-wrap { position:relative; flex:1; max-width:320px; }
-.search-wrap input { width:100%; background:rgba(255,255,255,0.05); border:0.5px solid var(--border); border-radius:8px; padding:0.55rem 1rem 0.55rem 2.25rem; color:var(--text-primary); font-family:'Raleway',sans-serif; font-size:12px; outline:none; transition:border-color 0.2s; }
+.search-wrap input { width:100%; background:rgba(255,255,255,0.05); border:0.5px solid var(--border); border-radius:12px; padding:0.55rem 1rem 0.55rem 2.25rem; color:var(--text-primary); font-family:'Raleway',sans-serif; font-size:12px; outline:none; transition:border-color 0.2s; }
 .search-wrap input::placeholder { color:var(--text-muted); }
 .search-wrap input:focus { border-color:rgba(74,143,196,0.4); }
 .search-icon { position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:12px; pointer-events:none; }
@@ -83,7 +83,7 @@ body {
 .hero-meta-item { font-size:10px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); }
 .hero-meta-item span { color:var(--gold); margin-right:5px; }
 /* SECTION NAV */
-.sec-nav { display:flex; gap:0; background:var(--surface); border:0.5px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:2.5rem; }
+.sec-nav { display:flex; gap:0; background:var(--surface); border:0.5px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:2.5rem; }
 .sec-nav a { flex:1; text-align:center; padding:0.65rem 0.5rem; font-family:'Cinzel',serif; font-size:9.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; border-right:0.5px solid var(--border); transition:all 0.15s; }
 .sec-nav a:last-child { border-right:none; }
 .sec-nav a:hover, .sec-nav a.active { color:var(--gold); background:var(--gold-dim); }
@@ -92,13 +92,13 @@ body {
 .sec-header {
   display:flex; align-items:center; gap:1.25rem; padding:1.4rem 1.5rem;
   background: linear-gradient(90deg, rgba(74,143,196,0.08) 0%, rgba(201,168,76,0.04) 100%);
-  border:0.5px solid rgba(74,143,196,0.2); border-radius:14px; margin-bottom:1.75rem;
+  border:0.5px solid rgba(74,143,196,0.2); border-radius:24px; margin-bottom:1.75rem;
 }
 .sec-number { font-family:'Cinzel',serif; font-size:28px; font-weight:700; color:rgba(201,168,76,0.25); line-height:1; min-width:48px; }
 .sec-title-block { flex:1; }
 .sec-eyebrow { font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--blue); margin-bottom:3px; }
 .sec-title { font-family:'Cinzel',serif; font-size:1.45rem; font-weight:700; color:var(--text-primary); line-height:1.2; }
-.sec-tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); border:0.5px solid rgba(201,168,76,0.3); padding:4px 12px; border-radius:20px; background:var(--gold-dim); white-space:nowrap; }
+.sec-tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); border:0.5px solid rgba(201,168,76,0.3); padding:4px 12px; border-radius:999px; background:var(--gold-dim); white-space:nowrap; }
 .sec-intro { font-family:'Crimson Pro',serif; font-size:15.5px; font-weight:300; color:var(--text-secondary); line-height:1.85; margin-bottom:1.75rem; padding:0 0.25rem; }
 /* ENTRY */
 .entry { background:var(--surface); border:0.5px solid var(--border); border-radius:12px; padding:1.4rem 1.5rem; margin-bottom:1.25rem; transition:border-color 0.2s; }
@@ -106,7 +106,7 @@ body {
 .entry-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:0.85rem; flex-wrap:wrap; }
 .entry-term { font-family:'Cinzel',serif; font-size:1.05rem; font-weight:600; color:var(--gold-light); line-height:1.3; }
 .entry-tags { display:flex; gap:6px; flex-wrap:wrap; }
-.tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+.tag { font-size:9px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:999px; }
 .tag-photo { color:var(--blue); background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); }
 .tag-video { color:var(--purple); background:var(--purple-dim); border:0.5px solid rgba(139,92,246,0.2); }
 .tag-audio { color:var(--teal); background:var(--teal-dim); border:0.5px solid rgba(58,158,138,0.2); }
@@ -118,21 +118,21 @@ body {
 .entry-body { font-family:'Crimson Pro',serif; font-size:15px; font-weight:300; color:var(--text-secondary); line-height:1.85; margin-bottom:1rem; }
 .entry-body:last-child { margin-bottom:0; }
 /* DOC LIST */
-.doc-list { background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dim); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.doc-list { background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dim); border-radius:0 12px 12px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
 .doc-list-label { font-size:9.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
 .doc-list ul { list-style:none; padding:0; }
 .doc-list li { font-size:13.5px; color:var(--text-secondary); padding:0.3rem 0; padding-left:1.25rem; position:relative; line-height:1.65; }
 .doc-list li::before { content:'·'; position:absolute; left:0.25rem; color:var(--gold); font-size:16px; line-height:1.2; }
 /* FIELD NOTE */
-.field-note { background:rgba(201,168,76,0.06); border:0.5px solid rgba(201,168,76,0.18); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.field-note { background:rgba(201,168,76,0.06); border:0.5px solid rgba(201,168,76,0.18); border-left:3px solid var(--gold); border-radius:0 12px 12px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
 .field-note-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem; }
 .field-note p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
 /* PRO TIP */
-.pro-tip { background:rgba(139,92,246,0.07); border:0.5px solid rgba(139,92,246,0.2); border-left:3px solid var(--purple); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.pro-tip { background:rgba(139,92,246,0.07); border:0.5px solid rgba(139,92,246,0.2); border-left:3px solid var(--purple); border-radius:0 12px 12px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
 .pro-tip-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--purple); margin-bottom:0.4rem; }
 .pro-tip p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
 /* IDENTIFY BOX */
-.identify-box { background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); border-radius:10px; padding:0.9rem 1.1rem; margin-top:0.85rem; }
+.identify-box { background:var(--blue-dim); border:0.5px solid rgba(74,143,196,0.2); border-radius:16px; padding:0.9rem 1.1rem; margin-top:0.85rem; }
 .identify-label { font-family:'Cinzel',serif; font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--blue); margin-bottom:0.55rem; }
 .identify-box ul { list-style:none; padding:0; }
 .identify-box li { font-size:13px; color:var(--text-secondary); padding:0.25rem 0; padding-left:1.2rem; position:relative; line-height:1.6; }
@@ -143,7 +143,7 @@ body {
 .step-num { font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:var(--gold); min-width:28px; padding-top:2px; }
 .step-text { font-size:13.5px; color:var(--text-secondary); line-height:1.65; flex:1; }
 /* DEBUNK BOX */
-.debunk-box { background:rgba(196,90,90,0.06); border:0.5px solid rgba(196,90,90,0.18); border-left:3px solid var(--red); border-radius:0 8px 8px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
+.debunk-box { background:rgba(196,90,90,0.06); border:0.5px solid rgba(196,90,90,0.18); border-left:3px solid var(--red); border-radius:0 12px 12px 0; padding:0.85rem 1rem; margin:0.85rem 0; }
 .debunk-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--red); margin-bottom:0.4rem; }
 .debunk-box p { font-size:13.5px; color:var(--text-secondary); line-height:1.65; }
 /* WEATHER TABLE */
@@ -155,12 +155,12 @@ body {
 .weather-table tr:hover td { background:var(--surface-hover); }
 /* BACK TOP */
 .back-top { text-align:right; margin:1.5rem 0; }
-.back-top a { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; padding:5px 12px; border:0.5px solid var(--border); border-radius:20px; transition:all 0.15s; }
+.back-top a { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; padding:5px 12px; border:0.5px solid var(--border); border-radius:999px; transition:all 0.15s; }
 .back-top a:hover { color:var(--gold); border-color:rgba(201,168,76,0.3); }
 /* SECTION LABEL */
 .section-label { font-family:'Cinzel',serif; font-size:9.5px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin:1.2rem 0 0.75rem; }
 /* CODE */
-code { font-family: 'Courier New', monospace; font-size:11.5px; background:rgba(74,143,196,0.1); color:var(--blue); padding:1px 5px; border-radius:4px; border:0.5px solid rgba(74,143,196,0.15); }
+code { font-family: 'Courier New', monospace; font-size:11.5px; background:rgba(74,143,196,0.1); color:var(--blue); padding:1px 5px; border-radius:999px; border:0.5px solid rgba(74,143,196,0.15); }
 /* Footer */
 .doc-footer { border-top:0.5px solid var(--border); margin-top:3rem; padding:2rem 1.75rem; }
 .footer-inner { max-width:960px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:0.5rem; text-align:center; }
