@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — Even trailing card rows on ParaNews/ParaTube: short final card rows widen their cards to span the grid (spans collapse on mobile), ParaNews promotes imageless rows into empty card slots first, and fixed a Load More bug where a page ending on a block boundary zeroed the quotas so the next page rendered nothing. Verified in-browser with short-remainder mocks on both pages. Deploy Version ID: f8e2e9a1-4b7e-4428-84af-0c7efc9d4337 (commit fb8c6b5).
+
 [BUFFY] 2026-10-06 — Full card-height equalization on ParaNews/ParaTube: 3-line clamped titles (2 on ParaTube), excerpt element always rendered with reserved min-height, grid stretch + full-height cards. Verified in-browser: every card in a block measures identical height with uniform 292px media boxes. Deploy Version ID: 81d83531-fef3-420a-9902-64aee2e4715e (commit 2c79d23).
 
 [BUFFY] 2026-10-06 — Uniform ParaNews/ParaTube image cards: card images absolutely positioned inside the 16/9 media box so tall/square sources can't stretch it — every image card now matches the Rabbit Hole card size. Verified in-browser (portrait/square/landscape all render 292px media boxes). Deploy Version ID: c0c98a11-946c-45e9-af2a-5d19323d6508 (commit 74b13de).
