@@ -43,9 +43,11 @@
         .pn-tab { padding: 7px 13px; color: var(--text-secondary); background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 999px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
         .pn-tab:hover { color: var(--text-primary); border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); }
         .pn-tab.active { color: var(--text-on-accent, #0a0c10); background: var(--pn-accent); border-color: var(--pn-accent); }
-        .pn-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-        @media (max-width: 1024px) { .pn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 640px) { .pn-grid { grid-template-columns: 1fr; } }
+        /* One interleaved grid: image cards fill a 4-across row, then text
+           rows span the full width (5 per block), repeating down the page. */
+        .pn-feed { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: start; }
+        @media (max-width: 1024px) { .pn-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) { .pn-feed { grid-template-columns: 1fr; } }
         .pn-card { display: flex; flex-direction: column; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
         .pn-card:hover { border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); transform: translateY(-2px); }
         .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: var(--bg-secondary); }
@@ -64,9 +66,7 @@
         .pn-note { margin: 14px 0 0; color: var(--text-tertiary); font-size: 11px; text-align: center; }
         /* Imageless stories render as compact text rows (paranormalcountry
            style): accent kicker, bold title, excerpt, date, divider rows. */
-        .pn-list { display: flex; flex-direction: column; margin-top: 22px; }
-        .pn-list:empty { display: none; }
-        .pn-row { display: block; padding: 16px 4px 14px; border-bottom: 1px solid var(--border-subtle); text-decoration: none; transition: background 0.15s; }
+        .pn-row { grid-column: 1 / -1; display: block; padding: 16px 4px 14px; border-bottom: 1px solid var(--border-subtle); text-decoration: none; transition: background 0.15s; }
         .pn-row:hover { background: color-mix(in srgb, var(--pn-accent) 4%, transparent); }
         .pn-row-kicker { margin: 0 0 4px; color: var(--pn-accent); font-size: 10.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
         .pn-row-title { margin: 0 0 5px; color: var(--text-primary); font-size: 16.5px; font-weight: 700; line-height: 1.35; }
@@ -88,10 +88,9 @@
 
     <nav class="pn-tabs" id="pn-tabs" aria-label="News categories"></nav>
 
-    <div class="pn-grid" id="pn-grid" aria-live="polite">
+    <div class="pn-feed" id="pn-feed" aria-live="polite">
         <p class="pn-status">Loading the latest paranormal news…</p>
     </div>
-    <div class="pn-list" id="pn-list" aria-live="polite"></div>
     <div class="pn-more" id="pn-more" hidden><button type="button" id="pn-more-btn">Load More</button></div>
     <p class="pn-note">News is aggregated from public RSS feeds and belongs to its original publishers. Articles open on the source site.</p>
 </main>
@@ -117,15 +116,30 @@
         ["rabbit hole", "\uD83D\uDD73\uFE0F Rabbit Hole"],
         ["unexplained", "\u2753 Unexplained"]
     ];
-    var LIMIT = 24; // 4 columns × 6 rows
-    var CARD_COUNT = 4; // image cards per page; everything else renders as text rows
+    var LIMIT = 24;
+    var CARDS_PER_BLOCK = 4;  // image cards per block
+    var ROWS_PER_BLOCK = 5;   // text rows between card blocks
     var activeCategory = "all";
     var offset = 0;
-    var grid = document.getElementById("pn-grid");
-    var listEl = document.getElementById("pn-list");
+    var feed = document.getElementById("pn-feed");
     var tabsEl = document.getElementById("pn-tabs");
     var moreWrap = document.getElementById("pn-more");
     var moreBtn = document.getElementById("pn-more-btn");
+    // Quotas carry across Load More pages so the rhythm continues.
+    var cardQuota = CARDS_PER_BLOCK;
+    var rowQuota = ROWS_PER_BLOCK;
+
+    function shuffle(items) {
+        // Fisher-Yates — fresh visual order on every page visit, per Todd:
+        // leaving and returning to ParaNews should look different even
+        // between content refreshes.
+        var arr = items.slice();
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        return arr;
+    }
 
     function esc(v) {
         return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -183,34 +197,55 @@
     }
 
     async function load(reset) {
-        if (reset) { offset = 0; grid.innerHTML = '<p class="pn-status">Loading…</p>'; listEl.innerHTML = ""; }
+        if (reset) {
+            offset = 0;
+            cardQuota = CARDS_PER_BLOCK;
+            rowQuota = ROWS_PER_BLOCK;
+            feed.innerHTML = '<p class="pn-status">Loading…</p>';
+        }
         var url = "/api/news?limit=" + LIMIT + "&offset=" + offset;
         if (activeCategory !== "all") url += "&category=" + encodeURIComponent(activeCategory);
         try {
             var res = await fetch(url);
             var data = await res.json();
-            var items = data.news || [];
-            var shownCards = grid.querySelectorAll(".pn-card").length;
-            if (reset) { grid.innerHTML = ""; listEl.innerHTML = ""; shownCards = 0; }
+            var items = shuffle(data.news || []);
+            if (reset) feed.innerHTML = "";
             if (!items.length && reset) {
-                grid.innerHTML = '<p class="pn-status">No stories in this topic yet — check back after the next refresh.</p>';
+                feed.innerHTML = '<p class="pn-status">No stories in this topic yet — check back after the next refresh.</p>';
                 moreWrap.hidden = true;
                 return;
             }
-            // Split the page: up to CARD_COUNT image cards up top, every other
-            // story (including imageless ones) as a compact text row below.
-            var cards = [], rows = [];
-            items.forEach(function (item) {
-                if (item.imageUrl && cards.length < CARD_COUNT - shownCards) cards.push(cardHtml(item));
-                else rows.push(rowHtml(item));
-            });
-            if (cards.length) grid.insertAdjacentHTML("beforeend", cards.join(""));
-            if (rows.length) listEl.insertAdjacentHTML("beforeend", rows.join(""));
-            grid.hidden = !grid.querySelector(".pn-card");
+            // Interleave: a row of up to 4 image cards, then up to 5 text
+            // rows, repeating. Quotas carry across pages; imageless stories
+            // always go to rows, extra imageful stories wait for the next
+            // card block.
+            var withImg = items.filter(function (i) { return i.imageUrl; });
+            var rest = items.filter(function (i) { return !i.imageUrl; });
+            var ci = 0, ri = 0;
+            var html = "";
+            while (ci < withImg.length || ri < rest.length) {
+                var blockCards = 0, blockRows = 0;
+                while (cardQuota > 0 && ci < withImg.length) {
+                    html += cardHtml(withImg[ci++]);
+                    cardQuota--; blockCards++;
+                }
+                while (rowQuota > 0 && ri < rest.length) {
+                    html += rowHtml(rest[ri++]);
+                    rowQuota--; blockRows++;
+                }
+                if (!blockCards && !blockRows) break; // safety
+                // Block complete — refill quotas for the next one. If both
+                // pools are exhausted we are done; otherwise keep the rhythm.
+                if (ci < withImg.length || ri < rest.length) {
+                    cardQuota = CARDS_PER_BLOCK;
+                    rowQuota = ROWS_PER_BLOCK;
+                }
+            }
+            if (html) feed.insertAdjacentHTML("beforeend", html);
             offset += items.length;
             moreWrap.hidden = items.length < LIMIT;
         } catch (e) {
-            grid.innerHTML = '<p class="pn-status">News is temporarily unavailable. Please refresh in a few minutes.</p>';
+            feed.innerHTML = '<p class="pn-status">News is temporarily unavailable. Please refresh in a few minutes.</p>';
             moreWrap.hidden = true;
         }
     }

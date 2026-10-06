@@ -104,6 +104,19 @@
     var LIMIT = 24; // 4 columns × 6 rows
     var activeCategory = "all";
     var offset = 0;
+
+    function shuffle(items) {
+        // Fisher-Yates — fresh visual order on every page visit, per Todd:
+        // leaving and returning to ParaTube should look different even
+        // between content refreshes.
+        var arr = items.slice();
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        return arr;
+    }
+
     var grid = document.getElementById("pn-grid");
     var tabsEl = document.getElementById("pn-tabs");
     var moreWrap = document.getElementById("pn-more");
@@ -169,7 +182,7 @@
         try {
             var res = await fetch(url);
             var data = await res.json();
-            var items = data.videos || [];
+            var items = shuffle(data.videos || []);
             if (reset) grid.innerHTML = "";
             if (!items.length && reset) {
                 grid.innerHTML = '<p class="pn-status">No videos in this topic yet — check back after the next refresh.</p>';
