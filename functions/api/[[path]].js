@@ -15,6 +15,7 @@ export async function onRequest(context) {
   try {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders() });
     if (request.method === "GET" && path === "/auth/me") return handleMe(request, env);
+    if (request.method === "GET" && path === "/me/pulse") return requireMember(request, env, user => handleMyPulse(request, env, user));
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
     if (request.method === "POST" && path === "/auth/logout") return handleLogout();
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
@@ -245,6 +246,54 @@ async function handleLogout() {
 async function handleMe(request, env) {
   const user = await getSessionUser(request, env);
   return json({ user: user ? privateMemberUser(user) : null });
+}
+
+// My Pulse stats: every number is a truthful count from real tables —
+// no estimates. Likes = reactions the member gave across forum posts,
+// articles and videos. Comments = article + video comments. Uploads =
+// media objects the member put in R2. Posts = forum topics started.
+// Following / Live Streams have no feature yet, so they report 0 until
+// those features exist.
+async function handleMyPulse(request, env, user) {
+  const counts = {
+    likes: 0,
+    following: 0,
+    posts: 0,
+    comments: 0,
+    uploads: 0,
+    liveStreams: 0
+  };
+  const queries = [
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM forum_reactions WHERE contributor_id = ?").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM article_reactions WHERE contributor_id = ?").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_reactions WHERE contributor_id = ?").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM forum_topics WHERE created_by = ? AND status NOT IN ('deleted', 'inactive')").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM comments WHERE contributor_id = ? AND status = 'approved'").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_comments WHERE contributor_id = ? AND status = 'visible'").bind(user.id).first()
+  ];
+  const results = await Promise.all(queries.map(q => q.catch(() => ({ n: 0 }))));
+  counts.likes = Number(results[0]?.n || 0) + Number(results[1]?.n || 0) + Number(results[2]?.n || 0);
+  counts.posts = Number(results[3]?.n || 0);
+  counts.comments = Number(results[4]?.n || 0) + Number(results[5]?.n || 0);
+  // R2 media keys are area/<username>/<date>/... so a prefix scan counts
+  // this member's uploads directly.
+  if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function" && user.username) {
+    const safeUser = clean(user.username).toLowerCase().replace(/[^a-z0-9-]/g, "-") || "contributor";
+    const markers = ["/" + safeUser + "/"];
+    try {
+      let cursor, done = false;
+      while (!done) {
+        const page = await env.TPI_MEDIA.list({ cursor, limit: 500 });
+        for (const obj of (page.objects || [])) {
+          for (const marker of markers) {
+            if (obj.key.includes(marker)) { counts.uploads++; break; }
+          }
+        }
+        if (page.truncated && page.cursor) { cursor = page.cursor; } else { done = true; }
+      }
+    } catch (e) { /* media count stays at what we could read */ }
+  }
+  return json({ pulse: counts });
 }
 
 async function handleMemberRegister(request, env) {

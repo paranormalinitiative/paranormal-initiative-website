@@ -153,25 +153,31 @@
             margin-bottom: 12px;
         }
 
+        /* ParaPost-style stat pills: number and label side by side on one
+           line, rounded rectangle, per Todd's My Pulse redesign. */
         .rail-pulse-stat {
-            padding: 8px 10px;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 10px;
             background: #0d1017;
             border: 1px solid #1f2d3d;
-            border-radius: 999px;
+            border-radius: 12px;
             text-align: center;
         }
 
         .rail-pulse-stat strong {
-            display: block;
+            display: inline;
             color: #f4f8fb;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .rail-pulse-stat span {
             color: #8aa0b6;
-            font-size: 10.5px;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.02em;
+            text-transform: none;
         }
 
         .rail-pulse-link {
@@ -2021,28 +2027,37 @@
                 '</div>' +
             '</div>' +
             '<div class="rail-pulse-stats">' +
+                '<div class="rail-pulse-stat"><strong id="pulse-likes">–</strong><span>Likes</span></div>' +
+                '<div class="rail-pulse-stat"><strong id="pulse-following">–</strong><span>Following</span></div>' +
                 '<div class="rail-pulse-stat"><strong id="pulse-posts">–</strong><span>Posts</span></div>' +
-                '<div class="rail-pulse-stat"><strong id="pulse-replies">–</strong><span>Replies</span></div>' +
+                '<div class="rail-pulse-stat"><strong id="pulse-comments">–</strong><span>Comments</span></div>' +
+                '<div class="rail-pulse-stat"><strong id="pulse-uploads">–</strong><span>Uploads</span></div>' +
+                '<div class="rail-pulse-stat"><strong id="pulse-streams">–</strong><span>Live Streams</span></div>' +
             '</div>' +
             '<a class="rail-pulse-link" href="member-profile.html">View Profile</a>';
-        // Counts derive from the user feed (forum topics + articles by this member)
-        window.TPIApi.userFeed(activeUser.username, 100, 0).then(function(data) {
-            var items = data.items || [];
-            var posts = 0, replies = 0;
-            items.forEach(function(item) {
-                if (item.type === "forum_post") {
-                    if (item.isTopicStart) posts++; else replies++;
-                }
-            });
-            var postsEl = document.getElementById("pulse-posts");
-            var repliesEl = document.getElementById("pulse-replies");
-            if (postsEl) postsEl.textContent = String(posts);
-            if (repliesEl) repliesEl.textContent = String(replies);
+        // Stats come from /me/pulse — a truthful count of this member's
+        // real activity (likes given, topics started, comments written,
+        // media uploaded). Layout per Todd: Likes | Following, Posts |
+        // Comments, Uploads | Live Streams.
+        window.TPIApi.myPulse().then(function(data) {
+            var pulse = data.pulse || {};
+            var set = function(id, value) {
+                var el = document.getElementById(id);
+                if (el) el.textContent = String(value);
+            };
+            set("pulse-likes", pulse.likes || 0);
+            set("pulse-following", pulse.following || 0);
+            set("pulse-posts", pulse.posts || 0);
+            set("pulse-comments", pulse.comments || 0);
+            set("pulse-uploads", pulse.uploads || 0);
+            set("pulse-streams", pulse.liveStreams || 0);
         }).catch(function() {
-            var postsEl = document.getElementById("pulse-posts");
-            var repliesEl = document.getElementById("pulse-replies");
-            if (postsEl) postsEl.textContent = "0";
-            if (repliesEl) repliesEl.textContent = "0";
+            var set = function(id) {
+                var el = document.getElementById(id);
+                if (el) el.textContent = "0";
+            };
+            set("pulse-likes"); set("pulse-following"); set("pulse-posts");
+            set("pulse-comments"); set("pulse-uploads"); set("pulse-streams");
         });
     }
 
