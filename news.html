@@ -48,6 +48,11 @@
         .pn-feed { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
         @media (max-width: 1024px) { .pn-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 640px) { .pn-feed { grid-template-columns: 1fr; } }
+        /* Trailing-row fillers: when a final card row can't be filled with
+           stories, the leftover cards widen to keep the row even. */
+        .pn-card.pn-span-2 { grid-column: span 2; }
+        .pn-card.pn-span-4 { grid-column: span 4; }
+        @media (max-width: 640px) { .pn-card.pn-span-2, .pn-card.pn-span-4 { grid-column: auto; } }
         .pn-card { display: flex; flex-direction: column; height: 100%; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
         .pn-card:hover { border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); transform: translateY(-2px); }
         .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: var(--bg-secondary); }
@@ -168,13 +173,13 @@
         return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
     }
 
-    function cardHtml(item) {
+    function cardHtml(item, extraClass) {
         var media = item.imageUrl
             ? '<img src="' + esc(item.imageUrl) + '" alt="" loading="lazy" onerror="this.parentElement.classList.add(\'no-image\'); this.remove();">'
             : "";
         if (!item.imageUrl) media = "";
         var icon = "\uD83D\uDCF0";
-        return '<a class="pn-card" href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' +
+        return '<a class="pn-card' + (extraClass ? " " + extraClass : "") + '" href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' +
             '<div class="pn-card-media' + (item.imageUrl ? "" : " no-image") + '">' +
                 media +
                 '<span class="pn-badge">' + esc(catLabel(item.category)) + '</span>' +
@@ -226,18 +231,19 @@
             var withImg = items.filter(function (i) { return i.imageUrl; });
             var rest = items.filter(function (i) { return !i.imageUrl; });
             var ci = 0, ri = 0;
-            var html = "";
+            var blocks = [];
             while (ci < withImg.length || ri < rest.length) {
-                var blockCards = 0, blockRows = 0;
+                var block = { cards: [], rows: [] };
                 while (cardQuota > 0 && ci < withImg.length) {
-                    html += cardHtml(withImg[ci++]);
-                    cardQuota--; blockCards++;
+                    block.cards.push(withImg[ci++]);
+                    cardQuota--;
                 }
                 while (rowQuota > 0 && ri < rest.length) {
-                    html += rowHtml(rest[ri++]);
-                    rowQuota--; blockRows++;
+                    block.rows.push(rest[ri++]);
+                    rowQuota--;
                 }
-                if (!blockCards && !blockRows) break; // safety
+                if (!block.cards.length && !block.rows.length) break; // safety
+                blocks.push(block);
                 // Block complete — refill quotas for the next one. If both
                 // pools are exhausted we are done; otherwise keep the rhythm.
                 if (ci < withImg.length || ri < rest.length) {
@@ -245,6 +251,33 @@
                     rowQuota = ROWS_PER_BLOCK;
                 }
             }
+            // A page that ends exactly on a block boundary leaves its quotas
+            // at zero — refill them so the NEXT Load More page can render.
+            // Partial quotas (a block cut short by the page end) still carry.
+            if (cardQuota === 0) cardQuota = CARDS_PER_BLOCK;
+            if (rowQuota === 0) rowQuota = ROWS_PER_BLOCK;
+            // Even every card row: if a block's card row came up short,
+            // promote imageless rows from that same block into card slots
+            // (they render with the no-image look) so no card row ends
+            // half-empty — per Todd, the bottom rows must be even.
+            blocks.forEach(function (b) {
+                if (b.cards.length > 0 && b.cards.length < CARDS_PER_BLOCK) {
+                    while (b.cards.length < CARDS_PER_BLOCK && b.rows.length > 0) {
+                        b.cards.push(b.rows.pop());
+                    }
+                }
+            });
+            var html = blocks.map(function (b) {
+                // Still short with nothing left to promote (all-image
+                // remainder): widen the trailing cards so the row stays even.
+                var spans = {};
+                if (b.cards.length === 1) spans[0] = "pn-span-4";
+                else if (b.cards.length === 2) { spans[0] = "pn-span-2"; spans[1] = "pn-span-2"; }
+                else if (b.cards.length === 3) spans[0] = "pn-span-2";
+                return b.cards.map(function (item, idx) {
+                    return cardHtml(item, spans[idx] || "");
+                }).join("") + b.rows.map(rowHtml).join("");
+            }).join("");
             if (html) feed.insertAdjacentHTML("beforeend", html);
             offset += items.length;
             moreWrap.hidden = items.length < LIMIT;

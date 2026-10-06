@@ -41,6 +41,11 @@
         .pn-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
         @media (max-width: 1024px) { .pn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 640px) { .pn-grid { grid-template-columns: 1fr; } }
+        /* Trailing-row fillers: when the final row can't be filled, the
+           leftover cards widen so the row stays even. */
+        .pn-card.pn-span-2 { grid-column: span 2; }
+        .pn-card.pn-span-4 { grid-column: span 4; }
+        @media (max-width: 640px) { .pn-card.pn-span-2, .pn-card.pn-span-4 { grid-column: auto; } }
         .pn-card { display: flex; flex-direction: column; height: 100%; background: var(--bg-card, #10141c); border: 1px solid var(--border-default, #263646); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
         .pn-card:hover { border-color: color-mix(in srgb, var(--accent) 55%, transparent); transform: translateY(-2px); }
         .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: #0d1017; }
@@ -152,13 +157,14 @@
         return m + ":" + String(s).padStart(2, "0");
     }
 
-    function cardHtml(video) {
+    function cardHtml(video, extraClass) {
+        var extra = extraClass ? " " + extraClass : "";
         var media = video.thumbnailUrl
             ? '<img src="' + esc(video.thumbnailUrl) + '" alt="" loading="lazy" onerror="this.parentElement.classList.add(\'no-image\'); this.textContent = \'\uD83C\uDFA5\'; this.appendChild(this.previousSibling);">'
             : "";
         if (!video.thumbnailUrl) media = "\uD83C\uDFA5";
         var duration = video.durationSeconds ? '<span class="pn-duration">' + esc(fmtDuration(video.durationSeconds)) + '</span>' : "";
-        return '<a class="pn-card" href="' + esc(video.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' +
+        return '<a class="pn-card' + extra + '" href="' + esc(video.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' +
             '<div class="pn-card-media' + (video.thumbnailUrl ? "" : " no-image") + '">' +
                 media +
                 '<span class="pn-badge">' + esc(catLabel(video.category)) + '</span>' +
@@ -189,7 +195,15 @@
                 moreWrap.hidden = true;
                 return;
             }
-            grid.insertAdjacentHTML("beforeend", items.map(cardHtml).join(""));
+            // Even the trailing row: if this page's video count isn't a
+            // multiple of 4, widen the last few cards so no row ends
+            // half-empty — per Todd, bottom rows must be even.
+            var spans = {};
+            var r = items.length % 4;
+            if (r === 1) spans[items.length - 1] = "pn-span-4";
+            else if (r === 2) { spans[items.length - 2] = "pn-span-2"; spans[items.length - 1] = "pn-span-2"; }
+            else if (r === 3) spans[items.length - 3] = "pn-span-2";
+            grid.insertAdjacentHTML("beforeend", items.map(function (v, idx) { return cardHtml(v, spans[idx] || ""); }).join(""));
             offset += items.length;
             moreWrap.hidden = items.length < LIMIT;
         } catch (e) {
