@@ -1455,8 +1455,111 @@
             border-radius: 8px;
             background: #071017;
             border: 1px solid #263646;
-            cursor: pointer;
+            cursor: zoom-in;
             transition: border-color 0.15s;
+        }
+
+        /* ===== FULL-SCREEN MEDIA VIEWER (click any feed photo/video) ===== */
+        .feed-media-viewer {
+            position: fixed;
+            inset: 0;
+            z-index: 140;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: rgba(2, 7, 10, 0.92);
+            backdrop-filter: blur(10px);
+            animation: feedViewerFade 0.15s ease-out;
+        }
+
+        @keyframes feedViewerFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feed-media-viewer-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            max-width: min(1500px, 97vw);
+            max-height: 94vh;
+        }
+
+        .feed-media-viewer-card img,
+        .feed-media-viewer-card video {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: min(1500px, 97vw);
+            max-height: 86vh;
+            border-radius: 12px;
+            border: 1px solid #263646;
+            background: #071017;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .feed-media-viewer-card video {
+            cursor: default;
+        }
+
+        .feed-media-viewer-close {
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            border: 1px solid #3a4c60;
+            background: #0d1017;
+            color: #e8eef5;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .feed-media-viewer-close:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0a0c10;
+        }
+
+        .feed-media-viewer-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            border: 1px solid #3a4c60;
+            background: rgba(13, 16, 23, 0.85);
+            color: #e8eef5;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .feed-media-viewer-nav:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0a0c10;
+        }
+
+        .feed-media-viewer-prev { left: -8px; }
+        .feed-media-viewer-next { right: -8px; }
+
+        .feed-media-viewer-count {
+            color: #8aa0b6;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
         }
 
         .feed-card-attachments img:hover,
@@ -3003,6 +3106,13 @@
         if (feedContainer.dataset.toolsBound) return;
         feedContainer.dataset.toolsBound = "1";
         feedContainer.addEventListener("click", async function(e) {
+            // Full-screen media viewer: click any photo/video in a post
+            var mediaEl = e.target.closest(".feed-card-attachments img, .feed-card-attachments video");
+            if (mediaEl) {
+                e.preventDefault();
+                openFeedMediaViewer(mediaEl);
+                return;
+            }
             var menuBtn = e.target.closest("[data-post-menu]");
             if (menuBtn) {
                 var topicId = menuBtn.getAttribute("data-post-menu");
@@ -3041,6 +3151,71 @@
                 feedContainer.querySelectorAll("[data-post-menu-panel]").forEach(function(p) { p.hidden = true; });
             }
         });
+    }
+
+    // ===== FULL-SCREEN MEDIA VIEWER =====
+    // Click any photo or video in a feed post to view it full-screen.
+    // Multi-media posts get prev/next arrows; Escape or backdrop closes.
+    function openFeedMediaViewer(mediaEl) {
+        closeFeedMediaViewer();
+        var card = mediaEl.closest(".feed-card");
+        var allMedia = card ? Array.from(card.querySelectorAll(".feed-card-attachments img, .feed-card-attachments video")) : [mediaEl];
+        var items = allMedia.map(function(el) {
+            return { url: el.getAttribute("src") || "", type: el.tagName === "VIDEO" ? "video" : "image", name: el.getAttribute("alt") || "" };
+        }).filter(function(item) { return item.url; });
+        if (!items.length) return;
+        var startIndex = Math.max(0, allMedia.indexOf(mediaEl));
+
+        var viewer = document.createElement("div");
+        viewer.className = "feed-media-viewer";
+        viewer.setAttribute("data-feed-media-viewer", "1");
+        viewer.innerHTML =
+            '<div class="feed-media-viewer-card">' +
+                '<button type="button" class="feed-media-viewer-close" data-viewer-close title="Close (Esc)">&#215;</button>' +
+                (items.length > 1 ? '<button type="button" class="feed-media-viewer-nav feed-media-viewer-prev" data-viewer-prev title="Previous">&#8249;</button>' : "") +
+                (items.length > 1 ? '<button type="button" class="feed-media-viewer-nav feed-media-viewer-next" data-viewer-next title="Next">&#8250;</button>' : "") +
+                '<div data-viewer-stage></div>' +
+                (items.length > 1 ? '<span class="feed-media-viewer-count" data-viewer-count></span>' : "") +
+            '</div>';
+        document.body.appendChild(viewer);
+        document.body.style.overflow = "hidden";
+
+        viewer._items = items;
+        viewer._index = startIndex;
+        renderViewerItem(viewer);
+
+        viewer.addEventListener("click", function(e) {
+            if (e.target === viewer || e.target.closest("[data-viewer-close]")) { closeFeedMediaViewer(); return; }
+            if (e.target.closest("[data-viewer-prev]")) { viewer._index = (viewer._index - 1 + items.length) % items.length; renderViewerItem(viewer); return; }
+            if (e.target.closest("[data-viewer-next]")) { viewer._index = (viewer._index + 1) % items.length; renderViewerItem(viewer); return; }
+        });
+        viewer._keyHandler = function(e) {
+            if (e.key === "Escape") { closeFeedMediaViewer(); return; }
+            if (e.key === "ArrowLeft" && items.length > 1) { viewer._index = (viewer._index - 1 + items.length) % items.length; renderViewerItem(viewer); }
+            if (e.key === "ArrowRight" && items.length > 1) { viewer._index = (viewer._index + 1) % items.length; renderViewerItem(viewer); }
+        };
+        document.addEventListener("keydown", viewer._keyHandler);
+    }
+
+    function renderViewerItem(viewer) {
+        var item = viewer._items[viewer._index];
+        var stage = viewer.querySelector("[data-viewer-stage]");
+        if (!stage || !item) return;
+        if (item.type === "video") {
+            stage.innerHTML = '<video src="' + escapeAttr(item.url) + '" controls autoplay muted playsinline></video>';
+        } else {
+            stage.innerHTML = '<img src="' + escapeAttr(item.url) + '" alt="' + escapeAttr(item.name || "Image") + '">';
+        }
+        var count = viewer.querySelector("[data-viewer-count]");
+        if (count) count.textContent = (viewer._index + 1) + " / " + viewer._items.length;
+    }
+
+    function closeFeedMediaViewer() {
+        var viewer = document.querySelector("[data-feed-media-viewer]");
+        if (!viewer) return;
+        if (viewer._keyHandler) document.removeEventListener("keydown", viewer._keyHandler);
+        viewer.remove();
+        document.body.style.overflow = "";
     }
 
     function openPostEditor(card, topicId) {
