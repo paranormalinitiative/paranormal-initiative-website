@@ -45,10 +45,10 @@
         .pn-tab.active { color: var(--text-on-accent, #0a0c10); background: var(--pn-accent); border-color: var(--pn-accent); }
         /* One interleaved grid: image cards fill a 4-across row, then text
            rows span the full width (5 per block), repeating down the page. */
-        .pn-feed { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: start; }
+        .pn-feed { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
         @media (max-width: 1024px) { .pn-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 640px) { .pn-feed { grid-template-columns: 1fr; } }
-        .pn-card { display: flex; flex-direction: column; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+        .pn-card { display: flex; flex-direction: column; height: 100%; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
         .pn-card:hover { border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); transform: translateY(-2px); }
         .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: var(--bg-secondary); }
         /* The img is absolutely positioned so a tall source image can't
@@ -59,8 +59,8 @@
         .pn-card-media.no-image { display: grid; place-items: center; font-size: 34px; opacity: 0.5; }
         .pn-badge { position: absolute; top: 10px; left: 10px; padding: 3px 9px; background: color-mix(in srgb, var(--bg-primary) 85%, transparent); border: 1px solid var(--pn-accent); border-radius: 999px; color: var(--pn-accent); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
         .pn-card-body { padding: 14px 15px 15px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
-        .pn-card-title { margin: 0; color: var(--text-primary); font-size: 15px; font-weight: 700; line-height: 1.35; }
-        .pn-card-excerpt { margin: 0; color: var(--text-tertiary); font-size: 12.5px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .pn-card-title { margin: 0; color: var(--text-primary); font-size: 15px; font-weight: 700; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: calc(3 * 1.35em); }
+        .pn-card-excerpt { margin: 0; color: var(--text-tertiary); font-size: 12.5px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: calc(3 * 1.5em); }
         .pn-card-meta { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; gap: 10px; color: var(--text-tertiary); font-size: 11px; }
         .pn-card-meta .src { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .pn-status { padding: 40px 0; text-align: center; color: var(--text-tertiary); font-size: 14px; }
@@ -182,7 +182,7 @@
             '</div>' +
             '<div class="pn-card-body">' +
                 '<h3 class="pn-card-title">' + esc(item.title) + '</h3>' +
-                (item.excerpt ? '<p class="pn-card-excerpt">' + esc(item.excerpt) + '</p>' : "") +
+                '<p class="pn-card-excerpt">' + esc(item.excerpt || "") + '</p>' +
                 '<div class="pn-card-meta">' +
                     '<span class="src">' + esc(item.sourceName || "News") + '</span>' +
                     '<span>' + esc(fmtDate(item.publishedAt)) + '</span>' +
