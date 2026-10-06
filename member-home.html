@@ -1456,6 +1456,16 @@
                 padding: 14px;
             }
         }
+
+        /* Rail refresh: soft cross-fade so scheduled content swaps read as
+           a gentle update instead of a flicker. */
+        .rail-refreshing .rail-card [data-rail-fade] {
+            opacity: 0;
+        }
+
+        .rail-card [data-rail-fade] {
+            transition: opacity 350ms ease;
+        }
     </style>
 </head>
 <body>
@@ -1783,7 +1793,39 @@
     }
 
     // ===== RIGHT RAIL =====
+    // The rail is meant to feel alive: content picks rotate on each refresh
+    // cycle (not always "newest"), and a visibility-aware timer re-fetches
+    // every few minutes so long sessions see new stories, videos, events,
+    // members and discussions without a reload.
+    var RAIL_REFRESH_MS = 3 * 60 * 1000;
+    var railRefreshTimer = null;
+
+    // Same Fisher-Yates shuffle the hub pages use so picks change per cycle.
+    function shuffle(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+        }
+        return arr;
+    }
+
+    function beginRailFade() {
+        var rail = document.querySelector("[data-home-rail]");
+        if (rail) rail.classList.add("rail-refreshing");
+    }
+
+    function endRailFade() {
+        var rail = document.querySelector("[data-home-rail]");
+        if (rail) rail.classList.remove("rail-refreshing");
+    }
+
     async function loadRightRail() {
+        loadRightRailContent();
+        startRailRefresh();
+    }
+
+    async function loadRightRailContent() {
+        beginRailFade();
         renderPulse();
         loadRailEvents();
         loadRailMembers();
@@ -1791,12 +1833,31 @@
         loadRailNews();
         loadRailVideo();
         loadRailFeatured();
+        // Fade back in after the swap window; loaders fill in whenever their
+        // fetches resolve, the fade just softens the moment of replacement.
+        setTimeout(endRailFade, 350);
+    }
+
+    // Re-runs the rail loaders every few minutes while the tab is visible,
+    // so members who leave the page open see fresh Spotlight, Featured
+    // Content, events, members and discussions without reloading.
+    function startRailRefresh() {
+        if (railRefreshTimer) clearInterval(railRefreshTimer);
+        railRefreshTimer = setInterval(function () {
+            if (document.hidden) return; // no churn in background tabs
+            loadRightRailContent();
+        }, RAIL_REFRESH_MS);
+        document.addEventListener("visibilitychange", function () {
+            // Returning to the tab after a while: refresh immediately.
+            if (!document.hidden && viewingOwnProfile) loadRightRailContent();
+        });
     }
 
     // Featured Content: fills the Spotlight-sized blocks with real site
-    // content — newest TPI video (Investigation Series), newest published
-    // article per section (Audio Research Lab / Field Papers), and the
-    // ParaTube slot takes its featured image from the video aggregator.
+    // content — newest TPI video (Investigation Series), published article
+    // picks per section (Audio Research Lab / Field Papers) that rotate on
+    // every refresh cycle, and the ParaTube slot takes its featured image
+    // from the video aggregator.
     async function loadRailFeatured() {
         // Video Series block always shows (static fallback image inside); the
         // ParaTube slot unhides at the bottom of this function.
@@ -1806,7 +1867,9 @@
             var res = await fetch("/api/articles", { credentials: "same-origin" });
             if (!res.ok) return;
             var data = await res.json();
+            // Shuffle so each refresh cycle surfaces different articles.
             var articles = data.articles || [];
+            shuffle(articles);
             // Newest article with an inline image wins the slot image; any
             // newest article updates the title either way.
             function fillArticleSlot(selector, label) {
@@ -1893,7 +1956,10 @@
                 body.innerHTML = '<p class="rail-empty">No headlines yet — <a href="news.html" style="color:#a855f7;">browse ParaNews</a>.</p>';
                 return;
             }
-            // Prefer the newest story that has an image; fall back to the newest.
+            // Rotate the Spotlight instead of always pinning the newest
+            // imaged story: shuffle the pool, then prefer the first story
+            // with an image so the block keeps its look between cycles.
+            shuffle(items);
             var story = items.find(function(n) { return n.imageUrl; }) || items[0];
             body.innerHTML =
                 '<a class="rail-feature" href="' + escapeAttr(story.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' +
