@@ -1,6 +1,6 @@
 # TPI MASTER BUILD PLAN
 
-[BUFFY] 2026-10-06 — Follow-up on the Featured Content rename: the homepage (index.html) static fallback card still said "Audio Research Lab" — renamed to "EVP / ITC Research" so the rename is consistent site-wide (member-home.html was already done in commit 6f414c5). Also confirmed Todd's screenshot showed the pre-deploy cached render; new layout is pills-above-preview as shipped in 8c5617cc.
+[BUFFY] 2026-10-06 — Follow-up on the Featured Content rename: the homepage (index.html) static fallback card still said "Audio Research Lab" — renamed to "EVP / ITC Research" so the rename is consistent site-wide (member-home.html was already done in commit 6f414c5). Also confirmed Todd's screenshot showed the pre-deploy cached render; new layout is pills-above-preview as shipped in 8c5617cc. Deploy Version ID: 93daf349-6726-4df7-a985-89b927eeae5f (commit e644bd0).
 
 [BUFFY] 2026-10-06 — Featured Content layout (Todd): category pills moved from overlapping the preview to their own line above it, block spacing widened to 16px, and Audio Research Lab renamed EVP / ITC Research across markup and JS so that section focuses on EVP/ITC. ParaTube dynamic fill updated to match the new pill placement. Verified in-browser (all 4 pills static above media). Deploy Version ID: 8c5617cc-8c92-4ebc-bddc-e24afe0dd3aa (commit 6f414c5).
 
