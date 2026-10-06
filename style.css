@@ -69,8 +69,10 @@
     --space-3xl: 64px;
 
     /* Border Radius */
-    --radius-sm: 10px;
-    --radius-md: 16px;
+    /* Education Center look site-wide: cards 24px, small controls 16px,
+       pills fully round (per Todd — rounder, more elegant). */
+    --radius-sm: 16px;
+    --radius-md: 24px;
     --radius-lg: 24px;
     --radius-xl: 32px;
     --radius-full: 9999px;
