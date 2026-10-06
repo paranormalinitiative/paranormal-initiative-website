@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — Finished radius uniformity on member-home: nested rail blocks/feed cards/empty states to 16px, identity + composer cards to 24px, feed-card badge to full pill, share modal to 24px. Deploy Version ID: b1eb41f0-dce4-4c46-b9b5-51cd110d0dbf (commit ac79d03).
+
 [BUFFY] 2026-10-06 — Uniform radius language on every page: swept all remaining hardcoded radii (cards/panels 10–20px → 24px Education look, small pills/chips 4–6px & 20px → fully round 999px, controls/inner tiles → 12–16px) across index, events, submit-event, admin-events, tpi-videos, member-home and the encyclopedia/glossary pages. Verified in-browser on home, events and tpi-videos. Deploy Version ID: 32764369-9576-4e42-b027-e0b6cf208a6c (commit f662e83).
 
 [BUFFY] 2026-10-06 — Global Education Center card/pill styling: remapped radius tokens (--radius-sm 10→16px, --radius-md 16→24px) so all token-driven cards/panels/inputs get the rounder look, plus hardcoded 10px card radii on news/paratube/member-home rail → 24px. Pills already fully round. Verified in-browser (news 24px, rail 24px, Education Center unchanged as reference). Deploy Version ID: 5dc8d03f-6637-48da-99bb-bf1fb462b632 (commit 5de20e8).
