@@ -1042,6 +1042,25 @@ body.member-mode .member-floating-chat .member-chat-create {
     box-shadow: 0 0 0 1px rgba(84, 211, 138, 0.28), 0 0 8px rgba(84, 211, 138, 0.72);
 }
 
+/* Pulsing identity ring — unique TPI visual: the member chip's avatar
+   ring breathes outward on a slow loop (accent-colored, respects
+   reduced-motion). */
+@keyframes member-identity-ring-pulse {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+    70%  { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+
+.member-chat-identity-avatar {
+    animation: member-identity-ring-pulse 2.6s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .member-chat-identity-avatar {
+        animation: none;
+    }
+}
+
 .member-chat-attachment-preview span {
     display: inline-flex;
     align-items: center;

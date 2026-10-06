@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=88">
-    <link rel="stylesheet" href="member-shell.css?v=59">
+    <link rel="stylesheet" href="member-shell.css?v=60">
     <style>
         /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
         /* Lift the shell's 1050px cap on this page only so the rail sits far
@@ -648,10 +648,17 @@
         }
 
         /* ===== IDENTITY BLOCK ===== */
+        /* Identity statement in its own pill-box card so it reads as part
+           of the page's card family (per Todd) — soft light highlight like
+           the rest of the cards. */
         .member-identity-block {
             text-align: center;
             margin-bottom: 28px;
             padding: 28px 20px;
+            background: #10141c;
+            border: 1px solid #263646;
+            border-radius: 24px;
+            box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05), 0 0 24px rgba(168, 85, 247, 0.07);
         }
 
         .member-identity-title {
@@ -1386,7 +1393,7 @@
             border-color: var(--accent);
         }
 
-        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=55) ===== */
+        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=60) ===== */
         @media (max-width: 700px) {
             .member-home-header h2 {
                 font-size: 22px;
@@ -1471,6 +1478,22 @@
 
         .rail-card [data-rail-fade] {
             transition: opacity 350ms ease;
+        }
+
+        /* Light highlight — member-home card family gets a soft accent
+           halo so cards and pills glow gently against the background
+           (per Todd). */
+        .member-home-rail section.rail-card,
+        .rail-pulse-stat,
+        .rail-pulse-link,
+        .member-composer,
+        .composer-textarea,
+        .feed-card,
+        .member-empty,
+        .event-form-card,
+        .member-profile-identity,
+        .member-identity-block {
+            box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05), 0 0 22px rgba(168, 85, 247, 0.07);
         }
     </style>
 </head>
