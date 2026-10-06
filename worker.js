@@ -158,7 +158,7 @@ export default {
     }
     try {
       const news = await scrapeNews(env);
-      console.log(`News updated: ${news.collected} collected, ${news.inserted} inserted, feeds ${news.feedsOk}/${news.feedsTotal}`);
+      console.log(`News updated: ${news.collected} collected, ${news.inserted} inserted, feeds ${news.feedsOk}/${news.feedsTotal} (this run: ${news.feedsActive})`);
     } catch (e) {
       console.error("Scheduled news scrape failed:", e.message);
     }
