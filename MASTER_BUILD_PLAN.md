@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — Full card-height equalization on ParaNews/ParaTube: 3-line clamped titles (2 on ParaTube), excerpt element always rendered with reserved min-height, grid stretch + full-height cards. Verified in-browser: every card in a block measures identical height with uniform 292px media boxes. Deploy Version ID: 81d83531-fef3-420a-9902-64aee2e4715e (commit 2c79d23).
+
 [BUFFY] 2026-10-06 — Uniform ParaNews/ParaTube image cards: card images absolutely positioned inside the 16/9 media box so tall/square sources can't stretch it — every image card now matches the Rabbit Hole card size. Verified in-browser (portrait/square/landscape all render 292px media boxes). Deploy Version ID: c0c98a11-946c-45e9-af2a-5d19323d6508 (commit 74b13de).
 
 [BUFFY] 2026-10-06 — Member-home right rail now refreshes with new content: shuffled ParaNews Spotlight + Featured Content picks (no longer always-newest), visibility-aware timer re-fetches all rail widgets every 3 minutes plus immediate refresh on tab return, soft cross-fade on swap. Deploy Version ID: 8f5c3c3e-0e58-4727-9a40-d6f9a172126e (commit 487ff66).
