@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — Member-home right rail now refreshes with new content: shuffled ParaNews Spotlight + Featured Content picks (no longer always-newest), visibility-aware timer re-fetches all rail widgets every 3 minutes plus immediate refresh on tab return, soft cross-fade on swap. Deploy Version ID: 8f5c3c3e-0e58-4727-9a40-d6f9a172126e (commit 487ff66).
+
 > **THE single source of truth for project state.** Both agents MUST keep this file current.
 > If you shipped work and didn't log it here, you are not done. Synced to every workspace via
 > git (live repo + desktop playground copy).
