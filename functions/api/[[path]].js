@@ -254,9 +254,10 @@ async function handleMe(request, env) {
 // My Pulse stats: every number is a truthful count from real tables —
 // no estimates. Likes = reactions the member gave across forum posts,
 // articles and videos. Comments = article + video comments. Uploads =
-// media objects the member put in R2. Posts = forum topics started.
-// Following / Live Streams have no feature yet, so they report 0 until
-// those features exist.
+// media objects the member put in R2. Posts = everything the member has
+// posted across the site: forum topics started, forum replies, and
+// published articles/papers. Following / Live Streams have no feature
+// yet, so they report 0 until those features exist.
 async function handleMyPulse(request, env, user) {
   const counts = {
     likes: 0,
@@ -272,11 +273,25 @@ async function handleMyPulse(request, env, user) {
     env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_reactions WHERE contributor_id = ?").bind(user.id).first(),
     env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM forum_topics WHERE created_by = ? AND status NOT IN ('deleted', 'inactive')").bind(user.id).first(),
     env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM comments WHERE contributor_id = ? AND status = 'approved'").bind(user.id).first(),
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_comments WHERE contributor_id = ? AND status = 'visible'").bind(user.id).first()
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_comments WHERE contributor_id = ? AND status = 'visible'").bind(user.id).first(),
+    // Replies = visible forum posts that are NOT the topic's opening post
+    // (openers are already counted via forum_topics above).
+    env.TPI_DB.prepare(`
+      SELECT COUNT(*) AS n
+      FROM forum_posts fp
+      WHERE fp.contributor_id = ? AND fp.status = 'visible'
+        AND fp.id <> COALESCE((
+          SELECT fp2.id FROM forum_posts fp2
+          WHERE fp2.topic_id = fp.topic_id AND fp2.status = 'visible'
+          ORDER BY fp2.created_at ASC, fp2.id ASC
+          LIMIT 1
+        ), '')
+    `).bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM articles WHERE created_by = ? AND status = 'published'").bind(user.id).first()
   ];
   const results = await Promise.all(queries.map(q => q.catch(() => ({ n: 0 }))));
   counts.likes = Number(results[0]?.n || 0) + Number(results[1]?.n || 0) + Number(results[2]?.n || 0);
-  counts.posts = Number(results[3]?.n || 0);
+  counts.posts = Number(results[3]?.n || 0) + Number(results[6]?.n || 0) + Number(results[7]?.n || 0);
   counts.comments = Number(results[4]?.n || 0) + Number(results[5]?.n || 0);
   // R2 media keys are area/<username>/<date>/... so a prefix scan counts
   // this member's uploads directly.
