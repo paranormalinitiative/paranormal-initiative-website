@@ -32,7 +32,9 @@
         .pn-tab { padding: 7px 13px; color: var(--text-secondary); background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 999px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
         .pn-tab:hover { color: var(--text-primary); border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); }
         .pn-tab.active { color: var(--text-on-accent, #0a0c10); background: var(--pn-accent); border-color: var(--pn-accent); }
-        .pn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .pn-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+        @media (max-width: 1024px) { .pn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) { .pn-grid { grid-template-columns: 1fr; } }
         .pn-card { display: flex; flex-direction: column; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
         .pn-card:hover { border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); transform: translateY(-2px); }
         .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: var(--bg-secondary); }
@@ -60,7 +62,7 @@
         .pn-row:hover .pn-row-title { text-decoration: underline; }
         .pn-row-excerpt { margin: 0 0 6px; color: var(--text-secondary); font-size: 13px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .pn-row-date { color: var(--text-tertiary); font-size: 11.5px; }
-        @media (max-width: 640px) { .pn-hero h1 { font-size: 24px; } .pn-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 640px) { .pn-hero h1 { font-size: 24px; } }
     </style>
 </head>
 <body>
@@ -104,8 +106,8 @@
         ["rabbit hole", "\uD83D\uDD73\uFE0F Rabbit Hole"],
         ["unexplained", "\u2753 Unexplained"]
     ];
-    var LIMIT = 24;
-    var CARD_COUNT = 6; // image cards per page; everything else renders as text rows
+    var LIMIT = 24; // 4 columns × 6 rows
+    var CARD_COUNT = 4; // image cards per page; everything else renders as text rows
     var activeCategory = "all";
     var offset = 0;
     var grid = document.getElementById("pn-grid");

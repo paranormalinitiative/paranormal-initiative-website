@@ -346,58 +346,115 @@
 
         .rail-feature + .rail-feature { margin-top: 10px; }
 
-        /* Featured Content — latest from the TPI community (rail widget) */
-        .rail-fc {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 9px;
-            margin: 0 -9px;
-            border-radius: 7px;
+        /* Featured Content — latest from the TPI community (rail widget).
+           Blocks mirror the ParaNews Spotlight .rail-feature card: media
+           (real article image) on top, body with title + meta below. The
+           three not-yet-built areas (ParaTube video slot, Reels, Forum,
+           Live) render as compact icon blocks until those pages complete. */
+        .rail-fc-block {
+            display: block;
             text-decoration: none;
-            transition: background 0.15s;
-        }
-
-        .rail-fc:hover { background: rgba(168, 85, 247, 0.07); }
-
-        .rail-fc-icon {
-            display: grid;
-            place-items: center;
-            width: 34px;
-            height: 34px;
-            flex-shrink: 0;
-            color: var(--accent, #a855f7);
-            background: color-mix(in srgb, var(--accent, #a855f7) 12%, transparent);
-            border: 1px solid color-mix(in srgb, var(--accent, #a855f7) 28%, transparent);
             border-radius: 8px;
-            font-size: 15px;
+            overflow: hidden;
+            border: 1px solid #1f2d3d;
+            background: #0d1017;
+            transition: border-color 0.15s;
         }
 
-        .rail-fc-copy { min-width: 0; }
+        .rail-fc-block:hover { border-color: rgba(168, 85, 247, 0.5); }
 
-        .rail-fc-name {
+        .rail-fc-block + .rail-fc-block { margin-top: 10px; }
+
+        .rail-fc-block-media {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #090c11;
+        }
+
+        .rail-fc-block-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .rail-fc-tag {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 2px 8px;
+            background: rgba(10, 12, 16, 0.85);
+            border: 1px solid var(--accent, #a855f7);
+            border-radius: 999px;
+            color: var(--accent, #a855f7);
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .rail-fc-block-body { padding: 10px 12px 12px; }
+
+        .rail-fc-block-title {
             margin: 0;
             color: #e8eef5;
-            font-size: 12.5px;
+            font-size: 13px;
             font-weight: 700;
-            line-height: 1.25;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rail-fc-block-meta {
+            margin: 5px 0 0;
+            color: #8aa0b6;
+            font-size: 11px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        .rail-fc-desc {
-            margin: 1px 0 0;
-            color: #8aa0b6;
-            font-size: 11px;
-            line-height: 1.35;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        /* Compact icon blocks for the not-yet-complete areas */
+        .rail-fc-iconblock {
+            display: grid;
+            place-items: center;
+            gap: 2px;
+            padding: 16px 12px 14px;
+            text-align: center;
         }
 
-        .rail-fc:hover .rail-fc-name { color: #bd7ef9; }
+        .rail-fc-iconblock .rail-fc-icon {
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            color: var(--accent, #a855f7);
+            background: color-mix(in srgb, var(--accent, #a855f7) 12%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent, #a855f7) 28%, transparent);
+            border-radius: 10px;
+            font-size: 17px;
+        }
+
+        .rail-fc-iconblock .rail-fc-name {
+            display: block;
+            margin: 6px 0 0;
+            color: #e8eef5;
+            font-size: 12.5px;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .rail-fc-iconblock .rail-fc-desc {
+            display: block;
+            margin: 2px 0 0;
+            color: #8aa0b6;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .rail-fc-iconblock:hover .rail-fc-name { color: #bd7ef9; }
 
         /* Active Discussions */
         .rail-topic {
@@ -1524,54 +1581,62 @@
                         <h4>Featured Content</h4>
                     </div>
                     <div data-featured-body>
-                        <a class="rail-fc" href="tpi-videos.html">
-                            <span class="rail-fc-icon">▶</span>
-                            <span class="rail-fc-copy">
-                                <span class="rail-fc-name">TPI Investigation Series</span>
-                                <span class="rail-fc-desc">Latest paranormal investigation videos from the field.</span>
-                            </span>
+                        <!-- Real content blocks (filled by loadRailFeatured()) -->
+                        <a class="rail-fc-block" href="tpi-videos.html" data-fc-video-slot hidden>
+                            <div class="rail-fc-block-media">
+                                <img src="assets/investigation-development-series/welcome-to-the-paranormal-initiative.png" alt="" loading="lazy">
+                                <span class="rail-fc-tag">TPI Investigation Series</span>
+                            </div>
+                            <div class="rail-fc-block-body">
+                                <p class="rail-fc-block-title">Latest paranormal investigation videos from the field.</p>
+                                <p class="rail-fc-block-meta">TPI Videos</p>
+                            </div>
                         </a>
-                        <a class="rail-fc" href="evp-itc-research.html">
-                            <span class="rail-fc-icon">♫</span>
-                            <span class="rail-fc-copy">
-                                <span class="rail-fc-name">Audio Research Lab</span>
-                                <span class="rail-fc-desc">Anomalous voice phenomena and ITC research.</span>
-                            </span>
+                        <a class="rail-fc-block" href="evp-itc-research.html" data-fc-article-slot="evp" hidden>
+                            <div class="rail-fc-block-media">
+                                <img src="assets/acs/ar-lab.png" alt="" loading="lazy">
+                                <span class="rail-fc-tag">Audio Research Lab</span>
+                            </div>
+                            <div class="rail-fc-block-body">
+                                <p class="rail-fc-block-title">Anomalous voice phenomena and ITC research.</p>
+                                <p class="rail-fc-block-meta">EVP / ITC</p>
+                            </div>
                         </a>
-                        <a class="rail-fc" href="field-articles.html">
-                            <span class="rail-fc-icon">✎</span>
-                            <span class="rail-fc-copy">
-                                <span class="rail-fc-name">Field Papers &amp; Articles</span>
-                                <span class="rail-fc-desc">Contributed research, methodology, and guides.</span>
-                            </span>
+                        <a class="rail-fc-block" href="field-articles.html" data-fc-article-slot="field" hidden>
+                            <div class="rail-fc-block-media">
+                                <img src="assets/ghostology-101/1.jpg" alt="" loading="lazy">
+                                <span class="rail-fc-tag">Field Papers &amp; Articles</span>
+                            </div>
+                            <div class="rail-fc-block-body">
+                                <p class="rail-fc-block-title">Contributed research, methodology, and guides.</p>
+                                <p class="rail-fc-block-meta">Published Work</p>
+                            </div>
                         </a>
-                        <a class="rail-fc" href="paratube.html">
-                            <span class="rail-fc-icon">🎬</span>
-                            <span class="rail-fc-copy">
-                                <span class="rail-fc-name">ParaTube</span>
-                                <span class="rail-fc-desc">Paranormal video aggregated from the open web.</span>
-                            </span>
+                        <!-- ParaTube slot: featured video image from the aggregator -->
+                        <a class="rail-fc-block" href="paratube.html" data-fc-paratube hidden>
+                            <div class="rail-fc-block-media">
+                                <span class="rail-fc-tag">ParaTube</span>
+                            </div>
+                            <div class="rail-fc-block-body">
+                                <p class="rail-fc-block-title">Paranormal video aggregated from the open web.</p>
+                                <p class="rail-fc-block-meta">Watch now</p>
+                            </div>
                         </a>
-                        <a class="rail-fc" href="reels.html">
+                        <!-- Compact blocks for areas still being completed -->
+                        <a class="rail-fc-block rail-fc-iconblock" href="reels.html">
                             <span class="rail-fc-icon">⏯</span>
-                            <span class="rail-fc-copy">
-                                <span class="rail-fc-name">TPI Reels</span>
-                                <span class="rail-fc-desc">Short clips, EVP evidence, and field tips.</span>
-                            </span>
+                            <span class="rail-fc-name">TPI Reels</span>
+                            <span class="rail-fc-desc">Short clips, EVP evidence, and field tips.</span>
                         </a>
-                        <a class="rail-fc" href="community-forum.html">
+                        <a class="rail-fc-block rail-fc-iconblock" href="community-forum.html">
                             <span class="rail-fc-icon">💬</span>
-                            <span class="rail-fc-copy">
-                                <span class="rail-fc-name">Community Forum</span>
-                                <span class="rail-fc-desc">Discussions with fellow investigators.</span>
-                            </span>
+                            <span class="rail-fc-name">Community Forum</span>
+                            <span class="rail-fc-desc">Discussions with fellow investigators.</span>
                         </a>
-                        <a class="rail-fc" href="live-video.html">
+                        <a class="rail-fc-block rail-fc-iconblock" href="live-video.html">
                             <span class="rail-fc-icon">📡</span>
-                            <span class="rail-fc-copy">
-                                <span class="rail-fc-name">Live Video</span>
-                                <span class="rail-fc-desc">Live investigations and Q&A via StudioFlow.</span>
-                            </span>
+                            <span class="rail-fc-name">Live Video</span>
+                            <span class="rail-fc-desc">Live investigations and Q&amp;A via StudioFlow.</span>
                         </a>
                     </div>
                 </section>
@@ -1725,6 +1790,95 @@
         loadRailDiscussions();
         loadRailNews();
         loadRailVideo();
+        loadRailFeatured();
+    }
+
+    // Featured Content: fills the Spotlight-sized blocks with real site
+    // content — newest TPI video (Investigation Series), newest published
+    // article per section (Audio Research Lab / Field Papers), and the
+    // ParaTube slot takes its featured image from the video aggregator.
+    async function loadRailFeatured() {
+        // Video Series block always shows (static fallback image inside); the
+        // ParaTube slot unhides at the bottom of this function.
+        var seriesSlot = document.querySelector("[data-fc-video-slot]");
+        if (seriesSlot) seriesSlot.hidden = false;
+        try {
+            var res = await fetch("/api/articles", { credentials: "same-origin" });
+            if (!res.ok) return;
+            var data = await res.json();
+            var articles = data.articles || [];
+            // Newest article with an inline image wins the slot image; any
+            // newest article updates the title either way.
+            function fillArticleSlot(selector, label) {
+                var slot = document.querySelector(selector);
+                if (!slot || !articles.length) return;
+                var pick = articles[0];
+                for (var i = 0; i < articles.length; i++) {
+                    var html = articles[i].bodyHtml || articles[i].articleHtml || "";
+                    var m = html.match(/<img[^>]*src=\"([^\"]+)\"/);
+                    if (m) { pick = articles[i]; break; }
+                }
+                var titleEl = slot.querySelector(".rail-fc-block-title");
+                var metaEl = slot.querySelector(".rail-fc-block-meta");
+                if (titleEl) titleEl.textContent = pick.title || label;
+                if (metaEl) metaEl.textContent = (pick.author || label);
+                var href = pick.href || ("published-article.html?id=" + encodeURIComponent(pick.id));
+                if (window.preserveMemberMode) href = window.preserveMemberMode(href);
+                slot.setAttribute("href", href);
+                slot.hidden = false;
+            }
+            fillArticleSlot("[data-fc-article-slot='field']", "Field Papers & Articles");
+            // Audio Research Lab: prefer EVP/ITC-labelled articles, else latest.
+            var evpSlot = document.querySelector("[data-fc-article-slot='evp']");
+            if (evpSlot) {
+                var evp = articles.filter(function (a) {
+                    var t = ((a.contributionType || "") + " " + (a.title || "") + " " + (a.subtitle || "")).toLowerCase();
+                    return t.includes("evp") || t.includes("itc");
+                })[0] || articles[0];
+                if (evp) {
+                    var titleEl = evpSlot.querySelector(".rail-fc-block-title");
+                    var metaEl = evpSlot.querySelector(".rail-fc-block-meta");
+                    if (titleEl) titleEl.textContent = evp.title || "Audio Research Lab";
+                    if (metaEl) metaEl.textContent = evp.author || "EVP / ITC";
+                    var href = evp.href || ("published-article.html?id=" + encodeURIComponent(evp.id));
+                    if (window.preserveMemberMode) href = window.preserveMemberMode(href);
+                    evpSlot.setAttribute("href", href);
+                    evpSlot.hidden = false;
+                }
+            }
+        } catch (e) {
+            // Blocks stay hidden on failure; fallback content already rendered.
+        }
+        // ParaTube slot: newest aggregated video thumbnail, click through to
+        // the watch page when the video is on-site, else ParaTube itself.
+        try {
+            var vres = await fetch("/api/videos?limit=1");
+            if (vres.ok) {
+                var vdata = await vres.json();
+                var video = (vdata.videos || [])[0];
+                var slot = document.querySelector("[data-fc-paratube]");
+                if (slot && video) {
+                    var media = slot.querySelector(".rail-fc-block-media");
+                    if (media && video.thumbnailUrl) {
+                        media.innerHTML = '<img src="' + escapeAttr(video.thumbnailUrl) + '" alt="" loading="lazy">' +
+                            '<span class="rail-fc-tag">ParaTube</span>';
+                    }
+                    var titleEl = slot.querySelector(".rail-fc-block-title");
+                    var metaEl = slot.querySelector(".rail-fc-block-meta");
+                    if (titleEl) titleEl.textContent = video.title || "Paranormal video from the open web";
+                    if (metaEl) metaEl.textContent = video.sourceName || "Watch now";
+                    slot.setAttribute("href", video.sourceUrl || "paratube.html");
+                    slot.setAttribute("target", "_blank");
+                    slot.setAttribute("rel", "noopener noreferrer");
+                    slot.hidden = false;
+                } else if (slot) {
+                    slot.hidden = false;
+                }
+            }
+        } catch (e) {
+            var slot = document.querySelector("[data-fc-paratube]");
+            if (slot) slot.hidden = false;
+        }
     }
 
     async function loadRailNews() {
