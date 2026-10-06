@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — Radius uniformity completed on ALL 276 pages: final sweep fixed haunted-location directory (50 state pages), the three TPI compendiums, tpi-video watch page and ITC lab manual. Audit confirms zero off-system radii remain — the whole site now runs the single scale: 24px cards, 16px nested, 12px controls, full-round pills. Verified in-browser on directory + watch page. Deploy Version ID: 2ad2e782-736c-4daf-9a9c-3d990b4f8547 (commit f812c40).
+
 [BUFFY] 2026-10-06 — Finished radius uniformity on member-home: nested rail blocks/feed cards/empty states to 16px, identity + composer cards to 24px, feed-card badge to full pill, share modal to 24px. Deploy Version ID: b1eb41f0-dce4-4c46-b9b5-51cd110d0dbf (commit ac79d03).
 
 [BUFFY] 2026-10-06 — Uniform radius language on every page: swept all remaining hardcoded radii (cards/panels 10–20px → 24px Education look, small pills/chips 4–6px & 20px → fully round 999px, controls/inner tiles → 12–16px) across index, events, submit-event, admin-events, tpi-videos, member-home and the encyclopedia/glossary pages. Verified in-browser on home, events and tpi-videos. Deploy Version ID: 32764369-9576-4e42-b027-e0b6cf208a6c (commit f662e83).
