@@ -2,6 +2,7 @@ import { onRequest as handleApiRequest } from "./functions/api/[[path]].js";
 import { getSessionUser } from "./lib/auth.js";
 import { scrapeAndUpdateEvents } from "./lib/event-scraper.js";
 import { scrapeNews } from "./lib/news-scraper.js";
+import { scrapeVideos } from "./lib/video-scraper.js";
 
 const MEMBER_GATE_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -160,6 +161,12 @@ export default {
       console.log(`News updated: ${news.collected} collected, ${news.inserted} inserted, feeds ${news.feedsOk}/${news.feedsTotal}`);
     } catch (e) {
       console.error("Scheduled news scrape failed:", e.message);
+    }
+    try {
+      const videos = await scrapeVideos(env);
+      console.log(`Videos updated: ${videos.collected} collected, ${videos.inserted} inserted`);
+    } catch (e) {
+      console.error("Scheduled video scrape failed:", e.message);
     }
   },
 };

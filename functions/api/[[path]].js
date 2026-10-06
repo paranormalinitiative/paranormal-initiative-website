@@ -1,6 +1,7 @@
 import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
 import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
 import { scrapeNews } from "../../lib/news-scraper.js";
+import { scrapeVideos } from "../../lib/video-scraper.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -130,6 +131,8 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/events/refresh") return handleRefreshEvents(env);
     if (request.method === "GET" && path === "/news") return handleListNews(request, env);
     if (request.method === "GET" && path === "/news/refresh") return handleRefreshNews(env);
+    if (request.method === "GET" && path === "/videos") return handleListVideos(request, env);
+    if (request.method === "GET" && path === "/videos/refresh") return handleRefreshVideos(env);
     if (request.method === "GET" && path.match(/^\/events\/[^/]+$/)) return handleGetEvent(path, env);
     if (request.method === "POST" && path === "/events") return requireAdmin(request, env, user => handleCreateEvent(request, env, user));
     if (request.method === "POST" && path === "/events/submit") return handleCommunityEventSubmit(request, env);
@@ -4203,5 +4206,30 @@ async function handleListNews(request, env) {
 async function handleRefreshNews(env) {
   // Shared scraper (same code path as the cron) — see lib/news-scraper.js
   const result = await scrapeNews(env);
+  return json({ ok: true, ...result });
+}
+
+async function handleListVideos(request, env) {
+  const url = new URL(request.url);
+  const category = clean(url.searchParams.get("category")).toLowerCase();
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "30"), 60);
+  const offset = Math.max(parseInt(url.searchParams.get("offset") || "0"), 0);
+
+  let query = "SELECT id, title, description, thumbnail_url AS thumbnailUrl, source_url AS sourceUrl, source_name AS sourceName, channel_name AS channelName, duration_seconds AS durationSeconds, category, published_at AS publishedAt FROM videos WHERE status = 'approved'";
+  const binds = [];
+  if (category && category !== "all") {
+    query += " AND category = ?";
+    binds.push(category);
+  }
+  query += " ORDER BY COALESCE(NULLIF(published_at, ''), scraped_at) DESC LIMIT ? OFFSET ?";
+  binds.push(limit, offset);
+
+  const { results } = await env.TPI_DB.prepare(query).bind(...binds).all();
+  return json({ videos: results || [] });
+}
+
+async function handleRefreshVideos(env) {
+  // Shared scraper (same code path as the cron) — see lib/video-scraper.js
+  const result = await scrapeVideos(env);
   return json({ ok: true, ...result });
 }

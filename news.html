@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>ParaNews | Paranormal News & Headlines | The Paranormal Initiative</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pp:title" content="ParaNews">
+    <meta name="pp:subtitle" content="Paranormal News & Headlines from Across the Web">
     <meta name="description" content="Aggregated paranormal news: cryptozoology, UFO and UAP, ghosts and hauntings, ancient mysteries, psychic phenomena, near-death studies, and more — refreshed automatically from across the web.">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="The Paranormal Initiative">
@@ -12,36 +14,52 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=85">
+    <link rel="stylesheet" href="style.css?v=86">
     <style>
+        /* ParaNews is a public page but shares the site design system:
+           backgrounds, text, and borders all come from style.css theme
+           variables so member color themes carry through. The orange
+           --pn-accent is the ParaNews brand accent (matches the rail's
+           ParaNews Spotlight). */
         :root { --pn-accent: #e08600; }
-        body { background: #0a0c10; }
+        body { background: var(--bg-primary); color: var(--text-primary); }
         .pn-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 18px 80px; }
         .pn-hero { padding: 28px 0 18px; }
         .pn-kicker { margin: 0 0 6px; color: var(--pn-accent); font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; }
-        .pn-hero h1 { margin: 0 0 8px; color: #f4f8fb; font-size: 30px; }
-        .pn-hero p { margin: 0; color: #8aa0b6; font-size: 14px; max-width: 640px; line-height: 1.55; }
+        .pn-hero h1 { margin: 0 0 8px; color: var(--text-primary); font-size: 30px; }
+        .pn-hero p { margin: 0; color: var(--text-tertiary); font-size: 14px; max-width: 640px; line-height: 1.55; }
         .pn-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 22px; }
-        .pn-tab { padding: 7px 13px; color: #c7d5e2; background: #10141c; border: 1px solid #263646; border-radius: 999px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
-        .pn-tab:hover { color: #f4f8fb; border-color: #3a4c60; }
-        .pn-tab.active { color: #0a0c10; background: var(--pn-accent); border-color: var(--pn-accent); }
+        .pn-tab { padding: 7px 13px; color: var(--text-secondary); background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 999px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+        .pn-tab:hover { color: var(--text-primary); border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); }
+        .pn-tab.active { color: var(--text-on-accent, #0a0c10); background: var(--pn-accent); border-color: var(--pn-accent); }
         .pn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-        .pn-card { display: flex; flex-direction: column; background: #10141c; border: 1px solid #263646; border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
-        .pn-card:hover { border-color: rgba(224, 134, 0, 0.55); transform: translateY(-2px); }
-        .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: #0d1017; }
+        .pn-card { display: flex; flex-direction: column; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 10px; overflow: hidden; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+        .pn-card:hover { border-color: color-mix(in srgb, var(--pn-accent) 55%, transparent); transform: translateY(-2px); }
+        .pn-card-media { position: relative; aspect-ratio: 16 / 9; background: var(--bg-secondary); }
         .pn-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .pn-card-media.no-image { display: grid; place-items: center; font-size: 34px; opacity: 0.5; }
-        .pn-badge { position: absolute; top: 10px; left: 10px; padding: 3px 9px; background: rgba(10, 12, 16, 0.85); border: 1px solid var(--pn-accent); border-radius: 999px; color: var(--pn-accent); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+        .pn-badge { position: absolute; top: 10px; left: 10px; padding: 3px 9px; background: color-mix(in srgb, var(--bg-primary) 85%, transparent); border: 1px solid var(--pn-accent); border-radius: 999px; color: var(--pn-accent); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
         .pn-card-body { padding: 14px 15px 15px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
-        .pn-card-title { margin: 0; color: #f4f8fb; font-size: 15px; font-weight: 700; line-height: 1.35; }
-        .pn-card-excerpt { margin: 0; color: #8aa0b6; font-size: 12.5px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .pn-card-meta { margin-top: auto; padding-top: 8px; border-top: 1px solid #1a2531; display: flex; justify-content: space-between; gap: 10px; color: #6d8098; font-size: 11px; }
+        .pn-card-title { margin: 0; color: var(--text-primary); font-size: 15px; font-weight: 700; line-height: 1.35; }
+        .pn-card-excerpt { margin: 0; color: var(--text-tertiary); font-size: 12.5px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .pn-card-meta { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; gap: 10px; color: var(--text-tertiary); font-size: 11px; }
         .pn-card-meta .src { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .pn-status { padding: 40px 0; text-align: center; color: #8aa0b6; font-size: 14px; }
+        .pn-status { padding: 40px 0; text-align: center; color: var(--text-tertiary); font-size: 14px; }
         .pn-more { text-align: center; padding: 22px 0 0; }
-        .pn-more button { min-height: 42px; padding: 10px 26px; color: #c7d5e2; background: #10141c; border: 1px solid #263646; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
-        .pn-more button:hover { color: #f4f8fb; border-color: var(--pn-accent); }
-        .pn-note { margin: 14px 0 0; color: #586a80; font-size: 11px; text-align: center; }
+        .pn-more button { min-height: 42px; padding: 10px 26px; color: var(--text-secondary); background: var(--bg-card); border: 1px solid var(--border-default); border-radius: 8px; font: inherit; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+        .pn-more button:hover { color: var(--text-primary); border-color: var(--pn-accent); }
+        .pn-note { margin: 14px 0 0; color: var(--text-tertiary); font-size: 11px; text-align: center; }
+        /* Imageless stories render as compact text rows (paranormalcountry
+           style): accent kicker, bold title, excerpt, date, divider rows. */
+        .pn-list { display: flex; flex-direction: column; margin-top: 22px; }
+        .pn-list:empty { display: none; }
+        .pn-row { display: block; padding: 16px 4px 14px; border-bottom: 1px solid var(--border-subtle); text-decoration: none; transition: background 0.15s; }
+        .pn-row:hover { background: color-mix(in srgb, var(--pn-accent) 4%, transparent); }
+        .pn-row-kicker { margin: 0 0 4px; color: var(--pn-accent); font-size: 10.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+        .pn-row-title { margin: 0 0 5px; color: var(--text-primary); font-size: 16.5px; font-weight: 700; line-height: 1.35; }
+        .pn-row:hover .pn-row-title { text-decoration: underline; }
+        .pn-row-excerpt { margin: 0 0 6px; color: var(--text-secondary); font-size: 13px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .pn-row-date { color: var(--text-tertiary); font-size: 11.5px; }
         @media (max-width: 640px) { .pn-hero h1 { font-size: 24px; } .pn-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -60,6 +78,7 @@
     <div class="pn-grid" id="pn-grid" aria-live="polite">
         <p class="pn-status">Loading the latest paranormal news…</p>
     </div>
+    <div class="pn-list" id="pn-list" aria-live="polite"></div>
     <div class="pn-more" id="pn-more" hidden><button type="button" id="pn-more-btn">Load More</button></div>
     <p class="pn-note">News is aggregated from public RSS feeds and belongs to its original publishers. Articles open on the source site.</p>
 </main>
@@ -86,9 +105,11 @@
         ["unexplained", "\u2753 Unexplained"]
     ];
     var LIMIT = 24;
+    var CARD_COUNT = 6; // image cards per page; everything else renders as text rows
     var activeCategory = "all";
     var offset = 0;
     var grid = document.getElementById("pn-grid");
+    var listEl = document.getElementById("pn-list");
     var tabsEl = document.getElementById("pn-tabs");
     var moreWrap = document.getElementById("pn-more");
     var moreBtn = document.getElementById("pn-more-btn");
@@ -139,21 +160,40 @@
         '</a>';
     }
 
+    function rowHtml(item) {
+        return '<a class="pn-row" href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' +
+            '<p class="pn-row-kicker">' + esc(catLabel(item.category)) + '</p>' +
+            '<h3 class="pn-row-title">' + esc(item.title) + '</h3>' +
+            (item.excerpt ? '<p class="pn-row-excerpt">' + esc(item.excerpt) + '</p>' : "") +
+            '<span class="pn-row-date">' + esc(fmtDate(item.publishedAt)) + '</span>' +
+        '</a>';
+    }
+
     async function load(reset) {
-        if (reset) { offset = 0; grid.innerHTML = '<p class="pn-status">Loading…</p>'; }
+        if (reset) { offset = 0; grid.innerHTML = '<p class="pn-status">Loading…</p>'; listEl.innerHTML = ""; }
         var url = "/api/news?limit=" + LIMIT + "&offset=" + offset;
         if (activeCategory !== "all") url += "&category=" + encodeURIComponent(activeCategory);
         try {
             var res = await fetch(url);
             var data = await res.json();
             var items = data.news || [];
-            if (reset) grid.innerHTML = "";
+            var shownCards = grid.querySelectorAll(".pn-card").length;
+            if (reset) { grid.innerHTML = ""; listEl.innerHTML = ""; shownCards = 0; }
             if (!items.length && reset) {
                 grid.innerHTML = '<p class="pn-status">No stories in this topic yet — check back after the next refresh.</p>';
                 moreWrap.hidden = true;
                 return;
             }
-            grid.insertAdjacentHTML("beforeend", items.map(cardHtml).join(""));
+            // Split the page: up to CARD_COUNT image cards up top, every other
+            // story (including imageless ones) as a compact text row below.
+            var cards = [], rows = [];
+            items.forEach(function (item) {
+                if (item.imageUrl && cards.length < CARD_COUNT - shownCards) cards.push(cardHtml(item));
+                else rows.push(rowHtml(item));
+            });
+            if (cards.length) grid.insertAdjacentHTML("beforeend", cards.join(""));
+            if (rows.length) listEl.insertAdjacentHTML("beforeend", rows.join(""));
+            grid.hidden = !grid.querySelector(".pn-card");
             offset += items.length;
             moreWrap.hidden = items.length < LIMIT;
         } catch (e) {

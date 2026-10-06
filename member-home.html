@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=85">
+    <link rel="stylesheet" href="style.css?v=86">
     <link rel="stylesheet" href="member-shell.css?v=59">
     <style>
         /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
@@ -345,6 +345,59 @@
         }
 
         .rail-feature + .rail-feature { margin-top: 10px; }
+
+        /* Featured Content — latest from the TPI community (rail widget) */
+        .rail-fc {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 9px;
+            margin: 0 -9px;
+            border-radius: 7px;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .rail-fc:hover { background: rgba(168, 85, 247, 0.07); }
+
+        .rail-fc-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            color: var(--accent, #a855f7);
+            background: color-mix(in srgb, var(--accent, #a855f7) 12%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent, #a855f7) 28%, transparent);
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .rail-fc-copy { min-width: 0; }
+
+        .rail-fc-name {
+            margin: 0;
+            color: #e8eef5;
+            font-size: 12.5px;
+            font-weight: 700;
+            line-height: 1.25;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .rail-fc-desc {
+            margin: 1px 0 0;
+            color: #8aa0b6;
+            font-size: 11px;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rail-fc:hover .rail-fc-name { color: #bd7ef9; }
 
         /* Active Discussions */
         .rail-topic {
@@ -1462,6 +1515,64 @@
                     </div>
                     <div data-news-body>
                         <p class="rail-loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- FEATURED CONTENT — latest from the TPI community -->
+                <section class="rail-card" data-rail-featured>
+                    <div class="rail-card-head">
+                        <h4>Featured Content</h4>
+                    </div>
+                    <div data-featured-body>
+                        <a class="rail-fc" href="tpi-videos.html">
+                            <span class="rail-fc-icon">▶</span>
+                            <span class="rail-fc-copy">
+                                <span class="rail-fc-name">TPI Investigation Series</span>
+                                <span class="rail-fc-desc">Latest paranormal investigation videos from the field.</span>
+                            </span>
+                        </a>
+                        <a class="rail-fc" href="evp-itc-research.html">
+                            <span class="rail-fc-icon">♫</span>
+                            <span class="rail-fc-copy">
+                                <span class="rail-fc-name">Audio Research Lab</span>
+                                <span class="rail-fc-desc">Anomalous voice phenomena and ITC research.</span>
+                            </span>
+                        </a>
+                        <a class="rail-fc" href="field-articles.html">
+                            <span class="rail-fc-icon">✎</span>
+                            <span class="rail-fc-copy">
+                                <span class="rail-fc-name">Field Papers &amp; Articles</span>
+                                <span class="rail-fc-desc">Contributed research, methodology, and guides.</span>
+                            </span>
+                        </a>
+                        <a class="rail-fc" href="paratube.html">
+                            <span class="rail-fc-icon">🎬</span>
+                            <span class="rail-fc-copy">
+                                <span class="rail-fc-name">ParaTube</span>
+                                <span class="rail-fc-desc">Paranormal video aggregated from the open web.</span>
+                            </span>
+                        </a>
+                        <a class="rail-fc" href="reels.html">
+                            <span class="rail-fc-icon">⏯</span>
+                            <span class="rail-fc-copy">
+                                <span class="rail-fc-name">TPI Reels</span>
+                                <span class="rail-fc-desc">Short clips, EVP evidence, and field tips.</span>
+                            </span>
+                        </a>
+                        <a class="rail-fc" href="community-forum.html">
+                            <span class="rail-fc-icon">💬</span>
+                            <span class="rail-fc-copy">
+                                <span class="rail-fc-name">Community Forum</span>
+                                <span class="rail-fc-desc">Discussions with fellow investigators.</span>
+                            </span>
+                        </a>
+                        <a class="rail-fc" href="live-video.html">
+                            <span class="rail-fc-icon">📡</span>
+                            <span class="rail-fc-copy">
+                                <span class="rail-fc-name">Live Video</span>
+                                <span class="rail-fc-desc">Live investigations and Q&A via StudioFlow.</span>
+                            </span>
+                        </a>
                     </div>
                 </section>
 

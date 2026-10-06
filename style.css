@@ -5252,13 +5252,16 @@ body.feed-app-page .member-explore-item-shell {
 
 .public-profile-photo {
     width: 210px;
-    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
 }
 
 .public-profile-shell {
     display: grid;
     gap: 24px;
     max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 18px 70px;
 }
 
 .public-profile-card {
@@ -5266,12 +5269,10 @@ body.feed-app-page .member-explore-item-shell {
     grid-template-columns: 300px minmax(0, 1fr);
     gap: 34px;
     padding: 34px;
-    background:
-        linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%),
-        linear-gradient(180deg, var(--bg-card), #0c1218);
+    background: var(--bg-card);
     border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
-    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .public-profile-sidebar {
@@ -5281,8 +5282,8 @@ body.feed-app-page .member-explore-item-shell {
     justify-items: center;
     padding: 22px;
     text-align: center;
-    background: var(--bg-primary);
-    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-md);
 }
 
@@ -5316,15 +5317,15 @@ body.feed-app-page .member-explore-item-shell {
 .public-profile-heading h1 {
     margin: 0;
     color: var(--text-primary);
-    font-size: clamp(34px, 5vw, 56px);
-    line-height: 1;
+    font-size: clamp(30px, 4.4vw, 46px);
+    line-height: 1.05;
 }
 
 .public-profile-heading p {
     max-width: 720px;
-    color: var(--accent-hover);
-    font-size: 18px;
-    font-weight: 800;
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .public-profile-card h2,
@@ -5334,7 +5335,12 @@ body.feed-app-page .member-explore-item-shell {
 }
 
 .public-profile-work {
-    width: 100%;
+    width: min(1120px, 100%);
+    padding: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .public-profile-card p {
@@ -5350,8 +5356,8 @@ body.feed-app-page .member-explore-item-shell {
 
 .public-profile-details div {
     padding: 12px;
-    background: rgba(9, 15, 20, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-sm);
 }
 
@@ -5378,8 +5384,8 @@ body.feed-app-page .member-explore-item-shell {
     min-height: 210px;
     padding: 22px;
     color: var(--text-primary);
-    background: rgba(9, 15, 20, 0.78);
-    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-sm);
 }
 
