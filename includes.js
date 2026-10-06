@@ -1,4 +1,15 @@
 (async function () {
+  // ===== Site theme — follow the member's saved choice on public pages =====
+  // member-shell.js sets html[data-theme] on member pages; public pages only
+  // get style.css, so without this they were pinned to the Cryptid default.
+  try {
+    const savedTheme = localStorage.getItem("tpiSiteTheme");
+    const validThemes = ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"];
+    document.documentElement.setAttribute("data-theme", validThemes.includes(savedTheme) ? savedTheme : "cryptid");
+  } catch (error) {
+    // localStorage unavailable — default theme stands.
+  }
+
   function isEditableTarget(target) {
     if (!target || target === document) return false;
     const editable = target.closest?.("input, textarea, select, [contenteditable='true']");

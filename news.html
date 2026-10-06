@@ -15,6 +15,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=86">
+    <script>
+        // Follow the member's saved site theme before first paint — public
+        // pages never set html[data-theme], so ParaNews was stuck on the
+        // Cryptid (green) default instead of the member's theme.
+        (function () {
+            var t = "";
+            try { t = localStorage.getItem("tpiSiteTheme") || ""; } catch (e) {}
+            var ok = ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"].indexOf(t) !== -1;
+            document.documentElement.setAttribute("data-theme", ok ? t : "cryptid");
+        })();
+    </script>
     <style>
         /* ParaNews is a public page but shares the site design system:
            backgrounds, text, and borders all come from style.css theme
