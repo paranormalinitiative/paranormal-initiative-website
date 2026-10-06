@@ -966,6 +966,218 @@
             flex-shrink: 0;
         }
 
+        /* ===== LINK PREVIEW CARD (composer + feed, Facebook-style) ===== */
+        .link-preview-card {
+            display: block;
+            margin-top: 10px;
+            border: 1px solid #263646;
+            border-radius: 12px;
+            background: #0d1017;
+            overflow: hidden;
+            text-decoration: none;
+            transition: border-color 0.15s;
+        }
+
+        a.link-preview-card:hover {
+            border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+        }
+
+        .link-preview-media {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 320px;
+            background: #071017;
+            overflow: hidden;
+        }
+
+        .link-preview-media img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .link-preview-noimg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: color-mix(in srgb, var(--accent) 70%, transparent);
+        }
+
+        .link-preview-noimg svg {
+            width: 36px;
+            height: 36px;
+            fill: currentColor;
+            opacity: 0.8;
+        }
+
+        .link-preview-info {
+            padding: 10px 14px 12px;
+        }
+
+        .link-preview-host {
+            display: block;
+            color: #8aa0b6;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .link-preview-title {
+            display: block;
+            color: #f4f8fb;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .link-preview-desc {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: #aebdcc;
+            font-size: 12px;
+            line-height: 1.45;
+            margin-top: 3px;
+        }
+
+        /* ===== POST EDIT / DELETE ===== */
+        .feed-post-tools {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .feed-post-menu-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            border: none;
+            background: transparent;
+            color: #8aa0b6;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .feed-post-menu-btn:hover {
+            color: #f4f8fb;
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
+        }
+
+        .feed-post-menu {
+            position: absolute;
+            top: 32px;
+            right: 0;
+            min-width: 140px;
+            background: #0d1017;
+            border: 1px solid #263646;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+            padding: 6px;
+            z-index: 30;
+        }
+
+        .feed-post-menu button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #e8eef5;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .feed-post-menu button:hover {
+            background: color-mix(in srgb, var(--accent) 10%, transparent);
+        }
+
+        .feed-post-menu button[data-post-action="delete"] {
+            color: #ff7a7a;
+        }
+
+        .feed-post-edited {
+            color: #8aa0b6;
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        .feed-edit-area {
+            margin-top: 8px;
+        }
+
+        .feed-edit-textarea {
+            width: 100%;
+            min-height: 88px;
+            padding: 10px 12px;
+            color: #e8eef5;
+            background: #0d1017;
+            border: 1px solid #263646;
+            border-radius: 12px;
+            font: inherit;
+            font-size: 13px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        .feed-edit-textarea:focus {
+            outline: none;
+            border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+        }
+
+        .feed-edit-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            justify-content: flex-end;
+        }
+
+        .feed-edit-save,
+        .feed-edit-cancel {
+            padding: 7px 14px;
+            border-radius: 999px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+
+        .feed-edit-save {
+            color: #0a0c10;
+            background: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .feed-edit-save:hover { filter: brightness(1.1); }
+
+        .feed-edit-save:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .feed-edit-cancel {
+            color: #8aa0b6;
+            background: transparent;
+            border: 1px solid #263646;
+        }
+
+        .feed-edit-cancel:hover { color: #e8eef5; border-color: #3a4c60; }
+
         /* ===== COMPOSER PREVIEW ===== */
         .composer-preview-area {
             display: flex;
@@ -1224,6 +1436,8 @@
         }
 
         /* ===== FEED CARD ATTACHMENTS ===== */
+        /* ===== POST PHOTOS (Facebook-style fixed boxes, not cropped round —
+           round corners are reserved for avatars only) ===== */
         .feed-card-attachments {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1235,9 +1449,9 @@
         .feed-card-attachments video {
             display: block;
             width: 100%;
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 16 / 10;
             object-fit: cover;
-            border-radius: 999px;
+            border-radius: 8px;
             background: #071017;
             border: 1px solid #263646;
             cursor: pointer;
@@ -1249,10 +1463,16 @@
             border-color: var(--accent);
         }
 
-        .feed-card-attachments .feed-attachment-single img,
-        .feed-card-attachments .feed-attachment-single video {
-            aspect-ratio: 16 / 10;
-            max-height: 360px;
+        /* Single photo fills the whole media box, like a Facebook feed post */
+        .feed-card-attachments.feed-attachment-single {
+            grid-template-columns: 1fr;
+        }
+
+        .feed-card-attachments.feed-attachment-single img,
+        .feed-card-attachments.feed-attachment-single video {
+            aspect-ratio: 16 / 9;
+            max-height: 420px;
+            border-radius: 12px;
         }
 
         /* ===== ARTICLE CARD ===== */
@@ -1532,6 +1752,7 @@
                     <textarea class="composer-textarea" data-composer-body rows="3" maxlength="6000" placeholder="Share something with the TPI community..." spellcheck="true"></textarea>
                 </div>
                 <div class="composer-preview-area" data-composer-previews></div>
+                <div data-composer-link-preview></div>
                 <div class="composer-media-row">
                     <button type="button" class="composer-media-btn" data-media-photo title="Add photo">
                         <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
@@ -1736,7 +1957,7 @@
 
 <div id="site-footer"></div>
 
-<script src="api-client.js"></script>
+<script src="api-client.js?v=17"></script>
 <script src="includes.js"></script>
 <script src="member-shell.js?v=51"></script>
 <script>
@@ -1802,6 +2023,7 @@
         renderProfile();
         setupProfileLinks();
         loadMyContent();
+        currentUsername = activeUser.username;
 
         var isOwn = profileUser.username === activeUser.username;
         viewingOwnProfile = isOwn;
@@ -1835,6 +2057,13 @@
     // members and discussions without a reload.
     var RAIL_REFRESH_MS = 3 * 60 * 1000;
     var railRefreshTimer = null;
+
+    // Username of the signed-in member — drives Edit/Delete visibility on feed posts.
+    var currentUsername = activeUser ? activeUser.username : "";
+
+    // Cache of fetched link previews so repeated cards don't refetch.
+    var linkPreviewCache = {};
+    var linkPreviewPending = {};
 
     // Same Fisher-Yates shuffle the hub pages use so picks change per cycle.
     function shuffle(arr) {
@@ -2402,7 +2631,8 @@
     }
 
     function removeAttachment(index) {
-        pendingAttachments.splice(index, 1);
+        var removed = pendingAttachments.splice(index, 1)[0];
+        if (removed && removed.mediaType === "link") clearComposerLinkPreview();
         renderPreviews();
         updatePostButtonState();
     }
@@ -2436,12 +2666,33 @@
         composerStatus.textContent = "";
         renderPreviews();
         updatePostButtonState();
+        loadComposerLinkPreview(value);
+    }
+
+    // Facebook-style: as soon as a link is added, fetch its preview so the
+    // member sees the image + title + description card before posting.
+    async function loadComposerLinkPreview(url) {
+        var area = document.querySelector("[data-composer-link-preview]");
+        if (!area) return;
+        area.innerHTML = '<div class="link-preview-card" style="padding:14px;color:#8aa0b6;font-size:12px;">Fetching link preview…</div>';
+        try {
+            var meta = await window.TPIApi.linkPreview(url);
+            area.innerHTML = renderLinkPreviewCard(meta) || "";
+        } catch (e) {
+            area.innerHTML = "";
+        }
+    }
+
+    function clearComposerLinkPreview() {
+        var area = document.querySelector("[data-composer-link-preview]");
+        if (area) area.innerHTML = "";
     }
 
     function clearComposer() {
         if (composerBody) composerBody.value = "";
         pendingAttachments = [];
         if (composerLinkRow) composerLinkRow.hidden = true;
+        clearComposerLinkPreview();
         renderPreviews();
         updatePostButtonState();
     }
@@ -2597,6 +2848,8 @@
         } else {
             feedContainer.innerHTML = html;
         }
+        setupFeedPostTools();
+        hydrateLinkPreviews(items);
     }
 
     function renderPublishedContent(articles) {
@@ -2652,24 +2905,216 @@
         var attachmentsHtml = renderFeedAttachments(item.attachments);
         var linksHtml = renderFeedLinks(item.attachments);
 
+        // Edit / Delete: only on the signed-in member's own posts.
+        var isOwn = currentUsername && item.authorUsername === currentUsername;
+        var toolsHtml = isOwn
+            ? '<div class="feed-post-tools">' +
+                '<button class="feed-post-menu-btn" type="button" data-post-menu="' + escapeAttr(item.topicId) + '" title="Post options" aria-haspopup="true" aria-expanded="false">&#8943;</button>' +
+                '<div class="feed-post-menu" data-post-menu-panel="' + escapeAttr(item.topicId) + '" hidden>' +
+                    '<button type="button" data-post-action="edit" data-topic-id="' + escapeAttr(item.topicId) + '">&#9998; Edit Post</button>' +
+                    '<button type="button" data-post-action="delete" data-topic-id="' + escapeAttr(item.topicId) + '">&#128465; Delete Post</button>' +
+                '</div>' +
+            '</div>'
+            : "";
+
         return '<article class="feed-card" data-feed-type="forum" data-topic-id="' + escapeAttr(item.topicId) + '">' +
             '<div class="feed-card-header">' +
                 avatar +
                 '<div class="feed-card-meta">' +
                     '<strong><a href="' + escapeAttr(profileUrl) + '">' + escapeHtml(item.authorName || "Community Member") + '</a></strong>' +
-                    '<span class="feed-card-detail">' + (item.authorTitle ? escapeHtml(item.authorTitle) + " &middot; " : "") + escapeHtml(formatDate(item.createdAt)) + '</span>' +
+                    '<span class="feed-card-detail">' + (item.authorTitle ? escapeHtml(item.authorTitle) + " &middot; " : "") + escapeHtml(formatDate(item.createdAt)) + (item.editedAt ? ' <span class="feed-post-edited">&middot; Edited</span>' : '') + '</span>' +
                 '</div>' +
                 categoryBadge +
+                toolsHtml +
             '</div>' +
-            (previewText ? '<div class="feed-card-body">' + previewText + '</div>' : "") +
+            '<div class="feed-card-body-wrap" data-body-wrap="' + escapeAttr(item.topicId) + '">' +
+                (previewText ? '<div class="feed-card-body">' + previewText + '</div>' : "") +
+            '</div>' +
             attachmentsHtml +
             linksHtml +
+            '<div data-link-preview-slot="' + escapeAttr(item.topicId) + '"></div>' +
             '<div class="feed-card-actions">' +
                 '<a class="feed-action-btn" href="' + escapeAttr(topicUrl) + '">Open Discussion' + (replyCount > 0 ? ' <span class="action-count">' + replyCount + '</span>' : '') + '</a>' +
                 (reactionTotal > 0 ? '<span class="feed-action-btn" style="cursor:default;">&#128077; <span class="action-count">' + reactionTotal + '</span></span>' : "") +
                 '<button class="feed-action-btn" type="button" data-share-url="' + escapeAttr(topicUrl) + '" data-share-title="' + escapeAttr(item.topicTitle || "") + '">Share</button>' +
             '</div>' +
         '</article>';
+    }
+
+    // ===== LINK PREVIEW CARDS (Facebook-style) =====
+    // After the feed paints, each post's first link attachment is checked
+    // against /api/link-preview; matching cards get an image + title +
+    // description preview under the post body.
+    function hydrateLinkPreviews(items) {
+        items.forEach(function(item) {
+            if (item.type !== "forum_post") return;
+            var links = (item.attachments || []).filter(function(a) { return (a.mediaType || "") === "link" && /^https?:\/\//i.test(a.url || ""); });
+            if (!links.length) return;
+            var slot = document.querySelector('[data-link-preview-slot="' + cssEscape(item.topicId || "") + '"]');
+            if (!slot) return;
+            var url = links[0].url;
+            if (linkPreviewCache[url]) {
+                slot.innerHTML = renderLinkPreviewCard(linkPreviewCache[url]);
+                return;
+            }
+            if (linkPreviewPending[url]) {
+                linkPreviewPending[url].push(function(meta) { if (meta) slot.innerHTML = renderLinkPreviewCard(meta); });
+                return;
+            }
+            linkPreviewPending[url] = [function(meta) { if (meta) slot.innerHTML = renderLinkPreviewCard(meta); }];
+            window.TPIApi.linkPreview(url).then(function(meta) {
+                linkPreviewCache[url] = meta;
+                (linkPreviewPending[url] || []).forEach(function(cb) { cb(meta); });
+            }).catch(function() {
+                // No preview available (404/blocked) — chips still render fine.
+            }).finally(function() {
+                delete linkPreviewPending[url];
+            });
+        });
+    }
+
+    function renderLinkPreviewCard(meta) {
+        if (!meta || (!meta.title && !meta.image && !meta.description)) return "";
+        var host = meta.host || "";
+        var title = meta.title || host || "Link";
+        var desc = meta.description || "";
+        var media;
+        if (meta.image) {
+            media = '<div class="link-preview-media"><img src="' + escapeAttr(meta.image) + '" alt="" loading="lazy" onerror="this.closest(\'.link-preview-media\").classList.add(\'link-preview-noimg\'); this.remove();"></div>';
+        } else {
+            media = '<div class="link-preview-media link-preview-noimg">' + LINK_ICON_SVG + '</div>';
+        }
+        return '<a class="link-preview-card" href="' + escapeAttr(meta.url) + '" target="_blank" rel="noopener noreferrer ugc">' +
+            media +
+            '<div class="link-preview-info">' +
+                (host ? '<span class="link-preview-host">' + escapeHtml(host) + '</span>' : "") +
+                '<span class="link-preview-title">' + escapeHtml(title) + '</span>' +
+                (desc ? '<span class="link-preview-desc">' + escapeHtml(desc) + '</span>' : "") +
+            '</div>' +
+        '</a>';
+    }
+
+    function cssEscape(value) {
+        if (window.CSS && CSS.escape) return CSS.escape(value);
+        return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+    }
+
+    // ===== POST EDIT / DELETE =====
+    function setupFeedPostTools() {
+        if (feedContainer.dataset.toolsBound) return;
+        feedContainer.dataset.toolsBound = "1";
+        feedContainer.addEventListener("click", async function(e) {
+            var menuBtn = e.target.closest("[data-post-menu]");
+            if (menuBtn) {
+                var topicId = menuBtn.getAttribute("data-post-menu");
+                var panel = feedContainer.querySelector('[data-post-menu-panel="' + cssEscape(topicId) + '"]');
+                if (panel) {
+                    var isOpen = !panel.hidden;
+                    feedContainer.querySelectorAll("[data-post-menu-panel]").forEach(function(p) { p.hidden = true; });
+                    panel.hidden = isOpen;
+                    menuBtn.setAttribute("aria-expanded", String(!isOpen));
+                }
+                return;
+            }
+            var actionBtn = e.target.closest("[data-post-action]");
+            if (actionBtn) {
+                e.preventDefault();
+                var card = actionBtn.closest(".feed-card");
+                var id = actionBtn.getAttribute("data-topic-id");
+                if (actionBtn.getAttribute("data-post-action") === "edit") {
+                    openPostEditor(card, id);
+                } else {
+                    deleteFeedPost(card, id);
+                }
+                return;
+            }
+            if (e.target.closest("[data-edit-save]")) {
+                savePostEdit(e.target.closest(".feed-card"));
+                return;
+            }
+            if (e.target.closest("[data-edit-cancel]")) {
+                var editingCard = e.target.closest(".feed-card");
+                if (editingCard) restorePostBody(editingCard);
+            }
+        });
+        document.addEventListener("click", function(e) {
+            if (!e.target.closest(".feed-post-tools")) {
+                feedContainer.querySelectorAll("[data-post-menu-panel]").forEach(function(p) { p.hidden = true; });
+            }
+        });
+    }
+
+    function openPostEditor(card, topicId) {
+        if (!card) return;
+        var panel = card.querySelector("[data-post-menu-panel]");
+        if (panel) panel.hidden = true;
+        var bodyWrap = card.querySelector("[data-body-wrap]");
+        if (!bodyWrap || bodyWrap.dataset.editing) return;
+        bodyWrap.dataset.editing = "1";
+        var currentText = "";
+        var bodyEl = bodyWrap.querySelector(".feed-card-body");
+        if (bodyEl) currentText = bodyEl.textContent.replace(/\.\.\.$/, "").trim();
+        bodyWrap.dataset.originalHtml = bodyWrap.innerHTML;
+        bodyWrap.innerHTML =
+            '<div class="feed-edit-area">' +
+                '<textarea class="feed-edit-textarea" data-edit-textarea spellcheck="true">' + escapeHtml(currentText) + '</textarea>' +
+                '<div class="feed-edit-actions">' +
+                    '<button type="button" class="feed-edit-cancel" data-edit-cancel>Cancel</button>' +
+                    '<button type="button" class="feed-edit-save" data-edit-save data-topic-id="' + escapeAttr(topicId) + '">Save Changes</button>' +
+                '</div>' +
+            '</div>';
+        var ta = bodyWrap.querySelector("[data-edit-textarea]");
+        if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+    }
+
+    function restorePostBody(card) {
+        var bodyWrap = card && card.querySelector("[data-body-wrap]");
+        if (!bodyWrap || !bodyWrap.dataset.editing) return;
+        bodyWrap.innerHTML = bodyWrap.dataset.originalHtml || "";
+        delete bodyWrap.dataset.editing;
+        delete bodyWrap.dataset.originalHtml;
+    }
+
+    async function savePostEdit(card) {
+        if (!card) return;
+        var topicId = card.getAttribute("data-topic-id");
+        var ta = card.querySelector("[data-edit-textarea]");
+        var saveBtn = card.querySelector("[data-edit-save]");
+        if (!topicId || !ta || !ta.value.trim()) return;
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+        try {
+            var result = await window.TPIApi.updateForumTopic(topicId, { body: ta.value.trim() });
+            var bodyWrap = card.querySelector("[data-body-wrap]");
+            var newText = escapeHtml(result.body || ta.value.trim());
+            if (newText.length > 400) newText = newText.substring(0, 400) + "...";
+            bodyWrap.innerHTML = '<div class="feed-card-body">' + newText + '</div>';
+            delete bodyWrap.dataset.editing;
+            delete bodyWrap.dataset.originalHtml;
+            var detail = card.querySelector(".feed-card-detail");
+            if (detail && !detail.querySelector(".feed-post-edited")) {
+                detail.insertAdjacentHTML("beforeend", ' <span class="feed-post-edited">&middot; Edited</span>');
+            }
+        } catch (e) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Changes";
+            composerStatus.textContent = e.message || "Post could not be updated.";
+        }
+    }
+
+    async function deleteFeedPost(card, topicId) {
+        if (!topicId) return;
+        if (!window.confirm("Delete this post? This removes it from the feed and the forum.")) return;
+        try {
+            await window.TPIApi.deleteOwnForumTopic(topicId);
+            if (card) {
+                card.style.transition = "opacity 0.3s";
+                card.style.opacity = "0";
+                setTimeout(function() { card.remove(); }, 300);
+            }
+        } catch (e) {
+            composerStatus.textContent = e.message || "Post could not be deleted.";
+        }
     }
 
     function renderFeedAttachments(attachments) {

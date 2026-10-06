@@ -103,12 +103,15 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
+    if (request.method === "GET" && path === "/link-preview") return handleLinkPreview(request, env);
     if (request.method === "GET" && path === "/feed") return handleCommunityFeed(request, env);
     if (request.method === "GET" && path === "/feed/user") return handleUserFeed(request, env);
     if (request.method === "GET" && path === "/forum") return handleForumIndex(request, env);
     if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, request, env);
     if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkForumTopicRead(path, env, user));
     if (request.method === "POST" && path === "/forum/topics") return requireMember(request, env, user => handleCreateForumTopic(request, env, user));
+    if (request.method === "PUT" && path.match(/^\/forum\/topics\/[^/]+$/)) return requireMember(request, env, user => handleUpdateForumTopic(path, request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/forum\/topics\/[^/]+$/)) return requireMember(request, env, user => handleDeleteOwnForumTopic(path, env, user));
     if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/posts$/)) return requireMember(request, env, user => handleCreateForumPost(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/forum\/posts\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleSetForumReaction(path, request, env, user));
     if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireMember(request, env, user => handleDeleteForumPost(path, env, user));
@@ -1437,6 +1440,7 @@ async function handleCommunityFeed(request, env) {
       fp.id,
       fp.body,
       fp.created_at AS createdAt,
+      fp.edited_at AS editedAt,
       ft.id AS topicId,
       ft.title AS topicTitle,
       ft.created_at AS topicCreatedAt,
@@ -1513,6 +1517,7 @@ async function handleCommunityFeed(request, env) {
       authorChatColor: item.authorChatColor || "#a855f7",
       replyCount: Math.max(0, postCount - 1),
       createdAt: item.createdAt,
+      editedAt: item.editedAt || null,
       attachments: []
     };
   });
@@ -1640,6 +1645,7 @@ async function handleUserFeed(request, env) {
       authorChatColor: item.authorChatColor || "#a855f7",
       replyCount: Math.max(0, postCount - 1),
       createdAt: item.createdAt,
+      editedAt: item.editedAt || null,
       attachments: []
     };
   });
@@ -1748,6 +1754,130 @@ async function handleForumTopic(path, request, env) {
   return json({ topic, posts });
 }
 
+// ===== Facebook-style link previews =====
+// Server-side fetch of a shared URL's Open Graph / Twitter Card metadata so the
+// member feed can show an image + title + description preview card (the browser
+// cannot do this itself: most sites block cross-origin reads).
+async function handleLinkPreview(request, env) {
+  const url = new URL(request.url);
+  const target = clean(url.searchParams.get("url"));
+  if (!target || !/^https?:\/\//i.test(target)) {
+    return json({ error: "A full http(s) URL is required." }, 400);
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(target);
+  } catch (e) {
+    return json({ error: "That URL could not be parsed." }, 400);
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    return json({ error: "Only http(s) URLs can be previewed." }, 400);
+  }
+  // Never preview our own origin or loopback targets (SSRF guard)
+  const host = (parsed.hostname || "").toLowerCase();
+  if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || /^(10|127)\./.test(host) || host === "[::1]" || host.endsWith(".internal")) {
+    return json({ error: "That URL cannot be previewed." }, 400);
+  }
+
+  const cacheKey = new Request(`https://link-preview-cache.tpi.internal/?url=${encodeURIComponent(target)}`);
+  try {
+    const cached = await caches.default.match(cacheKey);
+    if (cached) return json(await cached.json());
+  } catch (e) { /* cache optional */ }
+
+  const meta = await fetchPageMeta(target);
+  if (!meta) return json({ error: "No preview could be fetched for that URL." }, 404);
+
+  try {
+    const res = new Response(JSON.stringify(meta), { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=1800" } });
+    await caches.default.put(cacheKey, res.clone());
+  } catch (e) { /* cache optional */ }
+  return json(meta);
+}
+
+async function fetchPageMeta(target) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  try {
+    const res = await fetch(target, {
+      method: "GET",
+      redirect: "follow",
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; TPI-LinkPreview/1.0; +https://paranormalinitiative.com)",
+        "Accept": "text/html,application/xhtml+xml"
+      }
+    });
+    if (!res.ok) return null;
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("html")) {
+      // Direct image/video link: show it as the preview media itself
+      if (/^(image|video)\//.test(contentType)) {
+        return { url: target, image: target, imageIsMedia: true, title: "" };
+      }
+      return null;
+    }
+    // Read only the head region: og tags live there and huge pages would
+    // waste quota if we buffered the whole body.
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let html = "";
+    while (html.length < 300000) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      html += decoder.decode(value, { stream: true });
+      if (/<\/head>/i.test(html)) break;
+    }
+    try { reader.cancel(); } catch (e) {}
+    const headMatch = html.match(/<head[\s\S]*?<\/head>/i);
+    const head = headMatch ? headMatch[0] : html.slice(0, 60000);
+
+    const metaTag = (prop) => {
+      const re = new RegExp(`<meta[^>]+(?:property|name)=["']${prop.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["'][^>]*>`, "i");
+      const tag = head.match(re);
+      if (!tag) return "";
+      const content = tag[0].match(/content=["']([\s\S]*?)["']/i);
+      return content ? decodeEntities(content[1]).trim() : "";
+    };
+    const titleTag = () => {
+      const m = head.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+      return m ? decodeEntities(m[1]).replace(/\s+/g, " ").trim() : "";
+    };
+
+    const image = metaTag("og:image") || metaTag("og:image:secure_url") || metaTag("twitter:image") || metaTag("twitter:image:src");
+    const title = metaTag("og:title") || metaTag("twitter:title") || titleTag();
+    const description = metaTag("og:description") || metaTag("description") || metaTag("twitter:description");
+    const siteName = metaTag("og:site_name");
+    let host = "";
+    try { host = new URL(target).hostname.replace(/^www\./, ""); } catch (e) {}
+    if (!title && !description && !image) return null;
+    return {
+      url: target,
+      title: (title || host || "Link").slice(0, 200),
+      description: description.slice(0, 400),
+      image: image.slice(0, 1000),
+      siteName: siteName.slice(0, 120),
+      host
+    };
+  } catch (error) {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function decodeEntities(value) {
+  return String(value || "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&#x2F;/gi, "/")
+    .replace(/&nbsp;/g, " ");
+}
+
 async function handleCreateForumTopic(request, env, user) {
   const accessError = await getMemberActionAccessError(env, user, "post");
   if (accessError) return json({ error: accessError }, 403);
@@ -1773,6 +1903,49 @@ async function handleCreateForumTopic(request, env, user) {
   await createForumContentNotifications(env, user, { topicId, postId, topicTitle: title, body, attachments });
 
   return json({ topic: { id: topicId, categoryId, title, status: "open" }, post: { id: postId, topicId, body, attachments } });
+}
+
+async function handleUpdateForumTopic(path, request, env, user) {
+  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)$/)?.[1] || ""));
+  if (!topicId) return json({ error: "Topic id is required." }, 400);
+  const data = await readJson(request);
+  const title = clean(data.title).slice(0, 160);
+  const body = clean(data.body).slice(0, 6000);
+  if (!title && !body) return json({ error: "Nothing to update." }, 400);
+
+  // A feed post is the topic's opening post; edits go to that post's body
+  // (and optionally the topic title). Owner or admin only.
+  const opener = await env.TPI_DB.prepare(`
+    SELECT fp.id AS postId, fp.contributor_id AS contributorId, ft.created_by AS topicCreatorId
+    FROM forum_topics ft
+    JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
+    WHERE ft.id = ? AND ft.status NOT IN ('deleted', 'inactive')
+    ORDER BY fp.created_at ASC
+    LIMIT 1
+  `).bind(topicId).first();
+  if (!opener) return json({ error: "Post was not found." }, 404);
+  if (opener.contributorId !== user.id && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "You can only edit your own posts." }, 403);
+  }
+
+  const statements = [];
+  if (title) statements.push(env.TPI_DB.prepare("UPDATE forum_topics SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(title, topicId));
+  if (body) statements.push(env.TPI_DB.prepare("UPDATE forum_posts SET body = ?, edited_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(body, opener.postId));
+  await env.TPI_DB.batch(statements);
+  return json({ ok: true, topicId, postId: opener.postId, title, body });
+}
+
+async function handleDeleteOwnForumTopic(path, env, user) {
+  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)$/)?.[1] || ""));
+  if (!topicId) return json({ error: "Topic id is required." }, 400);
+
+  const topic = await env.TPI_DB.prepare("SELECT id, created_by FROM forum_topics WHERE id = ? AND status NOT IN ('deleted', 'inactive')").bind(topicId).first();
+  if (!topic) return json({ deleted: false });
+  if (topic.created_by !== user.id && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "You can only delete your own posts." }, 403);
+  }
+  await env.TPI_DB.prepare("UPDATE forum_topics SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(topicId).run();
+  return json({ deleted: true, id: topicId });
 }
 
 async function handleCreateForumPost(path, request, env, user) {
