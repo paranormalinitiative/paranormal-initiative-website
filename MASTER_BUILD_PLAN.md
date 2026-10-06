@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[BUFFY] 2026-10-06 — My Pulse rebuilt per Todd: ParaPost-style card with six stat pills (Likes | Following, Posts | Comments, Uploads | Live Streams) backed by a new truthful /me/pulse endpoint counting real DB rows — reactions given (forum+article+video), forum topics started, article+video comments, R2 media uploads. Following and Live Streams honestly 0 until those features ship. Verified in-browser. Deploy Version ID: 543ef59c-15d4-44de-aa82-181127135041 (commit e74006b).
+
 [BUFFY] 2026-10-06 — Radius uniformity completed on ALL 276 pages: final sweep fixed haunted-location directory (50 state pages), the three TPI compendiums, tpi-video watch page and ITC lab manual. Audit confirms zero off-system radii remain — the whole site now runs the single scale: 24px cards, 16px nested, 12px controls, full-round pills. Verified in-browser on directory + watch page. Deploy Version ID: 2ad2e782-736c-4daf-9a9c-3d990b4f8547 (commit f812c40).
 
 [BUFFY] 2026-10-06 — Finished radius uniformity on member-home: nested rail blocks/feed cards/empty states to 16px, identity + composer cards to 24px, feed-card badge to full pill, share modal to 24px. Deploy Version ID: b1eb41f0-dce4-4c46-b9b5-51cd110d0dbf (commit ac79d03).
