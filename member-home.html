@@ -1436,11 +1436,12 @@
         }
 
         /* ===== FEED CARD ATTACHMENTS ===== */
-        /* ===== POST PHOTOS (Facebook-style fixed boxes, not cropped round —
-           round corners are reserved for avatars only) ===== */
+        /* ===== POST PHOTOS (full image always visible — the box sizes to the
+           photo, never crops; round corners are reserved for avatars only) ===== */
         .feed-card-attachments {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
+            align-items: start;
             gap: 8px;
             margin-top: 4px;
         }
@@ -1449,8 +1450,8 @@
         .feed-card-attachments video {
             display: block;
             width: 100%;
-            aspect-ratio: 16 / 10;
-            object-fit: cover;
+            height: auto;
+            object-fit: contain;
             border-radius: 8px;
             background: #071017;
             border: 1px solid #263646;
@@ -1470,8 +1471,6 @@
 
         .feed-card-attachments.feed-attachment-single img,
         .feed-card-attachments.feed-attachment-single video {
-            aspect-ratio: 16 / 9;
-            max-height: 420px;
             border-radius: 12px;
         }
 
