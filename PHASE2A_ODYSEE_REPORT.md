@@ -119,3 +119,23 @@ Spot checks: ghost investigation kept; Minecraft gameplay rejected; Portuguese p
 ## 17. NEXT PHASE RECOMMENDATION
 
 **Rumble discovery integration** — the next provider expansion per the owner's plan. Phase 1 recorded that Rumble's search HTML 403s server-side and no public RSS exists; investigate legitimate/authorized discovery mechanisms (official APIs, embeddable feeds, or partnership access) without bypassing access protections. **Do not implement YouTube yet** (planned after Rumble per owner sequencing); the pipeline is ready for it when authorized.
+
+---
+
+## ADDENDUM — PRODUCTION VALIDATION & SUBREQUEST-BUDGET FIX (2026-10-07, later)
+
+Post-deploy production validation (read-only queries against the live D1) found that **both cron runs after the Phase 2A deploy failed for Odysee — and so did Dailymotion and Internet Archive**. Failure isolation and logging worked exactly as designed (providers isolated, sanitized errors recorded), which is what made the diagnosis fast.
+
+**Root cause:** the Cloudflare Workers free plan allows ~50 subrequests per invocation, and one `scheduled()` call chains Events (31 Eventbrite URLs) + News (25 of 50 feeds) + Videos (16 DM + 4 IA + 6 Odysee = 26 queries) = **82 fetches**. The budget was exhausted before the video scrapers ran: every provider failed with `Too many subrequests by single Worker invocation` (Odysee error_count 6, Dailymotion 16, IA 4, plus 17–23 news feeds). Local `wrangler dev` does not enforce this limit, which is why E2E was green while production failed.
+
+**Fix (rotation, the pattern Phase 1 already established in the news scraper):**
+
+- `lib/video-scraper.js` — each provider rotates its query list in **halves** per run (Dailymotion 8/16, Internet Archive 2/4, Odysee 3/6). Full coverage every 12h; run metadata now records `queries` (this run) and `queriesTotal`.
+- `lib/news-scraper.js` — feed rotation changed from halves to **thirds** (17/50 feeds per run, full sweep ~18h). Also fixed a latent crash surfaced by the rotation: `classifyNews` returns `null` for deliberately excluded items (jobs/coupons), and the caller bound the null straight into the INSERT, failing the whole news batch (`NOT NULL constraint failed: news_articles.category`). Excluded items are now skipped at the caller.
+- `lib/event-scraper.js` — URL rotation in **thirds** (11/31 per run, ~18h per listing). Because the old write path deleted ALL eventbrite rows each run (which would wipe the rotated-out groups), the write is now an **upsert** (`ON CONFLICT(external_id) DO UPDATE`) plus a 2-day staleness prune; rows from inactive groups survive untouched until their own group's next run.
+
+**Verified locally:** a full simulated `scheduled()` invocation on a fresh D1 now completes end-to-end — Events 173 scraped/173 inserted, News 1420 collected/400 inserted (17 feeds active), Videos 190 collected/190 inserted with per-provider metadata `{queries:8,queriesTotal:16}`, `{queries:2,queriesTotal:4}`, `{enabled:true,queries:3,queriesTotal:6}` — **41 fetches per invocation**, safely inside the limit. E2E suite re-run after the fix: **PASS=161 FAIL=0, exit 0**.
+
+**Production validation of the fix** fires at the next 6h cron (`0 */6 * * *`); success signature: `scraper_runs` rows for `dailymotion`/`internet_archive`/`odysee` with `status='success'`/`'partial'` and non-zero `items_found`, and Odysee `source_name='Odysee'` rows appearing in `/api/videos`.
+
+Request volume per scheduled run is now: **11 Eventbrite + ≤17 news feeds + 13 video queries ≈ 41 fetches** (was 82). Manual `/videos/refresh` is unchanged in shape (13 queries) and was never affected.
