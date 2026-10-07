@@ -3,6 +3,7 @@ import { getSessionUser } from "./lib/auth.js";
 import { scrapeAndUpdateEvents } from "./lib/event-scraper.js";
 import { scrapeNews } from "./lib/news-scraper.js";
 import { scrapeVideos } from "./lib/video-scraper.js";
+import { pruneScraperRuns } from "./lib/scraper-log.js";
 
 const MEMBER_GATE_HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -159,23 +160,25 @@ export default {
   async scheduled(event, env, ctx) {
     console.log("Running scheduled scrapes...");
     try {
-      const result = await scrapeAndUpdateEvents(env);
+      const result = await scrapeAndUpdateEvents(env, { trigger: "cron" });
       console.log(`Events updated: ${result.scraped} scraped, ${result.inserted} inserted`);
     } catch (e) {
       console.error("Scheduled event scrape failed:", e.message);
     }
     try {
-      const news = await scrapeNews(env);
+      const news = await scrapeNews(env, { trigger: "cron" });
       console.log(`News updated: ${news.collected} collected, ${news.inserted} inserted, feeds ${news.feedsOk}/${news.feedsTotal} (this run: ${news.feedsActive})`);
     } catch (e) {
       console.error("Scheduled news scrape failed:", e.message);
     }
     try {
-      const videos = await scrapeVideos(env);
+      const videos = await scrapeVideos(env, { trigger: "cron" });
       console.log(`Videos updated: ${videos.collected} collected, ${videos.inserted} inserted`);
     } catch (e) {
       console.error("Scheduled video scrape failed:", e.message);
     }
+    // Keep scraper run history bounded (scraper_runs only — never content).
+    await pruneScraperRuns(env);
   },
 };
 

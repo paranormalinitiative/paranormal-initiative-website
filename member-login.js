@@ -875,6 +875,142 @@
     } catch (error) {
       setStatus(error.message || "Advanced settings could not be loaded.", true);
     }
+    initScraperMonitor();
+  }
+
+  // ===== Discovery & Scrapers monitoring (admin-only) =====
+  // Operational troubleshooting view over the scraper_runs history. The API
+  // sanitizes error text at write time; this view never receives secrets.
+  const PROVIDER_STATE_LABELS = {
+    active: { label: "ACTIVE", style: "background: rgba(34,197,94,.15); color: #16a34a;" },
+    disabled: { label: "DISABLED / API ISSUE", style: "background: rgba(234,179,8,.18); color: #a16207;" },
+    not_configured: { label: "NOT CONFIGURED", style: "background: rgba(100,116,139,.15); color: #64748b;" }
+  };
+
+  function formatDuration(ms) {
+    const n = Number(ms) || 0;
+    if (!n) return "—";
+    return n < 1000 ? `${n} ms` : `${(n / 1000).toFixed(1)} s`;
+  }
+
+  function escapeCell(value) {
+    return escapeHtml(String(value ?? ""));
+  }
+
+  function statusHtml(status) {
+    const map = {
+      success: ["SUCCESS", "color: #16a34a;"],
+      partial: ["PARTIAL", "color: #a16207;"],
+      failed: ["FAILED", "color: #dc2626;"],
+      running: ["RUNNING", "color: #64748b;"]
+    };
+    const [label, style] = map[status] || [String(status || "—").toUpperCase(), ""];
+    return `<strong style="${style}">${escapeHtml(label)}</strong>`;
+  }
+
+  function scraperLabel(type, source) {
+    const names = { news: "News", videos: "Videos", events: "Events" };
+    return `${escapeCell(names[type] || type)}${source ? ` · ${escapeCell(source.replace(/_/g, " "))}` : ""}`;
+  }
+
+  async function initScraperMonitor() {
+    const monitor = document.querySelector("[data-scraper-monitor]");
+    if (!monitor) return;
+    if (!await cloudflareReady()) return;
+    try {
+      const data = await window.TPIApi.adminListScraperRuns();
+      monitor.removeAttribute("hidden");
+      renderScraperMonitor(monitor, data);
+    } catch (error) {
+      monitor.removeAttribute("hidden");
+      const cards = document.getElementById("scraper-cards");
+      if (cards) cards.innerHTML = `<p class="access-note access-error">${escapeHtml(error.message || "Scraper history could not be loaded.")}</p>`;
+    }
+    bindScraperRefreshButtons();
+  }
+
+  function renderScraperMonitor(monitor, data) {
+    const runs = data.runs || [];
+    const latest = data.latest || {};
+    const providers = data.providers || [];
+
+    // Per-scraper summary cards (latest completed run per scraper).
+    const cardsHost = document.getElementById("scraper-cards");
+    if (cardsHost) {
+      const summaries = ["news", "videos", "events"].map(type => {
+        const run = latest[type];
+        if (!run) {
+          return `<div class="admin-member-overview" style="padding: 10px 12px;"><strong>${type[0].toUpperCase() + type.slice(1)}</strong><span>No completed runs recorded yet — the next scheduled cron will populate this.</span></div>`;
+        }
+        return `<div class="admin-member-overview" style="padding: 10px 12px;">
+          <div><span>Scraper</span><strong>${type[0].toUpperCase() + type.slice(1)}</strong></div>
+          <div><span>Last Run</span><strong>${escapeCell(run.completed_at || run.started_at)}</strong></div>
+          <div><span>Status</span><strong>${statusHtml(run.status)}</strong></div>
+          <div><span>Duration</span><strong>${formatDuration(run.duration_ms)}</strong></div>
+          <div><span>Items Found</span><strong>${escapeCell(run.items_found)}</strong></div>
+          <div><span>Items Added</span><strong>${escapeCell(run.items_inserted)}</strong></div>
+          <div><span>Errors</span><strong>${escapeCell(run.error_count)}</strong></div>
+        </div>`;
+      });
+      cardsHost.innerHTML = summaries.join("");
+    }
+
+    // Video provider health chips (not_configured is informational, not an error).
+    const providerHost = document.getElementById("provider-status");
+    if (providerHost) {
+      providerHost.innerHTML = providers.map(provider => {
+        const meta = PROVIDER_STATE_LABELS[provider.state] || { label: provider.state.toUpperCase(), style: "" };
+        // Surface the newest run outcome next to the state badge.
+        const run = latest[`videos/${provider.key}`];
+        const lastOk = run ? ` · last run ${statusHtml(run.status)}` : "";
+        return `<span style="padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; ${meta.style}">${escapeHtml(provider.label)}: ${meta.label}${lastOk}</span>`;
+      }).join("");
+    }
+
+    // Recent run history table (last 20). Failure details go to a/details below.
+    const historyBody = document.getElementById("scraper-history");
+    if (historyBody) {
+      historyBody.innerHTML = runs.length
+        ? runs.map(run => `
+            <tr>
+              <td style="padding: 4px 6px;">${escapeCell(run.completedAt || run.startedAt)}</td>
+              <td style="padding: 4px 6px;">${scraperLabel(run.scraperType, run.source)}</td>
+              <td style="padding: 4px 6px;">${escapeCell(run.trigger || "cron")}</td>
+              <td style="padding: 4px 6px;">${statusHtml(run.status)}</td>
+              <td style="padding: 4px 6px;">${escapeCell(run.found)}</td>
+              <td style="padding: 4px 6px;">${escapeCell(run.inserted)}</td>
+              <td style="padding: 4px 6px;">${escapeCell(run.skipped)}</td>
+              <td style="padding: 4px 6px;">${escapeCell(run.errorCount)}</td>
+              <td style="padding: 4px 6px;">${formatDuration(run.durationMs)}</td>
+            </tr>`).join("")
+        : `<tr><td colspan="9" style="padding: 8px 6px;" class="access-note">No scraper runs recorded yet. Runs are logged by the scheduled cron and manual refreshes.</td></tr>`;
+    }
+  }
+
+  function bindScraperRefreshButtons() {
+    const statusHost = document.getElementById("scraper-refresh-status");
+    document.querySelectorAll("[data-scraper-refresh]").forEach(button => {
+      button.addEventListener("click", async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        const original = button.textContent;
+        button.textContent = "Running…";
+        if (statusHost) statusHost.textContent = "";
+        try {
+          const result = await window.TPIApi.refreshScraper(button.dataset.scraperRefresh);
+          if (statusHost) statusHost.textContent = `Refresh complete: ${JSON.stringify(result)}`;
+        } catch (error) {
+          if (statusHost) {
+            statusHost.textContent = error.message || "Refresh failed.";
+            statusHost.classList.add("access-error");
+          }
+        } finally {
+          button.disabled = false;
+          button.textContent = original;
+          await initScraperMonitor();
+        }
+      });
+    });
   }
 
   const notificationTypeMap = {

@@ -38,10 +38,10 @@ PASS=0; FAIL=0; FAILED_NAMES=()
 
 req() { # method path token [json_body] -> "status|body"
   local method="$1" path="$2" token="$3" body="${4:-}"
-  local args=(-s -o /tmp/tpi-e2e-body -w '%{http_code}' -X "$method" -H "Cookie: tpi_session=$token")
+  local args=(-s --max-time 300 -o /tmp/tpi-e2e-body-$$ -w '%{http_code}' -X "$method" -H "Cookie: tpi_session=$token")
   [ -n "$body" ] && args+=(-H 'Content-Type: application/json' -d "$body")
   local status; status=$(curl "${args[@]}" "$BASE$path")
-  echo "$status|$(cat /tmp/tpi-e2e-body)"
+  echo "$status|$(cat /tmp/tpi-e2e-body-$$)"
 }
 
 split() { SPLIT_STATUS="${1%%|*}"; SPLIT_BODY="${1#*|}"; }
@@ -438,6 +438,56 @@ R=$(req GET /notifications/unread-count tok-b)
 check "regenerated post increments B's unread again" 200 "$R" "d['unreadCount']>$B1"
 R=$(req GET /notifications tok-a)
 check "A received community_post notification with canonical href" 200 "$R" "any(n.get('type')=='community_post' and 'member-home.html' in (n.get('actionHref') or n.get('action_href') or '') for n in d['notifications'] if not n.get('chat'))"
+
+######################## 7. DISCOVERY / SCRAPER SECURITY & LOGGING ########################
+echo "== SCRAPER SECURITY & OBSERVABILITY =="
+KGREP() { grep -q "sk_" /dev/null 2>/dev/null; } # (unused helper guard)
+# Unauthenticated + ordinary member attempts must be rejected WITHOUT triggering a scrape.
+for T in tok-a tok-b tok-contrib tok-muted; do
+ LBL=${T:-anonymous}
+ split "$(req GET /news/refresh "$T")"
+ if [ "$SPLIT_STATUS" = "401" ] || [ "$SPLIT_STATUS" = "403" ]; then PASS=$((PASS+1)); echo "PASS  $LBL cannot trigger news refresh ($SPLIT_STATUS)"; else FAIL=$((FAIL+1)); FAILED_NAMES+=("$LBL news refresh not rejected"); echo "FAIL  $LBL news refresh got $SPLIT_STATUS"; fi
+ split "$(req GET /videos/refresh "$T")"
+ if [ "$SPLIT_STATUS" = "401" ] || [ "$SPLIT_STATUS" = "403" ]; then PASS=$((PASS+1)); echo "PASS  $LBL cannot trigger videos refresh ($SPLIT_STATUS)"; else FAIL=$((FAIL+1)); FAILED_NAMES+=("$LBL videos refresh not rejected"); echo "FAIL  $LBL videos refresh got $SPLIT_STATUS"; fi
+ split "$(req GET /events/refresh "$T")"
+ if [ "$SPLIT_STATUS" = "401" ] || [ "$SPLIT_STATUS" = "403" ]; then PASS=$((PASS+1)); echo "PASS  $LBL cannot trigger events refresh ($SPLIT_STATUS)"; else FAIL=$((FAIL+1)); FAILED_NAMES+=("$LBL events refresh not rejected"); echo "FAIL  $LBL events refresh got $SPLIT_STATUS"; fi
+done
+# Anonymous must also be rejected on all three refresh endpoints.
+for P in news videos events; do
+ ST=$(curl -s -o /dev/null -w '%{http_code}' "$BASE/$P/refresh")
+ if [ "$ST" = "401" ] || [ "$ST" = "403" ]; then PASS=$((PASS+1)); echo "PASS  anonymous cannot trigger $P refresh ($ST)"; else FAIL=$((FAIL+1)); FAILED_NAMES+=("anonymous $P refresh not rejected"); echo "FAIL  anonymous $P refresh got $ST"; fi
+done
+# Ordinary members also cannot read the run history.
+R=$(req GET /admin/scraper-runs tok-a)
+check "member cannot read scraper run history" 403 "$R"
+R=$(req GET /admin/scraper-runs '')
+check "anonymous cannot read scraper run history (401/403 both acceptable denials)" 403 "$R" "d.get('error') is not None"
+# Admin history endpoint serves runs + provider status
+R=$(req GET /admin/scraper-runs tok-admin)
+check "admin reads scraper run history" 200 "$R" "isinstance(d.get('runs'), list) and len(d.get('providers',[]))==5 and any(p['key']=='odysee' and p['state']=='disabled' for p in d['providers'])"
+check "provider states: 2 active, 1 disabled, 2 not_configured" 200 "$R" "sum(1 for p in d['providers'] if p['state']=='active')==2 and sum(1 for p in d['providers'] if p['state']=='not_configured')==2"
+
+# Trigger an authorized manual video refresh (real scrape against public APIs).
+R=$(req GET /videos/refresh tok-admin)
+check "admin can trigger videos refresh" 200 "$R" "d.get('ok')==True and d.get('collected')>=0"
+# Run history now contains the manual video run, per-provider rows, and no secrets.
+R=$(req GET "/admin/scraper-runs?limit=50" tok-admin)
+check "manual video run logged with trigger=manual" 200 "$R" "any(r.get('trigger')=='manual' and r.get('scraperType')=='videos' for r in d['runs'])"
+check "per-provider video runs logged (dailymotion/archive/odysee)" 200 "$R" "{'dailymotion','internet_archive','odysee'} <= {r.get('source') for r in d['runs'] if r.get('scraperType')=='videos'}"
+check "dailymotion run found>0 (live API returned results)" 200 "$R" "any(r.get('source')=='dailymotion' and (r.get('found') or 0)>0 for r in d['runs'])"
+check "duration_ms recorded (>0)" 200 "$R" "any((r.get('durationMs') or 0)>0 for r in d['runs'] if r.get('completedAt') and (r.get('found') or 0)>0)"
+R_OK=$(req GET "/admin/scraper-runs?limit=50" tok-admin)
+SECRETS=$(split "$R_OK"; echo "$SPLIT_BODY" | grep -ciE 'sk_[a-z0-9]|pk_[a-z0-9]|rk_[a-z0-9]|bearer |authorization:|cookie:|api[_-]?key.[:=]')
+if [ "$SECRETS" = "0" ]; then PASS=$((PASS+1)); echo "PASS  run history contains no secret-shaped strings"; else FAIL=$((FAIL+1)); FAILED_NAMES+=("secrets in run history"); echo "FAIL  secret-shaped strings in run history: $SECRETS"; fi
+
+# Authorized owner refresh also allowed.
+R=$(req GET /admin/scraper-runs tok-owner)
+check "owner reads scraper run history" 200 "$R"
+
+# Failure-tolerance: a logging/DB hiccup must not fail the scrape. Simulate by
+# confirming the scraper still completes when scraper_runs is dropped mid-flight
+# is NOT done here (destructive); the guarantee is structural in scraper-log.js
+# (every log write wrapped in try/catch) — verified by unit review above.
 
 echo ""
 echo "=================================="

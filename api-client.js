@@ -83,6 +83,8 @@
     approveComment: id => request(`/admin/comments/${encodeURIComponent(id)}/approve`, { method: "POST" }),
     deleteComment: id => request(`/admin/comments/${encodeURIComponent(id)}`, { method: "DELETE" }),
     getAdminSettings: () => request("/admin/settings"),
+    adminListScraperRuns: (limit = 20) => request(`/admin/scraper-runs?limit=${encodeURIComponent(limit)}`),
+    refreshScraper: type => request(`/${encodeURIComponent(type)}/refresh`),
     updateAdminSettings: payload => request("/admin/settings", { method: "POST", body: payload }),
     checkInvite: code => request("/invites/check", { method: "POST", body: { code } }),
     registerContributor: payload => request("/contributors/register", { method: "POST", body: payload }),

@@ -50,6 +50,44 @@
         </article>
     </section>
 
+    <section class="admin-control-grid" data-scraper-monitor data-scraper-section hidden>
+        <article class="editor-access-card admin-settings-card" style="grid-column: 1 / -1;">
+            <p class="portal-kicker">Discovery &amp; Scrapers</p>
+            <h3>Scraper Health</h3>
+            <p class="access-note">Last runs of the automated paranormal discovery scrapers. Manual refreshes use the same queues as the scheduled cron.</p>
+
+            <div class="admin-scraper-cards" id="scraper-cards" style="display: grid; gap: 12px; margin-top: 12px;"></div>
+
+            <h4 style="margin: 18px 0 8px; font-size: 1rem;">Video Providers</h4>
+            <div id="provider-status" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+
+            <h4 style="margin: 18px 0 8px; font-size: 1rem;">Recent Runs</h4>
+            <table class="admin-scraper-history" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead>
+                    <tr style="text-align: left; opacity: 0.7;">
+                        <th style="padding: 4px 6px;">When</th>
+                        <th style="padding: 4px 6px;">Scraper</th>
+                        <th style="padding: 4px 6px;">Source</th>
+                        <th style="padding: 4px 6px;">Status</th>
+                        <th style="padding: 4px 6px;">Found</th>
+                        <th style="padding: 4px 6px;">Added</th>
+                        <th style="padding: 4px 6px;">Errors</th>
+                        <th style="padding: 4px 6px;">Duration</th>
+                    </tr>
+                </thead>
+                <tbody id="scraper-history"></tbody>
+            </table>
+            <p id="scraper-run-error-details" class="access-note" style="margin-top: 10px; white-space: pre-wrap;"></p>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; align-items: center;">
+                <button type="button" class="portal-button portal-button-secondary" data-scraper-refresh="news">Refresh News</button>
+                <button type="button" class="portal-button portal-button-secondary" data-scraper-refresh="videos">Refresh Videos</button>
+                <button type="button" class="portal-button portal-button-secondary" data-scraper-refresh="events">Refresh Events</button>
+                <span id="scraper-refresh-status" class="access-note" style="margin-left: 6px;"></span>
+            </div>
+        </article>
+    </section>
+
     <p id="member-login-status" class="access-note member-login-status"></p>
 </div>
 </div>
@@ -58,7 +96,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=38"></script>
+<script src="member-login.js?v=39"></script>
 <script src="member-shell.js?v=51"></script>
 </body>
 </html>

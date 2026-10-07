@@ -1,7 +1,7 @@
 import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
 import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
 import { scrapeNews } from "../../lib/news-scraper.js";
-import { scrapeVideos } from "../../lib/video-scraper.js";
+import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -57,6 +57,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/conversations") return requireMember(request, env, user => handleListConversations(request, env, user));
     if (request.method === "POST" && path === "/conversations") return requireMember(request, env, user => handleCreateConversation(request, env, user));
     if (request.method === "GET" && path === "/conversations/unread-count") return requireMember(request, env, user => handleConversationUnreadCount(env, user));
+    if (request.method === "GET" && path === "/admin/scraper-runs") return requireAdmin(request, env, user => handleAdminScraperRuns(request, env, user));
     if (request.method === "PUT" && path.match(/^\/conversations\/[^/]+\/members$/)) return requireMember(request, env, user => handleReplaceConversationMembers(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+$/)) return requireMember(request, env, user => handleGetConversation(path, env, user));
     if (request.method === "GET" && path.match(/^\/conversations\/[^/]+\/messages$/)) return requireMember(request, env, user => handleListMessages(path, request, env, user));
@@ -139,12 +140,18 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/video-reports") return requireMember(request, env, user => handleCreateVideoReport(request, env, user));
 
     // Events API
+    // Manual refresh endpoints trigger expensive external scraping, so they
+    // require owner/admin authorization (ordinary members and anonymous
+    // visitors are rejected). The scheduled cron calls the shared scraper
+    // functions directly and does not go through these HTTP routes.
     if (request.method === "GET" && path === "/events") return handleListEvents(request, env);
-    if (request.method === "GET" && path === "/events/refresh") return handleRefreshEvents(env);
+    if (request.method === "GET" && path === "/events/refresh") return requireAdmin(request, env, () => handleRefreshEvents(env));
+
+
     if (request.method === "GET" && path === "/news") return handleListNews(request, env);
-    if (request.method === "GET" && path === "/news/refresh") return handleRefreshNews(env);
+    if (request.method === "GET" && path === "/news/refresh") return requireAdmin(request, env, () => handleRefreshNews(env));
     if (request.method === "GET" && path === "/videos") return handleListVideos(request, env);
-    if (request.method === "GET" && path === "/videos/refresh") return handleRefreshVideos(env);
+    if (request.method === "GET" && path === "/videos/refresh") return requireAdmin(request, env, () => handleRefreshVideos(env));
     if (request.method === "GET" && path.match(/^\/events\/[^/]+$/)) return handleGetEvent(path, env);
     if (request.method === "POST" && path === "/events") return requireAdmin(request, env, user => handleCreateEvent(request, env, user));
     if (request.method === "POST" && path === "/events/submit") return handleCommunityEventSubmit(request, env);
@@ -4428,7 +4435,7 @@ async function handleEventRsvp(path, request, env) {
 
 async function handleRefreshEvents(env) {
   // Shared scraper (same code path as the daily cron) — see lib/event-scraper.js
-  const result = await scrapeAndUpdateEvents(env);
+  const result = await scrapeAndUpdateEvents(env, { trigger: "manual" });
   return json({ ok: true, scraped: result.scraped, inserted: result.inserted });
 }
 
@@ -4453,7 +4460,7 @@ async function handleListNews(request, env) {
 
 async function handleRefreshNews(env) {
   // Shared scraper (same code path as the cron) — see lib/news-scraper.js
-  const result = await scrapeNews(env);
+  const result = await scrapeNews(env, { trigger: "manual" });
   return json({ ok: true, ...result });
 }
 
@@ -4478,6 +4485,48 @@ async function handleListVideos(request, env) {
 
 async function handleRefreshVideos(env) {
   // Shared scraper (same code path as the cron) — see lib/video-scraper.js
-  const result = await scrapeVideos(env);
+  const result = await scrapeVideos(env, { trigger: "manual" });
   return json({ ok: true, ...result });
+}
+
+// Scrape run history + provider status for the admin monitoring dashboard
+// (admin-advanced-settings.html > Discovery & Scrapers). Sanitized at write
+// time by scraper-log.js, so error messages here are display-safe.
+async function handleAdminScraperRuns(request, env, user) {
+  const url = new URL(request.url);
+  const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit") || "20", 10)), 100);
+  const scraperType = clean(url.searchParams.get("type"));
+  const where = scraperType ? "WHERE scraper_type = ?" : "";
+  const params = scraperType ? [scraperType, limit] : [limit];
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id, scraper_type AS scraperType, source, run_trigger AS trigger,
+           started_at AS startedAt, completed_at AS completedAt, status,
+           items_found AS found, items_inserted AS inserted, items_skipped AS skipped,
+           error_count AS errorCount, error_message AS errorMessage, duration_ms AS durationMs
+    FROM scraper_runs ${where}
+    ORDER BY started_at DESC
+    LIMIT ?
+  `).bind(...params).all();
+
+  // Latest per-scraper last-run summary. Last completed run per type (and
+  // per video provider) so the dashboard reflects reality, not an
+  // in-progress run.
+  const all = await env.TPI_DB.prepare(`
+    SELECT scraper_type, source, status, started_at, completed_at,
+           items_found, items_inserted, error_count, duration_ms
+    FROM scraper_runs
+    ORDER BY started_at DESC
+    LIMIT 200
+  `).all();
+  const latest = {};
+  for (const row of (all.results || [])) {
+    const key = row.source ? `${row.scraper_type}/${row.source}` : row.scraper_type;
+    if (!latest[key] && row.completed_at) latest[key] = row;
+  }
+
+  return json({
+    runs: results || [],
+    latest,
+    providers: PROVIDER_STATUS,
+  }, 200, { "Cache-Control": "no-store" });
 }
