@@ -4233,7 +4233,7 @@ function privateMemberUser(user) {
 
 // ===== Notification categories + per-member preferences (ParaPost-style settings) =====
 const NOTIFICATION_CATEGORIES = {
-  admin: { label: "Administration Notices", description: "Profile requests, account warnings, team-submission alerts, and other messages from leadership." },
+  admin: { label: "Administration Notices", description: "Profile requests, account warnings, and other messages from leadership." },
   posts: { label: "New Posts", description: "Community posts and member discussions." },
   education: { label: "Educational Content", description: "New papers and contributed research in the Education Center." },
   videos: { label: "New Videos", description: "New TPI videos and live content alerts." },

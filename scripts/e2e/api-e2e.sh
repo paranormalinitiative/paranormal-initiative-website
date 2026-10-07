@@ -17,50 +17,10 @@ if curl -s -o /dev/null --max-time 2 "http://127.0.0.1:$PORT/api/community/categ
 fi
 rm -rf .wrangler/state/v3/d1
 for f in migrations/*.sql; do
-  # Giant statement files (e.g. 0010 legacy conversions) can exceed wrangler's
-  # local execute statement cap — split long INSERTs by workarounds below.
-  npx wrangler d1 execute TPI_DB --local --file "$f" --json >/dev/null 2>&1
-  status=$?
-  if [ $status -ne 0 ]; then
-    python3 - "$f" <<'PYEOF' >/tmp/tpi-e2e-split.sql || echo "SKIPPED (INSERT...SELECT form, too large for local D1): $f" >&2
-import sys, re
-src = open(sys.argv[1]).read()
-# Split single multi-row INSERT statements into per-tuple INSERTs at '), (’ boundaries
-m = re.match(r'(INSERT(?: OR IGNORE)? INTO \w+ \([^)]*\) VALUES)\s*(.+);\s*$', src, re.S)
-if m:
-    head, tuples = m.group(1), m.group(2)
-    rows, depth, cur = [], 0, ''
-    in_str = False
-    i = 0
-    while i < len(tuples):
-        ch = tuples[i]
-        if in_str:
-            if ch == "'":
-                if i + 1 < len(tuples) and tuples[i+1] == "'":
-                    cur += "''"; i += 2; continue
-                in_str = False
-            cur += ch
-        else:
-            if ch == "'": in_str = True; cur += ch
-            elif ch == '(': depth += 1
-            elif ch == ')':
-                depth -= 1
-                if depth == 0:
-                    rows.append(cur + ')'); cur = ''
-            elif depth == 0:
-                pass
-            else:
-                cur += ch
-        i += 1
-    print('PRAGMA foreign_keys=OFF;')
-    for row in rows:
-        print(head + ' ' + row + ';')
-    print('PRAGMA foreign_keys=ON;')
-else:
-    sys.exit(1)
-PYEOF
-    npx wrangler d1 execute TPI_DB --local --file /tmp/tpi-e2e-split.sql --json >/dev/null 2>&1 || echo "SKIPPED (not a multi-row INSERT — see $f header; likely INSERT...SELECT form)" >&2
-  fi
+  # Strict: every migration must apply — including 0010, which is generated
+  # as one INSERT per legacy article specifically so it replays locally.
+  npx wrangler d1 execute TPI_DB --local --file "$f" --json >/dev/null 2>&1 \
+    || { echo "MIGRATION FAILED: $f"; exit 1; }
 done
 npx wrangler d1 execute TPI_DB --local --file scripts/e2e/seed-local.sql --json >/dev/null 2>&1 || { echo "SEED FAILED"; exit 1; }
 mkdir -p /tmp/tpi-e2e

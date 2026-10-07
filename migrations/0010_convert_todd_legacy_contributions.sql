@@ -1,11 +1,10 @@
 -- Converts Todd Wayne's legacy profile contribution queue into editable published Content Editor articles.
 -- Run this in Cloudflare D1 Console against tpi_contributor_portal.
 -- Safe to rerun: rows use stable ids and update on conflict.
+-- One INSERT per article: keeps each statement small enough for local wrangler replay.
 
 INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
-SELECT v.id, v.destination, v.href, v.title, v.subtitle, v.article_type, v.author, v.source, v.body_html, v.article_html, v.labels, v.status, c.id, CURRENT_TIMESTAMP
-FROM (
-  SELECT 'legacy-evp-itc-research' AS id, 'education-area-evp-itc-research.html' AS destination, 'published-article.html?id=legacy-evp-itc-research' AS href, 'EVP / ITC Research' AS title, 'Experimental Audio and Instrumental Transcommunication Study' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'evp-itc-research.html' AS source, '<section class="portal-hero">
+SELECT 'legacy-evp-itc-research', 'education-area-evp-itc-research.html', 'published-article.html?id=legacy-evp-itc-research', 'EVP / ITC Research', 'Experimental Audio and Instrumental Transcommunication Study', 'Research Paper', 'Todd Wayne', 'evp-itc-research.html', '<section class="portal-hero">
     <p class="portal-kicker">Research Area</p>
     <h2>EVP and ITC are treated as serious experimental communication research.</h2>
     <p>
@@ -383,8 +382,25 @@ FROM (
         <p>See how ACS and The Paranormal Initiative App support case work, documentation, and EVP/ITC research.</p>
         <span class="dashboard-panel-cta">Open Page ›</span>
     </a>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-investigation-development-raising-the-standards' AS id, 'investigation-development-series.html' AS destination, 'published-article.html?id=legacy-investigation-development-raising-the-standards' AS href, 'Raising The Standards Of Paranormal Investigation' AS title, 'Founder Statement' AS subtitle, 'Field Article' AS article_type, 'Todd Wayne' AS author, 'investigation-development-raising-the-standards.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-investigation-development-raising-the-standards', 'investigation-development-series.html', 'published-article.html?id=legacy-investigation-development-raising-the-standards', 'Raising The Standards Of Paranormal Investigation', 'Founder Statement', 'Field Article', 'Todd Wayne', 'investigation-development-raising-the-standards.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block">
         <h3>Thirty Years In The Field</h3>
         <div class="lesson-reading-copy">
@@ -438,8 +454,25 @@ FROM (
             <p><strong>Todd Wayne</strong><br>The Paranormal Initiative</p>
         </div>
     </article>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-what-is-paranormal-investigation' AS id, 'education-area-investigation-science.html' AS destination, 'published-article.html?id=legacy-education-research-what-is-paranormal-investigation' AS href, 'What Is Paranormal Investigation?' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-what-is-paranormal-investigation.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-what-is-paranormal-investigation', 'education-area-investigation-science.html', 'published-article.html?id=legacy-education-research-what-is-paranormal-investigation', 'What Is Paranormal Investigation?', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-what-is-paranormal-investigation.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction</h3>
                 <div class="lesson-reading-copy"><p>Paranormal investigation is the structured, evidence-minded study of reported unexplained phenomena. Unlike ghost hunting, which prioritizes personal experience, investigation prioritizes documentation, analysis, and honest reporting. The goal is not to prove or disprove the existence of ghosts. The goal is to examine a claim, gather information, test possible explanations, and present findings clearly.</p>
@@ -595,8 +628,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-what-is-ghost-hunting' AS id, 'education-area-investigation-science.html' AS destination, 'published-article.html?id=legacy-education-research-what-is-ghost-hunting' AS href, 'What Is Ghost Hunting?' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-what-is-ghost-hunting.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-what-is-ghost-hunting', 'education-area-investigation-science.html', 'published-article.html?id=legacy-education-research-what-is-ghost-hunting', 'What Is Ghost Hunting?', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-what-is-ghost-hunting.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction</h3>
                 <div class="lesson-reading-copy"><p>Almost everyone who enters the paranormal field today encounters ghost hunting first. It appears on television, on YouTube, on TikTok, in podcasts, on social media, and in weekend events held at historic locations across the country. Ghost hunting has become the public face of paranormal exploration. It is approachable, exciting, and accessible. It requires no degree, no certification, and no prior experience. You can simply show up at a location, walk through with a group, and see what happens.</p>
@@ -775,8 +825,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-why-investigate-paranormal' AS id, 'education-area-investigation-science.html' AS destination, 'published-article.html?id=legacy-education-research-why-investigate-paranormal' AS href, 'Why People Choose to Investigate the Paranormal' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-why-investigate-paranormal.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-why-investigate-paranormal', 'education-area-investigation-science.html', 'published-article.html?id=legacy-education-research-why-investigate-paranormal', 'Why People Choose to Investigate the Paranormal', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-why-investigate-paranormal.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - The Question Before the Investigation</h3>
                 <div class="lesson-reading-copy"><p>Every investigation begins with the investigator. Before you enter a cemetery, a historic building, a client''s home, or any location where people have reported strange experiences, you must first examine what you are bringing with you internally. Your expectations, your fears, your hopes, your beliefs, your doubts - all of these will shape what you notice, what you ignore, and how you interpret what you find.</p>
@@ -976,8 +1043,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-foundational-terminology-paranormal-research' AS id, 'education-area-investigation-science.html' AS destination, 'published-article.html?id=legacy-education-research-foundational-terminology-paranormal-research' AS href, 'Basic Terminology and Foundational Language' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-foundational-terminology-paranormal-research.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-foundational-terminology-paranormal-research', 'education-area-investigation-science.html', 'published-article.html?id=legacy-education-research-foundational-terminology-paranormal-research', 'Basic Terminology and Foundational Language', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-foundational-terminology-paranormal-research.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction</h3>
                 <div class="lesson-reading-copy"><p>Language shapes investigations. Two investigators may observe the same event but describe it differently because they use different words. Shared vocabulary reduces misunderstanding, improves documentation, and makes teamwork more effective. When you write a report, the words you choose determine whether readers can understand exactly what happened. When you speak with a witness, the words you use can shape what they tell you. When you present findings, the words you select can build or damage your credibility.</p>
@@ -1141,8 +1225,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-field-safety-permission' AS id, 'education-area-ethics-professional-standards.html' AS destination, 'published-article.html?id=legacy-education-research-field-safety-permission' AS href, 'Basic Field Safety and Permission' AS title, 'Education Center · Research Paper' AS subtitle, 'Field Article' AS article_type, 'Todd Wayne' AS author, 'education-research-field-safety-permission.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-field-safety-permission', 'education-area-ethics-professional-standards.html', 'published-article.html?id=legacy-education-research-field-safety-permission', 'Basic Field Safety and Permission', 'Education Center · Research Paper', 'Field Article', 'Todd Wayne', 'education-research-field-safety-permission.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - Preparation Protects Everyone</h3>
                 <div class="lesson-reading-copy"><p>Every investigation begins before you arrive on location. The decisions you make before you step onto a property - about permission, safety, equipment, and conduct - determine whether your investigation will be professional or reckless. Preparation protects investigators, clients, and property. It is not a burden. It is a sign of professionalism.</p>
@@ -1325,8 +1426,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-observation-note-taking' AS id, 'education-area-reporting-documentation.html' AS destination, 'published-article.html?id=legacy-education-research-observation-note-taking' AS href, 'Basic Observation and Note-Taking' AS title, 'Education Center · Research Paper' AS subtitle, 'Field Article' AS article_type, 'Todd Wayne' AS author, 'education-research-observation-note-taking.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-observation-note-taking', 'education-area-reporting-documentation.html', 'published-article.html?id=legacy-education-research-observation-note-taking', 'Basic Observation and Note-Taking', 'Education Center · Research Paper', 'Field Article', 'Todd Wayne', 'education-research-observation-note-taking.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - The Investigator&#x27;s Primary Instrument</h3>
                 <div class="lesson-reading-copy"><p>Investigators spend far more time observing than collecting dramatic evidence. For every hour of active investigation, there are hours of quiet observation - waiting, watching, listening, and documenting. This is not wasted time. This is the core of the investigative process.</p>
@@ -1501,8 +1619,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-equipment-what-tools-measure' AS id, 'education-area-instrumentation-technology.html' AS destination, 'published-article.html?id=legacy-education-research-equipment-what-tools-measure' AS href, 'Introduction to Equipment and What Tools Actually Measure' AS title, 'Education Center · Research Paper' AS subtitle, 'Technical Note' AS article_type, 'Todd Wayne' AS author, 'education-research-equipment-what-tools-measure.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-equipment-what-tools-measure', 'education-area-instrumentation-technology.html', 'published-article.html?id=legacy-education-research-equipment-what-tools-measure', 'Introduction to Equipment and What Tools Actually Measure', 'Education Center · Research Paper', 'Technical Note', 'Todd Wayne', 'education-research-equipment-what-tools-measure.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - Beyond the Gadgets</h3>
                 <div class="lesson-reading-copy"><p>Paranormal investigation equipment has a powerful appeal. Walk into any store that sells paranormal gear, and you will see devices with flashing lights, digital displays, and dramatic names. Ghost hunting television shows feature investigators carrying mysterious instruments that beep, flash, and produce dramatic readings at exactly the right moments. It is easy to believe that these devices can detect spirits.</p>
@@ -1666,8 +1801,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-choosing-researching-location' AS id, 'education-area-historical-cultural-research.html' AS destination, 'published-article.html?id=legacy-education-research-choosing-researching-location' AS href, 'How Beginners Choose and Research a Location' AS title, 'Education Center · Research Paper' AS subtitle, 'Field Article' AS article_type, 'Todd Wayne' AS author, 'education-research-choosing-researching-location.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-choosing-researching-location', 'education-area-historical-cultural-research.html', 'published-article.html?id=legacy-education-research-choosing-researching-location', 'How Beginners Choose and Research a Location', 'Education Center · Research Paper', 'Field Article', 'Todd Wayne', 'education-research-choosing-researching-location.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - The Investigation Begins Long Before You Arrive</h3>
                 <div class="lesson-reading-copy"><p>Beginners often believe the investigation starts when they arrive at a haunted location. They pack their equipment, drive to the site, and step through the door expecting something to happen. This is one of the most common misconceptions in paranormal investigation.</p>
@@ -1835,8 +1987,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-audio-photo-video-review' AS id, 'education-area-evidence-science-analysis.html' AS destination, 'published-article.html?id=legacy-education-research-audio-photo-video-review' AS href, 'Introduction to Audio, Photo, and Video Review' AS title, 'Education Center · Research Paper' AS subtitle, 'Media Review' AS article_type, 'Todd Wayne' AS author, 'education-research-audio-photo-video-review.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-audio-photo-video-review', 'education-area-evidence-science-analysis.html', 'published-article.html?id=legacy-education-research-audio-photo-video-review', 'Introduction to Audio, Photo, and Video Review', 'Education Center · Research Paper', 'Media Review', 'Todd Wayne', 'education-research-audio-photo-video-review.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - The Real Work Begins After the Investigation</h3>
                 <div class="lesson-reading-copy"><p>An investigation may generate hundreds or even thousands of media files. A single night of recording can produce hours of audio, dozens of photographs, and multiple video clips. When the team packs up and leaves the location, the evidence review has not yet begun. The collection phase is over. The analysis phase is just starting.</p>
@@ -2036,8 +2205,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-investigation-ethics-professional-conduct' AS id, 'education-area-ethics-professional-standards.html' AS destination, 'published-article.html?id=legacy-education-research-investigation-ethics-professional-conduct' AS href, 'Investigation Ethics and Professional Conduct' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-investigation-ethics-professional-conduct.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-investigation-ethics-professional-conduct', 'education-area-ethics-professional-standards.html', 'published-article.html?id=legacy-education-research-investigation-ethics-professional-conduct', 'Investigation Ethics and Professional Conduct', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-investigation-ethics-professional-conduct.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction</h3>
                 <div class="lesson-reading-copy"><p>Paranormal investigation exists at the intersection of curiosity, compassion, science, history, and human experience. People invite investigators into their homes, share their most personal experiences, and trust that those investigators will treat them with respect. Property owners allow access to historic and fragile locations. Witnesses reveal experiences that they may have never shared with anyone else. The public forms opinions about the entire field based on how investigators conduct themselves.</p>
@@ -2163,8 +2349,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-professional-documentation-reporting' AS id, 'education-area-reporting-documentation.html' AS destination, 'published-article.html?id=legacy-education-research-professional-documentation-reporting' AS href, 'Professional Investigation Documentation and Reporting' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-professional-documentation-reporting.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-professional-documentation-reporting', 'education-area-reporting-documentation.html', 'published-article.html?id=legacy-education-research-professional-documentation-reporting', 'Professional Investigation Documentation and Reporting', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-professional-documentation-reporting.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - The Permanent Record</h3>
                 <div class="lesson-reading-copy"><p>Every investigation generates data. Audio recordings, photographs, video footage, environmental readings, witness statements, and investigator observations all accumulate over The Education Center material of a case. But data alone is not documentation. Data becomes documentation only when it is organized, labeled, contextualized, and preserved in a form that others can understand.</p>
@@ -2356,8 +2559,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-debunking-natural-explanations' AS id, 'education-area-evidence-science-analysis.html' AS destination, 'published-article.html?id=legacy-education-research-debunking-natural-explanations' AS href, 'Debunking Basics and Natural Explanations' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-debunking-natural-explanations.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-debunking-natural-explanations', 'education-area-evidence-science-analysis.html', 'published-article.html?id=legacy-education-research-debunking-natural-explanations', 'Debunking Basics and Natural Explanations', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-debunking-natural-explanations.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction</h3>
                 <div class="lesson-reading-copy"><p>Many reported paranormal experiences have understandable environmental, psychological, or mechanical causes. A cold spot may be a draft. A strange sound may be settling pipes. A moving shadow may be headlights passing through a window. An EMF spike may be an ungrounded appliance. Finding these causes is not a failure of investigation. It is a successful investigation.</p>
@@ -2512,8 +2732,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-weather-environment-building-science-causes' AS id, 'education-area-environmental-research.html' AS destination, 'published-article.html?id=legacy-education-research-weather-environment-building-science-causes' AS href, 'Weather, Environment, and Building-Science Causes' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-weather-environment-building-science-causes.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-weather-environment-building-science-causes', 'education-area-environmental-research.html', 'published-article.html?id=legacy-education-research-weather-environment-building-science-causes', 'Weather, Environment, and Building-Science Causes', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-weather-environment-building-science-causes.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - Buildings Are Dynamic Environments</h3>
                 <div class="lesson-reading-copy"><p>Buildings are not static. They breathe, shift, settle, and respond to the world around them. Temperature changes cause materials to expand and contract. Wind creates pressure differences that move doors and windows. Humidity affects electrical systems and creates strange sensations. Plumbing systems produce sounds that seem to come from nowhere. HVAC systems cycle on and off, creating temperature changes and airflow that can feel like a presence.</p>
@@ -2751,8 +2988,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-psychological-triggers-paranormal-experiences' AS id, 'education-area-consciousness-human-experience.html' AS destination, 'published-article.html?id=legacy-education-research-psychological-triggers-paranormal-experiences' AS href, 'Psychological Triggers of Paranormal Experiences' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-psychological-triggers-paranormal-experiences.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-psychological-triggers-paranormal-experiences', 'education-area-consciousness-human-experience.html', 'published-article.html?id=legacy-education-research-psychological-triggers-paranormal-experiences', 'Psychological Triggers of Paranormal Experiences', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-psychological-triggers-paranormal-experiences.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - Every Investigation Involves People</h3>
                 <div class="lesson-reading-copy"><p>Every investigation involves people. People who experience strange events. People who report those events. People who investigate them. And people who evaluate the findings. At every stage, human perception, cognition, memory, and emotion are at work.</p>
@@ -2906,8 +3160,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-spiritual-religious-demonic-claim-language' AS id, 'education-area-historical-cultural-research.html' AS destination, 'published-article.html?id=legacy-education-research-spiritual-religious-demonic-claim-language' AS href, 'Spiritual, Religious, and Demonic-Claim Language' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-spiritual-religious-demonic-claim-language.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-spiritual-religious-demonic-claim-language', 'education-area-historical-cultural-research.html', 'published-article.html?id=legacy-education-research-spiritual-religious-demonic-claim-language', 'Spiritual, Religious, and Demonic-Claim Language', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-spiritual-religious-demonic-claim-language.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - Different Languages for Similar Experiences</h3>
                 <div class="lesson-reading-copy"><p>Paranormal investigators meet people from many different backgrounds. A family who believes their home is haunted by a restless spirit may describe the same type of experience that another family describes as a demonic attack. A third family may interpret the same phenomena through the lens of their cultural traditions, using language from their ancestral heritage. A fourth may have no religious framework at all and simply say they are experiencing strange things they cannot explain.</p>
@@ -3067,8 +3338,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-types-hauntings-claim-categories' AS id, 'education-area-investigation-science.html' AS destination, 'published-article.html?id=legacy-education-research-types-hauntings-claim-categories' AS href, 'Types of Hauntings and Claim Categories' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-types-hauntings-claim-categories.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-types-hauntings-claim-categories', 'education-area-investigation-science.html', 'published-article.html?id=legacy-education-research-types-hauntings-claim-categories', 'Types of Hauntings and Claim Categories', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-types-hauntings-claim-categories.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - Organizing the Unknown</h3>
                 <div class="lesson-reading-copy"><p>Throughout history, people have described strange experiences. A sound in the night. A figure seen from the corner of the eye. A cold spot in a warm room. An object that seemed to move on its own. These reports come from every culture, every time period, and every corner of the world. They share common features, but they also differ in important ways.</p>
@@ -3251,8 +3539,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-historical-records-local-legends-cemeteries-oral-history' AS id, 'education-area-historical-cultural-research.html' AS destination, 'published-article.html?id=legacy-education-research-historical-records-local-legends-cemeteries-oral-history' AS href, 'Historical Records, Local Legends, Cemeteries, and Oral History' AS title, 'Education Center · Research Paper' AS subtitle, 'Case / Location Study' AS article_type, 'Todd Wayne' AS author, 'education-research-historical-records-local-legends-cemeteries-oral-history.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-historical-records-local-legends-cemeteries-oral-history', 'education-area-historical-cultural-research.html', 'published-article.html?id=legacy-education-research-historical-records-local-legends-cemeteries-oral-history', 'Historical Records, Local Legends, Cemeteries, and Oral History', 'Education Center · Research Paper', 'Case / Location Study', 'Todd Wayne', 'education-research-historical-records-local-legends-cemeteries-oral-history.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - Every Location Has a Story</h3>
                 <div class="lesson-reading-copy"><p>Many investigations begin with a story. A homeowner hears footsteps in the attic. A hotel guest sees a figure in the hallway. A family experiences cold spots and strange sounds. These stories are the starting point. But good investigators do not stop at the story. They ask: What evidence supports this story? What historical context might explain it? What actually happened at this location before the current residents arrived?</p>
@@ -3373,8 +3678,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-history-hauntings-folklore-psychical-research' AS id, 'education-area-historical-cultural-research.html' AS destination, 'published-article.html?id=legacy-education-research-history-hauntings-folklore-psychical-research' AS href, 'History of Hauntings, Folklore, Ghost Hunting, and Psychical Research' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-history-hauntings-folklore-psychical-research.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-history-hauntings-folklore-psychical-research', 'education-area-historical-cultural-research.html', 'published-article.html?id=legacy-education-research-history-hauntings-folklore-psychical-research', 'History of Hauntings, Folklore, Ghost Hunting, and Psychical Research', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-history-hauntings-folklore-psychical-research.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction - The Longest Story Ever Told</h3>
                 <div class="lesson-reading-copy"><p>People have reported strange experiences for as long as there have been people. Ghost stories appear in the earliest written records, from the clay tablets of ancient Mesopotamia to the papyrus scrolls of Egypt, from the philosophical dialogues of classical Greece to the epic poems of Rome. Every culture that has ever existed has developed traditions about spirits, the afterlife, and the boundary between the living and the dead. These traditions are not identical. They differ in their details, their explanations, and their cultural meanings. But the underlying human experience - the sense that something exists beyond the physical world we can see and touch - is remarkably consistent across time and geography.</p>
@@ -3517,8 +3839,25 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-  UNION ALL SELECT 'legacy-education-research-motivations-meaning-paranormal-experience' AS id, 'education-area-consciousness-human-experience.html' AS destination, 'published-article.html?id=legacy-education-research-motivations-meaning-paranormal-experience' AS href, 'Personal Experience, Curiosity, Belief, Fear, Grief, Social Media, and the Search for Meaning' AS title, 'Education Center · Research Paper' AS subtitle, 'Research Paper' AS article_type, 'Todd Wayne' AS author, 'education-research-motivations-meaning-paranormal-experience.html' AS source, '<section class="lesson-reading-section series-article">
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
+ON CONFLICT(id) DO UPDATE SET
+  destination = excluded.destination,
+  href = excluded.href,
+  title = excluded.title,
+  subtitle = excluded.subtitle,
+  article_type = excluded.article_type,
+  author = excluded.author,
+  source = excluded.source,
+  body_html = excluded.body_html,
+  article_html = excluded.article_html,
+  labels = excluded.labels,
+  status = excluded.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
+SELECT 'legacy-education-research-motivations-meaning-paranormal-experience', 'education-area-consciousness-human-experience.html', 'published-article.html?id=legacy-education-research-motivations-meaning-paranormal-experience', 'Personal Experience, Curiosity, Belief, Fear, Grief, Social Media, and the Search for Meaning', 'Education Center · Research Paper', 'Research Paper', 'Todd Wayne', 'education-research-motivations-meaning-paranormal-experience.html', '<section class="lesson-reading-section series-article">
     <article class="lesson-reading-block paper-single-textbox">
         <h3>Introduction</h3>
                 <div class="lesson-reading-copy"><p>People enter the field of paranormal investigation through many different doors. Some have had an experience they cannot explain and are searching for answers. Some are driven by intellectual curiosity about the nature of consciousness and what happens after death. Some are motivated by belief systems that include spirits, an afterlife, or supernatural forces. Some are responding to fear and want to understand or control it. Some are grieving and seeking connection with a lost loved one. Some are drawn by the social media culture of paranormal content. And some are simply searching for meaning in a world that does not always provide clear answers.</p>
@@ -3666,9 +4005,9 @@ FROM (
     <p>The Paranormal Initiative - Applied Paranormal Research and Studies</p>
     <p>Somerset Paranormal Research Society</p>
     <p>Correspondence: <a href="mailto:paranormalinitiative@yahoo.com">paranormalinitiative@yahoo.com</a></p>
-</section>' AS body_html, '' AS article_html, 'Imported, Legacy Site Page' AS labels, 'published' AS status
-) v
-JOIN contributors c ON c.username = 'Todd_Wayne'
+</section>', '', 'Imported, Legacy Site Page', 'published', c.id, CURRENT_TIMESTAMP
+FROM contributors c
+WHERE c.username = 'Todd_Wayne'
 ON CONFLICT(id) DO UPDATE SET
   destination = excluded.destination,
   href = excluded.href,

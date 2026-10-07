@@ -70,25 +70,14 @@ const rows = legacy.map(item => {
   };
 });
 
-const statements = [
-  "-- Converts Todd Wayne's legacy profile contribution queue into editable published Content Editor articles.",
-  "-- Run this in Cloudflare D1 Console against tpi_contributor_portal.",
-  "-- Safe to rerun: rows use stable ids and update on conflict.",
-  "",
-  "INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)",
-  "SELECT v.id, v.destination, v.href, v.title, v.subtitle, v.article_type, v.author, v.source, v.body_html, v.article_html, v.labels, v.status, c.id, CURRENT_TIMESTAMP",
-  "FROM ("
-];
-
-rows.forEach((row, index) => {
-  statements.push(
-    `${index ? "  UNION ALL SELECT" : "  SELECT"} '${sql(row.id)}' AS id, '${sql(row.destination)}' AS destination, '${sql(row.href)}' AS href, '${sql(row.title)}' AS title, '${sql(row.subtitle)}' AS subtitle, '${sql(row.articleType)}' AS article_type, '${sql(row.author)}' AS author, '${sql(row.source)}' AS source, '${sql(row.bodyHtml)}' AS body_html, '${sql(row.articleHtml)}' AS article_html, '${sql(row.labels)}' AS labels, '${sql(row.status)}' AS status`
-  );
-});
-
-statements.push(
-  ") v",
-  "JOIN contributors c ON c.username = 'Todd_Wayne'",
+// One INSERT per legacy article keeps every statement under Wrangler's local
+// D1 statement-size cap (the single 1MB UNION ALL statement fails local
+// replay with SQLITE_TOOBIG). Semantics are unchanged: each row still joins
+// contributors on the legacy username and upserts on the stable article id,
+// exactly like the per-article chunks in migrations/0010_legacy_conversion_chunks.
+const upsertTail = [
+  "FROM contributors c",
+  "WHERE c.username = 'Todd_Wayne'",
   "ON CONFLICT(id) DO UPDATE SET",
   "  destination = excluded.destination,",
   "  href = excluded.href,",
@@ -101,8 +90,27 @@ statements.push(
   "  article_html = excluded.article_html,",
   "  labels = excluded.labels,",
   "  status = excluded.status,",
-  "  updated_at = CURRENT_TIMESTAMP;",
-  "",
+  "  updated_at = CURRENT_TIMESTAMP;"
+];
+
+const statements = [
+  "-- Converts Todd Wayne's legacy profile contribution queue into editable published Content Editor articles.",
+  "-- Run this in Cloudflare D1 Console against tpi_contributor_portal.",
+  "-- Safe to rerun: rows use stable ids and update on conflict.",
+  "-- One INSERT per article: keeps each statement small enough for local wrangler replay.",
+  ""
+];
+
+rows.forEach(row => {
+  statements.push(
+    "INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)",
+    `SELECT '${sql(row.id)}', '${sql(row.destination)}', '${sql(row.href)}', '${sql(row.title)}', '${sql(row.subtitle)}', '${sql(row.articleType)}', '${sql(row.author)}', '${sql(row.source)}', '${sql(row.bodyHtml)}', '${sql(row.articleHtml)}', '${sql(row.labels)}', '${sql(row.status)}', c.id, CURRENT_TIMESTAMP`,
+    ...upsertTail,
+    ""
+  );
+});
+
+statements.push(
   "SELECT COUNT(*) AS converted_legacy_articles",
   "FROM articles",
   "WHERE source IN (",
