@@ -464,8 +464,8 @@ R=$(req GET /admin/scraper-runs '')
 check "anonymous cannot read scraper run history (401/403 both acceptable denials)" 403 "$R" "d.get('error') is not None"
 # Admin history endpoint serves runs + provider status
 R=$(req GET /admin/scraper-runs tok-admin)
-check "admin reads scraper run history" 200 "$R" "isinstance(d.get('runs'), list) and len(d.get('providers',[]))==5 and any(p['key']=='odysee' and p['state']=='disabled' for p in d['providers'])"
-check "provider states: 2 active, 1 disabled, 2 not_configured" 200 "$R" "sum(1 for p in d['providers'] if p['state']=='active')==2 and sum(1 for p in d['providers'] if p['state']=='not_configured')==2"
+check "admin reads scraper run history" 200 "$R" "isinstance(d.get('runs'), list) and len(d.get('providers',[]))==5 and any(p['key']=='odysee' and p['state']=='active' for p in d['providers'])"
+check "provider states: 3 active, 0 disabled, 2 not_configured" 200 "$R" "sum(1 for p in d['providers'] if p['state']=='active')==3 and sum(1 for p in d['providers'] if p['state']=='not_configured')==2"
 
 # Trigger an authorized manual video refresh (real scrape against public APIs).
 R=$(req GET /videos/refresh tok-admin)
@@ -475,6 +475,8 @@ R=$(req GET "/admin/scraper-runs?limit=50" tok-admin)
 check "manual video run logged with trigger=manual" 200 "$R" "any(r.get('trigger')=='manual' and r.get('scraperType')=='videos' for r in d['runs'])"
 check "per-provider video runs logged (dailymotion/archive/odysee)" 200 "$R" "{'dailymotion','internet_archive','odysee'} <= {r.get('source') for r in d['runs'] if r.get('scraperType')=='videos'}"
 check "dailymotion run found>0 (live API returned results)" 200 "$R" "any(r.get('source')=='dailymotion' and (r.get('found') or 0)>0 for r in d['runs'])"
+check "odysee provider run logged (success or partial, no crash)" 200 "$R" "any(r.get('source')=='odysee' and r.get('status') in ('success','partial') for r in d['runs'])"
+check "odysee run metadata bounded (queries<=6, enabled)" 200 "$R" "any(r.get('source')=='odysee' and isinstance(r.get('metadata'),dict) and r['metadata'].get('enabled') is True and (r['metadata'].get('queries') or 0)<=6 for r in d['runs'])"
 check "duration_ms recorded (>0)" 200 "$R" "any((r.get('durationMs') or 0)>0 for r in d['runs'] if r.get('completedAt') and (r.get('found') or 0)>0)"
 R_OK=$(req GET "/admin/scraper-runs?limit=50" tok-admin)
 SECRETS=$(split "$R_OK"; echo "$SPLIT_BODY" | grep -ciE 'sk_[a-z0-9]|pk_[a-z0-9]|rk_[a-z0-9]|bearer |authorization:|cookie:|api[_-]?key.[:=]')

@@ -4498,15 +4498,27 @@ async function handleAdminScraperRuns(request, env, user) {
   const scraperType = clean(url.searchParams.get("type"));
   const where = scraperType ? "WHERE scraper_type = ?" : "";
   const params = scraperType ? [scraperType, limit] : [limit];
-  const { results } = await env.TPI_DB.prepare(`
+  const { results: rawRuns } = await env.TPI_DB.prepare(`
     SELECT id, scraper_type AS scraperType, source, run_trigger AS trigger,
            started_at AS startedAt, completed_at AS completedAt, status,
            items_found AS found, items_inserted AS inserted, items_skipped AS skipped,
-           error_count AS errorCount, error_message AS errorMessage, duration_ms AS durationMs
+           error_count AS errorCount, error_message AS errorMessage, duration_ms AS durationMs,
+           metadata_json AS metadataRaw
     FROM scraper_runs ${where}
     ORDER BY started_at DESC
     LIMIT ?
   `).bind(...params).all();
+  // Parse the metadata blob (provider query counts, enabled flags) into a
+  // plain object; contents are internal counters supplied by the scrapers,
+  // never secrets.
+  const runs = (rawRuns || []).map((row) => {
+    let metadata = null;
+    if (row.metadataRaw) {
+      try { metadata = JSON.parse(row.metadataRaw); } catch (e) { metadata = null; }
+    }
+    const { metadataRaw, ...rest } = row;
+    return { ...rest, metadata };
+  });
 
   // Latest per-scraper last-run summary. Last completed run per type (and
   // per video provider) so the dashboard reflects reality, not an
@@ -4525,7 +4537,7 @@ async function handleAdminScraperRuns(request, env, user) {
   }
 
   return json({
-    runs: results || [],
+    runs,
     latest,
     providers: PROVIDER_STATUS,
   }, 200, { "Cache-Control": "no-store" });
