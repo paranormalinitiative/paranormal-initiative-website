@@ -46,6 +46,9 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/notifications") return requireMember(request, env, user => handleListNotifications(env, user));
     if (request.method === "GET" && path === "/notifications/unread-count") return requireMember(request, env, user => handleNotificationUnreadCount(env, user));
+    if (request.method === "POST" && path === "/notifications/read-all") return requireMember(request, env, user => handleMarkAllNotificationsRead(request, env, user));
+    if (request.method === "GET" && path === "/notifications/preferences") return requireMember(request, env, user => handleGetNotificationPreferences(env, user));
+    if (request.method === "POST" && path === "/notifications/preferences") return requireMember(request, env, user => handleSetNotificationPreferences(request, env, user));
     if (request.method === "POST" && path.match(/^\/notifications\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkNotificationRead(path, env, user));
     if (request.method === "GET" && path === "/contributors") return handleListPublicContributors(env);
     if (request.method === "GET" && path === "/contributors/profile") return handlePublicContributorProfile(request, env);
@@ -467,6 +470,9 @@ async function handleAdminSendMemberNotification(path, request, env, actingUser)
   const target = await getUserByUsername(env, username);
   if (!target) return json({ error: "Member was not found." }, 404);
   const data = await readJson(request);
+  if (!categoryEnabledForType(target.notification_prefs, data.type || "profile-request")) {
+    return json({ suppressed: true, category: NOTIFICATION_TYPE_CATEGORY[normalizeNotificationType(data.type)] || "other", username: target.username }, 200, { "Cache-Control": "no-store" });
+  }
   const title = clean(data.title || "Please verify your account email").slice(0, 160);
   const body = clean(data.body || "Please confirm that your account email is current. Phone and address information are optional and private.").slice(0, 1000);
   const actionHref = clean(data.actionHref || "member-dashboard.html").slice(0, 500);
@@ -480,9 +486,9 @@ async function handleAdminSendMemberNotification(path, request, env, actingUser)
 
 async function notifyActiveMembers(env, notification) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id FROM contributors WHERE active = 1 AND id != ?
+    SELECT id, notification_prefs AS notificationPrefs FROM contributors WHERE active = 1 AND id != ?
   `).bind(notification.excludeContributorId || "").all();
-  const recipients = results || [];
+  const recipients = (results || []).filter(recipient => categoryEnabledForType(recipient.notificationPrefs, notification.type));
   if (!recipients.length) return 0;
   await env.TPI_DB.batch(recipients.map(recipient => env.TPI_DB.prepare(`
     INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
@@ -659,7 +665,15 @@ async function handleAdminSetCommunityPostStatus(path, request, env) {
   return json({ post: { id: post.id, title: post.title, status } });
 }
 
+async function handleMarkAllNotificationsRead(request, env, user) {
+  const result = await env.TPI_DB.prepare(
+    "UPDATE member_notifications SET read_at = datetime('now') WHERE contributor_id = ? AND read_at IS NULL"
+  ).bind(user.id).run();
+  return json({ ok: true, updated: (result.meta && result.meta.changes) || 0 }, 200, { "Cache-Control": "no-store" });
+}
+
 async function handleListNotifications(env, user) {
+  const prefs = parseNotificationPrefs(user.notification_prefs);
   const { results } = await env.TPI_DB.prepare(`
     SELECT id, title, body, action_href AS actionHref, type, read_at AS readAt, created_at AS createdAt
     FROM member_notifications
@@ -669,7 +683,7 @@ async function handleListNotifications(env, user) {
   `).bind(user.id).all();
   const notifications = (results || []).map(notification => ({ ...notification, read: Boolean(notification.readAt) }));
 
-  const chatNotifications = await getChatNotifications(env, user);
+  const chatNotifications = prefs.chat ? await getChatNotifications(env, user) : [];
   const allNotifications = notifications.concat(chatNotifications).sort((a, b) => {
     const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
     const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
@@ -4212,8 +4226,72 @@ function privateMemberUser(user) {
     phoneVerified: Boolean(user.phone_verified),
     canPost: user.can_post !== 0,
     canComment: user.can_comment !== 0,
-    canMessage: user.can_message !== 0
+    canMessage: user.can_message !== 0,
+    theme: user.theme
   };
+}
+
+// ===== Notification categories + per-member preferences (ParaPost-style settings) =====
+const NOTIFICATION_CATEGORIES = {
+  admin: { label: "Administration Notices", description: "Profile requests, account warnings, team-submission alerts, and other messages from leadership." },
+  posts: { label: "New Posts", description: "Community posts and member discussions." },
+  education: { label: "Educational Content", description: "New papers and contributed research in the Education Center." },
+  videos: { label: "New Videos", description: "New TPI videos and live content alerts." },
+  photos: { label: "New Photos", description: "Photo updates from the community feed." },
+  chat: { label: "Messages & Chat", description: "Messenger room activity and direct messages." }
+};
+const NOTIFICATION_TYPE_CATEGORY = {
+  admin: "admin", team_submission: "admin", profile_request: "admin", warning: "admin",
+  post: "posts", forum_post: "posts", community_post: "posts",
+  contribution: "education", article: "education", education: "education",
+  video: "videos", photo: "photos",
+  chat: "chat", message: "chat"
+};
+
+function normalizeNotificationType(type) {
+  return clean(String(type || "")).replace(/-/g, "_");
+}
+
+function parseNotificationPrefs(raw) {
+  let prefs = {};
+  if (raw) { try { prefs = JSON.parse(raw) || {}; } catch (error) { prefs = {}; } }
+  const out = {};
+  for (const key of Object.keys(NOTIFICATION_CATEGORIES)) out[key] = prefs[key] !== 0;
+  return out;
+}
+
+function categoryEnabledForType(prefsRaw, type) {
+  const category = NOTIFICATION_TYPE_CATEGORY[normalizeNotificationType(type)];
+  if (!category) return true;
+  return parseNotificationPrefs(prefsRaw)[category];
+}
+
+function notificationPreferencesPayload(prefsRaw) {
+  const prefs = parseNotificationPrefs(prefsRaw);
+  const categories = Object.entries(NOTIFICATION_CATEGORIES).map(([key, meta]) => ({
+    key,
+    label: meta.label,
+    description: meta.description,
+    enabled: prefs[key]
+  }));
+  return { categories, onCount: categories.filter(item => item.enabled).length, total: categories.length };
+}
+
+async function handleGetNotificationPreferences(env, user) {
+  return json(notificationPreferencesPayload(user.notification_prefs), 200, { "Cache-Control": "no-store" });
+}
+
+async function handleSetNotificationPreferences(request, env, user) {
+  const data = await readJson(request);
+  const incoming = data && typeof data.prefs === "object" && data.prefs ? data.prefs : {};
+  const stored = {};
+  for (const key of Object.keys(NOTIFICATION_CATEGORIES)) {
+    if (!(key in incoming)) return json({ error: `Preference for "${key}" is required.` }, 400);
+    stored[key] = incoming[key] === false || incoming[key] === 0 ? 0 : 1;
+  }
+  await env.TPI_DB.prepare("UPDATE contributors SET notification_prefs = ? WHERE id = ?")
+    .bind(JSON.stringify(stored), user.id).run();
+  return json({ ok: true, ...notificationPreferencesPayload(JSON.stringify(stored)) }, 200, { "Cache-Control": "no-store" });
 }
 
 function corsHeaders(extra = {}) {
