@@ -621,7 +621,7 @@
       selectedAdminUsername = "";
       if (adminSelectedTitle) adminSelectedTitle.textContent = "Select a member";
       if (adminMemberDetail) {
-        adminMemberDetail.innerHTML = `<p class="access-note">Choose a member to view account details, forum posts, uploaded forum media, and TPI videos connected to that account.</p>`;
+        adminMemberDetail.innerHTML = `<p class="access-note">Choose a member to view account details, community posts and comments, uploaded community media, and TPI videos connected to that account.</p>`;
       }
     }
   }
@@ -638,7 +638,7 @@
     const member = data.member || {};
     const posts = data.posts || [];
     const photos = data.photos || [];
-    const forumVideos = data.forumVideos || [];
+    const communityVideos = data.communityVideos || [];
     const tpiVideos = data.tpiVideos || [];
     const articles = data.articles || [];
     const comments = data.comments || [];
@@ -673,11 +673,11 @@
         <div><span>Status</span><strong>${member.active === false ? "Blocked" : "Active"}</strong></div>
         <div><span>Email Verified</span><strong>${member.emailVerified ? "Yes" : "No"}</strong></div>
         <div><span>Phone Verified</span><strong>${member.phoneVerified ? "Yes" : "No"}</strong></div>
-        <div><span>Forum Posts</span><strong>${posts.length}</strong></div>
+        <div><span>Community Posts</span><strong>${posts.length}</strong></div>
         <div><span>Contributions</span><strong>${articles.length}</strong></div>
         <div><span>Comments</span><strong>${comments.length + videoComments.length}</strong></div>
         <div><span>Photos</span><strong>${photos.length}</strong></div>
-        <div><span>Videos</span><strong>${forumVideos.length + tpiVideos.length}</strong></div>
+        <div><span>Videos</span><strong>${communityVideos.length + tpiVideos.length}</strong></div>
       </div>
       <section class="admin-activity-section">
         <h4>Private Contact Information</h4>
@@ -698,7 +698,7 @@
           <input name="username" type="hidden" value="${escapeHtml(member.username || "")}">
           <label class="access-checkbox">
             <input name="canPost" type="checkbox"${member.canPost !== false ? " checked" : ""}>
-            <span>Can post in the community forum.</span>
+            <span>Can post in the Community Feed.</span>
           </label>
           <label class="access-checkbox">
             <input name="canComment" type="checkbox"${member.canComment !== false ? " checked" : ""}>
@@ -725,26 +725,26 @@
         </div>
       </section>
       <section class="admin-activity-section">
-        <h4>Forum Posts</h4>
+        <h4>Community Posts & Comments</h4>
         <div class="admin-activity-list">
           ${posts.length ? posts.map(post => `
             <article class="admin-activity-item">
-              <strong>${escapeHtml(post.topicTitle || "Forum topic")}</strong>
-              <span>${escapeHtml(post.categoryTitle || "Forum")} · ${escapeHtml(post.status || "visible")} · ${escapeHtml(post.createdAt || "")}</span>
+              <strong>${escapeHtml(post.topicTitle || "Community post")}</strong>
+              <span>${escapeHtml(post.categoryTitle || "Community")} · ${escapeHtml(post.status || "visible")} · ${escapeHtml(post.createdAt || "")}</span>
               <p>${escapeHtml(post.body || "").slice(0, 420)}</p>
               ${(post.attachments || []).length ? `<em>${post.attachments.length} attachment${post.attachments.length === 1 ? "" : "s"}</em>` : ""}
             </article>
-          `).join("") : `<p class="access-note">No forum posts found for this member.</p>`}
+          `).join("") : `<p class="access-note">No community posts found for this member.</p>`}
         </div>
       </section>
       <section class="admin-activity-section">
         <h4>Photos Posted</h4>
-        <div class="admin-media-grid">${renderAttachmentList(photos, "No forum photos found for this member.")}</div>
+        <div class="admin-media-grid">${renderAttachmentList(photos, "No community photos found for this member.")}</div>
       </section>
       <section class="admin-activity-section">
         <h4>Videos Posted</h4>
         <div class="admin-media-grid">
-          ${forumVideos.length || !tpiVideos.length ? renderAttachmentList(forumVideos, "No video posts found for this member.") : ""}
+          ${communityVideos.length || !tpiVideos.length ? renderAttachmentList(communityVideos, "No video posts found for this member.") : ""}
           ${tpiVideos.map(video => `
             <a class="admin-media-item" href="tpi-video.html?id=${escapeHtml(video.slug || "")}" target="_blank" rel="noopener noreferrer">
               <strong>${escapeHtml(video.title || "TPI Video")}</strong>
@@ -819,7 +819,7 @@
         renderAdminActivity(data);
       } else {
         const user = getUsers().find(member => member.username === username);
-        renderAdminActivity({ member: user, posts: [], photos: [], forumVideos: [], tpiVideos: [] });
+        renderAdminActivity({ member: user, posts: [], photos: [], communityVideos: [], tpiVideos: [] });
       }
       await loadAdminMembers(getAdminSearchValue());
     } catch (error) {
@@ -882,8 +882,10 @@
     team_submission: { label: "Team Submission", categoryLabel: "Team Submissions", category: "admin", tone: "admin", href: "teams/admin.html" },
     "profile-request": { label: "Administration Notice", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
     warning: { label: "Administration Warning", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
-    post: { label: "New Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "community-forum.html?member=1" },
-    forum_post: { label: "New Forum Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "community-forum.html?member=1" },
+    post: { label: "New Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
+    forum_post: { label: "New Community Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
+    community_post: { label: "New Community Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
+    community_comment: { label: "New Community Comment", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
     contribution: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
     article: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
     education: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
@@ -895,7 +897,7 @@
 
   const notificationGuide = [
     { type: "admin", title: "Administration notices", body: "Profile requests, account warnings, membership access changes, and direct messages from authorized admins appear here.", href: "member-dashboard.html" },
-    { type: "forum_post", title: "New posts", body: "Forum posts open the exact topic and reply that created the notice.", href: "community-forum.html?member=1" },
+    { type: "community_post", title: "New posts", body: "Community posts open the exact post and comment that created the notice.", href: "member-home.html?member=1" },
     { type: "education", title: "Educational content", body: "Educational papers and contributed content open directly at the published item.", href: "education-center.html" },
     { type: "video", title: "New videos", body: "TPI video and live content alerts will appear here when video notifications are enabled.", href: "tpi-videos.html?member=1" },
     { type: "photo", title: "New photos", body: "Photo/media updates from the community feed will appear here when media notifications are enabled.", href: "explore.html" },

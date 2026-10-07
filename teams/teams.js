@@ -80,8 +80,7 @@
     footer.innerHTML = `
       <span>Part of The Paranormal Initiative — research, investigation, education.</span><br>
       <a href="../index.html">Back to TPI Home</a> ·
-      <a href="../haunted-location-directory/index.html">Haunted Location Directory</a> ·
-      <a href="../community-forum.html">Community Forum</a>
+      <a href="../haunted-location-directory/index.html">Haunted Location Directory</a>
     `;
     document.body.append(footer);
   }

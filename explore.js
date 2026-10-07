@@ -82,15 +82,15 @@
     try {
       setComposeStatus("Posting...");
       const attachments = await uploadFeedAttachments(fileInput?.files);
-      const response = await window.TPIApi.createForumTopic({ categoryId: "general", title, body, attachments });
+      const response = await window.TPIApi.createCommunityPost({ categoryId: "general", title, body, attachments });
       titleInput.value = "";
       bodyInput.value = "";
       if (fileInput) fileInput.value = "";
       closeComposer();
       setComposeStatus("Posted to your feed.");
       await loadFeed();
-      if (response?.topic?.id) {
-        window.location.href = `community-forum.html?member=1&topic=${encodeURIComponent(response.topic.id)}${response.post?.id ? `&post=${encodeURIComponent(response.post.id)}` : ""}`;
+      if (response?.post?.id) {
+        window.location.href = `member-home.html?member=1#post-${encodeURIComponent(response.post.id)}`;
       }
     } catch (error) {
       setComposeStatus(error.message || "Post could not be created.");
@@ -125,7 +125,7 @@
         <article class="member-explore-empty">
           <h3>Explore is ready for live community activity.</h3>
           <p>Once the live feed is available, new posts, contributions, videos, and chats will appear here with their start time.</p>
-          <a class="portal-button" href="community-forum.html?member=1">Open Community Forum</a>
+          <a class="portal-button" href="member-home.html?member=1">Open Community Feed</a>
         </article>
       `;
     }
@@ -262,7 +262,7 @@
   }
 
   function renderActiveMember(member) {
-    const href = member.username ? `contributor-profile.html?username=${encodeURIComponent(member.username)}` : "community-forum.html?member=1";
+    const href = member.username ? `contributor-profile.html?username=${encodeURIComponent(member.username)}` : "member-home.html?member=1";
     const initial = escapeHtml((member.name || "M").trim().charAt(0) || "M");
     return `
       <a class="member-feed-member" href="${escapeAttr(href)}">
@@ -314,16 +314,16 @@
   }
 
   function getItemMeta(item) {
-    if (item.type === "forum_post") {
+    if (item.type === "community_post") {
       return {
         typeLabel: item.categoryTitle || "Community Post",
-        title: item.topicTitle || "Forum Topic",
+        title: item.title || "Community Post",
         description: getItemDescription(item, "Join the conversation."),
         author: getAuthorName(item, "Community Member"),
         authorTitle: item.authorTitle || "Community Member",
         authorPhotoUrl: getAuthorPhotoUrl(item),
         authorUsername: item.authorUsername || "",
-        date: item.topicCreatedAt || item.createdAt
+        date: item.createdAt
       };
     }
     if (item.type === "chat") {
@@ -387,26 +387,25 @@
   }
 
   function getItemHref(item) {
-    if (item.type === "forum_post" && item.topicId) {
-      const postParam = item.id ? `&post=${encodeURIComponent(item.id)}` : "";
-      return `community-forum.html?member=1&topic=${encodeURIComponent(item.topicId)}${postParam}`;
+    if (item.type === "community_post" && item.postId) {
+      return `member-home.html?member=1#post-${encodeURIComponent(item.postId)}`;
     }
-    if (item.type === "chat") return item.href || "community-forum.html?member=1";
+    if (item.type === "chat") return item.href || "member-home.html?member=1";
     if (item.type === "article") return item.href || "education-center.html?member=1";
-    if (item.type === "photo") return item.href || "community-forum.html?member=1";
+    if (item.type === "photo") return item.href || "member-home.html?member=1";
     if (item.type === "video" && item.slug) return `tpi-video.html?slug=${encodeURIComponent(item.slug)}&member=1`;
-    return "community-forum.html?member=1";
+    return "member-home.html?member=1";
   }
 
   async function uploadFeedAttachments(files) {
     const selected = validateFeedFiles(files);
     if (!selected.length) return [];
-    if (!window.TPIApi?.uploadForumMedia) throw new Error("Feed media upload is not available yet.");
+    if (!window.TPIApi?.uploadCommunityMedia) throw new Error("Feed media upload is not available yet.");
     const uploaded = [];
     for (let index = 0; index < selected.length; index += 1) {
       const file = selected[index];
       setComposeStatus(`Uploading ${index + 1} of ${selected.length}...`);
-      const result = await window.TPIApi.uploadForumMedia(file);
+      const result = await window.TPIApi.uploadCommunityMedia(file);
       uploaded.push({
         url: result.url,
         key: result.key,

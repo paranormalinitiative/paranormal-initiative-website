@@ -71,6 +71,14 @@ export default {
       });
     }
 
+    // Community Forum retirement (see FORUM_DEPENDENCY_AUDIT.md): the
+    // dedicated Forum UI is retired; the Community Feed (member-home) is the
+    // single community discussion system. Historical links and old
+    // notification hrefs pointing here redirect to the Feed.
+    if (url.pathname === "/community-forum.html" || url.pathname === "/community-forum" || url.pathname === "/community-forum/") {
+      return Response.redirect(new URL("/member-home.html?member=1", url.origin).toString(), 302);
+    }
+
     // API routes (unchanged)
     if (url.pathname.startsWith("/api/") || url.pathname === "/api") {
       const apiPath = url.pathname.replace(/^\/api\/?/, "");

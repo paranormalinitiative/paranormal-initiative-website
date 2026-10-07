@@ -31,8 +31,8 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/notifications$/)) return requireAdmin(request, env, user => handleAdminSendMemberNotification(path, request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
-    if (request.method === "GET" && path === "/admin/forum/posts") return requireAdmin(request, env, user => handleAdminMemberForumPosts(request, env, user));
-    if (request.method === "POST" && path.match(/^\/admin\/forum\/topics\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetForumTopicStatus(path, request, env, user));
+    if (request.method === "GET" && path === "/admin/community/posts") return requireAdmin(request, env, user => handleAdminCommunityPosts(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
@@ -76,7 +76,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/unrestrict$/)) return requireMember(request, env, user => handleUnrestrictMember(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/conversations\/[^/]+\/report$/)) return requireMember(request, env, user => handleReportConversation(path, request, env, user));
     if (request.method === "POST" && path === "/uploads/profile-photo") return requireMember(request, env, user => handleProfilePhotoUpload(request, env, user));
-    if (request.method === "POST" && path === "/uploads/forum-media") return requireMember(request, env, user => handleForumMediaUpload(request, env, user));
+    if (request.method === "POST" && path === "/uploads/community-media") return requireMember(request, env, user => handleCommunityMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/messenger-media") return requireMember(request, env, user => handleMessengerMediaUpload(request, env, user));
     if (request.method === "POST" && path === "/uploads/article-media") return requireContributor(request, env, user => handleArticleMediaUpload(request, env, user));
     // StudioFlow room relay: guest invite links carry the roomId as the
@@ -106,15 +106,20 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/link-preview") return handleLinkPreview(request, env);
     if (request.method === "GET" && path === "/feed") return handleCommunityFeed(request, env);
     if (request.method === "GET" && path === "/feed/user") return handleUserFeed(request, env);
-    if (request.method === "GET" && path === "/forum") return handleForumIndex(request, env);
-    if (request.method === "GET" && path.startsWith("/forum/topics/")) return handleForumTopic(path, request, env);
-    if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/read$/)) return requireMember(request, env, user => handleMarkForumTopicRead(path, env, user));
-    if (request.method === "POST" && path === "/forum/topics") return requireMember(request, env, user => handleCreateForumTopic(request, env, user));
-    if (request.method === "PUT" && path.match(/^\/forum\/topics\/[^/]+$/)) return requireMember(request, env, user => handleUpdateForumTopic(path, request, env, user));
-    if (request.method === "DELETE" && path.match(/^\/forum\/topics\/[^/]+$/)) return requireMember(request, env, user => handleDeleteOwnForumTopic(path, env, user));
-    if (request.method === "POST" && path.match(/^\/forum\/topics\/[^/]+\/posts$/)) return requireMember(request, env, user => handleCreateForumPost(path, request, env, user));
-    if (request.method === "POST" && path.match(/^\/forum\/posts\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleSetForumReaction(path, request, env, user));
-    if (request.method === "DELETE" && path.startsWith("/forum/posts/")) return requireMember(request, env, user => handleDeleteForumPost(path, env, user));
+
+    // Community Feed (TPI's single community discussion system). The dedicated
+    // Community data model (community_*) replaced the retired Forum tables —
+    // see FORUM_DEPENDENCY_AUDIT.md and migrations 0032–0034.
+    if (request.method === "GET" && path === "/community/categories") return handleListCommunityCategories(env);
+    if (request.method === "GET" && path === "/community/posts") return handleListCommunityPosts(request, env);
+    if (request.method === "POST" && path === "/community/posts") return requireMember(request, env, user => handleCreateCommunityPost(request, env, user));
+    if (request.method === "PUT" && path.match(/^\/community\/posts\/[^/]+$/)) return requireMember(request, env, user => handleUpdateCommunityPost(path, request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/community\/posts\/[^/]+$/)) return requireMember(request, env, user => handleDeleteCommunityPost(path, env, user));
+    if (request.method === "GET" && path.match(/^\/community\/posts\/[^/]+\/comments$/)) return handleListCommunityComments(path, request, env);
+    if (request.method === "POST" && path.match(/^\/community\/posts\/[^/]+\/comments$/)) return requireMember(request, env, user => handleCreateCommunityComment(path, request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/community\/comments\/[^/]+$/)) return requireMember(request, env, user => handleDeleteCommunityComment(path, env, user));
+    if (request.method === "POST" && path.match(/^\/community\/posts\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleSetCommunityReaction(path, request, env, user, "post"));
+    if (request.method === "POST" && path.match(/^\/community\/comments\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleSetCommunityReaction(path, request, env, user, "comment"));
     if (request.method === "GET" && path === "/comments") return handleListComments(request, env);
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
     if (request.method === "GET" && path === "/video-comments") return handleListVideoComments(request, env);
@@ -252,67 +257,12 @@ async function handleMe(request, env) {
 }
 
 // My Pulse stats: every number is a truthful count from real tables —
-// no estimates. Likes = reactions the member gave across forum posts,
+// no estimates. Likes = reactions the member gave across community posts,
 // articles and videos. Comments = article + video comments. Uploads =
 // media objects the member put in R2. Posts = everything the member has
-// posted across the site: forum topics started, forum replies, and
+// posted across the site: community posts, community comments, and
 // published articles/papers. Following / Live Streams have no feature
 // yet, so they report 0 until those features exist.
-async function handleMyPulse(request, env, user) {
-  const counts = {
-    likes: 0,
-    following: 0,
-    posts: 0,
-    comments: 0,
-    uploads: 0,
-    liveStreams: 0
-  };
-  const queries = [
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM forum_reactions WHERE contributor_id = ?").bind(user.id).first(),
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM article_reactions WHERE contributor_id = ?").bind(user.id).first(),
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_reactions WHERE contributor_id = ?").bind(user.id).first(),
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM forum_topics WHERE created_by = ? AND status NOT IN ('deleted', 'inactive')").bind(user.id).first(),
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM comments WHERE contributor_id = ? AND status = 'approved'").bind(user.id).first(),
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_comments WHERE contributor_id = ? AND status = 'visible'").bind(user.id).first(),
-    // Replies = visible forum posts that are NOT the topic's opening post
-    // (openers are already counted via forum_topics above).
-    env.TPI_DB.prepare(`
-      SELECT COUNT(*) AS n
-      FROM forum_posts fp
-      WHERE fp.contributor_id = ? AND fp.status = 'visible'
-        AND fp.id <> COALESCE((
-          SELECT fp2.id FROM forum_posts fp2
-          WHERE fp2.topic_id = fp.topic_id AND fp2.status = 'visible'
-          ORDER BY fp2.created_at ASC, fp2.id ASC
-          LIMIT 1
-        ), '')
-    `).bind(user.id).first(),
-    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM articles WHERE created_by = ? AND status = 'published'").bind(user.id).first()
-  ];
-  const results = await Promise.all(queries.map(q => q.catch(() => ({ n: 0 }))));
-  counts.likes = Number(results[0]?.n || 0) + Number(results[1]?.n || 0) + Number(results[2]?.n || 0);
-  counts.posts = Number(results[3]?.n || 0) + Number(results[6]?.n || 0) + Number(results[7]?.n || 0);
-  counts.comments = Number(results[4]?.n || 0) + Number(results[5]?.n || 0);
-  // R2 media keys are area/<username>/<date>/... so a prefix scan counts
-  // this member's uploads directly.
-  if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function" && user.username) {
-    const safeUser = clean(user.username).toLowerCase().replace(/[^a-z0-9-]/g, "-") || "contributor";
-    const markers = ["/" + safeUser + "/"];
-    try {
-      let cursor, done = false;
-      while (!done) {
-        const page = await env.TPI_MEDIA.list({ cursor, limit: 500 });
-        for (const obj of (page.objects || [])) {
-          for (const marker of markers) {
-            if (obj.key.includes(marker)) { counts.uploads++; break; }
-          }
-        }
-        if (page.truncated && page.cursor) { cursor = page.cursor; } else { done = true; }
-      }
-    } catch (e) { /* media count stays at what we could read */ }
-  }
-  return json({ pulse: counts });
-}
 
 async function handleMemberRegister(request, env) {
   const data = await readJson(request);
@@ -436,11 +386,11 @@ async function handleAdminListMembers(request, env) {
         c.role,
         c.active,
         c.created_at AS createdAt,
-        COUNT(DISTINCT ft.id) AS topicCount,
-        COUNT(DISTINCT fp.id) AS postCount
+        COUNT(DISTINCT cp.id) AS topicCount,
+        COUNT(DISTINCT cm.id) AS postCount
       FROM contributors c
-      LEFT JOIN forum_topics ft ON ft.created_by = c.id AND ft.status != 'deleted'
-      LEFT JOIN forum_posts fp ON fp.contributor_id = c.id AND fp.status = 'visible'
+      LEFT JOIN community_posts cp ON cp.author_id = c.id AND cp.status != 'deleted'
+      LEFT JOIN community_comments cm ON cm.author_id = c.id AND cm.status = 'visible'
       WHERE c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR c.role LIKE ?
       GROUP BY c.id
       ORDER BY c.active DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
@@ -454,11 +404,11 @@ async function handleAdminListMembers(request, env) {
         c.role,
         c.active,
         c.created_at AS createdAt,
-        COUNT(DISTINCT ft.id) AS topicCount,
-        COUNT(DISTINCT fp.id) AS postCount
+        COUNT(DISTINCT cp.id) AS topicCount,
+        COUNT(DISTINCT cm.id) AS postCount
       FROM contributors c
-      LEFT JOIN forum_topics ft ON ft.created_by = c.id AND ft.status != 'deleted'
-      LEFT JOIN forum_posts fp ON fp.contributor_id = c.id AND fp.status = 'visible'
+      LEFT JOIN community_posts cp ON cp.author_id = c.id AND cp.status != 'deleted'
+      LEFT JOIN community_comments cm ON cm.author_id = c.id AND cm.status = 'visible'
       GROUP BY c.id
       ORDER BY c.active DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
       LIMIT 100
@@ -549,38 +499,164 @@ async function notifyActiveMembers(env, notification) {
   return recipients.length;
 }
 
-async function createForumContentNotifications(env, user, content) {
-  const actionHref = `community-forum.html?member=1&topic=${encodeURIComponent(content.topicId)}&post=${encodeURIComponent(content.postId)}`;
+async function createCommunityContentNotifications(env, user, content) {
+  const actionHref = `member-home.html?member=1#post-${encodeURIComponent(content.postId)}`;
+  const kindLabel = content.isComment ? "commented on a community post" : "posted in the community";
   const authorName = user.display_name || user.username || "A member";
   await notifyActiveMembers(env, {
-    title: `${authorName} posted in ${content.topicTitle || "the forum"}`,
+    title: `${authorName} ${kindLabel}`,
     body: clean(content.body).slice(0, 180),
     actionHref,
-    type: "forum_post",
+    type: "community_post",
     createdBy: user.id,
     excludeContributorId: user.id
   });
   const attachments = Array.isArray(content.attachments) ? content.attachments : [];
-  if (attachments.some(item => item.mediaType === "image")) {
+  if (!content.isComment && attachments.some(item => item.mediaType === "image")) {
     await notifyActiveMembers(env, {
       title: `${authorName} added new photos`,
-      body: `Open the exact forum post in ${content.topicTitle || "the community"}.`,
+      body: `Open the community post to see the new photos.`,
       actionHref,
       type: "photo",
       createdBy: user.id,
       excludeContributorId: user.id
     });
   }
-  if (attachments.some(item => item.mediaType === "video")) {
+  if (!content.isComment && attachments.some(item => item.mediaType === "video")) {
     await notifyActiveMembers(env, {
       title: `${authorName} added a new video`,
-      body: `Open the exact forum post in ${content.topicTitle || "the community"}.`,
+      body: `Open the community post to watch the new video.`,
       actionHref,
       type: "video",
       createdBy: user.id,
       excludeContributorId: user.id
     });
   }
+}
+
+async function handleMyPulse(request, env, user) {
+  const counts = {
+    likes: 0,
+    following: 0,
+    posts: 0,
+    comments: 0,
+    uploads: 0,
+    liveStreams: 0
+  };
+  const queries = [
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM community_reactions WHERE contributor_id = ?").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM article_reactions WHERE contributor_id = ?").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_reactions WHERE contributor_id = ?").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM community_posts WHERE author_id = ? AND status = 'visible'").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM comments WHERE contributor_id = ? AND status = 'approved'").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM video_comments WHERE contributor_id = ? AND status = 'visible'").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM community_comments WHERE author_id = ? AND status = 'visible'").bind(user.id).first(),
+    env.TPI_DB.prepare("SELECT COUNT(*) AS n FROM articles WHERE created_by = ? AND status = 'published'").bind(user.id).first()
+  ];
+  const results = await Promise.all(queries.map(q => q.catch(() => ({ n: 0 }))));
+  counts.likes = Number(results[0]?.n || 0) + Number(results[1]?.n || 0) + Number(results[2]?.n || 0);
+  // Posts = community posts + community comments + published articles.
+  counts.posts = Number(results[3]?.n || 0) + Number(results[6]?.n || 0) + Number(results[7]?.n || 0);
+  counts.comments = Number(results[4]?.n || 0) + Number(results[5]?.n || 0);
+  // R2 media keys are area/<username>/<date>/... so a prefix scan counts
+  // this member's uploads directly.
+  if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function" && user.username) {
+    const safeUser = clean(user.username).toLowerCase().replace(/[^a-z0-9-]/g, "-") || "contributor";
+    const markers = ["/" + safeUser + "/"];
+    try {
+      let cursor, done = false;
+      while (!done) {
+        const page = await env.TPI_MEDIA.list({ cursor, limit: 500 });
+        for (const obj of (page.objects || [])) {
+          for (const marker of markers) {
+            if (obj.key.includes(marker)) { counts.uploads++; break; }
+          }
+        }
+        if (page.truncated && page.cursor) { cursor = page.cursor; } else { done = true; }
+      }
+    } catch (e) { /* media count stays at what we could read */ }
+  }
+  return json({ pulse: counts });
+}
+
+async function handleAdminCommunityPosts(request, env) {
+  const username = clean(new URL(request.url).searchParams.get("username"));
+  if (!username) return json({ error: "Member username is required." }, 400);
+  const member = await getUserByUsername(env, username);
+  if (!member) return json({ error: "Member was not found." }, 404);
+
+  const postsQuery = env.TPI_DB.prepare(`
+    SELECT
+      cp.id,
+      cp.body,
+      cp.status,
+      cp.created_at AS createdAt,
+      cc.title AS categoryTitle
+    FROM community_posts cp
+    LEFT JOIN community_categories cc ON cc.id = cp.category_id
+    WHERE cp.author_id = ?
+    ORDER BY cp.created_at DESC
+    LIMIT 100
+  `).bind(member.id);
+  const commentsQuery = env.TPI_DB.prepare(`
+    SELECT
+      cm.id,
+      cm.post_id AS postId,
+      cm.body,
+      cm.status,
+      cm.created_at AS createdAt,
+      '' AS topicTitle,
+      '' AS categoryTitle
+    FROM community_comments cm
+    WHERE cm.author_id = ?
+    ORDER BY cm.created_at DESC
+    LIMIT 100
+  `).bind(member.id);
+
+  const [postsResult, commentsResult] = await Promise.all([postsQuery.all().catch(() => ({ results: [] })), commentsQuery.all().catch(() => ({ results: [] }))]);
+
+  const posts = (postsResult.results || []).map(row => ({
+    ...row,
+    topicId: row.id,
+    topicTitle: "Community post",
+    topicStatus: row.status
+  }));
+  // Include comment activity as separate rows so leadership sees the member's
+  // full community footprint (posts and comments in one list).
+  const comments = (commentsResult.results || []).map(row => ({
+    id: row.id,
+    topicId: row.postId,
+    topicTitle: "Community comment",
+    topicStatus: row.status,
+    body: row.body,
+    status: row.status,
+    createdAt: row.createdAt,
+    categoryTitle: "Comment"
+  }));
+
+  return json({
+    member: { username: member.username, displayName: member.display_name, title: member.title, role: member.role, active: Boolean(member.active) },
+    posts: posts.concat(comments).sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
+  });
+}
+
+async function handleAdminSetCommunityPostStatus(path, request, env) {
+  const postId = clean(decodeURIComponent(path.match(/^\/admin\/community\/posts\/([^/]+)\/status$/)?.[1] || ""));
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  if (!postId) return json({ error: "Post id is required." }, 400);
+  if (!["visible", "hidden", "deleted"].includes(status)) {
+    return json({ error: "Post status was not recognized." }, 400);
+  }
+
+  const post = await env.TPI_DB.prepare("SELECT id, title, status FROM community_posts WHERE id = ?").bind(postId).first();
+  if (!post) return json({ error: "Post was not found." }, 404);
+
+  await env.TPI_DB.prepare("UPDATE community_posts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+    .bind(status, postId)
+    .run();
+
+  return json({ post: { id: post.id, title: post.title, status } });
 }
 
 async function handleListNotifications(env, user) {
@@ -752,19 +828,27 @@ async function handleAdminMemberActivity(path, env) {
 
   const { results: postResults } = await env.TPI_DB.prepare(`
     SELECT
-      fp.id,
-      fp.topic_id AS topicId,
-      fp.body,
-      fp.status,
-      fp.created_at AS createdAt,
-      ft.title AS topicTitle,
-      ft.status AS topicStatus,
-      fc.title AS categoryTitle
-    FROM forum_posts fp
-    JOIN forum_topics ft ON ft.id = fp.topic_id
-    JOIN forum_categories fc ON fc.id = ft.category_id
-    WHERE fp.contributor_id = ?
-    ORDER BY fp.created_at DESC
+      cp.id,
+      cp.body,
+      cp.status,
+      cp.created_at AS createdAt,
+      cc.title AS categoryTitle
+    FROM community_posts cp
+    LEFT JOIN community_categories cc ON cc.id = cp.category_id
+    WHERE cp.author_id = ?
+    ORDER BY cp.created_at DESC
+    LIMIT 100
+  `).bind(member.id).all();
+
+  const { results: commentResultsRows } = await env.TPI_DB.prepare(`
+    SELECT
+      cm.id,
+      cm.body,
+      cm.status,
+      cm.created_at AS createdAt
+    FROM community_comments cm
+    WHERE cm.author_id = ?
+    ORDER BY cm.created_at DESC
     LIMIT 100
   `).bind(member.id).all();
 
@@ -801,11 +885,27 @@ async function handleAdminMemberActivity(path, env) {
     LIMIT 100
   `).bind(member.id).all();
 
-  const posts = await attachForumPostMedia(env, postResults || []);
+  const communityPostRows = (postResults || []).map(row => ({
+    ...row,
+    topicId: row.id,
+    topicTitle: "Community post",
+    topicStatus: row.status
+  }));
+  const communityCommentRows = (commentResultsRows || []).map(row => ({
+    ...row,
+    topicId: row.id,
+    topicTitle: "Community comment",
+    topicStatus: row.status,
+    categoryTitle: "Comment"
+  }));
+  await attachCommunityMedia(env, communityPostRows, "post");
+  await attachCommunityMedia(env, communityCommentRows, "comment");
+  const posts = communityPostRows.concat(communityCommentRows)
+    .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
   const photos = posts.flatMap(post => (post.attachments || [])
     .filter(item => item.mediaType === "image")
     .map(item => ({ ...item, postId: post.id, topicTitle: post.topicTitle, createdAt: post.createdAt })));
-  const forumVideos = posts.flatMap(post => (post.attachments || [])
+  const communityVideos = posts.flatMap(post => (post.attachments || [])
     .filter(item => item.mediaType === "video")
     .map(item => ({ ...item, postId: post.id, topicTitle: post.topicTitle, createdAt: post.createdAt })));
 
@@ -846,7 +946,7 @@ async function handleAdminMemberActivity(path, env) {
     member: privateMemberUser(member),
     posts,
     photos,
-    forumVideos,
+    communityVideos,
     tpiVideos: videoResults || [],
     articles: articleResults || [],
     comments: commentResults || [],
@@ -855,54 +955,7 @@ async function handleAdminMemberActivity(path, env) {
   });
 }
 
-async function handleAdminMemberForumPosts(request, env) {
-  const username = clean(new URL(request.url).searchParams.get("username"));
-  if (!username) return json({ error: "Member username is required." }, 400);
-  const member = await getUserByUsername(env, username);
-  if (!member) return json({ error: "Member was not found." }, 404);
-
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT
-      fp.id,
-      fp.topic_id AS topicId,
-      fp.body,
-      fp.status,
-      fp.created_at AS createdAt,
-      ft.title AS topicTitle,
-      ft.status AS topicStatus,
-      fc.title AS categoryTitle
-    FROM forum_posts fp
-    JOIN forum_topics ft ON ft.id = fp.topic_id
-    JOIN forum_categories fc ON fc.id = ft.category_id
-    WHERE fp.contributor_id = ?
-    ORDER BY fp.created_at DESC
-    LIMIT 100
-  `).bind(member.id).all();
-
-  return json({
-    member: { username: member.username, displayName: member.display_name, title: member.title, role: member.role, active: Boolean(member.active) },
-    posts: results
-  });
-}
-
-async function handleAdminSetForumTopicStatus(path, request, env) {
-  const topicId = clean(decodeURIComponent(path.match(/^\/admin\/forum\/topics\/([^/]+)\/status$/)?.[1] || ""));
-  const data = await readJson(request);
-  const status = clean(data.status).toLowerCase();
-  if (!topicId) return json({ error: "Topic id is required." }, 400);
-  if (!["open", "locked", "inactive", "deleted"].includes(status)) {
-    return json({ error: "Topic status was not recognized." }, 400);
-  }
-
-  const topic = await env.TPI_DB.prepare("SELECT id, title, status FROM forum_topics WHERE id = ?").bind(topicId).first();
-  if (!topic) return json({ error: "Topic was not found." }, 404);
-
-  await env.TPI_DB.prepare("UPDATE forum_topics SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-    .bind(status, topicId)
-    .run();
-
-  return json({ topic: { id: topic.id, title: topic.title, status } });
-}
+// ===== Admin: member community activity + post status =====
 
 async function handleAdminListComments(request, env) {
   const url = new URL(request.url);
@@ -1154,8 +1207,8 @@ async function handleArticleMediaUpload(request, env, user) {
   return handleMediaUpload(request, env, user, "articles", "article-media");
 }
 
-async function handleForumMediaUpload(request, env, user) {
-  return handleMediaUpload(request, env, user, "forum", "forum-media", ["image/", "video/"]);
+async function handleCommunityMediaUpload(request, env, user) {
+  return handleMediaUpload(request, env, user, "community", "community-media", ["image/", "video/"]);
 }
 
 async function handleMessengerMediaUpload(request, env, user) {
@@ -1371,110 +1424,36 @@ async function handleSetArticleReaction(request, env, user) {
   }
 }
 
-async function handleForumIndex(request, env) {
-  const user = await getSessionUser(request, env);
-  const { results: categoryRows } = await env.TPI_DB.prepare(`
-    SELECT
-      fc.id,
-      fc.title,
-      fc.description,
-      fc.sort_order AS sortOrder,
-      COUNT(DISTINCT ft.id) AS topicCount,
-      COUNT(fp.id) AS postCount
-    FROM forum_categories fc
-    LEFT JOIN forum_topics ft ON ft.category_id = fc.id AND ft.status NOT IN ('deleted', 'inactive')
-    LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
-    WHERE fc.active = 1
-    GROUP BY fc.id
-    ORDER BY fc.sort_order ASC, fc.title COLLATE NOCASE
-  `).all();
-
-  const { results: topicRows } = await env.TPI_DB.prepare(`
-    SELECT
-      ft.id,
-      ft.category_id AS categoryId,
-      ft.title,
-      ft.status,
-      ft.created_at AS createdAt,
-      ft.updated_at AS updatedAt,
-      c.username AS authorUsername,
-      c.display_name AS authorName,
-      c.title AS authorTitle,
-      COUNT(fp.id) AS postCount,
-      MAX(fp.created_at) AS lastPostAt
-    FROM forum_topics ft
-    LEFT JOIN contributors c ON c.id = ft.created_by
-    LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
-    WHERE ft.status NOT IN ('deleted', 'inactive')
-    GROUP BY ft.id
-    ORDER BY COALESCE(MAX(fp.created_at), ft.created_at) DESC
-    LIMIT 80
-  `).all();
-
-  const readRows = user ? await getForumReadRows(env, user.id) : [];
-  const readMap = new Map(readRows.map(row => [row.topic_id, row]));
-  const topics = topicRows.map(topic => {
-    const postCount = Number(topic.postCount || 0);
-    const replyCount = Math.max(0, postCount - 1);
-    const read = readMap.get(topic.id);
-    const seenPostCount = Number(read?.seen_post_count || 0);
-    const unreadTopicCount = user && !read ? 1 : 0;
-    const unreadReplyCount = user ? Math.max(0, postCount - Math.max(1, seenPostCount)) : 0;
-    return {
-      ...topic,
-      postCount,
-      replyCount,
-      unreadTopicCount,
-      unreadReplyCount
-    };
-  });
-  const categories = categoryRows.map(category => {
-    const categoryTopics = topics.filter(topic => topic.categoryId === category.id);
-    return {
-      ...category,
-      topicCount: Number(category.topicCount || 0),
-      postCount: Number(category.postCount || 0),
-      replyCount: Math.max(0, Number(category.postCount || 0) - Number(category.topicCount || 0)),
-      unreadTopicCount: categoryTopics.reduce((total, topic) => total + Number(topic.unreadTopicCount || 0), 0),
-      unreadReplyCount: categoryTopics.reduce((total, topic) => total + Number(topic.unreadReplyCount || 0), 0)
-    };
-  });
-
-  return json({ categories, topics });
-}
-
 async function handleCommunityFeed(request, env) {
   const url = new URL(request.url);
   const limit = Math.min(Number(url.searchParams.get("limit")) || 20, 50);
   const offset = Number(url.searchParams.get("offset")) || 0;
   const user = await getSessionUser(request, env);
 
-  const { results: forumItems } = await env.TPI_DB.prepare(`
+  // Community Feed posts (dedicated community_posts model — the Forum's
+  // forum_topics/forum_posts were retired; see FORUM_DEPENDENCY_AUDIT.md).
+  const { results: postItems } = await env.TPI_DB.prepare(`
     SELECT
-      'forum_post' AS type,
-      fp.id,
-      fp.body,
-      fp.created_at AS createdAt,
-      fp.edited_at AS editedAt,
-      ft.id AS topicId,
-      ft.title AS topicTitle,
-      ft.created_at AS topicCreatedAt,
-      fc.id AS categoryId,
-      fc.title AS categoryTitle,
+      'community_post' AS type,
+      cp.id,
+      cp.title,
+      cp.body,
+      cp.status,
+      cp.created_at AS createdAt,
+      cp.edited_at AS editedAt,
+      cc.id AS categoryId,
+      cc.title AS categoryTitle,
       c.username AS authorUsername,
       c.display_name AS authorName,
       c.title AS authorTitle,
       c.photo_url AS authorPhotoUrl,
       c.chat_color AS authorChatColor,
-      (SELECT COUNT(*) FROM forum_posts fp2 WHERE fp2.topic_id = ft.id AND fp2.status = 'visible') AS postCount
-    FROM forum_posts fp
-    JOIN forum_topics ft ON ft.id = fp.topic_id
-    JOIN forum_categories fc ON fc.id = ft.category_id
-    LEFT JOIN contributors c ON c.id = fp.contributor_id
-    WHERE fp.status = 'visible' AND ft.status NOT IN ('deleted', 'inactive') AND fp.id = (
-      SELECT fp3.id FROM forum_posts fp3 WHERE fp3.topic_id = ft.id AND fp3.status = 'visible' ORDER BY fp3.created_at DESC LIMIT 1
-    )
-    ORDER BY fp.created_at DESC
+      (SELECT COUNT(*) FROM community_comments cm WHERE cm.post_id = cp.id AND cm.status = 'visible') AS commentCount
+    FROM community_posts cp
+    LEFT JOIN community_categories cc ON cc.id = cp.category_id
+    LEFT JOIN contributors c ON c.id = cp.author_id
+    WHERE cp.status = 'visible'
+    ORDER BY cp.created_at DESC
     LIMIT 200
   `).all().catch(function () { return { results: [] }; });
 
@@ -1514,38 +1493,34 @@ async function handleCommunityFeed(request, env) {
     LIMIT 50
   `).all().catch(function () { return { results: [] }; });
 
-  const forumMapped = (forumItems || []).map(function(item) {
-    var postCount = Number(item.postCount || 0);
+  const communityMapped = (postItems || []).map(function(item) {
+    var commentCount = Number(item.commentCount || 0);
     return {
-      type: "forum_post",
+      type: "community_post",
       id: item.id,
-      topicId: item.topicId,
-      topicTitle: item.topicTitle,
-      topicCreatedAt: item.topicCreatedAt,
+      postId: item.id,
+      title: item.title || "",
+      body: item.body,
       categoryId: item.categoryId,
       categoryTitle: item.categoryTitle,
-      body: item.body,
       authorUsername: item.authorUsername,
       authorName: item.authorName,
       authorTitle: item.authorTitle,
       authorPhotoUrl: item.authorPhotoUrl,
       authorChatColor: item.authorChatColor || "#a855f7",
-      replyCount: Math.max(0, postCount - 1),
+      commentCount: commentCount,
+      replyCount: commentCount,
       createdAt: item.createdAt,
       editedAt: item.editedAt || null,
-      attachments: []
+      attachments: [],
+      reactionCounts: {},
+      userReaction: null
     };
   });
 
-  // Attach media to forum feed items
-  try {
-    const forumWithMedia = await attachForumPostMedia(env, forumMapped);
-    for (let i = 0; i < forumMapped.length; i++) {
-      forumMapped[i].attachments = forumWithMedia[i]?.attachments || [];
-    }
-  } catch (e) {
-    // Attachments optional; continue without them
-  }
+  // Batched attachment + reaction hydration (no N+1 per post).
+  await attachCommunityMedia(env, communityMapped, "post");
+  await attachCommunityReactions(env, communityMapped, "post", user?.id);
 
   const videoMapped = (videoItems || []).map(function(item) {
     return {
@@ -1576,7 +1551,7 @@ async function handleCommunityFeed(request, env) {
     };
   });
 
-  var all = [].concat(forumMapped).concat(videoMapped).concat(articleMapped);
+  var all = [].concat(communityMapped).concat(videoMapped).concat(articleMapped);
   all.sort(function(a, b) {
     var dateA = a.createdAt || a.publishedAt || "";
     var dateB = b.createdAt || b.publishedAt || "";
@@ -1599,28 +1574,27 @@ async function handleUserFeed(request, env) {
   ).bind(username).first();
   if (!contributor) return json({ error: "Member not found." }, 404);
 
-  const { results: forumItems } = await env.TPI_DB.prepare(`
+  const { results: postItems } = await env.TPI_DB.prepare(`
     SELECT
-      'forum_post' AS type,
-      fp.id,
-      fp.body,
-      fp.created_at AS createdAt,
-      ft.id AS topicId,
-      ft.title AS topicTitle,
-      fc.id AS categoryId,
-      fc.title AS categoryTitle,
+      'community_post' AS type,
+      cp.id,
+      cp.title,
+      cp.body,
+      cp.created_at AS createdAt,
+      cp.edited_at AS editedAt,
+      cc.id AS categoryId,
+      cc.title AS categoryTitle,
       c.username AS authorUsername,
       c.display_name AS authorName,
       c.title AS authorTitle,
       c.photo_url AS authorPhotoUrl,
       c.chat_color AS authorChatColor,
-      (SELECT COUNT(*) FROM forum_posts fp2 WHERE fp2.topic_id = ft.id AND fp2.status = 'visible') AS postCount
-    FROM forum_posts fp
-    JOIN forum_topics ft ON ft.id = fp.topic_id
-    JOIN forum_categories fc ON fc.id = ft.category_id
-    LEFT JOIN contributors c ON c.id = fp.contributor_id
-    WHERE fp.contributor_id = ? AND fp.status = 'visible' AND ft.status NOT IN ('deleted', 'inactive')
-    ORDER BY fp.created_at DESC
+      (SELECT COUNT(*) FROM community_comments cm WHERE cm.post_id = cp.id AND cm.status = 'visible') AS commentCount
+    FROM community_posts cp
+    LEFT JOIN community_categories cc ON cc.id = cp.category_id
+    LEFT JOIN contributors c ON c.id = cp.author_id
+    WHERE cp.author_id = ? AND cp.status = 'visible'
+    ORDER BY cp.created_at DESC
     LIMIT 200
   `).bind(contributor.id).all().catch(function () { return { results: [] }; });
 
@@ -1643,36 +1617,33 @@ async function handleUserFeed(request, env) {
     LIMIT 50
   `).bind(contributor.id).all().catch(function () { return { results: [] }; });
 
-  const forumMapped = (forumItems || []).map(function(item) {
-    var postCount = Number(item.postCount || 0);
+  const communityMapped = (postItems || []).map(function(item) {
+    var commentCount = Number(item.commentCount || 0);
     return {
-      type: "forum_post",
+      type: "community_post",
       id: item.id,
-      topicId: item.topicId,
-      topicTitle: item.topicTitle,
+      postId: item.id,
+      title: item.title || "",
+      body: item.body,
       categoryId: item.categoryId,
       categoryTitle: item.categoryTitle,
-      body: item.body,
       authorUsername: item.authorUsername,
       authorName: item.authorName,
       authorTitle: item.authorTitle,
       authorPhotoUrl: item.authorPhotoUrl,
       authorChatColor: item.authorChatColor || "#a855f7",
-      replyCount: Math.max(0, postCount - 1),
+      commentCount: commentCount,
+      replyCount: commentCount,
       createdAt: item.createdAt,
       editedAt: item.editedAt || null,
-      attachments: []
+      attachments: [],
+      reactionCounts: {},
+      userReaction: null
     };
   });
 
-  try {
-    const forumWithMedia = await attachForumPostMedia(env, forumMapped);
-    for (let i = 0; i < forumMapped.length; i++) {
-      forumMapped[i].attachments = forumWithMedia[i]?.attachments || [];
-    }
-  } catch (e) {
-    // Attachments optional
-  }
+  await attachCommunityMedia(env, communityMapped, "post");
+  await attachCommunityReactions(env, communityMapped, "post", null);
 
   const articleMapped = (articleItems || []).map(function(item) {
     return {
@@ -1689,7 +1660,7 @@ async function handleUserFeed(request, env) {
     };
   });
 
-  var all = [].concat(forumMapped).concat(articleMapped);
+  var all = [].concat(communityMapped).concat(articleMapped);
   all.sort(function(a, b) {
     var dateA = a.createdAt || "";
     var dateB = b.createdAt || "";
@@ -1700,375 +1671,324 @@ async function handleUserFeed(request, env) {
   return json({ items: page, total: all.length });
 }
 
-async function handleForumTopic(path, request, env) {
-  const topicId = clean(decodeURIComponent(path.replace(/^\/forum\/topics\//, "")));
-  if (!topicId) return json({ error: "Topic id is required." }, 400);
+// ===== Community Feed mutations (dedicated community data model) =====
+// The retired Forum's topic/post model was replaced by community_posts +
+// community_comments (see FORUM_DEPENDENCY_AUDIT.md, migrations 0032-0034).
+
+async function handleListCommunityCategories(env) {
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT id, title, description, sort_order AS sortOrder, active
+      FROM community_categories
+      WHERE active = 1
+      ORDER BY sort_order ASC, title COLLATE NOCASE
+    `).all();
+    const categories = results || [];
+    const counts = new Map();
+    try {
+      const { results: countRows } = await env.TPI_DB.prepare(`
+        SELECT category_id AS categoryId, COUNT(*) AS n
+        FROM community_posts
+        WHERE status = 'visible'
+        GROUP BY category_id
+      `).all();
+      (countRows || []).forEach(row => counts.set(row.categoryId, Number(row.n || 0)));
+    } catch (e) { /* counts optional */ }
+    return json({
+      categories: categories.map(category => ({
+        ...category,
+        topicCount: counts.get(category.id) || 0,
+        postCount: counts.get(category.id) || 0
+      }))
+    });
+  } catch (error) {
+    return json({ categories: [] });
+  }
+}
+
+async function handleListCommunityPosts(request, env) {
+  const url = new URL(request.url);
+  const limit = Math.min(Number(url.searchParams.get("limit")) || 20, 50);
+  const offset = Number(url.searchParams.get("offset")) || 0;
   const user = await getSessionUser(request, env);
 
-  const topic = await env.TPI_DB.prepare(`
+  const { results: rows } = await env.TPI_DB.prepare(`
     SELECT
-      ft.id,
-      ft.category_id AS categoryId,
-      ft.title,
-      ft.status,
-      ft.created_at AS createdAt,
-      ft.updated_at AS updatedAt,
-      fc.title AS categoryTitle,
+      cp.id,
+      cp.title,
+      cp.body,
+      cp.status,
+      cp.created_at AS createdAt,
+      cp.edited_at AS editedAt,
+      cc.id AS categoryId,
+      cc.title AS categoryTitle,
       c.username AS authorUsername,
       c.display_name AS authorName,
-      c.title AS authorTitle
-    FROM forum_topics ft
-    JOIN forum_categories fc ON fc.id = ft.category_id
-    LEFT JOIN contributors c ON c.id = ft.created_by
-    WHERE ft.id = ? AND ft.status NOT IN ('deleted', 'inactive')
-  `).bind(topicId).first();
-  if (!topic) return json({ error: "Topic was not found." }, 404);
+      c.title AS authorTitle,
+      c.photo_url AS authorPhotoUrl,
+      c.chat_color AS authorChatColor
+    FROM community_posts cp
+    LEFT JOIN community_categories cc ON cc.id = cp.category_id
+    LEFT JOIN contributors c ON c.id = cp.author_id
+    WHERE cp.status = 'visible'
+    ORDER BY cp.created_at DESC
+    LIMIT ? OFFSET ?
+  `).bind(limit, offset).all().catch(function () { return { results: [] }; });
 
-  let results = [];
-  try {
-    ({ results } = await env.TPI_DB.prepare(`
-      SELECT
-        fp.id,
-        fp.topic_id AS topicId,
-        fp.body,
-        fp.created_at AS createdAt,
-        fp.updated_at AS updatedAt,
-        c.username AS authorUsername,
-        c.display_name AS authorName,
-        c.title AS authorTitle,
-        c.role AS authorRole,
-        c.photo_url AS authorPhotoUrl,
-        c.chat_color AS authorChatColor
-      FROM forum_posts fp
-      LEFT JOIN contributors c ON c.id = fp.contributor_id
-      WHERE fp.topic_id = ? AND fp.status = 'visible'
-      ORDER BY fp.created_at ASC
-    `).bind(topicId).all());
-  } catch (error) {
-    ({ results } = await env.TPI_DB.prepare(`
-      SELECT
-        fp.id,
-        fp.topic_id AS topicId,
-        fp.body,
-        fp.created_at AS createdAt,
-        fp.updated_at AS updatedAt,
-        c.username AS authorUsername,
-        c.display_name AS authorName,
-        c.title AS authorTitle,
-        c.role AS authorRole,
-        c.photo_url AS authorPhotoUrl
-      FROM forum_posts fp
-      LEFT JOIN contributors c ON c.id = fp.contributor_id
-      WHERE fp.topic_id = ? AND fp.status = 'visible'
-      ORDER BY fp.created_at ASC
-    `).bind(topicId).all());
-  }
-
-  let posts = await attachForumPostMedia(env, results);
-  posts = await attachForumPostReactions(env, posts, user?.id);
-  return json({ topic, posts });
-}
-
-// ===== Facebook-style link previews =====
-// Server-side fetch of a shared URL's Open Graph / Twitter Card metadata so the
-// member feed can show an image + title + description preview card (the browser
-// cannot do this itself: most sites block cross-origin reads).
-async function handleLinkPreview(request, env) {
-  const url = new URL(request.url);
-  const target = clean(url.searchParams.get("url"));
-  if (!target || !/^https?:\/\//i.test(target)) {
-    return json({ error: "A full http(s) URL is required." }, 400);
-  }
-
-  let parsed;
-  try {
-    parsed = new URL(target);
-  } catch (e) {
-    return json({ error: "That URL could not be parsed." }, 400);
-  }
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-    return json({ error: "Only http(s) URLs can be previewed." }, 400);
-  }
-  // Never preview our own origin or loopback targets (SSRF guard)
-  const host = (parsed.hostname || "").toLowerCase();
-  if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || /^(10|127)\./.test(host) || host === "[::1]" || host.endsWith(".internal")) {
-    return json({ error: "That URL cannot be previewed." }, 400);
-  }
-
-  const cacheKey = new Request(`https://link-preview-cache.tpi.internal/?url=${encodeURIComponent(target)}`);
-  try {
-    const cached = await caches.default.match(cacheKey);
-    if (cached) return json(await cached.json());
-  } catch (e) { /* cache optional */ }
-
-  const meta = await fetchPageMeta(target);
-  if (!meta) return json({ error: "No preview could be fetched for that URL." }, 404);
-
-  try {
-    const res = new Response(JSON.stringify(meta), { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=1800" } });
-    await caches.default.put(cacheKey, res.clone());
-  } catch (e) { /* cache optional */ }
-  return json(meta);
-}
-
-async function fetchPageMeta(target) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8000);
-  try {
-    const res = await fetch(target, {
-      method: "GET",
-      redirect: "follow",
-      signal: controller.signal,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; TPI-LinkPreview/1.0; +https://paranormalinitiative.com)",
-        "Accept": "text/html,application/xhtml+xml"
-      }
-    });
-    if (!res.ok) return null;
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.includes("html")) {
-      // Direct image/video link: show it as the preview media itself
-      if (/^(image|video)\//.test(contentType)) {
-        return { url: target, image: target, imageIsMedia: true, title: "" };
-      }
-      return null;
-    }
-    // Read only the head region: og tags live there and huge pages would
-    // waste quota if we buffered the whole body.
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let html = "";
-    while (html.length < 300000) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      html += decoder.decode(value, { stream: true });
-      if (/<\/head>/i.test(html)) break;
-    }
-    try { reader.cancel(); } catch (e) {}
-    const headMatch = html.match(/<head[\s\S]*?<\/head>/i);
-    const head = headMatch ? headMatch[0] : html.slice(0, 60000);
-
-    const metaTag = (prop) => {
-      const re = new RegExp(`<meta[^>]+(?:property|name)=["']${prop.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["'][^>]*>`, "i");
-      const tag = head.match(re);
-      if (!tag) return "";
-      const content = tag[0].match(/content=["']([\s\S]*?)["']/i);
-      return content ? decodeEntities(content[1]).trim() : "";
-    };
-    const titleTag = () => {
-      const m = head.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-      return m ? decodeEntities(m[1]).replace(/\s+/g, " ").trim() : "";
-    };
-
-    const image = metaTag("og:image") || metaTag("og:image:secure_url") || metaTag("twitter:image") || metaTag("twitter:image:src");
-    const title = metaTag("og:title") || metaTag("twitter:title") || titleTag();
-    const description = metaTag("og:description") || metaTag("description") || metaTag("twitter:description");
-    const siteName = metaTag("og:site_name");
-    let host = "";
-    try { host = new URL(target).hostname.replace(/^www\./, ""); } catch (e) {}
-    if (!title && !description && !image) return null;
+  const posts = (rows || []).map(function(item) {
     return {
-      url: target,
-      title: (title || host || "Link").slice(0, 200),
-      description: description.slice(0, 400),
-      image: image.slice(0, 1000),
-      siteName: siteName.slice(0, 120),
-      host
+      id: item.id,
+      postId: item.id,
+      title: item.title || "",
+      body: item.body,
+      categoryId: item.categoryId,
+      categoryTitle: item.categoryTitle,
+      authorUsername: item.authorUsername,
+      authorName: item.authorName,
+      authorTitle: item.authorTitle,
+      authorPhotoUrl: item.authorPhotoUrl,
+      authorChatColor: item.authorChatColor || "#a855f7",
+      commentCount: 0,
+      createdAt: item.createdAt,
+      editedAt: item.editedAt || null,
+      attachments: [],
+      reactionCounts: {},
+      userReaction: null
     };
-  } catch (error) {
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
+  });
+
+  try {
+    if (posts.length) {
+      const placeholders = posts.map(() => "?").join(",");
+      const { results: countRows } = await env.TPI_DB.prepare(`
+        SELECT post_id AS postId, COUNT(*) AS n
+        FROM community_comments
+        WHERE status = 'visible' AND post_id IN (${placeholders})
+        GROUP BY post_id
+      `).bind(...posts.map(p => p.id)).all();
+      (countRows || []).forEach(row => {
+        const post = posts.find(p => p.id === row.postId);
+        if (post) post.commentCount = Number(row.n || 0);
+      });
+    }
+  } catch (e) { /* counts optional */ }
+
+  await attachCommunityMedia(env, posts, "post");
+  await attachCommunityReactions(env, posts, "post", user?.id);
+  return json({ posts, total: posts.length });
 }
 
-function decodeEntities(value) {
-  return String(value || "")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#0?39;|&apos;/g, "'")
-    .replace(/&#x2F;/gi, "/")
-    .replace(/&nbsp;/g, " ");
-}
-
-async function handleCreateForumTopic(request, env, user) {
+async function handleCreateCommunityPost(request, env, user) {
   const accessError = await getMemberActionAccessError(env, user, "post");
   if (accessError) return json({ error: accessError }, 403);
   const data = await readJson(request);
   const categoryId = clean(data.categoryId);
   const title = clean(data.title).slice(0, 160);
   const body = clean(data.body).slice(0, 6000);
-  const attachments = sanitizeForumAttachments(data.attachments);
-  if (!categoryId || !title || !body) return json({ error: "Category, topic title, and message are required." }, 400);
+  const attachments = sanitizeCommunityAttachments(data.attachments);
+  if (!categoryId || !title || !body) return json({ error: "Category, post title, and message are required." }, 400);
 
-  const category = await env.TPI_DB.prepare("SELECT id FROM forum_categories WHERE id = ? AND active = 1").bind(categoryId).first();
-  if (!category) return json({ error: "Forum category was not found." }, 404);
+  const category = await env.TPI_DB.prepare("SELECT id FROM community_categories WHERE id = ? AND active = 1").bind(categoryId).first();
+  if (!category) return json({ error: "Community category was not found." }, 404);
 
-  const topicId = crypto.randomUUID();
   const postId = crypto.randomUUID();
-  await env.TPI_DB.batch([
-    env.TPI_DB.prepare("INSERT INTO forum_topics (id, category_id, title, created_by, status, updated_at) VALUES (?, ?, ?, ?, 'open', CURRENT_TIMESTAMP)")
-      .bind(topicId, categoryId, title, user.id),
-    env.TPI_DB.prepare("INSERT INTO forum_posts (id, topic_id, contributor_id, body, status) VALUES (?, ?, ?, ?, 'visible')")
-      .bind(postId, topicId, user.id, body)
-  ]);
-  await insertForumAttachments(env, postId, attachments);
-  await createForumContentNotifications(env, user, { topicId, postId, topicTitle: title, body, attachments });
+  try {
+    await env.TPI_DB.prepare(`
+      INSERT INTO community_posts (id, category_id, author_id, title, body, status, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'visible', CURRENT_TIMESTAMP)
+    `).bind(postId, categoryId, user.id, title, body).run();
+  } catch (error) {
+    return json({ error: "Community data model is not ready yet. Apply migrations 0032 and 0033 in Cloudflare D1." }, 500);
+  }
+  await insertCommunityAttachments(env, postId, "post", attachments);
+  await createCommunityContentNotifications(env, user, { postId, postTitle: title, body, attachments });
 
-  return json({ topic: { id: topicId, categoryId, title, status: "open" }, post: { id: postId, topicId, body, attachments } });
+  return json({ post: { id: postId, categoryId, title, status: "visible" }, postId });
 }
 
-async function handleUpdateForumTopic(path, request, env, user) {
-  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)$/)?.[1] || ""));
-  if (!topicId) return json({ error: "Topic id is required." }, 400);
+async function handleUpdateCommunityPost(path, request, env, user) {
+  const postId = clean(decodeURIComponent(path.match(/^\/community\/posts\/([^/]+)$/)?.[1] || ""));
+  if (!postId) return json({ error: "Post id is required." }, 400);
   const data = await readJson(request);
   const title = clean(data.title).slice(0, 160);
   const body = clean(data.body).slice(0, 6000);
   if (!title && !body) return json({ error: "Nothing to update." }, 400);
 
-  // A feed post is the topic's opening post; edits go to that post's body
-  // (and optionally the topic title). Owner or admin only.
-  const opener = await env.TPI_DB.prepare(`
-    SELECT fp.id AS postId, fp.contributor_id AS contributorId, ft.created_by AS topicCreatorId
-    FROM forum_topics ft
-    JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
-    WHERE ft.id = ? AND ft.status NOT IN ('deleted', 'inactive')
-    ORDER BY fp.created_at ASC
-    LIMIT 1
-  `).bind(topicId).first();
-  if (!opener) return json({ error: "Post was not found." }, 404);
-  if (opener.contributorId !== user.id && !["owner", "admin"].includes(user.role)) {
+  // Owner or admin only.
+  const post = await env.TPI_DB.prepare(`
+    SELECT id, author_id AS authorId, title, status
+    FROM community_posts
+    WHERE id = ? AND status NOT IN ('deleted', 'hidden')
+  `).bind(postId).first();
+  if (!post) return json({ error: "Post was not found." }, 404);
+  if (post.authorId !== user.id && !["owner", "admin"].includes(user.role)) {
     return json({ error: "You can only edit your own posts." }, 403);
   }
 
-  const statements = [];
-  if (title) statements.push(env.TPI_DB.prepare("UPDATE forum_topics SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(title, topicId));
-  if (body) statements.push(env.TPI_DB.prepare("UPDATE forum_posts SET body = ?, edited_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(body, opener.postId));
-  await env.TPI_DB.batch(statements);
-  return json({ ok: true, topicId, postId: opener.postId, title, body });
+  if (body) {
+    await env.TPI_DB.prepare(`
+      UPDATE community_posts
+      SET body = ?, edited_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(body, postId).run();
+  }
+  if (title) {
+    await env.TPI_DB.prepare(`
+      UPDATE community_posts
+      SET title = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(title, postId).run();
+  }
+  return json({ ok: true, postId, title: title || post.title, body });
 }
 
-async function handleDeleteOwnForumTopic(path, env, user) {
-  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)$/)?.[1] || ""));
-  if (!topicId) return json({ error: "Topic id is required." }, 400);
+async function handleDeleteCommunityPost(path, env, user) {
+  const postId = clean(decodeURIComponent(path.match(/^\/community\/posts\/([^/]+)$/)?.[1] || ""));
+  if (!postId) return json({ error: "Post id is required." }, 400);
 
-  const topic = await env.TPI_DB.prepare("SELECT id, created_by FROM forum_topics WHERE id = ? AND status NOT IN ('deleted', 'inactive')").bind(topicId).first();
-  if (!topic) return json({ deleted: false });
-  if (topic.created_by !== user.id && !["owner", "admin"].includes(user.role)) {
+  const post = await env.TPI_DB.prepare("SELECT id, author_id AS authorId FROM community_posts WHERE id = ? AND status NOT IN ('deleted', 'hidden')").bind(postId).first();
+  if (!post) return json({ deleted: false });
+  if (post.authorId !== user.id && !["owner", "admin"].includes(user.role)) {
     return json({ error: "You can only delete your own posts." }, 403);
   }
-  await env.TPI_DB.prepare("UPDATE forum_topics SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(topicId).run();
-  return json({ deleted: true, id: topicId });
-}
-
-async function handleCreateForumPost(path, request, env, user) {
-  const accessError = await getMemberActionAccessError(env, user, "post");
-  if (accessError) return json({ error: accessError }, 403);
-  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)\/posts$/)?.[1] || ""));
-  const data = await readJson(request);
-  const body = clean(data.body).slice(0, 6000);
-  const attachments = sanitizeForumAttachments(data.attachments);
-  if (!topicId || !body) return json({ error: "Topic id and message are required." }, 400);
-
-  const topic = await env.TPI_DB.prepare("SELECT id, title, status FROM forum_topics WHERE id = ? AND status NOT IN ('deleted', 'inactive')").bind(topicId).first();
-  if (!topic) return json({ error: "Topic was not found." }, 404);
-  if (topic.status === "locked" && !["owner", "admin"].includes(user.role)) {
-    return json({ error: "This topic is locked." }, 403);
-  }
-
-  const postId = crypto.randomUUID();
-  await env.TPI_DB.batch([
-    env.TPI_DB.prepare("INSERT INTO forum_posts (id, topic_id, contributor_id, body, status) VALUES (?, ?, ?, ?, 'visible')")
-      .bind(postId, topicId, user.id, body),
-    env.TPI_DB.prepare("UPDATE forum_topics SET updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-      .bind(topicId)
-  ]);
-  await insertForumAttachments(env, postId, attachments);
-  await createForumContentNotifications(env, user, { topicId, postId, topicTitle: topic.title, body, attachments });
-
-  return json({ post: { id: postId, topicId, body, attachments } });
-}
-
-async function handleMarkForumTopicRead(path, env, user) {
-  const topicId = clean(decodeURIComponent(path.match(/^\/forum\/topics\/([^/]+)\/read$/)?.[1] || ""));
-  if (!topicId) return json({ error: "Topic id is required." }, 400);
-
-  const topic = await env.TPI_DB.prepare(`
-    SELECT
-      ft.id,
-      COUNT(fp.id) AS postCount,
-      MAX(fp.created_at) AS lastPostAt
-    FROM forum_topics ft
-    LEFT JOIN forum_posts fp ON fp.topic_id = ft.id AND fp.status = 'visible'
-    WHERE ft.id = ? AND ft.status NOT IN ('deleted', 'inactive')
-    GROUP BY ft.id
-  `).bind(topicId).first();
-  if (!topic) return json({ error: "Topic was not found." }, 404);
-
-  try {
-    await env.TPI_DB.prepare(`
-      INSERT INTO forum_topic_reads (contributor_id, topic_id, seen_post_count, seen_last_post_at, read_at)
-      VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(contributor_id, topic_id) DO UPDATE SET
-        seen_post_count = excluded.seen_post_count,
-        seen_last_post_at = excluded.seen_last_post_at,
-        read_at = CURRENT_TIMESTAMP
-    `).bind(user.id, topicId, Number(topic.postCount || 0), topic.lastPostAt || null).run();
-  } catch (error) {
-    return json({ ok: false, migrationRequired: true });
-  }
-
-  return json({ ok: true, topicId, seenPostCount: Number(topic.postCount || 0), seenLastPostAt: topic.lastPostAt || null });
-}
-
-async function handleDeleteForumPost(path, env, user) {
-  const postId = clean(decodeURIComponent(path.replace(/^\/forum\/posts\//, "")));
-  if (!postId) return json({ error: "Post id is required." }, 400);
-  const post = await env.TPI_DB.prepare("SELECT id, contributor_id FROM forum_posts WHERE id = ?").bind(postId).first();
-  if (!post) return json({ deleted: false });
-  if (post.contributor_id !== user.id && !["owner", "admin"].includes(user.role)) {
-    return json({ error: "You can only delete your own forum replies." }, 403);
-  }
-  await env.TPI_DB.prepare("UPDATE forum_posts SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(postId).run();
+  await env.TPI_DB.prepare("UPDATE community_posts SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(postId).run();
   return json({ deleted: true, id: postId });
 }
 
-async function handleSetForumReaction(path, request, env, user) {
-  const postId = clean(decodeURIComponent(path.match(/^\/forum\/posts\/([^/]+)\/reactions$/)?.[1] || ""));
+async function handleListCommunityComments(path, request, env) {
+  const postId = clean(decodeURIComponent(path.match(/^\/community\/posts\/([^/]+)\/comments$/)?.[1] || ""));
+  if (!postId) return json({ error: "Post id is required." }, 400);
+  const user = await getSessionUser(request, env);
+
+  const post = await env.TPI_DB.prepare(`
+    SELECT
+      cp.id, cp.title, cp.body, cp.status, cp.created_at AS createdAt,
+      cc.id AS categoryId, cc.title AS categoryTitle,
+      c.username AS authorUsername, c.display_name AS authorName,
+      c.title AS authorTitle, c.photo_url AS authorPhotoUrl, c.chat_color AS authorChatColor
+    FROM community_posts cp
+    LEFT JOIN community_categories cc ON cc.id = cp.category_id
+    LEFT JOIN contributors c ON c.id = cp.author_id
+    WHERE cp.id = ? AND cp.status = 'visible'
+  `).bind(postId).first();
+  if (!post) return json({ error: "Post was not found." }, 404);
+
+  let results = [];
+  try {
+    ({ results } = await env.TPI_DB.prepare(`
+      SELECT
+        cm.id,
+        cm.post_id AS postId,
+        cm.body,
+        cm.status,
+        cm.created_at AS createdAt,
+        cm.updated_at AS updatedAt,
+        cm.edited_at AS editedAt,
+        c.username AS authorUsername,
+        c.display_name AS authorName,
+        c.title AS authorTitle,
+        c.role AS authorRole,
+        c.photo_url AS authorPhotoUrl,
+        c.chat_color AS authorChatColor
+      FROM community_comments cm
+      LEFT JOIN contributors c ON c.id = cm.author_id
+      WHERE cm.post_id = ? AND cm.status = 'visible'
+      ORDER BY cm.created_at ASC
+    `).bind(postId).all());
+  } catch (error) {
+    results = [];
+  }
+
+  const comments = results.map(row => ({
+    ...row,
+    editedAt: row.editedAt || null,
+    attachments: [],
+    reactionCounts: {},
+    userReaction: null
+  }));
+  await attachCommunityMedia(env, comments, "comment");
+  await attachCommunityReactions(env, comments, "comment", user?.id);
+  return json({ post, comments });
+}
+
+async function handleCreateCommunityComment(path, request, env, user) {
+  const accessError = await getMemberActionAccessError(env, user, "comment");
+  if (accessError) return json({ error: accessError }, 403);
+  const postId = clean(decodeURIComponent(path.match(/^\/community\/posts\/([^/]+)\/comments$/)?.[1] || ""));
+  const data = await readJson(request);
+  const body = clean(data.body).slice(0, 6000);
+  const attachments = sanitizeCommunityAttachments(data.attachments);
+  if (!postId || !body) return json({ error: "Post id and message are required." }, 400);
+
+  const post = await env.TPI_DB.prepare("SELECT id, author_id AS authorId, title, status FROM community_posts WHERE id = ? AND status NOT IN ('deleted', 'hidden')").bind(postId).first();
+  if (!post) return json({ error: "Post was not found." }, 404);
+
+  const commentId = crypto.randomUUID();
+  try {
+    await env.TPI_DB.prepare(`
+      INSERT INTO community_comments (id, post_id, author_id, body, status, updated_at)
+      VALUES (?, ?, ?, ?, 'visible', CURRENT_TIMESTAMP)
+    `).bind(commentId, postId, user.id, body).run();
+  } catch (error) {
+    return json({ error: "Community data model is not ready yet. Apply migrations 0032 and 0033 in Cloudflare D1." }, 500);
+  }
+  await insertCommunityAttachments(env, commentId, "comment", attachments);
+  await createCommunityContentNotifications(env, user, { postId, postTitle: post.title, body, attachments, isComment: true, commentId });
+
+  return json({ comment: { id: commentId, postId, body, attachments }, post: { id: commentId, topicId: postId, body, attachments } });
+}
+
+async function handleDeleteCommunityComment(path, env, user) {
+  const commentId = clean(decodeURIComponent(path.match(/^\/community\/comments\/([^/]+)$/)?.[1] || ""));
+  if (!commentId) return json({ error: "Comment id is required." }, 400);
+  const comment = await env.TPI_DB.prepare("SELECT id, author_id AS authorId FROM community_comments WHERE id = ? AND status = 'visible'").bind(commentId).first();
+  if (!comment) return json({ deleted: false });
+  if (comment.authorId !== user.id && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "You can only delete your own comments." }, 403);
+  }
+  await env.TPI_DB.prepare("UPDATE community_comments SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(commentId).run();
+  return json({ deleted: true, id: commentId });
+}
+
+async function handleSetCommunityReaction(path, request, env, user, targetType) {
+  const pattern = targetType === "post"
+    ? /^\/community\/posts\/([^/]+)\/reactions$/
+    : /^\/community\/comments\/([^/]+)\/reactions$/;
+  const targetId = clean(decodeURIComponent(path.match(pattern)?.[1] || ""));
   const data = await readJson(request);
   const reaction = clean(data.reaction).toLowerCase();
-  if (!postId) return json({ error: "Post id is required." }, 400);
-  if (!isAllowedForumReaction(reaction)) return json({ error: "Reaction was not recognized." }, 400);
+  if (!targetId) return json({ error: "Target id is required." }, 400);
+  if (!isAllowedCommunityReaction(reaction)) return json({ error: "Reaction was not recognized." }, 400);
 
-  const post = await env.TPI_DB.prepare("SELECT id FROM forum_posts WHERE id = ? AND status = 'visible'").bind(postId).first();
-  if (!post) return json({ error: "Forum post was not found." }, 404);
+  let table = communityTableName(targetType);
+  if (!table) return json({ error: "Reaction target type was not recognized." }, 400);
+  const target = await env.TPI_DB.prepare(`SELECT id FROM ${table} WHERE id = ? AND status = 'visible'`).bind(targetId).first();
+  if (!target) return json({ error: targetType === "post" ? "Community post was not found." : "Community comment was not found." }, 404);
 
   try {
     const existing = await env.TPI_DB.prepare(`
       SELECT reaction
-      FROM forum_reactions
-      WHERE post_id = ? AND contributor_id = ?
+      FROM community_reactions
+      WHERE target_type = ? AND target_id = ? AND contributor_id = ?
       LIMIT 1
-    `).bind(postId, user.id).first();
+    `).bind(targetType, targetId, user.id).first();
 
-    await env.TPI_DB.prepare("DELETE FROM forum_reactions WHERE post_id = ? AND contributor_id = ?")
-      .bind(postId, user.id)
+    await env.TPI_DB.prepare("DELETE FROM community_reactions WHERE target_type = ? AND target_id = ? AND contributor_id = ?")
+      .bind(targetType, targetId, user.id)
       .run();
 
     let userReaction = null;
     if (existing?.reaction !== reaction) {
       userReaction = reaction;
-      await env.TPI_DB.prepare("INSERT INTO forum_reactions (id, post_id, contributor_id, reaction) VALUES (?, ?, ?, ?)")
-        .bind(crypto.randomUUID(), postId, user.id, reaction)
+      await env.TPI_DB.prepare("INSERT INTO community_reactions (id, target_type, target_id, contributor_id, reaction) VALUES (?, ?, ?, ?, ?)")
+        .bind(crypto.randomUUID(), targetType, targetId, user.id, reaction)
         .run();
     }
 
-    const reactionCounts = await getForumReactionSummary(env, postId);
-    return json({ postId, reactionCounts, userReaction });
+    const reactionCounts = await getCommunityReactionSummary(env, targetType, targetId);
+    return json({ targetId, reactionCounts, userReaction });
   } catch (error) {
-    return json({ error: "Forum reactions are not ready yet. Apply migrations/0004_discussion_portal.sql in Cloudflare D1." }, 500);
+    return json({ error: "Community reactions are not ready yet. Apply migrations 0032 and 0033 in Cloudflare D1." }, 500);
   }
 }
 
@@ -4007,109 +3927,122 @@ async function getOpenInvite(env, code) {
   return env.TPI_DB.prepare("SELECT * FROM invite_codes WHERE code = ? AND used = 0").bind(code).first();
 }
 
-async function getForumReadRows(env, contributorId) {
+// ===== Community helpers (attachment/reaction hydration + shared logic) =====
+// Names deliberately mirror the retired forum_* helpers so behavior carries
+// over unchanged; queries now target community_* with polymorphic targets.
+// attachCommunityMedia/attachCommunityReactions are batched (IN queries) to
+// avoid N+1 per post/comment.
+
+function communityTableName(targetType) {
+  return targetType === "post" ? "community_posts" : targetType === "comment" ? "community_comments" : null;
+}
+
+async function attachCommunityMedia(env, items, targetType) {
+  const safeItems = items || [];
+  if (!safeItems.length) return safeItems;
+  try {
+    const ids = safeItems.map(item => item.id);
+    const placeholders = ids.map(() => "?").join(",");
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT
+        target_id AS targetId,
+        id,
+        url,
+        media_key AS key,
+        name,
+        content_type AS contentType,
+        media_type AS mediaType,
+        sort_order AS sortOrder
+      FROM community_attachments
+      WHERE target_type = ? AND target_id IN (${placeholders})
+      ORDER BY sort_order ASC, created_at ASC
+    `).bind(targetType, ...ids).all();
+    const byTarget = new Map(safeItems.map(item => [item.id, []]));
+    (results || []).forEach(row => {
+      const list = byTarget.get(row.targetId);
+      if (list) list.push(row);
+    });
+    safeItems.forEach(item => { item.attachments = byTarget.get(item.id) || []; });
+  } catch (error) {
+    safeItems.forEach(item => { item.attachments = item.attachments || []; });
+  }
+  return safeItems;
+}
+
+const COMMUNITY_REACTIONS = new Set(["like", "love", "care", "haha", "wow", "sad", "angry"]);
+
+function isAllowedCommunityReaction(value) {
+  return COMMUNITY_REACTIONS.has(String(value || "").toLowerCase());
+}
+
+async function getCommunityReactionSummary(env, targetType, targetId) {
   try {
     const { results } = await env.TPI_DB.prepare(`
-      SELECT topic_id, seen_post_count, seen_last_post_at, read_at
-      FROM forum_topic_reads
-      WHERE contributor_id = ?
-    `).bind(contributorId).all();
-    return results || [];
+      SELECT reaction, COUNT(*) AS count
+      FROM community_reactions
+      WHERE target_type = ? AND target_id = ?
+      GROUP BY reaction
+    `).bind(targetType, targetId).all();
+    return Object.fromEntries((results || [])
+      .filter(row => isAllowedCommunityReaction(row.reaction))
+      .map(row => [row.reaction, Number(row.count || 0)]));
   } catch (error) {
-    return [];
+    return {};
   }
 }
 
-async function attachForumPostMedia(env, posts) {
-  const safePosts = posts || [];
-  if (!safePosts.length) return safePosts;
+async function getCommunityReactionSummaries(env, targetType, ids) {
+  const summary = new Map(ids.map(id => [id, {}]));
+  if (!ids.length) return summary;
   try {
-    const postIds = safePosts.map(post => post.id);
-    const attachmentsByPost = new Map(postIds.map(id => [id, []]));
-    for (const postId of postIds) {
-      const { results } = await env.TPI_DB.prepare(`
-        SELECT
-          id,
-          post_id AS postId,
-          url,
-          media_key AS key,
-          name,
-          content_type AS contentType,
-          media_type AS mediaType,
-          sort_order AS sortOrder
-        FROM forum_post_attachments
-        WHERE post_id = ?
-        ORDER BY sort_order ASC, created_at ASC
-      `).bind(postId).all();
-      attachmentsByPost.set(postId, results || []);
-    }
-    return safePosts.map(post => ({ ...post, attachments: attachmentsByPost.get(post.id) || [] }));
-  } catch (error) {
-    return safePosts.map(post => ({ ...post, attachments: [] }));
-  }
+    const placeholders = ids.map(() => "?").join(",");
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT target_id AS targetId, reaction, COUNT(*) AS count
+      FROM community_reactions
+      WHERE target_type = ? AND target_id IN (${placeholders})
+      GROUP BY target_id, reaction
+    `).bind(targetType, ...ids).all();
+    (results || []).forEach(row => {
+      if (!isAllowedCommunityReaction(row.reaction)) return;
+      const current = summary.get(row.targetId) || {};
+      current[row.reaction] = Number(row.count || 0);
+      summary.set(row.targetId, current);
+    });
+  } catch (error) { /* leave empty summaries */ }
+  return summary;
 }
 
-const FORUM_REACTIONS = new Set(["like", "love", "care", "haha", "wow", "sad", "angry"]);
-const ARTICLE_REACTIONS = new Set(["like", "love"]);
-
-function isAllowedForumReaction(value) {
-  return FORUM_REACTIONS.has(String(value || "").toLowerCase());
-}
-
-function isAllowedArticleReaction(value) {
-  return ARTICLE_REACTIONS.has(String(value || "").toLowerCase());
-}
-
-async function attachForumPostReactions(env, posts, contributorId) {
-  const safePosts = posts || [];
-  if (!safePosts.length) return safePosts;
+async function getUserCommunityReactions(env, targetType, ids, contributorId) {
+  const userReactions = new Map(ids.map(id => [id, null]));
+  if (!contributorId || !ids.length) return userReactions;
   try {
-    const withReactions = [];
-    for (const post of safePosts) {
-      const reactionCounts = await getForumReactionSummary(env, post.id);
-      let userReaction = null;
-      if (contributorId) {
-        const row = await env.TPI_DB.prepare(`
-          SELECT reaction
-          FROM forum_reactions
-          WHERE post_id = ? AND contributor_id = ?
-          LIMIT 1
-        `).bind(post.id, contributorId).first();
-        userReaction = row?.reaction || null;
-      }
-      withReactions.push({ ...post, reactionCounts, userReaction });
-    }
-    return withReactions;
-  } catch (error) {
-    return safePosts.map(post => ({ ...post, reactionCounts: {}, userReaction: null }));
-  }
+    const placeholders = ids.map(() => "?").join(",");
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT target_id AS targetId, reaction
+      FROM community_reactions
+      WHERE target_type = ? AND target_id IN (${placeholders}) AND contributor_id = ?
+    `).bind(targetType, ...ids, contributorId).all();
+    (results || []).forEach(row => userReactions.set(row.targetId, row.reaction || null));
+  } catch (error) { /* leave nulls */ }
+  return userReactions;
 }
 
-async function getForumReactionSummary(env, postId) {
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT reaction, COUNT(*) AS count
-    FROM forum_reactions
-    WHERE post_id = ?
-    GROUP BY reaction
-  `).bind(postId).all();
-  return Object.fromEntries((results || [])
-    .filter(row => isAllowedForumReaction(row.reaction))
-    .map(row => [row.reaction, Number(row.count || 0)]));
+async function attachCommunityReactions(env, items, targetType, contributorId) {
+  const safeItems = items || [];
+  if (!safeItems.length) return safeItems;
+  const ids = safeItems.map(item => item.id);
+  const [summaries, mine] = await Promise.all([
+    getCommunityReactionSummaries(env, targetType, ids),
+    getUserCommunityReactions(env, targetType, ids, contributorId)
+  ]);
+  safeItems.forEach(item => {
+    item.reactionCounts = summaries.get(item.id) || {};
+    item.userReaction = mine.get(item.id) || null;
+  });
+  return safeItems;
 }
 
-async function getArticleReactionSummary(env, pageId) {
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT reaction, COUNT(*) AS count
-    FROM article_reactions
-    WHERE page_id = ?
-    GROUP BY reaction
-  `).bind(pageId).all();
-  return Object.fromEntries((results || [])
-    .filter(row => isAllowedArticleReaction(row.reaction))
-    .map(row => [row.reaction, Number(row.count || 0)]));
-}
-
-function sanitizeForumAttachments(value) {
+function sanitizeCommunityAttachments(value) {
   const attachments = Array.isArray(value) ? value : [];
   const cleaned = attachments.map((item, index) => {
     const contentType = clean(item.contentType);
@@ -4129,21 +4062,21 @@ function sanitizeForumAttachments(value) {
   const images = cleaned.filter(item => item.mediaType === "image");
   const videos = cleaned.filter(item => item.mediaType === "video");
   const links = cleaned.filter(item => item.mediaType === "link");
-  if (images.length > 10) throw new Error("Forum posts can include up to 10 images.");
-  if (videos.length > 2) throw new Error("Forum posts can include up to 2 videos.");
-  if (links.length > 5) throw new Error("Forum posts can include up to 5 links.");
+  if (images.length > 10) throw new Error("Community posts can include up to 10 images.");
+  if (videos.length > 2) throw new Error("Community posts can include up to 2 videos.");
+  if (links.length > 5) throw new Error("Community posts can include up to 5 links.");
   return cleaned;
 }
 
-async function insertForumAttachments(env, postId, attachments) {
+async function insertCommunityAttachments(env, targetId, targetType, attachments) {
   if (!attachments.length) return;
   try {
     await env.TPI_DB.batch(attachments.map(item => env.TPI_DB.prepare(`
-      INSERT INTO forum_post_attachments (id, post_id, url, media_key, name, content_type, media_type, sort_order)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(crypto.randomUUID(), postId, item.url, item.key, item.name, item.contentType, item.mediaType, item.sortOrder)));
+      INSERT INTO community_attachments (id, target_type, target_id, url, media_key, name, content_type, media_type, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(crypto.randomUUID(), targetType, targetId, item.url, item.key, item.name, item.contentType, item.mediaType, item.sortOrder)));
   } catch (error) {
-    throw new Error("Forum attachment table is not ready yet. Apply migrations/0008_forum_post_attachments.sql in Cloudflare D1.");
+    throw new Error("community_attachments is not ready yet. Apply migrations 0032 and 0033 in Cloudflare D1.");
   }
 }
 

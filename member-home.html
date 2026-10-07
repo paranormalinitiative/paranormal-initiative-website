@@ -381,8 +381,9 @@
         /* Featured Content — latest from the TPI community (rail widget).
            Blocks mirror the ParaNews Spotlight .rail-feature card: media
            (real article image) on top, body with title + meta below. The
-           three not-yet-built areas (ParaTube video slot, Reels, Forum,
-           Live) render as compact icon blocks until those pages complete. */
+           three not-yet-built areas (ParaTube video slot, Reels, Community
+           Feed block, Live) render as compact icon blocks until those pages
+           complete. */
         .rail-fc-block {
             display: block;
             text-decoration: none;
@@ -1826,6 +1827,150 @@
         .member-identity-block {
             box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 5%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 7%, transparent);
         }
+
+        /* ===== INLINE FEED COMMENTS (Community Feed discussion) ===== */
+        .feed-comments {
+            margin-top: 10px;
+            padding-top: 12px;
+            border-top: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+        }
+        .feed-comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .feed-comment {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .feed-comment-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .feed-comment-initial {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #061018;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .feed-comment-main {
+            flex: 1;
+            min-width: 0;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 8px 12px;
+        }
+        .feed-comment-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .feed-comment-date {
+            color: #8aa0b6;
+            font-size: 11px;
+        }
+        .feed-comment-delete {
+            margin-left: auto;
+            border: none;
+            background: transparent;
+            color: #8aa0b6;
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 999px;
+        }
+        .feed-comment-delete:hover {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+        .feed-comment-body {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #c7d5e2;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .feed-comment-actions {
+            margin-top: 6px;
+            display: flex;
+            gap: 10px;
+        }
+        .feed-comment-like {
+            border: none;
+            background: transparent;
+            color: #8aa0b6;
+            font: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 2px 0;
+        }
+        .feed-comment-like.is-liked {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .feed-comment-empty,
+        .feed-comments-empty {
+            color: #8aa0b6;
+            font-size: 12px;
+            padding: 6px 0;
+        }
+        .feed-comment-form {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            margin-top: 12px;
+        }
+        .feed-comment-input {
+            flex: 1;
+            min-height: 38px;
+            padding: 9px 14px;
+            color: #c7d5e2;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 999px;
+            font: inherit;
+            font-size: 13px;
+            outline: none;
+            resize: none;
+        }
+        .feed-comment-input:focus {
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+        }
+        .feed-comment-submit {
+            min-height: 38px;
+            padding: 8px 18px;
+            color: #061018;
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 999px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .feed-comment-submit:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .feed-like-btn.is-liked {
+            color: var(--accent);
+            font-weight: 800;
+        }
     </style>
 </head>
 <body>
@@ -1997,9 +2142,9 @@
                             <span class="rail-fc-name">TPI Reels</span>
                             <span class="rail-fc-desc">Short clips, EVP evidence, and field tips.</span>
                         </a>
-                        <a class="rail-fc-block rail-fc-iconblock" href="community-forum.html">
+                        <a class="rail-fc-block rail-fc-iconblock" href="member-home.html?member=1">
                             <span class="rail-fc-icon">💬</span>
-                            <span class="rail-fc-name">Community Forum</span>
+                            <span class="rail-fc-name">Community Feed</span>
                             <span class="rail-fc-desc">Discussions with fellow investigators.</span>
                         </a>
                         <a class="rail-fc-block rail-fc-iconblock" href="live-video.html">
@@ -2046,7 +2191,7 @@
                 <section class="rail-card" data-rail-discussions>
                     <div class="rail-card-head">
                         <h4>Active Discussions</h4>
-                        <a class="rail-card-link" href="community-forum.html">Forum</a>
+                        <a class="rail-card-link" href="member-home.html?member=1">Feed</a>
                     </div>
                     <div data-discussions-body>
                         <p class="rail-loading">Loading…</p>
@@ -2068,7 +2213,7 @@
     var feedOffset = 0;
     var activeUser = null;
     var profileUser = null;
-    var forumCategories = [];
+    var communityCategories = [];
     var currentTab = "activity";
     var viewingOwnProfile = true;
 
@@ -2132,7 +2277,7 @@
 
         if (isOwn) {
             renderComposerAvatar();
-            await loadForumCategories();
+            await loadCommunityCategories();
             setupComposer();
         } else {
             var composerEl = document.querySelector("[data-member-composer]");
@@ -2486,7 +2631,7 @@
                 var avatar = m.authorPhotoUrl
                     ? '<img class="rail-member-avatar" src="' + escapeAttr(m.authorPhotoUrl) + '" alt="' + escapeAttr(m.authorName) + '">'
                     : '<div class="rail-member-initial" style="border-color:' + escapeAttr(m.authorChatColor || "var(--accent)") + ';background:' + escapeAttr(m.authorChatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
-                var sub = m.type === "article" ? "Published content" : (m.categoryTitle || "Forum post");
+                var sub = m.type === "article" ? "Published content" : (m.categoryTitle || "Community post");
                 return '<a class="rail-member" href="member-home.html?username=' + encodeURIComponent(m.authorUsername) + '">' +
                     avatar +
                     '<div style="min-width:0;">' +
@@ -2503,18 +2648,18 @@
     function loadRailDiscussions() {
         var body = document.querySelector("[data-discussions-body]");
         if (!body) return;
-        window.TPIApi.forumIndex().then(function(data) {
-            var topics = (data.topics || []).slice(0, 5);
-            if (!topics.length) {
-                body.innerHTML = '<p class="rail-empty">No discussions yet. <a href="community-forum.html" style="color:var(--accent);">Start one</a>.</p>';
+        window.TPIApi.communityPosts(5, 0).then(function(data) {
+            var posts = (data.posts || []).slice(0, 5);
+            if (!posts.length) {
+                body.innerHTML = '<p class="rail-empty">No discussions yet. <a href="member-home.html?member=1" style="color:var(--accent);">Start one</a>.</p>';
                 return;
             }
-            body.innerHTML = topics.map(function(t, i) {
-                var href = "community-forum.html#topic=" + encodeURIComponent(t.id);
+            body.innerHTML = posts.map(function(t, i) {
+                var href = "member-home.html?member=1#post-" + encodeURIComponent(t.postId || t.id);
                 return '<a class="rail-topic" href="' + escapeAttr(href) + '">' +
                     '<span class="rail-topic-rank">' + (i + 1) + '</span>' +
                     '<p class="rail-topic-title">' + escapeHtml(t.title || "Untitled") + '</p>' +
-                    '<span class="rail-topic-count">' + Number(t.replyCount || 0) + '</span>' +
+                    '<span class="rail-topic-count">' + Number(t.commentCount || 0) + '</span>' +
                 '</a>';
             }).join("");
         }).catch(function() {
@@ -2605,12 +2750,12 @@
         // This function is kept for any future page-specific profile link logic
     }
 
-    async function loadForumCategories() {
+    async function loadCommunityCategories() {
         try {
-            var data = await window.TPIApi.forumIndex();
-            forumCategories = data.categories || [];
+            var data = await window.TPIApi.communityCategories();
+            communityCategories = data.categories || [];
         } catch (e) {
-            forumCategories = [];
+            communityCategories = [];
         }
         renderCategoryOptions();
     }
@@ -2618,7 +2763,7 @@
     function renderCategoryOptions() {
         if (!composerCategory) return;
         var options = '<option value="general">General Discussion</option>';
-        forumCategories.forEach(function(cat) {
+        communityCategories.forEach(function(cat) {
             if (cat.id !== "general") {
                 options += '<option value="' + escapeAttr(cat.id) + '">' + escapeHtml(cat.title) + '</option>';
             }
@@ -2821,7 +2966,7 @@
             if (hasMedia) {
                 for (var i = 0; i < pendingAttachments.length; i++) {
                     composerStatus.textContent = "Uploading " + (i + 1) + " of " + pendingAttachments.length + "...";
-                    var result = await window.TPIApi.uploadForumMedia(pendingAttachments[i].file);
+                    var result = await window.TPIApi.uploadCommunityMedia(pendingAttachments[i].file);
                     uploadedAttachments.push({
                         url: result.url,
                         key: result.key,
@@ -2832,7 +2977,7 @@
                 }
             }
 
-            await window.TPIApi.createForumTopic({
+            await window.TPIApi.createCommunityPost({
                 categoryId: categoryId,
                 title: title,
                 body: body || title,
@@ -2887,7 +3032,7 @@
                 loadMoreWrap.hidden = true;
             } else if (viewingOwnProfile) {
                 // Merged Your Feed: the HOME feed is the community feed.
-                // Activity = everything; Posts = forum posts only.
+                // Activity = everything; Posts = community posts only.
                 var items = [];
                 var allFetched = 0;
                 var hasMore = true;
@@ -2901,7 +3046,7 @@
                         items = allItems;
                         break;
                     }
-                    items = items.concat(allItems.filter(function(item) { return item.type === "forum_post"; }));
+                    items = items.concat(allItems.filter(function(item) { return item.type === "community_post"; }));
                     if (items.length >= FEED_LIMIT) break;
                 }
                 loadMoreWrap.hidden = !hasMore;
@@ -2951,6 +3096,7 @@
             feedContainer.innerHTML = html;
         }
         setupFeedPostTools();
+        setupCommentForms();
         hydrateLinkPreviews(items);
     }
 
@@ -2983,43 +3129,44 @@
     }
 
     function renderFeedCard(item) {
-        if (item.type === "forum_post") return renderForumCard(item);
+        if (item.type === "community_post") return renderCommunityCard(item);
         if (item.type === "article") return renderArticleCard(item);
         if (item.type === "video") return renderVideoCard(item);
         return "";
     }
 
-    function renderForumCard(item) {
+    function renderCommunityCard(item) {
         var avatar = item.authorPhotoUrl
             ? '<img class="feed-card-avatar" src="' + escapeAttr(item.authorPhotoUrl) + '" alt="' + escapeAttr(item.authorName || "Member") + '">'
             : '<div class="feed-card-avatar-initial" style="border-color:' + escapeAttr(item.authorChatColor || 'var(--accent)') + ';background:' + escapeAttr(item.authorChatColor || 'var(--accent)') + '">' + escapeHtml((item.authorName || "M").charAt(0).toUpperCase()) + '</div>';
         var categoryBadge = item.categoryTitle ? '<span class="feed-card-badge badge-category">' + escapeHtml(item.categoryTitle) + '</span>' : "";
-        var replyCount = Number(item.replyCount || 0);
+        var commentCount = Number(item.commentCount || item.replyCount || 0);
         var reactionTotal = 0;
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
         }
-        var topicUrl = window.preserveMemberMode ? window.preserveMemberMode("community-forum.html#topic=" + encodeURIComponent(item.topicId || "")) : "community-forum.html#topic=" + encodeURIComponent(item.topicId || "");
+        var postUrl = window.preserveMemberMode ? window.preserveMemberMode("member-home.html?member=1#post-" + encodeURIComponent(item.postId || "")) : "member-home.html?member=1#post-" + encodeURIComponent(item.postId || "");
         var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
         var previewText = escapeHtml(item.body || "").substring(0, 400);
         if ((item.body || "").length > 400) previewText += "...";
 
         var attachmentsHtml = renderFeedAttachments(item.attachments);
         var linksHtml = renderFeedLinks(item.attachments);
+        var liked = item.userReaction ? " is-liked" : "";
 
         // Edit / Delete: only on the signed-in member's own posts.
         var isOwn = currentUsername && item.authorUsername === currentUsername;
         var toolsHtml = isOwn
             ? '<div class="feed-post-tools">' +
-                '<button class="feed-post-menu-btn" type="button" data-post-menu="' + escapeAttr(item.topicId) + '" title="Post options" aria-haspopup="true" aria-expanded="false">&#8943;</button>' +
-                '<div class="feed-post-menu" data-post-menu-panel="' + escapeAttr(item.topicId) + '" hidden>' +
-                    '<button type="button" data-post-action="edit" data-topic-id="' + escapeAttr(item.topicId) + '">&#9998; Edit Post</button>' +
-                    '<button type="button" data-post-action="delete" data-topic-id="' + escapeAttr(item.topicId) + '">&#128465; Delete Post</button>' +
+                '<button class="feed-post-menu-btn" type="button" data-post-menu="' + escapeAttr(item.postId) + '" title="Post options" aria-haspopup="true" aria-expanded="false">&#8943;</button>' +
+                '<div class="feed-post-menu" data-post-menu-panel="' + escapeAttr(item.postId) + '" hidden>' +
+                    '<button type="button" data-post-action="edit" data-post-id="' + escapeAttr(item.postId) + '">&#9998; Edit Post</button>' +
+                    '<button type="button" data-post-action="delete" data-post-id="' + escapeAttr(item.postId) + '">&#128465; Delete Post</button>' +
                 '</div>' +
             '</div>'
             : "";
 
-        return '<article class="feed-card" data-feed-type="forum" data-topic-id="' + escapeAttr(item.topicId) + '">' +
+        return '<article class="feed-card" data-feed-type="community" data-post-id="' + escapeAttr(item.postId) + '">' +
             '<div class="feed-card-header">' +
                 avatar +
                 '<div class="feed-card-meta">' +
@@ -3029,17 +3176,18 @@
                 categoryBadge +
                 toolsHtml +
             '</div>' +
-            '<div class="feed-card-body-wrap" data-body-wrap="' + escapeAttr(item.topicId) + '">' +
+            '<div class="feed-card-body-wrap" data-body-wrap="' + escapeAttr(item.postId) + '">' +
                 (previewText ? '<div class="feed-card-body">' + previewText + '</div>' : "") +
             '</div>' +
             attachmentsHtml +
             linksHtml +
-            '<div data-link-preview-slot="' + escapeAttr(item.topicId) + '"></div>' +
+            '<div data-link-preview-slot="' + escapeAttr(item.postId) + '"></div>' +
             '<div class="feed-card-actions">' +
-                '<a class="feed-action-btn" href="' + escapeAttr(topicUrl) + '">Open Discussion' + (replyCount > 0 ? ' <span class="action-count">' + replyCount + '</span>' : '') + '</a>' +
-                (reactionTotal > 0 ? '<span class="feed-action-btn" style="cursor:default;">&#128077; <span class="action-count">' + reactionTotal + '</span></span>' : "") +
-                '<button class="feed-action-btn" type="button" data-share-url="' + escapeAttr(topicUrl) + '" data-share-title="' + escapeAttr(item.topicTitle || "") + '">Share</button>' +
+                '<button class="feed-action-btn" type="button" data-comments-toggle>💬 Comment' + (commentCount > 0 ? ' <span class="action-count">' + commentCount + '</span>' : '') + '</button>' +
+                '<button class="feed-action-btn feed-like-btn' + liked + '" type="button" data-post-like title="Like">&#128077;' + (reactionTotal > 0 ? ' <span class="action-count">' + reactionTotal + '</span>' : '') + '</button>' +
+                '<button class="feed-action-btn" type="button" data-share-url="' + escapeAttr(postUrl) + '" data-share-title="' + escapeAttr(item.title || "") + '">Share</button>' +
             '</div>' +
+            '<div class="feed-comments" data-comments-panel hidden></div>' +
         '</article>';
     }
 
@@ -3049,10 +3197,10 @@
     // description preview under the post body.
     function hydrateLinkPreviews(items) {
         items.forEach(function(item) {
-            if (item.type !== "forum_post") return;
+            if (item.type !== "community_post") return;
             var links = (item.attachments || []).filter(function(a) { return (a.mediaType || "") === "link" && /^https?:\/\//i.test(a.url || ""); });
             if (!links.length) return;
-            var slot = document.querySelector('[data-link-preview-slot="' + cssEscape(item.topicId || "") + '"]');
+            var slot = document.querySelector('[data-link-preview-slot="' + cssEscape(item.postId || "") + '"]');
             if (!slot) return;
             var url = links[0].url;
             if (linkPreviewCache[url]) {
@@ -3115,8 +3263,8 @@
             }
             var menuBtn = e.target.closest("[data-post-menu]");
             if (menuBtn) {
-                var topicId = menuBtn.getAttribute("data-post-menu");
-                var panel = feedContainer.querySelector('[data-post-menu-panel="' + cssEscape(topicId) + '"]');
+                var menuPostId = menuBtn.getAttribute("data-post-menu");
+                var panel = feedContainer.querySelector('[data-post-menu-panel="' + cssEscape(menuPostId) + '"]');
                 if (panel) {
                     var isOpen = !panel.hidden;
                     feedContainer.querySelectorAll("[data-post-menu-panel]").forEach(function(p) { p.hidden = true; });
@@ -3129,12 +3277,46 @@
             if (actionBtn) {
                 e.preventDefault();
                 var card = actionBtn.closest(".feed-card");
-                var id = actionBtn.getAttribute("data-topic-id");
+                var id = actionBtn.getAttribute("data-post-id");
                 if (actionBtn.getAttribute("data-post-action") === "edit") {
                     openPostEditor(card, id);
                 } else {
                     deleteFeedPost(card, id);
                 }
+                return;
+            }
+            // Inline comments: toggle panel / submit handled by form listener below.
+            var commentsToggle = e.target.closest("[data-comments-toggle]");
+            if (commentsToggle) {
+                e.preventDefault();
+                var commentsCard = commentsToggle.closest(".feed-card");
+                if (commentsCard) toggleCommentsPanel(commentsCard);
+                return;
+            }
+            var postLikeBtn = e.target.closest("[data-post-like]");
+            if (postLikeBtn) {
+                e.preventDefault();
+                var likeCard = postLikeBtn.closest(".feed-card");
+                var likePostId = likeCard && likeCard.getAttribute("data-post-id");
+                if (likePostId) togglePostLike(likeCard, likePostId);
+                return;
+            }
+            var commentLikeBtn = e.target.closest("[data-comment-reaction]");
+            if (commentLikeBtn) {
+                e.preventDefault();
+                var commentCard = commentLikeBtn.closest(".feed-card");
+                var commentId = commentLikeBtn.getAttribute("data-comment-reaction");
+                var commentPostId = commentCard && commentCard.getAttribute("data-post-id");
+                if (commentPostId && commentId) likeComment(commentCard, commentPostId, commentId);
+                return;
+            }
+            var commentDeleteBtn = e.target.closest("[data-comment-delete]");
+            if (commentDeleteBtn) {
+                e.preventDefault();
+                var delCard = commentDeleteBtn.closest(".feed-card");
+                var delCommentId = commentDeleteBtn.getAttribute("data-comment-delete");
+                var delPostId = delCard && delCard.getAttribute("data-post-id");
+                if (delPostId && delCommentId) deleteComment(delCard, delPostId, delCommentId);
                 return;
             }
             if (e.target.closest("[data-edit-save]")) {
@@ -3218,7 +3400,7 @@
         document.body.style.overflow = "";
     }
 
-    function openPostEditor(card, topicId) {
+    function openPostEditor(card, postId) {
         if (!card) return;
         var panel = card.querySelector("[data-post-menu-panel]");
         if (panel) panel.hidden = true;
@@ -3234,7 +3416,7 @@
                 '<textarea class="feed-edit-textarea" data-edit-textarea spellcheck="true">' + escapeHtml(currentText) + '</textarea>' +
                 '<div class="feed-edit-actions">' +
                     '<button type="button" class="feed-edit-cancel" data-edit-cancel>Cancel</button>' +
-                    '<button type="button" class="feed-edit-save" data-edit-save data-topic-id="' + escapeAttr(topicId) + '">Save Changes</button>' +
+                    '<button type="button" class="feed-edit-save" data-edit-save data-post-id="' + escapeAttr(postId) + '">Save Changes</button>' +
                 '</div>' +
             '</div>';
         var ta = bodyWrap.querySelector("[data-edit-textarea]");
@@ -3251,14 +3433,14 @@
 
     async function savePostEdit(card) {
         if (!card) return;
-        var topicId = card.getAttribute("data-topic-id");
+        var postId = card.getAttribute("data-post-id");
         var ta = card.querySelector("[data-edit-textarea]");
         var saveBtn = card.querySelector("[data-edit-save]");
-        if (!topicId || !ta || !ta.value.trim()) return;
+        if (!postId || !ta || !ta.value.trim()) return;
         saveBtn.disabled = true;
         saveBtn.textContent = "Saving...";
         try {
-            var result = await window.TPIApi.updateForumTopic(topicId, { body: ta.value.trim() });
+            var result = await window.TPIApi.updateCommunityPost(postId, { body: ta.value.trim() });
             var bodyWrap = card.querySelector("[data-body-wrap]");
             var newText = escapeHtml(result.body || ta.value.trim());
             if (newText.length > 400) newText = newText.substring(0, 400) + "...";
@@ -3276,11 +3458,11 @@
         }
     }
 
-    async function deleteFeedPost(card, topicId) {
-        if (!topicId) return;
-        if (!window.confirm("Delete this post? This removes it from the feed and the forum.")) return;
+    async function deleteFeedPost(card, postId) {
+        if (!postId) return;
+        if (!window.confirm("Delete this post? This removes it from the community feed.")) return;
         try {
-            await window.TPIApi.deleteOwnForumTopic(topicId);
+            await window.TPIApi.deleteOwnCommunityPost(postId);
             if (card) {
                 card.style.transition = "opacity 0.3s";
                 card.style.opacity = "0";
@@ -3289,6 +3471,130 @@
         } catch (e) {
             composerStatus.textContent = e.message || "Post could not be deleted.";
         }
+    }
+
+    // ===== INLINE COMMENTS + REACTIONS (Community Feed) =====
+    // Discussion now lives directly on the feed card (comments/replies stored
+    // in the dedicated community model). The old forum thread view is retired.
+    function findCommentsPanel(card) {
+        return card ? card.querySelector("[data-comments-panel]") : null;
+    }
+
+    function renderCommentsPanelHtml(comments) {
+        var items = (comments || []).map(function(c) {
+            var isOwn = currentUsername && c.authorUsername === currentUsername;
+            var likes = 0;
+            Object.keys(c.reactionCounts || {}).forEach(function(k) { likes += Number(c.reactionCounts[k] || 0); });
+            var avatar = c.authorPhotoUrl
+                ? '<img class="feed-comment-avatar" src="' + escapeAttr(c.authorPhotoUrl) + '" alt="">'
+                : '<span class="feed-comment-initial">' + escapeHtml((c.authorName || "M").charAt(0).toUpperCase()) + '</span>';
+            return '<div class="feed-comment" data-comment-id="' + escapeAttr(c.id) + '">' +
+                avatar +
+                '<div class="feed-comment-main">' +
+                    '<div class="feed-comment-head"><strong>' + escapeHtml(c.authorName || "Member") + '</strong>' +
+                        '<span class="feed-comment-date">' + escapeHtml(formatDate(c.createdAt)) + (c.editedAt ? ' &middot; Edited' : '') + '</span>' +
+                        (isOwn ? '<button type="button" class="feed-comment-delete" data-comment-delete="' + escapeAttr(c.id) + '" title="Delete comment" aria-label="Delete comment">&times;</button>' : "") +
+                    '</div>' +
+                    '<p class="feed-comment-body">' + escapeHtml(c.body || "") + '</p>' +
+                    '<div class="feed-comment-actions">' +
+                        '<button type="button" class="feed-comment-like' + (c.userReaction ? ' is-liked' : '') + '" data-comment-reaction="' + escapeAttr(c.id) + '">&#128077; ' + (c.userReaction ? "Liked" : "Like") + (likes ? ' <span class="action-count">' + likes + '</span>' : "") + '</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join("");
+        return '<div class="feed-comments-list">' + (items || '<p class="feed-comments-empty">No comments yet. Start the conversation.</p>') + '</div>' +
+            '<form class="feed-comment-form" data-comment-form>' +
+                '<textarea class="feed-comment-input" data-comment-input rows="2" maxlength="6000" placeholder="Write a comment..." spellcheck="true"></textarea>' +
+                '<button type="submit" class="feed-comment-submit">Reply</button>' +
+            '</form>';
+    }
+
+    async function loadComments(card) {
+        var panel = findCommentsPanel(card);
+        var postId = card && card.getAttribute("data-post-id");
+        if (!panel || !postId) return;
+        panel.innerHTML = '<p class="feed-comments-empty">Loading comments...</p>';
+        try {
+            var data = await window.TPIApi.communityPostComments(postId);
+            panel.innerHTML = renderCommentsPanelHtml(data.comments || []);
+            panel.dataset.loaded = "1";
+            var ta = panel.querySelector("[data-comment-input]");
+            if (ta) ta.focus();
+        } catch (e) {
+            panel.innerHTML = '<p class="feed-comments-empty">Could not load comments right now.</p>';
+        }
+    }
+
+    async function toggleCommentsPanel(card) {
+        var panel = findCommentsPanel(card);
+        if (!panel) return;
+        if (!panel.hidden) { panel.hidden = true; return; }
+        panel.hidden = false;
+        if (!panel.dataset.loaded) await loadComments(card);
+    }
+
+    async function togglePostLike(card, postId) {
+        var btn = card.querySelector("[data-post-like]");
+        if (!btn) return;
+        try {
+            var result = await window.TPIApi.setCommunityReaction("post", postId, "like");
+            var total = 0;
+            Object.keys(result.reactionCounts || {}).forEach(function(k) { total += Number(result.reactionCounts[k] || 0); });
+            btn.classList.toggle("is-liked", Boolean(result.userReaction));
+            btn.innerHTML = '&#128077;' + (total > 0 ? ' <span class="action-count">' + total + '</span>' : '');
+        } catch (e) {
+            composerStatus.textContent = e.message || "Could not save your reaction.";
+        }
+    }
+
+    async function likeComment(card, postId, commentId) {
+        try {
+            await window.TPIApi.setCommunityReaction("comment", commentId, "like");
+            await loadComments(card);
+        } catch (e) {
+            composerStatus.textContent = e.message || "Could not save your reaction.";
+        }
+    }
+
+    async function deleteComment(card, postId, commentId) {
+        if (!window.confirm("Delete this comment?")) return;
+        try {
+            await window.TPIApi.deleteCommunityComment(commentId);
+            await loadComments(card);
+        } catch (e) {
+            composerStatus.textContent = e.message || "Comment could not be deleted.";
+        }
+    }
+
+    function setupCommentForms() {
+        if (feedContainer.dataset.commentFormsBound) return;
+        feedContainer.dataset.commentFormsBound = "1";
+        feedContainer.addEventListener("submit", async function(e) {
+            var form = e.target.closest("[data-comment-form]");
+            if (!form) return;
+            e.preventDefault();
+            var card = form.closest(".feed-card");
+            var postId = card && card.getAttribute("data-post-id");
+            var ta = form.querySelector("[data-comment-input]");
+            if (!postId || !ta || !ta.value.trim()) return;
+            var btn = form.querySelector(".feed-comment-submit");
+            if (btn) btn.disabled = true;
+            try {
+                await window.TPIApi.createCommunityComment(postId, { body: ta.value.trim() });
+                await loadComments(card);
+                // Keep the comment count badge in the card actions fresh.
+                var panel = findCommentsPanel(card);
+                if (panel && !panel.hidden) {
+                    var list = panel.querySelector(".feed-comments-list");
+                    var count = list ? list.querySelectorAll(".feed-comment").length : 0;
+                    var toggle = card.querySelector("[data-comments-toggle]");
+                    if (toggle) toggle.innerHTML = '💬 Comment' + (count > 0 ? ' <span class="action-count">' + count + '</span>' : '');
+                }
+            } catch (err) {
+                composerStatus.textContent = err.message || "Comment could not be posted.";
+                if (btn) btn.disabled = false;
+            }
+        });
     }
 
     function renderFeedAttachments(attachments) {
