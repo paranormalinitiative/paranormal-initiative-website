@@ -207,3 +207,33 @@ Smallest gaps identified (for later phases, each a small change):
 plus new Education Center preservation article for the Glanz essay.
 
 --- END OF PHASE 1 MAP — no changes made; awaiting Phase 2 approval.
+
+---
+
+# ADDENDUM (dated 2026-10-06, post-Phase-1 architectural decision)
+
+The initial Phase 1 plan proposed retaining the Forum tables
+(forum_topics / forum_posts) beneath the Community Feed. Subsequent
+architectural review determined that the Forum should be FULLY RETIRED
+because the Community Feed is the sole intended community discussion
+system. Therefore the implementation strategy was revised to:
+
+1. Migrate all community content into a dedicated community_* data model
+   (community_categories / community_posts / community_comments /
+   community_reactions / community_attachments) with original IDs,
+   authors, timestamps, states, reactions and attachments preserved
+   (migrations 0032-0033; see FORUM_DEPENDENCY_AUDIT.md).
+2. Switch all Feed reads/writes and admin/pulse/notification code to the
+   new model, remove every /api/forum/* route, and retire the
+   community-forum.html UI.
+3. Preserve the one unique educational Forum item — Steve Glanz's "ITC
+   Ethics: Curiosity Must Be Matched by Responsibility" — as a canonical
+   Education Center article (Ethics topic, Research Paper) inside
+   migration 0033.
+4. Drop the six Forum tables via migration 0034 only after the
+   migration reconciled (16/16, 5/5, 2/2, 2/2, 4/4) and the deployed
+   Feed was verified independent of Forum storage.
+
+Sections 7 and 12 above describe the state as found in Phase 1 and are
+preserved for historical accuracy; they no longer describe the final
+architecture.
