@@ -157,6 +157,34 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/events/submit") return handleCommunityEventSubmit(request, env);
     if (request.method === "POST" && path.match(/^\/events\/[^/]+\/rsvp$/)) return handleEventRsvp(path, request, env);
 
+    // ============================================================
+    // PARANORMAL TEAMS API
+    // ============================================================
+
+    // Public endpoints
+    if (request.method === "GET" && path === "/teams/counts") return handleTeamCounts(env);
+    if (request.method === "GET" && path.match(/^\/teams\/[^/]+$/) && !path.includes("/counts")) return handleGetTeam(path, env);
+    if (request.method === "GET" && path === "/teams") return handleListTeams(request, env);
+    if (request.method === "POST" && path === "/teams") return handleSubmitTeam(request, env);
+
+    // Team links
+    if (request.method === "GET" && path.match(/^\/teams\/[^/]+\/links$/)) return handleGetTeamLinks(path, env);
+    if (request.method === "POST" && path.match(/^\/teams\/[^/]+\/links$/)) return requireMember(request, env, user => handleAddTeamLink(path, request, env, user));
+
+    // Team verification
+    if (request.method === "GET" && path.match(/^\/teams\/[^/]+\/verification$/)) return handleGetTeamVerification(path, env);
+    if (request.method === "POST" && path.match(/^\/teams\/[^/]+\/verification$/)) return requireAdmin(request, env, user => handleAddTeamVerification(path, request, env, user));
+
+    // Team claims
+    if (request.method === "POST" && path.match(/^\/teams\/[^/]+\/claim$/)) return requireMember(request, env, user => handleSubmitClaim(path, request, env, user));
+
+    // Admin endpoints
+    if (request.method === "GET" && path === "/admin/teams") return requireAdmin(request, env, user => handleAdminListTeams(request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/admin\/teams\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminDeleteTeam(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/approve$/)) return requireAdmin(request, env, user => handleAdminApproveTeam(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/reject$/)) return requireAdmin(request, env, user => handleAdminRejectTeam(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetTeamStatus(path, request, env, user));
+
     return json({ error: "Not found." }, 404);
   } catch (error) {
     return json({ error: error.message || "Request failed." }, 500);
@@ -4319,6 +4347,438 @@ function json(body, status = 200, headers = {}) {
       ...headers
     }
   });
+}
+
+// ============================================================
+// PARANORMAL TEAMS API HANDLERS
+// ============================================================
+
+function teamRowToPublic(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    name: row.name,
+    acronym: row.acronym,
+    scope: row.scope,
+    city: row.city,
+    state: row.state,
+    country: row.country,
+    zip: row.zip,
+    address: row.address,
+    contactName: row.contact_name,
+    phone: row.phone,
+    phoneAlt: row.phone_alt,
+    fax: row.fax,
+    email: row.email,
+    emailAlt: row.email_alt,
+    website: row.website,
+    facebook: row.facebook,
+    twitter: row.twitter,
+    youtube: row.youtube,
+    founder: row.founder,
+    yearFounded: row.year_founded,
+    members: row.members,
+    areasServed: row.areas_served,
+    specialties: row.specialties,
+    details: row.details,
+    additionalStates: row.additional_states ? JSON.parse(row.additional_states) : [],
+    createdAt: row.created_at,
+    recordType: row.record_type,
+    verificationStatus: row.verification_status
+  };
+}
+
+function teamRowToAdmin(row) {
+  if (!row) return null;
+  return {
+    ...teamRowToPublic(row),
+    status: row.status,
+    submitterName: row.submitter_name,
+    submitterEmail: row.submitter_email,
+    heardAbout: row.heard_about,
+    reviewedAt: row.reviewed_at,
+    reviewedBy: row.reviewed_by,
+    externalId: row.external_id,
+    externalSource: row.external_source,
+    importedAt: row.imported_at,
+    claimedAt: row.claimed_at,
+    claimedBy: row.claimed_by,
+    verifiedAt: row.verified_at,
+    lastVerifiedAt: row.last_verified_at
+  };
+}
+
+async function handleTeamCounts(env) {
+  const approved = await env.TPI_DB.prepare(
+    "SELECT scope, state, country, COUNT(*) as cnt FROM paranormal_teams WHERE status = 'approved' GROUP BY scope, state, country"
+  ).all();
+
+  const states = {};
+  const countries = {};
+
+  for (const row of (approved.results || [])) {
+    if (row.scope === "us" && row.state) {
+      states[row.state] = (states[row.state] || 0) + row.cnt;
+    } else if (row.scope === "international" && row.country) {
+      countries[row.country] = (countries[row.country] || 0) + row.cnt;
+    }
+  }
+
+  return json({ states, countries }, 200, { "Cache-Control": "public, max-age=300" });
+}
+
+async function handleGetTeam(path, env) {
+  const id = path.split("/").pop();
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const row = await env.TPI_DB.prepare(
+    "SELECT * FROM paranormal_teams WHERE id = ? AND status = 'approved'"
+  ).bind(id).first();
+
+  if (!row) return json({ error: "Team not found." }, 404);
+  return json({ team: teamRowToPublic(row) }, 200, { "Cache-Control": "public, max-age=300" });
+}
+
+async function handleListTeams(request, env) {
+  const url = new URL(request.url);
+  const state = clean(url.searchParams.get("state") || "");
+  const country = clean(url.searchParams.get("country") || "");
+  const q = clean(url.searchParams.get("q") || "");
+  const scope = clean(url.searchParams.get("scope") || "");
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "100"), 200);
+  const offset = parseInt(url.searchParams.get("offset") || "0");
+
+  let where = "status = 'approved'";
+  const binds = [];
+
+  if (scope === "us") {
+    where += " AND scope = 'us'";
+  } else if (scope === "international") {
+    where += " AND scope = 'international'";
+  }
+
+  if (state) {
+    where += " AND (state = ? OR additional_states LIKE ?)";
+    binds.push(state, `%${state}%`);
+  }
+
+  if (country) {
+    where += " AND country = ?";
+    binds.push(country);
+  }
+
+  if (q) {
+    where += " AND (name LIKE ? OR city LIKE ? OR specialties LIKE ? OR details LIKE ? OR contact_name LIKE ?)";
+    const like = `%${q}%`;
+    binds.push(like, like, like, like, like);
+  }
+
+  const countRow = await env.TPI_DB.prepare(
+    `SELECT COUNT(*) as total FROM paranormal_teams WHERE ${where}`
+  ).bind(...binds).first();
+
+  const rows = await env.TPI_DB.prepare(
+    `SELECT * FROM paranormal_teams WHERE ${where} ORDER BY name ASC LIMIT ? OFFSET ?`
+  ).bind(...binds, limit, offset).all();
+
+  return json({
+    teams: (rows.results || []).map(teamRowToPublic),
+    total: countRow?.total || 0,
+    limit,
+    offset
+  }, 200, { "Cache-Control": "public, max-age=60" });
+}
+
+async function handleSubmitTeam(request, env) {
+  const data = await readJson(request);
+
+  // Honeypot check
+  if (data.company_url) return json({ ok: true }, 200);
+
+  // Validate required fields
+  const name = clean(data.name);
+  const city = clean(data.city);
+  const email = clean(data.email);
+  const submitterName = clean(data.submitterName);
+  const submitterEmail = clean(data.submitterEmail);
+
+  if (!name || !city || !email || !submitterName || !submitterEmail) {
+    return json({ error: "Name, city, email, submitter name, and submitter email are required." }, 400);
+  }
+
+  if (!email.includes("@") || !submitterEmail.includes("@")) {
+    return json({ error: "Valid email addresses are required." }, 400);
+  }
+
+  const scope = data.scope === "international" ? "international" : "us";
+  if (scope === "us" && !clean(data.state)) {
+    return json({ error: "State is required for U.S. teams." }, 400);
+  }
+  if (scope === "international" && !clean(data.country)) {
+    return json({ error: "Country is required for international teams." }, 400);
+  }
+
+  // Rate limiting: check recent submissions from this IP
+  const ip = request.headers.get("CF-Connecting-IP") || "";
+  const recentCount = await env.TPI_DB.prepare(
+    "SELECT COUNT(*) as cnt FROM paranormal_teams WHERE submitted_ip = ? AND created_at > datetime('now', '-1 hour')"
+  ).bind(ip).first();
+
+  if ((recentCount?.cnt || 0) >= 5) {
+    return json({ error: "Too many submissions. Please try again later." }, 429);
+  }
+
+  const id = crypto.randomUUID();
+  const additionalStates = Array.isArray(data.additionalStates)
+    ? data.additionalStates.filter(s => s && s !== clean(data.state)).slice(0, 4)
+    : [];
+
+  await env.TPI_DB.prepare(`
+    INSERT INTO paranormal_teams (
+      id, status, scope, name, acronym, address, city, state, country, zip,
+      contact_name, phone, phone_alt, fax, email, email_alt, website,
+      facebook, twitter, youtube, founder, year_founded, members,
+      areas_served, specialties, details, additional_states,
+      submitter_name, submitter_email, heard_about, submitted_ip, record_type
+    ) VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'REGISTERED_TEAM')
+  `).bind(
+    id, scope, name, clean(data.acronym), clean(data.address), city,
+    clean(data.state), clean(data.country), clean(data.zip),
+    clean(data.contactName), clean(data.phone), clean(data.phoneAlt),
+    clean(data.fax), email, clean(data.emailAlt), clean(data.website),
+    clean(data.facebook), clean(data.twitter), clean(data.youtube),
+    clean(data.founder), clean(data.yearFounded), clean(data.members),
+    clean(data.areasServed), clean(data.specialties), clean(data.details),
+    additionalStates.length ? JSON.stringify(additionalStates) : null,
+    submitterName, submitterEmail, clean(data.heardAbout), ip
+  ).run();
+
+  // Send notification email to admin (best effort)
+  try {
+    const { sendTeamSubmissionNotification } = await import("../../lib/email.js");
+    await sendTeamSubmissionNotification(env, { name, city: city, submitterName, submitterEmail });
+  } catch (e) {
+    // Email notification is best-effort
+  }
+
+  return json({ ok: true, id }, 201);
+}
+
+async function handleGetTeamLinks(path, env) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const rows = await env.TPI_DB.prepare(
+    "SELECT * FROM organization_links WHERE team_id = ? ORDER BY platform, created_at"
+  ).bind(id).all();
+
+  return json({ links: rows.results || [] }, 200, { "Cache-Control": "public, max-age=300" });
+}
+
+async function handleAddTeamLink(path, request, env, user) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  // Verify team exists and user has permission
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  const isOwner = await env.TPI_DB.prepare(
+    "SELECT 1 FROM team_members WHERE team_id = ? AND contributor_id = ? AND role IN ('owner', 'admin')"
+  ).bind(id, user.id).first();
+
+  if (!isOwner && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "Not authorized to add links to this team." }, 403);
+  }
+
+  const data = await readJson(request);
+  const platform = clean(data.platform);
+  const url = clean(data.url);
+  const linkType = clean(data.linkType || "website");
+
+  if (!platform || !url) return json({ error: "Platform and URL are required." }, 400);
+
+  // Validate URL format
+  try {
+    new URL(url.startsWith("http") ? url : `https://${url}`);
+  } catch {
+    return json({ error: "Invalid URL format." }, 400);
+  }
+
+  const linkId = crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO organization_links (id, team_id, platform, url, link_type, discovery_source)
+    VALUES (?, ?, ?, ?, ?, 'manual')
+  `).bind(linkId, id, platform, url.startsWith("http") ? url : `https://${url}`, linkType).run();
+
+  return json({ ok: true, id: linkId }, 201);
+}
+
+async function handleGetTeamVerification(path, env) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const rows = await env.TPI_DB.prepare(
+    "SELECT * FROM team_verification_events WHERE team_id = ? ORDER BY created_at DESC"
+  ).bind(id).all();
+
+  return json({ events: rows.results || [] }, 200, { "Cache-Control": "public, max-age=300" });
+}
+
+async function handleAddTeamVerification(path, request, env, user) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  const data = await readJson(request);
+  const status = clean(data.status);
+  const validStatuses = ["ACTIVE", "POSSIBLY_ACTIVE", "UNABLE_TO_VERIFY", "APPEARS_DEFUNCT"];
+
+  if (!validStatuses.includes(status)) {
+    return json({ error: `Status must be one of: ${validStatuses.join(", ")}` }, 400);
+  }
+
+  await env.TPI_DB.prepare(`
+    INSERT INTO team_verification_events (team_id, status, evidence_url, evidence_type, evidence_description, last_apparent_activity, confidence, verifier, notes)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    id, status, clean(data.evidenceUrl), clean(data.evidenceType),
+    clean(data.evidenceDescription), clean(data.lastApparentActivity),
+    clean(data.confidence), user.username, clean(data.notes)
+  ).run();
+
+  // Update team verification status
+  await env.TPI_DB.prepare(
+    "UPDATE paranormal_teams SET verification_status = ?, last_verified_at = datetime('now') WHERE id = ?"
+  ).bind(status, id).run();
+
+  return json({ ok: true }, 201);
+}
+
+async function handleSubmitClaim(path, request, env, user) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  // Check if already claimed
+  if (team.claimed_by) return json({ error: "This team is already claimed." }, 400);
+
+  // Check for existing pending claim
+  const existingClaim = await env.TPI_DB.prepare(
+    "SELECT 1 FROM team_claims WHERE team_id = ? AND claimant_id = ? AND status = 'pending'"
+  ).bind(id, user.id).first();
+
+  if (existingClaim) return json({ error: "You already have a pending claim for this team." }, 400);
+
+  const data = await readJson(request);
+  const claimantName = clean(data.claimantName || user.display_name);
+  const claimantEmail = clean(data.claimantEmail || user.correspondence);
+  const claimantRole = clean(data.claimantRole);
+
+  if (!claimantName || !claimantEmail) {
+    return json({ error: "Claimant name and email are required." }, 400);
+  }
+
+  const claimId = crypto.randomUUID();
+  await env.TPI_DB.prepare(`
+    INSERT INTO team_claims (id, team_id, claimant_id, claimant_name, claimant_email, claimant_role, evidence_url, evidence_description)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    claimId, id, user.id, claimantName, claimantEmail, claimantRole,
+    clean(data.evidenceUrl), clean(data.evidenceDescription)
+  ).run();
+
+  return json({ ok: true, id: claimId }, 201);
+}
+
+async function handleAdminListTeams(request, env, user) {
+  const url = new URL(request.url);
+  const status = clean(url.searchParams.get("status") || "pending");
+  const limit = Math.min(parseInt(url.searchParams.get("limit") || "100"), 500);
+  const offset = parseInt(url.searchParams.get("offset") || "0");
+
+  const validStatuses = ["pending", "approved", "rejected"];
+  if (!validStatuses.includes(status)) {
+    return json({ error: `Status must be one of: ${validStatuses.join(", ")}` }, 400);
+  }
+
+  const rows = await env.TPI_DB.prepare(
+    "SELECT * FROM paranormal_teams WHERE status = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
+  ).bind(status, limit, offset).all();
+
+  return json({ teams: (rows.results || []).map(teamRowToAdmin) });
+}
+
+async function handleAdminDeleteTeam(path, env, user) {
+  const id = path.split("/").pop();
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  // Delete related records first
+  await env.TPI_DB.prepare("DELETE FROM organization_links WHERE team_id = ?").bind(id).run();
+  await env.TPI_DB.prepare("DELETE FROM team_verification_events WHERE team_id = ?").bind(id).run();
+  await env.TPI_DB.prepare("DELETE FROM team_claims WHERE team_id = ?").bind(id).run();
+  await env.TPI_DB.prepare("DELETE FROM team_members WHERE team_id = ?").bind(id).run();
+  await env.TPI_DB.prepare("DELETE FROM team_imports WHERE team_id = ?").bind(id).run();
+  await env.TPI_DB.prepare("DELETE FROM paranormal_teams WHERE id = ?").bind(id).run();
+
+  return json({ ok: true });
+}
+
+async function handleAdminApproveTeam(path, env, user) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  await env.TPI_DB.prepare(
+    "UPDATE paranormal_teams SET status = 'approved', reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
+  ).bind(user.username, id).run();
+
+  return json({ ok: true });
+}
+
+async function handleAdminRejectTeam(path, env, user) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  await env.TPI_DB.prepare(
+    "UPDATE paranormal_teams SET status = 'rejected', reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
+  ).bind(user.username, id).run();
+
+  return json({ ok: true });
+}
+
+async function handleAdminSetTeamStatus(path, request, env, user) {
+  const id = path.split("/").slice(-2)[0];
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const data = await readJson(request);
+  const status = clean(data.status);
+  const validStatuses = ["pending", "approved", "rejected"];
+
+  if (!validStatuses.includes(status)) {
+    return json({ error: `Status must be one of: ${validStatuses.join(", ")}` }, 400);
+  }
+
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  await env.TPI_DB.prepare(
+    "UPDATE paranormal_teams SET status = ?, reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
+  ).bind(status, user.username, id).run();
+
+  return json({ ok: true });
 }
 
 // ============================================================
