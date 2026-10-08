@@ -130,3 +130,18 @@ Clean — 0 modified/untracked files; HEAD == origin/main.
 3. News feed availability fluctuates (10/17 OK this run) — external feed reliability, monitored via run metadata.
 4. Provider `items_inserted` attribution is aggregate-only (pre-existing convention).
 5. Rumble remains NOT IMPLEMENTED and is the next required provider phase (Phase 2B), followed by YouTube.
+
+---
+
+## Addendum — Independent Re-Verification (2026-10-08 ~03:15 UTC)
+
+A second, independent read-only verification pass re-checked every section above against live production ~45 minutes after the original. **All checks passed; no source code was modified; no deploy was made.**
+
+- **Deployment:** `wrangler deployments status` re-confirmed `(100%) 405876a1-dfef-4edd-a063-b9f6bd129781` (2026-10-07T21:45:33Z). Next cron run (06:00 UTC) had not yet fired at verification time — the 00:00 UTC run remains the only post-deploy scheduled run, so rotation slots 2 and 0 are still verified by slot math + code reading rather than direct observation.
+- **Cloudflare limits:** re-confirmed against the current limits docs and the 2026-02-11 changelog: Free plan = **50 external subrequests/invocation**, **1,000 subrequests to Cloudflare services (D1/R2/KV)**. D1 logging does not consume the external budget; ~41 external fetches leave ~9 headroom.
+- **Scraper runs:** all six post-deploy `scraper_runs` rows re-read directly from production D1 and identical to sections 5–9 (events success 123/123; news partial 179 inserted, 7 feed-level errors; DM 8/16 queries; IA 2/4; Odysee 3/6; videos aggregate 48 inserted).
+- **Correction to §13/§14:** the events table holds **347 rows**, of which **303 are Eventbrite rows with 303 distinct external_ids** (zero upsert duplicates — confirmed) plus **44 legacy rows** from the retired pre-Phase-2A Meetup scraper (all `source='meetup'`, all NULL `external_id`, all created 2026-10-05 18:47:21, before this deployment). The original report's "303 total" counted only Eventbrite rows. The 44 legacy rows are untouched by the prune because the prune is deliberately scoped to `source = 'eventbrite'` (lib/event-scraper.js:354); they are historical data from the old architecture, not output of the current pipeline, and were left in place (production data deletion is out of scope for a verification directive). They are inert with respect to scraper reliability.
+- **Code re-inspection:** rotation math (`Math.floor(Date.now()/6h) % 3` events/news, `% 2` videos — time-based, stateless), upsert `ON CONFLICT(external_id) DO UPDATE`, Eventbrite-scoped 2-day prune, per-scraper/per-provider try/catch isolation, `classifyNews()` NULL-skip at lib/news-scraper.js:286-287, and `requireAdmin`-gated `handleAdminScraperRuns` all confirmed in source.
+- **Public smoke re-run:** `/api/videos` 200 (Odysee: 8 of 30 items on page 1, sample `https://odysee.com/@FollowsTheWay:9/NS-10-07-2026:…`), `/api/videos/refresh` 403, `/api/admin/scraper-runs` 403, `/api/forum/topics` 404, `/community-forum` 302 → `member-home.html?member=1`.
+
+**Verdict unchanged: PRODUCTION COLLECTION CONFIRMED HEALTHY.** Outstanding: direct observation of rotation slots 2 and 0 at the 06:00/12:00 UTC cron runs; next-phase budget re-check before Phase 2B (Rumble).
