@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="pp:title" content="Photos">
+<meta name="pp:subtitle" content="Your private member library">
+<title>Your Photos | The Paranormal Initiative</title>
+<link rel="stylesheet" href="style.css?v=89">
+<link rel="stylesheet" href="member-shell.css?v=61">
+<link rel="stylesheet" href="member-library.css?v=1">
+</head>
+<body>
+<div id="site-header"></div>
+<div data-member-content hidden>
+<div class="member-main-inner">
+<section class="member-library" data-library-kind="photo">
+<header class="library-heading member-page-header"><div><h2>Photos</h2><p>Only you can browse this library. Items shared in posts keep their original visibility.</p></div><a href="member-home.html">Back to Feed</a></header>
+<nav class="library-navigation" aria-label="Your libraries">
+<a href="member-photos.html" aria-current="page">Photos</a>
+<a href="member-videos.html">Videos</a>
+<a href="member-files.html">Files</a>
+</nav>
+<div class="library-toolbar">
+<div class="library-tabs" data-library-tabs >
+<button type="button" data-library-view="all" aria-pressed="true">Your Photos</button>
+<button type="button" data-library-view="ofMe" aria-pressed="false">Photos of You</button>
+<button type="button" data-library-view="albums" aria-pressed="false">Albums</button>
+</div>
+<div class="library-upload">
+<label for="library-upload-input">Add Photos and Video</label>
+<input id="library-upload-input" type="file" data-library-upload multiple accept="image/*,video/*">
+</div>
+</div>
+<form class="library-album-form" data-album-form hidden><label for="album-name">New album</label><input id="album-name" name="title" maxlength="120" required placeholder="Album name"><button type="submit">Create Album</button></form>
+<p class="library-status" data-library-status role="status">Loading your library…</p>
+<div class="library-grid" data-library-grid></div>
+<button type="button" class="library-more" data-library-more hidden>Load More</button>
+</section>
+</div>
+</div>
+<div id="site-footer"></div>
+<script src="includes.js"></script>
+<script src="member-shell.js?v=54"></script>
+<script src="member-library.js?v=1"></script>
+</body>
+</html>

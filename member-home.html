@@ -1868,6 +1868,13 @@
             font-weight: 700;
         }
 
+        .feed-file-name small { display:block; margin-top:4px; color:var(--text-secondary); font-size:11px; }
+        .feed-file-entry { display:flex; align-items:center; gap:10px; }
+        .feed-file-entry .feed-file-chip { flex:1; min-width:0; }
+        .feed-save-file { flex:0 0 auto; padding:8px 12px; border:1px solid var(--border-default); border-radius:999px; background:var(--bg-card); color:var(--accent); font:inherit; font-size:12px; cursor:pointer; }
+        .feed-save-file:disabled { opacity:0.65; cursor:default; }
+        @media(max-width:600px) { .feed-file-entry { flex-wrap:wrap; } .feed-file-entry .feed-file-chip { flex-basis:100%; } }
+
         /* ===== ARTICLE CARD ===== */
         .feed-card-article-title {
             margin: 0;
@@ -2306,15 +2313,16 @@
                 </form>
                 <nav class="member-discovery-nav" aria-label="Member shortcuts">
                     <a href="#community-feed">Feed</a>
-                    <a href="about.html?member=1">About</a>
-                    <button type="button" data-member-discovery-action="photo">Photos</button>
-                    <button type="button" data-member-discovery-action="video">Videos</button>
+                    <a href="member-profile.html">Profile</a>
+                    <a href="member-photos.html">Photos</a>
+                    <a href="member-videos.html">Videos</a>
                     <button type="button" disabled title="Friends area is not available yet">Friends</button>
                     <div class="member-discovery-menu" data-member-discovery-menu>
                         <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false" aria-label="More member options">
                             More <span aria-hidden="true">⌄</span>
                         </button>
                         <div class="member-discovery-menu-panel" data-member-discovery-panel hidden>
+                            <a href="member-files.html" data-member-discovery-close>Files</a>
                             <a href="reels.html?member=1" data-member-discovery-close>Reels</a>
                             <a href="events.html?member=1" data-member-discovery-close>Events</a>
                             <button type="button" disabled title="Groups area is not available yet">Groups</button>
@@ -2611,7 +2619,7 @@
 
 <script src="api-client.js?v=17"></script>
 <script src="includes.js"></script>
-<script src="member-shell.js?v=53"></script>
+<script src="member-shell.js?v=54"></script>
 <script>
 (function () {
     var FEED_LIMIT = 20;
@@ -3162,7 +3170,7 @@
     }
 
     function setupProfileLinks() {
-        // Profile links and logout are handled by member-shell.js?v=53
+        // Profile links and logout are handled by member-shell.js?v=54
         // This function is kept for any future page-specific profile link logic
     }
 
@@ -4065,10 +4073,11 @@
             files.forEach(function(att) {
                 var url = escapeAttr(att.url || "");
                 if (!url) return;
-                parts.push('<a class="feed-file-chip" href="' + url + '" target="_blank" rel="noopener noreferrer" download>' +
+                var documentType = (att.contentType || '') === 'application/pdf' || /\.pdf$/i.test(att.name || '') ? 'PDF document' : /\.txt$/i.test(att.name || '') ? 'Text document' : 'Document file';
+                parts.push('<div class="feed-file-entry"><a class="feed-file-chip" href="' + url + '" target="_blank" rel="noopener noreferrer" download="' + escapeAttr(att.name || 'Document') + '">' +
                     '<span class="feed-file-icon" aria-hidden="true">📎</span>' +
-                    '<span class="feed-file-name">' + escapeHtml(att.name || "Attached file") + '</span>' +
-                '</a>');
+                    '<span class="feed-file-name">' + escapeHtml(att.name || "Attached file") + '<small>' + escapeHtml(documentType) + '</small></span>' +
+                '</a>' + (att.id ? '<button type="button" class="feed-save-file" data-save-library-file="' + escapeAttr(att.id) + '">Save to Files</button>' : '') + '</div>');
             });
             parts.push('</div>');
         }
@@ -4076,6 +4085,18 @@
     }
 
     var LINK_ICON_SVG = '<svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>';
+
+    document.addEventListener('click', async function(event) {
+        var button = event.target.closest('[data-save-library-file]');
+        if (!button) return;
+        button.disabled = true;
+        try {
+            var response = await fetch('/api/me/library/save', {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify({attachmentId:button.dataset.saveLibraryFile})});
+            var data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Could not save this document.');
+            button.textContent = 'Saved to Files';
+        } catch(error) { button.textContent = error.message; button.disabled = false; }
+    });
 
     function renderFeedLinks(attachments) {
         var links = (attachments || []).filter(function(a) { return (a.mediaType || "") === "link"; });

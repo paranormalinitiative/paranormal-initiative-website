@@ -2,6 +2,7 @@ import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
 import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
 import { scrapeNews } from "../../lib/news-scraper.js";
 import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
+import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -15,6 +16,8 @@ export async function onRequest(context) {
   try {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders() });
     if (request.method === "GET" && path === "/auth/me") return handleMe(request, env);
+    if (path === "/me/library" || path.startsWith("/me/library/")) return requireMember(request, env, user => handleMemberLibrary(path, request, env, user));
+    if (request.method === "POST" && path === "/uploads/library") return requireMember(request, env, user => handleMediaUpload(request, env, user, "private-library", "library", ["image/", "video/", "application/pdf", "text/plain", "text/csv", "application/json", "application/rtf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/zip", "application/octet-stream"]));
     if (request.method === "GET" && path === "/me/pulse") return requireMember(request, env, user => handleMyPulse(request, env, user));
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
     if (request.method === "POST" && path === "/auth/logout") return handleLogout();
@@ -101,7 +104,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireContributor(request, env, user => handleCloseStudioRoom(path, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/start$/)) return requireContributor(request, env, user => handleStartStudioLivestream(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/stop$/)) return requireContributor(request, env, user => handleStopStudioLivestream(path, env, user));
-    if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env);
+    if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
@@ -1244,8 +1247,9 @@ async function handleProfilePhotoUpload(request, env, user) {
   const key = makeMediaKey("profiles", user.username, upload.name, upload.type);
   await env.TPI_MEDIA.put(key, upload.body, {
     httpMetadata: { contentType: upload.type },
-    customMetadata: { contributorId: user.id, purpose: "profile-photo" }
+    customMetadata: { contributorId: user.id, purpose: "profile-photo", originalName: upload.name }
   });
+  await recordMemberUpload(env, user, key, upload);
   const url = `/api/media/${key}`;
   await env.TPI_DB.prepare("UPDATE contributors SET photo_url = ? WHERE id = ?").bind(url, user.id).run();
   const updated = await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ?").bind(user.id).first();
@@ -1310,20 +1314,28 @@ async function handleMediaUpload(request, env, user, area, purpose, allowedTypes
   const key = makeMediaKey(area, user.username, upload.name, upload.type);
   await env.TPI_MEDIA.put(key, upload.body, {
     httpMetadata: { contentType: upload.type },
-    customMetadata: { contributorId: user.id, purpose }
+    customMetadata: { contributorId: user.id, purpose, originalName: upload.name }
   });
-  return json({ url: `/api/media/${key}`, key, contentType: upload.type, name: upload.name });
+  const libraryId = await recordMemberUpload(env, user, key, upload);
+  return json({ id: libraryId, url: `/api/media/${key}`, key, contentType: upload.type, name: upload.name });
 }
 
-async function handleMediaRequest(path, env) {
+async function handleMediaRequest(path, env, request) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const key = decodeURIComponent(path.replace(/^\/media\//, ""));
   if (!key || key.includes("..")) return json({ error: "Media key is invalid." }, 400);
+  if (key.startsWith("private-library/")) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ error: "Member login required." }, 401, { "Cache-Control": "private, no-store" });
+    const metadata = await env.TPI_MEDIA.head(key);
+    if (!metadata || metadata.customMetadata?.contributorId !== user.id) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
+  }
   const object = await env.TPI_MEDIA.get(key);
   if (!object) return json({ error: "Media file not found." }, 404);
   const headers = new Headers();
   object.writeHttpMetadata(headers);
-  headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  headers.set("Cache-Control", key.startsWith("private-library/") ? "private, no-store" : "public, max-age=31536000, immutable");
+  headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Content-Security-Policy", "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'none'");
   return new Response(object.body, { headers });
 }
