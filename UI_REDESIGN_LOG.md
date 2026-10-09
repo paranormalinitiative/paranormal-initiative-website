@@ -1,5 +1,11 @@
 # TPI UI Redesign — Progress Log
 
+## October 9, 2026 — Settings Center migration [CODEX]
+
+Migrated all five Settings groups/twelve sections from the isolated reference into the existing Settings destination, with search, direct links, a padded two-column desktop layout, and compact mobile section menu. Six TPI themes now live in Personalization beside independent profile Highlights and heading fonts; added the missing account-theme save route, owner-backed personalization migration 0038, failure rollback, and styling on both profile views. Existing username/password/Profile editor/notification controls and private-library links retained. Actual Messenger block list is readable here. Imported privacy/feed/support/data/policy/payment tools are explicitly pending/disabled, not falsely saved or published. Full inventory, file map, and deferred work: `SETTINGS_MIGRATION.md`.
+
+Local synthetic API/SQLite and actual Chrome member-shell tests passed at 1440/1024/768/390px, including twelve pages, eight policy areas, three secondary areas, search, deep links, save/reload/rollback, owner isolation, and profile styles. No Settings control overflow or JS errors. Migration 0038 applied and schema checked locally/remotely; file-import auth error resolved with equivalent direct D1 query. Cache: shell v55, Settings/Profile style assets v1. Production deployment evidence follows; no real member-session production mutation tested.
+
 ## Overview
 
 This document tracks the UI redesign of The Paranormal Initiative website. The goal is to modernize the visual design with a **black + purple** color scheme, improve organization, and create a more polished user experience.

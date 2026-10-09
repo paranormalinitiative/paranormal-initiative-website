@@ -33,12 +33,28 @@
       if (active) btn.setAttribute("aria-current", "true"); else btn.removeAttribute("aria-current");
     });
   }
-  function saveSiteTheme(theme) {
+  async function saveSiteTheme(theme) {
     if (!validSiteTheme(theme)) return;
+    var previous = currentSiteTheme();
+    var status = document.querySelector("[data-theme-save-status]");
+    var picker = document.querySelector("[data-theme-picker]");
+    if (picker) picker.querySelectorAll("[data-theme-option]").forEach(function(btn) { btn.disabled = true; });
+    if (status) status.textContent = "Saving theme to your account…";
     applySiteTheme(theme);
     try { localStorage.setItem(SITE_THEME_KEY, theme); } catch (e) {}
     syncThemePicker(theme);
-    try { apiFetch("POST", "/api/contributors/me/theme", { theme: theme }); } catch (e) {}
+    try {
+      var response = await apiFetch("POST", "/api/contributors/me/theme", { theme: theme });
+      if (!response.ok) throw new Error(response.data.error || "Could not save your theme.");
+      if (status) status.textContent = "Theme saved to your account and this browser.";
+    } catch (e) {
+      applySiteTheme(previous);
+      try { localStorage.setItem(SITE_THEME_KEY, previous); } catch (storageError) {}
+      syncThemePicker(previous);
+      if (status) status.textContent = e.message + " Your previous theme was restored.";
+    } finally {
+      if (picker) picker.querySelectorAll("[data-theme-option]").forEach(function(btn) { btn.disabled = false; });
+    }
   }
   function initThemePicker() {
     var picker = document.querySelector("[data-theme-picker]");

@@ -1,0 +1,37 @@
+/* Profile-only presentation tokens drawn from the existing six TPI palettes.
+   Highlights never replace the member's full-site theme or alter content visibility. */
+:root {
+  --profile-font: 'Inter', sans-serif;
+  --highlight-cryptid: #4bb263;
+  --highlight-fieldops: #59a9dc;
+  --highlight-seance: #d46a7e;
+  --highlight-cosmic: #14b8d4;
+  --highlight-asylum: #e08600;
+  --highlight-gothicnight: #c084fc;
+}
+[data-profile-style-surface] { --profile-highlight: var(--text-accent); --profile-font: 'Inter', sans-serif; }
+[data-profile-highlight=cryptid], [data-highlight-swatch=cryptid] { --profile-highlight: var(--highlight-cryptid); }
+[data-profile-highlight=fieldops], [data-highlight-swatch=fieldops] { --profile-highlight: var(--highlight-fieldops); }
+[data-profile-highlight=seance], [data-highlight-swatch=seance] { --profile-highlight: var(--highlight-seance); }
+[data-profile-highlight=cosmic], [data-highlight-swatch=cosmic] { --profile-highlight: var(--highlight-cosmic); }
+[data-profile-highlight=asylum], [data-highlight-swatch=asylum] { --profile-highlight: var(--highlight-asylum); }
+[data-profile-highlight=gothicnight], [data-highlight-swatch=gothicnight] { --profile-highlight: var(--highlight-gothicnight); }
+[data-profile-font=modern] { --profile-font: 'Inter', Arial, sans-serif; }
+[data-profile-font=rounded] { --profile-font: 'Avenir Next', 'Segoe UI', sans-serif; }
+[data-profile-font=creator] { --profile-font: 'Arial Black', Arial, sans-serif; }
+[data-profile-font=serif] { --profile-font: Georgia, 'Times New Roman', serif; }
+[data-profile-font=minimal] { --profile-font: 'Helvetica Neue', Arial, sans-serif; }
+.member-profile-card[data-profile-style-surface] .member-profile-summary h3,
+.member-profile-card[data-profile-style-surface] .member-profile-summary h2,
+.public-profile-card[data-profile-style-surface] .public-profile-heading h1,
+.profile-style-preview h3 { color: var(--profile-highlight); font-family: var(--profile-font); }
+.member-profile-card[data-profile-style-surface] .member-profile-photo,
+.public-profile-card[data-profile-style-surface] .public-profile-photo { border-color: var(--profile-highlight); box-shadow: 0 0 20px color-mix(in srgb,var(--profile-highlight) 20%,transparent); }
+.tpi-settings .profile-style-options { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 18px 0; }
+.tpi-settings button[data-style-option] { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-primary); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.tpi-settings button[data-style-option][aria-pressed=true] { border-color: var(--text-accent); background: var(--accent-muted); }
+.profile-highlight-swatch { display: block; width: 100%; height: 20px; border-radius: var(--radius-full); background: var(--profile-highlight,var(--text-accent)); }
+.profile-style-preview { border: 1px solid color-mix(in srgb,var(--profile-highlight) 40%,transparent); background: var(--bg-surface); border-radius: var(--radius-sm); padding: 24px; margin-bottom: 20px; }
+.profile-style-ring { display: grid; place-items: center; width: 60px; height: 60px; border: 2px solid var(--profile-highlight); border-radius: var(--radius-full); font-size: 12px; font-weight: 700; margin-bottom: 16px; }
+.profile-style-badge { display: inline-block; color: var(--profile-highlight); border: 1px solid color-mix(in srgb,var(--profile-highlight) 40%,transparent); border-radius: var(--radius-full); padding: 6px 12px; font-size: 12px; }
+@media(max-width:1050px) { .tpi-settings .profile-style-options { grid-template-columns: repeat(2,minmax(0,1fr)); } }

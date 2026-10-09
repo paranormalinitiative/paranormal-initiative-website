@@ -27,34 +27,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=89">
     <link rel="stylesheet" href="member-shell.css?v=61">
-    <style>
-        article[data-theme-picker] { width: 100%; }
-    </style>
+    <link rel="stylesheet" href="member-settings.css?v=1">
+    <link rel="stylesheet" href="profile-style.css?v=1">
 </head>
 <body>
 <div id="site-header"></div>
 
 <div data-member-content hidden>
-<div class="member-main-inner">
+<div class="member-main-inner settings-main-inner">
 
-<section class="member-dashboard-shell">
+<section class="member-dashboard-shell tpi-settings">
     <div class="member-dashboard-header">
         <div>
             <p class="portal-kicker" data-dashboard-kicker>Settings</p>
             <h2 data-dashboard-name>Settings</h2>
-            <p data-dashboard-role>Loading contributor profile...</p>
+            <p data-dashboard-role>Loading member account...</p>
         </div>
         <div class="portal-actions">
             <button class="portal-button portal-button-secondary" type="button" data-member-logout>Sign Out</button>
         </div>
     </div>
 
-    <div class="member-dashboard-grid">
-        
-
+    <div class="settings-layout">
+        <aside class="settings-sidebar" aria-label="Settings navigation">
+            <h2>Settings Center</h2>
+            <label class="settings-search-label" for="settings-search">Find a setting</label>
+            <input id="settings-search" type="search" placeholder="Search settings…" autocomplete="off">
+            <details data-settings-menu open>
+                <summary>Browse Settings sections</summary>
+                <nav data-settings-nav aria-label="Settings sections"></nav>
+            </details>
+            <p data-settings-search-status role="status"></p>
+        </aside>
+        <div class="settings-content" data-settings-content>
+        <div id="settings-account" data-settings-panel="account">
         <article class="editor-access-card account-settings-card">
             <p class="portal-kicker">Account</p>
-            <h2>Login Settings</h2>
+            <h2 tabindex="-1">Account &amp; Security</h2>
             <div class="account-settings-grid">
                 <div class="account-identity-card" data-account-identity></div>
                 <form class="member-profile-form account-username-form" data-username-form hidden>
@@ -62,7 +71,7 @@
                     <button type="submit">Update Username</button>
                 </form>
                 <div class="account-password-panel">
-                    <p class="access-note">Update your contributor password. Passwords are protected and cannot be displayed after they are saved.</p>
+                    <p class="access-note">Update your account password. Passwords are protected and cannot be displayed after they are saved.</p>
                     <form class="member-profile-form account-password-form" data-password-form>
                         <label><span>Current Password</span><input name="currentPassword" type="password" autocomplete="current-password" required></label>
                         <label><span>New Password</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
@@ -72,10 +81,16 @@
                 </div>
             </div>
         </article>
-
+        <div class="settings-card">
+            <h3>Security &amp; account access</h3>
+            <p>Use the password-reset option on the sign-in page if you have forgotten your password. Sign out on shared devices.</p>
+            <div class="settings-actions"><a href="member-login.html">Sign-in &amp; password recovery</a><a href="#data">Data &amp; Account Files</a><a href="#help-support">Account help</a></div>
+        </div>
+        </div>
+        <div id="settings-personalization" data-settings-panel="personalization" hidden>
         <article class="editor-access-card" data-theme-picker>
-            <p class="portal-kicker">Appearance</p>
-            <h2>Color Theme</h2>
+            <p class="portal-kicker">Personalization · Appearance</p>
+            <h2 tabindex="-1">Our Themes</h2>
             <p class="access-note">Pick the look of your member area. Cryptid &amp; Folklore is the TPI default. Saved to your account and this browser.</p>
             <div class="theme-picker-grid">
                 <button type="button" class="theme-picker-option" data-theme-option="cryptid">
@@ -109,8 +124,29 @@
                     <small>Velvet dark purple · candlelight gold</small>
                 </button>
             </div>
+            <p data-theme-save-status role="status" class="access-note"></p>
         </article>
-
+        <div data-personalization-controls></div>
+        </div>
+        <div id="settings-notifications" data-settings-panel="notifications" hidden>
+            <article class="settings-card">
+                <p class="portal-kicker">Preferences</p>
+                <h2 tabindex="-1">Notifications</h2>
+                <p>Choose which account, content, and community updates you receive. These are our existing account-backed notification categories.</p>
+                <a href="member-notifications.html">Open your notifications</a>
+            </article>
+            <article class="editor-access-card member-notifications-card" data-notification-settings-card hidden>
+                <h3>Notification preferences</h3>
+                <p class="access-note">Changes apply to future notifications and save instantly.</p>
+                <div class="member-notification-settings" data-notification-settings></div>
+                <div class="member-notification-settings-footer">
+                    <span class="member-notification-save-state" data-notification-save-state aria-live="polite"></span>
+                    <button type="button" class="member-notification-reset" data-notification-reset>Reset Defaults</button>
+                </div>
+            </article>
+            <article class="settings-card"><h3>Phone notifications</h3><p>Device/push notification controls are included in the migration but are not connected yet.</p><button type="button" disabled>Enable Phone Notifications · Coming soon</button></article>
+        </div>
+        </div>
     </div>
 
     <p id="member-login-status" class="access-note member-login-status"></p>
@@ -123,7 +159,9 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
+<script src="member-settings.js?v=1"></script>
 <script src="member-login.js?v=38"></script>
-<script src="member-shell.js?v=54"></script>
+<script src="member-shell.js?v=55"></script>
+<script src="profile-style.js?v=1"></script>
 </body>
 </html>

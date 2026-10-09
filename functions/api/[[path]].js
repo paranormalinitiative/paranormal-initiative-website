@@ -3,6 +3,7 @@ import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
 import { scrapeNews } from "../../lib/news-scraper.js";
 import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
+import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -16,6 +17,10 @@ export async function onRequest(context) {
   try {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders() });
     if (request.method === "GET" && path === "/auth/me") return handleMe(request, env);
+    if (path === "/me/personalization") return requireMember(request, env, user => handlePersonalization(request, env, user));
+    if (request.method === "POST" && path === "/contributors/me/theme") return requireMember(request, env, user => handleSiteTheme(request, env, user));
+    if (request.method === "GET" && path === "/profile-style") return handlePublicStyle(request, env);
+    if (request.method === "GET" && path === "/me/blocked-users") return requireMember(request, env, user => handleBlockedUsers(request, env, user));
     if (path === "/me/library" || path.startsWith("/me/library/")) return requireMember(request, env, user => handleMemberLibrary(path, request, env, user));
     if (request.method === "POST" && path === "/uploads/library") return requireMember(request, env, user => handleMediaUpload(request, env, user, "private-library", "library", ["image/", "video/", "application/pdf", "text/plain", "text/csv", "application/json", "application/rtf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/zip", "application/octet-stream"]));
     if (request.method === "GET" && path === "/me/pulse") return requireMember(request, env, user => handleMyPulse(request, env, user));

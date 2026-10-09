@@ -1,0 +1,64 @@
+/* Settings-only layout. Explicit scope beats the shared member section reset. */
+body.member-mode .tpi-settings, .tpi-settings { max-width: 1440px; width: 100%; }
+body.member-mode .settings-main-inner { max-width: 1440px; }
+.tpi-settings [hidden] { display: none !important; }
+.tpi-settings .settings-layout { display: grid; grid-template-columns: 245px minmax(0, 1fr); gap: 24px; align-items: start; }
+.tpi-settings .settings-sidebar { position: sticky; top: 24px; padding: 22px 16px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-secondary); }
+.tpi-settings .settings-sidebar h2 { font-size: 19px; margin: 0 0 18px; }
+.tpi-settings .settings-search-label { display: block; font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px; }
+.tpi-settings input, .tpi-settings textarea, .tpi-settings select { width: 100%; min-width: 0; box-sizing: border-box; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); padding: 12px 14px; font: inherit; }
+.tpi-settings input[type=checkbox] { width: auto; }
+.tpi-settings .settings-nav-group { margin-top: 22px; }
+.tpi-settings .settings-sidebar summary { margin-top: 16px; cursor: pointer; font-size: 13px; color: var(--text-accent); }
+.tpi-settings .settings-overview-link { display: inline-block; margin-top: 16px; color: var(--text-accent); }
+.tpi-settings .settings-nav-group h3 { margin: 0 10px 7px; text-transform: uppercase; letter-spacing: .1em; font-size: 11px; color: var(--text-accent); }
+.tpi-settings .settings-nav-group a { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px; border: 1px solid transparent; border-radius: 12px; color: var(--text-secondary); text-decoration: none; font-size: 13px; line-height: 1.4; }
+.tpi-settings .settings-nav-group a:hover, .tpi-settings .settings-nav-group a[aria-current=page] { background: var(--accent-muted); border-color: var(--accent-border); color: var(--text-primary); }
+.tpi-settings .settings-content, .tpi-settings [data-settings-panel] { min-width: 0; }
+.tpi-settings [data-settings-panel] > * + * { margin-top: 18px; }
+.tpi-settings .settings-card, .tpi-settings .editor-access-card { width: 100%; box-sizing: border-box; padding: 26px; border-radius: var(--radius-md); border: 1px solid var(--border-default); background: var(--bg-card); box-shadow: var(--shadow-sm); min-width: 0; }
+.tpi-settings .settings-card h2 { margin: 4px 0 12px; }
+.tpi-settings .settings-card h3 { margin: 0 0 12px; }
+.tpi-settings .settings-card p { color: var(--text-secondary); line-height: 1.65; margin: 0 0 14px; }
+.tpi-settings .settings-card a { color: var(--text-accent); }
+.tpi-settings .settings-card .portal-kicker { color: var(--text-accent); font-size: 12px; }
+.tpi-settings .settings-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.tpi-settings .settings-actions a, .tpi-settings button:not(.theme-picker-option):not(.member-notification-reset):not([data-style-option]) { padding: 11px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-default); background: var(--bg-surface); color: var(--text-primary); font: inherit; font-size: 13px; line-height: 1.4; text-decoration: none; cursor: pointer; }
+.tpi-settings button:disabled { opacity: .55; cursor: not-allowed !important; }
+.tpi-settings .settings-status { display: inline-block; padding: 4px 8px; font-size: 11px; border-radius: var(--radius-sm); color: var(--text-tertiary); border: 1px solid var(--border-default); }
+.tpi-settings .settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+.tpi-settings .settings-grid .settings-card { padding: 20px; }
+.tpi-settings .settings-card label { display: grid; gap: 8px; color: var(--text-secondary); margin: 14px 0; }
+.tpi-settings .settings-card fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.tpi-settings .settings-pref { display: flex; gap: 14px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border-subtle); }
+.tpi-settings .settings-pref > div { flex: 1; min-width: 0; }
+.tpi-settings .settings-pref p { font-size: 13px; margin: 6px 0 0; }
+.tpi-settings .account-settings-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+.tpi-settings .account-password-panel { grid-column: 1 / -1; }
+.tpi-settings .account-password-form { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.tpi-settings .account-identity-card { min-width: 0; overflow-wrap: anywhere; }
+.tpi-settings .account-username-form { width: 100%; min-width: 0; }
+.tpi-settings .member-notifications-card { max-width: none; }
+.tpi-settings .theme-picker-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.tpi-settings .settings-empty { padding: 22px; border: 1px dashed var(--border-default); border-radius: var(--radius-sm); }
+.tpi-settings :focus-visible { outline: 2px solid var(--text-accent); outline-offset: 4px; }
+.tpi-settings h2[tabindex]:focus { outline: none; }
+@media (max-width: 1050px) {
+  .tpi-settings .settings-layout { grid-template-columns: 210px minmax(0,1fr); gap: 16px; }
+  .tpi-settings .settings-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 800px) {
+  .tpi-settings .settings-layout { grid-template-columns: 1fr; }
+  .tpi-settings .settings-sidebar { position: static; padding: 20px; }
+  .tpi-settings .settings-sidebar nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 14px; }
+  .tpi-settings .settings-nav-group { min-width: 0; }
+  .tpi-settings .settings-card, .tpi-settings .editor-access-card { padding: 22px; }
+}
+@media (max-width: 480px) {
+  .tpi-settings .settings-sidebar nav { grid-template-columns: 1fr; }
+  .tpi-settings .settings-nav-group { margin-top: 16px; }
+  .tpi-settings .settings-card, .tpi-settings .editor-access-card { padding: 20px 16px; }
+  .tpi-settings .account-settings-grid, .tpi-settings .account-password-form { grid-template-columns: 1fr; }
+  .tpi-settings .theme-picker-grid { gap: 10px; }
+  .tpi-settings .theme-picker-option { padding: 12px; }
+}
