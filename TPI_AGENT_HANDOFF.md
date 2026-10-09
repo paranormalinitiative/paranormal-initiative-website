@@ -14,6 +14,7 @@ Parapost is a visual and interaction reference only. Its member counts, activity
 
 ## Current Status - October 8, 2026
 
+- Search card CSS must use `body.member-mode section.member-discovery-bar` on desktop and mobile to override the shell's `body.member-mode section { padding: 0 }`. The previous single-class selector silently rendered with zero padding. Verified the corrected card in Chrome at desktop, tablet, and phone widths, including the More dropdown's visibility.
 - The editor is now named **Content Editor**, not Paper Editor.
 - Public visitors can read the site and public Discussion Portal topics.
 - Normal members can sign in, use their profile/dashboard, and participate in the Discussion Portal.

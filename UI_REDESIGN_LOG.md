@@ -20,6 +20,7 @@ When working on the live site (GitHub/Cloudflare):
 
 ## Member Feed / Content Editor Direction — Oct 8, 2026
 
+- Search-card padding bug fixed: the shared member-mode section reset had overridden the card's padding, leaving controls at its border despite previous CSS adjustments. Desktop and mobile card selectors now override that reset. Real browser geometry confirms 23px top/21px side border-to-control insets on desktop and 19px top/15px side insets on phone. Shortcut rows wrap; More dropdown no longer sits inside a clipping scroll container.
 - The member search card now has enough interior height and padding for the complete control group. Search, Feed, Photos, Videos, Files, Links, and More are proportionally sized and spaced; More remains beside Links and opens the remaining member shortcuts. The shortcuts remain TPI-specific rather than a Facebook copy. Existing notification, Messenger, and avatar controls remain in the member shell and are not duplicated here.
 - The member search/menu strip was enlarged to a 48px control height with more padding and a stronger card treatment so the section reads as an intentional member tool area instead of a thin divider. It stays stacked and full-width on mobile.
 - Member Messenger now accepts text and PDF files. Pending and sent attachments show the filename/title plus the document type, and sent documents are downloadable from the conversation.
