@@ -1,5 +1,9 @@
 # TPI UI Redesign — Progress Log
 
+## October 9, 2026 — Floating chat pulse removed [CODEX]
+
+Removed only the floating chat identity/avatar's outward pulsing ring. Avatar border, online indicator, chat behavior, frame shadow, and existing notification/nav pulses are unchanged. Shared shell CSS v62 across HTML references. Chrome computed-style checks passed for all six themes at 1440/390px: floating avatar animation/shadow both none; existing notification pulse still active. Deployment evidence follows.
+
 ## October 9, 2026 — Settings Center migration [CODEX]
 
 Release: commit `4d0c4a7` pushed to main; Wrangler Version ID `b10402aa-ceb2-4373-9156-5d861ee71c46`. Eight live pages/assets checked against source byte-for-byte (200); account-style/theme/block endpoints reject anonymous users (401), nonexistent public profile style returns 404. Signed-in production mutations were not tested; local synthetic save checks are not live-session evidence. Handoff-document deployment follows with the same feature code.
