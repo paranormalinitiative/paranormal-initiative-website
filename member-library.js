@@ -81,10 +81,10 @@
         status.textContent=`Uploading ${file.name}…`;
         const form=new FormData();form.append('file',file);
         const result=await api('/uploads/library',{method:'POST',body:form});
-        if (album && result.id) await send('/me/library/'+result.id,'PUT',{albumId:album});
+        if (album && result.id && result.contentType.startsWith('image/')) await send('/me/library/'+result.id,'PUT',{albumId:album});
         completed++;
       }
-      await load();status.textContent=`${completed} upload${completed===1?'':'s'} added. Videos are in your Videos library.`;
+      await load();status.textContent=`${completed} upload${completed===1?'':'s'} added.`+(kind==='photo'?' Videos are in your Videos library.':'');
     } catch(err) {try {await load();}catch{} error(err);} finally {upload.disabled=false;upload.value='';}
   });
   try {
