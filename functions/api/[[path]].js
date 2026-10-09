@@ -1276,7 +1276,7 @@ async function handleCommunityMediaUpload(request, env, user) {
 }
 
 async function handleMessengerMediaUpload(request, env, user) {
-  return handleMediaUpload(request, env, user, "messenger", "messenger-media", ["image/", "video/", "audio/"]);
+  return handleMediaUpload(request, env, user, "messenger", "messenger-media", ["image/", "video/", "audio/", "application/pdf", "text/plain", "application/octet-stream"]);
 }
 
 async function handleMediaUpload(request, env, user, area, purpose, allowedTypes) {
@@ -1301,6 +1301,8 @@ async function handleMediaUpload(request, env, user, area, purpose, allowedTypes
       ? "Voice messages must be 10 MB or smaller."
       : purpose === "community-media"
         ? "Community attachments must be 25 MB or smaller."
+        : purpose === "messenger-media"
+          ? "Messenger attachments must be 25 MB or smaller."
         : "Messenger photos and videos must be 25 MB or smaller.";
     return json({ error: sizeMessage }, 413);
   }
@@ -4191,11 +4193,16 @@ async function readUploadFile(request) {
 }
 
 function sanitizeMessengerAttachments(value) {
-  return (Array.isArray(value) ? value : []).slice(0, 6).map(item => ({
-    name: clean(item?.name).slice(0, 180),
-    type: ["photo", "video", "voice"].includes(clean(item?.type)) ? clean(item.type) : "",
-    url: clean(item?.url).slice(0, 1000)
-  })).filter(item => item.type && item.url.startsWith("/api/media/messenger/"));
+  return (Array.isArray(value) ? value : []).slice(0, 6).map(item => {
+    const type = clean(item?.type);
+    const documentType = clean(item?.documentType);
+    return {
+      name: clean(item?.name).slice(0, 180),
+      type: ["photo", "video", "voice", "file"].includes(type) ? type : "",
+      documentType: type === "file" && ["PDF document", "Text document", "Document file"].includes(documentType) ? documentType : "",
+      url: clean(item?.url).slice(0, 1000)
+    };
+  }).filter(item => item.type && item.url.startsWith("/api/media/messenger/"));
 }
 
 function clean(value) {

@@ -1519,6 +1519,57 @@ body.member-mode .member-floating-chat .member-chat-create {
     font-weight: 700;
 }
 
+.member-chat-file-attachment {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 190px;
+    max-width: min(100%, 300px);
+    padding: 8px 10px;
+    color: #e6edf3;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+}
+
+.member-chat-file-attachment:hover {
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.member-chat-file-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    border-radius: 9px;
+    font-size: 16px;
+}
+
+.member-chat-file-attachment > span:last-child {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+}
+
+.member-chat-file-attachment strong,
+.member-chat-file-attachment small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.member-chat-file-attachment strong { font-size: 11px; }
+
+.member-chat-file-attachment small {
+    color: #9fb3c8;
+    font-size: 10px;
+    font-weight: 700;
+}
+
 .member-chat-attachments figure {
     display: grid;
     gap: 5px;

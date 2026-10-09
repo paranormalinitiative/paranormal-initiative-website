@@ -2551,10 +2551,12 @@
             '<p class="member-chat-status" data-chat-status role="status" aria-live="polite" hidden></p>' +
             '<div class="member-chat-tools" aria-label="Message tools">' +
               '<button type="button" data-chat-media title="Add photos or videos">Photo</button>' +
+              '<button type="button" data-chat-file title="Attach a text or PDF file">Files</button>' +
               '<button type="button" data-chat-voice title="Add a voice message">Voice</button>' +
               '<button type="button" data-chat-emoji title="Open emojis">Emoji</button>' +
             '</div>' +
             '<input type="file" data-chat-media-input accept="image/*,video/*" multiple hidden>' +
+            '<input type="file" data-chat-file-input accept=".txt,.pdf,text/plain,application/pdf" multiple hidden>' +
             '<input type="text" data-chat-input placeholder="Send a message">' +
               '<button type="button" data-chat-like title="Send thumbs up">Like</button>' +
               '<button type="submit" data-chat-send>Send</button>' +
@@ -2596,6 +2598,7 @@
     var chatStatusEl = chat.querySelector("[data-chat-status]");
     var attachmentPreviewEl = chat.querySelector("[data-chat-attachments]");
     var mediaInputEl = chat.querySelector("[data-chat-media-input]");
+    var fileInputEl = chat.querySelector("[data-chat-file-input]");
     var emojiPickerEl = chat.querySelector("[data-chat-emoji-picker]");
     var emojiSearchEl = chat.querySelector("[data-chat-emoji-search]");
     var emojiGridEl = chat.querySelector("[data-chat-emoji-grid]");
@@ -2861,6 +2864,10 @@
       mediaInputEl.click();
     });
 
+    chat.querySelector("[data-chat-file]").addEventListener("click", function () {
+      fileInputEl.click();
+    });
+
     mediaInputEl.addEventListener("change", function () {
       var chosenAttachments = Array.from(mediaInputEl.files || []).map(function(file) {
         return {
@@ -2872,6 +2879,20 @@
       });
       pendingAttachments = (editingMessageIndex >= 0 ? pendingAttachments.concat(chosenAttachments) : chosenAttachments).slice(0, 6);
       mediaInputEl.value = "";
+      renderAttachmentPreview();
+    });
+
+    fileInputEl.addEventListener("change", function () {
+      var chosenAttachments = Array.from(fileInputEl.files || []).map(function(file) {
+        return {
+          name: file.name,
+          type: "file",
+          documentType: getDocumentType(file),
+          file: file
+        };
+      });
+      pendingAttachments = (editingMessageIndex >= 0 ? pendingAttachments.concat(chosenAttachments) : chosenAttachments).slice(0, 6);
+      fileInputEl.value = "";
       renderAttachmentPreview();
     });
 
@@ -4400,9 +4421,9 @@
           statusElement.hidden = false;
         }
         var uploaded = await uploadMessengerAttachment(att.file);
-        safeAttachments.push({ name: uploaded.name || att.name || "", type: att.type || "photo", url: uploaded.url || "" });
+        safeAttachments.push({ name: uploaded.name || att.name || "", type: att.type || "photo", documentType: att.documentType || "", url: uploaded.url || "" });
       } else if (att.url && String(att.url).indexOf("/api/media/messenger/") === 0) {
-        safeAttachments.push({ name: att.name || "", type: att.type || "photo", url: att.url });
+        safeAttachments.push({ name: att.name || "", type: att.type || "photo", documentType: att.documentType || "", url: att.url });
       }
     }
     return safeAttachments;
@@ -4477,18 +4498,33 @@
       if (attachment && attachment.url && attachment.type === "voice") {
         return '<figure><audio src="' + escapeHtml(attachment.url) + '" controls></audio><figcaption>' + label + '</figcaption></figure>';
       }
+      if (attachment && attachment.url && attachment.type === "file") {
+        return '<a class="member-chat-file-attachment" href="' + escapeHtml(attachment.url) + '" target="_blank" rel="noopener noreferrer" download>' +
+          '<span class="member-chat-file-icon" aria-hidden="true">📄</span>' +
+          '<span><strong>' + escapeHtml(attachment.name || "Attached file") + '</strong><small>' + escapeHtml(attachment.documentType || getDocumentType(attachment)) + '</small></span>' +
+        '</a>';
+      }
       return '<span>' + label + '</span>';
     }).join("") + '</div>';
   }
 
-  function getAttachmentLabel(attachment) {
-    var type = attachment && attachment.type ? attachment.type : "file";
-    var name = attachment && attachment.name ? attachment.name : type;
-    if (type === "photo") return "Photo: " + name;
-    if (type === "video") return "Video: " + name;
-    if (type === "voice") return "Voice message";
-    return name;
-  }
+    function getAttachmentLabel(attachment) {
+        var type = attachment && attachment.type ? attachment.type : "file";
+        var name = attachment && attachment.name ? attachment.name : type;
+        if (type === "photo") return "Photo: " + name;
+        if (type === "video") return "Video: " + name;
+        if (type === "voice") return "Voice message";
+        if (type === "file") return "File: " + name + " (" + (attachment.documentType || getDocumentType(attachment)) + ")";
+        return name;
+    }
+
+    function getDocumentType(fileOrAttachment) {
+      var contentType = String(fileOrAttachment && (fileOrAttachment.type || fileOrAttachment.contentType) || "").toLowerCase();
+      var name = String(fileOrAttachment && fileOrAttachment.name || "").toLowerCase();
+      if (contentType === "application/pdf" || name.endsWith(".pdf")) return "PDF document";
+      if (contentType === "text/plain" || name.endsWith(".txt")) return "Text document";
+      return "Document file";
+    }
 
   // Default chat bubble color follows the active theme accent (asylum =
   // dark orange, etc.) so member bubbles never clash with the theme.

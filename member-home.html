@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=89">
-    <link rel="stylesheet" href="member-shell.css?v=60">
+    <link rel="stylesheet" href="member-shell.css?v=61">
     <style>
         /* ===== TWO-COLUMN LAYOUT + RIGHT RAIL ===== */
         /* Lift the shell's 1050px cap on this page only so the rail sits far
@@ -691,6 +691,151 @@
             max-width: 480px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        /* ===== MEMBER SEARCH + SHORTCUT MENU ===== */
+        .member-discovery-bar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            margin: -12px 0 18px;
+            padding: 10px;
+            background: #10141c;
+            border: 1px solid #263646;
+            border-radius: 18px;
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 4%, transparent);
+        }
+
+        .member-discovery-search {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .member-discovery-search .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .member-discovery-search input {
+            width: 100%;
+            min-height: 38px;
+            padding: 8px 14px 8px 16px;
+            color: #e6edf3;
+            background: #090f14;
+            border: 1px solid #263646;
+            border-radius: 999px;
+            font: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .member-discovery-search input::placeholder { color: #6d8296; }
+
+        .member-discovery-search input:focus {
+            border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 8%, transparent);
+        }
+
+        .member-discovery-search button,
+        .member-discovery-menu-toggle {
+            min-height: 38px;
+            padding: 8px 14px;
+            color: #061018;
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 999px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .member-discovery-search button:hover,
+        .member-discovery-menu-toggle:hover { filter: brightness(1.08); }
+
+        .member-discovery-menu { position: relative; }
+
+        .member-discovery-menu-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #c7d5e2;
+            background: #18212b;
+            border-color: #33485b;
+            white-space: nowrap;
+        }
+
+        .member-discovery-menu-toggle[aria-expanded="true"] {
+            color: #061018;
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .member-discovery-menu-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            z-index: 20;
+            display: grid;
+            gap: 4px;
+            width: 230px;
+            padding: 8px;
+            background: #111820;
+            border: 1px solid #33485b;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .member-discovery-menu-panel[hidden] { display: none; }
+
+        .member-discovery-menu-label {
+            padding: 5px 9px 3px;
+            color: #8aa0b6;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .member-discovery-menu-panel a,
+        .member-discovery-menu-panel button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-height: 34px;
+            padding: 8px 10px;
+            color: #c7d5e2;
+            background: transparent;
+            border: 0;
+            border-radius: 10px;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: left;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .member-discovery-menu-panel a:hover,
+        .member-discovery-menu-panel button:hover {
+            color: #f4f8fb;
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
+        }
+
+        .member-discovery-menu-divider {
+            height: 1px;
+            margin: 4px 0;
+            background: #263646;
         }
 
         /* ===== COMPOSER ===== */
@@ -1821,7 +1966,7 @@
             border-color: var(--accent);
         }
 
-        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=60) ===== */
+        /* ===== RESPONSIVE (page-specific only; shell responsive in member-shell.css?v=61) ===== */
         @media (max-width: 700px) {
 
             .member-profile-identity {
@@ -1868,6 +2013,22 @@
 
             .composer-media-row {
                 flex-wrap: wrap;
+            }
+
+            .member-discovery-bar {
+                grid-template-columns: 1fr;
+                margin-top: -12px;
+            }
+
+            .member-discovery-menu,
+            .member-discovery-menu-toggle { width: 100%; }
+
+            .member-discovery-menu-toggle { justify-content: center; }
+
+            .member-discovery-menu-panel {
+                left: 0;
+                right: 0;
+                width: auto;
             }
 
             .composer-link-row {
@@ -2081,6 +2242,33 @@
                 <p class="member-identity-subtitle">Share your research, experiences, questions, ideas, and discoveries with the community.</p>
             </div>
 
+            <!-- MEMBER SEARCH + QUICK MENU — member-only discovery and sharing shortcuts. -->
+            <section class="member-discovery-bar" data-member-discovery aria-label="Member search and shortcuts">
+                <form class="member-discovery-search" data-member-home-search>
+                    <label class="sr-only" for="member-home-search-input">Search The Paranormal Initiative</label>
+                    <input id="member-home-search-input" type="search" data-member-home-search-input placeholder="Search paranormal research, members, and resources..." autocomplete="off" spellcheck="true">
+                    <button type="submit">Search</button>
+                </form>
+                <div class="member-discovery-menu" data-member-discovery-menu>
+                    <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false">
+                        Member Menu <span aria-hidden="true">⌄</span>
+                    </button>
+                    <div class="member-discovery-menu-panel" data-member-discovery-panel hidden>
+                        <span class="member-discovery-menu-label">Explore</span>
+                        <a href="#community-feed" data-member-discovery-close>Community Feed</a>
+                        <a href="search.html" data-member-discovery-close>Search Site</a>
+                        <a href="member-profile.html" data-member-discovery-close>My Profile</a>
+                        <div class="member-discovery-menu-divider" role="separator"></div>
+                        <span class="member-discovery-menu-label">Share</span>
+                        <button type="button" data-member-discovery-action="photo">Photo</button>
+                        <button type="button" data-member-discovery-action="video">Video</button>
+                        <button type="button" data-member-discovery-action="file">Files</button>
+                        <button type="button" data-member-discovery-action="link">Link</button>
+                        <button type="button" data-member-discovery-action="emoji">Emoji</button>
+                    </div>
+                </div>
+            </section>
+
             <!-- COMPOSER -->
             <div class="member-composer" data-member-composer>
                 <div class="composer-top">
@@ -2199,7 +2387,7 @@
             </div>
 
             <!-- FEED TABS -->
-            <div class="member-feed-tabs">
+            <div class="member-feed-tabs" id="community-feed">
                 <button type="button" class="member-feed-tab active" data-feed-tab="activity">Community Feed</button>
             </div>
 
@@ -2367,7 +2555,7 @@
 
 <script src="api-client.js?v=17"></script>
 <script src="includes.js"></script>
-<script src="member-shell.js?v=52"></script>
+<script src="member-shell.js?v=53"></script>
 <script>
 (function () {
     var FEED_LIMIT = 20;
@@ -2396,6 +2584,11 @@
     var composerLinkCancel = document.querySelector("[data-composer-link-cancel]");
     var composerEmojiButton = document.querySelector("[data-composer-emoji]");
     var composerEmojiPicker = document.querySelector("[data-composer-emoji-picker]");
+    var memberDiscovery = document.querySelector("[data-member-discovery]");
+    var memberHomeSearch = document.querySelector("[data-member-home-search]");
+    var memberHomeSearchInput = document.querySelector("[data-member-home-search-input]");
+    var memberDiscoveryToggle = document.querySelector("[data-member-discovery-toggle]");
+    var memberDiscoveryPanel = document.querySelector("[data-member-discovery-panel]");
     var feedContainer = document.querySelector("[data-member-feed]");
     var loadMoreWrap = document.querySelector("[data-feed-load-more]");
     var loadMoreBtn = document.querySelector("[data-load-more-btn]");
@@ -2440,11 +2633,13 @@
         if (isOwn) {
             renderComposerAvatar();
             setupComposer();
+            setupMemberDiscovery();
         } else {
             var composerEl = document.querySelector("[data-member-composer]");
             if (composerEl) composerEl.hidden = true;
             var identityBlock = document.querySelector(".member-identity-block");
             if (identityBlock) identityBlock.hidden = true;
+            if (memberDiscovery) memberDiscovery.hidden = true;
         }
 
         await loadFeed();
@@ -2911,7 +3106,7 @@
     }
 
     function setupProfileLinks() {
-        // Profile links and logout are handled by member-shell.js?v=52
+        // Profile links and logout are handled by member-shell.js?v=53
         // This function is kept for any future page-specific profile link logic
     }
 
@@ -2979,6 +3174,50 @@
                 composerFileInput.value = "";
             });
         }
+    }
+
+    function setupMemberDiscovery() {
+        if (!memberDiscovery) return;
+        if (memberHomeSearch) {
+            memberHomeSearch.addEventListener("submit", function(event) {
+                event.preventDefault();
+                var query = memberHomeSearchInput ? memberHomeSearchInput.value.trim() : "";
+                window.location.href = query ? "search.html?q=" + encodeURIComponent(query) : "search.html";
+            });
+        }
+        if (!memberDiscoveryToggle || !memberDiscoveryPanel) return;
+        memberDiscoveryToggle.addEventListener("click", function() {
+            var shouldOpen = memberDiscoveryPanel.hidden;
+            memberDiscoveryPanel.hidden = !shouldOpen;
+            memberDiscoveryToggle.setAttribute("aria-expanded", String(shouldOpen));
+        });
+        memberDiscoveryPanel.addEventListener("click", function(event) {
+            var action = event.target.closest("[data-member-discovery-action]");
+            if (!action) return;
+            var selectors = {
+                photo: "[data-media-photo]",
+                video: "[data-media-video]",
+                file: "[data-media-file]",
+                link: "[data-media-link]",
+                emoji: "[data-composer-emoji]"
+            };
+            var target = document.querySelector(selectors[action.dataset.memberDiscoveryAction]);
+            if (target) target.click();
+            memberDiscoveryPanel.hidden = true;
+            memberDiscoveryToggle.setAttribute("aria-expanded", "false");
+        });
+        document.addEventListener("click", function(event) {
+            if (!event.target.closest("[data-member-discovery-menu]")) {
+                memberDiscoveryPanel.hidden = true;
+                memberDiscoveryToggle.setAttribute("aria-expanded", "false");
+            }
+        });
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                memberDiscoveryPanel.hidden = true;
+                memberDiscoveryToggle.setAttribute("aria-expanded", "false");
+            }
+        });
     }
 
     function openFilePicker(accept) {
