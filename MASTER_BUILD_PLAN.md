@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[CODEX] 2026-10-08 — **Member menu labels updated per Todd.** Main row: Feed, About, Photos, Videos, Friends, then More. Dropdown: Reels, Events, Groups, Para News, ParaTube, in that order. About and dropdown links use existing destinations; Photos/Videos retain the current composer shortcuts. Friends and Groups are inactive menu entries pending dedicated member features. Search-card padding remains fixed; Files/Link/Emoji remain available in the composer.
+
 [CODEX] 2026-10-08 — **Search card padding override corrected.** The shared `body.member-mode section { padding: 0 }` rule was overriding every earlier single-class search-card padding adjustment. Scoped both desktop and mobile rules to `body.member-mode section.member-discovery-bar`; no shared shell reset changed. Browser rendering with the real styles confirmed padding changed from 0px to 22px/20px/20px on desktop and 18px/14px/16px on phone. Shortcut navigation now wraps and allows the More dropdown to remain visible. Verified at 1168px, 768px, and 390px without page overflow.
 
 [MIMO] 2026-10-08 — **Member search card proportion refinement.** Enlarged the card with more interior padding, vertical spacing, and a fuller border radius; Search, shortcut pills, and More were resized proportionally so the complete control group sits comfortably inside the card instead of reading as a shallow strip.

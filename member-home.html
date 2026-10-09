@@ -885,6 +885,11 @@
             background: #263646;
         }
 
+        .member-discovery-nav button:disabled {
+            opacity: 0.65;
+            cursor: default;
+        }
+
         /* ===== COMPOSER ===== */
         .member-composer {
             display: grid;
@@ -2301,22 +2306,20 @@
                 </form>
                 <nav class="member-discovery-nav" aria-label="Member shortcuts">
                     <a href="#community-feed">Feed</a>
+                    <a href="about.html?member=1">About</a>
                     <button type="button" data-member-discovery-action="photo">Photos</button>
                     <button type="button" data-member-discovery-action="video">Videos</button>
-                    <button type="button" data-member-discovery-action="file">Files</button>
-                    <button type="button" data-member-discovery-action="link">Links</button>
+                    <button type="button" disabled title="Friends area is not available yet">Friends</button>
                     <div class="member-discovery-menu" data-member-discovery-menu>
                         <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false" aria-label="More member options">
                             More <span aria-hidden="true">⌄</span>
                         </button>
                         <div class="member-discovery-menu-panel" data-member-discovery-panel hidden>
-                            <span class="member-discovery-menu-label">Explore</span>
-                            <a href="#community-feed" data-member-discovery-close>Community Feed</a>
-                            <a href="search.html" data-member-discovery-close>Search Site</a>
-                            <a href="member-profile.html" data-member-discovery-close>My Profile</a>
-                            <div class="member-discovery-menu-divider" role="separator"></div>
-                            <span class="member-discovery-menu-label">Share</span>
-                            <button type="button" data-member-discovery-action="emoji">Emoji</button>
+                            <a href="reels.html?member=1" data-member-discovery-close>Reels</a>
+                            <a href="events.html?member=1" data-member-discovery-close>Events</a>
+                            <button type="button" disabled title="Groups area is not available yet">Groups</button>
+                            <a href="news.html?member=1" data-member-discovery-close>Para News</a>
+                            <a href="paratube.html?member=1" data-member-discovery-close>ParaTube</a>
                         </div>
                     </div>
                 </nav>
@@ -3245,6 +3248,10 @@
             memberDiscoveryToggle.setAttribute("aria-expanded", String(shouldOpen));
         });
         memberDiscovery.addEventListener("click", function(event) {
+            if (event.target.closest("[data-member-discovery-close]")) {
+                memberDiscoveryPanel.hidden = true;
+                memberDiscoveryToggle.setAttribute("aria-expanded", "false");
+            }
             var action = event.target.closest("[data-member-discovery-action]");
             if (!action) return;
             var selectors = {

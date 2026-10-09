@@ -2,7 +2,7 @@
 
 ## Overview
 
-Member Home search-card correction (Oct 8, 2026): scope its section styling to `body.member-mode section.member-discovery-bar` so the shared member-mode section padding reset cannot collapse its interior. Keep Search above Feed/Photos/Videos/Files/Links/More, with More beside Links; wrap the shortcut row on narrow screens and keep its dropdown unclipped.
+Member Home search-card correction (Oct 8, 2026): scope its section styling to `body.member-mode section.member-discovery-bar` so the shared member-mode section padding reset cannot collapse its interior. Keep Search above Feed/About/Photos/Videos/Friends/More; More contains Reels/Events/Groups/Para News/ParaTube. Friends and Groups await dedicated features. Wrap the shortcut row on narrow screens and keep its dropdown unclipped.
 
 This document outlines the strategy for streamlining The Paranormal Initiative website to make it easier to navigate while still showcasing all the content and features that make TPI a premier paranormal/ITC community.
 
