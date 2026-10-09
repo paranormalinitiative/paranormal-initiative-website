@@ -18,6 +18,13 @@ When working on the live site (GitHub/Cloudflare):
 3. **ADD:** TPI Reels page to the live site
 4. **Backend:** Already configured with Cloudflare Workers, D1 Database, R2 Storage
 
+## Member Feed / Content Editor Direction — Oct 8, 2026
+
+- The member-home Community Feed is the social stream for paranormal and ITC conversation: member posts, replies, media, links, reactions, and emoji.
+- The Feed composer no longer exposes a category selector; new posts use the internal general bucket while existing category data remains available for historical context.
+- The Content Editor is a separate contributor/admin/owner-only publishing surface for Education Center and other destination content. Normal members must not see its navigation, My Content card, or article-list endpoint.
+- Member-home feed requests use the social-only feed scope so published articles and TPI videos stay in their destination/discovery surfaces instead of becoming feed posts.
+
 ---
 
 ## Design System — Color Palette

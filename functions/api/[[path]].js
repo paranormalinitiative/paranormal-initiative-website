@@ -43,7 +43,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/contributors/me/profile") return requireMember(request, env, user => handleUpdateProfile(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/username") return requireMember(request, env, user => handleUpdateUsername(request, env, user));
     if (request.method === "POST" && path === "/contributors/me/password") return requireMember(request, env, user => handleChangePassword(request, env, user));
-    if (request.method === "GET" && path === "/contributors/me/articles") return requireMember(request, env, user => handleContributorArticles(env, user));
+    if (request.method === "GET" && path === "/contributors/me/articles") return requireContributor(request, env, user => handleContributorArticles(env, user));
     if (request.method === "GET" && path === "/notifications") return requireMember(request, env, user => handleListNotifications(env, user));
     if (request.method === "GET" && path === "/notifications/unread-count") return requireMember(request, env, user => handleNotificationUnreadCount(env, user));
     if (request.method === "POST" && path === "/notifications/read-all") return requireMember(request, env, user => handleMarkAllNotificationsRead(request, env, user));
@@ -1477,6 +1477,7 @@ async function handleCommunityFeed(request, env) {
   const url = new URL(request.url);
   const limit = Math.min(Number(url.searchParams.get("limit")) || 20, 50);
   const offset = Number(url.searchParams.get("offset")) || 0;
+  const socialOnly = url.searchParams.get("scope") === "community";
   const user = await getSessionUser(request, env);
 
   // Community Feed posts (dedicated community_posts model — the Forum's
@@ -1506,41 +1507,47 @@ async function handleCommunityFeed(request, env) {
     LIMIT 200
   `).all().catch(function () { return { results: [] }; });
 
-  const { results: videoItems } = await env.TPI_DB.prepare(`
-    SELECT
-      'video' AS type,
-      id,
-      slug,
-      title,
-      description,
-      thumbnail,
-      published_at AS publishedAt,
-      is_live AS isLive,
-      category
-    FROM tpi_videos
-    WHERE status = 'published'
-    ORDER BY published_at DESC
-    LIMIT 50
-  `).all().catch(function () { return { results: [] }; });
+  let videoItems = [];
+  let articleItems = [];
+  if (!socialOnly) {
+    const videoResult = await env.TPI_DB.prepare(`
+      SELECT
+        'video' AS type,
+        id,
+        slug,
+        title,
+        description,
+        thumbnail,
+        published_at AS publishedAt,
+        is_live AS isLive,
+        category
+      FROM tpi_videos
+      WHERE status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 50
+    `).all().catch(function () { return { results: [] }; });
+    videoItems = videoResult.results || [];
 
-  const { results: articleItems } = await env.TPI_DB.prepare(`
-    SELECT
-      'article' AS type,
-      a.id,
-      a.title,
-      a.subtitle AS description,
-      a.href,
-      a.article_type AS contributionType,
-      a.created_at AS createdAt,
-      c.username AS authorUsername,
-      c.display_name AS authorName,
-      c.photo_url AS authorPhotoUrl
-    FROM articles a
-    LEFT JOIN contributors c ON c.id = a.created_by
-    WHERE a.status = 'published'
-    ORDER BY a.created_at DESC
-    LIMIT 50
-  `).all().catch(function () { return { results: [] }; });
+    const articleResult = await env.TPI_DB.prepare(`
+      SELECT
+        'article' AS type,
+        a.id,
+        a.title,
+        a.subtitle AS description,
+        a.href,
+        a.article_type AS contributionType,
+        a.created_at AS createdAt,
+        c.username AS authorUsername,
+        c.display_name AS authorName,
+        c.photo_url AS authorPhotoUrl
+      FROM articles a
+      LEFT JOIN contributors c ON c.id = a.created_by
+      WHERE a.status = 'published'
+      ORDER BY a.created_at DESC
+      LIMIT 50
+    `).all().catch(function () { return { results: [] }; });
+    articleItems = articleResult.results || [];
+  }
 
   const communityMapped = (postItems || []).map(function(item) {
     var commentCount = Number(item.commentCount || 0);
@@ -1616,6 +1623,7 @@ async function handleUserFeed(request, env) {
   const username = clean(url.searchParams.get("username") || "");
   const limit = Math.min(Number(url.searchParams.get("limit")) || 20, 50);
   const offset = Number(url.searchParams.get("offset")) || 0;
+  const socialOnly = url.searchParams.get("scope") === "community";
   if (!username) return json({ error: "Username is required." }, 400);
 
   const contributor = await env.TPI_DB.prepare(
@@ -1647,24 +1655,28 @@ async function handleUserFeed(request, env) {
     LIMIT 200
   `).bind(contributor.id).all().catch(function () { return { results: [] }; });
 
-  const { results: articleItems } = await env.TPI_DB.prepare(`
-    SELECT
-      'article' AS type,
-      a.id,
-      a.title,
-      a.subtitle AS description,
-      a.href,
-      a.article_type AS contributionType,
-      a.created_at AS createdAt,
-      c.username AS authorUsername,
-      c.display_name AS authorName,
-      c.photo_url AS authorPhotoUrl
-    FROM articles a
-    LEFT JOIN contributors c ON c.id = a.created_by
-    WHERE a.created_by = ? AND a.status = 'published'
-    ORDER BY a.created_at DESC
-    LIMIT 50
-  `).bind(contributor.id).all().catch(function () { return { results: [] }; });
+  let articleItems = [];
+  if (!socialOnly) {
+    const articleResult = await env.TPI_DB.prepare(`
+      SELECT
+        'article' AS type,
+        a.id,
+        a.title,
+        a.subtitle AS description,
+        a.href,
+        a.article_type AS contributionType,
+        a.created_at AS createdAt,
+        c.username AS authorUsername,
+        c.display_name AS authorName,
+        c.photo_url AS authorPhotoUrl
+      FROM articles a
+      LEFT JOIN contributors c ON c.id = a.created_by
+      WHERE a.created_by = ? AND a.status = 'published'
+      ORDER BY a.created_at DESC
+      LIMIT 50
+    `).bind(contributor.id).all().catch(function () { return { results: [] }; });
+    articleItems = articleResult.results || [];
+  }
 
   const communityMapped = (postItems || []).map(function(item) {
     var commentCount = Number(item.commentCount || 0);
@@ -1831,11 +1843,11 @@ async function handleCreateCommunityPost(request, env, user) {
   const accessError = await getMemberActionAccessError(env, user, "post");
   if (accessError) return json({ error: accessError }, 403);
   const data = await readJson(request);
-  const categoryId = clean(data.categoryId);
+  const categoryId = clean(data.categoryId) || "general";
   const title = clean(data.title).slice(0, 160);
   const body = clean(data.body).slice(0, 6000);
   const attachments = sanitizeCommunityAttachments(data.attachments);
-  if (!categoryId || !title || !body) return json({ error: "Category, post title, and message are required." }, 400);
+  if (!title || !body) return json({ error: "Post title and message are required." }, 400);
 
   const category = await env.TPI_DB.prepare("SELECT id FROM community_categories WHERE id = ? AND active = 1").bind(categoryId).first();
   if (!category) return json({ error: "Community category was not found." }, 404);

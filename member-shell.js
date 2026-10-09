@@ -357,8 +357,12 @@
   function setupRoleGatedNav(user) {
     var role = String(user && user.role || "").toLowerCase();
     var canUseAdminPanel = role === "owner" || role === "admin";
+    var canUseContentEditor = canUseAdminPanel || role === "contributor";
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
       element.hidden = !canUseAdminPanel;
+    });
+    document.querySelectorAll("[data-contributor-only]").forEach(function (element) {
+      element.hidden = !canUseContentEditor;
     });
     // Coming Soon markers (TPI Studio) hide for leadership, who can still enter.
     document.querySelectorAll("[data-coming-soon]").forEach(function (element) {

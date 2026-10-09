@@ -766,22 +766,6 @@
             padding-left: 52px;
         }
 
-        .composer-category-select {
-            padding: 8px 12px;
-            color: #c7d5e2;
-            background: #090f14;
-            border: 1px solid #263646;
-            border-radius: 999px;
-            font: inherit;
-            font-size: 12px;
-            outline: none;
-            max-width: 300px;
-        }
-
-        .composer-category-select:focus {
-            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-        }
-
         .composer-actions {
             display: flex;
             align-items: center;
@@ -852,6 +836,54 @@
             color: #c7d5e2;
             background: color-mix(in srgb, var(--accent) 6%, transparent);
             border-color: color-mix(in srgb, var(--accent) 12%, transparent);
+        }
+
+        .composer-emoji-wrap {
+            position: relative;
+        }
+
+        .composer-emoji-picker {
+            position: absolute;
+            left: 0;
+            bottom: calc(100% + 8px);
+            z-index: 20;
+            width: min(292px, calc(100vw - 40px));
+            padding: 10px;
+            background: #101820;
+            border: 1px solid #2b4052;
+            border-radius: 14px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.42);
+        }
+
+        .composer-emoji-picker[hidden] {
+            display: none;
+        }
+
+        .composer-emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 4px;
+        }
+
+        .composer-emoji-option {
+            display: grid;
+            place-items: center;
+            width: 32px;
+            height: 32px;
+            color: #e6edf3;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .composer-emoji-option:hover,
+        .composer-emoji-option:focus-visible {
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
+            border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+            outline: none;
         }
 
         /* ===== LINK SHARE ROW ===== */
@@ -1763,10 +1795,6 @@
                 align-items: stretch;
             }
 
-            .composer-category-select {
-                max-width: 100%;
-            }
-
             .composer-actions {
                 justify-content: space-between;
             }
@@ -2017,6 +2045,44 @@
                         <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
                         Link
                     </button>
+                    <div class="composer-emoji-wrap" data-composer-emoji-wrap>
+                        <button type="button" class="composer-media-btn" data-composer-emoji aria-haspopup="true" aria-expanded="false" title="Add emoji">
+                            <span aria-hidden="true">😊</span>
+                            Emoji
+                        </button>
+                        <div class="composer-emoji-picker" data-composer-emoji-picker hidden>
+                            <div class="composer-emoji-grid" role="group" aria-label="Choose an emoji">
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👻" aria-label="Ghost">👻</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🔮" aria-label="Crystal ball">🔮</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🛸" aria-label="Flying saucer">🛸</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧿" aria-label="Nazar amulet">🧿</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🕯️" aria-label="Candle">🕯️</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🌙" aria-label="Moon">🌙</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="✨" aria-label="Sparkles">✨</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🪬" aria-label="Hamsa">🪬</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="📡" aria-label="Antenna">📡</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎙️" aria-label="Microphone">🎙️</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="📻" aria-label="Radio">📻</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="📷" aria-label="Camera">📷</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎥" aria-label="Movie camera">🎥</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧪" aria-label="Test tube">🧪</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧠" aria-label="Brain">🧠</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🗺️" aria-label="Map">🗺️</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🏚️" aria-label="Derelict house">🏚️</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🪦" aria-label="Headstone">🪦</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🐾" aria-label="Paw prints">🐾</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🌌" aria-label="Milky Way">🌌</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👽" aria-label="Alien">👽</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👀" aria-label="Eyes">👀</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🤔" aria-label="Thinking face">🤔</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="❤️" aria-label="Red heart">❤️</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👍" aria-label="Thumbs up">👍</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🙏" aria-label="Folded hands">🙏</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🔥" aria-label="Fire">🔥</button>
+                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="😂" aria-label="Laughing face">😂</button>
+                            </div>
+                        </div>
+                    </div>
                     <input type="file" data-composer-file-input accept="image/*,video/*" multiple hidden>
                 </div>
                 <div class="composer-link-row" data-composer-link-row hidden>
@@ -2025,9 +2091,6 @@
                     <button type="button" class="composer-link-cancel" data-composer-link-cancel>Cancel</button>
                 </div>
                 <div class="composer-bottom">
-                    <select class="composer-category-select" data-composer-category>
-                        <option value="general">General Discussion</option>
-                    </select>
                     <div class="composer-actions">
                         <p class="composer-status" data-composer-status></p>
                         <button class="composer-post-btn" type="button" data-composer-post disabled>Post</button>
@@ -2037,9 +2100,7 @@
 
             <!-- FEED TABS -->
             <div class="member-feed-tabs">
-                <button type="button" class="member-feed-tab active" data-feed-tab="activity">Activity</button>
-                <button type="button" class="member-feed-tab" data-feed-tab="posts">Posts</button>
-                <button type="button" class="member-feed-tab" data-feed-tab="published">Published Content</button>
+                <button type="button" class="member-feed-tab active" data-feed-tab="activity">Community Feed</button>
             </div>
 
             <!-- FEED -->
@@ -2206,14 +2267,13 @@
 
 <script src="api-client.js?v=17"></script>
 <script src="includes.js"></script>
-<script src="member-shell.js?v=51"></script>
+<script src="member-shell.js?v=52"></script>
 <script>
 (function () {
     var FEED_LIMIT = 20;
     var feedOffset = 0;
     var activeUser = null;
     var profileUser = null;
-    var communityCategories = [];
     var currentTab = "activity";
     var viewingOwnProfile = true;
 
@@ -2225,7 +2285,6 @@
     var profileBio = document.querySelector("[data-member-bio]");
     var profileFacts = document.querySelector("[data-member-facts]");
     var composerBody = document.querySelector("[data-composer-body]");
-    var composerCategory = document.querySelector("[data-composer-category]");
     var composerPostBtn = document.querySelector("[data-composer-post]");
     var composerStatus = document.querySelector("[data-composer-status]");
     var composerAvatar = document.querySelector("[data-composer-avatar]");
@@ -2235,6 +2294,8 @@
     var composerLinkInput = document.querySelector("[data-composer-link-input]");
     var composerLinkAdd = document.querySelector("[data-composer-link-add]");
     var composerLinkCancel = document.querySelector("[data-composer-link-cancel]");
+    var composerEmojiButton = document.querySelector("[data-composer-emoji]");
+    var composerEmojiPicker = document.querySelector("[data-composer-emoji-picker]");
     var feedContainer = document.querySelector("[data-member-feed]");
     var loadMoreWrap = document.querySelector("[data-feed-load-more]");
     var loadMoreBtn = document.querySelector("[data-load-more-btn]");
@@ -2277,7 +2338,6 @@
 
         if (isOwn) {
             renderComposerAvatar();
-            await loadCommunityCategories();
             setupComposer();
         } else {
             var composerEl = document.querySelector("[data-member-composer]");
@@ -2716,7 +2776,7 @@
 
     async function loadMyContent() {
         var card = document.getElementById("my-content-card");
-        if (!card || !window.TPIApi || !window.TPIApi.contributorArticles) return;
+        if (!card || !hasContributorAccess(activeUser) || !window.TPIApi || !window.TPIApi.contributorArticles) return;
         try {
             var data = await window.TPIApi.contributorArticles();
             var articles = data.articles || data.papers || [];
@@ -2735,6 +2795,10 @@
         return { owner: "Owner Access", admin: "Admin Access", contributor: "Contributor Access", member: "Member Access" }[role] || "Member Access";
     }
 
+    function hasContributorAccess(user) {
+        return ["owner", "admin", "contributor"].includes(String(user && user.role || "").toLowerCase());
+    }
+
     function renderComposerAvatar() {
         if (!composerAvatar) return;
         if (activeUser.photoUrl) {
@@ -2746,29 +2810,8 @@
     }
 
     function setupProfileLinks() {
-        // Profile links and logout are handled by member-shell.js?v=51
+        // Profile links and logout are handled by member-shell.js?v=52
         // This function is kept for any future page-specific profile link logic
-    }
-
-    async function loadCommunityCategories() {
-        try {
-            var data = await window.TPIApi.communityCategories();
-            communityCategories = data.categories || [];
-        } catch (e) {
-            communityCategories = [];
-        }
-        renderCategoryOptions();
-    }
-
-    function renderCategoryOptions() {
-        if (!composerCategory) return;
-        var options = '<option value="general">General Discussion</option>';
-        communityCategories.forEach(function(cat) {
-            if (cat.id !== "general") {
-                options += '<option value="' + escapeAttr(cat.id) + '">' + escapeHtml(cat.title) + '</option>';
-            }
-        });
-        composerCategory.innerHTML = options;
     }
 
     function setupComposer() {
@@ -2785,6 +2828,31 @@
         document.querySelectorAll("[data-media-file]").forEach(function(btn) {
             btn.addEventListener("click", function() { openFilePicker("image/*,video/*"); });
         });
+
+        if (composerEmojiButton && composerEmojiPicker) {
+            composerEmojiButton.addEventListener("click", function() {
+                var shouldOpen = composerEmojiPicker.hidden;
+                composerEmojiPicker.hidden = !shouldOpen;
+                composerEmojiButton.setAttribute("aria-expanded", String(shouldOpen));
+            });
+            composerEmojiPicker.querySelectorAll("[data-composer-emoji-value]").forEach(function(button) {
+                button.addEventListener("click", function() {
+                    insertComposerEmoji(button.dataset.composerEmojiValue || "");
+                });
+            });
+            document.addEventListener("click", function(event) {
+                if (!event.target.closest("[data-composer-emoji-wrap]")) {
+                    composerEmojiPicker.hidden = true;
+                    composerEmojiButton.setAttribute("aria-expanded", "false");
+                }
+            });
+            document.addEventListener("keydown", function(event) {
+                if (event.key === "Escape") {
+                    composerEmojiPicker.hidden = true;
+                    composerEmojiButton.setAttribute("aria-expanded", "false");
+                }
+            });
+        }
 
         if (composerLinkRow && composerLinkInput && composerLinkAdd && composerLinkCancel) {
             document.querySelectorAll("[data-media-link]").forEach(function(btn) {
@@ -2939,9 +3007,23 @@
         if (composerBody) composerBody.value = "";
         pendingAttachments = [];
         if (composerLinkRow) composerLinkRow.hidden = true;
+        if (composerEmojiPicker) composerEmojiPicker.hidden = true;
+        if (composerEmojiButton) composerEmojiButton.setAttribute("aria-expanded", "false");
         clearComposerLinkPreview();
         renderPreviews();
         updatePostButtonState();
+    }
+
+    function insertComposerEmoji(emoji) {
+        if (!composerBody || !emoji) return;
+        var start = Number.isInteger(composerBody.selectionStart) ? composerBody.selectionStart : composerBody.value.length;
+        var end = Number.isInteger(composerBody.selectionEnd) ? composerBody.selectionEnd : start;
+        composerBody.value = composerBody.value.slice(0, start) + emoji + composerBody.value.slice(end);
+        composerBody.selectionStart = composerBody.selectionEnd = start + emoji.length;
+        composerBody.focus();
+        updatePostButtonState();
+        if (composerEmojiPicker) composerEmojiPicker.hidden = true;
+        if (composerEmojiButton) composerEmojiButton.setAttribute("aria-expanded", "false");
     }
 
     function updatePostButtonState() {
@@ -2954,7 +3036,6 @@
         var body = composerBody ? composerBody.value.trim() : "";
         var hasMedia = pendingAttachments.length > 0;
         if (!body && !hasMedia) return;
-        var categoryId = composerCategory ? composerCategory.value : "general";
         var title = autoTitle(body) || (hasMedia ? "Shared media" : "");
         if (!title) { composerStatus.textContent = "Please write something first."; return; }
 
@@ -2978,7 +3059,7 @@
             }
 
             await window.TPIApi.createCommunityPost({
-                categoryId: categoryId,
+                categoryId: "general",
                 title: title,
                 body: body || title,
                 attachments: uploadedAttachments.concat(pendingAttachments.filter(function(a) { return a.mediaType === "link"; }).map(function(a) {
@@ -3025,41 +3106,21 @@
         var username = profileUser.username;
 
         try {
-            if (currentTab === "published") {
-                var data = await window.TPIApi.publicProfile(username);
-                var articles = (data.articles || []).filter(function(a) { return a.status === "published"; });
-                renderPublishedContent(articles);
-                loadMoreWrap.hidden = true;
-            } else if (viewingOwnProfile) {
-                // Merged Your Feed: the HOME feed is the community feed.
-                // Activity = everything; Posts = community posts only.
-                var items = [];
-                var allFetched = 0;
-                var hasMore = true;
-                for (var page = 0; page < 4 && hasMore; page++) {
-                    var feedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset);
-                    var allItems = feedData.items || [];
-                    allFetched += allItems.length;
-                    feedOffset += allItems.length;
-                    hasMore = allItems.length >= FEED_LIMIT;
-                    if (currentTab !== "posts") {
-                        items = allItems;
-                        break;
-                    }
-                    items = items.concat(allItems.filter(function(item) { return item.type === "community_post"; }));
-                    if (items.length >= FEED_LIMIT) break;
-                }
-                loadMoreWrap.hidden = !hasMore;
-                renderFeed(items, false);
+            if (viewingOwnProfile) {
+                var ownFeedData = await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community");
+                var ownItems = ownFeedData.items || [];
+                renderFeed(ownItems, false);
+                feedOffset = ownItems.length;
+                loadMoreWrap.hidden = ownItems.length < FEED_LIMIT;
             } else {
-                var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset);
+                var feedData = await window.TPIApi.userFeed(username, FEED_LIMIT, feedOffset, "community");
                 var items = feedData.items || [];
                 renderFeed(items, false);
                 feedOffset = items.length;
                 loadMoreWrap.hidden = items.length < FEED_LIMIT;
             }
         } catch (e) {
-            feedContainer.innerHTML = '<div class="member-empty"><h3>No activity yet.</h3><p>When this member posts or publishes content, it will appear here.</p></div>';
+            feedContainer.innerHTML = '<div class="member-empty"><h3>No posts yet.</h3><p>When this member shares something, it will appear here.</p></div>';
             loadMoreWrap.hidden = true;
         }
     }
@@ -3070,7 +3131,9 @@
             loadMoreBtn.disabled = true;
             loadMoreBtn.textContent = "Loading...";
             try {
-                var feedData = await window.TPIApi.userFeed(profileUser.username, FEED_LIMIT, feedOffset);
+                var feedData = viewingOwnProfile
+                    ? await window.TPIApi.communityFeed(FEED_LIMIT, feedOffset, "community")
+                    : await window.TPIApi.userFeed(profileUser.username, FEED_LIMIT, feedOffset, "community");
                 var items = feedData.items || [];
                 renderFeed(items, true);
                 feedOffset += items.length;
@@ -3084,8 +3147,8 @@
     function renderFeed(items, append) {
         if (!items.length && !append) {
             var emptyCopy = viewingOwnProfile
-                ? '<div class="member-empty"><h3>No activity yet.</h3><p>Be the first — share something with the community above.</p></div>'
-                : '<div class="member-empty"><h3>No activity yet.</h3><p>When this member posts or publishes content, it will appear here.</p></div>';
+                ? '<div class="member-empty"><h3>No posts yet.</h3><p>Be the first — share something with the community above.</p></div>'
+                : '<div class="member-empty"><h3>No posts yet.</h3><p>When this member shares something, it will appear here.</p></div>';
             feedContainer.innerHTML = emptyCopy;
             return;
         }
@@ -3098,34 +3161,6 @@
         setupFeedPostTools();
         setupCommentForms();
         hydrateLinkPreviews(items);
-    }
-
-    function renderPublishedContent(articles) {
-        if (!articles.length) {
-            feedContainer.innerHTML = '<div class="member-empty"><h3>No published content yet.</h3><p>Published papers and articles will appear here.</p></div>';
-            return;
-        }
-        var html = articles.map(function(article) {
-            var avatar = profileUser.photoUrl
-                ? '<img class="feed-card-avatar" src="' + escapeAttr(profileUser.photoUrl) + '" alt="' + escapeAttr(profileUser.displayName || "Member") + '">'
-                : '<div class="feed-card-avatar-initial" style="border-color:var(--accent);background:var(--accent)">' + escapeHtml((profileUser.displayName || "M").charAt(0).toUpperCase()) + '</div>';
-            return '<article class="feed-card">' +
-                '<div class="feed-card-header">' +
-                    avatar +
-                    '<div class="feed-card-meta">' +
-                        '<strong>' + escapeHtml(profileUser.displayName || profileUser.username) + '</strong>' +
-                        '<span class="feed-card-detail">' + escapeHtml(formatDate(article.createdAt)) + '</span>' +
-                    '</div>' +
-                    '<span class="feed-card-badge badge-article">' + escapeHtml(article.contributionType || article.articleType || "Article") + '</span>' +
-                '</div>' +
-                (article.title ? '<h3 class="feed-card-article-title"><a href="' + escapeAttr(window.preserveMemberMode ? window.preserveMemberMode(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) : (article.href || "published-article.html?id=" + encodeURIComponent(article.id))) + '">' + escapeHtml(article.title) + '</a></h3>' : "") +
-                (article.subtitle ? '<p class="feed-card-article-preview">' + escapeHtml(article.subtitle) + '</p>' : "") +
-                '<div class="feed-card-actions">' +
-                    '<a class="feed-action-btn" href="' + escapeAttr(window.preserveMemberMode ? window.preserveMemberMode(article.href || "published-article.html?id=" + encodeURIComponent(article.id)) : (article.href || "published-article.html?id=" + encodeURIComponent(article.id))) + '">Open</a>' +
-                '</div>' +
-            '</article>';
-        }).join("");
-        feedContainer.innerHTML = html;
     }
 
     function renderFeedCard(item) {

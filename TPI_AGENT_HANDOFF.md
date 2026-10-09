@@ -8,7 +8,7 @@ This repository is the static website for **The Paranormal Initiative**. The sit
 
 The current focus is the **Education Center / Research Library** and the new **Content Editor**. The user wants full research papers, notes, reviews, long-form field papers, and practical investigation material. They do not want short academic-looking summaries.
 
-There is now also a live **Contributor Portal** and **Discussion Portal** direction. The Content Editor requires contributor access, public members can join the forum, invite/admin tools stay hidden from normal visitors, logged-in members land on a private dashboard, contributors can save drafts/publish contributions, and comments/discussion features use Cloudflare D1 when deployed. See `CONTRIBUTOR_PORTAL_PLAN.md` and `CLOUDFLARE_PORTAL_SETUP.md`.
+There is now also a live **Contributor Portal** and **Community Feed** direction. The member Feed is the social stream for member posts, replies, media, links, reactions, and paranormal/ITC conversation. The Content Editor is a separate contributor-only publishing surface for Education Center and other destination content; normal members must not see or access it. Invite/admin tools stay hidden from normal visitors, logged-in members land on a private dashboard, contributors can save drafts/publish contributions, and comments/discussion features use Cloudflare D1 when deployed. See `CONTRIBUTOR_PORTAL_PLAN.md` and `CLOUDFLARE_PORTAL_SETUP.md`.
 
 ## Current Status - July 27, 2026
 
@@ -17,6 +17,7 @@ There is now also a live **Contributor Portal** and **Discussion Portal** direct
 - Normal members can sign in, use their profile/dashboard, and participate in the Discussion Portal.
 - Contributor/editor/admin tools must stay hidden from normal members and public visitors.
 - Contributors can access the Content Editor, save drafts, publish articles, and manage their own content.
+- The member-home Feed is social-only. Its composer posts to the community Feed, uses the internal general bucket without exposing a category selector, and supports emoji insertion. Published articles and other destination content belong to the Content Editor and their destination areas, not the member Feed.
 - Owner/admin/director-level tools include member/contributor access management, comment moderation, and forum topic cleanup.
 - The Discussion Portal has a messenger-style layout with categories on the left and topic/chat bubbles on the right.
 - Forum topic badges use blue for topics and green for replies, with member read tracking when `forum_topic_reads` exists.
