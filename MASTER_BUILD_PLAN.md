@@ -1,6 +1,6 @@
 # TPI MASTER BUILD PLAN
 
-[MIMO] 2026-10-08 — **Member search/menu spacing refinement.** Increased the desktop gap between the Search group and Member Menu from 12px to 20px so the two pill controls no longer read as smooshed; mobile keeps the tighter stacked 12px gap.
+[MIMO] 2026-10-08 — **Member search/More layout refinement.** The member search card now places Search on the first row and a clearly labeled More dropdown directly below it, making the additional member shortcuts discoverable without crowding the search control.
 
 [MIMO] 2026-10-08 — **Member search strip presence adjustment.** The new member-only search/menu strip beneath “You Are the Initiative” was enlarged with a taller 48px control height, increased padding, and stronger card presence so it does not read as a thin divider above the composer. Mobile remains stacked and full-width.
 

@@ -197,7 +197,7 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 
 ## Session Log (append every working session)
 
-- **Oct 8, 2026 (session: mimo, member search spacing)** — **Search and Member Menu pills separated.** Increased the desktop outer gap to 20px so the controls no longer appear smooshed; mobile remains at 12px in the stacked layout. Commit and final Wrangler deployment verification follow.
+- **Oct 8, 2026 (session: mimo, member search layout)** — **Search and More controls separated into card rows.** Search now occupies the first row and a clearly labeled More dropdown sits directly below it, removing ambiguity about the additional member shortcuts. Commit and final Wrangler deployment verification follow.
 
 - **Oct 8, 2026 (session: mimo, member search sizing)** — **Member search/menu strip enlarged.** Increased the search and Member Menu controls to 48px high, added padding and stronger card treatment, and preserved the stacked full-width mobile layout. Commit and final Wrangler deployment verification follow.
 

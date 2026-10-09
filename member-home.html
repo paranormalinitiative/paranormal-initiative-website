@@ -695,10 +695,10 @@
 
         /* ===== MEMBER SEARCH + SHORTCUT MENU ===== */
         .member-discovery-bar {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 20px;
-            align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
             margin: -8px 0 22px;
             padding: 14px;
             background: #10141c;
@@ -712,6 +712,7 @@
             grid-template-columns: 1fr auto;
             gap: 8px;
             min-width: 0;
+            width: 100%;
         }
 
         .member-discovery-search .sr-only {
@@ -763,7 +764,10 @@
         .member-discovery-search button:hover,
         .member-discovery-menu-toggle:hover { filter: brightness(1.08); }
 
-        .member-discovery-menu { position: relative; }
+        .member-discovery-menu {
+            position: relative;
+            align-self: flex-start;
+        }
 
         .member-discovery-menu-toggle {
             display: inline-flex;
@@ -784,7 +788,7 @@
         .member-discovery-menu-panel {
             position: absolute;
             top: calc(100% + 8px);
-            right: 0;
+            left: 0;
             z-index: 20;
             display: grid;
             gap: 4px;
@@ -2016,7 +2020,6 @@
             }
 
             .member-discovery-bar {
-                grid-template-columns: 1fr;
                 margin-top: -8px;
                 gap: 12px;
             }
@@ -2251,8 +2254,8 @@
                     <button type="submit">Search</button>
                 </form>
                 <div class="member-discovery-menu" data-member-discovery-menu>
-                    <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false">
-                        Member Menu <span aria-hidden="true">⌄</span>
+                    <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false" aria-label="More member options">
+                        More <span aria-hidden="true">⌄</span>
                     </button>
                     <div class="member-discovery-menu-panel" data-member-discovery-panel hidden>
                         <span class="member-discovery-menu-label">Explore</span>

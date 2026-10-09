@@ -20,9 +20,8 @@ When working on the live site (GitHub/Cloudflare):
 
 ## Member Feed / Content Editor Direction — Oct 8, 2026
 
-- Added more desktop breathing room between the Search pill and Member Menu pill; mobile retains the compact stacked spacing.
+- The member search card now puts the Search control on its own first row and a clearly labeled More dropdown directly beneath it. The member shortcuts remain TPI-specific rather than a Facebook copy: Community Feed, Search Site, My Profile, and share shortcuts for Photo, Video, Files, Link, and Emoji. Existing notification, Messenger, and avatar controls remain in the member shell and are not duplicated here.
 - The member search/menu strip was enlarged to a 48px control height with more padding and a stronger card treatment so the section reads as an intentional member tool area instead of a thin divider. It stays stacked and full-width on mobile.
-- Member Home now places a search field and attached Member Menu directly below “You Are the Initiative.” The menu is TPI-specific rather than a Facebook copy: Community Feed, Search Site, My Profile, and share shortcuts for Photo, Video, Files, Link, and Emoji. Existing notification, Messenger, and avatar controls remain in the member shell and are not duplicated here.
 - Member Messenger now accepts text and PDF files. Pending and sent attachments show the filename/title plus the document type, and sent documents are downloadable from the conversation.
 - The community composer now completes the distinct Photos, Videos, Files, Link, and Emoji actions. Common file uploads are shown in the Feed as downloadable filename chips, while existing image/video rendering and validated links remain separate attachment types.
 - Emoji choices are grouped for scanning into Faces, Paranormal & Mystery, ITC & Research, and Reactions & Community; the Faces group includes 😳 and 😱.
