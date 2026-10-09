@@ -41,7 +41,7 @@ Checked-in runner: `scripts/e2e/member-settings.mjs`, Node with `node:sqlite` an
 
 Verified synthetic two-member API/SQLite auth gates, supported-value validation, owner isolation, saved theme choices, public style-only payload, and real Messenger block-list queries. Actual shared member shell/Settings frontend tested at 1440, 1024, 768, and 390px: all twelve sections, eight policy areas, three secondary routes, search, direct links, saved choices/reload, failed-save rollback, profile font application. No JavaScript errors or Settings control overflow. Other background APIs return empty fixtures; no live member credentials were used, and no live member account/password/profile was edited.
 
-Production release evidence will be recorded in the handoff logs after deployment. A signed-in production save still needs a normal member-session smoke check; synthetic checks are not that check.
+Production feature commit `4d0c4a7` was pushed to main and deployed with Wrangler as Cloudflare Version ID `b10402aa-ceb2-4373-9156-5d861ee71c46`. Live Settings HTML, Settings/Profile style assets, both profile pages and shared shell returned 200 and matched local source bytes. Anonymous personalization GET/POST, theme-save POST, and block-list GET returned 401; a missing public-style username returned 404. A signed-in production save still needs a normal member-session smoke check; synthetic checks are not that check. Subsequent handoff-document deployment carries the same verified feature code.
 
 ## Next pass
 

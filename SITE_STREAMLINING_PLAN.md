@@ -1,5 +1,7 @@
 # TPI Site Streamlining Game Plan
 
+Settings release verified October 9: `4d0c4a7`, Cloudflare Version ID `b10402aa-ceb2-4373-9156-5d861ee71c46`; live source matches and anonymous account-settings protections checked. Same feature code will be carried by the final handoff-document deployment. Outstanding section behavior is tracked explicitly in `SETTINGS_MIGRATION.md`.
+
 October 9, 2026 Settings migration: keep the existing main-nav Settings link, but organize its page into the reference's five groups/twelve sections. Personalization combines our six site themes and independent account-backed profile Highlights/fonts. Profile Settings uses our existing editor; Data & Account Files uses private libraries; Notifications retains real category controls. Placeholder privacy, feed, support/data forms, policy wording, and monetization are visibly pending and do not change existing permissions or inject content into the Feed. See `SETTINGS_MIGRATION.md` for the complete migration inventory and tested/deferred boundaries.
 
 ## Overview
