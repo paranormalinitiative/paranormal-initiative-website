@@ -700,7 +700,7 @@
             align-items: stretch;
             gap: 10px;
             margin: -8px 0 18px;
-            padding: 10px;
+            padding: 18px 14px 14px;
             background: #10141c;
             border: 1px solid #263646;
             border-radius: 22px;
@@ -729,14 +729,14 @@
 
         .member-discovery-search input {
             width: 100%;
-            min-height: 40px;
-            padding: 9px 14px;
+            min-height: 36px;
+            padding: 8px 13px;
             color: #e6edf3;
             background: #090f14;
             border: 1px solid #263646;
             border-radius: 999px;
             font: inherit;
-            font-size: 13px;
+            font-size: 12px;
             outline: none;
         }
 
@@ -749,8 +749,8 @@
 
         .member-discovery-search button,
         .member-discovery-menu-toggle {
-            min-height: 40px;
-            padding: 9px 14px;
+            min-height: 36px;
+            padding: 8px 13px;
             color: #061018;
             background: var(--accent);
             border: 1px solid var(--accent);
@@ -801,7 +801,7 @@
 
         .member-discovery-menu {
             position: relative;
-            align-self: flex-start;
+            flex: 0 0 auto;
         }
 
         .member-discovery-menu-toggle {
@@ -812,6 +812,12 @@
             background: #18212b;
             border-color: #33485b;
             white-space: nowrap;
+        }
+
+        .member-discovery-menu-toggle {
+            min-height: 34px;
+            padding: 7px 12px;
+            font-size: 11px;
         }
 
         .member-discovery-menu-toggle[aria-expanded="true"] {
@@ -2057,6 +2063,7 @@
             .member-discovery-bar {
                 margin-top: -8px;
                 gap: 12px;
+                padding: 16px 12px 12px;
             }
 
             .member-discovery-menu { width: max-content; }
@@ -2296,25 +2303,21 @@
                     <button type="button" data-member-discovery-action="video">Videos</button>
                     <button type="button" data-member-discovery-action="file">Files</button>
                     <button type="button" data-member-discovery-action="link">Links</button>
-                </nav>
-                <div class="member-discovery-menu" data-member-discovery-menu>
-                    <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false" aria-label="More member options">
-                        More <span aria-hidden="true">⌄</span>
-                    </button>
-                    <div class="member-discovery-menu-panel" data-member-discovery-panel hidden>
-                        <span class="member-discovery-menu-label">Explore</span>
-                        <a href="#community-feed" data-member-discovery-close>Community Feed</a>
-                        <a href="search.html" data-member-discovery-close>Search Site</a>
-                        <a href="member-profile.html" data-member-discovery-close>My Profile</a>
-                        <div class="member-discovery-menu-divider" role="separator"></div>
-                        <span class="member-discovery-menu-label">Share</span>
-                        <button type="button" data-member-discovery-action="photo">Photo</button>
-                        <button type="button" data-member-discovery-action="video">Video</button>
-                        <button type="button" data-member-discovery-action="file">Files</button>
-                        <button type="button" data-member-discovery-action="link">Link</button>
-                        <button type="button" data-member-discovery-action="emoji">Emoji</button>
+                    <div class="member-discovery-menu" data-member-discovery-menu>
+                        <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false" aria-label="More member options">
+                            More <span aria-hidden="true">⌄</span>
+                        </button>
+                        <div class="member-discovery-menu-panel" data-member-discovery-panel hidden>
+                            <span class="member-discovery-menu-label">Explore</span>
+                            <a href="#community-feed" data-member-discovery-close>Community Feed</a>
+                            <a href="search.html" data-member-discovery-close>Search Site</a>
+                            <a href="member-profile.html" data-member-discovery-close>My Profile</a>
+                            <div class="member-discovery-menu-divider" role="separator"></div>
+                            <span class="member-discovery-menu-label">Share</span>
+                            <button type="button" data-member-discovery-action="emoji">Emoji</button>
+                        </div>
                     </div>
-                </div>
+                </nav>
             </section>
 
             <!-- COMPOSER -->
