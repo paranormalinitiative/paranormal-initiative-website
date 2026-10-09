@@ -197,6 +197,8 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 
 ## Session Log (append every working session)
 
+- **Oct 8, 2026 (session: mimo, member search spacing)** — **Search and Member Menu pills separated.** Increased the desktop outer gap to 20px so the controls no longer appear smooshed; mobile remains at 12px in the stacked layout. Commit and final Wrangler deployment verification follow.
+
 - **Oct 8, 2026 (session: mimo, member search sizing)** — **Member search/menu strip enlarged.** Increased the search and Member Menu controls to 48px high, added padding and stronger card treatment, and preserved the stacked full-width mobile layout. Commit and final Wrangler deployment verification follow.
 
 - **Oct 8, 2026 (session: mimo, member discovery and Messenger files)** — **Member-only search/menu and text/PDF Messenger attachments deployed.** Member Home now puts a search field directly below “You Are the Initiative” with an attached TPI Member Menu for Community Feed, Search Site, My Profile, Photo, Video, Files, Link, and Emoji shortcuts. The existing Messenger gained a Files control restricted to `.txt` and `.pdf`; filenames/titles and document types survive upload/sanitization and render as downloadable document cards. Shell cache references moved to `member-shell.js?v=53` and `member-shell.css?v=61`. Commit `85139df` deployed as Wrangler Version ID `f6ac8d2b-2d07-4e01-959f-e5970c84081d`; live HTML/assets returned 200 and anonymous Messenger upload returned 401. Authenticated upload/post interaction remains a follow-up smoke test.

@@ -1,5 +1,7 @@
 # TPI MASTER BUILD PLAN
 
+[MIMO] 2026-10-08 — **Member search/menu spacing refinement.** Increased the desktop gap between the Search group and Member Menu from 12px to 20px so the two pill controls no longer read as smooshed; mobile keeps the tighter stacked 12px gap.
+
 [MIMO] 2026-10-08 — **Member search strip presence adjustment.** The new member-only search/menu strip beneath “You Are the Initiative” was enlarged with a taller 48px control height, increased padding, and stronger card presence so it does not read as a thin divider above the composer. Mobile remains stacked and full-width.
 
 [MIMO] 2026-10-08 — **Member discovery strip and Messenger document attachments deployed.** Member Home now places a TPI-styled search section directly beneath “You Are the Initiative,” with an attached member-only menu for Community Feed, Search Site, My Profile, and sharing shortcuts for Photo, Video, Files, Link, and Emoji. The existing member Messenger now accepts `.txt` and `.pdf` files, preserves the filename/title and document type through the R2/API message path, and renders a downloadable titled document card in the conversation. Notifications, Messenger access, and avatars remain in their existing shell locations; no duplicate header controls were added. Feature commit `85139df` deployed with Wrangler Version ID `f6ac8d2b-2d07-4e01-959f-e5970c84081d`; live HTML/assets returned 200 and the anonymous Messenger upload boundary returned 401. Authenticated upload/post interaction remains a follow-up smoke test.
