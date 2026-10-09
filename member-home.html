@@ -865,6 +865,20 @@
             gap: 4px;
         }
 
+        .composer-emoji-group + .composer-emoji-group {
+            margin-top: 10px;
+        }
+
+        .composer-emoji-group-label {
+            display: block;
+            margin: 0 0 5px;
+            color: #8aa0b6;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
         .composer-emoji-option {
             display: grid;
             place-items: center;
@@ -1610,6 +1624,53 @@
             border-radius: 12px;
         }
 
+        .feed-card-files {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .feed-file-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            padding: 10px 12px;
+            color: #c7d5e2;
+            background: #0d1017;
+            border: 1px solid #263646;
+            border-radius: 12px;
+            text-decoration: none;
+        }
+
+        .feed-file-chip:hover {
+            color: #f2f7fb;
+            border-color: color-mix(in srgb, var(--accent) 45%, #263646);
+            background: color-mix(in srgb, var(--accent) 6%, #0d1017);
+        }
+
+        .feed-file-icon {
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            width: 30px;
+            height: 30px;
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .feed-file-name {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
         /* ===== ARTICLE CARD ===== */
         .feed-card-article-title {
             margin: 0;
@@ -2051,35 +2112,74 @@
                             Emoji
                         </button>
                         <div class="composer-emoji-picker" data-composer-emoji-picker hidden>
-                            <div class="composer-emoji-grid" role="group" aria-label="Choose an emoji">
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👻" aria-label="Ghost">👻</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🔮" aria-label="Crystal ball">🔮</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🛸" aria-label="Flying saucer">🛸</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧿" aria-label="Nazar amulet">🧿</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🕯️" aria-label="Candle">🕯️</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🌙" aria-label="Moon">🌙</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="✨" aria-label="Sparkles">✨</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🪬" aria-label="Hamsa">🪬</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="📡" aria-label="Antenna">📡</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎙️" aria-label="Microphone">🎙️</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="📻" aria-label="Radio">📻</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="📷" aria-label="Camera">📷</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎥" aria-label="Movie camera">🎥</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧪" aria-label="Test tube">🧪</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧠" aria-label="Brain">🧠</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🗺️" aria-label="Map">🗺️</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🏚️" aria-label="Derelict house">🏚️</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🪦" aria-label="Headstone">🪦</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🐾" aria-label="Paw prints">🐾</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🌌" aria-label="Milky Way">🌌</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👽" aria-label="Alien">👽</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👀" aria-label="Eyes">👀</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🤔" aria-label="Thinking face">🤔</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="❤️" aria-label="Red heart">❤️</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="👍" aria-label="Thumbs up">👍</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🙏" aria-label="Folded hands">🙏</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="🔥" aria-label="Fire">🔥</button>
-                                <button type="button" class="composer-emoji-option" data-composer-emoji-value="😂" aria-label="Laughing face">😂</button>
+                            <div class="composer-emoji-group">
+                                <span class="composer-emoji-group-label">Faces</span>
+                                <div class="composer-emoji-grid" role="group" aria-label="Faces">
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😀" aria-label="Grinning face">😀</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😃" aria-label="Smiling face">😃</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😂" aria-label="Laughing face">😂</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🙂" aria-label="Slightly smiling face">🙂</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😉" aria-label="Winking face">😉</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😍" aria-label="Heart eyes">😍</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🤔" aria-label="Thinking face">🤔</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😳" aria-label="Flushed face">😳</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😱" aria-label="Face screaming in fear">😱</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😭" aria-label="Loudly crying face">😭</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="😡" aria-label="Angry face">😡</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🤯" aria-label="Exploding head">🤯</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="👀" aria-label="Eyes">👀</button>
+                                </div>
+                            </div>
+                            <div class="composer-emoji-group">
+                                <span class="composer-emoji-group-label">Paranormal &amp; Mystery</span>
+                                <div class="composer-emoji-grid" role="group" aria-label="Paranormal and mystery">
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="👻" aria-label="Ghost">👻</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🔮" aria-label="Crystal ball">🔮</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧿" aria-label="Nazar amulet">🧿</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🪬" aria-label="Hamsa">🪬</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🕯️" aria-label="Candle">🕯️</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🌙" aria-label="Moon">🌙</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="✨" aria-label="Sparkles">✨</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🏚️" aria-label="Derelict house">🏚️</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🪦" aria-label="Headstone">🪦</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🐾" aria-label="Paw prints">🐾</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🦉" aria-label="Owl">🦉</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🌌" aria-label="Milky Way">🌌</button>
+                                </div>
+                            </div>
+                            <div class="composer-emoji-group">
+                                <span class="composer-emoji-group-label">ITC &amp; Research</span>
+                                <div class="composer-emoji-grid" role="group" aria-label="ITC and research">
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="📡" aria-label="Antenna">📡</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎙️" aria-label="Microphone">🎙️</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="📻" aria-label="Radio">📻</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎧" aria-label="Headphones">🎧</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="📷" aria-label="Camera">📷</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎥" aria-label="Movie camera">🎥</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧪" aria-label="Test tube">🧪</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧠" aria-label="Brain">🧠</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🗺️" aria-label="Map">🗺️</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🧭" aria-label="Compass">🧭</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🔬" aria-label="Microscope">🔬</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🛸" aria-label="Flying saucer">🛸</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="👽" aria-label="Alien">👽</button>
+                                </div>
+                            </div>
+                            <div class="composer-emoji-group">
+                                <span class="composer-emoji-group-label">Reactions &amp; Community</span>
+                                <div class="composer-emoji-grid" role="group" aria-label="Reactions and community">
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="❤️" aria-label="Red heart">❤️</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🖤" aria-label="Black heart">🖤</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="👍" aria-label="Thumbs up">👍</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="👎" aria-label="Thumbs down">👎</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🙏" aria-label="Folded hands">🙏</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🔥" aria-label="Fire">🔥</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="💡" aria-label="Light bulb">💡</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="✅" aria-label="Check mark">✅</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="❓" aria-label="Question mark">❓</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="❗" aria-label="Exclamation mark">❗</button>
+                                    <button type="button" class="composer-emoji-option" data-composer-emoji-value="🎉" aria-label="Party popper">🎉</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2300,6 +2400,7 @@
     var loadMoreWrap = document.querySelector("[data-feed-load-more]");
     var loadMoreBtn = document.querySelector("[data-load-more-btn]");
     var pendingAttachments = [];
+    var COMMUNITY_FILE_ACCEPT = ".pdf,.txt,.csv,.json,.rtf,.doc,.docx,.odt,.xls,.xlsx,.zip,application/pdf,text/plain,text/csv,application/json,application/rtf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.text,application/zip,application/octet-stream";
 
     init();
 
@@ -2826,7 +2927,7 @@
             btn.addEventListener("click", function() { openFilePicker("video/*"); });
         });
         document.querySelectorAll("[data-media-file]").forEach(function(btn) {
-            btn.addEventListener("click", function() { openFilePicker("image/*,video/*"); });
+            btn.addEventListener("click", function() { openFilePicker(COMMUNITY_FILE_ACCEPT); });
         });
 
         if (composerEmojiButton && composerEmojiPicker) {
@@ -2890,17 +2991,18 @@
         if (!files || !files.length) return;
         var images = pendingAttachments.filter(function(a) { return a.mediaType === "image"; });
         var videos = pendingAttachments.filter(function(a) { return a.mediaType === "video"; });
+        var fileAttachments = pendingAttachments.filter(function(a) { return a.mediaType === "file"; });
         var newFiles = Array.from(files);
         for (var i = 0; i < newFiles.length; i++) {
             var file = newFiles[i];
             var isImage = file.type.startsWith("image/");
             var isVideo = file.type.startsWith("video/");
-            if (!isImage && !isVideo) continue;
             if (isImage && images.length >= 10) { composerStatus.textContent = "Maximum 10 images."; continue; }
             if (isVideo && videos.length >= 2) { composerStatus.textContent = "Maximum 2 videos."; continue; }
-            var entry = { file: file, mediaType: isImage ? "image" : "video", preview: null };
+            if (!isImage && !isVideo && fileAttachments.length >= 5) { composerStatus.textContent = "Maximum 5 files."; continue; }
+            var entry = { file: file, mediaType: isImage ? "image" : isVideo ? "video" : "file", preview: null };
             pendingAttachments.push(entry);
-            if (isImage) images.push(entry); else videos.push(entry);
+            if (isImage) images.push(entry); else if (isVideo) videos.push(entry); else fileAttachments.push(entry);
         }
         renderPreviews();
         updatePostButtonState();
@@ -2932,7 +3034,8 @@
             } else {
                 var icon = document.createElement("div");
                 icon.className = "preview-file-icon";
-                icon.textContent = att.file ? att.file.name.split(".").pop().toUpperCase() : "FILE";
+                icon.textContent = att.file ? (att.file.name.split(".").pop() || "FILE").toUpperCase() : "FILE";
+                icon.title = att.file ? att.file.name : "File";
                 item.appendChild(icon);
             }
             var removeBtn = document.createElement("button");
@@ -3044,16 +3147,19 @@
 
         try {
             var uploadedAttachments = [];
-            if (hasMedia) {
-                for (var i = 0; i < pendingAttachments.length; i++) {
-                    composerStatus.textContent = "Uploading " + (i + 1) + " of " + pendingAttachments.length + "...";
-                    var result = await window.TPIApi.uploadCommunityMedia(pendingAttachments[i].file);
+            var uploadAttachments = pendingAttachments.filter(function(attachment) {
+                return attachment.mediaType !== "link" && attachment.file;
+            });
+            if (uploadAttachments.length) {
+                for (var i = 0; i < uploadAttachments.length; i++) {
+                    composerStatus.textContent = "Uploading " + (i + 1) + " of " + uploadAttachments.length + "...";
+                    var result = await window.TPIApi.uploadCommunityMedia(uploadAttachments[i].file);
                     uploadedAttachments.push({
                         url: result.url,
                         key: result.key,
-                        name: result.name || pendingAttachments[i].file.name,
-                        contentType: result.contentType || pendingAttachments[i].file.type,
-                        mediaType: pendingAttachments[i].mediaType
+                        name: result.name || uploadAttachments[i].file.name,
+                        contentType: result.contentType || uploadAttachments[i].file.type,
+                        mediaType: uploadAttachments[i].mediaType
                     });
                 }
             }
@@ -3636,21 +3742,37 @@
         if (!attachments || !attachments.length) return "";
         var images = attachments.filter(function(a) { return (a.mediaType || a.contentType || "").startsWith("image"); });
         var videos = attachments.filter(function(a) { return (a.mediaType || a.contentType || "").startsWith("video"); });
-        if (!images.length && !videos.length) return "";
+        var files = attachments.filter(function(a) { return (a.mediaType || "") === "file"; });
         var media = images.concat(videos);
-        var singleClass = media.length === 1 ? " feed-attachment-single" : "";
-        var parts = ['<div class="feed-card-attachments' + singleClass + '">'];
-        media.forEach(function(att) {
-            var url = escapeAttr(att.url || "");
-            if (!url) return;
-            var isVid = (att.mediaType || att.contentType || "").startsWith("video");
-            if (isVid) {
-                parts.push('<video src="' + url + '" muted preload="metadata" playsinline></video>');
-            } else {
-                parts.push('<img src="' + url + '" alt="' + escapeAttr(att.name || "Image") + '" loading="lazy">');
-            }
-        });
-        parts.push('</div>');
+        if (!media.length && !files.length) return "";
+        var parts = [];
+        if (media.length) {
+            var singleClass = media.length === 1 ? " feed-attachment-single" : "";
+            parts.push('<div class="feed-card-attachments' + singleClass + '">');
+            media.forEach(function(att) {
+                var url = escapeAttr(att.url || "");
+                if (!url) return;
+                var isVid = (att.mediaType || att.contentType || "").startsWith("video");
+                if (isVid) {
+                    parts.push('<video src="' + url + '" muted preload="metadata" playsinline></video>');
+                } else {
+                    parts.push('<img src="' + url + '" alt="' + escapeAttr(att.name || "Image") + '" loading="lazy">');
+                }
+            });
+            parts.push('</div>');
+        }
+        if (files.length) {
+            parts.push('<div class="feed-card-files" aria-label="Attached files">');
+            files.forEach(function(att) {
+                var url = escapeAttr(att.url || "");
+                if (!url) return;
+                parts.push('<a class="feed-file-chip" href="' + url + '" target="_blank" rel="noopener noreferrer" download>' +
+                    '<span class="feed-file-icon" aria-hidden="true">📎</span>' +
+                    '<span class="feed-file-name">' + escapeHtml(att.name || "Attached file") + '</span>' +
+                '</a>');
+            });
+            parts.push('</div>');
+        }
         return parts.join("");
     }
 

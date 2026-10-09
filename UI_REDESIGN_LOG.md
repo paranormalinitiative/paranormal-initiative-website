@@ -20,6 +20,8 @@ When working on the live site (GitHub/Cloudflare):
 
 ## Member Feed / Content Editor Direction — Oct 8, 2026
 
+- The community composer now completes the distinct Photos, Videos, Files, Link, and Emoji actions. Common file uploads are shown in the Feed as downloadable filename chips, while existing image/video rendering and validated links remain separate attachment types.
+- Emoji choices are grouped for scanning into Faces, Paranormal & Mystery, ITC & Research, and Reactions & Community; the Faces group includes 😳 and 😱.
 - The member-home Community Feed is the social stream for paranormal and ITC conversation: member posts, replies, media, links, reactions, and emoji.
 - The Feed composer no longer exposes a category selector; new posts use the internal general bucket while existing category data remains available for historical context.
 - The Content Editor is a separate contributor/admin/owner-only publishing surface for Education Center and other destination content. Normal members must not see its navigation, My Content card, or article-list endpoint.

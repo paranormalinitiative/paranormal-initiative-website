@@ -1257,7 +1257,22 @@ async function handleArticleMediaUpload(request, env, user) {
 }
 
 async function handleCommunityMediaUpload(request, env, user) {
-  return handleMediaUpload(request, env, user, "community", "community-media", ["image/", "video/"]);
+  return handleMediaUpload(request, env, user, "community", "community-media", [
+    "image/",
+    "video/",
+    "application/pdf",
+    "application/json",
+    "application/rtf",
+    "application/msword",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.oasis.opendocument.text",
+    "application/zip",
+    "text/plain",
+    "text/csv",
+    "application/octet-stream"
+  ]);
 }
 
 async function handleMessengerMediaUpload(request, env, user) {
@@ -1282,7 +1297,12 @@ async function handleMediaUpload(request, env, user, area, purpose, allowedTypes
   }
   const maxBytes = upload.type.startsWith("audio/") ? 10 * 1024 * 1024 : 25 * 1024 * 1024;
   if (upload.size > maxBytes) {
-    return json({ error: upload.type.startsWith("audio/") ? "Voice messages must be 10 MB or smaller." : "Messenger photos and videos must be 25 MB or smaller." }, 413);
+    const sizeMessage = upload.type.startsWith("audio/")
+      ? "Voice messages must be 10 MB or smaller."
+      : purpose === "community-media"
+        ? "Community attachments must be 25 MB or smaller."
+        : "Messenger photos and videos must be 25 MB or smaller.";
+    return json({ error: sizeMessage }, 413);
   }
 
   const key = makeMediaKey(area, user.username, upload.name, upload.type);
@@ -4107,24 +4127,27 @@ function sanitizeCommunityAttachments(value) {
   const attachments = Array.isArray(value) ? value : [];
   const cleaned = attachments.map((item, index) => {
     const contentType = clean(item.contentType);
-    const mediaType = clean(item.mediaType || (contentType.startsWith("video/") ? "video" : "image"));
+    const inferredMediaType = contentType.startsWith("video/") ? "video" : contentType.startsWith("image/") ? "image" : "file";
+    const mediaType = clean(item.mediaType || inferredMediaType);
     return {
       url: clean(item.url).slice(0, 1000),
       key: clean(item.key).slice(0, 1000),
       name: clean(item.name).slice(0, 180),
       contentType: contentType.slice(0, 120),
-      mediaType: mediaType === "video" ? "video" : mediaType === "link" ? "link" : "image",
+      mediaType: mediaType === "video" ? "video" : mediaType === "link" ? "link" : mediaType === "file" ? "file" : "image",
       sortOrder: index
     };
-  }).filter(item => item.url && ["image", "video", "link"].includes(item.mediaType))
+  }).filter(item => item.url && ["image", "video", "file", "link"].includes(item.mediaType))
     // Links must be real http(s) URLs; uploaded media keys are only meaningful for image/video
     .filter(item => item.mediaType !== "link" || /^https?:\/\//i.test(item.url));
 
   const images = cleaned.filter(item => item.mediaType === "image");
   const videos = cleaned.filter(item => item.mediaType === "video");
+  const files = cleaned.filter(item => item.mediaType === "file");
   const links = cleaned.filter(item => item.mediaType === "link");
   if (images.length > 10) throw new Error("Community posts can include up to 10 images.");
   if (videos.length > 2) throw new Error("Community posts can include up to 2 videos.");
+  if (files.length > 5) throw new Error("Community posts can include up to 5 files.");
   if (links.length > 5) throw new Error("Community posts can include up to 5 links.");
   return cleaned;
 }
