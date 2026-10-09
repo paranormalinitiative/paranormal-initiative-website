@@ -197,7 +197,7 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 
 ## Session Log (append every working session)
 
-- **Oct 8, 2026 (session: mimo, member search hierarchy)** — **Search row and shortcut row refined.** Added top padding, reduced the Search field/button size, and placed More immediately beside Links on the compact Feed/Photos/Videos/Files/Links/More row. Commit and final Wrangler deployment verification follow.
+- **Oct 8, 2026 (session: mimo, member search card proportion)** — **Search card enlarged to fit its controls.** Added interior padding and vertical spacing, then resized Search, Feed/Photos/Videos/Files/Links, and More proportionally while keeping More beside Links. Commit and final Wrangler deployment verification follow.
 
 - **Oct 8, 2026 (session: mimo, member search sizing)** — **Member search/menu strip enlarged.** Increased the search and Member Menu controls to 48px high, added padding and stronger card treatment, and preserved the stacked full-width mobile layout. Commit and final Wrangler deployment verification follow.
 

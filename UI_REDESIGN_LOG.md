@@ -20,7 +20,7 @@ When working on the live site (GitHub/Cloudflare):
 
 ## Member Feed / Content Editor Direction — Oct 8, 2026
 
-- The member search card now has extra top breathing room, a smaller Search row, and one compact horizontal row for Feed, Photos, Videos, Files, Links, and More. More sits beside Links and opens the remaining member shortcuts. The shortcuts remain TPI-specific rather than a Facebook copy. Existing notification, Messenger, and avatar controls remain in the member shell and are not duplicated here.
+- The member search card now has enough interior height and padding for the complete control group. Search, Feed, Photos, Videos, Files, Links, and More are proportionally sized and spaced; More remains beside Links and opens the remaining member shortcuts. The shortcuts remain TPI-specific rather than a Facebook copy. Existing notification, Messenger, and avatar controls remain in the member shell and are not duplicated here.
 - The member search/menu strip was enlarged to a 48px control height with more padding and a stronger card treatment so the section reads as an intentional member tool area instead of a thin divider. It stays stacked and full-width on mobile.
 - Member Messenger now accepts text and PDF files. Pending and sent attachments show the filename/title plus the document type, and sent documents are downloadable from the conversation.
 - The community composer now completes the distinct Photos, Videos, Files, Link, and Emoji actions. Common file uploads are shown in the Feed as downloadable filename chips, while existing image/video rendering and validated links remain separate attachment types.
