@@ -698,9 +698,9 @@
             display: flex;
             flex-direction: column;
             align-items: stretch;
-            gap: 12px;
-            margin: -8px 0 22px;
-            padding: 14px;
+            gap: 10px;
+            margin: -8px 0 18px;
+            padding: 10px;
             background: #10141c;
             border: 1px solid #263646;
             border-radius: 22px;
@@ -729,14 +729,14 @@
 
         .member-discovery-search input {
             width: 100%;
-            min-height: 48px;
-            padding: 12px 18px;
+            min-height: 40px;
+            padding: 9px 14px;
             color: #e6edf3;
             background: #090f14;
             border: 1px solid #263646;
             border-radius: 999px;
             font: inherit;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
         }
 
@@ -749,20 +749,55 @@
 
         .member-discovery-search button,
         .member-discovery-menu-toggle {
-            min-height: 48px;
-            padding: 12px 18px;
+            min-height: 40px;
+            padding: 9px 14px;
             color: #061018;
             background: var(--accent);
             border: 1px solid var(--accent);
             border-radius: 999px;
             font: inherit;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 900;
             cursor: pointer;
         }
 
         .member-discovery-search button:hover,
         .member-discovery-menu-toggle:hover { filter: brightness(1.08); }
+
+        .member-discovery-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            overflow-x: auto;
+            padding: 1px 0 2px;
+            scrollbar-width: thin;
+        }
+
+        .member-discovery-nav a,
+        .member-discovery-nav button {
+            flex: 0 0 auto;
+            min-height: 34px;
+            padding: 7px 12px;
+            color: #9fb3c8;
+            background: transparent;
+            border: 1px solid #263646;
+            border-radius: 999px;
+            font: inherit;
+            font-size: 11px;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .member-discovery-nav a:hover,
+        .member-discovery-nav button:hover,
+        .member-discovery-nav a:focus-visible,
+        .member-discovery-nav button:focus-visible {
+            color: #f4f8fb;
+            border-color: color-mix(in srgb, var(--accent) 55%, #263646);
+            background: color-mix(in srgb, var(--accent) 10%, transparent);
+        }
 
         .member-discovery-menu {
             position: relative;
@@ -2024,15 +2059,17 @@
                 gap: 12px;
             }
 
-            .member-discovery-menu,
-            .member-discovery-menu-toggle { width: 100%; }
+            .member-discovery-menu { width: max-content; }
 
-            .member-discovery-menu-toggle { justify-content: center; }
+            .member-discovery-menu-toggle {
+                width: auto;
+                justify-content: center;
+            }
 
             .member-discovery-menu-panel {
                 left: 0;
-                right: 0;
-                width: auto;
+                right: auto;
+                width: 230px;
             }
 
             .composer-link-row {
@@ -2253,6 +2290,13 @@
                     <input id="member-home-search-input" type="search" data-member-home-search-input placeholder="Search paranormal research, members, and resources..." autocomplete="off" spellcheck="true">
                     <button type="submit">Search</button>
                 </form>
+                <nav class="member-discovery-nav" aria-label="Member shortcuts">
+                    <a href="#community-feed">Feed</a>
+                    <button type="button" data-member-discovery-action="photo">Photos</button>
+                    <button type="button" data-member-discovery-action="video">Videos</button>
+                    <button type="button" data-member-discovery-action="file">Files</button>
+                    <button type="button" data-member-discovery-action="link">Links</button>
+                </nav>
                 <div class="member-discovery-menu" data-member-discovery-menu>
                     <button type="button" class="member-discovery-menu-toggle" data-member-discovery-toggle aria-haspopup="menu" aria-expanded="false" aria-label="More member options">
                         More <span aria-hidden="true">⌄</span>
@@ -3195,7 +3239,7 @@
             memberDiscoveryPanel.hidden = !shouldOpen;
             memberDiscoveryToggle.setAttribute("aria-expanded", String(shouldOpen));
         });
-        memberDiscoveryPanel.addEventListener("click", function(event) {
+        memberDiscovery.addEventListener("click", function(event) {
             var action = event.target.closest("[data-member-discovery-action]");
             if (!action) return;
             var selectors = {

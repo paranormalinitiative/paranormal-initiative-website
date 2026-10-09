@@ -1,6 +1,6 @@
 # TPI MASTER BUILD PLAN
 
-[MIMO] 2026-10-08 — **Member search/More layout refinement.** The member search card now places Search on the first row and a clearly labeled More dropdown directly below it, making the additional member shortcuts discoverable without crowding the search control.
+[MIMO] 2026-10-08 — **Member search/menu hierarchy refinement.** The member search card now places a slimmer Search control first, a compact horizontal shortcut row for Feed, Photos, Videos, Files, and Links below it, and a clearly labeled More dropdown last. The card no longer crowds the large controls together.
 
 [MIMO] 2026-10-08 — **Member search strip presence adjustment.** The new member-only search/menu strip beneath “You Are the Initiative” was enlarged with a taller 48px control height, increased padding, and stronger card presence so it does not read as a thin divider above the composer. Mobile remains stacked and full-width.
 
