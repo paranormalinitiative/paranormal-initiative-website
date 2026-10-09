@@ -1,6 +1,6 @@
 # The Paranormal Initiative Website - Agent Handoff
 
-Last updated: July 27, 2026
+Last updated: October 8, 2026
 
 ## Project Identity
 
@@ -10,7 +10,9 @@ The current focus is the **Education Center / Research Library** and the new **C
 
 There is now also a live **Contributor Portal** and **Community Feed** direction. The member Feed is the social stream for member posts, replies, media, links, reactions, and paranormal/ITC conversation. The Content Editor is a separate contributor-only publishing surface for Education Center and other destination content; normal members must not see or access it. Invite/admin tools stay hidden from normal visitors, logged-in members land on a private dashboard, contributors can save drafts/publish contributions, and comments/discussion features use Cloudflare D1 when deployed. See `CONTRIBUTOR_PORTAL_PLAN.md` and `CLOUDFLARE_PORTAL_SETUP.md`.
 
-## Current Status - July 27, 2026
+Parapost is a visual and interaction reference only. Its member counts, activity totals, and other statistics are not TPI data and must never be used as product truth. TPI's own D1-backed counts are authoritative, including while the community is still small during the pre-campaign buildout.
+
+## Current Status - October 8, 2026
 
 - The editor is now named **Content Editor**, not Paper Editor.
 - Public visitors can read the site and public Discussion Portal topics.
@@ -18,6 +20,7 @@ There is now also a live **Contributor Portal** and **Community Feed** direction
 - Contributor/editor/admin tools must stay hidden from normal members and public visitors.
 - Contributors can access the Content Editor, save drafts, publish articles, and manage their own content.
 - The member-home Feed is social-only. Its composer posts to the community Feed, uses the internal general bucket without exposing a category selector, and supports emoji insertion. Published articles and other destination content belong to the Content Editor and their destination areas, not the member Feed.
+- Publishing new destination content automatically creates a notification with the title/summary and a clickable canonical destination link, respecting member preferences and excluding the author. It must not create a duplicate social Feed post. Thumbnail previews and optional direct-message delivery are planned notification enhancements and must remain separate from the Feed.
 - Owner/admin/director-level tools include member/contributor access management, comment moderation, and forum topic cleanup.
 - The Discussion Portal has a messenger-style layout with categories on the left and topic/chat bubbles on the right.
 - Forum topic badges use blue for topics and green for replies, with member read tracking when `forum_topic_reads` exists.

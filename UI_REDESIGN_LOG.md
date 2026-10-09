@@ -24,6 +24,8 @@ When working on the live site (GitHub/Cloudflare):
 - The Feed composer no longer exposes a category selector; new posts use the internal general bucket while existing category data remains available for historical context.
 - The Content Editor is a separate contributor/admin/owner-only publishing surface for Education Center and other destination content. Normal members must not see its navigation, My Content card, or article-list endpoint.
 - Member-home feed requests use the social-only feed scope so published articles and TPI videos stay in their destination/discovery surfaces instead of becoming feed posts.
+- Parapost remains a layout/interaction reference only; TPI's own D1-backed member counts and activity statistics are authoritative, especially while membership is intentionally small before the growth campaign.
+- Content Editor publication already sends a preference-aware, author-excluding notification with a title/summary and clickable destination link. Thumbnail and optional direct-message previews belong in the notification workflow, never as automatic member Feed posts.
 
 ---
 

@@ -322,19 +322,18 @@ The authoritative publishing workflow is:
      EDUCATION CENTER
             |
             v
-    PUBLICATION EVENT
+     PUBLICATION EVENT
             |
-            +----------------+
-            |                |
-            v                v
-      NOTIFICATION     COMMUNITY FEED
-                           ANNOUNCEMENT
-                                |
-                                v
-                           MEMBER DISCUSSION
+            +--------------------------+
+            |                          |
+            v                          v
+      NOTIFICATION CENTER       OPTIONAL DIRECT MESSAGE
+      title + summary +         thumbnail/preview +
+      clickable destination     clickable destination
 
 The contributor should NOT need to manually duplicate the article in the
-Community Feed.
+Community Feed. Publication discovery belongs in notifications and, when
+enabled, a direct message or preview card — not in the social Feed.
 
 ---
 
@@ -345,7 +344,9 @@ This is a critical rule.
 The complete Education Center article must NOT be duplicated inside the
 Community Feed.
 
-The Community Feed should contain only an announcement/preview/link.
+The notification center or optional direct message may contain an
+announcement/preview/link, but the social Community Feed should contain only
+member-created social posts and discussions.
 
 Example:
 
@@ -357,6 +358,10 @@ Example:
     and its importance when analyzing potential EVP evidence.
 
     [READ ARTICLE]
+
+This preview belongs in Notifications and, if enabled by the product
+workflow, a direct message with a thumbnail. It does not become an automatic
+Community Feed post.
 
 The actual article remains in:
 
