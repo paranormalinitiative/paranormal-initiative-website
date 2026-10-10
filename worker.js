@@ -50,6 +50,17 @@ const MEMBER_GATE_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
+const STUDIO_COMING_SOON_HTML = MEMBER_GATE_HTML
+  .replaceAll("ITC Visual Studio — Member Access", "Creator Studio — Coming Soon")
+  .replace(
+    "<h1>Creator Studio — Coming Soon</h1>",
+    '<p class="coming-soon-pill">COMING SOON</p><h1>Creator Studio</h1>'
+  )
+  .replace(
+    "ITC Visual Studio is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
+    "Creator Studio is in final development and is not publicly available yet. Authorized owner and test access remains protected."
+  );
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -111,39 +122,14 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    // StudioFlow is in private build testing: leadership access only (owner or
-    // admin, matching member-shell.js) until guest rooms and livestreaming pass
-    // their production tests (see STUDIOFLOW_MASTER_TODO.md Phase 3). Revisit
-    // this gate when RealtimeKit guests go into testing.
+    // Creator Studio is an owner/admin-only preview. Keep the gate server-side
+    // for the host route, direct assets, and the former guest URL so public or
+    // ordinary member requests cannot load the application bundle.
     if (url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
-      // Guest invite links are the guest's credential (ground rule 6: guests
-      // join via browser link — no website account needed). The app boots in
-      // guest mode from the /studio/guest/<room> URL. App assets are public so
-      // guests can load the same bundle; the host studio itself stays gated.
-      if (url.pathname.startsWith("/studio/guest/")) {
-        // Fetch the clean directory URL: /studio/index.html would 307 to
-        // /studio/ (assets clean-URL handling, known bug #16) and guests
-        // would bounce into the gated host page. The query string must
-        // survive the rewrite: guest invite links carry ?code=<showCode>
-        // (per-show invite codes; see functions/api room-codes endpoints).
-        const appUrl = new URL("/studio/", url.origin);
-        appUrl.search = url.search;
-        return env.ASSETS.fetch(new Request(appUrl, request));
-      }
-      if (url.pathname.startsWith("/studio/assets/")) {
-        return env.ASSETS.fetch(request);
-      }
       const user = await getSessionUser(request, env);
       const hasStudioAccess = user && (user.role === "owner" || user.role === "admin");
       if (!hasStudioAccess) {
-        const gateHtml = MEMBER_GATE_HTML
-          .replaceAll("ITC Visual Studio", "StudioFlow")
-          .replaceAll("StudioFlow — Member Access", "StudioFlow — Private Build Testing")
-          .replaceAll(
-            "StudioFlow is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
-            "StudioFlow is in private build testing and is not open to member access yet. Please check back soon."
-          );
-        return new Response(gateHtml, {
+        return new Response(STUDIO_COMING_SOON_HTML, {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8" }
         });

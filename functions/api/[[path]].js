@@ -95,20 +95,23 @@ export async function onRequest(context) {
     // credential (no website account). Same API shape as the local dev
     // room server so the frontend uses one code-scoped room id
     // (`show-<code>`; see 0024_studioflow_invite_codes.sql).
-    if (request.method === "GET" && path === "/room-codes/current") return handleRoomCodeCurrent(env);
-    if (request.method === "POST" && path === "/room-codes/current/close") return handleRoomCodeClose(env);
-    if (request.method === "GET" && path.match(/^\/room-codes\/[^/]+$/)) return handleRoomCodeValidate(path, env);
-    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return handleRoomListGuests(path, env);
-    if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return handleRoomUpsertGuest(path, request, env);
-    if (request.method === "DELETE" && path.match(/^\/rooms\/([^/]+)\/guests\/[^/]+$/)) return handleRoomRemoveGuest(path, env);
-    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/status$/)) return handleRoomStatus(path, env);
-    if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return handleRoomPostSignal(path, request, env);
-    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return handleRoomGetSignals(path, request, env);
-    if (request.method === "POST" && path === "/studio/rooms") return requireContributor(request, env, user => handleCreateStudioRoom(request, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return handleStudioGuestToken(path, request, env);
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireContributor(request, env, user => handleCloseStudioRoom(path, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/start$/)) return requireContributor(request, env, user => handleStartStudioLivestream(path, request, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/stop$/)) return requireContributor(request, env, user => handleStopStudioLivestream(path, env, user));
+    // Creator Studio preview is owner/admin-only. This covers the room relay,
+    // invite-code lifecycle, guest-token minting, and livestream controls so
+    // direct API calls cannot bypass the Worker gate or expose session state.
+    if (request.method === "GET" && path === "/room-codes/current") return requireAdmin(request, env, () => handleRoomCodeCurrent(env));
+    if (request.method === "POST" && path === "/room-codes/current/close") return requireAdmin(request, env, () => handleRoomCodeClose(env));
+    if (request.method === "GET" && path.match(/^\/room-codes\/[^/]+$/)) return requireAdmin(request, env, () => handleRoomCodeValidate(path, env));
+    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return requireAdmin(request, env, () => handleRoomListGuests(path, env));
+    if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/guests$/)) return requireAdmin(request, env, () => handleRoomUpsertGuest(path, request, env));
+    if (request.method === "DELETE" && path.match(/^\/rooms\/([^/]+)\/guests\/[^/]+$/)) return requireAdmin(request, env, () => handleRoomRemoveGuest(path, env));
+    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/status$/)) return requireAdmin(request, env, () => handleRoomStatus(path, env));
+    if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return requireAdmin(request, env, () => handleRoomPostSignal(path, request, env));
+    if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return requireAdmin(request, env, () => handleRoomGetSignals(path, request, env));
+    if (request.method === "POST" && path === "/studio/rooms") return requireAdmin(request, env, user => handleCreateStudioRoom(request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return requireAdmin(request, env, () => handleStudioGuestToken(path, request, env));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireAdmin(request, env, user => handleCloseStudioRoom(path, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/start$/)) return requireAdmin(request, env, user => handleStartStudioLivestream(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/stop$/)) return requireAdmin(request, env, user => handleStopStudioLivestream(path, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));

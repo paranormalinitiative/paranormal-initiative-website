@@ -81,8 +81,9 @@
     "member-notifications",
     "admin-panel",
     "admin-advanced-settings",
-    "live-video",
-    "podcast"
+    // Live Video and Podcast are public Coming Soon pages. Their launch
+    // controls remain role-gated; Creator Studio itself is protected by the
+    // Worker owner/admin gate.
     // Future: "activity", "chat", "saved"
   ];
 
