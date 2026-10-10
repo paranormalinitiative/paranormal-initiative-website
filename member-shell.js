@@ -383,11 +383,11 @@
     document.querySelectorAll("[data-contributor-only]").forEach(function (element) {
       element.hidden = !canUseContentEditor;
     });
-    // Coming Soon markers (TPI Studio) hide for leadership, who can still enter.
+    // Coming Soon markers (Creator Studio) hide for leadership, who can still enter.
     document.querySelectorAll("[data-coming-soon]").forEach(function (element) {
       element.hidden = canUseAdminPanel;
     });
-    // TPI Studio is Coming Soon: non-leadership gets a disabled nav item they
+    // Creator Studio is Coming Soon: non-leadership gets a disabled nav item they
     // cannot click through; leadership keeps the working link.
     document.querySelectorAll('[data-nav="studio"]').forEach(function (element) {
       if (canUseAdminPanel) {
@@ -399,7 +399,7 @@
       }
       element.classList.add("is-nav-disabled");
       element.setAttribute("aria-disabled", "true");
-      element.setAttribute("title", "TPI Studio — Coming Soon");
+      element.setAttribute("title", "Creator Studio — Coming Soon");
       element.removeAttribute("href");
     });
     document.body.classList.toggle("member-guest-mode", Boolean(user && user.guest));

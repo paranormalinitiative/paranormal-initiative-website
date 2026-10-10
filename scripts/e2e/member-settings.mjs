@@ -64,7 +64,7 @@ await page.route('**/*',async route=>{
  try { const content=fs.readFileSync(root+'/'+path);return route.fulfill({contentType:path.endsWith('.css')?'text/css':path.endsWith('.js')?'text/javascript':path.endsWith('.html')?'text/html':'application/octet-stream',body:content}); }
  catch {return route.fulfill({status:404,body:''});}
 });
-const sections=['account','profile','profile-visibility','privacy-safety','blocked-users','personalization','notifications','content-feed','data','help-support','legal','payments'];
+const sections=['account','profile','profile-visibility','privacy-safety','blocked-users','content-ownership','personalization','notifications','content-feed','data','help-support','legal','payments'];
 async function goto(key) { await page.evaluate(key=>{location.hash=key},key);await page.waitForFunction(key=>document.querySelector('[data-settings-panel="'+key+'"]')?.hidden===false,key); }
 for(const width of [1440,1024,768,390]) {
  await page.setViewportSize({width,height:1000});
@@ -72,7 +72,7 @@ for(const width of [1440,1024,768,390]) {
  await page.waitForSelector('body.member-mode');
  await page.waitForFunction(()=>document.querySelector('[data-account-identity]')?.textContent.includes('Alice'));
  await page.waitForFunction(()=>!document.querySelector('[data-style-save]').disabled);
- assert.equal(await page.locator('[data-settings-link]').count(),12);
+ assert.equal(await page.locator('[data-settings-link]').count(),13);
  for(const key of sections) {
   await goto(key);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
@@ -123,5 +123,5 @@ await page.waitForFunction(()=>document.querySelector('.public-profile-card')?.d
 assert((await page.locator('.public-profile-heading h1').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Arial Black'));
 await browser.close();
 assert.deepEqual(errors,[]);
-console.log('PASS actual member shell/UI with real Settings API: all 12 pages, 8 policy areas, 3 secondary routes, 4 viewport sizes, search, deep links, theme/style save & reload & failure rollback, private/public profile styling; no JS errors or overflowing controls. Other background APIs use empty fixtures; no live member data changed.');
+console.log('PASS actual member shell/UI with real Settings API: all 13 pages, 8 policy areas, 3 secondary routes, 4 viewport sizes, search, deep links, theme/style save & reload & failure rollback, private/public profile styling; no JS errors or overflowing controls. Other background APIs use empty fixtures; no live member data changed.');
 
