@@ -11,7 +11,7 @@ Release scope: accepted StudioFlow directives TPI-STUDIOFLOW-001 through TPI-STU
 | --- | --- | --- |
 | IMPLEMENTED | **YES** | The existing StudioFlow application contains the accepted feature batches through 008D. No rebuild or replacement was performed. |
 | AUTOMATED VERIFIED | **PARTIAL** | Static checks, local browser UI checks, prior isolated recording/recovery evidence, and prior local synthetic RTMP evidence passed as listed below. |
-| DEPLOYED | **YES** | Cloudflare Worker `theparanormalinitiative`, Version ID `16b8f785-abe9-4f88-b430-4603a1c292d5`. |
+| DEPLOYED | **YES** | Cloudflare Worker `theparanormalinitiative`; code deployment Version ID `16b8f785-abe9-4f88-b430-4603a1c292d5`, followed by documentation-sync Version ID `5bac599d-cf19-415e-a109-b6f1ea6a157`. |
 | LIVE VERIFIED | **PARTIAL** | Public site boundary, private StudioFlow gate, generated JS/CSS, `/live-video`, bindings, and trigger were checked. Signed-in interactive StudioFlow behavior was not claimed. |
 | OWNER VERIFIED | **YES — LIMITED** | Owner verification remains limited to camera functionality, microphone functionality, and creation of a local video recording. This is separate from automated testing. |
 | NOT VERIFIED | **YES** | Public live broadcasting, webinars, authenticated live StudioFlow interaction, and ticker/Style/background-music/uploaded-sound inclusion in recorded or RTMP output remain unverified. |
@@ -78,13 +78,14 @@ These automated/local results do not replace physical owner-device testing.
 - Existing workflow: `wrangler deploy` using `wrangler.toml`.
 - Worker: `theparanormalinitiative`
 - Account selected: Paranormal Initiative account `221ea5479876fd303ddc87002b9e892d`
-- Version ID: `16b8f785-abe9-4f88-b430-4603a1c292d5`
+- Code deployment Version ID: `16b8f785-abe9-4f88-b430-4603a1c292d5`
+- Final documentation-sync Version ID: `5bac599d-cf19-415e-a109-b6f1ea6a157`
 - Live worker URL: [theparanormalinitiative.paranormalsomerset.workers.dev](https://theparanormalinitiative.paranormalsomerset.workers.dev)
 - Public site URL: [https://paranormalinitiative.com](https://paranormalinitiative.com)
 - Bindings reported by Wrangler: `TPI_DB` → `tpi_contributor_portal`, `TPI_MEDIA` → `tpi-contributor-media`, and `ASSETS`.
 - Existing scheduled trigger remained `0 */6 * * *`.
 
-The deployment was performed from a clean archive of pushed commit `f4304c2`, not from the dirty shared checkout. This prevented unrelated unstaged changes from entering the production Worker.
+The code deployment was performed from a clean archive of pushed commit `f4304c2`, not from the dirty shared checkout. The final documentation-sync deployment was performed from clean pushed commit `9057b03`. This prevented unrelated unstaged changes from entering the production Worker.
 
 ## Live verification
 
@@ -95,7 +96,7 @@ Passed:
 - `https://paranormalinitiative.com/studio/` returned HTTP 403 with the expected **StudioFlow — Private Build Testing** gate for an unauthenticated request.
 - The deployed StudioFlow JavaScript asset returned HTTP 200 and contained the ticker, Brand Presets, Background Music, Recording, and Go Live feature markers.
 - The deployed StudioFlow CSS asset returned HTTP 200.
-- Cloudflare deployment listing showed Version ID `16b8f785-abe9-4f88-b430-4603a1c292d5` at 100%.
+- Cloudflare deployment listing showed the code Version ID `16b8f785-abe9-4f88-b430-4603a1c292d5` at 100%; the final documentation-sync deployment is `5bac599d-cf19-415e-a109-b6f1ea6a157`.
 
 Not claimed:
 
