@@ -1921,11 +1921,13 @@ body.member-mode #site-footer {
 }
 
 .mobile-nav-link {
+    flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 6px 8px;
+    padding: 6px 3px;
     color: #6d8296;
     text-decoration: none;
     font-size: 9px;

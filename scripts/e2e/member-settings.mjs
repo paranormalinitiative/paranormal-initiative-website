@@ -72,6 +72,10 @@ for(const width of [1440,1024,768,390]) {
  await page.waitForSelector('body.member-mode');
  await page.waitForFunction(()=>document.querySelector('[data-account-identity]')?.textContent.includes('Alice'));
  await page.waitForFunction(()=>!document.querySelector('[data-style-save]').disabled);
+ if(width===390) {
+  assert.equal(await page.locator('.member-mobile-nav [data-nav="studio"]').getAttribute('aria-label'),'Creator Studio');
+  assert.equal(await page.locator('.member-mobile-nav [data-nav="studio"]').getAttribute('aria-disabled'),'true');
+ }
  assert.equal(await page.locator('[data-settings-link]').count(),13);
  for(const key of sections) {
   await goto(key);

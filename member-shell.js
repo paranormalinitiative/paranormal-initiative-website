@@ -453,6 +453,8 @@
           '<span class="mobile-nav-icon">&#9679;</span>Home</a>' +
         '<a class="mobile-nav-link" href="tpi-videos.html?member=1" data-nav="tpi-videos">' +
           '<span class="mobile-nav-icon">&#9654;</span>Videos</a>' +
+        '<a class="mobile-nav-link" href="/studio/" data-nav="studio" aria-label="Creator Studio">' +
+          '<span class="mobile-nav-icon">&#9654;</span>Creator Studio</a>' +
         '<a class="mobile-nav-link" href="member-home.html" data-nav="profile" data-nav-profile-mobile>' +
           '<span class="mobile-nav-icon">&#9786;</span>Profile</a>' +
         '<a class="mobile-nav-link" href="member-notifications.html" data-nav="member-notifications">' +
