@@ -21,6 +21,10 @@ No application source, database schema, migration, deployment artifact, producti
 
 Report 18 records the next local development batch. It updates the existing canonical-source boundary with destination CRUD, Broadcast-selected destination precedence, live timer/bridge status, stable Program audio capture, queued-stop draining, and reconnect buffering. Isolated synthetic browser/local receiver evidence verified video, stereo audio, clean stop, concurrent local recording, and receiver restart recovery. It did not test a public destination, real key, webinar, physical guest broadcast, or production authorization. Historical reports 13–17 remain unchanged.
 
+## TPI-STUDIOFLOW-RELEASE-001 status addendum
+
+Release report 23 records the authorized promotion of the audited StudioFlow source into the TPI generated `studio/` bundle, the GitHub push, Cloudflare deployment, and post-deploy public-boundary checks. It does not convert owner verification into automated verification, and it does not mark live broadcasting, webinars, authenticated interactive StudioFlow behavior, or ticker/Style recording and RTMP capture as verified.
+
 ## Reports
 
 1. [Documentation inventory](./01_STUDIOFLOW_DOCUMENTATION_INVENTORY.md)
@@ -45,4 +49,5 @@ Report 18 records the next local development batch. It updates the existing cano
 20. [TPI-STUDIOFLOW-008B sounds progress](./20_TPI_STUDIOFLOW_008B_PROGRESS.md)
 21. [TPI-STUDIOFLOW-008C background music progress](./21_TPI_STUDIOFLOW_008C_PROGRESS.md)
 22. [TPI-STUDIOFLOW-008D ticker and Style progress](./22_TPI_STUDIOFLOW_008D_PROGRESS.md)
+23. [TPI-STUDIOFLOW-RELEASE-001 report](./TPI-STUDIOFLOW-RELEASE-001_REPORT.md)
 
