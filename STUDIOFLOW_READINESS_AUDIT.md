@@ -165,3 +165,14 @@ StudioFlow is ready for Todd's real use only after all of the following pass:
 ## TPI-STUDIOFLOW-009 — October 10, 2026
 
 The storage-indicator correction passed canonical source checks, production build, isolated browser rendering, console review, generated-bundle parity, and public asset/route checks. It now reports browser-managed `Used` and `Estimated available` values instead of raw quota-as-available, and gives an explicit browser-versus-Mac tooltip. The readiness gate remains open for authenticated owner-device interaction and longer-session observation; live broadcasting and webinars remain **NOT YET VERIFIED**.
+
+## TPI-STUDIOFLOW-010 — Recording & Storage readiness addendum — October 10, 2026
+
+The new Recording & Storage settings and direct-folder source path are built and
+the TypeScript/Vite/source checks pass. Browser Library, recovery, playback,
+download, and delete remain the cross-browser baseline. Direct-folder recording
+is capability-detected and is not claimed for Safari, Firefox, or iPhone/iPad.
+Actual selected-folder recording, controlled disconnection/reload, long-session
+durability, native picker export, cloud-provider upload, and live deployment
+verification remain **NOT YET VERIFIED**. No storage migration or production
+database change was made.

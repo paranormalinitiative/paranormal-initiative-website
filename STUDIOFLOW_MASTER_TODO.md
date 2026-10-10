@@ -300,3 +300,17 @@ Record browser, OS, device, and network for every line. Nothing ships unchecked.
 ## TPI-STUDIOFLOW-009 — October 10, 2026
 
 The existing StudioFlow storage indicator was audited and corrected. The prior UI labeled raw browser quota as available; the current UI uses actual `navigator.storage.estimate()` values, displays `LOCAL BROWSER STORAGE`, calculates `Estimated available` as nonnegative `quota - usage`, and explains that browser allowance is different from Mac disk space. Refreshes are tied to existing local IndexedDB writes/deletes/checkpoints and app/page visibility events; no browser data was reset or deleted. Canonical source `47839ca`, TPI integration `39bb853`, Cloudflare Version ID `fef6624b-75c4-4892-8666-69b88becb203`. See `docs/audits/2026-10-09/studioflow-audit/TPI-STUDIOFLOW-009_REPORT.md`; authenticated owner-device acceptance remains open.
+
+## TPI-STUDIOFLOW-010 — Recording & Storage architecture — October 10, 2026
+
+The canonical StudioFlow source now adds the existing Settings section
+**Recording & Storage**. Browser IndexedDB remains the default Library and
+recovery path. Supported secure-context Chromium browsers can write sequential
+MediaRecorder chunks to a user-selected folder or mounted external drive, close
+and size-verify the file, and index it without deleting the original. Existing
+recordings are not migrated. Google Drive and Dropbox remain **Requires Setup**;
+iCloud is a local-folder fallback only. Folder interruption, long-session,
+owner-media, native picker, and production deployment verification remain open.
+
+The four detailed TPI-STUDIOFLOW-010 records are maintained in the canonical
+StudioFlow workspace; this release-side Bible records only the status boundary.
