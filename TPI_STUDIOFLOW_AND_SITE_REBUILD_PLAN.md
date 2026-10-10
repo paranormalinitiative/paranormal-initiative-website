@@ -383,3 +383,7 @@ Every milestone handoff must state:
 - Whether the deployed site matches the tested local build.
 
 “Built,” “wired,” and “looks complete” are not substitutes for a successful end-to-end test.
+
+## TPI-STUDIOFLOW-009 integration boundary — October 10, 2026
+
+The existing StudioFlow storage indicator was corrected in canonical source and promoted into the TPI generated `studio/` bundle. Source `47839ca`, TPI `39bb853`, and Cloudflare Version ID `fef6624b-75c4-4892-8666-69b88becb203` are the current evidence chain. Browser estimate arithmetic, visibility/event refreshes, tooltip language, and no-data-mutation safeguards passed local checks. Authenticated owner-device acceptance, longer-session observation, live broadcasting, and webinars remain open.

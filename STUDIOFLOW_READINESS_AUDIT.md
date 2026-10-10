@@ -161,3 +161,7 @@ StudioFlow is ready for Todd's real use only after all of the following pass:
 - A forced stream interruption where the local recording remains intact.
 - Library playback, download, persistence, and recovery.
 - No visible control falsely advertising unavailable behavior.
+
+## TPI-STUDIOFLOW-009 — October 10, 2026
+
+The storage-indicator correction passed canonical source checks, production build, isolated browser rendering, console review, generated-bundle parity, and public asset/route checks. It now reports browser-managed `Used` and `Estimated available` values instead of raw quota-as-available, and gives an explicit browser-versus-Mac tooltip. The readiness gate remains open for authenticated owner-device interaction and longer-session observation; live broadcasting and webinars remain **NOT YET VERIFIED**.

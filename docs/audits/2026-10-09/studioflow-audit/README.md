@@ -25,6 +25,10 @@ Report 18 records the next local development batch. It updates the existing cano
 
 Release report 23 records the authorized promotion of the audited StudioFlow source into the TPI generated `studio/` bundle, the GitHub push, Cloudflare deployment, and post-deploy public-boundary checks. It does not convert owner verification into automated verification, and it does not mark live broadcasting, webinars, authenticated interactive StudioFlow behavior, or ticker/Style recording and RTMP capture as verified.
 
+## TPI-STUDIOFLOW-009 status addendum
+
+Report 24 records the storage-indicator audit and correction. The existing `navigator.storage.estimate()` path was retained, raw quota is now presented as calculated remaining browser allowance, the browser-versus-Mac distinction is explicit, and refreshes follow existing local media/recording/checkpoint mutations and page visibility events. No browser data or production database was changed. The source and generated bundle were tested, pushed, deployed, and checked at the public asset boundary; authenticated owner-device interaction remains open.
+
 ## Reports
 
 1. [Documentation inventory](./01_STUDIOFLOW_DOCUMENTATION_INVENTORY.md)
@@ -50,4 +54,5 @@ Release report 23 records the authorized promotion of the audited StudioFlow sou
 21. [TPI-STUDIOFLOW-008C background music progress](./21_TPI_STUDIOFLOW_008C_PROGRESS.md)
 22. [TPI-STUDIOFLOW-008D ticker and Style progress](./22_TPI_STUDIOFLOW_008D_PROGRESS.md)
 23. [TPI-STUDIOFLOW-RELEASE-001 report](./TPI-STUDIOFLOW-RELEASE-001_REPORT.md)
+24. [TPI-STUDIOFLOW-009 storage indicator report](./TPI-STUDIOFLOW-009_REPORT.md)
 
