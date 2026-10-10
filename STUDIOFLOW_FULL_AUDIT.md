@@ -2,6 +2,8 @@
 
 Audited: October 1, 2026, against the current checkout plus the authoritative local source.
 
+> **Historical audit note — October 10, 2026:** This document preserves the October 1 audit evidence. Current owner verification records camera, microphone, and local recording creation as **OWNER VERIFIED — WORKING**. An isolated browser-generated WebM smoke has since verified finalized recovery/playback, checkpoint cleanup, Discard, controlled failed-save retention, and fallback download. A prior controlled active-navigation test failed to recover 16 readable chunks; the Oct 10 reader repair hardened reload-time chunk discovery and subsequent Program/Backstage tests recovered committed chunks into playable Library items. An isolated synthetic-media browser pass verified the four General settings' behavior, persistence, and reversal; owner-device verification remains open. TPI-STUDIOFLOW-005 has since implemented local PDF presentation/page navigation and Extra Camera lifecycle in the canonical source; physical dual-camera and final output-parity verification remain open. Physical camera/microphone interruption, native save-picker behavior, 30-minute durability, and cloud persistence remain unverified. Live broadcasting and webinar functionality remain unverified. The canonical source is actively changing; do not treat the historical clean-tree or deployed-bundle statements below as current release status.
+
 ## 1. What StudioFlow Is Here
 
 StudioFlow is a StreamYard-style live video studio for TPI members. It lives in two places:

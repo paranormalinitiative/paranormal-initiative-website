@@ -2,6 +2,12 @@
 
 Last updated: October 1, 2026
 
+## Current StudioFlow status overlay — October 10, 2026
+
+The owner has verified camera functionality, microphone functionality, and creation of a local video recording as **OWNER VERIFIED — WORKING**, separate from automated testing. Live video broadcasting and webinar functionality remain **NOT YET VERIFIED**. An isolated synthetic-media browser pass verified the four repaired General settings' behavior, persistence, and reversal; owner-device verification remains **NOT YET VERIFIED**. TPI-STUDIOFLOW-005 added local PDF page rendering/navigation and Extra Camera device/stage/compositor lifecycle to the existing Present menu; synthetic multi-camera verification passed, while physical dual-camera and output-parity verification remain open. An isolated browser-generated WebM batch verified finalized recovery/playback, checkpoint cleanup, Discard, controlled failed-save retention, and fallback download. The interruption repair hardened reload-time chunk discovery; controlled active navigation now recovers committed Program and Backstage chunks into playable Library items. Physical camera/microphone interruption, native save-picker behavior, 30-minute durability, and cloud persistence remain open. A chunk still in flight at navigation is not claimed as recovered. The prior continuation was local-only; it is superseded for this release by the explicit TPI-STUDIOFLOW-RELEASE-001 authorization, while the verification limits above remain in force.
+
+TPI-STUDIOFLOW-006 completed a targeted local guest-lifecycle repair in the canonical source. Separate host/guest browser tabs verified invite generation/validation, guest presence, backstage arrival, host stage transition, targeted removal propagation, rejoin, normal leave cleanup, and invalid-code rejection. Signal deduplication, early-ICE queuing, stale peer/media/stage cleanup, presence-only joining, and audio-only/video-only acquisition fallback are implemented. Real guest media, cross-network connectivity, guest recording, production authorization, and owner-device acceptance remain open.
+
 ## Purpose
 
 Finish StudioFlow as a dependable recording and live-production studio, then reorganize The Paranormal Initiative into a visually coherent public website, member community, and application platform.
