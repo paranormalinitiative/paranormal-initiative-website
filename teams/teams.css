@@ -17,6 +17,7 @@
 }
 
 * { box-sizing: border-box; }
+*[hidden] { display: none !important; }
 
 body.ptd-body {
   margin: 0;
@@ -333,6 +334,16 @@ a:hover { color: var(--ptd-blue-strong); }
 
 .ptd-detail-head h1 { margin: 0 0 0.3rem; font-size: 1.55rem; color: var(--ptd-heading); }
 .ptd-detail-location { color: var(--ptd-text); margin: 0 0 1.5rem; }
+.ptd-detail-status {
+  display: inline-block;
+  margin: 0 0 1.5rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(217, 164, 65, 0.45);
+  border-radius: 8px;
+  background: rgba(217, 164, 65, 0.10);
+  color: var(--ptd-amber);
+  font-size: 0.86rem;
+}
 .ptd-detail-grid { display: flex; flex-direction: column; gap: 0.55rem; margin: 0 0 1.75rem; }
 .ptd-detail-row { display: flex; gap: 1rem; flex-wrap: wrap; }
 .ptd-detail-label {

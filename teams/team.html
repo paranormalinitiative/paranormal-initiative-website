@@ -47,16 +47,38 @@
     }
 
     function link(value) {
-        const safe = PTD.escapeHtml(value);
-        const href = /^https?:\/\//i.test(value) ? value : `https://${value}`;
-        return `<a href="${PTD.escapeHtml(href)}" target="_blank" rel="noopener nofollow">${safe}</a>`;
+        const raw = String(value || "").trim();
+        if (!raw) return "";
+        const href = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+        try {
+            const parsed = new URL(href, window.location.origin);
+            if (!["http:", "https:"].includes(parsed.protocol)) return "";
+            return `<a href="${PTD.escapeHtml(parsed.href)}" target="_blank" rel="noopener nofollow">${PTD.escapeHtml(raw)}</a>`;
+        } catch {
+            return "";
+        }
     }
 
     function paragraphs(value) {
-        return String(value || "").trim()
+        return String(value || "")
+            .replace(/<!--[\s\S]*?-->/g, "")
+            .trim()
             .split(/\n{2,}|\r\n\r\n/)
             .map(part => `<p>${PTD.escapeHtml(part.trim())}</p>`)
             .join("");
+    }
+
+    function normalizedText(value) {
+        return String(value || "").replace(/<!--[\s\S]*?-->/g, "").trim();
+    }
+
+    function linkLabel(linkItem) {
+        const platform = String(linkItem.platform || "").trim();
+        const type = String(linkItem.link_type || "").trim();
+        if (type && type !== "website" && type.toLowerCase() !== platform.toLowerCase()) {
+            return `${platform || "Online"} (${type})`;
+        }
+        return platform || "Online Link";
     }
 
     if (!id) {
@@ -71,9 +93,10 @@
 
         document.title = `${team.name} | TPI Paranormal Teams Directory`;
 
+        const locationParts = [team.city, team.state, team.zip, team.country].filter(value => String(value || "").trim());
         const location = team.scope === "us"
-            ? `${team.city || ""}${team.city && team.state ? ", " : ""}${team.state || ""}${team.zip ? ` ${team.zip}` : ""}`
-            : `${team.city || ""}${team.city && team.country ? ", " : ""}${team.country || ""}`;
+            ? [team.city, team.state].filter(value => String(value || "").trim()).join(", ") + (team.zip ? ` ${team.zip}` : "")
+            : locationParts.join(", ");
 
         const backHref = team.scope === "us"
             ? `browse.html?state=${encodeURIComponent(team.state || "")}`
@@ -81,12 +104,35 @@
         const backLabel = team.scope === "us" ? `&larr; Back to ${PTD.escapeHtml(team.state || "")} teams` : `&larr; Back to ${PTD.escapeHtml(team.country || "")} teams`;
 
         const additionalStates = Array.isArray(team.additionalStates) ? team.additionalStates.filter(Boolean) : [];
+        const normalizedLinks = Array.isArray(team.links) ? team.links.filter(item => item && item.url && String(item.link_status || "").toLowerCase() !== "inactive") : [];
+        const renderedNormalizedUrls = new Set(normalizedLinks.map(item => String(item.url || "").trim().toLowerCase()));
+        const normalizedLinkRows = normalizedLinks.map(item => row(linkLabel(item), link(item.url))).join("");
+        const legacyLinks = [
+            ["Website", team.website, team.website],
+            ["Facebook", team.facebook, team.facebook],
+            ["X / Twitter", team.twitter, /^https?:\/\//i.test(String(team.twitter || "")) ? team.twitter : (team.twitter ? `https://x.com/${String(team.twitter).replace(/^@/, "")}` : "")],
+            ["YouTube", team.youtube, team.youtube]
+        ].filter(([, value, href]) => value && href && !renderedNormalizedUrls.has(String(href).trim().toLowerCase()))
+            .map(([label, , href]) => row(label, link(href))).join("");
+        const verificationStatus = String(team.verificationStatus || "").trim().toUpperCase();
+        const statusNotice = team.recordType === "IMPORTED_DIRECTORY_LISTING"
+            ? `<p class="ptd-detail-status" role="status">Historical listing — current activity has not yet been independently verified.</p>`
+            : verificationStatus === "UNVERIFIED"
+                ? `<p class="ptd-detail-status" role="status">Current activity has not yet been independently verified.</p>`
+            : verificationStatus === "POSSIBLY_ACTIVE"
+                ? `<p class="ptd-detail-status" role="status">Activity may be current, but independent verification is incomplete.</p>`
+                : verificationStatus === "UNABLE_TO_VERIFY"
+                    ? `<p class="ptd-detail-status" role="status">Current activity could not be independently verified.</p>`
+                    : verificationStatus === "APPEARS_DEFUNCT"
+                        ? `<p class="ptd-detail-status" role="status">Available evidence suggests this organization may no longer be active.</p>`
+                        : "";
 
         content.innerHTML = `
             <article class="ptd-detail">
                 <div class="ptd-detail-head">
                     <h1>${PTD.escapeHtml(team.name)}</h1>
                     <p class="ptd-detail-location">${PTD.escapeHtml(location.trim()) || "&nbsp;"}</p>
+                    ${statusNotice}
                 </div>
 
                 <div class="ptd-detail-grid">
@@ -95,10 +141,8 @@
                     ${row("Alternate Phone", team.phoneAlt ? PTD.escapeHtml(team.phoneAlt) : "")}
                     ${row("Email", team.email ? `<a href="mailto:${PTD.escapeHtml(team.email)}">${PTD.escapeHtml(team.email)}</a>` : "")}
                     ${row("Alternate Email", team.emailAlt ? `<a href="mailto:${PTD.escapeHtml(team.emailAlt)}">${PTD.escapeHtml(team.emailAlt)}</a>` : "")}
-                    ${row("Website", team.website ? link(team.website) : "")}
-                    ${row("Facebook", team.facebook ? link(team.facebook) : "")}
-                    ${row("Twitter", team.twitter ? `<a href="https://twitter.com/${PTD.escapeHtml(String(team.twitter).replace(/^@/, ""))}" target="_blank" rel="noopener nofollow">${PTD.escapeHtml(team.twitter)}</a>` : "")}
-                    ${row("Youtube", team.youtube ? link(team.youtube) : "")}
+                    ${normalizedLinkRows}
+                    ${legacyLinks}
                     ${row("Founder", PTD.escapeHtml(team.founder || ""))}
                     ${row("Year Founded", PTD.escapeHtml(team.yearFounded || ""))}
                     ${row("Number of Members", PTD.escapeHtml(team.members || ""))}
@@ -107,7 +151,8 @@
 
                 ${team.areasServed ? `<div class="ptd-detail-section"><h3>Areas Served</h3>${paragraphs(team.areasServed)}</div>` : ""}
                 ${team.specialties ? `<div class="ptd-detail-section"><h3>Specialties</h3>${paragraphs(team.specialties)}</div>` : ""}
-                ${team.details ? `<div class="ptd-detail-section"><h3>Details</h3>${paragraphs(team.details)}</div>` : ""}
+                ${normalizedText(team.description) ? `<div class="ptd-detail-section"><h3>Organization Description</h3>${paragraphs(team.description)}</div>` : ""}
+                ${normalizedText(team.details) ? `<div class="ptd-detail-section"><h3>Details</h3>${paragraphs(team.details)}</div>` : ""}
 
                 <div class="ptd-backlinks">
                     <a class="ptd-button ptd-button-secondary" href="${backHref}">${backLabel}</a>

@@ -174,6 +174,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/teams\/[^/]+$/) && !path.includes("/counts")) return handleGetTeam(path, env);
     if (request.method === "GET" && path === "/teams") return handleListTeams(request, env);
     if (request.method === "POST" && path === "/teams") return handleSubmitTeam(request, env);
+    if (request.method === "PUT" && path.match(/^\/teams\/[^/]+$/)) return requireMember(request, env, user => handleUpdateTeam(path, request, env, user));
 
     // Team links
     if (request.method === "GET" && path.match(/^\/teams\/[^/]+\/links$/)) return handleGetTeamLinks(path, env);
@@ -188,6 +189,8 @@ export async function onRequest(context) {
 
     // Admin endpoints
     if (request.method === "GET" && path === "/admin/teams") return requireAdmin(request, env, user => handleAdminListTeams(request, env, user));
+    if (request.method === "GET" && path === "/admin/teams/claims") return requireAdmin(request, env, user => handleAdminListClaims(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/teams\/claims\/[^/]+\/(approve|reject)$/)) return requireAdmin(request, env, user => handleAdminReviewClaim(path, request, env, user));
     if (request.method === "DELETE" && path.match(/^\/admin\/teams\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminDeleteTeam(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/approve$/)) return requireAdmin(request, env, user => handleAdminApproveTeam(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/reject$/)) return requireAdmin(request, env, user => handleAdminRejectTeam(path, env, user));
@@ -4414,6 +4417,13 @@ function json(body, status = 200, headers = {}) {
 
 function teamRowToPublic(row) {
   if (!row) return null;
+  let additionalStates = [];
+  try {
+    const parsedStates = row.additional_states ? JSON.parse(row.additional_states) : [];
+    additionalStates = Array.isArray(parsedStates) ? parsedStates : [];
+  } catch (error) {
+    additionalStates = [];
+  }
   return {
     id: row.id,
     name: row.name,
@@ -4439,8 +4449,9 @@ function teamRowToPublic(row) {
     members: row.members,
     areasServed: row.areas_served,
     specialties: row.specialties,
+    description: row.description,
     details: row.details,
-    additionalStates: row.additional_states ? JSON.parse(row.additional_states) : [],
+    additionalStates,
     createdAt: row.created_at,
     recordType: row.record_type,
     verificationStatus: row.verification_status
@@ -4495,7 +4506,21 @@ async function handleGetTeam(path, env) {
   ).bind(id).first();
 
   if (!row) return json({ error: "Team not found." }, 404);
-  return json({ team: teamRowToPublic(row) }, 200, { "Cache-Control": "public, max-age=300" });
+
+  // The normalized link table is additive. Keep the public profile usable
+  // while an older local database is being upgraded, then prefer normalized
+  // links when they are available.
+  let links = [];
+  try {
+    const linkRows = await env.TPI_DB.prepare(
+      "SELECT id, platform, url, link_type, discovery_source, discovered_at, last_checked_at, link_status, verification_status, evidence_notes FROM organization_links WHERE team_id = ? ORDER BY platform, created_at"
+    ).bind(row.id).all();
+    links = linkRows.results || [];
+  } catch (error) {
+    links = [];
+  }
+
+  return json({ team: { ...teamRowToPublic(row), links } }, 200, { "Cache-Control": "public, max-age=300" });
 }
 
 async function handleListTeams(request, env) {
@@ -4597,7 +4622,7 @@ async function handleSubmitTeam(request, env) {
       id, status, scope, name, acronym, address, city, state, country, zip,
       contact_name, phone, phone_alt, fax, email, email_alt, website,
       facebook, twitter, youtube, founder, year_founded, members,
-      areas_served, specialties, details, additional_states,
+      areas_served, specialties, description, details, additional_states,
       submitter_name, submitter_email, heard_about, submitted_ip, record_type
     ) VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'REGISTERED_TEAM')
   `).bind(
@@ -4607,7 +4632,7 @@ async function handleSubmitTeam(request, env) {
     clean(data.fax), email, clean(data.emailAlt), clean(data.website),
     clean(data.facebook), clean(data.twitter), clean(data.youtube),
     clean(data.founder), clean(data.yearFounded), clean(data.members),
-    clean(data.areasServed), clean(data.specialties), clean(data.details),
+    clean(data.areasServed), clean(data.specialties), clean(data.description), clean(data.details),
     additionalStates.length ? JSON.stringify(additionalStates) : null,
     submitterName, submitterEmail, clean(data.heardAbout), ip
   ).run();
@@ -4623,9 +4648,105 @@ async function handleSubmitTeam(request, env) {
   return json({ ok: true, id }, 201);
 }
 
+async function handleUpdateTeam(path, request, env, user) {
+  const id = path.split("/").pop();
+  if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+
+  const membership = await env.TPI_DB.prepare(
+    "SELECT role FROM team_members WHERE team_id = ? AND contributor_id = ? AND role IN ('owner', 'admin')"
+  ).bind(id, user.id).first();
+  if (!membership && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "You are not authorized to edit this team." }, 403);
+  }
+
+  const data = await readJson(request);
+  const name = clean(data.name);
+  const city = clean(data.city);
+  const email = clean(data.email);
+  if (!name || !city || !email || !email.includes("@")) {
+    return json({ error: "Name, city, and a valid email address are required." }, 400);
+  }
+
+  const urlFields = ["website", "facebook", "youtube"];
+  const normalizedUrls = {};
+  for (const field of urlFields) {
+    const raw = clean(data[field]);
+    if (!raw) {
+      normalizedUrls[field] = null;
+      continue;
+    }
+    const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    try {
+      const parsed = new URL(candidate);
+      if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("Unsupported protocol");
+      normalizedUrls[field] = candidate;
+    } catch {
+      return json({ error: `${field} must be a valid web URL.` }, 400);
+    }
+  }
+
+  const additionalStates = Array.isArray(data.additionalStates)
+    ? data.additionalStates.filter(value => value && value !== clean(data.state)).slice(0, 4)
+    : [];
+  const next = {
+    name,
+    acronym: clean(data.acronym),
+    address: clean(data.address),
+    city,
+    state: clean(data.state),
+    country: clean(data.country),
+    zip: clean(data.zip),
+    contact_name: clean(data.contactName),
+    phone: clean(data.phone),
+    phone_alt: clean(data.phoneAlt),
+    fax: clean(data.fax),
+    email,
+    email_alt: clean(data.emailAlt),
+    website: normalizedUrls.website,
+    facebook: normalizedUrls.facebook,
+    twitter: clean(data.twitter),
+    youtube: normalizedUrls.youtube,
+    founder: clean(data.founder),
+    year_founded: clean(data.yearFounded),
+    members: clean(data.members),
+    areas_served: clean(data.areasServed),
+    specialties: clean(data.specialties),
+    description: clean(data.description),
+    details: clean(data.details),
+    additional_states: additionalStates.length ? JSON.stringify(additionalStates) : null
+  };
+
+  const changes = {};
+  for (const [column, value] of Object.entries(next)) {
+    const previous = team[column];
+    if (String(previous == null ? "" : previous) !== String(value == null ? "" : value)) {
+      changes[column] = { from: previous == null ? null : previous, to: value == null ? null : value };
+    }
+  }
+  if (!Object.keys(changes).length) return json({ ok: true, changed: false });
+
+  const assignments = Object.keys(next).map(column => `${column} = ?`).join(", ");
+  const update = env.TPI_DB.prepare(`UPDATE paranormal_teams SET ${assignments} WHERE id = ?`)
+    .bind(...Object.values(next), id);
+  const audit = env.TPI_DB.prepare(
+    "INSERT INTO team_edit_events (team_id, editor_id, editor_role, changes_json) VALUES (?, ?, ?, ?)"
+  ).bind(id, user.id, membership?.role || user.role, JSON.stringify(changes));
+
+  await env.TPI_DB.batch([update, audit]);
+  return json({ ok: true, changed: true });
+}
+
 async function handleGetTeamLinks(path, env) {
   const id = path.split("/").slice(-2)[0];
   if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare(
+    "SELECT id FROM paranormal_teams WHERE id = ? AND status = 'approved'"
+  ).bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
 
   const rows = await env.TPI_DB.prepare(
     "SELECT * FROM organization_links WHERE team_id = ? ORDER BY platform, created_at"
@@ -4657,9 +4778,11 @@ async function handleAddTeamLink(path, request, env, user) {
 
   if (!platform || !url) return json({ error: "Platform and URL are required." }, 400);
 
-  // Validate URL format
+  // Validate URL format and allow only externally navigable web URLs.
+  const normalizedUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
   try {
-    new URL(url.startsWith("http") ? url : `https://${url}`);
+    const parsed = new URL(normalizedUrl);
+    if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("Unsupported protocol");
   } catch {
     return json({ error: "Invalid URL format." }, 400);
   }
@@ -4668,7 +4791,7 @@ async function handleAddTeamLink(path, request, env, user) {
   await env.TPI_DB.prepare(`
     INSERT INTO organization_links (id, team_id, platform, url, link_type, discovery_source)
     VALUES (?, ?, ?, ?, ?, 'manual')
-  `).bind(linkId, id, platform, url.startsWith("http") ? url : `https://${url}`, linkType).run();
+  `).bind(linkId, id, platform, normalizedUrl, linkType).run();
 
   return json({ ok: true, id: linkId }, 201);
 }
@@ -4676,6 +4799,11 @@ async function handleAddTeamLink(path, request, env, user) {
 async function handleGetTeamVerification(path, env) {
   const id = path.split("/").slice(-2)[0];
   if (!id) return json({ error: "Team ID required." }, 400);
+
+  const team = await env.TPI_DB.prepare(
+    "SELECT id FROM paranormal_teams WHERE id = ? AND status = 'approved'"
+  ).bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
 
   const rows = await env.TPI_DB.prepare(
     "SELECT * FROM team_verification_events WHERE team_id = ? ORDER BY created_at DESC"
@@ -4772,12 +4900,79 @@ async function handleAdminListTeams(request, env, user) {
   return json({ teams: (rows.results || []).map(teamRowToAdmin) });
 }
 
+async function handleAdminListClaims(request, env, user) {
+  const url = new URL(request.url);
+  const status = clean(url.searchParams.get("status") || "pending");
+  const allowedStatuses = ["pending", "approved", "rejected"];
+  if (!allowedStatuses.includes(status)) {
+    return json({ error: `Claim status must be one of: ${allowedStatuses.join(", ")}` }, 400);
+  }
+
+  const rows = await env.TPI_DB.prepare(`
+    SELECT tc.*, pt.name AS team_name, pt.record_type, pt.verification_status,
+           pt.claimed_by AS team_claimed_by
+    FROM team_claims tc
+    JOIN paranormal_teams pt ON pt.id = tc.team_id
+    WHERE tc.status = ?
+    ORDER BY tc.created_at DESC
+    LIMIT 200
+  `).bind(status).all();
+
+  return json({ claims: rows.results || [] });
+}
+
+async function handleAdminReviewClaim(path, request, env, user) {
+  const match = path.match(/^\/admin\/teams\/claims\/([^/]+)\/(approve|reject)$/);
+  const claimId = match?.[1];
+  const action = match?.[2];
+  if (!claimId || !action) return json({ error: "Claim action is required." }, 400);
+
+  const claim = await env.TPI_DB.prepare(`
+    SELECT tc.*, pt.claimed_by AS team_claimed_by
+    FROM team_claims tc
+    JOIN paranormal_teams pt ON pt.id = tc.team_id
+    WHERE tc.id = ?
+  `).bind(claimId).first();
+  if (!claim) return json({ error: "Claim request not found." }, 404);
+  if (claim.status !== "pending") return json({ error: "This claim request has already been reviewed." }, 409);
+
+  const data = await readJson(request);
+  const reviewNotes = clean(data.reviewNotes);
+  const now = new Date().toISOString();
+
+  if (action === "reject") {
+    await env.TPI_DB.prepare(
+      "UPDATE team_claims SET status = 'rejected', reviewed_at = ?, reviewed_by = ?, review_notes = ?, updated_at = datetime('now') WHERE id = ? AND status = 'pending'"
+    ).bind(now, user.username, reviewNotes, claimId).run();
+    return json({ ok: true, status: "rejected" });
+  }
+
+  if (claim.team_claimed_by) return json({ error: "This team is already claimed by another account." }, 409);
+
+  const claimUpdate = env.TPI_DB.prepare(
+    "UPDATE team_claims SET status = 'approved', reviewed_at = ?, reviewed_by = ?, review_notes = ?, updated_at = datetime('now') WHERE id = ? AND status = 'pending'"
+  ).bind(now, user.username, reviewNotes, claimId);
+  const teamUpdate = env.TPI_DB.prepare(
+    "UPDATE paranormal_teams SET claimed_at = ?, claimed_by = ? WHERE id = ? AND claimed_by IS NULL"
+  ).bind(now, claim.claimant_id, claim.team_id);
+  const membership = env.TPI_DB.prepare(
+    "INSERT OR IGNORE INTO team_members (id, team_id, contributor_id, role) VALUES (?, ?, ?, 'owner')"
+  ).bind(crypto.randomUUID(), claim.team_id, claim.claimant_id);
+
+  await env.TPI_DB.batch([claimUpdate, teamUpdate, membership]);
+  return json({ ok: true, status: "approved" });
+}
+
 async function handleAdminDeleteTeam(path, env, user) {
   const id = path.split("/").pop();
   if (!id) return json({ error: "Team ID required." }, 400);
 
   const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
   if (!team) return json({ error: "Team not found." }, 404);
+
+  if (team.status === "approved" || team.claimed_by || team.record_type !== "REGISTERED_TEAM") {
+    return json({ error: "Approved, claimed, and imported team records cannot be deleted from this queue." }, 409);
+  }
 
   // Delete related records first
   await env.TPI_DB.prepare("DELETE FROM organization_links WHERE team_id = ?").bind(id).run();
@@ -4796,6 +4991,10 @@ async function handleAdminApproveTeam(path, env, user) {
 
   const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
   if (!team) return json({ error: "Team not found." }, 404);
+
+  if (team.record_type && team.record_type !== "REGISTERED_TEAM") {
+    return json({ error: "Imported listings require an approved publication policy before publication." }, 409);
+  }
 
   await env.TPI_DB.prepare(
     "UPDATE paranormal_teams SET status = 'approved', reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
@@ -4832,6 +5031,10 @@ async function handleAdminSetTeamStatus(path, request, env, user) {
 
   const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
   if (!team) return json({ error: "Team not found." }, 404);
+
+  if (status === "approved" && team.record_type && team.record_type !== "REGISTERED_TEAM") {
+    return json({ error: "Imported listings require an approved publication policy before publication." }, 409);
+  }
 
   await env.TPI_DB.prepare(
     "UPDATE paranormal_teams SET status = ?, reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"

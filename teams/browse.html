@@ -83,8 +83,8 @@
         content.innerHTML = `<div class="ptd-team-list">${
             teams.map(team => {
                 const location = team.scope === "us"
-                    ? `${team.city || ""}${team.city && team.state ? ", " : ""}${team.state || ""}`
-                    : `${team.city || ""}${team.city && team.country ? ", " : ""}${team.country || ""}`;
+                    ? [team.city, team.state].filter(value => String(value || "").trim()).join(", ") + (team.zip ? ` ${team.zip}` : "")
+                    : [team.city, team.state, team.zip, team.country].filter(value => String(value || "").trim()).join(", ");
                 const snippet = String(team.specialties || "").split(/\n+/)[0].slice(0, 140);
                 return `<article class="ptd-team-row">
                     <div class="ptd-team-row-main">

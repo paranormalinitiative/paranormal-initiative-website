@@ -60,9 +60,10 @@
     }
 
     function teamCard(team, statusMode) {
+        const locationParts = [team.city, team.state, team.zip, team.country].filter(value => String(value || "").trim());
         const location = team.scope === "us"
-            ? `${team.city || ""}${team.city && team.state ? ", " : ""}${team.state || ""}${team.zip ? ` ${team.zip}` : ""}`
-            : `${team.city || ""}${team.city && team.country ? ", " : ""}${team.country || ""}`;
+            ? [team.city, team.state].filter(value => String(value || "").trim()).join(", ") + (team.zip ? ` ${team.zip}` : "")
+            : locationParts.join(", ");
         const additional = Array.isArray(team.additionalStates) ? team.additionalStates.filter(Boolean) : [];
         return `
         <article class="ptd-admin-card" data-team-id="${fieldValue(team.id)}">
@@ -91,6 +92,7 @@
             </div>
             ${block("Areas Served", team.areasServed)}
             ${block("Specialties", team.specialties)}
+            ${block("Organization Description", team.description)}
             ${block("Details", team.details)}
             <div class="ptd-admin-block">
                 <h4>Submitter (not published)</h4>
@@ -108,7 +110,7 @@
                 ${statusMode !== "approved" ? `<button class="ptd-button ptd-button-approve" data-action="approve">Approve</button>` : ""}
                 ${statusMode === "pending" ? `<button class="ptd-button ptd-button-reject" data-action="reject">Reject</button>` : ""}
                 ${statusMode !== "pending" ? `<button class="ptd-button ptd-button-secondary" data-action="pending">Move back to Pending</button>` : ""}
-                <button class="ptd-button ptd-button-danger" data-action="delete">Delete</button>
+                ${statusMode !== "approved" && team.recordType === "REGISTERED_TEAM" && !team.claimedBy ? `<button class="ptd-button ptd-button-danger" data-action="delete">Delete</button>` : ""}
             </div>
         </article>`;
     }
@@ -118,8 +120,68 @@
             <button class="ptd-admin-tab ${currentStatus === "pending" ? "is-active" : ""}" data-status="pending">Pending (${counts.pending})</button>
             <button class="ptd-admin-tab ${currentStatus === "approved" ? "is-active" : ""}" data-status="approved">Approved (${counts.approved})</button>
             <button class="ptd-admin-tab ${currentStatus === "rejected" ? "is-active" : ""}" data-status="rejected">Rejected (${counts.rejected})</button>
+            <button class="ptd-admin-tab" id="ptd-show-claims" type="button">Claim Requests</button>
             <a class="ptd-button ptd-button-secondary" style="margin-left: auto;" href="index.html">View Directory</a>
         </div>`;
+    }
+
+    function claimCard(claim) {
+        return `<article class="ptd-admin-card" data-claim-id="${fieldValue(claim.id)}">
+            <div class="ptd-admin-card-head">
+                <h3>${fieldValue(claim.team_name)}</h3>
+                <span class="ptd-admin-when">Requested ${fieldValue(claim.created_at || "")}</span>
+            </div>
+            <div class="ptd-admin-meta">
+                ${metaItem("Claimant", claim.claimant_name)}
+                ${metaItem("Email", claim.claimant_email)}
+                ${metaItem("Role", claim.claimant_role)}
+                ${metaItem("Record Type", claim.record_type)}
+            </div>
+            ${block("Evidence URL", claim.evidence_url)}
+            ${block("Evidence Description", claim.evidence_description)}
+            <div class="ptd-admin-actions" style="margin-top: 1rem;">
+                <button class="ptd-button ptd-button-approve" data-claim-action="approve">Approve Claim</button>
+                <button class="ptd-button ptd-button-reject" data-claim-action="reject">Reject Claim</button>
+            </div>
+        </article>`;
+    }
+
+    async function loadClaims() {
+        content.innerHTML = `<p class="ptd-status">Loading claim requests...</p>`;
+        try {
+            const data = await PTD.api("/admin/teams/claims?status=pending");
+            const claims = data.claims || [];
+            content.innerHTML = `
+                <div class="ptd-admin-tabs">
+                    <button class="ptd-admin-tab is-active" id="ptd-back-to-teams" type="button">Team Approvals</button>
+                    <a class="ptd-button ptd-button-secondary" style="margin-left: auto;" href="index.html">View Directory</a>
+                </div>
+                <div id="ptd-claims-list">${claims.length ? claims.map(claimCard).join("") : `<div class="ptd-empty"><p>No pending claim requests.</p></div>`}</div>`;
+
+            document.getElementById("ptd-back-to-teams").addEventListener("click", load);
+            content.querySelectorAll("[data-claim-action]").forEach(button => {
+                button.addEventListener("click", async () => {
+                    const card = button.closest("[data-claim-id]");
+                    const claimId = card.dataset.claimId;
+                    const action = button.dataset.claimAction;
+                    const reviewNotes = window.prompt("Optional review notes:", "");
+                    if (reviewNotes === null) return;
+                    button.disabled = true;
+                    try {
+                        await PTD.api(`/admin/teams/claims/${encodeURIComponent(claimId)}/${action}`, {
+                            method: "POST",
+                            body: { reviewNotes }
+                        });
+                        loadClaims();
+                    } catch (error) {
+                        button.disabled = false;
+                        window.alert(error.message || "Claim review failed.");
+                    }
+                });
+            });
+        } catch (error) {
+            content.innerHTML = `<p class="ptd-status is-error">Could not load claim requests: ${PTD.escapeHtml(error.message || "unknown error")}</p>`;
+        }
     }
 
     async function load() {
@@ -151,6 +213,10 @@
             `;
 
             content.querySelectorAll(".ptd-admin-tab").forEach(tab => {
+                if (tab.id === "ptd-show-claims") {
+                    tab.addEventListener("click", loadClaims);
+                    return;
+                }
                 tab.addEventListener("click", () => {
                     currentStatus = tab.dataset.status;
                     load();

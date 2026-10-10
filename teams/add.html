@@ -36,7 +36,7 @@
         </p>
     </section>
 
-    <div class="ptd-scope-chooser">
+    <div class="ptd-scope-chooser" id="ptd-scope-chooser">
         <a class="ptd-visual-card is-us" id="ptd-scope-us" href="add.html">
             <svg class="ptd-visual-art" viewBox="0 0 1000 620" aria-hidden="true">
                 <path vector-effect="non-scaling-stroke" d="M32 60 L150 48 L300 50 L470 54 L500 60 L505 92 L512 78 L561 127 L603 82 L620 95 L691 121 L710 143 L722 174 L733 203 L768 205 L801 199 L825 183 L850 166 L871 152 L930 152 L939 60 L980 155 L934 185 L917 211 L863 247 L848 281 L838 314 L828 328 L846 372 L834 380 L747 425 L735 473 L747 497 L756 514 L761 569 L747 588 L722 523 L700 477 L644 466 L631 462 L615 500 L600 490 L526 494 L493 527 L493 566 L457 533 L434 493 L390 510 L342 440 L280 431 L240 428 L186 425 L144 421 L122 385 L87 374 L55 311 L22 256 L27 191 L20 71 L38 82 L44 66 Z"/>
@@ -114,6 +114,10 @@
             <label for="f-state"><span class="ptd-required">*</span> State</label>
             <div class="ptd-input-host"><select id="f-state" name="state" required></select></div>
         </div>
+        <div class="ptd-field" id="f-row-state-province" hidden>
+            <label for="f-state-province">State / Province / Region</label>
+            <div class="ptd-input-host"><input id="f-state-province" name="stateProvince" type="text" maxlength="120" spellcheck="true"></div>
+        </div>
         <div class="ptd-field" id="f-row-country" hidden>
             <label for="f-country"><span class="ptd-required">*</span> Country</label>
             <div class="ptd-input-host"><select id="f-country" name="country"></select></div>
@@ -183,6 +187,10 @@
             <div class="ptd-input-host"><textarea id="f-specialties" name="specialties" maxlength="4000" spellcheck="true"></textarea></div>
         </div>
         <div class="ptd-field">
+            <label for="f-description">Organization Description</label>
+            <div class="ptd-input-host"><textarea id="f-description" name="description" maxlength="6000" spellcheck="true"></textarea></div>
+        </div>
+        <div class="ptd-field">
             <label for="f-details">Details</label>
             <div class="ptd-input-host"><textarea id="f-details" name="details" maxlength="6000" spellcheck="true"></textarea></div>
         </div>
@@ -224,31 +232,52 @@
 <script src="teams.js"></script>
 <script>
 (async function () {
-    const international = new URLSearchParams(window.location.search).get("scope") === "international";
+    const params = new URLSearchParams(window.location.search);
+    const editId = (params.get("edit") || "").trim();
+    const editMode = Boolean(editId);
+    let international = params.get("scope") === "international";
     const form = document.getElementById("ptd-add-form");
     const status = document.getElementById("ptd-form-status");
     const success = document.getElementById("ptd-success");
 
-    document.getElementById("ptd-add-title").textContent = international
-        ? "Add a Paranormal Team - International (Non-US)"
-        : "Add a Paranormal Team - United States";
-    document.title = international
-        ? "Add an International Team | TPI Paranormal Teams Directory"
-        : "Add a Team | TPI Paranormal Teams Directory";
-    document.getElementById("ptd-add-switch").innerHTML = international
-        ? `Inside the United States? <a href="add.html">Use the United States form</a>.`
-        : `Outside the United States? <a href="?scope=international">Use the International (Non-US) form</a> — it asks for the same information.`;
+    function applyScope() {
+        document.getElementById("ptd-add-title").textContent = editMode
+            ? "Edit Paranormal Team"
+            : (international ? "Add a Paranormal Team - International (Non-US)" : "Add a Paranormal Team - United States");
+        document.title = editMode
+            ? "Edit Paranormal Team | TPI Paranormal Teams Directory"
+            : (international ? "Add an International Team | TPI Paranormal Teams Directory" : "Add a Team | TPI Paranormal Teams Directory");
+        document.getElementById("ptd-add-switch").hidden = editMode;
+        document.getElementById("ptd-add-switch").innerHTML = international
+            ? `Inside the United States? <a href="add.html">Use the United States form</a>.`
+            : `Outside the United States? <a href="?scope=international">Use the International (Non-US) form</a> — it asks for the same information.`;
 
-    document.getElementById("ptd-scope-us").classList.toggle("is-active", !international);
-    document.getElementById("ptd-scope-us").setAttribute("aria-current", international ? "false" : "true");
-    document.getElementById("ptd-scope-intl").classList.toggle("is-active", international);
-    document.getElementById("ptd-scope-intl").setAttribute("aria-current", international ? "true" : "false");
+        document.getElementById("ptd-scope-chooser").hidden = editMode;
+        document.getElementById("ptd-scope-us").classList.toggle("is-active", !international);
+        document.getElementById("ptd-scope-us").setAttribute("aria-current", international ? "false" : "true");
+        document.getElementById("ptd-scope-intl").classList.toggle("is-active", international);
+        document.getElementById("ptd-scope-intl").setAttribute("aria-current", international ? "true" : "false");
 
-    document.getElementById("f-row-state").hidden = international;
-    document.getElementById("f-row-country").hidden = !international;
-    document.getElementById("f-additional-states").hidden = international;
-    document.getElementById("f-state").required = !international;
-    document.getElementById("f-country").required = international;
+        document.getElementById("f-row-state").hidden = international;
+        document.getElementById("f-row-state-province").hidden = !international;
+        document.getElementById("f-row-country").hidden = !international;
+        document.getElementById("f-additional-states").hidden = international;
+        document.getElementById("f-state").required = !international;
+        document.getElementById("f-country").required = international;
+    }
+
+    applyScope();
+
+    if (editMode) {
+        ["f-submitter-name", "f-submitter-email", "f-heard-about"].forEach(id => {
+            document.getElementById(id).closest(".ptd-field").hidden = true;
+        });
+        document.querySelector(".ptd-attention").hidden = true;
+        document.querySelector(".ptd-certify").hidden = true;
+        document.getElementById("ptd-submit").textContent = "Save Changes";
+        success.querySelector("h3").textContent = "Team profile updated.";
+        success.querySelector("p").textContent = "The authorized profile changes were saved and recorded in the team edit history.";
+    }
 
     function fillSelect(select, values, blankLabel) {
         select.innerHTML = `<option value="">${blankLabel}</option>` +
@@ -273,10 +302,61 @@
     memberOptions += `<option value="100+">100+</option>`;
     memberSelect.innerHTML = memberOptions;
 
+    if (editMode) {
+        try {
+            const response = await PTD.api(`/teams/${encodeURIComponent(editId)}`);
+            const team = response.team;
+            if (!team) throw new Error("Team not found.");
+            international = team.scope === "international";
+            applyScope();
+            const values = {
+                "f-name": team.name,
+                "f-acronym": team.acronym,
+                "f-address": team.address,
+                "f-city": team.city,
+                "f-state": team.state,
+                "f-state-province": team.state,
+                "f-country": team.country,
+                "f-zip": team.zip,
+                "f-contact-name": team.contactName,
+                "f-phone": team.phone,
+                "f-phone-alt": team.phoneAlt,
+                "f-fax": team.fax,
+                "f-email": team.email,
+                "f-email-alt": team.emailAlt,
+                "f-website": team.website,
+                "f-facebook": team.facebook,
+                "f-twitter": team.twitter,
+                "f-youtube": team.youtube,
+                "f-founder": team.founder,
+                "f-year-founded": team.yearFounded,
+                "f-members": team.members,
+                "f-areas-served": team.areasServed,
+                "f-specialties": team.specialties,
+                "f-description": team.description,
+                "f-details": team.details
+            };
+            Object.entries(values).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) element.value = value == null ? "" : value;
+            });
+            const additionalStates = Array.isArray(team.additionalStates) ? team.additionalStates : [];
+            additionalStates.forEach((value, index) => {
+                const element = document.querySelector(`[data-additional-state="${index + 1}"]`);
+                if (element) element.value = value;
+            });
+        } catch (error) {
+            form.hidden = true;
+            success.hidden = false;
+            success.querySelector("h3").textContent = "This team could not be loaded for editing.";
+            success.querySelector("p").textContent = error.message || "The team may not be approved or you may not have access to it.";
+        }
+    }
+
     form.addEventListener("submit", async event => {
         event.preventDefault();
         status.className = "ptd-form-status";
-        status.textContent = "Submitting...";
+        status.textContent = editMode ? "Saving..." : "Submitting...";
 
         const data = new FormData(form);
         const payload = {
@@ -288,7 +368,7 @@
             acronym: data.get("acronym"),
             address: data.get("address"),
             city: data.get("city"),
-            state: data.get("state"),
+            state: international ? data.get("stateProvince") : data.get("state"),
             country: data.get("country"),
             zip: data.get("zip"),
             contactName: data.get("contactName"),
@@ -306,6 +386,7 @@
             members: data.get("members"),
             areasServed: data.get("areasServed"),
             specialties: data.get("specialties"),
+            description: data.get("description"),
             details: data.get("details"),
             additionalStates: international ? [] : ["1", "2", "3", "4"]
                 .map(index => data.get(`additionalState${index}`) || "")
@@ -313,7 +394,7 @@
             company_url: data.get("company_url")
         };
 
-        if (!payload.submitterName || !payload.name || !payload.city || !payload.email || !payload.email.includes("@") || !payload.submitterEmail.includes("@")) {
+        if ((!editMode && (!payload.submitterName || !String(payload.submitterEmail || "").includes("@"))) || !payload.name || !payload.city || !payload.email || !payload.email.includes("@")) {
             status.className = "ptd-form-status is-error";
             status.textContent = "Please fill in every required field (red labels).";
             return;
@@ -330,7 +411,10 @@
         }
 
         try {
-            await PTD.api("/teams", { method: "POST", body: payload });
+            await PTD.api(editMode ? `/teams/${encodeURIComponent(editId)}` : "/teams", {
+                method: editMode ? "PUT" : "POST",
+                body: payload
+            });
             form.hidden = true;
             success.hidden = false;
             window.scrollTo({ top: 0, behavior: "smooth" });

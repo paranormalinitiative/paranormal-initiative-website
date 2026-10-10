@@ -10,7 +10,7 @@ Usage:
 import json
 import sqlite3
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -24,16 +24,76 @@ def normalize_url(url):
     url = url.strip()
     if not url:
         return ""
-    if not url.startswith("http"):
+    if not re.match(r"^https?://", url, re.IGNORECASE):
         url = f"https://{url}"
     try:
         parsed = urlparse(url)
+        if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
+            return ""
         # Normalize: lowercase scheme/host, remove trailing slash, remove www
-        host = parsed.netloc.lower().replace("www.", "")
+        host = parsed.netloc.lower()
+        if host.startswith("www."):
+            host = host[4:]
         path = parsed.path.rstrip("/")
-        return f"{parsed.scheme}://{host}{path}".lower()
+        query = f"?{parsed.query}" if parsed.query else ""
+        return f"{parsed.scheme.lower()}://{host}{path}{query}".lower()
     except Exception:
-        return url.lower()
+        return ""
+
+
+def clean_display_text(value):
+    """Remove source-page HTML comments from display-only preview text.
+
+    The raw historical value is kept in the `details` field. This helper is
+    only for a safe preview of what the public renderer will show.
+    """
+    if value is None:
+        return None
+    cleaned = re.sub(r"<!--[\s\S]*?-->", "", str(value)).strip()
+    return cleaned or None
+
+
+def normalize_social_url(value, platform):
+    """Normalize a social identity, including bare handles when present."""
+    if not value:
+        return ""
+    candidate = str(value).strip()
+    if not candidate:
+        return ""
+    if platform == "x" and candidate.startswith("@"):
+        candidate = f"https://x.com/{candidate[1:]}"
+    elif platform == "x" and not re.match(r"^https?://", candidate, re.IGNORECASE) and "/" not in candidate and "." not in candidate:
+        candidate = f"https://x.com/{candidate}"
+    return normalize_url(candidate)
+
+
+def build_organization_links(org_dict):
+    """Build normalized, explicitly unverified online identities."""
+    links = []
+    seen = set()
+    candidates = (
+        ("website", org_dict.get("website"), "website"),
+        ("facebook", org_dict.get("facebook_url"), "page"),
+        ("x", org_dict.get("twitter_url"), "profile"),
+        ("youtube", org_dict.get("youtube_url"), "channel"),
+    )
+    for platform, raw_url, link_type in candidates:
+        normalized = normalize_social_url(raw_url, platform) if platform == "x" else normalize_url(raw_url)
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        links.append({
+            "platform": platform,
+            "url": normalized,
+            "link_type": link_type,
+            "discovery_source": "paranormalsocieties.com",
+            "discovered_at": org_dict.get("retrieved_at"),
+            "last_checked_at": None,
+            "link_status": "unverified",
+            "verification_status": "unverified",
+            "evidence_notes": "Collected from a historical source-directory snapshot; current ownership, activity, and reachability have not been independently verified.",
+        })
+    return links
 
 
 def normalize_name(name):
@@ -57,8 +117,13 @@ def extract_domain(url):
         return ""
 
 
-def run_dry_run(output_path=None):
-    """Run the migration dry-run analysis."""
+def run_dry_run(output_path=None, include_all=False):
+    """Run the migration dry-run analysis.
+
+    The default output remains a small preview. Review-manifest tooling can
+    request the complete in-memory candidate set without changing the legacy
+    preview artifact.
+    """
     if not RESEARCH_DB.exists():
         print(f"ERROR: Research database not found at {RESEARCH_DB}")
         return None
@@ -71,6 +136,7 @@ def run_dry_run(output_path=None):
         SELECT o.id, o.canonical_name, o.normalized_name, o.city, o.state_province, 
                o.postal_code, o.country, o.created_at,
                sr.id as source_record_id, sr.source_region, sr.source_record_id as external_id,
+               ss.id as source_snapshot_id, ss.source_url, ss.retrieved_at,
                ss.website, ss.email, ss.phone, ss.contact_name, ss.founder,
                ss.year_founded, ss.member_count, ss.areas_served, ss.specialties, ss.details,
                ss.facebook_url, ss.twitter_url, ss.youtube_url, ss.alternate_email,
@@ -92,6 +158,9 @@ def run_dry_run(output_path=None):
     valid = []
     invalid = []
     duplicate_candidates = []
+    link_platform_stats = {'website': 0, 'facebook': 0, 'x': 0, 'youtube': 0}
+    records_with_links = 0
+    records_with_details = 0
     missing_fields_stats = {
         'website': 0, 'email': 0, 'phone': 0, 'contact_name': 0,
         'city': 0, 'state_province': 0, 'country': 0
@@ -135,9 +204,9 @@ def run_dry_run(output_path=None):
         if norm_name in seen_names:
             duplicate_candidates.append({
                 'type': 'name_match',
-                'org1_id': seen_names[norm_name],
+                'org1_id': seen_names[norm_name]['id'],
                 'org2_id': org_dict['id'],
-                'org1_name': org_dict['canonical_name'],
+                'org1_name': seen_names[norm_name]['name'],
                 'org2_name': org_dict['canonical_name'],
                 'evidence': f"Normalized name: '{norm_name}'"
             })
@@ -158,7 +227,10 @@ def run_dry_run(output_path=None):
                 'evidence': f"Email: {norm_email}"
             })
 
-        seen_names[norm_name] = org_dict['id']
+        seen_names[norm_name] = {
+            'id': org_dict['id'],
+            'name': org_dict['canonical_name']
+        }
         if norm_website:
             seen_websites[norm_website] = org_dict['id']
         if norm_email:
@@ -166,6 +238,13 @@ def run_dry_run(output_path=None):
 
         # Determine scope
         scope = "us" if org_dict['source_region'] == 'USA' else "international"
+        organization_links = build_organization_links(org_dict)
+        if organization_links:
+            records_with_links += 1
+            for link in organization_links:
+                link_platform_stats[link['platform']] += 1
+        if org_dict['details']:
+            records_with_details += 1
 
         # Map country/state
         country = org_dict['country'] or ""
@@ -185,8 +264,15 @@ def run_dry_run(output_path=None):
         else:
             valid.append({
                 'id': org_dict['id'],
+                'research_organization_id': org_dict['id'],
+                'source_record_id': org_dict['source_record_id'],
+                'source_snapshot_id': org_dict['source_snapshot_id'],
+                'source_region': org_dict['source_region'],
                 'external_id': str(org_dict['external_id']),
+                'source_identity': f"{org_dict['source_region']}:{org_dict['external_id']}",
                 'external_source': 'paranormalsocieties.com',
+                'source_url': org_dict['source_url'],
+                'source_retrieved_at': org_dict['retrieved_at'],
                 'name': org_dict['canonical_name'],
                 'acronym': None,
                 'scope': scope,
@@ -209,7 +295,14 @@ def run_dry_run(output_path=None):
                 'members': str(org_dict['member_count']) if org_dict['member_count'] else None,
                 'areas_served': org_dict['areas_served'],
                 'specialties': org_dict['specialties'],
+                # The source has no dedicated description field. Keep this
+                # null rather than re-labeling historical details as current
+                # organization copy.
+                'description': None,
+                'description_source': 'not_available_in_source',
                 'details': org_dict['details'],
+                'details_display': clean_display_text(org_dict['details']),
+                'organization_links': organization_links,
                 'record_type': 'IMPORTED_DIRECTORY_LISTING',
                 'verification_status': 'UNVERIFIED'
             })
@@ -218,7 +311,7 @@ def run_dry_run(output_path=None):
 
     # Generate summary
     summary = {
-        'generated_at': datetime.utcnow().isoformat(),
+        'generated_at': datetime.now(timezone.utc).isoformat(),
         'research_db_path': str(RESEARCH_DB),
         'total_organizations': len(orgs),
         'valid_for_import': len(valid),
@@ -231,14 +324,27 @@ def run_dry_run(output_path=None):
         },
         'record_type_breakdown': {
             'IMPORTED_DIRECTORY_LISTING': len(valid)
+        },
+        'historical_description_mapping': {
+            'policy': 'UNMAPPED',
+            'description_source': 'not_available_in_source',
+            'reason': 'source_snapshots has no dedicated description column; historical details remain preserved in their original field',
+            'records_with_description': 0,
+            'records_with_details': records_with_details
+        },
+        'organization_links': {
+            'records_with_links': records_with_links,
+            'total_links': sum(link_platform_stats.values()),
+            'by_platform': link_platform_stats,
+            'verification_policy': 'UNVERIFIED until independently checked'
         }
     }
 
     result = {
         'summary': summary,
-        'valid_records': valid[:50],  # Preview only
-        'invalid_records': invalid[:20],  # Preview only
-        'duplicate_candidates': duplicate_candidates[:50],  # Preview only
+        'valid_records': valid if include_all else valid[:50],
+        'invalid_records': invalid if include_all else invalid[:20],
+        'duplicate_candidates': duplicate_candidates if include_all else duplicate_candidates[:50],
         'total_valid': len(valid),
         'total_invalid': len(invalid),
         'total_duplicates': len(duplicate_candidates)
