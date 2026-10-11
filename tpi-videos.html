@@ -325,12 +325,13 @@
             font-weight: 600;
             padding: 0.15rem 0.4rem;
             border-radius: 24px;
+            line-height: 1.2;
         }
         .video-card-copy {
-            padding: 1rem 1.25rem;
+            padding: 0.9rem 1.1rem;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex: 1;
         }
         .video-card-copy h3 {
@@ -342,7 +343,6 @@
             font-size: 0.82rem;
             color: #8d93a3;
             line-height: 1.5;
-            flex: 1;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -360,6 +360,7 @@
             font-weight: 600;
         }
         .video-card-attribution { color:#8d93a3; font-size:.78rem; margin-top:.25rem; }
+        .video-card-description { margin: 0; }
         .video-card-attribution a { color:#59a9dc; text-decoration:none; }
         .video-card-attribution a:hover { text-decoration:underline; }
         .video-load-more { display:flex; justify-content:center; margin:1.5rem 0 2.5rem; }
@@ -498,6 +499,17 @@
             <option value="discovered">Discovered videos</option>
         </select>
     </div>
+    <div class="tpi-channel-source">
+        <label for="video-duration-filter">Duration</label>
+        <select id="video-duration-filter">
+            <option value="all">All durations</option>
+            <option value="under-1">Under 1 minute</option>
+            <option value="1-5">1–5 minutes</option>
+            <option value="5-20">5–20 minutes</option>
+            <option value="20-60">20–60 minutes</option>
+            <option value="over-60">Over 1 hour</option>
+        </select>
+    </div>
 </div>
 
 <div id="video-category-filters" class="video-category-pills" hidden></div>
@@ -518,6 +530,7 @@
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="member-shell.js?v=55"></script>
+<script src="tpi-video-format.js?v=1"></script>
 <script src="tpi-video-player.js?v=2"></script>
 <script>
 (function () {
@@ -530,6 +543,7 @@
     var sectionTitle = document.getElementById("video-section-title");
     var resultsCount = document.getElementById("video-results-count");
     var sourceSelect = document.getElementById("video-source");
+    var durationSelect = document.getElementById("video-duration-filter");
     var loadMoreContainer = document.getElementById("video-load-more-container");
     var loadMoreButton = document.getElementById("video-load-more");
     var discoveryStatus = document.getElementById("video-discovery-status");
@@ -610,10 +624,7 @@
     }
 
     function formatDate(dateStr) {
-        if (!dateStr) return "";
-        var d = new Date(dateStr + "T00:00:00");
-        if (isNaN(d.getTime())) return dateStr;
-        return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+        return window.TPI_VIDEO_FORMAT.formatDate(dateStr);
     }
 
     function getCategoryIcon(category) {
@@ -681,6 +692,7 @@
         var targetHref = targetAction.href || getVideoUrl(target);
         var targetExternalAttrs = targetAction.href ? ' target="_blank" rel="noopener noreferrer"' : '';
         var borderColor = target.isLive ? ' style="border-color:#dc2626;"' : '';
+        var targetDuration = window.TPI_VIDEO_FORMAT.formatDuration(target.durationSeconds || target.duration, target.durationSeconds ? "seconds" : target.durationUnit);
 
         var html = '<div class="video-featured-card"' + borderColor + ' data-href="' + escapeHtml(targetHref) + '" data-external="' + (targetAction.href ? "true" : "false") + '" onclick="window.TPI_VIDEOS.openCard(this)">' +
             '<div class="video-featured-media">' + mediaHtml + '</div>' +
@@ -691,6 +703,7 @@
             '<div class="video-featured-meta">' +
             liveBadge +
             (target.publishedAt ? '<span>' + formatDate(target.publishedAt) + '</span>' : "") +
+            (targetDuration ? '<span>' + escapeHtml(targetDuration) + '</span>' : "") +
             (target.series ? '<span>' + escapeHtml(target.series) + '</span>' : "") +
             '</div>' +
             '<div class="video-featured-actions">' +
@@ -757,6 +770,12 @@
             });
         }
 
+        if (durationSelect.value !== "all") {
+            filtered = filtered.filter(function (v) {
+                return window.TPI_VIDEO_FORMAT.durationBucket(v) === durationSelect.value;
+            });
+        }
+
         // Sort
         var sortVal = sortSelect.value;
         filtered.sort(function (a, b) {
@@ -778,7 +797,8 @@
             ? '<img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + ' thumbnail" loading="lazy">'
             : renderThumbFallback(video.category, true);
 
-        var durationHtml = video.duration ? '<span class="video-card-duration">' + escapeHtml(video.duration) + '</span>' : '';
+        var duration = window.TPI_VIDEO_FORMAT.formatDuration(video.durationSeconds || video.duration, video.durationSeconds ? "seconds" : video.durationUnit);
+        var durationHtml = duration ? '<span class="video-card-duration" aria-label="Duration ' + escapeHtml(duration) + '">' + escapeHtml(duration) + '</span>' : '';
         var liveBadge = video.isLive ? '<span class="video-live-badge">Live</span>' : '';
         var action = window.TPI_VIDEO_PLAYER.actionFor(video);
         var actionHref = action.href || getVideoUrl(video);
@@ -796,7 +816,7 @@
             '<h3>' + escapeHtml(video.title) + '</h3>' +
             '<p class="video-card-attribution">' + (video.sourceType === "discovered" ? 'Discovered from ' + escapeHtml(video.sourceName || video.platform || "an external source") : (video.channelSlug ? '<a href="tpi-channel.html?slug=' + encodeURIComponent(video.channelSlug) + '" onclick="event.stopPropagation()">' + escapeHtml(video.channelName || "Creator channel") + '</a>' : 'TPI creator video')) + '</p>' +
             '<p class="video-card-watch-action"><a class="portal-button" href="' + actionHref + '"' + actionAttrs + ' onclick="event.stopPropagation()">' + escapeHtml(action.label) + '</a></p>' +
-            (video.description ? '<p>' + escapeHtml(video.description) + '</p>' : "") +
+            (video.description ? '<p class="video-card-description">' + escapeHtml(video.description) + '</p>' : "") +
             '</div>' +
             '</article>';
     }
@@ -887,6 +907,10 @@
             searchQuery = searchInput.value.trim();
             loadVideos(true);
         }, 200);
+    });
+
+    durationSelect.addEventListener("change", function () {
+        renderGrid();
     });
 
     // Sort handler

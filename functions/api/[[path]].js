@@ -2682,7 +2682,7 @@ function tpiVideoPayload(row) {
     platform: row.platform, videoUrl: row.video_url, embedUrl: row.embed_url,
     thumbnail: row.thumbnail, featured: Boolean(row.featured), isLive: Boolean(row.is_live),
     liveStartedAt: row.live_started_at, series: row.series, episode: row.episode,
-    duration: row.duration, viewingAccess: row.viewing_access || "members", status: row.status,
+    duration: row.duration, durationUnit: "formatted", viewingAccess: row.viewing_access || "members", status: row.status,
     channelId: row.channel_id || null, channelSlug: row.channelSlug || null,
     channelName: row.channelName || null,
     broadcastId: row.broadcast_id || null,
@@ -3187,12 +3187,13 @@ async function handleListTpiVideos(request, env) {
 }
 
 function scrapedVideoPayload(row) {
+  const durationSeconds = Number.isFinite(Number(row.duration)) && Number(row.duration) > 0 ? Math.floor(Number(row.duration)) : null;
   return {
     id: String(row.id), slug: row.slug || `scraped-${row.id}`, title: row.title, description: row.description || "",
     publishedAt: row.publishedAt || null, category: row.category || "Discovered Video", tags: [], platform: row.platform || "External source",
     sourceName: row.sourceName || row.platform || "External source", sourceType: "discovered", videoUrl: row.videoUrl || "", embedUrl: "",
     thumbnail: row.thumbnail || "", featured: false, isLive: false, liveStartedAt: null, series: "", episode: "",
-    duration: row.duration ? String(row.duration) : "", viewingAccess: "public", status: "published", channelId: null,
+    duration: durationSeconds === null ? "" : String(durationSeconds), durationSeconds, durationUnit: "seconds", viewingAccess: "public", status: "published", channelId: null,
     channelSlug: null, channelName: row.channelName || row.sourceName || null, creator: null,
     createdAt: row.createdAt || row.publishedAt || null, updatedAt: row.createdAt || row.publishedAt || null
   };

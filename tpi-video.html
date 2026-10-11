@@ -122,6 +122,7 @@
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="member-shell.js?v=55"></script>
+<script src="tpi-video-format.js?v=1"></script>
 <script src="tpi-video-player.js?v=2"></script>
 <script>
 (function () {
@@ -173,10 +174,7 @@
     }
 
     function formatDate(dateStr) {
-        if (!dateStr) return "";
-        var d = new Date(dateStr + "T00:00:00");
-        if (isNaN(d.getTime())) return dateStr;
-        return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+        return window.TPI_VIDEO_FORMAT.formatDate(dateStr);
     }
 
     function getCategoryIcon(category) {
@@ -470,7 +468,7 @@
             '<div class="video-detail-meta">' +
             '<span class="video-card-category">' + escapeHtml(video.category || "Video") + '</span>' +
             (video.publishedAt ? '<span>' + formatDate(video.publishedAt) + '</span>' : "") +
-            (video.duration ? '<span>' + escapeHtml(video.duration) + '</span>' : "") +
+            (window.TPI_VIDEO_FORMAT.formatDuration(video.durationSeconds || video.duration, video.durationSeconds ? "seconds" : video.durationUnit) ? '<span>' + escapeHtml(window.TPI_VIDEO_FORMAT.formatDuration(video.durationSeconds || video.duration, video.durationSeconds ? "seconds" : video.durationUnit)) + '</span>' : "") +
             (video.platform ? '<span>' + escapeHtml(video.platform) + '</span>' : "") +
             '</div>' +
             '</div>';
