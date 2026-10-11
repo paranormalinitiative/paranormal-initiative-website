@@ -13,6 +13,8 @@ mutations remain unverified or intentionally unimplemented.
 
 * `member-settings.js`: removed six accidental unary `+` operators that could
   render Content Ownership cards as `NaN`.
+* `member-dashboard.html`: bumped the Settings script query version from `v=2`
+  to `v=3` after the read-only production check found the old version cached.
 * `scripts/qa/tpi-social-003-settings-regression.mjs`: added focused regression.
 
 ## Verification

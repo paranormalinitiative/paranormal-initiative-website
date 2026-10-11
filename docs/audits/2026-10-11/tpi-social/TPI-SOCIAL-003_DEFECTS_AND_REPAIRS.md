@@ -18,3 +18,10 @@ local API/source checks; browser proof remains blocked by missing Playwright.
 
 No rebuild, duplicate datastore, destructive migration, or production mutation
 was performed.
+
+## Release cache correction
+
+The first read-only production asset check showed that the already-published
+`member-settings.js?v=2` URL could remain cached even though a cache-busted URL
+contained the repair. `member-dashboard.html` now requests `v=3`; no cache was
+purged and no unrelated asset was changed.
