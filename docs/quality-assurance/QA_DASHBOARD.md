@@ -17,6 +17,7 @@ Last updated: 2026-10-11
 | TPI-STUDIOFLOW-023 implementation | PASS locally / release pending | automatic live-comment queue and host controls built in canonical StudioFlow; authenticated media acceptance remains open |
 | TPI-STUDIOFLOW-023 production boundary | PASS — 10/10 anonymous smoke | /studio/ denied, /live-video Coming Soon, private APIs protected |
 | TPI-VIDEOS-002 creator publishing/security | PASS locally — 171/171 | migration-backed draft privacy, ownership, provider validation, channel, and lifecycle checks |
+| TPI-VIDEOS-002 production boundary | PASS — 10/10 standard smoke; 5/5 video-specific checks | Cloudflare version 165b50e5-0e84-4179-ad33-208173095123; owner-authenticated workflow remains open |
 
 ## Readiness interpretation
 
