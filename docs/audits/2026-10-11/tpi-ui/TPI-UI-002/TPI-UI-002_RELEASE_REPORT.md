@@ -19,4 +19,9 @@ Release checklist:
 - Git commit/push: required after verification.
 - Cloudflare deployment and post-deployment smoke: required after release.
 
+The first TPI-UI-002 deployment exposed a cache-versioning issue: direct
+unversioned asset URLs still returned the prior cached files. A follow-up
+cache-busting commit and deployment is required and is part of this directive,
+not a new feature batch.
+
 The authenticated visual review must stop for owner approval after deployment.

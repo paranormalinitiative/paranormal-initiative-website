@@ -6,6 +6,7 @@
 - Made the Administration Center grid explicitly `248px + minmax(0, 1fr)` and refined metric/chart transitions for desktop, tablet, and mobile widths.
 - Removed the inherited Settings Center width constraint on the dedicated route while retaining readable internal form/card widths.
 - Compactly aligned the existing Settings profile header without removing identity, role, or Sign Out.
+- Advanced the workspace stylesheet and shared shell cache-busting query strings so production browsers do not retain the prior layout assets.
 - Extended `scripts/verify/workspace-layout.mjs` with regression checks for dock separation, flexible grids, responsive reflow, and CSS scope.
 
 No business logic, API, authentication, authorization, database, R2, recording,

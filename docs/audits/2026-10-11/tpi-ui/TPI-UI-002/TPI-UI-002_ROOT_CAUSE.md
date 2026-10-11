@@ -13,3 +13,8 @@ containers to appear narrower or more widely spaced than the available shell.
 The correction is structural: the Messenger dock now uses a workspace-safe
 position, headers reflow at an intentional tablet breakpoint, and both
 workspace grids explicitly use `minmax(0, 1fr)` flexible content columns.
+
+Post-deployment verification also found that the unchanged asset query strings
+allowed an older edge-cached workspace stylesheet and member-shell script to be
+served. The two workspace HTML entry points now use the next cache-busting
+versions so the verified refinement reaches browsers.

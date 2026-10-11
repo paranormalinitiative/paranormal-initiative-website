@@ -20,7 +20,8 @@ for (const [name, html, bodyClass, title, navLabel] of [
   ["Settings Center", settings, "workspace-settings-page", "TPI Settings Center", "Settings navigation"],
 ]) {
   check(html.includes(`class="workspace-page ${bodyClass}"`), `${name}: route-scoped workspace body class is missing`);
-  check(html.includes("workspace-shell.css?v=1"), `${name}: dedicated workspace stylesheet is not loaded`);
+  check(html.includes("workspace-shell.css?v=2"), `${name}: dedicated workspace stylesheet is not loaded with the current cache-busting version`);
+  check(html.includes("member-shell.js?v=56"), `${name}: shared member shell is not loaded with the current cache-busting version`);
   check(html.includes("class=\"workspace-header\""), `${name}: dedicated workspace header is missing`);
   check(html.includes(title), `${name}: dedicated workspace title is missing`);
   check(html.includes('class="workspace-back-link" href="member-home.html">Back to TPI</a>'), `${name}: Back to TPI control is missing`);

@@ -8,6 +8,7 @@
 - Existing repository syntax/QA gate: 7 PASS checks.
 - Existing Settings API/auth harness: real SQLite auth gates, owner isolation, theme persistence, and Messenger block-list checks PASS.
 - Read-only production smoke: 10/10 PASS.
+- Versioned workspace asset checks: pending the cache-busting follow-up deployment.
 
 ## Explicit limitations
 
