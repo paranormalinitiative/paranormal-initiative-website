@@ -1,5 +1,11 @@
 # StudioFlow Master TODO
 
+**TPI-STUDIOFLOW-022A — Oct 11, 2026:** added non-blocking internet guidance
+to the existing Creator Studio setup checklist, host guest-invite modal, and
+guest preparation screen. Ethernet is recommended, Wi-Fi is supported, and no
+network detection or broadcast restriction was added. Local build and browser
+surface checks passed; parent 022 feature-freeze blockers remain open.
+
 **TPI-STUDIOFLOW-022 — Oct 11, 2026:** a narrow prerecorded-audio repair was
 verified in the canonical local source and isolated browser-to-local-RTMP
 capture. The repair unmutes the prerecorded compositor element at its three
