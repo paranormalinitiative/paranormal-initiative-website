@@ -667,6 +667,7 @@
             '<div class="video-card-meta">' +
             '<span class="video-card-category">' + escapeHtml(video.category || "Video") + '</span>' +
             (video.publishedAt ? '<span>' + formatDate(video.publishedAt) + '</span>' : "") +
+            (video.channelName ? '<span>' + escapeHtml(video.channelName) + '</span>' : "") +
             liveBadge +
             '</div>' +
             '<h3>' + escapeHtml(video.title) + '</h3>' +

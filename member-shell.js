@@ -79,6 +79,7 @@
     "member-videos",
     "member-files",
     "member-notifications",
+    "creator-videos",
     "admin-panel",
     "admin-advanced-settings",
     // Live Video and Podcast are public Coming Soon pages. Their launch

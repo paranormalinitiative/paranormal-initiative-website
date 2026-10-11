@@ -3,7 +3,7 @@
 | Area | Existing or new entrypoint | Evidence class | Default status |
 |---|---|---|---|
 | TPI Worker and API syntax | `scripts/qa/run-qa.mjs` | local static check | PASS when runner completes |
-| TPI social API | `scripts/e2e/api-e2e.sh` | local D1, synthetic multi-user integration | PASS: 152/0 on 2026-10-11 |
+| TPI social and video API | `scripts/e2e/api-e2e.sh` | local D1, synthetic multi-user integration | PASS: 171/0 on 2026-10-11; includes TPI-VIDEOS-002 security/publishing |
 | Social multi-member interaction audit | isolated synthetic Member A/B/C/D sessions plus local D1/API/browser checks | cross-account functional/security evidence | QUEUED after TPI-STUDIOFLOW-019 |
 | Migration replay | `scripts/e2e/verify-0010-equivalence.sh` | local migration equivalence | available; run when migration changes |
 | Member settings | `scripts/e2e/member-settings.mjs` | local browser/synthetic API harness | existing focused suite; run when settings changes |
@@ -18,6 +18,7 @@
 | TPI-STUDIOFLOW-019A media audit | `/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-019A_TEST_MATRIX.md` | isolated browser, FFmpeg, FFprobe, local RTMP receiver | ticker/video PASS; prerecorded audio defect open; recovery/download PARTIAL |
 | Physical iOS/Android/browser devices | owner/device lab | physical-device evidence | NOT YET VERIFIED |
 | External RTMP/RTMPS providers | provider accounts and receivers | external-provider evidence | NOT YET VERIFIED |
+| TPI-VIDEOS-002 provider/channel validation | `scripts/e2e/api-e2e.sh` plus migration 0042 | local authenticated/anonymous API evidence | PASS locally; production owner/provider paths NOT YET VERIFIED |
 
 ## Phase gate
 

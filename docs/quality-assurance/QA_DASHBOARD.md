@@ -16,6 +16,7 @@ Last updated: 2026-10-11
 | Production deployment for this QA batch | PASS — Cloudflare version 152f752a-0dd1-46aa-8fae-884bed496e19 | TPI integration commit 101b834 pushed; anonymous post-deployment smoke 10/10 |
 | TPI-STUDIOFLOW-023 implementation | PASS locally / release pending | automatic live-comment queue and host controls built in canonical StudioFlow; authenticated media acceptance remains open |
 | TPI-STUDIOFLOW-023 production boundary | PASS — 10/10 anonymous smoke | /studio/ denied, /live-video Coming Soon, private APIs protected |
+| TPI-VIDEOS-002 creator publishing/security | PASS locally — 171/171 | migration-backed draft privacy, ownership, provider validation, channel, and lifecycle checks |
 
 ## Readiness interpretation
 
@@ -58,3 +59,10 @@ concatenated WebM download remains partial. The attempted narrow runtime repair
 was reverted after it failed the repeat capture, so this QA batch has no runtime
 deployment. Full evidence is in the four
 `/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-019A_*.md` records.
+
+## TPI-VIDEOS-002 note
+
+The TPI-VIDEOS-002 batch repairs authored-video draft exposure and unsafe embed
+acceptance, then adds a draft-first contributor publishing/channel foundation.
+The local suite passed 171/171. External provider accounts and authenticated
+production creator acceptance remain separate verification items.

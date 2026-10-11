@@ -51,3 +51,12 @@
   VERIFIED.
 - The expanded local API E2E runner was canceled after becoming silent during
   its local Wrangler startup path; no pass was recorded.
+
+## TPI-VIDEOS-002 disposition
+
+- Repaired F-001, authored draft/private video exposure, with server-side
+  visibility filtering, contributor ownership checks, and explicit lifecycle.
+- Repaired F-002, unsafe provider/embed acceptance, with exact HTTPS provider
+  and thumbnail validation plus canonical YouTube/Rumble embeds.
+- Local migration-backed API coverage passed 171/171. Authenticated production
+  creator workflow and real provider playback remain NOT YET VERIFIED.

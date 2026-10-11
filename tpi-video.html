@@ -398,7 +398,10 @@
         var seriesHtml = video.series ? '<div class="video-detail-series">' + escapeHtml(video.series) + (video.episode ? ' &middot; Episode ' + video.episode : '') + '</div>' : '';
 
         // Channel identity
-        var channelHtml = '<div class="video-channel-identity"><strong>The Paranormal Initiative</strong> &middot; Applied Paranormal Research and Studies</div>';
+        var channelName = video.channelName || "The Paranormal Initiative";
+        var channelHref = video.channelSlug ? ' <a href="tpi-channel.html?slug=' + encodeURIComponent(video.channelSlug) + '">View channel</a>' : '';
+        var creatorName = video.creator && (video.creator.displayName || video.creator.username) ? ' · ' + escapeHtml(video.creator.displayName || video.creator.username) : '';
+        var channelHtml = '<div class="video-channel-identity"><strong>' + escapeHtml(channelName) + '</strong>' + creatorName + channelHref + '</div>';
 
         // Tags
         var tagsHtml = '';

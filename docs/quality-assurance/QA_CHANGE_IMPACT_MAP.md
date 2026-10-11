@@ -11,3 +11,5 @@ Run the smallest relevant set, then the full deterministic regression before rel
 | StudioFlow media, recording, storage, RTMP, room server | StudioFlow build/checks plus the actual isolated media test available for that feature; unverified paths stay open |
 | `.github/workflows/`, QA scripts, documentation only | syntax/runner execution; push documentation/test changes; no runtime deployment unless assets also changed |
 | `wrangler.toml`, credentials, R2/D1 bindings | stop and review separately; no destructive migration or credential change in routine QA |
+| `lib/video-providers.js`, authored TPI video routes, creator/channel pages | provider validation + migration-backed API E2E + anonymous production smoke; owner-authenticated production workflow remains separate |
+| `migrations/0042_tpi_video_channels.sql` | local migration replay + full API E2E; apply remote only as part of the authorized additive release |

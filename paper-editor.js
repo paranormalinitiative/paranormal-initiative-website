@@ -1882,6 +1882,14 @@ ${articleHtml}
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Publish failed");
+      const publishRes = await fetch("/api/tpi-videos/" + encodeURIComponent(data.slug) + "/publish", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: "{}"
+      });
+      const publishData = await publishRes.json().catch(() => ({}));
+      if (!publishRes.ok) throw new Error(publishData.error || "The video draft was saved but could not be published.");
       currentArticleId = data.id;
       publishFilename.value = data.slug;
       publishDestination.value = "tpi-videos.html";

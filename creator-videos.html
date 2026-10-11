@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>My Creator Videos | The Paranormal Initiative</title>
+  <link rel="stylesheet" href="style.css?v=89">
+  <link rel="stylesheet" href="member-shell.css?v=62">
+  <style>
+    .creator-video-page{max-width:1100px;margin:0 auto;padding:28px 18px 56px}.creator-video-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:22px}.creator-video-card{background:var(--bg-secondary,#12151c);border:1px solid var(--border-default,#263044);border-radius:18px;padding:20px}.creator-video-card h2{margin-top:0}.creator-video-form{display:grid;gap:14px}.creator-video-form label{display:grid;gap:6px;color:var(--text-secondary,#aab4c5);font-size:13px}.creator-video-form input,.creator-video-form textarea,.creator-video-form select{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border-default,#263044);border-radius:10px;background:var(--bg-card,#0d1118);color:var(--text-primary,#edf2fa);font:inherit}.creator-video-form textarea{min-height:110px;resize:vertical}.creator-video-actions{display:flex;gap:8px;flex-wrap:wrap}.creator-video-list{display:grid;gap:10px}.creator-video-row{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;border:1px solid var(--border-default,#263044);border-radius:12px;padding:13px}.creator-video-row strong{display:block}.creator-video-row small{display:block;color:var(--text-secondary,#aab4c5);margin-top:5px}.creator-video-row .creator-video-actions{justify-content:flex-end}.creator-video-status{min-height:1.3em;color:var(--accent,#59a9dc)}.creator-video-note{color:var(--text-secondary,#aab4c5);line-height:1.55;font-size:13px}@media(max-width:760px){.creator-video-grid{grid-template-columns:1fr}.creator-video-row{display:grid}.creator-video-row .creator-video-actions{justify-content:flex-start}}
+  </style>
+</head>
+<body>
+<div id="site-header"></div>
+<div data-member-content hidden>
+  <main class="creator-video-page">
+    <p class="portal-kicker">Creator Publishing</p>
+    <h1>My Creator Videos</h1>
+    <p class="creator-video-note">Create drafts, manage your own listings, and publish only after you review the validated external playback source. TPI does not host your recordings here.</p>
+    <p id="creator-video-status" class="creator-video-status" role="status"></p>
+    <div class="creator-video-grid">
+      <section class="creator-video-card" aria-labelledby="video-form-heading">
+        <h2 id="video-form-heading">Video listing</h2>
+        <form id="creator-video-form" class="creator-video-form">
+          <input type="hidden" id="creator-video-slug">
+          <label>Title *<input id="creator-video-title" maxlength="180" required></label>
+          <label>Description<textarea id="creator-video-description" maxlength="10000"></textarea></label>
+          <label>Video URL *<input id="creator-video-url" type="url" placeholder="https://rumble.com/... or https://odysee.com/..." required></label>
+          <label>Embed URL (optional)<input id="creator-video-embed" type="url" placeholder="Approved provider embed URL"></label>
+          <label>Thumbnail URL (optional)<input id="creator-video-thumbnail" type="url" placeholder="HTTPS provider thumbnail URL"></label>
+          <label>Category<select id="creator-video-category"><option>Applied Paranormal Research and Studies</option><option>Live Streams</option><option>EVP &amp; ITC</option><option>Visual ITC &amp; Scrying</option><option>Paranormal Investigation</option><option>Equipment &amp; Technology</option><option>Research Discussion</option><option>Education</option><option>Special Presentation</option></select></label>
+          <label>Tags<input id="creator-video-tags" placeholder="EVP, investigation"></label>
+          <label>Viewing access<select id="creator-video-access"><option value="members">Members</option><option value="public">Public</option></select></label>
+          <div class="creator-video-actions"><button type="submit" class="portal-button">Save Draft</button><button type="button" id="creator-video-clear" class="portal-button portal-button-secondary">Clear</button></div>
+        </form>
+      </section>
+      <section class="creator-video-card" aria-labelledby="channel-form-heading">
+        <h2 id="channel-form-heading">My channel</h2>
+        <form id="creator-channel-form" class="creator-video-form">
+          <label>Channel name *<input id="creator-channel-name" maxlength="120" required></label>
+          <label>Channel slug<input id="creator-channel-slug" maxlength="80" pattern="[a-z0-9-]+"></label>
+          <label>Description<textarea id="creator-channel-description" maxlength="1200"></textarea></label>
+          <label>Artwork URL<input id="creator-channel-artwork" type="url"></label>
+          <label>Visibility<select id="creator-channel-visibility"><option value="public">Public</option><option value="private">Private</option></select></label>
+          <button type="submit" class="portal-button">Save Channel</button>
+        </form>
+        <p class="creator-video-note">Your channel uses your existing TPI member identity. Private channels and drafts are never listed publicly.</p>
+        <p><a id="creator-channel-link" href="tpi-videos.html">Open public channel</a></p>
+      </section>
+    </div>
+    <section class="creator-video-card" style="margin-top:22px" aria-labelledby="my-videos-heading">
+      <h2 id="my-videos-heading">My listings</h2>
+      <div id="creator-video-list" class="creator-video-list"><p class="creator-video-note">Loading…</p></div>
+    </section>
+  </main>
+</div>
+<div id="site-footer"></div>
+<script src="includes.js"></script><script src="member-shell.js?v=55"></script><script src="creator-videos.js?v=1"></script>
+</body>
+</html>

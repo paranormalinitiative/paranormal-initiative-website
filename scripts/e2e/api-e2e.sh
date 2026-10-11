@@ -421,6 +421,48 @@ check "admin deletes own test article" 200 "$R"
 R=$(req DELETE "/articles/e2e-draft-article" tok-contrib)
 check "contributor deletes own draft" 200 "$R"
 
+######################## 6A. TPI VIDEO SECURITY & PUBLISHING ########################
+echo "== TPI VIDEO SECURITY & PUBLISHING =="
+R=$(req GET /tpi-videos '')
+check "anonymous video catalog is public-safe" 200 "$R" "all(v.get('status')=='published' and v.get('viewingAccess')=='public' for v in d.get('videos',[]))"
+R=$(req GET "/tpi-videos?status=draft" '')
+check "anonymous draft query returns no records" 200 "$R" "d.get('videos')==[]"
+R=$(req POST /tpi-videos '' '{"title":"Anonymous video","videoUrl":"https://www.youtube.com/watch?v=dQw4w9WgXcQ"}')
+check "anonymous cannot create video" 401 "$R"
+VIDEO_BODY='{"id":"e2e-video-a","title":"E2E Video A","description":"Isolated video security fixture","videoUrl":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","thumbnail":"https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg","category":"Education","tags":["e2e","video"],"viewingAccess":"public"}'
+R=$(req POST /tpi-videos tok-contrib "$VIDEO_BODY")
+check "creator creates video as draft" 200 "$R" "d.get('status')=='draft' and d.get('slug')=='e2e-video-a'"
+R=$(req GET /tpi-videos '')
+check "public catalog excludes creator draft" 200 "$R" "not any(v.get('slug')=='e2e-video-a' for v in d.get('videos',[]))"
+R=$(req GET "/tpi-videos?mine=true&status=all" tok-contrib)
+check "creator sees own draft" 200 "$R" "any(v.get('slug')=='e2e-video-a' and v.get('status')=='draft' for v in d.get('videos',[]))"
+R=$(req GET /tpi-videos/e2e-video-a tok-a)
+check "member cannot read creator draft detail" 404 "$R"
+R=$(req GET /tpi-videos/e2e-video-a tok-b)
+check "second creator cannot read creator draft detail" 404 "$R"
+R=$(req PUT /tpi-videos/e2e-video-a tok-contrib '{"videoUrl":"javascript:alert(1)"}')
+check "javascript video URL rejected" 400 "$R"
+R=$(req PUT /tpi-videos/e2e-video-a tok-contrib '{"embedUrl":"https://evil.example/embed/123"}')
+check "unsupported embed host rejected" 400 "$R"
+R=$(req PUT /tpi-videos/e2e-video-a tok-b '{"title":"hijack"}')
+check "second creator cannot edit creator video" 403 "$R"
+R=$(req POST /tpi-videos/e2e-video-a/publish tok-contrib '{}')
+check "creator explicitly publishes video" 200 "$R" "d.get('status')=='published'"
+R=$(req GET /tpi-videos '')
+check "published public video appears in catalog" 200 "$R" "any(v.get('slug')=='e2e-video-a' and v.get('status')=='published' for v in d.get('videos',[]))"
+R=$(req GET /tpi-videos/e2e-video-a '')
+check "published public video detail is readable" 200 "$R" "d.get('video',{}).get('embedUrl','').startswith('https://www.youtube-nocookie.com/embed/')"
+R=$(req GET /tpi-channels/e2e-contrib '')
+check "creator channel endpoint uses stable account slug" 200 "$R" "d.get('channel',{}).get('owner',{}).get('username')=='e2e_contrib'"
+R=$(req POST /tpi-videos/e2e-video-a/unpublish tok-contrib '{}')
+check "creator can unpublish own video" 200 "$R" "d.get('status')=='draft'"
+R=$(req GET /tpi-videos/e2e-video-a '')
+check "unpublished video detail is hidden again" 404 "$R"
+R=$(req POST /tpi-videos/e2e-video-a/remove tok-b '{}')
+check "second creator cannot remove creator video" 403 "$R"
+R=$(req POST /tpi-videos/e2e-video-a/remove tok-contrib '{}')
+check "creator can remove own listing without deleting external media" 200 "$R" "d.get('status')=='removed'"
+
 ######################## 6. FEED NOTIFICATION PREFERENCE ########################
 echo "== FEED NOTIFICATION TYPES =="
 R=$(req POST /notifications/preferences tok-b '{"prefs":{"admin":true,"posts":false,"education":true,"videos":true,"photos":true,"chat":true}}')

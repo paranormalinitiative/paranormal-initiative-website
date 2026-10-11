@@ -2,6 +2,26 @@
 
 This is a gated plan, not an authorization to start a large implementation.
 
+## TPI-VIDEOS-002 implementation status — 2026-10-11
+
+The Phase 0 security gates are now repaired in the canonical TPI source. The
+creator publishing foundation is implemented as a draft-first, contributor-
+owned workflow with an additive channel migration. Local migration-backed API
+coverage is green at 171/171 assertions. The release report and production
+verification remain the authoritative records for deployment status.
+
+Detailed records:
+
+- `TPI-VIDEOS-002_SECURITY_REPAIRS.md`
+- `TPI-VIDEOS-002_CREATOR_PUBLISHING.md`
+- `TPI-VIDEOS-002_CREATOR_CHANNELS.md`
+- `TPI-VIDEOS-002_TEST_MATRIX.md`
+- `TPI-VIDEOS-002_RELEASE_REPORT.md`
+
+StudioFlow is unchanged. The StudioFlow publication bridge, richer discovery
+social features, physical-device checks, and authenticated production owner
+acceptance remain future or explicitly unverified work.
+
 ## Phase 0 — Security and acceptance gates
 
 - Fix and test server-side publication/access filtering for authored videos.
