@@ -2723,7 +2723,8 @@ function tpiBroadcastListingSql() {
     lb.playback_url AS livePlaybackUrl, lb.playback_verified AS livePlaybackVerified,
     lb.replay_url AS liveReplayUrl, lb.replay_published AS liveReplayPublished,
     lb.moderation_status AS liveModerationStatus, lb.started_at AS liveStartedAt,
-    lb.ended_at AS liveEndedAt, lb.created_at AS liveCreatedAt, lb.updated_at AS liveUpdatedAt,
+    lb.ended_at AS liveEndedAt, lb.sync_version AS liveSyncVersion, lb.last_sync_at AS liveLastSyncAt,
+    lb.created_at AS liveCreatedAt, lb.updated_at AS liveUpdatedAt,
     ch.slug AS channelSlug, ch.display_name AS channelName, ch.description AS channelDescription,
     ch.artwork_url AS channelArtwork, c.username AS creatorUsername, c.display_name AS creatorDisplayName,
     c.title AS creatorTitle, c.photo_url AS creatorPhoto
@@ -2744,7 +2745,7 @@ function tpiBroadcastPayload(row, includePrivate = false) {
     playback_verified: row.livePlaybackVerified, replay_url: row.liveReplayUrl,
     replay_published: row.liveReplayPublished, moderation_status: row.liveModerationStatus,
     started_at: row.liveStartedAt, ended_at: row.liveEndedAt, created_at: row.liveCreatedAt,
-    updated_at: row.liveUpdatedAt
+    updated_at: row.liveUpdatedAt, sync_version: row.liveSyncVersion, last_sync_at: row.liveLastSyncAt
   } : row.broadcast;
   const video = isJoined ? row : row.video;
   if (!broadcast || !video) return null;
@@ -2752,6 +2753,7 @@ function tpiBroadcastPayload(row, includePrivate = false) {
   const replayPublished = Boolean(broadcast.replay_published || video.replay_published);
   const playbackUrl = playbackVerified ? (broadcast.playback_url || video.video_url || "") : "";
   const replayUrl = replayPublished ? (broadcast.replay_url || video.replay_url || "") : "";
+  const revision = Math.max(Number(broadcast.sync_version || 1), Number(video.sync_version || 1));
   const lifecycle = broadcast.status || "ready";
   const availability = lifecycle === "live" ? (playbackVerified ? "live" : "live_unverified")
     : lifecycle === "ended" ? (replayPublished ? "replay" : "ended")
@@ -2784,10 +2786,41 @@ function tpiBroadcastPayload(row, includePrivate = false) {
     startedAt: broadcast.started_at || video.actual_started_at || null,
     endedAt: broadcast.ended_at || video.actual_ended_at || null,
     video: tpiVideoPayload(video),
+    revision,
+    syncVersion: revision,
+    lastSyncAt: broadcast.last_sync_at || video.last_sync_at || null,
     creator: video.created_by ? { id: video.created_by, username: video.creatorUsername || "", displayName: video.creatorDisplayName || "", title: video.creatorTitle || "", photoUrl: video.creatorPhoto || "" } : null,
     createdAt: broadcast.created_at || video.created_at,
     updatedAt: broadcast.updated_at || video.updated_at
   };
+}
+
+function tpiBroadcastRevision(record) {
+  return Math.max(Number(record?.broadcast?.sync_version || 1), Number(record?.video?.sync_version || 1));
+}
+
+function expectedBroadcastRevision(data) {
+  if (data?.expectedRevision === undefined || data?.expectedRevision === null || data?.expectedRevision === "") return null;
+  const revision = Number(data.expectedRevision);
+  return Number.isInteger(revision) && revision > 0 ? revision : NaN;
+}
+
+function sameOriginMutationAllowed(request) {
+  const origin = request.headers.get("Origin");
+  if (!origin) return true;
+  try {
+    return new URL(origin).origin === new URL(request.url).origin;
+  } catch {
+    return false;
+  }
+}
+
+function broadcastConflictResponse(record) {
+  return json({
+    error: "This broadcast changed elsewhere. Refresh the server copy before retrying.",
+    code: "conflict",
+    broadcast: tpiBroadcastPayload({ broadcast: record.broadcast, video: record.video }, true)
+  }, 409, { "Cache-Control": "no-store" });
 }
 
 async function findTpiBroadcast(env, identifier) {
@@ -2873,6 +2906,7 @@ async function handleGetTpiBroadcast(path, request, env) {
 }
 
 async function handleCreateTpiBroadcast(request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin broadcast mutations are not allowed." }, 403);
   const data = await readJson(request);
   const id = cleanBroadcastId(data.broadcastId || data.id);
   const title = cleanVideoText(data.title || "", 180);
@@ -2914,11 +2948,15 @@ async function handleCreateTpiBroadcast(request, env, user) {
 }
 
 async function handleUpdateTpiBroadcast(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin broadcast mutations are not allowed." }, 403);
   const identifier = clean(decodeURIComponent(path.replace(/^\/tpi-broadcasts\//, "")));
   const record = await findTpiBroadcast(env, identifier);
   if (!record || !record.video) return json({ error: "Broadcast not found." }, 404);
   if (!broadcastOwnerOrAdmin(record, user)) return json({ error: "You can only edit your own broadcasts." }, 403);
   const data = await readJson(request);
+  const expectedRevision = expectedBroadcastRevision(data);
+  if (Number.isNaN(expectedRevision)) return json({ error: "expectedRevision must be a positive integer." }, 400);
+  if (expectedRevision !== null && expectedRevision !== tpiBroadcastRevision(record)) return broadcastConflictResponse(record);
   const title = data.title !== undefined ? cleanVideoText(data.title, 180) : record.video.title;
   if (!title) return json({ error: "Broadcast title is required." }, 400);
   const schedule = data.scheduledAt !== undefined ? parseBroadcastSchedule(data.scheduledAt) : { value: record.broadcast.scheduled_at || null };
@@ -2941,6 +2979,7 @@ async function handleUpdateTpiBroadcast(path, request, env, user) {
 }
 
 async function handleTpiBroadcastAction(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin broadcast mutations are not allowed." }, 403);
   const match = path.match(/^\/tpi-broadcasts\/([^/]+)\/(publish|unpublish|cancel|status|playback|replay)$/);
   const identifier = clean(decodeURIComponent(match?.[1] || ""));
   const action = match?.[2] || "";
@@ -2949,6 +2988,11 @@ async function handleTpiBroadcastAction(path, request, env, user) {
   if (!broadcastOwnerOrAdmin(record, user)) return json({ error: "You can only manage your own broadcasts." }, 403);
   const now = new Date().toISOString();
   const data = await readJson(request);
+  const expectedRevision = expectedBroadcastRevision(data);
+  if (Number.isNaN(expectedRevision)) return json({ error: "expectedRevision must be a positive integer." }, 400);
+  if (expectedRevision !== null && expectedRevision !== tpiBroadcastRevision(record)) return broadcastConflictResponse(record);
+  const wasPublished = record.video.status === "published";
+  const hadReplay = Boolean(record.broadcast.replay_published || record.video.replay_published);
   if (action === "publish") {
     if (record.broadcast.status === "cancelled") return json({ error: "Cancelled broadcasts cannot be published." }, 409);
     if (record.broadcast.scheduled_at && Date.parse(record.broadcast.scheduled_at) <= Date.now()) return json({ error: "Scheduled time must be in the future before publishing." }, 400);
@@ -2991,6 +3035,22 @@ async function handleTpiBroadcastAction(path, request, env, user) {
     ]);
   }
   const updated = await findTpiBroadcast(env, record.broadcast.id);
+  if (action === "publish" && !wasPublished && updated?.video?.status === "published") {
+    await notifyVideoFollowers(env, updated.video.channel_id, {
+      title: updated.video.title,
+      description: updated.video.description || "A creator you follow published a live broadcast.",
+      slug: updated.video.slug,
+      creatorId: updated.video.created_by
+    });
+  }
+  if (action === "replay" && data.publish !== false && !hadReplay && updated?.video?.replay_published) {
+    await notifyVideoFollowers(env, updated.video.channel_id, {
+      title: `${updated.video.title} replay available`,
+      description: "A replay is now available from a creator you follow.",
+      slug: updated.video.slug,
+      creatorId: updated.video.created_by
+    });
+  }
   return json({ ok: true, broadcast: tpiBroadcastPayload({ broadcast: updated.broadcast, video: updated.video }, true) }, 200, { "Cache-Control": "no-store" });
 }
 
@@ -5255,7 +5315,7 @@ const NOTIFICATION_TYPE_CATEGORY = {
   admin: "admin", team_submission: "admin", profile_request: "admin", warning: "admin",
   post: "posts", forum_post: "posts", community_post: "posts",
   contribution: "education", article: "education", education: "education",
-  video: "videos", photo: "photos",
+  video: "videos", broadcast_published: "videos", broadcast_replay: "videos", photo: "photos",
   chat: "chat", message: "chat"
 };
 

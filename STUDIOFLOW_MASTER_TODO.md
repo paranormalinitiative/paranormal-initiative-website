@@ -1,5 +1,17 @@
 # StudioFlow Master TODO
 
+**TPI-VIDEOS-005 — Oct 11, 2026:** canonical StudioFlow now has an explicit
+same-origin TPI Videos bridge for browser-local schedules. Schedule rows and
+the existing edit modal expose Sync, Publish, Refresh, Unpublish, and Cancel
+controls; failed calls persist pending metadata and stale revisions surface a
+conflict instead of overwriting server state. TPI API revision/idempotency
+checks, follower publication/replay notifications, and generated `/studio/`
+assets are integrated without recording uploads or storage changes. StudioFlow
+build and the isolated TPI API suite passed 207/207. Signed-in production
+mutation, physical offline behavior, and external-provider playback remain
+owner verification items. See
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-005_*`.
+
 **TPI-STUDIOFLOW-022A — Oct 11, 2026:** added non-blocking internet guidance
 to the existing Creator Studio setup checklist, host guest-invite modal, and
 guest preparation screen. Ethernet is recommended, Wi-Fi is supported, and no

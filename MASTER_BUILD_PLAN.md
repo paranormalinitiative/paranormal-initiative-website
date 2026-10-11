@@ -1,5 +1,19 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-VIDEOS-005 — Authenticated StudioFlow-to-TPI bridge — October 11, 2026
+
+The canonical StudioFlow source now exposes an explicit, authenticated bridge
+from browser-local schedules to TPI broadcast/listing identities. Creation,
+metadata updates, refresh, publish, unpublish, cancel, offline pending state,
+retry, and revision conflicts are represented without uploading creator
+recordings or changing the existing R2/D1 storage architecture. The TPI API
+reuses migration 0044's sync revisions, adds same-origin mutation validation,
+and reuses follower video notifications. StudioFlow production build passed;
+the isolated TPI API suite passed 207/207. Signed-in production mutation,
+physical offline behavior, and external-provider playback remain explicit
+owner verification items. Detailed evidence is in
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-005_*`.
+
 ## TPI-VIDEOS-004 — Broadcast identity and StudioFlow integration foundation — October 11, 2026
 
 The canonical TPI source now contains an additive broadcast/listing boundary:

@@ -524,6 +524,30 @@ check "creator can remove a broadcast listing without deleting its identity" 200
 R=$(req GET /tpi-broadcasts/e2e-broadcast-004 '')
 check "unpublished broadcast detail is hidden from public" 404 "$R"
 
+######################## 6C. TPI STUDIOFLOW SYNC SAFETY ########################
+echo "== TPI STUDIOFLOW SYNC SAFETY =="
+SYNC_BODY='{"broadcastId":"e2e-broadcast-005","title":"Sync Safety Broadcast","description":"Revision and retry fixture","category":"Live Streams","scheduledAt":"2031-01-02T15:00:00Z","scheduledTimezone":"America/New_York","visibility":"private"}'
+R=$(req POST /tpi-broadcasts tok-contrib "$SYNC_BODY")
+check "sync bridge creates one stable server identity" 201 "$R" "d.get('broadcast',{}).get('id')=='e2e-broadcast-005' and isinstance(d.get('broadcast',{}).get('revision'),int)"
+SYNC_REV=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['broadcast']['revision'])")
+R=$(req POST /tpi-broadcasts tok-contrib "$SYNC_BODY")
+check "retrying create is idempotent" 200 "$R" "d.get('existing') is True and d.get('broadcast',{}).get('revision')==$SYNC_REV"
+R=$(req PUT /tpi-broadcasts/e2e-broadcast-005 tok-contrib "{\"title\":\"Updated Sync Safety Broadcast\",\"scheduledAt\":\"2031-01-03T15:00:00Z\",\"scheduledTimezone\":\"America/New_York\",\"expectedRevision\":$SYNC_REV}")
+check "bridge updates a mapped schedule with the current revision" 200 "$R" "d.get('broadcast',{}).get('title')=='Updated Sync Safety Broadcast' and d.get('broadcast',{}).get('revision')>$SYNC_REV"
+SYNC_REV2=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['broadcast']['revision'])")
+R=$(req PUT /tpi-broadcasts/e2e-broadcast-005 tok-contrib "{\"title\":\"Stale Update\",\"expectedRevision\":$SYNC_REV}")
+check "stale bridge update returns an explicit conflict" 409 "$R" "d.get('code')=='conflict' and d.get('broadcast',{}).get('revision')==$SYNC_REV2"
+ORIGIN_STATUS=$(curl -s --max-time 300 -o /tmp/tpi-e2e-body-$$ -w '%{http_code}' -X PUT -H 'Origin: https://evil.example' -H 'Cookie: tpi_session=tok-contrib' -H 'Content-Type: application/json' -d '{"title":"Cross origin","expectedRevision":'$SYNC_REV2'}' "$BASE/tpi-broadcasts/e2e-broadcast-005")
+R="$ORIGIN_STATUS|$(cat /tmp/tpi-e2e-body-$$)"
+check "cross-origin bridge mutation is rejected" 403 "$R"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-005/publish tok-contrib "{\"visibility\":\"public\",\"expectedRevision\":$SYNC_REV2}")
+check "explicit publish advances the server revision" 200 "$R" "d.get('broadcast',{}).get('listingStatus')=='published' and d.get('broadcast',{}).get('revision')>$SYNC_REV2"
+SYNC_REV3=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['broadcast']['revision'])")
+R=$(req POST /tpi-broadcasts/e2e-broadcast-005/publish tok-contrib "{\"visibility\":\"public\",\"expectedRevision\":$SYNC_REV2}")
+check "stale publication retry returns an explicit conflict" 409 "$R" "d.get('code')=='conflict' and d.get('broadcast',{}).get('revision')==$SYNC_REV3"
+R=$(req GET /tpi-broadcasts/e2e-broadcast-005 tok-contrib)
+check "mapped broadcast refresh returns current server state" 200 "$R" "d.get('broadcast',{}).get('listingStatus')=='published' and d.get('broadcast',{}).get('revision')==$SYNC_REV3"
+
 ######################## 6. FEED NOTIFICATION PREFERENCE ########################
 echo "== FEED NOTIFICATION TYPES =="
 R=$(req POST /notifications/preferences tok-b '{"prefs":{"admin":true,"posts":false,"education":true,"videos":true,"photos":true,"chat":true}}')
