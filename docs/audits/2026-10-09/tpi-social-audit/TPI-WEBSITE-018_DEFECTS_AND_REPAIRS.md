@@ -3,7 +3,7 @@
 ## D018-001 — Messenger media was anonymously readable
 
 **Severity:** High privacy defect
-**Status:** Repaired locally; deploy verification required
+**Status:** Repaired, pushed, deployed, and production-verified
 **Affected path:** `functions/api/[[path]].js`, `handleMediaRequest`
 
 ### Reproduction
@@ -25,7 +25,7 @@ After the repair:
 - Anonymous Messenger-media request: HTTP 401 — PASS.
 - Authenticated member with the URL: HTTP 200 — PASS.
 - Full 45-check synthetic multi-user regression: 45/45 — PASS.
-- Production deployment verification is recorded in the companion audit after release.
+- Production fake-key probe: HTTP 401 — PASS.
 
 ### Remaining limitation
 

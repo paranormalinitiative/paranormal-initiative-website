@@ -52,6 +52,7 @@ Statuses mean: **PASS** = executed and observed; **FAIL** = executed and failed;
 | `/api/conversations` anonymous | 401 | PASS |
 | `/api/notifications` anonymous | 401 | PASS |
 | `/api/admin/members` anonymous | 403 | PASS |
+| `/api/media/messenger/...` anonymous fake-key probe | 401 | PASS |
 | Public community categories/posts | 200 | PASS |
 | Authenticated production social workflows | Not attempted; no real account used | BLOCKED |
 | Production uploads/mutations | Not attempted | BLOCKED |

@@ -80,7 +80,14 @@ No production login, mutation, upload, D1 query, R2 operation, or real-member te
 
 ## Release state
 
-The audit includes a small source repair and therefore requires the normal build, commit, push, Cloudflare deployment, and post-deployment verification sequence. The final commit and Cloudflare Version ID are recorded in this document after deployment; until then the code result is locally verified only.
+- Git commit: `c014d6a` — `Audit TPI social network and protect messenger media`
+- GitHub: pushed to `origin/main`
+- Cloudflare Worker: `theparanormalinitiative`
+- Cloudflare Version ID: `a44a1bda-d385-44da-8f15-c269787a6cdf`
+- Deployment source: clean archive of `c014d6a`; unrelated dirty files were excluded
+- Production verification: `/live-video` retained Coming Soon; anonymous `/studio/` returned 403; anonymous `/api/conversations` and `/api/notifications` returned 401; anonymous `/api/admin/members` returned 403; anonymous `/api/media/messenger/...` returned 401; public community categories/posts remained 200.
+
+The owner-only/public access boundary and `/live-video` behavior were preserved. No production member session, database mutation, R2 upload, or external provider action was used.
 
 ## Remaining owner/external verification
 
