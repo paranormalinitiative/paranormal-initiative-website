@@ -53,7 +53,10 @@ Completed locally on 2026-10-10:
 ## Release evidence
 
 - Canonical StudioFlow source commit: `3f17b58` — `Add pre-recorded video broadcast source`.
-- TPI integration commit and Cloudflare deployment identifiers are recorded here after the protected release deployment.
+- TPI integration commit: `ed935d6` — `Promote pre-recorded StudioFlow broadcasting`.
+- Cloudflare Worker deployment: `2cff61b2-a8ce-43b6-9414-4611e83aaf36`.
+- Deployment account: TPI Cloudflare account `221ea5479876fd303ddc87002b9e892d`.
+- The deployment uploaded only the StudioFlow index, generated JavaScript/CSS, and this directive document. Existing D1/R2 bindings remained attached and no database or bucket mutation was performed.
 
 ## Outstanding integration requirements
 
