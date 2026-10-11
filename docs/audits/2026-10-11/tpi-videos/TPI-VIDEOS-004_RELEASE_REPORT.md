@@ -1,6 +1,6 @@
 # TPI-VIDEOS-004 Release Report
 
-Status: local implementation verified; release pending.
+Status: IMPLEMENTED, VERIFIED LOCALLY, COMMITTED, PUSHED, MIGRATED, AND DEPLOYED.
 
 Implemented batch:
 
@@ -15,11 +15,22 @@ Implemented batch:
 
 Verification: fresh local D1 migration replay PASS; full isolated API E2E PASS,
 199/199 checks, 0 failures. One schema mismatch was repaired and the suite was
-rerun successfully.
+rerun successfully. `node --check`, `git diff --check`, and the Cloudflare
+dry-run build passed.
+
+Release evidence:
+
+- GitHub commit: `6d7e96f` pushed to `origin/main`.
+- Production D1 migration 0044: PASS; bookmark recorded in the database-change
+  report.
+- Cloudflare Version ID: `2c2fe8d3-3389-48a4-8b12-f6026d02f1ef`.
+- Production read-only boundary smoke: PASS; see the production-verification
+  report.
 
 Not complete: StudioFlow-to-TPI browser sync, actual media/provider delivery,
 external playback decode, owner-authenticated production mutation, physical
 device behavior, and automatic broadcast notifications.
 
-No deployment, GitHub push, or production D1 migration is claimed until the
-release step is completed and live boundaries are rechecked.
+The release does not claim StudioFlow browser-to-TPI sync, actual provider
+media delivery, external playback decode, authenticated owner production
+mutation, physical-device behavior, or automatic broadcast notifications.

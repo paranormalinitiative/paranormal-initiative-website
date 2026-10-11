@@ -12,7 +12,10 @@ introduced. Local D1 replay and the full API regression suite passed 199/199
 after one repaired schema mismatch. StudioFlow browser-local scheduling is not
 automatically visible to TPI; the explicit browser bridge, real provider media,
 authenticated production owner mutations, and physical-device behavior remain
-unverified. Detailed evidence is in
+unverified. Commit `6d7e96f` was pushed to `origin/main`; migration 0044 was
+applied to production D1; Cloudflare Version
+`2c2fe8d3-3389-48a4-8b12-f6026d02f1ef` is deployed; public boundary smoke
+passed. Detailed evidence is in
 `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-004_*`.
 
 ## TPI-ROADMAP-002 — Official development sequence — October 11, 2026
