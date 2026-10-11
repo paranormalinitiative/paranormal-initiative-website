@@ -1,5 +1,28 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-MEDIA-001 — Creator Studio and TPI Videos completion audit — October 11, 2026
+
+The final media-platform audit preserved the StudioFlow feature-freeze and
+focused the first repair on a confirmed TPI Videos defect: the shared member
+shell's more-specific `auto-fill` rule reduced the catalog to three columns at
+a 1440px rendered viewport. `tpi-videos.html` now applies the existing 4/3/2/1
+breakpoints with matching member-mode specificity. Authenticated isolated
+browser measurements passed 4 columns at 1440px, 3 at 1024px, 2 at 800px, and
+1 at 390px with no horizontal overflow.
+
+The full local API suite passed 213/213 after the local Wrangler permission
+retry. The full QA runner passed syntax, StudioFlow production build,
+StudioFlow room/RTMP checks, API E2E, and read-only production smoke. Native
+public Creator Studio recording playback remains unverified because local
+recordings require an authorized browser-accessible playback source; the
+disposable unapproved fixture correctly produced the truthful unavailable state.
+Physical device tests, long-duration recording, authenticated production
+mutations, external provider sessions, formal accessibility testing, and full
+Reels creation remain open. `/studio/` protection, `/live-video` Coming Soon,
+creator-owned recording storage, existing database/authentication, and unrelated
+dirty files remain preserved. Evidence is in
+`docs/audits/2026-10-11/tpi-videos/TPI-MEDIA-001_*`.
+
 ## TPI-SOCIAL-002 — Community Feed and integration recovery — October 11, 2026
 
 The TPI-SOCIAL-002 baseline re-ran the existing social/video regressions and

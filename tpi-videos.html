@@ -432,15 +432,19 @@
             border-color: #59a9dc;
             color: #59a9dc;
         }
+        /* The shared member shell has a more-specific auto-fill rule for
+           `.video-grid`. Keep this page's explicit discovery breakpoints in
+           force for the authenticated catalog. */
+        body.member-mode .video-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         @media (max-width: 800px) {
             .video-featured-card { grid-template-columns: 1fr; }
             .video-featured-media { min-height: 200px; }
-            .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            body.member-mode .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .tpi-channel-tabs { gap: 0; }
             .tpi-channel-tab { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
         }
-        @media (max-width: 1120px) and (min-width: 801px) { .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-        @media (max-width: 560px) { .video-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1120px) and (min-width: 801px) { body.member-mode .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (max-width: 560px) { body.member-mode .video-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
