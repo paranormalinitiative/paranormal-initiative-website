@@ -1,6 +1,6 @@
 # The Paranormal Initiative Website - Agent Handoff
 
-Last updated: October 8, 2026 (historical handoff context)
+Last updated: October 11, 2026
 
 ## Current documentation authority
 
@@ -10,6 +10,36 @@ For the current roadmap and cross-workspace status, use
 This handoff preserves historical website context and must not be used to
 restart or reorder the current TPI Videos, StudioFlow, social, administration,
 or final-audit sequence.
+
+## Current TPI-DOCS-002 handoff — October 11, 2026
+
+The TPI-VIDEOS-010 implementation batch and TPI-VIDEOS-010B documentation
+acceptance batch are complete. The overall media platform is **READY WITH
+LIMITATIONS**, not fully production-verified. The current evidence includes
+the `e911568` runtime and Cloudflare version
+`03d7b39f-9a13-44da-a45b-12d0c3632127`, the documentation commit
+`a11bd3780823e8b2378803a1467989714d74b15e`, and the isolated synthetic
+14-second Program recording with 13.965-second native playback metadata at
+1920×1080. The media acceptance register in
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010B_TEST_MATRIX.md` remains the
+source for outstanding requirements.
+
+Do not claim physical-device/native storage, long-duration reliability, fresh
+export-file integrity, authenticated publication, authorized production
+playback, creator-channel publication, Feed end-to-end integration, cross-role
+acceptance, or real provider broadcast as complete. The full API E2E runner
+hung before assertions and requires a startup/timeout/dependency investigation
+in TPI-FINAL-001. Preserve owner-verified camera, microphone, and local
+recording creation as distinct from automated evidence.
+
+Canonical boundaries remain: TPI live source is this repository; StudioFlow
+source is `/Users/toddknipple/Documents/StudioFlow/web`; StudioFlow is
+feature-frozen except for verified bug/security/reliability/accessibility/
+integration/compatibility repairs; `/studio/` remains owner/authorized-only;
+`/live-video` remains Coming Soon; creator recordings remain creator-owned and
+are not automatically uploaded to TPI R2. Next roadmap phase is
+TPI-SOCIAL-003, but implementation must wait for owner review of the remaining
+010/010B acceptance limitations. Do not start Administration or final phases.
 
 ## Project Identity
 

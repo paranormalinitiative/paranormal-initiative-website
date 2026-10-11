@@ -1,6 +1,6 @@
 # StudioFlow Master TODO
 
-> **Roadmap authority — TPI-DOCS-001 (October 11, 2026):** This file remains
+> **Roadmap authority — TPI-DOCS-002 (October 11, 2026):** This file remains
 > the StudioFlow feature and evidence history, but the current cross-project
 > order is maintained in
 > [`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
@@ -19,6 +19,18 @@ build and the isolated TPI API suite passed 207/207. Signed-in production
 mutation, physical offline behavior, and external-provider playback remain
 owner verification items. See
 `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-005_*`.
+
+**TPI-DOCS-002 — Oct 11, 2026:** the TPI-VIDEOS-010 implementation and
+TPI-VIDEOS-010B documentation acceptance batches are recorded complete. The
+overall media platform remains **READY WITH LIMITATIONS**. The isolated
+synthetic Program recording was roughly 14 seconds, with 13.965 seconds of
+native local playback metadata at 1920×1080; build, room, and RTMP checks
+passed. Keep physical/native storage, fresh export-file integrity,
+long-duration, authenticated publication, authorized production playback,
+provider delivery, and Feed end-to-end items open. The full API runner hung
+before assertions and requires investigation in TPI-FINAL-001. The next
+cross-workspace phase is TPI-SOCIAL-003 after owner review; do not infer that
+this documentation update authorizes new StudioFlow features.
 
 **TPI-STUDIOFLOW-022A — Oct 11, 2026:** added non-blocking internet guidance
 to the existing Creator Studio setup checklist, host guest-invite modal, and

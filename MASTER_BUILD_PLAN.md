@@ -6,10 +6,18 @@ The current owner-approved roadmap and cross-workspace status are recorded in
 [`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
 It preserves historical audit evidence while preventing older roadmap sections
 from being mistaken for the current work order. The locked order is:
-TPI-VIDEOS-009A (implemented through TPI-MEDIA-001), TPI-VIDEOS-010,
+TPI-MEDIA-001, TPI-DOCS-001, TPI-VIDEOS-010, TPI-VIDEOS-010B,
 TPI-SOCIAL-003, TPI-ADMIN-001, TPI-FINAL-001, TPI-FINAL-002, and
-TPI-FINAL-003. TPI-DOCS-001 changes Markdown only; it does not authorize
-runtime work or deployment.
+TPI-FINAL-003. TPI-DOCS-001 and TPI-DOCS-002 are documentation-only
+synchronization directives; they do not authorize runtime work or deployment.
+
+### TPI-DOCS-002 roadmap checkpoint
+
+Completed: TPI-MEDIA-001, TPI-DOCS-001, TPI-VIDEOS-010 implementation,
+TPI-VIDEOS-010B documented acceptance batch, TPI-SOCIAL-001, and
+TPI-SOCIAL-002. Next: TPI-SOCIAL-003. Then: TPI-ADMIN-001, TPI-FINAL-001,
+TPI-FINAL-002, and TPI-FINAL-003. This order is locked; no implementation is
+started by this documentation checkpoint.
 
 ## TPI-MEDIA-001 — Creator Studio and TPI Videos completion audit — October 11, 2026
 
@@ -51,14 +59,15 @@ room / RTMP checks, 10/10 production boundary smoke, and live browser
 verification. Runtime commit `e911568` was pushed and deployed as Cloudflare
 Version `03d7b39f-9a13-44da-a45b-12d0c3632127`.
 
-This phase is **NOT COMPLETE**. Authenticated creator publication and actual
-authorized native playback, physical-device behavior, complete recording and
-recovery acceptance, long-duration reliability, and full StudioFlow-to-Feed-
-to-authorized-playback integration remain unverified. Evidence is in
-`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010_*`. Do not begin
-TPI-SOCIAL-003 until the remaining 010 acceptance work is reviewed and closed.
+The TPI-VIDEOS-010 implementation batch is **COMPLETE**. Authenticated creator
+publication and actual authorized native playback, physical-device behavior,
+complete recording/export acceptance, long-duration reliability, and full
+StudioFlow-to-Feed-to-authorized-playback integration remain acceptance items
+tracked by 010B. Evidence is in
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010_*`. The overall media
+platform remains READY WITH LIMITATIONS pending the media acceptance register.
 
-## TPI-VIDEOS-010B — StudioFlow and TPI Videos acceptance continuation — October 11, 2026
+## TPI-VIDEOS-010B — StudioFlow and TPI Videos acceptance documentation — October 11, 2026
 
 The 010B continuation performed a bounded isolated browser recording run from
 the canonical StudioFlow source. A separate local origin using `?testMedia=1`
@@ -68,18 +77,20 @@ seconds, 1920×1080, and readyState 4. Existing checkpoint/recovery evidence
 also covers isolated 8-second and 15-second browser-generated WebM sessions,
 successful recovery and cleanup, and failed-final-save retention.
 
-The acceptance remains **NOT COMPLETE — READY WITH LIMITATIONS**. The Download
-control was exercised but the browser harness did not expose a fresh download
-file path; earlier valid-WebM fallback evidence is retained. Physical device
-and native Files/share workflows, long-duration durability, authenticated
-creator publication, authorized production playback, and the complete
+The documented acceptance-testing batch is **COMPLETE**. The overall media
+platform remains **READY WITH LIMITATIONS**. The Download control was
+exercised but the browser harness did not expose a fresh download file path;
+earlier valid-WebM fallback evidence is retained. Physical device and native
+Files/share workflows, long-duration durability, authenticated creator
+publication, authorized production playback, and the complete
 StudioFlow-to-Feed-to-playback path remain unverified. The full local API E2E
 runner hung before assertions and is not counted as a pass. No StudioFlow
 source repair, production data change, R2 change, or Cloudflare deployment was
 made for this documentation-only continuation. See
 `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010B_*`.
 
-TPI-SOCIAL-003 remains queued behind this acceptance gate.
+TPI-SOCIAL-003 is the next roadmap phase after owner review of the remaining
+010/010B acceptance limitations; no Social-003 implementation has started.
 
 ## TPI-SOCIAL-002 — Community Feed and integration recovery — October 11, 2026
 

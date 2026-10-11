@@ -7,8 +7,9 @@
 **Implementation authorization:** **Not yet granted**
 **Registered:** 2026-10-11
 
-> **Current roadmap note — TPI-DOCS-001:** Administration Center work remains
-> queued after TPI-VIDEOS-009A, TPI-VIDEOS-010, and TPI-SOCIAL-003. This
+> **Current roadmap note — TPI-DOCS-002:** Administration Center work remains
+> queued after the completed TPI-VIDEOS-010 implementation and documented
+> TPI-VIDEOS-010B acceptance batch, then TPI-SOCIAL-003. This
 > planning document does not authorize implementation. The current locked
 > order and cross-workspace status are in
 > [`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).

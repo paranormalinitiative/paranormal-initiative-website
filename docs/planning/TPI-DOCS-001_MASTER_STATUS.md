@@ -1,6 +1,6 @@
 # TPI-DOCS-001 — Master Documentation Status
 
-**Status:** Documentation synchronization complete — October 11, 2026
+**Status:** Superseded by TPI-DOCS-002 documentation synchronization — October 11, 2026
 **Scope:** Documentation only. No runtime, configuration, migration,
 authentication, Cloudflare, database, R2, or StudioFlow source changes were
 authorized by this directive.
@@ -30,10 +30,11 @@ The owner-approved order is not being restarted or reordered:
    work is implemented through **TPI-MEDIA-001** and remains pending only for
    any explicitly listed owner-acceptance items.
 2. **TPI-VIDEOS-010 / 010B** — final TPI Videos and Creator Studio
-   integration acceptance. The 010B continuation is active but not complete;
-   do not start Social-003 until its remaining acceptance items are closed.
-3. **TPI-SOCIAL-003** — next social-network batch after the 010 acceptance
-   gate.
+   integration acceptance. The implementation batch and documented 010B
+   acceptance batch are complete; the overall media platform remains READY
+   WITH LIMITATIONS pending the explicit open items in the media register.
+3. **TPI-SOCIAL-003** — next social-network batch after owner review of the
+   remaining 010/010B acceptance limitations.
 4. **TPI-ADMIN-001** — Administration and Network Operations Center after
    the preceding gates.
 5. **TPI-FINAL-001** — full website audit.
@@ -45,6 +46,11 @@ The owner-approved order is not being restarted or reordered:
 No later phase is authorized merely because a planning document exists.
 StudioFlow remains feature-frozen except for verified bug, security,
 reliability, accessibility, integration, and compatibility repairs.
+
+The completed roadmap records are TPI-MEDIA-001, TPI-DOCS-001,
+TPI-VIDEOS-010, TPI-VIDEOS-010B, TPI-SOCIAL-001, and TPI-SOCIAL-002.
+TPI-SOCIAL-003 is next, subject to owner review of the remaining media
+acceptance register; no Social-003 implementation has started.
 
 ## Completed evidence carried forward
 
@@ -69,7 +75,7 @@ reliability, accessibility, integration, and compatibility repairs.
 The detailed evidence remains in
 [`docs/audits/2026-10-11/tpi-videos/`](../audits/2026-10-11/tpi-videos/).
 
-### TPI-VIDEOS-010B continuation
+### TPI-VIDEOS-010B acceptance batch
 
 The bounded local browser acceptance created and finalized a 14-second Program
 recording from an isolated `?testMedia=1` session. The saved Library video
@@ -79,13 +85,18 @@ sessions, cleanup, Discard, and failed-final-save retention. StudioFlow build,
 room, and RTMP checks remain passing, and the prior production boundary smoke
 remains 10/10.
 
-Current classification is **READY WITH LIMITATIONS**. Physical device/native
+The documentation batch is **COMPLETE**. Overall classification remains
+**READY WITH LIMITATIONS**. Physical device/native
 storage workflows, long-duration reliability, a fresh export-file path,
 authenticated creator publication, authorized production playback, and full
 Feed integration remain unverified. The full API E2E runner hung before
 assertions and is not counted as a pass. No StudioFlow source, production data,
 R2, or Cloudflare runtime was changed by this documentation continuation.
 The detailed 010B matrix and release report are in the TPI Videos audit folder.
+
+The remaining media acceptance register is maintained in
+[`TPI-VIDEOS-010B_TEST_MATRIX.md`](../audits/2026-10-11/tpi-videos/TPI-VIDEOS-010B_TEST_MATRIX.md)
+and must be reviewed before Social-003 implementation.
 
 ### TPI-SOCIAL-002
 

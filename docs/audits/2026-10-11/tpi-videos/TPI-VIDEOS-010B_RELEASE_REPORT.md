@@ -1,13 +1,16 @@
 # TPI-VIDEOS-010B Release Report
 
-**Status:** NOT COMPLETE — READY WITH LIMITATIONS.
+**Status:** COMPLETE — documented acceptance batch; overall media platform
+remains READY WITH LIMITATIONS.
 
 ## Batch result
 
-This batch completed a bounded isolated browser recording acceptance and
-documentation synchronization. It did not close the full 010B gate because
-physical-device/native storage, long-duration, authenticated publication,
-authorized production playback, and the fresh export-file path remain open.
+This batch completed the requested bounded isolated browser recording
+acceptance and documentation synchronization. The batch is complete as a
+documented test/review unit; it does not claim that every underlying owner
+acceptance requirement passed. Physical-device/native storage, long-duration,
+authenticated publication, authorized production playback, and the fresh
+export-file path remain open.
 
 ## Verified evidence
 
@@ -28,5 +31,6 @@ deployed identifiers: `e91156846928fc39c79142d73cb10ea4338ff2f` and
 `03d7b39f-9a13-44da-a45b-12d0c3632127`. The documentation commit for this
 batch is reported after commit/push verification.
 
-TPI-SOCIAL-003, TPI-ADMIN-001, and final release phases remain queued until the
-010/010B acceptance gate is explicitly closed.
+TPI-SOCIAL-003 is the next roadmap phase. It must not begin until the owner
+reviews the remaining 010/010B acceptance limitations and authorizes that
+phase. TPI-ADMIN-001 and final release phases remain queued behind it.

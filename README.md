@@ -21,6 +21,14 @@ The site is designed to be dark, professional, research-driven, and practical. I
 - Administration and final release phases: planned only; no later phase may be
   started from a historical plan section without the current roadmap gate.
 
+The TPI-VIDEOS-010 implementation and TPI-VIDEOS-010B documentation
+acceptance batches are complete. The overall media platform is **READY WITH
+LIMITATIONS**: physical-device/native storage, long-duration, fresh export
+file integrity, authenticated publication, authorized production playback,
+provider, and complete Feed integration remain explicitly open. The next
+roadmap phase is TPI-SOCIAL-003 after owner review; this status does not launch
+Creator Studio publicly or change the `/live-video` Coming Soon boundary.
+
 ## Current authoritative status
 
 The current roadmap and cross-workspace status are maintained in

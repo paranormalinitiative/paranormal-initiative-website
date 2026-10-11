@@ -23,7 +23,7 @@ This section preserves the earlier QA operating sequence and is not the current
 owner-locked implementation order. The current order is recorded in
 [`MASTER_BUILD_PLAN.md`](../../MASTER_BUILD_PLAN.md) and
 [`TPI-DOCS-001_MASTER_STATUS.md`](../planning/TPI-DOCS-001_MASTER_STATUS.md):
-TPI-VIDEOS-009A, TPI-VIDEOS-010, TPI-SOCIAL-003, TPI-ADMIN-001,
+TPI-MEDIA-001, TPI-VIDEOS-010, TPI-VIDEOS-010B, TPI-SOCIAL-003, TPI-ADMIN-001,
 TPI-FINAL-001, TPI-FINAL-002, and TPI-FINAL-003. Do not start the older
 StudioFlow-019/020 sequence from this historical section.
 
@@ -52,6 +52,13 @@ for save/reset/persistence and light/dark theme behavior before release.
 This roadmap record is documentation-only; it does not authorize runtime
 feature work, database changes, R2 changes, authentication changes, or a
 deployment.
+
+The TPI-VIDEOS-010 implementation batch and TPI-VIDEOS-010B documentation
+acceptance batch are now recorded complete. The media platform remains READY
+WITH LIMITATIONS; physical-device, long-duration, fresh export-file,
+authenticated publication, authorized playback, provider, and Feed end-to-end
+items remain in the 010B acceptance register. The API runner hang is an
+explicit follow-up for TPI-FINAL-001.
 
 ## Boundaries
 
