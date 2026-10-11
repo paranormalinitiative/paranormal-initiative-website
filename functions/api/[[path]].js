@@ -139,6 +139,14 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
     if (request.method === "GET" && path === "/video-comments") return handleListVideoComments(request, env);
     if (request.method === "POST" && path === "/video-comments") return requireMember(request, env, user => handleCreateVideoComment(request, env, user));
+    if (request.method === "POST" && path === "/studio/live-broadcasts") return requireAdmin(request, env, user => handleRegisterLiveBroadcast(request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/live-broadcasts\/[^/]+\/(start|stop)$/)) return requireAdmin(request, env, user => handleSetLiveBroadcastStatus(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/events$/)) return requireMember(request, env, user => handleLiveBroadcastEvents(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/comments$/)) return requireMember(request, env, user => handleListLiveComments(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/live-broadcasts\/[^/]+\/comments$/)) return requireMember(request, env, user => handleCreateLiveComment(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/live-broadcasts\/[^/]+\/comments\/[^/]+\/(star|display|hide|moderate|reply)$/)) return requireAdmin(request, env, user => handleLiveCommentControl(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/live-broadcasts\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleSetLiveReaction(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/reactions$/)) return requireMember(request, env, user => handleGetLiveReactions(path, env, user));
     if (request.method === "GET" && path === "/tpi-videos") return handleListTpiVideos(request, env);
     if (request.method === "GET" && path.match(/^\/tpi-videos\/[^/]+$/)) return handleGetTpiVideo(path, env);
     if (request.method === "POST" && path === "/tpi-videos") return requireContributor(request, env, user => handleCreateTpiVideo(request, env, user));
@@ -2185,10 +2193,326 @@ async function handleCreateComment(request, env) {
   return json({ ok: true, id, status });
 }
 
+const LIVE_REACTIONS = new Set(["like", "love", "care", "haha", "wow", "sad", "angry"]);
+
+function liveBroadcastIdentifierFromPath(path) {
+  const match = String(path || "").match(/^\/live-broadcasts\/([^/]+)/);
+  return match ? clean(decodeURIComponent(match[1])) : "";
+}
+
+async function getLiveBroadcast(env, identifier) {
+  const key = clean(identifier);
+  if (!key) return null;
+  return env.TPI_DB.prepare(`
+    SELECT lb.*, tv.slug AS videoSlug
+    FROM live_broadcasts lb
+    LEFT JOIN tpi_videos tv ON tv.id = lb.video_id
+    WHERE lb.id = ? OR lb.video_id = ? OR tv.slug = ?
+    ORDER BY lb.created_at DESC
+    LIMIT 1
+  `).bind(key, key, key).first();
+}
+
+function liveBroadcastPayload(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    creatorId: row.creator_id,
+    videoId: row.video_id || null,
+    videoSlug: row.videoSlug || null,
+    title: row.title,
+    status: row.status,
+    startedAt: row.started_at || null,
+    endedAt: row.ended_at || null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+function liveCommentPayload(row) {
+  return {
+    id: row.id,
+    broadcastId: row.broadcast_id,
+    memberId: row.member_id,
+    parentId: row.parent_id || null,
+    displayName: row.display_name,
+    avatarUrl: row.avatar_url || "",
+    body: row.body,
+    status: row.status,
+    starred: Boolean(row.starred),
+    displayed: Boolean(row.displayed),
+    source: row.source || "tpi-live",
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    moderatedBy: row.moderated_by || null,
+    moderatedAt: row.moderated_at || null
+  };
+}
+
+function liveModerator(user, broadcast) {
+  return Boolean(user && broadcast && (
+    broadcast.creator_id === user.id || ["owner", "admin"].includes(user.role)
+  ));
+}
+
+async function listLiveCommentsForBroadcast(env, broadcast, user, options = {}) {
+  const canModerate = liveModerator(user, broadcast);
+  const after = clean(options.after) || "";
+  const afterId = clean(options.afterId) || "";
+  const limit = Math.min(Math.max(Number(options.limit) || 200, 1), 200);
+  const params = [broadcast.id];
+  let query = `
+    SELECT id, broadcast_id, member_id, parent_id, display_name, avatar_url,
+           body, status, starred, displayed, source, created_at, updated_at,
+           moderated_by, moderated_at
+    FROM live_comments
+    WHERE broadcast_id = ?
+  `;
+  if (!canModerate) query += " AND status = 'visible'";
+  if (after) {
+    query += " AND (created_at > ? OR (created_at = ? AND id > ?))";
+    params.push(after, after, afterId);
+  }
+  query += " ORDER BY created_at ASC, id ASC LIMIT ?";
+  params.push(limit + 1);
+  const { results } = await env.TPI_DB.prepare(query).bind(...params).all();
+  const rows = results || [];
+  const hasMore = rows.length > limit;
+  const comments = rows.slice(0, limit);
+  const last = comments[comments.length - 1];
+  return {
+    comments: comments.map(liveCommentPayload),
+    hasMore,
+    nextAfter: last?.created_at || after || null,
+    nextAfterId: last?.id || afterId || null,
+    canModerate
+  };
+}
+
+async function getLiveReactionPayload(env, broadcastId, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT reaction, COUNT(*) AS count
+    FROM live_reactions
+    WHERE broadcast_id = ?
+    GROUP BY reaction
+  `).bind(broadcastId).all();
+  const reactionCounts = {};
+  (results || []).forEach(row => {
+    if (LIVE_REACTIONS.has(row.reaction)) reactionCounts[row.reaction] = Number(row.count || 0);
+  });
+  let userReactions = [];
+  if (user) {
+    const mine = await env.TPI_DB.prepare(`
+      SELECT reaction FROM live_reactions WHERE broadcast_id = ? AND member_id = ? ORDER BY reaction
+    `).bind(broadcastId, user.id).all();
+    userReactions = (mine.results || []).map(row => row.reaction).filter(reaction => LIVE_REACTIONS.has(reaction));
+  }
+  return { reactionCounts, userReactions, userReaction: userReactions[0] || null, signedIn: Boolean(user) };
+}
+
+async function handleRegisterLiveBroadcast(request, env, user) {
+  const data = await readJson(request);
+  const id = clean(data.broadcastId || data.id);
+  const title = clean(data.title || "Live broadcast").slice(0, 240);
+  const videoId = clean(data.videoId) || null;
+  const requestedStatus = clean(data.status).toLowerCase();
+  const status = ["ready", "live", "ended", "cancelled"].includes(requestedStatus) ? requestedStatus : "ready";
+  if (!id) return json({ error: "broadcastId is required." }, 400);
+  if (!title) return json({ error: "Broadcast title is required." }, 400);
+
+  const existing = await env.TPI_DB.prepare("SELECT * FROM live_broadcasts WHERE id = ?").bind(id).first();
+  if (existing && existing.creator_id !== user.id && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "You cannot modify this broadcast." }, 403);
+  }
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO live_broadcasts (id, creator_id, video_id, title, status, started_at, ended_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      video_id = excluded.video_id,
+      title = excluded.title,
+      status = excluded.status,
+      started_at = CASE WHEN excluded.status = 'live' THEN COALESCE(live_broadcasts.started_at, excluded.started_at) ELSE live_broadcasts.started_at END,
+      ended_at = CASE WHEN excluded.status IN ('ended', 'cancelled') THEN COALESCE(live_broadcasts.ended_at, excluded.ended_at) ELSE live_broadcasts.ended_at END,
+      updated_at = excluded.updated_at
+  `).bind(
+    id,
+    existing?.creator_id || user.id,
+    videoId,
+    title,
+    status,
+    status === "live" ? now : null,
+    ["ended", "cancelled"].includes(status) ? now : null,
+    existing?.created_at || now,
+    now
+  ).run();
+  const broadcast = await env.TPI_DB.prepare("SELECT lb.*, tv.slug AS videoSlug FROM live_broadcasts lb LEFT JOIN tpi_videos tv ON tv.id = lb.video_id WHERE lb.id = ?").bind(id).first();
+  return json({ ok: true, broadcast: liveBroadcastPayload(broadcast) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleSetLiveBroadcastStatus(path, request, env, user) {
+  const identifier = path.split("/")[3] || "";
+  const action = path.split("/")[4] || "";
+  const broadcast = await getLiveBroadcast(env, decodeURIComponent(identifier));
+  if (!broadcast) return json({ error: "Broadcast not found." }, 404);
+  if (!liveModerator(user, broadcast)) return json({ error: "You cannot modify this broadcast." }, 403);
+  const status = action === "start" ? "live" : action === "stop" ? "ended" : "";
+  if (!status) return json({ error: "Unsupported broadcast status action." }, 400);
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    UPDATE live_broadcasts
+    SET status = ?, started_at = CASE WHEN ? = 'live' THEN COALESCE(started_at, ?) ELSE started_at END,
+        ended_at = CASE WHEN ? = 'ended' THEN COALESCE(ended_at, ?) ELSE ended_at END,
+        updated_at = ?
+    WHERE id = ?
+  `).bind(status, status, now, status, now, now, broadcast.id).run();
+  const updated = await getLiveBroadcast(env, broadcast.id);
+  return json({ ok: true, broadcast: liveBroadcastPayload(updated) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleListLiveComments(path, request, env, user) {
+  const broadcast = await getLiveBroadcast(env, liveBroadcastIdentifierFromPath(path));
+  if (!broadcast || broadcast.status === "cancelled") return json({ error: "Broadcast not found." }, 404);
+  const url = new URL(request.url);
+  const data = await listLiveCommentsForBroadcast(env, broadcast, user, {
+    after: url.searchParams.get("after"),
+    afterId: url.searchParams.get("afterId"),
+    limit: url.searchParams.get("limit")
+  });
+  return json({ broadcast: liveBroadcastPayload(broadcast), ...data }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleLiveBroadcastEvents(path, request, env, user) {
+  const broadcast = await getLiveBroadcast(env, liveBroadcastIdentifierFromPath(path));
+  if (!broadcast || broadcast.status === "cancelled") return json({ error: "Broadcast not found." }, 404);
+  const url = new URL(request.url);
+  const data = await listLiveCommentsForBroadcast(env, broadcast, user, {
+    after: url.searchParams.get("after"),
+    afterId: url.searchParams.get("afterId"),
+    limit: url.searchParams.get("limit") || 100
+  });
+  const reactions = await getLiveReactionPayload(env, broadcast.id, user);
+  return json({ broadcast: liveBroadcastPayload(broadcast), ...data, reactions }, 200, { "Cache-Control": "no-store" });
+}
+
+async function createLiveCommentForBroadcast(request, env, user, broadcast) {
+  const accessError = await getMemberActionAccessError(env, user, "comment");
+  if (accessError) return json({ error: accessError }, 403);
+  if (["ended", "cancelled"].includes(broadcast.status)) return json({ error: "This broadcast is no longer accepting comments." }, 409);
+  const data = await readJson(request);
+  const body = clean(data.body).slice(0, 2000);
+  const parentId = clean(data.parentId) || null;
+  if (!body) return json({ error: "Comment body is required." }, 400);
+  const recent = await env.TPI_DB.prepare(`
+    SELECT COUNT(*) AS count FROM live_comments
+    WHERE broadcast_id = ? AND member_id = ? AND created_at >= datetime('now', '-1 minute')
+  `).bind(broadcast.id, user.id).first();
+  if (Number(recent?.count || 0) >= 30) return json({ error: "Comment rate limit reached. Please wait a moment." }, 429);
+  if (parentId) {
+    const parent = await env.TPI_DB.prepare("SELECT id FROM live_comments WHERE id = ? AND broadcast_id = ? AND status = 'visible'").bind(parentId, broadcast.id).first();
+    if (!parent) return json({ error: "Reply target was not found." }, 400);
+  }
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO live_comments (id, broadcast_id, member_id, parent_id, display_name, avatar_url, body, status, source, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'visible', 'tpi-live', ?, ?)
+  `).bind(
+    id, broadcast.id, user.id, parentId,
+    clean(user.display_name || user.username || "A member").slice(0, 160),
+    clean(user.photo_url || "").slice(0, 1000), body, now, now
+  ).run();
+  const comment = await env.TPI_DB.prepare("SELECT * FROM live_comments WHERE id = ?").bind(id).first();
+  return json({ ok: true, comment: liveCommentPayload(comment) }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleCreateLiveComment(path, request, env, user) {
+  const broadcast = await getLiveBroadcast(env, liveBroadcastIdentifierFromPath(path));
+  if (!broadcast || broadcast.status === "cancelled") return json({ error: "Broadcast not found." }, 404);
+  return createLiveCommentForBroadcast(request, env, user, broadcast);
+}
+
+async function handleLiveCommentControl(path, request, env, user) {
+  const broadcast = await getLiveBroadcast(env, liveBroadcastIdentifierFromPath(path));
+  if (!broadcast) return json({ error: "Broadcast not found." }, 404);
+  if (!liveModerator(user, broadcast)) return json({ error: "Moderator access is required." }, 403);
+  const parts = path.split("/");
+  const commentId = parts[parts.length - 2] || "";
+  const action = parts[parts.length - 1] || "";
+  const comment = await env.TPI_DB.prepare("SELECT * FROM live_comments WHERE id = ? AND broadcast_id = ?").bind(commentId, broadcast.id).first();
+  if (!comment) return json({ error: "Comment not found." }, 404);
+  const now = new Date().toISOString();
+  if (action === "reply") {
+    const data = await readJson(request);
+    const body = clean(data.body).slice(0, 2000);
+    if (!body) return json({ error: "Reply body is required." }, 400);
+    const id = crypto.randomUUID();
+    await env.TPI_DB.prepare(`
+      INSERT INTO live_comments (id, broadcast_id, member_id, parent_id, display_name, avatar_url, body, status, source, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'visible', 'tpi-live-host', ?, ?)
+    `).bind(id, broadcast.id, user.id, comment.id, clean(user.display_name || user.username || "Host").slice(0, 160), clean(user.photo_url || "").slice(0, 1000), body, now, now).run();
+    const reply = await env.TPI_DB.prepare("SELECT * FROM live_comments WHERE id = ?").bind(id).first();
+    return json({ ok: true, comment: liveCommentPayload(reply) }, 201, { "Cache-Control": "no-store" });
+  }
+  if (action === "star") {
+    await env.TPI_DB.prepare("UPDATE live_comments SET starred = CASE WHEN starred = 1 THEN 0 ELSE 1 END, updated_at = ? WHERE id = ?").bind(now, comment.id).run();
+  } else if (action === "display") {
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare("UPDATE live_comments SET displayed = 0, updated_at = ? WHERE broadcast_id = ?").bind(now, broadcast.id),
+      env.TPI_DB.prepare("UPDATE live_comments SET displayed = 1, updated_at = ? WHERE id = ?").bind(now, comment.id)
+    ]);
+  } else if (action === "hide") {
+    await env.TPI_DB.prepare("UPDATE live_comments SET status = 'hidden', displayed = 0, updated_at = ? WHERE id = ?").bind(now, comment.id).run();
+  } else if (action === "moderate") {
+    await env.TPI_DB.prepare("UPDATE live_comments SET status = 'moderated', displayed = 0, moderated_by = ?, moderated_at = ?, updated_at = ? WHERE id = ?").bind(user.id, now, now, comment.id).run();
+  } else {
+    return json({ error: "Unsupported comment action." }, 400);
+  }
+  const updated = await env.TPI_DB.prepare("SELECT * FROM live_comments WHERE id = ?").bind(comment.id).first();
+  return json({ ok: true, comment: liveCommentPayload(updated) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function setLiveReactionForBroadcast(request, env, user, broadcast) {
+  if (["ended", "cancelled"].includes(broadcast.status)) return json({ error: "This broadcast is no longer accepting reactions." }, 409);
+  const data = await readJson(request);
+  const reaction = clean(data.reaction).toLowerCase();
+  if (!LIVE_REACTIONS.has(reaction)) return json({ error: "Reaction was not recognized." }, 400);
+  const recent = await env.TPI_DB.prepare(`
+    SELECT COUNT(*) AS count FROM live_reactions WHERE broadcast_id = ? AND member_id = ? AND created_at >= datetime('now', '-1 minute')
+  `).bind(broadcast.id, user.id).first();
+  if (Number(recent?.count || 0) >= 60) return json({ error: "Reaction rate limit reached. Please wait a moment." }, 429);
+  const existing = await env.TPI_DB.prepare("SELECT id FROM live_reactions WHERE broadcast_id = ? AND member_id = ? AND reaction = ?").bind(broadcast.id, user.id, reaction).first();
+  if (existing) {
+    await env.TPI_DB.prepare("DELETE FROM live_reactions WHERE id = ?").bind(existing.id).run();
+  } else {
+    await env.TPI_DB.prepare("INSERT INTO live_reactions (id, broadcast_id, member_id, reaction) VALUES (?, ?, ?, ?)").bind(crypto.randomUUID(), broadcast.id, user.id, reaction).run();
+  }
+  return json({ broadcastId: broadcast.id, ...(await getLiveReactionPayload(env, broadcast.id, user)) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleSetLiveReaction(path, request, env, user) {
+  const broadcast = await getLiveBroadcast(env, liveBroadcastIdentifierFromPath(path));
+  if (!broadcast || broadcast.status === "cancelled") return json({ error: "Broadcast not found." }, 404);
+  return setLiveReactionForBroadcast(request, env, user, broadcast);
+}
+
+async function handleGetLiveReactions(path, env, user) {
+  const broadcast = await getLiveBroadcast(env, liveBroadcastIdentifierFromPath(path));
+  if (!broadcast || broadcast.status === "cancelled") return json({ error: "Broadcast not found." }, 404);
+  return json({ broadcastId: broadcast.id, ...(await getLiveReactionPayload(env, broadcast.id, user)) }, 200, { "Cache-Control": "no-store" });
+}
+
 async function handleListVideoComments(request, env) {
   const url = new URL(request.url);
   const videoId = clean(url.searchParams.get("videoId"));
   if (!videoId) return json({ error: "videoId is required." }, 400);
+
+  const liveBroadcast = await getLiveBroadcast(env, videoId);
+  if (liveBroadcast && liveBroadcast.status !== "cancelled") {
+    const user = await getSessionUser(request, env);
+    const data = await listLiveCommentsForBroadcast(env, liveBroadcast, user, { limit: 200 });
+    return json({ comments: data.comments, liveBroadcast: liveBroadcastPayload(liveBroadcast) }, 200, { "Cache-Control": "no-store" });
+  }
 
   const { results } = await env.TPI_DB.prepare(`
     SELECT vc.id, vc.video_id AS videoId, vc.body, vc.status, vc.created_at AS createdAt,
@@ -2212,6 +2536,15 @@ async function handleCreateVideoComment(request, env, user) {
   if (!videoId) return json({ error: "videoId is required." }, 400);
   if (!body) return json({ error: "Comment body is required." }, 400);
   if (body.length > 2000) return json({ error: "Comment must be 2000 characters or fewer." }, 400);
+
+  const liveBroadcast = await getLiveBroadcast(env, videoId);
+  if (liveBroadcast && liveBroadcast.status !== "cancelled") {
+    return createLiveCommentForBroadcast(new Request(request.url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body })
+    }), env, user, liveBroadcast);
+  }
 
   const id = crypto.randomUUID();
   await env.TPI_DB.prepare(`
@@ -2464,6 +2797,10 @@ async function handleGetVideoReactions(request, env) {
   if (!videoId) return json({ error: "videoId is required." }, 400);
 
   const user = await getSessionUser(request, env);
+  const liveBroadcast = await getLiveBroadcast(env, videoId);
+  if (liveBroadcast && liveBroadcast.status !== "cancelled") {
+    return json({ videoId, ...(await getLiveReactionPayload(env, liveBroadcast.id, user)) }, 200, { "Cache-Control": "no-store" });
+  }
 
   const { results } = await env.TPI_DB.prepare(`
     SELECT reaction, COUNT(*) AS count
@@ -2496,6 +2833,15 @@ async function handleSetVideoReaction(request, env, user) {
   const reaction = clean(data.reaction).toLowerCase();
   if (!videoId) return json({ error: "videoId is required." }, 400);
   if (!VIDEO_REACTIONS.has(reaction)) return json({ error: "Reaction was not recognized." }, 400);
+
+  const liveBroadcast = await getLiveBroadcast(env, videoId);
+  if (liveBroadcast && liveBroadcast.status !== "cancelled") {
+    return setLiveReactionForBroadcast(new Request(request.url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reaction })
+    }), env, user, liveBroadcast);
+  }
 
   const existing = await env.TPI_DB.prepare(`
     SELECT reaction FROM video_reactions WHERE video_id = ? AND contributor_id = ? LIMIT 1

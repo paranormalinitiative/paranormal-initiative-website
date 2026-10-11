@@ -121,6 +121,8 @@
     var container = document.getElementById("video-detail-content");
     var videoId = new URLSearchParams(window.location.search).get("id");
     var currentUser = null;
+    var liveCommentsTimer = null;
+    var liveCommentsVideoId = null;
     var userReaction = null;
     var reactionCounts = {};
     var isSaved = false;
@@ -461,7 +463,7 @@
         if (canWatch) {
             wireUpReactionHandlers(video);
             wireUpActionHandlers(video);
-            initComments(video.slug || video.id);
+            initComments(video.slug || video.id, Boolean(video.isLive));
         }
     }
 
@@ -697,7 +699,12 @@
             '</section>';
     }
 
-    async function initComments(videoId) {
+    async function initComments(videoId, isLive) {
+        if (liveCommentsTimer) {
+            clearInterval(liveCommentsTimer);
+            liveCommentsTimer = null;
+        }
+        liveCommentsVideoId = isLive ? videoId : null;
         var formArea = document.getElementById("video-comment-form-area");
 
         if (currentUser) {
@@ -717,6 +724,11 @@
         }
 
         await loadComments(videoId);
+        if (isLive) {
+            liveCommentsTimer = setInterval(function () {
+                if (liveCommentsVideoId === videoId) loadComments(videoId);
+            }, 2500);
+        }
     }
 
     async function loadComments(videoId) {

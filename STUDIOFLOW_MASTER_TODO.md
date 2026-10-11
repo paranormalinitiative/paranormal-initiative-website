@@ -1,6 +1,6 @@
 # StudioFlow Master TODO
 
-**Last updated:** October 10, 2026
+**Last updated:** October 11, 2026
 **This file controls all StudioFlow work.** Work top-to-bottom by phase. Check items off only when their acceptance criteria are met and physically tested where noted. Update the "Where We Are" status line every session.
 
 **How to use this file:**
@@ -12,6 +12,8 @@
 ---
 
 ## Where We Are (status snapshot)
+
+**TPI-STUDIOFLOW-021 / 021A — Oct 11, 2026:** the first native TPI live-interaction batch is implemented in the canonical StudioFlow source and TPI Worker boundary. It adds broadcast-scoped live comments/reactions, authenticated cursor polling, owner/admin moderation controls, signed-in StudioFlow comments, and live TPI Videos comment refresh while preserving the existing compositor and `/live-video` Coming Soon/owner-only boundary. StudioFlow TypeScript/Vite build, Worker syntax, additive migration 0041, and focused loopback auth/comment/cursor checks passed. Automatic overlay queues, actual captured comment-overlay media, complete multi-member controls, authenticated browser/production verification, and deployment remain open; see the detailed [021 progress report](/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-021_PROGRESS.md), [test matrix](/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-021_TEST_MATRIX.md), and [failures/repairs report](/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-021_FAILURES_AND_REPAIRS.md).
 
 **TPI-STUDIOFLOW-015C — Oct 11, 2026:** canonical StudioFlow now removes Hopin and Brightcove from new destination choices and adds Odysee as a locally branded manual-RTMP destination. Existing saved/legacy destination records are preserved through the custom fallback; no stream keys, D1, R2, authentication, or owner-only access rules changed. The fresh `web/dist` asset set was reconciled into `studio/` while preserving the TPI theme bridge. Local browser selector checks, exact requested order, focused bundle regression, TypeScript/Vite build, room/RTMP syntax, and a 6.037-second H.264/AAC local RTMP capture passed. Real Odysee delivery, authenticated production interaction, physical responsive acceptance, and exact zoom checks remain open. Source commits `ed539f5` and `edc1641` are local-only because StudioFlow has no remote; final TPI commit `a434b49` was pushed and deployed as Cloudflare Version `11657fb5-7a34-463d-ae61-5bc72bb628b0`. Anonymous production boundaries passed.
 
