@@ -1335,6 +1335,10 @@ async function handleMediaRequest(path, env, request) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const key = decodeURIComponent(path.replace(/^\/media\//, ""));
   if (!key || key.includes("..")) return json({ error: "Media key is invalid." }, 400);
+  if (key.startsWith("messenger/")) {
+    const user = await getSessionUser(request, env);
+    if (!user) return json({ error: "Member login required." }, 401, { "Cache-Control": "private, no-store" });
+  }
   if (key.startsWith("private-library/")) {
     const user = await getSessionUser(request, env);
     if (!user) return json({ error: "Member login required." }, 401, { "Cache-Control": "private, no-store" });
