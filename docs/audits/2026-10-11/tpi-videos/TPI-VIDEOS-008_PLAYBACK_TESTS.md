@@ -22,7 +22,8 @@ Archive. Every row had a source URL; no row had an embed or direct playback URL.
 | Resolver/provider policy | Local Node VM | PASS |
 | Server provider validation | Local Node module test | PASS |
 | Catalog/watch markup | Local source regression | PASS |
-| Actual Odysee destination page | External provider browser session | PENDING RELEASE |
+| Actual Odysee destination page | External provider browser session | PASS; Odysee page loaded |
+| Actual Dailymotion TPI action | Production browser session | PASS; labelled external fallback |
 | Actual Dailymotion embedded playback | Production | NOT TESTABLE without approved Player ID |
 | Actual Internet Archive media decode | Production | NOT VERIFIED; scraper has no selected media file |
 | Creator-authored TPI playback | Authenticated production | NOT VERIFIED; no public creator rows |
