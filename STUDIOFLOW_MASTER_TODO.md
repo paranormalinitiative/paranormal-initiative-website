@@ -435,3 +435,10 @@ remains **NOT YET VERIFIED**.
 - [ ] Verify authenticated production interaction and provider connectivity.
 
 See `docs/audits/2026-10-09/studioflow-audit/TPI-STUDIOFLOW-015B_DESTINATION_LOGOS.md`.
+
+Release evidence: canonical StudioFlow commit `e40b876`, TPI integration
+commit `d75b922`, and Cloudflare Worker Version
+`7a9bd758-7d12-45d7-96f4-a3d4d20f839e`. Public `/live-video` remains Coming
+Soon; unauthenticated `/studio/` and direct StudioFlow/logo assets remain HTTP
+403. Owner-authenticated selector interaction and exact browser zoom remain
+**NOT YET VERIFIED**.

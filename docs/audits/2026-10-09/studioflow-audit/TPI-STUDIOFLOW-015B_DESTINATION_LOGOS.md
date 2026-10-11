@@ -1,6 +1,7 @@
 # TPI-STUDIOFLOW-015B — Real Platform Logos and Visual Destination Selector
 
-Status: IMPLEMENTED LOCALLY; PRODUCTION RELEASE PENDING
+Status: DEPLOYED; PROTECTED PRODUCTION PREVIEW; EXACT ZOOM AND OWNER
+INTERACTION PENDING
 
 This visual refinement preserves the existing Creator Studio destination model,
 saved destinations, manual RTMP configuration, stream-key handling, broadcast
@@ -73,8 +74,18 @@ server-side owner/admin gate.
 
 ## Release record
 
-Canonical StudioFlow source, TPI integration commit, Cloudflare deployment
-identifier, and final production route checks will be appended after release.
+- Canonical StudioFlow source commit: `e40b876`.
+- TPI integration commit: `d75b922`, pushed to `origin/main`.
+- Cloudflare Worker Version: `7a9bd758-7d12-45d7-96f4-a3d4d20f839e`.
+- Production `/` and `/live-video` returned HTTP 200.
+- Production `/live-video` retained Coming Soon.
+- Unauthenticated `/studio/`, the new JavaScript bundle, Brightcove asset, and
+  Hopin asset each returned HTTP 403.
+- This report returned HTTP 200.
+
+The production check was intentionally unauthenticated. Owner-authenticated
+selector interaction, provider connectivity, and exact browser zoom at 100%,
+125%, 150%, and 200% remain **NOT YET VERIFIED**.
 
 ## Known limitations
 
