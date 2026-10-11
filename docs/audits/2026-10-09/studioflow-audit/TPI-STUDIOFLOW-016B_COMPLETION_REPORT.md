@@ -1,7 +1,7 @@
 # TPI-STUDIOFLOW-016B — Reliability, Scheduling, and Broadcast History
 
-Status: IMPLEMENTED LOCALLY; RELEASE INTEGRATION IN PROGRESS; PROTECTED
-PRODUCTION VERIFICATION PENDING
+Status: DEPLOYED; PROTECTED PRODUCTION PREVIEW; OWNER HANDS-ON VERIFICATION
+PENDING
 
 This continuation preserves the existing StudioFlow pre-recorded source,
 IndexedDB storage, Program compositor, audio graph, RTMP bridge, owner-only
@@ -51,5 +51,19 @@ and livestream controls. Public `/live-video` must remain Coming Soon. No
 production database, creator recording store, R2 bucket, or unrelated dirty
 workspace file is in scope.
 
-Release commit and authoritative clean-archive Cloudflare Worker version will
-be appended after the release integration and live read-only checks complete.
+Release evidence:
+
+- Canonical StudioFlow source commit: `9a6097e`.
+- TPI integration commit: `446eb65`, pushed to `origin/main`.
+- Authoritative clean-archive Cloudflare Worker Version:
+  `4b97b78b-ca0b-41af-beac-a2073f65df7a`.
+- Production `/` and `/live-video` returned HTTP 200.
+- Production `/live-video` retained the Coming Soon surface.
+- Unauthenticated `/studio/` and the direct
+  `/studio/assets/index-BIPgAzeD.js` request returned HTTP 403.
+- The report itself returned HTTP 200.
+
+No authorized owner session was available for hands-on production StudioFlow
+interaction, so owner login, actual owner broadcast interaction, external
+provider delivery, physical interruption/device sleep, and long-session
+acceptance remain **NOT YET VERIFIED**.

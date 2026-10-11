@@ -412,3 +412,9 @@ public launch.
   long sessions, and recovery.
 
 See `docs/audits/2026-10-09/studioflow-audit/TPI-STUDIOFLOW-016B_COMPLETION_REPORT.md`.
+
+Release evidence: TPI commit `446eb65`; authoritative clean-archive
+Cloudflare Worker Version `4b97b78b-ca0b-41af-beac-a2073f65df7a`. Public
+`/live-video` remains Coming Soon and unauthenticated `/studio/` plus direct
+StudioFlow assets remain HTTP 403. Owner-authenticated hands-on verification
+remains **NOT YET VERIFIED**.
