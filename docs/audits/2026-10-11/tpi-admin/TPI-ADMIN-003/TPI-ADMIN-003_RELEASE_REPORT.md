@@ -15,7 +15,7 @@ Starting baseline: `0ea012f`, current production baseline `b5bf38ef-e438-433c-b0
 
 ## Git/deployment
 
-This batch adds only the required acceptance reports and master documentation references. It requires a documentation commit and push, but no Cloudflare deployment because no runtime changes were made. The exact documentation commit is recorded after commit/push.
+This batch adds only the required acceptance reports and master documentation references. Documentation commit `60c48fc` was pushed to `origin/main`. No Cloudflare deployment was performed because no runtime changes were made.
 
 ## Final classifications
 
