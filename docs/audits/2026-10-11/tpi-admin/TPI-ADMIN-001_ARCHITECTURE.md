@@ -8,6 +8,11 @@ The Administration Center is an authorized view over the existing TPI stack:
 overview presentation and calls only owner/admin endpoints. `worker.js` now
 protects the legacy admin HTML entry points before static assets are served.
 
+The later TPI-UI-001 correction gives this entry point a route-scoped dedicated
+workspace shell. It suppresses the generic member sidebar and public chrome
+only for the Administration Center while preserving this authentication and
+authorization path.
+
 The new read endpoints are:
 
 - `GET /api/admin/overview` — live counts from existing tables.

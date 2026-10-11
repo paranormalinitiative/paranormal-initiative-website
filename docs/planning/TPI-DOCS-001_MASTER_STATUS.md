@@ -212,3 +212,11 @@ long-duration windows, or an authorized playback source must be recorded as
 This record is the synchronization checkpoint. No code work, Cloudflare
 deployment, migration, push to production, or new feature phase was started
 by TPI-DOCS-001.
+### TPI-UI-001 — dedicated workspace shell correction
+
+On 2026-10-11, the confirmed duplicate public/member shell on the protected
+Administration and Settings workspaces was corrected with route-scoped CSS and
+dedicated headers. Existing auth, role gating, admin/settings logic, and
+ordinary member pages were preserved. Focused source regressions pass;
+authenticated visual acceptance and release identifiers are recorded in
+[`docs/audits/2026-10-11/tpi-ui/TPI-UI-001/`](../audits/2026-10-11/tpi-ui/TPI-UI-001/).

@@ -318,7 +318,7 @@
 
   function setupPageHeading(main, firstName) {
     // Check if page already has a custom heading (e.g. member-home.html has its own)
-    if (main.querySelector(".member-page-header, .member-home-header, .community-home-header")) {
+    if (main.querySelector(".member-page-header, .member-home-header, .community-home-header, .workspace-header")) {
       // Just set greeting in existing elements
       var existingGreeting = main.querySelector("[data-member-greeting], .member-greeting-inline, .community-greeting-inline");
       if (existingGreeting) {

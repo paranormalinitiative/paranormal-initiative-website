@@ -571,3 +571,12 @@ The sync script (`~/Desktop/sync-tpi-workspace.command`) pulls GitHub → worksp
 copy should be a git clone too, so `git pull` keeps both workspaces and this file in lockstep.
 
 **Related docs:** `MIMO_DIRECTIVE.md` (Opencode's standing rules) · `UI_REDESIGN_LOG.md` (design history) · `SITE_STREAMLINING_PLAN.md` (phases) · `STUDIOFLOW_MASTER_TODO.md` (detailed session handoffs)
+## TPI-UI-001 — Dedicated Administration and Settings workspaces — October 11, 2026
+
+The confirmed duplicate-shell condition on `admin-panel` and `member-dashboard`
+was corrected with a route-scoped workspace stylesheet and dedicated headers.
+The existing Administration Center and Settings Center navigation and business
+logic remain in place, while ordinary member pages retain the shared member
+shell. Focused route/layout and JavaScript syntax regressions pass. Production
+deployment and authenticated owner review are tracked in
+`docs/audits/2026-10-11/tpi-ui/TPI-UI-001/`.

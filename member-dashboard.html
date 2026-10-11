@@ -29,11 +29,22 @@
     <link rel="stylesheet" href="member-shell.css?v=62">
     <link rel="stylesheet" href="member-settings.css?v=1">
     <link rel="stylesheet" href="profile-style.css?v=1">
+    <link rel="stylesheet" href="workspace-shell.css?v=1">
 </head>
-<body>
+<body class="workspace-page workspace-settings-page">
 <div id="site-header"></div>
 
 <div data-member-content hidden>
+<header class="workspace-header" aria-label="TPI Settings Center workspace">
+    <a class="workspace-brand" href="member-home.html">
+        <span class="workspace-mark" aria-hidden="true">TPI</span>
+        <span><strong>TPI Settings Center</strong><small>Account and preferences workspace</small></span>
+    </a>
+    <div class="workspace-header-actions">
+        <span class="workspace-session-status"><span aria-hidden="true"></span> Protected session</span>
+        <a class="workspace-back-link" href="member-home.html">Back to TPI</a>
+    </div>
+</header>
 <div class="member-main-inner settings-main-inner">
 
 <section class="member-dashboard-shell tpi-settings">
