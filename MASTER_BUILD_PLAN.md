@@ -1,5 +1,58 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-ROADMAP-002 — Official development sequence — October 11, 2026
+
+This is the owner-approved sequence for existing functionality before major
+new feature work. It is recorded here as the governing roadmap addendum; no
+competing roadmap is created.
+
+### Phase 1 — Creator Studio testing and repairs — ACTIVE
+
+`TPI-STUDIOFLOW-019` remains the active development priority. Complete the
+existing Creator Studio inventory and every feasible Codex-executable test,
+including actual audio/video output, cross-feature behavior, recording and
+storage reliability, scheduling, destinations, Studio controls, responsive
+behavior, and security boundaries. Repair only verified defects, add focused
+regressions, deploy verified runtime corrections, and document every
+PASS/FAIL/PARTIAL/BLOCKED/NOT TESTED result. External providers, physical
+devices, owner credentials, and other unavailable resources must remain
+explicitly unverified rather than being inferred from local tests.
+
+### Phase 2 — Complete social-network testing and repairs — QUEUED
+
+After Phase 1 is complete, audit the entire existing social network with
+isolated synthetic member accounts and simultaneous sessions. Cover
+registration/login/session behavior, profiles, permissions/privacy, Feed CRUD
+and visibility, images/videos/emojis, comments/replies/reactions, Messenger
+delivery and attachment authorization, notifications, member interactions,
+responsive behavior, administrative boundaries, and all Settings Center pages.
+The owner-reported **Settings → Personalization → Highlights** issue is a
+high-priority investigation: reproduce the intended behavior, repair only a
+confirmed cause, verify save/reset/persistence and theme compatibility, and
+add permanent regression coverage. Do not use real production members for
+destructive testing.
+
+### Phase 3 — Future features — BLOCKED BY PHASES 1–2
+
+Only after the two testing phases are complete should major future work resume,
+including `TPI-ADMIN-001` Administration & Network Operations Center and
+Creator Partnership enhancements. `TPI-ADMIN-001` remains planned, with the
+approved Refine + shadcn/ui direction and Discourse-inspired reference, but no
+implementation is authorized by this roadmap update.
+
+### Phase gates and source references
+
+- Phase 1: `TPI-STUDIOFLOW-019`, `/Users/toddknipple/Documents/StudioFlow`.
+- Phase 2: `TPI-WEBSITE-018` scope plus the permanent `TPI-QA-001` system.
+- Phase 3: `TPI-ADMIN-001_FUTURE_ADMINISTRATION_CENTER.md` and approved future plans.
+- QA operating records: `docs/quality-assurance/QA_MASTER_PLAN.md`,
+  `QA_TEST_INVENTORY.md`, `QA_COVERAGE_MATRIX.md`, `QA_DEFECT_REGISTER.md`,
+  and `QA_RELEASE_CHECKLIST.md`.
+
+This planning update changes documentation only. It does not modify StudioFlow
+implementation, social runtime code, production databases, R2, authentication,
+or production deployments.
+
 [CODEX] 2026-10-11 — **TPI-STUDIOFLOW-015D destination label refinement.** The protected StudioFlow source now displays `Other Platforms` with the existing `Manual RTMP` subtitle while preserving the internal `Custom RTMP` identifier, manual configuration fields, saved destinations, Odysee, and selector order. TypeScript/Vite build, room/RTMP syntax, focused destination regression, local browser selector/form/save verification, and isolated local H.264/AAC RTMP capture passed. Canonical StudioFlow commit `b27908c` has no configured remote; TPI integration commit `583e067` contains only the generated bundle rename and theme-bridge HTML reference; documentation commit `cd46b32` was pushed. Cloudflare Worker Version `7264c40f-b6ed-4d19-b411-ad44a83ab695` deployed the verified bundle. Production read-only boundaries passed: public shell 200, `/live-video` Coming Soon, anonymous `/studio/` 403, new asset 403, and smoke suite 10/10. External-provider delivery, authenticated owner interaction, and physical responsive/zoom acceptance remain unverified.
 
 [CODEX] 2026-10-11 — **TPI-ADMIN-001 registered as an approved future project.** The Paranormal Initiative Administration & Network Operations Center is planned at high priority but remains **PLANNED — AWAITING IMPLEMENTATION**. The owner-approved module inventory, dedicated left-side navigation, role-based/server-side security, privacy, audit, network-health, QA, dependency, phase, acceptance requirements, and technology direction are recorded in [TPI-ADMIN-001 future Administration Center plan](TPI-ADMIN-001_FUTURE_ADMINISTRATION_CENTER.md). The approved future technology direction is Refine plus shadcn/ui with Discourse as a design reference, integrated with the existing Cloudflare Workers/D1/R2, authentication, and API stack; it does not authorize implementation or a second database/backend/framework. StudioFlow remains the current active development priority. No Administration Center code, route, API, migration, authentication change, production-data change, or deployment was made; explicit owner authorization is required before implementation.

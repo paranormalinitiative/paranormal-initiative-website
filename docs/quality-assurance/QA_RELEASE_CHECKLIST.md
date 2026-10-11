@@ -28,3 +28,15 @@
 - [ ] Run `node scripts/qa/production-smoke.mjs --base <production-url>`.
 - [ ] Verify owner/authenticated workflows separately from anonymous boundaries.
 - [ ] Update `QA_DASHBOARD.md`, the defect register, and the applicable Production Bible.
+
+## Roadmap phase gate
+
+- [ ] Do not begin major future features while `TPI-STUDIOFLOW-019` has
+  meaningful feasible tests or verified repairs remaining.
+- [ ] Before Phase 2 completion, verify isolated multi-member Feed visibility,
+  Messenger delivery and attachment authorization, notifications, media,
+  permissions, responsive behavior, and every Settings Center page.
+- [ ] Reproduce and repair the owner-reported Personalization → Highlights
+  issue, then add permanent save/reset/persistence/theme regression coverage.
+- [ ] Do not begin `TPI-ADMIN-001` implementation until Phases 1 and 2 are
+  complete and documented.

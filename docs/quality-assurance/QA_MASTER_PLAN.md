@@ -17,6 +17,29 @@ TPI-QA-001 defines the repeatable quality boundary for the TPI social network, t
 
 Tests and documentation may be committed and pushed without a Cloudflare deployment when no production runtime asset changed.
 
+## Owner-approved development sequence: TPI-ROADMAP-002
+
+The current phase gate is explicit:
+
+1. **Phase 1 — Creator Studio:** complete `TPI-STUDIOFLOW-019`, including
+   meaningful functional/media/cross-feature testing and verified repairs.
+2. **Phase 2 — Social Network:** only after Phase 1, audit the existing TPI
+   social platform with isolated synthetic members and simultaneous sessions.
+   Include Feed visibility, Messenger delivery and conversation-level
+   attachment authorization, notifications, media, permissions, responsive
+   behavior, and every Settings Center page.
+3. **Phase 3 — Future features:** only after Phases 1 and 2, resume approved
+   work such as `TPI-ADMIN-001` and Creator Partnership enhancements.
+
+The owner-reported **Settings → Personalization → Highlights** issue is a
+Phase 2 high-priority defect investigation. It is not marked fixed by this
+roadmap update. Any repair must be reproduced, regression-tested, and verified
+for save/reset/persistence and light/dark theme behavior before release.
+
+This roadmap record is documentation-only; it does not authorize runtime
+feature work, database changes, R2 changes, authentication changes, or a
+deployment.
+
 ## Boundaries
 
 - TPI live source: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`.
