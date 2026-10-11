@@ -15,6 +15,7 @@
 | StudioFlow RTMP bridge | `npm run check:rtmp` | local syntax check | PASS on 2026-10-11 |
 | Production boundary | `scripts/qa/production-smoke.mjs` | anonymous read-only endpoint check | explicit opt-in |
 | Actual media capture/analysis | StudioFlow local media tools | local integration/media evidence | PARTIAL/BLOCKED; no general automated runner exists |
+| TPI-STUDIOFLOW-019A media audit | `/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-019A_TEST_MATRIX.md` | isolated browser, FFmpeg, FFprobe, local RTMP receiver | ticker/video PASS; prerecorded audio defect open; recovery/download PARTIAL |
 | Physical iOS/Android/browser devices | owner/device lab | physical-device evidence | NOT YET VERIFIED |
 | External RTMP/RTMPS providers | provider accounts and receivers | external-provider evidence | NOT YET VERIFIED |
 

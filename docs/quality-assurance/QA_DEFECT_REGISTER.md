@@ -25,3 +25,15 @@
   physical/native storage workflows, external provider output, guest WebRTC
   media, webinars, authenticated production Studio interaction, and long
   sessions remain **NOT YET VERIFIED**, not defects.
+
+## TPI-STUDIOFLOW-019A disposition
+
+- Confirmed defect: a synthetic prerecorded MP4 with a known 440 Hz tone
+  reaches the local program/RTMP pipeline with video and an audio stream, but
+  the captured audio is effectively silent under FFmpeg `astats` analysis.
+- A narrow mute-state source hypothesis was tested and failed a repeated
+  end-to-end capture; the edit was reverted. The defect remains open and was
+  not deployed.
+- The existing ticker passed actual local RTMP and saved-recording visual
+  inspection. This does not close the audio, strict WebM validation, guest,
+  physical storage, responsive, production, or external-provider gaps.

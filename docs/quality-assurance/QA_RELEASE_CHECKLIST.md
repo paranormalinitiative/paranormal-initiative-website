@@ -6,6 +6,7 @@
 - [ ] Select tests from `QA_CHANGE_IMPACT_MAP.md`.
 - [ ] Run `node scripts/qa/run-qa.mjs --e2e --studioflow-root /Users/toddknipple/Documents/StudioFlow/web` when both workspaces are in scope.
 - [ ] Run any actual media test required by the changed pipeline; do not convert a connection pass into a media pass.
+- [x] For TPI-STUDIOFLOW-019A, run an actual local prerecorded media/RTMP capture and record the silent-audio defect without deploying the failed repair.
 - [ ] Review secrets, stream keys, R2 objects, recordings, and database writes.
 - [ ] Run the production build and inspect warnings/failures.
 

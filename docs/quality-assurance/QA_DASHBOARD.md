@@ -35,3 +35,16 @@ surface. This is local browser evidence and remains distinct from the owner's
 separate **OWNER VERIFIED — WORKING** statement. It does not verify external
 providers, authenticated production interaction, physical devices, guest media
 transport, webinars, or long-duration reliability.
+
+## TPI-STUDIOFLOW-019A pipeline verification note
+
+The 019A local media pass captured the existing ticker in an actual 1920x1080
+local RTMP output and in a downloaded Program-recording frame. A synthetic
+prerecorded source with a known 440 Hz tone produced video and an audio stream,
+but the received audio measured effectively silent. This is an open confirmed
+prerecorded-audio defect, not a passing audio result. Recovery-to-Library was
+exercised with browser-generated chunks; strict external validation of the
+concatenated WebM download remains partial. The attempted narrow runtime repair
+was reverted after it failed the repeat capture, so this QA batch has no runtime
+deployment. Full evidence is in the four
+`/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-019A_*.md` records.
