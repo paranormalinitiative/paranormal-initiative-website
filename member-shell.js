@@ -4713,10 +4713,11 @@
   }
 
   function dockCollapsedChat(chat) {
-    var left = document.body.classList.contains("member-mode") || document.body.classList.contains("feed-app-page") ? 278 : 18;
+    var isWorkspacePage = document.body.classList.contains("workspace-page");
+    var left = isWorkspacePage ? 18 : (document.body.classList.contains("member-mode") || document.body.classList.contains("feed-app-page") ? 278 : 18);
     left = Math.max(left, 18);
     chat.style.left = left + "px";
-    chat.style.top = "10px";
+    chat.style.top = isWorkspacePage ? "82px" : "10px";
     chat.style.right = "auto";
     chat.style.bottom = "auto";
     chat.style.width = Math.min(420, Math.max(320, window.innerWidth - left - 18)) + "px";

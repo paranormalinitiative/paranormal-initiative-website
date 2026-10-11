@@ -1,0 +1,83 @@
+{
+  "generatedAt": "2026-10-11T21:00:37.746Z",
+  "repository": "/Users/toddknipple/Documents/GitHub/paranormal-initiative-website",
+  "options": {
+    "e2e": false,
+    "productionSmoke": true,
+    "studioflowRoot": null
+  },
+  "results": [
+    {
+      "name": "Node syntax: worker.js",
+      "status": "PASS",
+      "durationMs": 55,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check worker.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: functions/api/[[path]].js",
+      "status": "PASS",
+      "durationMs": 55,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check functions/api/[[path]].js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: api-client.js",
+      "status": "PASS",
+      "durationMs": 57,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check api-client.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: includes.js",
+      "status": "PASS",
+      "durationMs": 56,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check includes.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: member-shell.js",
+      "status": "PASS",
+      "durationMs": 54,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check member-shell.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: scripts/studioflow-release-dry-run.mjs",
+      "status": "PASS",
+      "durationMs": 54,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check scripts/studioflow-release-dry-run.mjs",
+      "detail": "completed"
+    },
+    {
+      "name": "Bash syntax: existing E2E and migration checks",
+      "status": "PASS",
+      "durationMs": 4,
+      "command": "bash -n scripts/e2e/api-e2e.sh scripts/e2e/verify-0010-equivalence.sh",
+      "detail": "completed"
+    },
+    {
+      "name": "TPI local multi-user API E2E",
+      "status": "BLOCKED",
+      "detail": "not requested; pass --e2e"
+    },
+    {
+      "name": "StudioFlow workspace checks",
+      "status": "BLOCKED",
+      "detail": "not requested; pass --studioflow-root or set STUDIOFLOW_ROOT"
+    },
+    {
+      "name": "Read-only production smoke checks",
+      "status": "PASS",
+      "durationMs": 1066,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node scripts/qa/production-smoke.mjs --base https://theparanormalinitiative.paranormalsomerset.workers.dev",
+      "detail": "completed"
+    }
+  ],
+  "summary": {
+    "pass": 8,
+    "fail": 0,
+    "blocked": 2,
+    "overall": "PASS_WITH_EXPLICIT_BLOCKERS"
+  }
+}

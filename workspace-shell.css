@@ -40,6 +40,10 @@ body.workspace-page .workspace-header {
     background: color-mix(in srgb, var(--bg-card) 96%, transparent);
 }
 
+body.workspace-page .workspace-brand {
+    flex: 1 1 auto;
+}
+
 body.workspace-page .workspace-brand,
 body.workspace-page .workspace-header-actions,
 body.workspace-page .workspace-session-status {
@@ -87,6 +91,8 @@ body.workspace-page .workspace-mark {
 }
 
 body.workspace-page .workspace-header-actions {
+    flex: 0 1 auto;
+    min-width: 0;
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: 10px;
@@ -136,6 +142,130 @@ body.workspace-page .member-main-inner > .settings-main-inner {
     max-width: none;
 }
 
+/* A collapsed Messenger is still available, but must not dock over the
+ * workspace header as it does on the ordinary member shell. */
+body.workspace-page .member-floating-chat.is-collapsed {
+    top: 82px !important;
+    left: 18px !important;
+    right: auto !important;
+    max-width: min(420px, calc(100vw - 36px));
+}
+
+/* Keep the Administration Center's existing internal system but let the
+ * workspace width flow all the way through its two-column grid. */
+body.workspace-admin-page .member-main-inner,
+body.workspace-admin-page .admin-panel-page {
+    max-width: none;
+}
+
+body.workspace-admin-page .admin-center-shell {
+    grid-template-columns: minmax(220px, 248px) minmax(0, 1fr);
+    gap: 24px;
+}
+
+body.workspace-admin-page .admin-center-main,
+body.workspace-admin-page .admin-center-section,
+body.workspace-admin-page .admin-center-card {
+    min-width: 0;
+}
+
+body.workspace-admin-page .admin-center-hero,
+body.workspace-admin-page .admin-center-card {
+    box-sizing: border-box;
+}
+
+body.workspace-admin-page .admin-metric-grid,
+body.workspace-admin-page .admin-chart-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* The Settings Center keeps readable form widths while using the available
+ * workspace instead of inheriting the older 1,440px page constraint. */
+body.workspace-settings-page .member-main-inner,
+body.workspace-settings-page .settings-main-inner,
+body.workspace-settings-page .tpi-settings {
+    max-width: none;
+}
+
+body.workspace-settings-page .tpi-settings {
+    width: min(100%, 1600px);
+    margin: 0 auto;
+}
+
+body.workspace-settings-page .member-dashboard-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 14px;
+}
+
+body.workspace-settings-page .member-dashboard-header h2 {
+    font-size: clamp(20px, 2.2vw, 26px);
+}
+
+body.workspace-settings-page .member-dashboard-header p {
+    line-height: 1.35;
+}
+
+body.workspace-settings-page .settings-layout {
+    grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
+    gap: 20px;
+}
+
+body.workspace-settings-page .settings-content,
+body.workspace-settings-page [data-settings-panel] {
+    min-width: 0;
+}
+
+body.workspace-settings-page .settings-card,
+body.workspace-settings-page .editor-access-card {
+    padding: 22px;
+}
+
+@media (max-width: 1180px) {
+    body.workspace-admin-page .admin-metric-grid,
+    body.workspace-admin-page .admin-chart-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 980px) {
+    body.workspace-admin-page .admin-center-shell {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    body.workspace-page .workspace-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    body.workspace-page .workspace-header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 760px) {
+    body.workspace-page .member-floating-chat.is-collapsed {
+        top: auto !important;
+        left: 12px !important;
+        right: 12px !important;
+        bottom: 12px !important;
+        width: calc(100vw - 24px) !important;
+        max-width: none;
+        min-width: 0;
+    }
+
+    body.workspace-admin-page .admin-metric-grid,
+    body.workspace-admin-page .admin-chart-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 @media (max-width: 700px) {
     body.workspace-page .workspace-header {
         align-items: flex-start;
@@ -154,6 +284,15 @@ body.workspace-page .member-main-inner > .settings-main-inner {
 
     body.workspace-page .member-main-inner {
         padding: 18px 14px 36px;
+    }
+
+    body.workspace-settings-page .member-dashboard-header {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: flex-start;
+    }
+
+    body.workspace-settings-page .portal-actions {
+        width: 100%;
     }
 }
 

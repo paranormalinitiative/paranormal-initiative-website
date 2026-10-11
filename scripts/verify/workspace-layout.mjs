@@ -35,6 +35,12 @@ check(settings.includes('data-settings-nav'), "Settings Center: existing setting
 check(shell.includes("body.workspace-page #site-header") && shell.includes("body.workspace-page #site-footer"), "workspace shell does not hide public chrome within the dedicated routes");
 check(shell.includes("body.workspace-page .member-sidebar") && shell.includes("body.workspace-page .member-mobile-nav"), "generic member navigation is not scoped out of dedicated routes");
 check(shell.includes("body.workspace-page .member-main") && shell.includes("margin-left: 0"), "dedicated workspace content is not full width");
+check(shell.includes("body.workspace-page .member-floating-chat.is-collapsed") && shell.includes("top: 82px !important"), "collapsed Messenger is not kept below the workspace header");
+check(shell.includes("grid-template-columns: minmax(220px, 248px) minmax(0, 1fr)"), "Administration Center does not define a flexible two-column grid");
+check(shell.includes("grid-template-columns: minmax(220px, 250px) minmax(0, 1fr)"), "Settings Center does not define a flexible two-column grid");
+check(shell.includes("@media (max-width: 900px)"), "workspace header does not define an intentional tablet reflow");
+check(shell.includes("@media (max-width: 760px)"), "workspace layout does not define a mobile Messenger/card reflow");
+check(!/^\.workspace-header\s*\{/m.test(shell), "workspace header styles are not route scoped");
 check(!memberHome.includes("workspace-page"), "member home was accidentally converted into a dedicated workspace");
 check(!normalPage.includes("workspace-page"), "ordinary member pages were accidentally converted into a dedicated workspace");
 

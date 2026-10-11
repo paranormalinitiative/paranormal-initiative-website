@@ -225,3 +225,12 @@ The verified release commit is `89e8bff`; Cloudflare Worker version
 `68ad3a56-459c-4ceb-80f2-6cef9f1887db` is live. Anonymous production smoke
 passed 10/10. The remaining authenticated visual owner review is not implied by
 the anonymous smoke result.
+### TPI-UI-002 — workspace layout refinement
+
+TPI-UI-002 is a targeted frontend refinement of the TPI-UI-001 dedicated
+Administration and Settings workspaces. It preserves authentication,
+authorization, admin/settings logic, Messenger, themes, and all production data
+boundaries while correcting workspace header docking, grid width, card density,
+and responsive reflow. Focused checks pass; authenticated rendered visual
+acceptance remains an explicit owner-review gate. Evidence is in
+[`docs/audits/2026-10-11/tpi-ui/TPI-UI-002/`](../audits/2026-10-11/tpi-ui/TPI-UI-002/).

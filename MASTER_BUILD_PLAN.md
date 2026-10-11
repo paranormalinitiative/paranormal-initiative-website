@@ -585,3 +585,12 @@ Commit `89e8bff` was pushed to `origin/main` and deployed to Cloudflare Worker
 version `68ad3a56-459c-4ceb-80f2-6cef9f1887db`. Read-only anonymous production
 smoke passed 10/10. Authenticated desktop/tablet/phone owner review remains the
 final acceptance gate.
+## TPI-UI-002 — Administration and Settings workspace layout refinement — October 11, 2026
+
+TPI-UI-002 refines the already-separated workspace shells without rebuilding
+either application. It addresses the owner-observed header collision risk,
+legacy width constraints, dashboard grid density, Settings profile spacing, and
+responsive reflow. The existing floating Messenger behavior remains available;
+only its collapsed dock position changes on dedicated workspace routes so it
+cannot cover the workspace header. Evidence and the owner-review stop gate are
+maintained in `docs/audits/2026-10-11/tpi-ui/TPI-UI-002/`.
