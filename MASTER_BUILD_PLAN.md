@@ -18,7 +18,11 @@ and unrelated dirty files remain preserved. Focused provider regression passed
 passed. The existing full local API E2E runner remains blocked before assertions
 by its pre-existing first migration failure. Full owner-authenticated, external
 provider, physical-device, long-duration, and complete Reel-creation verification
-remain explicit limitations. Evidence is in `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-009_*`.
+remain explicit limitations. Implementation commit `837bc15` and Reels correction
+commit `7cfffcd` were pushed. Cloudflare Worker versions
+`dad69f38-7771-4304-b145-6749f5152357` and
+`a968cffd-5d55-4a6a-a8b6-84f5442b74b1` deployed the verified runtime. Evidence is
+in `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-009_*`.
 
 ## TPI-VIDEOS-008 — Provider-aware playback integration — October 11, 2026
 
