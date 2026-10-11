@@ -5,6 +5,7 @@ import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
+import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -169,6 +170,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/video-reactions") return requireMember(request, env, user => handleSetVideoReaction(request, env, user));
     if (request.method === "GET" && path === "/video-saves") return requireMember(request, env, user => handleGetVideoSaves(env, user));
     if (request.method === "POST" && path === "/video-saves") return requireMember(request, env, user => handleToggleVideoSave(request, env, user));
+    if (request.method === "GET" && path === "/video-history") return requireMember(request, env, user => handleGetVideoHistory(env, user));
+    if (request.method === "POST" && path === "/video-history") return requireMember(request, env, user => handleRecordVideoHistory(request, env, user));
+    if (request.method === "DELETE" && path === "/video-history") return requireMember(request, env, user => handleClearVideoHistory(request, env, user));
     if (request.method === "POST" && path === "/video-reports") return requireMember(request, env, user => handleCreateVideoReport(request, env, user));
 
     // Events API
@@ -2693,6 +2697,7 @@ function tpiVideoPayload(row) {
     actualStartedAt: row.actual_started_at || null,
     actualEndedAt: row.actual_ended_at || null,
     sourceType: row.sourceType || (row.created_by ? "creator" : "discovered"),
+    format: row.format === "shorts" || row.format === "reel" || row.format === "reels" ? "shorts" : "regular",
     sourceName: row.sourceName || row.platform || null,
     creator: row.created_by ? { id: row.created_by, username: row.creatorUsername || "", displayName: row.creatorDisplayName || "", title: row.creatorTitle || "", photoUrl: row.creatorPhoto || "" } : null,
     createdAt: row.created_at, updatedAt: row.updated_at
@@ -3089,6 +3094,8 @@ async function handleListTpiVideos(request, env) {
   const sort = ["oldest", "alpha", "relevance"].includes(clean(url.searchParams.get("sort")).toLowerCase())
     ? clean(url.searchParams.get("sort")).toLowerCase() : "newest";
   const liveFilter = url.searchParams.get("live");
+  const requestedFormat = clean(url.searchParams.get("format")).toLowerCase();
+  const formatFilter = ["regular", "shorts"].includes(requestedFormat) ? requestedFormat : "";
 
   if (mine && (!user || !["owner", "admin", "contributor"].includes(user.role))) {
     return json({ error: "Contributor login required." }, 401);
@@ -3158,7 +3165,10 @@ async function handleListTpiVideos(request, env) {
     scrapedRows.push(...(scrapedResult.results || []).map(row => ({ ...row, slug: `scraped-${row.id}`, sourceType: "discovered", status: "published", viewingAccess: "public", isLive: false, featured: false, tags: [] })));
   }
 
-  const combined = authoredRows.concat(scrapedRows);
+  const combined = authoredRows.concat(scrapedRows).filter(row => {
+    if (!formatFilter) return true;
+    return formatFilter === "shorts" ? ["shorts", "reel", "reels"].includes(String(row.format || "").toLowerCase()) : !["shorts", "reel", "reels"].includes(String(row.format || "").toLowerCase());
+  });
   combined.sort((a, b) => {
     if (sort === "alpha") return String(a.title || "").localeCompare(String(b.title || ""));
     if (sort === "relevance" && queryText) {
@@ -3208,6 +3218,34 @@ async function handleGetTpiVideo(path, env, request) {
   return json({ error: "Video not found." }, 404, { "Cache-Control": "no-store" });
 }
 
+async function handleLinkPreview(request, env) {
+  const requestUrl = new URL(request.url);
+  const raw = requestUrl.searchParams.get("url") || "";
+  const safe = isSafePreviewUrl(raw);
+  if (!safe.ok) return json({ error: safe.error }, 400, { "Cache-Control": "no-store" });
+
+  const host = safe.url.hostname.toLowerCase().replace(/^www\./, "");
+  if (host === "paranormalinitiative.com") {
+    const id = safe.url.searchParams.get("id") || safe.url.searchParams.get("slug") || "";
+    if (["/tpi-video", "/tpi-video.html"].includes(safe.url.pathname) && id) {
+      const row = await env.TPI_DB.prepare(tpiVideoSelectSql() + " WHERE tv.slug = ? LIMIT 1").bind(clean(id)).first();
+      if (row && row.status === "published" && row.viewing_access === "public") {
+        return json({ url: safe.url.toString(), title: row.title, description: String(row.description || "").slice(0, 320), image: row.thumbnail || "", host, fetched: true }, 200, { "Cache-Control": "public, max-age=300" });
+      }
+      const scrapedId = id.match(/^scraped-(\d+)$/)?.[1];
+      if (scrapedId) {
+        const scraped = await env.TPI_DB.prepare("SELECT title, description, thumbnail_url AS thumbnail FROM videos WHERE id = ? AND status = 'approved'").bind(scrapedId).first();
+        if (scraped) return json({ url: safe.url.toString(), title: scraped.title, description: String(scraped.description || "").slice(0, 320), image: scraped.thumbnail || "", host, fetched: true }, 200, { "Cache-Control": "public, max-age=300" });
+      }
+    }
+    return json({ url: safe.url.toString(), title: "The Paranormal Initiative", description: "", image: "", host, fetched: false }, 200, { "Cache-Control": "public, max-age=300" });
+  }
+
+  const result = await fetchExternalLinkPreview(safe.url.toString());
+  if (!result.ok) return json({ error: result.error }, result.status || 502, { "Cache-Control": "no-store" });
+  return json(result.preview || { url: safe.url.toString(), title: safe.url.hostname, description: "", image: "", host, fetched: false }, 200, { "Cache-Control": "public, max-age=300" });
+}
+
 function validateTpiVideoFields(data, existing = null) {
   const title = cleanVideoText(data.title !== undefined ? data.title : existing?.title, 180);
   if (!title) return { error: "Title is required." };
@@ -3230,6 +3268,7 @@ function validateTpiVideoFields(data, existing = null) {
     series: cleanVideoText(data.series !== undefined ? data.series : existing?.series, 180),
     episode: cleanVideoText(data.episode !== undefined ? data.episode : existing?.episode, 40),
     duration: cleanVideoText(data.duration !== undefined ? data.duration : existing?.duration, 30),
+    format: ["shorts", "reel", "reels"].includes(String(data.format !== undefined ? data.format : existing?.format || "").toLowerCase()) ? "shorts" : "regular",
     viewingAccess: data.viewingAccess === "public" ? "public" : (data.viewingAccess === "members" ? "members" : (existing?.viewing_access || "members"))
   };
 }
@@ -3252,9 +3291,9 @@ async function handleCreateTpiVideo(request, env, user) {
   const id = clean(data.id) || crypto.randomUUID();
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`INSERT INTO tpi_videos
-    (id, slug, title, description, published_at, category, tags, platform, video_url, embed_url, thumbnail, featured, is_live, live_started_at, series, episode, duration, viewing_access, status, created_by, created_at, updated_at, channel_id)
-    VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?)`)
-    .bind(id, finalSlug, fields.title, fields.description, fields.category, fields.tags, fields.platform, fields.videoUrl, fields.embedUrl, fields.thumbnail, fields.featured, fields.isLive, fields.liveStartedAt, fields.series, fields.episode, fields.duration, fields.viewingAccess, user.id, now, now, channel.id).run();
+    (id, slug, title, description, published_at, category, tags, platform, video_url, embed_url, thumbnail, featured, is_live, live_started_at, series, episode, duration, format, viewing_access, status, created_by, created_at, updated_at, channel_id)
+    VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?)`)
+    .bind(id, finalSlug, fields.title, fields.description, fields.category, fields.tags, fields.platform, fields.videoUrl, fields.embedUrl, fields.thumbnail, fields.featured, fields.isLive, fields.liveStartedAt, fields.series, fields.episode, fields.duration, fields.format, fields.viewingAccess, user.id, now, now, channel.id).run();
   return json({ ok: true, id, slug: finalSlug, status: "draft", channelSlug: channel.slug });
 }
 
@@ -3277,8 +3316,8 @@ async function handleUpdateTpiVideo(path, request, env, user) {
     newSlug = desired;
   }
   const now = new Date().toISOString();
-  await env.TPI_DB.prepare(`UPDATE tpi_videos SET slug=?, title=?, description=?, category=?, tags=?, platform=?, video_url=?, embed_url=?, thumbnail=?, featured=?, is_live=?, live_started_at=?, series=?, episode=?, duration=?, viewing_access=?, channel_id=?, updated_at=? WHERE id=?`)
-    .bind(newSlug, fields.title, fields.description, fields.category, fields.tags, fields.platform, fields.videoUrl, fields.embedUrl, fields.thumbnail, fields.featured, fields.isLive, fields.liveStartedAt, fields.series, fields.episode, fields.duration, fields.viewingAccess, channel.id, now, existing.id).run();
+  await env.TPI_DB.prepare(`UPDATE tpi_videos SET slug=?, title=?, description=?, category=?, tags=?, platform=?, video_url=?, embed_url=?, thumbnail=?, featured=?, is_live=?, live_started_at=?, series=?, episode=?, duration=?, format=?, viewing_access=?, channel_id=?, updated_at=? WHERE id=?`)
+    .bind(newSlug, fields.title, fields.description, fields.category, fields.tags, fields.platform, fields.videoUrl, fields.embedUrl, fields.thumbnail, fields.featured, fields.isLive, fields.liveStartedAt, fields.series, fields.episode, fields.duration, fields.format, fields.viewingAccess, channel.id, now, existing.id).run();
   return json({ ok: true, id: existing.id, slug: newSlug, status: existing.status, channelSlug: channel.slug });
 }
 
@@ -3397,20 +3436,43 @@ async function handleToggleTpiChannelFollow(path, env, user, shouldFollow) {
 
 async function handleShareTpiVideo(path, request, env, user) {
   const slug = clean(decodeURIComponent(path.match(/^\/tpi-videos\/([^/]+)\/share$/)?.[1] || ""));
-  const video = await env.TPI_DB.prepare(tpiVideoSelectSql() + " WHERE tv.slug = ? LIMIT 1").bind(slug).first();
-  if (!video || video.viewing_access !== "public" || !canReadTpiVideo(video, user) || video.status !== "published") return json({ error: "Video not found." }, 404);
+  let video = await env.TPI_DB.prepare(tpiVideoSelectSql() + " WHERE tv.slug = ? LIMIT 1").bind(slug).first();
+  if (video) {
+    if (video.viewing_access !== "public" || !canReadTpiVideo(video, user) || video.status !== "published") return json({ error: "Video not found." }, 404);
+    video = { ...video, sourceType: "creator" };
+  } else {
+    const scrapedId = slug.match(/^scraped-(\d+)$/)?.[1];
+    if (!scrapedId) return json({ error: "Video not found." }, 404);
+    const scraped = await env.TPI_DB.prepare(`SELECT id, title, description, thumbnail_url AS thumbnail, source_url AS videoUrl,
+      source_name AS platform, source_name AS sourceName, channel_name AS channelName,
+      duration_seconds AS duration, category, published_at AS publishedAt, scraped_at AS createdAt
+      FROM videos WHERE id = ? AND status = 'approved'`).bind(scrapedId).first();
+    if (!scraped || !validateExternalShareUrl(scraped.videoUrl)) return json({ error: "Video not found." }, 404);
+    video = scrapedVideoPayload({ ...scraped, slug });
+  }
   const data = await readJson(request);
   const message = clean(data.message).slice(0, 1000);
   const category = await env.TPI_DB.prepare("SELECT id FROM community_categories WHERE id = 'general' AND active = 1").first();
   if (!category) return json({ error: "Community sharing is not available." }, 503);
   const postId = crypto.randomUUID();
-  const watchUrl = new URL(`/tpi-video?id=${encodeURIComponent(video.slug)}`, request.url).toString();
+  const watchUrl = video.sourceType === "discovered" && video.videoUrl
+    ? video.videoUrl
+    : new URL(`/tpi-video?id=${encodeURIComponent(video.slug)}`, request.url).toString();
   const body = [message, `Watch: ${watchUrl}`].filter(Boolean).join("\n\n");
   await env.TPI_DB.prepare(`INSERT INTO community_posts (id, category_id, author_id, title, body, status, updated_at) VALUES (?, 'general', ?, ?, ?, 'visible', CURRENT_TIMESTAMP)`)
     .bind(postId, user.id, `Video: ${video.title}`.slice(0, 160), body).run();
   await insertCommunityAttachments(env, postId, "post", [{ url: watchUrl, key: "", name: video.title, contentType: "text/uri-list", mediaType: "link", sortOrder: 0 }]);
   await createCommunityContentNotifications(env, user, { postId, postTitle: video.title, body, attachments: [{ mediaType: "link" }] });
   return json({ ok: true, postId, href: `member-home.html?member=1#post-${encodeURIComponent(postId)}` });
+}
+
+function validateExternalShareUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return url.protocol === "https:" && !url.username && !url.password && !url.hash;
+  } catch {
+    return false;
+  }
 }
 
 function slugify(value) {
@@ -3512,7 +3574,7 @@ async function handleSetVideoReaction(request, env, user) {
 }
 
 async function handleGetVideoSaves(env, user) {
-  const { results } = await env.TPI_DB.prepare(`
+  const legacy = await env.TPI_DB.prepare(`
     SELECT vs.video_id AS videoId, vs.created_at AS savedAt,
            tv.title, tv.slug, tv.thumbnail, tv.category, tv.duration, tv.published_at AS publishedAt
     FROM video_saves vs
@@ -3520,26 +3582,96 @@ async function handleGetVideoSaves(env, user) {
     WHERE vs.contributor_id = ? AND tv.status = 'published'
     ORDER BY vs.created_at DESC
   `).bind(user.id).all();
-  return json({ saves: results });
+  const modern = await env.TPI_DB.prepare(`
+    SELECT video_key AS videoId, created_at AS savedAt, title, video_key AS slug, thumbnail,
+           category, duration, published_at AS publishedAt, source_type AS sourceType,
+           destination_url AS destinationUrl, platform, channel_slug AS channelSlug,
+           channel_name AS channelName
+    FROM tpi_video_saved_items WHERE contributor_id = ? ORDER BY created_at DESC
+  `).bind(user.id).all();
+  const saves = (legacy.results || []).map(row => ({ ...row, sourceType: "creator", destinationUrl: `tpi-video.html?id=${encodeURIComponent(row.slug || row.videoId)}` }))
+    .concat(modern.results || []);
+  saves.sort((a, b) => String(b.savedAt || "").localeCompare(String(a.savedAt || "")));
+  return json({ saves });
 }
 
 async function handleToggleVideoSave(request, env, user) {
   const data = await readJson(request);
-  const videoId = clean(data.videoId);
+  const videoId = clean(data.videoId || data.videoKey);
   if (!videoId) return json({ error: "videoId is required." }, 400);
 
+  const modernExisting = await env.TPI_DB.prepare("SELECT id FROM tpi_video_saved_items WHERE video_key = ? AND contributor_id = ? LIMIT 1").bind(videoId, user.id).first();
+  if (modernExisting) {
+    await env.TPI_DB.prepare("DELETE FROM tpi_video_saved_items WHERE id = ?").bind(modernExisting.id).run();
+    return json({ videoId, saved: false });
+  }
+
   const existing = await env.TPI_DB.prepare(`
-    SELECT id FROM video_saves WHERE video_id = ? AND contributor_id = ? LIMIT 1
-  `).bind(videoId, user.id).first();
+    SELECT vs.id FROM video_saves vs LEFT JOIN tpi_videos tv ON tv.id = vs.video_id
+    WHERE (vs.video_id = ? OR tv.slug = ?) AND vs.contributor_id = ? LIMIT 1
+  `).bind(videoId, videoId, user.id).first();
 
   if (existing) {
     await env.TPI_DB.prepare("DELETE FROM video_saves WHERE id = ?").bind(existing.id).run();
     return json({ videoId, saved: false });
   } else {
-    await env.TPI_DB.prepare("INSERT INTO video_saves (id, video_id, contributor_id) VALUES (?, ?, ?)")
-      .bind(crypto.randomUUID(), videoId, user.id).run();
+    let sourceType = "creator";
+    let destinationUrl = `tpi-video.html?id=${encodeURIComponent(videoId)}`;
+    let video = await env.TPI_DB.prepare(tpiVideoSelectSql() + " WHERE (tv.slug = ? OR tv.id = ?) AND tv.status = 'published' LIMIT 1").bind(videoId, videoId).first();
+    if (!video) {
+      sourceType = "discovered";
+      const externalUrl = clean(data.destinationUrl || data.videoUrl);
+      if (!validateExternalShareUrl(externalUrl)) return json({ error: "An approved external video URL is required." }, 400);
+      video = { title: cleanVideoText(data.title, 180) || "TPI Video", description: cleanVideoText(data.description, 320), thumbnail: clean(data.thumbnail), category: clean(data.category), duration: clean(data.duration), publishedAt: clean(data.publishedAt), platform: clean(data.platform), channelSlug: clean(data.channelSlug), channelName: clean(data.channelName) };
+      destinationUrl = externalUrl;
+    }
+    await env.TPI_DB.prepare(`INSERT INTO tpi_video_saved_items
+      (id, contributor_id, video_key, source_type, destination_url, title, description, thumbnail, category, duration, published_at, platform, channel_slug, channel_name)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .bind(crypto.randomUUID(), user.id, videoId, sourceType, destinationUrl, video.title || "TPI Video", video.description || "", video.thumbnail || "", video.category || "", video.duration || "", video.publishedAt || video.published_at || null, video.platform || video.sourceName || "", video.channelSlug || null, video.channelName || null).run();
     return json({ videoId, saved: true });
   }
+}
+
+async function handleGetVideoHistory(env, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT video_key AS videoId, source_type AS sourceType, destination_url AS destinationUrl,
+           title, thumbnail, platform, last_position_seconds AS lastPositionSeconds,
+           completed, watched_at AS watchedAt
+    FROM tpi_video_watch_history WHERE contributor_id = ? ORDER BY watched_at DESC LIMIT 200
+  `).bind(user.id).all();
+  return json({ history: results || [] });
+}
+
+async function handleRecordVideoHistory(request, env, user) {
+  const data = await readJson(request);
+  const videoId = clean(data.videoId || data.videoKey);
+  if (!videoId) return json({ error: "videoId is required." }, 400);
+  const isCreator = Boolean(await env.TPI_DB.prepare("SELECT id FROM tpi_videos WHERE (id = ? OR slug = ?) AND status = 'published' LIMIT 1").bind(videoId, videoId).first());
+  const sourceType = isCreator ? "creator" : "discovered";
+  const destinationUrl = isCreator ? `tpi-video.html?id=${encodeURIComponent(videoId)}` : clean(data.destinationUrl || data.videoUrl);
+  if (!isCreator && !validateExternalShareUrl(destinationUrl)) return json({ error: "A valid external destination is required." }, 400);
+  const position = Math.max(0, Math.min(86400, Number(data.lastPositionSeconds || 0)));
+  const completed = data.completed ? 1 : 0;
+  await env.TPI_DB.prepare(`INSERT INTO tpi_video_watch_history
+    (id, contributor_id, video_key, source_type, destination_url, title, thumbnail, platform, last_position_seconds, completed, watched_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    ON CONFLICT(contributor_id, video_key) DO UPDATE SET destination_url=excluded.destination_url, title=excluded.title,
+      thumbnail=excluded.thumbnail, platform=excluded.platform, last_position_seconds=excluded.last_position_seconds,
+      completed=excluded.completed, watched_at=CURRENT_TIMESTAMP`)
+    .bind(crypto.randomUUID(), user.id, videoId, sourceType, destinationUrl, cleanVideoText(data.title, 180) || "TPI Video", clean(data.thumbnail), clean(data.platform), position, completed).run();
+  return json({ ok: true, videoId });
+}
+
+async function handleClearVideoHistory(request, env, user) {
+  const url = new URL(request.url);
+  const videoId = clean(url.searchParams.get("videoId"));
+  if (videoId) {
+    await env.TPI_DB.prepare("DELETE FROM tpi_video_watch_history WHERE contributor_id = ? AND video_key = ?").bind(user.id, videoId).run();
+  } else {
+    await env.TPI_DB.prepare("DELETE FROM tpi_video_watch_history WHERE contributor_id = ?").bind(user.id).run();
+  }
+  return json({ ok: true });
 }
 
 async function handleCreateVideoReport(request, env, user) {

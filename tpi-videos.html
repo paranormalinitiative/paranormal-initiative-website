@@ -237,9 +237,45 @@
         }
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 1.25rem;
             margin-bottom: 2rem;
+        }
+        .video-format-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin: -0.5rem 0 1.25rem;
+            flex-wrap: wrap;
+        }
+        .video-format-tab {
+            background: #12151c;
+            border: 1px solid #1e2230;
+            border-radius: 999px;
+            color: #8d93a3;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: 0.05em;
+            padding: 0.45rem 0.85rem;
+            text-transform: uppercase;
+        }
+        .video-format-tab:hover { border-color: #2a3550; color: #c8cdd8; }
+        .video-format-tab.active { background: #1a2540; border-color: #59a9dc; color: #59a9dc; }
+        .video-new-indicator {
+            background: #1a2540;
+            border: 1px solid #59a9dc;
+            border-radius: 999px;
+            color: #8cc9f0;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0.05em;
+            padding: 0.45rem 0.8rem;
+            text-transform: uppercase;
         }
         .video-card {
             background: #12151c;
@@ -399,10 +435,12 @@
         @media (max-width: 800px) {
             .video-featured-card { grid-template-columns: 1fr; }
             .video-featured-media { min-height: 200px; }
-            .video-grid { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .tpi-channel-tabs { gap: 0; }
             .tpi-channel-tab { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
         }
+        @media (max-width: 1120px) and (min-width: 801px) { .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (max-width: 560px) { .video-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -429,6 +467,11 @@
     <button class="tpi-channel-tab" data-tab="all">All Videos</button>
     <button class="tpi-channel-tab" data-tab="following" id="video-following-tab" hidden>Following</button>
 </nav>
+
+<div class="video-format-tabs" role="tablist" aria-label="Video formats">
+    <button class="video-format-tab active" data-format="regular" role="tab" aria-selected="true">Regular Videos</button>
+    <button class="video-format-tab" data-format="shorts" role="tab" aria-selected="false">Shorts &amp; Reels</button>
+</div>
 
 <div class="tpi-channel-controls">
     <div class="tpi-channel-search">
@@ -463,30 +506,7 @@
 <div id="video-grid-container"></div>
 <div id="video-load-more-container" class="video-load-more" hidden><button id="video-load-more" class="portal-button portal-button-secondary">Load more videos</button></div>
 <p id="video-discovery-status" class="video-discovery-status" role="status" aria-live="polite"></p>
-
-<section class="study-hub-layout" style="margin-top:2rem;">
-    <article class="study-hub-card">
-        <h3>Continue Exploring</h3>
-        <p>
-            TPI video programming connects to the broader research, education, and investigation work
-            of The Paranormal Initiative. Explore more resources below.
-        </p>
-        <div class="portal-actions">
-            <a class="portal-button portal-button-secondary" href="education-center.html">Education Center</a>
-            <a class="portal-button portal-button-secondary" href="our-apps.html">Our Apps</a>
-        </div>
-    </article>
-    <aside class="study-hub-card">
-        <h3>Community &amp; Research</h3>
-        <p>
-            Join the discussion, explore the repository, and connect with other researchers and investigators.
-        </p>
-        <div class="portal-actions">
-            <a class="portal-button portal-button-secondary" href="member-login.html">Join the Community</a>
-            <a class="portal-button portal-button-secondary" href="repository.html">Repository</a>
-        </div>
-    </aside>
-</section>
+<button id="video-new-indicator" class="video-new-indicator" type="button" hidden>New videos available</button>
 
 </div>
 </div>
@@ -510,11 +530,27 @@
     var loadMoreButton = document.getElementById("video-load-more");
     var discoveryStatus = document.getElementById("video-discovery-status");
     var followingTab = document.getElementById("video-following-tab");
+    var newIndicator = document.getElementById("video-new-indicator");
     var activeTab = "latest";
+    var activeFormat = "regular";
     var activeCategory = "all";
     var searchQuery = "";
     var currentPage = 1;
     var hasMore = false;
+    var latestKnownId = "";
+    var refreshTimer = null;
+    var refreshAbort = null;
+
+    window.TPI_VIDEOS = window.TPI_VIDEOS || {};
+    window.TPI_VIDEOS.openCard = function (card) {
+        var href = card && card.getAttribute("data-href");
+        if (!href) return;
+        if (card.getAttribute("data-external") === "true") {
+            window.open(href, "_blank", "noopener,noreferrer");
+        } else {
+            window.location.href = href;
+        }
+    };
 
     async function loadVideos(reset) {
         var shouldReset = reset !== false;
@@ -538,6 +574,10 @@
             if (res.ok) {
                 var data = await res.json();
                 videos = (shouldReset ? [] : videos).concat(data.videos || []);
+                if (shouldReset && videos[0]) {
+                    latestKnownId = String(videos[0].slug || videos[0].id || "");
+                    newIndicator.hidden = true;
+                }
                 hasMore = Boolean(data.hasMore);
                 if (hasMore && data.nextPage) currentPage = data.nextPage;
                 discoveryStatus.textContent = "";
@@ -598,17 +638,26 @@
         return window.preserveMemberMode ? window.preserveMemberMode(url) : url;
     }
 
-    function renderFeatured() {
-        var liveVideos = videos.filter(function (v) { return v.isLive; });
-        var featured = null;
-        var target = null;
+    function videoFormat(video) {
+        var format = String(video && (video.format || video.videoFormat || "") || "").toLowerCase();
+        return ["short", "shorts", "reel", "reels"].indexOf(format) !== -1 ? "shorts" : "regular";
+    }
 
-        if (liveVideos.length) {
-            target = liveVideos[0];
-        } else {
-            featured = videos.find(function (v) { return v.featured; });
-            target = featured || (videos.length ? videos[0] : null);
-        }
+    function chooseFeatured() {
+        var liveVideos = videos.filter(function (v) { return v.isLive; });
+        if (liveVideos.length) return liveVideos[0];
+        var candidates = videos.filter(function (v) { return !v.isLive && v.featured; });
+        if (!candidates.length) candidates = videos.filter(function (v) { return !v.isLive; });
+        if (!candidates.length) return null;
+        var lastKey = "";
+        try { lastKey = localStorage.getItem("tpi.videos.featured.last") || ""; } catch (e) {}
+        var target = candidates.find(function (v) { return String(v.slug || v.id) !== lastKey; }) || candidates[0];
+        try { localStorage.setItem("tpi.videos.featured.last", String(target.slug || target.id)); } catch (e) {}
+        return target;
+    }
+
+    function renderFeatured() {
+        var target = chooseFeatured();
 
         if (!target) {
             featuredSection.hidden = true;
@@ -629,7 +678,7 @@
         var targetExternalAttrs = targetAction.href ? ' target="_blank" rel="noopener noreferrer"' : '';
         var borderColor = target.isLive ? ' style="border-color:#dc2626;"' : '';
 
-        var html = '<div class="video-featured-card"' + borderColor + ' onclick="window.location.href=\'' + getVideoUrl(target) + '\'">' +
+        var html = '<div class="video-featured-card"' + borderColor + ' data-href="' + escapeHtml(targetHref) + '" data-external="' + (targetAction.href ? "true" : "false") + '" onclick="window.TPI_VIDEOS.openCard(this)">' +
             '<div class="video-featured-media">' + mediaHtml + '</div>' +
             '<div class="video-featured-copy">' +
             '<p class="portal-kicker"' + kickerStyle + '>' + escapeHtml(kickerText) + '</p>' +
@@ -682,6 +731,8 @@
             filtered = filtered.filter(function (v) { return v.isLive || String(v.category || "").toLowerCase().indexOf("live") !== -1; });
         }
 
+        filtered = filtered.filter(function (v) { return videoFormat(v) === activeFormat; });
+
         // Category filter
         if (activeCategory !== "all") {
             filtered = filtered.filter(function (v) { return v.category === activeCategory; });
@@ -729,7 +780,7 @@
         var actionHref = action.href || getVideoUrl(video);
         var actionAttrs = action.href ? ' target="_blank" rel="noopener noreferrer"' : '';
 
-        return '<article class="video-card" onclick="window.location.href=\'' + getVideoUrl(video) + '\'">' +
+        return '<article class="video-card" data-href="' + escapeHtml(actionHref) + '" data-external="' + (action.href ? "true" : "false") + '" onclick="window.TPI_VIDEOS.openCard(this)">' +
             '<div class="video-card-media">' + mediaHtml + durationHtml + '</div>' +
             '<div class="video-card-copy">' +
             '<div class="video-card-meta">' +
@@ -801,6 +852,18 @@
         });
     });
 
+    document.querySelectorAll(".video-format-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            activeFormat = tab.dataset.format || "regular";
+            document.querySelectorAll(".video-format-tab").forEach(function (item) {
+                var selected = item.dataset.format === activeFormat;
+                item.classList.toggle("active", selected);
+                item.setAttribute("aria-selected", selected ? "true" : "false");
+            });
+            loadVideos(true);
+        });
+    });
+
     // Category filter click handler
     categoryFilters.addEventListener("click", function (e) {
         var pill = e.target.closest(".video-category-pill");
@@ -836,6 +899,37 @@
         loadVideos(false);
     });
 
+    async function checkForNewVideos() {
+        if (document.visibilityState !== "visible" || refreshAbort) return;
+        refreshAbort = new AbortController();
+        try {
+            var res = await fetch("/api/tpi-videos?page=1&pageSize=1&sort=newest&source=all", { credentials: "same-origin", signal: refreshAbort.signal });
+            if (!res.ok) return;
+            var data = await res.json();
+            var newest = data.videos && data.videos[0];
+            var newestId = newest ? String(newest.slug || newest.id || "") : "";
+            if (newestId && latestKnownId && newestId !== latestKnownId) newIndicator.hidden = false;
+            if (!latestKnownId && newestId) latestKnownId = newestId;
+        } catch (e) {
+            if (e && e.name !== "AbortError") {}
+        } finally {
+            refreshAbort = null;
+        }
+    }
+
+    function scheduleCatalogRefresh() {
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = setInterval(checkForNewVideos, 5 * 60 * 1000);
+    }
+
+    newIndicator.addEventListener("click", function () {
+        var top = window.scrollY;
+        loadVideos(true).finally(function () { window.scrollTo(0, top); });
+    });
+    document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") checkForNewVideos();
+    });
+
     // Initialize
     fetch("/api/auth/me", { credentials: "same-origin" }).then(function (res) {
         return res.ok ? res.json() : { user: null };
@@ -843,6 +937,7 @@
         if (data.user) followingTab.hidden = false;
     }).catch(function () {}).finally(function () {
         loadVideos(true);
+        scheduleCatalogRefresh();
     });
 })();
 </script>

@@ -135,6 +135,8 @@
     var reactionCounts = {};
     var isSaved = false;
     var replyTargetId = null;
+    var lastHistoryPostAt = 0;
+    var historyStarted = false;
 
     var REACTIONS = [
         { id: "like", emoji: "\uD83D\uDC4D", label: "Like" },
@@ -263,7 +265,8 @@
     }
 
     function renderShareModal(video) {
-        var url = window.location.href;
+        var shareAction = window.TPI_VIDEO_PLAYER.actionFor(video);
+        var url = shareAction.href || window.location.href;
         var title = video.title || "TPI Video";
         var encodedUrl = encodeURIComponent(url);
         var encodedTitle = encodeURIComponent(title);
@@ -310,7 +313,8 @@
     }
 
     function renderEmbedModal(video) {
-        var url = window.location.href;
+        var shareAction = window.TPI_VIDEO_PLAYER.actionFor(video);
+        var url = shareAction.href || window.location.href;
         var embedCode = '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">Watch on The Paranormal Initiative</a>';
 
         return '<div class="video-embed-modal hidden" id="embed-modal">' +
@@ -364,6 +368,41 @@
                 isSaved = (data.saves || []).some(function (s) { return s.videoId === videoId; });
             }
         } catch (e) {}
+    }
+
+    function recordWatchHistory(video, source, position, completed) {
+        if (!currentUser) return;
+        var now = Date.now();
+        if (!completed && historyStarted && now - lastHistoryPostAt < 30000) return;
+        if (!completed && Number(position || 0) < 5) return;
+        historyStarted = true;
+        lastHistoryPostAt = now;
+        fetch("/api/video-history", {
+            method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                videoId: video.slug || video.id,
+                destinationUrl: source && source.url || "",
+                title: video.title,
+                thumbnail: video.thumbnail || "",
+                platform: video.platform || "",
+                lastPositionSeconds: Number(position || 0),
+                completed: Boolean(completed)
+            })
+        }).catch(function () {});
+    }
+
+    function wireWatchHistory(video, source) {
+        if (!currentUser) return;
+        if (source.kind === "APPROVED_EXTERNAL_WATCH") {
+            var externalLink = container.querySelector('.video-detail-actions a[href]');
+            if (externalLink) externalLink.addEventListener("click", function () { recordWatchHistory(video, source, 0, false); });
+            return;
+        }
+        if (source.kind !== "DIRECT_BROWSER_MEDIA") return;
+        var nativeVideo = container.querySelector(".tpi-native-video");
+        if (!nativeVideo) return;
+        nativeVideo.addEventListener("timeupdate", function () { recordWatchHistory(video, source, nativeVideo.currentTime, false); });
+        nativeVideo.addEventListener("ended", function () { recordWatchHistory(video, source, nativeVideo.duration || nativeVideo.currentTime, true); });
     }
 
     function renderVideo(video) {
@@ -462,7 +501,10 @@
 
         container.innerHTML = html;
 
-        if (canWatch) window.TPI_VIDEO_PLAYER.wire(container.querySelector(".video-player-area"));
+        if (canWatch) {
+            window.TPI_VIDEO_PLAYER.wire(container.querySelector(".video-player-area"));
+            wireWatchHistory(video, source);
+        }
 
         // Wire up event handlers
         if (canWatch) {
@@ -566,8 +608,10 @@
         var shareBtn = document.getElementById("share-btn");
         if (shareBtn) {
             shareBtn.addEventListener("click", function () {
+                var shareAction = window.TPI_VIDEO_PLAYER.actionFor(video);
+                var shareUrl = shareAction.href || window.location.href;
                 if (navigator.share) {
-                    navigator.share({ title: video.title, url: window.location.href }).catch(function () {});
+                    navigator.share({ title: video.title, url: shareUrl }).catch(function () {});
                 } else {
                     document.getElementById("share-modal").classList.remove("hidden");
                 }
@@ -577,7 +621,8 @@
         var copyLinkBtn = document.getElementById("copy-link-btn");
         if (copyLinkBtn) {
             copyLinkBtn.addEventListener("click", function () {
-                navigator.clipboard.writeText(window.location.href).then(function () {
+                var shareAction = window.TPI_VIDEO_PLAYER.actionFor(video);
+                navigator.clipboard.writeText(shareAction.href || window.location.href).then(function () {
                     document.getElementById("share-status").textContent = "Link copied!";
                 });
             });
@@ -647,7 +692,7 @@
                         method: "POST",
                         credentials: "same-origin",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ videoId: video.slug || video.id })
+                        body: JSON.stringify({ videoId: video.slug || video.id, destinationUrl: window.TPI_VIDEO_PLAYER.actionFor(video).href || "", title: video.title, description: video.description || "", thumbnail: video.thumbnail || "", category: video.category || "", duration: video.duration || "", publishedAt: video.publishedAt || "", platform: video.platform || "", channelSlug: video.channelSlug || "", channelName: video.channelName || "" })
                     });
                     if (res.ok) {
                         var data = await res.json();

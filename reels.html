@@ -563,47 +563,26 @@
     </div>
 </div>
 
+<script src="tpi-video-player.js?v=2"></script>
 <script>
 (function() {
     const feed = document.querySelector('[data-reels-feed]');
     if (!feed) return;
-
-    // Like button toggle
-    document.querySelectorAll('[data-reel-like]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            btn.classList.toggle('liked');
-            const icon = btn.querySelector('.reel-action-icon');
-            const count = btn.querySelector('.reel-action-count');
-            if (btn.classList.contains('liked')) {
-                icon.textContent = '♥';
-                count.textContent = '1';
-            } else {
-                icon.textContent = '♡';
-                count.textContent = '0';
-            }
-        });
-    });
-
-    // Progress bar animation (demo)
-    const progressBar = document.querySelector('[data-reel-progress]');
-    if (progressBar) {
-        let progress = 0;
-        const animate = () => {
-            progress += 0.5;
-            if (progress > 100) progress = 0;
-            progressBar.style.width = progress + '%';
-            requestAnimationFrame(animate);
-        };
-        animate();
+    function esc(value) { return String(value || '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c])); }
+    function emptyState() {
+        feed.innerHTML = '<div class="reel-item"><div class="reel-video-container"><div class="reels-empty"><div class="reels-empty-icon">▶</div><h2>TPI Reels</h2><p>No published Shorts or Reels are available yet. Creator Studio listings marked Shorts / Reel will appear here when published.</p><a class="portal-button" href="tpi-videos.html?member=1">Browse TPI Videos</a></div></div></div>';
     }
-
-    // Category tab switching
-    document.querySelectorAll('.reel-category-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.reel-category-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        });
-    });
+    function render(items) {
+        if (!items.length) { emptyState(); return; }
+        feed.innerHTML = items.map(function(video) {
+            var action = window.TPI_VIDEO_PLAYER.actionFor(video);
+            var href = action.href || 'tpi-video.html?id=' + encodeURIComponent(video.slug || video.id);
+            var media = action.source.kind === 'DIRECT_BROWSER_MEDIA' ? '<video src="' + esc(action.source.url) + '" controls playsinline preload="metadata" poster="' + esc(video.thumbnail || '') + '"></video>' : '<div class="reels-empty"><div class="reels-empty-icon">▶</div><p>' + esc(action.source.kind === 'APPROVED_EXTERNAL_WATCH' ? 'Watch this Short on ' + (video.platform || 'the original provider') : 'Playback is not available here.') + '</p></div>';
+            var target = action.href ? ' target="_blank" rel="noopener noreferrer"' : '';
+            return '<article class="reel-item"><div class="reel-video-container">' + media + '</div><div class="reel-overlay"><div class="reel-top-bar"><a class="reel-back-btn" href="tpi-videos.html?member=1">← Back</a><span class="reel-category-tab active">Shorts &amp; Reels</span></div><div class="reel-info"><div class="reel-author"><span class="reel-author-avatar-placeholder">T</span><div class="reel-author-info"><span class="reel-author-name">' + esc(video.channelName || 'The Paranormal Initiative') + '</span><span class="reel-author-title">' + esc(video.platform || 'TPI Video') + '</span></div></div><div class="reel-title">' + esc(video.title) + '</div><div class="reel-description">' + esc(video.description || '') + '</div><a class="portal-button" href="' + esc(href) + '"' + target + '>' + esc(action.label) + '</a></div></div><div class="reel-progress"><div class="reel-progress-bar" style="width:100%"></div></div></article>';
+        }).join('');
+    }
+    fetch('/api/tpi-videos?format=shorts&page=1&pageSize=24&sort=newest', {credentials:'same-origin'}).then(function(res){ if (!res.ok) throw Error(); return res.json(); }).then(function(data){ render(data.videos || []); }).catch(function(){ emptyState(); });
 })();
 </script>
 

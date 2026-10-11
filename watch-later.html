@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Watch Later | The Paranormal Initiative</title><link rel="stylesheet" href="style.css?v=89"><link rel="stylesheet" href="member-shell.css?v=62"></head>
+<body><div id="site-header"></div><div data-member-content hidden><main class="member-main-inner"><section class="portal-hero"><p class="portal-kicker">Your Library</p><h1>Watch Later</h1><p>Keep TPI creator videos and external discoveries in one private member list.</p></section><div id="watch-later-status" class="video-discovery-status" role="status"></div><div id="watch-later-list" class="video-grid"></div></main></div><div id="site-footer"></div><script src="includes.js"></script><script src="member-shell.js?v=55"></script><script>
+(function(){
+  var list=document.getElementById("watch-later-list"), status=document.getElementById("watch-later-status");
+  function esc(v){return String(v||"").replace(/[&<>\"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[c]})}
+  function render(items){
+    if(!items.length){list.innerHTML='<div class="video-empty-state"><h3>Your Watch Later list is empty.</h3><p>Use Save on a TPI video to keep it here.</p></div>';return;}
+    list.innerHTML=items.map(function(item){var href=item.sourceType==="discovered"?item.destinationUrl:"tpi-video.html?id="+encodeURIComponent(item.videoId||item.slug||"");var attrs=item.sourceType==="discovered"?' target="_blank" rel="noopener noreferrer"':'';return '<article class="video-card"><div class="video-card-media">'+(item.thumbnail?'<img src="'+esc(item.thumbnail)+'" alt="" loading="lazy">':'<div class="video-thumb-fallback"><div class="video-thumb-fallback-icon">▶</div></div>')+'</div><div class="video-card-copy"><div class="video-card-meta"><span class="video-card-category">'+esc(item.platform||"TPI Video")+'</span></div><h3>'+esc(item.title)+'</h3><a class="portal-button" href="'+esc(href)+'"'+attrs+'>Watch</a><button class="portal-button portal-button-secondary" type="button" data-remove="'+esc(item.videoId)+'">Remove</button></div></article>'}).join("");
+    list.querySelectorAll("[data-remove]").forEach(function(btn){btn.addEventListener("click",function(){fetch("/api/video-saves",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({videoId:btn.dataset.remove})}).then(function(){load()})})});
+  }
+  function load(){status.textContent="Loading saved videos...";fetch("/api/video-saves",{credentials:"same-origin"}).then(function(r){if(!r.ok)throw Error();return r.json()}).then(function(d){status.textContent="";render(d.saves||[])}).catch(function(){status.textContent="Unable to load saved videos."})}
+  load();
+})();</script></body></html>

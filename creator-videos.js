@@ -13,11 +13,11 @@
     return data;
   }
   function say(message) { status.textContent = message || ""; }
-  function resetForm() { form.reset(); $("creator-video-slug").value = ""; $("creator-video-category").value = "Applied Paranormal Research and Studies"; $("creator-video-access").value = "members"; }
+  function resetForm() { form.reset(); $("creator-video-slug").value = ""; $("creator-video-category").value = "Applied Paranormal Research and Studies"; $("creator-video-format").value = "regular"; $("creator-video-access").value = "members"; }
   function loadInto(video) {
     $("creator-video-slug").value = video.slug || ""; $("creator-video-title").value = video.title || ""; $("creator-video-description").value = video.description || "";
     $("creator-video-url").value = video.videoUrl || ""; $("creator-video-embed").value = video.embedUrl || ""; $("creator-video-thumbnail").value = video.thumbnail || "";
-    $("creator-video-category").value = video.category || "Applied Paranormal Research and Studies"; $("creator-video-tags").value = (video.tags || []).join(", "); $("creator-video-access").value = video.viewingAccess || "members";
+    $("creator-video-category").value = video.category || "Applied Paranormal Research and Studies"; $("creator-video-format").value = video.format || "regular"; $("creator-video-tags").value = (video.tags || []).join(", "); $("creator-video-access").value = video.viewingAccess || "members";
     window.scrollTo({ top: 0, behavior: "smooth" }); say("Editing " + (video.title || "video"));
   }
   function render() {
@@ -36,7 +36,7 @@
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const slug = $("creator-video-slug").value;
-    const payload = { title: $("creator-video-title").value, description: $("creator-video-description").value, videoUrl: $("creator-video-url").value, embedUrl: $("creator-video-embed").value, thumbnail: $("creator-video-thumbnail").value, category: $("creator-video-category").value, tags: $("creator-video-tags").value, viewingAccess: $("creator-video-access").value };
+    const payload = { title: $("creator-video-title").value, description: $("creator-video-description").value, videoUrl: $("creator-video-url").value, embedUrl: $("creator-video-embed").value, thumbnail: $("creator-video-thumbnail").value, category: $("creator-video-category").value, format: $("creator-video-format").value, tags: $("creator-video-tags").value, viewingAccess: $("creator-video-access").value };
     try { const data = await request(slug ? "/api/tpi-videos/" + encodeURIComponent(slug) : "/api/tpi-videos", { method: slug ? "PUT" : "POST", body: JSON.stringify(payload) }); say("Draft saved."); resetForm(); await load(); } catch (error) { say(error.message); }
   });
   $("creator-channel-form").addEventListener("submit", async event => { event.preventDefault(); try { await request("/api/tpi-channels/me", { method: "PUT", body: JSON.stringify({ displayName: $("creator-channel-name").value, slug: $("creator-channel-slug").value, description: $("creator-channel-description").value, artworkUrl: $("creator-channel-artwork").value, visibility: $("creator-channel-visibility").value }) }); say("Channel saved."); await load(); } catch (error) { say(error.message); } });

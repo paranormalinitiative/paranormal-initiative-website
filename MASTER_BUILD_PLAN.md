@@ -1,5 +1,25 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-VIDEOS-009 — Video platform completion batch — October 11, 2026
+
+The 009 baseline audit found that TPI Videos already has a provider-aware catalog,
+watch page, creator channels, comments, reactions, follows, and StudioFlow/TPI
+broadcast identity integration, while Reels was still a static demonstration and
+Community Feed link previews had a confirmed production HTTP 500 from an undefined
+handler. This batch adds SSRF-bounded universal link previews, preserves original
+external routing for cards and shares, rotates the featured item in browser-local
+state, removes the legacy homepage cards, adds Regular vs Shorts/Reels format
+navigation, explicit responsive grid breakpoints, visibility-aware catalog polling,
+additive member Watch Later and Watch History storage/pages, and an API-backed
+Shorts/Reels browse path. Existing 008 playback routing, StudioFlow, `/studio/`
+protection, `/live-video` Coming Soon, creator-owned recording storage, R2 usage,
+and unrelated dirty files remain preserved. Focused provider regression passed
+22/22, link-preview regression passed 7/7, syntax and isolated schema checks
+passed. The existing full local API E2E runner remains blocked before assertions
+by its pre-existing first migration failure. Full owner-authenticated, external
+provider, physical-device, long-duration, and complete Reel-creation verification
+remain explicit limitations. Evidence is in `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-009_*`.
+
 ## TPI-VIDEOS-008 — Provider-aware playback integration — October 11, 2026
 
 The existing TPI Videos playback path now distinguishes intentional external
