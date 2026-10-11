@@ -52,10 +52,13 @@ Public `/live-video` remains Coming Soon and the owner-only Creator Studio
 gate remains in force.
 
 Release evidence is recorded in the preceding 016 report and the current TPI
-release records. The protected TPI integration used commit `a86c9d7` and
-Cloudflare deployments `2cff61b2-a8ce-43b6-9414-4611e83aaf36` (code) and
-`45b58281-9937-4f45-ae99-ee462e93127b` (documentation sync). No production
-database, R2 recording storage, or unrelated TPI work was changed.
+release records. This continuation is committed in TPI as `ef22ec3` and the
+authoritative clean-archive Cloudflare deployment is
+`f8f5631d-6c54-4bbc-9416-18de74564d54`. An earlier shared-checkout deploy
+created version `1eed9886-a043-451f-b27a-6c7a53793783`; it was immediately
+superseded by the clean-archive deployment after Wrangler reported the dirty
+checkout's additional asset set. No production database, R2 recording
+storage, or unrelated source file was intentionally changed by this batch.
 
 ## Official capability references
 
