@@ -34,8 +34,8 @@ accessibility automation, and long-duration streaming.
 
 - StudioFlow source commit: `8437b07`, local-only; no configured remote.
 - TPI source baseline: `3e3b326` before this audit change.
-- TPI-VIDEOS-006 audit commit and push: to be recorded after documentation
-  review.
+- TPI-VIDEOS-006 audit commit and push: `9b8c98d` (documentation, regression
+  coverage, and master-plan update).
 - Cloudflare: no new runtime deployment for this docs/test-only batch.
 
 ## Next phase
