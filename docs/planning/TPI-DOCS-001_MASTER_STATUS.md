@@ -220,3 +220,8 @@ dedicated headers. Existing auth, role gating, admin/settings logic, and
 ordinary member pages were preserved. Focused source regressions pass;
 authenticated visual acceptance and release identifiers are recorded in
 [`docs/audits/2026-10-11/tpi-ui/TPI-UI-001/`](../audits/2026-10-11/tpi-ui/TPI-UI-001/).
+
+The verified release commit is `89e8bff`; Cloudflare Worker version
+`68ad3a56-459c-4ceb-80f2-6cef9f1887db` is live. Anonymous production smoke
+passed 10/10. The remaining authenticated visual owner review is not implied by
+the anonymous smoke result.

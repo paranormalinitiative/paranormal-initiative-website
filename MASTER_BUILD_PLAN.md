@@ -580,3 +580,8 @@ logic remain in place, while ordinary member pages retain the shared member
 shell. Focused route/layout and JavaScript syntax regressions pass. Production
 deployment and authenticated owner review are tracked in
 `docs/audits/2026-10-11/tpi-ui/TPI-UI-001/`.
+
+Commit `89e8bff` was pushed to `origin/main` and deployed to Cloudflare Worker
+version `68ad3a56-459c-4ceb-80f2-6cef9f1887db`. Read-only anonymous production
+smoke passed 10/10. Authenticated desktop/tablet/phone owner review remains the
+final acceptance gate.
