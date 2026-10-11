@@ -2,6 +2,42 @@
 
 This is a gated plan, not an authorization to start a large implementation.
 
+## TPI-VIDEOS-004 implementation status — 2026-10-11
+
+The broadcast-integration batch is implemented as a bounded, additive TPI-side
+foundation. It adds stable creator-owned broadcast identity, draft-first
+scheduling, explicit public listing publication, lifecycle synchronization,
+availability filters, playback/replay metadata, and authorization checks.
+Existing live comments/reactions and existing StudioFlow registration paths are
+reused. StudioFlow itself remains browser-local and was not rebuilt or silently
+treated as server-synchronized.
+
+The local D1-backed API suite passed 199/199 checks after one repaired schema
+defect. Actual provider media delivery, playback decode, StudioFlow browser sync,
+authenticated production owner mutations, and physical-device behavior remain
+unverified. See the TPI-VIDEOS-004 records in this directory, especially the
+test matrix, defects report, and release report.
+
+Detailed records:
+
+- `TPI-VIDEOS-004_BASELINE.md`
+- `TPI-VIDEOS-004_STUDIOFLOW_INTEGRATION.md`
+- `TPI-VIDEOS-004_BROADCAST_IDENTITY.md`
+- `TPI-VIDEOS-004_SCHEDULING.md`
+- `TPI-VIDEOS-004_LIFECYCLE.md`
+- `TPI-VIDEOS-004_PLAYBACK_AVAILABILITY.md`
+- `TPI-VIDEOS-004_LIVE_DISCOVERY.md`
+- `TPI-VIDEOS-004_LIVE_INTERACTIONS.md`
+- `TPI-VIDEOS-004_NOTIFICATIONS.md`
+- `TPI-VIDEOS-004_REPLAY_MANAGEMENT.md`
+- `TPI-VIDEOS-004_CREATOR_OWNERSHIP.md`
+- `TPI-VIDEOS-004_SECURITY.md`
+- `TPI-VIDEOS-004_DATABASE_CHANGES.md`
+- `TPI-VIDEOS-004_TEST_MATRIX.md`
+- `TPI-VIDEOS-004_DEFECTS_AND_REPAIRS.md`
+- `TPI-VIDEOS-004_PRODUCTION_VERIFICATION.md`
+- `TPI-VIDEOS-004_RELEASE_REPORT.md`
+
 ## TPI-VIDEOS-003 implementation status — 2026-10-11
 
 The discovery/social batch is implemented in the canonical source as a bounded

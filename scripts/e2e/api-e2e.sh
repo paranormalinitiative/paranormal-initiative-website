@@ -484,6 +484,46 @@ check "member can unfollow a creator channel" 200 "$R" "d.get('following') is Fa
 R=$(req GET "/tpi-videos?following=true" tok-a)
 check "unfollow removes channel videos from following discovery" 200 "$R" "not any(v.get('slug')=='e2e-video-a' for v in d.get('videos',[]))"
 
+######################## 6B. TPI BROADCAST IDENTITY / LISTING LIFECYCLE ########################
+echo "== TPI BROADCAST IDENTITY / LISTING LIFECYCLE =="
+R=$(req POST /tpi-broadcasts '' '{"broadcastId":"e2e-broadcast-004","title":"Anonymous broadcast"}')
+check "anonymous cannot create a broadcast listing" 401 "$R"
+R=$(req POST /tpi-broadcasts tok-a '{"broadcastId":"e2e-broadcast-004","title":"Member broadcast"}')
+check "ordinary member cannot create a broadcast listing" 403 "$R"
+BROADCAST_BODY='{"broadcastId":"e2e-broadcast-004","title":"E2E Scheduled Broadcast","description":"Server-side listing integration fixture","category":"Live Streams","scheduledAt":"2030-01-02T15:00:00Z","scheduledTimezone":"America/New_York","visibility":"public","tags":["e2e","broadcast"]}'
+R=$(req POST /tpi-broadcasts tok-contrib "$BROADCAST_BODY")
+check "creator creates an unpublished broadcast identity" 201 "$R" "d.get('broadcast',{}).get('id')=='e2e-broadcast-004' and d.get('broadcast',{}).get('listingStatus')=='draft' and d.get('broadcast',{}).get('availability')=='upcoming'"
+R=$(req GET "/tpi-broadcasts?status=upcoming" '')
+check "unpublished broadcast is absent from public upcoming discovery" 200 "$R" "not any(b.get('id')=='e2e-broadcast-004' for b in d.get('broadcasts',[]))"
+R=$(req GET /tpi-broadcasts/e2e-broadcast-004 tok-a)
+check "member cannot read creator broadcast draft" 404 "$R"
+R=$(req GET /tpi-broadcasts/e2e-broadcast-004 tok-contrib)
+check "creator can reopen own broadcast draft" 200 "$R" "d.get('broadcast',{}).get('listingStatus')=='draft'"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-004/publish tok-contrib '{"visibility":"public"}')
+check "creator explicitly publishes scheduled listing" 200 "$R" "d.get('broadcast',{}).get('listingStatus')=='published' and d.get('broadcast',{}).get('availability')=='upcoming'"
+R=$(req GET "/tpi-broadcasts?status=upcoming" '')
+check "published scheduled broadcast appears in public upcoming discovery" 200 "$R" "any(b.get('id')=='e2e-broadcast-004' and b.get('listingStatus')=='published' for b in d.get('broadcasts',[]))"
+R=$(req PUT /tpi-broadcasts/e2e-broadcast-004 tok-b '{"title":"Unauthorized edit"}')
+check "second member cannot edit creator broadcast" 403 "$R"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-004/playback tok-contrib '{"playbackUrl":"https://example.invalid/live"}')
+check "unsupported broadcast playback provider is rejected" 400 "$R"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-004/playback tok-contrib '{"playbackUrl":"https://www.youtube.com/watch?v=dQw4w9WgXcQ"}')
+check "creator can register approved playback metadata" 200 "$R" "d.get('broadcast',{}).get('playbackProvider')=='youtube' and d.get('broadcast',{}).get('playbackVerified') is False"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-004/status tok-contrib '{"status":"live"}')
+check "creator can transition a ready broadcast to live" 200 "$R" "d.get('broadcast',{}).get('status')=='live' and d.get('broadcast',{}).get('playbackVerified') is False"
+R=$(req GET "/tpi-broadcasts?status=live" '')
+check "unverified live playback is excluded from public live discovery" 200 "$R" "not any(b.get('id')=='e2e-broadcast-004' for b in d.get('broadcasts',[]))"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-004/status tok-contrib '{"status":"ended"}')
+check "creator can end the broadcast" 200 "$R" "d.get('broadcast',{}).get('status')=='ended'"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-004/replay tok-contrib '{"replayUrl":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","publish":true}')
+check "creator explicitly publishes replay metadata" 200 "$R" "d.get('broadcast',{}).get('replayPublished') is True and d.get('broadcast',{}).get('playbackVerified') is False"
+R=$(req GET "/tpi-broadcasts?status=replay" '')
+check "published replay appears in public replay discovery" 200 "$R" "any(b.get('id')=='e2e-broadcast-004' and b.get('replayPublished') is True for b in d.get('broadcasts',[]))"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-004/unpublish tok-contrib '{}')
+check "creator can remove a broadcast listing without deleting its identity" 200 "$R" "d.get('broadcast',{}).get('listingStatus')=='draft'"
+R=$(req GET /tpi-broadcasts/e2e-broadcast-004 '')
+check "unpublished broadcast detail is hidden from public" 404 "$R"
+
 ######################## 6. FEED NOTIFICATION PREFERENCE ########################
 echo "== FEED NOTIFICATION TYPES =="
 R=$(req POST /notifications/preferences tok-b '{"prefs":{"admin":true,"posts":false,"education":true,"videos":true,"photos":true,"chat":true}}')

@@ -1,5 +1,20 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-VIDEOS-004 — Broadcast identity and StudioFlow integration foundation — October 11, 2026
+
+The canonical TPI source now contains an additive broadcast/listing boundary:
+creator-owned stable broadcast IDs, draft-first scheduling, explicit listing
+publication, upcoming/live/ended/replay discovery, validated playback/replay
+references, lifecycle synchronization with existing StudioFlow registration
+routes, and existing live interaction reuse. No StudioFlow rebuild, recording
+upload, R2 change, public livestream launch, or duplicate social identity was
+introduced. Local D1 replay and the full API regression suite passed 199/199
+after one repaired schema mismatch. StudioFlow browser-local scheduling is not
+automatically visible to TPI; the explicit browser bridge, real provider media,
+authenticated production owner mutations, and physical-device behavior remain
+unverified. Detailed evidence is in
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-004_*`.
+
 ## TPI-ROADMAP-002 — Official development sequence — October 11, 2026
 
 This is the owner-approved sequence for existing functionality before major

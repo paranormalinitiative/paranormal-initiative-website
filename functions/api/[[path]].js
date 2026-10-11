@@ -142,6 +142,11 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/video-comments") return requireMember(request, env, user => handleCreateVideoComment(request, env, user));
     if (request.method === "POST" && path === "/studio/live-broadcasts") return requireAdmin(request, env, user => handleRegisterLiveBroadcast(request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/live-broadcasts\/[^/]+\/(start|stop)$/)) return requireAdmin(request, env, user => handleSetLiveBroadcastStatus(path, request, env, user));
+    if (request.method === "GET" && path === "/tpi-broadcasts") return handleListTpiBroadcasts(request, env);
+    if (request.method === "POST" && path === "/tpi-broadcasts") return requireContributor(request, env, user => handleCreateTpiBroadcast(request, env, user));
+    if (request.method === "GET" && path.match(/^\/tpi-broadcasts\/[^/]+$/)) return handleGetTpiBroadcast(path, request, env);
+    if (request.method === "PUT" && path.match(/^\/tpi-broadcasts\/[^/]+$/)) return requireContributor(request, env, user => handleUpdateTpiBroadcast(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/tpi-broadcasts\/[^/]+\/(publish|unpublish|cancel|status|playback|replay)$/)) return requireContributor(request, env, user => handleTpiBroadcastAction(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/events$/)) return requireMember(request, env, user => handleLiveBroadcastEvents(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/comments$/)) return requireMember(request, env, user => handleListLiveComments(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/live-broadcasts\/[^/]+\/comments$/)) return requireMember(request, env, user => handleCreateLiveComment(path, request, env, user));
@@ -2230,6 +2235,17 @@ function liveBroadcastPayload(row) {
     videoSlug: row.videoSlug || null,
     title: row.title,
     status: row.status,
+    scheduledAt: row.scheduled_at || null,
+    scheduledTimezone: row.scheduled_timezone || null,
+    visibility: row.visibility || "private",
+    playbackProvider: row.playback_provider || null,
+    playbackUrl: row.playback_verified ? (row.playback_url || null) : null,
+    playbackVerified: Boolean(row.playback_verified),
+    replayUrl: row.replay_url || null,
+    replayPublished: Boolean(row.replay_published),
+    moderationStatus: row.moderation_status || "approved",
+    syncVersion: Number(row.sync_version || 1),
+    lastSyncAt: row.last_sync_at || null,
     startedAt: row.started_at || null,
     endedAt: row.ended_at || null,
     createdAt: row.created_at,
@@ -2261,6 +2277,34 @@ function liveModerator(user, broadcast) {
   return Boolean(user && broadcast && (
     broadcast.creator_id === user.id || ["owner", "admin"].includes(user.role)
   ));
+}
+
+async function syncTpiVideoFromLiveBroadcast(env, broadcastId, statusOverride = null) {
+  const broadcast = await getLiveBroadcast(env, broadcastId);
+  if (!broadcast) return null;
+  const now = new Date().toISOString();
+  const broadcastStatus = statusOverride || broadcast.status;
+  const actualStartedAt = broadcastStatus === "live" ? (broadcast.started_at || now) : (broadcast.actual_started_at || null);
+  const actualEndedAt = ["ended", "cancelled"].includes(broadcastStatus) ? (broadcast.ended_at || now) : (broadcast.actual_ended_at || null);
+  await env.TPI_DB.prepare(`
+    UPDATE tpi_videos
+    SET broadcast_status = ?, is_live = CASE WHEN ? = 'live' AND playback_verified = 1 AND status = 'published' THEN 1 ELSE 0 END,
+        live_started_at = CASE WHEN ? = 'live' AND playback_verified = 1 THEN COALESCE(live_started_at, ?) ELSE live_started_at END,
+        actual_started_at = COALESCE(actual_started_at, ?),
+        actual_ended_at = CASE WHEN ? IN ('ended', 'cancelled') THEN COALESCE(actual_ended_at, ?) ELSE actual_ended_at END,
+        scheduled_at = COALESCE(?, scheduled_at), scheduled_timezone = COALESCE(?, scheduled_timezone),
+        playback_provider = COALESCE(?, playback_provider), playback_url = COALESCE(?, playback_url),
+        playback_verified = COALESCE(?, playback_verified), replay_url = COALESCE(?, replay_url),
+        replay_published = COALESCE(?, replay_published), updated_at = ?, sync_version = sync_version + 1,
+        last_sync_at = ?
+    WHERE broadcast_id = ? OR id = ?
+  `).bind(
+    broadcastStatus, broadcastStatus, broadcastStatus, actualStartedAt, actualStartedAt,
+    broadcastStatus, actualEndedAt, broadcast.scheduled_at || null, broadcast.scheduled_timezone || null,
+    broadcast.playback_provider || null, broadcast.playback_url || null, Number(broadcast.playback_verified || 0),
+    broadcast.replay_url || null, Number(broadcast.replay_published || 0), now, now, broadcast.id, broadcast.video_id || ""
+  ).run();
+  return broadcast;
 }
 
 async function listLiveCommentsForBroadcast(env, broadcast, user, options = {}) {
@@ -2324,13 +2368,21 @@ async function handleRegisterLiveBroadcast(request, env, user) {
   const title = clean(data.title || "Live broadcast").slice(0, 240);
   const videoId = clean(data.videoId) || null;
   const requestedStatus = clean(data.status).toLowerCase();
-  const status = ["ready", "live", "ended", "cancelled"].includes(requestedStatus) ? requestedStatus : "ready";
   if (!id) return json({ error: "broadcastId is required." }, 400);
   if (!title) return json({ error: "Broadcast title is required." }, 400);
 
   const existing = await env.TPI_DB.prepare("SELECT * FROM live_broadcasts WHERE id = ?").bind(id).first();
   if (existing && existing.creator_id !== user.id && !["owner", "admin"].includes(user.role)) {
     return json({ error: "You cannot modify this broadcast." }, 403);
+  }
+  const status = ["ready", "live", "ended", "cancelled"].includes(requestedStatus)
+    ? requestedStatus
+    : (existing?.status || "ready");
+  if (existing && requestedStatus && existing.status !== requestedStatus) {
+    const allowed = (existing.status === "ready" && ["live", "cancelled"].includes(requestedStatus))
+      || (existing.status === "live" && requestedStatus === "ended")
+      || (existing.status === requestedStatus);
+    if (!allowed) return json({ error: `Invalid broadcast transition from ${existing.status} to ${requestedStatus}.` }, 409);
   }
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
@@ -2355,7 +2407,9 @@ async function handleRegisterLiveBroadcast(request, env, user) {
     now
   ).run();
   const broadcast = await env.TPI_DB.prepare("SELECT lb.*, tv.slug AS videoSlug FROM live_broadcasts lb LEFT JOIN tpi_videos tv ON tv.id = lb.video_id WHERE lb.id = ?").bind(id).first();
-  return json({ ok: true, broadcast: liveBroadcastPayload(broadcast) }, 200, { "Cache-Control": "no-store" });
+  await syncTpiVideoFromLiveBroadcast(env, id, status);
+  const syncedBroadcast = await env.TPI_DB.prepare("SELECT lb.*, tv.slug AS videoSlug FROM live_broadcasts lb LEFT JOIN tpi_videos tv ON tv.id = lb.video_id WHERE lb.id = ?").bind(id).first();
+  return json({ ok: true, broadcast: liveBroadcastPayload(syncedBroadcast || broadcast) }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleSetLiveBroadcastStatus(path, request, env, user) {
@@ -2366,6 +2420,9 @@ async function handleSetLiveBroadcastStatus(path, request, env, user) {
   if (!liveModerator(user, broadcast)) return json({ error: "You cannot modify this broadcast." }, 403);
   const status = action === "start" ? "live" : action === "stop" ? "ended" : "";
   if (!status) return json({ error: "Unsupported broadcast status action." }, 400);
+  if ((broadcast.status === "ready" && status !== "live") || (broadcast.status === "live" && status !== "ended") || ["ended", "cancelled"].includes(broadcast.status)) {
+    if (broadcast.status !== status) return json({ error: `Invalid broadcast transition from ${broadcast.status} to ${status}.` }, 409);
+  }
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
     UPDATE live_broadcasts
@@ -2374,6 +2431,7 @@ async function handleSetLiveBroadcastStatus(path, request, env, user) {
         updated_at = ?
     WHERE id = ?
   `).bind(status, status, now, status, now, now, broadcast.id).run();
+  await syncTpiVideoFromLiveBroadcast(env, broadcast.id, status);
   const updated = await getLiveBroadcast(env, broadcast.id);
   return json({ ok: true, broadcast: liveBroadcastPayload(updated) }, 200, { "Cache-Control": "no-store" });
 }
@@ -2604,6 +2662,17 @@ function tpiVideoPayload(row) {
     duration: row.duration, viewingAccess: row.viewing_access || "members", status: row.status,
     channelId: row.channel_id || null, channelSlug: row.channelSlug || null,
     channelName: row.channelName || null,
+    broadcastId: row.broadcast_id || null,
+    broadcastStatus: row.broadcast_status || null,
+    scheduledAt: row.scheduled_at || null,
+    scheduledTimezone: row.scheduled_timezone || null,
+    playbackProvider: row.playback_provider || null,
+    playbackUrl: row.playback_verified ? (row.playback_url || "") : "",
+    playbackVerified: Boolean(row.playback_verified),
+    replayUrl: row.replay_url || null,
+    replayPublished: Boolean(row.replay_published),
+    actualStartedAt: row.actual_started_at || null,
+    actualEndedAt: row.actual_ended_at || null,
     sourceType: row.sourceType || (row.created_by ? "creator" : "discovered"),
     sourceName: row.sourceName || row.platform || null,
     creator: row.created_by ? { id: row.created_by, username: row.creatorUsername || "", displayName: row.creatorDisplayName || "", title: row.creatorTitle || "", photoUrl: row.creatorPhoto || "" } : null,
@@ -2644,6 +2713,285 @@ async function ensureTpiChannel(env, user) {
     VALUES (?, ?, ?, ?, '', '', 'public', ?, ?)`).bind(id, user.id, slug, cleanVideoText(user.display_name || user.username, 120), now, now).run();
   channel = await env.TPI_DB.prepare("SELECT * FROM tpi_video_channels WHERE id = ?").bind(id).first();
   return channel;
+}
+
+function tpiBroadcastListingSql() {
+  return `SELECT tv.*, lb.id AS liveBroadcastId, lb.creator_id AS liveCreatorId,
+    lb.video_id AS liveVideoId, lb.title AS liveTitle, lb.status AS liveStatus,
+    lb.scheduled_at AS liveScheduledAt, lb.scheduled_timezone AS liveScheduledTimezone,
+    lb.visibility AS liveVisibility, lb.playback_provider AS livePlaybackProvider,
+    lb.playback_url AS livePlaybackUrl, lb.playback_verified AS livePlaybackVerified,
+    lb.replay_url AS liveReplayUrl, lb.replay_published AS liveReplayPublished,
+    lb.moderation_status AS liveModerationStatus, lb.started_at AS liveStartedAt,
+    lb.ended_at AS liveEndedAt, lb.created_at AS liveCreatedAt, lb.updated_at AS liveUpdatedAt,
+    ch.slug AS channelSlug, ch.display_name AS channelName, ch.description AS channelDescription,
+    ch.artwork_url AS channelArtwork, c.username AS creatorUsername, c.display_name AS creatorDisplayName,
+    c.title AS creatorTitle, c.photo_url AS creatorPhoto
+    FROM live_broadcasts lb
+    JOIN tpi_videos tv ON tv.broadcast_id = lb.id
+    LEFT JOIN tpi_video_channels ch ON ch.id = tv.channel_id
+    LEFT JOIN contributors c ON c.id = tv.created_by`;
+}
+
+function tpiBroadcastPayload(row, includePrivate = false) {
+  if (!row) return null;
+  const isJoined = Boolean(row.liveBroadcastId);
+  const broadcast = isJoined ? {
+    id: row.liveBroadcastId, creator_id: row.liveCreatorId, video_id: row.liveVideoId,
+    title: row.liveTitle, status: row.liveStatus, scheduled_at: row.liveScheduledAt,
+    scheduled_timezone: row.liveScheduledTimezone, visibility: row.liveVisibility,
+    playback_provider: row.livePlaybackProvider, playback_url: row.livePlaybackUrl,
+    playback_verified: row.livePlaybackVerified, replay_url: row.liveReplayUrl,
+    replay_published: row.liveReplayPublished, moderation_status: row.liveModerationStatus,
+    started_at: row.liveStartedAt, ended_at: row.liveEndedAt, created_at: row.liveCreatedAt,
+    updated_at: row.liveUpdatedAt
+  } : row.broadcast;
+  const video = isJoined ? row : row.video;
+  if (!broadcast || !video) return null;
+  const playbackVerified = Boolean(broadcast.playback_verified || video.playback_verified);
+  const replayPublished = Boolean(broadcast.replay_published || video.replay_published);
+  const playbackUrl = playbackVerified ? (broadcast.playback_url || video.video_url || "") : "";
+  const replayUrl = replayPublished ? (broadcast.replay_url || video.replay_url || "") : "";
+  const lifecycle = broadcast.status || "ready";
+  const availability = lifecycle === "live" ? (playbackVerified ? "live" : "live_unverified")
+    : lifecycle === "ended" ? (replayPublished ? "replay" : "ended")
+      : lifecycle === "cancelled" ? "cancelled"
+        : (broadcast.scheduled_at ? "upcoming" : "ready");
+  return {
+    id: broadcast.id,
+    listingId: video.id,
+    slug: video.slug,
+    creatorId: broadcast.creator_id || video.created_by,
+    channelId: video.channel_id || null,
+    channelSlug: video.channelSlug || null,
+    channelName: video.channelName || null,
+    title: video.title || broadcast.title,
+    description: video.description || "",
+    category: video.category || "Live Streams",
+    tags: video.tags ? video.tags.split(",").map(tag => tag.trim()).filter(Boolean) : [],
+    listingStatus: video.status,
+    status: lifecycle,
+    availability,
+    scheduledAt: broadcast.scheduled_at || video.scheduled_at || null,
+    scheduledTimezone: broadcast.scheduled_timezone || video.scheduled_timezone || null,
+    visibility: broadcast.visibility || (video.viewing_access === "public" ? "public" : "members"),
+    playbackProvider: broadcast.playback_provider || video.playback_provider || video.platform || null,
+    playbackUrl: includePrivate || playbackVerified ? playbackUrl : "",
+    playbackVerified,
+    replayUrl: includePrivate || replayPublished ? replayUrl : "",
+    replayPublished,
+    moderationStatus: broadcast.moderation_status || "approved",
+    startedAt: broadcast.started_at || video.actual_started_at || null,
+    endedAt: broadcast.ended_at || video.actual_ended_at || null,
+    video: tpiVideoPayload(video),
+    creator: video.created_by ? { id: video.created_by, username: video.creatorUsername || "", displayName: video.creatorDisplayName || "", title: video.creatorTitle || "", photoUrl: video.creatorPhoto || "" } : null,
+    createdAt: broadcast.created_at || video.created_at,
+    updatedAt: broadcast.updated_at || video.updated_at
+  };
+}
+
+async function findTpiBroadcast(env, identifier) {
+  const broadcast = await getLiveBroadcast(env, identifier);
+  if (!broadcast) return null;
+  const video = await env.TPI_DB.prepare(tpiVideoSelectSql() + " WHERE tv.broadcast_id = ? OR tv.id = ? LIMIT 1")
+    .bind(broadcast.id, broadcast.video_id || "").first();
+  return { broadcast, video };
+}
+
+function cleanBroadcastId(value) {
+  const id = clean(value);
+  return /^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$/.test(id) ? id : "";
+}
+
+function parseBroadcastSchedule(value) {
+  const raw = clean(value);
+  if (!raw) return { value: null };
+  const time = Date.parse(raw);
+  if (!Number.isFinite(time)) return { error: "scheduledAt must be a valid date and time." };
+  return { value: new Date(time).toISOString() };
+}
+
+function normalizeBroadcastVisibility(value, fallback = "private") {
+  return ["private", "members", "public"].includes(value) ? value : fallback;
+}
+
+function validateBroadcastPlayback(value) {
+  const raw = clean(value);
+  if (!raw) return { ok: true, url: "", provider: "" };
+  const source = validateVideoSource(raw, "");
+  if (!source.ok) return { ok: false, error: source.error };
+  return { ok: true, url: source.videoUrl, provider: source.provider };
+}
+
+function broadcastOwnerOrAdmin(record, user) {
+  return Boolean(record && user && (record.broadcast.creator_id === user.id || ["owner", "admin"].includes(user.role)));
+}
+
+async function handleListTpiBroadcasts(request, env) {
+  const url = new URL(request.url);
+  const user = await getSessionUser(request, env);
+  const requestedStatus = clean(url.searchParams.get("status")).toLowerCase() || "all";
+  const mine = url.searchParams.get("mine") === "true" || url.searchParams.get("mine") === "1";
+  const page = Math.max(parseInt(url.searchParams.get("page") || "1", 10) || 1, 1);
+  const pageSize = Math.min(Math.max(parseInt(url.searchParams.get("pageSize") || "24", 10) || 24, 1), 48);
+  const offset = (page - 1) * pageSize;
+  if (mine && (!user || !["owner", "admin", "contributor"].includes(user.role))) return json({ error: "Contributor login required." }, 401);
+  const params = [];
+  let query = tpiBroadcastListingSql() + " WHERE 1=1";
+  if (mine) {
+    query += " AND tv.created_by = ?";
+    params.push(user.id);
+  } else {
+    query += " AND tv.status = 'published' AND lb.moderation_status = 'approved' AND (lb.visibility = 'public'";
+    if (user) { query += " OR lb.visibility = 'members'"; }
+    query += ")";
+  }
+  const now = new Date().toISOString();
+  if (requestedStatus === "upcoming") query += " AND lb.status = 'ready' AND lb.scheduled_at IS NOT NULL AND lb.scheduled_at > ?", params.push(now);
+  else if (requestedStatus === "live") query += " AND lb.status = 'live' AND COALESCE(lb.playback_verified, 0) = 1";
+  else if (requestedStatus === "ended") query += " AND lb.status = 'ended' AND COALESCE(lb.replay_published, 0) = 0";
+  else if (requestedStatus === "replay") query += " AND lb.status = 'ended' AND COALESCE(lb.replay_published, 0) = 1";
+  else if (requestedStatus !== "all") return json({ error: "Unsupported broadcast status filter." }, 400);
+  query += " ORDER BY CASE WHEN lb.status = 'live' THEN 0 WHEN lb.status = 'ready' THEN 1 ELSE 2 END, COALESCE(lb.scheduled_at, lb.updated_at) ASC LIMIT ? OFFSET ?";
+  params.push(pageSize + 1, offset);
+  const { results } = await env.TPI_DB.prepare(query).bind(...params).all();
+  const rows = results || [];
+  const hasMore = rows.length > pageSize;
+  return json({ broadcasts: rows.slice(0, pageSize).map(row => tpiBroadcastPayload(row, mine)), page, pageSize, hasMore, nextPage: hasMore ? page + 1 : null }, 200, { "Cache-Control": mine ? "private, no-store" : "no-store" });
+}
+
+async function handleGetTpiBroadcast(path, request, env) {
+  const identifier = clean(decodeURIComponent(path.replace(/^\/tpi-broadcasts\//, "")));
+  const record = await findTpiBroadcast(env, identifier);
+  if (!record || !record.video) return json({ error: "Broadcast not found." }, 404, { "Cache-Control": "no-store" });
+  const user = await getSessionUser(request, env);
+  const owner = broadcastOwnerOrAdmin(record, user);
+  const publicReadable = record.video.status === "published" && record.broadcast.moderation_status === "approved"
+    && (record.broadcast.visibility === "public" || Boolean(user));
+  if (!owner && !publicReadable) return json({ error: "Broadcast not found." }, 404, { "Cache-Control": "no-store" });
+  return json({ broadcast: tpiBroadcastPayload({ broadcast: record.broadcast, video: record.video }, owner) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleCreateTpiBroadcast(request, env, user) {
+  const data = await readJson(request);
+  const id = cleanBroadcastId(data.broadcastId || data.id);
+  const title = cleanVideoText(data.title || "", 180);
+  if (!id) return json({ error: "broadcastId must contain only letters, numbers, dots, underscores, colons, or hyphens." }, 400);
+  if (!title) return json({ error: "Broadcast title is required." }, 400);
+  const schedule = parseBroadcastSchedule(data.scheduledAt);
+  if (schedule.error) return json({ error: schedule.error }, 400);
+  const channel = await ensureTpiChannel(env, user);
+  const existing = await findTpiBroadcast(env, id);
+  if (existing) {
+    if (!broadcastOwnerOrAdmin(existing, user)) return json({ error: "You cannot modify this broadcast." }, 403);
+    return json({ ok: true, existing: true, broadcast: tpiBroadcastPayload({ broadcast: existing.broadcast, video: existing.video }, true) }, 200, { "Cache-Control": "no-store" });
+  }
+  const visibility = normalizeBroadcastVisibility(clean(data.visibility), "private");
+  const category = cleanVideoText(data.category || "Live Streams", 120);
+  if (!TPI_VIDEO_CATEGORIES.has(category)) return json({ error: "Choose a supported TPI video category." }, 400);
+  const playback = validateBroadcastPlayback(data.playbackUrl);
+  if (!playback.ok) return json({ error: playback.error }, 400);
+  const thumbnail = validateThumbnailUrl(clean(data.thumbnail));
+  if (!thumbnail.ok) return json({ error: thumbnail.error }, 400);
+  const now = new Date().toISOString();
+  const videoId = crypto.randomUUID();
+  const slugBase = slugify(data.slug || title);
+  const slugTaken = await env.TPI_DB.prepare("SELECT id FROM tpi_videos WHERE slug = ?").bind(slugBase).first();
+  const slug = slugTaken ? `${slugBase}-${Date.now()}` : slugBase;
+  const status = schedule.value ? "upcoming" : "ready";
+  await env.TPI_DB.batch([
+    env.TPI_DB.prepare(`INSERT INTO live_broadcasts
+      (id, creator_id, video_id, title, status, scheduled_at, scheduled_timezone, visibility, playback_provider, playback_url, playback_verified, replay_published, moderation_status, sync_version, last_sync_at, created_at, updated_at)
+      VALUES (?, ?, ?, ?, 'ready', ?, ?, ?, ?, ?, 0, 0, 'approved', 1, ?, ?, ?)`)
+      .bind(id, user.id, videoId, title, schedule.value, clean(data.scheduledTimezone).slice(0, 120) || null, visibility, playback.provider || null, playback.url || null, now, now, now),
+    env.TPI_DB.prepare(`INSERT INTO tpi_videos
+      (id, slug, title, description, published_at, category, tags, platform, video_url, embed_url, thumbnail, featured, is_live, live_started_at, series, episode, duration, viewing_access, status, created_by, created_at, updated_at, channel_id, broadcast_id, broadcast_status, scheduled_at, scheduled_timezone, playback_provider, playback_url, playback_verified, replay_published, sync_version, last_sync_at)
+      VALUES (?, ?, ?, ?, NULL, ?, ?, ?, '', '', ?, 0, 0, NULL, '', '', '', ?, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 1, ?)`)
+      .bind(videoId, slug, title, cleanVideoText(data.description, 10000), category, normalizeVideoTags(data.tags), playback.provider ? (playback.provider === "youtube" ? "YouTube" : playback.provider) : "", thumbnail.value, visibility === "public" ? "public" : "members", user.id, now, now, channel.id, id, status, schedule.value, clean(data.scheduledTimezone).slice(0, 120) || null, playback.provider || null, playback.url || null, now)
+  ]);
+  const record = await findTpiBroadcast(env, id);
+  return json({ ok: true, existing: false, broadcast: tpiBroadcastPayload({ broadcast: record.broadcast, video: record.video }, true) }, 201, { "Cache-Control": "no-store" });
+}
+
+async function handleUpdateTpiBroadcast(path, request, env, user) {
+  const identifier = clean(decodeURIComponent(path.replace(/^\/tpi-broadcasts\//, "")));
+  const record = await findTpiBroadcast(env, identifier);
+  if (!record || !record.video) return json({ error: "Broadcast not found." }, 404);
+  if (!broadcastOwnerOrAdmin(record, user)) return json({ error: "You can only edit your own broadcasts." }, 403);
+  const data = await readJson(request);
+  const title = data.title !== undefined ? cleanVideoText(data.title, 180) : record.video.title;
+  if (!title) return json({ error: "Broadcast title is required." }, 400);
+  const schedule = data.scheduledAt !== undefined ? parseBroadcastSchedule(data.scheduledAt) : { value: record.broadcast.scheduled_at || null };
+  if (schedule.error) return json({ error: schedule.error }, 400);
+  const category = data.category !== undefined ? cleanVideoText(data.category, 120) : record.video.category;
+  if (!TPI_VIDEO_CATEGORIES.has(category)) return json({ error: "Choose a supported TPI video category." }, 400);
+  const visibility = data.visibility !== undefined ? normalizeBroadcastVisibility(clean(data.visibility), record.broadcast.visibility || "private") : (record.broadcast.visibility || "private");
+  const playback = data.playbackUrl !== undefined ? validateBroadcastPlayback(data.playbackUrl) : { ok: true, url: record.broadcast.playback_url || "", provider: record.broadcast.playback_provider || "" };
+  if (!playback.ok) return json({ error: playback.error }, 400);
+  const now = new Date().toISOString();
+  const nextStatus = ["ready"].includes(record.broadcast.status) ? (schedule.value ? "upcoming" : "ready") : (record.video.broadcast_status || record.broadcast.status);
+  await env.TPI_DB.batch([
+    env.TPI_DB.prepare(`UPDATE live_broadcasts SET title=?, scheduled_at=?, scheduled_timezone=?, visibility=?, playback_provider=?, playback_url=?, playback_verified=CASE WHEN ? != COALESCE(playback_url, '') THEN 0 ELSE playback_verified END, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?`)
+      .bind(title, schedule.value, data.scheduledTimezone !== undefined ? clean(data.scheduledTimezone).slice(0, 120) || null : record.broadcast.scheduled_timezone || null, visibility, playback.provider || null, playback.url || null, playback.url || "", now, now, record.broadcast.id),
+    env.TPI_DB.prepare(`UPDATE tpi_videos SET title=?, description=?, category=?, tags=?, viewing_access=?, scheduled_at=?, scheduled_timezone=?, playback_provider=?, playback_url=?, playback_verified=CASE WHEN ? != COALESCE(playback_url, '') THEN 0 ELSE playback_verified END, broadcast_status=?, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?`)
+      .bind(title, data.description !== undefined ? cleanVideoText(data.description, 10000) : record.video.description || "", category, data.tags !== undefined ? normalizeVideoTags(data.tags) : record.video.tags || "", visibility === "public" ? "public" : "members", schedule.value, data.scheduledTimezone !== undefined ? clean(data.scheduledTimezone).slice(0, 120) || null : record.video.scheduled_timezone || null, playback.provider || null, playback.url || null, playback.url || "", nextStatus, now, now, record.video.id)
+  ]);
+  const updated = await findTpiBroadcast(env, record.broadcast.id);
+  return json({ ok: true, broadcast: tpiBroadcastPayload({ broadcast: updated.broadcast, video: updated.video }, true) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleTpiBroadcastAction(path, request, env, user) {
+  const match = path.match(/^\/tpi-broadcasts\/([^/]+)\/(publish|unpublish|cancel|status|playback|replay)$/);
+  const identifier = clean(decodeURIComponent(match?.[1] || ""));
+  const action = match?.[2] || "";
+  const record = await findTpiBroadcast(env, identifier);
+  if (!record || !record.video) return json({ error: "Broadcast not found." }, 404);
+  if (!broadcastOwnerOrAdmin(record, user)) return json({ error: "You can only manage your own broadcasts." }, 403);
+  const now = new Date().toISOString();
+  const data = await readJson(request);
+  if (action === "publish") {
+    if (record.broadcast.status === "cancelled") return json({ error: "Cancelled broadcasts cannot be published." }, 409);
+    if (record.broadcast.scheduled_at && Date.parse(record.broadcast.scheduled_at) <= Date.now()) return json({ error: "Scheduled time must be in the future before publishing." }, 400);
+    const visibility = normalizeBroadcastVisibility(clean(data.visibility), record.broadcast.visibility || "public");
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare("UPDATE live_broadcasts SET visibility=?, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(visibility, now, now, record.broadcast.id),
+      env.TPI_DB.prepare("UPDATE tpi_videos SET status='published', published_at=COALESCE(published_at, ?), viewing_access=?, broadcast_status=?, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(now, visibility === "public" ? "public" : "members", record.broadcast.scheduled_at ? "upcoming" : "ready", now, now, record.video.id)
+    ]);
+  } else if (action === "unpublish") {
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare("UPDATE tpi_videos SET status='draft', is_live=0, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(now, now, record.video.id),
+      env.TPI_DB.prepare("UPDATE live_broadcasts SET updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(now, now, record.broadcast.id)
+    ]);
+  } else if (action === "cancel") {
+    if (["ended", "cancelled"].includes(record.broadcast.status)) return json({ error: "This broadcast is already finalized." }, 409);
+    await env.TPI_DB.prepare("UPDATE live_broadcasts SET status='cancelled', ended_at=COALESCE(ended_at, ?), updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(now, now, now, record.broadcast.id).run();
+    await syncTpiVideoFromLiveBroadcast(env, record.broadcast.id, "cancelled");
+  } else if (action === "status") {
+    const next = clean(data.status).toLowerCase();
+    if (!["ready", "live", "ended", "cancelled"].includes(next)) return json({ error: "Unsupported broadcast status." }, 400);
+    const current = record.broadcast.status;
+    const allowed = current === next || (current === "ready" && ["live", "cancelled"].includes(next)) || (current === "live" && next === "ended");
+    if (!allowed) return json({ error: `Invalid broadcast transition from ${current} to ${next}.` }, 409);
+    await env.TPI_DB.prepare(`UPDATE live_broadcasts SET status=?, started_at=CASE WHEN ?='live' THEN COALESCE(started_at, ?) ELSE started_at END, ended_at=CASE WHEN ? IN ('ended','cancelled') THEN COALESCE(ended_at, ?) ELSE ended_at END, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?`).bind(next, next, now, next, now, now, now, record.broadcast.id).run();
+    await syncTpiVideoFromLiveBroadcast(env, record.broadcast.id, next);
+  } else if (action === "playback") {
+    const playback = validateBroadcastPlayback(data.playbackUrl);
+    if (!playback.ok || !playback.url) return json({ error: playback.error || "A supported playback URL is required." }, 400);
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare("UPDATE live_broadcasts SET playback_provider=?, playback_url=?, playback_verified=0, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(playback.provider, playback.url, now, now, record.broadcast.id),
+      env.TPI_DB.prepare("UPDATE tpi_videos SET playback_provider=?, playback_url=?, playback_verified=0, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(playback.provider, playback.url, now, now, record.video.id)
+    ]);
+  } else if (action === "replay") {
+    const publish = data.publish !== false;
+    const replay = validateBroadcastPlayback(data.replayUrl || record.broadcast.replay_url || record.video.replay_url);
+    if (publish && (!replay.ok || !replay.url)) return json({ error: replay.error || "A supported replay URL is required." }, 400);
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare("UPDATE live_broadcasts SET replay_url=?, replay_published=?, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(publish ? replay.url : null, publish ? 1 : 0, now, now, record.broadcast.id),
+      env.TPI_DB.prepare("UPDATE tpi_videos SET replay_url=?, replay_published=?, updated_at=?, sync_version=sync_version+1, last_sync_at=? WHERE id=?").bind(publish ? replay.url : null, publish ? 1 : 0, now, now, record.video.id)
+    ]);
+  }
+  const updated = await findTpiBroadcast(env, record.broadcast.id);
+  return json({ ok: true, broadcast: tpiBroadcastPayload({ broadcast: updated.broadcast, video: updated.video }, true) }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleListTpiVideos(request, env) {
