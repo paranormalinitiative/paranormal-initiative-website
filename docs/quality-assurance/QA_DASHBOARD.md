@@ -13,7 +13,7 @@ Last updated: 2026-10-11
 | Anonymous production boundary smoke | PASS — 10/10 | `scripts/qa/production-smoke.mjs`, read-only GETs |
 | Actual StudioFlow media pipelines | PARTIAL | 019 real local recording plus prior 017 local RTMP/FFprobe evidence; see coverage matrix |
 | Physical devices and external providers | NOT YET VERIFIED | owner/device/provider testing required |
-| Production deployment for this QA batch | NOT APPLICABLE | tests/docs/CI only; no runtime assets changed |
+| Production deployment for this QA batch | PASS — Cloudflare version 152f752a-0dd1-46aa-8fae-884bed496e19 | TPI integration commit 101b834 pushed; anonymous post-deployment smoke 10/10 |
 | TPI-STUDIOFLOW-023 implementation | PASS locally / release pending | automatic live-comment queue and host controls built in canonical StudioFlow; authenticated media acceptance remains open |
 | TPI-STUDIOFLOW-023 production boundary | PASS — 10/10 anonymous smoke | /studio/ denied, /live-video Coming Soon, private APIs protected |
 
