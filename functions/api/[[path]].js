@@ -31,9 +31,15 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
-    if (request.method === "GET" && path === "/admin/overview") return requireAdmin(request, env, user => handleAdminOverview(env, user));
+    if (request.method === "GET" && path === "/admin/overview") return requireAdmin(request, env, user => handleAdminOverview(request, env, user));
+    if (request.method === "GET" && path === "/admin/analytics") return requireAdmin(request, env, user => handleAdminAnalytics(request, env, user));
     if (request.method === "GET" && path === "/admin/audit-logs") return requireAdmin(request, env, user => handleAdminAuditLogs(request, env, user));
     if (request.method === "GET" && path === "/admin/founding-50") return requireAdmin(request, env, user => handleAdminFounding50(env, user));
+    if (request.method === "GET" && path === "/admin/founding-50/applications") return requireAdmin(request, env, user => handleAdminFounding50Applications(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/founding-50\/applications\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminFounding50ApplicationStatus(path, request, env, user));
+    if (request.method === "POST" && path === "/admin/founding-50/allocate") return requireOwner(request, env, user => handleAdminAllocateFounding50(request, env, user));
+    if (request.method === "GET" && path === "/admin/creator-partnership") return requireAdmin(request, env, user => handleAdminCreatorPartnership(request, env, user));
+    if (request.method === "GET" && path === "/admin/creator-studio/entitlements") return requireAdmin(request, env, user => handleAdminCreatorStudioEntitlements(request, env, user));
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
@@ -462,55 +468,75 @@ async function handleUpdateContributorTitle(request, env, actingUser) {
 async function handleAdminListMembers(request, env) {
   const url = new URL(request.url);
   const search = clean(url.searchParams.get("search")).slice(0, 80);
-  const like = `%${search}%`;
-  const stmt = search
-    ? env.TPI_DB.prepare(`
-      SELECT
-        c.username,
-        c.display_name AS displayName,
-        c.title,
-        c.role,
-        c.active,
-        c.created_at AS createdAt,
-        COUNT(DISTINCT cp.id) AS topicCount,
-        COUNT(DISTINCT cm.id) AS postCount
-      FROM contributors c
-      LEFT JOIN community_posts cp ON cp.author_id = c.id AND cp.status != 'deleted'
-      LEFT JOIN community_comments cm ON cm.author_id = c.id AND cm.status = 'visible'
-      WHERE c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR c.role LIKE ?
-      GROUP BY c.id
-      ORDER BY c.active DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
-      LIMIT 100
-    `).bind(like, like, like, like)
-    : env.TPI_DB.prepare(`
-      SELECT
-        c.username,
-        c.display_name AS displayName,
-        c.title,
-        c.role,
-        c.active,
-        c.created_at AS createdAt,
-        COUNT(DISTINCT cp.id) AS topicCount,
-        COUNT(DISTINCT cm.id) AS postCount
-      FROM contributors c
-      LEFT JOIN community_posts cp ON cp.author_id = c.id AND cp.status != 'deleted'
-      LEFT JOIN community_comments cm ON cm.author_id = c.id AND cm.status = 'visible'
-      GROUP BY c.id
-      ORDER BY c.active DESC, c.display_name COLLATE NOCASE, c.username COLLATE NOCASE
-      LIMIT 100
-    `);
-  const { results } = await stmt.all();
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  const status = clean(url.searchParams.get("status")).toLowerCase();
+  const role = clean(url.searchParams.get("role")).toLowerCase();
+  const sort = { name: "c.display_name COLLATE NOCASE", username: "c.username COLLATE NOCASE", created: "c.created_at", activity: "(topicCount + postCount)" }[clean(url.searchParams.get("sort")).toLowerCase()] || "c.active";
+  const direction = clean(url.searchParams.get("direction")).toLowerCase() === "asc" ? "ASC" : "DESC";
+  const where = [];
+  const binds = [];
+  if (search) {
+    const like = `%${search}%`;
+    where.push("(c.username LIKE ? OR c.display_name LIKE ? OR c.title LIKE ? OR c.role LIKE ?)");
+    binds.push(like, like, like, like);
+  }
+  if (status === "active" || status === "inactive") {
+    where.push("c.active = ?");
+    binds.push(status === "active" ? 1 : 0);
+  }
+  if (["member", "contributor", "creator", "admin", "owner"].includes(role)) {
+    where.push("c.role = ?");
+    binds.push(role);
+  }
+  const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const baseSql = `
+    FROM contributors c
+    LEFT JOIN community_posts cp ON cp.author_id = c.id AND cp.status != 'deleted'
+    LEFT JOIN community_comments cm ON cm.author_id = c.id AND cm.status = 'visible'
+    ${whereSql}
+    GROUP BY c.id
+  `;
+  const countRow = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM contributors c ${whereSql}`).bind(...binds).first();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT c.username, c.display_name AS displayName, c.title, c.role, c.active,
+           c.created_at AS createdAt,
+           COUNT(DISTINCT cp.id) AS topicCount,
+           COUNT(DISTINCT cm.id) AS postCount
+    ${baseSql}
+    ORDER BY ${sort} ${direction}, c.username COLLATE NOCASE ASC
+    LIMIT ? OFFSET ?
+  `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+  const total = Number(countRow?.total || 0);
   return json({
     members: results.map(member => ({
       ...member,
       active: Boolean(member.active),
       topicCount: Number(member.topicCount || 0),
       postCount: Number(member.postCount || 0)
-    }))
+    })),
+    pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }
   });
 }
 
-async function handleAdminOverview(env, user) {
+function adminDateRange(request) {
+  const url = new URL(request.url);
+  const preset = clean(url.searchParams.get("range") || "30d").toLowerCase();
+  const now = new Date();
+  const requestedEnd = clean(url.searchParams.get("to"));
+  const end = /^\d{4}-\d{2}-\d{2}$/.test(requestedEnd) ? requestedEnd : now.toISOString().slice(0, 10);
+  const startDate = new Date(`${end}T00:00:00Z`);
+  if (preset === "today") startDate.setUTCDate(startDate.getUTCDate());
+  else if (preset === "7d") startDate.setUTCDate(startDate.getUTCDate() - 7);
+  else if (preset === "90d") startDate.setUTCDate(startDate.getUTCDate() - 90);
+  else if (preset === "custom" && /^\d{4}-\d{2}-\d{2}$/.test(clean(url.searchParams.get("from")))) {
+    return { preset, start: clean(url.searchParams.get("from")), end };
+  } else startDate.setUTCDate(startDate.getUTCDate() - 30);
+  return { preset: ["today", "7d", "90d"].includes(preset) ? preset : "30d", start: startDate.toISOString().slice(0, 10), end };
+}
+
+async function handleAdminOverview(request, env, user) {
+  const range = adminDateRange(request);
   const queries = [
     ["members", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END), 0) AS active, COALESCE(SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END), 0) AS inactive FROM contributors"],
     ["communityPosts", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'visible' THEN 1 ELSE 0 END), 0) AS visible, COALESCE(SUM(CASE WHEN status = 'hidden' THEN 1 ELSE 0 END), 0) AS hidden FROM community_posts"],
@@ -519,7 +545,10 @@ async function handleAdminOverview(env, user) {
     ["events", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0) AS published FROM events"],
     ["teams", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END), 0) AS approved FROM paranormal_teams"],
     ["notifications", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN read_at IS NULL THEN 1 ELSE 0 END), 0) AS unread FROM member_notifications"],
-    ["scraperRuns", "SELECT COUNT(*) AS total, MAX(started_at) AS lastStartedAt, MAX(CASE WHEN status = 'failed' THEN started_at END) AS lastFailedAt FROM scraper_runs"]
+    ["scraperRuns", "SELECT COUNT(*) AS total, MAX(started_at) AS lastStartedAt, MAX(CASE WHEN status = 'failed' THEN started_at END) AS lastFailedAt FROM scraper_runs"],
+    ["creatorAccounts", "SELECT COUNT(*) AS total FROM contributors WHERE role IN ('creator', 'contributor')"],
+    ["pendingReports", "SELECT COUNT(*) AS total FROM messenger_reports WHERE status = 'pending'"],
+    ["pendingEvents", "SELECT COUNT(*) AS total FROM events WHERE status = 'pending'"]
   ];
   const entries = await Promise.all(queries.map(async ([key, sql]) => {
     try {
@@ -532,44 +561,242 @@ async function handleAdminOverview(env, user) {
     }
   }));
   const data = Object.fromEntries(entries);
+  const trends = await getAdminTrends(env, range);
   return json({
     generatedAt: new Date().toISOString(),
     viewer: { username: user?.username, role: user?.role },
-    metrics: data
+    range,
+    metrics: data,
+    trends
   }, 200, { "Cache-Control": "no-store" });
 }
 
-async function handleAdminFounding50() {
-  return json({
-    program: "Founding 50",
-    status: "not_activated",
-    capacity: 50,
-    allocated: null,
-    remaining: null,
-    eligibility: "existing-account-only",
-    entitlement: "complimentary-lifetime-creator",
-    creatorStudioAccess: "owner-review-required",
-    note: "No production allocations or Creator Studio entitlement grants have been activated."
-  }, 200, { "Cache-Control": "no-store" });
+async function handleAdminAnalytics(request, env, user) {
+  const overview = await handleAdminOverview(request, env, user);
+  const body = await overview.json();
+  return json({ range: body.range, trends: body.trends, definitions: {
+    members: "Contributor accounts grouped by created_at day.",
+    communityPosts: "Community Feed posts grouped by created_at day.",
+    communityComments: "Community Feed comments grouped by created_at day.",
+    videos: "TPI Videos records grouped by created_at day.",
+    events: "Event records grouped by created_at day."
+  }}, 200, { "Cache-Control": "no-store" });
 }
 
+async function getAdminTrends(env, range) {
+  const sources = {
+    members: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM contributors WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
+    communityPosts: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM community_posts WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
+    communityComments: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM community_comments WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
+    videos: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM tpi_videos WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
+    events: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM events WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day"
+  };
+  const start = `${range.start}T00:00:00`;
+  const end = `${range.end}T23:59:59`;
+  const entries = await Promise.all(Object.entries(sources).map(async ([key, sql]) => {
+    try {
+      const { results } = await env.TPI_DB.prepare(sql).bind(start, end).all();
+      return [key, (results || []).map(row => ({ day: row.day, count: Number(row.count || 0) }))];
+    } catch (error) {
+      return [key, { unavailable: true }];
+    }
+  }));
+  return Object.fromEntries(entries);
+}
+
+async function handleAdminFounding50(env) {
+  try {
+    const summary = await env.TPI_DB.prepare(`
+      SELECT
+        COUNT(*) AS allocated,
+        COALESCE(SUM(CASE WHEN cpm.membership_state = 'active' THEN 1 ELSE 0 END), 0) AS active,
+        COALESCE(SUM(CASE WHEN cpm.membership_state = 'suspended' THEN 1 ELSE 0 END), 0) AS suspended,
+        COALESCE(SUM(CASE WHEN cpm.membership_state = 'revoked' THEN 1 ELSE 0 END), 0) AS revoked
+      FROM founding50_allocations f
+      JOIN creator_partnership_memberships cpm ON cpm.id = f.membership_id
+    `).first();
+    const application = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM founding50_applications WHERE status = 'pending'").first();
+    const allocated = Number(summary?.allocated || 0);
+    return json({
+      program: "Founding 50",
+      status: allocated ? "partially_allocated" : "not_activated",
+      capacity: 50,
+      allocated,
+      remaining: Math.max(0, 50 - allocated),
+      active: Number(summary?.active || 0),
+      suspended: Number(summary?.suspended || 0),
+      revoked: Number(summary?.revoked || 0),
+      pendingApplications: Number(application?.total || 0),
+      eligibility: "existing-account-only",
+      entitlement: "complimentary-lifetime-creator + creator_studio_lifetime",
+      creatorStudioAccess: "production-award-gated",
+      note: "No production award is possible until the explicit activation gate is enabled by the owner. Allocated slots are never silently recycled."
+    }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ program: "Founding 50", status: "migration_pending", capacity: 50, allocated: null, remaining: null, note: "The additive Creator Partnership migration is not available in this environment." }, 200, { "Cache-Control": "no-store" });
+  }
+}
+
+async function handleAdminFounding50Applications(request, env) {
+  const url = new URL(request.url);
+  const status = ["pending", "approved", "rejected", "all"].includes(clean(url.searchParams.get("status")).toLowerCase()) ? clean(url.searchParams.get("status")).toLowerCase() : "pending";
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  const where = status === "all" ? "" : "WHERE fa.status = ?";
+  const binds = status === "all" ? [] : [status];
+  try {
+    const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM founding50_applications fa ${where}`).bind(...binds).first();
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT fa.id, fa.status, fa.administrative_notes AS administrativeNotes,
+             fa.created_at AS createdAt, fa.reviewed_at AS reviewedAt,
+             c.username, c.display_name AS displayName, c.role, c.active
+      FROM founding50_applications fa
+      JOIN contributors c ON c.id = fa.applicant_id
+      ${where}
+      ORDER BY fa.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+    const total = Number(count?.total || 0);
+    return json({ applications: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
+  } catch (error) {
+    return json({ applications: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "migration_pending" });
+  }
+}
+
+async function handleAdminFounding50ApplicationStatus(path, request, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/founding-50\/applications\/([^/]+)\/status$/)?.[1] || ""));
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  if (!id || !["approved", "rejected", "pending"].includes(status)) return json({ error: "A valid application and status are required." }, 400);
+  try {
+    const application = await env.TPI_DB.prepare("SELECT id, applicant_id, status FROM founding50_applications WHERE id = ?").bind(id).first();
+    if (!application) return json({ error: "Founding 50 application was not found." }, 404);
+    await env.TPI_DB.prepare("UPDATE founding50_applications SET status = ?, administrative_notes = ?, reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+      .bind(status, clean(data.notes).slice(0, 2000), actingUser.id, id).run();
+    await writeAdminAuditLog(env, actingUser, `founding50.application_${status}`, "founding50_application", id, { previousStatus: application.status });
+    return json({ application: { id, status } });
+  } catch (error) {
+    return json({ error: "Founding 50 application storage is not available." }, 503);
+  }
+}
+
+async function handleAdminCreatorPartnership(request, env) {
+  const url = new URL(request.url);
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  try {
+    const count = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM creator_partnership_memberships").first();
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT cpm.id, cpm.membership_type AS membershipType, cpm.membership_state AS membershipState,
+             cpm.entitlement_code AS entitlementCode, cpm.founding50_slot AS founding50Slot,
+             cpm.awarded_at AS awardedAt, cpm.created_at AS createdAt,
+             c.username, c.display_name AS displayName, c.role, c.active,
+             cse.entitlement_state AS creatorStudioEntitlementState
+      FROM creator_partnership_memberships cpm
+      JOIN contributors c ON c.id = cpm.contributor_id
+      LEFT JOIN creator_studio_entitlements cse ON cse.contributor_id = c.id
+      ORDER BY cpm.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(pageSize, (page - 1) * pageSize).all();
+    const total = Number(count?.total || 0);
+    return json({ memberships: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
+  } catch (error) {
+    return json({ memberships: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "migration_pending" });
+  }
+}
+
+async function handleAdminCreatorStudioEntitlements(request, env) {
+  const url = new URL(request.url);
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  try {
+    const count = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM creator_studio_entitlements").first();
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT cse.id, cse.entitlement_code AS entitlementCode, cse.entitlement_state AS entitlementState,
+             cse.granted_at AS grantedAt, cse.revoked_at AS revokedAt,
+             c.username, c.display_name AS displayName, c.role, c.active
+      FROM creator_studio_entitlements cse
+      JOIN contributors c ON c.id = cse.contributor_id
+      ORDER BY cse.granted_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(pageSize, (page - 1) * pageSize).all();
+    const total = Number(count?.total || 0);
+    return json({ entitlements: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
+  } catch (error) {
+    return json({ entitlements: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "migration_pending" });
+  }
+}
+
+async function handleAdminAllocateFounding50(request, env, actingUser) {
+  if (String(env.FOUNDING50_PRODUCTION_ACTIVATION || "").toLowerCase() !== "approved") {
+    return json({ error: "Production Founding 50 awards are owner-review gated. No membership or Creator Studio entitlement was changed." }, 423);
+  }
+  const data = await readJson(request);
+  const username = clean(data.username);
+  const member = await getUserByUsername(env, username);
+  if (!member || !member.active) return json({ error: "An active existing account is required." }, 400);
+  try {
+    const existing = await env.TPI_DB.prepare("SELECT id FROM creator_partnership_memberships WHERE contributor_id = ? AND membership_type = 'founding50'").bind(member.id).first();
+    if (existing) return json({ error: "This account already has a Creator Partnership membership." }, 409);
+    const slots = await env.TPI_DB.prepare("SELECT slot_number AS slot FROM founding50_allocations ORDER BY slot_number").all();
+    const used = new Set((slots.results || []).map(row => Number(row.slot)));
+    const slot = Array.from({ length: 50 }, (_, index) => index + 1).find(value => !used.has(value));
+    if (!slot) return json({ error: "All 50 Founding 50 memberships have already been allocated." }, 409);
+    const membershipId = crypto.randomUUID();
+    const entitlementId = crypto.randomUUID();
+    const historyId = crypto.randomUUID();
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare(`INSERT INTO creator_partnership_memberships (id, contributor_id, membership_type, membership_state, entitlement_code, founding50_slot, awarded_at, awarded_by, notes) VALUES (?, ?, 'founding50', 'active', 'creator_studio_lifetime', ?, CURRENT_TIMESTAMP, ?, ?)`)
+        .bind(membershipId, member.id, slot, actingUser.id, clean(data.notes).slice(0, 2000)),
+      env.TPI_DB.prepare("INSERT INTO founding50_allocations (slot_number, membership_id, contributor_id, allocated_by) VALUES (?, ?, ?, ?)").bind(slot, membershipId, member.id, actingUser.id),
+      env.TPI_DB.prepare("INSERT INTO creator_studio_entitlements (id, contributor_id, source_membership_id, entitlement_code, entitlement_state, granted_by) VALUES (?, ?, ?, 'creator_studio_lifetime', 'active', ?)").bind(entitlementId, member.id, membershipId, actingUser.id),
+      env.TPI_DB.prepare("INSERT INTO creator_partnership_membership_history (id, membership_id, contributor_id, from_state, to_state, action, actor_id) VALUES (?, ?, ?, NULL, 'active', 'founding50_awarded', ?)").bind(historyId, membershipId, member.id, actingUser.id)
+    ]);
+    await writeAdminAuditLog(env, actingUser, "founding50.membership_awarded", "member", member.username, { slot, membershipId, entitlementId });
+    return json({ membership: { id: membershipId, username: member.username, slot, membershipState: "active", entitlementState: "active" } }, 201);
+  } catch (error) {
+    if (String(error?.message || "").toLowerCase().includes("unique") || String(error?.message || "").toLowerCase().includes("constraint")) {
+      return json({ error: "The account or Founding 50 slot was allocated concurrently. No duplicate award was created." }, 409);
+    }
+    return json({ error: "Founding 50 allocation could not be completed." }, 500);
+  }
+}
 async function handleAdminAuditLogs(request, env) {
   const url = new URL(request.url);
-  const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit") || "50", 10), 1), 100);
-  const offset = Math.min(Math.max(parseInt(url.searchParams.get("offset") || "0", 10), 0), 10000);
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit") || url.searchParams.get("pageSize") || "50", 10), 1), 100);
+  const offset = Math.min(Math.max(parseInt(url.searchParams.get("offset") || String((page - 1) * limit), 10), 0), 10000);
+  const actor = clean(url.searchParams.get("actor")).slice(0, 120);
+  const action = clean(url.searchParams.get("action")).slice(0, 120);
+  const target = clean(url.searchParams.get("target")).slice(0, 160);
+  const query = clean(url.searchParams.get("q")).slice(0, 160);
+  const from = clean(url.searchParams.get("from")).slice(0, 30);
+  const to = clean(url.searchParams.get("to")).slice(0, 30);
+  const filters = [];
+  const binds = [];
+  if (actor) { filters.push("actor_username LIKE ?"); binds.push(`%${actor}%`); }
+  if (action) { filters.push("action LIKE ?"); binds.push(`%${action}%`); }
+  if (target) { filters.push("(target_id LIKE ? OR target_type LIKE ?)"); binds.push(`%${target}%`, `%${target}%`); }
+  if (query) { filters.push("(actor_username LIKE ? OR action LIKE ? OR target_id LIKE ? OR target_type LIKE ?)"); binds.push(`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`); }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(from)) { filters.push("created_at >= ?"); binds.push(`${from}T00:00:00`); }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(to)) { filters.push("created_at <= ?"); binds.push(`${to}T23:59:59`); }
+  const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
   try {
+    const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM admin_audit_logs ${where}`).bind(...binds).first();
     const { results } = await env.TPI_DB.prepare(`
       SELECT id, actor_username AS actorUsername, actor_role AS actorRole,
              action, target_type AS targetType, target_id AS targetId,
              metadata_json AS metadata, created_at AS createdAt
       FROM admin_audit_logs
+      ${where}
       ORDER BY created_at DESC
       LIMIT ? OFFSET ?
-    `).bind(limit, offset).all();
+    `).bind(...binds, limit, offset).all();
+    const total = Number(count?.total || 0);
     return json({ logs: (results || []).map(row => ({
       ...row,
       metadata: safeJsonParse(row.metadata) || {}
-    })), limit, offset }, 200, { "Cache-Control": "no-store" });
+    })), limit, offset, page, pagination: { page, pageSize: limit, total, totalPages: Math.ceil(total / limit) } }, 200, { "Cache-Control": "no-store" });
   } catch (error) {
     return json({ logs: [], limit, offset, status: "migration_pending" }, 200, { "Cache-Control": "no-store" });
   }
@@ -762,8 +989,39 @@ async function handleMyPulse(request, env, user) {
 }
 
 async function handleAdminCommunityPosts(request, env) {
-  const username = clean(new URL(request.url).searchParams.get("username"));
-  if (!username) return json({ error: "Member username is required." }, 400);
+  const url = new URL(request.url);
+  const username = clean(url.searchParams.get("username"));
+  if (!username) {
+    const search = clean(url.searchParams.get("search")).slice(0, 100);
+    const status = ["visible", "hidden", "deleted", "all"].includes(clean(url.searchParams.get("status")).toLowerCase()) ? clean(url.searchParams.get("status")).toLowerCase() : "all";
+    const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+    const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+    const where = [];
+    const binds = [];
+    if (status !== "all") { where.push("cp.status = ?"); binds.push(status); }
+    if (search) { where.push("(cp.title LIKE ? OR cp.body LIKE ? OR c.username LIKE ? OR c.display_name LIKE ?)"); const like = `%${search}%`; binds.push(like, like, like, like); }
+    const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+    try {
+      const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM community_posts cp LEFT JOIN contributors c ON c.id = cp.author_id ${whereSql}`).bind(...binds).first();
+      const { results } = await env.TPI_DB.prepare(`
+        SELECT cp.id, cp.title, substr(cp.body, 1, 240) AS preview, cp.status,
+               cp.created_at AS createdAt, c.username AS authorUsername,
+               c.display_name AS authorDisplayName, cc.title AS categoryTitle,
+               (SELECT COUNT(*) FROM community_comments cm WHERE cm.post_id = cp.id AND cm.status != 'deleted') AS commentCount,
+               (SELECT COUNT(*) FROM community_reactions cr WHERE cr.target_type = 'post' AND cr.target_id = cp.id) AS reactionCount
+        FROM community_posts cp
+        LEFT JOIN contributors c ON c.id = cp.author_id
+        LEFT JOIN community_categories cc ON cc.id = cp.category_id
+        ${whereSql}
+        ORDER BY cp.created_at DESC
+        LIMIT ? OFFSET ?
+      `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+      const total = Number(count?.total || 0);
+      return json({ posts: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
+    } catch (error) {
+      return json({ posts: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "community_unavailable" }, 503);
+    }
+  }
   const member = await getUserByUsername(env, username);
   if (!member) return json({ error: "Member was not found." }, 404);
 
@@ -5152,6 +5410,12 @@ async function requireMember(request, env, handler) {
 async function requireAdmin(request, env, handler) {
   const user = await getSessionUser(request, env);
   if (!user || !["owner", "admin"].includes(user.role)) return json({ error: "Owner or admin access required." }, 403);
+  return handler(user);
+}
+
+async function requireOwner(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user || user.role !== "owner") return json({ error: "Owner access required." }, 403);
   return handler(user);
 }
 

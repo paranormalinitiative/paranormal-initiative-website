@@ -27,7 +27,7 @@ for f in migrations/*.sql; do
 done
 npx wrangler d1 execute TPI_DB --local --file scripts/e2e/seed-local.sql --json >/dev/null 2>&1 || { echo "SEED FAILED"; exit 1; }
 mkdir -p /tmp/tpi-e2e
-npx wrangler dev --port "$PORT" --local --compatibility-date=2026-07-15 > /tmp/tpi-e2e/wrangler-dev.log 2>&1 &
+npx wrangler dev --port "$PORT" --local --compatibility-date=2026-07-15 --live-reload=false > /tmp/tpi-e2e/wrangler-dev.log 2>&1 &
 DEV_PID=$!
 trap 'kill $DEV_PID 2>/dev/null' EXIT
 for i in $(seq 1 30); do
@@ -590,7 +590,34 @@ check "regenerated post increments B's unread again" 200 "$R" "d['unreadCount']>
 R=$(req GET /notifications tok-a)
 check "A received community_post notification with canonical href" 200 "$R" "any(n.get('type')=='community_post' and 'member-home.html' in (n.get('actionHref') or n.get('action_href') or '') for n in d['notifications'] if not n.get('chat'))"
 
-######################## 7. DISCOVERY / SCRAPER SECURITY & LOGGING ########################
+######################## 7. ADMIN CENTER 002 APIs ########################
+echo "== ADMINISTRATION CENTER 002 =="
+R=$(req GET "/admin/overview?range=7d" tok-admin)
+check "admin overview returns live metrics and bounded trends" 200 "$R" "d.get('range',{}).get('preset')=='7d' and 'members' in d.get('metrics',{}) and isinstance(d.get('trends',{}).get('members'),list)"
+R=$(req GET "/admin/analytics?range=30d" tok-admin)
+check "admin analytics returns metric definitions" 200 "$R" "'members' in d.get('definitions',{}) and isinstance(d.get('trends',{}).get('communityPosts'),list)"
+R=$(req GET "/admin/overview?range=7d" tok-a)
+check "ordinary member cannot read admin overview" 403 "$R"
+R=$(req GET "/admin/members?page=1&pageSize=2&status=active&sort=name&direction=asc" tok-admin)
+check "admin member directory supports pagination and filters" 200 "$R" "d.get('pagination',{}).get('pageSize')==2 and d.get('pagination',{}).get('total',0)>=1 and len(d.get('members',[]))<=2"
+R=$(req GET "/admin/community/posts?status=all&page=1&pageSize=5" tok-admin)
+check "admin community directory returns engagement fields" 200 "$R" "'pagination' in d and all('commentCount' in p and 'reactionCount' in p for p in d.get('posts',[]))"
+R=$(req GET "/admin/audit-logs?limit=5&action=community" tok-admin)
+check "admin audit logs support filters and pagination" 200 "$R" "d.get('pagination',{}).get('pageSize')==5 and isinstance(d.get('logs'),list)"
+R=$(req GET "/admin/founding-50" tok-admin)
+check "founding 50 reports authoritative zero allocation" 200 "$R" "d.get('capacity')==50 and d.get('allocated')==0 and d.get('remaining')==50 and d.get('status')=='not_activated'"
+R=$(req GET "/admin/creator-partnership?pageSize=5" tok-admin)
+check "creator partnership register is protected and queryable" 200 "$R" "isinstance(d.get('memberships'),list) and d.get('pagination',{}).get('pageSize')==5"
+R=$(req GET "/admin/creator-studio/entitlements" tok-admin)
+check "creator studio entitlement register is protected" 200 "$R" "isinstance(d.get('entitlements'),list) and d.get('pagination',{}).get('total')==0"
+R=$(req GET "/admin/founding-50" tok-a)
+check "ordinary member cannot read founding 50" 403 "$R"
+R=$(req POST "/admin/founding-50/allocate" tok-admin '{"username":"e2e_user_a"}')
+check "administrator cannot allocate founding 50" 403 "$R"
+R=$(req POST "/admin/founding-50/allocate" tok-owner '{"username":"e2e_user_a"}')
+check "owner award remains gated without activation approval" 423 "$R" "'gated' in d.get('error','').lower()"
+
+######################## 8. DISCOVERY / SCRAPER SECURITY & LOGGING ########################
 echo "== SCRAPER SECURITY & OBSERVABILITY =="
 KGREP() { grep -q "sk_" /dev/null 2>/dev/null; } # (unused helper guard)
 # Unauthenticated + ordinary member attempts must be rejected WITHOUT triggering a scrape.

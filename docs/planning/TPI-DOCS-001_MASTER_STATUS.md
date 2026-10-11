@@ -35,9 +35,9 @@ The owner-approved order is not being restarted or reordered:
    WITH LIMITATIONS pending the explicit open items in the media register.
 3. **TPI-SOCIAL-003** — next social-network batch after owner review of the
    remaining 010/010B acceptance limitations.
-4. **TPI-ADMIN-001** — Administration and Network Operations Center. Owner
-   authorization was granted on 2026-10-11; the active baseline/foundation
-   batch is recorded in `docs/audits/2026-10-11/tpi-admin/`.
+4. **TPI-ADMIN-001 / TPI-ADMIN-002** — Administration and Network Operations
+   Center. Owner authorization was granted on 2026-10-11; the foundation and
+   implementation batches are recorded in `docs/audits/2026-10-11/tpi-admin/`.
 5. **TPI-FINAL-001** — full website audit.
 6. **TPI-FINAL-002** — HTML Help Center, legal/privacy review, and email
    verification.
@@ -50,7 +50,8 @@ reliability, accessibility, integration, and compatibility repairs.
 
 The completed roadmap records are TPI-MEDIA-001, TPI-DOCS-001,
 TPI-VIDEOS-010, TPI-VIDEOS-010B, TPI-SOCIAL-001, TPI-SOCIAL-002, and the
-current TPI-SOCIAL-003 audit/repair batch. Creator Partnership and Founding 50
+current TPI-SOCIAL-003 audit/repair batch. TPI-ADMIN-001 and TPI-ADMIN-002 are
+recorded as completed development batches; Creator Partnership and Founding 50
 activation remain gated behind owner review. TPI-FINAL-001 remains queued until
 this admin batch is reviewed.
 
