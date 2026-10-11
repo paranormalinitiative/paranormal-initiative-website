@@ -21,3 +21,5 @@ Legend: **PASS** = executed evidence; **PARTIAL** = some local coverage; **BLOCK
 | Storage destinations | PARTIAL | browser/IndexedDB architecture evidence | physical picker/cloud providers NOT YET VERIFIED | no TPI-managed recording R2 |
 | Scheduling/library | PARTIAL | local UI/API evidence | authenticated production workflow NOT YET VERIFIED | calendar/provider tests open |
 | Owner-only Studio access | PASS boundary checks | n/a | anonymous direct URL/API denial read-only verified | preserve `/live-video` Coming Soon |
+| TPI-STUDIOFLOW-023 live interaction controls | PASS local source/build; local unauthenticated mode gate | PARTIAL | authenticated route execution and comment pixels NOT YET VERIFIED | automatic queue, duration, visible filter, manual override, reply, moderation wiring in canonical StudioFlow |
+| TPI-STUDIOFLOW-023 release boundary | PASS read-only production smoke | n/a | owner-authenticated acceptance NOT YET VERIFIED | production smoke 10/10; /studio/ 403; /live-video Coming Soon |

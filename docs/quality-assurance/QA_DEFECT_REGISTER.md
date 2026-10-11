@@ -37,3 +37,17 @@
 - The existing ticker passed actual local RTMP and saved-recording visual
   inspection. This does not close the audio, strict WebM validation, guest,
   physical storage, responsive, production, or external-provider gaps.
+
+## TPI-STUDIOFLOW-023 disposition
+
+- Repaired in canonical StudioFlow: opt-in automatic live-comment queue,
+  visible-status filtering, 5/8/10/15-second display duration, manual host
+  override, starred filter, host reply, explicit moderation control, and stale
+  hidden-comment compositor protection.
+- Local build, focused browser UI, isolated RTMP H.264/AAC capture, and
+  production anonymous boundary smoke passed. Authenticated production
+  comment/media capture, multi-member guest transport, physical devices,
+  external providers, long duration, and storage exhaustion remain NOT YET
+  VERIFIED.
+- The expanded local API E2E runner was canceled after becoming silent during
+  its local Wrangler startup path; no pass was recorded.

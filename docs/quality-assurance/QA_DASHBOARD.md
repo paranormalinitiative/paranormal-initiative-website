@@ -14,10 +14,20 @@ Last updated: 2026-10-11
 | Actual StudioFlow media pipelines | PARTIAL | 019 real local recording plus prior 017 local RTMP/FFprobe evidence; see coverage matrix |
 | Physical devices and external providers | NOT YET VERIFIED | owner/device/provider testing required |
 | Production deployment for this QA batch | NOT APPLICABLE | tests/docs/CI only; no runtime assets changed |
+| TPI-STUDIOFLOW-023 implementation | PASS locally / release pending | automatic live-comment queue and host controls built in canonical StudioFlow; authenticated media acceptance remains open |
+| TPI-STUDIOFLOW-023 production boundary | PASS — 10/10 anonymous smoke | /studio/ denied, /live-video Coming Soon, private APIs protected |
 
 ## Readiness interpretation
 
 The automated QA system is established and the deterministic local social baseline is green. That does not certify camera, microphone, WebRTC guest transport, public broadcast, physical storage pickers, cloud-provider integrations, or multi-hour reliability. Those remain visible in the matrix until executed with evidence.
+
+## TPI-STUDIOFLOW-023 note
+
+The 023 batch adds a small authenticated live-interaction control surface and
+does not rebuild StudioFlow. The local API E2E runner was not allowed to hang
+indefinitely; it was canceled after silent local Wrangler startup and is
+recorded as incomplete. The full 023 matrix in the StudioFlow documentation is
+the authoritative status record.
 
 ## Evidence locations
 
