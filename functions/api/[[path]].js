@@ -1352,6 +1352,21 @@ async function handleMediaUpload(request, env, user, area, purpose, allowedTypes
   return json({ id: libraryId, url: `/api/media/${key}`, key, contentType: upload.type, name: upload.name });
 }
 
+async function hasMessengerMediaAccess(env, url, user) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT conversation_id AS conversationId, attachments
+    FROM messages
+    WHERE deleted_at IS NULL AND attachments LIKE ?
+    LIMIT 100
+  `).bind(`%${url}%`).all();
+  for (const row of results || []) {
+    const attachments = safeJsonParse(row.attachments);
+    if (!Array.isArray(attachments) || !attachments.some(item => item?.url === url)) continue;
+    if (await requireConversationAccess(env, row.conversationId, user)) return true;
+  }
+  return false;
+}
+
 async function handleMediaRequest(path, env, request) {
   if (!env.TPI_MEDIA) return json({ error: "R2 media bucket binding TPI_MEDIA is not configured yet." }, 501);
   const key = decodeURIComponent(path.replace(/^\/media\//, ""));
@@ -1359,6 +1374,10 @@ async function handleMediaRequest(path, env, request) {
   if (key.startsWith("messenger/")) {
     const user = await getSessionUser(request, env);
     if (!user) return json({ error: "Member login required." }, 401, { "Cache-Control": "private, no-store" });
+    const url = `/api/media/${key}`;
+    if (!await hasMessengerMediaAccess(env, url, user)) {
+      return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
+    }
   }
   if (key.startsWith("private-library/")) {
     const user = await getSessionUser(request, env);

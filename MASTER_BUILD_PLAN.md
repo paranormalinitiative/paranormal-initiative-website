@@ -1,5 +1,18 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-SOCIAL-001 — Existing social network audit — October 11, 2026
+
+The audit of the existing member/community systems is complete at the current
+source boundary. The full local API/security regression passes 211/211, the
+focused Messenger media authorization matrix passes, and read-only production
+endpoint checks preserve the public/member boundary. One confirmed high-severity
+defect was repaired: authenticated members now need to be participants in a
+conversation containing a Messenger attachment before the Worker will fetch its
+R2 object. Settings API/SQLite verification passes; signed-in browser verification
+remains blocked because the repository has no Playwright module. No production
+data, R2 objects, unrelated dirty files, or runtime deployment were changed.
+Evidence is in `docs/audits/2026-10-11/tpi-social/TPI-SOCIAL-001_*`.
+
 ## TPI-VIDEOS-006 — Video platform acceptance audit — October 11, 2026
 
 The main TPI-VIDEOS-005 synchronization bridge was audited separately from the
