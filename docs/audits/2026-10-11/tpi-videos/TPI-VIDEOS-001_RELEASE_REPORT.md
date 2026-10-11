@@ -27,7 +27,8 @@ This avoids duplicating the audit in StudioFlow and TPI documentation trees. Exi
 - TPI source baseline: `e7b6be2`.
 - Existing StudioFlow baseline: `0622f27`.
 - Existing production deployment retained: `5c1f0006-cce6-45ba-8ba0-628891c9f045`.
-- New audit documentation commit: recorded after verification in the final report.
+- Initial audit documentation commit: `7b0f48a`.
+- Release-report metadata follow-up commit: recorded by Git after this file update.
 - New Cloudflare deployment: **none; documentation-only change**.
 
 ## Next required owner acceptance
