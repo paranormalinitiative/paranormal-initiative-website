@@ -1,6 +1,15 @@
 # The Paranormal Initiative Website - Agent Handoff
 
-Last updated: October 8, 2026
+Last updated: October 8, 2026 (historical handoff context)
+
+## Current documentation authority
+
+For the current roadmap and cross-workspace status, use
+[`MASTER_BUILD_PLAN.md`](MASTER_BUILD_PLAN.md) and
+[`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
+This handoff preserves historical website context and must not be used to
+restart or reorder the current TPI Videos, StudioFlow, social, administration,
+or final-audit sequence.
 
 ## Project Identity
 

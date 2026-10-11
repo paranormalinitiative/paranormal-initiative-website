@@ -1,5 +1,13 @@
 # StudioFlow Master TODO
 
+> **Roadmap authority — TPI-DOCS-001 (October 11, 2026):** This file remains
+> the StudioFlow feature and evidence history, but the current cross-project
+> order is maintained in
+> [`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
+> StudioFlow is feature-frozen except for verified bug, security, reliability,
+> accessibility, integration, and compatibility repairs. Do not infer that a
+> stale unchecked item authorizes unrelated new feature work.
+
 **TPI-VIDEOS-005 — Oct 11, 2026:** canonical StudioFlow now has an explicit
 same-origin TPI Videos bridge for browser-local schedules. Schedule rows and
 the existing edit modal expose Sync, Publish, Refresh, Unpublish, and Cancel

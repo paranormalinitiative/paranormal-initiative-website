@@ -12,6 +12,22 @@ The site is designed to be dark, professional, research-driven, and practical. I
 - Contributor Portal: member login, profile pages, contributor access, admin access management, and R2 profile/media uploads.
 - Discussion Portal: public-readable, member-posted forum with Education Center-aligned categories and chat-style topic replies.
 - Apps: public app directory, dedicated app pages, software-use terms, third-party notices, and a future release manifest for Mac/Windows downloads.
+- TPI Videos and Creator Studio integration: provider-aware video discovery,
+  creator channels, responsive catalog, browser-local StudioFlow schedule
+  synchronization, and protected `/studio/` access. `/live-video` remains
+  Coming Soon and local creator recordings are not public playback by default.
+- Community Feed and Messenger: existing member social and messaging systems
+  with server-side authorization and preserved attachment boundaries.
+- Administration and final release phases: planned only; no later phase may be
+  started from a historical plan section without the current roadmap gate.
+
+## Current authoritative status
+
+The current roadmap and cross-workspace status are maintained in
+[`MASTER_BUILD_PLAN.md`](MASTER_BUILD_PLAN.md) and
+[`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
+These documents consolidate status without replacing historical audit reports.
+Do not restart or reorder completed work based on older handoff or audit text.
 
 ## App Release Position
 

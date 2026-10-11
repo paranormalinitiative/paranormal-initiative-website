@@ -17,7 +17,15 @@ TPI-QA-001 defines the repeatable quality boundary for the TPI social network, t
 
 Tests and documentation may be committed and pushed without a Cloudflare deployment when no production runtime asset changed.
 
-## Owner-approved development sequence: TPI-ROADMAP-002
+## Historical QA sequence: TPI-ROADMAP-002
+
+This section preserves the earlier QA operating sequence and is not the current
+owner-locked implementation order. The current order is recorded in
+[`MASTER_BUILD_PLAN.md`](../../MASTER_BUILD_PLAN.md) and
+[`TPI-DOCS-001_MASTER_STATUS.md`](../planning/TPI-DOCS-001_MASTER_STATUS.md):
+TPI-VIDEOS-009A, TPI-VIDEOS-010, TPI-SOCIAL-003, TPI-ADMIN-001,
+TPI-FINAL-001, TPI-FINAL-002, and TPI-FINAL-003. Do not start the older
+StudioFlow-019/020 sequence from this historical section.
 
 The current phase gate is explicit:
 
@@ -56,4 +64,4 @@ deployment.
 
 ## Current baseline
 
-On 2026-10-11 the existing TPI multi-user local API suite completed **152 PASS / 0 FAIL** with external scraper refreshes disabled by default. The harness repair corrected an authorization expectation and stale unread-count field names; it did not weaken an application boundary. StudioFlow `npm run build`, `npm run check:room`, and `npm run check:rtmp` also passed locally. The anonymous production boundary smoke completed **10/10** read-only checks, including `/live-video` Coming Soon and Creator Studio/API denial boundaries. Physical devices, public/provider broadcast, TURN/WebRTC guest media, and multi-hour reliability remain unverified unless separately recorded in the matrix.
+On 2026-10-11 the earlier TPI multi-user local API baseline completed **152 PASS / 0 FAIL** with external scraper refreshes disabled by default. Later TPI-MEDIA-001 evidence records the current isolated API result as **213/213**; both results remain attributable to their named test runs. StudioFlow `npm run build`, `npm run check:room`, and `npm run check:rtmp` also passed locally. The anonymous production boundary smoke completed **10/10** read-only checks, including `/live-video` Coming Soon and Creator Studio/API denial boundaries. Physical devices, public/provider broadcast, TURN/WebRTC guest media, and multi-hour reliability remain unverified unless separately recorded in the matrix.

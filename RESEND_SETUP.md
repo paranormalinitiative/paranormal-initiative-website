@@ -1,6 +1,15 @@
 # Resend Email Setup — The Paranormal Initiative
 
-The website sends transactional email through [Resend](https://resend.com).
+> **Status note — TPI-DOCS-001:** This file is retained as setup/reference
+> material. It is not evidence that TPI's current provider, domain, sender,
+> secrets, templates, workflows, or mailbox delivery have been independently
+> verified. The future TPI-FINAL-002 email audit must test actual delivery and
+> token behavior with an authorized mailbox. Resend was selected for the
+> separate THE CAULDRON & THE CRAFT project; that decision does not authorize
+> copying its credentials or replacing TPI's provider.
+
+The historical setup assumption in this document is Resend for transactional
+email. The live TPI provider and configuration still require an explicit audit.
 Three things use it once the secrets below are set:
 
 1. **Member email verification** — new members get a code on signup; members
@@ -10,7 +19,9 @@ Three things use it once the secrets below are set:
 3. **Team submission alerts** — leadership gets an email whenever a team is
    submitted to the Paranormal Teams Directory (plus the in-site notification).
 
-Everything is live in code; only the two secrets below are needed to turn it on.
+The code paths and setup steps below are historical guidance. Do not treat the
+presence or absence of these secrets as proof of actual delivery until the
+future email audit verifies the live environment.
 
 ## One-time setup (about 5 minutes)
 

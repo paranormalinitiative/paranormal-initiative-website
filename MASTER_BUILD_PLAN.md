@@ -1,5 +1,16 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-DOCS-001 — Documentation synchronization — October 11, 2026
+
+The current owner-approved roadmap and cross-workspace status are recorded in
+[`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
+It preserves historical audit evidence while preventing older roadmap sections
+from being mistaken for the current work order. The locked order is:
+TPI-VIDEOS-009A (implemented through TPI-MEDIA-001), TPI-VIDEOS-010,
+TPI-SOCIAL-003, TPI-ADMIN-001, TPI-FINAL-001, TPI-FINAL-002, and
+TPI-FINAL-003. TPI-DOCS-001 changes Markdown only; it does not authorize
+runtime work or deployment.
+
 ## TPI-MEDIA-001 — Creator Studio and TPI Videos completion audit — October 11, 2026
 
 The final media-platform audit preserved the StudioFlow feature-freeze and
@@ -53,6 +64,12 @@ StudioFlow source change, or public livestream launch was made. Full evidence is
 in `docs/audits/2026-10-11/tpi-social/TPI-SOCIAL-002_*`.
 
 ## TPI-VIDEOS-009 — Video platform completion batch — October 11, 2026
+
+**Historical report clarification:** this section preserves the original 009
+audit and its evidence. Its statement that the full API runner was blocked by
+the first migration is historical and is superseded for current status by the
+later isolated TPI-MEDIA-001 run, which passed **213/213**. Use the
+TPI-MEDIA-001 section and TPI-DOCS-001 for the current release state.
 
 The 009 baseline audit found that TPI Videos already has a provider-aware catalog,
 watch page, creator channels, comments, reactions, follows, and StudioFlow/TPI
