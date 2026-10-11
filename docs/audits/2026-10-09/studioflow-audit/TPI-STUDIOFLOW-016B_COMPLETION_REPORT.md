@@ -54,9 +54,11 @@ workspace file is in scope.
 Release evidence:
 
 - Canonical StudioFlow source commit: `9a6097e`.
-- TPI integration commit: `446eb65`, pushed to `origin/main`.
+- TPI integration commits: `446eb65` (bundle) and `d13de80` (final release
+  evidence sync), both pushed to `origin/main`.
 - Authoritative clean-archive Cloudflare Worker Version:
-  `4b97b78b-ca0b-41af-beac-a2073f65df7a`.
+  `5a53a077-bc22-43df-b638-13777090b066` (final documentation-sync release;
+  the preceding bundle release was `4b97b78b-ca0b-41af-beac-a2073f65df7a`).
 - Production `/` and `/live-video` returned HTTP 200.
 - Production `/live-video` retained the Coming Soon surface.
 - Unauthenticated `/studio/` and the direct
