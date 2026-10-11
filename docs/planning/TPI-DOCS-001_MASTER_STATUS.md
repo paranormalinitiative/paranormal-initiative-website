@@ -96,6 +96,21 @@ Per the owner review gate, TPI-FINAL-001, Founding 50 activation, production
 Creator Studio entitlement grants, public Creator Studio launch, and Help
 Center development remain paused.
 
+### TPI-ADMIN-004 authenticated browser continuation
+
+TPI-ADMIN-004 was opened specifically to resolve the ADMIN-003 authenticated
+browser gap. No authorized administrator session, Playwright fixture, or
+approved isolated authenticated environment was available in this run. The
+authenticated portion therefore remains **BLOCKED — AUTHORIZED SESSION
+REQUIRED**. No credentials were invented, authentication was bypassed, or
+production state was changed. The required continuation reports are in
+[`docs/audits/2026-10-11/tpi-admin/TPI-ADMIN-004/`](../audits/2026-10-11/tpi-admin/TPI-ADMIN-004/).
+
+No runtime deployment is required. Await an approved session for the browser
+matrix, then stop for owner review again; do not activate Founding 50,
+Creator Studio entitlements, public Creator Studio, `/live-video`, or
+TPI-FINAL-001.
+
 ### TPI-VIDEOS-010B acceptance batch
 
 The bounded local browser acceptance created and finalized a 14-second Program
