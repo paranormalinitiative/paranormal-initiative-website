@@ -91,6 +91,14 @@ check "A sees B's post in feed" 200 "$R" "any(p['id']=='$POST_B1' for p in d['po
 R=$(req GET /feed tok-b)
 check "merged feed includes A's post for B" 200 "$R" "any((item.get('type')=='community_post' and item.get('postId')=='$POST_A1') or item.get('id')=='$POST_A1' for item in d.get('items',[]))"
 
+# Link attachments persist the original destination for the browser preview
+# and preserve the external-link routing contract.
+R=$(req POST /community/posts tok-a '{"title":"Link preview persistence","body":"Shared external link","categoryId":"general","attachments":[{"url":"https://example.com/","key":"","name":"example.com","contentType":"text/html","mediaType":"link"}]}')
+check "A creates a link attachment post" 200 "$R" "d['post']['title']=='Link preview persistence'"
+POST_LINK=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['post']['id'])")
+R=$(req GET /community/posts tok-b)
+check "B receives persisted external link attachment" 200 "$R" "any(p['id']=='$POST_LINK' and any(a.get('mediaType')=='link' and a.get('url')=='https://example.com/' for a in p.get('attachments',[])) for p in d['posts'])"
+
 # Comments
 R=$(req POST "/community/posts/$POST_A1/comments" tok-b '{"body":"Comment from B on A post"}')
 check "B comments on A's post" 200 "$R"

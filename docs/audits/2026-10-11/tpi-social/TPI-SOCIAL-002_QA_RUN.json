@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-10-11T17:24:38.643Z",
+  "repository": "/Users/toddknipple/Documents/GitHub/paranormal-initiative-website",
+  "options": {
+    "e2e": true,
+    "productionSmoke": true,
+    "studioflowRoot": "/Users/toddknipple/Documents/StudioFlow/web"
+  },
+  "results": [
+    {
+      "name": "Node syntax: worker.js",
+      "status": "PASS",
+      "durationMs": 64,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check worker.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: functions/api/[[path]].js",
+      "status": "PASS",
+      "durationMs": 64,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check functions/api/[[path]].js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: api-client.js",
+      "status": "PASS",
+      "durationMs": 64,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check api-client.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: includes.js",
+      "status": "PASS",
+      "durationMs": 63,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check includes.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: member-shell.js",
+      "status": "PASS",
+      "durationMs": 60,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check member-shell.js",
+      "detail": "completed"
+    },
+    {
+      "name": "Node syntax: scripts/studioflow-release-dry-run.mjs",
+      "status": "PASS",
+      "durationMs": 59,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node --check scripts/studioflow-release-dry-run.mjs",
+      "detail": "completed"
+    },
+    {
+      "name": "Bash syntax: existing E2E and migration checks",
+      "status": "PASS",
+      "durationMs": 4,
+      "command": "bash -n scripts/e2e/api-e2e.sh scripts/e2e/verify-0010-equivalence.sh",
+      "detail": "completed"
+    },
+    {
+      "name": "TPI local multi-user API E2E (scrapers disabled)",
+      "status": "PASS",
+      "durationMs": 71749,
+      "command": "bash scripts/e2e/api-e2e.sh 8791",
+      "detail": "completed"
+    },
+    {
+      "name": "StudioFlow production build",
+      "status": "PASS",
+      "durationMs": 4935,
+      "command": "npm run build",
+      "detail": "completed"
+    },
+    {
+      "name": "StudioFlow room-server syntax",
+      "status": "PASS",
+      "durationMs": 210,
+      "command": "npm run check:room",
+      "detail": "completed"
+    },
+    {
+      "name": "StudioFlow RTMP bridge syntax",
+      "status": "PASS",
+      "durationMs": 206,
+      "command": "npm run check:rtmp",
+      "detail": "completed"
+    },
+    {
+      "name": "Read-only production smoke checks",
+      "status": "PASS",
+      "durationMs": 854,
+      "command": "/opt/homebrew/Cellar/node/25.9.0_2/bin/node scripts/qa/production-smoke.mjs",
+      "detail": "completed"
+    }
+  ],
+  "summary": {
+    "pass": 12,
+    "fail": 0,
+    "blocked": 0,
+    "overall": "PASS_WITH_EXPLICIT_BLOCKERS"
+  }
+}

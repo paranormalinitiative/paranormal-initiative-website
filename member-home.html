@@ -2657,6 +2657,7 @@
     var loadMoreWrap = document.querySelector("[data-feed-load-more]");
     var loadMoreBtn = document.querySelector("[data-load-more-btn]");
     var pendingAttachments = [];
+    var composerPreviewRequest = 0;
     var COMMUNITY_FILE_ACCEPT = ".pdf,.txt,.csv,.json,.rtf,.doc,.docx,.odt,.xls,.xlsx,.zip,application/pdf,text/plain,text/csv,application/json,application/rtf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.text,application/zip,application/octet-stream";
 
     init();
@@ -3176,7 +3177,10 @@
 
     function setupComposer() {
         if (!composerBody || !composerPostBtn) return;
-        composerBody.addEventListener("input", updatePostButtonState);
+        composerBody.addEventListener("input", function() {
+            updatePostButtonState();
+            syncComposerBodyLinks();
+        });
         composerPostBtn.addEventListener("click", submitPost);
 
         document.querySelectorAll("[data-media-photo]").forEach(function(btn) {
@@ -3394,21 +3398,55 @@
         loadComposerLinkPreview(value);
     }
 
+    // A pasted URL in the main composer is a link attachment too. Keeping the
+    // attachment in the existing post payload makes the preview survive the
+    // feed refresh while preserving the member's original text unchanged.
+    function syncComposerBodyLinks() {
+        if (!composerBody) return;
+        var matches = composerBody.value.match(/https?:\/\/[^\s<>"']+/gi) || [];
+        var urls = [];
+        matches.forEach(function(raw) {
+            var value = raw.replace(/[),.;!?]+$/g, "");
+            if (isValidLinkUrl(value) && urls.indexOf(value) === -1 && urls.length < 5) urls.push(value);
+        });
+        var urlSet = {};
+        urls.forEach(function(url) { urlSet[url] = true; });
+        pendingAttachments = pendingAttachments.filter(function(attachment) {
+            return !attachment.autoFromBody || urlSet[attachment.url];
+        });
+        urls.forEach(function(url) {
+            var exists = pendingAttachments.some(function(attachment) {
+                return attachment.mediaType === "link" && attachment.url === url;
+            });
+            if (!exists) {
+                var host = "";
+                try { host = new URL(url).hostname.replace(/^www\./, ""); } catch (e) {}
+                pendingAttachments.push({ mediaType: "link", url: url, name: host || url, autoFromBody: true });
+            }
+        });
+        renderPreviews();
+        if (urls.length) loadComposerLinkPreview(urls[0]);
+        else if (!pendingAttachments.some(function(attachment) { return attachment.mediaType === "link"; })) clearComposerLinkPreview();
+    }
+
     // Facebook-style: as soon as a link is added, fetch its preview so the
     // member sees the image + title + description card before posting.
     async function loadComposerLinkPreview(url) {
         var area = document.querySelector("[data-composer-link-preview]");
         if (!area) return;
+        var requestId = ++composerPreviewRequest;
         area.innerHTML = '<div class="link-preview-card" style="padding:14px;color:#8aa0b6;font-size:12px;">Fetching link preview…</div>';
         try {
             var meta = await window.TPIApi.linkPreview(url);
+            if (requestId !== composerPreviewRequest) return;
             area.innerHTML = renderLinkPreviewCard(meta) || "";
         } catch (e) {
-            area.innerHTML = "";
+            if (requestId === composerPreviewRequest) area.innerHTML = "";
         }
     }
 
     function clearComposerLinkPreview() {
+        composerPreviewRequest += 1;
         var area = document.querySelector("[data-composer-link-preview]");
         if (area) area.innerHTML = "";
     }

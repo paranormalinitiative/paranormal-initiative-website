@@ -38,7 +38,13 @@ assert.equal((await json('/me/blocked-users','b')).users.length,0);
 for(const theme of ['cryptid','fieldops','seance','cosmic','asylum','gothicnight']) {await json('/contributors/me/theme','a','POST',{theme});assert.equal(db.prepare('SELECT theme FROM contributors WHERE id=?').get('a').theme,theme);}
 console.log('PASS real API/SQLite: auth gates, enum validation, owner isolation, theme persistence, public style only, real Messenger block list.');
 const require=createRequire(import.meta.url);
-const {chromium}=require(process.env.SETTINGS_PLAYWRIGHT || 'playwright');
+let chromium;
+try {
+ ({chromium}=require(process.env.SETTINGS_PLAYWRIGHT || 'playwright'));
+} catch (error) {
+ console.log(`BLOCKED browser Settings phase: Playwright module unavailable (${error.code || error.message}).`);
+ process.exit(0);
+}
 const browser=await chromium.launch({executablePath:process.env.SETTINGS_CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
 const page=await browser.newPage();
 await page.addInitScript(()=>localStorage.setItem('tpiFloatingChatFrame',JSON.stringify({collapsed:true})));

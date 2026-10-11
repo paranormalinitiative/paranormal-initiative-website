@@ -1,5 +1,30 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-SOCIAL-002 — Community Feed and integration recovery — October 11, 2026
+
+The TPI-SOCIAL-002 baseline re-ran the existing social/video regressions and
+repaired one confirmed Community Feed defect: a URL pasted directly into the
+existing composer was published as plain text without a persisted link
+attachment or preview. `member-home.html` now extracts valid HTTP(S) URLs from
+the composer body, reuses the existing link-preview card, preserves the member's
+original text, and persists the original external destination through the
+existing attachment model. A stale preview request cannot overwrite a newer
+one. The isolated browser test rendered a NASA Open Graph image at 3000 × 2400,
+published the post, and restored the preview after reload; external routing
+retained `_blank` plus `noopener noreferrer`.
+
+Current verification: focused link-preview 7/7, player/provider 22 assertions,
+Messenger security PASS, Settings API/SQLite PASS, full local multi-user API
+regression 213/213, and read-only production boundary smoke 10/10. The earlier
+reported first-migration blocker was not reproducible once the local Wrangler
+test environment was run with its required listener/log permissions; no
+production migration was changed. Playwright browser Settings verification,
+authenticated production mutations, external provider sessions, physical
+devices, long-duration tests, formal accessibility scans, and full Reel
+creation remain unverified. No D1 migration, R2 change, recording upload,
+StudioFlow source change, or public livestream launch was made. Full evidence is
+in `docs/audits/2026-10-11/tpi-social/TPI-SOCIAL-002_*`.
+
 ## TPI-VIDEOS-009 — Video platform completion batch — October 11, 2026
 
 The 009 baseline audit found that TPI Videos already has a provider-aware catalog,
