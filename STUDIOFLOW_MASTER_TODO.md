@@ -141,8 +141,8 @@ Then:
 - [ ] **Reusable studio scenes + branding → D1** (persist across browsers/devices). *AC: create studio, reopen from another browser, scenes/assets restored.*
 - [ ] **Media libraries → R2** — logos, overlays, backgrounds, clips, sounds, music (multi-item, not single custom slots). *AC: upload, reuse, delete; records in D1, binaries in R2.*
 - [ ] **Teleprompter scripts + show notes → D1** where appropriate. *AC: scripts survive browser change.*
-- [ ] **Finalized recordings → R2 upload after local finalization succeeds** — keep local copy, show upload state, retry interrupted uploads without duplicating records. *AC: upload → replay from cloud → download; one forced-interrupt retry clean.*
-- [ ] **Storage limits, cleanup rules, explicit destructive confirmations.** *AC: deletion requires confirmation; limits surfaced in UI.*
+- [ ] **Finalized recordings → creator-owned storage** — keep local copy, show destination status, preserve recovery; no TPI-managed R2 recording upload.
+- [ ] **Storage limits, cleanup rules, explicit destructive confirmations.** *AC: deletion requires confirmation; surface only measured browser/provider values; no TPI-hosted recording quota.*
 - [ ] **Replace "Unlimited" with real usage** (local + cloud). *AC: numbers truthful.* (If Phase 1 already fixed local display, this extends it to cloud.)
 
 ---
@@ -314,3 +314,101 @@ owner-media, native picker, and production deployment verification remain open.
 
 The four detailed TPI-STUDIOFLOW-010 records are maintained in the canonical
 StudioFlow workspace; this release-side Bible records only the status boundary.
+
+## TPI-STUDIOFLOW-010A — Library cleanup and Cloud Library architecture
+
+The duplicate Library **Save to folder** action was removed after confirming it
+was functionally identical to **Download**. The underlying picker and direct
+folder destination in Recording & Storage remain intact, and cards identify
+known storage locations. Existing TPI R2/D1 private-library ownership paths
+and the current bucket lifecycle were audited read-only. Per owner decision
+TPI-STUDIOFLOW-010A-1, TPI-hosted StudioFlow Cloud recording storage is not
+approved; creator-owned storage is the approved architecture.
+
+## TPI-STUDIOFLOW-010B — Device-first storage and mobile support
+
+StudioFlow now displays the existing Browser Library as capability-aware **My
+Device — Browser Storage**, without silently moving existing destinations. Direct
+folder recording remains separate from browser-managed storage, and completed
+file export is distinct from both. Mobile Download uses a native Files/share
+handoff only when exposed by the browser, otherwise the download fallback.
+
+Cloud providers remain separate from system file export; Google Drive, Dropbox,
+and iCloud Drive are not represented as automatic backups. StudioFlow Cloud
+recording storage is not offered.
+Physical iPhone, iPad, Android, native Files/share, suspension, interruption,
+and long-session workflows remain **NOT YET VERIFIED**. No deployment occurred.
+
+## TPI-STUDIOFLOW-010C through 010E — Development status — October 10, 2026
+
+The canonical StudioFlow source now has a locally implemented livestream
+creation and scheduling workflow, creator-approved ICS export and local
+rescheduling, and a measured storage dashboard. Pre-recorded broadcasting,
+official platform scheduling, Google/Outlook calendar APIs, physical storage
+capacity, mobile acceptance, and production verification remain clearly
+**UNVERIFIED**, **BLOCKED**, or **UNSUPPORTED** as documented in the canonical
+010C–010E records.
+
+## TPI-STUDIOFLOW-011 — Creator Studio and ownership preparation — October 10, 2026
+
+The user-facing navigation label is now **Creator Studio**; the underlying
+StudioFlow application name and routes remain unchanged. The existing Settings
+Center now contains **Content Ownership & Publishing**, documenting private
+recordings, explicit publication, creator-owned storage, and external-copy
+limitations. TPI Videos reuse and integration architecture is documented in the
+canonical StudioFlow workspace. Owner-scoped creator publication, external
+provider APIs, Community Feed linkage, and release verification remain open.
+
+## TPI-STUDIOFLOW-011A — Automatic publication architecture — October 10, 2026
+
+Automatic publication is documented as a future creator-authorized workflow,
+not an active feature. Recording alone must never publish. Creator Studio must
+first provide a verified playable source, then create or update one canonical
+TPI video record and one linked Community Feed presentation. Processing,
+Action Required, unpublish, ownership, and duplicate-prevention behavior remain
+future implementation and verification work.
+
+## TPI-STUDIOFLOW-012 — Production deployment — October 10, 2026
+
+The reviewed 010–011A integration is deployed as Cloudflare Worker Version
+`9c72e5ea-9604-40c8-a02b-509c805f433b` from final TPI integration commit
+`a3051dc` (preceded by `69b61a5` and `3e6c467`). The generated `studio/` output was built from the
+canonical local StudioFlow source commit `0e9b2ba`; that source workspace has no
+configured remote and was not pushed directly.
+
+Public checks confirmed home, Creator Studio desktop/mobile navigation assets,
+the private `/studio/` gate, the `/live-video` Coming Soon boundary, TPI Videos,
+member Settings source, and StudioFlow bundle markers. No D1/R2 schema, data,
+bucket, or binding changes were made. Signed-in StudioFlow behavior, physical
+mobile/external-drive workflows, long-session/recovery production behavior,
+provider APIs, automatic publication, and Community Feed synchronization remain
+**NOT YET VERIFIED** or **NOT IMPLEMENTED**.
+
+## TPI-STUDIOFLOW-012 Access Control Addendum — October 10, 2026
+
+Creator Studio remains an owner/admin-only production preview. The Worker now
+server-gates `/studio/*`, direct assets, the former `/studio/guest/*` route, and
+StudioFlow room-code, room-relay, guest-token, and livestream-control APIs.
+Public `/live-video` remains a Coming Soon page and does not expose the app.
+
+Anonymous denial is verified. Fresh authenticated owner/admin success after
+this addendum remains **NOT YET VERIFIED** because no authorized live session
+was available in the verification browser. The change is intentionally not a
+public launch.
+
+## TPI-STUDIOFLOW-016B — Reliability, scheduling, and broadcast history
+
+- [x] Preserve scheduled, live, completed, and failed broadcasts in Library.
+- [x] Record actual start/end timing, measured duration, and failure reasons.
+- [x] Extend the existing edit flow for description, destinations, thumbnail,
+  schedule changes, and local source replacement.
+- [x] Add pre-broadcast readiness checks and missing-source reselect.
+- [x] Require confirmation before manually ending a broadcast.
+- [x] Keep unattended automatic scheduling disabled and documented.
+- [x] Harden the local RTMP bridge against closed-destination EPIPE failures.
+- [x] Verify local build, browser workflow, failure history, and diagnostics.
+- [ ] Verify an authenticated owner session in protected production StudioFlow.
+- [ ] Verify external provider delivery, physical interruption/device sleep,
+  long sessions, and recovery.
+
+See `docs/audits/2026-10-09/studioflow-audit/TPI-STUDIOFLOW-016B_COMPLETION_REPORT.md`.
