@@ -21,6 +21,27 @@ Community Feed, Messenger, notifications, administrative functionality,
 Cloudflare infrastructure, D1, R2, authentication, StudioFlow, and the
 Creator Partnership Program remain protected dependencies.
 
+## Approved technology direction
+
+The owner-approved planning direction is:
+
+- **Functional foundation:** [Refine](https://refine.dev/), subject to
+  compatibility review against the actual TPI frontend architecture.
+- **Visual components:** [shadcn/ui](https://ui.shadcn.com/), subject to
+  dependency, licensing, maintenance, and security review.
+- **Design inspiration:** [Discourse](https://www.discourse.org/) administration
+  dashboards and navigation patterns. Discourse is a design reference only,
+  not a replacement backend or community platform.
+- **Existing backend:** Cloudflare Workers, Cloudflare D1, Cloudflare R2,
+  existing TPI authentication, and existing TPI APIs.
+
+This direction does not authorize implementation. Before work begins, the
+project must verify that Refine and shadcn/ui integrate appropriately with the
+actual TPI frontend without introducing a second frontend framework
+unnecessarily. The Administration Center must use the existing backend,
+authentication, member data, and social-network services; it must not
+introduce another database or replace the existing community.
+
 ## Project overview
 
 The Administration Center will be a protected, professional operations
