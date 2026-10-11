@@ -1,5 +1,19 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-VIDEOS-007 — Integrated playback and watch experience — October 11, 2026
+
+The TPI Videos watch page now uses a strict playback-source resolver. Verified
+direct browser media renders through the native HTML5 player; approved provider
+embeds use an iframe; approved external sources receive an explicit provider
+fallback; local StudioFlow recordings remain private/local; and thumbnails or
+unrecognized URLs are never presented as playable media. The controlled local
+H.264/AAC fixture loaded metadata, entered playback, advanced in the browser,
+and reached the end. The existing local API/security suite remains 211/211.
+Production currently contains no published creator-authored TPI video rows, so
+creator playback and StudioFlow recording publication remain unverified. No
+StudioFlow source, production data, R2 storage, or `/live-video` behavior was
+changed. Evidence is in `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-007_*`.
+
 ## TPI-SOCIAL-001 — Existing social network audit — October 11, 2026
 
 The audit of the existing member/community systems is complete at the current

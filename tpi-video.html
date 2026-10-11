@@ -20,6 +20,11 @@
         .video-player-area .video-thumb-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:3rem;text-align:center;width:100%;height:100%}
         .video-player-area .video-thumb-fallback-icon{width:100px;height:100px;font-size:2.5rem}
         .video-player-area img{width:100%;height:100%;object-fit:cover;display:block}
+        .video-player-area video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+        .video-player-status{position:absolute;left:1rem;right:1rem;bottom:.75rem;margin:0;padding:.35rem .6rem;border-radius:8px;background:rgba(0,0,0,.72);color:#c8cdd8;font-size:.75rem;text-align:center;pointer-events:none}
+        .video-player-embed iframe{background:#000}
+        .video-player-status-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.65rem;width:100%;height:100%;padding:2rem;text-align:center;color:#8d93a3;line-height:1.5}
+        .video-player-status-panel strong{color:#c8cdd8;font-size:1rem}
         .video-detail-header{margin-bottom:1.5rem}
         .video-detail-header h1{font-size:1.6rem;color:#e8ecf4;line-height:1.3;margin-bottom:0.75rem}
         .video-channel-identity{font-size:0.85rem;color:#5a6070;margin-bottom:0.75rem}
@@ -117,6 +122,7 @@
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="member-shell.js?v=55"></script>
+<script src="tpi-video-player.js?v=1"></script>
 <script>
 (function () {
     var videos = [];
@@ -361,7 +367,6 @@
     }
 
     function renderVideo(video) {
-        var hasEmbed = video.embedUrl && video.embedUrl.trim();
         var hasThumb = video.thumbnail && video.thumbnail.trim();
         var isPublic = video.viewingAccess === "public";
         var canWatch = isPublic || currentUser;
@@ -381,19 +386,11 @@
             if (!document.querySelector('meta[property="og:image"]')) document.head.appendChild(ogImage);
         }
 
-        // Player area
-        var playerHtml;
-        if (canWatch && hasEmbed) {
-            playerHtml = '<div class="video-player-area"><iframe src="' + escapeHtml(video.embedUrl) + '" title="' + escapeHtml(video.title) + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>';
-        } else if (canWatch && hasThumb) {
-            playerHtml = '<div class="video-player-area"><img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + '"></div>';
-        } else if (canWatch) {
-            playerHtml = '<div class="video-player-area">' + renderThumbFallback(video.category) + '</div>';
-        } else {
-            playerHtml = hasThumb
-                ? '<div class="video-player-area"><img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + '"></div>'
-                : '<div class="video-player-area">' + renderThumbFallback(video.category) + '</div>';
-        }
+        // Player area: never treat a thumbnail or HTTP response as proof of playback.
+        var source = canWatch ? window.TPI_VIDEO_PLAYER.resolveSource(video) : { kind: "UNAVAILABLE", label: "Members-only playback" };
+        var playerHtml = canWatch
+            ? window.TPI_VIDEO_PLAYER.renderPlayer(video, source)
+            : '<div class="video-player-area video-player-unavailable" data-player-kind="UNAVAILABLE"><div class="video-player-status-panel" role="status"><strong>Members-only playback</strong><span>Sign in or join TPI to view this video.</span></div></div>';
 
         // Live banner
         var liveBanner = video.isLive ? '<div class="video-live-banner">This stream is live now</div>' : '';
@@ -418,10 +415,8 @@
 
         // Watch button for external
         var watchBtn = '';
-        if (canWatch && video.videoUrl && !hasEmbed) {
-            watchBtn = '<div class="video-detail-actions"><a class="portal-button" href="' + escapeHtml(video.videoUrl) + '" target="_blank" rel="noopener noreferrer">Watch on ' + escapeHtml(video.platform || "External Site") + '</a></div>';
-        } else if (!canWatch && video.videoUrl) {
-            watchBtn = '<div class="video-detail-actions"><a class="portal-button" href="' + escapeHtml(video.videoUrl) + '" target="_blank" rel="noopener noreferrer">Watch on ' + escapeHtml(video.platform || "External Site") + '</a></div>';
+        if (canWatch && source.kind === "APPROVED_EXTERNAL_WATCH") {
+            watchBtn = '<div class="video-detail-actions"><a class="portal-button" href="' + escapeHtml(source.url) + '" target="_blank" rel="noopener noreferrer">Watch on ' + escapeHtml(video.platform || "External Site") + '</a></div>';
         }
 
         // Build page
@@ -466,6 +461,8 @@
         html += renderEmbedModal(video);
 
         container.innerHTML = html;
+
+        if (canWatch) window.TPI_VIDEO_PLAYER.wire(container.querySelector(".video-player-area"));
 
         // Wire up event handlers
         if (canWatch) {
