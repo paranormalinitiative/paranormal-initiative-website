@@ -420,3 +420,18 @@ Release evidence: TPI commits `446eb65` and final documentation-sync commit
 `/live-video` remains Coming Soon and unauthenticated `/studio/` plus direct
 StudioFlow assets remain HTTP 403. Owner-authenticated hands-on verification
 remains **NOT YET VERIFIED**.
+
+## TPI-STUDIOFLOW-015B — Real platform logos and destination selector
+
+- [x] Replace generic destination monograms with locally bundled recognizable
+  platform logos.
+- [x] Add the requested YouTube, Facebook, Rumble, Twitch, LinkedIn, Instagram,
+  X, Kick, Vimeo, Brightcove, Hopin, and Other Platforms / RTMP order.
+- [x] Preserve accurate capability disclosure, manual RTMP fields, stream keys,
+  saved destinations, routing, authentication, and owner-only access.
+- [x] Verify local logo visibility, selector ordering, unsupported disclosure,
+  manual RTMP flow, build, syntax checks, and diff hygiene.
+- [ ] Verify exact browser zoom at 100%, 125%, 150%, and 200%.
+- [ ] Verify authenticated production interaction and provider connectivity.
+
+See `docs/audits/2026-10-09/studioflow-audit/TPI-STUDIOFLOW-015B_DESTINATION_LOGOS.md`.
