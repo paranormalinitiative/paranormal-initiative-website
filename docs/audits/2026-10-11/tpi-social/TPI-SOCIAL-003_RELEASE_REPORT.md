@@ -2,7 +2,7 @@
 
 ## Current result
 
-**READY WITH LIMITATIONS pending release smoke.** One confirmed Settings UI
+**READY WITH LIMITATIONS.** One confirmed Settings UI
 defect was repaired without changing social architecture. Local regression and
 security evidence passed; browser-wide signed-in Settings verification remains
 blocked by the missing Playwright module. Export, account deletion, general
@@ -27,13 +27,19 @@ mutations remain unverified or intentionally unimplemented.
 * Navigation branding: **PASS**.
 * Syntax checks: **PASS**.
 * Playwright signed-in browser matrix: **BLOCKED**, module unavailable.
+* Production read-only smoke: **10/10 PASS**.
+* Production page/asset check: **PASS**; member-dashboard requests `v=3`,
+  repaired cards are present, `/live-video` is Coming Soon, and anonymous
+  `/studio/` is 403.
 
 ## Release record
 
-Commit and Cloudflare deployment identifiers are recorded here after commit,
-push, deployment, and read-only production verification. No D1 migration, R2
-change, recording-storage change, authentication change, or public livestream
-launch is authorized by this batch.
+Runtime commits pushed to `origin/main`: `573cedc` (repair, regression,
+audit set) and `03142a0` (cache-bust correction). Cloudflare deployments:
+`1e85a4f4-4240-4363-bcee-14ca98647148` for the first release and
+`d8da49ff-54ec-4335-8a9c-9378700addab` for the final cache-bust release.
+No D1 migration, R2 change, recording-storage change, authentication change,
+or public livestream launch was authorized by this batch.
 
 ## Roadmap gate
 

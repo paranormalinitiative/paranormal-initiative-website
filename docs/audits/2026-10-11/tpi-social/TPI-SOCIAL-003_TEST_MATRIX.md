@@ -13,7 +13,7 @@
 | Signed-in browser Settings matrix | Existing member-settings harness | BLOCKED | Playwright module unavailable |
 | Formal accessibility scan | Automated scanner | NOT RUN | Tool/dependency unavailable in this checkout |
 | Physical devices/external providers | Manual/provider sessions | NOT TESTED | Not available; not inferred |
-| Production endpoint smoke | `scripts/qa/production-smoke.mjs` | PENDING | Run after verified release deployment |
+| Production endpoint smoke | `scripts/qa/production-smoke.mjs` | PASS 10/10 | Public shell, Coming Soon, `/studio/` gate, API denials, Feed boundary, private media |
 
 The previous unbounded-run concern is resolved for this batch: the same suite
 completed when run with the required loopback permissions. Future runs should
