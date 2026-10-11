@@ -22,9 +22,9 @@ main-column width. No authentication, authorization, database, R2, recording,
 membership, entitlement, role, livestream, or StudioFlow behavior changed.
 
 Focused source/API checks passed, browser visual acceptance remains blocked
-without an authorized session, and the final production identifiers and smoke
-results are recorded in the TPI-UI-003 release reports. Stop for owner visual
-approval after deployment.
+without an authorized session. Runtime commit `6e9bf1e` was pushed and deployed
+as Cloudflare version `659bdc39-233e-477c-afb1-d6fef00ed791`; production smoke
+passed 10/10 on both production endpoints. Stop for owner visual approval.
 
 **Status:** Superseded by TPI-DOCS-002 documentation synchronization — October 11, 2026
 **Scope:** Documentation only. No runtime, configuration, migration,

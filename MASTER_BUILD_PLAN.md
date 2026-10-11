@@ -26,9 +26,11 @@ recordings, memberships, entitlements, roles, and StudioFlow remain unchanged.
 
 Focused workspace regressions, JavaScript syntax, `git diff --check`, the real
 Settings API/SQLite harness, and pre-release production smoke passed with the
-browser/Playwright limitations recorded in the TPI-UI-003 reports. Runtime and
-release identifiers are recorded after deployment in the TPI-UI-003 release
-report. Owner desktop/tablet/mobile visual review remains the final stop gate.
+browser/Playwright limitations recorded in the TPI-UI-003 reports. Runtime
+commit `6e9bf1e` was pushed and deployed as Cloudflare version
+`659bdc39-233e-477c-afb1-d6fef00ed791`; post-deployment smoke passed 10/10 on
+both the public domain and Worker endpoint. Owner desktop/tablet/mobile visual
+review remains the final stop gate.
 
 ## TPI-DOCS-001 — Documentation synchronization — October 11, 2026
 

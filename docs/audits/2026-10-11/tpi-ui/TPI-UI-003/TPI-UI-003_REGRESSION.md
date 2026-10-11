@@ -27,4 +27,14 @@ rules, existing Back to TPI/title hooks, and ordinary member-page preservation.
 Cloudflare dry-run and final deployment smoke are recorded after execution in
 the production verification and release reports.
 
+## Post-deployment verification
+
+- Cloudflare dry-run: PASS.
+- Public production domain smoke: PASS 10/10.
+- Worker endpoint smoke: PASS 10/10.
+- Versioned CSS/JS asset checks: PASS for `workspace-shell.css?v=3` and
+  `member-shell.js?v=57`.
+- Anonymous `/studio/` denial, `/live-video` Coming Soon, and private API
+  boundaries: PASS on both endpoints.
+
 Authenticated visual owner acceptance is not inferred from source assertions.
