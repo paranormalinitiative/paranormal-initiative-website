@@ -20,5 +20,24 @@ The member/sidebar and injected mobile navigation labels were updated from
 focused navigation regression passed; no StudioFlow source or generated
 StudioFlow functionality was changed.
 
-The runtime deployment and final documentation-sync deployment identifiers
-will be recorded here after production verification.
+Release identifiers for this addendum:
+
+- TPI GitHub commit: `e1ddab2`, pushed to `origin/main`.
+- Cloudflare runtime Version ID: `3626c893-7043-4cb5-9dbb-7e8011bf7fde`.
+- Cloudflare final documentation-sync Version ID: to be recorded after this
+  documentation update is deployed.
+
+Production verification passed on 2026-10-11:
+
+- `/member-sidebar.html` returned 200 and contains `TPI Creator Studio` with
+  the unchanged `/studio/` link.
+- `/member-shell.js` returned 200 and contains the matching mobile label,
+  accessible name, and unchanged `/studio/` link.
+- Anonymous `/studio/` returned 403 with the existing Coming Soon gate.
+- Public `/live-video` returned 200 with the existing Coming Soon message.
+- No database, R2, recording-storage, authentication, or StudioFlow bundle
+  change was made.
+
+The focused static regression and JavaScript syntax check passed. The existing
+member-settings test passed its isolated API/SQLite portion, but its browser
+portion was not run because Playwright is not installed in this checkout.

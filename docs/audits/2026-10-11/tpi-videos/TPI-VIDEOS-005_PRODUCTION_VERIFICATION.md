@@ -26,8 +26,25 @@ The deployment preserved `/studio/` authentication, public `/live-video`, creato
 
 ## TPI-VIDEOS-005-A — Navigation branding verification
 
-The deployed member sidebar and shared mobile-navigation source are expected
-to display `TPI Creator Studio` while retaining `/studio/`. Production asset
-inspection and protected-route verification will be recorded after the
-addendum deployment. No StudioFlow functionality, D1 data, R2 storage, or
-authentication rule is changed by this addendum.
+Cloudflare runtime Version ID: `3626c893-7043-4cb5-9dbb-7e8011bf7fde` from
+TPI commit `e1ddab2`.
+
+Cache-busted production verification passed on 2026-10-11:
+
+- `/member-sidebar.html` returned 200 and contains `TPI Creator Studio` with
+  the unchanged `/studio/` destination.
+- `/member-shell.js` returned 200 and contains the matching mobile visible
+  label, aria label, and `/studio/` destination.
+- Anonymous `/studio/` returned 403 and retained the Creator Studio Coming
+  Soon gate.
+- Public `/live-video` returned 200 and retained the Coming Soon message.
+
+The deployed source and static regression preserve the owner-only access
+boundary. An authenticated owner DOM session was not available, and the local
+member-settings browser portion could not run because Playwright is not
+installed; these remain owner/browser-environment acceptance items. No
+StudioFlow functionality, D1 data, R2 storage, or authentication rule was
+changed by this addendum.
+
+Final documentation-sync Cloudflare Version ID: to be recorded after this
+documentation-only update is deployed.

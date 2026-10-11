@@ -20,4 +20,4 @@
 |---|---|---|---|
 | Member/sidebar navigation | Static source regression | PASS | `member-sidebar.html` displays `TPI Creator Studio` and preserves `/studio/`. |
 | Mobile/injected navigation | Static source regression and JavaScript syntax check | PASS | `member-shell.js` injects the same label, aria label, and `/studio/` destination; `scripts/qa/tpi-videos-005a-navigation.mjs` passed. |
-| Desktop/mobile production assets | Deployed asset inspection | PENDING | Verify after the addendum deployment; authenticated owner DOM rendering remains a separate acceptance item. |
+| Desktop/mobile production assets | Cache-busted production asset inspection | PASS | `/member-sidebar.html` and `/member-shell.js` returned 200 with `TPI Creator Studio` and `/studio/`; authenticated owner DOM rendering remains a separate acceptance item because Playwright is not installed in this checkout. |
