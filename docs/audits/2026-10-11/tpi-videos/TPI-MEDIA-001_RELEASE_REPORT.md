@@ -19,4 +19,11 @@
 
 ## Release boundary
 
-This batch has not yet deployed the new grid repair. `/studio/` remains owner/tester protected, `/live-video` remains Coming Soon, and no production database/R2 changes are authorized by this batch.
+Runtime release:
+
+- GitHub commit: `0e23ff2` (`Repair TPI Videos desktop grid and record media audit`), pushed to `origin/main`.
+- Cloudflare Worker version: `27d917cd-dff2-4744-9694-0a8c1eab6d35`.
+- Post-deployment production smoke: `10/10 PASS`.
+- Live production asset check confirmed the matching-specificity grid repair.
+
+`/studio/` remains owner/tester protected, `/live-video` remains Coming Soon, and no production database/R2 changes were made. Authenticated production card counting, owner publication, and public Creator Studio playback remain unverified.

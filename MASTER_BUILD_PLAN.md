@@ -23,6 +23,10 @@ creator-owned recording storage, existing database/authentication, and unrelated
 dirty files remain preserved. Evidence is in
 `docs/audits/2026-10-11/tpi-videos/TPI-MEDIA-001_*`.
 
+Runtime commit `0e23ff2` was pushed and deployed as Cloudflare Worker version
+`27d917cd-dff2-4744-9694-0a8c1eab6d35`; post-deployment boundary smoke passed
+10/10.
+
 ## TPI-SOCIAL-002 — Community Feed and integration recovery — October 11, 2026
 
 The TPI-SOCIAL-002 baseline re-ran the existing social/video regressions and
