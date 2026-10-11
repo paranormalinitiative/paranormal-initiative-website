@@ -1,6 +1,6 @@
 # TPI-ADMIN-001 Release Report
 
-**Status:** Foundation batch ready for release verification; owner review remains required.
+**Status:** Foundation batch deployed and read-only production verification passed; owner review remains required.
 
 ## Changes
 
@@ -13,8 +13,15 @@
 
 ## Release identifiers
 
-Cloudflare deployment ID: **pending verified deployment**
-GitHub commit: **pending verified commit**
+Cloudflare deployment ID: `9fe57737-4643-4171-a729-b9a8aa00ce19`
+GitHub commit: `29db893`
+
+GitHub push: `main` updated on `origin`.
+
+Production smoke: existing suite **10/10 PASS**; admin route/API denial matrix
+**PASS**; `/studio/` **403**; `/live-video` **200 Coming Soon**. Signed-in
+owner/admin production interaction remains unverified and is listed rather than
+inferred from the local seeded-admin session.
 
 No production Founding 50 allocations, Creator Studio entitlement grants,
 recording-storage changes, R2 changes, or destructive migrations are included.
