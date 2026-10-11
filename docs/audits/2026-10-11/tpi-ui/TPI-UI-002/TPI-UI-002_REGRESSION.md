@@ -8,7 +8,9 @@
 - Existing repository syntax/QA gate: 7 PASS checks.
 - Existing Settings API/auth harness: real SQLite auth gates, owner isolation, theme persistence, and Messenger block-list checks PASS.
 - Read-only production smoke: 10/10 PASS.
-- Versioned workspace asset checks: pending the cache-busting follow-up deployment.
+- Versioned workspace asset checks after final deployment: PASS; CSS `?v=2`
+  contains the new route-scoped layout/docking rules and JS `?v=56` contains
+  the workspace-aware collapsed-chat behavior.
 
 ## Explicit limitations
 
@@ -17,3 +19,5 @@
 - StudioFlow checks: not run because this frontend-only directive did not modify StudioFlow.
 
 No CSS-only result is treated as proof of authenticated visual acceptance.
+The authenticated owner/member visual matrix remains the final owner review
+gate because no approved signed-in browser session was available.

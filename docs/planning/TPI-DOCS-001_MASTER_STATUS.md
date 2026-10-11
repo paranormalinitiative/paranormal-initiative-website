@@ -1,5 +1,17 @@
 # TPI-DOCS-001 — Master Documentation Status
 
+## TPI-UI-002 — Administration and Settings layout refinement — October 11, 2026
+
+The TPI-UI-002 runtime refinement is complete and deployed. Commits `8e8c0e9`
+and `450b446` are pushed to `origin/main`; the final Cloudflare Worker version
+is `ddddbb45-d518-46fa-b1e6-4c3f0d530f71`. The first deployment's stale
+unversioned asset behavior was corrected by versioning the workspace CSS and
+Member Shell requests. Production boundary smoke passed 10/10, including
+`/studio/` denial and `/live-video` Coming Soon, and the deployed versioned
+assets contain the final layout rules. No production data or unrelated systems
+were changed. Authenticated owner/member visual review remains required before
+the batch is considered visually accepted.
+
 **Status:** Superseded by TPI-DOCS-002 documentation synchronization — October 11, 2026
 **Scope:** Documentation only. No runtime, configuration, migration,
 authentication, Cloudflare, database, R2, or StudioFlow source changes were

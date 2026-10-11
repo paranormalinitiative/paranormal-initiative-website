@@ -1,5 +1,18 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-UI-002 — Administration and Settings layout refinement — October 11, 2026
+
+The targeted layout refinement is complete without changing authentication,
+business logic, D1/R2, recordings, membership, entitlements, roles, or
+StudioFlow. Runtime commits `8e8c0e9` and cache-busting follow-up `450b446` were
+pushed to `origin/main`. The initial deployment
+`b8edafb5-9c5d-46fb-ab49-fb5dafe3fcbf` exposed stale unversioned workspace
+assets; the follow-up versioned `workspace-shell.css?v=2` and
+`member-shell.js?v=56`, then deployed successfully as
+`ddddbb45-d518-46fa-b1e6-4c3f0d530f71`. Post-deployment boundary smoke passed
+10/10 and the final versioned asset checks passed. Authenticated owner/member
+visual review at desktop, tablet, and phone sizes remains the owner stop gate.
+
 ## TPI-DOCS-001 — Documentation synchronization — October 11, 2026
 
 The current owner-approved roadmap and cross-workspace status are recorded in
