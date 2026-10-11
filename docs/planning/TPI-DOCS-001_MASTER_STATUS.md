@@ -78,6 +78,24 @@ this admin batch is reviewed.
 The detailed evidence remains in
 [`docs/audits/2026-10-11/tpi-videos/`](../audits/2026-10-11/tpi-videos/).
 
+### TPI-ADMIN-003 acceptance audit
+
+The existing Administration Center was acceptance-reviewed without a rebuild.
+Live anonymous browser checks confirmed the server-side admin restriction, the
+protected Creator Studio Coming Soon state, and public `/live-video` Coming
+Soon state. The required authenticated owner/admin browser review remains
+**BLOCKED** because no already-authorized browser session was available. A
+fresh local API rerun was also **BLOCKED** before assertions by Wrangler
+`spawn EBADF`; ADMIN-002's prior 225/225 result is preserved as historical
+evidence and is not re-counted. No runtime, production data, D1, R2,
+recording, membership, entitlement, or deployment changes were made. Full
+reports and per-area classifications are in
+[`docs/audits/2026-10-11/tpi-admin/TPI-ADMIN-003/`](../audits/2026-10-11/tpi-admin/TPI-ADMIN-003/).
+
+Per the owner review gate, TPI-FINAL-001, Founding 50 activation, production
+Creator Studio entitlement grants, public Creator Studio launch, and Help
+Center development remain paused.
+
 ### TPI-VIDEOS-010B acceptance batch
 
 The bounded local browser acceptance created and finalized a 14-second Program
