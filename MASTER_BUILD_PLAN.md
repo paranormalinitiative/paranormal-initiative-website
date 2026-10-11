@@ -1,5 +1,21 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-VIDEOS-008 — Provider-aware playback integration — October 11, 2026
+
+The existing TPI Videos playback path now distinguishes intentional external
+viewing from missing playback. Odysee records are explicitly external by
+design and expose `WATCH ON ODYSEE` actions; Dailymotion and Internet Archive
+records without verified embedded sources use provider-labelled external
+fallbacks; approved direct media and provider embeds retain the 007 resolver
+path. Dailymotion validation accepts only the official Player-ID URL shape,
+and the current catalog is not claiming embedded Dailymotion playback without
+a configured TPI Player ID. The production discovery inventory contained 200
+records: 90 Odysee, 59 Dailymotion, and 51 Internet Archive; all had source
+URLs, while none had published embed or direct playback URLs. No StudioFlow
+source, D1/R2 data, `/live-video`, or access boundary was changed. Evidence is
+in `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-008_*`; release identifiers are
+recorded in the 008 release report.
+
 ## TPI-VIDEOS-007 — Integrated playback and watch experience — October 11, 2026
 
 The TPI Videos watch page now uses a strict playback-source resolver. Verified

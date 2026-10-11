@@ -122,7 +122,7 @@
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="member-shell.js?v=55"></script>
-<script src="tpi-video-player.js?v=1"></script>
+<script src="tpi-video-player.js?v=2"></script>
 <script>
 (function () {
     var videos = [];
@@ -416,7 +416,7 @@
         // Watch button for external
         var watchBtn = '';
         if (canWatch && source.kind === "APPROVED_EXTERNAL_WATCH") {
-            watchBtn = '<div class="video-detail-actions"><a class="portal-button" href="' + escapeHtml(source.url) + '" target="_blank" rel="noopener noreferrer">Watch on ' + escapeHtml(video.platform || "External Site") + '</a></div>';
+            watchBtn = '<div class="video-detail-actions"><a class="portal-button" href="' + escapeHtml(source.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(source.actionLabel || ("WATCH ON " + (video.platform || "EXTERNAL SITE").toUpperCase())) + '</a></div>';
         }
 
         // Build page

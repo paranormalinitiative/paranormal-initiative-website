@@ -37,7 +37,12 @@
         var path = url.pathname.replace(/\/+$/, "");
         if (provider.key === "youtube") return Boolean((path.match(/^\/embed\/[^/]+/) || path.match(/^\/shorts\/[^/]+/) || url.searchParams.get("v")));
         if (provider.key === "rumble") return Boolean(path.match(/\/(?:embed\/)?v[a-z0-9]+$/i));
-        if (provider.key === "dailymotion") return Boolean(path.match(/\/(?:video\/|embed\/video\/)[a-z0-9]+$/i));
+        if (provider.key === "dailymotion") {
+            if (url.hostname === "geo.dailymotion.com") {
+                return Boolean(path.match(/^\/player\/[^/]+\.html$/i) && url.searchParams.get("video"));
+            }
+            return Boolean(path.match(/\/(?:video\/|embed\/video\/)[a-z0-9]+$/i));
+        }
         return false;
     }
 
@@ -95,7 +100,14 @@
         if (embed) return { kind: "APPROVED_PROVIDER_EMBED", url: embed.url, provider: embed.provider.key, label: embed.provider.label };
 
         var external = safeProviderSource(video.videoUrl);
-        if (external) return { kind: "APPROVED_EXTERNAL_WATCH", url: external.url, provider: external.provider.key, label: external.provider.label };
+        if (external) return {
+            kind: "APPROVED_EXTERNAL_WATCH",
+            intent: external.provider.key === "odysee" ? "EXTERNAL_BY_DESIGN" : "EXTERNAL_FALLBACK",
+            url: external.url,
+            provider: external.provider.key,
+            label: external.provider.label,
+            actionLabel: external.provider.key === "odysee" ? "WATCH ON ODYSEE" : "WATCH ON " + external.provider.label.toUpperCase()
+        };
 
         return { kind: video.videoUrl || video.embedUrl ? "UNSUPPORTED" : "UNAVAILABLE", label: "Playback is not available" };
     }
@@ -116,12 +128,19 @@
                 '</div>';
         }
         var message = source.kind === "APPROVED_EXTERNAL_WATCH"
-            ? "Playback is available on the approved provider below."
+            ? source.intent === "EXTERNAL_BY_DESIGN"
+                ? "Odysee external viewing is intentional."
+                : "This video does not have an approved embedded source."
             : source.kind === "LOCAL_PRIVATE_RECORDING"
-                ? "This recording remains private in the creator's local StudioFlow storage."
+                ? "This recording has not been published. It remains private in the creator's local StudioFlow storage."
                 : "A playable source has not been published for this video yet.";
+        var heading = source.kind === "APPROVED_EXTERNAL_WATCH"
+            ? "Watch this video on " + escapeHtml(source.label)
+            : source.kind === "LOCAL_PRIVATE_RECORDING"
+                ? "Private recording"
+                : "Playback unavailable here";
         return '<div class="video-player-area video-player-unavailable" data-player-kind="' + escapeHtml(source.kind) + '">' +
-            '<div class="video-player-status-panel" role="status"><strong>Playback unavailable here</strong><span>' + escapeHtml(message) + '</span></div></div>';
+            '<div class="video-player-status-panel" role="status"><strong>' + heading + '</strong><span>' + escapeHtml(message) + '</span></div></div>';
     }
 
     function wire(root) {
@@ -140,6 +159,14 @@
         resolveSource: resolveSource,
         renderPlayer: renderPlayer,
         wire: wire,
-        isDirectMediaUrl: isDirectMediaUrl
+        isDirectMediaUrl: isDirectMediaUrl,
+        actionFor: function (video) {
+            var source = resolveSource(video);
+            return {
+                source: source,
+                label: source.kind === "APPROVED_EXTERNAL_WATCH" ? source.actionLabel : "WATCH NOW",
+                href: source.kind === "APPROVED_EXTERNAL_WATCH" ? source.url : ""
+            };
+        }
     };
 }(window));

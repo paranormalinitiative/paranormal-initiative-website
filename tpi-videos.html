@@ -494,6 +494,7 @@
 <div id="site-footer"></div>
 <script src="includes.js"></script>
 <script src="member-shell.js?v=55"></script>
+<script src="tpi-video-player.js?v=2"></script>
 <script>
 (function () {
     var videos = [];
@@ -622,7 +623,10 @@
         var liveBadge = target.isLive ? '<span class="video-live-badge">Live Now</span>' : '';
         var kickerText = target.isLive ? "Live Stream" : (target.category || "Featured");
         var kickerStyle = target.isLive ? ' style="color:#dc2626;"' : '';
-        var watchText = target.isLive ? "Watch Live" : "Watch Now";
+        var targetAction = window.TPI_VIDEO_PLAYER.actionFor(target);
+        var watchText = target.isLive ? "WATCH LIVE" : targetAction.label;
+        var targetHref = targetAction.href || getVideoUrl(target);
+        var targetExternalAttrs = targetAction.href ? ' target="_blank" rel="noopener noreferrer"' : '';
         var borderColor = target.isLive ? ' style="border-color:#dc2626;"' : '';
 
         var html = '<div class="video-featured-card"' + borderColor + ' onclick="window.location.href=\'' + getVideoUrl(target) + '\'">' +
@@ -637,7 +641,7 @@
             (target.series ? '<span>' + escapeHtml(target.series) + '</span>' : "") +
             '</div>' +
             '<div class="video-featured-actions">' +
-            '<a class="portal-button" href="' + getVideoUrl(target) + '" onclick="event.stopPropagation()">' + watchText + '</a>' +
+            '<a class="portal-button" href="' + targetHref + '"' + targetExternalAttrs + ' onclick="event.stopPropagation()">' + watchText + '</a>' +
             '</div>' +
             '</div>' +
             '</div>';
@@ -721,6 +725,9 @@
 
         var durationHtml = video.duration ? '<span class="video-card-duration">' + escapeHtml(video.duration) + '</span>' : '';
         var liveBadge = video.isLive ? '<span class="video-live-badge">Live</span>' : '';
+        var action = window.TPI_VIDEO_PLAYER.actionFor(video);
+        var actionHref = action.href || getVideoUrl(video);
+        var actionAttrs = action.href ? ' target="_blank" rel="noopener noreferrer"' : '';
 
         return '<article class="video-card" onclick="window.location.href=\'' + getVideoUrl(video) + '\'">' +
             '<div class="video-card-media">' + mediaHtml + durationHtml + '</div>' +
@@ -733,6 +740,7 @@
             '</div>' +
             '<h3>' + escapeHtml(video.title) + '</h3>' +
             '<p class="video-card-attribution">' + (video.sourceType === "discovered" ? 'Discovered from ' + escapeHtml(video.sourceName || video.platform || "an external source") : (video.channelSlug ? '<a href="tpi-channel.html?slug=' + encodeURIComponent(video.channelSlug) + '" onclick="event.stopPropagation()">' + escapeHtml(video.channelName || "Creator channel") + '</a>' : 'TPI creator video')) + '</p>' +
+            '<p class="video-card-watch-action"><a class="portal-button" href="' + actionHref + '"' + actionAttrs + ' onclick="event.stopPropagation()">' + escapeHtml(action.label) + '</a></p>' +
             (video.description ? '<p>' + escapeHtml(video.description) + '</p>' : "") +
             '</div>' +
             '</article>';
