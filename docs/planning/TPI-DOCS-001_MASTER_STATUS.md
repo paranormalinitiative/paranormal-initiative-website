@@ -12,6 +12,20 @@ assets contain the final layout rules. No production data or unrelated systems
 were changed. Authenticated owner/member visual review remains required before
 the batch is considered visually accepted.
 
+## TPI-UI-003 — Unified workspace navigation and header corrections — October 11, 2026
+
+The current TPI-UI-003 batch is a scoped frontend repair. Settings now uses the
+Administration sidebar's approved outer positioning and flexible content grid;
+the existing account/Messenger control has reserved header space on both
+workspace routes; and Administration dashboard sections share the available
+main-column width. No authentication, authorization, database, R2, recording,
+membership, entitlement, role, livestream, or StudioFlow behavior changed.
+
+Focused source/API checks passed, browser visual acceptance remains blocked
+without an authorized session, and the final production identifiers and smoke
+results are recorded in the TPI-UI-003 release reports. Stop for owner visual
+approval after deployment.
+
 **Status:** Superseded by TPI-DOCS-002 documentation synchronization — October 11, 2026
 **Scope:** Documentation only. No runtime, configuration, migration,
 authentication, Cloudflare, database, R2, or StudioFlow source changes were

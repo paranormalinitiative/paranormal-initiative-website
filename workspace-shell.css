@@ -29,9 +29,9 @@ body.workspace-page .member-main-inner {
 }
 
 body.workspace-page .workspace-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     align-items: center;
-    justify-content: space-between;
     gap: 20px;
     width: 100%;
     box-sizing: border-box;
@@ -42,6 +42,46 @@ body.workspace-page .workspace-header {
 
 body.workspace-page .workspace-brand {
     flex: 1 1 auto;
+}
+
+body.workspace-page .workspace-account-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+/* The signed-in Messenger owner control is a real header participant on
+ * dedicated workspaces. The open conversation still returns to the body as
+ * the existing movable panel; only its collapsed account bar is mounted here. */
+body.workspace-page .workspace-account-slot > .member-floating-chat.is-collapsed {
+    position: static !important;
+    display: block;
+    width: auto !important;
+    min-width: 0;
+    min-height: 0;
+    max-width: min(360px, 32vw);
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    overflow: visible;
+}
+
+body.workspace-page .workspace-account-slot .member-floating-chat-header {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: default;
+}
+
+body.workspace-page .workspace-account-slot .member-chat-owner {
+    max-width: 220px;
+}
+
+body.workspace-page .workspace-account-slot .member-chat-header-actions {
+    flex-shrink: 0;
 }
 
 body.workspace-page .workspace-brand,
@@ -145,9 +185,16 @@ body.workspace-page .member-main-inner > .settings-main-inner {
 /* A collapsed Messenger is still available, but must not dock over the
  * workspace header as it does on the ordinary member shell. */
 body.workspace-page .member-floating-chat.is-collapsed {
-    top: 82px !important;
-    left: 18px !important;
+    top: auto !important;
+    left: auto !important;
     right: auto !important;
+    bottom: auto !important;
+}
+
+body.workspace-page .member-floating-chat.is-collapsed:not(.is-workspace-account) {
+    position: fixed;
+    left: 18px !important;
+    top: 96px !important;
     max-width: min(420px, calc(100vw - 36px));
 }
 
@@ -167,6 +214,12 @@ body.workspace-admin-page .admin-center-main,
 body.workspace-admin-page .admin-center-section,
 body.workspace-admin-page .admin-center-card {
     min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+body.workspace-admin-page .admin-center-main > * {
+    width: 100%;
 }
 
 body.workspace-admin-page .admin-center-hero,
@@ -188,8 +241,8 @@ body.workspace-settings-page .tpi-settings {
 }
 
 body.workspace-settings-page .tpi-settings {
-    width: min(100%, 1600px);
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
 }
 
 body.workspace-settings-page .member-dashboard-header {
@@ -209,8 +262,22 @@ body.workspace-settings-page .member-dashboard-header p {
 }
 
 body.workspace-settings-page .settings-layout {
-    grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
-    gap: 20px;
+    grid-template-columns: minmax(220px, 248px) minmax(0, 1fr);
+    gap: 24px;
+}
+
+body.workspace-settings-page .settings-sidebar {
+    position: sticky;
+    top: 18px;
+    padding: 20px 14px;
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+}
+
+body.workspace-settings-page .settings-sidebar h2 {
+    padding: 4px 8px 12px;
+    margin: 0 0 8px;
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 body.workspace-settings-page .settings-content,
@@ -239,18 +306,30 @@ body.workspace-settings-page .editor-access-card {
 @media (max-width: 900px) {
     body.workspace-page .workspace-header {
         align-items: flex-start;
-        flex-direction: column;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 14px;
     }
 
+    body.workspace-page .workspace-account-slot {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-content: flex-start;
+    }
+
     body.workspace-page .workspace-header-actions {
-        width: 100%;
+        grid-column: 2;
+        grid-row: 1;
+        width: auto;
         justify-content: space-between;
+    }
+
+    body.workspace-page .workspace-account-slot > .member-floating-chat.is-collapsed {
+        max-width: min(420px, 100%);
     }
 }
 
 @media (max-width: 760px) {
-    body.workspace-page .member-floating-chat.is-collapsed {
+    body.workspace-page .member-floating-chat.is-collapsed:not(.is-workspace-account) {
         top: auto !important;
         left: 12px !important;
         right: 12px !important;
@@ -269,12 +348,19 @@ body.workspace-settings-page .editor-access-card {
 @media (max-width: 700px) {
     body.workspace-page .workspace-header {
         align-items: flex-start;
-        flex-direction: column;
+        grid-template-columns: minmax(0, 1fr);
         gap: 14px;
     }
 
+    body.workspace-page .workspace-account-slot,
     body.workspace-page .workspace-header-actions {
+        grid-column: 1;
+        grid-row: auto;
         width: 100%;
+        justify-content: flex-start;
+    }
+
+    body.workspace-page .workspace-header-actions {
         justify-content: space-between;
     }
 

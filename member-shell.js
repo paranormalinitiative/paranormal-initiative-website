@@ -2818,8 +2818,10 @@
       if (collapsed) {
         storeChatFrame(chat);
         chat.classList.add("is-collapsed");
-        dockCollapsedChat(chat);
+        mountWorkspaceCollapsedChat(chat);
+        if (!isWorkspaceCollapsedChatMounted(chat)) dockCollapsedChat(chat);
       } else {
+        unmountWorkspaceCollapsedChat(chat);
         chat.classList.remove("is-collapsed");
         applyStoredChatFrame(chat, true);
       }
@@ -2835,11 +2837,11 @@
     });
 
     chat.addEventListener("click", function () {
-      if (chat.classList.contains("is-collapsed")) dockCollapsedChat(chat);
+      if (chat.classList.contains("is-collapsed") && !isWorkspaceCollapsedChatMounted(chat)) dockCollapsedChat(chat);
     });
 
     window.addEventListener("resize", function () {
-      if (chat.classList.contains("is-collapsed")) dockCollapsedChat(chat);
+      if (chat.classList.contains("is-collapsed") && !isWorkspaceCollapsedChatMounted(chat)) dockCollapsedChat(chat);
       closeIdentityMenu();
       closeOwnerMenu();
     });
@@ -3040,6 +3042,7 @@
 
     setupFloatingChatDrag(chat);
     setupFloatingChatResize(chat);
+    if (chat.classList.contains("is-collapsed")) mountWorkspaceCollapsedChat(chat);
 
     function renderOnline() {
       var query = String(memberSearchQuery || "").trim().toLowerCase();
@@ -3391,6 +3394,7 @@
         closeIdentityMenu();
         closeOwnerMenu();
         if (chat.classList.contains("is-collapsed")) {
+          unmountWorkspaceCollapsedChat(chat);
           chat.classList.remove("is-collapsed");
           applyStoredChatFrame(chat, true);
           syncChatMinimizeButton();
@@ -4722,6 +4726,28 @@
     chat.style.bottom = "auto";
     chat.style.width = Math.min(420, Math.max(320, window.innerWidth - left - 18)) + "px";
     chat.style.height = "auto";
+  }
+
+  function isWorkspaceCollapsedChatMounted(chat) {
+    var slot = document.querySelector("[data-workspace-chat-slot]");
+    return Boolean(slot && chat && chat.parentElement === slot);
+  }
+
+  function mountWorkspaceCollapsedChat(chat) {
+    if (!chat || !document.body.classList.contains("workspace-page") || !chat.classList.contains("is-collapsed")) return;
+    var slot = document.querySelector("[data-workspace-chat-slot]");
+    if (!slot) return;
+    if (chat.parentElement !== slot) slot.appendChild(chat);
+    chat.classList.add("is-workspace-account");
+    ["position", "left", "top", "right", "bottom", "width", "height"].forEach(function(property) {
+      chat.style[property] = "";
+    });
+  }
+
+  function unmountWorkspaceCollapsedChat(chat) {
+    if (!chat || !isWorkspaceCollapsedChatMounted(chat)) return;
+    document.body.appendChild(chat);
+    chat.classList.remove("is-workspace-account");
   }
 
   function getStoredChatFrame() {

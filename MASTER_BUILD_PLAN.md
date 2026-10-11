@@ -13,6 +13,23 @@ assets; the follow-up versioned `workspace-shell.css?v=2` and
 10/10 and the final versioned asset checks passed. Authenticated owner/member
 visual review at desktop, tablet, and phone sizes remains the owner stop gate.
 
+## TPI-UI-003 — Unified workspace navigation and header corrections — October 11, 2026
+
+TPI-UI-003 is a targeted repair to the Administration and Settings workspace
+shells. The approved Administration sidebar geometry is now shared by Settings;
+the Settings wrapper no longer re-centers into a narrow desktop container; the
+existing collapsed Messenger/account control is mounted into a reserved
+workspace-header slot; and Administration sections explicitly use the available
+main-column width. Existing Settings categories/search, Administration data and
+navigation, authentication, authorization, `/studio/`, `/live-video`, D1, R2,
+recordings, memberships, entitlements, roles, and StudioFlow remain unchanged.
+
+Focused workspace regressions, JavaScript syntax, `git diff --check`, the real
+Settings API/SQLite harness, and pre-release production smoke passed with the
+browser/Playwright limitations recorded in the TPI-UI-003 reports. Runtime and
+release identifiers are recorded after deployment in the TPI-UI-003 release
+report. Owner desktop/tablet/mobile visual review remains the final stop gate.
+
 ## TPI-DOCS-001 — Documentation synchronization — October 11, 2026
 
 The current owner-approved roadmap and cross-workspace status are recorded in
