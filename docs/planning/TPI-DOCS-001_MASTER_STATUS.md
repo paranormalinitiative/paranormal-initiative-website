@@ -29,8 +29,9 @@ The owner-approved order is not being restarted or reordered:
 1. **TPI-VIDEOS-009A** — four-column desktop grid and compact cards. This
    work is implemented through **TPI-MEDIA-001** and remains pending only for
    any explicitly listed owner-acceptance items.
-2. **TPI-VIDEOS-010** — final TPI Videos and Creator Studio integration
-   acceptance. Do not start this phase as part of TPI-DOCS-001.
+2. **TPI-VIDEOS-010 / 010B** — final TPI Videos and Creator Studio
+   integration acceptance. The 010B continuation is active but not complete;
+   do not start Social-003 until its remaining acceptance items are closed.
 3. **TPI-SOCIAL-003** — next social-network batch after the 010 acceptance
    gate.
 4. **TPI-ADMIN-001** — Administration and Network Operations Center after
@@ -67,6 +68,24 @@ reliability, accessibility, integration, and compatibility repairs.
 
 The detailed evidence remains in
 [`docs/audits/2026-10-11/tpi-videos/`](../audits/2026-10-11/tpi-videos/).
+
+### TPI-VIDEOS-010B continuation
+
+The bounded local browser acceptance created and finalized a 14-second Program
+recording from an isolated `?testMedia=1` session. The saved Library video
+reported 13.965 seconds, 1920×1080, and readyState 4. Existing browser-generated
+checkpoint/recovery evidence remains authoritative for 8-second and 15-second
+sessions, cleanup, Discard, and failed-final-save retention. StudioFlow build,
+room, and RTMP checks remain passing, and the prior production boundary smoke
+remains 10/10.
+
+Current classification is **READY WITH LIMITATIONS**. Physical device/native
+storage workflows, long-duration reliability, a fresh export-file path,
+authenticated creator publication, authorized production playback, and full
+Feed integration remain unverified. The full API E2E runner hung before
+assertions and is not counted as a pass. No StudioFlow source, production data,
+R2, or Cloudflare runtime was changed by this documentation continuation.
+The detailed 010B matrix and release report are in the TPI Videos audit folder.
 
 ### TPI-SOCIAL-002
 

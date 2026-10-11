@@ -58,6 +58,29 @@ to-authorized-playback integration remain unverified. Evidence is in
 `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010_*`. Do not begin
 TPI-SOCIAL-003 until the remaining 010 acceptance work is reviewed and closed.
 
+## TPI-VIDEOS-010B — StudioFlow and TPI Videos acceptance continuation — October 11, 2026
+
+The 010B continuation performed a bounded isolated browser recording run from
+the canonical StudioFlow source. A separate local origin using `?testMedia=1`
+created and finalized a 14-second Program recording, returned it to the local
+Library, and rendered it through a native video element reporting 13.965
+seconds, 1920×1080, and readyState 4. Existing checkpoint/recovery evidence
+also covers isolated 8-second and 15-second browser-generated WebM sessions,
+successful recovery and cleanup, and failed-final-save retention.
+
+The acceptance remains **NOT COMPLETE — READY WITH LIMITATIONS**. The Download
+control was exercised but the browser harness did not expose a fresh download
+file path; earlier valid-WebM fallback evidence is retained. Physical device
+and native Files/share workflows, long-duration durability, authenticated
+creator publication, authorized production playback, and the complete
+StudioFlow-to-Feed-to-playback path remain unverified. The full local API E2E
+runner hung before assertions and is not counted as a pass. No StudioFlow
+source repair, production data change, R2 change, or Cloudflare deployment was
+made for this documentation-only continuation. See
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010B_*`.
+
+TPI-SOCIAL-003 remains queued behind this acceptance gate.
+
 ## TPI-SOCIAL-002 — Community Feed and integration recovery — October 11, 2026
 
 The TPI-SOCIAL-002 baseline re-ran the existing social/video regressions and
