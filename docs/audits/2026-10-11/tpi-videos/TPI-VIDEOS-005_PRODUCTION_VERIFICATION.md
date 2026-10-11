@@ -46,5 +46,5 @@ installed; these remain owner/browser-environment acceptance items. No
 StudioFlow functionality, D1 data, R2 storage, or authentication rule was
 changed by this addendum.
 
-Final documentation-sync Cloudflare Version ID: to be recorded after this
-documentation-only update is deployed.
+Documentation-sync Cloudflare Version ID that published this verification
+record: `24edd085-67ae-4522-b2c5-de2086902828`.

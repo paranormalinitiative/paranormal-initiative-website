@@ -24,8 +24,8 @@ Release identifiers for this addendum:
 
 - TPI GitHub commit: `e1ddab2`, pushed to `origin/main`.
 - Cloudflare runtime Version ID: `3626c893-7043-4cb5-9dbb-7e8011bf7fde`.
-- Cloudflare final documentation-sync Version ID: to be recorded after this
-  documentation update is deployed.
+- Cloudflare documentation-sync Version ID that published this release record:
+  `24edd085-67ae-4522-b2c5-de2086902828`.
 
 Production verification passed on 2026-10-11:
 
