@@ -21,9 +21,17 @@ restriction was changed.
 
 - TPI GitHub commit: `1271dec` (`Implement TPI Videos playback resolver`),
   pushed to `origin/main`.
-- Cloudflare deployment/version: `66aeea64-4f39-4ead-b7dd-239804ce4fa8`.
+- Cloudflare runtime deployment/version: `66aeea64-4f39-4ead-b7dd-239804ce4fa8`.
+- Cloudflare final clean evidence deployment/version:
+  `60e4d354-1bdd-4350-9ee6-6d2f29363220`.
 - Cloudflare account: `Paranormalsomerset@gmail.com's Account`
   (`221ea5479876fd303ddc87002b9e892d`).
+
+The intermediate docs-only attempt reported Version
+`2a0b9522-3f76-411c-8232-5f49840a0026` from the canonical checkout before its
+shell changed into the clean worktree. It was immediately superseded by the
+clean Version `60e4d354-1bdd-4350-9ee6-6d2f29363220` and is not the accepted
+release artifact. No D1 or R2 mutation occurred.
 
 ## Production boundary results
 

@@ -1,7 +1,8 @@
 # TPI-VIDEOS-007 Production Verification
 
-Verified: 2026-10-11 after Cloudflare Version
-`66aeea64-4f39-4ead-b7dd-239804ce4fa8`.
+Verified: 2026-10-11 after the corrected clean Cloudflare Version
+`60e4d354-1bdd-4350-9ee6-6d2f29363220`, deployed from the committed
+`50dc0a9` worktree.
 
 Read-only checks covered:
 

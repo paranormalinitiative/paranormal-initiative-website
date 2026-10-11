@@ -14,8 +14,9 @@ creator playback and StudioFlow recording publication remain unverified. No
 StudioFlow source, production data, R2 storage, or `/live-video` behavior was
 changed. Evidence is in `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-007_*`.
 Verified runtime commit `1271dec` was pushed and deployed as Cloudflare Version
-`66aeea64-4f39-4ead-b7dd-239804ce4fa8`; public and protected boundary checks
-passed.
+`66aeea64-4f39-4ead-b7dd-239804ce4fa8`; final clean evidence commit `50dc0a9`
+was deployed as Cloudflare Version `60e4d354-1bdd-4350-9ee6-6d2f29363220`;
+public and protected boundary checks passed.
 
 ## TPI-SOCIAL-001 — Existing social network audit — October 11, 2026
 
