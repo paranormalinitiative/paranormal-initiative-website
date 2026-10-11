@@ -454,6 +454,23 @@ R=$(req GET /tpi-videos/e2e-video-a '')
 check "published public video detail is readable" 200 "$R" "d.get('video',{}).get('embedUrl','').startswith('https://www.youtube-nocookie.com/embed/')"
 R=$(req GET /tpi-channels/e2e-contrib '')
 check "creator channel endpoint uses stable account slug" 200 "$R" "d.get('channel',{}).get('owner',{}).get('username')=='e2e_contrib'"
+R=$(req POST /tpi-channels/e2e-contrib/follow tok-a '{}')
+check "member can follow a public creator channel" 200 "$R" "d.get('following') is True and d.get('followerCount',0)>=1"
+R=$(req GET /tpi-channels/e2e-contrib tok-a)
+check "channel reports authenticated follow state" 200 "$R" "d.get('channel',{}).get('following') is True"
+R=$(req GET "/tpi-videos?following=true" tok-a)
+check "following discovery returns followed channel videos" 200 "$R" "any(v.get('slug')=='e2e-video-a' for v in d.get('videos',[]))"
+R=$(req GET "/tpi-videos?q=security&pageSize=1" '')
+check "server-side video search and pagination work" 200 "$R" "d.get('pageSize')==1 and any('e2e-video-a'==v.get('slug') for v in d.get('videos',[]))"
+R=$(req POST /tpi-videos/e2e-video-a/share tok-a '{"message":"Shared from the isolated video E2E test"}')
+check "member can share a public video to Community" 200 "$R" "d.get('ok') is True and d.get('postId')"
+R=$(req POST /video-comments tok-a '{"videoId":"e2e-video-a","body":"Parent comment for threaded discussion"}')
+check "member can create a video comment" 200 "$R" "d.get('id')"
+PARENT_COMMENT=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin).get('id',''))")
+R=$(req POST /video-comments tok-b "{\"videoId\":\"e2e-video-a\",\"body\":\"Reply comment\",\"parentId\":\"$PARENT_COMMENT\"}")
+check "member can reply to a video comment" 200 "$R" "d.get('parentId')=='$PARENT_COMMENT'"
+R=$(req GET "/video-comments?videoId=e2e-video-a" tok-a)
+check "video comment list preserves reply parent" 200 "$R" "any(c.get('parentId')=='$PARENT_COMMENT' for c in d.get('comments',[]))"
 R=$(req POST /tpi-videos/e2e-video-a/unpublish tok-contrib '{}')
 check "creator can unpublish own video" 200 "$R" "d.get('status')=='draft'"
 R=$(req GET /tpi-videos/e2e-video-a '')
@@ -462,6 +479,10 @@ R=$(req POST /tpi-videos/e2e-video-a/remove tok-b '{}')
 check "second creator cannot remove creator video" 403 "$R"
 R=$(req POST /tpi-videos/e2e-video-a/remove tok-contrib '{}')
 check "creator can remove own listing without deleting external media" 200 "$R" "d.get('status')=='removed'"
+R=$(req DELETE /tpi-channels/e2e-contrib/follow tok-a)
+check "member can unfollow a creator channel" 200 "$R" "d.get('following') is False"
+R=$(req GET "/tpi-videos?following=true" tok-a)
+check "unfollow removes channel videos from following discovery" 200 "$R" "not any(v.get('slug')=='e2e-video-a' for v in d.get('videos',[]))"
 
 ######################## 6. FEED NOTIFICATION PREFERENCE ########################
 echo "== FEED NOTIFICATION TYPES =="

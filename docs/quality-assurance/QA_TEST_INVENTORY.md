@@ -3,7 +3,7 @@
 | Area | Existing or new entrypoint | Evidence class | Default status |
 |---|---|---|---|
 | TPI Worker and API syntax | `scripts/qa/run-qa.mjs` | local static check | PASS when runner completes |
-| TPI social and video API | `scripts/e2e/api-e2e.sh` | local D1, synthetic multi-user integration | PASS: 171/0 on 2026-10-11; includes TPI-VIDEOS-002 security/publishing |
+| TPI social and video API | `scripts/e2e/api-e2e.sh` | local D1, synthetic multi-user integration | PASS: 181/0 on 2026-10-11; includes TPI-VIDEOS-003 discovery, follows, share, threaded comments, and 002 security/publishing |
 | Social multi-member interaction audit | isolated synthetic Member A/B/C/D sessions plus local D1/API/browser checks | cross-account functional/security evidence | QUEUED after TPI-STUDIOFLOW-019 |
 | Migration replay | `scripts/e2e/verify-0010-equivalence.sh` | local migration equivalence | available; run when migration changes |
 | Member settings | `scripts/e2e/member-settings.mjs` | local browser/synthetic API harness | existing focused suite; run when settings changes |

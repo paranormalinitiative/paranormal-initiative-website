@@ -59,6 +59,8 @@
         .video-comment-name{font-size:0.9rem;font-weight:600;color:#e8ecf4}
         .video-comment-date{font-size:0.75rem;color:#5a6070}
         .video-comment-body{font-size:0.9rem;color:#8d93a3;line-height:1.6}
+        .video-comment-reply{margin-left:2rem;border-left:2px solid #1e2230;border-radius:0 24px 24px 0}
+        .video-comment-reply-btn{background:none;border:0;color:#59a9dc;font:inherit;font-size:.78rem;font-weight:600;padding:0;margin-top:.65rem;cursor:pointer}
         .video-comment-status{font-size:0.85rem;color:#5a6070;margin-top:0.5rem}
         .video-related-section{margin-bottom:2rem}
         .video-related-section h2{font-size:1.2rem;color:#e8ecf4;margin-bottom:1rem}
@@ -126,6 +128,7 @@
     var userReaction = null;
     var reactionCounts = {};
     var isSaved = false;
+    var replyTargetId = null;
 
     var REACTIONS = [
         { id: "like", emoji: "\uD83D\uDC4D", label: "Like" },
@@ -268,6 +271,7 @@
             '<a class="video-share-btn" href="https://wa.me/?text=' + encodedTitle + '%20' + encodedUrl + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>' +
             '<a class="video-share-btn" href="mailto:?subject=' + encodedTitle + '&body=' + encodedUrl + '">Email</a>' +
             '<button class="video-share-btn" id="copy-link-btn">Copy Link</button>' +
+            '<button class="video-share-btn" id="share-community-btn">Share to Community</button>' +
             '</div>' +
             '<p id="share-status" style="font-size:0.82rem;color:#5a6070;margin-top:0.75rem"></p>' +
             '<button class="portal-button portal-button-secondary" style="margin-top:0.75rem" id="close-share-modal">Close</button>' +
@@ -380,7 +384,7 @@
         // Player area
         var playerHtml;
         if (canWatch && hasEmbed) {
-            playerHtml = '<div class="video-player-area"><iframe src="' + escapeHtml(video.embedUrl) + '" title="' + escapeHtml(video.title) + '" allowfullscreen></iframe></div>';
+            playerHtml = '<div class="video-player-area"><iframe src="' + escapeHtml(video.embedUrl) + '" title="' + escapeHtml(video.title) + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>';
         } else if (canWatch && hasThumb) {
             playerHtml = '<div class="video-player-area"><img src="' + escapeHtml(video.thumbnail) + '" alt="' + escapeHtml(video.title) + '"></div>';
         } else if (canWatch) {
@@ -401,7 +405,8 @@
         var channelName = video.channelName || "The Paranormal Initiative";
         var channelHref = video.channelSlug ? ' <a href="tpi-channel.html?slug=' + encodeURIComponent(video.channelSlug) + '">View channel</a>' : '';
         var creatorName = video.creator && (video.creator.displayName || video.creator.username) ? ' · ' + escapeHtml(video.creator.displayName || video.creator.username) : '';
-        var channelHtml = '<div class="video-channel-identity"><strong>' + escapeHtml(channelName) + '</strong>' + creatorName + channelHref + '</div>';
+        var channelAction = video.channelSlug ? '<button class="video-action-btn" id="video-follow-btn" type="button">Follow channel</button><span id="video-follow-count" aria-live="polite"></span>' : '';
+        var channelHtml = '<div class="video-channel-identity"><strong>' + escapeHtml(channelName) + '</strong>' + creatorName + channelHref + (channelAction ? '<div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem">' + channelAction + '</div>' : '') + '</div>';
 
         // Tags
         var tagsHtml = '';
@@ -588,6 +593,51 @@
             });
         }
 
+        var communityShareBtn = document.getElementById("share-community-btn");
+        if (communityShareBtn) {
+            communityShareBtn.addEventListener("click", async function () {
+                if (!currentUser) {
+                    window.location.href = "member-login.html";
+                    return;
+                }
+                communityShareBtn.disabled = true;
+                try {
+                    var shareRes = await fetch("/api/tpi-videos/" + encodeURIComponent(video.slug || video.id) + "/share", {
+                        method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: "" })
+                    });
+                    var shareData = await shareRes.json();
+                    document.getElementById("share-status").textContent = shareRes.ok ? "Shared to Community." : (shareData.error || "Could not share this video.");
+                } catch (e) {
+                    document.getElementById("share-status").textContent = "Could not share this video.";
+                } finally {
+                    communityShareBtn.disabled = false;
+                }
+            });
+        }
+
+        var followBtn = document.getElementById("video-follow-btn");
+        if (followBtn && video.channelSlug) {
+            var followCount = document.getElementById("video-follow-count");
+            var updateFollowUi = function (following, count) {
+                followBtn.textContent = following ? "Following" : "Follow channel";
+                followBtn.classList.toggle("active", Boolean(following));
+                if (followCount) followCount.textContent = Number(count || 0) + " follower" + (Number(count || 0) === 1 ? "" : "s");
+            };
+            fetch("/api/tpi-channels/" + encodeURIComponent(video.channelSlug), { credentials: "same-origin" }).then(function (res) { return res.ok ? res.json() : null; }).then(function (data) {
+                if (data && data.channel) updateFollowUi(data.channel.following, data.channel.followerCount);
+            }).catch(function () {});
+            followBtn.addEventListener("click", async function () {
+                if (!currentUser) { window.location.href = "member-login.html"; return; }
+                var following = followBtn.classList.contains("active");
+                followBtn.disabled = true;
+                try {
+                    var followRes = await fetch("/api/tpi-channels/" + encodeURIComponent(video.channelSlug) + "/follow", { method: following ? "DELETE" : "POST", credentials: "same-origin" });
+                    var followData = await followRes.json();
+                    if (followRes.ok) updateFollowUi(followData.following, followData.followerCount);
+                } catch (e) {} finally { followBtn.disabled = false; }
+            });
+        }
+
         var saveBtn = document.getElementById("save-btn");
         if (saveBtn) {
             saveBtn.addEventListener("click", async function () {
@@ -759,9 +809,9 @@
             return;
         }
         var html = '';
-        comments.forEach(function (c) {
+        var renderComment = function (c, depth) {
             var initial = (c.displayName || c.username || "M").charAt(0).toUpperCase();
-            html += '<article class="video-comment">' +
+            html += '<article class="video-comment' + (depth ? ' video-comment-reply' : '') + '">' +
                 '<div class="video-comment-header">' +
                 '<div class="video-comment-avatar">' + escapeHtml(initial) + '</div>' +
                 '<div class="video-comment-info">' +
@@ -769,9 +819,21 @@
                 '<span class="video-comment-date">' + formatDate(c.createdAt) + '</span>' +
                 '</div></div>' +
                 '<div class="video-comment-body">' + escapeHtml(c.body) + '</div>' +
+                (currentUser ? '<button class="video-comment-reply-btn" type="button" data-reply="' + escapeHtml(c.id) + '">Reply</button>' : '') +
                 '</article>';
-        });
+            comments.filter(function (reply) { return reply.parentId === c.id; }).forEach(function (reply) { renderComment(reply, depth + 1); });
+        };
+        comments.filter(function (c) { return !c.parentId; }).forEach(function (c) { renderComment(c, 0); });
         listArea.innerHTML = html;
+        listArea.querySelectorAll("[data-reply]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                replyTargetId = button.dataset.reply;
+                var input = document.getElementById("video-comment-input");
+                var status = document.getElementById("video-comment-status");
+                if (input) { input.placeholder = "Reply to this comment..."; input.focus(); }
+                if (status) status.textContent = "Replying to a comment."
+            });
+        });
     }
 
     async function handleCommentSubmit(e) {
@@ -787,11 +849,13 @@
                 method: "POST",
                 credentials: "same-origin",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ videoId: videoId, body: body })
+                body: JSON.stringify({ videoId: videoId, body: body, parentId: replyTargetId })
             });
             var data = await res.json();
             if (res.ok) {
                 input.value = "";
+                replyTargetId = null;
+                input.placeholder = "Share your thoughts...";
                 status.textContent = "Comment posted.";
                 await loadComments(videoId);
             } else {

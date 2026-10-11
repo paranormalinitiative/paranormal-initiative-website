@@ -115,6 +115,10 @@
             cursor: pointer;
         }
         .tpi-channel-sort select:focus { outline: none; border-color: #59a9dc; }
+        .tpi-channel-source { display:flex; align-items:center; gap:.5rem; }
+        .tpi-channel-source label { font-size:.8rem; color:#5a6070; font-weight:600; text-transform:uppercase; letter-spacing:.06em; white-space:nowrap; }
+        .tpi-channel-source select { background:#12151c; border:1px solid #1e2230; color:#c8cdd8; font-size:.85rem; padding:.6rem .75rem; border-radius:999px; font-family:inherit; cursor:pointer; }
+        .tpi-channel-source select:focus { outline:none; border-color:#59a9dc; }
         .video-featured-card {
             background: #12151c;
             border: 1px solid #1e2230;
@@ -319,6 +323,11 @@
             color: #5a6070;
             font-weight: 600;
         }
+        .video-card-attribution { color:#8d93a3; font-size:.78rem; margin-top:.25rem; }
+        .video-card-attribution a { color:#59a9dc; text-decoration:none; }
+        .video-card-attribution a:hover { text-decoration:underline; }
+        .video-load-more { display:flex; justify-content:center; margin:1.5rem 0 2.5rem; }
+        .video-discovery-status { color:#8d93a3; font-size:.85rem; min-height:1.2rem; }
         .video-card-category {
             color: #59a9dc !important;
             text-transform: uppercase;
@@ -418,6 +427,7 @@
     <button class="tpi-channel-tab active" data-tab="latest">Latest</button>
     <button class="tpi-channel-tab" data-tab="live">Live Streams</button>
     <button class="tpi-channel-tab" data-tab="all">All Videos</button>
+    <button class="tpi-channel-tab" data-tab="following" id="video-following-tab" hidden>Following</button>
 </nav>
 
 <div class="tpi-channel-controls">
@@ -430,6 +440,15 @@
         <select id="video-sort">
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
+            <option value="alpha">Alphabetical</option>
+        </select>
+    </div>
+    <div class="tpi-channel-source">
+        <label for="video-source">Source</label>
+        <select id="video-source">
+            <option value="all">All sources</option>
+            <option value="creator">Creator videos</option>
+            <option value="discovered">Discovered videos</option>
         </select>
     </div>
 </div>
@@ -442,6 +461,8 @@
 </div>
 
 <div id="video-grid-container"></div>
+<div id="video-load-more-container" class="video-load-more" hidden><button id="video-load-more" class="portal-button portal-button-secondary">Load more videos</button></div>
+<p id="video-discovery-status" class="video-discovery-status" role="status" aria-live="polite"></p>
 
 <section class="study-hub-layout" style="margin-top:2rem;">
     <article class="study-hub-card">
@@ -483,21 +504,58 @@
     var sortSelect = document.getElementById("video-sort");
     var sectionTitle = document.getElementById("video-section-title");
     var resultsCount = document.getElementById("video-results-count");
+    var sourceSelect = document.getElementById("video-source");
+    var loadMoreContainer = document.getElementById("video-load-more-container");
+    var loadMoreButton = document.getElementById("video-load-more");
+    var discoveryStatus = document.getElementById("video-discovery-status");
+    var followingTab = document.getElementById("video-following-tab");
     var activeTab = "latest";
     var activeCategory = "all";
     var searchQuery = "";
+    var currentPage = 1;
+    var hasMore = false;
 
-    async function loadVideos() {
+    async function loadVideos(reset) {
+        var shouldReset = reset !== false;
+        if (shouldReset) {
+            currentPage = 1;
+            videos = [];
+            discoveryStatus.textContent = "Loading videos...";
+        }
+        var params = new URLSearchParams();
+        params.set("page", String(currentPage));
+        params.set("pageSize", "24");
+        params.set("sort", sortSelect.value);
+        params.set("source", sourceSelect.value);
+        if (activeTab === "live") params.set("live", "true");
+        if (activeTab === "latest") params.set("live", "false");
+        if (activeTab === "following") params.set("following", "true");
+        if (activeCategory !== "all") params.set("category", activeCategory);
+        if (searchQuery) params.set("q", searchQuery);
         try {
-            var res = await fetch("/api/tpi-videos", { credentials: "same-origin" });
+            var res = await fetch("/api/tpi-videos?" + params.toString(), { credentials: "same-origin" });
             if (res.ok) {
                 var data = await res.json();
-                videos = data.videos || [];
+                videos = (shouldReset ? [] : videos).concat(data.videos || []);
+                hasMore = Boolean(data.hasMore);
+                if (hasMore && data.nextPage) currentPage = data.nextPage;
+                discoveryStatus.textContent = "";
+            } else if (activeTab === "following" && res.status === 401) {
+                videos = [];
+                hasMore = false;
+                discoveryStatus.textContent = "Sign in to see videos from channels you follow.";
+            } else {
+                hasMore = false;
+                discoveryStatus.textContent = "Video discovery is temporarily unavailable.";
             }
-        } catch (e) {}
+        } catch (e) {
+            hasMore = false;
+            discoveryStatus.textContent = "Video discovery is temporarily unavailable.";
+        }
         renderFeatured();
         renderCategoryFilters(videos);
         renderGrid();
+        loadMoreContainer.hidden = !hasMore;
     }
 
     function escapeHtml(value) {
@@ -643,6 +701,9 @@
         // Sort
         var sortVal = sortSelect.value;
         filtered.sort(function (a, b) {
+            if (sortVal === "alpha") {
+                return String(a.title || "").localeCompare(String(b.title || ""));
+            }
             if (sortVal === "oldest") {
                 return String(a.publishedAt || "").localeCompare(String(b.publishedAt || ""));
             }
@@ -671,6 +732,7 @@
             liveBadge +
             '</div>' +
             '<h3>' + escapeHtml(video.title) + '</h3>' +
+            '<p class="video-card-attribution">' + (video.sourceType === "discovered" ? 'Discovered from ' + escapeHtml(video.sourceName || video.platform || "an external source") : (video.channelSlug ? '<a href="tpi-channel.html?slug=' + encodeURIComponent(video.channelSlug) + '" onclick="event.stopPropagation()">' + escapeHtml(video.channelName || "Creator channel") + '</a>' : 'TPI creator video')) + '</p>' +
             (video.description ? '<p>' + escapeHtml(video.description) + '</p>' : "") +
             '</div>' +
             '</article>';
@@ -680,7 +742,7 @@
         var filtered = filterAndSort(videos);
 
         // Update section title
-        var titles = { latest: "Latest", live: "Live Streams", all: "All Videos" };
+        var titles = { latest: "Latest", live: "Live Streams", all: "All Videos", following: "Following" };
         sectionTitle.textContent = titles[activeTab] || "Videos";
 
         // Update results count
@@ -727,7 +789,7 @@
             document.querySelectorAll(".tpi-channel-tab").forEach(function (t) {
                 t.classList.toggle("active", t.dataset.tab === activeTab);
             });
-            renderGrid();
+            loadVideos(true);
         });
     });
 
@@ -739,7 +801,7 @@
         categoryFilters.querySelectorAll(".video-category-pill").forEach(function (p) {
             p.classList.toggle("active", p.dataset.category === activeCategory);
         });
-        renderGrid();
+        loadVideos(true);
     });
 
     // Search handler
@@ -748,17 +810,32 @@
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(function () {
             searchQuery = searchInput.value.trim();
-            renderGrid();
+            loadVideos(true);
         }, 200);
     });
 
     // Sort handler
     sortSelect.addEventListener("change", function () {
-        renderGrid();
+        loadVideos(true);
+    });
+
+    sourceSelect.addEventListener("change", function () {
+        loadVideos(true);
+    });
+
+    loadMoreButton.addEventListener("click", function () {
+        if (!hasMore) return;
+        loadVideos(false);
     });
 
     // Initialize
-    loadVideos();
+    fetch("/api/auth/me", { credentials: "same-origin" }).then(function (res) {
+        return res.ok ? res.json() : { user: null };
+    }).then(function (data) {
+        if (data.user) followingTab.hidden = false;
+    }).catch(function () {}).finally(function () {
+        loadVideos(true);
+    });
 })();
 </script>
 </body>
