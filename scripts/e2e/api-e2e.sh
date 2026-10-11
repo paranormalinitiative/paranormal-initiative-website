@@ -548,6 +548,19 @@ check "stale publication retry returns an explicit conflict" 409 "$R" "d.get('co
 R=$(req GET /tpi-broadcasts/e2e-broadcast-005 tok-contrib)
 check "mapped broadcast refresh returns current server state" 200 "$R" "d.get('broadcast',{}).get('listingStatus')=='published' and d.get('broadcast',{}).get('revision')==$SYNC_REV3"
 
+# Cancellation is part of the StudioFlow bridge contract and must retain the
+# stable identity while removing the listing from upcoming discovery.
+CANCEL_BODY='{"broadcastId":"e2e-broadcast-006","title":"Cancellation Safety Broadcast","description":"Cancellation lifecycle fixture","category":"Live Streams","scheduledAt":"2031-02-02T15:00:00Z","scheduledTimezone":"America/New_York","visibility":"public"}'
+R=$(req POST /tpi-broadcasts tok-contrib "$CANCEL_BODY")
+check "sync bridge creates cancellable schedule" 201 "$R" "d.get('broadcast',{}).get('id')=='e2e-broadcast-006' and d.get('broadcast',{}).get('availability')=='upcoming'"
+CANCEL_REV=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['broadcast']['revision'])")
+R=$(req POST /tpi-broadcasts/e2e-broadcast-006/cancel tok-contrib "{\"expectedRevision\":$CANCEL_REV}")
+check "creator can cancel a scheduled bridge listing" 200 "$R" "d.get('broadcast',{}).get('status')=='cancelled' and d.get('broadcast',{}).get('availability')=='cancelled' and d.get('broadcast',{}).get('id')=='e2e-broadcast-006'"
+R=$(req GET "/tpi-broadcasts?status=upcoming" '')
+check "cancelled bridge listing leaves upcoming discovery" 200 "$R" "not any(b.get('id')=='e2e-broadcast-006' for b in d.get('broadcasts',[]))"
+R=$(req POST /tpi-broadcasts/e2e-broadcast-006/cancel tok-contrib "{\"expectedRevision\":$CANCEL_REV}")
+check "stale cancellation retry returns an explicit conflict" 409 "$R" "d.get('code')=='conflict' and d.get('broadcast',{}).get('status')=='cancelled'"
+
 ######################## 6. FEED NOTIFICATION PREFERENCE ########################
 echo "== FEED NOTIFICATION TYPES =="
 R=$(req POST /notifications/preferences tok-b '{"prefs":{"admin":true,"posts":false,"education":true,"videos":true,"photos":true,"chat":true}}')

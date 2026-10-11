@@ -1,5 +1,19 @@
 # TPI MASTER BUILD PLAN
 
+## TPI-VIDEOS-006 — Video platform acceptance audit — October 11, 2026
+
+The main TPI-VIDEOS-005 synchronization bridge was audited separately from the
+navigation-only TPI-STUDIOFLOW-005-A addendum. The current deterministic TPI
+API/security suite passes 211/211 after adding cancellation lifecycle coverage;
+StudioFlow build, room/RTMP syntax, isolated H.264/AAC RTMP capture, and
+read-only production boundaries also pass. The platform remains **READY WITH
+LIMITATIONS** pending authenticated browser creator workflow, real offline
+reload recovery, physical-device, external-provider playback, accessibility,
+and long-duration acceptance. Full evidence is in
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-006_*`. This audit changes tests
+and documentation only; it does not rebuild StudioFlow, modify production
+data, or launch `/live-video`.
+
 ## TPI-VIDEOS-005 — Authenticated StudioFlow-to-TPI bridge — October 11, 2026
 
 The canonical StudioFlow source now exposes an explicit, authenticated bridge

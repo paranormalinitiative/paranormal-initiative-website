@@ -21,3 +21,10 @@
 | Member/sidebar navigation | Static source regression | PASS | `member-sidebar.html` displays `TPI Creator Studio` and preserves `/studio/`. |
 | Mobile/injected navigation | Static source regression and JavaScript syntax check | PASS | `member-shell.js` injects the same label, aria label, and `/studio/` destination; `scripts/qa/tpi-videos-005a-navigation.mjs` passed. |
 | Desktop/mobile production assets | Cache-busted production asset inspection | PASS | `/member-sidebar.html` and `/member-shell.js` returned 200 with `TPI Creator Studio` and `/studio/`; authenticated owner DOM rendering remains a separate acceptance item because Playwright is not installed in this checkout. |
+
+## Current audit note
+
+The historical 005 release baseline recorded 207 API checks. The current
+TPI-VIDEOS-006 rerun is 211/211 because four cancellation lifecycle assertions
+were added to `scripts/e2e/api-e2e.sh`; the historical release count is
+preserved rather than rewritten.
