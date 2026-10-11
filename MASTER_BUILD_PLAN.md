@@ -9,8 +9,10 @@ endpoint checks preserve the public/member boundary. One confirmed high-severity
 defect was repaired: authenticated members now need to be participants in a
 conversation containing a Messenger attachment before the Worker will fetch its
 R2 object. Settings API/SQLite verification passes; signed-in browser verification
-remains blocked because the repository has no Playwright module. No production
-data, R2 objects, unrelated dirty files, or runtime deployment were changed.
+remains blocked because the repository has no Playwright module. Commit
+`4cb1c41fabb8cb06df3619766945746cb8023e22` was pushed and deployed from an
+isolated worktree as Cloudflare Version
+`dc959b7f-8b79-4923-8d2f-40ab6ca6ba4f`. No production data or R2 objects changed.
 Evidence is in `docs/audits/2026-10-11/tpi-social/TPI-SOCIAL-001_*`.
 
 ## TPI-VIDEOS-006 — Video platform acceptance audit — October 11, 2026

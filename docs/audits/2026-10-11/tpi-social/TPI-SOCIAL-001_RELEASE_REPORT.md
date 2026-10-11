@@ -15,11 +15,11 @@ URL and conversation participation before reading R2. Regression script:
 
 ## Documentation
 
-The 41-file audit collection in this directory and the TPI master build plan
-were updated. The release commit hash is recorded in the final handoff after
-commit. No Cloudflare runtime deployment was made because the application repair
-must complete its release review first; production data, D1, R2, and unrelated
-dirty files were untouched.
+The 39-file audit collection in this directory and the TPI master build plan
+were updated. Release commit: `4cb1c41fabb8cb06df3619766945746cb8023e22`.
+Cloudflare deployment: `dc959b7f-8b79-4923-8d2f-40ab6ca6ba4f`. The deployment was
+made from an isolated worktree at that commit; production data, D1, R2 objects,
+and unrelated dirty files were untouched.
 
 ## Production read-only results
 
