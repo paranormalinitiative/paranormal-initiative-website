@@ -25,3 +25,6 @@ on Cloudflare Version `435fe7df-5447-4a34-874f-1a85e9965b82`.
 The current 006 changes are tests and documentation only. No new runtime
 deployment is required for this audit batch unless a later code repair is
 authorized and verified.
+
+The audit documents and regression asset were published in docs-only Cloudflare
+Version `f0b300c3-0ba4-4bd1-9f66-d836ca89113d`.

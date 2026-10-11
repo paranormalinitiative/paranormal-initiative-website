@@ -37,6 +37,7 @@ accessibility automation, and long-duration streaming.
 - TPI-VIDEOS-006 audit commit and push: `9b8c98d` (documentation, regression
   coverage, and master-plan update).
 - Cloudflare: no new runtime deployment for this docs/test-only batch.
+- Cloudflare docs-only deployment: `f0b300c3-0ba4-4bd1-9f66-d836ca89113d`.
 
 ## Next phase
 
