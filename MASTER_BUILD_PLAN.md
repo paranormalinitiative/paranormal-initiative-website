@@ -19,6 +19,15 @@ TPI-SOCIAL-002. Next: TPI-SOCIAL-003. Then: TPI-ADMIN-001, TPI-FINAL-001,
 TPI-FINAL-002, and TPI-FINAL-003. This order is locked; no implementation is
 started by this documentation checkpoint.
 
+### Founding 50 owner decision — deferred implementation
+
+Reserve for the future approved Creator Partnership/Admin phase: 50
+complimentary lifetime Creator memberships, each including free lifetime TPI
+Creator Studio access. Use real member accounts only. There is no automatic
+award, placeholder-account creation, production reservation, entitlement
+ledger, or public promise in the current phase. Do not implement this decision
+until the owner approves the Creator Partnership/Admin design and release gate.
+
 ## TPI-MEDIA-001 — Creator Studio and TPI Videos completion audit — October 11, 2026
 
 The final media-platform audit preserved the StudioFlow feature-freeze and
@@ -89,8 +98,27 @@ source repair, production data change, R2 change, or Cloudflare deployment was
 made for this documentation-only continuation. See
 `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010B_*`.
 
-TPI-SOCIAL-003 is the next roadmap phase after owner review of the remaining
-010/010B acceptance limitations; no Social-003 implementation has started.
+TPI-SOCIAL-003 is the current roadmap phase after owner review of the remaining
+010/010B acceptance limitations.
+
+## TPI-SOCIAL-003 — Social network audit and focused Settings repair — October 11, 2026
+
+The existing Feed, profiles, Messenger, notifications, personalization,
+privacy/safety, Settings, navigation, and cross-feature boundaries were audited
+without rebuilding the social system. The disposable local multi-user suite
+passed **213/213**. A confirmed Settings defect was repaired: six Content
+Ownership cards used accidental unary `+` operators and could render as `NaN`.
+The repair removes only those operators and adds a focused regression guard.
+
+Settings API/SQLite, Messenger media security, link-preview, video-player,
+navigation, and syntax checks passed. Playwright signed-in browser verification
+remains blocked because the module is not installed. Automated export and
+account deletion remain intentionally unimplemented; Friends, physical-device,
+external-provider, authenticated production mutation, and formal accessibility
+testing remain open. Existing StudioFlow/TPI Videos work, `/studio/` access
+restrictions, `/live-video` Coming Soon, D1/R2 data, and unrelated dirty files
+are preserved. Evidence is in
+`docs/audits/2026-10-11/tpi-social/TPI-SOCIAL-003_*`.
 
 ## TPI-SOCIAL-002 — Community Feed and integration recovery — October 11, 2026
 

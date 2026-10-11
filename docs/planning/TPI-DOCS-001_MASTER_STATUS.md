@@ -48,9 +48,9 @@ StudioFlow remains feature-frozen except for verified bug, security,
 reliability, accessibility, integration, and compatibility repairs.
 
 The completed roadmap records are TPI-MEDIA-001, TPI-DOCS-001,
-TPI-VIDEOS-010, TPI-VIDEOS-010B, TPI-SOCIAL-001, and TPI-SOCIAL-002.
-TPI-SOCIAL-003 is next, subject to owner review of the remaining media
-acceptance register; no Social-003 implementation has started.
+TPI-VIDEOS-010, TPI-VIDEOS-010B, TPI-SOCIAL-001, TPI-SOCIAL-002, and the
+current TPI-SOCIAL-003 audit/repair batch. TPI-ADMIN-001, Creator Partnership,
+Founding 50 implementation, and TPI-FINAL-001 remain gated behind owner review.
 
 ## Completed evidence carried forward
 
@@ -106,6 +106,29 @@ The documented runtime commit is `aa6f049`, the documentation commit is
 link-preview, Messenger-security, and 10/10 production-boundary results are
 preserved in the existing audit reports. Full creator publishing into public
 playback remains unclaimed without an authorized browser-accessible source.
+
+### TPI-SOCIAL-003
+
+The existing social network was audited and the local multi-user suite passed
+213/213. One confirmed Settings defect was repaired: six Content Ownership
+cards were being coerced to `NaN` by accidental unary `+` operators. The
+focused Settings regression, Settings API/SQLite checks, Messenger media
+security, link-preview, video-player, navigation, and syntax checks passed.
+The signed-in browser Settings matrix remains blocked because Playwright is not
+installed. Data export, account deletion, general Friends relationships,
+physical-device, external-provider, and authenticated production mutation
+capabilities remain unimplemented or unverified as documented. Production
+boundary smoke and the release identifiers are recorded in the Social-003
+release report after deployment.
+
+### Founding 50 decision
+
+The owner decision is recorded for future implementation planning only: reserve
+50 complimentary lifetime Creator memberships, each including free lifetime TPI
+Creator Studio access. Use real member accounts only; do not auto-award, create
+placeholder accounts, reserve slots in production, or add entitlement records in
+this phase. Implementation belongs to the approved Creator Partnership/Admin
+phase after owner review.
 
 ## Product and access decisions that remain in force
 
