@@ -442,3 +442,26 @@ commit `d75b922`, and Cloudflare Worker Version
 Soon; unauthenticated `/studio/` and direct StudioFlow/logo assets remain HTTP
 403. Owner-authenticated selector interaction and exact browser zoom remain
 **NOT YET VERIFIED**.
+
+## TPI-STUDIOFLOW-017 — Complete automated pipeline testing
+
+- [x] Inventory the canonical source media, storage, compositor, room, and RTMP paths.
+- [x] Generate known video/audio fixtures with FFmpeg and analyze them with FFprobe.
+- [x] Exercise single-destination local RTMP with captured H.264/AAC output.
+- [x] Exercise two simultaneous local RTMP destinations with captured output from both receivers.
+- [x] Exercise an unavailable RTMP destination and confirm controlled failure without bridge crash.
+- [x] Exercise room guest presence, signaling storage, status reporting, and removal.
+- [x] Exercise the browser pre-recorded source, local broadcast creation, manual Go Live, automatic end, and Library history.
+- [x] Exercise Program recording finalization, Library playback, and local IndexedDB persistence in an isolated browser session.
+- [x] Run TypeScript, Vite production build, room syntax, and RTMP syntax checks.
+- [x] Preserve the owner-only Creator Studio boundary and public `/live-video` Coming Soon boundary.
+- [x] Create the 017 pipeline audit, test matrix, and failures/repairs report.
+- [ ] Complete real two-browser guest WebRTC media transport verification.
+- [ ] Complete controlled recording reload/process-termination recovery without touching owner recordings.
+- [ ] Complete native folder/external-drive, physical mobile, provider RTMPS, and authenticated production verification.
+- [ ] Investigate the browser RTMP capture's unusual FLV 1,000 fps metadata before claiming strict frame-rate fidelity.
+- [ ] Run a dedicated long-duration resource/drift test; do not infer it from the short audit.
+
+Audit evidence: `docs/audits/2026-10-09/studioflow-audit/TPI-STUDIOFLOW-017_PIPELINE_AUDIT.md`,
+`TPI-STUDIOFLOW-017_TEST_MATRIX.md`, and
+`TPI-STUDIOFLOW-017_FAILURES_AND_REPAIRS.md`.
