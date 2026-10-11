@@ -38,6 +38,26 @@ Runtime commit `0e23ff2` was pushed and deployed as Cloudflare Worker version
 `27d917cd-dff2-4744-9694-0a8c1eab6d35`; post-deployment boundary smoke passed
 10/10.
 
+## TPI-VIDEOS-010 — Final Creator Studio and TPI Videos completion — October 11, 2026
+
+The first TPI-VIDEOS-010 repair verified the owner-reported catalog defect:
+production discovered-video `duration_seconds` values were being displayed as
+raw seconds. The existing provider-aware source distinction is preserved;
+known seconds now render as `M:SS` or `H:MM:SS`, explicit creator timestamps are
+parsed safely, unknown values remain blank, duration filters use normalized
+metadata, dates render readably, and card spacing remains compact. The repair
+passed focused duration/date, grid, and player regressions, StudioFlow build /
+room / RTMP checks, 10/10 production boundary smoke, and live browser
+verification. Runtime commit `e911568` was pushed and deployed as Cloudflare
+Version `03d7b39f-9a13-44da-a45b-12d0c3632127`.
+
+This phase is **NOT COMPLETE**. Authenticated creator publication and actual
+authorized native playback, physical-device behavior, complete recording and
+recovery acceptance, long-duration reliability, and full StudioFlow-to-Feed-
+to-authorized-playback integration remain unverified. Evidence is in
+`docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-010_*`. Do not begin
+TPI-SOCIAL-003 until the remaining 010 acceptance work is reviewed and closed.
+
 ## TPI-SOCIAL-002 — Community Feed and integration recovery — October 11, 2026
 
 The TPI-SOCIAL-002 baseline re-ran the existing social/video regressions and
