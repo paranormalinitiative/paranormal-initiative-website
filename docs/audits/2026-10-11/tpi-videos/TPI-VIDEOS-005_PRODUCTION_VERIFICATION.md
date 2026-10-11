@@ -23,3 +23,11 @@ Required after deployment:
 - no R2 or recording-storage writes.
 
 The deployment preserved `/studio/` authentication, public `/live-video`, creator-owned recording storage, and unrelated production data. No D1 migration or R2 change was performed.
+
+## TPI-VIDEOS-005-A — Navigation branding verification
+
+The deployed member sidebar and shared mobile-navigation source are expected
+to display `TPI Creator Studio` while retaining `/studio/`. Production asset
+inspection and protected-route verification will be recorded after the
+addendum deployment. No StudioFlow functionality, D1 data, R2 storage, or
+authentication rule is changed by this addendum.

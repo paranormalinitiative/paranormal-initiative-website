@@ -13,3 +13,11 @@
 | Recording media | Existing StudioFlow systems | NOT RE-RUN | Preserved; outside this metadata-only bridge batch |
 | External provider playback | Real provider | NOT TESTED | No provider credentials or broadcast authorized |
 | Physical offline/network interruption | Device/browser | NOT TESTED | Requires owner session/device |
+
+## TPI-VIDEOS-005-A — Navigation branding
+
+| Surface | Method | Result | Evidence / limitation |
+|---|---|---|---|
+| Member/sidebar navigation | Static source regression | PASS | `member-sidebar.html` displays `TPI Creator Studio` and preserves `/studio/`. |
+| Mobile/injected navigation | Static source regression and JavaScript syntax check | PASS | `member-shell.js` injects the same label, aria label, and `/studio/` destination; `scripts/qa/tpi-videos-005a-navigation.mjs` passed. |
+| Desktop/mobile production assets | Deployed asset inspection | PENDING | Verify after the addendum deployment; authenticated owner DOM rendering remains a separate acceptance item. |

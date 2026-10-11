@@ -11,3 +11,14 @@ Release identifiers:
 - Cloudflare Version ID: `fced668f-8949-4e5e-8153-663462702084`.
 
 Production boundary verification passed for anonymous public/API behavior. Authenticated owner/contributor browser mutations, notification inbox delivery, external provider playback, and physical offline behavior remain explicitly unverified and are listed for owner acceptance.
+
+## TPI-VIDEOS-005-A — Navigation branding
+
+The member/sidebar and injected mobile navigation labels were updated from
+`Creator Studio` to `TPI Creator Studio`. Both surfaces preserve the existing
+`/studio/` destination and the protected StudioFlow access boundary. The
+focused navigation regression passed; no StudioFlow source or generated
+StudioFlow functionality was changed.
+
+The runtime deployment and final documentation-sync deployment identifiers
+will be recorded here after production verification.

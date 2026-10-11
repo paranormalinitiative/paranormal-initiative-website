@@ -73,7 +73,8 @@ for(const width of [1440,1024,768,390]) {
  await page.waitForFunction(()=>document.querySelector('[data-account-identity]')?.textContent.includes('Alice'));
  await page.waitForFunction(()=>!document.querySelector('[data-style-save]').disabled);
  if(width===390) {
-  assert.equal(await page.locator('.member-mobile-nav [data-nav="studio"]').getAttribute('aria-label'),'Creator Studio');
+  assert.equal(await page.locator('.member-mobile-nav [data-nav="studio"]').getAttribute('aria-label'),'TPI Creator Studio');
+  assert.equal((await page.locator('.member-mobile-nav [data-nav="studio"]').textContent()).replace(/\s+/g,' ').trim(),'▶TPI Creator Studio');
   assert.equal(await page.locator('.member-mobile-nav [data-nav="studio"]').getAttribute('aria-disabled'),'true');
  }
  assert.equal(await page.locator('[data-settings-link]').count(),13);

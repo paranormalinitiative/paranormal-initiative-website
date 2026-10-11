@@ -14,6 +14,13 @@ physical offline behavior, and external-provider playback remain explicit
 owner verification items. Detailed evidence is in
 `docs/audits/2026-10-11/tpi-videos/TPI-VIDEOS-005_*`.
 
+### TPI-VIDEOS-005-A — Navigation branding
+
+The member sidebar and injected mobile navigation now display `TPI Creator
+Studio` while preserving the `/studio/` destination and existing owner-only
+access boundary. A focused static regression check covers the desktop/sidebar
+and mobile labels without changing StudioFlow functionality.
+
 ## TPI-VIDEOS-004 — Broadcast identity and StudioFlow integration foundation — October 11, 2026
 
 The canonical TPI source now contains an additive broadcast/listing boundary:
