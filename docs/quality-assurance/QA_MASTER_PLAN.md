@@ -21,14 +21,19 @@ Tests and documentation may be committed and pushed without a Cloudflare deploym
 
 The current phase gate is explicit:
 
-1. **Phase 1 — Creator Studio:** complete `TPI-STUDIOFLOW-019`, including
+1. **Phase 1A — Creator Studio:** complete `TPI-STUDIOFLOW-019`, including
    meaningful functional/media/cross-feature testing and verified repairs.
-2. **Phase 2 — Social Network:** only after Phase 1, audit the existing TPI
+2. **Phase 1B — Comparative audit:** after 019 and owner review, execute the
+   registered `TPI-STUDIOFLOW-020` StreamYard comparison. Do not implement
+   findings automatically.
+3. **Phase 1C — Owner review:** obtain separate approval for high-value
+   Creator Studio improvements before changing runtime code.
+4. **Phase 2 — Social Network:** only after Phase 1C, audit the existing TPI
    social platform with isolated synthetic members and simultaneous sessions.
    Include Feed visibility, Messenger delivery and conversation-level
    attachment authorization, notifications, media, permissions, responsive
    behavior, and every Settings Center page.
-3. **Phase 3 — Future features:** only after Phases 1 and 2, resume approved
+5. **Phase 3 — Future features:** only after Phases 1A–2, resume approved
    work such as `TPI-ADMIN-001` and Creator Partnership enhancements.
 
 The owner-reported **Settings → Personalization → Highlights** issue is a

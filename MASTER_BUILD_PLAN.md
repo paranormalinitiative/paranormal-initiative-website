@@ -6,7 +6,7 @@ This is the owner-approved sequence for existing functionality before major
 new feature work. It is recorded here as the governing roadmap addendum; no
 competing roadmap is created.
 
-### Phase 1 — Creator Studio testing and repairs — ACTIVE
+### Phase 1A — Creator Studio testing and repairs — ACTIVE
 
 `TPI-STUDIOFLOW-019` remains the active development priority. Complete the
 existing Creator Studio inventory and every feasible Codex-executable test,
@@ -17,6 +17,34 @@ regressions, deploy verified runtime corrections, and document every
 PASS/FAIL/PARTIAL/BLOCKED/NOT TESTED result. External providers, physical
 devices, owner credentials, and other unavailable resources must remain
 explicitly unverified rather than being inferred from local tests.
+
+### Phase 1B — StreamYard comparative audit — REGISTERED / QUEUED
+
+`TPI-STUDIOFLOW-020` is the next Creator Studio evaluation milestone. It must
+begin only after `TPI-STUDIOFLOW-019` is complete and the owner has reviewed
+the 019 completion report. The audit will compare actual TPI Creator Studio
+behavior with current StreamYard documentation, official tutorials,
+announcements, public demonstrations, and available screenshots. StreamYard is
+a functional reference, not a design specification; no proprietary code,
+artwork, branding, or pixel-perfect clone is authorized.
+
+The comparison will cover dashboard/navigation, livestream creation and
+scheduling, destinations/multistreaming/manual RTMP, camera/microphone and
+guest workflows, screen sharing, layouts/scenes, branding/graphics/tickers,
+fonts/colors/themes, music/sound/audio mixing, recording/storage/recovery,
+pre-recorded broadcasting, history/calendar, live interaction, monitoring,
+failure recovery, responsive/accessibility/performance/reliability, onboarding,
+privacy/content ownership, creator costs/infrastructure, TPI community
+integration, and overall creator experience. Each finding must identify its
+evidence level and use one classification: TPI ADVANTAGE, COMPARABLE,
+IMPROVEMENT NEEDED, MISSING CAPABILITY, NOT APPLICABLE, or UNVERIFIED.
+
+### Phase 1C — Owner review and approved improvements — GATED
+
+The 020 findings must be presented to the owner before implementation. No
+StreamYard-inspired feature is implemented automatically. Approved work must
+be separately authorized, prioritized P0–P3, regression-tested, and evaluated
+for infrastructure, storage, security, and regression implications.
 
 ### Phase 2 — Complete social-network testing and repairs — QUEUED
 
@@ -32,7 +60,7 @@ confirmed cause, verify save/reset/persistence and theme compatibility, and
 add permanent regression coverage. Do not use real production members for
 destructive testing.
 
-### Phase 3 — Future features — BLOCKED BY PHASES 1–2
+### Phase 3 — Future features — BLOCKED BY PHASES 1A–2
 
 Only after the two testing phases are complete should major future work resume,
 including `TPI-ADMIN-001` Administration & Network Operations Center and
@@ -42,7 +70,9 @@ implementation is authorized by this roadmap update.
 
 ### Phase gates and source references
 
-- Phase 1: `TPI-STUDIOFLOW-019`, `/Users/toddknipple/Documents/StudioFlow`.
+- Phase 1A: `TPI-STUDIOFLOW-019`, `/Users/toddknipple/Documents/StudioFlow`.
+- Phase 1B: `TPI-STUDIOFLOW-020` registration and progress record in StudioFlow.
+- Phase 1C: owner review and separate approval for any implementation.
 - Phase 2: `TPI-WEBSITE-018` scope plus the permanent `TPI-QA-001` system.
 - Phase 3: `TPI-ADMIN-001_FUTURE_ADMINISTRATION_CENTER.md` and approved future plans.
 - QA operating records: `docs/quality-assurance/QA_MASTER_PLAN.md`,

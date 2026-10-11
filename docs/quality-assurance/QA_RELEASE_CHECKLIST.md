@@ -40,3 +40,7 @@
   issue, then add permanent save/reset/persistence/theme regression coverage.
 - [ ] Do not begin `TPI-ADMIN-001` implementation until Phases 1 and 2 are
   complete and documented.
+- [ ] Do not execute `TPI-STUDIOFLOW-020` until 019 is complete and the owner
+  has reviewed its completion report.
+- [ ] Present comparative findings to the owner before implementing any
+  StreamYard-referenced improvement.

@@ -9,6 +9,7 @@
 | Member settings | `scripts/e2e/member-settings.mjs` | local browser/synthetic API harness | existing focused suite; run when settings changes |
 | Personalization Highlights | member settings browser/API regression harness | persistence, reset, theme, and visual behavior | NOT YET VERIFIED; owner-reported issue queued for Phase 2 |
 | TPI/StudioFlow integration | `scripts/studioflow-release-dry-run.mjs` | read-only source/dist manifest comparison | available; no deployment mutation |
+| StudioFlow comparative audit | `/Users/toddknipple/Documents/StudioFlow/TPI-STUDIOFLOW-020_PROGRESS.md` | source, local runtime, and current public-reference evidence | REGISTERED; execute only after 019 owner review |
 | StudioFlow build | `npm run build` in `StudioFlow/web` | local production build | PASS on 2026-10-11 |
 | StudioFlow room server | `npm run check:room` | local syntax check | PASS on 2026-10-11 |
 | StudioFlow RTMP bridge | `npm run check:rtmp` | local syntax check | PASS on 2026-10-11 |
