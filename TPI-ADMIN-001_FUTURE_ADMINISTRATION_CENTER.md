@@ -2,25 +2,24 @@
 
 **Project:** The Paranormal Initiative Administration & Network Operations Center
 **Directive:** TPI-ADMIN-000
-**Status:** **PLANNED — AWAITING IMPLEMENTATION**
+**Status:** **ACTIVE — TPI-ADMIN-001 BASELINE AND FOUNDATION BATCH**
 **Priority:** High
-**Implementation authorization:** **Not yet granted**
+**Implementation authorization:** **Owner authorized on 2026-10-11**
 **Registered:** 2026-10-11
 
-> **Current roadmap note — TPI-DOCS-002:** Administration Center work remains
-> queued after the completed TPI-VIDEOS-010 implementation and documented
-> TPI-VIDEOS-010B acceptance batch, then TPI-SOCIAL-003. This
-> planning document does not authorize implementation. The current locked
-> order and cross-workspace status are in
+> **Historical roadmap note:** This document previously recorded a queued,
+> not-yet-authorized project. That status is superseded by the owner's explicit
+> TPI-ADMIN-001 authorization on 2026-10-11. The current audit and foundation
+> evidence is in
 > [`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
 
 ## Planning boundary
 
-This document records an owner-approved future project. It is a planning
-record, not an implementation authorization. StudioFlow remains the current
-active development priority. No Administration Center routes, APIs, database
-migrations, authentication changes, production-data changes, or deployment
-are part of this registration.
+This document began as a planning record. It remains the historical design
+record for the approved Administration Center, while the dated audit set under
+`docs/audits/2026-10-11/tpi-admin/` records implementation status and evidence.
+The current batch extends the existing admin surface; it does not create a
+second backend, duplicate member controls, or change StudioFlow entitlements.
 
 The future center must integrate existing TPI functionality instead of
 duplicating or rebuilding working systems. Existing member accounts,
@@ -180,11 +179,12 @@ Before this project can be considered implemented, it must demonstrate:
 
 ## Current project status
 
-**Planned — awaiting implementation.** TPI-ADMIN-000 registers the project and
-preserves its approved vision. No application implementation has started, no
-administrative functionality was changed, and no database migration, API
-route, authentication change, production-data change, or deployment was made
-for this project.
+**Active foundation batch.** The existing admin pages and protected API routes
+were audited. The current implementation adds a server-side gate for legacy
+admin HTML entry points, a live D1-backed overview endpoint, an additive audit
+log table and read-only audit endpoint, and a dedicated responsive navigation
+shell in `admin-panel.html`. Founding 50 allocation and Creator Studio
+entitlement activation remain explicitly **not activated** pending owner review.
 
 StudioFlow remains the current active development priority. TPI-QA-001 remains
 the permanent QA system. The Creator Partnership Program remains separately

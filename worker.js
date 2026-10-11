@@ -61,6 +61,17 @@ const STUDIO_COMING_SOON_HTML = MEMBER_GATE_HTML
     "Creator Studio is in final development and is not publicly available yet. Authorized owner and test access remains protected."
   );
 
+const ADMIN_GATE_HTML = MEMBER_GATE_HTML
+  .replaceAll("ITC Visual Studio — Member Access", "Administration Center — Restricted Access")
+  .replace(
+    "<h1>Administration Center — Restricted Access</h1>",
+    "<h1>Administration Center</h1>"
+  )
+  .replace(
+    "ITC Visual Studio is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
+    "The TPI Administration Center is restricted to authorized owner and administrator accounts. Sign in with an approved account to continue."
+  );
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -132,6 +143,36 @@ export default {
         return new Response(STUDIO_COMING_SOON_HTML, {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8" }
+        });
+      }
+      return env.ASSETS.fetch(request);
+    }
+
+    // Administrative pages contain privileged operational controls. Keep the
+    // existing API authorization intact and add the same server-side boundary
+    // to the HTML entry points so ordinary members cannot load the admin UI
+    // bundle by guessing a direct URL.
+    const isAdminPage = [
+      "/admin-panel.html",
+      "/admin-panel",
+      "/admin-panel/",
+      "/admin-advanced-settings.html",
+      "/admin-advanced-settings",
+      "/admin-advanced-settings/",
+      "/admin-events.html",
+      "/admin-events",
+      "/admin-events/",
+      "/teams/admin.html",
+      "/teams/admin",
+      "/teams/admin/"
+    ].includes(url.pathname);
+    if (isAdminPage) {
+      const user = await getSessionUser(request, env);
+      const hasAdminAccess = user && (user.role === "owner" || user.role === "admin");
+      if (!hasAdminAccess) {
+        return new Response(ADMIN_GATE_HTML, {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
       return env.ASSETS.fetch(request);

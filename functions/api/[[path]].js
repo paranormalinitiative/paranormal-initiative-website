@@ -31,6 +31,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
+    if (request.method === "GET" && path === "/admin/overview") return requireAdmin(request, env, user => handleAdminOverview(env, user));
+    if (request.method === "GET" && path === "/admin/audit-logs") return requireAdmin(request, env, user => handleAdminAuditLogs(request, env, user));
+    if (request.method === "GET" && path === "/admin/founding-50") return requireAdmin(request, env, user => handleAdminFounding50(env, user));
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
@@ -446,6 +449,12 @@ async function handleUpdateContributorTitle(request, env, actingUser) {
     .bind(title, nextRole, username)
     .run();
 
+  await writeAdminAuditLog(env, actingUser, "member.role_or_title_updated", "member", username, {
+    previousRole: target.role,
+    role: nextRole,
+    titleChanged: title !== clean(target.title)
+  });
+
   const updated = await getUserByUsername(env, username);
   return json({ contributor: publicUser(updated) });
 }
@@ -501,6 +510,88 @@ async function handleAdminListMembers(request, env) {
   });
 }
 
+async function handleAdminOverview(env, user) {
+  const queries = [
+    ["members", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END), 0) AS active, COALESCE(SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END), 0) AS inactive FROM contributors"],
+    ["communityPosts", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'visible' THEN 1 ELSE 0 END), 0) AS visible, COALESCE(SUM(CASE WHEN status = 'hidden' THEN 1 ELSE 0 END), 0) AS hidden FROM community_posts"],
+    ["communityComments", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'visible' THEN 1 ELSE 0 END), 0) AS visible, COALESCE(SUM(CASE WHEN status = 'hidden' THEN 1 ELSE 0 END), 0) AS hidden FROM community_comments"],
+    ["videos", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0) AS published FROM tpi_videos"],
+    ["events", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0) AS published FROM events"],
+    ["teams", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END), 0) AS approved FROM paranormal_teams"],
+    ["notifications", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN read_at IS NULL THEN 1 ELSE 0 END), 0) AS unread FROM member_notifications"],
+    ["scraperRuns", "SELECT COUNT(*) AS total, MAX(started_at) AS lastStartedAt, MAX(CASE WHEN status = 'failed' THEN started_at END) AS lastFailedAt FROM scraper_runs"]
+  ];
+  const entries = await Promise.all(queries.map(async ([key, sql]) => {
+    try {
+      const row = await env.TPI_DB.prepare(sql).first();
+      return [key, row || {}];
+    } catch (error) {
+      // A missing optional table should make only that card unavailable, not
+      // break the rest of the admin dashboard.
+      return [key, { unavailable: true }];
+    }
+  }));
+  const data = Object.fromEntries(entries);
+  return json({
+    generatedAt: new Date().toISOString(),
+    viewer: { username: user?.username, role: user?.role },
+    metrics: data
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminFounding50() {
+  return json({
+    program: "Founding 50",
+    status: "not_activated",
+    capacity: 50,
+    allocated: null,
+    remaining: null,
+    eligibility: "existing-account-only",
+    entitlement: "complimentary-lifetime-creator",
+    creatorStudioAccess: "owner-review-required",
+    note: "No production allocations or Creator Studio entitlement grants have been activated."
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminAuditLogs(request, env) {
+  const url = new URL(request.url);
+  const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit") || "50", 10), 1), 100);
+  const offset = Math.min(Math.max(parseInt(url.searchParams.get("offset") || "0", 10), 0), 10000);
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT id, actor_username AS actorUsername, actor_role AS actorRole,
+             action, target_type AS targetType, target_id AS targetId,
+             metadata_json AS metadata, created_at AS createdAt
+      FROM admin_audit_logs
+      ORDER BY created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(limit, offset).all();
+    return json({ logs: (results || []).map(row => ({
+      ...row,
+      metadata: safeJsonParse(row.metadata) || {}
+    })), limit, offset }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ logs: [], limit, offset, status: "migration_pending" }, 200, { "Cache-Control": "no-store" });
+  }
+}
+
+async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {
+  try {
+    await env.TPI_DB.prepare(`
+      INSERT INTO admin_audit_logs
+        (id, actor_id, actor_username, actor_role, action, target_type, target_id, metadata_json)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      crypto.randomUUID(), actor?.id || null, clean(actor?.username || "unknown"), clean(actor?.role || "unknown"),
+      clean(action).slice(0, 120), clean(targetType).slice(0, 80) || null,
+      clean(targetId).slice(0, 160) || null, JSON.stringify(metadata || {})
+    ).run();
+  } catch (error) {
+    // Audit logging must never turn a completed admin action into a failed
+    // request while an older deployment is still missing the new table.
+  }
+}
+
 async function handleAdminSetMemberActive(path, env, actingUser, active) {
   const username = clean(decodeURIComponent(path.replace(/^\/admin\/members\//, "").replace(/\/(?:un)?block$/, "")));
   if (!username) return json({ error: "Member username is required." }, 400);
@@ -512,6 +603,8 @@ async function handleAdminSetMemberActive(path, env, actingUser, active) {
   await env.TPI_DB.prepare("UPDATE contributors SET active = ? WHERE username = ?")
     .bind(active ? 1 : 0, username)
     .run();
+
+  await writeAdminAuditLog(env, actingUser, active ? "member.reactivated" : "member.deactivated", "member", username);
 
   const updated = await getUserByUsername(env, username);
   return json({ member: { username: updated.username, displayName: updated.display_name, title: updated.title, role: updated.role, active: Boolean(updated.active) } });
@@ -534,6 +627,11 @@ async function handleAdminUpdateMemberAccess(path, request, env, actingUser) {
     data.canMessage === false ? 0 : 1,
     username
   ).run();
+  await writeAdminAuditLog(env, actingUser, "member.access_updated", "member", username, {
+    canPost: data.canPost !== false,
+    canComment: data.canComment !== false,
+    canMessage: data.canMessage !== false
+  });
   const updated = await getUserByUsername(env, username);
   return json({ member: privateMemberUser(updated) });
 }
@@ -555,6 +653,10 @@ async function handleAdminSendMemberNotification(path, request, env, actingUser)
     INSERT INTO member_notifications (id, contributor_id, title, body, action_href, type, created_by)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `).bind(id, target.id, title, body, actionHref, clean(data.type || "profile-request"), actingUser.id).run();
+  await writeAdminAuditLog(env, actingUser, "member.notification_sent", "member", username, {
+    type: clean(data.type || "profile-request"),
+    title
+  });
   return json({ notification: { id, username: target.username, title, body, actionHref, read: false } });
 }
 
@@ -720,7 +822,7 @@ async function handleAdminCommunityPosts(request, env) {
   });
 }
 
-async function handleAdminSetCommunityPostStatus(path, request, env) {
+async function handleAdminSetCommunityPostStatus(path, request, env, actingUser) {
   const postId = clean(decodeURIComponent(path.match(/^\/admin\/community\/posts\/([^/]+)\/status$/)?.[1] || ""));
   const data = await readJson(request);
   const status = clean(data.status).toLowerCase();
@@ -735,6 +837,11 @@ async function handleAdminSetCommunityPostStatus(path, request, env) {
   await env.TPI_DB.prepare("UPDATE community_posts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
     .bind(status, postId)
     .run();
+
+  await writeAdminAuditLog(env, actingUser, "community.post_status_updated", "community_post", postId, {
+    previousStatus: post.status,
+    status
+  });
 
   return json({ post: { id: post.id, title: post.title, status } });
 }
@@ -905,6 +1012,9 @@ async function handleAdminUpdateSettings(request, env, user) {
       ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_by = excluded.updated_by, updated_at = CURRENT_TIMESTAMP
     `).bind(pairs[key], data[key] ? "1" : "0", user.id).run();
   }
+  await writeAdminAuditLog(env, user, "site.settings_updated", "site_settings", "general", {
+    keys: allowed.filter(key => key in data)
+  });
   return json({ settings: await getSiteSettings(env) });
 }
 

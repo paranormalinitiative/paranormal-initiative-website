@@ -15,18 +15,19 @@ synchronization directives; they do not authorize runtime work or deployment.
 
 Completed: TPI-MEDIA-001, TPI-DOCS-001, TPI-VIDEOS-010 implementation,
 TPI-VIDEOS-010B documented acceptance batch, TPI-SOCIAL-001, and
-TPI-SOCIAL-002. Next: TPI-SOCIAL-003. Then: TPI-ADMIN-001, TPI-FINAL-001,
-TPI-FINAL-002, and TPI-FINAL-003. This order is locked; no implementation is
-started by this documentation checkpoint.
+TPI-SOCIAL-002. TPI-SOCIAL-003 is complete; the owner authorized the
+TPI-ADMIN-001 baseline/foundation batch on 2026-10-11. TPI-FINAL-001,
+TPI-FINAL-002, and TPI-FINAL-003 remain queued for after admin review.
 
-### Founding 50 owner decision — deferred implementation
+### Founding 50 owner decision — deferred activation
 
-Reserve for the future approved Creator Partnership/Admin phase: 50
+The approved Creator Partnership/Admin design reserves 50
 complimentary lifetime Creator memberships, each including free lifetime TPI
 Creator Studio access. Use real member accounts only. There is no automatic
 award, placeholder-account creation, production reservation, entitlement
 ledger, or public promise in the current phase. Do not implement this decision
-until the owner approves the Creator Partnership/Admin design and release gate.
+until the owner approves allocation and the release gate. The current
+Administration Center displays this as not activated; no accounts were awarded.
 
 ## TPI-MEDIA-001 — Creator Studio and TPI Videos completion audit — October 11, 2026
 
@@ -362,7 +363,7 @@ or production deployments.
 
 [CODEX] 2026-10-11 — **TPI-STUDIOFLOW-015D destination label refinement.** The protected StudioFlow source now displays `Other Platforms` with the existing `Manual RTMP` subtitle while preserving the internal `Custom RTMP` identifier, manual configuration fields, saved destinations, Odysee, and selector order. TypeScript/Vite build, room/RTMP syntax, focused destination regression, local browser selector/form/save verification, and isolated local H.264/AAC RTMP capture passed. Canonical StudioFlow commit `b27908c` has no configured remote; TPI integration commit `583e067` contains only the generated bundle rename and theme-bridge HTML reference; documentation commit `cd46b32` was pushed. Cloudflare Worker Version `7264c40f-b6ed-4d19-b411-ad44a83ab695` deployed the verified bundle. Production read-only boundaries passed: public shell 200, `/live-video` Coming Soon, anonymous `/studio/` 403, new asset 403, and smoke suite 10/10. External-provider delivery, authenticated owner interaction, and physical responsive/zoom acceptance remain unverified.
 
-[CODEX] 2026-10-11 — **TPI-ADMIN-001 registered as an approved future project.** The Paranormal Initiative Administration & Network Operations Center is planned at high priority but remains **PLANNED — AWAITING IMPLEMENTATION**. The owner-approved module inventory, dedicated left-side navigation, role-based/server-side security, privacy, audit, network-health, QA, dependency, phase, acceptance requirements, and technology direction are recorded in [TPI-ADMIN-001 future Administration Center plan](TPI-ADMIN-001_FUTURE_ADMINISTRATION_CENTER.md). The approved future technology direction is Refine plus shadcn/ui with Discourse as a design reference, integrated with the existing Cloudflare Workers/D1/R2, authentication, and API stack; it does not authorize implementation or a second database/backend/framework. StudioFlow remains the current active development priority. No Administration Center code, route, API, migration, authentication change, production-data change, or deployment was made; explicit owner authorization is required before implementation.
+[CODEX] 2026-10-11 — **TPI-ADMIN-001 baseline and foundation batch authorized.** The existing admin surface was extended rather than rebuilt: legacy admin HTML entry points now use a server-side owner/admin gate; `admin-panel.html` has a responsive left-side Administration Center navigation; `/api/admin/overview` reports live D1-backed counts; `/api/admin/audit-logs` reads the additive `admin_audit_logs` table; and `/api/admin/founding-50` reports the owner-approved program as not activated. Existing member search, moderation, invitations, StudioFlow, TPI Videos, Community Feed, authentication, D1, R2, `/studio/`, and `/live-video` boundaries remain protected. Refine and shadcn/ui were used as information-architecture and visual references only; no framework replacement or duplicate backend was introduced. Full section inventory, tests, release evidence, and remaining limitations: `docs/audits/2026-10-11/tpi-admin/`.
 
 [CODEX] 2026-10-11 — **TPI-STUDIOFLOW-015C Odysee destination cleanup.** Canonical StudioFlow removed Hopin and Brightcove from new destination choices, added locally bundled Odysee branding with manual RTMP setup and official instructions, and preserved existing saved/legacy destination records through the custom fallback. The fresh build was reconciled into TPI `studio/` while preserving the existing theme bridge. Local selector/source-bundle regression, exact requested selector order, TypeScript/Vite build, room/RTMP syntax, and isolated local RTMP H.264/AAC capture passed. Real Odysee delivery, authenticated production interaction, physical responsive acceptance, and zoom checks remain unverified. Source commits `ed539f5` and final order correction `edc1641` are local-only because StudioFlow has no remote; final TPI integration commit `a434b49` was pushed and deployed as Cloudflare Version `11657fb5-7a34-463d-ae61-5bc72bb628b0`. Anonymous production boundaries passed.
 
