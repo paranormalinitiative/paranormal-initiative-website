@@ -1,5 +1,15 @@
 # StudioFlow Master TODO
 
+**TPI-STUDIOFLOW-022 — Oct 11, 2026:** a narrow prerecorded-audio repair was
+verified in the canonical local source and isolated browser-to-local-RTMP
+capture. The repair unmutes the prerecorded compositor element at its three
+audio-path assignments; captured H.264/AAC output now contains the controlled
+440 Hz signal at the source level. This is not a complete 022 acceptance or
+feature freeze: automatic live-comment overlays, multi-member/guest media,
+physical devices, storage/native-picker, long-duration stability, and
+authenticated production verification remain open. See the 022 reports in
+`/Users/toddknipple/Documents/StudioFlow/`.
+
 **Last updated:** October 11, 2026
 **This file controls all StudioFlow work.** Work top-to-bottom by phase. Check items off only when their acceptance criteria are met and physically tested where noted. Update the "Where We Are" status line every session.
 
