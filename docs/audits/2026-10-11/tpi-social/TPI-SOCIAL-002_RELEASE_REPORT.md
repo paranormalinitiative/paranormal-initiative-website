@@ -19,10 +19,21 @@
 - Messenger media security: PASS.
 - Full local multi-user suite: 213/213.
 - Isolated browser direct-link preview, image rendering, persistence, and external destination: PASS.
-- Read-only production smoke: 10/10.
+- Read-only production smoke after deployment: 10/10.
+- Live production asset check: deployed `member-home.html` contains the direct-paste repair (`syncComposerBodyLinks`).
 
 Playwright-based Settings/browser matrix, authenticated production mutations, external-provider sessions, physical devices, long-duration behavior, formal accessibility scans, and full Reel creation remain unverified.
 
+## Release
+
+- GitHub commit: `aa6f049` (`Repair direct Community Feed link previews`), pushed to `origin/main`.
+- Cloudflare account: `221ea5479876fd303ddc87002b9e892d`.
+- Cloudflare Worker version: `d55c3a01-974c-409c-ab8b-d55d230096cc`.
+- Production URL: `https://paranormalinitiative.com`.
+- Post-deployment verification: production smoke `10/10 PASS`.
+
+The direct-paste repair was verified in an isolated browser session before release and the deployed asset was checked read-only afterward. An authenticated production mutation test was not performed because no owner session was used in this run.
+
 ## Release safety
 
-No D1 migration, R2 change, recording upload, credential change, public livestream launch, or production data mutation was performed by this batch. Deployment is pending the final build/dry-run and release command.
+No D1 migration, R2 change, recording upload, credential change, public livestream launch, or production data mutation was performed by this batch. The deployment was limited to the verified Worker/assets release.
