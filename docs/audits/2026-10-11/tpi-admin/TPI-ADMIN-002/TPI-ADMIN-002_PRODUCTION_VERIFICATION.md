@@ -1,11 +1,16 @@
 # TPI-ADMIN-002 Production Verification
 
-Production verification is pending the release deployment for this batch.
-The pre-existing production evidence remains: anonymous admin routes and
-admin APIs are denied, `/studio/` remains protected, and `/live-video` remains
-Coming Soon. A signed-in production administrator was not used without an
-approved credential.
+Deployment: Cloudflare Worker version `5c041278-86a9-490e-a885-93c597740a59`.
+Production smoke: **PASS 10/10**. Anonymous checks returned 403 for
+`/admin-panel.html`, `/admin-panel`, `/admin-advanced-settings.html`,
+`/admin-events.html`, `/teams/admin.html`, `/api/admin/overview`,
+`/api/admin/analytics`, `/api/admin/founding-50`,
+`/api/admin/creator-partnership`, and
+`/api/admin/creator-studio/entitlements`. `/live-video` returned 200 and
+contained `Coming Soon`; anonymous `/studio/` remained 403.
 
-Required post-deploy checks: anonymous/ordinary-member denial, authorized admin
-dashboard/API access, `/live-video` preservation, and confirmation that
-Founding 50 allocation remains gated.
+The additive migration applied successfully before deployment. A read-only
+production D1 check found all five new tables, zero Founding 50 allocations,
+and zero Creator Studio entitlement rows. A signed-in production administrator
+was not used without an approved credential, so authenticated production UI
+interaction remains BLOCKED rather than PASS.
