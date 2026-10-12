@@ -354,6 +354,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Release documentation sync — Notifications pagination
+
+- Documentation commit: `7a612d7fff02fa29d9377397200b6d29e2c95b96` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `18e9e22b-639d-45cc-98f5-5dda70bbe547`.
+- The sync published the Notifications pagination release evidence and
+  regression results; runtime code remained unchanged.
+
 ## Notifications pagination release
 
 - Git commit: `30aeaa54495f6f21fbbb545a85fb2da34659341b` pushed to
