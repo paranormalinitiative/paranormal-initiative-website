@@ -99,6 +99,26 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 - No entitlement records, D1 schema, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Founding 50 application pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  62/62. Vite emitted only its existing large-chunk advisory.
+- The protected Founding 50 review queue now consumes the existing
+  status-filtered pagination totals with a bounded 50-row request, matching
+  totals, and Previous/Next controls. Existing approve/reject actions remain
+  intact; award activation remains gated.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-DOG2O9zV.js` asset, `/api/admin/founding-50/applications?status=pending&page=1&pageSize=50`,
+  unauthenticated POST `/api/admin/founding-50/allocate`, and
+  `/admin-panel.html` returned HTTP 403; the full read-only production smoke
+  passed 10/10 and `/live-video` remained Coming Soon.
+- Authenticated Founding 50 rendering, pagination interaction, safe review
+  action testing, and rollback verification remain pending an authorized
+  owner/admin browser session and are not claimed as passed.
+- No application records, award allocations, D1 schema, R2 objects, Creator
+  Studio access, or legacy `/admin-panel` behavior were changed.
+
 ## Roles & Permissions release verification
 
 - Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin

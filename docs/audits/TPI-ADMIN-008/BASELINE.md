@@ -67,3 +67,7 @@ metadata-only and exposes no unverified resolution mutation.
 Creator Studio Access now consumes the existing entitlement pagination
 contract with bounded server-backed browsing and matching totals. It remains
 read-only and does not grant, revoke, or expand Creator Studio access.
+
+Founding 50 applications now consume the existing status-filtered pagination
+contract with bounded review browsing. Existing approve/reject actions remain
+on the protected workflow, while award activation remains gated.

@@ -227,6 +227,30 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No entitlement records, D1 migration, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Founding 50 application pagination release
+
+- Git commit: `a6db37e` pushed to `origin/main`.
+- Cloudflare Version ID: `0d1a8833-87c8-4a13-93a3-64af29eb8e10`.
+- Preview asset: `/admin-center-preview/assets/index-DOG2O9zV.js`.
+- The protected Founding 50 review queue now uses the existing status-filtered
+  pagination contract with a bounded 50-row page, matching totals, and
+  Previous/Next controls. Existing approve/reject actions remain intact and
+  award activation remains gated.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA 62/62.
+  The existing Vite large-chunk advisory remains informational.
+- Authenticated Founding 50 rendering, pagination interaction, and review
+  actions remain pending an authorized owner/admin browser session and are not
+  claimed as owner-verified.
+- Anonymous production boundary checks: preview HTML, exact preview asset,
+  `/api/admin/founding-50/applications?status=pending&page=1&pageSize=50`,
+  unauthenticated POST `/api/admin/founding-50/allocate`, and
+  `/admin-panel.html` returned HTTP 403; the read-only production smoke passed
+  10/10 and `/live-video` remained Coming Soon.
+- No application records, award allocations, D1 migration, R2 operation,
+  credential change, `/admin-panel` replacement, or Creator Studio access
+  expansion was performed.
+
 ## Release documentation sync — Creator Studio Access pagination
 
 - Documentation commit: `2751c64` pushed to `origin/main`.
