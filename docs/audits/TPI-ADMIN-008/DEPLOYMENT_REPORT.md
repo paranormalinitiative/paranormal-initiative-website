@@ -1052,3 +1052,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, production report mutation, R2 operation, credential
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
+
+## Final documentation sync — protected report resolution
+
+- Documentation commit: `b9660be` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `0ec55c7d-6376-4c3d-8a22-b96e7739eef4`.
+- This sync published the protected report-resolution implementation evidence,
+  parity/readiness updates, regression results, and owner acceptance checklist.
+  Runtime code was unchanged by the documentation commit.
