@@ -397,6 +397,14 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   HTTP 403; `/live-video` returned HTTP 200 with Coming Soon preserved; the
   read-only production smoke passed 10/10.
 
+## Release documentation sync — activity route separation
+
+- Documentation commit: `35185ce` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `0c147b6b-70bc-4a57-bb90-4bb33bee3f4d`.
+- The sync published the Activity release evidence; runtime code remained
+  unchanged.
+
 ## Release documentation sync — community route separation
 
 - Documentation commit: `3acc19a` pushed to `origin/main`.
