@@ -26,6 +26,10 @@ existing protected read/API contracts. The Founding 50 award gate remains
 closed and Creator Studio entitlement escalation remains unavailable; runtime
 verification still requires an authorized owner/admin session.
 
+System Settings is integrated as a protected read-only view with visibly
+disabled controls. The existing mutation workflow remains preserved in the
+legacy settings surface until owner acceptance verifies it.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

@@ -41,6 +41,8 @@ const checks = [
   ["platform health preserves provider capability disclosures", source.includes('not-configured providers are not presented as operational') && source.includes('provider.state === "active"') && source.includes('No completed scraper runs returned.')],
   ["creator management uses existing protected contracts", source.includes('view === "creators" && <CreatorDirectory') && source.includes('"/admin/creator-partnership?pageSize=100"') && source.includes('view === "founding" && <Founding50') && source.includes('"/admin/founding-50"') && source.includes('view === "studio-access" && <StudioAccess') && source.includes('"/admin/creator-studio/entitlements?pageSize=100"')],
   ["creator access remains non-escalating", source.includes('This view does not allocate memberships or grant Creator Studio access') && source.includes('Awards remain gated') && source.includes('does not grant, revoke, or expand access') && api.includes('path === "/admin/founding-50"') && api.includes('path === "/admin/creator-studio/entitlements"')],
+  ["system settings uses a read-only protected contract", source.includes('view === "settings" && <SettingsView') && source.includes('"/admin/settings"') && source.includes('Read-only preview') && source.includes('disabled aria-label={label}') && api.includes('path === "/admin/settings"')],
+  ["settings mutation is not invoked by preview", source.includes('No mutation endpoint is invoked from this preview') && !source.includes('adminFetch("/admin/settings", { method: "POST"')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

@@ -39,6 +39,8 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - Creator Directory, Founding 50, and Creator Studio Access map to their
   existing protected APIs; award activation and Studio entitlement escalation
   remain unavailable in the preview.
+- System Settings reads the existing protected settings contract and renders
+  disabled controls; no settings mutation is invoked by the preview.
 - No team data was mutated during verification; authenticated runtime action
   testing remains pending owner/admin browser access. No contributor, invite,
   or role data was mutated during verification.

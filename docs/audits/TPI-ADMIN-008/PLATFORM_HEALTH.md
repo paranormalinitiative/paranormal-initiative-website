@@ -9,6 +9,10 @@ The view does not invoke refresh jobs or expose credentials. Providers marked
 Authenticated runtime verification remains pending an authorized owner/admin
 session; no scraper job was started during this batch.
 
+System Settings is intentionally separate from Platform Health. Its preview
+surface reads `/admin/settings` and renders the four current access flags as
+disabled controls; it does not invoke the POST mutation contract.
+
 The preview does not claim a complete Platform Health workspace. Existing TPI
 operational sources include scraper-run records, Worker observability, D1, R2,
 scheduled tasks, and application routes, but they do not yet form one verified
