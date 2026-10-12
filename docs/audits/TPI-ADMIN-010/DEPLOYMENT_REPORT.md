@@ -18,8 +18,8 @@ Read-only live smoke results after deployment:
 - `/api/admin/community/posts`: HTTP 403 without an authorized session.
 - TPI-ADMIN-010 audit document: HTTP 200.
 
-The final documentation-only deployment will be recorded below after its
-Cloudflare Version ID is available.
+Final documentation-only deployment Cloudflare Version ID:
+`2fd1004c-3c88-49ca-b86c-c14eaf61a6c7`.
 
 The legacy `/admin-panel` route must remain unchanged. No production database,
 R2 object, role assignment, public navigation, Creator Studio access, or
