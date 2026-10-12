@@ -603,6 +603,17 @@ The sync script (`~/Desktop/sync-tpi-workspace.command`) pulls GitHub → worksp
 copy should be a git clone too, so `git pull` keeps both workspaces and this file in lockstep.
 
 **Related docs:** `MIMO_DIRECTIVE.md` (Opencode's standing rules) · `UI_REDESIGN_LOG.md` (design history) · `SITE_STREAMLINING_PLAN.md` (phases) · `STUDIOFLOW_MASTER_TODO.md` (detailed session handoffs)
+
+## TPI-ADMIN-006 — integrated Administration Center preview batch — October 12, 2026
+
+The existing ADMIN-005 protected React/Refine preview was refined in place.
+The batch adds the complete Administration navigation taxonomy, live range-
+aware dashboard and analytics, server-filtered member management with safe
+detail tabs and confirmed account actions, Community Feed post moderation,
+classic comment moderation, audit/moderation history, and explicit capability
+boundaries for resources whose current APIs are incomplete. `/admin-panel`
+remains the production destination and was not replaced. Evidence, limitations,
+and the owner review checklist are in `docs/audits/TPI-ADMIN-006/`.
 ## TPI-UI-001 — Dedicated Administration and Settings workspaces — October 11, 2026
 
 The confirmed duplicate-shell condition on `admin-panel` and `member-dashboard`

@@ -84,6 +84,40 @@ tbody tr { cursor: pointer; }
 .audit-row span, .audit-row time { color: var(--muted-foreground); font-size: 0.78rem; margin-top: 4px; }
 .audit-row > div:last-child { text-align: right; }
 .mobile-menu, .mobile-close, .sidebar-scrim { display: none; }
+.nav-group { margin-bottom: 16px; }
+.page-actions { display: flex; align-items: center; gap: 8px; }
+.page-actions select, .filter-bar select, .inline-action, .page-intro > select { min-height: 40px; border: 1px solid var(--input); background: var(--card); color: var(--foreground); border-radius: 7px; padding: 0 10px; font-size: .85rem; }
+.metric-button { border: 0; padding: 0; background: transparent; text-align: left; cursor: pointer; color: inherit; }
+.metric-button .card-content, .metric-button [class*="p-6"] { display: flex; justify-content: space-between; align-items: center; }
+.metric-button:hover > div { border-color: var(--ring); box-shadow: 0 5px 18px rgba(40, 73, 110, .12); }
+.filter-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.filter-bar .search-field { flex: 1 1 280px; margin-top: 0; }
+.table-sort { border: 0; background: transparent; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.pagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 16px; }
+.pagination > div { display: flex; gap: 7px; }
+.detail-tabs { display: flex; gap: 5px; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.detail-tabs button { border: 0; border-radius: 5px; padding: 7px 9px; background: transparent; color: var(--muted-foreground); cursor: pointer; text-transform: capitalize; font-size: .8rem; }
+.detail-tabs button:hover, .detail-tabs button.is-active { background: var(--accent); color: var(--accent-foreground); }
+.activity-item small { display: block; color: var(--muted-foreground); font-size: .72rem; margin-top: 4px; }
+.notice-panel { border: 1px solid #f0d69b; background: #fff9e8; border-radius: 8px; padding: 12px; color: #795a17; line-height: 1.5; }
+.notice-panel p { margin: 8px 0 0; }
+.moderation-list { display: grid; gap: 0; }
+.moderation-row { display: flex; justify-content: space-between; gap: 18px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+.moderation-row:last-child { border-bottom: 0; }
+.moderation-row p { margin: 7px 0; line-height: 1.45; max-width: 740px; }
+.inline-action { margin-top: 7px; min-height: 30px; font-size: .75rem; }
+.portal-link { display: inline-flex; align-items: center; gap: 5px; color: var(--primary); font-weight: 600; font-size: .87rem; }
+.capability-panel { display: grid; gap: 18px; max-width: 720px; line-height: 1.55; }
+.capability-panel p { margin: 0; color: var(--muted-foreground); }
+.state-message { min-height: 100px; display: flex; align-items: center; justify-content: center; gap: 9px; color: var(--muted-foreground); }
+.error-state { color: #9b3342; }
+.spin { animation: spin 1.2s linear infinite; }
+.dialog-backdrop { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(11, 23, 39, .45); }
+.confirm-dialog { width: min(440px, 100%); border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 22px; box-shadow: 0 20px 70px rgba(8, 23, 45, .25); }
+.confirm-dialog h3 { margin: 0; font-size: 1.1rem; }
+.confirm-dialog p { color: var(--muted-foreground); line-height: 1.5; margin: 10px 0 20px; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 1000px) {
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -102,6 +136,9 @@ tbody tr { cursor: pointer; }
   .two-column, .analytics-grid { grid-template-columns: 1fr; }
   .audit-row { align-items: flex-start; flex-direction: column; }
   .audit-row > div:last-child { text-align: left; }
+  .moderation-row { flex-direction: column; }
+  .page-actions { width: 100%; }
+  .page-actions select { flex: 1; }
 }
 @media (max-width: 480px) {
   .metric-grid { grid-template-columns: 1fr; }

@@ -238,6 +238,16 @@ long-duration windows, or an authorized playback source must be recorded as
 This record is the synchronization checkpoint. No code work, Cloudflare
 deployment, migration, push to production, or new feature phase was started
 by TPI-DOCS-001.
+
+### TPI-ADMIN-006 — integrated Administration Center preview batch
+
+On 2026-10-12, the isolated ADMIN-005 preview was refined in place with the
+required Administration navigation, live dashboard/analytics, member
+management, Community Feed moderation, classic comment moderation, and audit
+views. Incomplete resources remain explicitly bounded and `/admin-panel`
+remains the production destination. The current evidence and owner checklist
+are maintained in `docs/audits/TPI-ADMIN-006/`; authenticated owner review is
+not implied by a successful local build.
 ### TPI-UI-001 — dedicated workspace shell correction
 
 On 2026-10-11, the confirmed duplicate public/member shell on the protected

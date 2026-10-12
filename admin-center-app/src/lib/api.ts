@@ -1,6 +1,7 @@
 export type AdminOverview = {
   generatedAt: string;
   viewer?: { username?: string; role?: string };
+  range?: { preset: string; start: string; end: string };
   metrics: Record<string, Record<string, unknown>>;
   trends: Record<string, Array<{ day: string; count: number }> | { unavailable: boolean }>;
 };
@@ -14,6 +15,7 @@ export type Member = {
   createdAt: string;
   topicCount: number;
   postCount: number;
+  commentCount?: number;
 };
 
 export type MemberActivity = {
@@ -22,6 +24,30 @@ export type MemberActivity = {
   comments: Array<{ id: string; body?: string; text?: string; status: string; createdAt: string }>;
   tpiVideos: Array<{ id: string; title: string; status: string; createdAt: string }>;
   articles: Array<{ id: string; title: string; status: string; createdAt: string }>;
+  videoComments?: Array<{ id: string; body?: string; status: string; createdAt: string }>;
+};
+
+export type CommunityPost = {
+  id: string;
+  title?: string;
+  preview?: string;
+  status: string;
+  createdAt: string;
+  authorUsername?: string;
+  authorDisplayName?: string;
+  categoryTitle?: string;
+  commentCount: number;
+  reactionCount: number;
+};
+
+export type ClassicComment = {
+  id: string;
+  pageId?: string;
+  name?: string;
+  authorUsername?: string;
+  text?: string;
+  status: string;
+  createdAt: string;
 };
 
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
