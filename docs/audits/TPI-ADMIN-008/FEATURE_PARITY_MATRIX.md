@@ -7,7 +7,7 @@
 | Roles and permissions | Existing server-side authorization and account controls | Protected read-only role/capability summary from contributor records; role/title/capability mutations remain on Contributor Management | WORKING WITH LIMITATIONS |
 | Account restrictions | Existing member capability flags and user-to-user restriction workflows | Protected read-only capability-restrictions list; no administrative suspension or user-to-user restriction mutation | WORKING WITH LIMITATIONS |
 | Community posts | Existing Community Feed admin API | Active/visible/hidden/deleted filtering and status updates | WORKING |
-| Community comments/reactions | Existing APIs and member activity | Classic comments are separate; aggregate reaction metric added | PARTIALLY WORKING |
+| Community comments/reactions | Existing Community Feed comment/reaction tables and member activity | Protected metadata-only Community Comments queue with visible/deleted/all filters and search; aggregate reaction metric remains read-only | WORKING WITH LIMITATIONS |
 | Reports and moderation | Existing video and messenger report metadata/contracts | Protected unified metadata-only queue with status filters; no private evidence or resolution mutations | WORKING WITH LIMITATIONS |
 | Moderation history/audit | Existing audit log API | Audit and filtered moderation-history views | WORKING WITH LIMITATIONS |
 | Contributor management | Legacy invite/access controls | Protected directory, invite listing/generation, invite-type/access-level controls, and role/title updates through existing APIs | WORKING WITH LIMITATIONS |

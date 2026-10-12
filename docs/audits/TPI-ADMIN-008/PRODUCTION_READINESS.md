@@ -63,6 +63,11 @@ server-side gates and preserved data/public-state boundaries. It is
 source-defined and does not replace authenticated role-matrix or session-expiry
 verification.
 
+Community Posts & Comments now includes a protected metadata-only Community
+Comments queue with visible/deleted/all filters and search. It does not expose
+an administrative comment mutation; Article Comment Moderation remains
+separate under Education Center.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

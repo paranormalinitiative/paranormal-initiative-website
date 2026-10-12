@@ -44,3 +44,8 @@ The preview Security view is a read-only source-defined summary of these
 boundaries. It does not grant permissions, replace the Worker/API gates,
 expose private data, or claim authenticated role-matrix and session-expiry
 verification.
+
+The protected `/api/admin/community/comments` endpoint is metadata-only. It
+reads the existing public Community Feed comment records with status and
+search filters, returns bounded comment previews plus author/post metadata,
+and exposes no administrative comment mutation.

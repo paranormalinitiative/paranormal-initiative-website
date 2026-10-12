@@ -7,6 +7,9 @@ not create a second backend or replace `/admin-panel`.
 This batch improves the preview's route ownership and dashboard contract:
 
 - Community Overview and Posts & Comments now have distinct client routes.
+- Posts & Comments now includes a protected metadata-only Community Comments
+  queue backed by the existing `community_comments` table; Article Comment
+  Moderation remains a separate Education Center resource.
 - Overview exposes real metrics for members, community content, reactions,
   videos, creator channels, articles, teams, open reports, and Founding 50
   allocations when their existing tables are available.

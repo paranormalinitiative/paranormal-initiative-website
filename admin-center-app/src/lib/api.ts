@@ -44,6 +44,18 @@ export type CommunityPost = {
   reactionCount: number;
 };
 
+export type AdminCommunityComment = {
+  id: string;
+  postId: string;
+  preview?: string;
+  status: string;
+  createdAt: string;
+  postTitle?: string;
+  postStatus?: string;
+  authorUsername?: string;
+  authorDisplayName?: string;
+};
+
 export type ClassicComment = {
   id: string;
   pageId?: string;

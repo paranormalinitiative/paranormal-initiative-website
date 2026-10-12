@@ -51,6 +51,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
     if (request.method === "GET" && path === "/admin/community/posts") return requireAdmin(request, env, user => handleAdminCommunityPosts(request, env, user));
+    if (request.method === "GET" && path === "/admin/community/comments") return requireAdmin(request, env, user => handleAdminCommunityComments(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
@@ -1274,6 +1275,49 @@ async function handleAdminSetCommunityPostStatus(path, request, env, actingUser)
   });
 
   return json({ post: { id: post.id, title: post.title, status } });
+}
+
+async function handleAdminCommunityComments(request, env) {
+  const url = new URL(request.url);
+  const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
+  const status = ["visible", "deleted", "all"].includes(requestedStatus) ? requestedStatus : "visible";
+  const search = clean(url.searchParams.get("search")).slice(0, 100);
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  const where = [];
+  const binds = [];
+  if (status !== "all") { where.push("cm.status = ?"); binds.push(status); }
+  if (search) {
+    where.push("(cm.body LIKE ? OR cp.title LIKE ? OR c.username LIKE ? OR c.display_name LIKE ?)");
+    const like = `%${search}%`;
+    binds.push(like, like, like, like);
+  }
+  const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  try {
+    const count = await env.TPI_DB.prepare(`
+      SELECT COUNT(*) AS total
+      FROM community_comments cm
+      LEFT JOIN community_posts cp ON cp.id = cm.post_id
+      LEFT JOIN contributors c ON c.id = cm.author_id
+      ${whereSql}
+    `).bind(...binds).first();
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT cm.id, cm.post_id AS postId, substr(cm.body, 1, 240) AS preview,
+             cm.status, cm.created_at AS createdAt,
+             cp.title AS postTitle, cp.status AS postStatus,
+             c.username AS authorUsername, c.display_name AS authorDisplayName
+      FROM community_comments cm
+      LEFT JOIN community_posts cp ON cp.id = cm.post_id
+      LEFT JOIN contributors c ON c.id = cm.author_id
+      ${whereSql}
+      ORDER BY cm.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+    const total = Number(count?.total || 0);
+    return json({ comments: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }, metadataOnly: true });
+  } catch (error) {
+    return json({ comments: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, metadataOnly: true, status: "community_comments_unavailable" }, 503);
+  }
 }
 
 async function handleMarkAllNotificationsRead(request, env, user) {

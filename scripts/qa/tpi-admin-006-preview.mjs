@@ -57,6 +57,8 @@ const checks = [
   ["account restrictions preserves separate blocking boundary", source.includes("Capability restrictions only—not administrative suspension") && source.includes("user-to-user member_restrictions") && api.includes("user-to-user member_restrictions") && !source.includes('adminFetch("/admin/restrictions", { method: "POST"')],
   ["security boundary view is explicit", source.includes("SecurityView") && source.includes("Source-defined security boundaries") && source.includes("Admin HTML routes require an owner or admin session") && source.includes("`/live-video` remains Coming Soon")],
   ["security view preserves authenticated-test limitation", source.includes("authenticated role-matrix testing remains an owner acceptance step") && source.includes("not a replacement for authenticated browser verification")],
+  ["community comments use a protected existing table contract", source.includes("CommunityComments") && source.includes("/admin/community/comments?") && api.includes('path === "/admin/community/comments"') && api.includes("FROM community_comments") && api.includes("metadataOnly: true")],
+  ["community comments queue remains read-only", source.includes("No comment mutation is exposed") && api.includes('["visible", "deleted", "all"]') && api.includes("metadataOnly: true") && !source.includes('adminFetch(`/admin/community/comments/${')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

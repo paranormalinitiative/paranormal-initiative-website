@@ -37,3 +37,8 @@ Restrictions views using existing TPI tables/contracts. These additions remain
 read-only where no complete safe mutation contract exists; `/admin-panel`
 promotion, authenticated owner/admin acceptance, and rollback verification
 remain gated.
+
+The Community Posts & Comments surface now also includes a protected
+metadata-only Community Comments queue backed by `community_comments`. It
+supports visible/deleted/all filtering and search without adding an
+unverified administrative comment mutation.
