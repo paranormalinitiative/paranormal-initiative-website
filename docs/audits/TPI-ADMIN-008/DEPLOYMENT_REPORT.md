@@ -495,8 +495,9 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   `tpi-contributor-media`, and `ASSETS` binding were confirmed.
 - The protected Audit Logs view now uses the existing `/admin/audit-logs`
   contract with bounded query pagination, a matching-record count, and
-  previous/next controls. Moderation History remains client-filtered and the
-  integrated view remains explicitly read-only.
+  previous/next controls. Moderation History uses a fixed server-side
+  moderation scope before pagination, and both integrated views remain
+  explicitly read-only.
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,
   `git diff --check`, and focused QA 50/50. Vite emitted only its existing
   large-chunk advisory.
@@ -1050,6 +1051,32 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   audit-log inspection, and rollback verification remain pending an authorized
   browser session and are not claimed as passed.
 - No D1 migration, production report mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
+## Moderation History server-scope release
+
+- GitHub runtime commit: `61735ec` pushed to `origin/main`.
+- Cloudflare runtime Version ID:
+  `380aaf9f-d4ba-4459-b6dd-b5cc98339917`.
+- Preview asset: `/admin-center-preview/assets/index-4oxvrPzS.js`.
+- Moderation History now passes `scope=moderation` to the protected audit-log
+  contract. The Worker applies a fixed, non-user-supplied moderation predicate
+  before counting and paginating; the browser no longer filters only the
+  current unscoped page. Dashboard report and preview directive labels were
+  also corrected to reflect the protected report-resolution controls and
+  TPI-ADMIN-008 scope.
+- Source/build checks: PASS — Admin Center production build, Worker syntax,
+  `git diff --check`, and focused QA 72/72. The existing Vite large-chunk
+  advisory remains informational only.
+- Anonymous production checks: public shell HTTP 200; `/live-video` HTTP 200
+  with Coming Soon; `/admin-center-preview/`, the exact preview asset,
+  `/admin-panel.html`, `/studio/`, the protected audit endpoint, and the
+  protected Reports endpoint returned HTTP 403.
+- Authenticated owner/admin rendering, filtered audit acceptance, role-matrix
+  testing, and rollback verification remain pending an authorized browser
+  session and are not claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 

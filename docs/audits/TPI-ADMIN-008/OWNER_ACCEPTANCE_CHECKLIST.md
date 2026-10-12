@@ -7,7 +7,7 @@
 - [ ] Confirm Community Overview renders its authoritative totals separately from Posts & Comments, which owns record-level post/comment review.
 - [ ] Confirm deleted Community posts are absent from Active and visible only through Deleted.
 - [ ] Verify Community Comments loads visible/deleted/all filters and search without exposing an unverified mutation control; keep Article Comment Moderation separate under Education Center.
-- [ ] Verify Audit Logs and Moderation History search and pagination operate through the protected read-only audit query.
+- [ ] Verify Audit Logs and Moderation History search and pagination operate through the protected read-only audit query; confirm Moderation History totals exclude non-moderation records before page navigation.
 - [ ] Verify member directory, detail tabs, and safe confirmation-gated actions.
 - [ ] Verify selected Member Detail activity uses 25-record server pages and Previous/Next controls without exposing private conversation bodies.
 - [ ] Verify Contributor Management loads the directory and existing invite records through the protected preview.

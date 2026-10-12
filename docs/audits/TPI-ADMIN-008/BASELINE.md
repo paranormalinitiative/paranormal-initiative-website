@@ -66,6 +66,11 @@ metadata-only for report evidence, and now exposes protected status/review-audit
 controls backed by the existing report review fields. Authenticated mutation
 acceptance remains pending; no report records were changed by this batch.
 
+Moderation History now applies a fixed server-side moderation scope to the
+existing audit-log contract before pagination. Its matching totals and
+Previous/Next controls therefore describe the filtered moderation set rather
+than filtering only the current unscoped page in the browser.
+
 Creator Studio Access now consumes the existing entitlement pagination
 contract with bounded server-backed browsing and matching totals. It remains
 read-only and does not grant, revoke, or expand Creator Studio access.

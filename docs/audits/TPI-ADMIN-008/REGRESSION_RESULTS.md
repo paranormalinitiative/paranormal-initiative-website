@@ -322,6 +322,27 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production report rows, R2 objects, credentials, Creator
   Studio access, or legacy `/admin-panel` behavior were changed.
 
+## Moderation History server-scope release verification — 2026-10-12
+
+- GitHub runtime commit: `61735ec` pushed to `origin/main`.
+- Cloudflare runtime Version ID: `380aaf9f-d4ba-4459-b6dd-b5cc98339917`.
+- Admin Center production build: PASS. Worker syntax, focused preview QA
+  72/72, and `git diff --check`: PASS. Vite emitted only the existing large
+  chunk advisory.
+- Moderation History now requests the protected audit endpoint with the fixed
+  `scope=moderation` parameter. The Worker applies the fixed scope before
+  counting and paginating; Audit Logs remains unscoped and searchable. No
+  audit mutation or new data source was introduced.
+- Anonymous production checks: public shell HTTP 200; `/live-video` HTTP 200
+  with Coming Soon; preview HTML, exact preview asset, `/admin-panel.html`,
+  `/studio/`, the protected audit endpoint, and the protected Reports endpoint
+  returned HTTP 403.
+- Authenticated filtered rendering, matching-total acceptance, role-matrix
+  testing, and rollback verification remain pending an authorized owner/admin
+  browser session and are not claimed as passed.
+- No D1 schema, production records, R2 objects, credentials, Creator Studio
+  access, or legacy `/admin-panel` behavior were changed.
+
 ## Contributor Invites pagination release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

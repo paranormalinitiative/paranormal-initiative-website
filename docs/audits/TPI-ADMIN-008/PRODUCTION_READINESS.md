@@ -91,8 +91,9 @@ and bounded server-backed pagination. It does not add event creation,
 approval, editing, or lifecycle mutations to the preview.
 
 Audit Logs and Moderation History now expose the existing protected audit
-query with read-only search and pagination. No audit mutation or private
-message/recording data is exposed.
+query with read-only search and pagination. Moderation History uses a fixed
+server-side moderation scope before pagination, so filtered totals remain
+authoritative. No audit mutation or private message/recording data is exposed.
 
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
