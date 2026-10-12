@@ -7,3 +7,13 @@ build; old hashed assets were replaced by the new build output.
 
 Production authenticated regression and live mutation checks remain pending
 owner-session verification.
+
+## Release smoke evidence
+
+- GitHub commit: `8f1183cd5907cdbbcd8913d9f27f60be8216add9`
+- Cloudflare Worker version: `bd7654b6-9b5b-46d0-9351-bfca67e3f7cd`
+- Anonymous `/admin-center-preview/`: HTTP 403 restricted gate
+- Direct generated preview asset: HTTP 403 restricted gate
+- Anonymous `/admin-panel.html`: HTTP 403 restricted gate
+- Public `/live-video`: HTTP 200 with Coming Soon marker
+- Public `/`: HTTP 200 with TPI title marker
