@@ -17,3 +17,7 @@ Owner acceptance procedure:
 5. Confirm no private data, stream keys, recordings, or unauthorized controls
    are exposed.
 6. Test only disposable/safe records for mutations.
+7. In System Settings, record the four starting values, change only one safe
+   flag, verify Reset changes, then make a confirmed save and verify the
+   resulting `site.settings_updated` audit entry. Restore the original value
+   through the same confirmed workflow and verify no unrelated setting changed.

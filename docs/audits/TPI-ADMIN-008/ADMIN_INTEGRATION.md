@@ -47,6 +47,11 @@ This batch improves the preview's route ownership and dashboard contract:
 - Security now has an explicit read-only boundary summary for the existing
   server-side gates and preserved public/private data boundaries; it does not
   add new controls or replace authenticated verification.
+- System Settings now maps the four existing account-access flags to the
+  protected `/admin/settings` POST contract. The preview requires explicit
+  confirmation, sends only the allowlisted keys, and preserves the existing
+  server-side authorization and audit logging; no new API or storage contract
+  was introduced.
 - Creator Studio Access now consumes the existing entitlement count/pagination
   contract with bounded read-only browsing; grant, revoke, and escalation
   controls remain excluded.

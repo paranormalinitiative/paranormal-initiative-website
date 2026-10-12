@@ -82,6 +82,13 @@ The same isolated environment also exercised the 23 protected Admin Center GET
 routes: each returned 200 for the seeded admin and rejected both the seeded
 member and anonymous requests.
 
+System Settings now also uses the existing protected POST contract for the
+four account-access flags. The preview submits only those allowlisted keys,
+requires explicit confirmation, and relies on the existing server-side audit
+entry. An isolated in-memory contract test verified admin read/save, member
+rejection, persistence, and `site.settings_updated` audit logging. Authenticated
+owner/admin acceptance and rollback verification remain pending.
+
 Creator Studio Access now consumes the existing entitlement pagination
 contract with bounded server-backed browsing and matching totals. It remains
 read-only and does not grant, revoke, or expand Creator Studio access.

@@ -10,8 +10,10 @@ Authenticated runtime verification remains pending an authorized owner/admin
 session; no scraper job was started during this batch.
 
 System Settings is intentionally separate from Platform Health. Its preview
-surface reads `/admin/settings` and renders the four current access flags as
-disabled controls; it does not invoke the POST mutation contract.
+surface reads `/admin/settings` and edits the four current access flags through
+the existing protected POST contract after explicit confirmation; it submits
+only the allowlisted keys and relies on the existing server audit. Authenticated
+acceptance remains pending.
 
 The preview does not claim a complete Platform Health workspace. Existing TPI
 operational sources include scraper-run records, Worker observability, D1, R2,

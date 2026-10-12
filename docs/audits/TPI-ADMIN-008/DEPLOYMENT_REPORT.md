@@ -110,6 +110,23 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - The preview invoked no settings POST mutation and changed no production
   configuration.
 
+## Protected System Settings mutation release
+
+- Git commit: `04aed52` pushed to `origin/main`.
+- Cloudflare Version ID: `32d0d8ec-8e11-485f-b924-d70bb4d9b1f4`.
+- The preview now supports the four existing account-access settings through
+  the protected `/admin/settings` POST contract. It requires explicit
+  confirmation, submits only the four allowlisted keys, and preserves the
+  existing server-side audit workflow.
+- Verification: Admin Center build PASS, Worker syntax PASS, `git diff --check`
+  PASS, focused QA `72/72` PASS, and isolated in-memory settings contract PASS.
+- Anonymous production smoke: `/` and `/live-video` HTTP 200 with Coming Soon
+  preserved; preview HTML, the generated asset, `/studio/`,
+  `/admin-panel.html`, and GET/POST `/api/admin/settings` HTTP 403.
+- Authenticated owner/admin acceptance and rollback verification remain pending.
+- No production settings, D1 records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed by the deployment verification.
+
 ## Published content views release
 
 - Git commit: `82ca842` pushed to `origin/main`.

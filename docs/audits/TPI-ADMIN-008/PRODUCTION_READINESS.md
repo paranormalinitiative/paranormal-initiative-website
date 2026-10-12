@@ -39,9 +39,11 @@ preserving the existing approve/reject workflow. The Founding 50 award gate
 remains closed and Creator Studio entitlement escalation remains unavailable;
 runtime verification still requires an authorized owner/admin session.
 
-System Settings is integrated as a protected read-only view with visibly
-disabled controls. The existing mutation workflow remains preserved in the
-legacy settings surface until owner acceptance verifies it.
+System Settings is integrated with the existing protected `/admin/settings`
+read and mutation contracts for the four account-access flags. The preview
+requires explicit confirmation, submits only the allowlisted settings, and
+preserves server-side authorization and audit logging. Authenticated owner/admin
+acceptance and rollback verification remain pending.
 
 Published Education, TPI Videos, and approved Events listings are integrated
 read-only. TPI Videos now uses the existing `hasMore`/next-page contract for

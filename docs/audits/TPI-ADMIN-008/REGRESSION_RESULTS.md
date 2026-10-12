@@ -300,6 +300,26 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Protected System Settings mutation release
+
+- Source/build checks: PASS — commit `04aed52`; Admin Center production build,
+  Worker syntax, `git diff --check`, and focused QA `72/72` passed. Vite emitted
+  only its existing large-chunk advisory.
+- Isolated in-memory contract: PASS — seeded admin GET/POST succeeded, seeded
+  member POST was rejected, only the four allowlisted flags persisted, and the
+  existing `site.settings_updated` audit entry was written. No production
+  settings were changed by this contract test.
+- Cloudflare runtime: deployed Version ID
+  `32d0d8ec-8e11-485f-b924-d70bb4d9b1f4`.
+- Anonymous production boundary: PASS — public `/` and `/live-video` returned
+  HTTP 200; `/live-video` retained Coming Soon; preview HTML, the exact preview
+  asset, `/studio/`, `/admin-panel.html`, and GET/POST `/api/admin/settings`
+  returned HTTP 403.
+- Authenticated owner/admin browser acceptance, role-matrix verification, and
+  rollback verification remain pending; they are not claimed as passed.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Protected report resolution release verification — 2026-10-12
 
 - GitHub runtime commit: `0f6c8ea` pushed to `origin/main`.
