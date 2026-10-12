@@ -300,6 +300,27 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Contributor Invites pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, `git diff --check`, and focused QA 70/70. Vite emitted only
+  its existing large-chunk advisory.
+- The protected `/invites` endpoint now returns bounded pages and matching
+  totals when pagination parameters are supplied; no-query response behavior
+  remains compatible.
+- Contributor Management displays 25 invite records per page with isolated
+  Previous/Next controls; invite creation and existing role/access-level
+  controls remain on their existing protected contracts.
+- Anonymous production checks: public shell HTTP 200; `/live-video` HTTP 200
+  with Coming Soon preserved; `/studio/`, `/admin-center-preview/`, the exact
+  generated preview asset, `/admin-panel.html`, `/api/invites?page=1&pageSize=25`,
+  and `/api/admin/contributors?status=active&page=1&pageSize=50` all returned
+  HTTP 403.
+- Authenticated invite rendering, page navigation, creation, and owner/admin
+  role-matrix verification remain pending an authorized browser session.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Contributor Management pagination release — 2026-10-12
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

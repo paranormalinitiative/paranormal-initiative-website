@@ -11,6 +11,7 @@
 - [ ] Verify member directory, detail tabs, and safe confirmation-gated actions.
 - [ ] Verify Contributor Management loads the directory and existing invite records through the protected preview.
 - [ ] Verify Contributor Management status filters, server-side search, matching totals, and Previous/Next pagination.
+- [ ] Verify Contributor Invites loads 25-record pages with matching totals and Previous/Next controls without exposing unauthorized invite data.
 - [ ] Verify invitation types, access levels, code generation, and role/title updates only with safe test data.
 - [ ] Verify Teams status filters, server-side search, matching totals, Previous/Next pagination, and a disposable approval/rejection action only if safe test data is available; do not mutate real records.
 - [ ] Verify Education, creator, video, and event transitional links.

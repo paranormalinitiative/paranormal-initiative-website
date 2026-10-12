@@ -128,6 +128,12 @@ Contributor Management now consumes the existing protected
 bounded 50-record pagination, and matching totals. Existing no-query callers,
 invite generation, and role/title updates remain compatible and protected.
 
+Contributor Invites now consumes the existing protected `/invites` contract
+with optional bounded 25-record pagination and matching totals. Existing
+no-query callers and invite creation/validation remain compatible and
+protected; authenticated invite navigation and creation still require owner
+acceptance.
+
 Source/build/QA checks passed, but authenticated owner/admin browser acceptance
 and rollback verification remain pending. This batch does not authorize
 promotion of `/admin-center-preview/` over `/admin-panel`.

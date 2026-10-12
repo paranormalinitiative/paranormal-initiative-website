@@ -78,6 +78,11 @@ This batch improves the preview's route ownership and dashboard contract:
   explicit 50-record pages, and matching totals. Invite generation and
   role/title updates continue to use their existing protected contracts.
 
+- Contributor Invites now requests the existing protected `/invites` contract
+  with explicit 25-record pages and matching totals. The no-query response,
+  invite generation, validation, and access-level enforcement remain
+  compatible; no invitation records or new storage were introduced.
+
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and
 explicit owner approval.

@@ -511,6 +511,33 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Contributor Invites pagination release
+
+- Git commit: `64a3e3b` pushed to `origin/main`.
+- Cloudflare Version ID: `1a92dac9-aee1-4f6e-9774-87a8c04b13d7`.
+- Preview asset: `/admin-center-preview/assets/index-Cf0Zccts.js`.
+- The protected `/invites` GET contract now supports optional bounded
+  `page`/`pageSize` pagination and matching totals. Existing no-query callers
+  still receive the legacy `{ invites }` response, and invite generation and
+  validation were not changed.
+- Contributor Management now displays 25 invite records per page with
+  Previous/Next controls instead of fetching the full invite table and
+  truncating it client-side.
+- Source/build/QA checks: PASS — Admin Center TypeScript/Vite production
+  build, Worker syntax, `git diff --check`, and focused QA 70/70. Vite emitted
+  only its existing large-chunk advisory.
+- Anonymous boundary checks after deployment: public shell HTTP 200,
+  `/live-video` HTTP 200, `/studio/` HTTP 403, `/admin-center-preview/` HTTP
+  403, exact preview asset HTTP 403, `/admin-panel.html` HTTP 403,
+  `/api/invites?page=1&pageSize=25` HTTP 403, and the paginated contributor
+  directory API HTTP 403.
+- Authenticated owner/admin invite pagination, invite creation, and rollback
+  verification remain pending an authorized browser session; they are not
+  claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Final documentation sync — Contributor Management pagination
 
 - Documentation commit: `d8ddc61` pushed to `origin/main`.

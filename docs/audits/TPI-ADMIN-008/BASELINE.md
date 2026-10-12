@@ -104,3 +104,8 @@ Contributor Management now uses the existing protected `/admin/contributors`
 contract with server-side status/search filtering, explicit 50-record pages,
 and matching totals. Existing no-query callers, invite generation, and
 role/title updates remain compatible.
+
+Contributor Invites now uses the existing protected `/invites` contract with
+optional explicit 25-record pages and matching totals. Existing no-query
+callers, invite generation, validation, and access-level enforcement remain
+compatible.
