@@ -279,3 +279,8 @@ and safe member-detail activity tabs. Private conversation/message bodies are
 not exposed by the expanded activity response. The full ADMIN-007 directive
 remains incomplete; evidence and limitations are recorded in
 `docs/audits/TPI-ADMIN-007/`.
+
+ADMIN-007A subsequently isolated the legacy Administration Center's Contributor
+Invites, Paranormal Teams, and Education Center article-comment resources and
+aligned the Refine preview navigation. The repair passed the 13/13 isolation
+suite and is pending owner-authenticated visual acceptance.

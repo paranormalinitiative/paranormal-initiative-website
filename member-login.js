@@ -21,6 +21,16 @@
   const dashboardKicker = document.querySelector("[data-dashboard-kicker]");
   const contributorTools = document.querySelectorAll("[data-contributor-tool]");
   const accountIdentity = document.querySelector("[data-account-identity]");
+
+  function revealAdminToolHost(host) {
+    if (!host) return;
+    if (host.closest("[data-admin-center]") && host.dataset.adminView) {
+      host.dataset.adminAuthorized = "true";
+      window.TPIAdminCenter?.refreshView?.();
+      return;
+    }
+    host.hidden = false;
+  }
   const profileForm = document.querySelector("[data-profile-form]");
   const usernameForm = document.querySelector("[data-username-form]");
   const publicProfileLink = document.querySelector("[data-public-profile-link]");
@@ -423,7 +433,7 @@
   function showOwnerToolsForSetupOnly() {
     if (!inviteOwnerTools || !ownerBootstrapForm || !isDevUnlocked()) return;
 
-    inviteOwnerTools.hidden = false;
+    revealAdminToolHost(inviteOwnerTools);
     inviteOwnerTools.querySelector("[data-owner-invite-form]")?.setAttribute("hidden", "");
     if (inviteLinkList) inviteLinkList.innerHTML = "";
   }
@@ -432,7 +442,7 @@
     const currentUser = getUsers().find(user => user.username === localStorage.getItem(ACCESS_SESSION_KEY) && user.active !== false && !user.developerOwner);
     if (!inviteOwnerTools || !inviteLinkList || !["owner", "admin"].includes(currentUser?.role)) return;
 
-    inviteOwnerTools.hidden = false;
+    revealAdminToolHost(inviteOwnerTools);
     inviteOwnerTools.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
     if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
     const invites = getInvites();
@@ -840,7 +850,7 @@
       `;
       return;
     }
-    if (dashboardAdmin) dashboardAdmin.hidden = false;
+    revealAdminToolHost(dashboardAdmin);
     lockAdvancedAdminControls(currentUser);
     const initialAdminMember = getAdminMemberFromHash();
     selectedAdminUsername = initialAdminMember;
@@ -1335,7 +1345,7 @@
         window.TPIApi.listInvites(),
         adminContributorList ? window.TPIApi.listContributors() : Promise.resolve({ contributors: [] })
       ]);
-      ownerToolsHost.hidden = false;
+      revealAdminToolHost(ownerToolsHost);
       ownerToolsHost.querySelector("[data-owner-invite-form]")?.removeAttribute("hidden");
       if (ownerBootstrapForm) ownerBootstrapForm.hidden = true;
       renderInviteLinks((data.invites || []).filter(invite => !invite.used));

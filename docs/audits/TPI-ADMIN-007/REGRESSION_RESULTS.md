@@ -17,3 +17,12 @@ Production smoke evidence for the protected deployment:
 | `/live-video` public behavior | PASS — HTTP 200 with Coming Soon marker |
 | `/` public behavior | PASS — HTTP 200 |
 | Cloudflare Worker version | `8dac1b3c-d4f4-4e65-9e37-f8508c4c73ae` |
+
+ADMIN-007A repair verification:
+
+| Check | Result |
+| --- | --- |
+| Legacy resource isolation and navigation ownership | PASS — 13/13 administration isolation checks |
+| Legacy Analytics, Dashboard, Members, and System views free of relocated panels | PASS — source-level route/DOM boundary checks |
+| Refine preview navigation rendered at local Vite server | PASS — Community and Content & Publishing groups visible |
+| Authenticated legacy workflow with real invite/team/comment records | PENDING OWNER SESSION |

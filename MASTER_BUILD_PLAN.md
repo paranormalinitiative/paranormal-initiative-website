@@ -624,6 +624,11 @@ without exposing private conversation/message bodies. The current status is
 documented in `docs/audits/TPI-ADMIN-007/`. Central reports, full moderation
 investigation, platform health, and remaining creator/publishing integrations
 remain future batches; `/admin-panel` remains the production destination.
+ADMIN-007A then corrected the legacy shared-panel rendering boundary: invites,
+Paranormal Teams, and Education Center article-comment moderation now have
+separate resources, while the Refine preview navigation uses the same ownership
+model. The repair is implemented and awaits owner visual acceptance; the
+existing teams approval workflow remains linked rather than duplicated.
 ## TPI-UI-001 — Dedicated Administration and Settings workspaces — October 11, 2026
 
 The confirmed duplicate-shell condition on `admin-panel` and `member-dashboard`

@@ -9,6 +9,7 @@
   const get = (selector) => root.querySelector(selector);
 
   function showView(name) {
+    root.dataset.adminActiveView = name;
     root.querySelectorAll("[data-admin-view]").forEach((view) => {
       view.hidden = view.dataset.adminView !== name && !(name === "members" && view.id === "members");
     });
@@ -147,6 +148,8 @@
   get("[data-admin-founding-award-form]")?.addEventListener("submit", (event) => event.preventDefault());
   const initial = location.hash.replace(/^#/, "");
   const initialView = initial && !initial.includes("=") && get(`[data-admin-nav='${CSS.escape(initial)}']`) ? initial : "overview";
+  window.TPIAdminCenter = { refreshView: () => showView(root.dataset.adminActiveView || initialView) };
+  new MutationObserver(() => window.TPIAdminCenter.refreshView()).observe(root, { subtree: true, attributes: true, attributeFilter: ["data-admin-authorized"] });
   showView(initialView);
   load();
 })();

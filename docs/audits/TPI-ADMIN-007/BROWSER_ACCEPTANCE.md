@@ -21,3 +21,14 @@ Anonymous production smoke checks passed for the deployed protected preview:
 
 These checks verify the access boundary only; they do not replace authenticated
 owner acceptance of real member records or administrative actions.
+
+ADMIN-007A local rendered preview evidence:
+
+- The rebuilt protected preview rendered the Community group with Reports &
+  Moderation and Moderation History.
+- The rebuilt protected preview rendered Content & Publishing with Contributor
+  Management, Paranormal Teams, Education Center, and Article Comment Moderation.
+- Selecting Reports & Moderation rendered its isolated integration-boundary
+  view; no unrelated contributor/team/article panels were rendered.
+- Legacy `/admin-panel` owner/admin visual acceptance remains pending an
+  authorized session.

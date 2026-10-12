@@ -11,6 +11,16 @@ Community post/comment management remains on the existing protected APIs.
 Central reports, deeper moderation workflows, platform health, creator and
 publishing integration remain incomplete and are documented honestly.
 
+ADMIN-007A isolation repair:
+
+- Removed the shared legacy owner-tools render boundary that exposed invites,
+  team approvals, and article comment moderation together.
+- Assigned separate legacy resources for Contributor Management, Paranormal
+  Teams, and Education Center article comment moderation.
+- Aligned the Refine preview navigation with Community versus Content &
+  Publishing ownership without duplicating backend contracts.
+- Detailed evidence: `ADMIN_PANEL_ISOLATION.md`.
+
 Release evidence:
 
 - GitHub source commit: `25b36ca`

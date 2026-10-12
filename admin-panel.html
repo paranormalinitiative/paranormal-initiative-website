@@ -56,9 +56,9 @@
             <nav class="admin-center-nav" aria-label="Administration navigation">
                 <div class="admin-nav-group"><span>Overview</span><a class="is-active" href="#overview" data-admin-nav="overview">Dashboard</a><a href="#analytics" data-admin-nav="analytics">Analytics</a><a href="#audit" data-admin-nav="audit">Activity</a></div>
                 <div class="admin-nav-group"><span>Members</span><a href="#members" data-admin-nav="members">All Members</a><a href="#members" data-admin-nav="members">Roles &amp; Permissions</a></div>
-                <div class="admin-nav-group"><span>Community</span><a href="#community" data-admin-nav="community">Community Overview</a><a href="#moderation" data-admin-nav="moderation">Moderation</a></div>
+                <div class="admin-nav-group"><span>Community</span><a href="#community" data-admin-nav="community">Community Overview</a><a href="#moderation" data-admin-nav="moderation">Reports &amp; Moderation</a></div>
                 <div class="admin-nav-group"><span>Creators &amp; Partnership</span><a href="#creators" data-admin-nav="creators">Creator Directory</a><a href="#founding-50" data-admin-nav="founding-50">Founding 50</a><a href="#creator-studio" data-admin-nav="creator-studio">Creator Studio Access</a></div>
-                <div class="admin-nav-group"><span>Publishing</span><a href="#videos" data-admin-nav="videos">TPI Videos</a><a href="#content" data-admin-nav="content">Education &amp; Content</a><a href="#events" data-admin-nav="events">Events</a></div>
+                <div class="admin-nav-group"><span>Content &amp; Publishing</span><a href="#contributors" data-admin-nav="contributors">Contributor Management</a><a href="#teams" data-admin-nav="teams">Paranormal Teams</a><a href="#content" data-admin-nav="content">Education Center</a><a href="#article-comments" data-admin-nav="article-comments">Article Comment Moderation</a><a href="#videos" data-admin-nav="videos">TPI Videos</a><a href="#events" data-admin-nav="events">Events</a></div>
                 <div class="admin-nav-group"><span>System</span><a href="#notifications" data-admin-nav="notifications">Notifications</a><a href="#system" data-admin-nav="system">Platform Health</a><a href="#security" data-admin-nav="security">Security</a><a href="admin-advanced-settings.html">System Settings</a></div>
             </nav>
             <a class="admin-center-back" href="member-home.html">Back to TPI</a>
@@ -149,9 +149,10 @@
         </article>
     </section>
 
-    <section class="editor-access-card invite-owner-tools admin-panel-invites" data-dashboard-admin data-invite-owner-tools hidden>
+    <section class="editor-access-card invite-owner-tools admin-panel-invites" data-admin-view="contributors" id="contributors" data-dashboard-admin data-invite-owner-tools hidden>
         <p class="portal-kicker">Invite Access Control</p>
-        <h2>Contributor Invites</h2>
+        <h2>Contributor Management</h2>
+        <h3>Contributor Invites</h3>
         <p>Generate invite links for approved contributors and grant Content Editor access to trusted members. Public visitors and regular members do not see this panel.</p>
         <form data-owner-invite-form>
             <label>
@@ -168,11 +169,18 @@
             <button type="submit">Generate Invite Link</button>
         </form>
         <div class="invite-link-list" data-invite-link-list></div>
+        <p class="access-note">Contributor directory records remain available through the protected Creator Directory. This resource owns invitation and access-level controls.</p>
+    </section>
 
+    <section class="editor-access-card admin-panel-teams" data-admin-view="teams" id="teams" data-dashboard-admin hidden>
+        <p class="portal-kicker">Content &amp; Publishing</p>
         <h2>Paranormal Teams Directory</h2>
         <p>Review "Add a Team" submissions to the <a href="teams/index.html">Paranormal Teams Directory</a>. Approved teams appear in their state or country page, listed alphabetically.</p>
         <p><a class="portal-button" href="teams/admin.html">Open Team Approvals</a></p>
+    </section>
 
+    <section class="editor-access-card admin-panel-article-comments" data-admin-view="article-comments" id="article-comments" data-dashboard-admin hidden>
+        <p class="portal-kicker">Education Center</p>
         <h2>Comment Moderation</h2>
         <p>Review public comments before they appear on article pages. Contributor-signed comments can publish immediately.</p>
         <div class="moderation-toolbar">
@@ -192,8 +200,8 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=38"></script>
-<script src="admin-center.js?v=2"></script>
+<script src="member-login.js?v=39"></script>
+<script src="admin-center.js?v=3"></script>
 <script src="member-shell.js?v=57"></script>
 </body>
 </html>
