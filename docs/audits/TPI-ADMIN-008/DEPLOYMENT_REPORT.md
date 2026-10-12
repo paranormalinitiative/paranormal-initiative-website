@@ -140,3 +140,10 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   200 with Coming Soon preserved.
 - No D1 migration, report mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
+## Release documentation sync
+
+- Documentation commit: `3b8ba6d` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID: `763f96a9-19ee-472a-bbd0-f20531d615df`.
+- The sync published the updated deployment report and regression results;
+  runtime code remained unchanged.
