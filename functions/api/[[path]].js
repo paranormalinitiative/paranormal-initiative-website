@@ -51,6 +51,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/unblock")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, true));
     if (request.method === "GET" && path === "/admin/community/posts") return requireAdmin(request, env, user => handleAdminCommunityPosts(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/community\/posts\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminCommunityPostDetail(path, env, user));
     if (request.method === "GET" && path === "/admin/community/comments") return requireAdmin(request, env, user => handleAdminCommunityComments(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
@@ -1296,6 +1297,10 @@ async function handleAdminCommunityPosts(request, env) {
   const username = clean(url.searchParams.get("username"));
   if (!username) {
     const search = clean(url.searchParams.get("search")).slice(0, 100);
+    const author = clean(url.searchParams.get("author")).slice(0, 80);
+    const sort = clean(url.searchParams.get("sort")).toLowerCase();
+    const direction = clean(url.searchParams.get("direction")).toLowerCase() === "asc" ? "ASC" : "DESC";
+    const sortColumn = sort === "updated" ? "cp.updated_at" : "cp.created_at";
     const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
     // Active is the safe default for administrative lists: deleted records
     // remain in D1 and are available only through an explicit deleted view.
@@ -1307,6 +1312,7 @@ async function handleAdminCommunityPosts(request, env) {
     if (status === "active") where.push("cp.status IN ('visible', 'hidden')");
     else { where.push("cp.status = ?"); binds.push(status); }
     if (search) { where.push("(cp.title LIKE ? OR cp.body LIKE ? OR c.username LIKE ? OR c.display_name LIKE ?)"); const like = `%${search}%`; binds.push(like, like, like, like); }
+    if (author) { where.push("c.username LIKE ?"); binds.push(`%${author}%`); }
     const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
     try {
       const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM community_posts cp LEFT JOIN contributors c ON c.id = cp.author_id ${whereSql}`).bind(...binds).first();
@@ -1320,11 +1326,11 @@ async function handleAdminCommunityPosts(request, env) {
         LEFT JOIN contributors c ON c.id = cp.author_id
         LEFT JOIN community_categories cc ON cc.id = cp.category_id
         ${whereSql}
-        ORDER BY cp.created_at DESC
+        ORDER BY ${sortColumn} ${direction}
         LIMIT ? OFFSET ?
       `).bind(...binds, pageSize, (page - 1) * pageSize).all();
       const total = Number(count?.total || 0);
-      return json({ posts: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
+      return json({ posts: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }, filters: { search, author, sort: sort === "updated" ? "updated" : "created", direction: direction.toLowerCase() } });
     } catch (error) {
       return json({ posts: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "community_unavailable" }, 503);
     }
@@ -1409,6 +1415,55 @@ async function handleAdminSetCommunityPostStatus(path, request, env, actingUser)
   });
 
   return json({ post: { id: post.id, title: post.title, status } });
+}
+
+async function handleAdminCommunityPostDetail(path, env) {
+  const postId = clean(decodeURIComponent(path.match(/^\/admin\/community\/posts\/([^/]+)$/)?.[1] || ""));
+  if (!postId) return json({ error: "Post id is required." }, 400);
+  try {
+    const post = await env.TPI_DB.prepare(`
+      SELECT cp.id, cp.title, cp.body, cp.status, cp.created_at AS createdAt,
+             cp.updated_at AS updatedAt, cc.title AS categoryTitle,
+             c.username AS authorUsername, c.display_name AS authorDisplayName,
+             c.role AS authorRole
+      FROM community_posts cp
+      LEFT JOIN community_categories cc ON cc.id = cp.category_id
+      LEFT JOIN contributors c ON c.id = cp.author_id
+      WHERE cp.id = ?
+    `).bind(postId).first();
+    if (!post) return json({ error: "Post was not found." }, 404);
+    const [comments, reactions] = await Promise.all([
+      env.TPI_DB.prepare(`
+        SELECT cm.id, cm.post_id AS postId, substr(cm.body, 1, 500) AS preview,
+               cm.status, cm.created_at AS createdAt,
+               c.username AS authorUsername, c.display_name AS authorDisplayName
+        FROM community_comments cm
+        LEFT JOIN contributors c ON c.id = cm.author_id
+        WHERE cm.post_id = ?
+        ORDER BY cm.created_at DESC
+        LIMIT 100
+      `).bind(postId).all(),
+      env.TPI_DB.prepare(`
+        SELECT cr.id, cr.reaction, cr.created_at AS createdAt,
+               c.username AS contributorUsername, c.display_name AS contributorDisplayName
+        FROM community_reactions cr
+        LEFT JOIN contributors c ON c.id = cr.contributor_id
+        WHERE cr.target_type = 'post' AND cr.target_id = ?
+        ORDER BY cr.created_at DESC
+        LIMIT 100
+      `).bind(postId).all()
+    ]);
+    return json({
+      post,
+      comments: comments.results || [],
+      reactions: reactions.results || [],
+      reports: [],
+      reportsAvailable: false,
+      reportsNote: "No community-post report table or supported report contract is present; video and private-message reports remain separate."
+    }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ error: "Community post details are unavailable." }, 503);
+  }
 }
 
 async function handleAdminCommunityComments(request, env) {

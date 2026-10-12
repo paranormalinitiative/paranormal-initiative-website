@@ -60,6 +60,20 @@ export type AdminCommunityComment = {
   authorDisplayName?: string;
 };
 
+export type AdminCommunityPostDetail = {
+  post: CommunityPost & {
+    body: string;
+    updatedAt?: string;
+    categoryTitle?: string;
+    authorRole?: string;
+  };
+  comments: Array<AdminCommunityComment>;
+  reactions: Array<{ id: string; reaction: string; createdAt?: string; contributorUsername?: string; contributorDisplayName?: string }>;
+  reports: Array<AdminReport>;
+  reportsAvailable: boolean;
+  reportsNote?: string;
+};
+
 export type ClassicComment = {
   id: string;
   pageId?: string;
