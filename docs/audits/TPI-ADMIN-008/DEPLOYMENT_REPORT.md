@@ -362,3 +362,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   `b2e28c73-45d1-4aee-a96c-7bd54d191db9`.
 - The sync published the Audit Logs pagination release evidence and regression
   results; runtime code remained unchanged.
+
+## Final release documentation sync — Audit Logs pagination
+
+- Documentation-history commit: `5995dc8d36a8a9095f4503eb3ae21d0007ad4583`
+  pushed to `origin/main`.
+- Final documentation sync Cloudflare Version ID:
+  `ca8bed91-669b-4d34-b388-bd80e2b7ee9e`.
+- This final sync published the preceding documentation-sync identifier in
+  the release history; runtime code remained unchanged.
