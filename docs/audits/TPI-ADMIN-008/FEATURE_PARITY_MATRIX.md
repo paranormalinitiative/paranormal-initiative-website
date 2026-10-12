@@ -6,7 +6,7 @@
 | Member directory/detail | Existing admin member APIs and activity | Search, filters, sorting, pagination, detail/activity | WORKING WITH LIMITATIONS |
 | Roles and permissions | Existing server-side authorization and account controls | Protected read-only role/capability summary from contributor records; role/title/capability mutations remain on Contributor Management | WORKING WITH LIMITATIONS |
 | Account restrictions | Existing member capability flags and user-to-user restriction workflows | Protected read-only capability-restrictions list; no administrative suspension or user-to-user restriction mutation | WORKING WITH LIMITATIONS |
-| Community posts | Existing Community Feed admin API | Active/visible/hidden/deleted filtering and status updates | WORKING |
+| Community overview and posts | Existing Community Feed admin API | Distinct protected overview metrics plus Posts & Comments record review with active/visible/hidden/deleted filtering and status updates | WORKING |
 | Community comments/reactions | Existing Community Feed comment/reaction tables and member activity | Protected metadata-only Community Comments queue with visible/deleted/all filters and search; aggregate reaction metric remains read-only | WORKING WITH LIMITATIONS |
 | Reports and moderation | Existing video and messenger report metadata/contracts | Protected unified metadata-only queue with status filters and safe metadata search; no private evidence or resolution mutations | WORKING WITH LIMITATIONS |
 | Moderation history/audit | Existing audit log API | Protected read-only audit and filtered moderation-history views with query pagination | WORKING WITH LIMITATIONS |

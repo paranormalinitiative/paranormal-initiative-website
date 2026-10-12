@@ -7,6 +7,11 @@ integration. Promotion remains gated because feature parity is incomplete,
 report resolution, platform health/role management are not complete, and
 authenticated browser acceptance and rollback verification have not passed.
 
+Community Overview and Posts & Comments are now separate rendered resources:
+the former uses the protected overview metrics, and the latter retains the
+record-level moderation surfaces. This separation is source/build verified;
+authenticated rendering still requires owner/admin acceptance.
+
 The Paranormal Teams surface is now integrated in the protected preview for
 read-only status browsing and existing protected approval mutations. Its
 runtime approval actions remain unverified until an authorized owner/admin

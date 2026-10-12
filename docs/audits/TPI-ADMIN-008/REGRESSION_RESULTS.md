@@ -204,6 +204,25 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Community route separation release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  55/55. Vite emitted only its existing large-chunk advisory.
+- Community Overview now renders protected overview metrics in its own
+  resource; Posts & Comments retains record-level post status controls and the
+  metadata-only Community Comments queue.
+- Anonymous production boundary checks after deployment: preview HTML,
+  `index-BE8hSo1D.js`, `/api/admin/overview`, and
+  `/api/admin/community/posts?status=active&page=1&pageSize=25` returned HTTP
+  403; `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon preserved; the parity and deployment reports returned HTTP
+  200.
+- Authenticated rendering remains pending an authorized owner/admin browser
+  session and is not claimed as passed.
+- No Community Feed records, D1 schema, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Notifications pagination release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

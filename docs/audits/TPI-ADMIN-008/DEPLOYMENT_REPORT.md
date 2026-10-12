@@ -354,6 +354,29 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Community route separation release
+
+- Git commit: `7185626` pushed to `origin/main`.
+- Cloudflare Version ID: `d38d638a-9506-41bd-adb5-fcb4ded765a0`.
+- Preview asset: `/admin-center-preview/assets/index-BE8hSo1D.js`.
+- The protected preview now renders Community Overview separately from Posts &
+  Comments. Overview uses the existing protected overview metrics; Posts &
+  Comments retains record-level post status review and metadata-only Community
+  Comments.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  55/55. The existing Vite large-chunk advisory remains informational.
+- No Community Feed records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+- Anonymous production boundary checks: preview HTML, the exact preview asset,
+  `/api/admin/overview`, `/api/admin/community/posts?status=active&page=1&pageSize=25`,
+  and `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon preserved; published parity and deployment reports returned
+  HTTP 200.
+- Authenticated owner/admin rendering and owner acceptance remain pending; the
+  separation is not claimed as runtime owner-verified until an authorized
+  browser session is available.
+
 ## Release documentation sync — Notifications pagination
 
 - Documentation commit: `7a612d7fff02fa29d9377397200b6d29e2c95b96` pushed to
