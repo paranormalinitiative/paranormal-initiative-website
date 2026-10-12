@@ -36,8 +36,10 @@ This batch improves the preview's route ownership and dashboard contract:
   Notifications uses its existing server-backed count and pagination contract,
   and private payloads and unverified resolution/delivery mutations remain
   excluded.
-- Creator Channels, Roles & Permissions, and Account Restrictions now have
-  protected read-only views backed by existing channel/contributor fields;
+- Creator Channels now has a protected read-only view backed by existing
+  channel fields with bounded server-backed pagination. Roles & Permissions
+  and Account Restrictions remain protected read-only views backed by existing
+  contributor fields;
   lifecycle, role, suspension, and user-to-user restriction mutations remain
   on their existing protected workflows.
 - Security now has an explicit read-only boundary summary for the existing

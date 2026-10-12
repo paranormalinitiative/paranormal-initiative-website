@@ -55,8 +55,9 @@ delivery and admin-send workflows remain unchanged.
 
 Creator Channels now has a protected metadata-only directory over the existing
 `tpi_video_channels` table, with public/private visibility and channel/owner
-search filters plus published-video counts. Editing, ownership transfer,
-visibility changes, and video lifecycle mutations remain on creator workflows.
+search filters, matching totals, bounded server-backed pagination, and
+published-video counts. Editing, ownership transfer, visibility changes, and
+video lifecycle mutations remain on creator workflows.
 
 Roles & Permissions now has a protected read-only summary over existing
 contributor role and capability fields. It reports live role/account counts and

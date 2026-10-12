@@ -33,7 +33,9 @@ Authenticated production browser acceptance is not available in this run.
 The baseline above records the starting state and is preserved as history. Since
 that capture, the protected preview has added metadata-only Reports &
 Moderation, Notifications, Creator Channels, Roles & Permissions, and Account
-Restrictions views using existing TPI tables/contracts. These additions remain
+Restrictions views using existing TPI tables/contracts. Creator Channels now
+uses the existing server-backed count/pagination contract for bounded browsing.
+These additions remain
 read-only where no complete safe mutation contract exists; `/admin-panel`
 promotion, authenticated owner/admin acceptance, and rollback verification
 remain gated.

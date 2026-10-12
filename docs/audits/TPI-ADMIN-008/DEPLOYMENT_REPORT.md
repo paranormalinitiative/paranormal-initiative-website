@@ -183,6 +183,28 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, channel mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Creator Channels pagination release
+
+- Git commit: `086752e` pushed to `origin/main`.
+- Cloudflare Version ID: `02b8b577-8f3a-4639-90a2-c8756cb95aaf`.
+- Preview asset: `/admin-center-preview/assets/index-BnxGqqHA.js`.
+- The protected Channels preview now uses the existing server-backed
+  pagination contract with a bounded 50-row page, matching totals, and
+  Previous/Next controls. Visibility/search filters, metadata-only fields,
+  and the no-channel-mutation boundary remain intact.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA 60/60.
+  The existing Vite large-chunk advisory remains informational.
+- Authenticated Channels rendering and pagination interaction remain pending
+  an authorized owner/admin browser session and are not claimed as
+  owner-verified.
+- Anonymous production boundary checks: preview HTML, exact preview asset,
+  `/api/admin/channels?visibility=all&page=1&pageSize=50`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; the read-only production smoke passed 10/10.
+- No channel records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
 ## Roles & Permissions summary release
 
 - Git commit: `f643b81` pushed to `origin/main`.

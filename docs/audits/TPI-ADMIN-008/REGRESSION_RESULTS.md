@@ -61,6 +61,25 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 - Authenticated channel directory data/filter rendering remains BLOCKED
   without an authorized owner/admin browser session.
 
+## Creator Channels pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  60/60. Vite emitted only its existing large-chunk advisory.
+- The protected Channels preview now consumes the existing pagination totals
+  with a bounded 50-row request, matching totals, and Previous/Next controls
+  while preserving visibility/search filters, metadata-only fields, and the
+  no-mutation boundary.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-BnxGqqHA.js` asset, `/api/admin/channels?visibility=all&page=1&pageSize=50`,
+  and `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon preserved; the full read-only production smoke passed 10/10.
+- Authenticated Channels rendering, pagination interaction, and rollback
+  verification remain pending an authorized owner/admin browser session and
+  are not claimed as passed.
+- No channel records, D1 schema, R2 objects, Creator Studio access, or legacy
+  `/admin-panel` behavior were changed.
+
 ## Roles & Permissions release verification
 
 - Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin
