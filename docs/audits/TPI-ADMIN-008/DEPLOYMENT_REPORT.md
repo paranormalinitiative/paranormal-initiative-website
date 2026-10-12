@@ -354,6 +354,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Release documentation sync — protected Analytics contract
+
+- Documentation commit: `8f35faafad4898c9b96869989590a501054564f8` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `2fd65d58-2f2b-4206-98ab-271b05ed9389`.
+- The sync published the Analytics release evidence and regression results;
+  runtime code remained unchanged.
+
 ## Release documentation sync — Audit Logs pagination
 
 - Documentation commit: `35476abc83c8d6efcc3bbd68c621a74759badb94` pushed to
