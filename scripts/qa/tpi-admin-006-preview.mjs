@@ -82,6 +82,7 @@ const checks = [
   ["events review queue remains read-only", source.includes("no event mutations in preview") && api.includes("Event creation, review, and lifecycle changes remain on the existing protected event workflow") && !source.includes('adminFetch(`/admin/events/${')],
   ["events queue uses bounded server pagination", source.includes('pageSize: "50"') && source.includes('matching events') && source.includes('Math.ceil(total / 50)') && api.includes('totalPages')],
   ["audit views use existing protected pagination", source.includes("/admin/audit-logs?") && source.includes("pagination?.total") && source.includes("matching audit records") && api.includes('path === "/admin/audit-logs"') && api.includes("pagination")],
+  ["moderation history uses a server-side fixed scope", source.includes('if (historyOnly) params.set("scope", "moderation")') && source.includes("const rows = logs;") && api.includes('const scope = clean(url.searchParams.get("scope")).toLowerCase();') && api.includes('scope === "moderation"') && api.includes("action LIKE '%moder%'")],
   ["audit search reloads on Enter", source.includes('if (event.key === "Enter") { setPage(1); if (page === 1) load(); }')],
   ["audit views remain read-only", source.includes("Protected read-only") && !source.includes('adminFetch(`/admin/audit-logs/${')],
 ];

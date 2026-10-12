@@ -834,6 +834,7 @@ async function handleAdminAuditLogs(request, env) {
   const action = clean(url.searchParams.get("action")).slice(0, 120);
   const target = clean(url.searchParams.get("target")).slice(0, 160);
   const query = clean(url.searchParams.get("q")).slice(0, 160);
+  const scope = clean(url.searchParams.get("scope")).toLowerCase();
   const from = clean(url.searchParams.get("from")).slice(0, 30);
   const to = clean(url.searchParams.get("to")).slice(0, 30);
   const filters = [];
@@ -842,6 +843,9 @@ async function handleAdminAuditLogs(request, env) {
   if (action) { filters.push("action LIKE ?"); binds.push(`%${action}%`); }
   if (target) { filters.push("(target_id LIKE ? OR target_type LIKE ?)"); binds.push(`%${target}%`, `%${target}%`); }
   if (query) { filters.push("(actor_username LIKE ? OR action LIKE ? OR target_id LIKE ? OR target_type LIKE ?)"); binds.push(`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`); }
+  if (scope === "moderation") {
+    filters.push("(action LIKE '%moder%' OR action LIKE '%comment%' OR action LIKE '%community%' OR action LIKE '%block%' OR action LIKE '%deactivat%' OR action LIKE '%report%')");
+  }
   if (/^\d{4}-\d{2}-\d{2}$/.test(from)) { filters.push("created_at >= ?"); binds.push(`${from}T00:00:00`); }
   if (/^\d{4}-\d{2}-\d{2}$/.test(to)) { filters.push("created_at <= ?"); binds.push(`${to}T23:59:59`); }
   const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
