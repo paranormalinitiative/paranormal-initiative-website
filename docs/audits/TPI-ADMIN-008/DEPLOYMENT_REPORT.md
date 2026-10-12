@@ -403,6 +403,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No event records, D1 migration, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Release documentation sync — Events pagination
+
+- Documentation commit: `de17d93` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `be9f2a1c-b69a-4744-beca-8fdca8ebd19d`.
+- The sync published the Events pagination release evidence and updated
+  parity, readiness, regression, and owner-acceptance documentation; runtime
+  code remained unchanged.
+
 ## Community route separation release
 
 - Git commit: `7185626` pushed to `origin/main`.
