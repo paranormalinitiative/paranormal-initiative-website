@@ -10,3 +10,9 @@ conversation/message bodies were removed from this member-activity response.
 Community post/comment management remains on the existing protected APIs.
 Central reports, deeper moderation workflows, platform health, creator and
 publishing integration remain incomplete and are documented honestly.
+
+Release evidence:
+
+- GitHub source commit: `25b36ca`
+- Cloudflare protected preview deployment: `8dac1b3c-d4f4-4e65-9e37-f8508c4c73ae`
+- No production database mutation, R2 change, or public Creator Studio launch was performed.
