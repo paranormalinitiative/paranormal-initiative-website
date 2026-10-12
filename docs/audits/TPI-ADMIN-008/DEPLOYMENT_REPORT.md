@@ -1111,3 +1111,13 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - This sync published the Moderation History server-scope implementation
   evidence, parity/readiness updates, regression results, and owner acceptance
   checklist. Runtime code was unchanged by the documentation commit.
+
+## Final documentation sync — local contract verification
+
+- Documentation commit: `572291b` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `faeab035-eb1f-4a02-8247-a08299dec855`.
+- This sync published the isolated local protected-admin contract results, the
+  Wrangler `spawn EBADF` environment limitation, parity/readiness updates,
+  regression results, and owner acceptance checklist. Runtime code was
+  unchanged by the documentation commit.
