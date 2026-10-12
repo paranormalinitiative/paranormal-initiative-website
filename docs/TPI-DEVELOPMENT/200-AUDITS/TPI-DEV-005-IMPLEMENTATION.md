@@ -44,6 +44,7 @@ All existing migrations were applied to development D1 only. Synthetic accounts 
 - Anonymous `/admin-center-preview/`: HTTP 403.
 - Development owner login: passed; `/api/auth/me`, Admin Center HTML, `/api/admin/overview`, and `/api/admin/members` passed.
 - Development member login: passed; `/admin-center-preview/` remained HTTP 403.
+- Normalized public/member routes: `/member-home?member=1`, `/education-center`, and `/podcast` resolved HTTP 200 after expected `.html` redirects; `/live-video` remained Coming Soon and `/studio` remained HTTP 403 anonymously.
 - Secret/config asset probes: `/.dev.vars` and `/.wrangler.dev.toml` returned HTTP 404.
 - Development D1: disposable create/write/read/delete/drop passed.
 - Development R2: explicit remote disposable upload/download/delete and post-delete read failure passed.
