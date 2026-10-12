@@ -327,3 +327,29 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   `20d0738b-1900-49e5-83d6-970519fa36ee`.
 - The sync published the Events review-queue release evidence and regression
   results; runtime code remained unchanged.
+
+## Audit Logs pagination release
+
+- Git commit: `42e6ff2` pushed to `origin/main`.
+- Cloudflare Version ID: `575453ba-7c6b-4830-8374-7ac37b509983`.
+- Preview asset: `/admin-center-preview/assets/index-CXNAwm4r.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- The protected Audit Logs view now uses the existing `/admin/audit-logs`
+  contract with bounded query pagination, a matching-record count, and
+  previous/next controls. Moderation History remains client-filtered and the
+  integrated view remains explicitly read-only.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  `git diff --check`, and focused QA 50/50. Vite emitted only its existing
+  large-chunk advisory.
+- Anonymous boundary checks after deployment: preview HTML, exact preview
+  asset, `/api/admin/audit-logs?page=1&limit=50`, and `/admin-panel.html`
+  returned HTTP 403; `/live-video` returned HTTP 200 with Coming Soon
+  preserved; the published parity documentation returned HTTP 200.
+- Authenticated owner/admin browser rendering, pagination interaction, and
+  rollback verification remain pending an authorized browser session and are
+  not claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.

@@ -187,3 +187,20 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - Authenticated owner/admin Teams rendering and mutation workflow: BLOCKED
   pending an authorized browser session; not claimed as passed.
 
+## Audit Logs pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  `git diff --check`, and focused QA 50/50. Vite emitted only its existing
+  large-chunk advisory.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-CXNAwm4r.js`: HTTP 403.
+- Anonymous `/api/admin/audit-logs?page=1&limit=50`: HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Published parity documentation: HTTP 200.
+- Authenticated Audit Logs rendering, pagination interaction, and rollback
+  verification remain pending an authorized owner/admin browser session; they
+  are not claimed as passed.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
