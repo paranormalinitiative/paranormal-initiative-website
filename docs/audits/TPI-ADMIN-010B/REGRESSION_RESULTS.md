@@ -15,3 +15,16 @@ Build output: `admin-center-preview/assets/index-DHCMRuca.js`; CSS remains
 non-failing build advisory.
 
 Live route and asset results will be appended after deployment.
+
+Live results for runtime commit `45649cc`, Cloudflare Version ID
+`41858f81-27d2-413d-821b-6a03f7316bf3`, and asset
+`index-DHCMRuca.js`:
+
+- Homepage: HTTP 200.
+- `/live-video`: HTTP 200 with `Coming Soon`.
+- `/admin-panel`: HTTP 403 anonymously.
+- `/admin-center-preview/`: HTTP 403 anonymously.
+- New preview JavaScript asset: HTTP 403 anonymously.
+- Community comment detail API: HTTP 403 anonymously.
+- Report detail API: HTTP 403 anonymously.
+- TPI-ADMIN-010B audit document: HTTP 200.
