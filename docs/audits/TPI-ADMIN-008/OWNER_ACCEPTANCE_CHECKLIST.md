@@ -14,6 +14,7 @@
 - [ ] Verify Creator Directory, Founding 50 application status, and Creator Studio entitlement status remain inside their protected boundaries.
 - [ ] Confirm Founding 50 award activation and Creator Studio access escalation remain closed.
 - [ ] Verify System Settings values load and remain visibly disabled in the preview; verify mutations only through the existing protected workflow.
+- [ ] Verify published Education, TPI Videos, and approved Events listings load without exposing draft or mutation controls.
 - [ ] Confirm `/admin-panel` remains unchanged and protected.
 - [ ] Confirm `/live-video` remains Coming Soon.
 - [ ] Review parity limitations before approving any `/admin-panel` promotion.

@@ -30,6 +30,10 @@ System Settings is integrated as a protected read-only view with visibly
 disabled controls. The existing mutation workflow remains preserved in the
 legacy settings surface until owner acceptance verifies it.
 
+Published Education, TPI Videos, and approved Events listings are integrated
+read-only. Draft/editor lifecycle, channel-directory, and event mutation
+workflows remain explicitly limited and require the existing protected systems.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

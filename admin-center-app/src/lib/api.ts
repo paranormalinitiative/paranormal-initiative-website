@@ -156,6 +156,42 @@ export type AdminFoundingApplication = {
   active: boolean | number;
 };
 
+export type AdminPublishedArticle = {
+  id: string;
+  title: string;
+  destination?: string;
+  contributionType?: string;
+  author?: string;
+  authorDisplayName?: string;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type AdminPublishedVideo = {
+  id: string;
+  title: string;
+  category?: string;
+  sourceType?: string;
+  channelName?: string;
+  publishedAt?: string;
+  status: string;
+  viewingAccess?: string;
+};
+
+export type AdminEventRecord = {
+  id?: string | number;
+  title: string;
+  type?: string;
+  category?: string;
+  start_date?: string;
+  end_date?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  status?: string;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

@@ -43,6 +43,8 @@ const checks = [
   ["creator access remains non-escalating", source.includes('This view does not allocate memberships or grant Creator Studio access') && source.includes('Awards remain gated') && source.includes('does not grant, revoke, or expand access') && api.includes('path === "/admin/founding-50"') && api.includes('path === "/admin/creator-studio/entitlements"')],
   ["system settings uses a read-only protected contract", source.includes('view === "settings" && <SettingsView') && source.includes('"/admin/settings"') && source.includes('Read-only preview') && source.includes('disabled aria-label={label}') && api.includes('path === "/admin/settings"')],
   ["settings mutation is not invoked by preview", source.includes('No mutation endpoint is invoked from this preview') && !source.includes('adminFetch("/admin/settings", { method: "POST"')],
+  ["published content views use existing listing contracts", source.includes('view === "education" && <PublishedEducation') && source.includes('"/articles"') && source.includes('view === "videos" && <PublishedVideos') && source.includes('"/tpi-videos?page=1&pageSize=48&source=creator"') && source.includes('view === "events" && <ApprovedEvents') && source.includes('"/events?limit=100"')],
+  ["content mutation boundaries remain explicit", source.includes('Draft/editor management remains on its existing contributor workflow') && source.includes('Draft and lifecycle mutations remain on the existing contributor workflow') && source.includes('no mutation is exposed here')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);
