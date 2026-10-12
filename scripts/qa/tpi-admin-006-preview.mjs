@@ -63,6 +63,7 @@ const checks = [
   ["events review queue uses protected existing table contract", source.includes('adminFetch<{ events: AdminEventRecord[] }>(`/admin/events?') && source.includes('aria-label="Event status"') && api.includes('path === "/admin/events"') && api.includes("FROM events e") && api.includes("metadataOnly: true")],
   ["events review queue remains read-only", source.includes("no event mutations in preview") && api.includes("Event creation, review, and lifecycle changes remain on the existing protected event workflow") && !source.includes('adminFetch(`/admin/events/${')],
   ["audit views use existing protected pagination", source.includes("/admin/audit-logs?") && source.includes("pagination?.total") && source.includes("matching audit records") && api.includes('path === "/admin/audit-logs"') && api.includes("pagination")],
+  ["audit search reloads on Enter", source.includes('if (event.key === "Enter") { setPage(1); if (page === 1) load(); }')],
   ["audit views remain read-only", source.includes("Protected read-only") && !source.includes('adminFetch(`/admin/audit-logs/${')],
 ];
 
