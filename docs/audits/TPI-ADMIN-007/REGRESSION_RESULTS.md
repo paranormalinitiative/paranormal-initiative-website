@@ -34,3 +34,13 @@ ADMIN-007A production deployment:
 - Anonymous legacy `/admin-panel.html` and direct `#analytics` access: HTTP 403.
 - Anonymous preview route and direct preview asset access: HTTP 403.
 - Public `/live-video`: HTTP 200 with Coming Soon.
+
+ADMIN-007B theme regression coverage:
+
+| Check | Result |
+| --- | --- |
+| TPI semantic background, card, accent, sidebar, chart, and shadcn mappings | PASS — source regression coverage added |
+| Six theme selectors and persisted theme allowlist | PASS — `cryptid`, `seance`, `cosmic`, `asylum`, `fieldops`, `gothicnight` |
+| Former generic light dashboard palette absent from preview CSS | PASS — source regression coverage added |
+| Responsive/mobile theme states and focus treatment | PASS — CSS coverage; rendered browser review pending |
+| Authenticated owner visual acceptance | PENDING — owner session required |

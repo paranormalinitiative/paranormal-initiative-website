@@ -89,6 +89,12 @@ npx wrangler deploy 2>&1 | tail -4
   in HTML/CSS — use tokens or `color-mix(in srgb, var(--accent) X%, transparent)`. Adding a theme has
   SEVEN touchpoints (style.css tokens, member-shell.js SITE_THEMES, dashboard picker, teams.css block,
   teams bootstrap regex ×7 pages, studio bridge, backend MEMBER_THEMES allowlist).
+- **TPI interface visual identity:** All new or modified TPI interfaces must follow the existing
+  Paranormal Initiative website design system. The existing website is the visual source of truth.
+  Refine, shadcn/ui, or any other component framework must be configured to use TPI's established
+  colors, typography, spacing, and theme behavior. Generic white dashboards, default framework themes,
+  and unrelated visual styles are not acceptable. Visual consistency must be verified before a feature
+  is considered complete.
 - **TPI Studio (`studio/`)** is a built bundle, not source — DO NOT modify it. It's gated: non-leadership
   gets a Coming Soon page (worker.js STUDIO_GATE_HTML) and a disabled nav item.
 - **Specificity traps in style.css:** `.editor-access-card` is `width:min(440px,100%)` (wide cards need

@@ -31,3 +31,15 @@ Release evidence:
 - GitHub source commit: `25b36ca`
 - Cloudflare protected preview deployment: `8dac1b3c-d4f4-4e65-9e37-f8508c4c73ae`
 - No production database mutation, R2 change, or public Creator Studio launch was performed.
+
+ADMIN-007B visual-system update:
+
+- Replaced the protected preview's generic light palette with the exact TPI
+  dark design tokens sourced from `style.css`.
+- Preserved the six existing themes and `tpiSiteTheme` persistence behavior,
+  with `cryptid` as the safe default for the preview.
+- Mapped shadcn semantic, sidebar, and chart variables to TPI tokens and
+  applied them across navigation, cards, tables, forms, dialogs, notices,
+  responsive states, and focus treatment.
+- No production `/admin-panel` replacement or data/storage change was made.
+- Detailed token and component evidence is in `TPI_DESIGN_SYSTEM.md`.

@@ -17,3 +17,12 @@ ADMIN-007A isolation review:
   `data-admin-view` route when revealing Contributor Management.
 - No invitation code, team record, comment record, D1 row, R2 object, stream
   key, or production membership was changed during this repair.
+
+ADMIN-007B security boundary:
+
+- Theme initialization is presentation-only and reads the existing
+  `tpiSiteTheme` allowlist; it does not grant access or alter authorization.
+- The preview remains server-gated, and `/admin-panel` remains the existing
+  protected production destination.
+- No database, R2, credential, route, or Creator Studio access boundary was
+  changed by the visual-system update.

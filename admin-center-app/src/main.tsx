@@ -4,6 +4,19 @@ import { Refine, type DataProvider } from "@refinedev/core";
 import { App } from "./app";
 import "./index.css";
 
+const SITE_THEMES = ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"] as const;
+const applyInitialSiteTheme = () => {
+  try {
+    const stored = window.localStorage.getItem("tpiSiteTheme");
+    const theme = stored && SITE_THEMES.includes(stored as (typeof SITE_THEMES)[number]) ? stored : "cryptid";
+    document.documentElement.dataset.theme = theme;
+  } catch {
+    document.documentElement.dataset.theme = "cryptid";
+  }
+};
+
+applyInitialSiteTheme();
+
 const unsupported = async () => { throw new Error("This preview action is not connected to an existing TPI API contract."); };
 
 const dataProvider: DataProvider = {

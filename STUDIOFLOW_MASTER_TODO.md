@@ -8,6 +8,15 @@
 > accessibility, integration, and compatibility repairs. Do not infer that a
 > stale unchecked item authorizes unrelated new feature work.
 
+**TPI-ADMIN-007B — Oct 13, 2026 (session: mimo):** the protected Refine/shadcn
+Administration Center preview now uses the established TPI dark design system
+and six-theme architecture. This is a website-admin visual update, not a
+StudioFlow feature change. Build, source regression, protected-route, and
+production smoke evidence remain tracked in
+`docs/audits/TPI-ADMIN-007/`; authenticated owner visual acceptance remains
+open. No production `/admin-panel` replacement, D1, R2, or Creator Studio
+access change was made.
+
 **TPI-VIDEOS-005 — Oct 11, 2026:** canonical StudioFlow now has an explicit
 same-origin TPI Videos bridge for browser-local schedules. Schedule rows and
 the existing edit modal expose Sync, Publish, Refresh, Unpublish, and Cancel

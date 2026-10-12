@@ -284,3 +284,8 @@ ADMIN-007A subsequently isolated the legacy Administration Center's Contributor
 Invites, Paranormal Teams, and Education Center article-comment resources and
 aligned the Refine preview navigation. The repair passed the 13/13 isolation
 suite and is pending owner-authenticated visual acceptance.
+ADMIN-007B then applied the established six-theme TPI design system to the
+protected Refine/shadcn preview without replacing `/admin-panel`. Theme tokens,
+semantic shadcn mappings, responsive states, and focus treatment are documented
+in `docs/audits/TPI-ADMIN-007/TPI_DESIGN_SYSTEM.md`; owner visual acceptance is
+still pending.

@@ -35,3 +35,16 @@ ADMIN-007A local rendered preview evidence:
 
 Deployment evidence: commit `2859f7c`, Cloudflare version
 `31086383-9600-4ca8-abef-8cc4928cee3a`.
+
+ADMIN-007B visual review status:
+
+- The protected preview now uses the existing TPI dark theme and six-theme
+  architecture rather than the former generic light dashboard palette.
+- A local mobile-sized browser render was captured and visibly showed the dark
+  TPI background, green accent treatment, dark cards, and responsive stacked
+  layout. A desktop screenshot was not captured because the available in-app
+  browser surface was mobile-sized.
+- Authenticated owner review and desktop/tablet visual checks are still
+  required before visual acceptance is marked complete.
+- This directive does not replace `/admin-panel`; it only updates the protected
+  preview application.

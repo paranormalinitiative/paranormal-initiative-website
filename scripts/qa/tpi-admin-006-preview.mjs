@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 
 const source = readFileSync(new URL("../../admin-center-app/src/app.tsx", import.meta.url), "utf8");
 const main = readFileSync(new URL("../../admin-center-app/src/main.tsx", import.meta.url), "utf8");
+const theme = readFileSync(new URL("../../admin-center-app/src/index.css", import.meta.url), "utf8");
 const worker = readFileSync(new URL("../../worker.js", import.meta.url), "utf8");
 const legacy = readFileSync(new URL("../../admin-panel.html", import.meta.url), "utf8");
 const legacyScript = readFileSync(new URL("../../admin-center.js", import.meta.url), "utf8");
@@ -23,9 +24,12 @@ const checks = [
   ["admin navigation ownership", ["Contributor Management", "Paranormal Teams", "Education Center", "Article Comment Moderation", "Reports &amp; Moderation"].every((value) => legacy.includes(value)) && ["Contributor Management", "Paranormal Teams", "Article Comment Moderation", "Reports & Moderation"].every((value) => source.includes(value))],
   ["confirmation dialog", source.includes("role=\"dialog\"") && source.includes("ConfirmDialog")],
   ["no production admin replacement in source", !source.includes("admin-panel.html\" replace")],
+  ["TPI design tokens and shadcn mappings", ["--tpi-bg-primary", "--tpi-bg-card", "--tpi-accent", "--chart-1", "--sidebar", "color-scheme: dark", "@theme inline"].every((value) => theme.includes(value))],
+  ["all six TPI themes are mapped", ["html[data-theme=\"seance\"]", "html[data-theme=\"cosmic\"]", "html[data-theme=\"asylum\"]", "html[data-theme=\"fieldops\"]", "html[data-theme=\"gothicnight\"]"].every((value) => theme.includes(value)) && ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"].every((value) => main.includes(value))],
+  ["generic light dashboard palette removed", !["#f6f7fb", "#ffffff", "#315f94", "#13243c", "#1a3150", "#2c5685", "rgba(255,255,255"].some((value) => theme.includes(value))],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);
 for (const [label, passed] of checks) console.log(`${passed ? "PASS" : "FAIL"} ${label}`);
 if (failed.length) process.exit(1);
-console.log(`TPI-ADMIN-007A administration isolation checks: ${checks.length}/${checks.length} passed`);
+console.log(`TPI-ADMIN-007B theme/isolation checks: ${checks.length}/${checks.length} passed`);

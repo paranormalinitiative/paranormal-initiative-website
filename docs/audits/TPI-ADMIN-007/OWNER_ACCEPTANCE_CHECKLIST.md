@@ -14,5 +14,11 @@
 - [ ] Confirm Paranormal Teams opens the existing approval workflow.
 - [ ] Confirm Education Center / Article Comment Moderation shows classic
   article comment controls only.
+- [ ] Confirm the protected preview uses the TPI dark design system rather
+  than a generic white/default shadcn dashboard.
+- [ ] Check the six existing themes (`cryptid`, `seance`, `cosmic`, `asylum`,
+  `fieldops`, `gothicnight`) at desktop and mobile widths.
+- [ ] Check readable contrast, keyboard focus, cards, tables, charts, forms,
+  dialogs, and responsive navigation.
 - [ ] Review remaining Batch B–F limitations before approving further work.
 - [ ] Do not treat this checklist as accepted automatically.
