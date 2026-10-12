@@ -78,6 +78,10 @@ identities. The full Wrangler local API E2E harness remains environment-
 blocked before assertions by `spawn EBADF` from Wrangler/esbuild; this is not
 treated as a passing full-suite result.
 
+The same isolated environment also exercised the 23 protected Admin Center GET
+routes: each returned 200 for the seeded admin and rejected both the seeded
+member and anonymous requests.
+
 Creator Studio Access now consumes the existing entitlement pagination
 contract with bounded server-backed browsing and matching totals. It remains
 read-only and does not grant, revoke, or expand Creator Studio access.

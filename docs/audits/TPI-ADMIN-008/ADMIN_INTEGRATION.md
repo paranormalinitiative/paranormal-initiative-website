@@ -94,6 +94,9 @@ This batch improves the preview's route ownership and dashboard contract:
   an isolated in-memory SQLite database with seeded test identities. The full
   Wrangler local API E2E harness still requires an environment fix because its
   local server fails before assertions with `spawn EBADF`.
+- A 23-route protected Admin Center GET matrix also passed in that isolated
+  environment: seeded admin access returned 200, while seeded member and
+  anonymous access were rejected for every route.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

@@ -351,6 +351,9 @@ Pre-existing unrelated dirty files were preserved and not staged.
   `reviewed_at`/`reviewed_by` persistence, invalid-status rejection, and the
   server-scoped Moderation History query. No repository, production D1, R2, or
   production record was changed.
+- PASS — The same isolated environment exercised 23 protected Admin Center GET
+  routes. Every route returned HTTP 200 for the seeded admin identity and
+  rejected both the seeded member and anonymous requests.
 - BLOCKED BEFORE ASSERTIONS — `scripts/e2e/api-e2e.sh 8791` could not start
   Wrangler local mode because the bundled esbuild service failed with
   `Error: spawn EBADF`. A direct `wrangler dev --no-bundle` retry failed with

@@ -519,6 +519,9 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   included anonymous/member authorization gates, metadata-only report output,
   protected report status/review audit updates, invalid-status rejection, and
   server-scoped Moderation History filtering before pagination.
+- A broader 23-route protected Admin Center GET matrix also passed in that
+  isolated environment: every route returned HTTP 200 for the seeded admin and
+  rejected seeded member and anonymous access.
 - The full `scripts/e2e/api-e2e.sh` harness remains BLOCKED before assertions:
   Wrangler local mode failed during startup with `Error: spawn EBADF` from its
   esbuild service. A direct `wrangler dev --no-bundle` retry produced the same
