@@ -30,12 +30,12 @@ This batch improves the preview's route ownership and dashboard contract:
 - Optional table/query failures display `Unavailable`, never fabricated zeroes.
 - Remaining capability links remain explicit transitional routes where no
   complete preview-safe contract exists.
-- Reports & Moderation and Notifications now have protected metadata-only
-  queues backed by their existing tables; Reports supports safe metadata
-  search with the existing server-backed count/pagination contract,
-  Notifications uses its existing server-backed count and pagination contract,
-  and private payloads and unverified resolution/delivery mutations remain
-  excluded.
+- Reports & Moderation and Notifications now have protected queues backed by
+  their existing tables. Reports supports safe metadata search with the
+  existing server-backed count/pagination contract and bounded status/review-
+  audit updates through a protected endpoint; private evidence remains
+  excluded. Notifications uses its existing server-backed count and pagination
+  contract, and unverified delivery mutations remain excluded.
 - Creator Channels now has a protected read-only view backed by existing
   channel fields with bounded server-backed pagination. Roles & Permissions
   and Account Restrictions remain protected read-only views backed by existing

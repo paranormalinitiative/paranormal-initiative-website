@@ -1027,3 +1027,28 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - This sync published the Member Detail activity pagination release
   evidence, parity/readiness updates, regression results, and owner
   acceptance checklist. Runtime code remained unchanged.
+
+## Protected report resolution release
+
+- GitHub runtime commit: `0f6c8ea47cc2e58d61777e335f0767cc3b02de7a`, pushed to
+  `origin/main`.
+- Cloudflare runtime Version ID:
+  `fc695fea-ba6e-4ae5-8b9c-9a33de2daddc`.
+- Preview asset: `/admin-center-preview/assets/index-c1lPhfyz.js`.
+- The Reports & Moderation preview now includes protected status selectors for
+  video and messenger reports. The Worker constrains each report type's
+  accepted statuses, updates only the existing status/reviewed-at/reviewed-by
+  fields, and records an admin audit event. Private evidence remains excluded.
+- Source/build checks: PASS — Admin Center production build, Worker syntax,
+  `git diff --check`, and focused QA 71/71. The existing Vite large-chunk
+  advisory remains informational only.
+- Anonymous production boundary checks: public shell HTTP 200;
+  `/live-video` HTTP 200 with Coming Soon; `/studio/`, `/admin-center-preview/`,
+  the exact preview asset, `/admin-panel.html`, the Reports GET endpoint, and
+  both video/messenger status POST probes returned HTTP 403.
+- Authenticated owner/admin rendering, disposable-record mutation acceptance,
+  audit-log inspection, and rollback verification remain pending an authorized
+  browser session and are not claimed as passed.
+- No D1 migration, production report mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.

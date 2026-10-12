@@ -22,7 +22,7 @@
 - [ ] Verify System Settings values load and remain visibly disabled in the preview; verify mutations only through the existing protected workflow.
 - [ ] Verify published Education and Article Comment Moderation, TPI Videos, and approved Events listings load without exposing draft or unrelated mutation controls; verify Education, Article Comment Moderation, and TPI Videos Previous/Next browsing follows the existing listing contracts.
 - [ ] Verify Events can browse approved/pending/rejected/cancelled/all records with search, matching totals, and Previous/Next pagination without exposing event mutations; use the existing protected event manager for any owner-approved mutation test.
-- [ ] Verify Reports & Moderation lists safe metadata for video and messenger reports across status filters, safe metadata search, and Previous/Next pagination without exposing private evidence or resolution controls.
+- [ ] Verify Reports & Moderation lists safe metadata for video and messenger reports across status filters, safe metadata search, and Previous/Next pagination without exposing private evidence; with disposable test data only, verify protected status updates write the existing review timestamp/actor audit fields and do not expose private evidence.
 - [ ] Verify Notifications lists safe delivery metadata across all/unread/read filters with previous/next pagination without exposing notification bodies or action URLs.
 - [ ] Verify Creator Channels lists channel/owner metadata across visibility and search filters with matching totals and Previous/Next pagination without exposing mutation controls.
 - [ ] Verify Roles & Permissions lists live role/capability counts without exposing role or account-restriction mutation controls.

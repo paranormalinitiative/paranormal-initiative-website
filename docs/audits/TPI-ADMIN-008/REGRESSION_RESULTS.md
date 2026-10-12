@@ -300,6 +300,28 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Protected report resolution release verification — 2026-10-12
+
+- GitHub runtime commit: `0f6c8ea` pushed to `origin/main`.
+- Cloudflare runtime Version ID: `fc695fea-ba6e-4ae5-8b9c-9a33de2daddc`.
+- Admin Center production build: PASS. Worker syntax, focused preview QA
+  71/71, and `git diff --check`: PASS. Vite emitted only the existing large
+  chunk advisory.
+- The protected Reports & Moderation preview now renders bounded metadata-only
+  report rows with status selectors. A protected POST endpoint updates only the
+  existing report status/review timestamp/reviewer fields and writes an admin
+  audit event; video and messenger status vocabularies remain constrained by
+  report type. No schema migration or production record mutation was performed.
+- Anonymous production checks: public shell HTTP 200; `/live-video` HTTP 200
+  with Coming Soon; `/studio/`, `/admin-center-preview/`, the exact generated
+  preview asset, `/admin-panel.html`, the Reports GET endpoint, and both report
+  status POST probes returned HTTP 403.
+- Authenticated owner/admin rendering, a disposable-record status update,
+  audit-log inspection, and rollback verification remain pending an authorized
+  browser session. They are not claimed as passed.
+- No D1 schema, production report rows, R2 objects, credentials, Creator
+  Studio access, or legacy `/admin-panel` behavior were changed.
+
 ## Contributor Invites pagination release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

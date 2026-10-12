@@ -49,10 +49,11 @@ mutation workflows remain explicitly limited and require the existing
 protected systems.
 
 Reports & Moderation now has a protected metadata-only queue for existing video
-and messenger reports. Status browsing is available, while private evidence and
-review-resolution actions remain unavailable pending a verified mutation
-contract. The queue uses bounded server-backed pagination and a matching-record
-count.
+and messenger reports. Status browsing and bounded protected status/review-audit
+updates are implemented using the existing report review fields; private
+evidence remains excluded. Authenticated owner/admin mutation acceptance and
+rollback verification remain pending. The queue uses bounded server-backed
+pagination and a matching-record count.
 
 Notifications now has a protected metadata-only queue over the existing
 `member_notifications` table. It exposes delivery metadata and unread/read/all
