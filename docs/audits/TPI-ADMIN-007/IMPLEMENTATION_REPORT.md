@@ -43,3 +43,12 @@ ADMIN-007B visual-system update:
   responsive states, and focus treatment.
 - No production `/admin-panel` replacement or data/storage change was made.
 - Detailed token and component evidence is in `TPI_DESIGN_SYSTEM.md`.
+
+ADMIN-007B release evidence:
+
+- GitHub source commit: `5521f55`
+- Cloudflare protected-preview deployment: `29c88d39-25be-42dd-8ac5-2753d3b11811`
+- Deployment was produced from a clean committed archive; unrelated dirty
+  workspace files were excluded.
+- No production database mutation, R2 change, or public Creator Studio launch
+  was performed.

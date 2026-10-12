@@ -17,6 +17,11 @@ production smoke evidence remain tracked in
 open. No production `/admin-panel` replacement, D1, R2, or Creator Studio
 access change was made.
 
+ADMIN-007B release evidence: source commit `5521f55`; Cloudflare Worker
+Version `29c88d39-25be-42dd-8ac5-2753d3b11811`. Anonymous preview/asset and
+legacy admin routes returned 403; `/live-video` remained Coming Soon and `/`
+returned 200. Owner-authenticated visual acceptance remains open.
+
 **TPI-VIDEOS-005 — Oct 11, 2026:** canonical StudioFlow now has an explicit
 same-origin TPI Videos bridge for browser-local schedules. Schedule rows and
 the existing edit modal expose Sync, Publish, Refresh, Unpublish, and Cancel

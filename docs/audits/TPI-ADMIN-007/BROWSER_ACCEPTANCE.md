@@ -48,3 +48,9 @@ ADMIN-007B visual review status:
   required before visual acceptance is marked complete.
 - This directive does not replace `/admin-panel`; it only updates the protected
   preview application.
+
+ADMIN-007B deployment evidence: source commit `5521f55`, Cloudflare Worker
+version `29c88d39-25be-42dd-8ac5-2753d3b11811`. Anonymous route verification
+passed for the protected preview and direct asset, legacy `/admin-panel.html`,
+public `/live-video` Coming Soon, and the homepage. This is access-boundary
+evidence, not authenticated owner visual acceptance.

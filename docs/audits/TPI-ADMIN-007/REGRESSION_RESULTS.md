@@ -44,3 +44,14 @@ ADMIN-007B theme regression coverage:
 | Former generic light dashboard palette absent from preview CSS | PASS — source regression coverage added |
 | Responsive/mobile theme states and focus treatment | PASS — CSS coverage; rendered browser review pending |
 | Authenticated owner visual acceptance | PENDING — owner session required |
+
+ADMIN-007B production verification:
+
+| Endpoint/check | Result |
+| --- | --- |
+| `/admin-center-preview/` anonymous access | PASS — HTTP 403 |
+| Direct protected preview JS asset | PASS — HTTP 403 |
+| `/admin-panel.html` anonymous access | PASS — HTTP 403 |
+| `/live-video` public behavior | PASS — HTTP 200 with Coming Soon marker |
+| `/` public behavior | PASS — HTTP 200 |
+| Cloudflare Worker version | `29c88d39-25be-42dd-8ac5-2753d3b11811` |

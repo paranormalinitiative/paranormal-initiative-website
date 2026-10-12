@@ -63,3 +63,7 @@ Current status:
   open**.
 - Authenticated owner visual acceptance: **NOT YET VERIFIED**.
 - Public `/admin-panel` replacement: **NOT PERFORMED**.
+
+Release evidence: source commit `5521f55`; Cloudflare Worker version
+`29c88d39-25be-42dd-8ac5-2753d3b11811`. Anonymous access protection remained
+active after deployment.
