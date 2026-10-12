@@ -55,6 +55,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
     if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
     if (request.method === "GET" && path === "/admin/roles") return requireAdmin(request, env, user => handleAdminRoles(request, env, user));
@@ -923,6 +924,29 @@ async function handleAdminReports(request, env) {
     LIMIT ? OFFSET ?`).bind(...binds, pageSize, offset).all();
   const total = Number(count?.total || 0);
   return json({ reports: results || [], status, search, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminReportStatus(path, request, env, actingUser) {
+  const match = path.match(/^\/admin\/reports\/(video|messenger)\/([^/]+)\/status$/);
+  const reportType = match?.[1] || "";
+  const reportId = clean(decodeURIComponent(match?.[2] || ""));
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  const allowedStatuses = reportType === "video"
+    ? ["open", "reviewed", "dismissed", "actioned"]
+    : ["pending", "reviewed", "dismissed", "actioned"];
+  if (!reportId) return json({ error: "Report id is required." }, 400);
+  if (!allowedStatuses.includes(status)) return json({ error: "Report status was not recognized." }, 400);
+  const table = reportType === "video" ? "video_reports" : "messenger_reports";
+  const current = await env.TPI_DB.prepare(`SELECT id, status FROM ${table} WHERE id = ?`).bind(reportId).first();
+  if (!current) return json({ error: "Report was not found." }, 404);
+  if (status === "open" || status === "pending") {
+    await env.TPI_DB.prepare(`UPDATE ${table} SET status = ?, reviewed_at = NULL, reviewed_by = NULL WHERE id = ?`).bind(status, reportId).run();
+  } else {
+    await env.TPI_DB.prepare(`UPDATE ${table} SET status = ?, reviewed_at = CURRENT_TIMESTAMP, reviewed_by = ? WHERE id = ?`).bind(status, actingUser.id, reportId).run();
+  }
+  await writeAdminAuditLog(env, actingUser, `report.${status}`, `${reportType}_report`, reportId, { previousStatus: current.status, status });
+  return json({ report: { id: reportId, reportType, status } });
 }
 
 async function handleAdminNotifications(request, env) {
