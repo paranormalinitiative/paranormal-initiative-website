@@ -297,3 +297,24 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   `6002a341-89f4-4133-bf08-832d74ac23b1`.
 - The sync published the Community Comments release evidence and regression
   results; runtime code remained unchanged.
+
+## Events review queue release
+
+- Git commit: `52e67a8c15e7547cf7bf4e9e7aaca8262d1e6c6a` pushed to
+  `origin/main`.
+- Cloudflare Version ID: `87900f2f-d620-412d-8fc0-e57d2dd16331`.
+- Preview asset: `/admin-center-preview/assets/index-CQ5r140J.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- The protected `/api/admin/events` route now provides a metadata-only review
+  queue over the existing `events` table with approved/pending/rejected/
+  cancelled/all filters, search, and pagination. Private submission fields
+  and event mutations remain excluded.
+- Anonymous boundary checks: preview HTML, exact preview asset, all five
+  `/api/admin/events` status variants, and `/admin-panel.html` returned HTTP
+  403; `/live-video` returned HTTP 200 with Coming Soon; parity and security
+  docs returned HTTP 200.
+- No D1 migration, event mutation, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
