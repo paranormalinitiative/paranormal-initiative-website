@@ -353,3 +353,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, production record mutation, R2 operation, credential
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
+
+## Release documentation sync — Audit Logs pagination
+
+- Documentation commit: `35476abc83c8d6efcc3bbd68c621a74759badb94` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `b2e28c73-45d1-4aee-a96c-7bd54d191db9`.
+- The sync published the Audit Logs pagination release evidence and regression
+  results; runtime code remained unchanged.
