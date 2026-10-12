@@ -288,3 +288,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, Community Feed record mutation, R2 operation, credential
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
+
+## Release documentation sync — Community Comments
+
+- Documentation commit: `7e36035c67e9d799367e2e0ff806c0cac76b2e33` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `6002a341-89f4-4133-bf08-832d74ac23b1`.
+- The sync published the Community Comments release evidence and regression
+  results; runtime code remained unchanged.
