@@ -16,7 +16,8 @@ authoritative safe contract is verified.
 The protected `/api/admin/notifications` endpoint is also metadata-only. It
 returns notification title, type, recipient/creator identity, read state, and
 timestamps from `member_notifications`, while omitting notification bodies and
-action URLs. The preview exposes no send, edit, read-state, or delete mutation.
+action URLs. The preview uses the endpoint's server-backed count and bounded
+pagination and exposes no send, edit, read-state, or delete mutation.
 
 The protected `/api/admin/channels` endpoint returns channel identity,
 visibility, owner identity, timestamps, and published-video counts from the
