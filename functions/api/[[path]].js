@@ -699,8 +699,16 @@ async function handleAdminCreatorPartnership(request, env) {
   const url = new URL(request.url);
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  const search = clean(url.searchParams.get("search")).slice(0, 120);
+  const where = search ? "WHERE lower(c.username) LIKE lower(?) OR lower(c.display_name) LIKE lower(?) OR lower(cpm.membership_type) LIKE lower(?) OR lower(cpm.membership_state) LIKE lower(?)" : "";
+  const binds = search ? Array(4).fill(`%${search}%`) : [];
   try {
-    const count = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM creator_partnership_memberships").first();
+    const count = await env.TPI_DB.prepare(`
+      SELECT COUNT(*) AS total
+      FROM creator_partnership_memberships cpm
+      JOIN contributors c ON c.id = cpm.contributor_id
+      ${where}
+    `).bind(...binds).first();
     const { results } = await env.TPI_DB.prepare(`
       SELECT cpm.id, cpm.membership_type AS membershipType, cpm.membership_state AS membershipState,
              cpm.entitlement_code AS entitlementCode, cpm.founding50_slot AS founding50Slot,
@@ -710,13 +718,14 @@ async function handleAdminCreatorPartnership(request, env) {
       FROM creator_partnership_memberships cpm
       JOIN contributors c ON c.id = cpm.contributor_id
       LEFT JOIN creator_studio_entitlements cse ON cse.contributor_id = c.id
+      ${where}
       ORDER BY cpm.created_at DESC
       LIMIT ? OFFSET ?
-    `).bind(pageSize, (page - 1) * pageSize).all();
+    `).bind(...binds, pageSize, (page - 1) * pageSize).all();
     const total = Number(count?.total || 0);
-    return json({ memberships: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
+    return json({ memberships: results || [], search, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
   } catch (error) {
-    return json({ memberships: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "migration_pending" });
+    return json({ memberships: [], search, pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "migration_pending" });
   }
 }
 
