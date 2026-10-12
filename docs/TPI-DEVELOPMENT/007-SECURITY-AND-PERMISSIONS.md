@@ -15,6 +15,10 @@ Because the current workers.dev target maps to the same configured Worker and st
 - Synthetic test accounts and fixtures.
 - Explicit owner approval before granting new permissions or implementing new administrative roles.
 
+Development authentication uses the separate development D1 session store, host-scoped `tpi_session` cookies without a Domain attribute, and development-only `tpi-dev-owner` / `tpi-dev-member` accounts. The current auth implementation uses random database-backed session tokens rather than a signing secret. Production credentials, cookies, private member data, and secrets were not copied into development. The development config has no Resend secrets and sets `TPI_DISABLE_OUTBOUND=1`.
+
+Runtime checks passed: anonymous Admin Center access returned 403; the development owner logged in and received Admin Center/API access; the ordinary development member logged in but remained denied from Admin Center; `.dev.vars` and temporary deployment config probes returned 404.
+
 ## Current role policy
 
 Future Owner, Assistant Administrator, and Moderator roles remain planning items. TPI-DEV-001 does not change role assignments or permissions.

@@ -72,6 +72,22 @@ const ADMIN_GATE_HTML = MEMBER_GATE_HTML
     "The TPI Administration Center is restricted to authorized owner and administrator accounts. Sign in with an approved account to continue."
   );
 
+const DEVELOPMENT_BANNER = `<div data-tpi-development-environment style="position:fixed;z-index:2147483647;top:0;left:0;right:0;padding:7px 12px;background:#5b2a86;color:#fff;font:700 12px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.35)">DEVELOPMENT ENVIRONMENT</div>`;
+
+async function serveAssets(request, env) {
+  const response = await env.ASSETS.fetch(request);
+  if (env.TPI_ENV !== "development" || !response.ok) return response;
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) return response;
+  const html = await response.text();
+  if (html.includes("data-tpi-development-environment")) return response;
+  const body = html.replace(/<body([^>]*)>/i, `<body$1>${DEVELOPMENT_BANNER}`);
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  headers.set("Cache-Control", "no-store");
+  return new Response(body, { status: response.status, statusText: response.statusText, headers });
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -130,7 +146,7 @@ export default {
         return new Response("Forbidden", { status: 403 });
       }
       // Authenticated - serve static asset
-      return env.ASSETS.fetch(request);
+      return serveAssets(request, env);
     }
 
     // Creator Studio is an owner/admin-only preview. Keep the gate server-side
@@ -145,7 +161,7 @@ export default {
           headers: { "Content-Type": "text/html; charset=utf-8" }
         });
       }
-      return env.ASSETS.fetch(request);
+      return serveAssets(request, env);
     }
 
     // TPI-ADMIN-005 isolated React preview. Gate the entry document and every
@@ -159,7 +175,7 @@ export default {
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return env.ASSETS.fetch(request);
+      return serveAssets(request, env);
     }
 
     // Administrative pages contain privileged operational controls. Keep the
@@ -189,11 +205,11 @@ export default {
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return env.ASSETS.fetch(request);
+      return serveAssets(request, env);
     }
 
     // Default: serve normal website static assets
-    return env.ASSETS.fetch(request);
+    return serveAssets(request, env);
   },
 
   // Cron trigger: every 6 hours (see wrangler.toml crons). Events refresh

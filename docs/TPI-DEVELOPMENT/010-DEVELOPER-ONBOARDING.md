@@ -1,5 +1,53 @@
 # Developer Onboarding
 
+## READ BEFORE MODIFYING TPI
+
+### Use this folder
+
+Use only the canonical source checkout:
+
+    /Users/toddknipple/Documents/GitHub/paranormal-initiative-website
+
+The Desktop folder at `/Users/toddknipple/Desktop/paranormal-initiative-website` is an older archive/research workspace with unique uncommitted StudioFlow/member-site work and Paranormal Teams research data. Do not delete, overwrite, synchronize, merge, or deploy from it. Valuable material must be audited separately before incorporation.
+
+### Use this branch carefully
+
+The development branch is `codex/tpi-development`. Confirm it before development deployment and preserve unrelated changes. Do not push it to `main` or use it for production deployment.
+
+### Know the environments
+
+- Production Worker: `theparanormalinitiative`
+- Production URL: `https://paranormalinitiative.com/`
+- Production D1: `tpi_contributor_portal`
+- Production R2: `tpi-contributor-media`
+- Existing workers.dev endpoint: production-bound; not safe for development
+- Development Worker: `theparanormalinitiative-dev`
+- Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
+
+The development environment has separate D1, R2, host-scoped sessions, test accounts, and no cron or Resend configuration. Do not add production secrets or bindings to it.
+
+### What must not be changed without approval
+
+Do not deploy the root Wrangler configuration as development, modify production D1/R2, change production authentication or scheduled jobs, replace `/admin-panel`, activate memberships, launch livestreaming, create new administrative roles, or access The Cauldron & The Craft. Do not request or use owner passwords, cookies, or access tokens.
+
+### How to work and test
+
+1. Inspect `git status --short`, branch, and HEAD.
+2. Make changes only in the canonical checkout.
+3. Create a recoverable checkpoint before substantial work.
+4. Run the smallest relevant tests and build checks.
+5. Use isolated fixtures; never use production data for destructive testing.
+6. Use `./scripts/deploy-development.sh` for remote preview. Its preflight requires `codex/tpi-development` and the development bindings, and its staging step excludes secrets and internal files.
+7. Preserve evidence, including the exact URL and deployment identifier.
+
+### How Todd approves changes
+
+Todd reviews the authenticated development website, checks the requested workflow and responsive behavior, and reports approval or defects. Approval of a development preview is not production authorization. Production requires a separate explicit authorization.
+
+### How to recover from mistakes
+
+Preserve unrelated changes. Prefer targeted restoration, revert commits, and the last verified deployment. Do not force-push, rewrite shared history, or assume that a code rollback restores D1/R2 data. For an uncertain state, stop and record the current commit, target, and deployment before changing anything.
+
 ## First session
 
     cd /Users/toddknipple/Documents/GitHub/paranormal-initiative-website
@@ -19,7 +67,7 @@ Use the URL printed by Vite. Build with npm run build; preview the build with np
 
 ## Review and release
 
-Run git diff --check, review only the intended files, run the relevant tests, and preserve unrelated dirty files. Push only to the approved repository and branch after review. Production requires a separate explicit owner authorization.
+Run `git diff --check`, review only the intended files, run the relevant tests, and preserve unrelated dirty files. Push only to the approved repository and verified development branch after review. Production requires a separate explicit owner authorization.
 
 ## Never do without approval
 

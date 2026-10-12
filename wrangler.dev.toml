@@ -1,0 +1,32 @@
+name = "theparanormalinitiative-dev"
+account_id = "221ea5479876fd303ddc87002b9e892d"
+main = "worker.js"
+compatibility_date = "2026-07-18"
+compatibility_flags = [ "nodejs_compat" ]
+
+[observability]
+enabled = true
+
+[vars]
+TPI_ENV = "development"
+TPI_DISABLE_OUTBOUND = "1"
+
+[assets]
+directory = "."
+binding = "ASSETS"
+run_worker_first = true
+
+# scripts/deploy-development.mjs stages a sanitized asset directory because
+# this installed Wrangler version does not support assets.exclude.
+
+[[d1_databases]]
+binding = "TPI_DB"
+database_name = "tpi_contributor_portal_dev"
+database_id = "4948ecc5-35de-4782-8f6b-b07fa1782b66"
+
+[[r2_buckets]]
+binding = "TPI_MEDIA"
+bucket_name = "tpi-contributor-media-dev"
+
+# Development intentionally has no cron triggers. Scrapers and outbound
+# side effects must be invoked only through explicitly reviewed test paths.

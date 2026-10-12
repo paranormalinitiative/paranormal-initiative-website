@@ -1,5 +1,13 @@
 # Local Development
 
+## Use the canonical checkout
+
+Run local development only from:
+
+    /Users/toddknipple/Documents/GitHub/paranormal-initiative-website
+
+Do not use the Desktop archive/research workspace for development deployment. Preserve its uncommitted work and research data; do not synchronize it automatically.
+
 ## Administration Center
 
 The following scripts are verified from admin-center-app/package.json:
@@ -20,4 +28,14 @@ That command was not re-run in this audit, so its current local port and current
 
 ## Checks
 
-Use git diff --check before committing. Run the relevant package tests and build scripts. Stop local servers with the terminal process control used to start them; do not kill unrelated processes.
+Use `git status --short` before and after work, preserve unrelated changes, and run `git diff --check` before any future commit. Run the relevant package tests and build scripts. Stop local servers with the terminal process control used to start them; do not kill unrelated processes.
+
+Local tests must use isolated fixtures. Do not point local experiments at production D1/R2 for mutation, and do not treat the current workers.dev endpoint as a development server.
+
+## Isolated development deployment
+
+From the canonical checkout on `codex/tpi-development`, run:
+
+    ./scripts/deploy-development.sh
+
+The script verifies the branch and development bindings, stages a sanitized asset directory that excludes secrets and internal files, and deploys with `wrangler.dev.toml`. It must not be replaced with a generic `npx wrangler deploy` command.

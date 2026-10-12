@@ -21,6 +21,34 @@
 | Authenticated dev workflow | NOT TESTED | No isolated test account/environment |
 | Production mutation | NOT PERFORMED | Safety requirement preserved |
 
+## TPI-DEV-005 implementation verification
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Development branch | VERIFIED | `codex/tpi-development` created from `3579fe8` |
+| Development Worker | VERIFIED | `theparanormalinitiative-dev` at workers.dev |
+| Development D1 | VERIFIED | `tpi_contributor_portal_dev`, `4948ecc5-35de-4782-8f6b-b07fa1782b66`; 50 migrations applied |
+| Development R2 | VERIFIED | `tpi-contributor-media-dev`; remote disposable upload/download/delete passed |
+| Development banner | VERIFIED | Homepage contains `DEVELOPMENT ENVIRONMENT`; production was not given the banner |
+| Anonymous protection | VERIFIED | Admin preview and admin panel returned 403 on development URL |
+| Development owner login | VERIFIED | `tpi-dev-owner` login, `/api/auth/me`, Admin Center HTML, overview, and member API passed |
+| Development member boundary | VERIFIED | `tpi-dev-member` login passed; Admin Center returned 403 |
+| Secret/config asset protection | VERIFIED | `/.dev.vars` and `/.wrangler.dev.toml` returned 404 |
+| Local build and syntax | VERIFIED | Admin Center build, worker/API syntax, and QA syntax gates passed |
+| Existing local E2E harness | PARTIAL | First run hit sandbox `spawn EBADF`; escalated retry completed the reported QA checks, but no separate production-authenticated E2E claim is made |
+| Production preservation | VERIFIED | Production remained at observed version `7e357215-2579-4c60-b27e-dd572a5656fe`; homepage 200, `/admin-panel` 403, `/live-video` Coming Soon |
+
 ## Future verification
 
-After isolation is approved, test public routes, auth, community, messenger, notifications, videos, Creator Studio restrictions, Administration Center APIs, D1/R2 boundaries, scheduled tasks, and responsive behavior against synthetic data. Record exact URLs, deployment IDs, and evidence files.
+Owner acceptance remains for broader browser coverage: public/member workflows, Community Feed, Messenger, Notifications, StudioFlow, responsive layouts, and the complete Administration Center navigation. These are available for development testing but are not all claimed as end-to-end verified by TPI-DEV-005.
+
+## Approval evidence
+
+Separate these claims in every report:
+
+- **Verified current state:** directly observed repository, configuration, or runtime evidence.
+- **Implemented and tested:** source change plus executed test evidence.
+- **Approved future architecture:** intended design awaiting implementation.
+- **Not tested / blocked:** no safe environment, credentials, device, or other prerequisite.
+
+An anonymous protected response can verify that a route is not public; it cannot prove authenticated Administration Center functionality. Owner review must occur on the isolated development website after that environment is operational.
