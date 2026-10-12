@@ -16,6 +16,7 @@
 - [ ] Confirm Founding 50 award activation and Creator Studio access escalation remain closed.
 - [ ] Verify System Settings values load and remain visibly disabled in the preview; verify mutations only through the existing protected workflow.
 - [ ] Verify published Education, TPI Videos, and approved Events listings load without exposing draft or mutation controls.
+- [ ] Verify Events can browse approved/pending/rejected/cancelled/all records and search without exposing event mutations; use the existing protected event manager for any owner-approved mutation test.
 - [ ] Verify Reports & Moderation lists safe metadata for video and messenger reports across status filters without exposing private evidence or resolution controls.
 - [ ] Verify Notifications lists safe delivery metadata across all/unread/read filters without exposing notification bodies or action URLs.
 - [ ] Verify Creator Channels lists channel/owner metadata across visibility and search filters without exposing mutation controls.

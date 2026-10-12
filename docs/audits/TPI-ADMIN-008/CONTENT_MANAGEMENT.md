@@ -22,10 +22,11 @@ contracts while keeping production award activation closed, and Creator Studio
 Access reads existing entitlement status without granting or revoking access.
 
 Education Center, TPI Videos, and Events now expose their existing published or
-approved read listings in the preview. Draft/editor lifecycle controls,
+approved read listings in the preview. Events also expose a protected
+metadata-only review queue across existing statuses. Draft/editor lifecycle controls,
 channel editing/ownership/lifecycle controls, and event creation/review remain
-on their existing protected workflows because no complete preview-safe admin
-contract was added for those operations.
+on their existing protected workflows for mutation because no complete
+preview-safe mutation contract was added for those operations.
 
 No private StudioFlow recordings are exposed, no recordings are automatically
 published, and no team, article, video, contributor, or event records were

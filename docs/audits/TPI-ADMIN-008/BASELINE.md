@@ -42,3 +42,8 @@ The Community Posts & Comments surface now also includes a protected
 metadata-only Community Comments queue backed by `community_comments`. It
 supports visible/deleted/all filtering and search without adding an
 unverified administrative comment mutation.
+
+The Events surface now includes a protected metadata-only review queue backed
+by the existing `events` table. It can browse approved, pending, rejected,
+cancelled, or all records with search; event mutations remain on the existing
+protected event manager.

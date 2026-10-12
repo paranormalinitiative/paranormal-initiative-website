@@ -59,6 +59,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
     if (request.method === "GET" && path === "/admin/roles") return requireAdmin(request, env, user => handleAdminRoles(request, env, user));
     if (request.method === "GET" && path === "/admin/restrictions") return requireAdmin(request, env, user => handleAdminRestrictions(request, env, user));
+    if (request.method === "GET" && path === "/admin/events") return requireAdmin(request, env, user => handleAdminEvents(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
@@ -969,6 +970,41 @@ async function handleAdminRestrictions(request, env) {
     LIMIT 100
   `).bind(...binds).all();
   return json({ restrictions: (results || []).map(row => ({ ...row, active: Boolean(row.active), canPost: Boolean(row.canPost), canComment: Boolean(row.canComment), canMessage: Boolean(row.canMessage) })), search, metadataOnly: true, boundary: "Capability restrictions only; user-to-user member_restrictions and administrative suspension are separate workflows." }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminEvents(request, env) {
+  const url = new URL(request.url);
+  const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
+  const status = ["approved", "pending", "rejected", "cancelled", "all"].includes(requestedStatus) ? requestedStatus : "approved";
+  const search = clean(url.searchParams.get("search")).slice(0, 100);
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const where = [];
+  const binds = [];
+  if (status !== "all") { where.push("e.status = ?"); binds.push(status); }
+  if (search) {
+    where.push("(e.title LIKE ? OR e.type LIKE ? OR e.category LIKE ? OR e.city LIKE ? OR e.state LIKE ? OR e.organizer_name LIKE ?)");
+    const like = `%${search}%`;
+    binds.push(like, like, like, like, like, like);
+  }
+  const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  try {
+    const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM events e ${whereSql}`).bind(...binds).first();
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT e.id, e.title, e.type, e.category, e.start_date, e.end_date,
+             e.location_name, e.city, e.state, e.country, e.organizer_name,
+             e.source, e.status, e.featured, e.created_at
+      FROM events e
+      ${whereSql}
+      ORDER BY CASE e.status WHEN 'pending' THEN 1 WHEN 'approved' THEN 2 ELSE 3 END,
+               e.start_date ASC, e.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+    const total = Number(count?.total || 0);
+    return json({ events: results || [], status, search, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }, metadataOnly: true, mutationBoundary: "Event creation, review, and lifecycle changes remain on the existing protected event workflow." }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ events: [], status, search, pagination: { page, pageSize, total: 0, totalPages: 0 }, metadataOnly: true, statusCode: "events_unavailable" }, 503);
+  }
 }
 
 async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {

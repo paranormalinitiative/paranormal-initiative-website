@@ -10,6 +10,9 @@ This batch improves the preview's route ownership and dashboard contract:
 - Posts & Comments now includes a protected metadata-only Community Comments
   queue backed by the existing `community_comments` table; Article Comment
   Moderation remains a separate Education Center resource.
+- Events now includes a protected metadata-only review queue over the existing
+  `events` table; creation, approval, editing, and lifecycle mutations remain
+  on the existing protected event manager.
 - Overview exposes real metrics for members, community content, reactions,
   videos, creator channels, articles, teams, open reports, and Founding 50
   allocations when their existing tables are available.

@@ -68,6 +68,10 @@ Comments queue with visible/deleted/all filters and search. It does not expose
 an administrative comment mutation; Article Comment Moderation remains
 separate under Education Center.
 
+Events now includes a protected metadata-only review queue for approved,
+pending, rejected, and cancelled records with search. It does not add event
+creation, approval, editing, or lifecycle mutations to the preview.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

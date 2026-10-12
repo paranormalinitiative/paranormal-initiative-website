@@ -49,3 +49,8 @@ The protected `/api/admin/community/comments` endpoint is metadata-only. It
 reads the existing public Community Feed comment records with status and
 search filters, returns bounded comment previews plus author/post metadata,
 and exposes no administrative comment mutation.
+
+The protected `/api/admin/events` endpoint is metadata-only. It returns event
+status, scheduling, location, organizer name, and source metadata from the
+existing `events` table, excludes private submission fields, and exposes no
+event mutation.
