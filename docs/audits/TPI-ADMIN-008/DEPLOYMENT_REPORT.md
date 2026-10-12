@@ -1133,3 +1133,13 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - This sync published the 23-route protected Admin Center GET matrix evidence
   and the associated baseline/integration/regression records. Runtime code was
   unchanged by the documentation commit.
+
+## Documentation reconciliation — report resolution
+
+- Documentation commit: `d828098` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `7fe1d1a0-b824-43af-b562-962820a06107`.
+- This sync reconciled the current dashboard, content-management,
+  community-moderation, and security records with the deployed protected
+  report status/review-audit controls. Historical release entries were
+  preserved; runtime code was unchanged.
