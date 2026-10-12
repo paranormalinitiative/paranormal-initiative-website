@@ -382,6 +382,27 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - The sync published the Reports pagination release evidence; runtime code
   remained unchanged.
 
+## Events pagination release
+
+- Git commit: `4395c71` pushed to `origin/main`.
+- Cloudflare Version ID: `c5c64835-b343-494f-9f6b-dab91818a795`.
+- Preview asset: `/admin-center-preview/assets/index-C_4vJIMb.js`.
+- The protected Events preview now uses the existing server-backed
+  `pagination.total`/`totalPages` contract with a bounded 50-row page, matching
+  totals, and Previous/Next controls. Status filters, search, metadata-only
+  fields, and the no-event-mutation boundary remain intact.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA 59/59.
+  The existing Vite large-chunk advisory remains informational.
+- Authenticated Events rendering and pagination interaction remain pending an
+  authorized owner/admin browser session and are not claimed as owner-verified.
+- Anonymous production boundary checks: preview HTML, exact preview asset,
+  `/api/admin/events?status=all&page=1&pageSize=50`, and `/admin-panel.html`
+  returned HTTP 403; `/live-video` returned HTTP 200 with Coming Soon
+  preserved; the read-only production smoke passed 10/10.
+- No event records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
 ## Community route separation release
 
 - Git commit: `7185626` pushed to `origin/main`.

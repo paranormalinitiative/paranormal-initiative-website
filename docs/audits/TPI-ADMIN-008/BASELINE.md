@@ -45,8 +45,8 @@ unverified administrative comment mutation.
 
 The Events surface now includes a protected metadata-only review queue backed
 by the existing `events` table. It can browse approved, pending, rejected,
-cancelled, or all records with search; event mutations remain on the existing
-protected event manager.
+cancelled, or all records with search and bounded server-backed pagination;
+event mutations remain on the existing protected event manager.
 
 The Community navigation now renders Community Overview as its own protected
 resource using authoritative overview metrics, while Posts & Comments retains

@@ -222,6 +222,25 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No report records, D1 schema, R2 objects, Creator Studio access, or legacy
   `/admin-panel` behavior were changed.
 
+## Events pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  59/59. Vite emitted only its existing large-chunk advisory.
+- The protected Events queue now consumes the existing `pagination.total` and
+  `totalPages` contract, uses a bounded 50-row request, and exposes matching
+  totals plus Previous/Next controls while preserving status filters, search,
+  metadata-only fields, and the no-mutation boundary.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-C_4vJIMb.js` asset, `/api/admin/events?status=all&page=1&pageSize=50`,
+  and `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon preserved; the full read-only production smoke passed 10/10.
+- Authenticated Events rendering, pagination interaction, owner-approved
+  mutation testing, and rollback verification remain pending an authorized
+  owner/admin browser session and are not claimed as passed.
+- No event records, D1 schema, R2 objects, Creator Studio access, or legacy
+  `/admin-panel` behavior were changed.
+
 ## Quality-gate follow-up — 2026-10-12
 
 - Focused TPI-ADMIN-008 preview suite: PASS — 55/55.
