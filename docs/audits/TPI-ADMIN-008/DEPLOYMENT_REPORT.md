@@ -201,6 +201,29 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, account mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Security boundary view release
+
+- Git commit: `1a650708993b1c16cb3ae7502c8d9dec00a2e418` pushed to `origin/main`.
+- Cloudflare Version ID: `af0b5ce1-9cf1-404a-a0b7-86f42c75a871`.
+- Preview asset: `/admin-center-preview/assets/index-FI-EnamA.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- The protected preview now has an explicit read-only Security boundary view
+  documenting the existing admin/API gates, preserved Creator Studio and
+  `/admin-panel` boundaries, private-data exclusions, and `/live-video`
+  Coming Soon state. It adds no authorization or data mutation system.
+- Anonymous boundary checks: preview HTML, exact preview asset,
+  `/admin-panel.html`, `/api/admin/restrictions`, `/api/admin/roles`,
+  `/api/admin/channels`, `/api/admin/notifications`, and
+  `/api/admin/reports` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon; parity, security, and owner-checklist docs returned
+  HTTP 200.
+- Authenticated owner/admin Security view, role-matrix, and session-expiry
+  testing remain pending without an authorized session. No D1 migration,
+  R2 operation, production-data mutation, or `/admin-panel` replacement was
+  performed.
+
 ## Release documentation sync — parity reconciliation
 
 - Documentation commit: `05b79fe` pushed to `origin/main`.

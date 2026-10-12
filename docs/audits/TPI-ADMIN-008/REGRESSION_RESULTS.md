@@ -91,6 +91,25 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
   authorized owner/admin browser session.
 
 Pre-existing unrelated dirty files were preserved and not staged.
+
+## Security boundary view release verification
+
+- Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin
+  syntax, `git diff --check`, and focused QA 44/44.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-FI-EnamA.js`: HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Anonymous `/api/admin/restrictions`, `/api/admin/roles`,
+  `/api/admin/channels`, `/api/admin/notifications`, and
+  `/api/admin/reports`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Published parity, security-review, and owner-acceptance documentation:
+  HTTP 200.
+- Authenticated Security view rendering, role-matrix, and session-expiry
+  checks remain BLOCKED without an authorized owner/admin browser session;
+  they are not claimed as passed.
+- No production records, D1 schema, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
 ## Incremental teams batch
 
 - `npm run build` in `admin-center-app`: PASS.
