@@ -118,6 +118,11 @@ matching totals. The legacy offset/limit response and approve/reject workflow
 remain compatible. Authenticated rendering, pagination, search, and safe
 disposable-record mutation acceptance remain owner/admin browser checks.
 
+Account Restrictions now consumes the existing protected `/admin/restrictions`
+contract with server-side search, bounded 50-record pagination, and matching
+totals. It remains read-only and does not implement administrative suspension
+or user-to-user blocking.
+
 Source/build/QA checks passed, but authenticated owner/admin browser acceptance
 and rollback verification remain pending. This batch does not authorize
 promotion of `/admin-center-preview/` over `/admin-panel`.

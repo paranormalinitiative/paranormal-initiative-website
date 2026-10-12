@@ -94,3 +94,8 @@ Paranormal Teams now uses the existing protected `/admin/teams` contract with
 server-side status/search filtering, explicit 50-record pages, and matching
 totals. Existing offset/limit callers and approve/reject actions remain
 compatible.
+
+Account Restrictions now uses the existing protected `/admin/restrictions`
+contract with server-side search, explicit 50-record pages, and matching
+totals. It remains metadata-only and does not expose suspension or
+user-to-user blocking mutations.

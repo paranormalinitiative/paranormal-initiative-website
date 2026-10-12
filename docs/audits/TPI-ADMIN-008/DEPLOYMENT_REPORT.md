@@ -511,6 +511,31 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Account Restrictions pagination release
+
+- Git commit: `d2854e1` pushed to `origin/main`.
+- Cloudflare Version ID: `eec34030-c181-494d-a7ee-09baf1e624a2`.
+- Preview asset: `/admin-center-preview/assets/index-CM69E10U.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- Account Restrictions now uses server-side search, bounded 50-record
+  pagination, and matching totals through the existing protected contract.
+  The view remains metadata-only with no suspension or user-to-user blocking
+  mutations.
+- Source/build checks: PASS — TypeScript/Vite build, Worker syntax,
+  legacy-admin syntax, `git diff --check`, and focused QA 68/68.
+- Anonymous production checks: public shell 200; `/live-video` 200 with
+  Coming Soon; `/studio/` 403; `/admin-center-preview/` 403; exact preview
+  asset 403; `/admin-panel.html` 403; anonymous restrictions admin API 403;
+  and anonymous Teams admin API 403.
+- Authenticated owner/admin Account Restrictions rendering, search,
+  pagination, and rollback verification remain pending an authorized browser
+  session and are not claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Final documentation sync — Paranormal Teams pagination
 
 - Documentation commit: `269c84b` pushed to `origin/main`.

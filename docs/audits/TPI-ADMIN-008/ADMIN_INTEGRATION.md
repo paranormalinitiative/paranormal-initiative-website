@@ -69,6 +69,10 @@ This batch improves the preview's route ownership and dashboard contract:
   with server-side status/search filtering, explicit 50-record pages, and
   matching totals. Existing offset/limit callers and approve/reject actions
   remain compatible.
+- Account Restrictions now requests the existing protected
+  `/admin/restrictions` contract with server-side search, explicit 50-record
+  pages, and matching totals. The preview remains metadata-only and does not
+  add suspension or user-to-user blocking mutations.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and
