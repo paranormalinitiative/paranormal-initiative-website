@@ -377,6 +377,14 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   separation is not claimed as runtime owner-verified until an authorized
   browser session is available.
 
+## Release documentation sync — community route separation
+
+- Documentation commit: `3acc19a` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `b2c910fd-a52e-48bd-bfec-fb9fc3f643c3`.
+- The sync published the route-separation deployment and regression evidence;
+  runtime code remained unchanged.
+
 ## Release documentation sync — Notifications pagination
 
 - Documentation commit: `7a612d7fff02fa29d9377397200b6d29e2c95b96` pushed to
