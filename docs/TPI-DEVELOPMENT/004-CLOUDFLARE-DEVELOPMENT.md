@@ -59,3 +59,15 @@ Read-only identity and binding checks used in this audit:
     npx wrangler deploy --dry-run
 
 Do not run npx wrangler deploy against the root configuration as a development command.
+
+## Development content parity
+
+The development D1 is intentionally not a copy of production. TPI-DEV-007 records the first focused content repair: synthetic Community Feed records and clearly labeled public open-media sample links were seeded into development only.
+
+Use the guarded, idempotent seed operation from the canonical checkout:
+
+    node scripts/dev/seed-development-content.mjs
+
+The script refuses production configuration values and the wrong branch. Its `--cleanup` mode removes only its fixed development seed IDs. Do not use production Wrangler configuration for content seeding, and do not copy private production records or R2 media into development.
+
+See [TPI-DEV-007 content parity audit](200-AUDITS/TPI-DEV-007-CONTENT-PARITY.md) for current counts, root cause, runtime verification, and remaining parity limitations.
