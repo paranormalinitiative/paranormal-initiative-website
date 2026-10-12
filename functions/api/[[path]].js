@@ -976,6 +976,9 @@ async function handleAdminRoles(request, env) {
 async function handleAdminRestrictions(request, env) {
   const url = new URL(request.url);
   const search = clean(url.searchParams.get("search") || "").slice(0, 120);
+  const paginated = url.searchParams.has("page") || url.searchParams.has("pageSize");
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
   const binds = [];
   const filters = ["(active = 0 OR can_post = 0 OR can_comment = 0 OR can_message = 0)"];
   if (search) {
@@ -983,6 +986,7 @@ async function handleAdminRestrictions(request, env) {
     const pattern = `%${search}%`;
     binds.push(pattern, pattern, pattern);
   }
+  const limitSql = paginated ? "LIMIT ? OFFSET ?" : "LIMIT 100";
   const { results } = await env.TPI_DB.prepare(`
     SELECT username, display_name AS displayName, title, role, active,
            can_post AS canPost, can_comment AS canComment, can_message AS canMessage,
@@ -990,9 +994,13 @@ async function handleAdminRestrictions(request, env) {
     FROM contributors
     WHERE ${filters.join(" AND ")}
     ORDER BY active ASC, username COLLATE NOCASE ASC
-    LIMIT 100
-  `).bind(...binds).all();
-  return json({ restrictions: (results || []).map(row => ({ ...row, active: Boolean(row.active), canPost: Boolean(row.canPost), canComment: Boolean(row.canComment), canMessage: Boolean(row.canMessage) })), search, metadataOnly: true, boundary: "Capability restrictions only; user-to-user member_restrictions and administrative suspension are separate workflows." }, 200, { "Cache-Control": "no-store" });
+    ${limitSql}
+  `).bind(...(paginated ? [...binds, pageSize, (page - 1) * pageSize] : binds)).all();
+  const payload = { restrictions: (results || []).map(row => ({ ...row, active: Boolean(row.active), canPost: Boolean(row.canPost), canComment: Boolean(row.canComment), canMessage: Boolean(row.canMessage) })), search, metadataOnly: true, boundary: "Capability restrictions only; user-to-user member_restrictions and administrative suspension are separate workflows." };
+  if (!paginated) return json(payload, 200, { "Cache-Control": "no-store" });
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM contributors WHERE ${filters.join(" AND ")}`).bind(...binds).first();
+  const total = Number(count?.total || 0);
+  return json({ ...payload, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleAdminEvents(request, env) {

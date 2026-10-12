@@ -389,13 +389,54 @@ function ApprovedEvents({ onNotice }: { onNotice: (value: string) => void }) {
 
 function Restrictions({ onNotice }: { onNotice: (value: string) => void }) {
   const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [restrictions, setRestrictions] = useState<AdminRestriction[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const load = () => { setLoading(true); const query = search.trim() ? `?search=${encodeURIComponent(search.trim())}` : ""; adminFetch<{ restrictions: AdminRestriction[] }>(`/admin/restrictions${query}`).then((body) => setRestrictions(body.restrictions || [])).catch((error) => onNotice(error.message)).finally(() => setLoading(false)); };
-  useEffect(load, [search]);
-  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Members</p><h2>Account Restrictions</h2><p>Capability restrictions only—not administrative suspension. User-to-user blocking remains a separate member workflow.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><Card><CardHeader><div className="filter-bar"><div className="search-field"><Search size={16} /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search restricted account" aria-label="Search restricted accounts" /></div><Badge variant="outline">Read-only metadata</Badge></div></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Role</TableHead><TableHead>Account state</TableHead><TableHead>Posting</TableHead><TableHead>Commenting</TableHead><TableHead>Messaging</TableHead></TableRow></TableHeader><TableBody>{loading ? <TableRow><TableCell colSpan={6}><LoadingState label="Loading capability restrictions…" /></TableCell></TableRow> : restrictions.length ? restrictions.map((restriction) => <TableRow key={restriction.username}><TableCell><strong>{restriction.displayName || restriction.username}</strong><span className="table-subtext">@{restriction.username}{restriction.title ? ` · ${restriction.title}` : ""}</span></TableCell><TableCell><Badge variant="outline">{restriction.role}</Badge></TableCell><TableCell><Badge variant={restriction.active ? "success" : "warning"}>{restriction.active ? "Active" : "Inactive"}</Badge></TableCell><TableCell><Badge variant={restriction.canPost ? "success" : "warning"}>{restriction.canPost ? "Allowed" : "Restricted"}</Badge></TableCell><TableCell><Badge variant={restriction.canComment ? "success" : "warning"}>{restriction.canComment ? "Allowed" : "Restricted"}</Badge></TableCell><TableCell><Badge variant={restriction.canMessage ? "success" : "warning"}>{restriction.canMessage ? "Allowed" : "Restricted"}</Badge></TableCell></TableRow>) : <TableRow><TableCell colSpan={6}><EmptyState label="No capability-restricted accounts returned." /></TableCell></TableRow>}</TableBody></Table><div className="notice-panel"><Badge variant="warning">No restriction mutations</Badge><p>This preview does not suspend accounts, edit capability flags, or display user-to-user member_restrictions. Existing protected workflows remain unchanged.</p></div></CardContent></Card></section>;
+  const load = () => {
+    setLoading(true);
+    const params = new URLSearchParams({ page: String(page), pageSize: "50" });
+    if (query.trim()) params.set("search", query.trim());
+    adminFetch<{ restrictions: AdminRestriction[]; pagination?: { total?: number } }>(`/admin/restrictions?${params}`).then((body) => {
+      setRestrictions(body.restrictions || []);
+      setTotal(body.pagination?.total || 0);
+    }).catch((error) => onNotice(error.message)).finally(() => setLoading(false));
+  };
+  useEffect(load, [page, query]);
+  return <section className="content-stack">
+    <div className="page-intro">
+      <div><p className="eyebrow">Members</p><h2>Account Restrictions</h2><p>Capability restrictions only—not administrative suspension. User-to-user blocking remains a separate member workflow.</p></div>
+      <Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button>
+    </div>
+    <Card>
+      <CardHeader>
+        <div className="filter-bar">
+          <div className="search-field"><Search size={16} /><Input value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { setQuery(search); setPage(1); } }} placeholder="Search restricted account" aria-label="Search restricted accounts" /></div>
+          <Badge variant="outline">Read-only metadata</Badge>
+        </div>
+        <CardDescription>{total} matching restrictions · page {page}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader><TableRow><TableHead>Account</TableHead><TableHead>Role</TableHead><TableHead>Account state</TableHead><TableHead>Posting</TableHead><TableHead>Commenting</TableHead><TableHead>Messaging</TableHead></TableRow></TableHeader>
+          <TableBody>
+            {loading ? <TableRow><TableCell colSpan={6}><LoadingState label="Loading capability restrictions…" /></TableCell></TableRow> : restrictions.length ? restrictions.map((restriction) => <TableRow key={restriction.username}>
+              <TableCell><strong>{restriction.displayName || restriction.username}</strong><span className="table-subtext">@{restriction.username}{restriction.title ? " · " + restriction.title : ""}</span></TableCell>
+              <TableCell><Badge variant="outline">{restriction.role}</Badge></TableCell>
+              <TableCell><Badge variant={restriction.active ? "success" : "warning"}>{restriction.active ? "Active" : "Inactive"}</Badge></TableCell>
+              <TableCell><Badge variant={restriction.canPost ? "success" : "warning"}>{restriction.canPost ? "Allowed" : "Restricted"}</Badge></TableCell>
+              <TableCell><Badge variant={restriction.canComment ? "success" : "warning"}>{restriction.canComment ? "Allowed" : "Restricted"}</Badge></TableCell>
+              <TableCell><Badge variant={restriction.canMessage ? "success" : "warning"}>{restriction.canMessage ? "Allowed" : "Restricted"}</Badge></TableCell>
+            </TableRow>) : <TableRow><TableCell colSpan={6}><EmptyState label="No capability-restricted accounts returned." /></TableCell></TableRow>}
+          </TableBody>
+        </Table>
+        <div className="pagination"><span className="muted">{total} matching restrictions</span><div><Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={!total || page >= Math.ceil(total / 50)} onClick={() => setPage((value) => value + 1)}>Next</Button></div></div>
+        <div className="notice-panel"><Badge variant="warning">No restriction mutations</Badge><p>This preview does not suspend accounts, edit capability flags, or display user-to-user member_restrictions. Existing protected workflows remain unchanged.</p></div>
+      </CardContent>
+    </Card>
+  </section>;
 }
-
 function Roles({ onNotice }: { onNotice: (value: string) => void }) {
   const [roles, setRoles] = useState<AdminRoleSummary[]>([]);
   const [loading, setLoading] = useState(true);
