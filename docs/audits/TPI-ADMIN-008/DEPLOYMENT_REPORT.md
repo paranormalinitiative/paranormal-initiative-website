@@ -354,6 +354,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Release documentation sync — Audit Logs search repair
+
+- Documentation commit: `9bb242d4b6ab75c0f09d151ae3756afaab3aae27` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `71e0d1d6-da30-4a85-9e28-93e199af25ff`.
+- The sync published the Audit Logs search-repair evidence and regression
+  results; runtime code remained unchanged.
+
 ## Audit Logs search repair release
 
 - Git commit: `fd05c8ab324bf9443d5bed136319c3999b96b17e` pushed to
