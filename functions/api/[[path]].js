@@ -2163,23 +2163,24 @@ async function handleListArticles(request, env) {
   const destinationAlt = destination.endsWith(".html")
     ? destination.replace(/\.html$/, "")
     : `${destination}.html`;
-  const stmt = destination
-    ? env.TPI_DB.prepare(`
-      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt, a.updated_at AS updatedAt
-      FROM articles a
-      LEFT JOIN contributors c ON c.id = a.created_by
-      WHERE a.destination IN (?, ?) AND a.status = 'published'
-      ORDER BY COALESCE(a.updated_at, a.created_at) DESC
-    `).bind(destination, destinationAlt)
-    : env.TPI_DB.prepare(`
-      SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt, a.updated_at AS updatedAt
-      FROM articles a
-      LEFT JOIN contributors c ON c.id = a.created_by
-      WHERE a.status = 'published'
-      ORDER BY COALESCE(a.updated_at, a.created_at) DESC
-    `);
-  const { results } = await stmt.all();
-  return json({ articles: results });
+  const paginated = url.searchParams.has("page") || url.searchParams.has("pageSize");
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const where = destination ? "WHERE a.destination IN (?, ?) AND a.status = 'published'" : "WHERE a.status = 'published'";
+  const binds = destination ? [destination, destinationAlt] : [];
+  const limitSql = paginated ? "LIMIT ? OFFSET ?" : "";
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT a.id, a.destination, a.href, a.title, a.subtitle, a.article_type AS contributionType, a.author, c.username AS authorUsername, c.display_name AS authorDisplayName, a.source, a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels, a.status, a.created_at AS createdAt, a.updated_at AS updatedAt
+    FROM articles a
+    LEFT JOIN contributors c ON c.id = a.created_by
+    ${where}
+    ORDER BY COALESCE(a.updated_at, a.created_at) DESC
+    ${limitSql}
+  `).bind(...(paginated ? [...binds, pageSize, (page - 1) * pageSize] : binds)).all();
+  if (!paginated) return json({ articles: results });
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM articles a ${where}`).bind(...binds).first();
+  const total = Number(count?.total || 0);
+  return json({ articles: results, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
 }
 
 async function handleContributorArticles(env, user) {
