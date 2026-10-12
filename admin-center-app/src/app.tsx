@@ -384,11 +384,29 @@ function StudioAccess({ onNotice }: { onNotice: (value: string) => void }) {
 
 function SettingsView({ onNotice }: { onNotice: (value: string) => void }) {
   const [settings, setSettings] = useState<Record<string, boolean> | null>(null);
+  const [draft, setDraft] = useState<Record<string, boolean> | null>(null);
   const [loading, setLoading] = useState(true);
-  const load = () => { setLoading(true); adminFetch<{ settings: Record<string, boolean> }>("/admin/settings").then((body) => setSettings(body.settings || {})).catch((error) => onNotice(error.message)).finally(() => setLoading(false)); };
+  const [saving, setSaving] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const load = () => { setLoading(true); adminFetch<{ settings: Record<string, boolean> }>("/admin/settings").then((body) => { const next = body.settings || {}; setSettings(next); setDraft(next); }).catch((error) => onNotice(error.message)).finally(() => setLoading(false)); };
   useEffect(load, []);
   const rows = [["autoRestrictUnverifiedEmail", "Auto-restrict unverified email accounts"], ["requireVerifiedEmailToPost", "Require verified email to post"], ["requireVerifiedEmailToComment", "Require verified email to comment"], ["requireVerifiedEmailToMessage", "Require verified email to message"]] as const;
-  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">System</p><h2>System Settings</h2><p>Current values from the existing protected settings contract. Controls are intentionally disabled in this preview until owner acceptance confirms the mutation workflow.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><Card><CardHeader><CardTitle>Account access settings</CardTitle><CardDescription>Read-only preview — no settings are changed by this screen.</CardDescription></CardHeader><CardContent><div className="status-list">{rows.map(([key, label]) => <label className="setting-row" key={key}><span><strong>{label}</strong><small>{settings == null ? "Loading…" : settings[key] ? "Enabled" : "Disabled"}</small></span><input type="checkbox" checked={Boolean(settings?.[key])} disabled aria-label={label} readOnly /></label>)}</div><div className="notice-panel"><Badge variant="warning">Read-only</Badge><p>The existing server-side authorization and legacy settings workflow remain preserved. No mutation endpoint is invoked from this preview.</p></div></CardContent></Card></section>;
+  const dirty = settings != null && draft != null && rows.some(([key]) => Boolean(settings[key]) !== Boolean(draft[key]));
+  const save = async () => {
+    if (!draft) return;
+    setSaving(true);
+    try {
+      const body = Object.fromEntries(rows.map(([key]) => [key, Boolean(draft[key])]));
+      const response = await adminFetch<{ settings: Record<string, boolean> }>("/admin/settings", { method: "POST", body: JSON.stringify(body) });
+      const next = response.settings || draft;
+      setSettings(next); setDraft(next); setConfirm(false); onNotice("System settings saved.");
+    } catch (error) {
+      onNotice((error as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">System</p><h2>System Settings</h2><p>Current values from the existing protected settings contract. Changes require explicit confirmation and are recorded by the existing server-side audit workflow.</p></div><Button variant="outline" onClick={load} disabled={loading || saving}><RefreshCw size={16} />Refresh</Button></div><Card><CardHeader><CardTitle>Account access settings</CardTitle><CardDescription>Protected settings · changes apply through the existing server-side contract.</CardDescription></CardHeader><CardContent><div className="status-list">{rows.map(([key, label]) => <label className="setting-row" key={key}><span><strong>{label}</strong><small>{draft == null ? "Loading…" : draft[key] ? "Enabled" : "Disabled"}</small></span><input type="checkbox" checked={Boolean(draft?.[key])} disabled={draft == null || saving} aria-label={label} onChange={(event) => setDraft((current) => current ? { ...current, [key]: event.target.checked } : current)} /></label>)}</div><div className="detail-actions"><Button variant="outline" disabled={!dirty || saving} onClick={() => setDraft(settings)} >Reset changes</Button><Button disabled={!dirty || saving} onClick={() => setConfirm(true)}>{saving ? "Saving…" : "Save changes"}</Button></div><div className="notice-panel"><Badge variant="outline">Protected mutation</Badge><p>Only these four account-access flags are submitted. The existing server-side authorization and audit logging remain authoritative; confirmation is required before saving.</p></div></CardContent></Card>{confirm && <ConfirmDialog title="Save system settings?" message="This will update the four selected account-access flags through the protected administration contract and write an audit entry." confirmLabel="Save settings" onCancel={() => setConfirm(false)} onConfirm={save} />}</section>;
 }
 
 function PublishedEducation({ onNotice }: { onNotice: (value: string) => void }) {
