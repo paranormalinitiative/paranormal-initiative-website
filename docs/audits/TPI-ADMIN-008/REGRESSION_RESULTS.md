@@ -7,13 +7,13 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 | Refine/Vite/TypeScript build | PASS — `npm run build` |
 | Worker JavaScript syntax | PASS — `node --check 'functions/api/[[path]].js'` |
 | Legacy admin JavaScript syntax | PASS — `node --check admin-center.js` |
-| TPI admin/theme/isolation suite | PASS — 28/28 |
+| TPI admin/theme/isolation suite | PASS — 30/30 |
 | Deleted-post active filtering | PASS — source regression |
 | Distinct Community routes | PASS — source regression |
 | Optional dashboard metrics | PASS — source regression |
 | Existing `/admin-panel` replacement | NOT PERFORMED |
 | Authenticated production browser matrix | BLOCKED — no authorized session |
-| Live deployment for this batch | PASS — Cloudflare Version `1294ca23-52b8-41f7-a11a-73ff4445d72e` |
+| Live deployment for this batch | PASS — Cloudflare Version `d4576ae9-1d28-45bc-9c7a-beae7203464a` |
 | Anonymous homepage | PASS — HTTP 200 |
 | Anonymous `/admin-panel.html` | PASS — HTTP 403 |
 | Anonymous preview route and hashed asset | PASS — HTTP 403 |
@@ -56,6 +56,7 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - Anonymous `/api/admin/creator-partnership`: HTTP 403.
 - Anonymous `/api/admin/founding-50`: HTTP 403.
 - Anonymous `/api/admin/creator-studio/entitlements`: HTTP 403.
+- Anonymous `/api/admin/settings`: HTTP 403.
 - Public `/live-video`: HTTP 200 with Coming Soon preserved.
 - Authenticated owner/admin Teams rendering and mutation workflow: BLOCKED
   pending an authorized browser session; not claimed as passed.

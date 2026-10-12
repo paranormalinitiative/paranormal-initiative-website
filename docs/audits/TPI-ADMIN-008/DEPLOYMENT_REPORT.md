@@ -96,3 +96,16 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   returned HTTP 200 with Coming Soon preserved.
 - No Founding 50 award, Creator Studio entitlement, D1, or R2 mutation was
   performed during verification.
+
+## System Settings release
+
+- Git commit: `85b8ac6` pushed to `origin/main`.
+- Cloudflare Version ID: `d4576ae9-1d28-45bc-9c7a-beae7203464a`.
+- Preview asset: `/admin-center-preview/assets/index-CNAPvCfq.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- Anonymous boundary checks: preview, preview asset, and `/api/admin/settings`
+  returned HTTP 403; `/live-video` returned HTTP 200 with Coming Soon
+  preserved.
+- The preview invoked no settings POST mutation and changed no production
+  configuration.
