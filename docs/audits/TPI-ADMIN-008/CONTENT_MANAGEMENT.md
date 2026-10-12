@@ -35,3 +35,8 @@ Reports & Moderation is a protected metadata-only integration over the existing
 video and messenger report tables. It does not expose report details, private
 conversation identifiers, message bodies, recordings, or stream data, and it
 does not invent review-resolution controls.
+
+Notifications is a protected metadata-only integration over the existing
+`member_notifications` table. It does not expose notification bodies or action
+URLs and does not add notification mutations; existing delivery, preferences,
+and admin-send behavior remain on their existing protected workflows.

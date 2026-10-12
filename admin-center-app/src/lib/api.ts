@@ -210,6 +210,17 @@ export type AdminReport = {
   evidenceNote?: string;
 };
 
+export type AdminNotification = {
+  id: string;
+  title: string;
+  type: string;
+  readAt?: string;
+  createdAt: string;
+  recipientUsername?: string;
+  recipientName?: string;
+  createdByUsername?: string;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

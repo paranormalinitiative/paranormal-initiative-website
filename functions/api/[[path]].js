@@ -54,6 +54,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
+    if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
@@ -855,6 +856,31 @@ async function handleAdminReports(request, env) {
     LIMIT ? OFFSET ?`;
   const { results } = await env.TPI_DB.prepare(baseQuery).bind(...statusBinds, pageSize, offset).all();
   return json({ reports: results || [], status, pagination: { page, pageSize, returned: (results || []).length }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminNotifications(request, env) {
+  const url = new URL(request.url);
+  const requestedStatus = clean(url.searchParams.get("status") || "all").toLowerCase();
+  const allowedStatuses = ["unread", "read", "all"];
+  const status = allowedStatuses.includes(requestedStatus) ? requestedStatus : "all";
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const offset = (page - 1) * pageSize;
+  const statusWhere = status === "unread" ? "WHERE mn.read_at IS NULL" : status === "read" ? "WHERE mn.read_at IS NOT NULL" : "";
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM member_notifications mn ${statusWhere}`).first();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT mn.id, mn.title, mn.type, mn.read_at AS readAt, mn.created_at AS createdAt,
+           recipient.username AS recipientUsername, recipient.display_name AS recipientName,
+           creator.username AS createdByUsername
+    FROM member_notifications mn
+    LEFT JOIN contributors recipient ON recipient.id = mn.contributor_id
+    LEFT JOIN contributors creator ON creator.id = mn.created_by
+    ${statusWhere}
+    ORDER BY mn.created_at DESC
+    LIMIT ? OFFSET ?
+  `).bind(pageSize, offset).all();
+  const total = Number(count?.total || 0);
+  return json({ notifications: results || [], status, metadataOnly: true, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
 }
 
 async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {

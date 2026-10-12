@@ -39,6 +39,11 @@ and messenger reports. Status browsing is available, while private evidence and
 review-resolution actions remain unavailable pending a verified mutation
 contract.
 
+Notifications now has a protected metadata-only queue over the existing
+`member_notifications` table. It exposes delivery metadata and unread/read/all
+filters without returning notification bodies or action URLs; existing member
+delivery and admin-send workflows remain unchanged.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

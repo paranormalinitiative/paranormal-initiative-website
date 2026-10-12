@@ -12,6 +12,9 @@ This batch improves the preview's route ownership and dashboard contract:
   allocations when their existing tables are available.
 - Optional table/query failures display `Unavailable`, never fabricated zeroes.
 - Existing capability links remain explicit transitional routes.
+- Reports & Moderation and Notifications now have protected metadata-only
+  queues backed by their existing tables; private payloads and unverified
+  resolution/delivery mutations remain excluded.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

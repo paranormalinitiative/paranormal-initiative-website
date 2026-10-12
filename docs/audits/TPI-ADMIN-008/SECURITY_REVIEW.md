@@ -12,6 +12,11 @@ deliberately omits report details, private conversation IDs and bodies, and
 stream or recording data. The preview exposes no report-resolution mutation
 until an authoritative safe contract is verified.
 
+The protected `/api/admin/notifications` endpoint is also metadata-only. It
+returns notification title, type, recipient/creator identity, read state, and
+timestamps from `member_notifications`, while omitting notification bodies and
+action URLs. The preview exposes no send, edit, read-state, or delete mutation.
+
 Source checks pass for the TPI theme, route ownership, deleted-content filter,
 and protected-preview boundary. Authenticated role-matrix testing, session
 expiry, and authorized production mutation testing remain BLOCKED without an
