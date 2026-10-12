@@ -55,3 +55,14 @@ ADMIN-007B production verification:
 | `/live-video` public behavior | PASS — HTTP 200 with Coming Soon marker |
 | `/` public behavior | PASS — HTTP 200 |
 | Cloudflare Worker version | `29c88d39-25be-42dd-8ac5-2753d3b11811` |
+
+ADMIN-007C live asset/routing verification:
+
+| Check | Result |
+| --- | --- |
+| Local build reproduces committed JS/CSS asset names | PASS — `index-DB483ZS4.js`, `index-CcAOeEMa.css` |
+| Local build output hashes | PASS — recorded in `BROWSER_ACCEPTANCE.md` |
+| Cloudflare account/configuration | PASS — account, Worker, D1, and R2 match `wrangler.toml` |
+| Anonymous preview entry and direct asset | PASS — both HTTP 403 |
+| Authenticated preview UI, API requests, and console | BLOCKED — no authorized production session available |
+| Production `/admin-panel` replacement | NOT PERFORMED |

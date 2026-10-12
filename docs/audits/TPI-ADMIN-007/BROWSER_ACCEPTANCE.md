@@ -54,3 +54,36 @@ version `29c88d39-25be-42dd-8ac5-2753d3b11811`. Anonymous route verification
 passed for the protected preview and direct asset, legacy `/admin-panel.html`,
 public `/live-video` Coming Soon, and the homepage. This is access-boundary
 evidence, not authenticated owner visual acceptance.
+
+## ADMIN-007C — live deployment verification
+
+The latest committed Administration Center build remains:
+
+- GitHub HEAD: `f4cbf675fba04c1019dd68e19a0e254068afb81d` (`origin/main` matches)
+- HTML entry: `/admin-center-preview/index.html`
+- JavaScript asset: `index-DB483ZS4.js`
+- CSS asset: `index-CcAOeEMa.css`
+- Local SHA-256: JS `3c3cf483809d1a2adb281ccbd3728d1c614b62adae40b26179aa5e278337a252`;
+  CSS `f0d29ea39ebb533eea1b626e5e7c9e0819185f9627f34c1211b14522d2222748`
+- The themed asset bundle was uploaded in Cloudflare Version
+  `29c88d39-25be-42dd-8ac5-2753d3b11811`; later versions `0c4e6846...` and
+  `961d08c3...` contained documentation-only changes.
+
+Live anonymous routing verification:
+
+- `/admin-center-preview/`: **PASS — HTTP 403**
+- Direct `/admin-center-preview/assets/index-DB483ZS4.js`: **PASS — HTTP 403**
+- `/admin-panel.html`: **PASS — HTTP 403**
+- `/live-video`: **PASS — HTTP 200 with Coming Soon**
+- `/`: **PASS — HTTP 200**
+
+Authenticated owner/admin verification is **BLOCKED** in this environment;
+no authorized production session was available. This means the live gate and
+asset protection are verified, but it does not claim that an authenticated
+browser session loaded the UI or exercised its APIs.
+
+Owner-assisted verification: sign in with an authorized TPI administrator,
+open <https://paranormalinitiative.com/admin-center-preview/>, hard-refresh,
+confirm the dark TPI sidebar/dashboard, open Members, Analytics, Reports &
+Moderation, and inspect browser console/network failures. Confirm `/admin-panel`
+is unchanged and ordinary signed-out access remains denied.
