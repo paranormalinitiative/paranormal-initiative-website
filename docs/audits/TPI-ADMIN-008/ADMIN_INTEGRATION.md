@@ -73,6 +73,10 @@ This batch improves the preview's route ownership and dashboard contract:
   `/admin/restrictions` contract with server-side search, explicit 50-record
   pages, and matching totals. The preview remains metadata-only and does not
   add suspension or user-to-user blocking mutations.
+- Contributor Management now requests the existing protected
+  `/admin/contributors` contract with server-side status/search filtering,
+  explicit 50-record pages, and matching totals. Invite generation and
+  role/title updates continue to use their existing protected contracts.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

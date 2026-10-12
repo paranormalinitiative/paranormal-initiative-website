@@ -123,6 +123,11 @@ contract with server-side search, bounded 50-record pagination, and matching
 totals. It remains read-only and does not implement administrative suspension
 or user-to-user blocking.
 
+Contributor Management now consumes the existing protected
+`/admin/contributors` contract with server-side status/search filtering,
+bounded 50-record pagination, and matching totals. Existing no-query callers,
+invite generation, and role/title updates remain compatible and protected.
+
 Source/build/QA checks passed, but authenticated owner/admin browser acceptance
 and rollback verification remain pending. This batch does not authorize
 promotion of `/admin-center-preview/` over `/admin-panel`.

@@ -511,6 +511,31 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Contributor Management pagination release
+
+- Git commit: `a422104` pushed to `origin/main`.
+- Cloudflare Version ID: `53eec25d-dcc7-4a6f-b9bf-d26fda44631c`.
+- Preview asset: `/admin-center-preview/assets/index-EaXvLRI1.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- Contributor Management now uses server-side status/search filtering, bounded
+  50-record pagination, and matching totals through the existing protected
+  contract. Existing no-query callers, invite generation, and role/title
+  updates remain compatible.
+- Source/build checks: PASS — TypeScript/Vite build, Worker syntax,
+  legacy-admin syntax, `git diff --check`, and focused QA 69/69.
+- Anonymous production checks: public shell 200; `/live-video` 200 with
+  Coming Soon; `/studio/` 403; `/admin-center-preview/` 403; exact preview
+  asset 403; `/admin-panel.html` 403; anonymous contributors API 403;
+  anonymous invites API 403; and anonymous Teams admin API 403.
+- Authenticated owner/admin Contributor Management rendering, pagination,
+  invite generation, role/title updates, and rollback verification remain
+  pending an authorized browser session and are not claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Final documentation sync — Account Restrictions pagination
 
 - Documentation commit: `0e66b2a` pushed to `origin/main`.

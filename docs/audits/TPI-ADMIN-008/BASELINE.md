@@ -99,3 +99,8 @@ Account Restrictions now uses the existing protected `/admin/restrictions`
 contract with server-side search, explicit 50-record pages, and matching
 totals. It remains metadata-only and does not expose suspension or
 user-to-user blocking mutations.
+
+Contributor Management now uses the existing protected `/admin/contributors`
+contract with server-side status/search filtering, explicit 50-record pages,
+and matching totals. Existing no-query callers, invite generation, and
+role/title updates remain compatible.
