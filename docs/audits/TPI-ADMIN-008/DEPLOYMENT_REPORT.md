@@ -227,6 +227,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No entitlement records, D1 migration, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Release documentation sync — Creator Studio Access pagination
+
+- Documentation commit: `2751c64` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `7ea0f9e4-9981-4496-90b3-d9816861532e`.
+- The sync published the Creator Studio Access pagination release evidence and
+  updated parity, readiness, regression, baseline, and owner-acceptance
+  documentation; runtime code remained unchanged.
+
 ## Release documentation sync — Creator Channels pagination
 
 - Documentation commit: `67aa430` pushed to `origin/main`.
