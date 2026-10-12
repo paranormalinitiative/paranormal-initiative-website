@@ -95,6 +95,13 @@ npx wrangler deploy 2>&1 | tail -4
   colors, typography, spacing, and theme behavior. Generic white dashboards, default framework themes,
   and unrelated visual styles are not acceptable. Visual consistency must be verified before a feature
   is considered complete.
+- **Permanent release requirement:** Every completed and verified TPI development batch must be
+  committed to the approved Git repository, pushed to the approved remote, deployed to the designated
+  Cloudflare environment, and verified on the live domain. Approved production fixes must be deployed
+  to production. Unapproved replacement applications must remain in their protected preview
+  environment until owner acceptance. Every completion report must include the Git commit, Cloudflare
+  deployment ID, live URL, and verification results. Do not claim completion when implementation
+  remains only in local files.
 - **TPI Studio (`studio/`)** is a built bundle, not source — DO NOT modify it. It's gated: non-leadership
   gets a Coming Soon page (worker.js STUDIO_GATE_HTML) and a disabled nav item.
 - **Specificity traps in style.css:** `.editor-access-card` is `width:min(440px,100%)` (wide cards need
