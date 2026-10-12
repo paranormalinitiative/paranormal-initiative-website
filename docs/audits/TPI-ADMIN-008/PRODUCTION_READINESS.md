@@ -21,6 +21,11 @@ Platform Health is integrated as a read-only view of existing scraper/provider
 status. It does not start refresh jobs and remains subject to authenticated
 runtime verification.
 
+Creator Directory, Founding 50, and Creator Studio Access are integrated using
+existing protected read/API contracts. The Founding 50 award gate remains
+closed and Creator Studio entitlement escalation remains unavailable; runtime
+verification still requires an authorized owner/admin session.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

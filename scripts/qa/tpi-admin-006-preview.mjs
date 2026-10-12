@@ -39,6 +39,8 @@ const checks = [
   ["contributor invite types and access levels preserved", source.includes('Standard Contributor') && source.includes('Assistant Director') && source.includes('Advisory Board Member') && source.includes('option value="owner">Owner</option>') && source.includes('Director and Admin invite permissions remain enforced by the server')],
   ["platform health uses existing read-only scraper contract", source.includes('view === "health" && <PlatformHealth') && source.includes('"/admin/scraper-runs?limit=50"') && api.includes('path === "/admin/scraper-runs"') && source.includes('Refreshing this view does not start a scraper job')],
   ["platform health preserves provider capability disclosures", source.includes('not-configured providers are not presented as operational') && source.includes('provider.state === "active"') && source.includes('No completed scraper runs returned.')],
+  ["creator management uses existing protected contracts", source.includes('view === "creators" && <CreatorDirectory') && source.includes('"/admin/creator-partnership?pageSize=100"') && source.includes('view === "founding" && <Founding50') && source.includes('"/admin/founding-50"') && source.includes('view === "studio-access" && <StudioAccess') && source.includes('"/admin/creator-studio/entitlements?pageSize=100"')],
+  ["creator access remains non-escalating", source.includes('This view does not allocate memberships or grant Creator Studio access') && source.includes('Awards remain gated') && source.includes('does not grant, revoke, or expand access') && api.includes('path === "/admin/founding-50"') && api.includes('path === "/admin/creator-studio/entitlements"')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

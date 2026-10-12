@@ -36,6 +36,9 @@ Pre-existing unrelated dirty files were preserved and not staged.
   to the existing protected endpoint.
 - Platform Health loads the existing read-only `/admin/scraper-runs` contract,
   preserves provider capability disclosures, and does not trigger scraper jobs.
+- Creator Directory, Founding 50, and Creator Studio Access map to their
+  existing protected APIs; award activation and Studio entitlement escalation
+  remain unavailable in the preview.
 - No team data was mutated during verification; authenticated runtime action
   testing remains pending owner/admin browser access. No contributor, invite,
   or role data was mutated during verification.

@@ -117,6 +117,45 @@ export type AdminScraperRun = {
 
 export type AdminProviderStatus = { key: string; label: string; state: string };
 
+export type AdminCreatorMembership = {
+  id: string;
+  membershipType: string;
+  membershipState: string;
+  entitlementCode?: string;
+  founding50Slot?: string;
+  awardedAt?: string;
+  createdAt?: string;
+  username: string;
+  displayName?: string;
+  role: string;
+  active: boolean | number;
+  creatorStudioEntitlementState?: string;
+};
+
+export type AdminCreatorEntitlement = {
+  id: string;
+  entitlementCode?: string;
+  entitlementState: string;
+  grantedAt?: string;
+  revokedAt?: string;
+  username: string;
+  displayName?: string;
+  role: string;
+  active: boolean | number;
+};
+
+export type AdminFoundingApplication = {
+  id: string;
+  status: string;
+  administrativeNotes?: string;
+  createdAt?: string;
+  reviewedAt?: string;
+  username: string;
+  displayName?: string;
+  role: string;
+  active: boolean | number;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

@@ -12,8 +12,8 @@
 | Contributor management | Legacy invite/access controls | Protected directory, invite listing/generation, invite-type/access-level controls, and role/title updates through existing APIs | WORKING WITH LIMITATIONS |
 | Paranormal Teams | Existing directory/approval APIs | Protected status filters, searchable directory, and pending approve/reject controls using existing server contracts | WORKING WITH LIMITATIONS |
 | Education Center | Existing article and comment workflows | Article comment view; broader publishing is transitional | PARTIALLY WORKING |
-| Creator partnership/Founding 50 | Existing protected APIs and closed award gate | Protected transitional views | PARTIALLY WORKING |
-| Creator Studio access | Existing owner/admin gate and entitlement APIs | Protected transitional link | PARTIALLY WORKING |
+| Creator partnership/Founding 50 | Existing protected APIs and closed award gate | Protected creator directory, program summary/application review, and explicit closed-award state | WORKING WITH LIMITATIONS |
+| Creator Studio access | Existing owner/admin gate and entitlement APIs | Protected read-only entitlement status; no grant/revoke/escalation controls | WORKING WITH LIMITATIONS |
 | TPI Videos/channels | Existing contributor/video/channel APIs | Transitional link; no private recording exposure | PARTIALLY WORKING |
 | Events | Existing event APIs | Transitional link | PARTIALLY WORKING |
 | Notifications | Existing member notification APIs | Transitional link | NOT INTEGRATED |
