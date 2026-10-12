@@ -19,7 +19,7 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 | Anonymous preview route and hashed asset | PASS — HTTP 403 |
 | Anonymous admin API | PASS — HTTP 403 |
 | Public `/live-video` | PASS — HTTP 200 with Coming Soon |
-| Published TPI-ADMIN-008 docs | PASS — HTTP 200; latest docs sync Version `4a139d16-f32e-4ca8-9b03-151d30b2050f` |
+| Published TPI-ADMIN-008 docs | PASS — HTTP 200; latest docs sync Version `fb1d9db4-0bbc-4d2a-8725-e4ed4299e904` |
 
 ## Reports queue release verification
 
