@@ -39,3 +39,8 @@ authorized session.
 
 No D1 migration, R2 operation, credential change, membership activation, or
 cross-project access occurred.
+
+The preview Security view is a read-only source-defined summary of these
+boundaries. It does not grant permissions, replace the Worker/API gates,
+expose private data, or claim authenticated role-matrix and session-expiry
+verification.

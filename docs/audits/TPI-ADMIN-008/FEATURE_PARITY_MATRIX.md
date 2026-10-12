@@ -19,4 +19,4 @@
 | Events | Existing event APIs | Approved event listing; admin review/creation remains on existing workflow | WORKING WITH LIMITATIONS |
 | Notifications | Existing `member_notifications` storage and protected delivery/send contracts | Protected metadata-only queue with unread/read/all filters; bodies and action URLs excluded; no mutation controls | WORKING WITH LIMITATIONS |
 | Platform health | Existing scraper/operational data paths | Protected read-only provider states, latest summaries, and sanitized run history | WORKING WITH LIMITATIONS |
-| Security/settings | Existing protected contracts | Protected read-only system settings with disabled mutation controls; server authorization preserved | WORKING WITH LIMITATIONS |
+| Security/settings | Existing protected routes/settings contracts | Protected source-defined Security boundary summary plus read-only system settings with disabled mutation controls; server authorization preserved | WORKING WITH LIMITATIONS |

@@ -58,6 +58,11 @@ Account Restrictions now has a protected read-only capability-restrictions list
 over existing contributor flags and active state. It does not implement
 administrative suspension or user-to-user restriction changes.
 
+Security now has a protected-preview boundary summary for the existing
+server-side gates and preserved data/public-state boundaries. It is
+source-defined and does not replace authenticated role-matrix or session-expiry
+verification.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

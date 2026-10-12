@@ -20,6 +20,9 @@ This batch improves the preview's route ownership and dashboard contract:
   protected read-only views backed by existing channel/contributor fields;
   lifecycle, role, suspension, and user-to-user restriction mutations remain
   on their existing protected workflows.
+- Security now has an explicit read-only boundary summary for the existing
+  server-side gates and preserved public/private data boundaries; it does not
+  add new controls or replace authenticated verification.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

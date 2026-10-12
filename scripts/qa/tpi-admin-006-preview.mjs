@@ -55,6 +55,8 @@ const checks = [
   ["roles preview remains read-only", source.includes("Read-only preview") && source.includes("Account Restrictions remains separate") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/roles", { method: "POST"')],
   ["account restrictions uses protected capability flags", source.includes('view === "restrictions" && <Restrictions') && source.includes('/admin/restrictions') && api.includes('path === "/admin/restrictions"') && api.includes('can_post = 0') && api.includes('can_comment = 0') && api.includes('can_message = 0')],
   ["account restrictions preserves separate blocking boundary", source.includes("Capability restrictions only—not administrative suspension") && source.includes("user-to-user member_restrictions") && api.includes("user-to-user member_restrictions") && !source.includes('adminFetch("/admin/restrictions", { method: "POST"')],
+  ["security boundary view is explicit", source.includes("SecurityView") && source.includes("Source-defined security boundaries") && source.includes("Admin HTML routes require an owner or admin session") && source.includes("`/live-video` remains Coming Soon")],
+  ["security view preserves authenticated-test limitation", source.includes("authenticated role-matrix testing remains an owner acceptance step") && source.includes("not a replacement for authenticated browser verification")],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

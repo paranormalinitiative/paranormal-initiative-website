@@ -20,6 +20,7 @@
 - [ ] Verify Creator Channels lists channel/owner metadata across visibility and search filters without exposing mutation controls.
 - [ ] Verify Roles & Permissions lists live role/capability counts without exposing role or account-restriction mutation controls.
 - [ ] Verify Account Restrictions lists capability-restricted accounts without exposing administrative suspension or user-to-user restriction controls.
+- [ ] Verify the Security view reflects the protected admin/Creator Studio/data boundaries, then separately perform authenticated role-matrix and session-expiry checks.
 - [ ] Confirm `/admin-panel` remains unchanged and protected.
 - [ ] Confirm `/live-video` remains Coming Soon.
 - [ ] Review parity limitations before approving any `/admin-panel` promotion.
