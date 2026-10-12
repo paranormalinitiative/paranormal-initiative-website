@@ -17,5 +17,5 @@
 | TPI Videos/channels | Existing contributor/video/channel APIs | Transitional link; no private recording exposure | PARTIALLY WORKING |
 | Events | Existing event APIs | Transitional link | PARTIALLY WORKING |
 | Notifications | Existing member notification APIs | Transitional link | NOT INTEGRATED |
-| Platform health | Existing scraper/operational data paths | No complete health contract | NOT IMPLEMENTED IN PREVIEW |
+| Platform health | Existing scraper/operational data paths | Protected read-only provider states, latest summaries, and sanitized run history | WORKING WITH LIMITATIONS |
 | Security/settings | Existing protected contracts | Transitional boundaries; no broad settings mutation | PARTIALLY WORKING |

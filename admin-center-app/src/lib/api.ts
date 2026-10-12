@@ -99,6 +99,24 @@ export type AdminInvite = {
   createdAt: string;
 };
 
+export type AdminScraperRun = {
+  id: string;
+  scraperType: string;
+  source?: string;
+  trigger?: string;
+  startedAt?: string;
+  completedAt?: string;
+  status: string;
+  found?: number;
+  inserted?: number;
+  skipped?: number;
+  errorCount?: number;
+  errorMessage?: string;
+  durationMs?: number;
+};
+
+export type AdminProviderStatus = { key: string; label: string; state: string };
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

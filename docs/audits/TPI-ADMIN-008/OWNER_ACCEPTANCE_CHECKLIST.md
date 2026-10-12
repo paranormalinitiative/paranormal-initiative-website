@@ -10,6 +10,7 @@
 - [ ] Verify invitation types, access levels, code generation, and role/title updates only with safe test data.
 - [ ] Verify a disposable Teams approval/rejection action only if safe test data is available; do not mutate real records.
 - [ ] Verify Education, creator, video, and event transitional links.
+- [ ] Verify Platform Health shows provider states and recent scraper runs without starting a refresh job.
 - [ ] Confirm `/admin-panel` remains unchanged and protected.
 - [ ] Confirm `/live-video` remains Coming Soon.
 - [ ] Review parity limitations before approving any `/admin-panel` promotion.

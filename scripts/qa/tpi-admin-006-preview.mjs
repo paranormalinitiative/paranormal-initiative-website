@@ -37,6 +37,8 @@ const checks = [
   ["teams status filters and approval controls", source.includes('Pending approvals') && source.includes('Approved teams') && source.includes('Rejected teams') && source.includes('>Approve</Button>') && source.includes('>Reject</Button>')],
   ["contributor management uses existing protected APIs", source.includes('view === "contributors" && <Contributors') && source.includes('adminFetch<{ contributors: AdminContributor[] }>("/admin/contributors")') && source.includes('adminFetch<{ invites: AdminInvite[] }>("/invites")') && source.includes('"/admin/contributors/title"') && api.includes('path === "/admin/contributors"') && api.includes('path === "/invites"')],
   ["contributor invite types and access levels preserved", source.includes('Standard Contributor') && source.includes('Assistant Director') && source.includes('Advisory Board Member') && source.includes('option value="owner">Owner</option>') && source.includes('Director and Admin invite permissions remain enforced by the server')],
+  ["platform health uses existing read-only scraper contract", source.includes('view === "health" && <PlatformHealth') && source.includes('"/admin/scraper-runs?limit=50"') && api.includes('path === "/admin/scraper-runs"') && source.includes('Refreshing this view does not start a scraper job')],
+  ["platform health preserves provider capability disclosures", source.includes('not-configured providers are not presented as operational') && source.includes('provider.state === "active"') && source.includes('No completed scraper runs returned.')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

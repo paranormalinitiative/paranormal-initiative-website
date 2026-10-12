@@ -34,6 +34,8 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - Contributor Management loads the existing contributor and invite contracts,
   preserves invitation type/access-level choices, and maps role/title updates
   to the existing protected endpoint.
+- Platform Health loads the existing read-only `/admin/scraper-runs` contract,
+  preserves provider capability disclosures, and does not trigger scraper jobs.
 - No team data was mutated during verification; authenticated runtime action
   testing remains pending owner/admin browser access. No contributor, invite,
   or role data was mutated during verification.

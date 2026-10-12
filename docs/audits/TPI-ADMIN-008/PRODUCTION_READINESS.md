@@ -17,6 +17,10 @@ inspection and existing invitation/access-level mutations. Runtime loading and
 mutation acceptance remain pending an authorized owner/admin session; no
 contributor or invitation records were changed during this batch.
 
+Platform Health is integrated as a read-only view of existing scraper/provider
+status. It does not start refresh jobs and remains subject to authenticated
+runtime verification.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.
