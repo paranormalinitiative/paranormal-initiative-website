@@ -7,6 +7,11 @@ integration. Promotion remains gated because feature parity is incomplete,
 unified reports/platform health/role management are not complete, and
 authenticated browser acceptance and rollback verification have not passed.
 
+The Paranormal Teams surface is now integrated in the protected preview for
+read-only status browsing and existing protected approval mutations. Its
+runtime approval actions remain unverified until an authorized owner/admin
+session is available; no production team records were changed by this batch.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

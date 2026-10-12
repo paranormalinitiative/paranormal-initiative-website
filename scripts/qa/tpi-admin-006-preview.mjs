@@ -33,9 +33,11 @@ const checks = [
   ["community UI exposes explicit deleted view", source.includes('useState("active")') && source.includes('value="active">Active (not deleted)') && source.includes('value="deleted">Deleted') && legacy.includes('value="active">Active (not deleted)') && legacyAdminCenter.includes('?.value || "active"')],
   ["community navigation routes are distinct", source.includes('id: "community"') && source.includes('id: "community-content"') && source.includes('["community", "community-content"].includes(view)')],
   ["dashboard metrics avoid fabricated unavailable values", source.includes('"Active members"') && source.includes('"Community comments"') && source.includes('"Education articles"') && source.includes('"Founding 50 allocated"') && api.includes('["founding50"') && readFileSync(new URL("../../admin-center-app/src/lib/api.ts", import.meta.url), "utf8").includes('metrics?.[section]?.unavailable')],
+  ["teams management uses existing protected API", source.includes('view === "teams" && <Teams') && source.includes('`/admin/teams?status=${status}&limit=100`') && source.includes('`/admin/teams/${encodeURIComponent(team.id)}/status`') && api.includes('path === "/admin/teams"') && api.includes('/status$/')],
+  ["teams status filters and approval controls", source.includes('Pending approvals') && source.includes('Approved teams') && source.includes('Rejected teams') && source.includes('>Approve</Button>') && source.includes('>Reject</Button>')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);
 for (const [label, passed] of checks) console.log(`${passed ? "PASS" : "FAIL"} ${label}`);
 if (failed.length) process.exit(1);
-console.log(`TPI-ADMIN-007B theme/isolation checks: ${checks.length}/${checks.length} passed`);
+console.log(`TPI-ADMIN-008 preview checks: ${checks.length}/${checks.length} passed`);

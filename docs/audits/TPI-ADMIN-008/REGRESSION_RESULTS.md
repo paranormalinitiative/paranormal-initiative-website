@@ -22,3 +22,15 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 | Published TPI-ADMIN-008 docs | PASS — HTTP 200 |
 
 Pre-existing unrelated dirty files were preserved and not staged.
+## Incremental teams batch
+
+- `npm run build` in `admin-center-app`: PASS.
+- `node scripts/qa/tpi-admin-006-preview.mjs`: PASS, 22/22 focused checks.
+- Teams navigation now renders a protected management view instead of only a
+  transitional link.
+- Pending, approved, and rejected filters map to the existing server-side
+  `/admin/teams` contract.
+- Pending approve/reject actions map to the existing protected status endpoint.
+- No team data was mutated during verification; authenticated runtime action
+  testing remains pending owner/admin browser access.
+

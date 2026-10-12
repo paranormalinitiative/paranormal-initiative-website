@@ -10,7 +10,7 @@
 | Reports and moderation | Existing report metadata/contracts | No unified report queue contract | PARTIALLY WORKING |
 | Moderation history/audit | Existing audit log API | Audit and filtered moderation-history views | WORKING WITH LIMITATIONS |
 | Contributor management | Legacy invite/access controls | Protected transitional link | PARTIALLY WORKING |
-| Paranormal Teams | Existing directory/approval APIs | Protected transitional link | PARTIALLY WORKING |
+| Paranormal Teams | Existing directory/approval APIs | Protected status filters, searchable directory, and pending approve/reject controls using existing server contracts | WORKING WITH LIMITATIONS |
 | Education Center | Existing article and comment workflows | Article comment view; broader publishing is transitional | PARTIALLY WORKING |
 | Creator partnership/Founding 50 | Existing protected APIs and closed award gate | Protected transitional views | PARTIALLY WORKING |
 | Creator Studio access | Existing owner/admin gate and entitlement APIs | Protected transitional link | PARTIALLY WORKING |

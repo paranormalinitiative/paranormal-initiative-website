@@ -58,10 +58,11 @@ Refine/shadcn application remains protected at `/admin-center-preview/`; the
 existing `/admin-panel` remains production and must not be replaced without
 feature parity, authenticated browser acceptance, rollback verification, and
 explicit owner approval. The current batch adds distinct Community navigation
-routes and real optional dashboard metrics while preserving existing APIs and
-authorization. Reports, platform health, role management, broader publishing
-workflows, and authenticated production browser acceptance remain incomplete or
-blocked. Evidence is maintained under `docs/audits/TPI-ADMIN-008/`.
+routes, real optional dashboard metrics, and a protected Paranormal Teams
+directory/approval view while preserving existing APIs and authorization.
+Reports, platform health, role management, broader publishing workflows, and
+authenticated production browser acceptance remain incomplete or blocked.
+Evidence is maintained under `docs/audits/TPI-ADMIN-008/`.
 
 ## Current Status - October 8, 2026
 

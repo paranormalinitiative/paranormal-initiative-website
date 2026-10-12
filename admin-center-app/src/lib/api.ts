@@ -54,6 +54,30 @@ export type ClassicComment = {
   createdAt: string;
 };
 
+export type AdminTeam = {
+  id: string;
+  name: string;
+  acronym?: string;
+  scope?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  website?: string;
+  description?: string;
+  createdAt: string;
+  recordType?: string;
+  verificationStatus?: string;
+  status: "pending" | "approved" | "rejected";
+  submitterName?: string;
+  submitterEmail?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  externalId?: string;
+  externalSource?: string;
+  claimedAt?: string;
+  claimedBy?: string;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));
