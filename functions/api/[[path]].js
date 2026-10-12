@@ -56,6 +56,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
     if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
+    if (request.method === "GET" && path === "/admin/roles") return requireAdmin(request, env, user => handleAdminRoles(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
@@ -922,6 +923,28 @@ async function handleAdminChannels(request, env) {
   `).bind(...binds, pageSize, offset).all();
   const total = Number(count?.total || 0);
   return json({ channels: results || [], visibility: ["public", "private"].includes(visibility) ? visibility : "all", search, metadataOnly: true, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminRoles(request, env) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT role,
+           COUNT(*) AS total,
+           SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) AS active,
+           SUM(CASE WHEN can_post = 1 THEN 1 ELSE 0 END) AS canPost,
+           SUM(CASE WHEN can_comment = 1 THEN 1 ELSE 0 END) AS canComment,
+           SUM(CASE WHEN can_message = 1 THEN 1 ELSE 0 END) AS canMessage
+    FROM contributors
+    GROUP BY role
+    ORDER BY CASE role
+      WHEN 'owner' THEN 1
+      WHEN 'admin' THEN 2
+      WHEN 'creator' THEN 3
+      WHEN 'contributor' THEN 4
+      WHEN 'member' THEN 5
+      ELSE 6
+    END, role
+  `).all();
+  return json({ roles: results || [], metadataOnly: true, mutationBoundary: "Role and capability changes remain on existing protected Contributor Management workflows." }, 200, { "Cache-Control": "no-store" });
 }
 
 async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {

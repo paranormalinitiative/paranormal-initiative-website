@@ -49,6 +49,11 @@ Creator Channels now has a protected metadata-only directory over the existing
 search filters plus published-video counts. Editing, ownership transfer,
 visibility changes, and video lifecycle mutations remain on creator workflows.
 
+Roles & Permissions now has a protected read-only summary over existing
+contributor role and capability fields. It reports live role/account counts and
+capability counts without adding role or account-restriction mutations; those
+remain on existing protected workflows.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

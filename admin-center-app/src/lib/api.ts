@@ -233,6 +233,15 @@ export type AdminChannel = {
   publishedVideoCount?: number;
 };
 
+export type AdminRoleSummary = {
+  role: string;
+  total: number;
+  active: number;
+  canPost: number;
+  canComment: number;
+  canMessage: number;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

@@ -51,6 +51,8 @@ const checks = [
   ["notifications queue omits bodies and mutations", source.includes("Notification bodies and action URLs are intentionally excluded") && source.includes("No notification mutations") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/notifications", { method: "POST"') && !source.includes('adminFetch(`/admin/notifications/${')],
   ["creator channel directory uses protected existing table", source.includes('view === "channels" && <Channels') && source.includes('/admin/channels?') && api.includes('path === "/admin/channels"') && api.includes('FROM tpi_video_channels') && api.includes('publishedVideoCount')],
   ["channel directory remains read-only", source.includes("No channel mutations") && source.includes("Editing, ownership transfer") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/channels", { method: "POST"') && !source.includes('adminFetch(`/admin/channels/${')],
+  ["roles summary uses protected contributor capability data", source.includes('view === "roles" && <Roles') && source.includes('"/admin/roles"') && api.includes('path === "/admin/roles"') && api.includes('FROM contributors') && api.includes('can_post') && api.includes('can_comment') && api.includes('can_message')],
+  ["roles preview remains read-only", source.includes("Read-only preview") && source.includes("Account Restrictions remains separate") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/roles", { method: "POST"')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

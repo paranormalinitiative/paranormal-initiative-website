@@ -22,6 +22,10 @@ visibility, owner identity, timestamps, and published-video counts from the
 existing channel table. It omits channel descriptions/artwork and exposes no
 editing, ownership, visibility, or video lifecycle mutation.
 
+The protected `/api/admin/roles` endpoint returns aggregate role, active-account,
+and capability counts from `contributors`. It returns no password/session data
+and exposes no role, title, capability, or restriction mutation.
+
 Source checks pass for the TPI theme, route ownership, deleted-content filter,
 and protected-preview boundary. Authenticated role-matrix testing, session
 expiry, and authorized production mutation testing remain BLOCKED without an
