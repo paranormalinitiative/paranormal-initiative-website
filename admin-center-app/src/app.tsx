@@ -230,19 +230,26 @@ function Teams({ onNotice }: { onNotice: (value: string) => void }) {
   const [status, setStatus] = useState<AdminTeam["status"]>("pending");
   const [teams, setTeams] = useState<AdminTeam[]>([]);
   const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const load = () => {
     setLoading(true);
-    adminFetch<{ teams: AdminTeam[] }>(`/admin/teams?status=${status}&limit=100`).then((body) => setTeams(body.teams || [])).catch((error) => onNotice(error.message)).finally(() => setLoading(false));
+    const params = new URLSearchParams({ status, page: String(page), pageSize: "50" });
+    if (query.trim()) params.set("search", query.trim());
+    adminFetch<{ teams: AdminTeam[]; pagination?: { total?: number } }>(`/admin/teams?${params}`).then((body) => {
+      setTeams(body.teams || []);
+      setTotal(body.pagination?.total || 0);
+    }).catch((error) => onNotice(error.message)).finally(() => setLoading(false));
   };
-  useEffect(load, [status]);
-  const visibleTeams = teams.filter((team) => `${team.name} ${team.acronym || ""} ${team.city || ""} ${team.state || ""} ${team.submitterName || ""}`.toLowerCase().includes(search.toLowerCase().trim()));
+  useEffect(load, [status, page, query]);
   const updateStatus = async (team: AdminTeam, nextStatus: "approved" | "rejected") => {
     setBusyId(team.id);
     try {
-      await adminFetch(`/admin/teams/${encodeURIComponent(team.id)}/status`, { method: "POST", body: JSON.stringify({ status: nextStatus }) });
-      onNotice(`Team ${nextStatus === "approved" ? "approved" : "rejected"}.`);
+      await adminFetch("/admin/teams/" + encodeURIComponent(team.id) + "/status", { method: "POST", body: JSON.stringify({ status: nextStatus }) });
+      onNotice("Team " + (nextStatus === "approved" ? "approved" : "rejected") + ".");
       load();
     } catch (error) {
       onNotice((error as Error).message);
@@ -250,9 +257,41 @@ function Teams({ onNotice }: { onNotice: (value: string) => void }) {
       setBusyId(null);
     }
   };
-  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Content &amp; Publishing</p><h2>Paranormal Teams</h2><p>Review registered team submissions through the existing protected approval contract. Imported directory records remain subject to the existing publication policy.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><Card><CardHeader><div className="filter-bar"><div className="search-field"><Search size={16} /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search team, location, or submitter" aria-label="Search Paranormal Teams" /></div><select aria-label="Team status" value={status} onChange={(event) => setStatus(event.target.value as AdminTeam["status"])}><option value="pending">Pending approvals</option><option value="approved">Approved teams</option><option value="rejected">Rejected teams</option></select></div></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>Team</TableHead><TableHead>Location</TableHead><TableHead>Record</TableHead><TableHead>Status</TableHead><TableHead>Submitted</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader><TableBody>{loading ? <TableRow><TableCell colSpan={6}><LoadingState label="Loading Paranormal Teams…" /></TableCell></TableRow> : visibleTeams.length ? visibleTeams.map((team) => <TableRow key={team.id}><TableCell><strong>{team.name}</strong><span className="table-subtext">{team.acronym || "No acronym"}{team.submitterName ? ` · submitted by ${team.submitterName}` : ""}</span></TableCell><TableCell>{[team.city, team.state, team.country].filter(Boolean).join(", ") || "—"}</TableCell><TableCell><Badge variant={team.recordType === "REGISTERED_TEAM" ? "outline" : "warning"}>{team.recordType || "Unknown"}</Badge>{team.externalSource && <span className="table-subtext">{team.externalSource}</span>}</TableCell><TableCell><Badge variant={team.status === "approved" ? "success" : team.status === "pending" ? "warning" : "outline"}>{team.status}</Badge></TableCell><TableCell><span className="table-subtext">{team.createdAt ? new Date(team.createdAt).toLocaleDateString() : "—"}</span></TableCell><TableCell>{team.status === "pending" ? <div className="detail-actions"><Button size="sm" disabled={busyId === team.id} onClick={() => updateStatus(team, "approved")}>Approve</Button><Button size="sm" variant="destructive" disabled={busyId === team.id} onClick={() => updateStatus(team, "rejected")}>Reject</Button></div> : <span className="table-subtext">{team.reviewedBy ? `Reviewed by ${team.reviewedBy}` : "Previously reviewed"}</span>}</TableCell></TableRow>) : <TableRow><TableCell colSpan={6}><EmptyState label={`No ${status} Paranormal Teams matched this filter.`} /></TableCell></TableRow>}</TableBody></Table><div className="pagination"><span className="muted">{visibleTeams.length} of {teams.length} loaded records</span><Badge variant="outline">Server-side authorization preserved</Badge></div></CardContent></Card></section>;
+  return <section className="content-stack">
+    <div className="page-intro">
+      <div><p className="eyebrow">Content &amp; Publishing</p><h2>Paranormal Teams</h2><p>Review registered team submissions through the existing protected approval contract. Imported directory records remain subject to the existing publication policy.</p></div>
+      <Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button>
+    </div>
+    <Card>
+      <CardHeader>
+        <div className="filter-bar">
+          <div className="search-field"><Search size={16} /><Input value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { setQuery(search); setPage(1); } }} placeholder="Search team, location, or submitter" aria-label="Search Paranormal Teams" /></div>
+          <select aria-label="Team status" value={status} onChange={(event) => { setStatus(event.target.value as AdminTeam["status"]); setPage(1); }}>
+            <option value="pending">Pending approvals</option><option value="approved">Approved teams</option><option value="rejected">Rejected teams</option>
+          </select>
+        </div>
+        <CardDescription>{total} matching teams · page {page}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader><TableRow><TableHead>Team</TableHead><TableHead>Location</TableHead><TableHead>Record</TableHead><TableHead>Status</TableHead><TableHead>Submitted</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+          <TableBody>
+            {loading ? <TableRow><TableCell colSpan={6}><LoadingState label="Loading Paranormal Teams…" /></TableCell></TableRow> : teams.length ? teams.map((team) => <TableRow key={team.id}>
+              <TableCell><strong>{team.name}</strong><span className="table-subtext">{team.acronym || "No acronym"}{team.submitterName ? " · submitted by " + team.submitterName : ""}</span></TableCell>
+              <TableCell>{[team.city, team.state, team.country].filter(Boolean).join(", ") || "—"}</TableCell>
+              <TableCell><Badge variant={team.recordType === "REGISTERED_TEAM" ? "outline" : "warning"}>{team.recordType || "Unknown"}</Badge>{team.externalSource && <span className="table-subtext">{team.externalSource}</span>}</TableCell>
+              <TableCell><Badge variant={team.status === "approved" ? "success" : team.status === "pending" ? "warning" : "outline"}>{team.status}</Badge></TableCell>
+              <TableCell><span className="table-subtext">{team.createdAt ? new Date(team.createdAt).toLocaleDateString() : "—"}</span></TableCell>
+              <TableCell>{team.status === "pending" ? <div className="detail-actions"><Button size="sm" disabled={busyId === team.id} onClick={() => updateStatus(team, "approved")}>Approve</Button><Button size="sm" variant="destructive" disabled={busyId === team.id} onClick={() => updateStatus(team, "rejected")}>Reject</Button></div> : <span className="table-subtext">{team.reviewedBy ? "Reviewed by " + team.reviewedBy : "Previously reviewed"}</span>}</TableCell>
+            </TableRow>) : <TableRow><TableCell colSpan={6}><EmptyState label={"No " + status + " Paranormal Teams matched this filter."} /></TableCell></TableRow>}
+          </TableBody>
+        </Table>
+        <div className="pagination"><span className="muted">{total} matching teams</span><div><Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={!total || page >= Math.ceil(total / 50)} onClick={() => setPage((value) => value + 1)}>Next</Button></div></div>
+        <div className="notice-panel"><Badge variant="outline">Server-side authorization preserved</Badge></div>
+      </CardContent>
+    </Card>
+  </section>;
 }
-
 function PlatformHealth({ onNotice }: { onNotice: (value: string) => void }) {
   const [runs, setRuns] = useState<AdminScraperRun[]>([]);
   const [providers, setProviders] = useState<AdminProviderStatus[]>([]);

@@ -6721,19 +6721,36 @@ async function handleSubmitClaim(path, request, env, user) {
 async function handleAdminListTeams(request, env, user) {
   const url = new URL(request.url);
   const status = clean(url.searchParams.get("status") || "pending");
-  const limit = Math.min(parseInt(url.searchParams.get("limit") || "100"), 500);
-  const offset = parseInt(url.searchParams.get("offset") || "0");
+  const paginated = url.searchParams.has("page") || url.searchParams.has("pageSize");
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const limit = Math.max(1, Math.min(parseInt(url.searchParams.get("limit") || "100", 10) || 100, 500));
+  const offset = Math.max(0, parseInt(url.searchParams.get("offset") || "0", 10) || 0);
+  const search = clean(url.searchParams.get("search") || "").slice(0, 120);
 
   const validStatuses = ["pending", "approved", "rejected"];
   if (!validStatuses.includes(status)) {
     return json({ error: `Status must be one of: ${validStatuses.join(", ")}` }, 400);
   }
 
+  const filters = ["status = ?"];
+  const binds = [status];
+  if (search) {
+    filters.push("(name LIKE ? OR acronym LIKE ? OR city LIKE ? OR state LIKE ? OR country LIKE ? OR submitter_name LIKE ?)");
+    const pattern = `%${search}%`;
+    binds.push(pattern, pattern, pattern, pattern, pattern, pattern);
+  }
+  const where = filters.join(" AND ");
+  const requestedLimit = paginated ? pageSize : limit;
+  const requestedOffset = paginated ? (page - 1) * pageSize : offset;
   const rows = await env.TPI_DB.prepare(
-    "SELECT * FROM paranormal_teams WHERE status = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
-  ).bind(status, limit, offset).all();
+    `SELECT * FROM paranormal_teams WHERE ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`
+  ).bind(...binds, requestedLimit, requestedOffset).all();
 
-  return json({ teams: (rows.results || []).map(teamRowToAdmin) });
+  if (!paginated) return json({ teams: (rows.results || []).map(teamRowToAdmin) });
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM paranormal_teams WHERE ${where}`).bind(...binds).first();
+  const total = Number(count?.total || 0);
+  return json({ teams: (rows.results || []).map(teamRowToAdmin), search, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
 }
 
 async function handleAdminListClaims(request, env, user) {
