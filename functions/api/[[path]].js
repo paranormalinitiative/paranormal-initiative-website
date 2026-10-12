@@ -1745,15 +1745,22 @@ async function handleAdminListComments(request, env) {
   const url = new URL(request.url);
   const status = clean(url.searchParams.get("status") || "pending");
   const allowedStatus = ["pending", "approved"].includes(status) ? status : "pending";
+  const paginated = url.searchParams.has("page") || url.searchParams.has("pageSize");
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const limitSql = paginated ? "LIMIT ? OFFSET ?" : "LIMIT 100";
   const { results } = await env.TPI_DB.prepare(`
     SELECT cm.id, cm.page_id AS pageId, cm.parent_id AS parentId, cm.name, cm.author_title AS authorTitle, c.username AS authorUsername, cm.text, cm.status, cm.created_at AS createdAt
     FROM comments cm
     LEFT JOIN contributors c ON c.id = cm.contributor_id
     WHERE cm.status = ?
     ORDER BY cm.created_at DESC
-    LIMIT 100
-  `).bind(allowedStatus).all();
-  return json({ comments: results });
+    ${limitSql}
+  `).bind(...(paginated ? [allowedStatus, pageSize, (page - 1) * pageSize] : [allowedStatus])).all();
+  if (!paginated) return json({ comments: results });
+  const count = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM comments WHERE status = ?").bind(allowedStatus).first();
+  const total = Number(count?.total || 0);
+  return json({ comments: results, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
 }
 
 async function handleAdminApproveComment(path, env) {
