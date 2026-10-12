@@ -109,3 +109,16 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   preserved.
 - The preview invoked no settings POST mutation and changed no production
   configuration.
+
+## Published content views release
+
+- Git commit: `82ca842` pushed to `origin/main`.
+- Cloudflare Version ID: `fd566f6e-9a15-4183-a450-709c19ed3b1b`.
+- Preview asset: `/admin-center-preview/assets/index-BhFaD7AW.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- Anonymous boundary checks: preview and preview asset returned HTTP 403;
+  existing public `/api/articles`, `/api/tpi-videos`, and `/api/events`
+  listings returned HTTP 200; `/live-video` returned HTTP 200 with Coming
+  Soon preserved.
+- No draft, event, video, article, D1, or R2 mutation was performed.
