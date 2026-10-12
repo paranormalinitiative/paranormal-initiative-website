@@ -11,9 +11,11 @@ Status: **PASS WITH LIMITATIONS pending live authenticated owner review.**
 | Frontend TypeScript/Vite build | PASS — `npm run build` |
 | Worker JavaScript syntax | PASS — `node --check 'functions/api/[[path]].js'` |
 | Legacy admin JavaScript syntax | PASS — `node --check admin-center.js` |
-| Anonymous `/admin-panel` protection | Pending final live smoke; expected HTTP 403 |
-| Anonymous preview protection | Pending final live smoke; expected HTTP 403 |
-| `/live-video` Coming Soon | Pending final live smoke; expected unchanged |
+| Anonymous `/admin-panel` protection | PASS — production HTTP 403 |
+| Anonymous preview protection | PASS — production HTTP 403 for route and direct asset |
+| Anonymous admin API protection | PASS — production HTTP 403 |
+| `/live-video` Coming Soon | PASS — production HTTP 200 with Coming Soon content |
+| Published audit document | PASS — production HTTP 200 |
 | Authenticated owner/admin Community Overview | BLOCKED without authorized session |
 
 No production records were modified for testing. The TPI D1 evidence query was
