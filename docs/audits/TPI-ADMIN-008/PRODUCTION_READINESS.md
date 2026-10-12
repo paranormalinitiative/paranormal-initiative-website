@@ -44,6 +44,11 @@ Notifications now has a protected metadata-only queue over the existing
 filters without returning notification bodies or action URLs; existing member
 delivery and admin-send workflows remain unchanged.
 
+Creator Channels now has a protected metadata-only directory over the existing
+`tpi_video_channels` table, with public/private visibility and channel/owner
+search filters plus published-video counts. Editing, ownership transfer,
+visibility changes, and video lifecycle mutations remain on creator workflows.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

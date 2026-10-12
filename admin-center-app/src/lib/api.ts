@@ -221,6 +221,18 @@ export type AdminNotification = {
   createdByUsername?: string;
 };
 
+export type AdminChannel = {
+  id: string;
+  slug: string;
+  displayName: string;
+  visibility: "public" | "private" | string;
+  createdAt: string;
+  updatedAt: string;
+  ownerUsername?: string;
+  ownerName?: string;
+  publishedVideoCount?: number;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

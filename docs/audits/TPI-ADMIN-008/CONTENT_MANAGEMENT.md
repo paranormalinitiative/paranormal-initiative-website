@@ -40,3 +40,8 @@ Notifications is a protected metadata-only integration over the existing
 `member_notifications` table. It does not expose notification bodies or action
 URLs and does not add notification mutations; existing delivery, preferences,
 and admin-send behavior remain on their existing protected workflows.
+
+Creator Channels is a protected metadata-only directory over the existing
+`tpi_video_channels` table. It supports visibility and channel/owner search
+filters plus published-video counts, but does not edit channels, transfer
+ownership, change visibility, or mutate video lifecycle state.

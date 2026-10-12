@@ -55,6 +55,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
+    if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
@@ -881,6 +882,46 @@ async function handleAdminNotifications(request, env) {
   `).bind(pageSize, offset).all();
   const total = Number(count?.total || 0);
   return json({ notifications: results || [], status, metadataOnly: true, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminChannels(request, env) {
+  const url = new URL(request.url);
+  const visibility = clean(url.searchParams.get("visibility") || "all").toLowerCase();
+  const search = clean(url.searchParams.get("search") || "").slice(0, 120);
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const offset = (page - 1) * pageSize;
+  const filters = [];
+  const binds = [];
+  if (["public", "private"].includes(visibility)) {
+    filters.push("ch.visibility = ?");
+    binds.push(visibility);
+  }
+  if (search) {
+    filters.push("(ch.display_name LIKE ? OR ch.slug LIKE ? OR owner.username LIKE ?)");
+    const pattern = `%${search}%`;
+    binds.push(pattern, pattern, pattern);
+  }
+  const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
+  const baseFrom = `
+    FROM tpi_video_channels ch
+    LEFT JOIN contributors owner ON owner.id = ch.owner_id`;
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total ${baseFrom} ${where}`).bind(...binds).first();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT ch.id, ch.slug, ch.display_name AS displayName, ch.visibility,
+           ch.created_at AS createdAt, ch.updated_at AS updatedAt,
+           owner.username AS ownerUsername, owner.display_name AS ownerName,
+           COUNT(CASE WHEN tv.status = 'published' THEN 1 END) AS publishedVideoCount
+    ${baseFrom}
+    LEFT JOIN tpi_videos tv ON tv.channel_id = ch.id
+    ${where}
+    GROUP BY ch.id, ch.slug, ch.display_name, ch.visibility, ch.created_at,
+             ch.updated_at, owner.username, owner.display_name
+    ORDER BY ch.updated_at DESC
+    LIMIT ? OFFSET ?
+  `).bind(...binds, pageSize, offset).all();
+  const total = Number(count?.total || 0);
+  return json({ channels: results || [], visibility: ["public", "private"].includes(visibility) ? visibility : "all", search, metadataOnly: true, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
 }
 
 async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {

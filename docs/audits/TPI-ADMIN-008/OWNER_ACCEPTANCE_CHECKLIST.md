@@ -17,6 +17,7 @@
 - [ ] Verify published Education, TPI Videos, and approved Events listings load without exposing draft or mutation controls.
 - [ ] Verify Reports & Moderation lists safe metadata for video and messenger reports across status filters without exposing private evidence or resolution controls.
 - [ ] Verify Notifications lists safe delivery metadata across all/unread/read filters without exposing notification bodies or action URLs.
+- [ ] Verify Creator Channels lists channel/owner metadata across visibility and search filters without exposing mutation controls.
 - [ ] Confirm `/admin-panel` remains unchanged and protected.
 - [ ] Confirm `/live-video` remains Coming Soon.
 - [ ] Review parity limitations before approving any `/admin-panel` promotion.

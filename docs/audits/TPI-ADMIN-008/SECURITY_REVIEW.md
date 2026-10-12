@@ -17,6 +17,11 @@ returns notification title, type, recipient/creator identity, read state, and
 timestamps from `member_notifications`, while omitting notification bodies and
 action URLs. The preview exposes no send, edit, read-state, or delete mutation.
 
+The protected `/api/admin/channels` endpoint returns channel identity,
+visibility, owner identity, timestamps, and published-video counts from the
+existing channel table. It omits channel descriptions/artwork and exposes no
+editing, ownership, visibility, or video lifecycle mutation.
+
 Source checks pass for the TPI theme, route ownership, deleted-content filter,
 and protected-preview boundary. Authenticated role-matrix testing, session
 expiry, and authorized production mutation testing remain BLOCKED without an

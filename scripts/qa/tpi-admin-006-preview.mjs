@@ -49,6 +49,8 @@ const checks = [
   ["reports queue omits private evidence and resolution mutations", source.includes("Metadata only") && source.includes("No resolution controls") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/reports", { method: "POST"') && !source.includes('adminFetch(`/admin/reports/${')],
   ["notifications metadata queue uses protected existing table", source.includes('view === "notifications" && <Notifications') && source.includes('/admin/notifications?status=${status}&pageSize=100') && api.includes('path === "/admin/notifications"') && api.includes('FROM member_notifications')],
   ["notifications queue omits bodies and mutations", source.includes("Notification bodies and action URLs are intentionally excluded") && source.includes("No notification mutations") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/notifications", { method: "POST"') && !source.includes('adminFetch(`/admin/notifications/${')],
+  ["creator channel directory uses protected existing table", source.includes('view === "channels" && <Channels') && source.includes('/admin/channels?') && api.includes('path === "/admin/channels"') && api.includes('FROM tpi_video_channels') && api.includes('publishedVideoCount')],
+  ["channel directory remains read-only", source.includes("No channel mutations") && source.includes("Editing, ownership transfer") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/channels", { method: "POST"') && !source.includes('adminFetch(`/admin/channels/${')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);
