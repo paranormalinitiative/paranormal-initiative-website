@@ -204,6 +204,21 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Quality-gate follow-up — 2026-10-12
+
+- Focused TPI-ADMIN-008 preview suite: PASS — 55/55.
+- Read-only production smoke: PASS — 10/10 after allowing network access;
+  public shell and category/feed boundaries returned 200, `/studio/` returned
+  403, anonymous Messenger and Notifications returned 401, the anonymous
+  admin API returned 403, and `/live-video` remained Coming Soon.
+- Local multi-user API E2E: BLOCKED by the execution environment, not
+  classified as an application pass or fail. The first migration applies
+  successfully when run directly, but the existing Wrangler local server
+  repeatedly fails during esbuild startup with `spawn EBADF`, so no local API
+  assertions were counted.
+- No production records, D1 schema, R2 objects, or unrelated worktree files
+  were changed by the attempted test run.
+
 ## Community route separation release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

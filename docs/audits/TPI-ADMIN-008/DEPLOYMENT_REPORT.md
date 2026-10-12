@@ -385,6 +385,16 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - The sync published the route-separation deployment and regression evidence;
   runtime code remained unchanged.
 
+## Quality-gate follow-up — 2026-10-12
+
+- Focused preview QA remains PASS at 55/55.
+- Read-only production smoke passed 10/10 with network access. Public and
+  protected boundary results are recorded in `REGRESSION_RESULTS.md`.
+- The local multi-user API E2E harness remains environment-blocked by
+  Wrangler/esbuild `spawn EBADF` during local-server startup. This is not
+  claimed as an application pass, and no production data or local fixture
+  records were used for a mutation test.
+
 ## Release documentation sync — Notifications pagination
 
 - Documentation commit: `7a612d7fff02fa29d9377397200b6d29e2c95b96` pushed to
