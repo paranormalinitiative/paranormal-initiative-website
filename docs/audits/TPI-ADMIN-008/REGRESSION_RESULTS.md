@@ -7,13 +7,13 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 | Refine/Vite/TypeScript build | PASS — `npm run build` |
 | Worker JavaScript syntax | PASS — `node --check 'functions/api/[[path]].js'` |
 | Legacy admin JavaScript syntax | PASS — `node --check admin-center.js` |
-| TPI admin/theme/isolation suite | PASS — 36/36 |
+| TPI admin/theme/isolation suite | PASS — 38/38 |
 | Deleted-post active filtering | PASS — source regression |
 | Distinct Community routes | PASS — source regression |
 | Optional dashboard metrics | PASS — source regression |
 | Existing `/admin-panel` replacement | NOT PERFORMED |
 | Authenticated production browser matrix | BLOCKED — no authorized session |
-| Live deployment for this batch | PASS — Cloudflare Version `e4796d24-83bc-49d7-b2a3-758fc0cfa061` |
+| Live deployment for this batch | PASS — Cloudflare Version `9d360f2f-965b-4b46-bf6f-5ba467df29b4` |
 | Anonymous homepage | PASS — HTTP 200 |
 | Anonymous `/admin-panel.html` | PASS — HTTP 403 |
 | Anonymous preview route and hashed asset | PASS — HTTP 403 |
@@ -47,6 +47,19 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 - Public `/live-video`: HTTP 200 with Coming Soon preserved.
 - Authenticated notification data rendering and filter interaction remain
   BLOCKED without an authorized owner/admin browser session.
+
+## Creator Channels release verification
+
+- Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin
+  syntax, `git diff --check`, and focused QA 38/38.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-BM2E7VZ7.js`: HTTP 403.
+- Anonymous `/api/admin/channels`: HTTP 403.
+- Anonymous `/api/admin/notifications` and `/api/admin/reports`: HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Authenticated channel directory data/filter rendering remains BLOCKED
+  without an authorized owner/admin browser session.
 
 Pre-existing unrelated dirty files were preserved and not staged.
 ## Incremental teams batch

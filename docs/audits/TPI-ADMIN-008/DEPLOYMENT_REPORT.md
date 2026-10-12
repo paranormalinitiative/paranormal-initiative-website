@@ -164,3 +164,21 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   preserved; updated parity and security docs returned HTTP 200.
 - No D1 migration, notification mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
+## Creator Channels metadata directory release
+
+- Git commit: `18ceb20` pushed to `origin/main`.
+- Cloudflare Version ID: `9d360f2f-965b-4b46-bf6f-5ba467df29b4`.
+- Preview asset: `/admin-center-preview/assets/index-BM2E7VZ7.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- The protected `/api/admin/channels` route now provides public/private
+  visibility and channel/owner search filters plus published-video counts from
+  `tpi_video_channels`. It remains metadata-only and exposes no channel or
+  video lifecycle mutation.
+- Anonymous boundary checks: preview, exact preview asset,
+  `/api/admin/channels`, `/api/admin/notifications`, `/api/admin/reports`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; the parity matrix returned HTTP 200.
+- No D1 migration, channel mutation, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
