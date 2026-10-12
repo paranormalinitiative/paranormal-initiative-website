@@ -238,6 +238,23 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No Community Feed records, D1 schema, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Activity route separation release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  57/57. Vite emitted only its existing large-chunk advisory.
+- Dashboard Activity now renders a dedicated recent-activity feed from the
+  protected audit query; Audit Logs retains the searchable/paginated view and
+  Moderation History retains its filtered view.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-8ikpZcBw.js` asset, `/api/admin/audit-logs?page=1&limit=25`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; the full read-only production smoke passed 10/10.
+- Authenticated rendering remains pending an authorized owner/admin browser
+  session and is not claimed as passed.
+- No audit records, D1 schema, R2 objects, Creator Studio access, or legacy
+  `/admin-panel` behavior were changed.
+
 ## Notifications pagination release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

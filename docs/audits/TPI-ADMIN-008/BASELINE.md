@@ -52,3 +52,8 @@ The Community navigation now renders Community Overview as its own protected
 resource using authoritative overview metrics, while Posts & Comments retains
 record-level post and metadata-only comment review. The two routes no longer
 render the same full moderation page.
+
+The Dashboard Activity route now renders its own bounded recent-activity feed
+from the protected audit query. Audit Logs remains the searchable and
+paginated accountability resource, rather than being rendered identically as
+the Activity page.

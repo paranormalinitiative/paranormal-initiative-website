@@ -3,6 +3,7 @@
 - [ ] Open the protected preview using an authorized owner/admin session.
 - [ ] Confirm the TPI dark/purple theme and six theme choices at desktop and mobile widths.
 - [ ] Confirm Dashboard and Analytics show real values or explicit Unavailable states; confirm Analytics uses the protected trend contract and source definitions.
+- [ ] Confirm Activity shows the dedicated recent-activity feed and Audit Logs separately provides search and pagination.
 - [ ] Confirm Community Overview renders its authoritative totals separately from Posts & Comments, which owns record-level post/comment review.
 - [ ] Confirm deleted Community posts are absent from Active and visible only through Deleted.
 - [ ] Verify Community Comments loads visible/deleted/all filters and search without exposing an unverified mutation control; keep Article Comment Moderation separate under Education Center.

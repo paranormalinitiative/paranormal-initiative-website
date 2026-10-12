@@ -12,6 +12,9 @@ the former uses the protected overview metrics, and the latter retains the
 record-level moderation surfaces. This separation is source/build verified;
 authenticated rendering still requires owner/admin acceptance.
 
+Dashboard Activity is also a distinct read-only recent-activity resource;
+Audit Logs remains the searchable and paginated accountability surface.
+
 The Paranormal Teams surface is now integrated in the protected preview for
 read-only status browsing and existing protected approval mutations. Its
 runtime approval actions remain unverified until an authorized owner/admin

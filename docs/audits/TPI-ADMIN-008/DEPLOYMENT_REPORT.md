@@ -377,6 +377,26 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   separation is not claimed as runtime owner-verified until an authorized
   browser session is available.
 
+## Activity route separation release
+
+- Git commit: `8cf2582` pushed to `origin/main`.
+- Cloudflare Version ID: `c2cfb27b-560e-4604-ae9e-f0bac2bd91bb`.
+- Preview asset: `/admin-center-preview/assets/index-8ikpZcBw.js`.
+- Dashboard Activity now renders a dedicated recent-activity feed from the
+  existing protected audit query. Audit Logs retains search and pagination;
+  Moderation History retains its filtered view.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  57/57. The existing Vite large-chunk advisory remains informational.
+- Authenticated owner/admin rendering remains pending an authorized browser
+  session and is not claimed as runtime owner-verified.
+- No audit records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+- Anonymous production boundary checks: preview HTML, exact preview asset,
+  `/api/admin/audit-logs?page=1&limit=25`, and `/admin-panel.html` returned
+  HTTP 403; `/live-video` returned HTTP 200 with Coming Soon preserved; the
+  read-only production smoke passed 10/10.
+
 ## Release documentation sync — community route separation
 
 - Documentation commit: `3acc19a` pushed to `origin/main`.

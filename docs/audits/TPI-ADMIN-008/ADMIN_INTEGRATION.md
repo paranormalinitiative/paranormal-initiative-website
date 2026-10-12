@@ -10,6 +10,8 @@ This batch improves the preview's route ownership and dashboard contract:
 - Community Overview now renders the protected overview metrics as a separate
   resource; Posts & Comments owns record-level post status review and the
   metadata-only Community Comments queue.
+- Dashboard Activity now renders a dedicated recent-activity feed from the
+  existing protected audit query; Audit Logs retains search and pagination.
 - Posts & Comments now includes a protected metadata-only Community Comments
   queue backed by the existing `community_comments` table; Article Comment
   Moderation remains a separate Education Center resource.
