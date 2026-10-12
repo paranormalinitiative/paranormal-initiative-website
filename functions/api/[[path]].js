@@ -53,9 +53,11 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/community/posts") return requireAdmin(request, env, user => handleAdminCommunityPosts(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/community\/posts\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminCommunityPostDetail(path, env, user));
     if (request.method === "GET" && path === "/admin/community/comments") return requireAdmin(request, env, user => handleAdminCommunityComments(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/community\/comments\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminCommunityCommentDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
     if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
@@ -877,6 +879,13 @@ async function handleAdminReports(request, env) {
   const allowedStatuses = ["open", "pending", "reviewed", "dismissed", "actioned", "all"];
   const status = allowedStatuses.includes(requestedStatus) ? requestedStatus : "open";
   const search = clean(url.searchParams.get("search") || "").slice(0, 120);
+  const requestedType = clean(url.searchParams.get("type") || "all").toLowerCase();
+  const reportType = ["video", "messenger", "all"].includes(requestedType) ? requestedType : "all";
+  const from = clean(url.searchParams.get("from") || "");
+  const to = clean(url.searchParams.get("to") || "");
+  const requestedSort = clean(url.searchParams.get("sort") || "created").toLowerCase();
+  const sort = requestedSort === "status" ? "status" : "created";
+  const direction = clean(url.searchParams.get("direction") || "desc").toLowerCase() === "asc" ? "ASC" : "DESC";
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
   const offset = (page - 1) * pageSize;
@@ -891,6 +900,9 @@ async function handleAdminReports(request, env) {
     filters.push("(reportType LIKE ? OR contentLabel LIKE ? OR reason LIKE ? OR reporterUsername LIKE ? OR reporterName LIKE ? OR reportedUsername LIKE ? OR reportedName LIKE ?)");
     binds.push(pattern, pattern, pattern, pattern, pattern, pattern, pattern);
   }
+  if (reportType !== "all") { filters.push("reportType = ?"); binds.push(reportType); }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(from)) { filters.push("createdAt >= ?"); binds.push(`${from}T00:00:00`); }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(to)) { filters.push("createdAt <= ?"); binds.push(`${to}T23:59:59`); }
   const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
   const queueSource = `
     FROM (
@@ -925,10 +937,63 @@ async function handleAdminReports(request, env) {
            createdAt, reviewedAt, reviewedBy, evidenceNote
     ${queueSource}
     ${where}
-    ORDER BY createdAt DESC
+    ORDER BY ${sort === "status" ? "status" : "createdAt"} ${direction}
     LIMIT ? OFFSET ?`).bind(...binds, pageSize, offset).all();
   const total = Number(count?.total || 0);
-  return json({ reports: results || [], status, search, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+  return json({ reports: results || [], status, search, filters: { type: reportType, from, to, sort, direction: direction.toLowerCase() }, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminReportDetail(path, env) {
+  const match = path.match(/^\/admin\/reports\/(video|messenger)\/([^/]+)$/);
+  const reportType = match?.[1] || "";
+  const reportId = clean(decodeURIComponent(match?.[2] || ""));
+  if (!reportId) return json({ error: "Report id is required." }, 400);
+  try {
+    let report;
+    if (reportType === "video") {
+      report = await env.TPI_DB.prepare(`
+        SELECT vr.id, 'video' AS reportType, 'video' AS contentType,
+               vr.video_id AS contentId, tv.title AS contentLabel, vr.reason,
+               vr.status, reporter.username AS reporterUsername,
+               reporter.display_name AS reporterName, vr.created_at AS createdAt,
+               vr.reviewed_at AS reviewedAt, reviewer.username AS reviewedBy,
+               'Video report details are limited to supported metadata; private media and credentials are excluded.' AS evidenceNote
+        FROM video_reports vr
+        LEFT JOIN tpi_videos tv ON tv.id = vr.video_id
+        LEFT JOIN contributors reporter ON reporter.id = vr.contributor_id
+        LEFT JOIN contributors reviewer ON reviewer.id = vr.reviewed_by
+        WHERE vr.id = ?
+      `).bind(reportId).first();
+    } else {
+      report = await env.TPI_DB.prepare(`
+        SELECT mr.id, 'messenger' AS reportType, 'private-conversation' AS contentType,
+               NULL AS contentId, NULL AS contentLabel, mr.reason, mr.status,
+               reporter.username AS reporterUsername, reporter.display_name AS reporterName,
+               reported.username AS reportedUsername, reported.display_name AS reportedName,
+               mr.created_at AS createdAt, mr.reviewed_at AS reviewedAt,
+               reviewer.username AS reviewedBy,
+               'Private conversation evidence is report-scoped and not exposed here.' AS evidenceNote
+        FROM messenger_reports mr
+        LEFT JOIN contributors reporter ON reporter.id = mr.reporter_id
+        LEFT JOIN contributors reported ON reported.id = mr.reported_contributor_id
+        LEFT JOIN contributors reviewer ON reviewer.id = mr.reviewed_by
+        WHERE mr.id = ?
+      `).bind(reportId).first();
+    }
+    if (!report) return json({ error: "Report was not found." }, 404);
+    const history = await env.TPI_DB.prepare(`
+      SELECT id, actor_username AS actorUsername, actor_role AS actorRole,
+             action, target_type AS targetType, target_id AS targetId,
+             metadata_json AS metadata, created_at AS createdAt
+      FROM admin_audit_logs
+      WHERE target_type = ? AND target_id = ?
+      ORDER BY created_at DESC
+      LIMIT 50
+    `).bind(`${reportType}_report`, reportId).all().catch(() => ({ results: [] }));
+    return json({ report, history: (history.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })), privateEvidence: false, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ error: "Report details are unavailable." }, 503);
+  }
 }
 
 async function handleAdminReportStatus(path, request, env, actingUser) {
@@ -937,6 +1002,7 @@ async function handleAdminReportStatus(path, request, env, actingUser) {
   const reportId = clean(decodeURIComponent(match?.[2] || ""));
   const data = await readJson(request);
   const status = clean(data.status).toLowerCase();
+  const reason = clean(data.reason).slice(0, 500);
   const allowedStatuses = reportType === "video"
     ? ["open", "reviewed", "dismissed", "actioned"]
     : ["pending", "reviewed", "dismissed", "actioned"];
@@ -950,7 +1016,7 @@ async function handleAdminReportStatus(path, request, env, actingUser) {
   } else {
     await env.TPI_DB.prepare(`UPDATE ${table} SET status = ?, reviewed_at = CURRENT_TIMESTAMP, reviewed_by = ? WHERE id = ?`).bind(status, actingUser.id, reportId).run();
   }
-  await writeAdminAuditLog(env, actingUser, `report.${status}`, `${reportType}_report`, reportId, { previousStatus: current.status, status });
+  await writeAdminAuditLog(env, actingUser, `report.${status}`, `${reportType}_report`, reportId, { previousStatus: current.status, status, reason: reason || undefined });
   return json({ report: { id: reportId, reportType, status } });
 }
 
@@ -1471,6 +1537,13 @@ async function handleAdminCommunityComments(request, env) {
   const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
   const status = ["visible", "deleted", "all"].includes(requestedStatus) ? requestedStatus : "visible";
   const search = clean(url.searchParams.get("search")).slice(0, 100);
+  const author = clean(url.searchParams.get("author")).slice(0, 80);
+  const from = clean(url.searchParams.get("from"));
+  const to = clean(url.searchParams.get("to"));
+  const requestedSort = clean(url.searchParams.get("sort")).toLowerCase();
+  const sort = requestedSort === "updated" ? "updated" : "created";
+  const direction = clean(url.searchParams.get("direction")).toLowerCase() === "asc" ? "ASC" : "DESC";
+  const sortColumn = sort === "updated" ? "cm.updated_at" : "cm.created_at";
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
   const where = [];
@@ -1481,6 +1554,9 @@ async function handleAdminCommunityComments(request, env) {
     const like = `%${search}%`;
     binds.push(like, like, like, like);
   }
+  if (author) { where.push("(c.username LIKE ? OR c.display_name LIKE ?)"); binds.push(`%${author}%`, `%${author}%`); }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(from)) { where.push("cm.created_at >= ?"); binds.push(`${from}T00:00:00`); }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(to)) { where.push("cm.created_at <= ?"); binds.push(`${to}T23:59:59`); }
   const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
   try {
     const count = await env.TPI_DB.prepare(`
@@ -1499,13 +1575,53 @@ async function handleAdminCommunityComments(request, env) {
       LEFT JOIN community_posts cp ON cp.id = cm.post_id
       LEFT JOIN contributors c ON c.id = cm.author_id
       ${whereSql}
-      ORDER BY cm.created_at DESC
+      ORDER BY ${sortColumn} ${direction}
       LIMIT ? OFFSET ?
     `).bind(...binds, pageSize, (page - 1) * pageSize).all();
     const total = Number(count?.total || 0);
-    return json({ comments: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }, metadataOnly: true });
+    return json({ comments: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) }, filters: { status, search, author, from, to, sort, direction: direction.toLowerCase() }, metadataOnly: true });
   } catch (error) {
-    return json({ comments: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, metadataOnly: true, status: "community_comments_unavailable" }, 503);
+    return json({ comments: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, filters: { status, search, author, from, to, sort, direction: direction.toLowerCase() }, metadataOnly: true, status: "community_comments_unavailable" }, 503);
+  }
+}
+
+async function handleAdminCommunityCommentDetail(path, env) {
+  const commentId = clean(decodeURIComponent(path.match(/^\/admin\/community\/comments\/([^/]+)$/)?.[1] || ""));
+  if (!commentId) return json({ error: "Comment id is required." }, 400);
+  try {
+    const comment = await env.TPI_DB.prepare(`
+      SELECT cm.id, cm.post_id AS postId, cm.body, cm.status,
+             cm.created_at AS createdAt, cm.updated_at AS updatedAt,
+             c.username AS authorUsername, c.display_name AS authorDisplayName,
+             c.role AS authorRole, cp.title AS postTitle, cp.body AS postBody,
+             cp.status AS postStatus, cp.author_id AS postAuthorId
+      FROM community_comments cm
+      LEFT JOIN contributors c ON c.id = cm.author_id
+      LEFT JOIN community_posts cp ON cp.id = cm.post_id
+      WHERE cm.id = ?
+    `).bind(commentId).first();
+    if (!comment) return json({ error: "Community comment was not found." }, 404);
+    const reactions = await env.TPI_DB.prepare(`
+      SELECT cr.id, cr.reaction, cr.created_at AS createdAt,
+             c.username AS contributorUsername, c.display_name AS contributorDisplayName
+      FROM community_reactions cr
+      LEFT JOIN contributors c ON c.id = cr.contributor_id
+      WHERE cr.target_type = 'comment' AND cr.target_id = ?
+      ORDER BY cr.created_at DESC
+      LIMIT 100
+    `).bind(commentId).all();
+    return json({
+      comment,
+      reactions: reactions.results || [],
+      replies: [],
+      repliesAvailable: false,
+      repliesNote: "Community comments do not have a parent-comment/reply field in the current TPI schema; replies are not represented as a supported administrative relationship.",
+      reports: [],
+      reportsAvailable: false,
+      reportsNote: "No community-comment report table or supported report contract is present; video and private-message reports remain separate."
+    }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ error: "Community comment details are unavailable." }, 503);
   }
 }
 

@@ -60,6 +60,22 @@ export type AdminCommunityComment = {
   authorDisplayName?: string;
 };
 
+export type AdminCommunityCommentDetail = {
+  comment: AdminCommunityComment & {
+    body: string;
+    updatedAt?: string;
+    authorRole?: string;
+    postBody?: string;
+  };
+  reactions: Array<{ id: string; reaction: string; createdAt?: string; contributorUsername?: string; contributorDisplayName?: string }>;
+  replies: AdminCommunityComment[];
+  repliesAvailable: boolean;
+  repliesNote?: string;
+  reports: AdminReport[];
+  reportsAvailable: boolean;
+  reportsNote?: string;
+};
+
 export type AdminCommunityPostDetail = {
   post: CommunityPost & {
     body: string;
@@ -238,6 +254,13 @@ export type AdminReport = {
   reviewedAt?: string;
   reviewedBy?: string;
   evidenceNote?: string;
+};
+
+export type AdminReportDetail = {
+  report: AdminReport;
+  history: Array<{ id: string; actorUsername: string; actorRole: string; action: string; targetType?: string; targetId?: string; metadata?: Record<string, unknown>; createdAt: string }>;
+  privateEvidence: boolean;
+  metadataOnly: boolean;
 };
 
 export type AdminNotification = {
