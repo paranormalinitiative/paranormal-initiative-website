@@ -147,3 +147,20 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - Documentation sync Cloudflare Version ID: `763f96a9-19ee-472a-bbd0-f20531d615df`.
 - The sync published the updated deployment report and regression results;
   runtime code remained unchanged.
+
+## Notifications metadata queue release
+
+- Git commit: `8f0142c` pushed to `origin/main`.
+- Cloudflare Version ID: `e4796d24-83bc-49d7-b2a3-758fc0cfa061`.
+- Preview asset: `/admin-center-preview/assets/index-DtzLRBXy.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- The protected `/api/admin/notifications` route now provides unread/read/all
+  metadata browsing over `member_notifications`. Notification bodies and action
+  URLs are excluded, and no send/edit/read/delete mutation is exposed.
+- Anonymous boundary checks: preview, exact preview asset,
+  `/api/admin/notifications`, `/api/admin/reports`, and `/admin-panel.html`
+  returned HTTP 403; `/live-video` returned HTTP 200 with Coming Soon
+  preserved; updated parity and security docs returned HTTP 200.
+- No D1 migration, notification mutation, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
