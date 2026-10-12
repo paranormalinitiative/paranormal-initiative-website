@@ -27,3 +27,13 @@ moderation history, TPI theme tokens, and the ADMIN-007A isolation repair.
 Creator, reports, publishing, events, notifications, health, settings, and
 role/restriction workspaces remain partial integrations or capability links.
 Authenticated production browser acceptance is not available in this run.
+
+## Current incremental status
+
+The baseline above records the starting state and is preserved as history. Since
+that capture, the protected preview has added metadata-only Reports &
+Moderation, Notifications, Creator Channels, Roles & Permissions, and Account
+Restrictions views using existing TPI tables/contracts. These additions remain
+read-only where no complete safe mutation contract exists; `/admin-panel`
+promotion, authenticated owner/admin acceptance, and rollback verification
+remain gated.

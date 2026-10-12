@@ -201,6 +201,14 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, account mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Release documentation sync — Account Restrictions
+
+- Documentation commit: `bfb18e9` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID: `4a139d16-f32e-4ca8-9b03-151d30b2050f`.
+- The sync published the corrected current-status baseline, parity summaries,
+  regression results, and Account Restrictions release history; runtime code
+  remained unchanged.
+
 ## Account Restrictions status release
 
 - Git commit: `daceb96` pushed to `origin/main`.

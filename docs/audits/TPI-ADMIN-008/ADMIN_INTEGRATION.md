@@ -8,13 +8,18 @@ This batch improves the preview's route ownership and dashboard contract:
 
 - Community Overview and Posts & Comments now have distinct client routes.
 - Overview exposes real metrics for members, community content, reactions,
-  videos, creator channels, articles, teams, pending reports, and Founding 50
+  videos, creator channels, articles, teams, open reports, and Founding 50
   allocations when their existing tables are available.
 - Optional table/query failures display `Unavailable`, never fabricated zeroes.
-- Existing capability links remain explicit transitional routes.
+- Remaining capability links remain explicit transitional routes where no
+  complete preview-safe contract exists.
 - Reports & Moderation and Notifications now have protected metadata-only
   queues backed by their existing tables; private payloads and unverified
   resolution/delivery mutations remain excluded.
+- Creator Channels, Roles & Permissions, and Account Restrictions now have
+  protected read-only views backed by existing channel/contributor fields;
+  lifecycle, role, suspension, and user-to-user restriction mutations remain
+  on their existing protected workflows.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and
