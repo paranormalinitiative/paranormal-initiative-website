@@ -354,6 +354,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Release documentation sync — Reports metadata search
+
+- Documentation commit: `0784bb3d03235ed28b09cdaf8e87431144bc6daf` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `6a5f4aff-8804-4cc8-ad8c-18d39820e018`.
+- The sync published the Reports metadata-search release evidence and
+  regression results; runtime code remained unchanged.
+
 ## Reports metadata search release
 
 - Git commit: `98864fe7dd47d384d1d236b435c4f88b5cd9adde` pushed to
