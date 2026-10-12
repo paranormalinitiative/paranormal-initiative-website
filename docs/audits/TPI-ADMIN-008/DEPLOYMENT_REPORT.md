@@ -1018,3 +1018,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, production record mutation, R2 operation, credential
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
+
+## Final documentation sync — Member Detail activity pagination
+
+- Documentation commit: `c1bc34f` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `27eedb1c-3e56-4364-bf6a-daaa014bb3cd`.
+- This sync published the Member Detail activity pagination release
+  evidence, parity/readiness updates, regression results, and owner
+  acceptance checklist. Runtime code remained unchanged.
