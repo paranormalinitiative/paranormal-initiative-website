@@ -822,11 +822,22 @@ async function handleAdminReports(request, env) {
   const requestedStatus = clean(url.searchParams.get("status") || "open").toLowerCase();
   const allowedStatuses = ["open", "pending", "reviewed", "dismissed", "actioned", "all"];
   const status = allowedStatuses.includes(requestedStatus) ? requestedStatus : "open";
+  const search = clean(url.searchParams.get("search") || "").slice(0, 120);
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
   const offset = (page - 1) * pageSize;
-  const statusWhere = status === "all" ? "" : status === "open" ? "WHERE status IN ('open', 'pending')" : "WHERE status = ?";
-  const statusBinds = status === "all" || status === "open" ? [] : [status];
+  const filters = [];
+  const binds = [];
+  if (status !== "all") {
+    filters.push(status === "open" ? "status IN ('open', 'pending')" : "status = ?");
+    if (status !== "open") binds.push(status);
+  }
+  if (search) {
+    const pattern = `%${search}%`;
+    filters.push("(reportType LIKE ? OR contentLabel LIKE ? OR reason LIKE ? OR reporterUsername LIKE ? OR reporterName LIKE ? OR reportedUsername LIKE ? OR reportedName LIKE ?)");
+    binds.push(pattern, pattern, pattern, pattern, pattern, pattern, pattern);
+  }
+  const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
   const baseQuery = `
     SELECT id, reportType, contentType, contentId, contentLabel, reason, status,
            reporterUsername, reporterName, reportedUsername, reportedName,
@@ -856,11 +867,11 @@ async function handleAdminReports(request, env) {
       LEFT JOIN contributors reported ON reported.id = mr.reported_contributor_id
       LEFT JOIN contributors reviewer ON reviewer.id = mr.reviewed_by
     ) reportQueue
-    ${statusWhere}
+    ${where}
     ORDER BY createdAt DESC
     LIMIT ? OFFSET ?`;
-  const { results } = await env.TPI_DB.prepare(baseQuery).bind(...statusBinds, pageSize, offset).all();
-  return json({ reports: results || [], status, pagination: { page, pageSize, returned: (results || []).length }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+  const { results } = await env.TPI_DB.prepare(baseQuery).bind(...binds, pageSize, offset).all();
+  return json({ reports: results || [], status, search, pagination: { page, pageSize, returned: (results || []).length }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleAdminNotifications(request, env) {

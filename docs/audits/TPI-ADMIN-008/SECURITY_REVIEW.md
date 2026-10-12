@@ -7,10 +7,11 @@ recordings, stream keys, or Creator Studio storage.
 
 The protected `/api/admin/reports` endpoint is metadata-only. It reads the
 existing video and messenger report tables and returns status, reason, safe
-subject identity, reporter identity, timestamps, and review metadata. It
-deliberately omits report details, private conversation IDs and bodies, and
-stream or recording data. The preview exposes no report-resolution mutation
-until an authoritative safe contract is verified.
+subject identity, reporter identity, timestamps, and review metadata. Its
+optional search is limited to those safe metadata fields. It deliberately
+omits report details, private conversation IDs and bodies, and stream or
+recording data. The preview exposes no report-resolution mutation until an
+authoritative safe contract is verified.
 
 The protected `/api/admin/notifications` endpoint is also metadata-only. It
 returns notification title, type, recipient/creator identity, read state, and
