@@ -300,6 +300,24 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Published Education pagination release — 2026-10-12
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  65/65. Vite emitted only its existing large-chunk advisory.
+- Anonymous production `/api/articles?page=1&pageSize=50`: HTTP 200 with 23
+  returned articles and pagination metadata (`total=23`, `totalPages=1`).
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous exact preview asset `/admin-center-preview/assets/index-DN1BKB9C.js`:
+  HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved; `/studio/`: HTTP
+  403.
+- Authenticated Education rendering and page navigation remain pending an
+  authorized owner/admin browser session; they are not claimed as passed.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Reports pagination release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

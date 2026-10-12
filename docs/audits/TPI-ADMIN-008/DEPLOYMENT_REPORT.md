@@ -511,6 +511,33 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Published Education pagination release
+
+- Git commit: `7c67acceb147692bd72a10d6fea55cbedf7a32de` pushed to
+  `origin/main`.
+- Cloudflare Version ID: `e94208b3-63ab-4d05-bd1c-fe4ad4ee4adb`.
+- Preview asset: `/admin-center-preview/assets/index-DN1BKB9C.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- The Education view now uses the existing `/articles` endpoint with bounded
+  50-record server pagination and matching totals. Unpaged and
+  destination-filtered article callers remain compatible; no mutation path was
+  added.
+- Source/build checks: PASS — TypeScript/Vite build, Worker syntax,
+  legacy-admin syntax, `git diff --check`, and focused QA 65/65.
+- Anonymous production checks: public shell 200; `/live-video` 200 with
+  Coming Soon; `/studio/` 403; `/admin-center-preview/` 403; exact preview
+  asset 403; `/admin-panel.html` 403; `/api/auth/me` 200; and
+  `/api/articles?page=1&pageSize=50` 200 with 23 articles and pagination
+  metadata.
+- Authenticated owner/admin Education rendering and Previous/Next interaction
+  remain pending an authorized browser session. Rollback verification also
+  remains pending; neither is claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Reports pagination release
 
 - Git commit: `a81627a` pushed to `origin/main`.

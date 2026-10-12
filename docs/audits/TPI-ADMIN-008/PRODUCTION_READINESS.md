@@ -96,3 +96,16 @@ message/recording data is exposed.
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.
+
+## Published Education pagination release
+
+The protected preview's Education Center listing now consumes the existing
+public-safe `/articles?page=1&pageSize=50` contract. The Worker applies bounded
+server pagination only when pagination parameters are supplied and returns
+matching totals; existing unpaged and destination-filtered callers remain
+compatible. Draft/editor and article-comment mutations remain on their
+existing protected workflows.
+
+Source/build/QA checks passed, but authenticated owner/admin browser acceptance
+and rollback verification remain pending. This batch does not authorize
+promotion of `/admin-center-preview/` over `/admin-panel`.

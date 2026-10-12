@@ -79,3 +79,8 @@ does not allocate memberships or grant Creator Studio access.
 Published TPI Videos now uses the existing public-safe `hasMore` listing
 contract for bounded Previous/Next browsing. Draft and lifecycle mutations
 remain on the existing contributor workflow.
+
+Published Education now uses the existing public-safe `/articles` listing
+contract with explicit 50-record pages and matching totals. Existing unpaged
+article callers and destination-filtered behavior remain unchanged; draft,
+editor, and comment mutations remain on their existing protected workflows.

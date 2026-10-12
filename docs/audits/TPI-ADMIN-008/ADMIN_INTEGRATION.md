@@ -57,6 +57,10 @@ This batch improves the preview's route ownership and dashboard contract:
 - Published TPI Videos now uses the existing `hasMore`/next-page listing
   contract for bounded read-only browsing; draft and lifecycle mutations
   remain on the contributor workflow.
+- Published Education now uses the existing `/articles` listing contract with
+  explicit 50-record pages and server-backed matching totals; unpaged and
+  destination-filtered callers retain their existing response behavior.
+  Draft, editor, and comment mutations remain outside the preview.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and
