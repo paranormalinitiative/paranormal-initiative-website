@@ -122,3 +122,21 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   listings returned HTTP 200; `/live-video` returned HTTP 200 with Coming
   Soon preserved.
 - No draft, event, video, article, D1, or R2 mutation was performed.
+
+## Reports metadata queue release
+
+- Git commit: `30996baa0742263b6958b12ad696b568418c4783` pushed to `origin/main`.
+- Cloudflare Version ID: `0ceddb56-cc3e-4820-a132-3ee5e01ba94a`.
+- Preview asset: `/admin-center-preview/assets/index-BgDOmMqw.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- The protected `/api/admin/reports` route now provides a metadata-only queue
+  over existing video and messenger reports with status filters. It does not
+  expose report details, private conversation IDs or bodies, recordings, or
+  stream data, and it presents no unverified resolution mutation.
+- Anonymous boundary checks: preview, exact preview asset, `/api/admin/reports`,
+  `/admin-panel.html`, and `/api/admin/overview` returned HTTP 403; public
+  article/video/event listings returned HTTP 200; `/live-video` returned HTTP
+  200 with Coming Soon preserved.
+- No D1 migration, report mutation, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.

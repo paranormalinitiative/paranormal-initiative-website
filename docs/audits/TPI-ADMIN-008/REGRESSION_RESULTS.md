@@ -7,19 +7,33 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 | Refine/Vite/TypeScript build | PASS — `npm run build` |
 | Worker JavaScript syntax | PASS — `node --check 'functions/api/[[path]].js'` |
 | Legacy admin JavaScript syntax | PASS — `node --check admin-center.js` |
-| TPI admin/theme/isolation suite | PASS — 32/32 |
+| TPI admin/theme/isolation suite | PASS — 34/34 |
 | Deleted-post active filtering | PASS — source regression |
 | Distinct Community routes | PASS — source regression |
 | Optional dashboard metrics | PASS — source regression |
 | Existing `/admin-panel` replacement | NOT PERFORMED |
 | Authenticated production browser matrix | BLOCKED — no authorized session |
-| Live deployment for this batch | PASS — Cloudflare Version `fd566f6e-9a15-4183-a450-709c19ed3b1b` |
+| Live deployment for this batch | PASS — Cloudflare Version `0ceddb56-cc3e-4820-a132-3ee5e01ba94a` |
 | Anonymous homepage | PASS — HTTP 200 |
 | Anonymous `/admin-panel.html` | PASS — HTTP 403 |
 | Anonymous preview route and hashed asset | PASS — HTTP 403 |
 | Anonymous admin API | PASS — HTTP 403 |
 | Public `/live-video` | PASS — HTTP 200 with Coming Soon |
 | Published TPI-ADMIN-008 docs | PASS — HTTP 200 |
+
+## Reports queue release verification
+
+- Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin
+  syntax, `git diff --check`, and focused QA 34/34.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-BgDOmMqw.js`: HTTP 403.
+- Anonymous `/api/admin/reports`: HTTP 403.
+- Anonymous `/admin-panel.html` and `/api/admin/overview`: HTTP 403.
+- Public `/api/articles`, `/api/tpi-videos`, and `/api/events`: HTTP 200.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Reports API query and status-filter behavior: source/build verified; live
+  authenticated data rendering and filter interaction remain BLOCKED without an
+  authorized owner/admin browser session.
 
 Pre-existing unrelated dirty files were preserved and not staged.
 ## Incremental teams batch
