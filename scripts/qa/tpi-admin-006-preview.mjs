@@ -10,6 +10,7 @@ const checks = [
   ["protected preview route", worker.includes("/admin-center-preview") && worker.includes("hasAdminAccess")],
   ["real dashboard API", source.includes("/admin/overview?range=")],
   ["member detail excludes private conversations", source.includes("No private messenger conversation data is exposed") && !source.includes("activity.conversations")],
+  ["member activity tabs", ["reactions", "reports", "Moderation History", "Account Management"].every((value) => source.includes(value))],
   ["community moderation API", source.includes("/admin/community/posts") && source.includes("/admin/comments")],
   ["confirmation dialog", source.includes("role=\"dialog\"") && source.includes("ConfirmDialog")],
   ["no production admin replacement in source", !source.includes("admin-panel.html\" replace")],

@@ -45,7 +45,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
     if (request.method === "GET" && path === "/admin/members") return requireAdmin(request, env, user => handleAdminListMembers(request, env, user));
-    if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/activity$/)) return requireAdmin(request, env, user => handleAdminMemberActivity(path, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/activity$/)) return requireAdmin(request, env, user => handleAdminMemberActivity(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/access$/)) return requireAdmin(request, env, user => handleAdminUpdateMemberAccess(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/notifications$/)) return requireAdmin(request, env, user => handleAdminSendMemberNotification(path, request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/members/") && path.endsWith("/block")) return requireAdmin(request, env, user => handleAdminSetMemberActive(path, env, user, false));
@@ -1276,11 +1276,15 @@ async function handleAdminUpdateSettings(request, env, user) {
   return json({ settings: await getSiteSettings(env) });
 }
 
-async function handleAdminMemberActivity(path, env) {
+async function handleAdminMemberActivity(path, request, env) {
   const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/activity$/)?.[1] || ""));
   if (!username) return json({ error: "Member username is required." }, 400);
   const member = await getUserByUsername(env, username);
   if (!member) return json({ error: "Member was not found." }, 404);
+  const activityUrl = new URL(request.url);
+  const activityPage = Math.max(1, Math.min(parseInt(activityUrl.searchParams.get("page") || "1", 10) || 1, 10000));
+  const activityPageSize = Math.max(1, Math.min(parseInt(activityUrl.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  const activityOffset = (activityPage - 1) * activityPageSize;
 
   const { results: postResults } = await env.TPI_DB.prepare(`
     SELECT
@@ -1293,8 +1297,8 @@ async function handleAdminMemberActivity(path, env) {
     LEFT JOIN community_categories cc ON cc.id = cp.category_id
     WHERE cp.author_id = ?
     ORDER BY cp.created_at DESC
-    LIMIT 100
-  `).bind(member.id).all();
+    LIMIT ? OFFSET ?
+  `).bind(member.id, activityPageSize, activityOffset).all();
 
   const { results: commentResultsRows } = await env.TPI_DB.prepare(`
     SELECT
@@ -1305,32 +1309,32 @@ async function handleAdminMemberActivity(path, env) {
     FROM community_comments cm
     WHERE cm.author_id = ?
     ORDER BY cm.created_at DESC
-    LIMIT 100
-  `).bind(member.id).all();
+    LIMIT ? OFFSET ?
+  `).bind(member.id, activityPageSize, activityOffset).all();
 
   const { results: videoResults } = await env.TPI_DB.prepare(`
     SELECT id, slug, title, category, status, published_at AS publishedAt, created_at AS createdAt, thumbnail, video_url AS videoUrl
     FROM tpi_videos
     WHERE created_by = ?
     ORDER BY created_at DESC
-    LIMIT 100
-  `).bind(member.id).all();
+    LIMIT ? OFFSET ?
+  `).bind(member.id, activityPageSize, activityOffset).all();
 
   const { results: articleResults } = await env.TPI_DB.prepare(`
     SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, source, labels, status, created_at AS createdAt, updated_at AS updatedAt
     FROM articles
     WHERE created_by = ? OR lower(author) IN (lower(?), lower(?))
     ORDER BY COALESCE(updated_at, created_at) DESC
-    LIMIT 200
-  `).bind(member.id, member.display_name || "", member.username || "").all();
+    LIMIT ? OFFSET ?
+  `).bind(member.id, member.display_name || "", member.username || "", activityPageSize, activityOffset).all();
 
   const { results: commentResults } = await env.TPI_DB.prepare(`
     SELECT id, page_id AS pageId, parent_id AS parentId, name, author_title AS authorTitle, text, status, created_at AS createdAt
     FROM comments
     WHERE contributor_id = ?
     ORDER BY created_at DESC
-    LIMIT 100
-  `).bind(member.id).all();
+    LIMIT ? OFFSET ?
+  `).bind(member.id, activityPageSize, activityOffset).all();
 
   const { results: videoCommentResults } = await env.TPI_DB.prepare(`
     SELECT vc.id, vc.video_id AS videoId, vc.body, vc.status, vc.created_at AS createdAt, tv.slug AS videoSlug, tv.title AS videoTitle
@@ -1338,8 +1342,73 @@ async function handleAdminMemberActivity(path, env) {
     LEFT JOIN tpi_videos tv ON tv.id = vc.video_id
     WHERE vc.contributor_id = ?
     ORDER BY vc.created_at DESC
-    LIMIT 100
-  `).bind(member.id).all();
+    LIMIT ? OFFSET ?
+  `).bind(member.id, activityPageSize, activityOffset).all();
+
+  const [communityReactionRows, articleReactionRows, videoReactionRows, videoReportRows, messengerReportRows, moderationHistoryRows] = await Promise.all([
+    env.TPI_DB.prepare(`
+      SELECT cr.id, cr.target_type AS targetType, cr.target_id AS targetId,
+             cr.reaction, cr.created_at AS createdAt,
+             CASE WHEN cr.target_type = 'post' THEN cp.title ELSE substr(cc.body, 1, 180) END AS label,
+             CASE WHEN cr.target_type = 'post' THEN '/member-home.html?member=1#post-' || cr.target_id
+                  ELSE '/member-home.html?member=1#post-' || cc.post_id END AS contentHref
+      FROM community_reactions cr
+      LEFT JOIN community_posts cp ON cr.target_type = 'post' AND cp.id = cr.target_id
+      LEFT JOIN community_comments cc ON cr.target_type = 'comment' AND cc.id = cr.target_id
+      WHERE cr.contributor_id = ?
+      ORDER BY cr.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(member.id, activityPageSize, activityOffset).all().catch(() => ({ results: [] })),
+    env.TPI_DB.prepare(`
+      SELECT ar.id, 'article' AS targetType, ar.page_id AS targetId,
+             ar.reaction, ar.created_at AS createdAt, ar.page_id AS label,
+             NULL AS contentHref
+      FROM article_reactions ar
+      WHERE ar.contributor_id = ?
+      ORDER BY ar.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(member.id, activityPageSize, activityOffset).all().catch(() => ({ results: [] })),
+    env.TPI_DB.prepare(`
+      SELECT vr.id, 'video' AS targetType, vr.video_id AS targetId,
+             vr.reaction, vr.created_at AS createdAt, tv.title AS label,
+             '/tpi-video.html?id=' || vr.video_id AS contentHref
+      FROM video_reactions vr
+      LEFT JOIN tpi_videos tv ON tv.id = vr.video_id
+      WHERE vr.contributor_id = ?
+      ORDER BY vr.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(member.id, activityPageSize, activityOffset).all().catch(() => ({ results: [] })),
+    env.TPI_DB.prepare(`
+      SELECT vr.id, 'video' AS reportType, vr.video_id AS contentId,
+             tv.title AS contentLabel, vr.reason, vr.details AS description,
+             vr.status, vr.created_at AS createdAt, vr.reviewed_at AS reviewedAt,
+             'submitted' AS memberRelation
+      FROM video_reports vr
+      LEFT JOIN tpi_videos tv ON tv.id = vr.video_id
+      WHERE vr.contributor_id = ?
+      ORDER BY vr.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(member.id, activityPageSize, activityOffset).all().catch(() => ({ results: [] })),
+    env.TPI_DB.prepare(`
+      SELECT mr.id, 'messenger' AS reportType, 'private-conversation' AS contentType,
+             mr.reason, mr.status, mr.created_at AS createdAt, mr.reviewed_at AS reviewedAt,
+             CASE WHEN mr.reporter_id = ? THEN 'submitted' ELSE 'reported' END AS memberRelation,
+             'message evidence is report-scoped and not included in member activity' AS evidenceNote
+      FROM messenger_reports mr
+      WHERE mr.reporter_id = ? OR mr.reported_contributor_id = ?
+      ORDER BY mr.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(member.id, member.id, member.id, activityPageSize, activityOffset).all().catch(() => ({ results: [] })),
+    env.TPI_DB.prepare(`
+      SELECT id, action, actor_username AS actorUsername, actor_role AS actorRole,
+             target_type AS targetType, target_id AS targetId,
+             metadata_json AS metadata, created_at AS createdAt
+      FROM admin_audit_logs
+      WHERE target_type IN ('member', 'contributor') AND target_id = ?
+      ORDER BY created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(member.username, activityPageSize, activityOffset).all().catch(() => ({ results: [] }))
+  ]);
 
   const communityPostRows = (postResults || []).map(row => ({
     ...row,
@@ -1365,39 +1434,6 @@ async function handleAdminMemberActivity(path, env) {
     .filter(item => item.mediaType === "video")
     .map(item => ({ ...item, postId: post.id, topicTitle: post.topicTitle, createdAt: post.createdAt })));
 
-  const { results: conversationRows } = await env.TPI_DB.prepare(`
-    SELECT c.id, c.title, c.direct, c.created_at AS createdAt, c.updated_at AS updatedAt,
-           cp.hidden_at AS hiddenAt, cp.archived_at AS archivedAt
-    FROM conversations c
-    JOIN conversation_participants cp ON cp.conversation_id = c.id
-    WHERE cp.contributor_id = ?
-    ORDER BY c.updated_at DESC
-    LIMIT 100
-  `).bind(member.id).all();
-  const conversations = [];
-  for (const conversation of conversationRows || []) {
-    const { results: messageRows } = await env.TPI_DB.prepare(`
-      SELECT m.id, m.body, m.attachments, m.created_at AS createdAt, m.edited_at AS editedAt, m.deleted_at AS deletedAt,
-             author.username AS authorUsername, author.display_name AS authorDisplayName
-      FROM messages m
-      LEFT JOIN contributors author ON author.id = m.contributor_id
-      WHERE m.conversation_id = ?
-      ORDER BY m.created_at ASC
-      LIMIT 500
-    `).bind(conversation.id).all();
-    conversations.push({
-      ...conversation,
-      direct: Boolean(conversation.direct),
-      hidden: Boolean(conversation.hiddenAt),
-      members: await getConversationMembers(env, conversation.id),
-      messages: (messageRows || []).map(message => ({
-        ...message,
-        attachments: safeJsonParse(message.attachments),
-        deleted: Boolean(message.deletedAt)
-      }))
-    });
-  }
-
   return json({
     member: privateMemberUser(member),
     posts,
@@ -1407,7 +1443,24 @@ async function handleAdminMemberActivity(path, env) {
     articles: articleResults || [],
     comments: commentResults || [],
     videoComments: videoCommentResults || [],
-    conversations
+    reactionActivity: [...(communityReactionRows.results || []), ...(articleReactionRows.results || []), ...(videoReactionRows.results || [])]
+      .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || ""))),
+    reports: [...(videoReportRows.results || []), ...(messengerReportRows.results || [])]
+      .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || ""))),
+    moderationHistory: (moderationHistoryRows.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })),
+    activityPagination: {
+      page: activityPage,
+      pageSize: activityPageSize,
+      hasMore: {
+        posts: (postResults || []).length === activityPageSize,
+        comments: (commentResultsRows || []).length === activityPageSize,
+        videos: (videoResults || []).length === activityPageSize,
+        articles: (articleResults || []).length === activityPageSize,
+        reactions: (communityReactionRows.results || []).length + (articleReactionRows.results || []).length + (videoReactionRows.results || []).length >= activityPageSize,
+        reports: (videoReportRows.results || []).length + (messengerReportRows.results || []).length >= activityPageSize,
+        moderationHistory: (moderationHistoryRows.results || []).length === activityPageSize
+      }
+    }
   });
 }
 

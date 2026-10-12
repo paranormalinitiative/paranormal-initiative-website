@@ -25,6 +25,10 @@ export type MemberActivity = {
   tpiVideos: Array<{ id: string; title: string; status: string; createdAt: string }>;
   articles: Array<{ id: string; title: string; status: string; createdAt: string }>;
   videoComments?: Array<{ id: string; body?: string; status: string; createdAt: string }>;
+  reactionActivity: Array<{ id: string; targetType: string; targetId: string; reaction: string; label?: string; contentHref?: string; createdAt: string }>;
+  reports: Array<{ id: string; reportType: string; contentType?: string; contentId?: string; contentLabel?: string; reason: string; description?: string; status: string; createdAt: string; reviewedAt?: string; memberRelation?: string; evidenceNote?: string }>;
+  moderationHistory: Array<{ id: string; action: string; actorUsername: string; actorRole: string; targetType?: string; targetId?: string; metadata?: Record<string, unknown>; createdAt: string }>;
+  activityPagination?: { page: number; pageSize: number; hasMore: Record<string, boolean> };
 };
 
 export type CommunityPost = {

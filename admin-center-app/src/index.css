@@ -99,6 +99,8 @@ tbody tr { cursor: pointer; }
 .detail-tabs button { border: 0; border-radius: 5px; padding: 7px 9px; background: transparent; color: var(--muted-foreground); cursor: pointer; text-transform: capitalize; font-size: .8rem; }
 .detail-tabs button:hover, .detail-tabs button.is-active { background: var(--accent); color: var(--accent-foreground); }
 .activity-item small { display: block; color: var(--muted-foreground); font-size: .72rem; margin-top: 4px; }
+.activity-link { color: var(--primary); text-decoration: underline; text-decoration-color: #aac5e1; text-underline-offset: 2px; }
+.activity-page-note { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 8px; border-top: 1px solid var(--border); }
 .notice-panel { border: 1px solid #f0d69b; background: #fff9e8; border-radius: 8px; padding: 12px; color: #795a17; line-height: 1.5; }
 .notice-panel p { margin: 8px 0 0; }
 .moderation-list { display: grid; gap: 0; }

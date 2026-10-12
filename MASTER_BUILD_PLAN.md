@@ -614,6 +614,16 @@ classic comment moderation, audit/moderation history, and explicit capability
 boundaries for resources whose current APIs are incomplete. `/admin-panel`
 remains the production destination and was not replaced. Evidence, limitations,
 and the owner review checklist are in `docs/audits/TPI-ADMIN-006/`.
+
+## TPI-ADMIN-007 — Batch A member activity and content-management continuation — October 12, 2026
+
+The existing protected ADMIN-006 preview was continued in place. Batch A adds
+bounded real reactions, video-report metadata, messenger-report metadata,
+member-targeted moderation history, and corresponding member-detail tabs
+without exposing private conversation/message bodies. The current status is
+documented in `docs/audits/TPI-ADMIN-007/`. Central reports, full moderation
+investigation, platform health, and remaining creator/publishing integrations
+remain future batches; `/admin-panel` remains the production destination.
 ## TPI-UI-001 — Dedicated Administration and Settings workspaces — October 11, 2026
 
 The confirmed duplicate-shell condition on `admin-panel` and `member-dashboard`

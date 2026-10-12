@@ -270,3 +270,12 @@ boundaries while correcting workspace header docking, grid width, card density,
 and responsive reflow. Focused checks pass; authenticated rendered visual
 acceptance remains an explicit owner-review gate. Evidence is in
 [`docs/audits/2026-10-11/tpi-ui/TPI-UI-002/`](../audits/2026-10-11/tpi-ui/TPI-UI-002/).
+
+### TPI-ADMIN-007 — Batch A member activity and content-management continuation
+
+On 2026-10-12, the protected Administration Center preview added bounded,
+real member reactions, report metadata, member-targeted moderation history,
+and safe member-detail activity tabs. Private conversation/message bodies are
+not exposed by the expanded activity response. The full ADMIN-007 directive
+remains incomplete; evidence and limitations are recorded in
+`docs/audits/TPI-ADMIN-007/`.
