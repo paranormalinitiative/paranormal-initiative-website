@@ -511,6 +511,14 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Final documentation sync — Published Education pagination
+
+- Documentation commit: `b4da110` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `501469ea-ac91-4532-84a6-2dd1b2bb273f`.
+- This sync published the TPI-ADMIN-008 Education pagination release record
+  and related parity/readiness updates; runtime code remained unchanged.
+
 ## Published Education pagination release
 
 - Git commit: `7c67acceb147692bd72a10d6fea55cbedf7a32de` pushed to
