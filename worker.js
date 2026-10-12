@@ -148,6 +148,20 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
+    // TPI-ADMIN-005 isolated React preview. Gate the entry document and every
+    // generated asset so an obscure URL is never treated as authorization.
+    if (url.pathname === "/admin-center-preview" || url.pathname.startsWith("/admin-center-preview/")) {
+      const user = await getSessionUser(request, env);
+      const hasAdminAccess = user && (user.role === "owner" || user.role === "admin");
+      if (!hasAdminAccess) {
+        return new Response(ADMIN_GATE_HTML, {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
+        });
+      }
+      return env.ASSETS.fetch(request);
+    }
+
     // Administrative pages contain privileged operational controls. Keep the
     // existing API authorization intact and add the same server-side boundary
     // to the HTML entry points so ordinary members cannot load the admin UI

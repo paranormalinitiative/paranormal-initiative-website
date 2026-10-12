@@ -11,6 +11,8 @@
 .wrangler/**
 node_modules
 node_modules/**
+admin-center-app
+admin-center-app/**
 .DS_Store
 **/.DS_Store
 wrangler.jsonc
