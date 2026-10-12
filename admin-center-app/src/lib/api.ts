@@ -63,5 +63,6 @@ export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T
 
 export function metricValue(metrics: AdminOverview["metrics"], section: string, key: string) {
   const value = metrics?.[section]?.[key];
+  if (metrics?.[section]?.unavailable) return "Unavailable";
   return typeof value === "number" ? value.toLocaleString() : value == null ? "—" : String(value);
 }

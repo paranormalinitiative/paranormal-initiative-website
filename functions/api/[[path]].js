@@ -543,6 +543,10 @@ async function handleAdminOverview(request, env, user) {
     ["communityComments", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'visible' THEN 1 ELSE 0 END), 0) AS visible, COALESCE(SUM(CASE WHEN status = 'hidden' THEN 1 ELSE 0 END), 0) AS hidden FROM community_comments"],
     ["videos", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0) AS published FROM tpi_videos"],
     ["events", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0) AS published FROM events"],
+    ["communityReactions", "SELECT COUNT(*) AS total FROM community_reactions"],
+    ["articles", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0) AS published FROM articles"],
+    ["creatorChannels", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN visibility = 'public' THEN 1 ELSE 0 END), 0) AS public FROM tpi_video_channels"],
+    ["founding50", "SELECT COUNT(*) AS allocated FROM founding50_allocations"],
     ["teams", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END), 0) AS approved FROM paranormal_teams"],
     ["notifications", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN read_at IS NULL THEN 1 ELSE 0 END), 0) AS unread FROM member_notifications"],
     ["scraperRuns", "SELECT COUNT(*) AS total, MAX(started_at) AS lastStartedAt, MAX(CASE WHEN status = 'failed' THEN started_at END) AS lastFailedAt FROM scraper_runs"],
@@ -578,6 +582,7 @@ async function handleAdminAnalytics(request, env, user) {
     members: "Contributor accounts grouped by created_at day.",
     communityPosts: "Community Feed posts grouped by created_at day.",
     communityComments: "Community Feed comments grouped by created_at day.",
+    communityReactions: "Community Feed reactions grouped by created_at day.",
     videos: "TPI Videos records grouped by created_at day.",
     events: "Event records grouped by created_at day."
   }}, 200, { "Cache-Control": "no-store" });
@@ -588,6 +593,7 @@ async function getAdminTrends(env, range) {
     members: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM contributors WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
     communityPosts: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM community_posts WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
     communityComments: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM community_comments WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
+    communityReactions: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM community_reactions WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
     videos: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM tpi_videos WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day",
     events: "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM events WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day"
   };

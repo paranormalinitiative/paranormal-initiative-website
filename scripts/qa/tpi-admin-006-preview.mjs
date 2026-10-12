@@ -13,7 +13,7 @@ const legacySectionBlocks = [...legacy.matchAll(/<section\b[^>]*data-admin-view=
 const sectionWith = (marker) => legacySectionBlocks.filter(([, , block]) => block.includes(marker));
 
 const checks = [
-  ["complete navigation groups", ["Dashboard", "Members", "Community", "Creators", "Content & Publishing", "System"].every((value) => source.includes(`label: \"${value}\"`))],
+  ["complete navigation groups", ["Dashboard", "Members", "Community", "Creators", "Content & Publishing", "System"].every((value) => source.includes(`label: \"${value}\"`)) && source.includes('id: "community-content"')],
   ["server member filters", ["search", "status", "role", "pageSize", "direction"].every((value) => main.includes(value))],
   ["protected preview route", worker.includes("/admin-center-preview") && worker.includes("hasAdminAccess")],
   ["real dashboard API", source.includes("/admin/overview?range=")],
@@ -31,6 +31,8 @@ const checks = [
   ["generic light dashboard palette removed", !["#f6f7fb", "#ffffff", "#315f94", "#13243c", "#1a3150", "#2c5685", "rgba(255,255,255"].some((value) => theme.includes(value))],
   ["deleted community posts excluded by default", api.includes('const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();') && api.includes('const status = ["visible", "hidden", "deleted", "active"].includes(requestedStatus) ? requestedStatus : "active";') && api.includes('cp.status IN (\'visible\', \'hidden\')') && !api.includes('includes(requestedStatus) ? requestedStatus : "all"')],
   ["community UI exposes explicit deleted view", source.includes('useState("active")') && source.includes('value="active">Active (not deleted)') && source.includes('value="deleted">Deleted') && legacy.includes('value="active">Active (not deleted)') && legacyAdminCenter.includes('?.value || "active"')],
+  ["community navigation routes are distinct", source.includes('id: "community"') && source.includes('id: "community-content"') && source.includes('["community", "community-content"].includes(view)')],
+  ["dashboard metrics avoid fabricated unavailable values", source.includes('"Active members"') && source.includes('"Community comments"') && source.includes('"Education articles"') && source.includes('"Founding 50 allocated"') && api.includes('["founding50"') && readFileSync(new URL("../../admin-center-app/src/lib/api.ts", import.meta.url), "utf8").includes('metrics?.[section]?.unavailable')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

@@ -51,6 +51,18 @@ There is now also a live **Contributor Portal** and **Community Feed** direction
 
 Parapost is a visual and interaction reference only. Its member counts, activity totals, and other statistics are not TPI data and must never be used as product truth. TPI's own D1-backed counts are authoritative, including while the community is still small during the pre-campaign buildout.
 
+## TPI-ADMIN-008 handoff — protected integration batch
+
+TPI-ADMIN-008 is the current Administration Center integration directive. The
+Refine/shadcn application remains protected at `/admin-center-preview/`; the
+existing `/admin-panel` remains production and must not be replaced without
+feature parity, authenticated browser acceptance, rollback verification, and
+explicit owner approval. The current batch adds distinct Community navigation
+routes and real optional dashboard metrics while preserving existing APIs and
+authorization. Reports, platform health, role management, broader publishing
+workflows, and authenticated production browser acceptance remain incomplete or
+blocked. Evidence is maintained under `docs/audits/TPI-ADMIN-008/`.
+
 ## Current Status - October 8, 2026
 
 - Search card CSS must use `body.member-mode section.member-discovery-bar` on desktop and mobile to override the shell's `body.member-mode section { padding: 0 }`. The previous single-class selector silently rendered with zero padding. Verified the corrected card in Chrome at desktop, tablet, and phone widths, including the More dropdown's visibility.
