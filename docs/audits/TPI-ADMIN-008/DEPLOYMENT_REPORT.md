@@ -354,6 +354,32 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Notifications pagination release
+
+- Git commit: `30aeaa54495f6f21fbbb545a85fb2da34659341b` pushed to
+  `origin/main`.
+- Cloudflare Version ID: `1d5fbf41-3ff0-4515-9d06-2922f26346a8`.
+- Preview asset: `/admin-center-preview/assets/index-lvN7HLWs.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- The protected Notifications view now uses the existing server-backed count
+  and bounded pagination contract, with page reset when changing all/unread/
+  read filters. Notification bodies, action URLs, and mutations remain
+  excluded.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  54/54. Vite emitted only its existing large-chunk advisory.
+- Anonymous boundary checks after deployment: preview HTML, exact preview
+  asset, `/api/admin/notifications?status=all&page=1&pageSize=50`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; the published parity matrix returned HTTP 200.
+- Authenticated Notifications rendering and pagination interaction remain
+  pending an authorized browser session and are not claimed as owner-verified.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Release documentation sync — Reports metadata search
 
 - Documentation commit: `0784bb3d03235ed28b09cdaf8e87431144bc6daf` pushed to

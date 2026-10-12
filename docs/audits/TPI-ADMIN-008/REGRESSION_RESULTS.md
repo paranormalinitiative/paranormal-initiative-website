@@ -204,6 +204,23 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Notifications pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  54/54. Vite emitted only its existing large-chunk advisory.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-lvN7HLWs.js`: HTTP 403.
+- Anonymous `/api/admin/notifications?status=all&page=1&pageSize=50`: HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Published parity documentation: HTTP 200.
+- Authenticated Notifications rendering and pagination interaction remain
+  pending an authorized owner/admin browser session; they are not claimed as
+  passed.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Reports metadata search release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,
