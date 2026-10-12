@@ -204,6 +204,22 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Reports metadata search release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  53/53. Vite emitted only its existing large-chunk advisory.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-Dx3_mIh3.js`: HTTP 403.
+- Anonymous `/api/admin/reports?status=all&search=video&pageSize=100`: HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Published parity documentation: HTTP 200.
+- Authenticated Reports rendering and search interaction remain pending an
+  authorized owner/admin browser session; they are not claimed as passed.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Audit Logs search repair release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

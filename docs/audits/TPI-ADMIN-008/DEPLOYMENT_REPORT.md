@@ -354,6 +354,32 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Reports metadata search release
+
+- Git commit: `98864fe7dd47d384d1d236b435c4f88b5cd9adde` pushed to
+  `origin/main`.
+- Cloudflare Version ID: `3c78b9f6-6ce2-4783-a1aa-3ad68651f034`.
+- Preview asset: `/admin-center-preview/assets/index-Dx3_mIh3.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- The protected Reports queue now supports parameterized search over safe
+  metadata fields only: report type, subject label, reason, and participant
+  identities. Private evidence and report-resolution mutations remain out of
+  scope.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  53/53. Vite emitted only its existing large-chunk advisory.
+- Anonymous boundary checks after deployment: preview HTML, exact preview
+  asset, `/api/admin/reports?status=all&search=video&pageSize=100`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; the published parity matrix returned HTTP 200.
+- Authenticated Reports rendering and search interaction remain pending an
+  authorized browser session and are not claimed as owner-verified.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Release documentation sync — Audit Logs search repair
 
 - Documentation commit: `9bb242d4b6ab75c0f09d151ae3756afaab3aae27` pushed to
