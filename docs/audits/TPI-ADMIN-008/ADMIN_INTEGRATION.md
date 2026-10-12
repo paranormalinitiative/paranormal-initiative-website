@@ -61,6 +61,10 @@ This batch improves the preview's route ownership and dashboard contract:
   explicit 50-record pages and server-backed matching totals; unpaged and
   destination-filtered callers retain their existing response behavior.
   Draft, editor, and comment mutations remain outside the preview.
+- Article Comment Moderation now requests the existing protected
+  `/admin/comments` contract with explicit 50-record pages and matching
+  totals. Approve/delete actions remain on the existing protected endpoints;
+  no new comment storage or mutation contract was introduced.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

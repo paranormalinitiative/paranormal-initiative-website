@@ -300,6 +300,25 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Article Comment Moderation pagination release — 2026-10-12
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  66/66. Vite emitted only its existing large-chunk advisory.
+- Anonymous production `/api/admin/comments?status=pending&page=1&pageSize=50`:
+  HTTP 403, preserving the protected admin boundary.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous exact preview asset `/admin-center-preview/assets/index-_5X2VsQ0.js`:
+  HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved; `/studio/`: HTTP
+  403; public `/api/articles?page=1&pageSize=50`: HTTP 200.
+- Authenticated Article Comment Moderation rendering, page navigation, and
+  approve/delete acceptance remain pending an authorized owner/admin browser
+  session; they are not claimed as passed.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Published Education pagination release — 2026-10-12
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

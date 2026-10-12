@@ -106,6 +106,12 @@ matching totals; existing unpaged and destination-filtered callers remain
 compatible. Draft/editor and article-comment mutations remain on their
 existing protected workflows.
 
+Article Comment Moderation now consumes the existing protected
+`/admin/comments?status=...&page=1&pageSize=50` contract with matching totals.
+The legacy unpaged response remains compatible, and approve/delete continue to
+use their existing protected endpoints. Authenticated rendering and mutation
+acceptance remain owner/admin browser checks.
+
 Source/build/QA checks passed, but authenticated owner/admin browser acceptance
 and rollback verification remain pending. This batch does not authorize
 promotion of `/admin-center-preview/` over `/admin-panel`.

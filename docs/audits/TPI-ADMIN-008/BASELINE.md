@@ -84,3 +84,8 @@ Published Education now uses the existing public-safe `/articles` listing
 contract with explicit 50-record pages and matching totals. Existing unpaged
 article callers and destination-filtered behavior remain unchanged; draft,
 editor, and comment mutations remain on their existing protected workflows.
+
+Article Comment Moderation now uses the existing protected `/admin/comments`
+contract with explicit 50-record pages and matching totals. The legacy
+unpaged response remains compatible, and approve/delete actions remain on the
+existing protected endpoints.

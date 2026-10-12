@@ -511,6 +511,30 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Article Comment Moderation pagination release
+
+- Git commit: `cf5a298` pushed to `origin/main`.
+- Cloudflare Version ID: `f6fb988f-bda1-48a0-a90c-6445f2406c27`.
+- Preview asset: `/admin-center-preview/assets/index-_5X2VsQ0.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- Article Comment Moderation now uses bounded 50-record server pagination and
+  matching totals through the existing protected `/admin/comments` contract.
+  Existing unpaged callers and approve/delete endpoints remain compatible.
+- Source/build checks: PASS — TypeScript/Vite build, Worker syntax,
+  legacy-admin syntax, `git diff --check`, and focused QA 66/66.
+- Anonymous production checks: public shell 200; `/live-video` 200 with
+  Coming Soon; `/studio/` 403; `/admin-center-preview/` 403; exact preview
+  asset 403; `/admin-panel.html` 403; anonymous article-comments admin API
+  403; and public `/api/articles?page=1&pageSize=50` 200.
+- Authenticated owner/admin comment rendering, page navigation, approve/delete
+  workflow, and rollback verification remain pending an authorized browser
+  session and are not claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Final documentation sync — Published Education pagination
 
 - Documentation commit: `b4da110` pushed to `origin/main`.
