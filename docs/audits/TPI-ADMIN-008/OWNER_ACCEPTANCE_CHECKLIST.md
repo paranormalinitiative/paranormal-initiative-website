@@ -8,6 +8,7 @@
 - [ ] Confirm deleted Community posts are absent from Active and visible only through Deleted.
 - [ ] Verify Community Comments loads visible/deleted/all filters and search without exposing an unverified mutation control; keep Article Comment Moderation separate under Education Center.
 - [ ] Verify Audit Logs and Moderation History search and pagination operate through the protected read-only audit query; confirm Moderation History totals exclude non-moderation records before page navigation.
+- [ ] With disposable test data, verify the Reports status/review update and corresponding audit entry in an authenticated owner/admin browser session; the local contract test does not replace this acceptance step.
 - [ ] Verify member directory, detail tabs, and safe confirmation-gated actions.
 - [ ] Verify selected Member Detail activity uses 25-record server pages and Previous/Next controls without exposing private conversation bodies.
 - [ ] Verify Contributor Management loads the directory and existing invite records through the protected preview.

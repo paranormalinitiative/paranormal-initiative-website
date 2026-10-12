@@ -71,6 +71,13 @@ existing audit-log contract before pagination. Its matching totals and
 Previous/Next controls therefore describe the filtered moderation set rather
 than filtering only the current unscoped page in the browser.
 
+An isolated in-memory SQLite contract test now exercises the protected admin
+gates, metadata-only report response, report status/review audit update,
+invalid-status rejection, and server-scoped moderation query using seeded test
+identities. The full Wrangler local API E2E harness remains environment-
+blocked before assertions by `spawn EBADF` from Wrangler/esbuild; this is not
+treated as a passing full-suite result.
+
 Creator Studio Access now consumes the existing entitlement pagination
 contract with bounded server-backed browsing and matching totals. It remains
 read-only and does not grant, revoke, or expand Creator Studio access.

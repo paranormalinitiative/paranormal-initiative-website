@@ -512,6 +512,20 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Local contract verification follow-up
+
+- The protected admin contract was exercised in an isolated in-memory SQLite
+  test with repository migrations and seeded E2E identities. PASS coverage
+  included anonymous/member authorization gates, metadata-only report output,
+  protected report status/review audit updates, invalid-status rejection, and
+  server-scoped Moderation History filtering before pagination.
+- The full `scripts/e2e/api-e2e.sh` harness remains BLOCKED before assertions:
+  Wrangler local mode failed during startup with `Error: spawn EBADF` from its
+  esbuild service. A direct `wrangler dev --no-bundle` retry produced the same
+  failure. No production resources or records were involved.
+- This local contract evidence supplements, but does not replace, the pending
+  authenticated owner/admin browser acceptance and rollback verification.
+
 ## Contributor Invites pagination release
 
 - Git commit: `64a3e3b` pushed to `origin/main`.

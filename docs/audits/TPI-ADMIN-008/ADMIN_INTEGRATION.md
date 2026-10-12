@@ -89,6 +89,11 @@ This batch improves the preview's route ownership and dashboard contract:
   with explicit 25-record pages and Previous/Next browsing from its existing
   `activityPagination` response. No new endpoint, mutation, or private-data
   surface was introduced.
+- The protected admin contracts for report metadata, report status/review
+  audit updates, and server-scoped Moderation History were exercised against
+  an isolated in-memory SQLite database with seeded test identities. The full
+  Wrangler local API E2E harness still requires an environment fix because its
+  local server fails before assertions with `spawn EBADF`.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

@@ -343,6 +343,22 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, credentials, Creator Studio
   access, or legacy `/admin-panel` behavior were changed.
 
+## Local protected-admin contract verification — 2026-10-12
+
+- PASS — An isolated in-memory SQLite exercise loaded the repository migrations
+  and seeded E2E identities. It verified anonymous/member admin gates,
+  metadata-only Reports responses, protected video-report status updates,
+  `reviewed_at`/`reviewed_by` persistence, invalid-status rejection, and the
+  server-scoped Moderation History query. No repository, production D1, R2, or
+  production record was changed.
+- BLOCKED BEFORE ASSERTIONS — `scripts/e2e/api-e2e.sh 8791` could not start
+  Wrangler local mode because the bundled esbuild service failed with
+  `Error: spawn EBADF`. A direct `wrangler dev --no-bundle` retry failed with
+  the same startup error. This is recorded as an environment limitation, not
+  as a passing full API E2E result.
+- Authenticated browser rendering, role-matrix/session-expiry checks, and
+  rollback verification remain pending an authorized owner/admin session.
+
 ## Contributor Invites pagination release verification
 
 - Source/build checks: PASS — Admin Center TypeScript/Vite production build,

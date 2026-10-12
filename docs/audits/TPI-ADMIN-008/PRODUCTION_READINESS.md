@@ -4,8 +4,9 @@ Status: **NOT READY FOR `/admin-panel` PROMOTION.**
 
 The protected preview is suitable for continued owner review and incremental
 integration. Promotion remains gated because feature parity is incomplete,
-report resolution, platform health/role management are not complete, and
-authenticated browser acceptance and rollback verification have not passed.
+authenticated report-resolution acceptance and platform-health/role-management
+mutation workflows are not complete, and authenticated browser acceptance and
+rollback verification have not passed.
 
 Community Overview and Posts & Comments are now separate rendered resources:
 the former uses the protected overview metrics, and the latter retains the
