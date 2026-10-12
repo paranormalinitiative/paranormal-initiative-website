@@ -511,6 +511,14 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Final documentation sync — Article Comment Moderation pagination
+
+- Documentation commit: `c6cc8ef` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `099fd632-9a54-4ccd-a747-dafd6378e4c6`.
+- This sync published the Article Comment Moderation release record and
+  related parity/readiness updates; runtime code remained unchanged.
+
 ## Article Comment Moderation pagination release
 
 - Git commit: `cf5a298` pushed to `origin/main`.
