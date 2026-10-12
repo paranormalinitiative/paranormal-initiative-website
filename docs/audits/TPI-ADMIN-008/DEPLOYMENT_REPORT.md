@@ -511,6 +511,14 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Final documentation sync — Account Restrictions pagination
+
+- Documentation commit: `0e66b2a` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `61b97611-c165-4750-835f-70a8a332cdbc`.
+- This sync published the Account Restrictions release record and related
+  parity/readiness updates; runtime code remained unchanged.
+
 ## Account Restrictions pagination release
 
 - Git commit: `d2854e1` pushed to `origin/main`.
