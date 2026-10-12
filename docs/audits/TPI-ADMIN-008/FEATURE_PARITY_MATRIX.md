@@ -2,7 +2,7 @@
 
 | Area | Existing production/admin implementation | Protected preview status | Classification |
 | --- | --- | --- | --- |
-| Dashboard and analytics | Legacy admin overview, analytics, D1-backed counts | Real overview metrics and bounded trend cards | PARTIALLY WORKING |
+| Dashboard and analytics | Legacy admin overview, analytics, D1-backed counts | Real overview metrics plus protected `/admin/analytics` trends and source definitions | PARTIALLY WORKING |
 | Member directory/detail | Existing admin member APIs and activity | Search, filters, sorting, pagination, detail/activity | WORKING WITH LIMITATIONS |
 | Roles and permissions | Existing server-side authorization and account controls | Protected read-only role/capability summary from contributor records; role/title/capability mutations remain on Contributor Management | WORKING WITH LIMITATIONS |
 | Account restrictions | Existing member capability flags and user-to-user restriction workflows | Protected read-only capability-restrictions list; no administrative suspension or user-to-user restriction mutation | WORKING WITH LIMITATIONS |

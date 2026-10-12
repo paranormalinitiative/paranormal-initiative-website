@@ -17,6 +17,7 @@ const checks = [
   ["server member filters", ["search", "status", "role", "pageSize", "direction"].every((value) => main.includes(value))],
   ["protected preview route", worker.includes("/admin-center-preview") && worker.includes("hasAdminAccess")],
   ["real dashboard API", source.includes("/admin/overview?range=")],
+  ["analytics uses existing protected analytics API", source.includes("/admin/analytics?range=${encodeURIComponent(range)}") && source.includes("analytics?.definitions") && api.includes('path === "/admin/analytics"')],
   ["member detail excludes private conversations", source.includes("No private messenger conversation data is exposed") && !source.includes("activity.conversations")],
   ["member activity tabs", ["reactions", "reports", "Moderation History", "Account Management"].every((value) => source.includes(value))],
   ["community moderation API", source.includes("/admin/community/posts") && source.includes("/admin/comments")],

@@ -18,6 +18,9 @@ This batch improves the preview's route ownership and dashboard contract:
 - Overview exposes real metrics for members, community content, reactions,
   videos, creator channels, articles, teams, open reports, and Founding 50
   allocations when their existing tables are available.
+- Analytics now queries the existing protected `/admin/analytics` contract
+  directly, rendering its authoritative trend definitions instead of relying
+  on the Overview response as an implicit data source.
 - Optional table/query failures display `Unavailable`, never fabricated zeroes.
 - Remaining capability links remain explicit transitional routes where no
   complete preview-safe contract exists.

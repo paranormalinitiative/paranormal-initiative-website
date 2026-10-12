@@ -16,8 +16,10 @@ an optional table is absent. The preview displays:
   Moderation queue; private evidence and resolution controls remain excluded;
 - Founding 50 allocations without activating awards.
 
-Analytics now includes the available community-reaction trend in addition to
-members, posts, comments, videos, and events.
+Analytics now queries the protected `/admin/analytics` endpoint directly and
+renders its available community-reaction trend in addition to members, posts,
+comments, videos, and events. Each trend card uses the endpoint's source
+definition when available.
 
 ## Verification result
 

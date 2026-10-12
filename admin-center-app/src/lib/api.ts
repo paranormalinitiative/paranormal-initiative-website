@@ -6,6 +6,10 @@ export type AdminOverview = {
   trends: Record<string, Array<{ day: string; count: number }> | { unavailable: boolean }>;
 };
 
+export type AdminAnalytics = Pick<AdminOverview, "range" | "trends"> & {
+  definitions?: Record<string, string>;
+};
+
 export type Member = {
   username: string;
   displayName: string;
