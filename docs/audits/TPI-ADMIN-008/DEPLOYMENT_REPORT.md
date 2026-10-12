@@ -69,3 +69,16 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   and `/api/invites` returned HTTP 403; `/live-video` returned HTTP 200 with
   Coming Soon preserved.
 - No contributor, invite, role, D1, or R2 data was mutated during verification.
+
+## Platform Health release
+
+- Git commit: `8d006bf` pushed to `origin/main`.
+- Cloudflare Version ID: `a4efadbc-5dde-4df3-b57c-0c4343b21392`.
+- Preview asset: `/admin-center-preview/assets/index-DU0WSzoQ.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- Anonymous boundary checks: preview, preview asset, and
+  `/api/admin/scraper-runs` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon preserved.
+- No scraper refresh job, D1 migration, R2 operation, or production data
+  mutation was performed.
