@@ -7,6 +7,8 @@ const worker = readFileSync(new URL("../../worker.js", import.meta.url), "utf8")
 const legacy = readFileSync(new URL("../../admin-panel.html", import.meta.url), "utf8");
 const legacyScript = readFileSync(new URL("../../admin-center.js", import.meta.url), "utf8");
 const memberLogin = readFileSync(new URL("../../member-login.js", import.meta.url), "utf8");
+const api = readFileSync(new URL("../../functions/api/[[path]].js", import.meta.url), "utf8");
+const legacyAdminCenter = readFileSync(new URL("../../admin-center.js", import.meta.url), "utf8");
 const legacySectionBlocks = [...legacy.matchAll(/<section\b[^>]*data-admin-view="([^"]+)"[^>]*>([\s\S]*?)<\/section>/g)];
 const sectionWith = (marker) => legacySectionBlocks.filter(([, , block]) => block.includes(marker));
 
@@ -27,6 +29,8 @@ const checks = [
   ["TPI design tokens and shadcn mappings", ["--tpi-bg-primary", "--tpi-bg-card", "--tpi-accent", "--chart-1", "--sidebar", "color-scheme: dark", "@theme inline"].every((value) => theme.includes(value))],
   ["all six TPI themes are mapped", ["html[data-theme=\"seance\"]", "html[data-theme=\"cosmic\"]", "html[data-theme=\"asylum\"]", "html[data-theme=\"fieldops\"]", "html[data-theme=\"gothicnight\"]"].every((value) => theme.includes(value)) && ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"].every((value) => main.includes(value))],
   ["generic light dashboard palette removed", !["#f6f7fb", "#ffffff", "#315f94", "#13243c", "#1a3150", "#2c5685", "rgba(255,255,255"].some((value) => theme.includes(value))],
+  ["deleted community posts excluded by default", api.includes('const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();') && api.includes('const status = ["visible", "hidden", "deleted", "active"].includes(requestedStatus) ? requestedStatus : "active";') && api.includes('cp.status IN (\'visible\', \'hidden\')') && !api.includes('includes(requestedStatus) ? requestedStatus : "all"')],
+  ["community UI exposes explicit deleted view", source.includes('useState("active")') && source.includes('value="active">Active (not deleted)') && source.includes('value="deleted">Deleted') && legacy.includes('value="active">Active (not deleted)') && legacyAdminCenter.includes('?.value || "active"')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

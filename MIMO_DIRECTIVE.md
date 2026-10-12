@@ -102,6 +102,14 @@ npx wrangler deploy 2>&1 | tail -4
   environment until owner acceptance. Every completion report must include the Git commit, Cloudflare
   deployment ID, live URL, and verification results. Do not claim completion when implementation
   remains only in local files.
+- **PROJECT ISOLATION — MANDATORY:** The Paranormal Initiative is an independent project. All TPI
+  development must remain within the authorized TPI repository and its verified infrastructure. The
+  Cauldron & The Craft is a separate protected project. Do not access, modify, rebuild, deploy,
+  migrate, or integrate The Cauldron & The Craft while working on TPI. Do not combine project
+  documentation, assets, databases, authentication, or application functionality. If a requested
+  change crosses project boundaries, stop and obtain explicit owner approval. The TPI website is the
+  visual source of truth for all TPI interfaces. All completed and verified TPI development must be
+  committed, pushed, deployed, and live-verified.
 - **TPI Studio (`studio/`)** is a built bundle, not source — DO NOT modify it. It's gated: non-leadership
   gets a Coming Soon page (worker.js STUDIO_GATE_HTML) and a disabled nav item.
 - **Specificity traps in style.css:** `.editor-access-card` is `width:min(440px,100%)` (wide cards need

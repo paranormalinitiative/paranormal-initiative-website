@@ -87,7 +87,7 @@
 
   async function loadCommunity() {
     const search = get("[data-admin-community-search]")?.value || "";
-    const status = get("[data-admin-community-status]")?.value || "all";
+    const status = get("[data-admin-community-status]")?.value || "active";
     const data = await fetchJson(`/api/admin/community/posts?status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}&pageSize=50`);
     const host = get("[data-admin-community-table]");
     if (host) host.innerHTML = (data.posts || []).length ? data.posts.map((post) => `<tr><td><strong>${esc(post.title || "Untitled post")}</strong><small>${esc(post.preview || "")}</small></td><td>${esc(post.authorDisplayName || post.authorUsername || "Unknown")}</td><td><span class="admin-pill admin-pill-${post.status === "visible" ? "success" : "warning"}">${esc(post.status)}</span></td><td>${formatCount(post.commentCount)} comments · ${formatCount(post.reactionCount)} reactions</td><td>${esc(post.createdAt || "")}</td></tr>`).join("") : '<tr><td colspan="5">No Community Feed posts matched.</td></tr>';

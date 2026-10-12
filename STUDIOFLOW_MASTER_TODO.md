@@ -17,6 +17,13 @@ production smoke evidence remain tracked in
 open. No production `/admin-panel` replacement, D1, R2, or Creator Studio
 access change was made.
 
+**TPI-PROJECT-001 — Oct 13, 2026 (session: mimo):** confirmed strict TPI-only
+project boundaries and corrected Community Overview's deleted-post handling.
+The normal admin list now defaults to active (`visible` + `hidden`) records;
+deleted records remain preserved and require an explicit Deleted filter. No
+other project was accessed, and final release evidence is tracked under
+`docs/audits/TPI-PROJECT-001/`.
+
 ADMIN-007B release evidence: source commit `5521f55`; Cloudflare Worker
 Version `29c88d39-25be-42dd-8ac5-2753d3b11811`. Anonymous preview/asset and
 legacy admin routes returned 403; `/live-video` remained Coming Soon and `/`

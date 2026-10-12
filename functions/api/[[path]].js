@@ -993,12 +993,16 @@ async function handleAdminCommunityPosts(request, env) {
   const username = clean(url.searchParams.get("username"));
   if (!username) {
     const search = clean(url.searchParams.get("search")).slice(0, 100);
-    const status = ["visible", "hidden", "deleted", "all"].includes(clean(url.searchParams.get("status")).toLowerCase()) ? clean(url.searchParams.get("status")).toLowerCase() : "all";
+    const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
+    // Active is the safe default for administrative lists: deleted records
+    // remain in D1 and are available only through an explicit deleted view.
+    const status = ["visible", "hidden", "deleted", "active"].includes(requestedStatus) ? requestedStatus : "active";
     const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
     const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
     const where = [];
     const binds = [];
-    if (status !== "all") { where.push("cp.status = ?"); binds.push(status); }
+    if (status === "active") where.push("cp.status IN ('visible', 'hidden')");
+    else { where.push("cp.status = ?"); binds.push(status); }
     if (search) { where.push("(cp.title LIKE ? OR cp.body LIKE ? OR c.username LIKE ? OR c.display_name LIKE ?)"); const like = `%${search}%`; binds.push(like, like, like, like); }
     const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
     try {
