@@ -45,6 +45,8 @@ const checks = [
   ["settings mutation is not invoked by preview", source.includes('No mutation endpoint is invoked from this preview') && !source.includes('adminFetch("/admin/settings", { method: "POST"')],
   ["published content views use existing listing contracts", source.includes('view === "education" && <PublishedEducation') && source.includes('"/articles"') && source.includes('view === "videos" && <PublishedVideos') && source.includes('"/tpi-videos?page=1&pageSize=48&source=creator"') && source.includes('view === "events" && <ApprovedEvents') && source.includes('"/events?limit=100"')],
   ["content mutation boundaries remain explicit", source.includes('Draft/editor management remains on its existing contributor workflow') && source.includes('Draft and lifecycle mutations remain on the existing contributor workflow') && source.includes('no mutation is exposed here')],
+  ["reports metadata queue uses protected existing report tables", source.includes('view === "reports" && <Reports') && source.includes('/admin/reports?status=${status}&pageSize=100') && api.includes('path === "/admin/reports"') && api.includes('FROM video_reports') && api.includes('FROM messenger_reports')],
+  ["reports queue omits private evidence and resolution mutations", source.includes("Metadata only") && source.includes("No resolution controls") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/reports", { method: "POST"') && !source.includes('adminFetch(`/admin/reports/${')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

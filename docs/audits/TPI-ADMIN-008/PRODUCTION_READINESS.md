@@ -4,7 +4,7 @@ Status: **NOT READY FOR `/admin-panel` PROMOTION.**
 
 The protected preview is suitable for continued owner review and incremental
 integration. Promotion remains gated because feature parity is incomplete,
-unified reports/platform health/role management are not complete, and
+report resolution, platform health/role management are not complete, and
 authenticated browser acceptance and rollback verification have not passed.
 
 The Paranormal Teams surface is now integrated in the protected preview for
@@ -33,6 +33,11 @@ legacy settings surface until owner acceptance verifies it.
 Published Education, TPI Videos, and approved Events listings are integrated
 read-only. Draft/editor lifecycle, channel-directory, and event mutation
 workflows remain explicitly limited and require the existing protected systems.
+
+Reports & Moderation now has a protected metadata-only queue for existing video
+and messenger reports. Status browsing is available, while private evidence and
+review-resolution actions remain unavailable pending a verified mutation
+contract.
 
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,

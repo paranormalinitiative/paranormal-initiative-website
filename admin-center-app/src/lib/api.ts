@@ -192,6 +192,24 @@ export type AdminEventRecord = {
   status?: string;
 };
 
+export type AdminReport = {
+  id: string;
+  reportType: "video" | "messenger" | string;
+  contentType?: string;
+  contentId?: string;
+  contentLabel?: string;
+  reason: string;
+  status: string;
+  reporterUsername?: string;
+  reporterName?: string;
+  reportedUsername?: string;
+  reportedName?: string;
+  createdAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  evidenceNote?: string;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

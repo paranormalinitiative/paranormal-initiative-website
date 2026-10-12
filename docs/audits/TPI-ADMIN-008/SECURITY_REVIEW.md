@@ -5,6 +5,13 @@ Worker owner/admin check. Admin API handlers continue to enforce server-side
 authorization. The preview does not expose private conversation bodies,
 recordings, stream keys, or Creator Studio storage.
 
+The protected `/api/admin/reports` endpoint is metadata-only. It reads the
+existing video and messenger report tables and returns status, reason, safe
+subject identity, reporter identity, timestamps, and review metadata. It
+deliberately omits report details, private conversation IDs and bodies, and
+stream or recording data. The preview exposes no report-resolution mutation
+until an authoritative safe contract is verified.
+
 Source checks pass for the TPI theme, route ownership, deleted-content filter,
 and protected-preview boundary. Authenticated role-matrix testing, session
 expiry, and authorized production mutation testing remain BLOCKED without an

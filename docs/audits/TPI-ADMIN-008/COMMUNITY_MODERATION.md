@@ -7,5 +7,10 @@ deletion was introduced.
 
 Classic article comments remain under Education Center / Article Comment
 Moderation. Community Feed content is not conflated with article comments.
-Unified reports, replies/reactions detail management, investigation status, and
-resolution actions require additional verified API contracts.
+
+Reports & Moderation now has a protected metadata-only queue backed by the
+existing `video_reports` and `messenger_reports` tables. It supports open,
+pending, reviewed, dismissed, actioned, and all-status browsing without
+exposing private message bodies, conversation IDs, report details, recordings,
+or stream data. No unified review-resolution mutation is presented because no
+verified safe mutation contract exists yet.

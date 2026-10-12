@@ -53,6 +53,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/community/posts") return requireAdmin(request, env, user => handleAdminCommunityPosts(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
+    if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
@@ -551,6 +552,8 @@ async function handleAdminOverview(request, env, user) {
     ["notifications", "SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN read_at IS NULL THEN 1 ELSE 0 END), 0) AS unread FROM member_notifications"],
     ["scraperRuns", "SELECT COUNT(*) AS total, MAX(started_at) AS lastStartedAt, MAX(CASE WHEN status = 'failed' THEN started_at END) AS lastFailedAt FROM scraper_runs"],
     ["creatorAccounts", "SELECT COUNT(*) AS total FROM contributors WHERE role IN ('creator', 'contributor')"],
+    ["videoReports", "SELECT COUNT(*) AS total FROM video_reports WHERE status IN ('open', 'pending')"],
+    ["messengerReports", "SELECT COUNT(*) AS total FROM messenger_reports WHERE status IN ('open', 'pending')"],
     ["pendingReports", "SELECT COUNT(*) AS total FROM messenger_reports WHERE status = 'pending'"],
     ["pendingEvents", "SELECT COUNT(*) AS total FROM events WHERE status = 'pending'"]
   ];
@@ -806,6 +809,52 @@ async function handleAdminAuditLogs(request, env) {
   } catch (error) {
     return json({ logs: [], limit, offset, status: "migration_pending" }, 200, { "Cache-Control": "no-store" });
   }
+}
+
+async function handleAdminReports(request, env) {
+  const url = new URL(request.url);
+  const requestedStatus = clean(url.searchParams.get("status") || "open").toLowerCase();
+  const allowedStatuses = ["open", "pending", "reviewed", "dismissed", "actioned", "all"];
+  const status = allowedStatuses.includes(requestedStatus) ? requestedStatus : "open";
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const offset = (page - 1) * pageSize;
+  const statusWhere = status === "all" ? "" : status === "open" ? "WHERE status IN ('open', 'pending')" : "WHERE status = ?";
+  const statusBinds = status === "all" || status === "open" ? [] : [status];
+  const baseQuery = `
+    SELECT id, reportType, contentType, contentId, contentLabel, reason, status,
+           reporterUsername, reporterName, reportedUsername, reportedName,
+           createdAt, reviewedAt, reviewedBy, evidenceNote
+    FROM (
+      SELECT vr.id, 'video' AS reportType, 'video' AS contentType,
+             vr.video_id AS contentId, tv.title AS contentLabel, vr.reason,
+             vr.status, reporter.username AS reporterUsername,
+             reporter.display_name AS reporterName, NULL AS reportedUsername,
+             NULL AS reportedName, vr.created_at AS createdAt,
+             vr.reviewed_at AS reviewedAt, reviewer.username AS reviewedBy,
+             'Video report metadata only; report details are not exposed here.' AS evidenceNote
+      FROM video_reports vr
+      LEFT JOIN tpi_videos tv ON tv.id = vr.video_id
+      LEFT JOIN contributors reporter ON reporter.id = vr.contributor_id
+      LEFT JOIN contributors reviewer ON reviewer.id = vr.reviewed_by
+      UNION ALL
+      SELECT mr.id, 'messenger' AS reportType, 'private-conversation' AS contentType,
+             NULL AS contentId, NULL AS contentLabel, mr.reason, mr.status,
+             reporter.username AS reporterUsername, reporter.display_name AS reporterName,
+             reported.username AS reportedUsername, reported.display_name AS reportedName,
+             mr.created_at AS createdAt, mr.reviewed_at AS reviewedAt,
+             reviewer.username AS reviewedBy,
+             'Private conversation evidence is report-scoped and not exposed here.' AS evidenceNote
+      FROM messenger_reports mr
+      LEFT JOIN contributors reporter ON reporter.id = mr.reporter_id
+      LEFT JOIN contributors reported ON reported.id = mr.reported_contributor_id
+      LEFT JOIN contributors reviewer ON reviewer.id = mr.reviewed_by
+    ) reportQueue
+    ${statusWhere}
+    ORDER BY createdAt DESC
+    LIMIT ? OFFSET ?`;
+  const { results } = await env.TPI_DB.prepare(baseQuery).bind(...statusBinds, pageSize, offset).all();
+  return json({ reports: results || [], status, pagination: { page, pageSize, returned: (results || []).length }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
 }
 
 async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {

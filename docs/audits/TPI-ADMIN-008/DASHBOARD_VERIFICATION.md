@@ -12,7 +12,8 @@ an optional table is absent. The preview displays:
 - creator channels;
 - published Education Center articles;
 - approved Paranormal Teams;
-- pending messenger reports, explicitly labelled as non-unified;
+- open video and messenger report metadata through the protected Reports &
+  Moderation queue; private evidence and resolution controls remain excluded;
 - Founding 50 allocations without activating awards.
 
 Analytics now includes the available community-reaction trend in addition to

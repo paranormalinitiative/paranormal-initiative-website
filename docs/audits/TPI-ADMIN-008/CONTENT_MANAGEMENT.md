@@ -30,3 +30,8 @@ was added for those operations.
 No private StudioFlow recordings are exposed, no recordings are automatically
 published, and no team, article, video, contributor, or event records were
 mutated in this batch.
+
+Reports & Moderation is a protected metadata-only integration over the existing
+video and messenger report tables. It does not expose report details, private
+conversation identifiers, message bodies, recordings, or stream data, and it
+does not invent review-resolution controls.

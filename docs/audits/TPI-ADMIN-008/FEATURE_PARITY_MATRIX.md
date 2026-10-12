@@ -7,7 +7,7 @@
 | Roles and permissions | Existing server-side authorization and account controls | Navigation boundary; no role editor | NOT IMPLEMENTED IN PREVIEW |
 | Community posts | Existing Community Feed admin API | Active/visible/hidden/deleted filtering and status updates | WORKING |
 | Community comments/reactions | Existing APIs and member activity | Classic comments are separate; aggregate reaction metric added | PARTIALLY WORKING |
-| Reports and moderation | Existing report metadata/contracts | No unified report queue contract | PARTIALLY WORKING |
+| Reports and moderation | Existing video and messenger report metadata/contracts | Protected unified metadata-only queue with status filters; no private evidence or resolution mutations | WORKING WITH LIMITATIONS |
 | Moderation history/audit | Existing audit log API | Audit and filtered moderation-history views | WORKING WITH LIMITATIONS |
 | Contributor management | Legacy invite/access controls | Protected directory, invite listing/generation, invite-type/access-level controls, and role/title updates through existing APIs | WORKING WITH LIMITATIONS |
 | Paranormal Teams | Existing directory/approval APIs | Protected status filters, searchable directory, and pending approve/reject controls using existing server contracts | WORKING WITH LIMITATIONS |
