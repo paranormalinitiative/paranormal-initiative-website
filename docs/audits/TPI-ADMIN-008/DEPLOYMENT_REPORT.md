@@ -256,3 +256,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   preserved; member-management documentation returned HTTP 200.
 - No D1 migration, account mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
+## Release documentation sync — Security boundary
+
+- Documentation commit: `85dc0862c78dd5cf9df1eec4edd25388ce454ac2` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `c629157c-399d-439b-8f1a-8224dc0e40d2`.
+- The sync published the Security boundary release evidence and final
+  regression results; runtime code remained unchanged.
