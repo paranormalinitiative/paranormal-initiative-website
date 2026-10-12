@@ -54,6 +54,9 @@ This batch improves the preview's route ownership and dashboard contract:
 - Creator Directory now uses bounded server-side search and pagination from
   the existing partnership contract; membership allocation and Creator Studio
   access grants remain excluded.
+- Published TPI Videos now uses the existing `hasMore`/next-page listing
+  contract for bounded read-only browsing; draft and lifecycle mutations
+  remain on the contributor workflow.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

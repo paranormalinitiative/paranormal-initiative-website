@@ -75,3 +75,7 @@ on the protected workflow, while award activation remains gated.
 Creator Directory now uses the existing partnership contract with bounded
 server-side search, pagination, and matching totals. It remains read-only and
 does not allocate memberships or grant Creator Studio access.
+
+Published TPI Videos now uses the existing public-safe `hasMore` listing
+contract for bounded Previous/Next browsing. Draft and lifecycle mutations
+remain on the existing contributor workflow.

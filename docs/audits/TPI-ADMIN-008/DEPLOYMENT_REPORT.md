@@ -273,6 +273,28 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No membership records, D1 migration, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Published TPI Videos pagination release
+
+- Git commit: `645d77e` pushed to `origin/main`.
+- Cloudflare Version ID: `151d269f-6856-4bb4-8846-a49c47d8d80d`.
+- Preview asset: `/admin-center-preview/assets/index-BRNsmqmB.js`.
+- The protected preview's published TPI Videos view now uses the existing
+  public-safe `hasMore`/next-page contract with bounded 48-row requests and
+  Previous/Next controls. Draft and lifecycle mutations remain excluded.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA 64/64.
+  The existing Vite large-chunk advisory remains informational.
+- Authenticated preview rendering and pagination interaction remain pending an
+  authorized owner/admin browser session and are not claimed as
+  owner-verified.
+- Anonymous production boundary checks: preview HTML and exact preview asset
+  returned HTTP 403; public `/api/tpi-videos?page=1&pageSize=48&source=creator`
+  returned HTTP 200; `/admin-panel.html` returned HTTP 403; `/live-video`
+  returned HTTP 200 with Coming Soon preserved; the read-only production smoke
+  passed 10/10.
+- No draft/video records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
 ## Release documentation sync — Creator Directory
 
 - Documentation commit: `9d89ca9` pushed to `origin/main`.

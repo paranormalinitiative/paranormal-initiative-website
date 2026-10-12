@@ -43,8 +43,10 @@ disabled controls. The existing mutation workflow remains preserved in the
 legacy settings surface until owner acceptance verifies it.
 
 Published Education, TPI Videos, and approved Events listings are integrated
-read-only. Draft/editor lifecycle, channel-directory, and event mutation
-workflows remain explicitly limited and require the existing protected systems.
+read-only. TPI Videos now uses the existing `hasMore`/next-page contract for
+bounded browsing. Draft/editor lifecycle, channel-directory, and event
+mutation workflows remain explicitly limited and require the existing
+protected systems.
 
 Reports & Moderation now has a protected metadata-only queue for existing video
 and messenger reports. Status browsing is available, while private evidence and

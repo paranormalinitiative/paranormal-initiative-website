@@ -138,6 +138,25 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 - No membership records, D1 schema, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Published TPI Videos pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  64/64. Vite emitted only its existing large-chunk advisory.
+- The protected preview's published TPI Videos view now uses the existing
+  public-safe `hasMore`/next-page contract with bounded 48-row requests and
+  Previous/Next controls. Draft and lifecycle mutations remain excluded.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-BRNsmqmB.js` asset, and `/admin-panel.html` returned HTTP 403;
+  public `/api/tpi-videos?page=1&pageSize=48&source=creator` returned HTTP 200,
+  `/live-video` returned HTTP 200, and the full read-only production smoke
+  passed 10/10.
+- Authenticated preview rendering, pagination interaction, and rollback
+  verification remain pending an authorized owner/admin browser session and
+  are not claimed as passed.
+- No draft/video records, D1 schema, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Roles & Permissions release verification
 
 - Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin

@@ -17,7 +17,7 @@
 - [ ] Verify Creator Directory server-side search, matching totals, and Previous/Next pagination; verify Founding 50 status-filtered matching totals and Previous/Next pagination, existing approve/reject workflow, and closed award gate; verify Creator Studio Access pagination without grant/revoke controls.
 - [ ] Confirm Founding 50 award activation and Creator Studio access escalation remain closed.
 - [ ] Verify System Settings values load and remain visibly disabled in the preview; verify mutations only through the existing protected workflow.
-- [ ] Verify published Education, TPI Videos, and approved Events listings load without exposing draft or mutation controls.
+- [ ] Verify published Education, TPI Videos, and approved Events listings load without exposing draft or mutation controls; verify TPI Videos Previous/Next browsing follows the existing public-safe listing contract.
 - [ ] Verify Events can browse approved/pending/rejected/cancelled/all records with search, matching totals, and Previous/Next pagination without exposing event mutations; use the existing protected event manager for any owner-approved mutation test.
 - [ ] Verify Reports & Moderation lists safe metadata for video and messenger reports across status filters, safe metadata search, and Previous/Next pagination without exposing private evidence or resolution controls.
 - [ ] Verify Notifications lists safe delivery metadata across all/unread/read filters with previous/next pagination without exposing notification bodies or action URLs.
