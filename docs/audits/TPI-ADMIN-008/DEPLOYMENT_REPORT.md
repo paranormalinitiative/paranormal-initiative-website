@@ -200,3 +200,21 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   Coming Soon preserved; member-management documentation returned HTTP 200.
 - No D1 migration, account mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
+## Account Restrictions status release
+
+- Git commit: `daceb96` pushed to `origin/main`.
+- Cloudflare Version ID: `c3acc232-061c-4155-ac11-c8c2a68603ac`.
+- Preview asset: `/admin-center-preview/assets/index-BDgFA2FY.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- The protected `/api/admin/restrictions` route now lists only inactive or
+  capability-restricted contributor accounts. It excludes user-to-user
+  `member_restrictions` rows and exposes no suspension or restriction mutation.
+- Final anonymous boundary checks: preview, exact preview asset,
+  `/api/admin/restrictions`, `/api/admin/roles`, `/api/admin/channels`,
+  `/api/admin/notifications`, `/api/admin/reports`, and `/admin-panel.html`
+  returned HTTP 403; `/live-video` returned HTTP 200 with Coming Soon
+  preserved; member-management documentation returned HTTP 200.
+- No D1 migration, account mutation, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.

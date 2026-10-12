@@ -7,13 +7,13 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 | Refine/Vite/TypeScript build | PASS — `npm run build` |
 | Worker JavaScript syntax | PASS — `node --check 'functions/api/[[path]].js'` |
 | Legacy admin JavaScript syntax | PASS — `node --check admin-center.js` |
-| TPI admin/theme/isolation suite | PASS — 40/40 |
+| TPI admin/theme/isolation suite | PASS — 42/42 |
 | Deleted-post active filtering | PASS — source regression |
 | Distinct Community routes | PASS — source regression |
 | Optional dashboard metrics | PASS — source regression |
 | Existing `/admin-panel` replacement | NOT PERFORMED |
 | Authenticated production browser matrix | BLOCKED — no authorized session |
-| Live deployment for this batch | PASS — Cloudflare Version `b1e22ab4-779c-45e7-8d6e-4826bfedb821` |
+| Live deployment for this batch | PASS — Cloudflare Version `c3acc232-061c-4155-ac11-c8c2a68603ac` |
 | Anonymous homepage | PASS — HTTP 200 |
 | Anonymous `/admin-panel.html` | PASS — HTTP 403 |
 | Anonymous preview route and hashed asset | PASS — HTTP 403 |
@@ -74,6 +74,21 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 - Public `/live-video`: HTTP 200 with Coming Soon preserved.
 - Authenticated role-summary rendering remains BLOCKED without an authorized
   owner/admin browser session.
+
+## Account Restrictions release verification
+
+- Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin
+  syntax, `git diff --check`, and focused QA 42/42.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-BDgFA2FY.js`: HTTP 403.
+- Anonymous `/api/admin/restrictions`: HTTP 403 with the existing server-side
+  owner/admin authorization response.
+- Anonymous `/api/admin/roles`, `/api/admin/channels`,
+  `/api/admin/notifications`, and `/api/admin/reports`: HTTP 403.
+- Anonymous `/admin-panel.html`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Authenticated restriction-list rendering remains BLOCKED without an
+  authorized owner/admin browser session.
 
 Pre-existing unrelated dirty files were preserved and not staged.
 ## Incremental teams batch
