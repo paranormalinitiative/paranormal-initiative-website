@@ -251,6 +251,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   credential change, `/admin-panel` replacement, or Creator Studio access
   expansion was performed.
 
+## Release documentation sync — Founding 50 pagination
+
+- Documentation commit: `e794870` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `b9c22813-fe9f-4c2d-96e4-8a9453eb2679`.
+- The sync published the Founding 50 pagination release evidence and updated
+  parity, readiness, regression, baseline, and owner-acceptance documentation;
+  runtime code remained unchanged.
+
 ## Release documentation sync — Creator Studio Access pagination
 
 - Documentation commit: `2751c64` pushed to `origin/main`.
