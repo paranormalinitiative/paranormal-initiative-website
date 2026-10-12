@@ -110,6 +110,24 @@ Pre-existing unrelated dirty files were preserved and not staged.
   they are not claimed as passed.
 - No production records, D1 schema, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
+
+## Community Comments queue release verification
+
+- Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin
+  syntax, `git diff --check`, and focused QA 46/46.
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous `/admin-center-preview/assets/index-Dbr2-v9H.js`: HTTP 403.
+- Anonymous `/api/admin/community/comments?status=visible` and
+  `?status=deleted`: HTTP 403.
+- Anonymous `/admin-panel.html`, `/api/admin/overview`,
+  `/api/admin/reports`, and `/api/admin/notifications`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Published parity and security documentation: HTTP 200.
+- Authenticated Community Comments rendering and filter interaction remain
+  pending an authorized owner/admin browser session; they are not claimed as
+  passed.
+- No Community Feed records, D1 schema, R2 objects, Creator Studio access,
+  or legacy `/admin-panel` behavior were changed.
 ## Incremental teams batch
 
 - `npm run build` in `admin-center-app`: PASS.

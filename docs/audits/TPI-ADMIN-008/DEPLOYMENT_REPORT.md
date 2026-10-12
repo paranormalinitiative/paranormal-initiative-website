@@ -265,3 +265,26 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   `c629157c-399d-439b-8f1a-8224dc0e40d2`.
 - The sync published the Security boundary release evidence and final
   regression results; runtime code remained unchanged.
+
+## Community Comments queue release
+
+- Git commit: `86b8279d3deb2ccbd22c3422ca5bf8755b36261d` pushed to
+  `origin/main`.
+- Cloudflare Version ID: `15415be0-ecc1-426e-90d6-642eb8d82dca`.
+- Preview asset: `/admin-center-preview/assets/index-Dbr2-v9H.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- The protected `/api/admin/community/comments` route now provides a
+  metadata-only Community Feed comment queue backed by `community_comments`
+  with visible/deleted/all filters, search, bounded previews, and pagination.
+  It exposes no administrative comment mutation.
+- Anonymous boundary checks: preview HTML, exact preview asset,
+  `/api/admin/community/comments?status=visible`,
+  `/api/admin/community/comments?status=deleted`, `/admin-panel.html`,
+  `/api/admin/overview`, `/api/admin/reports`, and
+  `/api/admin/notifications` returned HTTP 403; `/live-video` returned HTTP
+  200 with Coming Soon; parity and security docs returned HTTP 200.
+- No D1 migration, Community Feed record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
