@@ -173,6 +173,8 @@ function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
   const [status, setStatus] = useState("active");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [invitePage, setInvitePage] = useState(1);
+  const [inviteTotal, setInviteTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [inviteType, setInviteType] = useState("standard");
   const [inviteRole, setInviteRole] = useState("contributor");
@@ -184,14 +186,15 @@ function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
     if (query.trim()) params.set("search", query.trim());
     Promise.all([
       adminFetch<{ contributors: AdminContributor[]; pagination?: { total?: number } }>("/admin/contributors?" + params.toString()),
-      adminFetch<{ invites: AdminInvite[] }>("/invites")
+      adminFetch<{ invites: AdminInvite[]; pagination?: { total?: number } }>(`/invites?page=${invitePage}&pageSize=25`)
     ]).then(([directory, inviteList]) => {
       setContributors(directory.contributors || []);
       setTotal(directory.pagination?.total || 0);
       setInvites(inviteList.invites || []);
+      setInviteTotal(inviteList.pagination?.total || 0);
     }).catch((error) => onNotice(error.message)).finally(() => setLoading(false));
   };
-  useEffect(load, [status, page, query]);
+  useEffect(load, [status, page, query, invitePage]);
   const changeInviteType = (value: string) => {
     setInviteType(value);
     setInviteRole(value === "D" ? "owner" : value === "AD" ? "admin" : "contributor");
@@ -230,7 +233,7 @@ function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
         <CardContent>
           <form className="detail-stack" onSubmit={createInvite}><label><span>Invite type</span><select value={inviteType} onChange={(event) => changeInviteType(event.target.value)}><option value="standard">Standard Contributor</option><option value="D">Director</option><option value="AD">Assistant Director</option><option value="ABM">Advisory Board Member</option></select></label><label><span>Access level</span><select value={inviteRole} onChange={(event) => setInviteRole(event.target.value)}><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label><label><span>Invite code (optional)</span><Input value={inviteCode} onChange={(event) => setInviteCode(event.target.value)} placeholder="Leave blank to generate" /></label><Button type="submit" disabled={creatingInvite}>{creatingInvite ? "Creating…" : "Generate Invite Link"}</Button></form>
           <div className="notice-panel"><Badge variant="outline">Protected</Badge><p>Director and Admin invite permissions remain enforced by the server. Existing invite assignment and validation rules are unchanged.</p></div>
-          <div className="invite-list"><h3>Existing invites</h3>{invites.length ? invites.slice(0, 25).map((invite) => <div className="activity-item" key={invite.code + "-" + invite.createdAt}><code>{invite.code}</code><Badge variant={Boolean(invite.used) ? "outline" : "success"}>{Boolean(invite.used) ? "Used" : "Available"}</Badge><span>{invite.role}<small>{invite.createdAt ? new Date(invite.createdAt).toLocaleString() : "—"}{invite.usedBy ? " · used by " + invite.usedBy : ""}</small></span></div>) : <EmptyState label="No invitation records returned." />}</div>
+          <div className="invite-list"><h3>Existing invites</h3>{invites.length ? invites.map((invite) => <div className="activity-item" key={invite.code + "-" + invite.createdAt}><code>{invite.code}</code><Badge variant={Boolean(invite.used) ? "outline" : "success"}>{Boolean(invite.used) ? "Used" : "Available"}</Badge><span>{invite.role}<small>{invite.createdAt ? new Date(invite.createdAt).toLocaleString() : "—"}{invite.usedBy ? " · used by " + invite.usedBy : ""}</small></span></div>) : <EmptyState label="No invitation records returned." />}</div><div className="pagination"><span className="muted">{inviteTotal} matching invites · page {invitePage}</span><div><Button size="sm" variant="outline" disabled={invitePage <= 1} onClick={() => setInvitePage((value) => value - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={!inviteTotal || invitePage >= Math.ceil(inviteTotal / 25)} onClick={() => setInvitePage((value) => value + 1)}>Next</Button></div></div>
         </CardContent>
       </Card>
     </div>

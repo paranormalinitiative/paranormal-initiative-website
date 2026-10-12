@@ -40,7 +40,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/admin/founding-50/allocate") return requireOwner(request, env, user => handleAdminAllocateFounding50(request, env, user));
     if (request.method === "GET" && path === "/admin/creator-partnership") return requireAdmin(request, env, user => handleAdminCreatorPartnership(request, env, user));
     if (request.method === "GET" && path === "/admin/creator-studio/entitlements") return requireAdmin(request, env, user => handleAdminCreatorStudioEntitlements(request, env, user));
-    if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
+    if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(request, env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
     if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(request, env, user));
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
@@ -421,9 +421,23 @@ async function handleCreateInvite(request, env, user) {
   return json({ invite: { code, role, used: false } });
 }
 
-async function handleListInvites(env) {
-  const { results } = await env.TPI_DB.prepare("SELECT code, role, used, used_by, used_at, created_at FROM invite_codes ORDER BY created_at DESC").all();
-  return json({ invites: results });
+async function handleListInvites(request, env) {
+  const url = new URL(request.url);
+  const paginated = url.searchParams.has("page") || url.searchParams.has("pageSize");
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "25", 10) || 25, 100));
+  const limitSql = paginated ? "LIMIT ? OFFSET ?" : "";
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT code, role, used, used_by, used_at, created_at
+    FROM invite_codes
+    ORDER BY created_at DESC
+    ${limitSql}
+  `).bind(...(paginated ? [pageSize, (page - 1) * pageSize] : [])).all();
+  const payload = { invites: results };
+  if (!paginated) return json(payload);
+  const count = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM invite_codes").first();
+  const total = Number(count?.total || 0);
+  return json({ ...payload, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
 }
 
 async function handleListContributors(request, env) {
