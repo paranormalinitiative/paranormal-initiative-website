@@ -1088,3 +1088,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - This sync published the protected report-resolution implementation evidence,
   parity/readiness updates, regression results, and owner acceptance checklist.
   Runtime code was unchanged by the documentation commit.
+
+## Final documentation sync — Moderation History server scope
+
+- Documentation commit: `0ddcfed` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `d2e46404-b8f2-41b0-87b2-eb01e91e8943`.
+- This sync published the Moderation History server-scope implementation
+  evidence, parity/readiness updates, regression results, and owner acceptance
+  checklist. Runtime code was unchanged by the documentation commit.
