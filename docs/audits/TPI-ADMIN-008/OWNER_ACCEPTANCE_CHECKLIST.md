@@ -11,7 +11,7 @@
 - [ ] Verify member directory, detail tabs, and safe confirmation-gated actions.
 - [ ] Verify Contributor Management loads the directory and existing invite records through the protected preview.
 - [ ] Verify invitation types, access levels, code generation, and role/title updates only with safe test data.
-- [ ] Verify a disposable Teams approval/rejection action only if safe test data is available; do not mutate real records.
+- [ ] Verify Teams status filters, server-side search, matching totals, Previous/Next pagination, and a disposable approval/rejection action only if safe test data is available; do not mutate real records.
 - [ ] Verify Education, creator, video, and event transitional links.
 - [ ] Verify Platform Health shows provider states and recent scraper runs without starting a refresh job.
 - [ ] Verify Creator Directory server-side search, matching totals, and Previous/Next pagination; verify Founding 50 status-filtered matching totals and Previous/Next pagination, existing approve/reject workflow, and closed award gate; verify Creator Studio Access pagination without grant/revoke controls.

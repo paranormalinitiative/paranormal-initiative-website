@@ -112,6 +112,12 @@ The legacy unpaged response remains compatible, and approve/delete continue to
 use their existing protected endpoints. Authenticated rendering and mutation
 acceptance remain owner/admin browser checks.
 
+Paranormal Teams now consumes the existing protected `/admin/teams` contract
+with server-side status/search filtering, bounded 50-record pagination, and
+matching totals. The legacy offset/limit response and approve/reject workflow
+remain compatible. Authenticated rendering, pagination, search, and safe
+disposable-record mutation acceptance remain owner/admin browser checks.
+
 Source/build/QA checks passed, but authenticated owner/admin browser acceptance
 and rollback verification remain pending. This batch does not authorize
 promotion of `/admin-center-preview/` over `/admin-panel`.

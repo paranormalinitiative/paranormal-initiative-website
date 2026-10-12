@@ -511,6 +511,31 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Paranormal Teams search/pagination release
+
+- Git commit: `f0426e4` pushed to `origin/main`.
+- Cloudflare Version ID: `4bf99807-c0c8-4de9-9084-453d6d603b8f`.
+- Preview asset: `/admin-center-preview/assets/index-UCi7kOhY.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- Paranormal Teams now uses server-side status/search filtering, bounded
+  50-record pagination, and matching totals through the existing protected
+  contract. Existing offset/limit callers and approve/reject actions remain
+  compatible.
+- Source/build checks: PASS — TypeScript/Vite build, Worker syntax,
+  legacy-admin syntax, `git diff --check`, and focused QA 67/67.
+- Anonymous production checks: public shell 200; `/live-video` 200 with
+  Coming Soon; `/studio/` 403; `/admin-center-preview/` 403; exact preview
+  asset 403; `/admin-panel.html` 403; anonymous Teams admin API 403; and
+  public `/api/articles?page=1&pageSize=50` 200.
+- Authenticated owner/admin Teams rendering, search, pagination,
+  approve/reject workflow, and rollback verification remain pending an
+  authorized browser session and are not claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Final documentation sync — Article Comment Moderation pagination
 
 - Documentation commit: `c6cc8ef` pushed to `origin/main`.

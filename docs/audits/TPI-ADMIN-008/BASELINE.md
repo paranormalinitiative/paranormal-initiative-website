@@ -89,3 +89,8 @@ Article Comment Moderation now uses the existing protected `/admin/comments`
 contract with explicit 50-record pages and matching totals. The legacy
 unpaged response remains compatible, and approve/delete actions remain on the
 existing protected endpoints.
+
+Paranormal Teams now uses the existing protected `/admin/teams` contract with
+server-side status/search filtering, explicit 50-record pages, and matching
+totals. Existing offset/limit callers and approve/reject actions remain
+compatible.

@@ -65,6 +65,10 @@ This batch improves the preview's route ownership and dashboard contract:
   `/admin/comments` contract with explicit 50-record pages and matching
   totals. Approve/delete actions remain on the existing protected endpoints;
   no new comment storage or mutation contract was introduced.
+- Paranormal Teams now requests the existing protected `/admin/teams` contract
+  with server-side status/search filtering, explicit 50-record pages, and
+  matching totals. Existing offset/limit callers and approve/reject actions
+  remain compatible.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and
