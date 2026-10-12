@@ -13,6 +13,8 @@ This batch improves the preview's route ownership and dashboard contract:
 - Events now includes a protected metadata-only review queue over the existing
   `events` table; creation, approval, editing, and lifecycle mutations remain
   on the existing protected event manager.
+- Audit Logs and Moderation History now use the existing protected audit query
+  with read-only search and pagination; no mutation surface is added.
 - Overview exposes real metrics for members, community content, reactions,
   videos, creator channels, articles, teams, open reports, and Founding 50
   allocations when their existing tables are available.

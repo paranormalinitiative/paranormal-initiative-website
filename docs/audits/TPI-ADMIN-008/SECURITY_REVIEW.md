@@ -54,3 +54,8 @@ The protected `/api/admin/events` endpoint is metadata-only. It returns event
 status, scheduling, location, organizer name, and source metadata from the
 existing `events` table, excludes private submission fields, and exposes no
 event mutation.
+
+The existing protected `/api/admin/audit-logs` query remains read-only. The
+preview exposes bounded actor/action/target search results and pagination,
+without audit mutation controls or private message, recording, or stream-key
+data.

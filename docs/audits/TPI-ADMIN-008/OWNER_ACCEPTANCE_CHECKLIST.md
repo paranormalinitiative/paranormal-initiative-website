@@ -6,6 +6,7 @@
 - [ ] Confirm Community Overview and Posts & Comments are distinct active routes.
 - [ ] Confirm deleted Community posts are absent from Active and visible only through Deleted.
 - [ ] Verify Community Comments loads visible/deleted/all filters and search without exposing an unverified mutation control; keep Article Comment Moderation separate under Education Center.
+- [ ] Verify Audit Logs and Moderation History search and pagination operate through the protected read-only audit query.
 - [ ] Verify member directory, detail tabs, and safe confirmation-gated actions.
 - [ ] Verify Contributor Management loads the directory and existing invite records through the protected preview.
 - [ ] Verify invitation types, access levels, code generation, and role/title updates only with safe test data.

@@ -72,6 +72,10 @@ Events now includes a protected metadata-only review queue for approved,
 pending, rejected, and cancelled records with search. It does not add event
 creation, approval, editing, or lifecycle mutations to the preview.
 
+Audit Logs and Moderation History now expose the existing protected audit
+query with read-only search and pagination. No audit mutation or private
+message/recording data is exposed.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

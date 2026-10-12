@@ -61,6 +61,8 @@ const checks = [
   ["community comments queue remains read-only", source.includes("No comment mutation is exposed") && api.includes('["visible", "deleted", "all"]') && api.includes("metadataOnly: true") && !source.includes('adminFetch(`/admin/community/comments/${')],
   ["events review queue uses protected existing table contract", source.includes('adminFetch<{ events: AdminEventRecord[] }>(`/admin/events?') && source.includes('aria-label="Event status"') && api.includes('path === "/admin/events"') && api.includes("FROM events e") && api.includes("metadataOnly: true")],
   ["events review queue remains read-only", source.includes("no event mutations in preview") && api.includes("Event creation, review, and lifecycle changes remain on the existing protected event workflow") && !source.includes('adminFetch(`/admin/events/${')],
+  ["audit views use existing protected pagination", source.includes("/admin/audit-logs?") && source.includes("pagination?.total") && source.includes("matching audit records") && api.includes('path === "/admin/audit-logs"') && api.includes("pagination")],
+  ["audit views remain read-only", source.includes("Protected read-only") && !source.includes('adminFetch(`/admin/audit-logs/${')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

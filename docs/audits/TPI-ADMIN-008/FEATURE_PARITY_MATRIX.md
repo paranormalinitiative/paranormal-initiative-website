@@ -9,7 +9,7 @@
 | Community posts | Existing Community Feed admin API | Active/visible/hidden/deleted filtering and status updates | WORKING |
 | Community comments/reactions | Existing Community Feed comment/reaction tables and member activity | Protected metadata-only Community Comments queue with visible/deleted/all filters and search; aggregate reaction metric remains read-only | WORKING WITH LIMITATIONS |
 | Reports and moderation | Existing video and messenger report metadata/contracts | Protected unified metadata-only queue with status filters; no private evidence or resolution mutations | WORKING WITH LIMITATIONS |
-| Moderation history/audit | Existing audit log API | Audit and filtered moderation-history views | WORKING WITH LIMITATIONS |
+| Moderation history/audit | Existing audit log API | Protected read-only audit and filtered moderation-history views with query pagination | WORKING WITH LIMITATIONS |
 | Contributor management | Legacy invite/access controls | Protected directory, invite listing/generation, invite-type/access-level controls, and role/title updates through existing APIs | WORKING WITH LIMITATIONS |
 | Paranormal Teams | Existing directory/approval APIs | Protected status filters, searchable directory, and pending approve/reject controls using existing server contracts | WORKING WITH LIMITATIONS |
 | Education Center | Existing article and comment workflows | Published article listing plus article comment view; draft/editor mutations remain on contributor workflow | WORKING WITH LIMITATIONS |
