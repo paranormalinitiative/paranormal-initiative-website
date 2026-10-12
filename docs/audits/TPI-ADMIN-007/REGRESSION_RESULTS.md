@@ -26,3 +26,11 @@ ADMIN-007A repair verification:
 | Legacy Analytics, Dashboard, Members, and System views free of relocated panels | PASS — source-level route/DOM boundary checks |
 | Refine preview navigation rendered at local Vite server | PASS — Community and Content & Publishing groups visible |
 | Authenticated legacy workflow with real invite/team/comment records | PENDING OWNER SESSION |
+
+ADMIN-007A production deployment:
+
+- Source commit: `2859f7c`
+- Cloudflare Worker version: `31086383-9600-4ca8-abef-8cc4928cee3a`
+- Anonymous legacy `/admin-panel.html` and direct `#analytics` access: HTTP 403.
+- Anonymous preview route and direct preview asset access: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon.

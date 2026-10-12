@@ -21,6 +21,11 @@ ADMIN-007A isolation repair:
   Publishing ownership without duplicating backend contracts.
 - Detailed evidence: `ADMIN_PANEL_ISOLATION.md`.
 
+ADMIN-007A release evidence:
+
+- GitHub commit: `2859f7c`
+- Cloudflare deployment: `31086383-9600-4ca8-abef-8cc4928cee3a`
+
 Release evidence:
 
 - GitHub source commit: `25b36ca`

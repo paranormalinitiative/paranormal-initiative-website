@@ -32,3 +32,6 @@ ADMIN-007A local rendered preview evidence:
   view; no unrelated contributor/team/article panels were rendered.
 - Legacy `/admin-panel` owner/admin visual acceptance remains pending an
   authorized session.
+
+Deployment evidence: commit `2859f7c`, Cloudflare version
+`31086383-9600-4ca8-abef-8cc4928cee3a`.

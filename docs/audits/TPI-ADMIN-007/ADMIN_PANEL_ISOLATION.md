@@ -52,6 +52,11 @@ no duplicate backend or new production administration application was created.
   Moderation resource without unrelated panels.
 - Authenticated owner/admin acceptance of real records remains pending.
 
+Release evidence:
+
+- GitHub commit: `2859f7c`
+- Cloudflare deployment: `31086383-9600-4ca8-abef-8cc4928cee3a`
+
 ## Security and data safety
 
 Existing server-side authorization, D1/R2 bindings, `/admin-panel`,
