@@ -1124,3 +1124,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   Wrangler `spawn EBADF` environment limitation, parity/readiness updates,
   regression results, and owner acceptance checklist. Runtime code was
   unchanged by the documentation commit.
+
+## Final documentation sync — protected route matrix
+
+- Documentation commit: `3516d44` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `65957d68-08b5-4176-9b42-959909af0125`.
+- This sync published the 23-route protected Admin Center GET matrix evidence
+  and the associated baseline/integration/regression records. Runtime code was
+  unchanged by the documentation commit.
