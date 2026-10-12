@@ -62,6 +62,6 @@ Todd should not need to operate Git to approve or reject a change: review the de
 
 - Development website: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/`
 - Administration Center preview: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/admin-center-preview/`
-- Current verified dev deployment: `05a2256e-2f4c-4b02-acb8-7f951ff3995d`
+- Current verified dev deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
 The development deployment has no scheduled triggers, no production Resend secrets, and uses only the development D1/R2 resources. The existing production Worker and custom domain remain separate.

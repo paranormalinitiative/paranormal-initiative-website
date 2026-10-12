@@ -20,7 +20,7 @@ Date: 2026-10-12
 - Account: `221ea5479876fd303ddc87002b9e892d`
 - Worker: `theparanormalinitiative-dev`
 - URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/`
-- Latest verified deployment: `05a2256e-2f4c-4b02-acb8-7f951ff3995d`
+- Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 - D1: `tpi_contributor_portal_dev`, `4948ecc5-35de-4782-8f6b-b07fa1782b66`
 - R2: `tpi-contributor-media-dev`
 - Scheduled triggers: none in `wrangler.dev.toml`

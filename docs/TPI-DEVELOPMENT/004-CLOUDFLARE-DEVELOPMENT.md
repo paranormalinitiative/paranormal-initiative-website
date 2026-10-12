@@ -43,7 +43,7 @@ The development resources and migrations were created under TPI-DEV-005 only. Pr
 
 ## Verified deployment
 
-- Latest deployment version: `05a2256e-2f4c-4b02-acb8-7f951ff3995d`
+- Latest deployment version: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 - Development route: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/`
 - Admin preview: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/admin-center-preview/`
 - Cron: absent from development configuration
