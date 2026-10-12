@@ -354,6 +354,31 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Audit Logs search repair release
+
+- Git commit: `fd05c8ab324bf9443d5bed136319c3999b96b17e` pushed to
+  `origin/main`.
+- Cloudflare Version ID: `e579674d-4805-4917-98e6-63f921f12d0c`.
+- Preview asset: `/admin-center-preview/assets/index-R-ZadZ2y.js`.
+- Dry run: PASS — account `221ea5479876fd303ddc87002b9e892d`, Worker
+  `theparanormalinitiative`, D1 `tpi_contributor_portal`, R2
+  `tpi-contributor-media`, and `ASSETS` binding were confirmed.
+- Corrected the protected Audit Logs search submit path so Enter reloads the
+  current query even when the user is already on page 1. Pagination and
+  read-only boundaries remain unchanged.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  52/52. Vite emitted only its existing large-chunk advisory.
+- Anonymous boundary checks after deployment: preview HTML, exact preview
+  asset, `/api/admin/audit-logs?page=1&limit=50`, and `/admin-panel.html`
+  returned HTTP 403; `/live-video` returned HTTP 200 with Coming Soon
+  preserved; the published regression documentation returned HTTP 200.
+- Authenticated Audit Logs search interaction remains pending an authorized
+  browser session and is not claimed as owner-verified.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
+
 ## Release documentation sync — protected Analytics contract
 
 - Documentation commit: `8f35faafad4898c9b96869989590a501054564f8` pushed to
