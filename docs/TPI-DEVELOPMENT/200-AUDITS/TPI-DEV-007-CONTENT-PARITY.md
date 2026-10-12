@@ -131,4 +131,12 @@ Use the development-only accounts from the existing local recovery file. Do not 
 
 ## Deployment and production safety
 
-The repair was performed against development D1 only. The final development deployment ID and Git commit are recorded in the completion report after the verified deployment. Production remains protected and must not be promoted from this branch without separate owner authorization.
+The repair was performed against development D1 only.
+
+- Git commit: `7b6c8a5` (`dev: seed isolated content parity fixtures`), pushed to `origin/codex/tpi-development`.
+- A clean-archive Worker upload created version `6e01afa5-928a-4bae-91a6-7f16fcee52f6`. It was immediately rolled back because the clean committed archive intentionally excluded three unrelated application files that were already present in the prior development deployment as uncommitted owner work.
+- Effective active development version after the safety rollback: `c8432743-71c7-4b5c-8cd1-9503cb81e038`.
+- The rollback changed Worker traffic only; it did not roll back or alter development D1/R2. The seeded content remains verified at the development URLs above.
+- Production latest observed version remained `7e357215-2579-4c60-b27e-dd572a5656fe`.
+
+The three unrelated dirty application files and all other unrelated dirty/untracked files remain untouched and unstaged. Production remains protected and must not be promoted from this branch without separate owner authorization.
