@@ -2,6 +2,30 @@
 
 Last updated: July 26, 2026
 
+## Official TPI Cloudflare account
+
+Verified October 12, 2026 for The Paranormal Initiative:
+
+- Account name: `Paranormalsomerset@gmail.com's Account`
+- Account email: `paranormalsomerset@gmail.com`
+- Account ID: `221ea5479876fd303ddc87002b9e892d`
+- Plan: Free
+- Worker: `theparanormalinitiative`
+- Production custom domain: `paranormalinitiative.com`
+- D1: `TPI_DB` → `tpi_contributor_portal` → `f36b9161-b517-4634-9857-bef4147cefe3`
+- R2: `TPI_MEDIA` → `tpi-contributor-media`
+
+The account ID is pinned in `wrangler.toml`. Before a production deployment,
+select this account explicitly and confirm the Worker, domain, D1, and R2
+bindings. Do not migrate or transfer resources between accounts.
+
+Verification evidence: Wrangler authenticated as the designated email; the
+Worker deployment history exists in this account; the active Cloudflare zone
+is `paranormalinitiative.com`; the Worker custom-domain record maps that
+hostname to `theparanormalinitiative` in the `production` environment; and
+the public domain returned through Cloudflare successfully. No credentials or
+tokens are stored in this document.
+
 ## What Was Added
 
 The static prototype now has a Cloudflare-ready backend:

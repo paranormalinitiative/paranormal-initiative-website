@@ -1,4 +1,5 @@
 name = "theparanormalinitiative"
+account_id = "221ea5479876fd303ddc87002b9e892d"
 main = "worker.js"
 compatibility_date = "2026-07-18"
 compatibility_flags = [ "nodejs_compat" ]

@@ -11,6 +11,13 @@ Owner: **Todd** (Todd_Wayne, admin, paranormalinitiative@yahoo.com).
 You share this repo with **another AI agent (Codebuff/Buffy)** working in parallel. The rules below
 exist so neither of you destroys the other's work.
 
+**Official Cloudflare target:** `Paranormalsomerset@gmail.com's Account`
+(`paranormalsomerset@gmail.com`), account ID
+`221ea5479876fd303ddc87002b9e892d`, Free plan. The production Worker is
+`theparanormalinitiative`, with custom domain `paranormalinitiative.com`.
+`wrangler.toml` pins this account ID. Never deploy TPI to another account
+without explicit owner approval.
+
 ---
 
 ## 1. The Iron Rules (never break these)
@@ -56,6 +63,13 @@ Never commit them, never "clean them up," never add a .gitignore change without 
 ```bash
 npx wrangler deploy 2>&1 | tail -4
 ```
+- Before deploying, verify the pinned account and target bindings with
+  `npx wrangler whoami`, `npx wrangler deployments list --name theparanormalinitiative`,
+  `npx wrangler d1 info tpi_contributor_portal`, and
+  `npx wrangler r2 bucket list`. The expected account ID is
+  `221ea5479876fd303ddc87002b9e892d`; expected D1 ID is
+  `f36b9161-b517-4634-9857-bef4147cefe3`; expected R2 bucket is
+  `tpi-contributor-media`.
 - You MUST see `Current Version ID: <uuid>` in the output. **No Version ID printed = NOT deployed.**
   This failure mode has happened once already and cost a whole debugging session (Todd saw a stale
   site and thought features were missing). Re-run the deploy if in doubt.
