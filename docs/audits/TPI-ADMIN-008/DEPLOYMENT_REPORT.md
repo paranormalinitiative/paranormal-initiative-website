@@ -1160,3 +1160,16 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   community-moderation, and security records with the deployed protected
   report status/review-audit controls. Historical release entries were
   preserved; runtime code was unchanged.
+
+## Final documentation sync — protected System Settings mutation
+
+- Runtime commit: `04aed52` pushed to `origin/main`.
+- Runtime Cloudflare Version ID: `32d0d8ec-8e11-485f-b924-d70bb4d9b1f4`.
+- Documentation commit: `64e3ea2` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `0ddc04c8-3352-46b9-bca3-ae80da347ce3`.
+- This sync records the four-key allowlist, explicit confirmation, existing
+  server audit behavior, focused QA `72/72`, isolated settings contract pass,
+  anonymous production protection results, and the pending authenticated
+  owner/admin acceptance and rollback gates. Runtime code was unchanged by
+  the documentation commit.
