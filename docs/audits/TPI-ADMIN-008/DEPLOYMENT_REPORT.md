@@ -318,3 +318,12 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, event mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
+
+## Release documentation sync — Events
+
+- Documentation commit: `2b7540f28e246a366a317935ae6a5736f9077541` pushed to
+  `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `20d0738b-1900-49e5-83d6-970519fa36ee`.
+- The sync published the Events review-queue release evidence and regression
+  results; runtime code remained unchanged.
