@@ -42,7 +42,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/creator-studio/entitlements") return requireAdmin(request, env, user => handleAdminCreatorStudioEntitlements(request, env, user));
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
-    if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(env, user));
+    if (request.method === "GET" && path === "/admin/contributors") return requireAdmin(request, env, user => handleListContributors(request, env, user));
     if (request.method === "POST" && path === "/admin/contributors/title") return requireAdmin(request, env, user => handleUpdateContributorTitle(request, env, user));
     if (request.method === "GET" && path === "/admin/members") return requireAdmin(request, env, user => handleAdminListMembers(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/activity$/)) return requireAdmin(request, env, user => handleAdminMemberActivity(path, request, env, user));
@@ -426,13 +426,38 @@ async function handleListInvites(env) {
   return json({ invites: results });
 }
 
-async function handleListContributors(env) {
+async function handleListContributors(request, env) {
+  const url = new URL(request.url);
+  const paginated = url.searchParams.has("page") || url.searchParams.has("pageSize") || url.searchParams.has("status") || url.searchParams.has("search");
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const status = clean(url.searchParams.get("status") || "all");
+  const search = clean(url.searchParams.get("search") || "").slice(0, 120);
+  const filters = [];
+  const binds = [];
+  if (status === "active" || status === "inactive") {
+    filters.push("active = ?");
+    binds.push(status === "active" ? 1 : 0);
+  }
+  if (search) {
+    filters.push("(username LIKE ? OR display_name LIKE ? OR title LIKE ? OR role LIKE ?)");
+    const pattern = `%${search}%`;
+    binds.push(pattern, pattern, pattern, pattern);
+  }
+  const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
+  const limitSql = paginated ? "LIMIT ? OFFSET ?" : "";
   const { results } = await env.TPI_DB.prepare(`
     SELECT username, display_name, title, role, correspondence, active, created_at
     FROM contributors
+    ${where}
     ORDER BY active DESC, display_name COLLATE NOCASE, username COLLATE NOCASE
-  `).all();
-  return json({ contributors: results.map(publicUser) });
+    ${limitSql}
+  `).bind(...(paginated ? [...binds, pageSize, (page - 1) * pageSize] : binds)).all();
+  const payload = { contributors: results.map(publicUser) };
+  if (!paginated) return json(payload);
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM contributors ${where}`).bind(...binds).first();
+  const total = Number(count?.total || 0);
+  return json({ ...payload, status, search, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
 }
 
 async function handleUpdateContributorTitle(request, env, actingUser) {

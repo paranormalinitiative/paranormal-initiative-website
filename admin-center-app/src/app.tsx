@@ -169,7 +169,10 @@ function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
   const [contributors, setContributors] = useState<AdminContributor[]>([]);
   const [invites, setInvites] = useState<AdminInvite[]>([]);
   const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [status, setStatus] = useState("active");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [inviteType, setInviteType] = useState("standard");
   const [inviteRole, setInviteRole] = useState("contributor");
@@ -177,13 +180,18 @@ function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
   const [creatingInvite, setCreatingInvite] = useState(false);
   const load = () => {
     setLoading(true);
-    Promise.all([adminFetch<{ contributors: AdminContributor[] }>("/admin/contributors"), adminFetch<{ invites: AdminInvite[] }>("/invites")]).then(([directory, inviteList]) => {
+    const params = new URLSearchParams({ status, page: String(page), pageSize: "50" });
+    if (query.trim()) params.set("search", query.trim());
+    Promise.all([
+      adminFetch<{ contributors: AdminContributor[]; pagination?: { total?: number } }>("/admin/contributors?" + params.toString()),
+      adminFetch<{ invites: AdminInvite[] }>("/invites")
+    ]).then(([directory, inviteList]) => {
       setContributors(directory.contributors || []);
+      setTotal(directory.pagination?.total || 0);
       setInvites(inviteList.invites || []);
     }).catch((error) => onNotice(error.message)).finally(() => setLoading(false));
   };
-  useEffect(load, []);
-  const visibleContributors = contributors.filter((contributor) => (status === "all" || (status === "active" ? contributor.active : !contributor.active)) && `${contributor.displayName} ${contributor.username} ${contributor.title || ""} ${contributor.role}`.toLowerCase().includes(search.toLowerCase().trim()));
+  useEffect(load, [status, page, query]);
   const changeInviteType = (value: string) => {
     setInviteType(value);
     setInviteRole(value === "D" ? "owner" : value === "AD" ? "admin" : "contributor");
@@ -193,7 +201,7 @@ function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
     setCreatingInvite(true);
     try {
       const suppliedCode = inviteCode.trim();
-      const generatedCode = suppliedCode || (inviteType === "standard" ? "" : `${inviteType}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`);
+      const generatedCode = suppliedCode || (inviteType === "standard" ? "" : inviteType + "-" + Math.random().toString(36).slice(2, 8).toUpperCase());
       await adminFetch<{ invite: AdminInvite }>("/invites", { method: "POST", body: JSON.stringify({ code: generatedCode, role: inviteRole }) });
       onNotice("Invite created through the existing protected invitation contract.");
       setInviteCode("");
@@ -204,9 +212,30 @@ function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
       setCreatingInvite(false);
     }
   };
-  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Content &amp; Publishing</p><h2>Contributor Management</h2><p>Manage the protected contributor directory, invitation types, and access levels through the existing server-side contracts. Invite codes are only returned to authorized administrators.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><div className="two-column"><Card><CardHeader><CardTitle>Contributor Directory</CardTitle><CardDescription>Active and inactive accounts with protected role/title controls.</CardDescription></CardHeader><CardContent><div className="filter-bar"><div className="search-field"><Search size={16} /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, username, title, or role" aria-label="Search contributors" /></div><select aria-label="Contributor status" value={status} onChange={(event) => setStatus(event.target.value)}><option value="active">Active</option><option value="inactive">Inactive</option><option value="all">All accounts</option></select></div><Table><TableHeader><TableRow><TableHead>Contributor</TableHead><TableHead>Role</TableHead><TableHead>State</TableHead><TableHead>Access controls</TableHead></TableRow></TableHeader><TableBody>{loading ? <TableRow><TableCell colSpan={4}><LoadingState label="Loading contributor directory…" /></TableCell></TableRow> : visibleContributors.length ? visibleContributors.map((contributor) => <ContributorRow key={contributor.username} contributor={contributor} onNotice={onNotice} onReload={load} />) : <TableRow><TableCell colSpan={4}><EmptyState label="No contributor accounts matched this filter." /></TableCell></TableRow>}</TableBody></Table><div className="pagination"><span className="muted">{visibleContributors.length} of {contributors.length} loaded accounts</span><Badge variant="outline">Protected admin API</Badge></div></CardContent></Card><Card><CardHeader><CardTitle>Contributor Invites</CardTitle><CardDescription>Generate the existing invitation types without changing validation or expiration behavior.</CardDescription></CardHeader><CardContent><form className="detail-stack" onSubmit={createInvite}><label><span>Invite type</span><select value={inviteType} onChange={(event) => changeInviteType(event.target.value)}><option value="standard">Standard Contributor</option><option value="D">Director</option><option value="AD">Assistant Director</option><option value="ABM">Advisory Board Member</option></select></label><label><span>Access level</span><select value={inviteRole} onChange={(event) => setInviteRole(event.target.value)}><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label><label><span>Invite code (optional)</span><Input value={inviteCode} onChange={(event) => setInviteCode(event.target.value)} placeholder="Leave blank to generate" /></label><Button type="submit" disabled={creatingInvite}>{creatingInvite ? "Creating…" : "Generate Invite Link"}</Button></form><div className="notice-panel"><Badge variant="outline">Protected</Badge><p>Director and Admin invite permissions remain enforced by the server. Existing invite assignment and validation rules are unchanged.</p></div><div className="invite-list"><h3>Existing invites</h3>{invites.length ? invites.slice(0, 25).map((invite) => <div className="activity-item" key={`${invite.code}-${invite.createdAt}`}><code>{invite.code}</code><Badge variant={Boolean(invite.used) ? "outline" : "success"}>{Boolean(invite.used) ? "Used" : "Available"}</Badge><span>{invite.role}<small>{invite.createdAt ? new Date(invite.createdAt).toLocaleString() : "—"}{invite.usedBy ? ` · used by ${invite.usedBy}` : ""}</small></span></div>) : <EmptyState label="No invitation records returned." />}</div></CardContent></Card></div></section>;
+  return <section className="content-stack">
+    <div className="page-intro"><div><p className="eyebrow">Content &amp; Publishing</p><h2>Contributor Management</h2><p>Manage the protected contributor directory, invitation types, and access levels through the existing server-side contracts. Invite codes are only returned to authorized administrators.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div>
+    <div className="two-column">
+      <Card>
+        <CardHeader><CardTitle>Contributor Directory</CardTitle><CardDescription>Active and inactive accounts with protected role/title controls.</CardDescription></CardHeader>
+        <CardContent>
+          <div className="filter-bar"><div className="search-field"><Search size={16} /><Input value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { setQuery(search); setPage(1); } }} placeholder="Search name, username, title, or role" aria-label="Search contributors" /></div><select aria-label="Contributor status" value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}><option value="active">Active</option><option value="inactive">Inactive</option><option value="all">All accounts</option></select></div>
+          <Table><TableHeader><TableRow><TableHead>Contributor</TableHead><TableHead>Role</TableHead><TableHead>State</TableHead><TableHead>Access controls</TableHead></TableRow></TableHeader><TableBody>
+            {loading ? <TableRow><TableCell colSpan={4}><LoadingState label="Loading contributor directory…" /></TableCell></TableRow> : contributors.length ? contributors.map((contributor) => <ContributorRow key={contributor.username} contributor={contributor} onNotice={onNotice} onReload={load} />) : <TableRow><TableCell colSpan={4}><EmptyState label="No contributor accounts matched this filter." /></TableCell></TableRow>}
+          </TableBody></Table>
+          <div className="pagination"><span className="muted">{total} matching contributors · page {page}</span><div><Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</Button><Button size="sm" variant="outline" disabled={!total || page >= Math.ceil(total / 50)} onClick={() => setPage((value) => value + 1)}>Next</Button></div></div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader><CardTitle>Contributor Invites</CardTitle><CardDescription>Generate the existing invitation types without changing validation or expiration behavior.</CardDescription></CardHeader>
+        <CardContent>
+          <form className="detail-stack" onSubmit={createInvite}><label><span>Invite type</span><select value={inviteType} onChange={(event) => changeInviteType(event.target.value)}><option value="standard">Standard Contributor</option><option value="D">Director</option><option value="AD">Assistant Director</option><option value="ABM">Advisory Board Member</option></select></label><label><span>Access level</span><select value={inviteRole} onChange={(event) => setInviteRole(event.target.value)}><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label><label><span>Invite code (optional)</span><Input value={inviteCode} onChange={(event) => setInviteCode(event.target.value)} placeholder="Leave blank to generate" /></label><Button type="submit" disabled={creatingInvite}>{creatingInvite ? "Creating…" : "Generate Invite Link"}</Button></form>
+          <div className="notice-panel"><Badge variant="outline">Protected</Badge><p>Director and Admin invite permissions remain enforced by the server. Existing invite assignment and validation rules are unchanged.</p></div>
+          <div className="invite-list"><h3>Existing invites</h3>{invites.length ? invites.slice(0, 25).map((invite) => <div className="activity-item" key={invite.code + "-" + invite.createdAt}><code>{invite.code}</code><Badge variant={Boolean(invite.used) ? "outline" : "success"}>{Boolean(invite.used) ? "Used" : "Available"}</Badge><span>{invite.role}<small>{invite.createdAt ? new Date(invite.createdAt).toLocaleString() : "—"}{invite.usedBy ? " · used by " + invite.usedBy : ""}</small></span></div>) : <EmptyState label="No invitation records returned." />}</div>
+        </CardContent>
+      </Card>
+    </div>
+  </section>;
 }
-
 function ContributorRow({ contributor, onNotice, onReload }: { contributor: AdminContributor; onNotice: (value: string) => void; onReload: () => void }) {
   const [title, setTitle] = useState(contributor.title || "");
   const [role, setRole] = useState(contributor.role);
