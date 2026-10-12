@@ -54,6 +54,10 @@ contributor role and capability fields. It reports live role/account counts and
 capability counts without adding role or account-restriction mutations; those
 remain on existing protected workflows.
 
+Account Restrictions now has a protected read-only capability-restrictions list
+over existing contributor flags and active state. It does not implement
+administrative suspension or user-to-user restriction changes.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.

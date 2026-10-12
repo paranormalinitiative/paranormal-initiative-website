@@ -242,6 +242,18 @@ export type AdminRoleSummary = {
   canMessage: number;
 };
 
+export type AdminRestriction = {
+  username: string;
+  displayName: string;
+  title?: string;
+  role: string;
+  active: boolean;
+  canPost: boolean;
+  canComment: boolean;
+  canMessage: boolean;
+  createdAt: string;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

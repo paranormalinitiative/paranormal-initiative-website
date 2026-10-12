@@ -57,6 +57,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
     if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
     if (request.method === "GET" && path === "/admin/roles") return requireAdmin(request, env, user => handleAdminRoles(request, env, user));
+    if (request.method === "GET" && path === "/admin/restrictions") return requireAdmin(request, env, user => handleAdminRestrictions(request, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
@@ -945,6 +946,28 @@ async function handleAdminRoles(request, env) {
     END, role
   `).all();
   return json({ roles: results || [], metadataOnly: true, mutationBoundary: "Role and capability changes remain on existing protected Contributor Management workflows." }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminRestrictions(request, env) {
+  const url = new URL(request.url);
+  const search = clean(url.searchParams.get("search") || "").slice(0, 120);
+  const binds = [];
+  const filters = ["(active = 0 OR can_post = 0 OR can_comment = 0 OR can_message = 0)"];
+  if (search) {
+    filters.push("(username LIKE ? OR display_name LIKE ? OR role LIKE ?)");
+    const pattern = `%${search}%`;
+    binds.push(pattern, pattern, pattern);
+  }
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT username, display_name AS displayName, title, role, active,
+           can_post AS canPost, can_comment AS canComment, can_message AS canMessage,
+           created_at AS createdAt
+    FROM contributors
+    WHERE ${filters.join(" AND ")}
+    ORDER BY active ASC, username COLLATE NOCASE ASC
+    LIMIT 100
+  `).bind(...binds).all();
+  return json({ restrictions: (results || []).map(row => ({ ...row, active: Boolean(row.active), canPost: Boolean(row.canPost), canComment: Boolean(row.canComment), canMessage: Boolean(row.canMessage) })), search, metadataOnly: true, boundary: "Capability restrictions only; user-to-user member_restrictions and administrative suspension are separate workflows." }, 200, { "Cache-Control": "no-store" });
 }
 
 async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {

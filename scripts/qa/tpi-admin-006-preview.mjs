@@ -53,6 +53,8 @@ const checks = [
   ["channel directory remains read-only", source.includes("No channel mutations") && source.includes("Editing, ownership transfer") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/channels", { method: "POST"') && !source.includes('adminFetch(`/admin/channels/${')],
   ["roles summary uses protected contributor capability data", source.includes('view === "roles" && <Roles') && source.includes('"/admin/roles"') && api.includes('path === "/admin/roles"') && api.includes('FROM contributors') && api.includes('can_post') && api.includes('can_comment') && api.includes('can_message')],
   ["roles preview remains read-only", source.includes("Read-only preview") && source.includes("Account Restrictions remains separate") && api.includes("metadataOnly: true") && !source.includes('adminFetch("/admin/roles", { method: "POST"')],
+  ["account restrictions uses protected capability flags", source.includes('view === "restrictions" && <Restrictions') && source.includes('/admin/restrictions') && api.includes('path === "/admin/restrictions"') && api.includes('can_post = 0') && api.includes('can_comment = 0') && api.includes('can_message = 0')],
+  ["account restrictions preserves separate blocking boundary", source.includes("Capability restrictions only—not administrative suspension") && source.includes("user-to-user member_restrictions") && api.includes("user-to-user member_restrictions") && !source.includes('adminFetch("/admin/restrictions", { method: "POST"')],
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

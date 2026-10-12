@@ -26,6 +26,12 @@ The protected `/api/admin/roles` endpoint returns aggregate role, active-account
 and capability counts from `contributors`. It returns no password/session data
 and exposes no role, title, capability, or restriction mutation.
 
+The protected `/api/admin/restrictions` endpoint returns only accounts with an
+inactive state or disabled posting/commenting/messaging flags. It does not
+return password/session data, user-to-user restriction rows, or mutation
+controls, and it explicitly distinguishes capability restrictions from
+administrative suspension.
+
 Source checks pass for the TPI theme, route ownership, deleted-content filter,
 and protected-preview boundary. Authenticated role-matrix testing, session
 expiry, and authorized production mutation testing remain BLOCKED without an
