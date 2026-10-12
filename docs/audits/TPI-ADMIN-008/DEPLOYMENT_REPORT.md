@@ -14,6 +14,9 @@ this batch.
 
 ## Release evidence
 
+The initial protected-preview batch and this incremental Teams integration are
+both retained below as release history.
+
 - Git commit: `0bc2d474fe67606aac022366d810db109a4ce66a`
 - GitHub: pushed to `origin/main`
 - Cloudflare Version ID: `ff131b83-25a2-4dd9-a9aa-dd45e0f7ae5a`
@@ -37,3 +40,18 @@ this batch.
 Authenticated administrator browser verification remains BLOCKED without an
 authorized session. `/admin-panel` promotion remains explicitly gated by full
 parity, authenticated acceptance, rollback verification, and owner approval.
+
+## Teams integration release
+
+- Git commit: `2f46d35cd74d00508c6df91b086f2e0b6e156867`
+- GitHub: pushed to `origin/main`
+- Cloudflare Version ID: `c4594714-a6c5-45cf-9ee1-0cf16de2875e`
+- Preview asset: `/admin-center-preview/assets/index-CdANy844.js`
+- Wrangler identity: PASS — designated TPI account ID
+  `221ea5479876fd303ddc87002b9e892d`
+- Dry run: PASS — `TPI_DB` resolved to `tpi_contributor_portal`, `TPI_MEDIA`
+  resolved to `tpi-contributor-media`, and `ASSETS` was present.
+- Uploaded assets were limited to the protected preview bundle, focused QA
+  script, and TPI-ADMIN-008 documentation.
+- No D1 migration, team-record mutation, R2 operation, or `/admin-panel`
+  replacement was performed.

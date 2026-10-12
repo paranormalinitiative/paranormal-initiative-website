@@ -7,13 +7,13 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 | Refine/Vite/TypeScript build | PASS — `npm run build` |
 | Worker JavaScript syntax | PASS — `node --check 'functions/api/[[path]].js'` |
 | Legacy admin JavaScript syntax | PASS — `node --check admin-center.js` |
-| TPI admin/theme/isolation suite | PASS — 20/20 |
+| TPI admin/theme/isolation suite | PASS — 22/22 |
 | Deleted-post active filtering | PASS — source regression |
 | Distinct Community routes | PASS — source regression |
 | Optional dashboard metrics | PASS — source regression |
 | Existing `/admin-panel` replacement | NOT PERFORMED |
 | Authenticated production browser matrix | BLOCKED — no authorized session |
-| Live deployment for this batch | PASS — Cloudflare Version `ff131b83-25a2-4dd9-a9aa-dd45e0f7ae5a` |
+| Live deployment for this batch | PASS — Cloudflare Version `c4594714-a6c5-45cf-9ee1-0cf16de2875e` |
 | Anonymous homepage | PASS — HTTP 200 |
 | Anonymous `/admin-panel.html` | PASS — HTTP 403 |
 | Anonymous preview route and hashed asset | PASS — HTTP 403 |
@@ -33,4 +33,13 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - Pending approve/reject actions map to the existing protected status endpoint.
 - No team data was mutated during verification; authenticated runtime action
   testing remains pending owner/admin browser access.
+
+## Production boundary smoke
+
+- Anonymous `/admin-center-preview/`: HTTP 403.
+- Anonymous preview JavaScript asset: HTTP 403.
+- Anonymous `/api/admin/teams`: HTTP 403.
+- Public `/live-video`: HTTP 200 with Coming Soon preserved.
+- Authenticated owner/admin Teams rendering and mutation workflow: BLOCKED
+  pending an authorized browser session; not claimed as passed.
 
