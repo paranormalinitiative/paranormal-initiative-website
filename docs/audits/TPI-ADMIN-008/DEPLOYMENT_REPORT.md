@@ -182,3 +182,21 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   Coming Soon preserved; the parity matrix returned HTTP 200.
 - No D1 migration, channel mutation, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
+## Roles & Permissions summary release
+
+- Git commit: `f643b81` pushed to `origin/main`.
+- Cloudflare Version ID: `b1e22ab4-779c-45e7-8d6e-4826bfedb821`.
+- Preview asset: `/admin-center-preview/assets/index-DVENW52k.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- The protected `/api/admin/roles` route now provides aggregate role,
+  active-account, and `can_post`/`can_comment`/`can_message` counts from the
+  existing contributor records. It returns no password/session data and adds
+  no role, capability, or restriction mutation.
+- Anonymous boundary checks: preview, exact preview asset, `/api/admin/roles`,
+  `/api/admin/channels`, `/api/admin/notifications`, `/api/admin/reports`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; member-management documentation returned HTTP 200.
+- No D1 migration, account mutation, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
