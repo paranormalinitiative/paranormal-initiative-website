@@ -57,3 +57,7 @@ The Dashboard Activity route now renders its own bounded recent-activity feed
 from the protected audit query. Audit Logs remains the searchable and
 paginated accountability resource, rather than being rendered identically as
 the Activity page.
+
+The Reports & Moderation queue now consumes the existing report contract with
+bounded server-backed pagination and matching-record totals. It remains
+metadata-only and exposes no unverified resolution mutation.

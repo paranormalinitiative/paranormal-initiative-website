@@ -204,6 +204,24 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+## Reports pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  58/58. Vite emitted only its existing large-chunk advisory.
+- The protected Reports queue now returns total/totalPages metadata and the
+  preview uses a bounded 50-row page with Previous/Next controls. Safe search,
+  status filters, metadata-only fields, and the no-resolution boundary remain
+  intact.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-Bp15uWxX.js` asset, `/api/admin/reports?status=all&search=video&page=1&pageSize=50`,
+  and `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon preserved; the full read-only production smoke passed 10/10.
+- Authenticated Reports rendering and pagination interaction remain pending an
+  authorized owner/admin browser session and are not claimed as passed.
+- No report records, D1 schema, R2 objects, Creator Studio access, or legacy
+  `/admin-panel` behavior were changed.
+
 ## Quality-gate follow-up — 2026-10-12
 
 - Focused TPI-ADMIN-008 preview suite: PASS — 55/55.

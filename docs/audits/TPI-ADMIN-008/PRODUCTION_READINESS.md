@@ -45,7 +45,8 @@ workflows remain explicitly limited and require the existing protected systems.
 Reports & Moderation now has a protected metadata-only queue for existing video
 and messenger reports. Status browsing is available, while private evidence and
 review-resolution actions remain unavailable pending a verified mutation
-contract.
+contract. The queue uses bounded server-backed pagination and a matching-record
+count.
 
 Notifications now has a protected metadata-only queue over the existing
 `member_notifications` table. It exposes delivery metadata and unread/read/all

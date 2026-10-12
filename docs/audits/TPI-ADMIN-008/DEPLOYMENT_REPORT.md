@@ -354,6 +354,26 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
 
+## Reports pagination release
+
+- Git commit: `a81627a` pushed to `origin/main`.
+- Cloudflare Version ID: `f3581d75-4313-4add-ad02-18943d8db017`.
+- Preview asset: `/admin-center-preview/assets/index-Bp15uWxX.js`.
+- The protected Reports API now returns bounded pagination totals, and the
+  preview exposes 50-row Previous/Next navigation while retaining safe search,
+  status filters, metadata-only fields, and no resolution mutation.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, `git diff --check`, and focused QA 58/58. The existing Vite
+  large-chunk advisory remains informational.
+- Authenticated Reports rendering and pagination remain pending an authorized
+  owner/admin browser session and are not claimed as runtime owner-verified.
+- No report records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+- Anonymous production boundary checks: preview HTML, exact preview asset,
+  `/api/admin/reports?status=all&search=video&page=1&pageSize=50`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; the read-only production smoke passed 10/10.
+
 ## Community route separation release
 
 - Git commit: `7185626` pushed to `origin/main`.
