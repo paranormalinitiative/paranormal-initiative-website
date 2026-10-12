@@ -57,3 +57,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   replacement was performed.
 - Documentation sync commit: `d6b45ed` pushed to `origin/main`.
 - Documentation sync Cloudflare Version ID: `53f787b5-ed28-4796-9b0a-20b01ade2f87`.
+
+## Contributor Management release
+
+- Git commit: `88f2316` pushed to `origin/main`.
+- Cloudflare Version ID: `6e48d46b-5f3b-44f8-98a6-7596e84db61d`.
+- Preview asset: `/admin-center-preview/assets/index-b-VW_Pff.js`.
+- Dry run: PASS — `TPI_DB` resolved to `tpi_contributor_portal`, `TPI_MEDIA`
+  resolved to `tpi-contributor-media`, and `ASSETS` was present.
+- Anonymous boundary checks: preview, preview asset, `/api/admin/contributors`,
+  and `/api/invites` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved.
+- No contributor, invite, role, D1, or R2 data was mutated during verification.
