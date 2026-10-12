@@ -80,6 +80,25 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 - No channel records, D1 schema, R2 objects, Creator Studio access, or legacy
   `/admin-panel` behavior were changed.
 
+## Creator Studio Access pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  61/61. Vite emitted only its existing large-chunk advisory.
+- The protected Creator Studio Access preview now consumes the existing
+  entitlement pagination totals with a bounded 50-row request, matching
+  totals, and Previous/Next controls. Grant, revoke, and escalation controls
+  remain excluded.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-BEgXbqkj.js` asset, `/api/admin/creator-studio/entitlements?page=1&pageSize=50`,
+  `/studio/`, and `/admin-panel.html` returned HTTP 403; the full read-only
+  production smoke passed 10/10 and `/live-video` remained Coming Soon.
+- Authenticated Creator Studio Access rendering, pagination interaction, and
+  rollback verification remain pending an authorized owner/admin browser
+  session and are not claimed as passed.
+- No entitlement records, D1 schema, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Roles & Permissions release verification
 
 - Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin

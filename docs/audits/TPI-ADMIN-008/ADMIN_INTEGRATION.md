@@ -45,6 +45,9 @@ This batch improves the preview's route ownership and dashboard contract:
 - Security now has an explicit read-only boundary summary for the existing
   server-side gates and preserved public/private data boundaries; it does not
   add new controls or replace authenticated verification.
+- Creator Studio Access now consumes the existing entitlement count/pagination
+  contract with bounded read-only browsing; grant, revoke, and escalation
+  controls remain excluded.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

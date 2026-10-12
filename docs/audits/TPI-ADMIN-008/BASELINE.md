@@ -63,3 +63,7 @@ the Activity page.
 The Reports & Moderation queue now consumes the existing report contract with
 bounded server-backed pagination and matching-record totals. It remains
 metadata-only and exposes no unverified resolution mutation.
+
+Creator Studio Access now consumes the existing entitlement pagination
+contract with bounded server-backed browsing and matching totals. It remains
+read-only and does not grant, revoke, or expand Creator Studio access.

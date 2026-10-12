@@ -30,9 +30,11 @@ status. It does not start refresh jobs and remains subject to authenticated
 runtime verification.
 
 Creator Directory, Founding 50, and Creator Studio Access are integrated using
-existing protected read/API contracts. The Founding 50 award gate remains
-closed and Creator Studio entitlement escalation remains unavailable; runtime
-verification still requires an authorized owner/admin session.
+existing protected read/API contracts. Creator Studio Access now uses bounded
+server-backed entitlement pagination and matching totals. The Founding 50
+award gate remains closed and Creator Studio entitlement escalation remains
+unavailable; runtime verification still requires an authorized owner/admin
+session.
 
 System Settings is integrated as a protected read-only view with visibly
 disabled controls. The existing mutation workflow remains preserved in the

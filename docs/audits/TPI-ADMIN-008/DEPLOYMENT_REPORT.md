@@ -205,6 +205,28 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No channel records, D1 migration, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Creator Studio Access pagination release
+
+- Git commit: `b840336` pushed to `origin/main`.
+- Cloudflare Version ID: `bbf47de4-a771-4e1e-851c-49944baec87b`.
+- Preview asset: `/admin-center-preview/assets/index-BEgXbqkj.js`.
+- The protected Creator Studio Access preview now uses the existing entitlement
+  pagination contract with a bounded 50-row page, matching totals, and
+  Previous/Next controls. Grant, revoke, and escalation controls remain
+  excluded.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA 61/61.
+  The existing Vite large-chunk advisory remains informational.
+- Authenticated Creator Studio Access rendering and pagination interaction
+  remain pending an authorized owner/admin browser session and are not claimed
+  as owner-verified.
+- Anonymous production boundary checks: preview HTML, exact preview asset,
+  `/api/admin/creator-studio/entitlements?page=1&pageSize=50`, `/studio/`, and
+  `/admin-panel.html` returned HTTP 403; the read-only production smoke passed
+  10/10 and `/live-video` remained Coming Soon.
+- No entitlement records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
 ## Release documentation sync — Creator Channels pagination
 
 - Documentation commit: `67aa430` pushed to `origin/main`.
