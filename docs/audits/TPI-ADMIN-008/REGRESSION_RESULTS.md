@@ -569,3 +569,21 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - No D1 schema, production records, R2 objects, Creator Studio access, or
   legacy `/admin-panel` behavior were changed.
 
+
+## Member Detail activity pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, `git diff --check`, and focused QA 71/71. Vite emitted only
+  its existing large-chunk advisory.
+- Member Detail requests `/admin/members/:username/activity?page=...&pageSize=25`
+  and renders Previous/Next controls from the existing `activityPagination`
+  response. No new API or mutation was introduced.
+- Anonymous production checks: public shell HTTP 200; `/live-video` HTTP 200
+  with Coming Soon preserved; preview HTML, exact generated preview asset,
+  `/admin-panel.html`, and the protected member-activity API all returned
+  HTTP 403.
+- Authenticated member-detail rendering, page navigation, status mutation,
+  and owner/admin role-matrix verification remain pending an authorized
+  browser session.
+- No D1 schema, production records, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.

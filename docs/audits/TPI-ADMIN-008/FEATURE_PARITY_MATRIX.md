@@ -4,7 +4,7 @@
 | --- | --- | --- | --- |
 | Dashboard and analytics | Legacy admin overview, analytics, D1-backed counts | Real overview metrics plus protected `/admin/analytics` trends and source definitions | PARTIALLY WORKING |
 | Administration activity | Existing audit activity data | Dedicated protected recent-activity feed; Audit Logs retains search and pagination | WORKING WITH LIMITATIONS |
-| Member directory/detail | Existing admin member APIs and activity | Search, filters, sorting, pagination, detail/activity | WORKING WITH LIMITATIONS |
+| Member directory/detail | Existing admin member APIs and activity | Search, filters, sorting, pagination, protected detail/activity with existing 25-record server pagination and Previous/Next browsing | WORKING WITH LIMITATIONS |
 | Roles and permissions | Existing server-side authorization and account controls | Protected read-only role/capability summary from contributor records; role/title/capability mutations remain on Contributor Management | WORKING WITH LIMITATIONS |
 | Account restrictions | Existing member capability flags and user-to-user restriction workflows | Protected read-only capability-restrictions list with server-side search, bounded 50-record pagination, and matching totals; no administrative suspension or user-to-user restriction mutation | WORKING WITH LIMITATIONS |
 | Community overview and posts | Existing Community Feed admin API | Distinct protected overview metrics plus Posts & Comments record review with active/visible/hidden/deleted filtering and status updates | WORKING |

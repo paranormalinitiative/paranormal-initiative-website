@@ -9,6 +9,7 @@
 - [ ] Verify Community Comments loads visible/deleted/all filters and search without exposing an unverified mutation control; keep Article Comment Moderation separate under Education Center.
 - [ ] Verify Audit Logs and Moderation History search and pagination operate through the protected read-only audit query.
 - [ ] Verify member directory, detail tabs, and safe confirmation-gated actions.
+- [ ] Verify selected Member Detail activity uses 25-record server pages and Previous/Next controls without exposing private conversation bodies.
 - [ ] Verify Contributor Management loads the directory and existing invite records through the protected preview.
 - [ ] Verify Contributor Management status filters, server-side search, matching totals, and Previous/Next pagination.
 - [ ] Verify Contributor Invites loads 25-record pages with matching totals and Previous/Next controls without exposing unauthorized invite data.

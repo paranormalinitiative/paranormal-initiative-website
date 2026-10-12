@@ -83,6 +83,11 @@ This batch improves the preview's route ownership and dashboard contract:
   invite generation, validation, and access-level enforcement remain
   compatible; no invitation records or new storage were introduced.
 
+- Member Detail now requests the existing protected member-activity contract
+  with explicit 25-record pages and Previous/Next browsing from its existing
+  `activityPagination` response. No new endpoint, mutation, or private-data
+  surface was introduced.
+
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and
 explicit owner approval.

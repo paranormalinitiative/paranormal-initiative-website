@@ -109,3 +109,7 @@ Contributor Invites now uses the existing protected `/invites` contract with
 optional explicit 25-record pages and matching totals. Existing no-query
 callers, invite generation, validation, and access-level enforcement remain
 compatible.
+
+Member Detail activity now uses the existing protected member-activity
+contract with explicit 25-record pages and Previous/Next browsing. Existing
+member-directory behavior and private-data boundaries remain unchanged.

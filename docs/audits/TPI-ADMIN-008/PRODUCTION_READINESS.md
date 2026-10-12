@@ -134,6 +134,12 @@ no-query callers and invite creation/validation remain compatible and
 protected; authenticated invite navigation and creation still require owner
 acceptance.
 
+Member Detail activity now consumes the existing protected member-activity
+contract with explicit 25-record pages and Previous/Next browsing. Existing
+member-directory pagination, protected status actions, and private-data
+boundaries remain unchanged; authenticated activity-page acceptance remains
+pending.
+
 Source/build/QA checks passed, but authenticated owner/admin browser acceptance
 and rollback verification remain pending. This batch does not authorize
 promotion of `/admin-center-preview/` over `/admin-panel`.

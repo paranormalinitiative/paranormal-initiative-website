@@ -995,3 +995,26 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No D1 migration, production record mutation, R2 operation, credential
   change, `/admin-panel` replacement, or Creator Studio access expansion was
   performed.
+
+## Member Detail activity pagination release
+
+- Git commit: `8d28e41` pushed to `origin/main`.
+- Cloudflare Version ID: `872839e9-ab03-46e0-8042-2fca7863be1f`.
+- Preview asset: `/admin-center-preview/assets/index-DnoQfzqY.js`.
+- Member Detail now uses the existing protected member-activity contract with
+  explicit 25-record pages and Previous/Next controls. The existing member
+  directory pagination, protected status mutations, and private-data boundary
+  remain unchanged.
+- Source/build/QA checks: PASS — Admin Center TypeScript/Vite production
+  build, Worker syntax, `git diff --check`, and focused QA 71/71. Vite
+  emitted only its existing large-chunk advisory.
+- Anonymous boundary checks after deployment: public shell HTTP 200,
+  `/live-video` HTTP 200 with Coming Soon preserved, preview HTML HTTP 403,
+  exact preview asset HTTP 403, `/admin-panel.html` HTTP 403, and the
+  protected member-activity API HTTP 403.
+- Authenticated owner/admin member-detail page navigation and rollback
+  verification remain pending an authorized browser session; they are not
+  claimed as passed.
+- No D1 migration, production record mutation, R2 operation, credential
+  change, `/admin-panel` replacement, or Creator Studio access expansion was
+  performed.
