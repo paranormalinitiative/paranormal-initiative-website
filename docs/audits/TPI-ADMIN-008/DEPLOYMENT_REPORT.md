@@ -295,6 +295,15 @@ parity, authenticated acceptance, rollback verification, and owner approval.
 - No draft/video records, D1 migration, R2 operation, credential change,
   `/admin-panel` replacement, or Creator Studio access expansion was performed.
 
+## Release documentation sync — Published TPI Videos pagination
+
+- Documentation commit: `de19dfe` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `bbde11c6-7bda-4f47-a1d1-7b118c4d217b`.
+- The sync published the TPI Videos pagination release evidence and updated
+  parity, readiness, regression, baseline, and owner-acceptance documentation;
+  runtime code remained unchanged.
+
 ## Release documentation sync — Creator Directory
 
 - Documentation commit: `9d89ca9` pushed to `origin/main`.
