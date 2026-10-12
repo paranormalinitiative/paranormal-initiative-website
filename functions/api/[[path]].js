@@ -838,10 +838,7 @@ async function handleAdminReports(request, env) {
     binds.push(pattern, pattern, pattern, pattern, pattern, pattern, pattern);
   }
   const where = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
-  const baseQuery = `
-    SELECT id, reportType, contentType, contentId, contentLabel, reason, status,
-           reporterUsername, reporterName, reportedUsername, reportedName,
-           createdAt, reviewedAt, reviewedBy, evidenceNote
+  const queueSource = `
     FROM (
       SELECT vr.id, 'video' AS reportType, 'video' AS contentType,
              vr.video_id AS contentId, tv.title AS contentLabel, vr.reason,
@@ -866,12 +863,18 @@ async function handleAdminReports(request, env) {
       LEFT JOIN contributors reporter ON reporter.id = mr.reporter_id
       LEFT JOIN contributors reported ON reported.id = mr.reported_contributor_id
       LEFT JOIN contributors reviewer ON reviewer.id = mr.reviewed_by
-    ) reportQueue
+    ) reportQueue`;
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total ${queueSource} ${where}`).bind(...binds).first();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id, reportType, contentType, contentId, contentLabel, reason, status,
+           reporterUsername, reporterName, reportedUsername, reportedName,
+           createdAt, reviewedAt, reviewedBy, evidenceNote
+    ${queueSource}
     ${where}
     ORDER BY createdAt DESC
-    LIMIT ? OFFSET ?`;
-  const { results } = await env.TPI_DB.prepare(baseQuery).bind(...binds, pageSize, offset).all();
-  return json({ reports: results || [], status, search, pagination: { page, pageSize, returned: (results || []).length }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+    LIMIT ? OFFSET ?`).bind(...binds, pageSize, offset).all();
+  const total = Number(count?.total || 0);
+  return json({ reports: results || [], status, search, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) }, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleAdminNotifications(request, env) {
