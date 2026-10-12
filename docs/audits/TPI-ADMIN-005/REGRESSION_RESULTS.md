@@ -8,6 +8,8 @@ helpers, or StudioFlow source were modified.
 
 PASS: source and dependency directories are excluded from asset publishing.
 
-PENDING: authenticated production smoke and direct anonymous asset-request
-checks for the new preview path. These require a deployed build and test
-sessions and must precede any replacement of `/admin-panel`.
+PENDING: authenticated production smoke for the new preview path. Anonymous
+boundary checks are complete on Cloudflare version
+`7256a900-37ab-41c0-81e1-858d536e26c1`: preview document `403`, direct asset
+`403`, admin API `403`, legacy admin entry `403`, and public `/live-video`
+`200` with Coming Soon. Signed-in owner/admin regression remains pending.

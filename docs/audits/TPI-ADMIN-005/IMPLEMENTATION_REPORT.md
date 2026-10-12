@@ -22,3 +22,15 @@ Preserved:
 No database migration, R2 change, public launch, `/admin-panel` replacement,
 or owner acceptance claim was made. Release identifiers are added only after
 the protected preview is verified through the established release workflow.
+
+## Release evidence
+
+- GitHub commit: `3f9aaeabe637b19fe8726c94f138629a7373d4da`
+- Cloudflare Worker version: `7256a900-37ab-41c0-81e1-858d536e26c1`
+- Worker endpoint: `https://theparanormalinitiative.paranormalsomerset.workers.dev`
+- Anonymous preview HTML: `403`
+- Anonymous direct preview JavaScript asset: `403`
+- Anonymous `/api/admin/overview`: `403`
+- Anonymous legacy `/admin-panel.html`: `403`
+- Public `/live-video`: `200`, Coming Soon marker present
+- Authorized owner/admin browser verification: pending owner session

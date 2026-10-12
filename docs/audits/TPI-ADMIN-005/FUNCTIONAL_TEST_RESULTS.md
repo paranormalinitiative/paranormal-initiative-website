@@ -14,3 +14,12 @@
 | Anonymous gate | Local Worker/deployment | PENDING | Requires deployed Worker or authenticated local Worker harness |
 
 No production database or R2 test was performed.
+
+## Production smoke evidence
+
+Cloudflare version `7256a900-37ab-41c0-81e1-858d536e26c1` was checked through
+the Worker endpoint. Anonymous entry and direct-asset requests were rejected
+with `403`; the admin API was rejected with `403`; the legacy admin entry was
+also rejected with `403`; and `/live-video` returned `200` with Coming Soon.
+An authorized owner/admin session was not available in this automated run and
+remains pending owner acceptance testing.

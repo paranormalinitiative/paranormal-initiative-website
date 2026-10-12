@@ -2,7 +2,7 @@
 
 Status: NOT YET ACCEPTED — protected preview review required.
 
-- [ ] Anonymous request to `/admin-center-preview/` receives the server gate.
+- [x] Anonymous request to `/admin-center-preview/` receives the server gate (production smoke).
 - [ ] Ordinary member request receives the server gate.
 - [ ] Owner/admin request loads the preview and all generated assets.
 - [ ] Dashboard D1 metrics are accurate.
@@ -14,3 +14,5 @@ Status: NOT YET ACCEPTED — protected preview review required.
 - [ ] Existing `/admin-panel` remains the production Administration Center.
 - [ ] `/studio` remains owner/admin-only and `/live-video` remains Coming Soon.
 - [ ] Owner explicitly approves any future replacement decision.
+
+Production smoke version: `7256a900-37ab-41c0-81e1-858d536e26c1`.

@@ -19,3 +19,10 @@ Required owner acceptance checks after protected preview deployment:
 5. Member search/detail/activity and block/unblock operate.
 6. Legacy `/admin-panel` remains unchanged and reachable to authorized users.
 7. `/studio` and `/live-video` remain protected/Coming Soon respectively.
+
+## First production gate check
+
+Cloudflare version `7256a900-37ab-41c0-81e1-858d536e26c1` passed anonymous
+boundary checks for the preview document, preview JavaScript asset, admin API,
+and legacy admin HTML. `/live-video` remained Coming Soon. Authorized owner and
+admin functionality still requires a signed-in browser session for acceptance.
