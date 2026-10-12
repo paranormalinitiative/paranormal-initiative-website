@@ -6,7 +6,8 @@
 - [ ] Confirm Community Overview and Posts & Comments are distinct active routes.
 - [ ] Confirm deleted Community posts are absent from Active and visible only through Deleted.
 - [ ] Verify member directory, detail tabs, and safe confirmation-gated actions.
-- [ ] Verify Contributor Management remains transitional and Teams loads pending, approved, and rejected records through the protected preview.
+- [ ] Verify Contributor Management loads the directory and existing invite records through the protected preview.
+- [ ] Verify invitation types, access levels, code generation, and role/title updates only with safe test data.
 - [ ] Verify a disposable Teams approval/rejection action only if safe test data is available; do not mutate real records.
 - [ ] Verify Education, creator, video, and event transitional links.
 - [ ] Confirm `/admin-panel` remains unchanged and protected.

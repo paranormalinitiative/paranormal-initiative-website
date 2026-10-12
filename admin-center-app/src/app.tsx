@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { useList } from "@refinedev/core";
 import { Activity, BarChart3, BookOpen, CheckCircle2, ChevronRight, CircleHelp, FileCheck2, FileText, Gauge, LayoutDashboard, Menu, MessageSquare, MoreHorizontal, RefreshCw, Search, Settings2, ShieldCheck, SlidersHorizontal, Users, Video, X, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { adminFetch, metricValue, type AdminOverview, type AdminTeam, type ClassicComment, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
+import { adminFetch, metricValue, type AdminContributor, type AdminInvite, type AdminOverview, type AdminTeam, type ClassicComment, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
 
 type View = "overview" | "analytics" | "activity" | "members" | "roles" | "restrictions" | "community" | "community-content" | "comments" | "reports" | "moderation-history" | "creators" | "founding" | "studio-access" | "channels" | "videos" | "education" | "contributors" | "teams" | "events" | "notifications" | "health" | "security" | "audit" | "settings";
 type NavItem = { id: View; label: string; icon: typeof LayoutDashboard };
@@ -28,7 +28,7 @@ function App() {
   useEffect(loadOverview, [range]);
   const selectView = (next: View) => { setView(next); setSidebarOpen(false); setNotice(""); };
   const current = flatNav.find((item) => item.id === view) || flatNav[0];
-  const implemented = new Set<View>(["overview", "analytics", "activity", "audit", "members", "community", "community-content", "comments", "moderation-history", "teams"]);
+  const implemented = new Set<View>(["overview", "analytics", "activity", "audit", "members", "community", "community-content", "comments", "moderation-history", "contributors", "teams"]);
   return <div className="admin-preview-app">
     <aside className={`admin-preview-sidebar ${sidebarOpen ? "is-open" : ""}`}>
       <div className="admin-preview-brand"><span className="admin-preview-mark">TPI</span><div><strong>Administration Center</strong><small>Protected preview</small></div><button className="mobile-close" onClick={() => setSidebarOpen(false)} aria-label="Close navigation"><X size={18} /></button></div>
@@ -37,7 +37,7 @@ function App() {
       <div className="admin-preview-sidebar-foot">TPI-ADMIN-007A<br /><span>Protected preview — `/admin-panel` remains unchanged</span></div>
     </aside>
     {sidebarOpen && <button className="sidebar-scrim" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
-    <main className="admin-preview-main"><header className="admin-preview-topbar"><button className="mobile-menu" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Menu size={20} /></button><div><p className="eyebrow">The Paranormal Initiative</p><h1>{current.label}</h1></div><div className="topbar-status"><span className="status-dot" /> Protected session</div></header>{notice && <div className="preview-notice" role="alert">{notice}</div>}{view === "overview" && <Dashboard overview={overview} loading={overviewLoading} range={range} onRange={setRange} onRefresh={loadOverview} onNavigate={selectView} />}{view === "analytics" && <Analytics overview={overview} loading={overviewLoading} range={range} onRange={setRange} />}{["activity", "audit", "moderation-history"].includes(view) && <Audit onNotice={setNotice} historyOnly={view === "moderation-history"} />}{view === "members" && <Members onNotice={setNotice} />}{["community", "community-content"].includes(view) && <CommunityPosts onNotice={setNotice} />}{view === "comments" && <Comments onNotice={setNotice} />}{view === "teams" && <Teams onNotice={setNotice} />}{!implemented.has(view) && <Capability view={view} overview={overview} />}</main>
+    <main className="admin-preview-main"><header className="admin-preview-topbar"><button className="mobile-menu" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Menu size={20} /></button><div><p className="eyebrow">The Paranormal Initiative</p><h1>{current.label}</h1></div><div className="topbar-status"><span className="status-dot" /> Protected session</div></header>{notice && <div className="preview-notice" role="alert">{notice}</div>}{view === "overview" && <Dashboard overview={overview} loading={overviewLoading} range={range} onRange={setRange} onRefresh={loadOverview} onNavigate={selectView} />}{view === "analytics" && <Analytics overview={overview} loading={overviewLoading} range={range} onRange={setRange} />}{["activity", "audit", "moderation-history"].includes(view) && <Audit onNotice={setNotice} historyOnly={view === "moderation-history"} />}{view === "members" && <Members onNotice={setNotice} />}{["community", "community-content"].includes(view) && <CommunityPosts onNotice={setNotice} />}{view === "comments" && <Comments onNotice={setNotice} />}{view === "contributors" && <Contributors onNotice={setNotice} />}{view === "teams" && <Teams onNotice={setNotice} />}{!implemented.has(view) && <Capability view={view} overview={overview} />}</main>
   </div>;
 }
 
@@ -82,6 +82,67 @@ function CommunityPostRow({ post, onNotice, onReload }: { post: CommunityPost; o
 function Comments({ onNotice }: { onNotice: (value: string) => void }) { const [status, setStatus] = useState("pending"); const [comments, setComments] = useState<ClassicComment[]>([]); const [loading, setLoading] = useState(true); const load = () => { setLoading(true); adminFetch<{ comments: ClassicComment[] }>(`/admin/comments?status=${status}`).then((body) => setComments(body.comments || [])).catch((error) => onNotice(error.message)).finally(() => setLoading(false)); }; useEffect(load, [status]); const action = async (comment: ClassicComment, method: "approve" | "delete") => { try { await adminFetch(`/admin/comments/${encodeURIComponent(comment.id)}${method === "approve" ? "/approve" : ""}`, { method: method === "approve" ? "POST" : "DELETE" }); onNotice(`Comment ${method === "approve" ? "approved" : "deleted"}.`); load(); } catch (error) { onNotice((error as Error).message); } }; return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Education Center</p><h2>Article Comment Moderation</h2><p>Review classic article comments here. Community Feed comments remain in the Community moderation resources.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><Card><CardHeader><div className="filter-bar"><select aria-label="Comment status" value={status} onChange={(event) => setStatus(event.target.value)}><option value="pending">Pending</option><option value="approved">Approved</option></select><Badge variant="outline">Classic article comments</Badge></div></CardHeader><CardContent>{loading ? <LoadingState label="Loading article comments…" /> : comments.length ? <div className="moderation-list">{comments.map((comment) => <div className="moderation-row" key={comment.id}><div><strong>{comment.name || comment.authorUsername || "Commenter"}</strong><p>{comment.text || "No comment text returned."}</p><span className="table-subtext">{comment.pageId || "Unknown page"} · {new Date(comment.createdAt).toLocaleString()}</span></div><div className="detail-actions"><Badge variant={comment.status === "approved" ? "success" : "warning"}>{comment.status}</Badge>{comment.status === "pending" && <Button size="sm" onClick={() => action(comment, "approve")}>Approve</Button>}<Button size="sm" variant="destructive" onClick={() => action(comment, "delete")}>Delete</Button></div></div>)}</div> : <EmptyState label={`No ${status} article comments returned.`} />}</CardContent></Card></section>; }
 
 function Audit({ onNotice, historyOnly }: { onNotice: (value: string) => void; historyOnly?: boolean }) { const [logs, setLogs] = useState<Array<{ id: string; actorUsername: string; actorRole: string; action: string; targetType?: string; targetId?: string; createdAt: string }>>([]); const [loading, setLoading] = useState(true); const [query, setQuery] = useState(""); const load = () => { setLoading(true); const params = new URLSearchParams({ limit: "50" }); if (query) params.set("q", query); adminFetch<{ logs: typeof logs }>(`/admin/audit-logs?${params}`).then((body) => setLogs(body.logs || [])).catch((error) => onNotice(error.message)).finally(() => setLoading(false)); }; useEffect(load, []); const rows = historyOnly ? logs.filter((log) => /moderat|comment|community|block|deactivat|report/i.test(`${log.action} ${log.targetType || ""}`)) : logs; return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Accountability</p><h2>{historyOnly ? "Moderation History" : "Audit Logs"}</h2><p>Administrative actions are shown without message bodies, recordings, stream keys, or private conversation content.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><Card><CardHeader><div className="filter-bar"><div className="search-field"><Search size={16} /><Input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.key === "Enter" && load()} placeholder="Actor, action, or target" aria-label="Filter audit logs" /></div></div></CardHeader><CardContent className="audit-list">{loading ? <LoadingState label="Loading audit history…" /> : rows.length ? rows.map((log) => <div className="audit-row" key={log.id}><div><strong>{log.action}</strong><span>{log.targetType || "system"}{log.targetId ? ` · ${log.targetId}` : ""}</span></div><div><Badge variant="outline">{log.actorUsername} · {log.actorRole}</Badge><time>{new Date(log.createdAt).toLocaleString()}</time></div></div>) : <EmptyState label="No audit records matched this filter." icon={<Activity size={28} />} />}</CardContent></Card></section>; }
+
+function Contributors({ onNotice }: { onNotice: (value: string) => void }) {
+  const [contributors, setContributors] = useState<AdminContributor[]>([]);
+  const [invites, setInvites] = useState<AdminInvite[]>([]);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("active");
+  const [loading, setLoading] = useState(true);
+  const [inviteType, setInviteType] = useState("standard");
+  const [inviteRole, setInviteRole] = useState("contributor");
+  const [inviteCode, setInviteCode] = useState("");
+  const [creatingInvite, setCreatingInvite] = useState(false);
+  const load = () => {
+    setLoading(true);
+    Promise.all([adminFetch<{ contributors: AdminContributor[] }>("/admin/contributors"), adminFetch<{ invites: AdminInvite[] }>("/invites")]).then(([directory, inviteList]) => {
+      setContributors(directory.contributors || []);
+      setInvites(inviteList.invites || []);
+    }).catch((error) => onNotice(error.message)).finally(() => setLoading(false));
+  };
+  useEffect(load, []);
+  const visibleContributors = contributors.filter((contributor) => (status === "all" || (status === "active" ? contributor.active : !contributor.active)) && `${contributor.displayName} ${contributor.username} ${contributor.title || ""} ${contributor.role}`.toLowerCase().includes(search.toLowerCase().trim()));
+  const changeInviteType = (value: string) => {
+    setInviteType(value);
+    setInviteRole(value === "D" ? "owner" : value === "AD" ? "admin" : "contributor");
+  };
+  const createInvite = async (event: FormEvent) => {
+    event.preventDefault();
+    setCreatingInvite(true);
+    try {
+      const suppliedCode = inviteCode.trim();
+      const generatedCode = suppliedCode || (inviteType === "standard" ? "" : `${inviteType}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`);
+      await adminFetch<{ invite: AdminInvite }>("/invites", { method: "POST", body: JSON.stringify({ code: generatedCode, role: inviteRole }) });
+      onNotice("Invite created through the existing protected invitation contract.");
+      setInviteCode("");
+      load();
+    } catch (error) {
+      onNotice((error as Error).message);
+    } finally {
+      setCreatingInvite(false);
+    }
+  };
+  return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Content &amp; Publishing</p><h2>Contributor Management</h2><p>Manage the protected contributor directory, invitation types, and access levels through the existing server-side contracts. Invite codes are only returned to authorized administrators.</p></div><Button variant="outline" onClick={load}><RefreshCw size={16} />Refresh</Button></div><div className="two-column"><Card><CardHeader><CardTitle>Contributor Directory</CardTitle><CardDescription>Active and inactive accounts with protected role/title controls.</CardDescription></CardHeader><CardContent><div className="filter-bar"><div className="search-field"><Search size={16} /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, username, title, or role" aria-label="Search contributors" /></div><select aria-label="Contributor status" value={status} onChange={(event) => setStatus(event.target.value)}><option value="active">Active</option><option value="inactive">Inactive</option><option value="all">All accounts</option></select></div><Table><TableHeader><TableRow><TableHead>Contributor</TableHead><TableHead>Role</TableHead><TableHead>State</TableHead><TableHead>Access controls</TableHead></TableRow></TableHeader><TableBody>{loading ? <TableRow><TableCell colSpan={4}><LoadingState label="Loading contributor directory…" /></TableCell></TableRow> : visibleContributors.length ? visibleContributors.map((contributor) => <ContributorRow key={contributor.username} contributor={contributor} onNotice={onNotice} onReload={load} />) : <TableRow><TableCell colSpan={4}><EmptyState label="No contributor accounts matched this filter." /></TableCell></TableRow>}</TableBody></Table><div className="pagination"><span className="muted">{visibleContributors.length} of {contributors.length} loaded accounts</span><Badge variant="outline">Protected admin API</Badge></div></CardContent></Card><Card><CardHeader><CardTitle>Contributor Invites</CardTitle><CardDescription>Generate the existing invitation types without changing validation or expiration behavior.</CardDescription></CardHeader><CardContent><form className="detail-stack" onSubmit={createInvite}><label><span>Invite type</span><select value={inviteType} onChange={(event) => changeInviteType(event.target.value)}><option value="standard">Standard Contributor</option><option value="D">Director</option><option value="AD">Assistant Director</option><option value="ABM">Advisory Board Member</option></select></label><label><span>Access level</span><select value={inviteRole} onChange={(event) => setInviteRole(event.target.value)}><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select></label><label><span>Invite code (optional)</span><Input value={inviteCode} onChange={(event) => setInviteCode(event.target.value)} placeholder="Leave blank to generate" /></label><Button type="submit" disabled={creatingInvite}>{creatingInvite ? "Creating…" : "Generate Invite Link"}</Button></form><div className="notice-panel"><Badge variant="outline">Protected</Badge><p>Director and Admin invite permissions remain enforced by the server. Existing invite assignment and validation rules are unchanged.</p></div><div className="invite-list"><h3>Existing invites</h3>{invites.length ? invites.slice(0, 25).map((invite) => <div className="activity-item" key={`${invite.code}-${invite.createdAt}`}><code>{invite.code}</code><Badge variant={Boolean(invite.used) ? "outline" : "success"}>{Boolean(invite.used) ? "Used" : "Available"}</Badge><span>{invite.role}<small>{invite.createdAt ? new Date(invite.createdAt).toLocaleString() : "—"}{invite.usedBy ? ` · used by ${invite.usedBy}` : ""}</small></span></div>) : <EmptyState label="No invitation records returned." />}</div></CardContent></Card></div></section>;
+}
+
+function ContributorRow({ contributor, onNotice, onReload }: { contributor: AdminContributor; onNotice: (value: string) => void; onReload: () => void }) {
+  const [title, setTitle] = useState(contributor.title || "");
+  const [role, setRole] = useState(contributor.role);
+  const [busy, setBusy] = useState(false);
+  const save = async () => {
+    setBusy(true);
+    try {
+      await adminFetch<{ contributor: AdminContributor }>("/admin/contributors/title", { method: "POST", body: JSON.stringify({ username: contributor.username, title, role }) });
+      onNotice(`Updated ${contributor.displayName || contributor.username}.`);
+      onReload();
+    } catch (error) {
+      onNotice((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return <TableRow><TableCell><strong>{contributor.displayName || contributor.username}</strong><span className="table-subtext">@{contributor.username}{contributor.organization ? ` · ${contributor.organization}` : ""}</span></TableCell><TableCell><select className="inline-action" value={role} onChange={(event) => setRole(event.target.value)} aria-label={`Role for ${contributor.username}`}><option value="member">Member</option><option value="contributor">Contributor</option><option value="admin">Admin</option><option value="owner">Owner</option></select><Input value={title} onChange={(event) => setTitle(event.target.value)} aria-label={`Title for ${contributor.username}`} placeholder="Title" /></TableCell><TableCell><Badge variant={contributor.active ? "success" : "warning"}>{contributor.active ? "Active" : "Inactive"}</Badge><span className="table-subtext">Joined {contributor.createdAt ? new Date(contributor.createdAt).toLocaleDateString() : "—"}</span></TableCell><TableCell><Button size="sm" disabled={busy || !contributor.active} onClick={save}>{busy ? "Saving…" : "Save access"}</Button></TableCell></TableRow>;
+}
 
 function Teams({ onNotice }: { onNotice: (value: string) => void }) {
   const [status, setStatus] = useState<AdminTeam["status"]>("pending");

@@ -78,6 +78,27 @@ export type AdminTeam = {
   claimedBy?: string;
 };
 
+export type AdminContributor = {
+  username: string;
+  displayName: string;
+  title?: string;
+  role: string;
+  affiliation?: string;
+  organization?: string;
+  website?: string;
+  active: boolean;
+  createdAt: string;
+};
+
+export type AdminInvite = {
+  code: string;
+  role: string;
+  used: boolean | number;
+  usedBy?: string;
+  usedAt?: string;
+  createdAt: string;
+};
+
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api${path}`, { credentials: "same-origin", headers: { "Content-Type": "application/json", ...(init?.headers || {}) }, ...init });
   const body = await response.json().catch(() => ({}));

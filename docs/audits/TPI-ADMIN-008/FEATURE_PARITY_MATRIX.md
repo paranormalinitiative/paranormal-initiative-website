@@ -9,7 +9,7 @@
 | Community comments/reactions | Existing APIs and member activity | Classic comments are separate; aggregate reaction metric added | PARTIALLY WORKING |
 | Reports and moderation | Existing report metadata/contracts | No unified report queue contract | PARTIALLY WORKING |
 | Moderation history/audit | Existing audit log API | Audit and filtered moderation-history views | WORKING WITH LIMITATIONS |
-| Contributor management | Legacy invite/access controls | Protected transitional link | PARTIALLY WORKING |
+| Contributor management | Legacy invite/access controls | Protected directory, invite listing/generation, invite-type/access-level controls, and role/title updates through existing APIs | WORKING WITH LIMITATIONS |
 | Paranormal Teams | Existing directory/approval APIs | Protected status filters, searchable directory, and pending approve/reject controls using existing server contracts | WORKING WITH LIMITATIONS |
 | Education Center | Existing article and comment workflows | Article comment view; broader publishing is transitional | PARTIALLY WORKING |
 | Creator partnership/Founding 50 | Existing protected APIs and closed award gate | Protected transitional views | PARTIALLY WORKING |

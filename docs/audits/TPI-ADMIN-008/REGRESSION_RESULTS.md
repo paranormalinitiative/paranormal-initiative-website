@@ -31,8 +31,12 @@ Pre-existing unrelated dirty files were preserved and not staged.
 - Pending, approved, and rejected filters map to the existing server-side
   `/admin/teams` contract.
 - Pending approve/reject actions map to the existing protected status endpoint.
+- Contributor Management loads the existing contributor and invite contracts,
+  preserves invitation type/access-level choices, and maps role/title updates
+  to the existing protected endpoint.
 - No team data was mutated during verification; authenticated runtime action
-  testing remains pending owner/admin browser access.
+  testing remains pending owner/admin browser access. No contributor, invite,
+  or role data was mutated during verification.
 
 ## Production boundary smoke
 

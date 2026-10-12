@@ -12,6 +12,11 @@ read-only status browsing and existing protected approval mutations. Its
 runtime approval actions remain unverified until an authorized owner/admin
 session is available; no production team records were changed by this batch.
 
+Contributor Management is also integrated for protected directory/invite
+inspection and existing invitation/access-level mutations. Runtime loading and
+mutation acceptance remain pending an authorized owner/admin session; no
+contributor or invitation records were changed during this batch.
+
 The existing `/admin-panel` remains the production Administration Center. No
 Founding 50 memberships were activated, no Creator Studio access was expanded,
 and no public livestreaming was launched.
