@@ -251,6 +251,28 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   credential change, `/admin-panel` replacement, or Creator Studio access
   expansion was performed.
 
+## Creator Directory search/pagination release
+
+- Git commit: `ff84a7b` pushed to `origin/main`.
+- Cloudflare Version ID: `c25ec15f-7c50-493d-aaec-6e3bed6c4c04`.
+- Preview asset: `/admin-center-preview/assets/index-BdPvFeV_.js`.
+- The protected Creator Directory now uses bounded server-side search and a
+  50-row pagination request with matching totals and Previous/Next controls.
+  Membership allocation and Creator Studio access-grant controls remain
+  excluded.
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA 63/63.
+  The existing Vite large-chunk advisory remains informational.
+- Authenticated Creator Directory search and pagination interaction remain
+  pending an authorized owner/admin browser session and are not claimed as
+  owner-verified.
+- Anonymous production boundary checks: preview HTML, exact preview asset,
+  `/api/admin/creator-partnership?page=1&pageSize=50&search=creator`, and
+  `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
+  Coming Soon preserved; the read-only production smoke passed 10/10.
+- No membership records, D1 migration, R2 operation, credential change,
+  `/admin-panel` replacement, or Creator Studio access expansion was performed.
+
 ## Release documentation sync — Founding 50 pagination
 
 - Documentation commit: `e794870` pushed to `origin/main`.

@@ -14,7 +14,7 @@
 - [ ] Verify a disposable Teams approval/rejection action only if safe test data is available; do not mutate real records.
 - [ ] Verify Education, creator, video, and event transitional links.
 - [ ] Verify Platform Health shows provider states and recent scraper runs without starting a refresh job.
-- [ ] Verify Creator Directory, Founding 50 application status, and Creator Studio entitlement status remain inside their protected boundaries; verify Founding 50 status-filtered matching totals and Previous/Next pagination, existing approve/reject workflow, and closed award gate; verify Creator Studio Access pagination without grant/revoke controls.
+- [ ] Verify Creator Directory server-side search, matching totals, and Previous/Next pagination; verify Founding 50 status-filtered matching totals and Previous/Next pagination, existing approve/reject workflow, and closed award gate; verify Creator Studio Access pagination without grant/revoke controls.
 - [ ] Confirm Founding 50 award activation and Creator Studio access escalation remain closed.
 - [ ] Verify System Settings values load and remain visibly disabled in the preview; verify mutations only through the existing protected workflow.
 - [ ] Verify published Education, TPI Videos, and approved Events listings load without exposing draft or mutation controls.

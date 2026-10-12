@@ -71,3 +71,7 @@ read-only and does not grant, revoke, or expand Creator Studio access.
 Founding 50 applications now consume the existing status-filtered pagination
 contract with bounded review browsing. Existing approve/reject actions remain
 on the protected workflow, while award activation remains gated.
+
+Creator Directory now uses the existing partnership contract with bounded
+server-side search, pagination, and matching totals. It remains read-only and
+does not allocate memberships or grant Creator Studio access.

@@ -51,6 +51,9 @@ This batch improves the preview's route ownership and dashboard contract:
 - Founding 50 application review now consumes the existing status-filtered
   pagination contract with bounded browsing; approve/reject remains the
   existing protected workflow and award activation remains gated.
+- Creator Directory now uses bounded server-side search and pagination from
+  the existing partnership contract; membership allocation and Creator Studio
+  access grants remain excluded.
 
 Promotion to `/admin-panel` is not authorized by this batch. It remains gated
 by parity, authenticated browser acceptance, rollback verification, and

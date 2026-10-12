@@ -119,6 +119,25 @@ Status: **PASS WITH LIMITATIONS — protected preview batch; promotion not ready
 - No application records, award allocations, D1 schema, R2 objects, Creator
   Studio access, or legacy `/admin-panel` behavior were changed.
 
+## Creator Directory search/pagination release verification
+
+- Source/build checks: PASS — Admin Center TypeScript/Vite production build,
+  Worker syntax, legacy-admin syntax, `git diff --check`, and focused QA
+  63/63. Vite emitted only its existing large-chunk advisory.
+- The protected Creator Directory now uses bounded server-side search and a
+  50-row pagination request with matching totals and Previous/Next controls.
+  Membership allocation and Creator Studio access-grant controls remain
+  excluded.
+- Anonymous production boundary checks after deployment: preview HTML, exact
+  `index-BdPvFeV_.js` asset, `/api/admin/creator-partnership?page=1&pageSize=50&search=creator`,
+  and `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200
+  with Coming Soon preserved; the full read-only production smoke passed 10/10.
+- Authenticated Creator Directory search, pagination interaction, and rollback
+  verification remain pending an authorized owner/admin browser session and
+  are not claimed as passed.
+- No membership records, D1 schema, R2 objects, Creator Studio access, or
+  legacy `/admin-panel` behavior were changed.
+
 ## Roles & Permissions release verification
 
 - Source/build checks: PASS — `npm run build`, Worker syntax, legacy admin
