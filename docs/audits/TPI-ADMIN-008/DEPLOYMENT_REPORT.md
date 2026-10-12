@@ -82,3 +82,17 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   with Coming Soon preserved.
 - No scraper refresh job, D1 migration, R2 operation, or production data
   mutation was performed.
+
+## Creator Management release
+
+- Git commit: `0a6e8bc` pushed to `origin/main`.
+- Cloudflare Version ID: `1294ca23-52b8-41f7-a11a-73ff4445d72e`.
+- Preview asset: `/admin-center-preview/assets/index-CiNmH33P.js`.
+- Dry run: PASS — `TPI_DB`, `TPI_MEDIA`, and `ASSETS` resolved to the
+  designated TPI resources.
+- Anonymous boundary checks: preview, preview asset,
+  `/api/admin/creator-partnership`, `/api/admin/founding-50`, and
+  `/api/admin/creator-studio/entitlements` returned HTTP 403; `/live-video`
+  returned HTTP 200 with Coming Soon preserved.
+- No Founding 50 award, Creator Studio entitlement, D1, or R2 mutation was
+  performed during verification.
