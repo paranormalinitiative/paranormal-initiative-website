@@ -374,6 +374,14 @@ parity, authenticated acceptance, rollback verification, and owner approval.
   `/admin-panel.html` returned HTTP 403; `/live-video` returned HTTP 200 with
   Coming Soon preserved; the read-only production smoke passed 10/10.
 
+## Release documentation sync — Reports pagination
+
+- Documentation commit: `9744d02` pushed to `origin/main`.
+- Documentation sync Cloudflare Version ID:
+  `bfe7c5c5-0e60-4367-85b4-9b876b462ddc`.
+- The sync published the Reports pagination release evidence; runtime code
+  remained unchanged.
+
 ## Community route separation release
 
 - Git commit: `7185626` pushed to `origin/main`.
