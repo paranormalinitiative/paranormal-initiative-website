@@ -10,8 +10,10 @@ existing video and messenger report tables and returns status, reason, safe
 subject identity, reporter identity, timestamps, and review metadata. Its
 optional search is limited to those safe metadata fields. It deliberately
 omits report details, private conversation IDs and bodies, and stream or
-recording data. It uses bounded server-backed pagination and exposes no
-report-resolution mutation until an authoritative safe contract is verified.
+recording data. It uses bounded server-backed pagination. Its protected
+status/review-audit endpoint updates only the existing review fields; no
+private evidence or report details are exposed, and authenticated mutation
+acceptance remains pending.
 
 The protected `/api/admin/notifications` endpoint is also metadata-only. It
 returns notification title, type, recipient/creator identity, read state, and

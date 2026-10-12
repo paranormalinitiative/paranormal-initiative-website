@@ -13,7 +13,8 @@ an optional table is absent. The preview displays:
 - published Education Center articles;
 - approved Paranormal Teams;
 - open video and messenger report metadata through the protected Reports &
-  Moderation queue; private evidence and resolution controls remain excluded;
+  Moderation queue; protected status/review-audit controls update only the
+  existing review fields, while private evidence remains excluded;
 - Founding 50 allocations without activating awards.
 
 Analytics now queries the protected `/admin/analytics` endpoint directly and
@@ -23,5 +24,6 @@ definition when available.
 
 ## Verification result
 
-PASS at source/build level. Authenticated live data rendering remains blocked
-without an authorized administrator browser session.
+PASS at source/build and isolated protected-contract level. Authenticated live
+data rendering and report mutation acceptance remain blocked without an
+authorized administrator browser session.

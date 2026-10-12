@@ -12,5 +12,6 @@ Reports & Moderation now has a protected metadata-only queue backed by the
 existing `video_reports` and `messenger_reports` tables. It supports open,
 pending, reviewed, dismissed, actioned, and all-status browsing without
 exposing private message bodies, conversation IDs, report details, recordings,
-or stream data. No unified review-resolution mutation is presented because no
-verified safe mutation contract exists yet.
+or stream data. Bounded status/review-audit controls update only the existing
+review fields through a protected endpoint; authenticated owner/admin
+acceptance remains pending.

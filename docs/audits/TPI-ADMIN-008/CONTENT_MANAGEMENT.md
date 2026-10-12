@@ -34,8 +34,9 @@ mutated in this batch.
 
 Reports & Moderation is a protected metadata-only integration over the existing
 video and messenger report tables. It does not expose report details, private
-conversation identifiers, message bodies, recordings, or stream data, and it
-does not invent review-resolution controls.
+conversation identifiers, message bodies, recordings, or stream data. Its
+bounded status/review-audit controls update only the existing report review
+fields; authenticated mutation acceptance remains pending.
 
 Notifications is a protected metadata-only integration over the existing
 `member_notifications` table. It does not expose notification bodies or action
