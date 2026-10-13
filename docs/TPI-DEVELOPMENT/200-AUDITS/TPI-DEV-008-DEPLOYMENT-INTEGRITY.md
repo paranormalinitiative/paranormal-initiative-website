@@ -11,7 +11,8 @@ deployed, migrated, or written.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- HEAD: `e98619e5379fdb70157e2e13a89f9a1ebe1391b3`
+- Baseline HEAD before this repair: `e98619e5379fdb70157e2e13a89f9a1ebe1391b3`
+- Repair commit: `ad93bf0` (`dev: enforce reproducible development deployments`)
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/`
 - Development D1: `tpi_contributor_portal_dev` / `4948ecc5-35de-4782-8f6b-b07fa1782b66`
@@ -83,8 +84,9 @@ development deployment identifiers are recorded in `deployment-context.txt`.
 invocation cannot bypass the safety gate.
 
 Current enforcement result: **BLOCKED as designed** because the four
-pre-existing application files plus the two repaired deployment scripts are
-not yet committed. Documentation-only dirt and known local state are allowed.
+pre-existing application files remain uncommitted. The repaired deployment
+scripts are now committed in `ad93bf0`; documentation-only dirt and known
+local state are allowed.
 
 ## Runtime and Cloudflare verification
 
