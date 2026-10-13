@@ -3527,6 +3527,12 @@ footer {
     text-align: center;
 }
 
+@media (max-width: 700px) {
+    body.member-login-page.member-authenticated .command-header {
+        padding-top: 72px;
+    }
+}
+
 .account-recovery-form,
 .account-identity-card {
     display: grid;

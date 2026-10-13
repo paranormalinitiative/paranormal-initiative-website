@@ -202,6 +202,7 @@
 
     const firstName = String(user.displayName || user.username || "Member").trim().split(/\s+/)[0] || "Member";
     const profileUrl = "member-home.html";
+    document.body.classList.add("member-authenticated");
     updateAuthenticatedNavigation();
     const badge = document.createElement("div");
     badge.className = "member-greeting";
