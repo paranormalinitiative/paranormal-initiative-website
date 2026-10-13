@@ -21,7 +21,10 @@ const EXCLUDED_PREFIXES = [
   "functions/",
   "node_modules/",
   ".wrangler/",
-  ".git/"
+  ".git/",
+  ".freebuff/",
+  "itc-visual-studio/",
+  "studio/"
 ];
 
 function walk(dir) {
@@ -51,11 +54,23 @@ function getLastmod(filePath) {
   }
 }
 
+function isIndexable(filePath) {
+  try {
+    const html = fs.readFileSync(filePath, "utf8");
+    const robots = html.match(/<meta\b[^>]*\bname=["']robots["'][^>]*\bcontent=["']([^"']*)["'][^>]*>/i)
+      || html.match(/<meta\b[^>]*\bcontent=["']([^"']*)["'][^>]*\bname=["']robots["'][^>]*>/i);
+    return !robots || !/\bnoindex\b/i.test(robots[1]);
+  } catch (error) {
+    return false;
+  }
+}
+
 const pages = walk(ROOT)
   .filter(file => file.endsWith(".html"))
   .map(file => path.relative(ROOT, file).replace(/\\/g, "/"))
   .filter(file => !EXCLUDED_FILES.has(path.basename(file)))
   .filter(file => !EXCLUDED_PREFIXES.some(prefix => file.startsWith(prefix)))
+  .filter(file => isIndexable(path.join(ROOT, file)))
   .map(file => {
     const loc = file === "index.html" ? DOMAIN + "/" : DOMAIN + "/" + file;
     const lastmod = getLastmod(path.join(ROOT, file));
