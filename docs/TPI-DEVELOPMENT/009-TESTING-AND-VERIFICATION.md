@@ -42,6 +42,20 @@
 
 Owner acceptance remains for broader browser coverage: public/member workflows, Community Feed, Messenger, Notifications, StudioFlow, responsive layouts, and the complete Administration Center navigation. These are available for development testing but are not all claimed as end-to-end verified by TPI-DEV-005.
 
+## TPI-DEV-009 production-baseline and development-deployment verification
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Production baseline file comparison | VERIFIED | `index.html`, `education-center.html`, and `sitemap.xml` hashes matched current production responses; sitemap generator behavior was reconciled |
+| Development StudioFlow relay schema | VERIFIED | Development-only migration `0049_studioflow_room_relay.sql`; guest and signal tables present with zero data rows |
+| Reproducible source preflight | VERIFIED | HEAD `7f3a3f1`; no uncommitted application files; `reproducibleFromHead: true` |
+| Admin Center build and focused QA | VERIFIED | `tsc -b && vite build`; existing focused suites; Admin Center `78/78` |
+| Development runtime smoke | VERIFIED | `10/10` against `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev` |
+| Production preservation smoke | VERIFIED | `10/10` against `https://paranormalinitiative.com`; production version remained `7e357215-2579-4c60-b27e-dd572a5656fe` |
+| Development deployment | VERIFIED | Version `a6dded19-2f63-4a98-88c4-30ed3d02ca1b` on `theparanormalinitiative-dev` |
+| Owner-authenticated StudioFlow/Admin Center acceptance | NOT TESTED | No owner credentials or session used; anonymous protection is verified only |
+| Full local API E2E | BLOCKED | Existing Wrangler `spawn EBADF` runner issue |
+
 ## Approval evidence
 
 Separate these claims in every report:

@@ -50,14 +50,14 @@ The development resources and migrations were created under TPI-DEV-005 only. Pr
 
 ## Verified deployment
 
-- Latest deployment version: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
+- Latest deployment version: `a6dded19-2f63-4a98-88c4-30ed3d02ca1b`
 - Development route: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/`
 - Admin preview: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/admin-center-preview/`
 - Cron: absent from development configuration
 - Production latest observed version remained `7e357215-2579-4c60-b27e-dd572a5656fe`
 
 TPI-DEV-008 source-integrity results and the unresolved working-tree overlay
-are recorded in [the deployment integrity audit](200-AUDITS/TPI-DEV-008-DEPLOYMENT-INTEGRITY.md).
+are preserved historically in [the deployment integrity audit](200-AUDITS/TPI-DEV-008-DEPLOYMENT-INTEGRITY.md). The TPI-DEV-009 reconciliation and current deployment evidence are in [the production baseline migration audit](200-AUDITS/TPI-DEV-009-PRODUCTION-BASELINE-MIGRATION.md).
 
 ## Verification commands
 
