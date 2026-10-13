@@ -225,4 +225,3 @@ the requested responsive sizes.
 The production Member Login page has the same pre-repair visual defect. It
 remains unchanged under this directive. A production repair requires a new
 explicit authorization and a separate production release review.
-
