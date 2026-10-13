@@ -21,6 +21,10 @@
   const dashboardKicker = document.querySelector("[data-dashboard-kicker]");
   const contributorTools = document.querySelectorAll("[data-contributor-tool]");
   const accountIdentity = document.querySelector("[data-account-identity]");
+  const loginPage = document.querySelector("[data-member-login-page]");
+  const authenticatedLoginState = document.querySelector("[data-authenticated-login-state]");
+  const authenticatedUserName = document.querySelector("[data-authenticated-user-name]");
+  const switchAccountButton = document.querySelector("[data-switch-account]");
 
   function revealAdminToolHost(host) {
     if (!host) return;
@@ -82,6 +86,38 @@
 
   async function cloudflareReady() {
     return Boolean(window.TPIApi && await window.TPIApi.isAvailable());
+  }
+
+  function getLocalSessionUser() {
+    const username = localStorage.getItem(ACCESS_SESSION_KEY);
+    if (!username) return null;
+    return getUsers().find(user => user.username === username && user.active !== false && !user.developerOwner) || null;
+  }
+
+  async function getLoginSessionUser() {
+    if (window.TPIApi) {
+      try {
+        const session = await window.TPIApi.me();
+        return session.user || null;
+      } catch (error) {
+        // Local previews may not provide the Cloudflare API.
+      }
+    }
+    return getLocalSessionUser();
+  }
+
+  async function initAuthenticatedLoginState() {
+    if (!loginPage || !authenticatedLoginState) return;
+    const user = await getLoginSessionUser();
+    if (!user) return;
+
+    if (authenticatedUserName) {
+      authenticatedUserName.textContent = user.displayName || user.username || "this account";
+    }
+    document.querySelectorAll("[data-login-guest-content]").forEach(element => {
+      element.hidden = true;
+    });
+    authenticatedLoginState.hidden = false;
   }
 
   function escapeHtml(value) {
@@ -2513,6 +2549,20 @@
     setStatus("Select the invite link field and copy it manually.", false);
   });
 
+  if (switchAccountButton) {
+    switchAccountButton.addEventListener("click", async () => {
+      switchAccountButton.disabled = true;
+      localStorage.removeItem(ACCESS_SESSION_KEY);
+      try {
+        if (window.TPIApi) await window.TPIApi.logout();
+      } catch (error) {
+        // Clearing the client marker still lets the user retry sign-in if the
+        // development session endpoint is temporarily unavailable.
+      }
+      window.location.reload();
+    });
+  }
+
   document.addEventListener("change", event => {
     const photoInput = event.target.closest("input[name='profilePhotoFile']");
     if (!photoInput || !profilePhotoPreview || !photoInput.files?.[0]) return;
@@ -2539,6 +2589,7 @@
 
   if (inviteSetupPanel) inviteSetupPanel.hidden = true;
   if (inviteOwnerTools) inviteOwnerTools.hidden = true;
+  initAuthenticatedLoginState();
   importInviteFromUrl();
   showOwnerToolsForSetupOnly();
   initDashboard();

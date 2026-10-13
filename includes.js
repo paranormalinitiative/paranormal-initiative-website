@@ -202,6 +202,7 @@
 
     const firstName = String(user.displayName || user.username || "Member").trim().split(/\s+/)[0] || "Member";
     const profileUrl = "member-home.html";
+    updateAuthenticatedNavigation();
     const badge = document.createElement("div");
     badge.className = "member-greeting";
     badge.innerHTML = `
@@ -225,6 +226,18 @@
         // Local previews do not always have the Cloudflare API.
       }
       window.location.href = "member-login.html";
+    });
+  }
+
+  function updateAuthenticatedNavigation() {
+    document.querySelectorAll("a").forEach(link => {
+      const destination = new URL(link.href, window.location.href).pathname.replace(/\/+$/, "");
+      const label = link.textContent.trim().replace(/\s+/g, " ").toLowerCase();
+      const isLoginDestination = destination.endsWith("/member-login") || destination.endsWith("/member-login.html");
+      const isLoginLabel = ["sign in", "member login", "contributor login"].includes(label);
+      if (!isLoginDestination || !isLoginLabel) return;
+      link.href = "member-home.html";
+      link.textContent = "Member Dashboard";
     });
   }
 

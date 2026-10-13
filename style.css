@@ -3393,7 +3393,17 @@ footer {
     gap: 18px;
     justify-content: center;
     align-items: start;
+    width: 100%;
     max-width: 980px;
+}
+
+.member-login-page .command-header {
+    padding: 36px 20px 32px;
+}
+
+.member-login-page .member-page-header {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
 }
 
 .member-login-single {
@@ -3407,6 +3417,109 @@ footer {
 
 .account-toggle-button {
     justify-self: start;
+}
+
+.member-login-shell .editor-access-card form:not(.account-recovery-form) {
+    display: grid;
+    gap: 12px;
+}
+
+.member-login-shell .editor-access-card form > button[type="submit"],
+.member-login-shell .account-recovery-form button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 18px;
+    color: var(--text-on-accent);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base), opacity var(--transition-base);
+}
+
+.member-login-shell .editor-access-card form > button[type="submit"]:hover,
+.member-login-shell .account-recovery-form button[type="submit"]:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+}
+
+.member-login-shell .editor-access-card form > button[type="submit"]:focus-visible,
+.member-login-shell .account-recovery-form button[type="submit"]:focus-visible,
+.member-login-shell .account-toggle-button:focus-visible,
+.member-login-shell .account-state-actions a:focus-visible,
+.member-login-shell .account-state-actions button:focus-visible {
+    outline: 3px solid var(--accent-hover);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px var(--accent-muted);
+}
+
+.member-login-shell .editor-access-card form > button[type="submit"]:disabled,
+.member-login-shell .account-recovery-form button[type="submit"]:disabled {
+    opacity: 0.58;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.member-login-shell .account-toggle-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 42px;
+    margin-top: -2px;
+}
+
+.member-login-shell .access-checkbox {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+}
+
+.member-login-shell .access-checkbox input {
+    width: 18px;
+    min-height: 18px;
+    margin: 2px 0 0;
+    padding: 0;
+}
+
+.member-login-shell .access-checkbox span {
+    line-height: 1.45;
+}
+
+.authenticated-login-state {
+    grid-column: 1 / -1;
+    width: min(520px, 100%);
+    justify-self: center;
+}
+
+.authenticated-login-state h2 {
+    margin-bottom: 0;
+}
+
+.authenticated-login-state strong {
+    color: var(--text-primary);
+}
+
+.account-state-actions {
+    display: grid;
+    gap: 10px;
+}
+
+.account-state-actions .portal-button {
+    width: 100%;
+    text-align: center;
 }
 
 .account-recovery-form,
@@ -6854,6 +6967,15 @@ body.feed-app-page .member-explore-item-shell {
 }
 
 @media (max-width: 420px) {
+    .member-login-page .command-header {
+        padding: 30px 16px 24px;
+    }
+
+    .member-login-page .member-page-header {
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+    }
+
     body.member-mode .member-login-shell .editor-access-card {
         padding: 16px 14px;
     }

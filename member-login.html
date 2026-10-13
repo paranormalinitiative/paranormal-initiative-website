@@ -25,15 +25,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=89">
+    <link rel="stylesheet" href="style.css?v=90">
     <link rel="stylesheet" href="member-shell.css?v=62">
 </head>
-<body>
+<body class="member-login-page">
 <div id="site-header"></div>
 
 <div data-member-content hidden>
-<section class="member-login-shell">
-    <div class="editor-access-card">
+<section class="member-login-shell" data-member-login-page>
+    <div class="editor-access-card authenticated-login-state" data-authenticated-login-state hidden>
+        <p class="portal-kicker">Current Session</p>
+        <h2>Already Signed In</h2>
+        <p>You are signed in as <strong data-authenticated-user-name>this development account</strong>.</p>
+        <div class="account-state-actions">
+            <a class="portal-button" href="member-home.html">Open Member Dashboard</a>
+            <button class="portal-button portal-button-secondary" type="button" data-switch-account>Sign Out and Use Another Account</button>
+        </div>
+    </div>
+
+    <div class="editor-access-card" data-login-guest-content>
         <p class="portal-kicker">Member Login</p>
         <h2>Contributor Access</h2>
         <p>Sign in with your member, contributor, admin, or owner username/email and password.</p>
@@ -54,7 +64,7 @@
         <p class="access-note">Members can join discussions. Contributors can also use the Content Editor after approval.</p>
     </div>
 
-    <div class="editor-access-card">
+    <div class="editor-access-card" data-login-guest-content>
         <p class="portal-kicker">New Member</p>
         <h2>Create Member Account</h2>
         <p>Create a normal member account for the Discussion Portal. Contributor publishing access is approved separately.</p>
@@ -73,7 +83,7 @@
         </form>
     </div>
 
-    <div class="editor-access-card" data-invite-code-panel>
+    <div class="editor-access-card" data-invite-code-panel data-login-guest-content>
         <p class="portal-kicker">Contributor Invite</p>
         <h2>Upgrade With Invite Code</h2>
         <p>Have a contributor invite code from The Paranormal Initiative? Enter it here to create approved contributor access.</p>
@@ -84,7 +94,7 @@
         <p class="access-note">Contributor access allows writing, drafts, and publishing tools. Normal membership does not require an invite.</p>
     </div>
 
-    <div class="editor-access-card invite-setup-card" data-invite-setup-panel hidden>
+    <div class="editor-access-card invite-setup-card" data-invite-setup-panel data-login-guest-content hidden>
         <p class="portal-kicker">Account Setup</p>
         <h2>Set Up Your Account</h2>
         <p>Create the approved contributor login you will use for the Discussion Portal and Content Editor.</p>
@@ -126,7 +136,7 @@
         </form>
     </div>
 
-    <div class="editor-access-card invite-owner-tools" data-invite-owner-tools hidden>
+    <div class="editor-access-card invite-owner-tools" data-invite-owner-tools data-login-guest-content hidden>
         <p class="portal-kicker">Owner Setup</p>
         <h2>Create Owner Login</h2>
         <p>First-time setup only. This appears when 10-click is enabled so you can create your real owner/admin login.</p>
@@ -138,7 +148,7 @@
         </form>
     </div>
 
-    <p id="member-login-status" class="access-note member-login-status"></p>
+    <p id="member-login-status" class="access-note member-login-status" data-login-guest-content role="status" aria-live="polite" aria-atomic="true"></p>
 </section>
 </div>
 
@@ -146,7 +156,7 @@
 <script src="includes.js"></script>
 <script src="api-client.js"></script>
 <script src="legacy-contributions.js"></script>
-<script src="member-login.js?v=38"></script>
+<script src="member-login.js?v=39"></script>
 <script src="member-shell.js?v=55"></script>
 </body>
 </html>
