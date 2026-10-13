@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join, relative, sep } from "node:path";
 
 const repoRoot = process.cwd();
+execFileSync(process.execPath, [join(repoRoot, "scripts/verify-development-config.mjs"), "--deployment"], { stdio: "inherit" });
 const stage = mkdtempSync(join(tmpdir(), "tpi-dev-assets-"));
 const configDir = mkdtempSync(join(tmpdir(), "tpi-dev-config-"));
 const excludedDirectories = new Set([

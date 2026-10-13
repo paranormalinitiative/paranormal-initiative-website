@@ -40,6 +40,12 @@ Do not deploy the root Wrangler configuration as development, modify production 
 6. Use `./scripts/deploy-development.sh` for remote preview. Its preflight requires `codex/tpi-development` and the development bindings, and its staging step excludes secrets and internal files.
 7. Preserve evidence, including the exact URL and deployment identifier.
 
+The deployment gate also requires the package to be reproducible from the
+reviewed Git revision. If application files are uncommitted, stop and review
+them before deployment; do not use a clean archive and do not silently deploy
+an undocumented working-tree overlay. `node scripts/verify-development-config.mjs
+--report-only` inventories the state without deploying.
+
 ### How Todd approves changes
 
 Todd reviews the authenticated development website, checks the requested workflow and responsive behavior, and reports approval or defects. Approval of a development preview is not production authorization. Production requires a separate explicit authorization.

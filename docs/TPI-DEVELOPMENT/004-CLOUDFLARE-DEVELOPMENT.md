@@ -14,6 +14,13 @@ The development target is now implemented as:
 
 The development deployment uses `wrangler.dev.toml` and `scripts/deploy-development.mjs`. The script rejects production Worker names, production D1/R2 identifiers, the production hostname, and non-development branches. It stages assets without `.dev.vars`, `.env*`, Git metadata, documentation, migrations, backups, data, scripts, or source-only Admin Center files.
 
+TPI-DEV-008 added a source-integrity gate. The preflight records the current
+HEAD and working-tree state and refuses deployment when application files are
+uncommitted or when undocumented ignored files could affect the package.
+Documentation-only changes may remain dirty. Use `node
+scripts/verify-development-config.mjs --report-only` for inventory; ordinary
+deployment invocation must remain fail-closed.
+
 ## Current audit result
 
 The root production configuration remains protected. The isolated development configuration is now verified:
@@ -48,6 +55,9 @@ The development resources and migrations were created under TPI-DEV-005 only. Pr
 - Admin preview: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/admin-center-preview/`
 - Cron: absent from development configuration
 - Production latest observed version remained `7e357215-2579-4c60-b27e-dd572a5656fe`
+
+TPI-DEV-008 source-integrity results and the unresolved working-tree overlay
+are recorded in [the deployment integrity audit](200-AUDITS/TPI-DEV-008-DEPLOYMENT-INTEGRITY.md).
 
 ## Verification commands
 

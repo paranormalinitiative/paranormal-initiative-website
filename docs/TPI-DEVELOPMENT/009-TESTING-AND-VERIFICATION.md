@@ -52,3 +52,16 @@ Separate these claims in every report:
 - **Not tested / blocked:** no safe environment, credentials, device, or other prerequisite.
 
 An anonymous protected response can verify that a route is not public; it cannot prove authenticated Administration Center functionality. Owner review must occur on the isolated development website after that environment is operational.
+
+## TPI-DEV-008 deployment-integrity verification
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Git/source inventory | VERIFIED | Branch `codex/tpi-development`, HEAD `e98619e`, tracked and untracked status captured before repair |
+| Recovery checkpoint | VERIFIED | Private checkpoint at `/private/tmp/tpi-dev-008-recovery-20261013/`; patches, safe untracked documentation, hashes, and reverse patch check |
+| Root cause | VERIFIED | Clean archive `6e01afa5` omitted application files not present at HEAD; active version `c8432743` was restored |
+| Development bindings | VERIFIED | Wrangler read-only checks confirmed dev D1 `4948ecc5-35de-4782-8f6b-b07fa1782b66` and prod D1 `f36b9161-b517-4634-9857-bef4147cefe3` |
+| Source preflight report | VERIFIED | `node scripts/verify-development-config.mjs --report-only` identifies the unresolved application overlay |
+| Deployment enforcement | VERIFIED | Normal preflight exits nonzero until application files are approved and committed |
+| New development deployment | NOT PERFORMED | Safe stop preserved active `c8432743`; no incomplete replacement was uploaded |
+| Production protection | VERIFIED | Production homepage 200, anonymous `/admin-panel` 403, `/live-video` Coming Soon; no production deployment or data mutation |
