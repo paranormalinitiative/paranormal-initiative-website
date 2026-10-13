@@ -3406,6 +3406,11 @@ footer {
     padding-bottom: 14px;
 }
 
+/* The login route is an access/account-state page, not a chat workspace. */
+.member-login-page .member-floating-chat {
+    display: none !important;
+}
+
 .member-login-single {
     grid-template-columns: minmax(0, 480px);
 }
