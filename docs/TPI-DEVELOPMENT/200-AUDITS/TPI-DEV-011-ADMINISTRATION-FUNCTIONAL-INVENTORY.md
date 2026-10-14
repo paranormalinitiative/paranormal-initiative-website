@@ -41,3 +41,15 @@ This is a focused implementation inventory, not a new website-wide audit.
 - Full authenticated owner browser acceptance requires the approved development owner session; the currently open browser session is an ordinary development member and correctly receives the admin restriction page.
 - Full local multi-user E2E remains subject to the known Wrangler/esbuild `spawn EBADF` startup issue.
 - Article body editing, video metadata editing, event lifecycle controls, channel ownership changes, role mutation, bulk notifications, and Founding 50 award activation remain on existing workflows or explicitly gated.
+
+## Security addendum boundary inventory
+
+| Surface | Unauthorized behavior | Authorized role boundary | Server enforcement |
+| --- | --- | --- | --- |
+| Administration Center navigation | Hidden from ordinary members and public visitors on desktop/mobile | `owner`, `admin` | `/admin-center-preview/` Worker gate plus protected `/api/admin/*` contracts |
+| Legacy admin pages | Not served to unauthorized direct URLs | `owner`, `admin` | Worker page gate plus API guards |
+| Creator Studio / StudioFlow | Navigation hidden from non-admins; direct URL denied | `owner`, `admin` | Worker gate and protected Studio API routes |
+| Content Editor | Shortcut hidden from non-contributors; direct page denied | `owner`, `admin`, `contributor` | Worker contributor-page gate plus `requireContributor` and ownership checks |
+| Creator video management | Direct management page denied to ordinary members | `owner`, `admin`, `contributor` | Worker contributor-page gate plus owned-channel/video checks |
+
+The existing schema does not currently support granular assigned article/category permissions or a distinct creator role. The addendum reuses the existing role and ownership architecture; a finer permission matrix requires a separate owner-approved design and migration.
