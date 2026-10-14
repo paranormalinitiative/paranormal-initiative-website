@@ -206,8 +206,11 @@ export type AdminPublishedArticle = {
   id: string;
   title: string;
   destination?: string;
+  href?: string;
+  subtitle?: string;
   contributionType?: string;
   author?: string;
+  authorUsername?: string;
   authorDisplayName?: string;
   status: string;
   createdAt?: string;
@@ -216,10 +219,13 @@ export type AdminPublishedArticle = {
 
 export type AdminPublishedVideo = {
   id: string;
+  slug?: string;
   title: string;
   category?: string;
   sourceType?: string;
   channelName?: string;
+  videoUrl?: string;
+  thumbnail?: string;
   publishedAt?: string;
   status: string;
   viewingAccess?: string;

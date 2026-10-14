@@ -56,6 +56,8 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/admin\/community\/comments\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminCommunityCommentDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
+    if (request.method === "GET" && path === "/admin/articles") return requireAdmin(request, env, user => handleAdminArticles(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/articles\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminArticleStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
@@ -2408,6 +2410,75 @@ async function handleCreateArticle(request, env, user) {
   }
 
   return json({ article: { id, href, destination, title, subtitle, contributionType, author, source, labels, status } });
+}
+
+async function handleAdminArticles(request, env, actingUser) {
+  const url = new URL(request.url);
+  const search = clean(url.searchParams.get("search")).slice(0, 120);
+  const requestedStatus = clean(url.searchParams.get("status")).toLowerCase();
+  const status = ["draft", "published", "all"].includes(requestedStatus) ? requestedStatus : "all";
+  const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
+  const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
+  const where = [];
+  const binds = [];
+  if (status !== "all") {
+    where.push("a.status = ?");
+    binds.push(status);
+  }
+  if (search) {
+    const like = `%${search}%`;
+    where.push("(a.title LIKE ? OR a.destination LIKE ? OR a.article_type LIKE ? OR a.author LIKE ? OR c.username LIKE ? OR c.display_name LIKE ?)");
+    binds.push(like, like, like, like, like, like);
+  }
+  const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM articles a LEFT JOIN contributors c ON c.id = a.created_by ${whereSql}`).bind(...binds).first();
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT a.id, a.destination, a.href, a.title, a.subtitle,
+           a.article_type AS contributionType, a.author,
+           c.username AS authorUsername, c.display_name AS authorDisplayName,
+           a.source, a.labels, a.status, a.created_at AS createdAt, a.updated_at AS updatedAt
+    FROM articles a
+    LEFT JOIN contributors c ON c.id = a.created_by
+    ${whereSql}
+    ORDER BY COALESCE(a.updated_at, a.created_at) DESC
+    LIMIT ? OFFSET ?
+  `).bind(...binds, pageSize, (page - 1) * pageSize).all();
+  const total = Number(count?.total || 0);
+  return json({
+    articles: results || [],
+    search,
+    status,
+    pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
+    metadataOnly: true,
+    mutationBoundary: "Article publication status uses the protected administrative contract; article bodies remain on the contributor publishing workflow."
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminArticleStatus(path, request, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/articles\/([^/]+)\/status$/)?.[1] || ""));
+  if (!id) return json({ error: "Article id is required." }, 400);
+  const article = await env.TPI_DB.prepare("SELECT id, href, title, subtitle, article_type AS contributionType, author, status FROM articles WHERE id = ?").bind(id).first();
+  if (!article) return json({ error: "Article was not found." }, 404);
+  const data = await readJson(request);
+  const status = clean(data.status).toLowerCase();
+  if (!["draft", "published"].includes(status)) return json({ error: "Article status must be draft or published." }, 400);
+  if (status === article.status) return json({ article: { ...article, changed: false } });
+  if (status === "published" && (!clean(article.title) || clean(article.title).toLowerCase().startsWith("untitled"))) {
+    return json({ error: "A real title is required before publishing." }, 400);
+  }
+  await env.TPI_DB.prepare("UPDATE articles SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(status, id).run();
+  await writeAdminAuditLog(env, actingUser, `article.${status}`, "article", id, { previousStatus: article.status, title: article.title });
+  if (status === "published") {
+    await notifyActiveMembers(env, {
+      title: `New educational content: ${article.title}`,
+      body: article.subtitle || `${article.contributionType || "Article"} by ${article.author || actingUser.display_name || actingUser.username}`,
+      actionHref: article.href || `published-article.html?id=${encodeURIComponent(id)}`,
+      type: "education",
+      createdBy: actingUser.id,
+      excludeContributorId: actingUser.id
+    });
+  }
+  return json({ article: { ...article, status, changed: true } });
 }
 
 async function handleListArticles(request, env) {

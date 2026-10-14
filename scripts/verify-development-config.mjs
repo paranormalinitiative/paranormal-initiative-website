@@ -26,7 +26,7 @@ const changedFiles = git(["status", "--porcelain=v1", "--untracked-files=all"])
   .split("\n")
   .filter(Boolean)
   .map(line => line.slice(3));
-const uncommittedApplicationFiles = changedFiles.filter(file => !documentationOnly(file));
+const uncommittedApplicationFiles = changedFiles.filter(file => !documentationOnly(file) && !safeIgnoredLocalState(file));
 const ignoredFiles = git([
   "ls-files", "--others", "--ignored", "--exclude-standard", "--",
   ".",
