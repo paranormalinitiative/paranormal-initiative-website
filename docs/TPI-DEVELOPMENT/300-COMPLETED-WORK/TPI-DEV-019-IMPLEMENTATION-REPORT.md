@@ -42,7 +42,14 @@ No migration was required. Existing D1 tables and columns were reused. No resear
 
 ## Deployment and acceptance
 
-The guarded development deployment must be run only after the scoped commit makes application files reproducible from HEAD. The final deployment ID and runtime commit are recorded here after deployment verification. Production remains untouched.
+- Development deployment ID: `b8dc98c9-a830-40a4-a489-da4903e41d82`
+- Runtime source commit: `dca22f1a6ea7f2d5a90e56c89e6ca68ebc98beac`
+- Runtime source branch: `codex/tpi-development`
+- Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
+- Provenance endpoint matched the committed source and branch.
+- Anonymous `/admin-center-preview/`, `/studio/`, and `/api/admin/overview` checks returned `403`.
+
+The development deployment used the isolated `tpi_contributor_portal_dev` D1, `tpi-contributor-media-dev` R2, `TPI_ENV=development`, outbound-disabled development setting, and disabled Founding 50 activation gate. Production remains untouched.
 
 ## Remaining work
 
