@@ -36,6 +36,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/audit-logs") return requireAdmin(request, env, user => handleAdminAuditLogs(request, env, user));
     if (request.method === "GET" && path === "/admin/founding-50") return requireAdmin(request, env, user => handleAdminFounding50(env, user));
     if (request.method === "GET" && path === "/admin/founding-50/applications") return requireAdmin(request, env, user => handleAdminFounding50Applications(request, env, user));
+    if (request.method === "POST" && path === "/admin/founding-50/applications") return requireAdmin(request, env, user => handleAdminCreateFounding50Application(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/founding-50\/applications\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminFounding50ApplicationStatus(path, request, env, user));
     if (request.method === "POST" && path === "/admin/founding-50/allocate") return requireOwner(request, env, user => handleAdminAllocateFounding50(request, env, user));
     if (request.method === "GET" && path === "/admin/creator-partnership") return requireAdmin(request, env, user => handleAdminCreatorPartnership(request, env, user));
@@ -675,7 +676,13 @@ async function handleAdminFounding50(env) {
       FROM founding50_allocations f
       JOIN creator_partnership_memberships cpm ON cpm.id = f.membership_id
     `).first();
-    const application = await env.TPI_DB.prepare("SELECT COUNT(*) AS total FROM founding50_applications WHERE status = 'pending'").first();
+    const applications = await env.TPI_DB.prepare(`
+      SELECT
+        COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0) AS pending,
+        COALESCE(SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END), 0) AS approved,
+        COALESCE(SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END), 0) AS rejected
+      FROM founding50_applications
+    `).first();
     const allocated = Number(summary?.allocated || 0);
     return json({
       program: "Founding 50",
@@ -686,7 +693,10 @@ async function handleAdminFounding50(env) {
       active: Number(summary?.active || 0),
       suspended: Number(summary?.suspended || 0),
       revoked: Number(summary?.revoked || 0),
-      pendingApplications: Number(application?.total || 0),
+      pendingApplications: Number(applications?.pending || 0),
+      approvedApplications: Number(applications?.approved || 0),
+      rejectedApplications: Number(applications?.rejected || 0),
+      slotPolicy: "Only activated founding50 allocations consume one of the 50 slots.",
       eligibility: "existing-account-only",
       entitlement: "complimentary-lifetime-creator + creator_studio_lifetime",
       creatorStudioAccess: "production-award-gated",
@@ -709,17 +719,91 @@ async function handleAdminFounding50Applications(request, env) {
     const { results } = await env.TPI_DB.prepare(`
       SELECT fa.id, fa.status, fa.administrative_notes AS administrativeNotes,
              fa.created_at AS createdAt, fa.reviewed_at AS reviewedAt,
+             fa.contact_email AS contactEmail, fa.website_url AS websiteUrl,
+             fa.social_channels AS socialChannels, fa.video_channels AS videoChannels,
+             fa.creator_description AS creatorDescription, fa.applicant_id AS applicantId,
+             cpm.id AS membershipId, cpm.membership_state AS membershipState,
+             cse.entitlement_state AS entitlementState,
              c.username, c.display_name AS displayName, c.role, c.active
       FROM founding50_applications fa
       JOIN contributors c ON c.id = fa.applicant_id
+      LEFT JOIN creator_partnership_memberships cpm ON cpm.application_id = fa.id
+      LEFT JOIN creator_studio_entitlements cse ON cse.source_membership_id = cpm.id
       ${where}
       ORDER BY fa.created_at DESC
       LIMIT ? OFFSET ?
     `).bind(...binds, pageSize, (page - 1) * pageSize).all();
     const total = Number(count?.total || 0);
-    return json({ applications: results || [], pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
+    return json({ applications: (results || []).map(founderApplicationPayload), pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
   } catch (error) {
     return json({ applications: [], pagination: { page, pageSize, total: 0, totalPages: 0 }, status: "migration_pending" });
+  }
+}
+
+function founderApplicationPayload(row) {
+  const parseList = value => {
+    try {
+      const parsed = JSON.parse(value || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  };
+  return {
+    ...row,
+    active: Boolean(row.active),
+    socialChannels: parseList(row.socialChannels),
+    videoChannels: parseList(row.videoChannels),
+    readiness: row.entitlementState === "active" && row.membershipState === "active"
+      ? "activated"
+      : row.status === "approved"
+        ? "ready_for_owner_activation"
+        : row.status === "rejected"
+          ? "rejected"
+          : "under_review"
+  };
+}
+
+function normalizeApplicationUrlList(value, label) {
+  const raw = Array.isArray(value) ? value : String(value || "").split(/[\n,]+/);
+  const values = Array.from(new Set(raw.map(item => clean(String(item)).slice(0, 500)).filter(Boolean)));
+  if (values.length > 8) return { error: `${label} may contain up to eight URLs.` };
+  if (values.some(value => !/^https?:\/\//i.test(value))) return { error: `${label} must contain only http or https URLs.` };
+  return { values };
+}
+
+async function handleAdminCreateFounding50Application(request, env, actingUser) {
+  const data = await readJson(request);
+  const username = clean(data.accountUsername || data.username);
+  if (!username) return json({ error: "An existing TPI account username is required." }, 400);
+  const member = await getUserByUsername(env, username);
+  if (!member || !member.active) return json({ error: "An active existing TPI account is required." }, 400);
+  const contactEmail = clean(data.contactEmail).slice(0, 320).toLowerCase();
+  if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) return json({ error: "Contact email is invalid." }, 400);
+  const websiteUrl = clean(data.websiteUrl).slice(0, 500);
+  if (websiteUrl && !/^https?:\/\//i.test(websiteUrl)) return json({ error: "Website URL must start with http:// or https://." }, 400);
+  const social = normalizeApplicationUrlList(data.socialChannels, "Social channels");
+  const video = normalizeApplicationUrlList(data.videoChannels, "Video channels");
+  if (social.error || video.error) return json({ error: social.error || video.error }, 400);
+  const description = clean(data.creatorDescription || data.description).slice(0, 4000);
+  const administrativeNotes = clean(data.administrativeNotes || data.notes).slice(0, 2000);
+  try {
+    const existing = await env.TPI_DB.prepare(`
+      SELECT id, status FROM founding50_applications
+      WHERE applicant_id = ? AND status IN ('pending', 'approved')
+      ORDER BY created_at DESC LIMIT 1
+    `).bind(member.id).first();
+    if (existing) return json({ error: "This account already has a pending or approved Founding 50 application.", applicationId: existing.id }, 409);
+    const id = crypto.randomUUID();
+    await env.TPI_DB.prepare(`
+      INSERT INTO founding50_applications
+        (id, applicant_id, status, administrative_notes, contact_email, website_url, social_channels, video_channels, creator_description)
+      VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?)
+    `).bind(id, member.id, administrativeNotes, contactEmail, websiteUrl, JSON.stringify(social.values), JSON.stringify(video.values), description).run();
+    await writeAdminAuditLog(env, actingUser, "founding50.application_created", "founding50_application", id, { applicantUsername: member.username, status: "pending" });
+    return json({ application: { id, applicantId: member.id, username: member.username, status: "pending", readiness: "under_review" } }, 201);
+  } catch (error) {
+    return json({ error: "Creator application storage is not available in this development database." }, 503);
   }
 }
 
@@ -797,12 +881,22 @@ async function handleAdminCreatorStudioEntitlements(request, env) {
 }
 
 async function handleAdminAllocateFounding50(request, env, actingUser) {
-  if (String(env.FOUNDING50_PRODUCTION_ACTIVATION || "").toLowerCase() !== "approved") {
-    return json({ error: "Production Founding 50 awards are owner-review gated. No membership or Creator Studio entitlement was changed." }, 423);
+  const activationApproved = env.TPI_ENV === "development"
+    ? String(env.FOUNDING50_DEVELOPMENT_ACTIVATION || "").toLowerCase() === "approved"
+    : String(env.FOUNDING50_PRODUCTION_ACTIVATION || "").toLowerCase() === "approved";
+  if (!activationApproved) {
+    return json({ error: "Founding 50 activation is owner-gated. No membership or Creator Studio entitlement was changed." }, 423);
   }
   const data = await readJson(request);
   const username = clean(data.username);
-  const member = await getUserByUsername(env, username);
+  const applicationId = clean(data.applicationId);
+  const application = applicationId
+    ? await env.TPI_DB.prepare("SELECT id, applicant_id, status FROM founding50_applications WHERE id = ?").bind(applicationId).first()
+    : null;
+  if (applicationId && (!application || application.status !== "approved")) return json({ error: "An approved Founding 50 application is required before activation." }, 409);
+  const member = application
+    ? await env.TPI_DB.prepare("SELECT * FROM contributors WHERE id = ? AND active = 1").bind(application.applicant_id).first()
+    : await getUserByUsername(env, username);
   if (!member || !member.active) return json({ error: "An active existing account is required." }, 400);
   try {
     const existing = await env.TPI_DB.prepare("SELECT id FROM creator_partnership_memberships WHERE contributor_id = ? AND membership_type = 'founding50'").bind(member.id).first();
@@ -815,13 +909,13 @@ async function handleAdminAllocateFounding50(request, env, actingUser) {
     const entitlementId = crypto.randomUUID();
     const historyId = crypto.randomUUID();
     await env.TPI_DB.batch([
-      env.TPI_DB.prepare(`INSERT INTO creator_partnership_memberships (id, contributor_id, membership_type, membership_state, entitlement_code, founding50_slot, awarded_at, awarded_by, notes) VALUES (?, ?, 'founding50', 'active', 'creator_studio_lifetime', ?, CURRENT_TIMESTAMP, ?, ?)`)
-        .bind(membershipId, member.id, slot, actingUser.id, clean(data.notes).slice(0, 2000)),
+      env.TPI_DB.prepare(`INSERT INTO creator_partnership_memberships (id, contributor_id, membership_type, membership_state, entitlement_code, founding50_slot, awarded_at, awarded_by, notes, application_id) VALUES (?, ?, 'founding50', 'active', 'creator_studio_lifetime', ?, CURRENT_TIMESTAMP, ?, ?, ?)`)
+        .bind(membershipId, member.id, slot, actingUser.id, clean(data.notes).slice(0, 2000), application?.id || null),
       env.TPI_DB.prepare("INSERT INTO founding50_allocations (slot_number, membership_id, contributor_id, allocated_by) VALUES (?, ?, ?, ?)").bind(slot, membershipId, member.id, actingUser.id),
       env.TPI_DB.prepare("INSERT INTO creator_studio_entitlements (id, contributor_id, source_membership_id, entitlement_code, entitlement_state, granted_by) VALUES (?, ?, ?, 'creator_studio_lifetime', 'active', ?)").bind(entitlementId, member.id, membershipId, actingUser.id),
       env.TPI_DB.prepare("INSERT INTO creator_partnership_membership_history (id, membership_id, contributor_id, from_state, to_state, action, actor_id) VALUES (?, ?, ?, NULL, 'active', 'founding50_awarded', ?)").bind(historyId, membershipId, member.id, actingUser.id)
     ]);
-    await writeAdminAuditLog(env, actingUser, "founding50.membership_awarded", "member", member.username, { slot, membershipId, entitlementId });
+    await writeAdminAuditLog(env, actingUser, "founding50.membership_awarded", "member", member.username, { slot, membershipId, entitlementId, applicationId: application?.id || null });
     return json({ membership: { id: membershipId, username: member.username, slot, membershipState: "active", entitlementState: "active" } }, 201);
   } catch (error) {
     if (String(error?.message || "").toLowerCase().includes("unique") || String(error?.message || "").toLowerCase().includes("constraint")) {

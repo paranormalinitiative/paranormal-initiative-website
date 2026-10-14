@@ -194,6 +194,16 @@ export type AdminFoundingApplication = {
   id: string;
   status: string;
   administrativeNotes?: string;
+  contactEmail?: string;
+  websiteUrl?: string;
+  socialChannels?: string[];
+  videoChannels?: string[];
+  creatorDescription?: string;
+  applicantId?: string;
+  membershipId?: string;
+  membershipState?: string;
+  entitlementState?: string;
+  readiness?: string;
   createdAt?: string;
   reviewedAt?: string;
   username: string;
