@@ -455,13 +455,15 @@
           '<span class="mobile-nav-icon">&#9679;</span>Home</a>' +
         '<a class="mobile-nav-link" href="tpi-videos.html?member=1" data-nav="tpi-videos">' +
           '<span class="mobile-nav-icon">&#9654;</span>Videos</a>' +
-        '<a class="mobile-nav-link" href="/studio/" data-nav="studio" aria-label="TPI Creator Studio">' +
+        '<a class="mobile-nav-link" href="/studio/" data-nav="studio" data-admin-only hidden aria-label="TPI Creator Studio">' +
           '<span class="mobile-nav-icon">&#9654;</span>TPI Creator Studio</a>' +
         '<a class="mobile-nav-link" href="member-home.html" data-nav="profile" data-nav-profile-mobile>' +
           '<span class="mobile-nav-icon">&#9786;</span>Profile</a>' +
         '<a class="mobile-nav-link" href="member-notifications.html" data-nav="member-notifications">' +
           '<span class="mobile-nav-icon">&#128276;</span>Alerts' +
           '<span class="member-mobile-notification-badge" data-notification-count hidden>0</span></a>' +
+        '<a class="mobile-nav-link" href="/admin-center-preview/" data-nav="admin-center" data-admin-only hidden>' +
+          '<span class="mobile-nav-icon">&#9881;</span>Admin</a>' +
         '<a class="mobile-nav-link" href="member-dashboard.html" data-nav="settings">' +
           '<span class="mobile-nav-icon">&#9881;</span>Settings</a>' +
       '</div>';

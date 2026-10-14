@@ -5,10 +5,18 @@ const apiTypes = readFileSync(new URL("../../admin-center-app/src/lib/api.ts", i
 const api = readFileSync(new URL("../../functions/api/[[path]].js", import.meta.url), "utf8");
 const worker = readFileSync(new URL("../../worker.js", import.meta.url), "utf8");
 const devConfig = readFileSync(new URL("../../wrangler.dev.toml", import.meta.url), "utf8");
+const sidebar = readFileSync(new URL("../../member-sidebar.html", import.meta.url), "utf8");
+const shell = readFileSync(new URL("../../member-shell.js", import.meta.url), "utf8");
+const memberHome = readFileSync(new URL("../../member-home.html", import.meta.url), "utf8");
 
 const checks = [
   ["development bindings remain isolated", devConfig.includes('name = "theparanormalinitiative-dev"') && devConfig.includes("tpi_contributor_portal_dev") && devConfig.includes("tpi-contributor-media-dev") && devConfig.includes('TPI_DISABLE_OUTBOUND = "1"')],
   ["protected preview route remains server gated", worker.includes("/admin-center-preview") && worker.includes("hasAdminAccess")],
+  ["administration navigation is permission-gated on desktop and mobile", sidebar.includes('href="/admin-center-preview/" data-nav="admin-center" data-admin-only hidden') && shell.includes('href="/admin-center-preview/" data-nav="admin-center" data-admin-only hidden') && shell.includes('document.querySelectorAll("[data-admin-only]")')],
+  ["Creator Studio navigation is hidden from non-admin accounts", sidebar.includes('href="/studio/" data-nav="studio" data-admin-only hidden') && shell.includes('href="/studio/" data-nav="studio" data-admin-only hidden') && worker.includes('url.pathname === "/studio"')],
+  ["contributor management pages are server gated", worker.includes("/paper-editor.html") && worker.includes("/creator-videos.html") && worker.includes("hasContributorAccess") && worker.includes("CONTRIBUTOR_GATE_HTML")],
+  ["content editor shortcut remains contributor-gated", memberHome.includes('href="paper-editor.html" data-contributor-only') && shell.includes('document.querySelectorAll("[data-contributor-only]")')],
+  ["content-management APIs retain role and ownership checks", api.includes("requireContributor(request, env, user => handleCreateArticle") && api.includes("article.created_by !== user.id") && api.includes("tpiVideoOwnerOrAdmin(existing, user)")],
   ["member capability controls use existing protected endpoints", source.includes("MemberAccountManagement") && source.includes("/admin/members/${encodeURIComponent(member.username)}/access") && api.includes('path.match(/^\\/admin\\/members\\/[^/]+\\/access$/)')],
   ["member notification control is in-app and protected", source.includes("Send development notification") && source.includes("/admin/members/${encodeURIComponent(member.username)}/notifications") && api.includes('path.match(/^\\/admin\\/members\\/[^/]+\\/notifications$/)')],
   ["Education Center queue reads real article records", source.includes("Article review queue") && source.includes("/admin/articles?") && api.includes("handleAdminArticles")],

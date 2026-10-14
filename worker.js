@@ -72,6 +72,17 @@ const ADMIN_GATE_HTML = MEMBER_GATE_HTML
     "The TPI Administration Center is restricted to authorized owner and administrator accounts. Sign in with an approved account to continue."
   );
 
+const CONTRIBUTOR_GATE_HTML = MEMBER_GATE_HTML
+  .replaceAll("ITC Visual Studio — Member Access", "Contributor Tools — Restricted Access")
+  .replace(
+    "<h1>Contributor Tools — Restricted Access</h1>",
+    "<h1>Contributor Tools</h1>"
+  )
+  .replace(
+    "ITC Visual Studio is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
+    "Content Editor and creator management tools are restricted to approved contributors, administrators, and the owner. Sign in with an approved account to continue."
+  );
+
 const DEVELOPMENT_BANNER = `<div data-tpi-development-environment style="position:fixed;z-index:2147483647;top:0;left:0;right:0;padding:7px 12px;background:#5b2a86;color:#fff;font:700 12px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.35)">DEVELOPMENT ENVIRONMENT</div>`;
 
 async function serveAssets(request, env) {
@@ -201,6 +212,31 @@ export default {
       const hasAdminAccess = user && (user.role === "owner" || user.role === "admin");
       if (!hasAdminAccess) {
         return new Response(ADMIN_GATE_HTML, {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
+        });
+      }
+      return serveAssets(request, env);
+    }
+
+    // Contributor management pages contain authoring and creator controls.
+    // Keep the entry documents server-gated so direct URLs cannot expose the
+    // management surface to public visitors or ordinary members. API routes
+    // remain independently protected by requireContributor and ownership
+    // checks in functions/api/[[path]].js.
+    const isContributorManagementPage = [
+      "/paper-editor.html",
+      "/paper-editor",
+      "/paper-editor/",
+      "/creator-videos.html",
+      "/creator-videos",
+      "/creator-videos/"
+    ].includes(url.pathname);
+    if (isContributorManagementPage) {
+      const user = await getSessionUser(request, env);
+      const hasContributorAccess = user && ["owner", "admin", "contributor"].includes(user.role);
+      if (!hasContributorAccess) {
+        return new Response(CONTRIBUTOR_GATE_HTML, {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
