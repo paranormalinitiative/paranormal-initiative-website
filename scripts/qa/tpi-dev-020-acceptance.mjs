@@ -44,6 +44,11 @@ function expectStatus(name, result, expected) {
   record(name, actual === expected, `HTTP ${actual}; expected ${expected}`);
 }
 
+function expectStatusOrAlreadyPersisted(name, result) {
+  const actual = result.response.status;
+  record(name, actual === 200 || actual === 409, `HTTP ${actual}; accepted 200 or repeat-safe 409; persisted history is checked separately`);
+}
+
 const adminLogin = await login(adminAccount);
 expectStatus("admin fixture login", adminLogin, 200);
 const adminCookie = adminLogin.cookie;
@@ -147,9 +152,9 @@ const teamHistory = await request(`/api/admin/teams/${ids.approveTeam}/history`,
 record("team verification event persisted", teamHistory.body?.verificationEvents?.some(event => event.status === "ACTIVE" && event.evidenceType === "synthetic"), "history event present");
 
 const claimApproval = await request(`/api/admin/teams/claims/${ids.approveClaim}/approve`, { method: "POST", body: JSON.stringify({ reviewNotes: "TPI-DEV-020 synthetic approval." }) }, adminCookie);
-expectStatus("team claim approval mutation", claimApproval, 200);
+expectStatusOrAlreadyPersisted("team claim approval mutation", claimApproval);
 const claimRejection = await request(`/api/admin/teams/claims/${ids.rejectClaim}/reject`, { method: "POST", body: JSON.stringify({ reviewNotes: "TPI-DEV-020 synthetic rejection." }) }, adminCookie);
-expectStatus("team claim rejection mutation", claimRejection, 200);
+expectStatusOrAlreadyPersisted("team claim rejection mutation", claimRejection);
 const approvedTeamHistory = await request(`/api/admin/teams/${ids.approveTeam}/history`, {}, adminCookie);
 const rejectedTeamHistory = await request(`/api/admin/teams/${ids.rejectTeam}/history`, {}, adminCookie);
 record("approved claim persisted", approvedTeamHistory.body?.claims?.some(claim => claim.id === ids.approveClaim && claim.status === "approved"), "approved claim present");
