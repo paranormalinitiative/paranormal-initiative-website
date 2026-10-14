@@ -36,9 +36,9 @@ Status: **PARTIAL COMPLETION — AUTHENTICATED BROWSER AND DEPLOYMENT PENDING**
 | TPI-DEV-014 source checks | PASSED | 9/9 |
 | Admin Center build | PASSED | 1,878 modules transformed |
 | Worker/API/browser-runner syntax | PASSED | `node --check` |
-| Authenticated browser runner | BLOCKED | Playwright module unavailable; no credentials exposed |
-| Live development smoke | BLOCKED | Shell DNS `ENOTFOUND` for development Worker |
-| Development deployment | NOT TESTED | Guarded deployment deferred until application checkpoint is committed and live verification is available |
+| Authenticated browser runner | BLOCKED | Playwright installed outside repo, but Chrome aborted during launch; no credentials exposed |
+| Live development smoke | PASSED | Read-only provenance and anonymous route checks against deployed Worker |
+| Development deployment | PASSED | Guarded deployment `514a7a14-77c3-4a96-9a8b-2be5429f991c`; provenance matched commit `9fcea66` |
 
 ## Local authenticated test procedure
 
@@ -68,7 +68,8 @@ Tavily/Facebook request, push, or merge into `main` occurred.
 - Run the authenticated browser matrix from a Mac environment with Playwright
   and development DNS access.
 - Perform guarded development deployment after reviewing the application
-  checkpoint and then verify deployed provenance and protected routes.
+  checkpoint and then verify deployed provenance and protected routes. This
+  checkpoint deployed successfully as `514a7a14-77c3-4a96-9a8b-2be5429f991c`.
 - Decide whether event, channel, role, restriction, and admin-composed
   notification mutations have approved authoritative contracts. No new policy
   was invented in this checkpoint.

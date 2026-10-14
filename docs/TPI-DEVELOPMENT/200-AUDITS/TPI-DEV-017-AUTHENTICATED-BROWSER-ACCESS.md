@@ -13,11 +13,13 @@ mode `0600`. Only usernames, roles, and presence metadata were inspected; no
 password was printed or written to the repository, logs, clipboard, or
 screenshots.
 
-The browser runner could not execute because the Playwright module is not
-installed in this repository/runtime. Earlier shell live checks also failed to
-resolve `theparanormalinitiative-dev.paranormalsomerset.workers.dev` with
-`ENOTFOUND`. These are environment blockers, not authenticated application
-passes or application failures.
+Playwright was installed for testing in a temporary directory outside the
+repository, but Chrome aborted during headless launch in this execution
+environment. Earlier shell live checks also failed to resolve
+`theparanormalinitiative-dev.paranormalsomerset.workers.dev` with `ENOTFOUND`
+until the guarded deployment verification was run with network access. These
+are environment blockers, not authenticated application passes or application
+failures.
 
 ## Repeatable local runner
 

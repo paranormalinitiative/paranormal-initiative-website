@@ -34,8 +34,7 @@ workspace.
 
 ## Current limitation
 
-The current Codex execution environment can read the credential file, but does
-not have the Playwright module installed and cannot resolve the development
-Worker hostname from the shell. The runner therefore reports `BLOCKED` here;
-it does not fabricate authenticated browser acceptance. A local Mac procedure
-is recorded in the implementation report.
+The current Codex execution environment can read the credential file. Playwright
+was installed outside the repository, but Chrome aborted during launch, so the
+runner reports `BLOCKED` here; it does not fabricate authenticated browser
+acceptance. A local Mac procedure is recorded in the implementation report.

@@ -73,10 +73,16 @@ async function checkRoute(page, account, path, shouldAllow, label) {
   record(`${account.username} ${label}`, allowed === shouldAllow, `HTTP ${response?.status() ?? "unknown"}`);
 }
 
-const browser = await chromium.launch({
-  executablePath: browserPath,
-  headless: process.env.TPI_DEV017_HEADLESS !== "0",
-});
+let browser;
+try {
+  browser = await chromium.launch({
+    executablePath: browserPath,
+    headless: process.env.TPI_DEV017_HEADLESS !== "0",
+  });
+} catch {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: "Chrome could not launch in this execution environment" }));
+  process.exit(0);
+}
 
 try {
   for (const username of Object.keys(expected)) {
