@@ -124,6 +124,26 @@ export type AdminTeam = {
   claimedBy?: string;
 };
 
+export type AdminTeamClaim = {
+  id: string;
+  teamId: string;
+  claimantId: string;
+  claimantName?: string;
+  claimantEmail?: string;
+  claimantRole?: string;
+  evidenceUrl?: string;
+  evidenceDescription?: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  reviewNotes?: string;
+  teamName?: string;
+  recordType?: string;
+  verificationStatus?: string;
+  teamClaimedBy?: string;
+};
+
 export type AdminContributor = {
   username: string;
   displayName: string;

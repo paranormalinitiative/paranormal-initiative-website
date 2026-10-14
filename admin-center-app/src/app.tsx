@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { adminFetch, metricValue, type AdminAnalytics, type AdminChannel, type AdminCommunityComment, type AdminCommunityCommentDetail, type AdminCommunityPostDetail, type AdminContributor, type AdminCreatorEntitlement, type AdminCreatorMembership, type AdminEventRecord, type AdminFoundingApplication, type AdminInvite, type AdminNotification, type AdminOverview, type AdminPublishedArticle, type AdminPublishedVideo, type AdminProviderStatus, type AdminReport, type AdminReportDetail, type AdminRestriction, type AdminRoleSummary, type AdminScraperRun, type AdminTeam, type ClassicComment, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
+import { adminFetch, metricValue, type AdminAnalytics, type AdminChannel, type AdminCommunityComment, type AdminCommunityCommentDetail, type AdminCommunityPostDetail, type AdminContributor, type AdminCreatorEntitlement, type AdminCreatorMembership, type AdminEventRecord, type AdminFoundingApplication, type AdminInvite, type AdminNotification, type AdminOverview, type AdminPublishedArticle, type AdminPublishedVideo, type AdminProviderStatus, type AdminReport, type AdminReportDetail, type AdminRestriction, type AdminRoleSummary, type AdminScraperRun, type AdminTeam, type AdminTeamClaim, type ClassicComment, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
 
 type View = "overview" | "analytics" | "activity" | "members" | "roles" | "restrictions" | "community" | "community-content" | "reactions" | "comments" | "reports" | "moderation-history" | "creators" | "founding" | "studio-access" | "channels" | "videos" | "education" | "contributors" | "teams" | "events" | "notifications" | "health" | "security" | "audit" | "settings";
 type NavItem = { id: View; label: string; icon: typeof LayoutDashboard };
@@ -339,16 +339,25 @@ function Teams({ onNotice }: { onNotice: (value: string) => void }) {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [claimStatus, setClaimStatus] = useState<AdminTeamClaim["status"]>("pending");
+  const [claims, setClaims] = useState<AdminTeamClaim[]>([]);
+  const [claimBusyId, setClaimBusyId] = useState<string | null>(null);
+  const [claimNotes, setClaimNotes] = useState<Record<string, string>>({});
+  const [claimConfirm, setClaimConfirm] = useState<{ claim: AdminTeamClaim; action: "approve" | "reject" } | null>(null);
   const load = () => {
     setLoading(true);
     const params = new URLSearchParams({ status, page: String(page), pageSize: "50" });
     if (query.trim()) params.set("search", query.trim());
-    adminFetch<{ teams: AdminTeam[]; pagination?: { total?: number } }>(`/admin/teams?${params}`).then((body) => {
+    Promise.all([
+      adminFetch<{ teams: AdminTeam[]; pagination?: { total?: number } }>(`/admin/teams?${params}`),
+      adminFetch<{ claims: AdminTeamClaim[] }>(`/admin/teams/claims?status=${claimStatus}`),
+    ]).then(([body, claimBody]) => {
       setTeams(body.teams || []);
       setTotal(body.pagination?.total || 0);
+      setClaims(claimBody.claims || []);
     }).catch((error) => onNotice(error.message)).finally(() => setLoading(false));
   };
-  useEffect(load, [status, page, query]);
+  useEffect(load, [status, page, query, claimStatus]);
   const updateStatus = async (team: AdminTeam, nextStatus: "approved" | "rejected") => {
     setBusyId(team.id);
     try {
@@ -359,6 +368,21 @@ function Teams({ onNotice }: { onNotice: (value: string) => void }) {
       onNotice((error as Error).message);
     } finally {
       setBusyId(null);
+    }
+  };
+  const reviewClaim = async () => {
+    if (!claimConfirm) return;
+    const { claim, action } = claimConfirm;
+    setClaimBusyId(claim.id);
+    try {
+      await adminFetch(`/admin/teams/claims/${encodeURIComponent(claim.id)}/${action}`, { method: "POST", body: JSON.stringify({ reviewNotes: claimNotes[claim.id] || "" }) });
+      setClaimConfirm(null);
+      onNotice(`Team claim ${action === "approve" ? "approved" : "rejected"}.`);
+      load();
+    } catch (error) {
+      onNotice((error as Error).message);
+    } finally {
+      setClaimBusyId(null);
     }
   };
   return <section className="content-stack">
@@ -394,6 +418,20 @@ function Teams({ onNotice }: { onNotice: (value: string) => void }) {
         <div className="notice-panel"><Badge variant="outline">Server-side authorization preserved</Badge></div>
       </CardContent>
     </Card>
+    <Card>
+      <CardHeader>
+        <div className="filter-bar"><CardTitle>Team claim requests</CardTitle><select aria-label="Team claim status" value={claimStatus} onChange={(event) => setClaimStatus(event.target.value as AdminTeamClaim["status"])}><option value="pending">Pending claims</option><option value="approved">Approved claims</option><option value="rejected">Rejected claims</option></select></div>
+        <CardDescription>{claims.length} claims returned · review uses the existing protected claim contract</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {claims.length ? <div className="moderation-list">{claims.map((claim) => <div className="moderation-row" key={claim.id}>
+          <div><strong>{claim.teamName || claim.teamId}</strong><p>{claim.claimantName || claim.claimantId} · {claim.claimantEmail || "No email supplied"}</p>{claim.evidenceDescription && <span className="table-subtext">{claim.evidenceDescription}</span>}{claim.evidenceUrl && <a className="inline-link" href={claim.evidenceUrl} target="_blank" rel="noreferrer">Open evidence</a>}</div>
+          <div className="detail-actions"><Badge variant={claim.status === "approved" ? "success" : claim.status === "pending" ? "warning" : "outline"}>{claim.status}</Badge>{claim.status === "pending" && <><Input value={claimNotes[claim.id] || ""} maxLength={2000} onChange={(event) => setClaimNotes((current) => ({ ...current, [claim.id]: event.target.value }))} aria-label={`Review notes for ${claim.teamName || claim.teamId}`} placeholder="Review notes" /><Button size="sm" disabled={claimBusyId === claim.id} onClick={() => setClaimConfirm({ claim, action: "approve" })}>Approve</Button><Button size="sm" variant="destructive" disabled={claimBusyId === claim.id} onClick={() => setClaimConfirm({ claim, action: "reject" })}>Reject</Button></>}</div>
+        </div>)}</div> : <EmptyState label={`No ${claimStatus} team claims returned.`} />}
+        <div className="notice-panel"><Badge variant="outline">Protected claim review</Badge><p>Approval establishes one owner membership for the claimant through the existing server transaction. It does not import teams, alter research evidence, or grant unrelated administrative access.</p></div>
+      </CardContent>
+    </Card>
+    {claimConfirm && <ConfirmDialog title={`${claimConfirm.action === "approve" ? "Approve" : "Reject"} team claim?`} message={`This will ${claimConfirm.action} the claim for ${claimConfirm.claim.teamName || claimConfirm.claim.teamId} through the protected development API.`} confirmLabel={claimConfirm.action === "approve" ? "Approve claim" : "Reject claim"} destructive={claimConfirm.action === "reject"} onCancel={() => setClaimConfirm(null)} onConfirm={reviewClaim} />}
   </section>;
 }
 function PlatformHealth({ onNotice }: { onNotice: (value: string) => void }) {
