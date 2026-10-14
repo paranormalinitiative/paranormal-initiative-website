@@ -51,7 +51,18 @@ No migration was added. No D1 or R2 mutation was performed by this implementatio
 
 ## Deployment
 
-Deployment is performed only after the authorized files are committed and the guarded development preflight passes. The deployment ID and deployed source commit are appended here after verification; no production deployment is permitted.
+The guarded development deployment completed successfully after the authorized files were committed:
+
+- Deployment/version ID: `d4be8744-e604-49ad-9be2-f7de9eefc927`
+- Deployed source commit: `fbc00ce5c59ea9d1568424a43740c59f1d52bf05`
+- Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
+- Provenance: passed; branch `codex/tpi-development`, source commit matched
+- Anonymous `/admin-center-preview/`: `403`
+- Anonymous `/studio/`: `403`
+- Anonymous `/api/admin/overview`: `403`
+- Deployment bindings: development D1/R2, `TPI_ENV=development`, outbound disabled, Founding 50 activation disabled
+
+The report-only documentation update after deployment is intentionally not redeployed; the deployed application source remains the verified implementation commit above.
 
 ## Completion status
 
