@@ -10,6 +10,9 @@ enabled = true
 [vars]
 TPI_ENV = "development"
 TPI_DISABLE_OUTBOUND = "1"
+# Explicitly disabled outside an owner-approved synthetic test window. This is
+# intentionally separate from the production activation variable.
+FOUNDING50_DEVELOPMENT_ACTIVATION = "disabled"
 
 [assets]
 directory = "."

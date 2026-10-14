@@ -39,6 +39,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/admin/founding-50/applications") return requireAdmin(request, env, user => handleAdminCreateFounding50Application(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/founding-50\/applications\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminFounding50ApplicationStatus(path, request, env, user));
     if (request.method === "POST" && path === "/admin/founding-50/allocate") return requireOwner(request, env, user => handleAdminAllocateFounding50(request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/founding-50\/memberships\/[^/]+\/status$/)) return requireOwner(request, env, user => handleAdminFounding50MembershipStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/creator-partnership") return requireAdmin(request, env, user => handleAdminCreatorPartnership(request, env, user));
     if (request.method === "GET" && path === "/admin/creator-studio/entitlements") return requireAdmin(request, env, user => handleAdminCreatorStudioEntitlements(request, env, user));
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(request, env, user));
@@ -922,6 +923,72 @@ async function handleAdminAllocateFounding50(request, env, actingUser) {
       return json({ error: "The account or Founding 50 slot was allocated concurrently. No duplicate award was created." }, 409);
     }
     return json({ error: "Founding 50 allocation could not be completed." }, 500);
+  }
+}
+
+async function handleAdminFounding50MembershipStatus(path, request, env, actingUser) {
+  const activationApproved = env.TPI_ENV === "development"
+    ? String(env.FOUNDING50_DEVELOPMENT_ACTIVATION || "").toLowerCase() === "approved"
+    : String(env.FOUNDING50_PRODUCTION_ACTIVATION || "").toLowerCase() === "approved";
+  if (!activationApproved) {
+    return json({ error: "Founding 50 status changes are owner-gated. No membership or entitlement was changed." }, 423);
+  }
+  const membershipId = clean(decodeURIComponent(path.match(/^\/admin\/founding-50\/memberships\/([^/]+)\/status$/)?.[1] || ""));
+  const data = await readJson(request);
+  const nextState = clean(data.status).toLowerCase();
+  if (!membershipId || !["active", "suspended", "revoked"].includes(nextState)) {
+    return json({ error: "A valid Founding 50 membership and status are required." }, 400);
+  }
+  try {
+    const membership = await env.TPI_DB.prepare(`
+      SELECT cpm.id, cpm.contributor_id AS contributorId, cpm.membership_type AS membershipType,
+             cpm.membership_state AS membershipState, cpm.founding50_slot AS founding50Slot,
+             c.username, c.active AS accountActive, cse.id AS entitlementId,
+             cse.entitlement_state AS entitlementState
+      FROM creator_partnership_memberships cpm
+      JOIN contributors c ON c.id = cpm.contributor_id
+      LEFT JOIN creator_studio_entitlements cse ON cse.source_membership_id = cpm.id
+      WHERE cpm.id = ?
+    `).bind(membershipId).first();
+    if (!membership || membership.membershipType !== "founding50") return json({ error: "Founding 50 membership was not found." }, 404);
+    if (membership.membershipState === nextState) return json({ error: `Membership is already ${nextState}.` }, 409);
+    if (nextState === "active" && !membership.accountActive) return json({ error: "An inactive account cannot be reactivated." }, 409);
+    const action = `founding50.membership_${nextState}`;
+    const historyId = crypto.randomUUID();
+    const entitlementState = nextState === "active" ? "active" : nextState;
+    await env.TPI_DB.batch([
+      env.TPI_DB.prepare(`
+        UPDATE creator_partnership_memberships
+        SET membership_state = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).bind(nextState, membershipId),
+      env.TPI_DB.prepare(`
+        UPDATE creator_studio_entitlements
+        SET entitlement_state = ?, revoked_at = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE source_membership_id = ?
+      `).bind(entitlementState, nextState === "active" ? null : new Date().toISOString(), membershipId),
+      env.TPI_DB.prepare(`
+        INSERT INTO creator_partnership_membership_history
+          (id, membership_id, contributor_id, from_state, to_state, action, notes, actor_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(historyId, membershipId, membership.contributorId, membership.membershipState, nextState, action, clean(data.notes).slice(0, 2000), actingUser.id)
+    ]);
+    await writeAdminAuditLog(env, actingUser, action, "creator_partnership_membership", membershipId, {
+      username: membership.username,
+      fromState: membership.membershipState,
+      toState: nextState,
+      founding50Slot: membership.founding50Slot,
+      slotPolicy: "allocated_slots_are_not_recycled"
+    });
+    return json({ membership: {
+      id: membershipId,
+      username: membership.username,
+      founding50Slot: membership.founding50Slot,
+      membershipState: nextState,
+      entitlementState
+    }, slotConsumed: true, slotPolicy: "allocated_slots_are_not_recycled" });
+  } catch (error) {
+    return json({ error: "Founding 50 membership status could not be updated." }, 500);
   }
 }
 async function handleAdminAuditLogs(request, env) {

@@ -1,0 +1,40 @@
+{
+  "directive": "TPI-DEV-014",
+  "environment": "development-only",
+  "database": "tpi_contributor_portal_dev",
+  "worker": "theparanormalinitiative-dev",
+  "credentialFile": "/Users/toddknipple/.config/tpi/dev-014/credentials.json",
+  "credentialPolicy": "Outside repository; directory mode 0700; file mode 0600; contents never printed or committed",
+  "accounts": [
+    { "id": "d7cba8e6-5adc-46f8-ade9-9ff3d5e22235", "username": "tpi-dev014-admin", "role": "admin", "state": "active" },
+    { "id": "25ac67b7-8a0e-4df1-b5a7-4c9b59b8b2e7", "username": "tpi-dev014-contender", "role": "member", "state": "active" },
+    { "id": "4e2d3ac7-4c0d-48bf-82b6-c9254983d214", "username": "tpi-dev014-contributor", "role": "contributor", "state": "active" },
+    { "id": "cd83748c-5cea-4368-83c3-a7148a3f3b25", "username": "tpi-dev014-creator", "role": "member", "state": "active" },
+    { "id": "ad8865c0-50d9-4459-bb07-f19273a33928", "username": "tpi-dev014-member", "role": "member", "state": "active" },
+    { "id": "c8779c3a-68e9-44ec-8bb2-786f44dbc1cb", "username": "tpi-dev014-owner", "role": "owner", "state": "active" },
+    { "id": "2e09d72a-de63-447c-93b6-8088aec91f24", "username": "tpi-dev014-rejected", "role": "member", "state": "inactive" },
+    { "id": "087af650-0591-4619-bed3-c44e9e9737e4", "username": "tpi-dev014-revoked", "role": "member", "state": "active" }
+  ],
+  "capacityFixtures": {
+    "usernames": "tpi-dev014-filler-02 through tpi-dev014-filler-49",
+    "slots": "2 through 49",
+    "purpose": "Synthetic capacity-only memberships; not real creator accounts",
+    "cleanupKey": "username prefix tpi-dev014-"
+  },
+  "memberships": [
+    { "id": "fb963bcb-5bb4-4dac-8769-c1c77935f5b5", "username": "tpi-dev014-revoked", "slot": 1, "finalState": "revoked", "entitlement": "revoked" },
+    { "id": "c824fdee-f02b-4fd6-a17e-dbbccc93bede", "username": "tpi-dev014-creator", "slot": 50, "finalState": "revoked", "entitlement": "revoked" }
+  ],
+  "applications": {
+    "rejected": "d3c93d02-b337-440f-81a2-50669ccb90ea",
+    "revokedLifecycle": "d01d7133-7ec1-4372-896e-00a5bf2e31bf",
+    "creatorApproved": "70776c4d-31c8-4a64-bcd4-9114317fd2bb",
+    "contenderApproved": "3f905a80-5194-4b56-9249-cd2537d975a0"
+  },
+  "cleanup": {
+    "status": "NOT EXECUTED — retained for development owner review",
+    "order": ["sessions", "creator_studio_entitlements", "founding50_allocations", "creator_partnership_membership_history", "creator_partnership_memberships", "founding50_applications", "admin_audit_logs", "contributors"],
+    "selection": "Every DELETE must be constrained to contributor usernames LIKE 'tpi-dev014-%' or IDs selected from that namespace.",
+    "note": "Do not use a broad table-wide DELETE. Do not target tpi-dev-owner or any non-synthetic account."
+  }
+}

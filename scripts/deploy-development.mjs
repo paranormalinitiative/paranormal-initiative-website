@@ -1,4 +1,4 @@
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join, relative, sep } from "node:path";
@@ -29,6 +29,16 @@ const filter = source => {
 
 try {
   cpSync(repoRoot, stage, { recursive: true, filter });
+  const sourceCommit = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  const sourceBranch = execFileSync("git", ["branch", "--show-current"], { encoding: "utf8" }).trim();
+  mkdirSync(join(stage, ".well-known"), { recursive: true });
+  writeFileSync(join(stage, ".well-known", "tpi-development-provenance.json"), JSON.stringify({
+    environment: "development",
+    worker: "theparanormalinitiative-dev",
+    sourceCommit,
+    sourceBranch,
+    generatedAt: new Date().toISOString()
+  }, null, 2) + "\n", { mode: 0o644 });
   const config = readFileSync(join(repoRoot, "wrangler.dev.toml"), "utf8")
     .replace('main = "worker.js"', `main = "${join(repoRoot, "worker.js")}"`)
     .replace('directory = "."', `directory = "${stage}"`);
