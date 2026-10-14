@@ -14,7 +14,7 @@ const checks = [
   ["team claim review remains protected", app.includes("/admin/teams/claims?status=") && app.includes("reviewNotes") && workerApi.includes("handleAdminReviewClaim")],
   ["video detail uses existing protected GET", app.includes("VideoDetail") && app.includes("/tpi-videos/${encodeURIComponent(video.slug)}") && workerApi.includes('path.match(/^\\/tpi-videos\\/[^/]+$/)')],
   ["video lifecycle remains confirmed and protected", app.includes("ConfirmDialog") && app.includes("confirm.action") && workerApi.includes("tpiVideoOwnerOrAdmin")],
-  ["notifications remain internal and bounded", app.includes("Unread notifications") && app.includes("No notification mutations") && workerApi.includes("metadataOnly: true")],
+  ["notifications remain internal and recipient-scoped", app.includes("Private content protected") && app.includes("Mark my notifications read") && workerApi.includes("privateContentBoundary") && workerApi.includes("Only the notification recipient can change its read state")],
   ["founding 50 activation gate remains closed", workerApi.includes('FOUNDING50_DEVELOPMENT_ACTIVATION || ""') && workerApi.includes("return json({ error: \"Founding 50 activation is owner-gated")],
   ["research workspace remains outside admin mutations", app.includes("Research workspace records remain separate") && !app.includes("authoritative-teams.csv")],
 ];

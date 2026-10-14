@@ -41,6 +41,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/admin/founding-50/allocate") return requireOwner(request, env, user => handleAdminAllocateFounding50(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/founding-50\/memberships\/[^/]+\/status$/)) return requireOwner(request, env, user => handleAdminFounding50MembershipStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/creator-partnership") return requireAdmin(request, env, user => handleAdminCreatorPartnership(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/creators\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminCreatorDetail(path, env, user));
     if (request.method === "GET" && path === "/admin/creator-studio/entitlements") return requireAdmin(request, env, user => handleAdminCreatorStudioEntitlements(request, env, user));
     if (request.method === "GET" && path === "/invites") return requireAdmin(request, env, user => handleListInvites(request, env, user));
     if (request.method === "POST" && path === "/invites") return requireAdmin(request, env, user => handleCreateInvite(request, env, user));
@@ -59,11 +60,16 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/admin\/community\/posts\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminSetCommunityPostStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/comments") return requireAdmin(request, env, user => handleAdminListComments(request, env, user));
     if (request.method === "GET" && path === "/admin/articles") return requireAdmin(request, env, user => handleAdminArticles(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/articles\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminArticleDetail(path, env, user));
+    if ((request.method === "PUT" || request.method === "PATCH") && path.match(/^\/admin\/articles\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminArticleUpdate(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/articles\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminArticleStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/reports") return requireAdmin(request, env, user => handleAdminReports(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminReportDetail(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/reports\/(video|messenger)\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminReportStatus(path, request, env, user));
     if (request.method === "GET" && path === "/admin/notifications") return requireAdmin(request, env, user => handleAdminNotifications(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/notifications\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminNotificationDetail(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/notifications\/[^/]+\/(read|unread)$/)) return requireAdmin(request, env, user => handleAdminNotificationState(path, env, user));
+    if (request.method === "POST" && path === "/admin/notifications/read-all") return requireAdmin(request, env, user => handleAdminMarkAllNotificationsRead(env, user));
     if (request.method === "GET" && path === "/admin/channels") return requireAdmin(request, env, user => handleAdminChannels(request, env, user));
     if (request.method === "GET" && path === "/admin/roles") return requireAdmin(request, env, user => handleAdminRoles(request, env, user));
     if (request.method === "GET" && path === "/admin/restrictions") return requireAdmin(request, env, user => handleAdminRestrictions(request, env, user));
@@ -242,6 +248,7 @@ export async function onRequest(context) {
     // Admin endpoints
     if (request.method === "GET" && path === "/admin/teams") return requireAdmin(request, env, user => handleAdminListTeams(request, env, user));
     if (request.method === "GET" && path === "/admin/teams/claims") return requireAdmin(request, env, user => handleAdminListClaims(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/teams\/[^/]+\/history$/)) return requireAdmin(request, env, user => handleAdminTeamHistory(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/teams\/claims\/[^/]+\/(approve|reject)$/)) return requireAdmin(request, env, user => handleAdminReviewClaim(path, request, env, user));
     if (request.method === "DELETE" && path.match(/^\/admin\/teams\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminDeleteTeam(path, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/teams\/[^/]+\/approve$/)) return requireAdmin(request, env, user => handleAdminApproveTeam(path, env, user));
@@ -862,6 +869,26 @@ async function handleAdminCreatorPartnership(request, env) {
   }
 }
 
+async function handleAdminCreatorDetail(path, env) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/creators\/([^/]+)$/)?.[1] || ""));
+  if (!username) return json({ error: "Creator username is required." }, 400);
+  const creator = await env.TPI_DB.prepare("SELECT id, username, display_name AS displayName, role, active, title, organization, website, created_at AS createdAt FROM contributors WHERE username = ?").bind(username).first();
+  if (!creator) return json({ error: "Creator account was not found." }, 404);
+  try {
+    const [memberships, entitlements, applications, channels, history] = await Promise.all([
+      env.TPI_DB.prepare(`SELECT id, membership_type AS membershipType, membership_state AS membershipState, entitlement_code AS entitlementCode, founding50_slot AS founding50Slot, awarded_at AS awardedAt, created_at AS createdAt, updated_at AS updatedAt, notes FROM creator_partnership_memberships WHERE contributor_id = ? ORDER BY created_at DESC`).bind(creator.id).all(),
+      env.TPI_DB.prepare(`SELECT id, entitlement_code AS entitlementCode, entitlement_state AS entitlementState, granted_at AS grantedAt, revoked_at AS revokedAt, created_at AS createdAt, updated_at AS updatedAt FROM creator_studio_entitlements WHERE contributor_id = ? ORDER BY created_at DESC`).bind(creator.id).all(),
+      env.TPI_DB.prepare(`SELECT id, status, administrative_notes AS administrativeNotes, contact_email AS contactEmail, website_url AS websiteUrl, social_channels AS socialChannels, video_channels AS videoChannels, creator_description AS creatorDescription, created_at AS createdAt, updated_at AS updatedAt, reviewed_at AS reviewedAt, reviewed_by AS reviewedBy FROM founding50_applications WHERE applicant_id = ? ORDER BY created_at DESC`).bind(creator.id).all(),
+      env.TPI_DB.prepare(`SELECT ch.id, ch.slug, ch.display_name AS displayName, ch.description, ch.visibility, ch.created_at AS createdAt, ch.updated_at AS updatedAt, COUNT(CASE WHEN tv.status = 'published' THEN 1 END) AS publishedVideoCount FROM tpi_video_channels ch LEFT JOIN tpi_videos tv ON tv.channel_id = ch.id WHERE ch.owner_id = ? GROUP BY ch.id, ch.slug, ch.display_name, ch.description, ch.visibility, ch.created_at, ch.updated_at ORDER BY ch.updated_at DESC`).bind(creator.id).all(),
+      env.TPI_DB.prepare(`SELECT id, actor_username AS actorUsername, actor_role AS actorRole, action, target_type AS targetType, target_id AS targetId, metadata_json AS metadata, created_at AS createdAt FROM admin_audit_logs WHERE (target_type = 'member' AND target_id = ?) OR (target_type = 'creator_partnership_membership' AND target_id IN (SELECT id FROM creator_partnership_memberships WHERE contributor_id = ?)) OR (target_type = 'founding50_application' AND target_id IN (SELECT id FROM founding50_applications WHERE applicant_id = ?)) ORDER BY created_at DESC LIMIT 100`).bind(username, creator.id, creator.id).all().catch(() => ({ results: [] }))
+    ]);
+    const parseList = value => safeJsonParse(value) || [];
+    return json({ creator, memberships: memberships.results || [], entitlements: entitlements.results || [], applications: (applications.results || []).map(row => ({ ...row, socialChannels: parseList(row.socialChannels), videoChannels: parseList(row.videoChannels) })), channels: channels.results || [], history: (history.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })) }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return json({ error: "Creator management details are unavailable in this development database." }, 503);
+  }
+}
+
 async function handleAdminCreatorStudioEntitlements(request, env) {
   const url = new URL(request.url);
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
@@ -1186,7 +1213,7 @@ async function handleAdminReportStatus(path, request, env, actingUser) {
   return json({ report: { id: reportId, reportType, status } });
 }
 
-async function handleAdminNotifications(request, env) {
+async function handleAdminNotifications(request, env, actingUser) {
   const url = new URL(request.url);
   const requestedStatus = clean(url.searchParams.get("status") || "all").toLowerCase();
   const allowedStatuses = ["unread", "read", "all"];
@@ -1194,10 +1221,17 @@ async function handleAdminNotifications(request, env) {
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
   const pageSize = Math.max(1, Math.min(parseInt(url.searchParams.get("pageSize") || "50", 10) || 50, 100));
   const offset = (page - 1) * pageSize;
-  const statusWhere = status === "unread" ? "WHERE mn.read_at IS NULL" : status === "read" ? "WHERE mn.read_at IS NOT NULL" : "";
-  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM member_notifications mn ${statusWhere}`).first();
+  const type = clean(url.searchParams.get("type") || "").slice(0, 80);
+  const filters = [];
+  const filterBinds = [];
+  if (status === "unread") filters.push("mn.read_at IS NULL");
+  if (status === "read") filters.push("mn.read_at IS NOT NULL");
+  if (type) { filters.push("mn.type = ?"); filterBinds.push(type); }
+  const statusWhere = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
+  const count = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total FROM member_notifications mn ${statusWhere}`).bind(...filterBinds).first();
   const { results } = await env.TPI_DB.prepare(`
     SELECT mn.id, mn.title, mn.type, mn.read_at AS readAt, mn.created_at AS createdAt,
+           CASE WHEN mn.contributor_id = ? THEN 1 ELSE 0 END AS canMutate,
            recipient.username AS recipientUsername, recipient.display_name AS recipientName,
            creator.username AS createdByUsername
     FROM member_notifications mn
@@ -1206,9 +1240,50 @@ async function handleAdminNotifications(request, env) {
     ${statusWhere}
     ORDER BY mn.created_at DESC
     LIMIT ? OFFSET ?
-  `).bind(pageSize, offset).all();
+  `).bind(actingUser.id, ...filterBinds, pageSize, offset).all();
   const total = Number(count?.total || 0);
-  return json({ notifications: results || [], status, metadataOnly: true, pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
+  return json({ notifications: results || [], status, type, metadataOnly: true, privateContentBoundary: "Bodies and action targets are returned only by the owning member notification workflow.", pagination: { page, pageSize, returned: (results || []).length, total, totalPages: Math.ceil(total / pageSize) } }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminNotificationDetail(path, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/notifications\/([^/]+)$/)?.[1] || ""));
+  if (!id) return json({ error: "Notification id is required." }, 400);
+  const notification = await env.TPI_DB.prepare(`
+    SELECT mn.id, mn.title, mn.type, mn.read_at AS readAt, mn.created_at AS createdAt,
+           mn.contributor_id AS recipientId, mn.body, mn.action_href AS actionHref,
+           recipient.username AS recipientUsername, recipient.display_name AS recipientName,
+           creator.username AS createdByUsername
+    FROM member_notifications mn
+    LEFT JOIN contributors recipient ON recipient.id = mn.contributor_id
+    LEFT JOIN contributors creator ON creator.id = mn.created_by
+    WHERE mn.id = ?
+  `).bind(id).first();
+  if (!notification) return json({ error: "Notification was not found." }, 404);
+  const ownsNotification = notification.recipientId === actingUser.id;
+  const detail = { ...notification, body: ownsNotification ? notification.body : undefined, actionHref: ownsNotification ? notification.actionHref : undefined, canMutate: ownsNotification };
+  delete detail.recipientId;
+  return json({ notification: detail, metadataOnly: !ownsNotification, privateContentBoundary: ownsNotification ? "Owner-scoped notification content." : "Private notification content is not exposed to administrative oversight." }, 200, { "Cache-Control": "private, no-store" });
+}
+
+async function handleAdminNotificationState(path, env, actingUser) {
+  const match = path.match(/^\/admin\/notifications\/([^/]+)\/(read|unread)$/);
+  const id = clean(decodeURIComponent(match?.[1] || ""));
+  const nextState = match?.[2];
+  if (!id || !nextState) return json({ error: "Notification state is required." }, 400);
+  const notification = await env.TPI_DB.prepare("SELECT id, contributor_id, read_at FROM member_notifications WHERE id = ?").bind(id).first();
+  if (!notification) return json({ error: "Notification was not found." }, 404);
+  if (notification.contributor_id !== actingUser.id) return json({ error: "Only the notification recipient can change its read state." }, 403);
+  const readAt = nextState === "read" ? "CURRENT_TIMESTAMP" : "NULL";
+  await env.TPI_DB.prepare(`UPDATE member_notifications SET read_at = ${readAt} WHERE id = ? AND contributor_id = ?`).bind(id, actingUser.id).run();
+  await writeAdminAuditLog(env, actingUser, `notification.${nextState}`, "member_notification", id, { previousReadAt: notification.read_at || null });
+  return json({ ok: true, id, read: nextState === "read" });
+}
+
+async function handleAdminMarkAllNotificationsRead(env, actingUser) {
+  const result = await env.TPI_DB.prepare("UPDATE member_notifications SET read_at = datetime('now') WHERE contributor_id = ? AND read_at IS NULL").bind(actingUser.id).run();
+  const updated = Number(result.meta?.changes || 0);
+  if (updated) await writeAdminAuditLog(env, actingUser, "notification.read_all", "member_notifications", actingUser.id, { updated });
+  return json({ ok: true, updated });
 }
 
 async function handleAdminChannels(request, env) {
@@ -2616,6 +2691,75 @@ async function handleAdminArticles(request, env, actingUser) {
     metadataOnly: true,
     mutationBoundary: "Article publication status uses the protected administrative contract; article bodies remain on the contributor publishing workflow."
   }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminArticleDetail(path, env) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/articles\/([^/]+)$/)?.[1] || ""));
+  if (!id) return json({ error: "Article id is required." }, 400);
+  const article = await env.TPI_DB.prepare(`
+    SELECT a.id, a.destination, a.href, a.title, a.subtitle,
+           a.article_type AS contributionType, a.author, a.source,
+           a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels,
+           a.status, a.created_at AS createdAt, a.updated_at AS updatedAt,
+           c.username AS authorUsername, c.display_name AS authorDisplayName
+    FROM articles a
+    LEFT JOIN contributors c ON c.id = a.created_by
+    WHERE a.id = ?
+  `).bind(id).first();
+  if (!article) return json({ error: "Article was not found." }, 404);
+  const history = await env.TPI_DB.prepare(`
+    SELECT id, actor_username AS actorUsername, actor_role AS actorRole,
+           action, target_type AS targetType, target_id AS targetId,
+           metadata_json AS metadata, created_at AS createdAt
+    FROM admin_audit_logs
+    WHERE target_type = 'article' AND target_id = ?
+    ORDER BY created_at DESC
+    LIMIT 50
+  `).bind(id).all().catch(() => ({ results: [] }));
+  return json({ article, history: (history.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminArticleUpdate(path, request, env, actingUser) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/articles\/([^/]+)$/)?.[1] || ""));
+  if (!id) return json({ error: "Article id is required." }, 400);
+  const current = await env.TPI_DB.prepare("SELECT * FROM articles WHERE id = ?").bind(id).first();
+  if (!current) return json({ error: "Article was not found." }, 404);
+  const data = await readJson(request);
+  const expectedUpdatedAt = clean(data.expectedUpdatedAt);
+  if (expectedUpdatedAt && expectedUpdatedAt !== current.updated_at) {
+    return json({ error: "This article changed since it was loaded. Refresh before saving.", code: "ARTICLE_EDIT_CONFLICT", currentUpdatedAt: current.updated_at }, 409);
+  }
+  const title = clean(Object.prototype.hasOwnProperty.call(data, "title") ? data.title : current.title);
+  const destination = clean(Object.prototype.hasOwnProperty.call(data, "destination") ? data.destination : current.destination);
+  const bodyHtml = String(Object.prototype.hasOwnProperty.call(data, "bodyHtml") ? data.bodyHtml || "" : current.body_html || "");
+  if (!title || title.toLowerCase().startsWith("untitled")) return json({ error: "A real title is required." }, 400);
+  if (!destination) return json({ error: "Article destination is required." }, 400);
+  if (!bodyHtml.trim()) return json({ error: "Article body is required." }, 400);
+  const href = clean(Object.prototype.hasOwnProperty.call(data, "href") ? data.href : current.href);
+  const subtitle = clean(Object.prototype.hasOwnProperty.call(data, "subtitle") ? data.subtitle : current.subtitle);
+  const contributionType = clean(Object.prototype.hasOwnProperty.call(data, "contributionType") ? data.contributionType : current.article_type);
+  const author = clean(Object.prototype.hasOwnProperty.call(data, "author") ? data.author : current.author);
+  const source = clean(Object.prototype.hasOwnProperty.call(data, "source") ? data.source : current.source);
+  const articleHtml = String(Object.prototype.hasOwnProperty.call(data, "articleHtml") ? data.articleHtml || "" : current.article_html || "");
+  const labels = clean(Object.prototype.hasOwnProperty.call(data, "labels") ? data.labels : current.labels);
+  const updateResult = await env.TPI_DB.prepare(`
+    UPDATE articles
+    SET destination = ?, href = ?, title = ?, subtitle = ?, article_type = ?,
+        author = ?, source = ?, body_html = ?, article_html = ?, labels = ?,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ? AND updated_at = ?
+  `).bind(destination, href, title, subtitle, contributionType, author, source, bodyHtml, articleHtml, labels, id, current.updated_at).run();
+  if (!Number(updateResult.meta?.changes || 0)) return json({ error: "This article changed before the save completed. Refresh before saving.", code: "ARTICLE_EDIT_CONFLICT" }, 409);
+  const updated = await env.TPI_DB.prepare(`
+    SELECT id, destination, href, title, subtitle, article_type AS contributionType,
+           author, source, body_html AS bodyHtml, article_html AS articleHtml,
+           labels, status, created_at AS createdAt, updated_at AS updatedAt
+    FROM articles WHERE id = ?
+  `).bind(id).first();
+  await writeAdminAuditLog(env, actingUser, "article.updated", "article", id, {
+    title, previousUpdatedAt: current.updated_at, updatedAt: updated?.updatedAt || null
+  });
+  return json({ article: updated, changed: true });
 }
 
 async function handleAdminArticleStatus(path, request, env, actingUser) {
@@ -7172,6 +7316,7 @@ async function handleAddTeamVerification(path, request, env, user) {
   await env.TPI_DB.prepare(
     "UPDATE paranormal_teams SET verification_status = ?, last_verified_at = datetime('now') WHERE id = ?"
   ).bind(status, id).run();
+  await writeAdminAuditLog(env, user, "team.verification_recorded", "team", id, { status, evidenceUrl: clean(data.evidenceUrl), confidence: clean(data.confidence) });
 
   return json({ ok: true }, 201);
 }
@@ -7293,6 +7438,7 @@ async function handleAdminReviewClaim(path, request, env, user) {
     await env.TPI_DB.prepare(
       "UPDATE team_claims SET status = 'rejected', reviewed_at = ?, reviewed_by = ?, review_notes = ?, updated_at = datetime('now') WHERE id = ? AND status = 'pending'"
     ).bind(now, user.username, reviewNotes, claimId).run();
+    await writeAdminAuditLog(env, user, "team.claim_rejected", "team_claim", claimId, { teamId: claim.team_id, previousStatus: "pending", status: "rejected", reviewNotes: reviewNotes || undefined });
     return json({ ok: true, status: "rejected" });
   }
 
@@ -7309,7 +7455,21 @@ async function handleAdminReviewClaim(path, request, env, user) {
   ).bind(crypto.randomUUID(), claim.team_id, claim.claimant_id);
 
   await env.TPI_DB.batch([claimUpdate, teamUpdate, membership]);
+  await writeAdminAuditLog(env, user, "team.claim_approved", "team_claim", claimId, { teamId: claim.team_id, previousStatus: "pending", status: "approved", reviewNotes: reviewNotes || undefined });
   return json({ ok: true, status: "approved" });
+}
+
+async function handleAdminTeamHistory(path, env, user) {
+  const id = clean(decodeURIComponent(path.match(/^\/admin\/teams\/([^/]+)\/history$/)?.[1] || ""));
+  if (!id) return json({ error: "Team ID is required." }, 400);
+  const team = await env.TPI_DB.prepare("SELECT id, name, status, verification_status AS verificationStatus, reviewed_at AS reviewedAt, reviewed_by AS reviewedBy FROM paranormal_teams WHERE id = ?").bind(id).first();
+  if (!team) return json({ error: "Team not found." }, 404);
+  const [verification, claims, audits] = await Promise.all([
+    env.TPI_DB.prepare(`SELECT id, team_id AS teamId, status, evidence_url AS evidenceUrl, evidence_type AS evidenceType, evidence_description AS evidenceDescription, last_apparent_activity AS lastApparentActivity, confidence, verifier, notes, created_at AS createdAt FROM team_verification_events WHERE team_id = ? ORDER BY created_at DESC`).bind(id).all(),
+    env.TPI_DB.prepare(`SELECT id, team_id AS teamId, claimant_id AS claimantId, claimant_name AS claimantName, claimant_email AS claimantEmail, claimant_role AS claimantRole, evidence_url AS evidenceUrl, evidence_description AS evidenceDescription, status, reviewed_at AS reviewedAt, reviewed_by AS reviewedBy, review_notes AS reviewNotes, created_at AS createdAt, updated_at AS updatedAt FROM team_claims WHERE team_id = ? ORDER BY created_at DESC`).bind(id).all(),
+    env.TPI_DB.prepare(`SELECT id, actor_username AS actorUsername, actor_role AS actorRole, action, target_type AS targetType, target_id AS targetId, metadata_json AS metadata, created_at AS createdAt FROM admin_audit_logs WHERE (target_type = 'team' AND target_id = ?) OR (target_type = 'team_claim' AND target_id IN (SELECT id FROM team_claims WHERE team_id = ?)) ORDER BY created_at DESC LIMIT 100`).bind(id, id).all().catch(() => ({ results: [] }))
+  ]);
+  return json({ team, verificationEvents: verification.results || [], claims: claims.results || [], auditLogs: (audits.results || []).map(row => ({ ...row, metadata: safeJsonParse(row.metadata) || {} })) }, 200, { "Cache-Control": "no-store" });
 }
 
 async function handleAdminDeleteTeam(path, env, user) {
@@ -7345,9 +7505,11 @@ async function handleAdminApproveTeam(path, env, user) {
     return json({ error: "Imported listings require an approved publication policy before publication." }, 409);
   }
 
+  const previousStatus = team.status;
   await env.TPI_DB.prepare(
     "UPDATE paranormal_teams SET status = 'approved', reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
   ).bind(user.username, id).run();
+  await writeAdminAuditLog(env, user, "team.approved", "team", id, { previousStatus, status: "approved", name: team.name });
 
   return json({ ok: true });
 }
@@ -7359,9 +7521,11 @@ async function handleAdminRejectTeam(path, env, user) {
   const team = await env.TPI_DB.prepare("SELECT * FROM paranormal_teams WHERE id = ?").bind(id).first();
   if (!team) return json({ error: "Team not found." }, 404);
 
+  const previousStatus = team.status;
   await env.TPI_DB.prepare(
     "UPDATE paranormal_teams SET status = 'rejected', reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
   ).bind(user.username, id).run();
+  await writeAdminAuditLog(env, user, "team.rejected", "team", id, { previousStatus, status: "rejected", name: team.name });
 
   return json({ ok: true });
 }
@@ -7385,9 +7549,11 @@ async function handleAdminSetTeamStatus(path, request, env, user) {
     return json({ error: "Imported listings require an approved publication policy before publication." }, 409);
   }
 
+  const previousStatus = team.status;
   await env.TPI_DB.prepare(
     "UPDATE paranormal_teams SET status = ?, reviewed_at = datetime('now'), reviewed_by = ? WHERE id = ?"
   ).bind(status, user.username, id).run();
+  await writeAdminAuditLog(env, user, `team.${status}`, "team", id, { previousStatus, status, name: team.name });
 
   return json({ ok: true });
 }

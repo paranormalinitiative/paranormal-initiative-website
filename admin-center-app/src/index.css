@@ -143,6 +143,9 @@ tbody tr { cursor: pointer; }
 .detail-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .detail-facts span { display: grid; gap: 4px; color: var(--muted-foreground); font-size: .8rem; }
 .detail-facts strong { color: var(--foreground); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+.form-field { display: grid; gap: 7px; color: var(--muted-foreground); font-size: .8rem; font-weight: 600; }
+.form-field textarea { width: 100%; resize: vertical; border: 1px solid var(--border); border-radius: var(--tpi-radius-sm); background: var(--tpi-bg-secondary); color: var(--foreground); padding: 10px 12px; font: inherit; line-height: 1.45; }
+.form-field textarea:focus { outline: 2px solid var(--tpi-accent); outline-offset: 1px; }
 .detail-stack h4 { margin: 0 0 10px; }
 .activity-item, .audit-row, .moderation-row { border-bottom: 1px solid var(--border); }
 .activity-item { display: flex; align-items: flex-start; gap: 8px; padding: 9px 0; font-size: .82rem; line-height: 1.45; }

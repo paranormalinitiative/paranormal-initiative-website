@@ -246,6 +246,15 @@ export type AdminPublishedArticle = {
   status: string;
   createdAt?: string;
   updatedAt?: string;
+  bodyHtml?: string;
+  articleHtml?: string;
+  source?: string;
+  labels?: string;
+};
+
+export type AdminArticleDetail = {
+  article: AdminPublishedArticle;
+  history: Array<{ id: string; actorUsername: string; actorRole: string; action: string; targetType?: string; targetId?: string; metadata?: Record<string, unknown>; createdAt: string }>;
 };
 
 export type AdminPublishedVideo = {
@@ -319,6 +328,31 @@ export type AdminNotification = {
   recipientUsername?: string;
   recipientName?: string;
   createdByUsername?: string;
+  canMutate?: boolean | number;
+  body?: string;
+  actionHref?: string;
+};
+
+export type AdminNotificationDetail = {
+  notification: AdminNotification;
+  metadataOnly?: boolean;
+  privateContentBoundary?: string;
+};
+
+export type AdminTeamHistory = {
+  team: { id: string; name: string; status: string; verificationStatus?: string; reviewedAt?: string; reviewedBy?: string };
+  verificationEvents: Array<{ id: string | number; status: string; evidenceUrl?: string; evidenceType?: string; evidenceDescription?: string; lastApparentActivity?: string; confidence?: string; verifier?: string; notes?: string; createdAt: string }>;
+  claims: AdminTeamClaim[];
+  auditLogs: Array<{ id: string; actorUsername: string; actorRole: string; action: string; targetType?: string; targetId?: string; metadata?: Record<string, unknown>; createdAt: string }>;
+};
+
+export type AdminCreatorDetail = {
+  creator: { id: string; username: string; displayName: string; role: string; active: boolean | number; title?: string; organization?: string; website?: string; createdAt?: string };
+  memberships: Array<AdminCreatorMembership & { updatedAt?: string; notes?: string }>;
+  entitlements: Array<AdminCreatorEntitlement & { createdAt?: string; updatedAt?: string }>;
+  applications: Array<AdminFoundingApplication & { administrativeNotes?: string; updatedAt?: string }>;
+  channels: Array<AdminChannel & { description?: string }>;
+  history: Array<{ id: string; actorUsername: string; actorRole: string; action: string; targetType?: string; targetId?: string; metadata?: Record<string, unknown>; createdAt: string }>;
 };
 
 export type AdminChannel = {
