@@ -1,5 +1,5 @@
 import { onRequest as handleApiRequest } from "./functions/api/[[path]].js";
-import { getSessionUser } from "./lib/auth.js";
+import { getSessionUser, hasCreatorStudioAccess } from "./lib/auth.js";
 import { scrapeAndUpdateEvents } from "./lib/event-scraper.js";
 import { scrapeNews } from "./lib/news-scraper.js";
 import { scrapeVideos } from "./lib/video-scraper.js";
@@ -59,6 +59,14 @@ const STUDIO_COMING_SOON_HTML = MEMBER_GATE_HTML
   .replace(
     "ITC Visual Studio is available to registered members of The Paranormal Initiative. Sign in to continue, or create a free member account to access the application.",
     "Creator Studio is in final development and is not publicly available yet. Authorized owner and test access remains protected."
+  );
+
+const STUDIO_ACCESS_HTML = STUDIO_COMING_SOON_HTML
+  .replace("Creator Studio — Coming Soon", "Creator Studio — Restricted Access")
+  .replace("<p class=\"coming-soon-pill\">COMING SOON</p>", "")
+  .replace(
+    "Creator Studio is in final development and is not publicly available yet. Authorized owner and test access remains protected.",
+    "Creator Studio is restricted to the owner, administrators, and accounts with an active Creator Studio entitlement."
   );
 
 const ADMIN_GATE_HTML = MEMBER_GATE_HTML
@@ -160,16 +168,16 @@ export default {
       return serveAssets(request, env);
     }
 
-    // Creator Studio is an owner/admin-only preview. Keep the gate server-side
-    // for the host route, direct assets, and the former guest URL so public or
-    // ordinary member requests cannot load the application bundle.
+    // Creator Studio is distinct from Administration Center. Leadership keeps
+    // its existing access, while creators must have an active entitlement.
+    // The check is server-side for the host route and every direct asset.
     if (url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
       const user = await getSessionUser(request, env);
-      const hasStudioAccess = user && (user.role === "owner" || user.role === "admin");
+      const hasStudioAccess = await hasCreatorStudioAccess(env, user);
       if (!hasStudioAccess) {
-        return new Response(STUDIO_COMING_SOON_HTML, {
+        return new Response(user ? STUDIO_ACCESS_HTML : STUDIO_COMING_SOON_HTML, {
           status: 403,
-          headers: { "Content-Type": "text/html; charset=utf-8" }
+          headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
       return serveAssets(request, env);

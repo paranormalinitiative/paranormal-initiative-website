@@ -83,8 +83,8 @@
     "admin-panel",
     "admin-advanced-settings",
     // Live Video and Podcast are public Coming Soon pages. Their launch
-    // controls remain role-gated; Creator Studio itself is protected by the
-    // Worker owner/admin gate.
+    // controls remain entitlement-gated; Creator Studio is protected by the
+    // Worker's server-side role/entitlement check.
     // Future: "activity", "chat", "saved"
   ];
 
@@ -379,30 +379,31 @@
     var role = String(user && user.role || "").toLowerCase();
     var canUseAdminPanel = role === "owner" || role === "admin";
     var canUseContentEditor = canUseAdminPanel || role === "contributor";
+    var canUseCreatorStudio = Boolean(user && user.creatorStudioAccess);
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
       element.hidden = !canUseAdminPanel;
     });
     document.querySelectorAll("[data-contributor-only]").forEach(function (element) {
       element.hidden = !canUseContentEditor;
     });
-    // Coming Soon markers (Creator Studio) hide for leadership, who can still enter.
-    document.querySelectorAll("[data-coming-soon]").forEach(function (element) {
-      element.hidden = canUseAdminPanel;
+    document.querySelectorAll("[data-studio-only]").forEach(function (element) {
+      element.hidden = !canUseCreatorStudio;
     });
-    // Creator Studio is Coming Soon: non-leadership gets a disabled nav item they
-    // cannot click through; leadership keeps the working link.
+    // Coming Soon markers hide for accounts that can actually enter StudioFlow.
+    document.querySelectorAll("[data-coming-soon]").forEach(function (element) {
+      element.hidden = canUseCreatorStudio;
+    });
+    // Unauthorized management options are hidden, never rendered as disabled
+    // pseudo-permissions. Authorized creators and leadership keep the link.
     document.querySelectorAll('[data-nav="studio"]').forEach(function (element) {
-      if (canUseAdminPanel) {
+      if (canUseCreatorStudio) {
         element.classList.remove("is-nav-disabled");
         element.removeAttribute("aria-disabled");
         element.removeAttribute("title");
         if (!element.getAttribute("href")) element.setAttribute("href", "/studio/");
         return;
       }
-      element.classList.add("is-nav-disabled");
-      element.setAttribute("aria-disabled", "true");
-      element.setAttribute("title", "TPI Creator Studio — Coming Soon");
-      element.removeAttribute("href");
+      element.hidden = true;
     });
     document.body.classList.toggle("member-guest-mode", Boolean(user && user.guest));
     if (user && user.guest) {
@@ -455,7 +456,7 @@
           '<span class="mobile-nav-icon">&#9679;</span>Home</a>' +
         '<a class="mobile-nav-link" href="tpi-videos.html?member=1" data-nav="tpi-videos">' +
           '<span class="mobile-nav-icon">&#9654;</span>Videos</a>' +
-        '<a class="mobile-nav-link" href="/studio/" data-nav="studio" data-admin-only hidden aria-label="TPI Creator Studio">' +
+        '<a class="mobile-nav-link" href="/studio/" data-nav="studio" data-studio-only hidden aria-label="TPI Creator Studio">' +
           '<span class="mobile-nav-icon">&#9654;</span>TPI Creator Studio</a>' +
         '<a class="mobile-nav-link" href="member-home.html" data-nav="profile" data-nav-profile-mobile>' +
           '<span class="mobile-nav-icon">&#9786;</span>Profile</a>' +

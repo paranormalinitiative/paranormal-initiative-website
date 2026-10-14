@@ -1,4 +1,4 @@
-import { SESSION_COOKIE, getCookie, getSessionUser } from "../../lib/auth.js";
+import { SESSION_COOKIE, getCookie, getSessionUser, hasCreatorStudioAccess } from "../../lib/auth.js";
 import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
 import { scrapeNews } from "../../lib/news-scraper.js";
 import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
@@ -131,11 +131,11 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/status$/)) return requireAdmin(request, env, () => handleRoomStatus(path, env));
     if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return requireAdmin(request, env, () => handleRoomPostSignal(path, request, env));
     if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return requireAdmin(request, env, () => handleRoomGetSignals(path, request, env));
-    if (request.method === "POST" && path === "/studio/rooms") return requireAdmin(request, env, user => handleCreateStudioRoom(request, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return requireAdmin(request, env, () => handleStudioGuestToken(path, request, env));
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireAdmin(request, env, user => handleCloseStudioRoom(path, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/start$/)) return requireAdmin(request, env, user => handleStartStudioLivestream(path, request, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/stop$/)) return requireAdmin(request, env, user => handleStopStudioLivestream(path, env, user));
+    if (request.method === "POST" && path === "/studio/rooms") return requireStudioAccess(request, env, user => handleCreateStudioRoom(request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return requireStudioAccess(request, env, user => handleStudioGuestToken(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireStudioAccess(request, env, user => handleCloseStudioRoom(path, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/start$/)) return requireStudioAccess(request, env, user => handleStartStudioLivestream(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/stop$/)) return requireStudioAccess(request, env, user => handleStopStudioLivestream(path, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
@@ -163,8 +163,8 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/comments") return handleCreateComment(request, env);
     if (request.method === "GET" && path === "/video-comments") return handleListVideoComments(request, env);
     if (request.method === "POST" && path === "/video-comments") return requireMember(request, env, user => handleCreateVideoComment(request, env, user));
-    if (request.method === "POST" && path === "/studio/live-broadcasts") return requireAdmin(request, env, user => handleRegisterLiveBroadcast(request, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/live-broadcasts\/[^/]+\/(start|stop)$/)) return requireAdmin(request, env, user => handleSetLiveBroadcastStatus(path, request, env, user));
+    if (request.method === "POST" && path === "/studio/live-broadcasts") return requireStudioAccess(request, env, user => handleRegisterLiveBroadcast(request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/live-broadcasts\/[^/]+\/(start|stop)$/)) return requireStudioAccess(request, env, user => handleSetLiveBroadcastStatus(path, request, env, user));
     if (request.method === "GET" && path === "/tpi-broadcasts") return handleListTpiBroadcasts(request, env);
     if (request.method === "POST" && path === "/tpi-broadcasts") return requireContributor(request, env, user => handleCreateTpiBroadcast(request, env, user));
     if (request.method === "GET" && path.match(/^\/tpi-broadcasts\/[^/]+$/)) return handleGetTpiBroadcast(path, request, env);
@@ -352,7 +352,7 @@ async function handleLogout() {
 
 async function handleMe(request, env) {
   const user = await getSessionUser(request, env);
-  return json({ user: user ? privateMemberUser(user) : null });
+  return json({ user: user ? privateMemberUser(user, await hasCreatorStudioAccess(env, user)) : null }, 200, { "Cache-Control": "no-store" });
 }
 
 // My Pulse stats: every number is a truthful count from real tables —
@@ -5057,7 +5057,7 @@ async function handleCreateStudioRoom(request, env, user) {
   }, 201, { "Cache-Control": "no-store" });
 }
 
-async function handleStudioGuestToken(path, request, env) {
+async function handleStudioGuestToken(path, request, env, user) {
   assertRealtimeKitConfigured(env);
   const roomId = studioRoomIdFromPath(path);
   const data = await readJson(request);
@@ -5070,6 +5070,9 @@ async function handleStudioGuestToken(path, request, env) {
     LIMIT 1
   `).bind(roomId, inviteToken).first();
   if (!room) return json({ error: "This StudioFlow invitation is invalid or the room has closed." }, 403);
+  if (room.host_id !== user.id && !["owner", "admin"].includes(user.role)) {
+    return json({ error: "Only the StudioFlow room host can issue guest access." }, 403);
+  }
 
   const participant = await createRealtimeKitParticipant(env, room.realtimekit_meeting_id, {
     customParticipantId: `guest:${crypto.randomUUID()}`,
@@ -6066,6 +6069,15 @@ async function requireAdmin(request, env, handler) {
   return handler(user);
 }
 
+async function requireStudioAccess(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Creator Studio access requires an authenticated account." }, 401);
+  if (!(await hasCreatorStudioAccess(env, user))) {
+    return json({ error: "An active Creator Studio entitlement is required." }, 403);
+  }
+  return handler(user);
+}
+
 async function requireOwner(request, env, handler) {
   const user = await getSessionUser(request, env);
   if (!user || user.role !== "owner") return json({ error: "Owner access required." }, 403);
@@ -6460,7 +6472,7 @@ function publicUser(user) {
   };
 }
 
-function privateMemberUser(user) {
+function privateMemberUser(user, creatorStudioAccess = false) {
   return {
     id: user.id,
     ...publicUser(user),
@@ -6477,7 +6489,10 @@ function privateMemberUser(user) {
     canPost: user.can_post !== 0,
     canComment: user.can_comment !== 0,
     canMessage: user.can_message !== 0,
-    theme: user.theme
+    theme: user.theme,
+    // This is a server-derived capability for navigation only. All protected
+    // routes and APIs repeat the authoritative entitlement check.
+    creatorStudioAccess
   };
 }
 
