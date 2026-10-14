@@ -74,6 +74,9 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "/admin/roles") return requireAdmin(request, env, user => handleAdminRoles(request, env, user));
     if (request.method === "GET" && path === "/admin/restrictions") return requireAdmin(request, env, user => handleAdminRestrictions(request, env, user));
     if (request.method === "GET" && path === "/admin/events") return requireAdmin(request, env, user => handleAdminEvents(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminEventDetail(path, env, user));
+    if ((request.method === "PUT" || request.method === "PATCH") && path.match(/^\/admin\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminEventUpdate(path, request, env, user));
+    if (request.method === "DELETE" && path.match(/^\/admin\/events\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminEventCancel(path, env, user));
     if (request.method === "POST" && path.startsWith("/admin/comments/") && path.endsWith("/approve")) return requireAdmin(request, env, user => handleAdminApproveComment(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/admin/comments/")) return requireAdmin(request, env, user => handleAdminDeleteComment(path, env, user));
     if (request.method === "GET" && path === "/admin/settings") return requireAdmin(request, env, user => handleAdminGetSettings(env, user));
@@ -1411,6 +1414,119 @@ async function handleAdminEvents(request, env) {
   } catch (error) {
     return json({ events: [], status, search, pagination: { page, pageSize, total: 0, totalPages: 0 }, metadataOnly: true, statusCode: "events_unavailable" }, 503);
   }
+}
+
+function adminEventIdFromPath(path) {
+  return clean(decodeURIComponent(path.replace(/^\/admin\/events\//, "")));
+}
+
+async function getAdminEvent(path, env) {
+  const id = adminEventIdFromPath(path);
+  if (!id) return { id: "", event: null };
+  const event = await env.TPI_DB.prepare("SELECT * FROM events WHERE id = ? LIMIT 1").bind(id).first();
+  return { id, event };
+}
+
+async function handleAdminEventDetail(path, env) {
+  const { id, event } = await getAdminEvent(path, env);
+  if (!id) return json({ error: "Event id is required." }, 400);
+  if (!event) return json({ error: "Event not found." }, 404);
+  return json({ event, metadataOnly: true }, 200, { "Cache-Control": "no-store" });
+}
+
+function eventMutationValues(data) {
+  const requestedStatus = clean(data.status || "approved").toLowerCase();
+  const maxAttendeesRaw = data.maxAttendees;
+  const maxAttendees = maxAttendeesRaw === "" || maxAttendeesRaw == null ? null : Number(maxAttendeesRaw);
+  const maxAttendeesValid = maxAttendees === null || (Number.isInteger(maxAttendees) && maxAttendees >= 0);
+  const organizerUrl = clean(data.organizerUrl || "");
+  const imageUrl = clean(data.imageUrl || "");
+  const virtualLink = clean(data.virtualLink || "");
+  return {
+    title: clean(data.title),
+    description: clean(data.description || ""),
+    type: clean(data.type || ""),
+    category: clean(data.category || "general"),
+    startDate: clean(data.startDate || ""),
+    endDate: clean(data.endDate || ""),
+    locationName: clean(data.locationName || ""),
+    address: clean(data.address || ""),
+    city: clean(data.city || ""),
+    state: clean(data.state || ""),
+    country: clean(data.country || "United States"),
+    isVirtual: data.isVirtual ? 1 : 0,
+    virtualLink,
+    platform: clean(data.platform || ""),
+    organizerName: clean(data.organizerName || data.organizer || ""),
+    organizerUrl,
+    imageUrl,
+    maxAttendees,
+    maxAttendeesValid,
+    price: clean(data.price || ""),
+    status: ["approved", "pending", "rejected", "cancelled"].includes(requestedStatus) ? requestedStatus : "approved",
+    featured: data.featured ? 1 : 0
+  };
+}
+
+function isValidEventDate(value) {
+  return Boolean(value && Number.isFinite(new Date(value).getTime()));
+}
+
+function isValidEventUrl(value) {
+  if (!value) return true;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch (error) {
+    return false;
+  }
+}
+
+function validateEventMutation(values) {
+  if (!values.title) return "Title is required.";
+  if (!values.type) return "Event type is required.";
+  if (!isValidEventDate(values.startDate)) return "A valid start date and time are required.";
+  if (values.endDate && !isValidEventDate(values.endDate)) return "The end date and time are invalid.";
+  if (values.endDate && new Date(values.endDate).getTime() < new Date(values.startDate).getTime()) return "The end date and time cannot be before the start date and time.";
+  if (!isValidEventUrl(values.virtualLink) || !isValidEventUrl(values.organizerUrl) || !isValidEventUrl(values.imageUrl)) return "Event links must use http:// or https:// URLs.";
+  if (!values.maxAttendeesValid) return "Maximum attendees must be a non-negative whole number.";
+  if (!["approved", "pending", "rejected", "cancelled"].includes(values.status)) return "Event status was not recognized.";
+  return "";
+}
+
+async function handleAdminEventUpdate(path, request, env, user) {
+  const { id, event } = await getAdminEvent(path, env);
+  if (!id) return json({ error: "Event id is required." }, 400);
+  if (!event) return json({ error: "Event not found." }, 404);
+  const data = await readJson(request);
+  const values = eventMutationValues(data);
+  const validationError = validateEventMutation(values);
+  if (validationError) return json({ error: validationError }, 400);
+
+  await env.TPI_DB.prepare(`
+    UPDATE events SET title = ?, description = ?, type = ?, category = ?, start_date = ?, end_date = ?,
+      location_name = ?, address = ?, city = ?, state = ?, country = ?, is_virtual = ?, virtual_link = ?,
+      platform = ?, organizer_name = ?, organizer_url = ?, image_url = ?, max_attendees = ?, price = ?,
+      status = ?, featured = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).bind(
+    values.title, values.description, values.type, values.category, values.startDate, values.endDate,
+    values.locationName, values.address, values.city, values.state, values.country, values.isVirtual,
+    values.virtualLink, values.platform, values.organizerName, values.organizerUrl, values.imageUrl,
+    values.maxAttendees, values.price, values.status, values.featured, id
+  ).run();
+  await writeAdminAuditLog(env, user, "event.updated", "event", id, { previousStatus: event.status, status: values.status, title: values.title });
+  const updated = await env.TPI_DB.prepare("SELECT * FROM events WHERE id = ? LIMIT 1").bind(id).first();
+  return json({ ok: true, event: updated }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminEventCancel(path, env, user) {
+  const { id, event } = await getAdminEvent(path, env);
+  if (!id) return json({ error: "Event id is required." }, 400);
+  if (!event) return json({ error: "Event not found." }, 404);
+  await env.TPI_DB.prepare("UPDATE events SET status = 'cancelled', updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(id).run();
+  await writeAdminAuditLog(env, user, "event.cancelled", "event", id, { previousStatus: event.status, title: event.title });
+  return json({ ok: true, status: "cancelled" }, 200, { "Cache-Control": "no-store" });
 }
 
 async function writeAdminAuditLog(env, actor, action, targetType = null, targetId = null, metadata = {}) {
@@ -7598,32 +7714,23 @@ async function handleGetEvent(path, env) {
 
 async function handleCreateEvent(request, env, user) {
   const data = await readJson(request);
-  if (!data.title) return json({ error: "Title is required." }, 400);
+  const values = eventMutationValues({ ...data, status: "approved" });
+  const validationError = validateEventMutation(values);
+  if (validationError) return json({ error: validationError }, 400);
 
   const result = await env.TPI_DB.prepare(`
     INSERT INTO events (title, description, type, category, start_date, end_date,
-      location_name, city, state, country, is_virtual, virtual_link, image_url,
-      organizer_name, source, status, featured)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)
+      location_name, address, city, state, country, is_virtual, virtual_link, platform,
+      organizer_name, organizer_url, image_url, max_attendees, price, source, status, featured)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)
   `).bind(
-    clean(data.title),
-    clean(data.description || ""),
-    clean(data.type || "other"),
-    clean(data.category || "paranormal"),
-    clean(data.startDate || ""),
-    clean(data.endDate || ""),
-    clean(data.locationName || ""),
-    clean(data.city || ""),
-    clean(data.state || ""),
-    clean(data.country || "United States"),
-    data.isVirtual ? 1 : 0,
-    clean(data.virtualLink || ""),
-    clean(data.imageUrl || ""),
-    clean(data.organizerName || ""),
-    clean(data.source || "admin"),
-    data.featured ? 1 : 0
+    values.title, values.description, values.type, values.category, values.startDate, values.endDate,
+    values.locationName, values.address, values.city, values.state, values.country, values.isVirtual,
+    values.virtualLink, values.platform, values.organizerName, values.organizerUrl, values.imageUrl,
+    values.maxAttendees, values.price, "admin", values.featured
   ).run();
 
+  await writeAdminAuditLog(env, user, "event.created", "event", String(result.meta?.last_row_id || ""), { title: values.title, status: "approved" });
   return json({ ok: true, id: result.meta?.last_row_id });
 }
 

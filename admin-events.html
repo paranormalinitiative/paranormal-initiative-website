@@ -623,124 +623,149 @@
 <script src="member-shell.js?v=55"></script>
 <script>
 // Leadership gate: only owner/admin can use the event manager.
-(async function () {
-    let isLeadership = false;
-    try {
-        const response = await fetch('/api/auth/me', { credentials: 'same-origin' });
-        if (response.ok) {
-            const data = await response.json();
-            const role = String(data.user && data.user.role || '').toLowerCase();
-            isLeadership = role === 'owner' || role === 'admin';
-        }
-    } catch (error) {
-        isLeadership = false;
-    }
-    document.getElementById('admin-form-card').hidden = !isLeadership;
-    document.getElementById('admin-gate-note').hidden = isLeadership;
-    document.querySelectorAll('[data-preview-event], [data-save-event], [data-clear-event]').forEach(btn => {
-        btn.disabled = !isLeadership;
-    });
-})();
-
-// Toggle virtual link field
+let editingEventId = '';
+let editingEventStatus = 'approved';
+let isLeadership = false;
+const form = document.getElementById('event-form');
+const previewSection = document.getElementById('event-preview');
 const virtualCheckbox = document.getElementById('event-virtual');
 const virtualLinkGroup = document.getElementById('virtual-link-group');
-virtualCheckbox?.addEventListener('change', () => {
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+}
+
+async function apiJson(path, options = {}) {
+    const response = await fetch(path, { credentials: 'same-origin', ...options, headers: { 'Content-Type': 'application/json', ...(options.headers || {}) } });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error || `Request failed (${response.status})`);
+    return body;
+}
+
+function collectEventForm() {
+    return {
+        title: document.getElementById('event-title').value.trim(),
+        type: document.getElementById('event-type').value,
+        category: document.getElementById('event-category').value,
+        description: document.getElementById('event-description').value.trim(),
+        startDate: document.getElementById('event-start-date').value,
+        endDate: document.getElementById('event-end-date').value,
+        locationName: document.getElementById('event-location-name').value.trim(),
+        address: document.getElementById('event-address').value.trim(),
+        city: document.getElementById('event-city').value.trim(),
+        state: document.getElementById('event-state').value.trim(),
+        country: document.getElementById('event-country').value.trim(),
+        isVirtual: document.getElementById('event-virtual').checked,
+        virtualLink: document.getElementById('event-virtual-link').value.trim(),
+        organizerName: document.getElementById('event-organizer').value.trim(),
+        organizerUrl: document.getElementById('event-organizer-url').value.trim(),
+        imageUrl: document.getElementById('event-image').value.trim(),
+        maxAttendees: document.getElementById('event-max-attendees').value,
+        price: document.getElementById('event-price').value.trim(),
+        status: editingEventStatus,
+        source: 'admin'
+    };
+}
+
+function fillEventForm(event) {
+    editingEventId = String(event.id || '');
+    editingEventStatus = event.status || 'approved';
+    const values = {
+        'event-title': event.title, 'event-type': event.type, 'event-category': event.category,
+        'event-description': event.description, 'event-start-date': event.start_date, 'event-end-date': event.end_date,
+        'event-location-name': event.location_name, 'event-address': event.address, 'event-city': event.city,
+        'event-state': event.state, 'event-country': event.country || 'United States', 'event-virtual-link': event.virtual_link,
+        'event-organizer': event.organizer_name, 'event-organizer-url': event.organizer_url, 'event-image': event.image_url,
+        'event-max-attendees': event.max_attendees, 'event-price': event.price
+    };
+    Object.entries(values).forEach(([id, value]) => { const field = document.getElementById(id); if (field) field.value = value ?? ''; });
+    virtualCheckbox.checked = Boolean(event.is_virtual);
     virtualLinkGroup.style.display = virtualCheckbox.checked ? '' : 'none';
-});
+    form.querySelector('button[type="submit"]').textContent = 'Update Event';
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-// Preview functionality
-const previewBtn = document.querySelector('[data-preview-event]');
-const previewSection = document.getElementById('event-preview');
-previewBtn?.addEventListener('click', () => {
-    const title = document.getElementById('event-title').value || 'Event Title';
-    const type = document.getElementById('event-type').value || 'Type';
-    const category = document.getElementById('event-category').value || 'Category';
-    const description = document.getElementById('event-description').value || 'Event description will appear here...';
-    const locationName = document.getElementById('event-location-name').value;
-    const city = document.getElementById('event-city').value;
-    const startDate = document.getElementById('event-start-date').value;
+function clearEventForm() {
+    editingEventId = '';
+    editingEventStatus = 'approved';
+    form.reset();
+    document.getElementById('event-country').value = 'United States';
+    virtualLinkGroup.style.display = 'none';
+    form.querySelector('button[type="submit"]').textContent = 'Save Event';
+    previewSection.style.display = 'none';
+}
 
-    document.getElementById('preview-title').textContent = title;
-    document.getElementById('preview-type').textContent = type;
-    document.getElementById('preview-category').textContent = category;
-    document.getElementById('preview-description').textContent = description;
-    document.getElementById('preview-location').textContent = locationName ? `📍 ${locationName}${city ? ', ' + city : ''}` : '';
-    document.getElementById('preview-date').textContent = startDate ? `📅 ${new Date(startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}` : '';
+async function loadEvents() {
+    const list = document.getElementById('events-list');
+    try {
+        const data = await apiJson('/api/admin/events?status=all&pageSize=100');
+        const events = data.events || [];
+        list.innerHTML = events.length ? events.map(event => {
+            const date = event.start_date ? new Date(event.start_date) : null;
+            const month = date && !Number.isNaN(date.valueOf()) ? date.toLocaleString('default', { month: 'short' }) : '—';
+            const day = date && !Number.isNaN(date.valueOf()) ? date.getDate() : '—';
+            const location = [event.location_name || (event.is_virtual ? 'Online' : ''), event.city, event.state].filter(Boolean).join(', ') || 'Location pending';
+            return `<div class="events-list-item" data-event-id="${escapeHtml(event.id)}">
+                <div class="events-list-date"><span class="events-list-month">${escapeHtml(month)}</span><span class="events-list-day">${escapeHtml(day)}</span></div>
+                <div class="events-list-info"><h4>${escapeHtml(event.title)}</h4><p>📍 ${escapeHtml(location)} · ${escapeHtml(event.type || 'other')} · ${escapeHtml(event.status || 'unknown')}</p></div>
+                <div class="events-list-actions"><button class="events-list-btn" type="button" data-event-edit="${escapeHtml(event.id)}">Edit</button><button class="events-list-btn events-list-btn-danger" type="button" data-event-cancel="${escapeHtml(event.id)}">Cancel</button></div>
+            </div>`;
+        }).join('') : '<p class="form-hint">No events found.</p>';
+    } catch (error) {
+        list.innerHTML = `<p class="form-hint">${escapeHtml(error.message)}</p>`;
+    }
+}
 
+(async function () {
+    try {
+        const data = await apiJson('/api/auth/me');
+        const role = String(data.user && data.user.role || '').toLowerCase();
+        isLeadership = role === 'owner' || role === 'admin';
+    } catch (error) { isLeadership = false; }
+    document.getElementById('admin-form-card').hidden = !isLeadership;
+    document.getElementById('admin-gate-note').hidden = isLeadership;
+    document.querySelectorAll('[data-preview-event], [data-save-event], [data-clear-event]').forEach(btn => { btn.disabled = !isLeadership; });
+    if (isLeadership) loadEvents();
+})();
+
+virtualCheckbox?.addEventListener('change', () => { virtualLinkGroup.style.display = virtualCheckbox.checked ? '' : 'none'; });
+
+document.querySelector('[data-preview-event]')?.addEventListener('click', () => {
+    const data = collectEventForm();
+    document.getElementById('preview-title').textContent = data.title || 'Event Title';
+    document.getElementById('preview-type').textContent = data.type || 'Type';
+    document.getElementById('preview-category').textContent = data.category || 'Category';
+    document.getElementById('preview-description').textContent = data.description || 'Event description will appear here...';
+    document.getElementById('preview-location').textContent = data.locationName ? `📍 ${data.locationName}${data.city ? ', ' + data.city : ''}` : '';
+    document.getElementById('preview-date').textContent = data.startDate ? `📅 ${new Date(data.startDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}` : '';
     previewSection.style.display = '';
     previewSection.scrollIntoView({ behavior: 'smooth' });
 });
 
-// Form submission
-const form = document.getElementById('event-form');
-form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // Collect form data
-    const formData = {
-        title: document.getElementById('event-title').value,
-        type: document.getElementById('event-type').value,
-        category: document.getElementById('event-category').value,
-        description: document.getElementById('event-description').value,
-        startDate: document.getElementById('event-start-date').value,
-        endDate: document.getElementById('event-end-date').value,
-        locationName: document.getElementById('event-location-name').value,
-        address: document.getElementById('event-address').value,
-        city: document.getElementById('event-city').value,
-        state: document.getElementById('event-state').value,
-        country: document.getElementById('event-country').value,
-        isVirtual: document.getElementById('event-virtual').checked,
-        virtualLink: document.getElementById('event-virtual-link').value,
-        organizer: document.getElementById('event-organizer').value,
-        organizerUrl: document.getElementById('event-organizer-url').value,
-        imageUrl: document.getElementById('event-image').value,
-        maxAttendees: document.getElementById('event-max-attendees').value,
-        price: document.getElementById('event-price').value,
-        status: 'approved',
-        source: 'admin'
-    };
-
-    // TODO: Send to API
-    console.log('Event data:', formData);
-    alert('Event saved! (This will connect to the database API)');
-
-    // Add to list
-    const eventsList = document.getElementById('events-list');
-    const date = new Date(formData.startDate);
-    const month = date.toLocaleString('default', { month: 'short' });
-    const day = date.getDate();
-    
-    const newItem = document.createElement('div');
-    newItem.className = 'events-list-item';
-    newItem.innerHTML = `
-        <div class="events-list-date">
-            <span class="events-list-month">${month}</span>
-            <span class="events-list-day">${day}</span>
-        </div>
-        <div class="events-list-info">
-            <h4>${formData.title}</h4>
-            <p>📍 ${formData.locationName || 'Online'} · ${formData.type} · New</p>
-        </div>
-        <div class="events-list-actions">
-            <button class="events-list-btn" type="button">Edit</button>
-            <button class="events-list-btn events-list-btn-danger" type="button">Delete</button>
-        </div>
-    `;
-    eventsList.insertBefore(newItem, eventsList.firstChild);
-
-    // Reset form
-    form.reset();
-    previewSection.style.display = 'none';
+form?.addEventListener('submit', async event => {
+    event.preventDefault();
+    try {
+        const wasEditing = Boolean(editingEventId);
+        const data = collectEventForm();
+        const path = editingEventId ? `/api/admin/events/${encodeURIComponent(editingEventId)}` : '/api/events';
+        await apiJson(path, { method: editingEventId ? 'PUT' : 'POST', body: JSON.stringify(data) });
+        clearEventForm();
+        await loadEvents();
+        alert(wasEditing ? 'Event updated.' : 'Event saved.');
+    } catch (error) { alert(error.message); }
 });
 
-// Delete buttons
-document.querySelectorAll('.events-list-btn-danger').forEach(btn => {
-    btn.addEventListener('click', () => {
-        if (confirm('Are you sure you want to delete this event?')) {
-            btn.closest('.events-list-item').remove();
-        }
-    });
+document.getElementById('events-list')?.addEventListener('click', async event => {
+    const editButton = event.target.closest('[data-event-edit]');
+    const cancelButton = event.target.closest('[data-event-cancel]');
+    if (editButton) {
+        try { const data = await apiJson(`/api/admin/events/${encodeURIComponent(editButton.dataset.eventEdit)}`); fillEventForm(data.event); }
+        catch (error) { alert(error.message); }
+    }
+    if (cancelButton && confirm('Cancel this event? It will remain in history as cancelled.')) {
+        try { await apiJson(`/api/admin/events/${encodeURIComponent(cancelButton.dataset.eventCancel)}`, { method: 'DELETE' }); await loadEvents(); }
+        catch (error) { alert(error.message); }
+    }
 });
 </script>
 </body>
