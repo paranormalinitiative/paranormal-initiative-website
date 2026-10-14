@@ -226,6 +226,7 @@ export type AdminFoundingApplication = {
   readiness?: string;
   createdAt?: string;
   reviewedAt?: string;
+  reviewedBy?: string;
   username: string;
   displayName?: string;
   role: string;
@@ -259,6 +260,16 @@ export type AdminPublishedVideo = {
   publishedAt?: string;
   status: string;
   viewingAccess?: string;
+  description?: string;
+  tags?: string[];
+  platform?: string;
+  embedUrl?: string;
+  featured?: boolean;
+  isLive?: boolean;
+  format?: string;
+  creator?: { username?: string; displayName?: string; title?: string } | null;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type AdminEventRecord = {

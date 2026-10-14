@@ -608,7 +608,10 @@ async function handleAdminOverview(request, env, user) {
     ["videoReports", "SELECT COUNT(*) AS total FROM video_reports WHERE status IN ('open', 'pending')"],
     ["messengerReports", "SELECT COUNT(*) AS total FROM messenger_reports WHERE status IN ('open', 'pending')"],
     ["pendingReports", "SELECT COUNT(*) AS total FROM messenger_reports WHERE status = 'pending'"],
-    ["pendingEvents", "SELECT COUNT(*) AS total FROM events WHERE status = 'pending'"]
+    ["pendingEvents", "SELECT COUNT(*) AS total FROM events WHERE status = 'pending'"],
+    ["pendingCreatorApplications", "SELECT COUNT(*) AS total FROM founding50_applications WHERE status = 'pending'"],
+    ["pendingContent", "SELECT COUNT(*) AS total FROM articles WHERE status = 'draft'"],
+    ["pendingModeration", "SELECT (SELECT COUNT(*) FROM comments WHERE status = 'pending') + (SELECT COUNT(*) FROM video_reports WHERE status IN ('open', 'pending')) + (SELECT COUNT(*) FROM messenger_reports WHERE status IN ('open', 'pending')) AS total"]
   ];
   const entries = await Promise.all(queries.map(async ([key, sql]) => {
     try {
