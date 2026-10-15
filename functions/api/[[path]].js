@@ -142,6 +142,7 @@ export async function onRequest(context) {
     if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/status$/)) return requireAdmin(request, env, () => handleRoomStatus(path, env));
     if (request.method === "POST" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return requireAdmin(request, env, () => handleRoomPostSignal(path, request, env));
     if (request.method === "GET" && path.match(/^\/rooms\/([^/]+)\/signals$/)) return requireAdmin(request, env, () => handleRoomGetSignals(path, request, env));
+    if (request.method === "GET" && path === "/studio/rooms") return requireStudioAccess(request, env, user => handleListStudioRooms(request, env, user));
     if (request.method === "POST" && path === "/studio/rooms") return requireStudioAccess(request, env, user => handleCreateStudioRoom(request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return requireStudioAccess(request, env, user => handleStudioGuestToken(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireStudioAccess(request, env, user => handleCloseStudioRoom(path, env, user));
@@ -182,10 +183,10 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/studio/live-broadcasts") return requireStudioAccess(request, env, user => handleRegisterLiveBroadcast(request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/live-broadcasts\/[^/]+\/(start|stop)$/)) return requireStudioAccess(request, env, user => handleSetLiveBroadcastStatus(path, request, env, user));
     if (request.method === "GET" && path === "/tpi-broadcasts") return handleListTpiBroadcasts(request, env);
-    if (request.method === "POST" && path === "/tpi-broadcasts") return requireContributor(request, env, user => handleCreateTpiBroadcast(request, env, user));
+    if (request.method === "POST" && path === "/tpi-broadcasts") return requireContributorOrStudio(request, env, user => handleCreateTpiBroadcast(request, env, user));
     if (request.method === "GET" && path.match(/^\/tpi-broadcasts\/[^/]+$/)) return handleGetTpiBroadcast(path, request, env);
-    if (request.method === "PUT" && path.match(/^\/tpi-broadcasts\/[^/]+$/)) return requireContributor(request, env, user => handleUpdateTpiBroadcast(path, request, env, user));
-    if (request.method === "POST" && path.match(/^\/tpi-broadcasts\/[^/]+\/(publish|unpublish|cancel|status|playback|replay)$/)) return requireContributor(request, env, user => handleTpiBroadcastAction(path, request, env, user));
+    if (request.method === "PUT" && path.match(/^\/tpi-broadcasts\/[^/]+$/)) return requireContributorOrStudio(request, env, user => handleUpdateTpiBroadcast(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/tpi-broadcasts\/[^/]+\/(publish|unpublish|cancel|status|playback|replay)$/)) return requireContributorOrStudio(request, env, user => handleTpiBroadcastAction(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/events$/)) return requireMember(request, env, user => handleLiveBroadcastEvents(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/live-broadcasts\/[^/]+\/comments$/)) return requireMember(request, env, user => handleListLiveComments(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/live-broadcasts\/[^/]+\/comments$/)) return requireMember(request, env, user => handleCreateLiveComment(path, request, env, user));
@@ -199,8 +200,8 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/tpi-videos\/[^/]+\/(publish|unpublish|remove)$/)) return requireContributor(request, env, user => handleTpiVideoLifecycle(path, env, user));
     if (request.method === "POST" && path.match(/^\/tpi-videos\/[^/]+\/share$/)) return requireMember(request, env, user => handleShareTpiVideo(path, request, env, user));
     if (request.method === "DELETE" && path.match(/^\/tpi-videos\/[^/]+$/)) return requireContributor(request, env, user => handleDeleteTpiVideo(path, env, user));
-    if (request.method === "GET" && path === "/tpi-channels/me") return requireContributor(request, env, user => handleGetMyTpiChannel(env, user));
-    if (request.method === "PUT" && path === "/tpi-channels/me") return requireContributor(request, env, user => handleUpdateMyTpiChannel(request, env, user));
+    if (request.method === "GET" && path === "/tpi-channels/me") return requireContributorOrStudio(request, env, user => handleGetMyTpiChannel(env, user));
+    if (request.method === "PUT" && path === "/tpi-channels/me") return requireContributorOrStudio(request, env, user => handleUpdateMyTpiChannel(request, env, user));
     if (request.method === "POST" && path.match(/^\/tpi-channels\/[^/]+\/follow$/)) return requireMember(request, env, user => handleToggleTpiChannelFollow(path, env, user, true));
     if (request.method === "DELETE" && path.match(/^\/tpi-channels\/[^/]+\/follow$/)) return requireMember(request, env, user => handleToggleTpiChannelFollow(path, env, user, false));
     if (request.method === "GET" && path.match(/^\/tpi-channels\/[^/]+$/)) return handleGetTpiChannel(path, env, request);
@@ -5658,6 +5659,25 @@ async function handleCreateStudioRoom(request, env, user) {
   }, 201, { "Cache-Control": "no-store" });
 }
 
+async function handleListStudioRooms(request, env, user) {
+  const url = new URL(request.url);
+  const status = clean(url.searchParams.get("status")).toLowerCase();
+  const params = [user.id];
+  let query = `
+    SELECT id, broadcast_key AS broadcastKey, title, status, closed_at AS closedAt,
+           created_at AS createdAt, updated_at AS updatedAt
+    FROM studio_rooms
+    WHERE host_id = ?
+  `;
+  if (["open", "closed"].includes(status)) {
+    query += " AND status = ?";
+    params.push(status);
+  }
+  query += " ORDER BY updated_at DESC LIMIT 50";
+  const { results } = await env.TPI_DB.prepare(query).bind(...params).all();
+  return json({ rooms: results || [] }, 200, { "Cache-Control": "private, no-store" });
+}
+
 async function handleStudioGuestToken(path, request, env, user) {
   assertRealtimeKitConfigured(env);
   const roomId = studioRoomIdFromPath(path);
@@ -6656,6 +6676,13 @@ async function requireContributor(request, env, handler) {
     return json({ error: "Contributor access is required." }, 403);
   }
   return handler(user);
+}
+
+async function requireContributorOrStudio(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Contributor or Creator Studio access required." }, 401);
+  if (["owner", "admin", "contributor"].includes(user.role) || await hasCreatorStudioAccess(env, user)) return handler(user);
+  return json({ error: "Contributor or Creator Studio access required." }, 403);
 }
 
 async function requireMember(request, env, handler) {

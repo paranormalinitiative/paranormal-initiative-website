@@ -104,6 +104,95 @@
 
   function cacheWorkspaces() { write(KEYS.workspaceCache, workspaces); }
 
+  function backupPayload(workspace) {
+    var state = workspace && workspace.state ? workspace.state : stateForSave();
+    if (!state) return null;
+    return {
+      applicationId: "tpi-studioflow",
+      formatVersion: 1,
+      backupType: "workspace-configuration",
+      exportedAt: new Date().toISOString(),
+      workspace: {
+        title: text(workspace && workspace.title) || text(state.broadcast && state.broadcast.title) || "Untitled workspace",
+        description: text(workspace && workspace.description) || text(state.broadcast && state.broadcast.description) || "",
+        state: state
+      }
+    };
+  }
+
+  function downloadBackup(payload) {
+    if (!payload) {
+      setMessage("Select or create a StudioFlow broadcast before exporting.", true);
+      return;
+    }
+    var blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var anchor = document.createElement("a");
+    var slug = String(payload.workspace.title || "workspace").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "workspace";
+    anchor.href = url;
+    anchor.download = "tpi-studioflow-" + slug + "-backup.json";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+    setMessage("Configuration backup downloaded. Recording files are not included.");
+  }
+
+  function exportCurrent() { downloadBackup(backupPayload(null)); }
+
+  function exportWorkspace(workspace) {
+    downloadBackup(backupPayload(workspace));
+  }
+
+  function validateBackup(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("The backup must be a JSON object.");
+    if (raw.applicationId !== "tpi-studioflow" || raw.backupType !== "workspace-configuration") throw new Error("This file is not a supported StudioFlow workspace backup.");
+    if (raw.formatVersion !== 1) throw new Error("This workspace backup version is not supported.");
+    if (!raw.workspace || typeof raw.workspace !== "object" || Array.isArray(raw.workspace)) throw new Error("The backup is missing workspace data.");
+    if (!text(raw.workspace.title).trim()) throw new Error("The backup is missing a workspace title.");
+    if (!raw.workspace.state || typeof raw.workspace.state !== "object" || Array.isArray(raw.workspace.state)) throw new Error("The backup is missing supported workspace settings.");
+    ["ownerId", "owner_id", "workspaceId", "workspace_id", "serverId", "server_id"].forEach(function (key) {
+      if (Object.prototype.hasOwnProperty.call(raw, key) || Object.prototype.hasOwnProperty.call(raw.workspace, key)) throw new Error("Protected server ownership fields are not accepted in backups.");
+    });
+    return raw;
+  }
+
+  function importBackupFile(file) {
+    if (!file) return;
+    if (file.size > 1024 * 1024) {
+      setMessage("Backup files must be 1 MB or smaller.", true);
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var backup = validateBackup(JSON.parse(String(reader.result || "")));
+        if (!window.confirm("Import this configuration as a new workspace? Existing workspaces and recordings will not be overwritten.")) return;
+        var newId = "imported-" + (window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now()));
+        var state = JSON.parse(JSON.stringify(backup.workspace.state));
+        state.broadcast = state.broadcast && typeof state.broadcast === "object" ? state.broadcast : {};
+        state.broadcast.id = newId;
+        delete state.broadcast.tpiSync;
+        api("/api/studio/workspaces", {
+          method: "POST",
+          body: JSON.stringify({
+            localBroadcastId: newId,
+            title: text(backup.workspace.title).slice(0, 180),
+            description: text(backup.workspace.description).slice(0, 1000),
+            state: state
+          })
+        }).then(function () {
+          setMessage("Workspace configuration imported as a new workspace. No recording files were imported.");
+          return refresh();
+        }).catch(function (error) { setMessage(error.message, true); });
+      } catch (error) {
+        setMessage(error && error.message ? error.message : "The workspace backup could not be read.", true);
+      }
+    };
+    reader.onerror = function () { setMessage("The workspace backup could not be read.", true); };
+    reader.readAsText(file);
+  }
+
   function renderList() {
     if (!list) return;
     while (list.firstChild) list.removeChild(list.firstChild);
@@ -137,6 +226,11 @@
         archive.addEventListener("click", function () { archiveWorkspace(workspace); });
         actions.appendChild(archive);
       }
+      var exportButton = document.createElement("button");
+      exportButton.type = "button";
+      exportButton.textContent = "Export";
+      exportButton.addEventListener("click", function () { exportWorkspace(workspace); });
+      actions.appendChild(exportButton);
       row.appendChild(name);
       row.appendChild(meta);
       row.appendChild(actions);
@@ -225,11 +319,14 @@
     if (panel || !document.body) return;
     panel = document.createElement("aside");
     panel.id = "tpi-workspace-bridge";
-    panel.innerHTML = "<div class=\"tpi-ws-header\"><strong>Saved Workspaces</strong><button type=\"button\" class=\"tpi-ws-close\" aria-label=\"Close saved workspaces\">×</button></div><div class=\"tpi-ws-help\">Workspace metadata syncs to your account. Recording files stay in Browser Storage until you explicitly export them.</div><div class=\"tpi-ws-toolbar\"><button type=\"button\" data-action=\"save\">Save current</button><button type=\"button\" data-action=\"refresh\">Refresh</button></div><div class=\"tpi-ws-message\" role=\"status\"></div><div class=\"tpi-ws-list\"></div>";
+    panel.innerHTML = "<div class=\"tpi-ws-header\"><strong>Saved Workspaces</strong><button type=\"button\" class=\"tpi-ws-close\" aria-label=\"Close saved workspaces\">×</button></div><div class=\"tpi-ws-help\">Workspace metadata syncs to your account. Recording files stay in Browser Storage until you explicitly export them.</div><div class=\"tpi-ws-toolbar\"><button type=\"button\" data-action=\"save\">Save current</button><button type=\"button\" data-action=\"export\">Export current</button><button type=\"button\" data-action=\"import\">Import</button><button type=\"button\" data-action=\"refresh\">Refresh</button><input type=\"file\" data-action=\"file\" accept=\"application/json,.json\" hidden></div><div class=\"tpi-ws-message\" role=\"status\"></div><div class=\"tpi-ws-list\"></div>";
     document.body.appendChild(panel);
     list = panel.querySelector(".tpi-ws-list");
     message = panel.querySelector(".tpi-ws-message");
     panel.querySelector("[data-action=save]").addEventListener("click", saveCurrent);
+    panel.querySelector("[data-action=export]").addEventListener("click", exportCurrent);
+    panel.querySelector("[data-action=import]").addEventListener("click", function () { panel.querySelector("[data-action=file]").click(); });
+    panel.querySelector("[data-action=file]").addEventListener("change", function (event) { importBackupFile(event.target.files && event.target.files[0]); event.target.value = ""; });
     panel.querySelector("[data-action=refresh]").addEventListener("click", refresh);
     panel.querySelector(".tpi-ws-close").addEventListener("click", function () { panel.classList.toggle("collapsed"); });
     renderList();

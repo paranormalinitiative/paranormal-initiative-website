@@ -17,9 +17,13 @@ check("workspace reads are exact-owner scoped", api.includes("WHERE id = ? AND o
 check("workspace mutations reject cross-origin requests", api.includes("Cross-origin workspace mutations are not allowed.") && api.includes("sameOriginMutationAllowed(request)"));
 check("workspace saves use optimistic version checks", api.includes("expectedVersion") && api.includes("version = version + 1") && api.includes('code: "conflict"'));
 check("archive is non-destructive", api.includes("status = 'archived'") && !api.includes("DELETE FROM studio_workspaces"));
+check("entitled creators can use their own channel and broadcast contracts", api.includes("requireContributorOrStudio") && api.includes('path === "/tpi-channels/me"') && api.includes('path === "/tpi-broadcasts"'));
 check("recording bridge does not upload or delete recordings", bridge.includes("Recording files stay in Browser Storage") && !bridge.includes("/api/uploads") && !bridge.includes("deleteDatabase") && !bridge.includes("indexedDB.deleteDatabase"));
 check("bridge only appears for server-derived Studio access", bridge.includes("/api/auth/me") && bridge.includes("creatorStudioAccess === true"));
 check("bridge provides save restore archive actions", bridge.includes("Save current") && bridge.includes("openWorkspace") && bridge.includes("archiveWorkspace"));
+check("bridge provides local JSON export", bridge.includes("backupType: \"workspace-configuration\"") && bridge.includes("applicationId: \"tpi-studioflow\"") && bridge.includes("downloadBackup"));
+check("bridge validates and imports backups as new workspaces", bridge.includes("validateBackup") && bridge.includes("formatVersion !== 1") && bridge.includes("imported-") && bridge.includes("Existing workspaces and recordings will not be overwritten"));
+check("backup import drops protected server linkage", bridge.includes("delete state.broadcast.tpiSync") && !bridge.includes("/api/uploads") && !bridge.includes("r2"));
 check("bridge is loaded by StudioFlow shell", studio.includes('/studio/workspace-bridge.js'));
 
 for (const result of checks) console.log(`${result.ok ? "PASS" : "FAIL"} ${result.name}${result.detail ? ` — ${result.detail}` : ""}`);
