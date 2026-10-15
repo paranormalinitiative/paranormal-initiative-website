@@ -47,8 +47,9 @@ fail closed where the production schema lacks the required columns.
 
 ## Release gate
 
-The exact candidate must be reviewed after the final commit and package
-verification. Production deployment is not claimed by this document. The
+The exact candidate is `dc28377` with the built package recorded in the
+implementation report. It must be reviewed against the current production
+Worker before deployment. Production deployment is not claimed by this document. The
 deployment must preserve the current production Worker as rollback target and
 must use the guarded production procedure with an explicit candidate-specific
 approval.
