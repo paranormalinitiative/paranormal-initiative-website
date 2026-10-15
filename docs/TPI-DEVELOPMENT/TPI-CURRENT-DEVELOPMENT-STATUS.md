@@ -120,3 +120,25 @@ does not record migration 0051 in its ledger. Because both environments have
 schema/history discrepancies, no migration was applied and no production backup
 was exported. The release candidate and required approval procedure are recorded
 in the TPI-DEV-027 reports. Production remains untouched.
+
+## TPI-DEV-028 focused Administration Center release
+
+TPI-DEV-028 is prepared for owner approval and has not been deployed. The
+candidate source snapshot is `8dc0d45c8e0ab9dac2b7154f4458503d4a58bc44` on
+`codex/tpi-development`; the current production Worker version is
+`7e357215-2579-4c60-b27e-dd572a5656fe`. Anonymous read-only checks returned
+HTTP 403 for `/admin-center-preview/`, `/admin-panel.html`, and
+`/api/admin/overview`, confirming that the existing public boundary remains
+protected.
+
+The focused package is limited to the existing Administration Center preview
+runtime, its protected admin API compatibility changes, and the already
+present authentication/navigation boundary. It excludes StudioFlow, Events,
+research, synthetic data, Founding 50 activation, database replacement, and
+unapproved migrations. Dashboard, member management, community moderation,
+notifications metadata, Education, video metadata/lifecycle, Paranormal Teams,
+settings, roles/restrictions, and read-only creator/entitlement views passed
+the local focused checks. Creator-application detail/create is deferred because
+production does not have the additive `0050_creator_application_details.sql`
+columns or the membership `application_id` column. No production write,
+migration, export, deployment, commit, or push was performed for DEV-028.
