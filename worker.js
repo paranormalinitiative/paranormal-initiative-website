@@ -116,7 +116,7 @@ async function serveCanonicalAdminCenter(request, env) {
   const targetPath = sourceUrl.pathname === "/admin-panel" ||
     sourceUrl.pathname === "/admin-panel/" ||
     sourceUrl.pathname === "/admin-panel/index.html"
-    ? "/admin-center-preview/index.html"
+    ? "/admin-center-preview/"
     : sourceUrl.pathname.replace(/^\/admin-panel(?:\.html)?/, "/admin-center-preview");
   const targetUrl = new URL(targetPath + sourceUrl.search, sourceUrl.origin);
   return serveAssets(new Request(targetUrl, request), env);

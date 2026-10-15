@@ -10,7 +10,7 @@ const css = read("admin-center-app/src/index.css");
 const checks = [
   ["canonical admin route is server-gated", worker.includes("serveCanonicalAdminCenter") && worker.includes('url.pathname === "/admin-panel"') && worker.includes('user.role === "owner" || user.role === "admin"')],
   ["legacy admin bookmark redirects to canonical route", worker.includes('url.pathname === "/admin-panel.html"') && worker.includes('Response.redirect(new URL(`/admin-panel${url.search}`')],
-  ["preview and canonical route share the same static package", worker.includes('"/admin-center-preview/index.html"') && worker.includes("targetPath")],
+  ["preview and canonical route share the same static package", worker.includes('"/admin-center-preview/"') && worker.includes("targetPath")],
   ["desktop navigation uses canonical route", sidebar.includes('href="/admin-panel" data-nav="admin-center"')],
   ["mobile navigation uses canonical route", shell.includes('href="/admin-panel" data-nav="admin-center"')],
   ["saved member theme is applied", main.includes("/api/auth/me") && main.includes("document.documentElement.dataset.theme")],
