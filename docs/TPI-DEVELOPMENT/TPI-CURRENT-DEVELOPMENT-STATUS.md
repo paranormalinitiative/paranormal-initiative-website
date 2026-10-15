@@ -6,11 +6,11 @@ Last verified: 2026-10-14
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Current committed source: `ba050af`
-- Current deployed application source: `a8ef0df`
+- Current committed source: `863387e`
+- Current deployed application source: `863387e`
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
-- Development version: `a51e3478-b620-4b6b-811c-a777af9b4a95`
+- Development version: `893f373b-8fa8-48ed-bd2b-f46e73142f57`
 - Production: protected and not modified by TPI-DEV-026
 
 The deployed provenance endpoint reports the development Worker, branch, and
@@ -41,7 +41,7 @@ documentation-only and was not redeployed.
 | Media uploads and retrieval | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | DEV-022 offline privacy contracts and media regression passed; no production media changes |
 | Search | VERIFIED COMPLETE AT CONTRACT LEVEL | DEV-022 offline search contracts passed; broad visual acceptance remains owner work |
 | Events | VERIFIED COMPLETE AT DEVELOPMENT RUNTIME LEVEL | Browser inspection rendered the development Events page, filters, cards, RSVP controls, and submit-event navigation; authenticated administration UI remains owner acceptance |
-| Administration Center | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | Protected integration evidence exists; no unprotected endpoints or production deployment |
+| Administration Center | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | DEV-031 interactive analytics and protected API are deployed to development; authenticated owner chart inspection remains open; no unprotected endpoints or production deployment |
 | Creator applications and entitlement enforcement | VERIFIED COMPLETE WITH LIMITATIONS | DEV-014 and DEV-025 authenticated synthetic tests passed; real membership activation remains disabled |
 | Founding 50 activation/allocation | VERIFIED PROTECTED | Development activation is `disabled`; protected mutation remains expected HTTP 423 |
 | StudioFlow creator access | VERIFIED COMPLETE WITH LIMITATIONS | Positive entitled creator access and revoked denial passed; visual acceptance remains open |
@@ -105,6 +105,24 @@ Historical totals are not added together as unique coverage.
 
 See [TPI-DEV-026 implementation report](300-COMPLETED-WORK/TPI-DEV-026-IMPLEMENTATION-REPORT.md)
 and [TPI-DEV-026 production readiness gap analysis](200-AUDITS/TPI-DEV-026-PRODUCTION-READINESS-GAP-ANALYSIS.md).
+
+## TPI-DEV-031 interactive visual analytics
+
+DEV-031 extends the existing protected Administration Center with member-growth,
+community-engagement, membership-distribution, creator-activity, moderation,
+and content-overview charts. The development Worker version is
+`893f373b-8fa8-48ed-bd2b-f46e73142f57` from source commit `863387e`.
+Analytics queries are read-only and bounded. Website traffic is shown as
+unavailable because no reliable first-party visits/page-views source exists in
+the current schema; no synthetic traffic is displayed. Membership distribution
+is limited to actual creator-partnership membership categories where available,
+with an explicit unavailable state when a general plan table is absent.
+
+The DEV-031 focused checks pass 11/11, existing authorization regression passes
+57/57, the React build passes, and authenticated development API verification
+returns the expected analytics series. Production was not deployed or modified.
+Owner authenticated browser inspection of the protected chart view remains an
+acceptance item.
 
 ## TPI-DEV-027 production-release preparation
 
