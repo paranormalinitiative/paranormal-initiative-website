@@ -2326,8 +2326,8 @@
                             <a href="reels.html?member=1" data-member-discovery-close>Reels</a>
                             <a href="events.html?member=1" data-member-discovery-close>Events</a>
                             <button type="button" disabled title="Groups area is not available yet">Groups</button>
-                            <a href="news.html?member=1" data-member-discovery-close>Para News</a>
-                            <a href="paratube.html?member=1" data-member-discovery-close>ParaTube</a>
+                            <a href="/news?member=1" data-member-discovery-close>Para News</a>
+                            <a href="/paratube?member=1" data-member-discovery-close>ParaTube</a>
                         </div>
                     </div>
                 </nav>
@@ -2496,7 +2496,7 @@
                 <section class="rail-card" data-rail-news>
                     <div class="rail-card-head">
                         <h4>ParaNews Spotlight</h4>
-                        <a class="rail-card-link" href="news.html">All</a>
+                        <a class="rail-card-link" href="/news">All</a>
                     </div>
                     <div data-news-body>
                         <p class="rail-loading">Loading…</p>
@@ -2541,7 +2541,7 @@
                             </div>
                         </a>
                         <!-- ParaTube slot: featured video image from the aggregator -->
-                        <a class="rail-fc-block" href="paratube.html" data-fc-paratube hidden>
+                        <a class="rail-fc-block" href="/paratube" data-fc-paratube hidden>
                             <span class="rail-fc-tag">ParaTube</span>
                             <div class="rail-fc-block-media"></div>
                             <div class="rail-fc-block-body">
@@ -2871,7 +2871,7 @@
                     var metaEl = slot.querySelector(".rail-fc-block-meta");
                     if (titleEl) titleEl.textContent = video.title || "Paranormal video from the open web";
                     if (metaEl) metaEl.textContent = video.sourceName || "Watch now";
-                    slot.setAttribute("href", video.sourceUrl || "paratube.html");
+                    slot.setAttribute("href", video.sourceUrl || "/paratube");
                     slot.setAttribute("target", "_blank");
                     slot.setAttribute("rel", "noopener noreferrer");
                     slot.hidden = false;
@@ -2894,7 +2894,7 @@
             var data = await res.json();
             var items = data.news || [];
             if (!items.length) {
-                body.innerHTML = '<p class="rail-empty">No headlines yet — <a href="news.html" style="color:var(--accent);">browse ParaNews</a>.</p>';
+                body.innerHTML = '<p class="rail-empty">No headlines yet — <a href="/news" style="color:var(--accent);">browse ParaNews</a>.</p>';
                 return;
             }
             // Rotate the Spotlight instead of always pinning the newest

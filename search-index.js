@@ -1675,7 +1675,7 @@ window.TPI_SEARCH_INDEX = [
   {
     "title": "ParaNews",
     "subtitle": "Paranormal News & Headlines from Across the Web",
-    "href": "news.html",
+    "href": "/news",
     "description": "Aggregated paranormal news: cryptozoology, UFO and UAP, ghosts and hauntings, ancient mysteries, psychic phenomena, near-death studies, and more — refreshed automatically from across the web.",
     "text": "ParaNews | Paranormal News & Headlines | The Paranormal Initiative TPI Content Hub ParaNews Paranormal headlines from across the web — cryptozoology to UFOs, hauntings to ancient mysteries — collected automatically and sorted into twelve topics. Articles link to their original publishers. Loading the latest paranormal news… Load More News is aggregated from public RSS feeds and belongs to its original publishers. Articles open on the source site."
   },
@@ -1696,7 +1696,7 @@ window.TPI_SEARCH_INDEX = [
   {
     "title": "ParaTube",
     "subtitle": "Paranormal Videos from Across the Open Web",
-    "href": "paratube.html",
+    "href": "/paratube",
     "description": "ParaTube — paranormal videos from across the open web: investigations, EVP and ITC sessions, UFO and cryptid footage, and documentaries from Dailymotion and Internet Archive.",
     "text": "ParaTube | Paranormal Videos | The Paranormal Initiative TPI Content Hub ParaTube Paranormal video from across the open web — investigations, EVP and ITC sessions, UFO footage, and documentaries — collected automatically from Dailymotion and Internet Archive and sorted into twelve topics. Loading paranormal videos… Load More Videos are aggregated from public platforms and belong to their original creators. Videos open on the source platform."
   },

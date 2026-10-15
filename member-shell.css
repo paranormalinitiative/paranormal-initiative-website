@@ -1875,6 +1875,22 @@ body.member-mode #site-footer {
     margin: 0 auto;
 }
 
+/* Shared content-hub pages use the same shell width and vertical rhythm as
+   Member Home. Their article/video grids remain page-specific. */
+body.member-mode .pn-wrap {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 0 0 48px;
+}
+
+body.member-mode .pn-hero {
+    padding: 0 0 16px;
+}
+
+body.member-mode .pn-tabs {
+    margin-top: 0;
+}
+
 /* ===== PAGE HEADING ===== */
 .member-page-header {
     display: flex;
@@ -3116,6 +3132,10 @@ body.member-mode .home-pathway-group-balanced .home-card-grid > .dashboard-panel
         padding: 16px 14px calc(116px + env(safe-area-inset-bottom, 0px));
         height: auto;
         overflow: visible;
+    }
+
+    body.member-mode .pn-wrap {
+        padding-bottom: 32px;
     }
 
     body.member-mode #site-footer {
