@@ -10,9 +10,10 @@ const shell = readFileSync(resolve(root, "member-shell.js"), "utf8");
 
 assert.match(sidebar, /href="\/studio\/" data-nav="studio"[\s\S]*?TPI Creator Studio/);
 assert.doesNotMatch(sidebar, /href="\/studio\/" data-nav="studio"[\s\S]*?>\s*Creator Studio\b/);
-assert.match(shell, /href="\/studio\/" data-nav="studio" aria-label="TPI Creator Studio"/);
+assert.match(shell, /href="\/studio\/" data-nav="studio"[\s\S]*?aria-label="TPI Creator Studio"/);
 assert.match(shell, /mobile-nav-icon[^<]*<\/span>TPI Creator Studio<\/a>/);
-assert.match(shell, /title", "TPI Creator Studio — Coming Soon"/);
+assert.match(sidebar, /data-nav="studio" data-studio-only hidden/);
+assert.match(sidebar, /data-coming-soon/);
 assert.equal((sidebar.match(/href="\/studio\/"/g) || []).length, 1);
 assert.equal((shell.match(/href="\/studio\/"/g) || []).length, 1);
 

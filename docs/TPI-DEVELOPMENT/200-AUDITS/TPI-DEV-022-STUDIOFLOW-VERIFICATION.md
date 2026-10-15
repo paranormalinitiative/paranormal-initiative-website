@@ -1,5 +1,10 @@
 # TPI-DEV-022 StudioFlow Verification
 
+> Historical snapshot: DEV-024 and DEV-025 later implemented and verified
+> workspace persistence, creator entitlement access, and local configuration
+> backup/import. The original DEV-022 limitations remain historically accurate;
+> consult TPI-DEV-026 for current status.
+
 ## Status
 
 `PARTIALLY COMPLETE` / `BLOCKED BY EXTERNAL DEPENDENCY`

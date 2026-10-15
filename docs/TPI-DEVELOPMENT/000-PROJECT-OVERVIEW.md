@@ -30,6 +30,25 @@ The root Wrangler configuration remains production-bound: Worker `theparanormali
 
 The development architecture is implemented and deployed. Its development-only accounts are `tpi-dev-owner` and `tpi-dev-member`; passwords are not documented or committed. The Worker has no cron trigger and no Resend secrets.
 
+## Current TPI-DEV-026 status
+
+The latest committed source is `ba050af` on `codex/tpi-development`. The latest
+deployed application source remains `a8ef0df`, served by development Worker
+version `a51e3478-b620-4b6b-811c-a777af9b4a95`. The deployed provenance endpoint
+reports that Worker, branch, and source commit directly.
+
+DEV-024 and DEV-025 verified owner-scoped workspace persistence, entitled creator
+access, cross-account isolation, local JSON configuration backup/import, and
+recording-storage boundaries. DEV-026 found no new runtime application defect;
+authenticated browser visual acceptance, browser file-picker behavior, browser
+session-restart recording recovery, and positive external RealtimeKit behavior
+remain unverified or separately authorized.
+
+The development D1 contains `studio_workspaces`. The remote migration ledger
+still reports `0051_studioflow_workspaces.sql` as pending even though the table is
+present. This is a migration-ledger reconciliation item; no migration was applied
+by DEV-026.
+
 ## Safety decision
 
 The workers.dev address must not be treated as an isolated development environment. The public HTML returned by the workers.dev address and the production domain was byte-identical during this audit (19,312 bytes each; SHA-256 87669c4992174b729e1b8d220c24dfd041951d3de008fe9041f747ed1b86d6e0c2c6f). The configured deployment target also exposes the production D1 and R2 bindings.

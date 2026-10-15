@@ -1,5 +1,10 @@
 # TPI-DEV-023 — StudioFlow Completion Assessment
 
+> Historical snapshot: this assessment describes the state before DEV-024
+> workspace persistence and DEV-025 creator acceptance. See the TPI-DEV-026
+> current development status for the reconciled state. Original findings and
+> test results remain unchanged below.
+
 Date: 2026-10-14
 
 ## Evidence reviewed

@@ -48,13 +48,28 @@ The future deployment configuration must make the target environment explicit. A
 
 The development resources and migrations were created under TPI-DEV-005 only. Production resource creation and migration remain prohibited.
 
-## Verified deployment
+## Historical deployment record
 
-- Latest deployment version: `a6dded19-2f63-4a98-88c4-30ed3d02ca1b`
+- The TPI-DEV-009 deployment version was `a6dded19-2f63-4a98-88c4-30ed3d02ca1b`.
+
+## Current verified deployment
+
+- Worker: `theparanormalinitiative-dev`
+- Current deployed application source: `a8ef0df`
+- Current development version: `a51e3478-b620-4b6b-811c-a777af9b4a95`
 - Development route: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/`
 - Admin preview: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev/admin-center-preview/`
 - Cron: absent from development configuration
-- Production latest observed version remained `7e357215-2579-4c60-b27e-dd572a5656fe`
+- Production remains outside the scope of this development record and was not
+  contacted or modified by TPI-DEV-026.
+
+The deployed provenance endpoint was read successfully during TPI-DEV-026 and
+reported the expected development Worker, branch, and source commit. The remote
+development D1 contains the `studio_workspaces` table. Wrangler's read-only
+migration listing still reports `0051_studioflow_workspaces.sql` as pending,
+despite the schema being present; this requires an explicit migration-ledger
+reconciliation before any future migration work. DEV-026 did not apply or alter
+the migration.
 
 TPI-DEV-008 source-integrity results and the unresolved working-tree overlay
 are preserved historically in [the deployment integrity audit](200-AUDITS/TPI-DEV-008-DEPLOYMENT-INTEGRITY.md). The TPI-DEV-009 reconciliation and current deployment evidence are in [the production baseline migration audit](200-AUDITS/TPI-DEV-009-PRODUCTION-BASELINE-MIGRATION.md).

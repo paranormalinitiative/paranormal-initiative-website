@@ -1,0 +1,107 @@
+# TPI Current Development Status
+
+Last verified: 2026-10-14
+
+## Project identity
+
+- Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
+- Branch: `codex/tpi-development`
+- Current committed source: `ba050af`
+- Current deployed application source: `a8ef0df`
+- Development Worker: `theparanormalinitiative-dev`
+- Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
+- Development version: `a51e3478-b620-4b6b-811c-a777af9b4a95`
+- Production: protected and not modified by TPI-DEV-026
+
+The deployed provenance endpoint reports the development Worker, branch, and
+application source commit above. The latest commit after the deployed source is
+documentation-only and was not redeployed.
+
+## Status vocabulary
+
+- **VERIFIED COMPLETE**: current source and executed evidence support the claim.
+- **IMPLEMENTED, VISUAL ACCEPTANCE PENDING**: source and non-visual tests exist,
+  but authenticated browser inspection remains open.
+- **IMPLEMENTED, EXTERNAL ACCEPTANCE PENDING**: local integration exists, but a
+  separately authorized provider or external service test has not occurred.
+- **PARTIALLY COMPLETE**: only a defined subset is verified.
+- **NOT IMPLEMENTED**: no current implementation evidence.
+- **BLOCKED**: a required safe prerequisite prevents verification.
+- **NOT TESTED**: no current execution evidence for the specific claim.
+
+## Current feature matrix
+
+| Area | Current status | Evidence / limitation |
+| --- | --- | --- |
+| Public homepage, navigation, content, authentication entry points | VERIFIED COMPLETE | Development runtime and prior website integration evidence; visual scope remains subject to owner review where noted below |
+| Member Home, profiles, feed, comments, reactions, messaging, notifications, settings, privacy | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | DEV-021 integration evidence and focused API regressions; no claim of complete owner visual acceptance |
+| Education Center | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | Existing development source and prior integration evidence; production publication is outside scope |
+| Paranormal Teams | IMPLEMENTED, IMPORT NOT AUTHORIZED | Research remains separate; no research import or publication was performed |
+| TPI Videos | VERIFIED COMPLETE WITH REGRESSION LIMITATIONS | Video player: 22 assertions passed; format/date, navigation, and media-grid regressions passed |
+| Media uploads and retrieval | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | DEV-022 offline privacy contracts and media regression passed; no production media changes |
+| Search | VERIFIED COMPLETE AT CONTRACT LEVEL | DEV-022 offline search contracts passed; broad visual acceptance remains owner work |
+| Events | VERIFIED COMPLETE AT DEVELOPMENT RUNTIME LEVEL | Browser inspection rendered the development Events page, filters, cards, RSVP controls, and submit-event navigation; authenticated administration UI remains owner acceptance |
+| Administration Center | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | Protected integration evidence exists; no unprotected endpoints or production deployment |
+| Creator applications and entitlement enforcement | VERIFIED COMPLETE WITH LIMITATIONS | DEV-014 and DEV-025 authenticated synthetic tests passed; real membership activation remains disabled |
+| Founding 50 activation/allocation | VERIFIED PROTECTED | Development activation is `disabled`; protected mutation remains expected HTTP 423 |
+| StudioFlow creator access | VERIFIED COMPLETE WITH LIMITATIONS | Positive entitled creator access and revoked denial passed; visual acceptance remains open |
+| StudioFlow workspaces | VERIFIED COMPLETE WITH LIMITATIONS | Save, restore, update, archive, owner isolation, and conflict protection passed; migration ledger reconciliation remains open |
+| StudioFlow JSON configuration backup/import | VERIFIED COMPLETE AT API/OFFLINE LEVEL | Export structure and import validation passed; browser download/file-picker interaction remains owner acceptance |
+| StudioFlow recording recovery | IMPLEMENTED, BROWSER RESTART ACCEPTANCE PENDING | Existing browser-local recovery and download behavior preserved; session restart and playback were not manually verified in DEV-026 |
+| RealtimeKit rooms/livestreams | IMPLEMENTED, EXTERNAL ACCEPTANCE PENDING | Integration path and protections are documented; no external room or livestream was created |
+
+## Administration Center and creator boundaries
+
+Creator Studio entitlement does not grant Administration Center access. The
+current tests verify owner-scoped workspace access and cross-account isolation.
+Private recordings, stream credentials, unpublished media, and provider tokens
+remain outside the administration preview surface.
+
+## Database and migration status
+
+Development D1 is `tpi_contributor_portal_dev` (`4948ecc5-35de-4782-8f6b-b07fa1782b66`).
+The `studio_workspaces` table exists remotely and supports the deployed workspace
+routes. Wrangler's read-only migration listing reports
+`0051_studioflow_workspaces.sql` as pending even though the table is present.
+This is a migration-ledger reconciliation blocker for future migration work. No
+database write or migration was performed by DEV-026.
+
+## Backup and restore policy
+
+Cloudflare D1 and R2 are application-storage services, not backup destinations.
+The approved backup destinations are local storage, personal cloud drives, and
+external/removable storage. StudioFlow currently exports/imports workspace
+configuration JSON locally. Recording binaries are not included in that JSON;
+existing browser-local recordings remain in browser storage until the creator
+explicitly downloads or exports them. No automatic upload, deletion, or cloud
+drive OAuth was introduced.
+
+## Verified test evidence
+
+- DEV-025 creator acceptance: 39/39 passed.
+- DEV-024 offline workspace/backup boundaries: 17/17 passed.
+- DEV-022 offline media/search/Events contracts: 15/15 passed.
+- DEV-014 authenticated authorization: 57/57 passed.
+- DEV-020 acceptance: 39/39 passed.
+- DEV-021 integration: 116/116 passed.
+- Video player regression: 22 assertions passed.
+- Video format/date regression: passed.
+- Media grid regression: passed.
+- TPI Videos navigation regression: passed after a stale assertion was repaired.
+
+Historical totals are not added together as unique coverage.
+
+## Remaining owner and release decisions
+
+1. Perform authenticated StudioFlow browser acceptance at desktop, tablet, and
+   mobile sizes.
+2. Verify browser download/import dialogs and browser session-restart recording
+   recovery with a synthetic recording.
+3. Decide whether to authorize a separate bounded RealtimeKit test, including any
+   provider cost and cleanup approval.
+4. Reconcile the development D1 migration ledger before future migration work.
+5. Approve a production release only after the gap analysis and release checklist
+   are satisfied.
+
+See [TPI-DEV-026 implementation report](300-COMPLETED-WORK/TPI-DEV-026-IMPLEMENTATION-REPORT.md)
+and [TPI-DEV-026 production readiness gap analysis](200-AUDITS/TPI-DEV-026-PRODUCTION-READINESS-GAP-ANALYSIS.md).

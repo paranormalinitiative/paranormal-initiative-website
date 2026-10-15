@@ -67,6 +67,26 @@ Separate these claims in every report:
 
 An anonymous protected response can verify that a route is not public; it cannot prove authenticated Administration Center functionality. Owner review must occur on the isolated development website after that environment is operational.
 
+## TPI-DEV-026 current verification
+
+The following checks were executed for the current development state and are not
+added to historical totals:
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Workspace and backup boundary checks | PASSED | DEV-024 offline verification: 17/17 |
+| Media, search, and Events offline contracts | PASSED | DEV-022 offline verification: 15/15 |
+| Video player policy and rendering regression | PASSED | 22 assertions |
+| Video duration/date regression | PASSED | Formatting, unknown handling, filters, and card wiring |
+| Media grid regression | PASSED | Responsive 4/3/2/1 breakpoint assertions |
+| TPI Videos navigation regression | PASSED | Stale attribute-order/title assertions repaired; current protected StudioFlow markup verified |
+| Development Worker provenance | PASSED | Endpoint reports `a8ef0df` / `codex/tpi-development` / `theparanormalinitiative-dev` |
+| Development D1 schema presence | PASSED WITH RECONCILIATION NOTE | `studio_workspaces` exists; Wrangler migration ledger still reports 0051 pending |
+| Public browser Events surface | PASSED | Development browser inspection rendered filters, event cards, RSVP, and submit-event navigation |
+| Authenticated StudioFlow visual/file-picker acceptance | NOT TESTED | Owner browser session required |
+| Browser session-restart recording recovery | NOT TESTED | Browser restart and authenticated recording fixture not available in this run |
+| Positive external RealtimeKit room/livestream | NOT TESTED | Explicitly outside DEV-026 authorization |
+
 ## TPI-DEV-008 deployment-integrity verification
 
 | Check | Result | Evidence |

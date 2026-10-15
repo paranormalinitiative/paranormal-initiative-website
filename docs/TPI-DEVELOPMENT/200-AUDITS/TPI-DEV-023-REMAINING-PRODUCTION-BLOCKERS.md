@@ -21,3 +21,18 @@ The following items remain before any production consideration:
 
 These are documented blockers or limitations, not silently converted into
 passing functionality.
+
+## Current-status addendum — TPI-DEV-026
+
+This document preserves the DEV-023 snapshot. Subsequent directives changed the
+current state:
+
+- StudioFlow workspace metadata persistence, owner isolation, conflict handling,
+  and archive behavior were implemented in DEV-024.
+- Positive entitled-creator access and local JSON configuration backup/import
+  were verified in DEV-025.
+- The remaining StudioFlow limitations are browser visual/file-picker acceptance,
+  browser session-restart recording recovery, and a separately authorized
+  positive RealtimeKit test.
+- Production deployment, production data changes, and the development migration
+  ledger reconciliation remain open release-readiness concerns.
