@@ -179,8 +179,22 @@ export default {
     if (url.pathname === "/" || url.pathname === "/index.html") {
       const user = await getSessionUser(request, env);
       if (user) {
-        return Response.redirect(new URL(`/member-home${url.search}`, url.origin).toString(), 307);
+        return new Response(null, {
+          status: 307,
+          headers: {
+            Location: new URL(`/member-home${url.search}`, url.origin).toString(),
+            "Cache-Control": "private, no-store"
+          }
+        });
       }
+      const publicHome = await serveAssets(request, env);
+      const publicHeaders = new Headers(publicHome.headers);
+      publicHeaders.set("Cache-Control", "private, no-store");
+      return new Response(publicHome.body, {
+        status: publicHome.status,
+        statusText: publicHome.statusText,
+        headers: publicHeaders
+      });
     }
 
     // API routes (unchanged)

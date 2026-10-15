@@ -249,11 +249,15 @@
       const response = await fetch("/api/auth/me", { credentials: "same-origin" });
       if (response.ok) {
         const data = await response.json();
-        if (data.user) return data.user;
+        // A successful API response is authoritative. Do not let stale local
+        // preview state impersonate a hosted session after logout/expiry.
+        return data.user || null;
       }
     } catch (error) {
-      // Fall back to local preview state.
+      // Local preview state is only valid on an explicitly local origin.
     }
+
+    if (!isLocalPreviewOrigin()) return null;
 
     const username = localStorage.getItem("tpiEditorSession");
     if (!username) return null;
@@ -263,6 +267,11 @@
     } catch (error) {
       return null;
     }
+  }
+
+  function isLocalPreviewOrigin() {
+    return window.location.protocol === "file:" ||
+      ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname);
   }
 
   function escapeGreeting(value) {

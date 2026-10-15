@@ -170,12 +170,18 @@
       var resp = await fetch("/api/auth/me", { credentials: "same-origin" });
       if (resp.ok) {
         var data = await resp.json();
-        if (data.user) return data.user;
+        return data.user || null;
       }
     } catch (e) {}
+    if (!isLocalPreviewOrigin()) return null;
     var username = null;
     try { username = localStorage.getItem("tpiEditorSession"); } catch (e) {}
     return username ? true : null;
+  }
+
+  function isLocalPreviewOrigin() {
+    return window.location.protocol === "file:" ||
+      ["localhost", "127.0.0.1", "[::1]"].indexOf(window.location.hostname) !== -1;
   }
 
   // ---- Shell Initialization ----
@@ -425,6 +431,35 @@
     });
     document.body.classList.toggle("member-guest-mode", Boolean(user && user.guest));
     if (user && user.guest) {
+      // Reuse the member sidebar visual system for public visitors while
+      // mapping dual-mode links to public destinations.
+      var guestRoutes = {
+        home: "/",
+        about: "about.html",
+        "our-apps": "our-apps.html",
+        "education-center": "education-center.html",
+        repository: "repository.html",
+        "haunted-locations": "haunted-locations.html",
+        "paranormal-teams": "teams/index.html",
+        standards: "standards.html",
+        "advisory-board": "advisory-board.html",
+        search: "search.html",
+        "contact-links": "early-access.html",
+        reels: "reels.html",
+        "tpi-videos": "tpi-videos.html",
+        events: "events.html",
+        news: "/news",
+        paratube: "/paratube",
+        "member-notifications": "member-login.html",
+        "watch-history": "member-login.html",
+        chat: "member-login.html",
+        logout: "member-login.html"
+      };
+      Object.keys(guestRoutes).forEach(function (navName) {
+        document.querySelectorAll('[data-nav="' + navName + '"]').forEach(function (element) {
+          element.setAttribute("href", guestRoutes[navName]);
+        });
+      });
       document.querySelectorAll('[data-nav="logout"]').forEach(function (element) {
         element.innerHTML = '<span class="nav-icon">&#8594;</span> Member Login';
       });
@@ -4823,9 +4858,12 @@
       var response = await fetch("/api/auth/me", { credentials: "same-origin" });
       if (response.ok) {
         var data = await response.json();
-        if (data.user) return data.user;
+        // The server session is authoritative on hosted origins. A stale
+        // local preview identity must never make the shell look signed in.
+        return data.user || null;
       }
     } catch (error) {}
+    if (!isLocalPreviewOrigin()) return null;
     var username = null;
     try { username = localStorage.getItem("tpiEditorSession"); } catch (e) {}
     if (!username) return null;
