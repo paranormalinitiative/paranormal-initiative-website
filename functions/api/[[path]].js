@@ -4561,6 +4561,17 @@ function normalizeStudioWorkspaceState(value) {
   return { value: normalized, serialized };
 }
 
+function studioWorkspaceStorageFailure(error) {
+  const detail = String(error?.message || error || "").toLowerCase();
+  const schemaUnavailable = /no such table|no such column|unknown table|schema.*not.*available|table.*does not exist/.test(detail);
+  return json({
+    error: schemaUnavailable
+      ? "Saved workspace storage is not available in this environment yet. Export the workspace configuration to keep a local copy."
+      : "Saved workspace storage is temporarily unavailable. Export the workspace configuration to keep a local copy and try again later.",
+    code: schemaUnavailable ? "workspace_schema_unsupported" : "workspace_backend_unavailable"
+  }, 503, { "Cache-Control": "no-store" });
+}
+
 function studioWorkspacePayload(row) {
   if (!row) return null;
   return {
@@ -4591,28 +4602,33 @@ async function getOwnedStudioWorkspace(env, id, userId) {
 }
 
 async function handleListStudioWorkspaces(request, env, user) {
-  const url = new URL(request.url);
-  const includeArchived = url.searchParams.get("includeArchived") === "1" || url.searchParams.get("includeArchived") === "true";
-  const { results } = await env.TPI_DB.prepare(`
+  try {
+    const url = new URL(request.url);
+    const includeArchived = url.searchParams.get("includeArchived") === "1" || url.searchParams.get("includeArchived") === "true";
+    const { results } = await env.TPI_DB.prepare(`
     SELECT id, owner_id, channel_id, room_id, local_broadcast_id, title, description,
            workspace_type, status, state_json, version, last_opened_at, created_at, updated_at
     FROM studio_workspaces
     WHERE owner_id = ? ${includeArchived ? "" : "AND status = 'active'"}
     ORDER BY updated_at DESC
     LIMIT 50
-  `).bind(user.id).all();
-  return json({ workspaces: (results || []).map(studioWorkspacePayload) }, 200, { "Cache-Control": "private, no-store" });
+    `).bind(user.id).all();
+    return json({ workspaces: (results || []).map(studioWorkspacePayload) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
 }
 
 async function handleCreateStudioWorkspace(request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  try {
   const data = await readJson(request);
   const localBroadcastId = cleanBroadcastId(data.localBroadcastId || data.broadcast?.id) || `local-${crypto.randomUUID()}`;
   const title = cleanVideoText(data.title || data.broadcast?.title || "", 180);
-  if (!title) return json({ error: "Workspace title is required." }, 400);
+  if (!title) return json({ error: "Workspace title is required.", code: "workspace_invalid" }, 400);
   const description = cleanVideoText(data.description || data.broadcast?.description || "", 1000);
   const state = normalizeStudioWorkspaceState(data.state || {});
-  if (state.error) return json({ error: state.error }, 413);
+  if (state.error) return json({ error: state.error, code: "workspace_too_large" }, 413);
   const existing = await env.TPI_DB.prepare("SELECT id FROM studio_workspaces WHERE owner_id = ? AND local_broadcast_id = ? LIMIT 1")
     .bind(user.id, localBroadcastId).first();
   if (existing) {
@@ -4629,35 +4645,43 @@ async function handleCreateStudioWorkspace(request, env, user) {
   `).bind(id, user.id, channel?.id || null, localBroadcastId, title, description, state.serialized, now, now, now).run();
   const workspace = await getOwnedStudioWorkspace(env, id, user.id);
   return json({ ok: true, workspace: studioWorkspacePayload(workspace) }, 201, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
 }
 
 async function handleGetStudioWorkspace(path, request, env, user) {
+  try {
   const id = workspacePathId(path);
   const workspace = await getOwnedStudioWorkspace(env, id, user.id);
-  if (!workspace) return json({ error: "Workspace not found." }, 404, { "Cache-Control": "no-store" });
+  if (!workspace) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
   const now = new Date().toISOString();
   await env.TPI_DB.prepare("UPDATE studio_workspaces SET last_opened_at = ?, updated_at = updated_at WHERE id = ? AND owner_id = ?")
     .bind(now, id, user.id).run();
   workspace.last_opened_at = now;
   return json({ workspace: studioWorkspacePayload(workspace) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
 }
 
 async function handleUpdateStudioWorkspace(path, request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  try {
   const id = workspacePathId(path);
   const existing = await getOwnedStudioWorkspace(env, id, user.id);
-  if (!existing) return json({ error: "Workspace not found." }, 404);
+  if (!existing) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404);
   const data = await readJson(request);
   const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
-  if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer." }, 400);
+  if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
   if (expectedVersion !== null && expectedVersion !== Number(existing.version)) {
-    return json({ error: "This workspace changed elsewhere. Refresh before saving again.", code: "conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
+    return json({ error: "This workspace changed elsewhere. Refresh before saving again.", code: "workspace_conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
   }
   const title = data.title !== undefined ? cleanVideoText(data.title, 180) : existing.title;
-  if (!title) return json({ error: "Workspace title is required." }, 400);
+  if (!title) return json({ error: "Workspace title is required.", code: "workspace_invalid" }, 400);
   const description = data.description !== undefined ? cleanVideoText(data.description, 1000) : existing.description || "";
   const state = data.state === undefined ? { serialized: existing.state_json } : normalizeStudioWorkspaceState(data.state);
-  if (state.error) return json({ error: state.error }, 413);
+  if (state.error) return json({ error: state.error, code: "workspace_too_large" }, 413);
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
     UPDATE studio_workspaces
@@ -4666,22 +4690,29 @@ async function handleUpdateStudioWorkspace(path, request, env, user) {
   `).bind(title, description, state.serialized, now, now, id, user.id, Number(existing.version)).run();
   const updated = await getOwnedStudioWorkspace(env, id, user.id);
   return json({ ok: true, workspace: studioWorkspacePayload(updated) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
 }
 
 async function handleArchiveStudioWorkspace(path, request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  try {
   const id = workspacePathId(path, "/archive");
   const existing = await getOwnedStudioWorkspace(env, id, user.id);
-  if (!existing) return json({ error: "Workspace not found." }, 404);
+  if (!existing) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404);
   const data = await readJson(request);
   const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
-  if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer." }, 400);
-  if (expectedVersion !== null && expectedVersion !== Number(existing.version)) return json({ error: "This workspace changed elsewhere. Refresh before archiving again.", code: "conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
+  if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
+  if (expectedVersion !== null && expectedVersion !== Number(existing.version)) return json({ error: "This workspace changed elsewhere. Refresh before archiving again.", code: "workspace_conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`UPDATE studio_workspaces SET status = 'archived', version = version + 1, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?`)
     .bind(now, id, user.id, Number(existing.version)).run();
   const archived = await getOwnedStudioWorkspace(env, id, user.id);
   return json({ ok: true, workspace: studioWorkspacePayload(archived) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
 }
 
 function parseBroadcastSchedule(value) {
@@ -6900,9 +6931,9 @@ async function requireAdmin(request, env, handler) {
 
 async function requireStudioAccess(request, env, handler) {
   const user = await getSessionUser(request, env);
-  if (!user) return json({ error: "Creator Studio access requires an authenticated account." }, 401);
+  if (!user) return json({ error: "Creator Studio access requires an authenticated account.", code: "auth_required" }, 401);
   if (!(await hasCreatorStudioAccess(env, user))) {
-    return json({ error: "An active Creator Studio entitlement is required." }, 403);
+    return json({ error: "An active Creator Studio entitlement is required.", code: "access_denied" }, 403);
   }
   return handler(user);
 }

@@ -87,18 +87,52 @@
     message.className = isError ? "tpi-ws-message error" : "tpi-ws-message";
   }
 
+  function workspaceRequestError(status, body) {
+    var code = text(body && body.code);
+    var messages = {
+      workspace_schema_unsupported: "Saved workspaces are not enabled in this environment yet. Export the configuration to keep a local copy.",
+      workspace_backend_unavailable: "Saved workspace storage is temporarily unavailable. Export the configuration and try Refresh again later.",
+      workspace_not_found: "That workspace was not found. Refresh the list to see the current saved workspaces.",
+      workspace_conflict: "This workspace changed elsewhere. Refresh the list before saving again.",
+      workspace_exists: "A workspace for this broadcast already exists. Refresh the list and open the saved copy.",
+      workspace_invalid: body && body.error ? body.error : "The workspace configuration is not valid.",
+      workspace_too_large: body && body.error ? body.error : "The workspace configuration is too large to save."
+    };
+    var error = new Error(messages[code] || (body && text(body.error)) || "The workspace request could not be completed.");
+    error.code = code;
+    error.status = status;
+    error.body = body || {};
+    return error;
+  }
+
+  function describeWorkspaceFailure(error, fallback) {
+    if (error && error.code === "auth_required") return "Your member session is no longer active. Sign in again, then Refresh the workspace list.";
+    if (error && error.code === "access_denied") return "Your account is not permitted to use Saved Workspaces. Contact the site owner if this is unexpected.";
+    if (error && error.code === "network_failure") return "The workspace service could not be reached. Check your connection and try Refresh again.";
+    return error && error.message ? error.message : fallback;
+  }
+
   function api(path, options) {
     return fetch(path, Object.assign({ credentials: "same-origin", headers: { "Content-Type": "application/json" } }, options || {}))
       .then(function (response) {
-        return response.json().catch(function () { return {}; }).then(function (body) {
+        return response.text().then(function (raw) {
+          var body = {};
+          try { body = raw ? JSON.parse(raw) : {}; } catch (error) { body = {}; }
           if (!response.ok) {
-            var error = new Error(body.error || "Workspace request failed.");
-            error.body = body;
-            error.status = response.status;
-            throw error;
+            var requestError = workspaceRequestError(response.status, body);
+            if (response.status === 401) requestError.code = "auth_required";
+            else if (response.status === 403) requestError.code = "access_denied";
+            throw requestError;
           }
           return body;
         });
+      })
+      .catch(function (error) {
+        if (error && (error.status || error.code === "auth_required" || error.code === "access_denied")) throw error;
+        var networkError = new Error("The workspace service could not be reached. Check your connection and try Refresh again.");
+        networkError.code = "network_failure";
+        networkError.cause = error;
+        throw networkError;
       });
   }
 
@@ -184,7 +218,7 @@
         }).then(function () {
           setMessage("Workspace configuration imported as a new workspace. No recording files were imported.");
           return refresh();
-        }).catch(function (error) { setMessage(error.message, true); });
+        }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "The imported workspace could not be saved."), true); });
       } catch (error) {
         setMessage(error && error.message ? error.message : "The workspace backup could not be read.", true);
       }
@@ -245,7 +279,7 @@
       renderList();
       setMessage("Workspace list refreshed.");
     }).catch(function (error) {
-      setMessage(error.message, true);
+      setMessage(describeWorkspaceFailure(error, "Saved workspaces could not be refreshed."), true);
     });
   }
 
@@ -269,7 +303,7 @@
       setMessage(existing ? "Workspace saved." : "Workspace saved for this account.");
       return refresh();
     }).catch(function (error) {
-      setMessage(error.message, true);
+      setMessage(describeWorkspaceFailure(error, "Workspace could not be saved. No success was recorded."), true);
       if (error.body && error.body.workspace) {
         workspaces = workspaces.map(function (item) { return item.id === error.body.workspace.id ? error.body.workspace : item; });
         renderList();
@@ -305,21 +339,21 @@
       }));
       setMessage("Workspace restored. Browser recordings were left in place.");
       window.setTimeout(function () { window.location.reload(); }, 350);
-    }).catch(function (error) { setMessage(error.message, true); });
+    }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Workspace could not be restored."), true); });
   }
 
   function archiveWorkspace(workspace) {
     if (!window.confirm("Archive this workspace? Its browser recordings will remain untouched.")) return;
     api("/api/studio/workspaces/" + encodeURIComponent(workspace.id) + "/archive", { method: "POST", body: JSON.stringify({ expectedVersion: workspace.version }) })
       .then(function () { setMessage("Workspace archived. Recordings were not deleted."); return refresh(); })
-      .catch(function (error) { setMessage(error.message, true); });
+      .catch(function (error) { setMessage(describeWorkspaceFailure(error, "Workspace could not be archived."), true); });
   }
 
   function inject() {
     if (panel || !document.body) return;
     panel = document.createElement("aside");
     panel.id = "tpi-workspace-bridge";
-    panel.innerHTML = "<div class=\"tpi-ws-header\"><strong>Saved Workspaces</strong><button type=\"button\" class=\"tpi-ws-close\" aria-label=\"Close saved workspaces\">×</button></div><div class=\"tpi-ws-help\">Workspace metadata syncs to your account. Recording files stay in Browser Storage until you explicitly export them.</div><div class=\"tpi-ws-toolbar\"><button type=\"button\" data-action=\"save\">Save current</button><button type=\"button\" data-action=\"export\">Export current</button><button type=\"button\" data-action=\"import\">Import</button><button type=\"button\" data-action=\"refresh\">Refresh</button><input type=\"file\" data-action=\"file\" accept=\"application/json,.json\" hidden></div><div class=\"tpi-ws-message\" role=\"status\"></div><div class=\"tpi-ws-list\"></div>";
+    panel.innerHTML = "<div class=\"tpi-ws-header\"><strong>Saved Workspaces</strong><button type=\"button\" class=\"tpi-ws-close\" aria-label=\"Close saved workspaces\">×</button></div><div class=\"tpi-ws-help\"><strong>Configuration only.</strong> Save syncs supported StudioFlow settings to your account when backend support is available. Export downloads a local configuration backup. Import loads one as a new workspace. Refresh reloads your account's saved list. Recording files remain in Browser Storage until you download them separately; they are never included in workspace saves.</div><div class=\"tpi-ws-toolbar\"><button type=\"button\" data-action=\"save\">Save Workspace</button><button type=\"button\" data-action=\"export\">Export Workspace</button><button type=\"button\" data-action=\"import\">Import Workspace</button><button type=\"button\" data-action=\"refresh\">Refresh</button><input type=\"file\" data-action=\"file\" accept=\"application/json,.json\" hidden></div><div class=\"tpi-ws-message\" role=\"status\"></div><div class=\"tpi-ws-list\"></div>";
     document.body.appendChild(panel);
     list = panel.querySelector(".tpi-ws-list");
     message = panel.querySelector(".tpi-ws-message");
