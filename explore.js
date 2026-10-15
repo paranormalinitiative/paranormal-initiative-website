@@ -90,7 +90,7 @@
       setComposeStatus("Posted to your feed.");
       await loadFeed();
       if (response?.post?.id) {
-        window.location.href = `member-home.html?member=1#post-${encodeURIComponent(response.post.id)}`;
+        window.location.href = `/member-home?member=1#post-${encodeURIComponent(response.post.id)}`;
       }
     } catch (error) {
       setComposeStatus(error.message || "Post could not be created.");
@@ -125,7 +125,7 @@
         <article class="member-explore-empty">
           <h3>Explore is ready for live community activity.</h3>
           <p>Once the live feed is available, new posts, contributions, videos, and chats will appear here with their start time.</p>
-          <a class="portal-button" href="member-home.html?member=1">Open Community Feed</a>
+          <a class="portal-button" href="/member-home?member=1">Open Community Feed</a>
         </article>
       `;
     }
@@ -262,7 +262,7 @@
   }
 
   function renderActiveMember(member) {
-    const href = member.username ? `contributor-profile.html?username=${encodeURIComponent(member.username)}` : "member-home.html?member=1";
+    const href = member.username ? `contributor-profile.html?username=${encodeURIComponent(member.username)}` : "/member-home?member=1";
     const initial = escapeHtml((member.name || "M").trim().charAt(0) || "M");
     return `
       <a class="member-feed-member" href="${escapeAttr(href)}">
@@ -388,13 +388,13 @@
 
   function getItemHref(item) {
     if (item.type === "community_post" && item.postId) {
-      return `member-home.html?member=1#post-${encodeURIComponent(item.postId)}`;
+      return `/member-home?member=1#post-${encodeURIComponent(item.postId)}`;
     }
-    if (item.type === "chat") return item.href || "member-home.html?member=1";
+    if (item.type === "chat") return item.href || "/member-home?member=1";
     if (item.type === "article") return item.href || "education-center.html?member=1";
-    if (item.type === "photo") return item.href || "member-home.html?member=1";
+    if (item.type === "photo") return item.href || "/member-home?member=1";
     if (item.type === "video" && item.slug) return `tpi-video.html?slug=${encodeURIComponent(item.slug)}&member=1`;
-    return "member-home.html?member=1";
+    return "/member-home?member=1";
   }
 
   async function uploadFeedAttachments(files) {

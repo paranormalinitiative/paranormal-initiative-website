@@ -5,7 +5,7 @@
     <script>
         // Signed-in members hitting the homepage in member mode go straight to their one home page.
         if (new URLSearchParams(location.search).has("member")) {
-            location.replace("member-home.html" + location.hash);
+            location.replace("/member-home" + location.hash);
         }
     </script>
     <link rel="canonical" href="https://paranormalinitiative.com/">

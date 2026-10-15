@@ -1640,7 +1640,7 @@ window.TPI_SEARCH_INDEX = [
   {
     "title": "The Paranormal Initiative",
     "subtitle": "Paranormal Research, Field Investigation, Education, Exploration, and Technology",
-    "href": "member-home.html",
+    "href": "/member-home",
     "description": "Research, field investigation, education, and technology from The Paranormal Initiative.",
     "text": "Home | The Paranormal Initiative You Are the Initiative Share your research, experiences, questions, ideas, and discoveries with the community. Photo Video File Link Add Cancel General Discussion Post Activity Posts Published Content Loading activity... Load More 📄 My Content Your published and unpublished papers and posts, at a glance. Open Content Editor Unpublished drafts – Published – My Pulse Loading… ParaNews Spotlight All Loading… Featured Content TPI Investigation Series Latest paranormal investigation videos from the field. TPI Videos EVP / ITC Research Anomalous voice phenomena and ITC research. EVP / ITC Field Papers & Articles Contributed research, methodology, and guides. Published Work ParaTube Paranormal video aggregated from the open web. Watch now ⏯ TPI Reels Short clips, EVP evidence, and field tips. 💬 Community Feed Discussions with fellow investigators. 📡 Live Video Live investigations and Q&A via StudioFlow. Featured Video All Loading… Upcoming Events All Loading… Active Members Loading… Active Discussions Feed Loading…"
   },

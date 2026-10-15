@@ -9,7 +9,7 @@
 (function () {
   "use strict";
 
-  var MEMBER_HOME = "/member-home.html";
+  var MEMBER_HOME = "/member-home";
 
   function syncReturnLink() {
     document.querySelectorAll("a.nav-return").forEach(function (link) {

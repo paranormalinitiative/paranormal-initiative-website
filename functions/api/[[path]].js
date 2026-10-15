@@ -1843,7 +1843,7 @@ async function notifyActiveMembers(env, notification) {
 }
 
 async function createCommunityContentNotifications(env, user, content) {
-  const actionHref = `member-home.html?member=1#post-${encodeURIComponent(content.postId)}`;
+  const actionHref = `/member-home?member=1#post-${encodeURIComponent(content.postId)}`;
   const kindLabel = content.isComment ? "commented on a community post" : "posted in the community";
   const authorName = user.display_name || user.username || "A member";
   await notifyActiveMembers(env, {
@@ -2435,8 +2435,8 @@ async function handleAdminMemberActivity(path, request, env) {
       SELECT cr.id, cr.target_type AS targetType, cr.target_id AS targetId,
              cr.reaction, cr.created_at AS createdAt,
              CASE WHEN cr.target_type = 'post' THEN cp.title ELSE substr(cc.body, 1, 180) END AS label,
-             CASE WHEN cr.target_type = 'post' THEN '/member-home.html?member=1#post-' || cr.target_id
-                  ELSE '/member-home.html?member=1#post-' || cc.post_id END AS contentHref
+             CASE WHEN cr.target_type = 'post' THEN '/member-home?member=1#post-' || cr.target_id
+                  ELSE '/member-home?member=1#post-' || cc.post_id END AS contentHref
       FROM community_reactions cr
       LEFT JOIN community_posts cp ON cr.target_type = 'post' AND cp.id = cr.target_id
       LEFT JOIN community_comments cc ON cr.target_type = 'comment' AND cc.id = cr.target_id
@@ -5319,7 +5319,7 @@ async function handleShareTpiVideo(path, request, env, user) {
     .bind(postId, user.id, `Video: ${video.title}`.slice(0, 160), body).run();
   await insertCommunityAttachments(env, postId, "post", [{ url: watchUrl, key: "", name: video.title, contentType: "text/uri-list", mediaType: "link", sortOrder: 0 }]);
   await createCommunityContentNotifications(env, user, { postId, postTitle: video.title, body, attachments: [{ mediaType: "link" }] });
-  return json({ ok: true, postId, href: `member-home.html?member=1#post-${encodeURIComponent(postId)}` });
+  return json({ ok: true, postId, href: `/member-home?member=1#post-${encodeURIComponent(postId)}` });
 }
 
 function validateExternalShareUrl(value) {

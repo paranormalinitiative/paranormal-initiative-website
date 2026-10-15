@@ -452,7 +452,7 @@
     nav.setAttribute("aria-label", "Mobile member navigation");
     nav.innerHTML =
       '<div class="member-mobile-nav-inner">' +
-        '<a class="mobile-nav-link" href="member-home.html" data-nav="home">' +
+        '<a class="mobile-nav-link" href="/member-home" data-nav="home">' +
           '<span class="mobile-nav-icon">&#9679;</span>Home</a>' +
         '<a class="mobile-nav-link" href="tpi-videos.html?member=1" data-nav="tpi-videos">' +
           '<span class="mobile-nav-icon">&#9654;</span>Videos</a>' +

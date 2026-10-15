@@ -58,7 +58,7 @@ for (const path of publicPages) {
   }
 }
 
-for (const path of ["/member-home.html", "/admin-center-preview/", "/studio/"]) {
+for (const path of ["/member-home", "/admin-center-preview/", "/studio/"]) {
   const result = await request(path);
   expectAnyStatus(`anonymous protected page ${path}`, result, [401, 403, 307]);
 }

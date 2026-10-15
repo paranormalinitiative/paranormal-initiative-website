@@ -24,7 +24,7 @@ for (const [name, html, bodyClass, title] of [
   check(html.includes("member-shell.js?v=57"), `${name}: member shell cache version missing`);
   check(html.includes("class=\"workspace-account-slot\" data-workspace-chat-slot role=\"group\""), `${name}: reserved account slot missing`);
   check(html.includes(title), `${name}: title missing`);
-  check(html.includes('class="workspace-back-link" href="member-home.html">Back to TPI</a>'), `${name}: Back to TPI missing`);
+  check(html.includes('class="workspace-back-link" href="/member-home">Back to TPI</a>'), `${name}: Back to TPI missing`);
 }
 
 check(shell.includes("grid-template-columns: minmax(0, 1fr) auto auto"), "workspace header does not reserve account and action columns");

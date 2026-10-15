@@ -15,9 +15,10 @@ const checks = [];
 const check = (name, passed) => checks.push({ name, passed });
 
 check("StudioFlow loads the navigation compatibility bridge", studio.includes('/studio/navigation-bridge.js'));
-check("StudioFlow return control targets canonical member homepage", navigationBridge.includes('var MEMBER_HOME = "/member-home.html"'));
+check("StudioFlow return control targets canonical member homepage", navigationBridge.includes('var MEMBER_HOME = "/member-home"'));
 check("return navigation is environment-relative", navigationBridge.includes('setAttribute("href", MEMBER_HOME)') && !navigationBridge.includes("paranormalinitiative.com"));
-check("canonical member homepage is present in existing member navigation", sidebar.includes('href="member-home.html"') && memberHome.includes('data-member-content'));
+check("canonical member homepage is present in existing member navigation", sidebar.includes('href="/member-home"') && memberHome.includes('data-member-content'));
+check("StudioFlow does not return to legacy explore", !navigationBridge.includes("/explore"));
 check("legacy explore is not in the normal member sidebar", !sidebar.includes('href="explore.html"') && !sidebar.includes('href="/explore"'));
 check("explore remains the working Community Feed surface", explore.includes('data-explore-feed') && exploreJs.includes('communityFeed(40, 0)'));
 check("workspace errors distinguish auth, permission, missing, schema, backend, and network cases", [

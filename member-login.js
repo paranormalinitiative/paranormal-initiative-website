@@ -1064,10 +1064,10 @@
     team_submission: { label: "Team Submission", categoryLabel: "Team Submissions", category: "admin", tone: "admin", href: "teams/admin.html" },
     "profile-request": { label: "Administration Notice", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
     warning: { label: "Administration Warning", categoryLabel: "Administration Notices", category: "admin", tone: "admin", href: "member-dashboard.html" },
-    post: { label: "New Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
-    forum_post: { label: "New Community Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
-    community_post: { label: "New Community Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
-    community_comment: { label: "New Community Comment", categoryLabel: "New Posts", category: "posts", tone: "community", href: "member-home.html?member=1" },
+    post: { label: "New Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "/member-home?member=1" },
+    forum_post: { label: "New Community Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "/member-home?member=1" },
+    community_post: { label: "New Community Post", categoryLabel: "New Posts", category: "posts", tone: "community", href: "/member-home?member=1" },
+    community_comment: { label: "New Community Comment", categoryLabel: "New Posts", category: "posts", tone: "community", href: "/member-home?member=1" },
     contribution: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
     article: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
     education: { label: "Educational Content", categoryLabel: "Educational Content", category: "education", tone: "content", href: "education-center.html" },
@@ -1079,7 +1079,7 @@
 
   const notificationGuide = [
     { type: "admin", title: "Administration notices", body: "Profile requests, account warnings, membership access changes, and direct messages from authorized admins appear here.", href: "member-dashboard.html" },
-    { type: "community_post", title: "New posts", body: "Community posts open the exact post and comment that created the notice.", href: "member-home.html?member=1" },
+    { type: "community_post", title: "New posts", body: "Community posts open the exact post and comment that created the notice.", href: "/member-home?member=1" },
     { type: "education", title: "Educational content", body: "Educational papers and contributed content open directly at the published item.", href: "education-center.html" },
     { type: "video", title: "New videos", body: "TPI video and live content alerts will appear here when video notifications are enabled.", href: "tpi-videos.html?member=1" },
     { type: "photo", title: "New photos", body: "Photo/media updates from the community feed will appear here when media notifications are enabled.", href: "explore.html" },
@@ -2105,7 +2105,7 @@
           if (result.user) saveUsers([{ ...result.user, active: true }]);
           localStorage.setItem(ACCESS_SESSION_KEY, result.user?.username || identifier);
           var loginUsername = result.user?.username || identifier;
-          window.location.href = "member-home.html?username=" + encodeURIComponent(loginUsername);
+          window.location.href = "/member-home?username=" + encodeURIComponent(loginUsername);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -2124,7 +2124,7 @@
         return;
       }
       localStorage.setItem(ACCESS_SESSION_KEY, user.username);
-      window.location.href = "member-home.html?username=" + encodeURIComponent(user.username);
+          window.location.href = "/member-home?username=" + encodeURIComponent(user.username);
       return;
     }
 
@@ -2167,7 +2167,7 @@
           });
           await window.TPIApi.login(username, password);
           localStorage.setItem(ACCESS_SESSION_KEY, username);
-          window.location.href = "member-home.html?username=" + encodeURIComponent(username);
+          window.location.href = "/member-home?username=" + encodeURIComponent(username);
         } catch (error) {
           setStatus(error.message, true);
         }
@@ -2194,7 +2194,7 @@
       });
       saveUsers(users);
       localStorage.setItem(ACCESS_SESSION_KEY, username);
-      window.location.href = "member-home.html?username=" + encodeURIComponent(username);
+          window.location.href = "/member-home?username=" + encodeURIComponent(username);
       return;
     }
 
@@ -2317,7 +2317,7 @@
     saveUsers(users);
     saveInvites(invites);
     localStorage.setItem(ACCESS_SESSION_KEY, username);
-    window.location.href = "member-home.html?username=" + encodeURIComponent(username);
+    window.location.href = "/member-home?username=" + encodeURIComponent(username);
   });
 
   document.addEventListener("click", async event => {

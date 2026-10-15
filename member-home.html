@@ -2555,7 +2555,7 @@
                             <span class="rail-fc-name">TPI Reels</span>
                             <span class="rail-fc-desc">Short clips, EVP evidence, and field tips.</span>
                         </a>
-                        <a class="rail-fc-block rail-fc-iconblock" href="member-home.html?member=1">
+                        <a class="rail-fc-block rail-fc-iconblock" href="/member-home?member=1">
                             <span class="rail-fc-icon">💬</span>
                             <span class="rail-fc-name">Community Feed</span>
                             <span class="rail-fc-desc">Discussions with fellow investigators.</span>
@@ -2604,7 +2604,7 @@
                 <section class="rail-card" data-rail-discussions>
                     <div class="rail-card-head">
                         <h4>Active Discussions</h4>
-                        <a class="rail-card-link" href="member-home.html?member=1">Feed</a>
+                        <a class="rail-card-link" href="/member-home?member=1">Feed</a>
                     </div>
                     <div data-discussions-body>
                         <p class="rail-loading">Loading…</p>
@@ -3053,7 +3053,7 @@
                     ? '<img class="rail-member-avatar" src="' + escapeAttr(m.authorPhotoUrl) + '" alt="' + escapeAttr(m.authorName) + '">'
                     : '<div class="rail-member-initial" style="border-color:' + escapeAttr(m.authorChatColor || "var(--accent)") + ';background:' + escapeAttr(m.authorChatColor || "var(--accent)") + '">' + escapeHtml(initial) + '</div>';
                 var sub = m.type === "article" ? "Published content" : (m.categoryTitle || "Community post");
-                return '<a class="rail-member" href="member-home.html?username=' + encodeURIComponent(m.authorUsername) + '">' +
+                return '<a class="rail-member" href="/member-home?username=' + encodeURIComponent(m.authorUsername) + '">' +
                     avatar +
                     '<div style="min-width:0;">' +
                         '<p class="rail-member-name">' + escapeHtml(m.authorName || "Member") + '</p>' +
@@ -3072,11 +3072,11 @@
         window.TPIApi.communityPosts(5, 0).then(function(data) {
             var posts = (data.posts || []).slice(0, 5);
             if (!posts.length) {
-                body.innerHTML = '<p class="rail-empty">No discussions yet. <a href="member-home.html?member=1" style="color:var(--accent);">Start one</a>.</p>';
+                body.innerHTML = '<p class="rail-empty">No discussions yet. <a href="/member-home?member=1" style="color:var(--accent);">Start one</a>.</p>';
                 return;
             }
             body.innerHTML = posts.map(function(t, i) {
-                var href = "member-home.html?member=1#post-" + encodeURIComponent(t.postId || t.id);
+                var href = "/member-home?member=1#post-" + encodeURIComponent(t.postId || t.id);
                 return '<a class="rail-topic" href="' + escapeAttr(href) + '">' +
                     '<span class="rail-topic-rank">' + (i + 1) + '</span>' +
                     '<p class="rail-topic-title">' + escapeHtml(t.title || "Untitled") + '</p>' +
@@ -3631,8 +3631,8 @@
         if (item.reactionCounts) {
             Object.keys(item.reactionCounts).forEach(function(k) { reactionTotal += Number(item.reactionCounts[k] || 0); });
         }
-        var postUrl = window.preserveMemberMode ? window.preserveMemberMode("member-home.html?member=1#post-" + encodeURIComponent(item.postId || "")) : "member-home.html?member=1#post-" + encodeURIComponent(item.postId || "");
-        var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
+        var postUrl = window.preserveMemberMode ? window.preserveMemberMode("/member-home?member=1#post-" + encodeURIComponent(item.postId || "")) : "/member-home?member=1#post-" + encodeURIComponent(item.postId || "");
+        var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";
         var previewText = escapeHtml(item.body || "").substring(0, 400);
         if ((item.body || "").length > 400) previewText += "...";
 
@@ -4187,7 +4187,7 @@
     }
 
     function renderArticleCard(item) {
-        var profileUrl = item.authorUsername ? "member-home.html?username=" + encodeURIComponent(item.authorUsername) : "#";
+        var profileUrl = item.authorUsername ? "/member-home?username=" + encodeURIComponent(item.authorUsername) : "#";
         var rawArticleUrl = item.href || "published-article.html?id=" + encodeURIComponent(item.id);
         var articleUrl = window.preserveMemberMode ? window.preserveMemberMode(rawArticleUrl) : rawArticleUrl;
         var typeBadge = item.contributionType || item.articleType || "Article";

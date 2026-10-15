@@ -24,7 +24,7 @@ for (const [name, html, bodyClass, title, navLabel] of [
   check(html.includes("member-shell.js?v=57"), `${name}: shared member shell is not loaded with the current cache-busting version`);
   check(html.includes("class=\"workspace-header\""), `${name}: dedicated workspace header is missing`);
   check(html.includes(title), `${name}: dedicated workspace title is missing`);
-  check(html.includes('class="workspace-back-link" href="member-home.html">Back to TPI</a>'), `${name}: Back to TPI control is missing`);
+  check(html.includes('class="workspace-back-link" href="/member-home">Back to TPI</a>'), `${name}: Back to TPI control is missing`);
   check(html.includes(`aria-label="${navLabel}"`), `${name}: workspace navigation landmark is missing`);
   check(html.includes('id="site-header"') && html.includes('id="site-footer"'), `${name}: shared include anchors must remain for auth/bootstrap compatibility`);
 }

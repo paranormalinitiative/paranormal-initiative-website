@@ -201,7 +201,7 @@
     if (!user) return;
 
     const firstName = String(user.displayName || user.username || "Member").trim().split(/\s+/)[0] || "Member";
-    const profileUrl = "member-home.html";
+    const profileUrl = "/member-home";
     document.body.classList.add("member-authenticated");
     updateAuthenticatedNavigation();
     const badge = document.createElement("div");
@@ -237,7 +237,7 @@
       const isLoginDestination = destination.endsWith("/member-login") || destination.endsWith("/member-login.html");
       const isLoginLabel = ["sign in", "member login", "contributor login"].includes(label);
       if (!isLoginDestination || !isLoginLabel) return;
-      link.href = "member-home.html";
+      link.href = "/member-home";
       link.textContent = "Member Dashboard";
     });
   }

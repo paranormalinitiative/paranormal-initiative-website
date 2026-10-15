@@ -149,7 +149,7 @@ export default {
     // single community discussion system. Historical links and old
     // notification hrefs pointing here redirect to the Feed.
     if (url.pathname === "/community-forum.html" || url.pathname === "/community-forum" || url.pathname === "/community-forum/") {
-      return Response.redirect(new URL("/member-home.html?member=1", url.origin).toString(), 302);
+      return Response.redirect(new URL("/member-home?member=1", url.origin).toString(), 302);
     }
 
     // API routes (unchanged)
