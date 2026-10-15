@@ -6,7 +6,7 @@ Last verified: 2026-10-15
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Current committed source: d127bd3
+- Current committed source: aa5518c (documentation-only follow-up; deployed application source is d127bd3)
 - Current deployed application source: d127bd3
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
