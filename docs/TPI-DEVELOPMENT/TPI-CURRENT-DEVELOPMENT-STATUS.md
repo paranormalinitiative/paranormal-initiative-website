@@ -123,7 +123,7 @@ in the TPI-DEV-027 reports. Production remains untouched.
 
 ## TPI-DEV-028 focused Administration Center release
 
-TPI-DEV-028 is prepared for owner approval and has not been deployed. The
+TPI-DEV-028 was deployed after explicit owner approval. The
 candidate source snapshot is `8dc0d45c8e0ab9dac2b7154f4458503d4a58bc44` on
 `codex/tpi-development`; the current production Worker version is
 `7e357215-2579-4c60-b27e-dd572a5656fe`. Anonymous read-only checks returned
@@ -141,4 +141,10 @@ settings, roles/restrictions, and read-only creator/entitlement views passed
 the local focused checks. Creator-application detail/create is deferred because
 production does not have the additive `0050_creator_application_details.sql`
 columns or the membership `application_id` column. No production write,
-migration, export, deployment, commit, or push was performed for DEV-028.
+No production D1/R2 write, migration, export, data import, Founding 50
+activation, or unrelated feature deployment was performed for DEV-028. The
+final production Worker version is
+`830aa684-d14e-4d39-b103-7fb7538fef84`; an initial package version
+`0f114a72-ccf0-46c7-aae2-ea53b79510de` was immediately corrected after its root
+asset manifest exposed existing documentation paths. The final asset manifest
+excludes `docs/`, and the checked documentation path now returns `404`.

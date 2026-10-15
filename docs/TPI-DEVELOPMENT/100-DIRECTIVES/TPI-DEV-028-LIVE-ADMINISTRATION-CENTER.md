@@ -1,7 +1,7 @@
 # TPI-DEV-028 — Live Administration Center
 
 Date: 2026-10-14
-Status: `READY FOR OWNER APPROVAL — NOT DEPLOYED`
+Status: `DEPLOYED WITH LIMITATIONS — LIVE PROTECTION VERIFIED`
 
 ## Objective
 
@@ -69,6 +69,10 @@ records may be changed for demonstration.
 
 ## Approval boundary
 
-Before any production write, the owner must approve this exact focused package.
-Approval must not be interpreted as approval for D1 migrations, Founding 50
-activation, unrelated branch deployment, or production data changes.
+The owner approved this exact focused package before deployment. Final Worker
+version: `830aa684-d14e-4d39-b103-7fb7538fef84`. An initial upload version
+`0f114a72-ccf0-46c7-aae2-ea53b79510de` was immediately superseded when its
+root asset manifest exposed existing documentation paths; the corrected
+manifest excludes `docs/`, and the affected production path returns `404`.
+Approval did not include D1 migrations, Founding 50 activation, unrelated
+branch deployment, or production data changes.

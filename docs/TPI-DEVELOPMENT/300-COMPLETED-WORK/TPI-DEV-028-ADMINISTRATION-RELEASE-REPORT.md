@@ -1,7 +1,7 @@
 # TPI-DEV-028 — Administration Center Release Report
 
 Date: 2026-10-14
-Status: `READY FOR OWNER APPROVAL — NOT DEPLOYED`
+Status: `DEPLOYED WITH LIMITATIONS — LIVE PROTECTION VERIFIED`
 
 ## Concise approval summary
 
@@ -14,7 +14,9 @@ Status: `READY FOR OWNER APPROVAL — NOT DEPLOYED`
 - Destructive operations: none included or executed.
 - Rollback: restore the prior Worker version; because no database change is
   included, database rollback is not required for this focused package.
-- Deployment status: not deployed; waiting for explicit owner approval.
+- Deployment status: deployed after explicit owner approval.
+- Final Worker version: `830aa684-d14e-4d39-b103-7fb7538fef84`.
+- Initial Worker version immediately superseded: `0f114a72-ccf0-46c7-aae2-ea53b79510de`.
 
 ## Production compatibility
 
@@ -41,6 +43,22 @@ Passed:
 - Owner-only Founding 50 allocation remains separately gated.
 - Creator entitlements do not grant Administration Center access.
 - No public administrative endpoint or hardcoded credential was introduced.
+- The deployed documentation path `/docs/TPI-DEVELOPMENT/100-DIRECTIVES/DIRECTIVE-INDEX.md`
+  returns `404` after the corrective asset-manifest deployment.
+
+## Live verification
+
+Passed:
+
+- `/admin-center-preview/`: `403` anonymously.
+- `/admin-center-preview/assets/index-Bc-OW49F.js`: `403` anonymously.
+- `/admin-panel.html`: `403` anonymously.
+- `/api/admin/overview`: `403` anonymously.
+- `/api/auth/me`: `200` anonymous response with no session.
+- `/`: `200`.
+- `/events`, `/education-center`, `/teams/`, `/member-home`, and
+  `/published-article/`: `200` after existing redirects.
+- Unintended documentation asset path: `404` after correction.
 
 ## Tests
 
@@ -60,7 +78,7 @@ Passed:
 Not tested:
 
 - Authenticated owner login against production.
-- Authenticated production Administration Center rendering.
+- Authenticated production Administration Center rendering and module loading.
 - Production data mutation, intentionally.
 - Production deployment and post-deployment acceptance.
 
@@ -74,7 +92,7 @@ commit.
 
 ## Decision
 
-`READY FOR OWNER APPROVAL.` After approval, assemble and deploy only the exact
-focused package above, record the new Worker version, and perform the
-non-destructive live acceptance checks. Do not deploy the whole development
-branch or run the historical migration backlog.
+`DEPLOYED WITH LIMITATIONS.` The final Worker version is recorded above and the
+non-destructive anonymous/live route checks passed. Authenticated owner testing
+is still required to confirm dashboard data and module loading. Do not run the
+historical migration backlog or activate deferred creator-application schema.
