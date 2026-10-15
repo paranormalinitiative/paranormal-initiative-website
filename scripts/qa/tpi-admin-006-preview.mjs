@@ -16,6 +16,8 @@ const checks = [
   ["complete navigation groups", ["Dashboard", "Members", "Community", "Creators", "Content & Publishing", "System"].every((value) => source.includes(`label: \"${value}\"`)) && source.includes('id: "community-content"')],
   ["server member filters", ["search", "status", "role", "pageSize", "direction"].every((value) => main.includes(value))],
   ["protected preview route", worker.includes("/admin-center-preview") && worker.includes("hasAdminAccess")],
+  ["canonical production route serves the same protected package", worker.includes("serveCanonicalAdminCenter") && worker.includes('url.pathname === "/admin-panel"') && worker.includes('url.pathname === "/admin-panel.html"')],
+  ["saved personalization is loaded by the canonical app", main.includes("/api/auth/me") && main.includes("/api/me/personalization") && main.includes("dataset.profileFont")],
   ["real dashboard API", source.includes("/admin/overview?range=")],
   ["analytics uses existing protected analytics API", source.includes("/admin/analytics?range=${encodeURIComponent(range)}") && source.includes("analytics?.definitions") && api.includes('path === "/admin/analytics"')],
   ["member detail excludes private conversations", source.includes("No private messenger conversation data is exposed") && !source.includes("activity.conversations")],

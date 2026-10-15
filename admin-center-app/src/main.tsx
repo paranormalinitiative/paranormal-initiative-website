@@ -5,6 +5,7 @@ import { App } from "./app";
 import "./index.css";
 
 const SITE_THEMES = ["cryptid", "seance", "cosmic", "asylum", "fieldops", "gothicnight"] as const;
+const PROFILE_FONTS = ["default", "modern", "rounded", "creator", "serif", "minimal"] as const;
 const applyInitialSiteTheme = () => {
   try {
     const stored = window.localStorage.getItem("tpiSiteTheme");
@@ -12,6 +13,29 @@ const applyInitialSiteTheme = () => {
     document.documentElement.dataset.theme = theme;
   } catch {
     document.documentElement.dataset.theme = "cryptid";
+  }
+};
+
+const applyMemberPersonalization = async () => {
+  applyInitialSiteTheme();
+  try {
+    const response = await fetch("/api/auth/me", { credentials: "same-origin", cache: "no-store" });
+    if (!response.ok) return;
+    const body = await response.json() as { user?: { theme?: string } | null };
+    const theme = body.user?.theme;
+    if (theme && SITE_THEMES.includes(theme as (typeof SITE_THEMES)[number])) {
+      document.documentElement.dataset.theme = theme;
+      try { window.localStorage.setItem("tpiSiteTheme", theme); } catch { /* optional browser cache */ }
+    }
+    const styleResponse = await fetch("/api/me/personalization", { credentials: "same-origin", cache: "no-store" });
+    if (!styleResponse.ok) return;
+    const styleBody = await styleResponse.json() as { style?: { font?: string } };
+    const font = styleBody.style?.font;
+    if (font && PROFILE_FONTS.includes(font as (typeof PROFILE_FONTS)[number])) {
+      document.documentElement.dataset.profileFont = font;
+    }
+  } catch {
+    // The local theme cache remains a safe fallback when session APIs are unavailable.
   }
 };
 
@@ -52,10 +76,12 @@ const dataProvider: DataProvider = {
   custom: unsupported,
 };
 
-createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <Refine dataProvider={dataProvider} resources={[{ name: "members", list: "/members", show: "/members/:id" }]}>
-      <App />
-    </Refine>
-  </React.StrictMode>,
-);
+applyMemberPersonalization().finally(() => {
+  createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <Refine dataProvider={dataProvider} resources={[{ name: "members", list: "/members", show: "/members/:id" }]}>
+        <App />
+      </Refine>
+    </React.StrictMode>,
+  );
+});

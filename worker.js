@@ -107,6 +107,21 @@ async function serveAssets(request, env) {
   return new Response(body, { status: response.status, statusText: response.statusText, headers });
 }
 
+// The React Administration Center is the canonical implementation. Keep the
+// historical preview asset directory as its static package namespace, but
+// serve the same entry document and assets from the user-facing /admin-panel
+// route so development and production cannot drift into separate frontends.
+async function serveCanonicalAdminCenter(request, env) {
+  const sourceUrl = new URL(request.url);
+  const targetPath = sourceUrl.pathname === "/admin-panel" ||
+    sourceUrl.pathname === "/admin-panel/" ||
+    sourceUrl.pathname === "/admin-panel/index.html"
+    ? "/admin-center-preview/index.html"
+    : sourceUrl.pathname.replace(/^\/admin-panel(?:\.html)?/, "/admin-center-preview");
+  const targetUrl = new URL(targetPath + sourceUrl.search, sourceUrl.origin);
+  return serveAssets(new Request(targetUrl, request), env);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -195,6 +210,29 @@ export default {
         });
       }
       return serveAssets(request, env);
+    }
+
+    // Canonical Administration Center entry point. The old HTML admin panel
+    // remains a protected compatibility bookmark and redirects authenticated
+    // administrators here; it is no longer a second implementation.
+    const isCanonicalAdminCenter = url.pathname === "/admin-panel" ||
+      url.pathname === "/admin-panel/" ||
+      url.pathname === "/admin-panel/index.html" ||
+      url.pathname === "/admin-panel.html" ||
+      url.pathname.startsWith("/admin-panel/assets/");
+    if (isCanonicalAdminCenter) {
+      const user = await getSessionUser(request, env);
+      const hasAdminAccess = user && (user.role === "owner" || user.role === "admin");
+      if (!hasAdminAccess) {
+        return new Response(ADMIN_GATE_HTML, {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
+        });
+      }
+      if (url.pathname === "/admin-panel.html") {
+        return Response.redirect(new URL(`/admin-panel${url.search}`, url.origin).toString(), 307);
+      }
+      return serveCanonicalAdminCenter(request, env);
     }
 
     // Administrative pages contain privileged operational controls. Keep the

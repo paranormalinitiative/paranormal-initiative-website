@@ -1,5 +1,6 @@
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join, relative, sep } from "node:path";
 
@@ -38,6 +39,27 @@ try {
     sourceCommit,
     sourceBranch,
     generatedAt: new Date().toISOString()
+  }, null, 2) + "\n", { mode: 0o644 });
+  const adminRoot = join(stage, "admin-center-preview");
+  const adminFiles = readdirSync(adminRoot, { withFileTypes: true })
+    .filter(entry => entry.isFile() && entry.name !== "release.json")
+    .map(entry => join(adminRoot, entry.name))
+    .concat(readdirSync(join(adminRoot, "assets"), { withFileTypes: true })
+      .filter(entry => entry.isFile())
+      .map(entry => join(adminRoot, "assets", entry.name)));
+  const adminManifest = adminFiles.map(file => ({
+    path: relative(stage, file),
+    bytes: statSync(file).size,
+    sha256: createHash("sha256").update(readFileSync(file)).digest("hex")
+  }));
+  writeFileSync(join(adminRoot, "release.json"), JSON.stringify({
+    schemaVersion: 1,
+    application: "tpi-administration-center",
+    environment: "development",
+    sourceCommit,
+    sourceBranch,
+    generatedAt: new Date().toISOString(),
+    files: adminManifest
   }, null, 2) + "\n", { mode: 0o644 });
   const config = readFileSync(join(repoRoot, "wrangler.dev.toml"), "utf8")
     .replace('main = "worker.js"', `main = "${join(repoRoot, "worker.js")}"`)

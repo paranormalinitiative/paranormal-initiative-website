@@ -463,7 +463,7 @@
         '<a class="mobile-nav-link" href="member-notifications.html" data-nav="member-notifications">' +
           '<span class="mobile-nav-icon">&#128276;</span>Alerts' +
           '<span class="member-mobile-notification-badge" data-notification-count hidden>0</span></a>' +
-        '<a class="mobile-nav-link" href="/admin-center-preview/" data-nav="admin-center" data-admin-only hidden>' +
+        '<a class="mobile-nav-link" href="/admin-panel" data-nav="admin-center" data-admin-only hidden>' +
           '<span class="mobile-nav-icon">&#9881;</span>Admin</a>' +
         '<a class="mobile-nav-link" href="member-dashboard.html" data-nav="settings">' +
           '<span class="mobile-nav-icon">&#9881;</span>Settings</a>' +

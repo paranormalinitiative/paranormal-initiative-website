@@ -148,3 +148,17 @@ final production Worker version is
 `0f114a72-ccf0-46c7-aae2-ea53b79510de` was immediately corrected after its root
 asset manifest exposed existing documentation paths. The final asset manifest
 excludes `docs/`, and the checked documentation path now returns `404`.
+
+## TPI-DEV-030 release workflow repair
+
+The Administration Center source and route boundary has now been unified in
+the development branch. `/admin-panel` is the canonical protected route, the
+historical `/admin-center-preview/` path serves the same React package for
+compatibility, and authenticated `/admin-panel.html` bookmarks redirect to the
+canonical route. Desktop and mobile Administration navigation now use
+`/admin-panel`. The shared React application hydrates the signed-in member's
+saved theme and typography from the existing personalization APIs. The guarded
+development staging script records an Administration Center package manifest
+with source identity and SHA-256 file hashes. TPI-DEV-030 implementation checks
+pass; production approval and deployment remain pending for the exact
+post-commit candidate.
