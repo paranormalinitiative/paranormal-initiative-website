@@ -67,7 +67,11 @@ try {
   const configPath = join(configDir, "wrangler.dev.toml");
   writeFileSync(configPath, config, { mode: 0o600 });
   console.log(`Staged sanitized development assets in ${stage}`);
-  execFileSync("npx", ["wrangler@4.149.0", "deploy", "--config", configPath, ...process.argv.slice(2)], { stdio: "inherit" });
+  const wranglerCommand = process.env.TPI_WRANGLER_BIN || "npx";
+  const wranglerArgs = process.env.TPI_WRANGLER_BIN
+    ? ["deploy", "--config", configPath, ...process.argv.slice(2)]
+    : ["wrangler@4.149.0", "deploy", "--config", configPath, ...process.argv.slice(2)];
+  execFileSync(wranglerCommand, wranglerArgs, { stdio: "inherit" });
 } finally {
   rmSync(stage, { recursive: true, force: true });
   rmSync(configDir, { recursive: true, force: true });
