@@ -221,12 +221,21 @@ theme variables, typography, and member-home conventions. Existing news/video
 APIs, cards, search/category controls, links, scrapers, and the distinct `/`,
 `/member-home`, and `/explore` destinations were preserved.
 
-The implementation source is `50cedea2bd5e9f7e2f0bad1bcbfd9a9761cc5ee0`.
-Development deployment `98cb936a-0c63-4662-b2f6-97b1e76fbafd` and production
-deployment `a2cbde12-0c39-4eeb-ac75-269e66c6dcea` use that same application
-source. Focused source checks passed 12/12; member-home, DEV-032, DEV-033,
+The original implementation source is `50cedea2bd5e9f7e2f0bad1bcbfd9a9761cc5ee0`.
+The addendum source is `41de90a98fac0747fe19c376e463c70a578cee36`.
+Development deployment `264e5ea5-b165-4b6e-adc0-1bc41f7bebcc` and production
+deployment `80cc9aa2-c2a2-4fc8-99c7-989e523e4654` use the addendum source.
+Focused source checks passed 16/16; member-home, DEV-032, DEV-033,
 DEV-030, workspace-layout, syntax, and diff checks passed; development
-runtime verification passed; and the anonymous production smoke suite passed
-10/10. No D1/R2 writes, migrations, imports, authentication changes, or
+runtime verification passed, including authenticated development root routing;
+and the anonymous production smoke suite passed 10/10. No D1/R2 writes,
+migrations, imports, authentication changes, or
 unrelated feature changes were made. Authenticated production browser visual
 acceptance remains pending because no production owner session was available.
+
+The root routing correction uses the Worker session boundary to redirect
+authenticated `/` requests to `/member-home` while preserving the public home
+for signed-out visitors. The early theme bootstrap applies the existing local
+theme before first paint, and the member shell now synchronizes with the
+include-ready event instead of waiting a fixed 150 ms. The production rollback
+target was `a2cbde12-0c39-4eeb-ac75-269e66c6dcea`.

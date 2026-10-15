@@ -33,3 +33,24 @@ The implementation is a static website-shell correction. It does not alter
 the news/video APIs, scrapers, database schema, storage, authentication, or
 Administration Center code. Development was deployed first and the same
 application commit was promoted through the guarded production procedure.
+
+## Addendum — authenticated home routing and stable page paint
+
+The addendum corrects two shared-shell problems:
+
+- The root route now checks the existing server session. Authenticated users
+  receive a 307 redirect to `/member-home`; signed-out visitors continue to
+  receive the public `/` document. `/explore` remains an intentional,
+  independent Community Feed destination.
+- The Worker injects a small early theme bootstrap into HTML responses. It
+  uses only the existing local `tpiSiteTheme` preference and applies matching
+  dark background/text colors before the full stylesheet and authenticated
+  personalization request finish loading. It does not expose session data or
+  create a second personalization system.
+- `includes.js` now signals when the shared header/footer injection is ready,
+  and `member-shell.js` waits for that signal instead of imposing a fixed
+  150 ms delay on every navigation. A bounded fallback remains for blocked
+  include requests.
+
+The implementation preserves login/logout/session handling, protected routes,
+DEV-034 ParaNews/ParaTube work, and the existing public/member navigation.

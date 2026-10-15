@@ -14,7 +14,9 @@ behavior on their canonical routes:
 - Authenticated member homepage: `/member-home`
 - Community Feed: `/explore`
 
-The implementation source commit was `50cedea2bd5e9f7e2f0bad1bcbfd9a9761cc5ee0`.
+The original layout implementation source commit was
+`50cedea2bd5e9f7e2f0bad1bcbfd9a9761cc5ee0`. The addendum implementation
+source commit is `41de90a98fac0747fe19c376e463c70a578cee36`.
 Only the authorized website-shell files and the focused QA script were part
 of that implementation commit. Existing news/video APIs, content rendering,
 search/category controls, links, scrapers, authentication, and data storage
@@ -43,22 +45,22 @@ changes, or Administration Center changes were made.
 
 | Environment | Worker | Version | Application source |
 | --- | --- | --- | --- |
-| Development | `theparanormalinitiative-dev` | `98cb936a-0c63-4662-b2f6-97b1e76fbafd` | `50cedea2bd5e9f7e2f0bad1bcbfd9a9761cc5ee0` |
-| Production | `theparanormalinitiative` | `a2cbde12-0c39-4eeb-ac75-269e66c6dcea` | `50cedea2bd5e9f7e2f0bad1bcbfd9a9761cc5ee0` |
+| Development | `theparanormalinitiative-dev` | `264e5ea5-b165-4b6e-adc0-1bc41f7bebcc` | `41de90a98fac0747fe19c376e463c70a578cee36` |
+| Production | `theparanormalinitiative` | `80cc9aa2-c2a2-4fc8-99c7-989e523e4654` | `41de90a98fac0747fe19c376e463c70a578cee36` |
 
 The guarded production staging output recorded the source commit and asset
 SHA-256 hashes. The release manifest endpoint is protected by the existing
 Administration Center boundary and returned HTTP 403 to anonymous validation,
 so no private release metadata was exposed publicly.
 
-The production baseline immediately before promotion was Worker version
-`8f251d0d-d4d2-46e0-8be8-3ed3a960035a`.
+The production rollback target immediately before this addendum promotion
+was Worker version `a2cbde12-0c39-4eeb-ac75-269e66c6dcea`.
 
 ## Verification
 
 ### Offline/source checks — PASSED
 
-- TPI-DEV-034 focused checks: **12/12**.
+- TPI-DEV-034 focused checks: **16/16**.
 - Member-home navigation addendum: **10/10**.
 - DEV-032 navigation regression: **13/13**.
 - DEV-033 StudioFlow regression: **16/16**.
@@ -67,6 +69,17 @@ The production baseline immediately before promotion was Worker version
 - JavaScript syntax checks passed for the affected shell, worker, explore,
   include, and API files.
 - `git diff --check` passed for the implementation files.
+
+### Addendum-specific findings — PASSED
+
+- Root routing previously served the public static document for both signed-in
+  and signed-out requests; the Worker now uses `getSessionUser` before serving
+  `/` or `/index.html`.
+- The early-paint correction is applied by the shared Worker HTML path and was
+  observed on `/`, `/about`, `/explore`, `/news`, `/paratube`, and
+  `/member-home` in both development and production.
+- The fixed member-shell delay was removed and replaced with an event-based
+  include-ready signal plus bounded failure fallback.
 
 ### Development runtime — PASSED
 
@@ -78,6 +91,8 @@ The production baseline immediately before promotion was Worker version
 - Anonymous and owner-authenticated development session checks passed.
 - Owner `/api/auth/me`, protected Administration Center overview, and member
   management reads returned the expected authorized responses.
+- Anonymous development `/` remained HTTP 200; the existing owner fixture
+  received HTTP 307 from `/` to `/member-home` and retained a valid session.
 
 ### Production runtime — PASSED
 
@@ -89,11 +104,16 @@ The production baseline immediately before promotion was Worker version
 - Anonymous Administration Center API access returned HTTP 403.
 - Anonymous `/studio/` access returned HTTP 403.
 - Existing read-only production smoke suite passed **10/10**.
+- Production `/` remained HTTP 200 for anonymous visitors and the early theme
+  bootstrap was present on public and member-facing representative routes.
 
 ## Limitations
 
 - Authenticated production browser acceptance was not performed because no
   production owner session was available in the authorized test environment.
+- Production authenticated `/` redirect was not directly exercised because no
+  production owner session was available; the exact same Worker source and
+  authenticated development verification passed.
 - Desktop/tablet/mobile behavior was verified through the existing shared
   responsive shell source checks and deployed asset/runtime checks; a manual
   owner visual walkthrough remains a recommended acceptance step.
