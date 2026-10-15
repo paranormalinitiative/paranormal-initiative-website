@@ -67,7 +67,9 @@
   }
   var MEMBER_PARAM = "member";
   var STORAGE_KEY = "tpiMemberMode";
-  var SIDEBAR_URL = "member-sidebar.html";
+  // Guarded deployments stage this same markup as a text asset because
+  // Cloudflare clean-URL handling can 500 on this standalone HTML include.
+  var SIDEBAR_URL = "member-sidebar.txt";
 
   // Pages that are ALWAYS member-only when authenticated.
   // These do NOT require ?member=1 — they check for a valid session directly.

@@ -42,6 +42,10 @@ const filter = (source) => {
 
 try {
   cpSync(repoRoot, stage, { recursive: true, filter });
+  // Keep one source of truth for shared includes while avoiding the
+  // standalone clean-URL rewrite that affects footer.html/member-sidebar.html.
+  cpSync(join(stage, "footer.html"), join(stage, "footer.txt"));
+  cpSync(join(stage, "member-sidebar.html"), join(stage, "member-sidebar.txt"));
   const sourceCommit = git(["rev-parse", "HEAD"]);
   const sourceBranch = branch;
   const adminRoot = join(stage, "admin-center-preview");

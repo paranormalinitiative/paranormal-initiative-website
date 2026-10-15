@@ -174,7 +174,10 @@
   }
 
   await inject("#site-header", "header.html");
-  await inject("#site-footer", "footer.html");
+  // Cloudflare's clean-URL handling can rewrite standalone footer.html
+  // requests before the Worker sees them. Guarded deployments stage the same
+  // source-of-truth markup under footer.txt for a stable include URL.
+  await inject("#site-footer", "footer.txt");
   installContentProtection();
   installMemberGreeting();
   installHeaderSearch();

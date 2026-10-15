@@ -30,6 +30,10 @@ const filter = source => {
 
 try {
   cpSync(repoRoot, stage, { recursive: true, filter });
+  // Keep one source of truth for shared includes while avoiding the
+  // standalone clean-URL rewrite that affects footer.html/member-sidebar.html.
+  cpSync(join(stage, "footer.html"), join(stage, "footer.txt"));
+  cpSync(join(stage, "member-sidebar.html"), join(stage, "member-sidebar.txt"));
   const sourceCommit = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
   const sourceBranch = execFileSync("git", ["branch", "--show-current"], { encoding: "utf8" }).trim();
   mkdirSync(join(stage, ".well-known"), { recursive: true });
