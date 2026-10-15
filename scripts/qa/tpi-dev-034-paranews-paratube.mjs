@@ -7,6 +7,8 @@ const sidebar = read("member-sidebar.html");
 const header = read("header.html");
 const shellCss = read("member-shell.css");
 const shellJs = read("member-shell.js");
+const worker = read("worker.js");
+const includes = read("includes.js");
 const checks = [
   ["ParaNews uses the shared member shell", news.includes('member-shell.css?v=62') && news.includes('data-member-content hidden') && news.includes('member-shell.js?v=57')],
   ["ParaTube uses the shared member shell", tube.includes('member-shell.css?v=62') && tube.includes('data-member-content hidden') && tube.includes('member-shell.js?v=57')],
@@ -20,6 +22,10 @@ const checks = [
   ["ParaTube uses saved theme variables instead of a hardcoded purple accent", tube.includes("--pn-accent: var(--accent)") && !tube.includes("#a855f7")],
   ["Neither page adds legacy horizontal navigation", !news.includes('class="command-nav"') && !tube.includes('class="command-nav"')],
   ["Existing member destinations remain distinct", read("member-sidebar.html").includes('href="/member-home"') && read("explore.html").includes("data-explore-feed")],
+  ["Worker uses the authoritative session for root member routing", worker.includes('url.pathname === "/" || url.pathname === "/index.html"') && worker.includes("const user = await getSessionUser(request, env)") && worker.includes("/member-home")],
+  ["Worker injects a non-white early theme surface", worker.includes("EARLY_THEME_BOOTSTRAP") && worker.includes('background:#1a221e') && worker.includes('data-tpi-theme-bootstrap')],
+  ["Includes publishes a shell-ready signal", includes.includes("window.__tpiIncludesReady = true") && includes.includes('tpi:includes-ready')],
+  ["Member shell waits for includes without a fixed navigation delay", shellJs.includes("waitForIncludes") && shellJs.includes('tpi:includes-ready') && !shellJs.includes("await delay(150)")],
 ];
 for (const [label, passed] of checks) console.log(`${passed ? "PASS" : "FAIL"} ${label}`);
 const failed = checks.filter(([, passed]) => !passed);

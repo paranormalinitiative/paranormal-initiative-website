@@ -93,17 +93,37 @@ const CONTRIBUTOR_GATE_HTML = MEMBER_GATE_HTML
 
 const DEVELOPMENT_BANNER = `<div data-tpi-development-environment style="position:fixed;z-index:2147483647;top:0;left:0;right:0;padding:7px 12px;background:#5b2a86;color:#fff;font:700 12px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.35)">DEVELOPMENT ENVIRONMENT</div>`;
 
+// Keep the first paint on the same dark surface as the TPI design system.
+// This is deliberately limited to the browser's existing local theme choice;
+// it does not inspect authentication state or expose account information.
+const EARLY_THEME_BOOTSTRAP = `<style data-tpi-theme-bootstrap>
+html,body{background:#1a221e;color:#f2f7f3}
+html[data-theme="seance"],html[data-theme="seance"] body{background:#120c1f;color:#f9f6ee}
+html[data-theme="cosmic"],html[data-theme="cosmic"] body{background:#0d0c28;color:#f0f2fa}
+html[data-theme="asylum"],html[data-theme="asylum"] body{background:#1e1e1e;color:#ededed}
+html[data-theme="fieldops"],html[data-theme="fieldops"] body{background:#0a0c10;color:#e8ecf4}
+html[data-theme="gothicnight"],html[data-theme="gothicnight"] body{background:#0e0a1a;color:#f5f1fa}
+</style><script data-tpi-theme-bootstrap>(function(){try{var t=localStorage.getItem("tpiSiteTheme");var ok=["cryptid","seance","cosmic","asylum","fieldops","gothicnight"].indexOf(t)!==-1;document.documentElement.setAttribute("data-theme",ok?t:"cryptid")}catch(e){document.documentElement.setAttribute("data-theme","cryptid")}})();</script>`;
+
 async function serveAssets(request, env) {
   const response = await env.ASSETS.fetch(request);
-  if (env.TPI_ENV !== "development" || !response.ok) return response;
+  if (!response.ok) return response;
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) return response;
   const html = await response.text();
-  if (html.includes("data-tpi-development-environment")) return response;
-  const body = html.replace(/<body([^>]*)>/i, `<body$1>${DEVELOPMENT_BANNER}`);
+  let body = html;
+  if (!html.includes("data-tpi-theme-bootstrap")) {
+    body = body.replace(/<head([^>]*)>/i, `<head$1>${EARLY_THEME_BOOTSTRAP}`);
+  }
+  if (env.TPI_ENV === "development" && !body.includes("data-tpi-development-environment")) {
+    body = body.replace(/<body([^>]*)>/i, `<body$1>${DEVELOPMENT_BANNER}`);
+  }
+  if (body === html) return response;
   const headers = new Headers(response.headers);
   headers.delete("content-length");
-  headers.set("Cache-Control", "no-store");
+  headers.delete("etag");
+  headers.delete("last-modified");
+  if (env.TPI_ENV === "development") headers.set("Cache-Control", "no-store");
   return new Response(body, { status: response.status, statusText: response.statusText, headers });
 }
 
@@ -150,6 +170,17 @@ export default {
     // notification hrefs pointing here redirect to the Feed.
     if (url.pathname === "/community-forum.html" || url.pathname === "/community-forum" || url.pathname === "/community-forum/") {
       return Response.redirect(new URL("/member-home?member=1", url.origin).toString(), 302);
+    }
+
+    // The public root remains available to signed-out visitors, while the
+    // authoritative server session determines the destination for members.
+    // This prevents the homepage from briefly rendering public content before
+    // client-side auth code can redirect an already signed-in member.
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      const user = await getSessionUser(request, env);
+      if (user) {
+        return Response.redirect(new URL(`/member-home${url.search}`, url.origin).toString(), 307);
+      }
     }
 
     // API routes (unchanged)

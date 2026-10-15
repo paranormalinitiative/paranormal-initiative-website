@@ -99,8 +99,9 @@
   var shellMode = await detectMemberMode();
   if (!shellMode) return;
 
-  // Wait briefly for includes.js to finish injecting header/footer
-  await delay(150);
+  // Synchronize with includes.js instead of imposing a fixed delay on every
+  // navigation. The fallback only covers a failed/blocked include request.
+  await waitForIncludes();
   await initMemberShell();
 
   // ---- Member Mode Detection ----
@@ -145,6 +146,23 @@
     } catch (e) {}
 
     return false;
+  }
+
+  function waitForIncludes() {
+    if (window.__tpiIncludesReady || document.querySelector(".command-header")) {
+      return Promise.resolve();
+    }
+    return new Promise(function (resolve) {
+      var settled = false;
+      function finish() {
+        if (settled) return;
+        settled = true;
+        window.removeEventListener("tpi:includes-ready", finish);
+        resolve();
+      }
+      window.addEventListener("tpi:includes-ready", finish, { once: true });
+      window.setTimeout(finish, 500);
+    });
   }
 
   async function quickSessionCheck() {

@@ -178,6 +178,8 @@
   installContentProtection();
   installMemberGreeting();
   installHeaderSearch();
+  window.__tpiIncludesReady = true;
+  window.dispatchEvent(new Event("tpi:includes-ready"));
 
   // Per-page title/subtitle (optional)
   const titleMeta = document.querySelector('meta[name="pp:title"]');
