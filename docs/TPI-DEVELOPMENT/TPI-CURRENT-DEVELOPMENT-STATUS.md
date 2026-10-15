@@ -1,18 +1,18 @@
 # TPI Current Development Status
 
-Last verified: 2026-10-14
+Last verified: 2026-10-15
 
 ## Project identity
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Current committed source: `51236c3`
-- Current deployed application source: `51236c3`
+- Current committed source: d127bd3
+- Current deployed application source: d127bd3
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
-- Development version: `c181a58d-005d-4c57-b188-24d3467fef78`
-- Production version: `4f679573-fb15-4bf9-9541-2a85e70209a0`
-- Production: DEV-032 navigation correction deployed; authenticated owner acceptance remains pending
+- Development version: 20031a3d-1c35-4621-a1b4-b74842256a95
+- Production version: adc6e8d7-1950-49a7-8127-54f0a2acd634
+- Production: TPI-DEV-035 public landing/auth routing correction deployed; authenticated member acceptance remains pending
 
 The deployed provenance endpoint reports the development Worker, branch, and
 application source commit above. The latest commit after the deployed source is
@@ -43,6 +43,7 @@ documentation-only and was not redeployed.
 | Search | VERIFIED COMPLETE AT CONTRACT LEVEL | DEV-022 offline search contracts passed; broad visual acceptance remains owner work |
 | Events | VERIFIED COMPLETE AT DEVELOPMENT RUNTIME LEVEL | Browser inspection rendered the development Events page, filters, cards, RSVP controls, and submit-event navigation; authenticated administration UI remains owner acceptance |
 | Administration Center | IMPLEMENTED, DEVELOPMENT AND PRODUCTION DEPLOYED / VISUAL ACCEPTANCE PENDING | DEV-032 navigation correction and DEV-031 analytics are deployed to both environments; anonymous protection, public routes, private-source exclusion, and development authenticated authorization passed; authenticated production owner inspection remains open |
+| Public landing and authenticated home routing | IMPLEMENTED AND DEPLOYED / AUTHENTICATED ACCEPTANCE PENDING | TPI-DEV-035 uses the existing shared shell for guest navigation, makes hosted /api/auth/me authoritative, redirects authenticated / server-side to /member-home, and marks anonymous root HTML private/no-store. Anonymous development and production checks passed; authenticated browser acceptance remains open. |
 | Creator applications and entitlement enforcement | VERIFIED COMPLETE WITH LIMITATIONS | DEV-014 and DEV-025 authenticated synthetic tests passed; real membership activation remains disabled |
 | Founding 50 activation/allocation | VERIFIED PROTECTED | Development activation is `disabled`; protected mutation remains expected HTTP 423 |
 | StudioFlow creator access | VERIFIED COMPLETE WITH LIMITATIONS | Positive entitled creator access and revoked denial passed; visual acceptance remains open |
@@ -239,3 +240,27 @@ for signed-out visitors. The early theme bootstrap applies the existing local
 theme before first paint, and the member shell now synchronizes with the
 include-ready event instead of waiting a fixed 150 ms. The production rollback
 target was `a2cbde12-0c39-4eeb-ac75-269e66c6dcea`.
+
+## TPI-DEV-035 public landing and authenticated home routing
+
+TPI-DEV-035 corrected the remaining public/authenticated mismatch. Hosted
+/api/auth/me is authoritative, while localStorage identities are accepted only
+for local preview origins. This prevents stale preview state from showing a
+member greeting when the Worker correctly has no session. Anonymous root
+responses are private, no-store, and authenticated root requests continue to
+redirect to /member-home.
+
+The public landing page retains the established TPI visual system and content
+assets while adding clear entry cards for ParaNews, ParaTube, Our Apps, and
+Contact & Links. The existing shared sidebar is populated for guests with
+public route destinations and remains unchanged for authenticated members.
+Because the deployed Cloudflare asset configuration returned 500 for the
+standalone clean URLs /member-sidebar and /footer, the guarded staging
+scripts emit .txt aliases containing the exact canonical source markup.
+
+Development deployment 20031a3d-1c35-4621-a1b4-b74842256a95 and production
+deployment adc6e8d7-1950-49a7-8127-54f0a2acd634 use source commit d127bd3.
+Source checks and public runtime checks passed. The broad authenticated browser
+runner was blocked by its own safety gate because it would create six
+development session records; authenticated production acceptance remains
+pending and is not represented as passed.
