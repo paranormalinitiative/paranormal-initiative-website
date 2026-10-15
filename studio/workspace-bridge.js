@@ -1,380 +1,92 @@
 /*
- * TPI-DEV-024 StudioFlow workspace bridge.
- *
- * The deployed StudioFlow bundle remains the source of truth for the editor.
- * This small bridge persists only an allow-listed broadcast/settings snapshot;
- * recording blobs and file handles stay in the browser's existing storage.
+ * TPI-DEV-037 My Studios bridge.
+ * StudioFlow's compiled editor remains the source of truth for recording and
+ * production behavior. This bridge persists only an explicit configuration
+ * allow-list; recordings and media remain in browser storage.
  */
 (function () {
   "use strict";
-
-  var KEYS = {
-    active: "studioflow.activeBroadcastId",
-    broadcasts: "studioflow.broadcasts",
-    orientation: "studioflow.programOrientation",
-    preferences: "studioflow.recordingPreferences.v2",
-    storage: "studioflow.recordingStorage.v1",
-    workspaceCache: "studioflow.tpiWorkspaceCache.v1"
-  };
-  var panel;
-  var list;
-  var message;
-  var workspaces = [];
-
-  function read(key, fallback) {
-    try {
-      var value = localStorage.getItem(key);
-      return value === null ? fallback : JSON.parse(value);
-    } catch (error) {
-      return fallback;
-    }
-  }
-
-  function write(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch (error) {}
-  }
-
+  var KEYS = { active: "studioflow.activeBroadcastId", broadcasts: "studioflow.broadcasts", preferences: "studioflow.recordingPreferences.v2", storage: "studioflow.recordingStorage.v1", activeStudio: "studioflow.tpiActiveStudioId.v1", workspaceCache: "studioflow.tpiWorkspaceCache.v2" };
+  var CONFIG_KEYS = { selectedBackground: "studioflow.selectedBackground", activeSceneId: "studioflow.activeSceneId", showLogo: "studioflow.showLogo", logoPlacement: "studioflow.logoPlacement", styleSettings: "studioflow.styleSettings", widgetSettings: "studioflow.widgetSettings", generalSettings: "studioflow.generalSettings.v1", guestPermissionSettings: "studioflow.guestPermissionSettings", studioScenes: "studioflow.studioScenes", bannerScrollTicker: "studioflow.bannerScrollTicker", programOrientation: "studioflow.programOrientation" };
+  var panel, selector, selectorMenu, manageMenu, message, saveTimer, channel;
+  var workspaces = [], deletedWorkspaces = [], selectedWorkspace = null, saveInFlight = false, saveAgain = false, lastSavedFingerprint = "", remoteProductionLock = false;
   function text(value) { return typeof value === "string" ? value : ""; }
-
-  function activeBroadcast() {
-    var id = text(localStorage.getItem(KEYS.active));
-    var broadcasts = read(KEYS.broadcasts, []);
-    return Array.isArray(broadcasts) ? broadcasts.find(function (item) { return item && item.id === id; }) || null : null;
+  function read(key, fallback) { try { var value = localStorage.getItem(key); return value === null ? fallback : JSON.parse(value); } catch (error) { return fallback; } }
+  function write(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (error) {} }
+  function clone(value) { try { return JSON.parse(JSON.stringify(value)); } catch (error) { return {}; } }
+  function uuid(prefix) { return prefix + "-" + (window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + "-" + Math.random().toString(16).slice(2)); }
+  function activeBroadcast() { var id = text(localStorage.getItem(KEYS.active)); var broadcasts = read(KEYS.broadcasts, []); return Array.isArray(broadcasts) ? broadcasts.find(function (item) { return item && item.id === id; }) || null : null; }
+  function currentProductionStatus() {
+    var broadcast = activeBroadcast(); var status = text(broadcast && broadcast.status).toLowerCase(); var sessions = read("studioflow.recordingSessions", []);
+    var sessionLock = Array.isArray(sessions) && sessions.some(function (item) { return item && ["recording", "live", "stopping", "finalizing", "recovery"].includes(text(item.status).toLowerCase()); });
+    return { locked: sessionLock || ["recording", "live", "stopping", "finalizing", "recovery"].includes(status), status: status };
   }
-
-  function stateForSave() {
-    var broadcast = activeBroadcast();
-    if (!broadcast) return null;
-    var preferences = read(KEYS.preferences, {}) || {};
-    var storage = read(KEYS.storage, {}) || {};
-    var libraryItems = read("studioflow.libraryItems", []);
-    var sessions = read("studioflow.recordingSessions", []);
-    return {
-      broadcast: {
-        id: text(broadcast.id),
-        title: text(broadcast.title),
-        description: text(broadcast.description),
-        scheduledAt: text(broadcast.scheduledAt),
-        visibility: text(broadcast.visibility),
-        status: text(broadcast.status),
-        tpiSync: broadcast.tpiSync ? {
-          broadcastId: text(broadcast.tpiSync.broadcastId),
-          revision: Number(broadcast.tpiSync.revision) || null,
-          visibility: text(broadcast.tpiSync.visibility),
-          syncState: text(broadcast.tpiSync.syncState),
-          lastSyncedAt: text(broadcast.tpiSync.lastSyncedAt)
-        } : null
-      },
-      settings: {
-        programOrientation: text(localStorage.getItem(KEYS.orientation)) || "landscape",
-        recordingDestination: text(storage.mode || storage.destination || storage.storageMode) || "browser",
-        keepLocalBackup: preferences.keepLocalBackup !== false,
-        saveAutomatically: preferences.saveAutomatically === true,
-        recordBackstageAutomatically: preferences.recordBackstageAutomatically === true,
-        resumeBackstageAfterShow: preferences.resumeBackstageAfterShow === true
-      },
-      recording: {
-        localLibraryCount: Array.isArray(libraryItems) ? libraryItems.length : 0,
-        incompleteSessionCount: Array.isArray(sessions) ? sessions.filter(function (item) { return item && item.status === "recording"; }).length : 0,
-        storageMode: text(storage.mode || storage.destination || storage.storageMode) || "browser"
-      }
-    };
-  }
-
-  function setMessage(value, isError) {
-    if (!message) return;
-    message.textContent = value || "";
-    message.className = isError ? "tpi-ws-message error" : "tpi-ws-message";
-  }
-
+  function productionLock() { return remoteProductionLock || currentProductionStatus().locked; }
+  function setMessage(value, isError) { if (!message) return; message.textContent = value || ""; message.className = "tpi-studio-status" + (isError ? " error" : ""); }
   function workspaceRequestError(status, body) {
-    var code = text(body && body.code);
-    var messages = {
-      workspace_schema_unsupported: "Saved workspaces are not enabled in this environment yet. Export the configuration to keep a local copy.",
-      workspace_backend_unavailable: "Saved workspace storage is temporarily unavailable. Export the configuration and try Refresh again later.",
-      workspace_not_found: "That workspace was not found. Refresh the list to see the current saved workspaces.",
-      workspace_conflict: "This workspace changed elsewhere. Refresh the list before saving again.",
-      workspace_exists: "A workspace for this broadcast already exists. Refresh the list and open the saved copy.",
-      workspace_invalid: body && body.error ? body.error : "The workspace configuration is not valid.",
-      workspace_too_large: body && body.error ? body.error : "The workspace configuration is too large to save."
+    var code = text(body && body.code); var messages = {
+      workspace_schema_unsupported: "My Studios needs the current workspace schema in this environment. Export the configuration until the migration is available.", workspace_backend_unavailable: "Studio persistence is temporarily unavailable. Export the configuration and try again later.", workspace_not_found: "That Studio is no longer available. Refresh the Studio list.", workspace_conflict: "This Studio changed elsewhere. Refresh before saving again; your local editor remains open.", workspace_exists: "This broadcast already belongs to a Studio. Refresh the list and select it.", studio_production_active: "Studio changes are unavailable while a recording or livestream is active.", studio_scheduled_production: "This Studio has a scheduled production. Reassign or cancel it before deleting.", workspace_invalid: body && body.error ? body.error : "The Studio configuration is not valid.", workspace_too_large: body && body.error ? body.error : "The Studio configuration is too large to save."
     };
-    var error = new Error(messages[code] || (body && text(body.error)) || "The workspace request could not be completed.");
-    error.code = code;
-    error.status = status;
-    error.body = body || {};
-    return error;
+    var error = new Error(messages[code] || (body && text(body.error)) || "The Studio request could not be completed."); error.code = code; error.status = status; error.body = body || {}; return error;
   }
-
-  function describeWorkspaceFailure(error, fallback) {
-    if (error && error.code === "auth_required") return "Your member session is no longer active. Sign in again, then Refresh the workspace list.";
-    if (error && error.code === "access_denied") return "Your account is not permitted to use Saved Workspaces. Contact the site owner if this is unexpected.";
-    if (error && error.code === "network_failure") return "The workspace service could not be reached. Check your connection and try Refresh again.";
-    return error && error.message ? error.message : fallback;
-  }
-
+  function describeWorkspaceFailure(error, fallback) { if (error && error.code === "auth_required") return "Your member session is no longer active. Sign in again, then refresh My Studios."; if (error && error.code === "access_denied") return "Your account is not permitted to use My Studios."; if (error && error.code === "network_failure") return "Studio persistence could not be reached. Check your connection and try again."; return error && error.message ? error.message : fallback; }
   function api(path, options) {
-    return fetch(path, Object.assign({ credentials: "same-origin", headers: { "Content-Type": "application/json" } }, options || {}))
-      .then(function (response) {
-        return response.text().then(function (raw) {
-          var body = {};
-          try { body = raw ? JSON.parse(raw) : {}; } catch (error) { body = {}; }
-          if (!response.ok) {
-            var requestError = workspaceRequestError(response.status, body);
-            if (response.status === 401) requestError.code = "auth_required";
-            else if (response.status === 403) requestError.code = "access_denied";
-            throw requestError;
-          }
-          return body;
-        });
-      })
-      .catch(function (error) {
-        if (error && (error.status || error.code === "auth_required" || error.code === "access_denied")) throw error;
-        var networkError = new Error("The workspace service could not be reached. Check your connection and try Refresh again.");
-        networkError.code = "network_failure";
-        networkError.cause = error;
-        throw networkError;
-      });
+    return fetch(path, Object.assign({ credentials: "same-origin", headers: { "Content-Type": "application/json" } }, options || {})).then(function (response) {
+      return response.text().then(function (raw) { var body = {}; try { body = raw ? JSON.parse(raw) : {}; } catch (error) {} if (!response.ok) { var requestError = workspaceRequestError(response.status, body); if (response.status === 401) requestError.code = "auth_required"; else if (response.status === 403) requestError.code = "access_denied"; throw requestError; } return body; });
+    }).catch(function (error) { if (error && (error.status || error.code === "auth_required" || error.code === "access_denied")) throw error; var networkError = new Error("The Studio service could not be reached. Check your connection and try again."); networkError.code = "network_failure"; networkError.cause = error; throw networkError; });
   }
-
-  function cacheWorkspaces() { write(KEYS.workspaceCache, workspaces); }
-
-  function backupPayload(workspace) {
-    var state = workspace && workspace.state ? workspace.state : stateForSave();
-    if (!state) return null;
-    return {
-      applicationId: "tpi-studioflow",
-      formatVersion: 1,
-      backupType: "workspace-configuration",
-      exportedAt: new Date().toISOString(),
-      workspace: {
-        title: text(workspace && workspace.title) || text(state.broadcast && state.broadcast.title) || "Untitled workspace",
-        description: text(workspace && workspace.description) || text(state.broadcast && state.broadcast.description) || "",
-        state: state
-      }
-    };
+  function configurationForSave() {
+    var configuration = {}; Object.keys(CONFIG_KEYS).forEach(function (name) { var raw = localStorage.getItem(CONFIG_KEYS[name]); if (raw === null) return; try { configuration[name] = JSON.parse(raw); } catch (error) { configuration[name] = raw; } }); return configuration;
   }
-
-  function downloadBackup(payload) {
-    if (!payload) {
-      setMessage("Select or create a StudioFlow broadcast before exporting.", true);
-      return;
-    }
-    var blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" });
-    var url = URL.createObjectURL(blob);
-    var anchor = document.createElement("a");
-    var slug = String(payload.workspace.title || "workspace").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "workspace";
-    anchor.href = url;
-    anchor.download = "tpi-studioflow-" + slug + "-backup.json";
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    URL.revokeObjectURL(url);
-    setMessage("Configuration backup downloaded. Recording files are not included.");
+  function stateForSave() {
+    var broadcast = activeBroadcast(); if (!broadcast) return null; var preferences = read(KEYS.preferences, {}) || {}; var storage = read(KEYS.storage, {}) || {}; var libraryItems = read("studioflow.libraryItems", []); var sessions = read("studioflow.recordingSessions", []);
+    return { broadcast: { id: text(broadcast.id), title: text(broadcast.title), description: text(broadcast.description), scheduledAt: text(broadcast.scheduledAt), visibility: text(broadcast.visibility), status: text(broadcast.status), tpiSync: broadcast.tpiSync ? { broadcastId: text(broadcast.tpiSync.broadcastId), revision: Number(broadcast.tpiSync.revision) || null, visibility: text(broadcast.tpiSync.visibility), syncState: text(broadcast.tpiSync.syncState), lastSyncedAt: text(broadcast.tpiSync.lastSyncedAt) } : null }, settings: { programOrientation: text(localStorage.getItem(CONFIG_KEYS.programOrientation)) || "landscape", recordingDestination: text(storage.mode || storage.destination || storage.storageMode) || "browser", keepLocalBackup: preferences.keepLocalBackup !== false, saveAutomatically: preferences.saveAutomatically === true, recordBackstageAutomatically: preferences.recordBackstageAutomatically === true, resumeBackstageAfterShow: preferences.resumeBackstageAfterShow === true }, recording: { localLibraryCount: Array.isArray(libraryItems) ? libraryItems.length : 0, incompleteSessionCount: Array.isArray(sessions) ? sessions.filter(function (item) { return item && item.status === "recording"; }).length : 0, storageMode: text(storage.mode || storage.destination || storage.storageMode) || "browser" }, configuration: configurationForSave() };
   }
-
-  function exportCurrent() { downloadBackup(backupPayload(null)); }
-
-  function exportWorkspace(workspace) {
-    downloadBackup(backupPayload(workspace));
+  function backupPayload(workspace) { var state = workspace && workspace.state ? workspace.state : stateForSave(); if (!state) return null; return { applicationId: "tpi-studioflow", formatVersion: 1, backupType: "workspace-configuration", exportedAt: new Date().toISOString(), workspace: { title: text(workspace && workspace.title) || text(state.broadcast && state.broadcast.title) || "Untitled Studio", description: text(workspace && workspace.description) || text(state.broadcast && state.broadcast.description) || "", state: state } }; }
+  function downloadBackup(payload) { if (!payload) { setMessage("Select or create a Studio before exporting.", true); return; } var blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" }); var url = URL.createObjectURL(blob); var anchor = document.createElement("a"); var slug = String(payload.workspace.title || "studio").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "studio"; anchor.href = url; anchor.download = "tpi-studioflow-" + slug + "-backup.json"; document.body.appendChild(anchor); anchor.click(); anchor.remove(); URL.revokeObjectURL(url); setMessage("Configuration backup downloaded. Recording files are not included."); }
+  function exportCurrent() { downloadBackup(backupPayload(selectedWorkspace)); }
+  function exportWorkspace(workspace) { downloadBackup(backupPayload(workspace)); }
+  function validateBackup(raw) { if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("The backup must be a JSON object."); if (raw.applicationId !== "tpi-studioflow" || raw.backupType !== "workspace-configuration") throw new Error("This file is not a supported StudioFlow workspace backup."); if (raw.formatVersion !== 1 || !raw.workspace || typeof raw.workspace !== "object" || !raw.workspace.state) throw new Error("This workspace backup version is not supported."); ["ownerId", "owner_id", "workspaceId", "workspace_id", "serverId", "server_id"].forEach(function (key) { if (Object.prototype.hasOwnProperty.call(raw, key) || Object.prototype.hasOwnProperty.call(raw.workspace, key)) throw new Error("Protected server ownership fields are not accepted in backups."); }); if (!text(raw.workspace.title).trim()) throw new Error("The backup is missing a Studio title."); return raw; }
+  function importBackupFile(file) { if (!file) return; if (file.size > 1024 * 1024) { setMessage("Backup files must be 1 MB or smaller.", true); return; } var reader = new FileReader(); reader.onload = function () { try { var backup = validateBackup(JSON.parse(String(reader.result || ""))); if (!window.confirm("Import this configuration as a new Studio? Existing workspaces and recordings will not be overwritten.")) return; var newId = "imported-" + uuid("studio"); var state = clone(backup.workspace.state); state.broadcast = state.broadcast && typeof state.broadcast === "object" ? state.broadcast : {}; state.broadcast.id = newId; delete state.broadcast.tpiSync; api("/api/studio/workspaces", { method: "POST", body: JSON.stringify({ localBroadcastId: newId, title: text(backup.workspace.title).slice(0, 180), description: text(backup.workspace.description).slice(0, 1000), state: state }) }).then(function () { setMessage("Studio configuration imported. No recording files were imported."); return refresh(); }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "The Studio backup could not be imported."), true); }); } catch (error) { setMessage(error && error.message ? error.message : "The Studio backup could not be read.", true); } }; reader.onerror = function () { setMessage("The Studio backup could not be read.", true); }; reader.readAsText(file); }
+  function fingerprint() { var state = stateForSave(); return state ? JSON.stringify(state) : ""; }
+  function cacheWorkspaces() { write(KEYS.workspaceCache, { active: workspaces, deleted: deletedWorkspaces, selectedId: selectedWorkspace && selectedWorkspace.id, cachedAt: new Date().toISOString() }); }
+  function selectedLabel(workspace) { return workspace ? "Studio " + (workspace.studioNumber || "—") + ": " + (workspace.title || "Untitled Studio") : "Select a Studio"; }
+  function closeMenus() { if (selectorMenu) selectorMenu.hidden = true; if (manageMenu) manageMenu.hidden = true; }
+  function button(label, action, className) { var item = document.createElement("button"); item.type = "button"; item.textContent = label; item.dataset.action = action; if (className) item.className = className; return item; }
+  function render() {
+    if (!panel) return; selector.textContent = selectedLabel(selectedWorkspace) + " ▾"; while (selectorMenu.firstChild) selectorMenu.removeChild(selectorMenu.firstChild);
+    workspaces.forEach(function (workspace) { var item = button(selectedLabel(workspace), "open"); item.dataset.workspaceId = workspace.id; item.className = workspace.id === (selectedWorkspace && selectedWorkspace.id) ? "selected" : ""; selectorMenu.appendChild(item); });
+    selectorMenu.appendChild(button("+ Create New Studio", "create", "create")); if (deletedWorkspaces.length) selectorMenu.appendChild(button("Recently Deleted Studios", "deleted", "secondary"));
+    while (manageMenu.firstChild) manageMenu.removeChild(manageMenu.firstChild); manageMenu.appendChild(button("Rename Studio", "rename")); manageMenu.appendChild(button("Duplicate Studio", "duplicate")); manageMenu.appendChild(button("Delete Studio", "delete", "danger")); if (selectedWorkspace) manageMenu.appendChild(button("Export Configuration", "export-selected")); cacheWorkspaces();
   }
-
-  function validateBackup(raw) {
-    if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("The backup must be a JSON object.");
-    if (raw.applicationId !== "tpi-studioflow" || raw.backupType !== "workspace-configuration") throw new Error("This file is not a supported StudioFlow workspace backup.");
-    if (raw.formatVersion !== 1) throw new Error("This workspace backup version is not supported.");
-    if (!raw.workspace || typeof raw.workspace !== "object" || Array.isArray(raw.workspace)) throw new Error("The backup is missing workspace data.");
-    if (!text(raw.workspace.title).trim()) throw new Error("The backup is missing a workspace title.");
-    if (!raw.workspace.state || typeof raw.workspace.state !== "object" || Array.isArray(raw.workspace.state)) throw new Error("The backup is missing supported workspace settings.");
-    ["ownerId", "owner_id", "workspaceId", "workspace_id", "serverId", "server_id"].forEach(function (key) {
-      if (Object.prototype.hasOwnProperty.call(raw, key) || Object.prototype.hasOwnProperty.call(raw.workspace, key)) throw new Error("Protected server ownership fields are not accepted in backups.");
-    });
-    return raw;
+  function showPrompt(title, initial, callback) { var value = window.prompt(title, initial || ""); if (value !== null && text(value).trim()) callback(text(value).trim().slice(0, 180)); }
+  function canChangeStudio() { if (productionLock()) { setMessage("Studio switching is unavailable while a recording or livestream is active. Finish the production before switching Studios.", true); return false; } return true; }
+  function applyState(saved) {
+    var state = saved && saved.state ? saved.state : saved || {}; var broadcast = state.broadcast || {}; var broadcasts = read(KEYS.broadcasts, []); if (!Array.isArray(broadcasts)) broadcasts = [];
+    var restored = broadcasts.find(function (item) { return item && item.id === (saved.localBroadcastId || broadcast.id); }); if (!restored) { restored = { id: saved.localBroadcastId || broadcast.id || uuid("studio"), kind: "live" }; broadcasts.push(restored); }
+    restored.title = broadcast.title || saved.title || restored.title || "Untitled Studio"; restored.description = broadcast.description || saved.description || restored.description || ""; if (broadcast.status) restored.status = broadcast.status; restored.scheduledAt = broadcast.scheduledAt || null; write(KEYS.broadcasts, broadcasts); localStorage.setItem(KEYS.active, restored.id);
+    var settings = state.settings || {}; if (settings.programOrientation) localStorage.setItem(CONFIG_KEYS.programOrientation, settings.programOrientation); write(KEYS.preferences, Object.assign(read(KEYS.preferences, {}) || {}, { keepLocalBackup: settings.keepLocalBackup !== false, saveAutomatically: settings.saveAutomatically === true, recordBackstageAutomatically: settings.recordBackstageAutomatically === true, resumeBackstageAfterShow: settings.resumeBackstageAfterShow === true }));
+    Object.keys(CONFIG_KEYS).forEach(function (name) { if (state.configuration && state.configuration[name] !== undefined) write(CONFIG_KEYS[name], state.configuration[name]); }); localStorage.setItem(KEYS.activeStudio, saved.id); window.dispatchEvent(new Event("storage"));
   }
-
-  function importBackupFile(file) {
-    if (!file) return;
-    if (file.size > 1024 * 1024) {
-      setMessage("Backup files must be 1 MB or smaller.", true);
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function () {
-      try {
-        var backup = validateBackup(JSON.parse(String(reader.result || "")));
-        if (!window.confirm("Import this configuration as a new workspace? Existing workspaces and recordings will not be overwritten.")) return;
-        var newId = "imported-" + (window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now()));
-        var state = JSON.parse(JSON.stringify(backup.workspace.state));
-        state.broadcast = state.broadcast && typeof state.broadcast === "object" ? state.broadcast : {};
-        state.broadcast.id = newId;
-        delete state.broadcast.tpiSync;
-        api("/api/studio/workspaces", {
-          method: "POST",
-          body: JSON.stringify({
-            localBroadcastId: newId,
-            title: text(backup.workspace.title).slice(0, 180),
-            description: text(backup.workspace.description).slice(0, 1000),
-            state: state
-          })
-        }).then(function () {
-          setMessage("Workspace configuration imported as a new workspace. No recording files were imported.");
-          return refresh();
-        }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "The imported workspace could not be saved."), true); });
-      } catch (error) {
-        setMessage(error && error.message ? error.message : "The workspace backup could not be read.", true);
-      }
-    };
-    reader.onerror = function () { setMessage("The workspace backup could not be read.", true); };
-    reader.readAsText(file);
+  function selectWorkspace(workspace, reload) { if (!workspace || !canChangeStudio()) return; selectedWorkspace = workspace; localStorage.setItem(KEYS.activeStudio, workspace.id); render(); api("/api/studio/workspaces/" + encodeURIComponent(workspace.id)).then(function (body) { selectedWorkspace = body.workspace || workspace; applyState(selectedWorkspace); lastSavedFingerprint = fingerprint(); setMessage("Saved"); if (reload) window.setTimeout(function () { window.location.reload(); }, 250); }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Studio could not be opened."), true); }); }
+  function createStudio(title, sourceState) { var state = sourceState || stateForSave() || { broadcast: { id: uuid("studio"), title: title || "Untitled Studio", status: "draft" }, configuration: configurationForSave() }; var id = uuid("studio"); state = clone(state); state.broadcast = state.broadcast || {}; state.broadcast.id = id; state.broadcast.title = title || state.broadcast.title || "Untitled Studio"; state.broadcast.status = "draft"; return api("/api/studio/workspaces", { method: "POST", body: JSON.stringify({ localBroadcastId: id, title: text(state.broadcast.title).slice(0, 180), description: text(state.broadcast.description).slice(0, 1000), state: state }) }).then(function (body) { selectedWorkspace = body.workspace; localStorage.setItem(KEYS.activeStudio, selectedWorkspace.id); setMessage("Studio created and saved."); return refresh().then(function () { selectWorkspace(selectedWorkspace, true); }); }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Studio could not be created."), true); }); }
+  function saveCurrent(options) {
+    options = options || {}; var state = stateForSave(); if (!state || !selectedWorkspace) { if (options.manual) setMessage("Select or create a Studio before saving.", true); return Promise.resolve(false); } var current = fingerprint(); if (!options.force && current === lastSavedFingerprint) return Promise.resolve(true); if (saveInFlight) { saveAgain = true; return Promise.resolve(false); }
+    saveInFlight = true; setMessage("Saving"); var body = { title: state.broadcast.title || selectedWorkspace.title || "Untitled Studio", description: state.broadcast.description || "", state: state, expectedVersion: selectedWorkspace.version }; var existing = selectedWorkspace; var request = api("/api/studio/workspaces/" + encodeURIComponent(selectedWorkspace.id), { method: "PATCH", body: JSON.stringify(body) });
+    return request.then(function () { var response = arguments[0]; selectedWorkspace = response.workspace || selectedWorkspace; lastSavedFingerprint = current; workspaces = workspaces.map(function (item) { return item.id === selectedWorkspace.id ? selectedWorkspace : item; }); setMessage(existing ? "Workspace saved." : "Workspace saved for this account."); render(); return true; }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Unable to Save. Your local changes remain in StudioFlow."), true); if (error.body && error.body.workspace) selectedWorkspace = error.body.workspace; return false; }).finally(function () { saveInFlight = false; if (saveAgain) { saveAgain = false; scheduleAutosave(); } });
   }
-
-  function renderList() {
-    if (!list) return;
-    while (list.firstChild) list.removeChild(list.firstChild);
-    if (!workspaces.length) {
-      var empty = document.createElement("div");
-      empty.className = "tpi-ws-empty";
-      empty.textContent = "No saved workspaces yet.";
-      list.appendChild(empty);
-      return;
-    }
-    workspaces.forEach(function (workspace) {
-      var row = document.createElement("div");
-      row.className = "tpi-ws-row" + (workspace.status === "archived" ? " archived" : "");
-      var name = document.createElement("div");
-      name.className = "tpi-ws-name";
-      name.textContent = workspace.title || workspace.localBroadcastId;
-      var meta = document.createElement("div");
-      meta.className = "tpi-ws-meta";
-      meta.textContent = workspace.status === "archived" ? "Archived" : "Saved locally + server metadata";
-      var actions = document.createElement("div");
-      actions.className = "tpi-ws-actions";
-      if (workspace.status !== "archived") {
-        var open = document.createElement("button");
-        open.type = "button";
-        open.textContent = "Open";
-        open.addEventListener("click", function () { openWorkspace(workspace); });
-        actions.appendChild(open);
-        var archive = document.createElement("button");
-        archive.type = "button";
-        archive.textContent = "Archive";
-        archive.addEventListener("click", function () { archiveWorkspace(workspace); });
-        actions.appendChild(archive);
-      }
-      var exportButton = document.createElement("button");
-      exportButton.type = "button";
-      exportButton.textContent = "Export";
-      exportButton.addEventListener("click", function () { exportWorkspace(workspace); });
-      actions.appendChild(exportButton);
-      row.appendChild(name);
-      row.appendChild(meta);
-      row.appendChild(actions);
-      list.appendChild(row);
-    });
-  }
-
-  function refresh() {
-    return api("/api/studio/workspaces?includeArchived=true").then(function (body) {
-      workspaces = Array.isArray(body.workspaces) ? body.workspaces : [];
-      cacheWorkspaces();
-      renderList();
-      setMessage("Workspace list refreshed.");
-    }).catch(function (error) {
-      setMessage(describeWorkspaceFailure(error, "Saved workspaces could not be refreshed."), true);
-    });
-  }
-
-  function saveCurrent() {
-    var state = stateForSave();
-    if (!state) {
-      setMessage("Select or create a StudioFlow broadcast before saving.", true);
-      return;
-    }
-    var id = state.broadcast.id;
-    var existing = workspaces.find(function (workspace) { return workspace.localBroadcastId === id; });
-    var body = JSON.stringify({
-      localBroadcastId: id,
-      title: state.broadcast.title || "Untitled workspace",
-      description: state.broadcast.description || "",
-      state: state,
-      expectedVersion: existing ? existing.version : undefined
-    });
-    var request = existing ? api("/api/studio/workspaces/" + encodeURIComponent(existing.id), { method: "PATCH", body: body }) : api("/api/studio/workspaces", { method: "POST", body: body });
-    request.then(function () {
-      setMessage(existing ? "Workspace saved." : "Workspace saved for this account.");
-      return refresh();
-    }).catch(function (error) {
-      setMessage(describeWorkspaceFailure(error, "Workspace could not be saved. No success was recorded."), true);
-      if (error.body && error.body.workspace) {
-        workspaces = workspaces.map(function (item) { return item.id === error.body.workspace.id ? error.body.workspace : item; });
-        renderList();
-      }
-    });
-  }
-
-  function openWorkspace(workspace) {
-    api("/api/studio/workspaces/" + encodeURIComponent(workspace.id)).then(function (body) {
-      var saved = body.workspace;
-      var state = saved.state || {};
-      var broadcast = state.broadcast || {};
-      var broadcasts = read(KEYS.broadcasts, []);
-      if (!Array.isArray(broadcasts)) broadcasts = [];
-      var restored = broadcasts.find(function (item) { return item && item.id === saved.localBroadcastId; });
-      if (!restored) {
-        restored = { id: saved.localBroadcastId, kind: "live", title: saved.title, description: saved.description || "", status: broadcast.status || "draft" };
-        broadcasts.push(restored);
-      } else {
-        restored.title = broadcast.title || saved.title;
-        restored.description = broadcast.description || saved.description || "";
-        if (broadcast.status) restored.status = broadcast.status;
-      }
-      write(KEYS.broadcasts, broadcasts);
-      localStorage.setItem(KEYS.active, saved.localBroadcastId);
-      var settings = state.settings || {};
-      if (settings.programOrientation) localStorage.setItem(KEYS.orientation, settings.programOrientation);
-      write(KEYS.preferences, Object.assign(read(KEYS.preferences, {}) || {}, {
-        keepLocalBackup: settings.keepLocalBackup !== false,
-        saveAutomatically: settings.saveAutomatically === true,
-        recordBackstageAutomatically: settings.recordBackstageAutomatically === true,
-        resumeBackstageAfterShow: settings.resumeBackstageAfterShow === true
-      }));
-      setMessage("Workspace restored. Browser recordings were left in place.");
-      window.setTimeout(function () { window.location.reload(); }, 350);
-    }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Workspace could not be restored."), true); });
-  }
-
-  function archiveWorkspace(workspace) {
-    if (!window.confirm("Archive this workspace? Its browser recordings will remain untouched.")) return;
-    api("/api/studio/workspaces/" + encodeURIComponent(workspace.id) + "/archive", { method: "POST", body: JSON.stringify({ expectedVersion: workspace.version }) })
-      .then(function () { setMessage("Workspace archived. Recordings were not deleted."); return refresh(); })
-      .catch(function (error) { setMessage(describeWorkspaceFailure(error, "Workspace could not be archived."), true); });
-  }
-
-  function inject() {
-    if (panel || !document.body) return;
-    panel = document.createElement("aside");
-    panel.id = "tpi-workspace-bridge";
-    panel.innerHTML = "<div class=\"tpi-ws-header\"><strong>Saved Workspaces</strong><button type=\"button\" class=\"tpi-ws-close\" aria-label=\"Close saved workspaces\">×</button></div><div class=\"tpi-ws-help\"><strong>Configuration only.</strong> Save syncs supported StudioFlow settings to your account when backend support is available. Export downloads a local configuration backup. Import loads one as a new workspace. Refresh reloads your account's saved list. Recording files remain in Browser Storage until you download them separately; they are never included in workspace saves.</div><div class=\"tpi-ws-toolbar\"><button type=\"button\" data-action=\"save\">Save Workspace</button><button type=\"button\" data-action=\"export\">Export Workspace</button><button type=\"button\" data-action=\"import\">Import Workspace</button><button type=\"button\" data-action=\"refresh\">Refresh</button><input type=\"file\" data-action=\"file\" accept=\"application/json,.json\" hidden></div><div class=\"tpi-ws-message\" role=\"status\"></div><div class=\"tpi-ws-list\"></div>";
-    document.body.appendChild(panel);
-    list = panel.querySelector(".tpi-ws-list");
-    message = panel.querySelector(".tpi-ws-message");
-    panel.querySelector("[data-action=save]").addEventListener("click", saveCurrent);
-    panel.querySelector("[data-action=export]").addEventListener("click", exportCurrent);
-    panel.querySelector("[data-action=import]").addEventListener("click", function () { panel.querySelector("[data-action=file]").click(); });
-    panel.querySelector("[data-action=file]").addEventListener("change", function (event) { importBackupFile(event.target.files && event.target.files[0]); event.target.value = ""; });
-    panel.querySelector("[data-action=refresh]").addEventListener("click", refresh);
-    panel.querySelector(".tpi-ws-close").addEventListener("click", function () { panel.classList.toggle("collapsed"); });
-    renderList();
-    refresh();
-  }
-
-  function start() {
-    api("/api/auth/me").then(function (body) {
-      if (body && body.user && body.user.creatorStudioAccess === true) inject();
-    }).catch(function () {});
-  }
-
-  var style = document.createElement("style");
-  style.textContent = "#tpi-workspace-bridge{position:fixed;z-index:2147483000;right:18px;bottom:18px;width:340px;max-height:70vh;overflow:auto;background:var(--panel,#1e2630);color:var(--text,#f2f7f3);border:1px solid var(--line,#34404a);border-radius:12px;box-shadow:0 16px 44px rgba(0,0,0,.35);padding:14px;font:13px/1.4 system-ui,sans-serif}#tpi-workspace-bridge.collapsed{width:auto;max-height:none}#tpi-workspace-bridge.collapsed>*:not(.tpi-ws-header){display:none}.tpi-ws-header{display:flex;justify-content:space-between;align-items:center;font-size:14px}.tpi-ws-close,.tpi-ws-actions button,#tpi-workspace-bridge .tpi-ws-toolbar button{border:1px solid var(--line,#34404a);border-radius:7px;background:var(--panel-2,#323d38);color:inherit;padding:6px 9px;cursor:pointer}.tpi-ws-close{font-size:18px;line-height:1}.tpi-ws-help{color:var(--muted,#9ba8a0);margin:8px 0}.tpi-ws-toolbar{display:flex;gap:7px;margin:8px 0}.tpi-ws-message{min-height:19px;color:var(--blue,#4bb263);margin:4px 0}.tpi-ws-message.error{color:#ff9d9d}.tpi-ws-row{border-top:1px solid var(--line,#34404a);padding:9px 0}.tpi-ws-row.archived{opacity:.7}.tpi-ws-name{font-weight:650}.tpi-ws-meta{color:var(--muted,#9ba8a0);font-size:11px;margin:2px 0 7px}.tpi-ws-actions{display:flex;gap:6px}.tpi-ws-empty{color:var(--muted,#9ba8a0);padding:10px 0}";
-  document.head.appendChild(style);
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+  function scheduleAutosave() { if (!selectedWorkspace || productionLock()) return; window.clearTimeout(saveTimer); setMessage("Saving"); saveTimer = window.setTimeout(function () { saveCurrent({ force: false }); }, 700); }
+  function openWorkspace(workspace) { if (!canChangeStudio()) return; saveCurrent({ force: true }).then(function () { selectWorkspace(workspace, true); }); }
+  function archiveWorkspace(workspace) { deleteWorkspace(workspace); }
+  function renameWorkspace() { if (!selectedWorkspace) return; showPrompt("Rename Studio", selectedWorkspace.title, function (title) { saveCurrent({ force: true }).then(function () { api("/api/studio/workspaces/" + encodeURIComponent(selectedWorkspace.id), { method: "PATCH", body: JSON.stringify({ title: title, expectedVersion: selectedWorkspace.version }) }).then(function (body) { selectedWorkspace = body.workspace; workspaces = workspaces.map(function (item) { return item.id === selectedWorkspace.id ? selectedWorkspace : item; }); setMessage("Studio renamed and saved."); render(); }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Studio could not be renamed."), true); }); }); }); }
+  function duplicateWorkspace() { if (!selectedWorkspace || !canChangeStudio()) return; api("/api/studio/workspaces/" + encodeURIComponent(selectedWorkspace.id) + "/duplicate", { method: "POST", body: JSON.stringify({}) }).then(function (body) { setMessage("Studio duplicated as " + selectedLabel(body.workspace) + "."); return refresh().then(function () { selectWorkspace(body.workspace, true); }); }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Studio could not be duplicated."), true); }); }
+  function deleteWorkspace(workspace) { if (!workspace || !canChangeStudio()) return; if (!window.confirm("Delete " + selectedLabel(workspace) + "? Recordings and media will not be deleted. You can recover the Studio from Recently Deleted.")) return; api("/api/studio/workspaces/" + encodeURIComponent(workspace.id) + "/delete", { method: "POST", body: JSON.stringify({ expectedVersion: workspace.version }) }).then(function () { setMessage("Studio deleted. Recordings were not deleted."); selectedWorkspace = null; return refresh(); }).then(function () { if (workspaces[0]) selectWorkspace(workspaces[0], true); else render(); }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Studio could not be deleted."), true); }); }
+  function restoreWorkspace(workspace) { api("/api/studio/workspaces/" + encodeURIComponent(workspace.id) + "/restore", { method: "POST", body: JSON.stringify({ expectedVersion: workspace.version }) }).then(function (body) { setMessage("Studio restored."); return refresh().then(function () { selectWorkspace(body.workspace, true); }); }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "Studio could not be restored."), true); }); }
+  function renderDeleted() { while (selectorMenu.firstChild) selectorMenu.removeChild(selectorMenu.firstChild); if (!deletedWorkspaces.length) { selectorMenu.appendChild(button("No recently deleted Studios", "noop", "secondary")); return; } deletedWorkspaces.forEach(function (workspace) { var row = document.createElement("div"); row.className = "tpi-deleted-studio-row"; var label = document.createElement("span"); label.textContent = selectedLabel(workspace); row.appendChild(label); var restore = button("Restore", "restore"); restore.dataset.workspaceId = workspace.id; row.appendChild(restore); selectorMenu.appendChild(row); }); selectorMenu.appendChild(button("Back to Studios", "back", "secondary")); }
+  function refresh() { return Promise.all([api("/api/studio/workspaces"), api("/api/studio/workspaces?includeDeleted=true")]).then(function (responses) { workspaces = Array.isArray(responses[0].workspaces) ? responses[0].workspaces : []; deletedWorkspaces = Array.isArray(responses[1].workspaces) ? responses[1].workspaces : []; var remembered = text(localStorage.getItem(KEYS.activeStudio)); var activeId = text(localStorage.getItem(KEYS.active)); selectedWorkspace = workspaces.find(function (item) { return item.id === remembered; }) || workspaces.find(function (item) { return item.localBroadcastId === activeId; }) || workspaces[0] || null; if (selectedWorkspace) localStorage.setItem(KEYS.activeStudio, selectedWorkspace.id); cacheWorkspaces(); render(); if (selectedWorkspace && !lastSavedFingerprint) setMessage("Saved"); else if (!selectedWorkspace) setMessage("Create a Studio to save your production configuration."); return responses; }).catch(function (error) { setMessage(describeWorkspaceFailure(error, "My Studios could not be refreshed."), true); throw error; }); }
+  function handleAction(event) { var target = event.target.closest("button"); if (!target) return; var action = target.dataset.action; var workspace = workspaces.find(function (item) { return item.id === target.dataset.workspaceId; }) || deletedWorkspaces.find(function (item) { return item.id === target.dataset.workspaceId; }); if (action === "open") { closeMenus(); openWorkspace(workspace); } else if (action === "create") { closeMenus(); showPrompt("Create Studio", "New Studio", function (title) { createStudio(title); }); } else if (action === "deleted") renderDeleted(); else if (action === "restore") restoreWorkspace(workspace); else if (action === "back") render(); else if (action === "rename") { closeMenus(); renameWorkspace(); } else if (action === "duplicate") { closeMenus(); duplicateWorkspace(); } else if (action === "delete") { closeMenus(); deleteWorkspace(selectedWorkspace); } else if (action === "export-selected") { closeMenus(); exportWorkspace(selectedWorkspace); } else if (action === "export") exportCurrent(); else if (action === "save") saveCurrent({ force: true, manual: true }); else if (action === "refresh") refresh(); }
+  function injectIntoAssetPanel() { if (panel) return true; var host = document.querySelector(".asset-panel"); if (!host) return false; panel = document.createElement("section"); panel.id = "tpi-my-studios-panel"; panel.className = "tpi-my-studios-panel"; panel.innerHTML = "<div class=\"tpi-studios-heading\"><strong>MY STUDIOS</strong><span class=\"tpi-studios-scope\">Private</span></div><div class=\"tpi-studio-picker\"><button type=\"button\" class=\"tpi-studio-selector\" aria-haspopup=\"listbox\"></button><button type=\"button\" class=\"tpi-studio-manage\" aria-label=\"Manage Studio\">⋯</button></div><div class=\"tpi-studio-menu\" hidden></div><div class=\"tpi-studio-manage-menu\" hidden></div><div class=\"tpi-studio-status\" role=\"status\"></div><div class=\"tpi-studio-help\"><strong>Configuration only.</strong> Autosave syncs supported StudioFlow settings to your account. Recording files remain in Browser Storage and are never included in workspace saves.</div><div class=\"tpi-studio-tools\"><button type=\"button\" data-action=\"save\" aria-label=\"Save Workspace configuration\">Save</button><button type=\"button\" data-action=\"export\">Export</button><button type=\"button\" data-action=\"import\">Import</button><button type=\"button\" data-action=\"refresh\">Refresh</button><input type=\"file\" data-action=\"file\" accept=\"application/json,.json\" hidden></div>"; var brand = host.querySelector(".brand-row"); host.insertBefore(panel, brand || host.firstChild); selector = panel.querySelector(".tpi-studio-selector"); selectorMenu = panel.querySelector(".tpi-studio-menu"); manageMenu = panel.querySelector(".tpi-studio-manage-menu"); message = panel.querySelector(".tpi-studio-status"); selector.addEventListener("click", function () { manageMenu.hidden = true; selectorMenu.hidden = !selectorMenu.hidden; }); panel.querySelector(".tpi-studio-manage").addEventListener("click", function () { selectorMenu.hidden = true; manageMenu.hidden = !manageMenu.hidden; }); panel.addEventListener("click", handleAction); panel.querySelector("[data-action=import]").addEventListener("click", function () { panel.querySelector("[data-action=file]").click(); }); panel.querySelector("[data-action=file]").addEventListener("change", function (event) { importBackupFile(event.target.files && event.target.files[0]); event.target.value = ""; }); document.addEventListener("click", function (event) { if (panel && !panel.contains(event.target)) closeMenus(); }); render(); refresh(); return true; }
+  function broadcastProductionState() { try { if (channel) channel.postMessage({ type: "tpi-studio-production-state", locked: currentProductionStatus().locked }); } catch (error) {} }
+  function start() { api("/api/auth/me").then(function (body) { if (!body || !body.user || body.user.creatorStudioAccess === true) { if (!body || !body.user || body.user.creatorStudioAccess !== true) return; } else return; var attempts = 0; var timer = window.setInterval(function () { attempts += 1; if (injectIntoAssetPanel() || attempts > 50) window.clearInterval(timer); }, 200); injectIntoAssetPanel(); try { channel = new BroadcastChannel("tpi-studio-production"); channel.onmessage = function (event) { if (event.data && event.data.type === "tpi-studio-production-state") remoteProductionLock = event.data.locked === true; }; } catch (error) { channel = null; } window.setInterval(function () { broadcastProductionState(); if (selectedWorkspace && !productionLock()) { var current = fingerprint(); if (current && current !== lastSavedFingerprint) scheduleAutosave(); } }, 1000); window.addEventListener("storage", function () { if (!productionLock()) scheduleAutosave(); }); window.addEventListener("beforeunload", function (event) { if (currentProductionStatus().locked) { event.preventDefault(); event.returnValue = "StudioFlow is still recording or livestreaming."; } }); }).catch(function () {}); }
+  var style = document.createElement("style"); style.textContent = ".tpi-my-studios-panel{margin:0 0 12px;padding:10px;border:1px solid color-mix(in srgb,var(--line,#34404a) 80%,transparent);border-radius:10px;background:color-mix(in srgb,var(--panel,#1e2630) 92%,transparent);color:var(--text,#f2f7f3);font:12px/1.35 system-ui,sans-serif}.tpi-studios-heading,.tpi-studio-picker{display:flex;align-items:center;justify-content:space-between;gap:6px}.tpi-studios-heading{font-size:11px;letter-spacing:.08em}.tpi-studios-scope{font-size:10px;letter-spacing:0;color:var(--muted,#9ba8a0)}.tpi-studio-picker{margin-top:7px}.tpi-studio-selector,.tpi-studio-manage,.tpi-studio-menu button,.tpi-studio-manage-menu button,.tpi-studio-tools button{border:1px solid var(--line,#34404a);border-radius:7px;background:var(--panel-2,#323d38);color:inherit;padding:6px 8px;cursor:pointer}.tpi-studio-selector{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tpi-studio-manage{font-size:17px;line-height:14px;padding:5px 8px}.tpi-studio-menu,.tpi-studio-manage-menu{display:grid;gap:5px;margin-top:6px;padding:6px;border:1px solid var(--line,#34404a);border-radius:8px;background:var(--panel-2,#323d38)}.tpi-studio-menu[hidden],.tpi-studio-manage-menu[hidden]{display:none}.tpi-studio-menu button,.tpi-studio-manage-menu button{text-align:left;background:transparent}.tpi-studio-menu button.selected{outline:1px solid var(--accent,#4bb263)}.tpi-studio-menu .create{color:var(--accent,#65d47a)}.tpi-studio-manage-menu .danger{color:#ff9d9d}.tpi-studio-menu .secondary{color:var(--muted,#9ba8a0)}.tpi-deleted-studio-row{display:flex;align-items:center;justify-content:space-between;gap:6px;color:var(--muted,#9ba8a0)}.tpi-deleted-studio-row button{padding:4px 6px}.tpi-studio-status{min-height:16px;margin-top:7px;color:var(--accent,#65d47a);font-size:11px}.tpi-studio-status.error{color:#ff9d9d}.tpi-studio-help{margin-top:5px;color:var(--muted,#9ba8a0);font-size:10px}.tpi-studio-tools{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.tpi-studio-tools button{font-size:11px;padding:5px 7px}@media(max-width:720px){.tpi-my-studios-panel{margin:8px}.tpi-studio-tools button{flex:1}}"; document.head.appendChild(style); if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();

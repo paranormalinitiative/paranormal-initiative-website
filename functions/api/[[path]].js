@@ -152,6 +152,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/studio/workspaces") return requireStudioAccess(request, env, user => handleCreateStudioWorkspace(request, env, user));
     if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+$/)) return requireStudioAccess(request, env, user => handleGetStudioWorkspace(path, request, env, user));
     if ((request.method === "PUT" || request.method === "PATCH") && path.match(/^\/studio\/workspaces\/[^/]+$/)) return requireStudioAccess(request, env, user => handleUpdateStudioWorkspace(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/duplicate$/)) return requireStudioAccess(request, env, user => handleDuplicateStudioWorkspace(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/delete$/)) return requireStudioAccess(request, env, user => handleDeleteStudioWorkspace(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/restore$/)) return requireStudioAccess(request, env, user => handleRestoreStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/archive$/)) return requireStudioAccess(request, env, user => handleArchiveStudioWorkspace(path, request, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
@@ -4520,6 +4523,63 @@ function workspacePathId(path, suffix = "") {
   return clean(decodeURIComponent(raw));
 }
 
+function normalizeStudioConfiguration(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const style = source.styleSettings && typeof source.styleSettings === "object" ? source.styleSettings : {};
+  const widgets = source.widgetSettings && typeof source.widgetSettings === "object" ? source.widgetSettings : {};
+  const general = source.generalSettings && typeof source.generalSettings === "object" ? source.generalSettings : {};
+  const guest = source.guestPermissionSettings && typeof source.guestPermissionSettings === "object" ? source.guestPermissionSettings : {};
+  const scenes = Array.isArray(source.studioScenes) ? source.studioScenes.slice(0, 50).map((scene, index) => ({
+    id: clean(scene && scene.id).slice(0, 100) || `scene-${index + 1}`,
+    kind: clean(scene && scene.kind).slice(0, 40) || "scene",
+    title: cleanVideoText(scene && scene.title || `Scene ${index + 1}`, 120),
+    layout: cleanVideoText(scene && scene.layout || "Speaker view", 80)
+  })) : [];
+  const accentColor = clean(style.accentColor);
+  const ticker = source.bannerScrollTicker && typeof source.bannerScrollTicker === "object" ? source.bannerScrollTicker : {};
+  return {
+    selectedBackground: clean(source.selectedBackground).slice(0, 100) || "default",
+    activeSceneId: clean(source.activeSceneId).slice(0, 100) || null,
+    showLogo: source.showLogo !== false,
+    logoPlacement: ["top-left", "top-right", "bottom-left", "bottom-right"].includes(clean(source.logoPlacement)) ? clean(source.logoPlacement) : "top-right",
+    styleSettings: {
+      accentColor: /^#[0-9a-f]{6}$/i.test(accentColor) ? accentColor : "#1266e3",
+      brandPreset: clean(style.brandPreset).slice(0, 40) || "studioflow",
+      cameraFallbackStyle: clean(style.cameraFallbackStyle).slice(0, 40) || "standard",
+      fontFamily: clean(style.fontFamily).slice(0, 80) || "theme",
+      nameplateStyle: clean(style.nameplateStyle).slice(0, 40) || "rounded",
+      roundedCorners: style.roundedCorners !== false,
+      showDisplayNames: style.showDisplayNames !== false,
+      showHeadlines: style.showHeadlines !== false,
+      textSize: clean(style.textSize).slice(0, 30) || "default",
+      theme: clean(style.theme).slice(0, 30) || "bubble"
+    },
+    widgetSettings: {
+      showClock: widgets.showClock === true,
+      showElapsed: widgets.showElapsed === true,
+      showCountdown: widgets.showCountdown === true,
+      placement: clean(widgets.placement).slice(0, 30) || "bottom-right"
+    },
+    generalSettings: {
+      resolution: ["720p", "1080p", "2160p"].includes(clean(general.resolution)) ? clean(general.resolution) : "1080p",
+      orientation: ["landscape", "portrait", "square"].includes(clean(general.orientation)) ? clean(general.orientation) : "landscape"
+    },
+    guestPermissionSettings: {
+      canStreamToOwnDestination: guest.canStreamToOwnDestination === true,
+      canSeeViewerComments: guest.canSeeViewerComments !== false,
+      playEntrySound: guest.playEntrySound !== false,
+      mustAuthenticate: guest.mustAuthenticate === true,
+      canControlSlides: guest.canControlSlides === true
+    },
+    studioScenes: scenes,
+    bannerScrollTicker: {
+      enabled: ticker.enabled === true,
+      text: cleanVideoText(ticker.text || "", 300),
+      position: clean(ticker.position).slice(0, 30) || "bottom"
+    }
+  };
+}
+
 function normalizeStudioWorkspaceState(value) {
   const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
   const rawBroadcast = source.broadcast && typeof source.broadcast === "object" ? source.broadcast : {};
@@ -4532,7 +4592,7 @@ function normalizeStudioWorkspaceState(value) {
     description: cleanVideoText(rawBroadcast.description || "", 1000),
     scheduledAt: scheduled.error ? null : scheduled.value,
     visibility: normalizeBroadcastVisibility(clean(rawBroadcast.visibility), "private"),
-    status: ["draft", "ready", "upcoming", "live", "ended", "cancelled"].includes(clean(rawBroadcast.status)) ? clean(rawBroadcast.status) : "draft",
+    status: ["draft", "ready", "upcoming", "live", "recording", "stopping", "finalizing", "recovery", "ended", "cancelled"].includes(clean(rawBroadcast.status)) ? clean(rawBroadcast.status) : "draft",
     tpiSync: rawBroadcast.tpiSync && typeof rawBroadcast.tpiSync === "object" ? {
       broadcastId: cleanBroadcastId(rawBroadcast.tpiSync.broadcastId),
       revision: Number.isInteger(Number(rawBroadcast.tpiSync.revision)) && Number(rawBroadcast.tpiSync.revision) > 0 ? Number(rawBroadcast.tpiSync.revision) : null,
@@ -4554,7 +4614,7 @@ function normalizeStudioWorkspaceState(value) {
     incompleteSessionCount: Number.isInteger(Number(rawRecording.incompleteSessionCount)) && Number(rawRecording.incompleteSessionCount) >= 0 ? Math.min(Number(rawRecording.incompleteSessionCount), 10000) : 0,
     storageMode: ["browser", "folder"].includes(clean(rawRecording.storageMode)) ? clean(rawRecording.storageMode) : "browser"
   };
-  const normalized = { broadcast, settings, recording };
+  const normalized = { broadcast, settings, recording, configuration: normalizeStudioConfiguration(source.configuration) };
   const serialized = JSON.stringify(normalized);
   const bytes = typeof TextEncoder === "function" ? new TextEncoder().encode(serialized).length : serialized.length;
   if (bytes > STUDIO_WORKSPACE_MAX_STATE_BYTES) return { error: "Workspace state is too large to save." };
@@ -4583,6 +4643,8 @@ function studioWorkspacePayload(row) {
     description: row.description || "",
     workspaceType: row.workspace_type,
     status: row.status,
+    studioNumber: Number(row.studio_number || 0) || null,
+    deletedAt: row.deleted_at || null,
     state: safeJsonParse(row.state_json) || {},
     version: Number(row.version || 1),
     lastOpenedAt: row.last_opened_at || null,
@@ -4594,7 +4656,7 @@ function studioWorkspacePayload(row) {
 async function getOwnedStudioWorkspace(env, id, userId) {
   return env.TPI_DB.prepare(`
     SELECT id, owner_id, channel_id, room_id, local_broadcast_id, title, description,
-           workspace_type, status, state_json, version, last_opened_at, created_at, updated_at
+           workspace_type, status, studio_number, deleted_at, state_json, version, last_opened_at, created_at, updated_at
     FROM studio_workspaces
     WHERE id = ? AND owner_id = ?
     LIMIT 1
@@ -4605,11 +4667,13 @@ async function handleListStudioWorkspaces(request, env, user) {
   try {
     const url = new URL(request.url);
     const includeArchived = url.searchParams.get("includeArchived") === "1" || url.searchParams.get("includeArchived") === "true";
+    const includeDeleted = url.searchParams.get("includeDeleted") === "1" || url.searchParams.get("includeDeleted") === "true";
+    const statusFilter = includeDeleted ? "AND deleted_at IS NOT NULL" : includeArchived ? "AND deleted_at IS NULL AND status = 'archived'" : "AND deleted_at IS NULL AND status = 'active'";
     const { results } = await env.TPI_DB.prepare(`
     SELECT id, owner_id, channel_id, room_id, local_broadcast_id, title, description,
-           workspace_type, status, state_json, version, last_opened_at, created_at, updated_at
+           workspace_type, status, studio_number, deleted_at, state_json, version, last_opened_at, created_at, updated_at
     FROM studio_workspaces
-    WHERE owner_id = ? ${includeArchived ? "" : "AND status = 'active'"}
+    WHERE owner_id = ? ${statusFilter}
     ORDER BY updated_at DESC
     LIMIT 50
     `).bind(user.id).all();
@@ -4638,13 +4702,123 @@ async function handleCreateStudioWorkspace(request, env, user) {
   const channel = await env.TPI_DB.prepare("SELECT id FROM tpi_video_channels WHERE owner_id = ? LIMIT 1").bind(user.id).first();
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
+  const studioNumber = await allocateStudioNumber(env, user.id);
   await env.TPI_DB.prepare(`
     INSERT INTO studio_workspaces
-      (id, owner_id, channel_id, local_broadcast_id, title, description, workspace_type, status, state_json, version, last_opened_at, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, 'broadcast', 'active', ?, 1, ?, ?, ?)
-  `).bind(id, user.id, channel?.id || null, localBroadcastId, title, description, state.serialized, now, now, now).run();
+      (id, owner_id, channel_id, local_broadcast_id, title, description, workspace_type, status, studio_number, deleted_at, state_json, version, last_opened_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, 'broadcast', 'active', ?, NULL, ?, 1, ?, ?, ?)
+  `).bind(id, user.id, channel?.id || null, localBroadcastId, title, description, studioNumber, state.serialized, now, now, now).run();
   const workspace = await getOwnedStudioWorkspace(env, id, user.id);
   return json({ ok: true, workspace: studioWorkspacePayload(workspace) }, 201, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
+}
+
+const STUDIO_ACTIVE_PRODUCTION_STATUSES = new Set(["recording", "live", "stopping", "finalizing", "recovery"]);
+
+function studioProductionGuard(row, deleteOnly = false) {
+  const state = safeJsonParse(row?.state_json) || {};
+  const broadcast = state.broadcast && typeof state.broadcast === "object" ? state.broadcast : {};
+  const status = clean(broadcast.status).toLowerCase();
+  if (STUDIO_ACTIVE_PRODUCTION_STATUSES.has(status)) {
+    return { code: "studio_production_active", error: "Studio changes are unavailable while a recording or livestream is active. Finish the production before switching Studios." };
+  }
+  if (deleteOnly && broadcast.scheduledAt && Number.isFinite(Date.parse(broadcast.scheduledAt)) && Date.parse(broadcast.scheduledAt) > Date.now() && ["draft", "ready", "upcoming"].includes(status)) {
+    return { code: "studio_scheduled_production", error: "This Studio has a scheduled production. Reassign or cancel it before deleting the Studio." };
+  }
+  return null;
+}
+
+async function allocateStudioNumber(env, userId) {
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare("INSERT OR IGNORE INTO studio_number_allocations(owner_id, next_number, updated_at) VALUES (?, 1, ?)")
+    .bind(userId, now).run();
+  const allocated = await env.TPI_DB.prepare("UPDATE studio_number_allocations SET next_number = next_number + 1, updated_at = ? WHERE owner_id = ? RETURNING next_number - 1 AS studio_number")
+    .bind(now, userId).first();
+  const number = Number(allocated?.studio_number);
+  if (!Number.isInteger(number) || number < 1) throw new Error("Studio number allocation failed");
+  return number;
+}
+
+function duplicateStudioState(row, newLocalBroadcastId) {
+  const state = safeJsonParse(row?.state_json) || {};
+  const duplicate = JSON.parse(JSON.stringify(state));
+  duplicate.broadcast = duplicate.broadcast && typeof duplicate.broadcast === "object" ? duplicate.broadcast : {};
+  duplicate.broadcast.id = newLocalBroadcastId;
+  duplicate.broadcast.status = "draft";
+  duplicate.broadcast.scheduledAt = null;
+  duplicate.broadcast.tpiSync = null;
+  return normalizeStudioWorkspaceState(duplicate);
+}
+
+async function handleDuplicateStudioWorkspace(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  try {
+    const id = workspacePathId(path, "/duplicate");
+    const existing = await getOwnedStudioWorkspace(env, id, user.id);
+    if (!existing || existing.deleted_at) return json({ error: "Studio not found.", code: "workspace_not_found" }, 404);
+    const guard = studioProductionGuard(existing);
+    if (guard) return json(guard, 409, { "Cache-Control": "no-store" });
+    const data = await readJson(request);
+    const localBroadcastId = `studio-${crypto.randomUUID()}`;
+    const state = duplicateStudioState(existing, localBroadcastId);
+    if (state.error) return json({ error: state.error, code: "workspace_too_large" }, 413);
+    const title = cleanVideoText(data.title || `${existing.title} Copy`, 180) || `${existing.title} Copy`;
+    const description = cleanVideoText(data.description === undefined ? existing.description || "" : data.description, 1000);
+    const channel = await env.TPI_DB.prepare("SELECT id FROM tpi_video_channels WHERE owner_id = ? LIMIT 1").bind(user.id).first();
+    const newId = crypto.randomUUID();
+    const now = new Date().toISOString();
+    const studioNumber = await allocateStudioNumber(env, user.id);
+    await env.TPI_DB.prepare(`
+      INSERT INTO studio_workspaces
+        (id, owner_id, channel_id, local_broadcast_id, title, description, workspace_type, status, studio_number, deleted_at, state_json, version, last_opened_at, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'broadcast', 'active', ?, NULL, ?, 1, ?, ?, ?)
+    `).bind(newId, user.id, channel?.id || null, localBroadcastId, title, description, studioNumber, state.serialized, now, now, now).run();
+    const workspace = await getOwnedStudioWorkspace(env, newId, user.id);
+    return json({ ok: true, workspace: studioWorkspacePayload(workspace) }, 201, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
+}
+
+async function handleDeleteStudioWorkspace(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  try {
+    const id = workspacePathId(path, "/delete");
+    const existing = await getOwnedStudioWorkspace(env, id, user.id);
+    if (!existing || existing.deleted_at) return json({ error: "Studio not found.", code: "workspace_not_found" }, 404);
+    const guard = studioProductionGuard(existing, true);
+    if (guard) return json(guard, 409, { "Cache-Control": "no-store" });
+    const data = await readJson(request);
+    const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
+    if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
+    if (expectedVersion !== null && expectedVersion !== Number(existing.version)) return json({ error: "This Studio changed elsewhere. Refresh before deleting again.", code: "workspace_conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
+    const now = new Date().toISOString();
+    await env.TPI_DB.prepare("UPDATE studio_workspaces SET status = 'archived', deleted_at = ?, version = version + 1, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
+      .bind(now, now, id, user.id, Number(existing.version)).run();
+    const deleted = await getOwnedStudioWorkspace(env, id, user.id);
+    return json({ ok: true, workspace: studioWorkspacePayload(deleted) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
+}
+
+async function handleRestoreStudioWorkspace(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  try {
+    const id = workspacePathId(path, "/restore");
+    const existing = await getOwnedStudioWorkspace(env, id, user.id);
+    if (!existing || !existing.deleted_at) return json({ error: "Deleted Studio not found.", code: "workspace_not_found" }, 404);
+    const data = await readJson(request);
+    const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
+    if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
+    if (expectedVersion !== null && expectedVersion !== Number(existing.version)) return json({ error: "This deleted Studio changed elsewhere. Refresh before restoring again.", code: "workspace_conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
+    const now = new Date().toISOString();
+    await env.TPI_DB.prepare("UPDATE studio_workspaces SET status = 'active', deleted_at = NULL, version = version + 1, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
+      .bind(now, id, user.id, Number(existing.version)).run();
+    const restored = await getOwnedStudioWorkspace(env, id, user.id);
+    return json({ ok: true, workspace: studioWorkspacePayload(restored) }, 200, { "Cache-Control": "private, no-store" });
   } catch (error) {
     return studioWorkspaceStorageFailure(error);
   }
@@ -4671,6 +4845,7 @@ async function handleUpdateStudioWorkspace(path, request, env, user) {
   const id = workspacePathId(path);
   const existing = await getOwnedStudioWorkspace(env, id, user.id);
   if (!existing) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404);
+  if (existing.deleted_at) return json({ error: "Deleted Studios must be restored before they can be changed.", code: "workspace_deleted" }, 409);
   const data = await readJson(request);
   const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
   if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
