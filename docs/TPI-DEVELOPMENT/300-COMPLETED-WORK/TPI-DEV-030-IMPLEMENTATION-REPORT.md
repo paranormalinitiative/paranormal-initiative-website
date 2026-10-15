@@ -1,7 +1,7 @@
 # TPI-DEV-030 — Implementation Report
 
-Date: 2026-10-14
-Status: `IMPLEMENTATION COMPLETE — PRODUCTION APPROVAL PENDING`
+Date: 2026-10-15
+Status: `DEPLOYED — AUTHENTICATED OWNER ACCEPTANCE PENDING`
 
 ## Result
 
@@ -13,8 +13,10 @@ Administration Center package through the canonical `/admin-panel` route.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Application candidate commit: `dc28377` (`fix: unify administration center release route`)
-- Production rollback target before any release: Worker
+- Approved application candidate commit: `dc28377` (`fix: unify administration center release route`)
+- Final source commit: `ef7182e77d7966dacff49e21701580ba189103ae`
+  (`fix: serve canonical admin entry without redirect`)
+- Production rollback target before this release: Worker
   `830aa684-d14e-4d39-b103-7fb7538fef84`
 - Canonical source: `admin-center-app/src/`
 - Static package namespace: `admin-center-preview/`
@@ -38,11 +40,31 @@ Passed:
 - `node --check worker.js`.
 - `node --check functions/api/[[path]].js`.
 - Development/production binding separation checks.
+- Development deployment: Worker `85a142a1-026e-4658-b8f1-a7924ba30062`.
+- Development authenticated canonical-route checks: login 200; `/admin-panel`
+  200; legacy `/admin-panel.html` 307 to `/admin-panel`; compatibility route,
+  JavaScript asset, and release manifest 200.
+- Initial production deployment: Worker
+  `40e6b45d-7f85-40ec-acc3-0cd1edac490c`.
+- Corrective production deployment: Worker
+  `f89c0971-b3e5-40be-9b20-abfa9a132dcd`; the corrective package excludes
+  private `lib/` source files from static assets.
+- Production anonymous route and public-function checks passed: protected admin
+  routes/assets/API 403, `/api/auth/me` 200, public `/`, `/events`,
+  `/education-center`, `/teams/`, `/member-home`, and `/published-article/`
+  200 after redirects.
+- Production source/documentation exposure checks passed: `/worker.js`,
+  `/lib/auth.js`, the application source path, the API source path, and the
+  implementation-report URL all return 404.
+- Production D1 read-only verification reported `changes: 0`,
+  `changed_db: false`, and `rows_written: 0`; migration ledger remains only
+  `0001_contributor_portal.sql` and `0002_contributor_profiles.sql`.
 
 Not tested:
 
 - Authenticated owner/admin browser rendering in the live production Worker.
-- Production deployment of this new candidate.
+- Production dashboard/module data loading under an owner session.
+- Production personalization rendering under an owner session.
 - Production D1/R2 mutation, intentionally prohibited.
 
 ## Data and security boundaries
@@ -53,7 +75,15 @@ StudioFlow boundaries are not modified by this implementation.
 
 ## Release decision
 
-`IMPLEMENTATION READY / PRODUCTION APPROVAL REQUIRED.` The exact candidate is
-`dc28377` with the package hashes above. The live Wrangler baseline could not
-be refreshed in this environment because Cloudflare API DNS resolution failed;
-therefore no development or production deployment was attempted.
+`DEPLOYED — AUTHENTICATED OWNER ACCEPTANCE PENDING.` The approved React
+Administration Center package is live in production as corrective Worker
+`f89c0971-b3e5-40be-9b20-abfa9a132dcd`, deployed 2026-10-15T01:54:30Z, with
+production D1/R2 bindings preserved. A packaging-only correction followed the
+initial deployment because `/lib/auth.js` was found publicly readable; the
+corrective deployment now returns 404 for that path and all checked source and
+documentation paths. No migration, import, data write, secret change, or R2
+operation was performed. The remaining limitation is the absence of an owner
+browser session in this execution environment; the owner should sign in, open
+Administration from the member navigation, and confirm the live dashboard,
+navigation, and saved personalization before treating authenticated acceptance
+as complete.

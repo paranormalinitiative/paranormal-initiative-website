@@ -144,12 +144,13 @@ columns or the membership `application_id` column. No production write,
 No production D1/R2 write, migration, export, data import, Founding 50
 activation, or unrelated feature deployment was performed for DEV-028. The
 final production Worker version is
-`830aa684-d14e-4d39-b103-7fb7538fef84`; an initial package version
+`830aa684-d14e-4d39-b103-7fb7538fef84` at the time of the DEV-028 release;
+an initial package version
 `0f114a72-ccf0-46c7-aae2-ea53b79510de` was immediately corrected after its root
 asset manifest exposed existing documentation paths. The final asset manifest
 excludes `docs/`, and the checked documentation path now returns `404`.
 
-## TPI-DEV-030 release workflow repair
+## TPI-DEV-030 release workflow repair and deployment
 
 The Administration Center source and route boundary has now been unified in
 the development branch. `/admin-panel` is the canonical protected route, the
@@ -160,5 +161,17 @@ canonical route. Desktop and mobile Administration navigation now use
 saved theme and typography from the existing personalization APIs. The guarded
 development staging script records an Administration Center package manifest
 with source identity and SHA-256 file hashes. TPI-DEV-030 implementation checks
-pass; production approval and deployment remain pending for the exact
-post-commit candidate.
+pass. The owner-approved release was deployed to development as Worker
+`85a142a1-026e-4658-b8f1-a7924ba30062` and to production as Worker
+`f89c0971-b3e5-40be-9b20-abfa9a132dcd` from final source commit
+`ef7182e77d7966dacff49e21701580ba189103ae`. The first production version
+`40e6b45d-7f85-40ec-acc3-0cd1edac490c` was immediately corrected after a
+non-destructive source-path check found `/lib/auth.js` publicly readable; the
+corrected asset manifest excludes `lib/`, and the path now returns 404. The
+production package was assembled against the production baseline and uses the
+production D1/R2 bindings; no migrations, imports, secret changes, or data
+writes were made. Anonymous protection and public smoke routes passed, and the
+deployed source and documentation paths are not publicly exposed. Authenticated
+owner/admin browser rendering, dashboard data loading, and production
+personalization acceptance remain pending because no owner production session
+was available.

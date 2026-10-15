@@ -1,7 +1,7 @@
 # TPI-DEV-030 — Release Workflow Repair
 
-Date: 2026-10-14
-Status: `IMPLEMENTATION COMPLETE — PRODUCTION APPROVAL PENDING`
+Date: 2026-10-15
+Status: `IMPLEMENTED AND DEPLOYED — AUTHENTICATED ACCEPTANCE PENDING`
 
 ## Objective
 
@@ -45,11 +45,23 @@ No D1 migration, D1 write, R2 write, data import, credential change, Founding
 implementation checkpoint. Unsupported creator-application fields continue to
 fail closed where the production schema lacks the required columns.
 
-## Release gate
+## Release result
 
-The exact candidate is `dc28377` with the built package recorded in the
-implementation report. It must be reviewed against the current production
-Worker before deployment. Production deployment is not claimed by this document. The
-deployment must preserve the current production Worker as rollback target and
-must use the guarded production procedure with an explicit candidate-specific
-approval.
+The owner-approved release was staged from the production `main` baseline with
+only the Administration Center/runtime patch, the required `lib/auth.js`
+compatibility dependency, and the protected package manifest. The final source
+identity is `ef7182e77d7966dacff49e21701580ba189103ae`; the approved application
+commit remains `dc28377` and the candidate documentation commit remains
+`633f097`.
+
+Development was deployed and verified as Worker
+`85a142a1-026e-4658-b8f1-a7924ba30062`. Production was initially deployed as
+Worker `40e6b45d-7f85-40ec-acc3-0cd1edac490c`, then corrected as Worker
+`f89c0971-b3e5-40be-9b20-abfa9a132dcd`, replacing rollback target
+`830aa684-d14e-4d39-b103-7fb7538fef84`. The package uses the production D1 and
+R2 bindings and contains no migrations or data imports. A packaging-only fix
+excluded the required `lib/` auth helper from static assets after the first
+deployment exposed `/lib/auth.js`; the corrected path returns 404. Anonymous
+protection, public routes, asset boundaries, and read-only D1 migration state
+were verified after the corrective deployment. Authenticated owner browser
+acceptance remains pending.
