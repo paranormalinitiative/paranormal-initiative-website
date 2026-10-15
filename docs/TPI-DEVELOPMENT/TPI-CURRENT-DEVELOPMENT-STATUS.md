@@ -211,3 +211,22 @@ deployed source and documentation paths are not publicly exposed. Authenticated
 owner/admin browser rendering, dashboard data loading, and production
 personalization acceptance remain pending because no owner production session
 was available.
+
+## TPI-DEV-034 unified ParaNews and ParaTube layout
+
+TPI-DEV-034 unified the canonical `/news` and `/paratube` content hubs with
+the existing TPI member shell. The implementation reuses the established
+sidebar, independent scrolling, mobile navigation, authentication boundary,
+theme variables, typography, and member-home conventions. Existing news/video
+APIs, cards, search/category controls, links, scrapers, and the distinct `/`,
+`/member-home`, and `/explore` destinations were preserved.
+
+The implementation source is `50cedea2bd5e9f7e2f0bad1bcbfd9a9761cc5ee0`.
+Development deployment `98cb936a-0c63-4662-b2f6-97b1e76fbafd` and production
+deployment `a2cbde12-0c39-4eeb-ac75-269e66c6dcea` use that same application
+source. Focused source checks passed 12/12; member-home, DEV-032, DEV-033,
+DEV-030, workspace-layout, syntax, and diff checks passed; development
+runtime verification passed; and the anonymous production smoke suite passed
+10/10. No D1/R2 writes, migrations, imports, authentication changes, or
+unrelated feature changes were made. Authenticated production browser visual
+acceptance remains pending because no production owner session was available.
