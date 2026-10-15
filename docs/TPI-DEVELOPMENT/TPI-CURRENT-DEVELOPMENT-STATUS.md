@@ -125,8 +125,9 @@ in the TPI-DEV-027 reports. Production remains untouched.
 
 TPI-DEV-028 was deployed after explicit owner approval. The
 candidate source snapshot is `8dc0d45c8e0ab9dac2b7154f4458503d4a58bc44` on
-`codex/tpi-development`; the current production Worker version is
-`7e357215-2579-4c60-b27e-dd572a5656fe`. Anonymous read-only checks returned
+`codex/tpi-development`; the production Worker version immediately before the
+DEV-028 release was `7e357215-2579-4c60-b27e-dd572a5656fe`. Anonymous
+read-only checks returned
 HTTP 403 for `/admin-center-preview/`, `/admin-panel.html`, and
 `/api/admin/overview`, confirming that the existing public boundary remains
 protected.
