@@ -6,12 +6,13 @@ Last verified: 2026-10-14
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Current committed source: `863387e`
-- Current deployed application source: `863387e`
+- Current committed source: `51236c3`
+- Current deployed application source: `51236c3`
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
-- Development version: `893f373b-8fa8-48ed-bd2b-f46e73142f57`
-- Production: protected and not modified by TPI-DEV-026
+- Development version: `c181a58d-005d-4c57-b188-24d3467fef78`
+- Production version: `4f679573-fb15-4bf9-9541-2a85e70209a0`
+- Production: DEV-032 navigation correction deployed; authenticated owner acceptance remains pending
 
 The deployed provenance endpoint reports the development Worker, branch, and
 application source commit above. The latest commit after the deployed source is
@@ -41,7 +42,7 @@ documentation-only and was not redeployed.
 | Media uploads and retrieval | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | DEV-022 offline privacy contracts and media regression passed; no production media changes |
 | Search | VERIFIED COMPLETE AT CONTRACT LEVEL | DEV-022 offline search contracts passed; broad visual acceptance remains owner work |
 | Events | VERIFIED COMPLETE AT DEVELOPMENT RUNTIME LEVEL | Browser inspection rendered the development Events page, filters, cards, RSVP controls, and submit-event navigation; authenticated administration UI remains owner acceptance |
-| Administration Center | IMPLEMENTED, VISUAL ACCEPTANCE PENDING | DEV-031 interactive analytics and protected API are deployed to development; authenticated owner chart inspection remains open; no unprotected endpoints or production deployment |
+| Administration Center | IMPLEMENTED, DEVELOPMENT AND PRODUCTION DEPLOYED / VISUAL ACCEPTANCE PENDING | DEV-032 navigation correction and DEV-031 analytics are deployed to both environments; anonymous protection, public routes, private-source exclusion, and development authenticated authorization passed; authenticated production owner inspection remains open |
 | Creator applications and entitlement enforcement | VERIFIED COMPLETE WITH LIMITATIONS | DEV-014 and DEV-025 authenticated synthetic tests passed; real membership activation remains disabled |
 | Founding 50 activation/allocation | VERIFIED PROTECTED | Development activation is `disabled`; protected mutation remains expected HTTP 423 |
 | StudioFlow creator access | VERIFIED COMPLETE WITH LIMITATIONS | Positive entitled creator access and revoked denial passed; visual acceptance remains open |
@@ -123,6 +124,22 @@ The DEV-031 focused checks pass 11/11, existing authorization regression passes
 returns the expected analytics series. Production was not deployed or modified.
 Owner authenticated browser inspection of the protected chart view remains an
 acceptance item.
+
+## TPI-DEV-032 navigation correction
+
+The Administration Center now follows the existing member-shell navigation
+patterns rather than maintaining a separate navigation design. The desktop and
+iPad rail is fixed and independently scrollable; the main content scrolls in its
+own viewport; active items use page-current semantics; the mobile layout uses a
+drawer and bottom navigation; and `Return to Main Site` uses the current host's
+`/` route. Existing menu groups and DEV-031 analytics remain present.
+
+The final application source is `51236c3`. Development version
+`c181a58d-005d-4c57-b188-24d3467fef78` and production version
+`4f679573-fb15-4bf9-9541-2a85e70209a0` use the same built asset hashes. A
+packaging-only corrective deployment removed private `lib/` and `functions/`
+source files from the asset package; both environments now return 404 for
+those paths. No database migrations, imports, or data writes were performed.
 
 ## TPI-DEV-027 production-release preparation
 
