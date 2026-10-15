@@ -105,3 +105,18 @@ Historical totals are not added together as unique coverage.
 
 See [TPI-DEV-026 implementation report](300-COMPLETED-WORK/TPI-DEV-026-IMPLEMENTATION-REPORT.md)
 and [TPI-DEV-026 production readiness gap analysis](200-AUDITS/TPI-DEV-026-PRODUCTION-READINESS-GAP-ANALYSIS.md).
+
+## TPI-DEV-027 production-release preparation
+
+Production release preparation is currently `BLOCKED`. Read-only inspection
+confirmed production Worker version `7e357215-2579-4c60-b27e-dd572a5656fe`, the
+production D1 binding `tpi_contributor_portal`, and production R2 bucket
+`tpi-contributor-media`. Production D1 contains many later application tables but
+its Wrangler migration ledger records only `0001_contributor_portal.sql` and
+`0002_contributor_profiles.sql`; `studio_workspaces` is absent.
+
+The development D1 has the workspace table and five existing workspace rows, but
+does not record migration 0051 in its ledger. Because both environments have
+schema/history discrepancies, no migration was applied and no production backup
+was exported. The release candidate and required approval procedure are recorded
+in the TPI-DEV-027 reports. Production remains untouched.
