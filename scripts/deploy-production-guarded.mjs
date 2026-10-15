@@ -12,7 +12,7 @@ const changedFiles = git(["status", "--porcelain=v1", "--untracked-files=all"])
   .filter(Boolean)
   .map((line) => line.slice(3));
 const documentationOnly = (file) => file.startsWith("docs/") || file.endsWith(".md");
-const safeLocalState = (file) => file === ".DS_Store" || file.endsWith("/.DS_Store") || file.startsWith(".wrangler/") || file.startsWith("node_modules/") || file.startsWith("admin-center-app/node_modules/") || file.startsWith("backups/") || file.startsWith("data/");
+const safeLocalState = (file) => file === ".DS_Store" || file === "DS_Store" || file.endsWith("/.DS_Store") || file.startsWith(".wrangler/") || file.startsWith("node_modules/") || file.startsWith("admin-center-app/node_modules/") || file.startsWith("backups/") || file.startsWith("data/");
 const uncommittedApplicationFiles = changedFiles.filter((file) => !documentationOnly(file) && !safeLocalState(file));
 if (branch !== "codex/tpi-development") throw new Error(`Production promotion requires codex/tpi-development; current branch is ${branch || "detached"}`);
 if (uncommittedApplicationFiles.length) throw new Error(`Production promotion aborted because application files are not committed: ${uncommittedApplicationFiles.join(", ")}`);
