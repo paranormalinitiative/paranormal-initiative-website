@@ -27,7 +27,7 @@ for (const forbidden of ["theparanormalinitiative-dev", "tpi_contributor_portal_
 
 const stage = mkdtempSync(join(tmpdir(), "tpi-production-assets-"));
 const configDir = mkdtempSync(join(tmpdir(), "tpi-production-config-"));
-const excludedDirectories = new Set([".git", ".wrangler", "node_modules", "backups", "data", "docs", "migrations", "scripts", "admin-center-app"]);
+const excludedDirectories = new Set([".git", ".wrangler", "node_modules", "backups", "data", "docs", "migrations", "scripts", "lib", "functions", "admin-center-app"]);
 const excludedFiles = new Set([".dev.vars", ".env", "wrangler.toml", "wrangler.dev.toml", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]);
 const filter = (source) => {
   const rel = relative(repoRoot, source);

@@ -10,7 +10,7 @@ const stage = mkdtempSync(join(tmpdir(), "tpi-dev-assets-"));
 const configDir = mkdtempSync(join(tmpdir(), "tpi-dev-config-"));
 const excludedDirectories = new Set([
   ".git", ".wrangler", "node_modules", "backups", "data", "docs",
-  "migrations", "scripts", "admin-center-app",
+  "migrations", "scripts", "lib", "functions", "admin-center-app",
 ]);
 const excludedFiles = new Set([
   ".dev.vars", ".env", "wrangler.toml", "wrangler.dev.toml",
