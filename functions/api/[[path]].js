@@ -653,14 +653,215 @@ async function handleAdminOverview(request, env, user) {
 async function handleAdminAnalytics(request, env, user) {
   const overview = await handleAdminOverview(request, env, user);
   const body = await overview.json();
-  return json({ range: body.range, trends: body.trends, definitions: {
-    members: "Contributor accounts grouped by created_at day.",
-    communityPosts: "Community Feed posts grouped by created_at day.",
-    communityComments: "Community Feed comments grouped by created_at day.",
-    communityReactions: "Community Feed reactions grouped by created_at day.",
-    videos: "TPI Videos records grouped by created_at day.",
-    events: "Event records grouped by created_at day."
-  }}, 200, { "Cache-Control": "no-store" });
+  const analytics = await getAdminAnalyticsData(env, body.range, body.metrics || {}, body.trends || {});
+  return json({
+    range: body.range,
+    trends: body.trends,
+    definitions: analytics.definitions,
+    series: analytics.series,
+    summary: analytics.summary,
+    membershipDistribution: analytics.membershipDistribution,
+    contentOverview: analytics.contentOverview,
+    websiteActivity: analytics.websiteActivity
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function getAdminAnalyticsData(env, range, metrics, trends) {
+  const creatorSeries = await Promise.all([
+    getAdminDailySeries(env, "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM contributors WHERE role IN ('creator', 'contributor') AND created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day", range),
+    getAdminDailySeries(env, "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM tpi_video_channels WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day", range),
+    getAdminDailySeries(env, "SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM (SELECT created_at FROM tpi_videos WHERE status = 'published' UNION ALL SELECT created_at FROM articles WHERE status = 'published') GROUP BY day ORDER BY day", range)
+  ]);
+  const memberGrowth = await getAdminMemberGrowthSeries(env, range);
+  const moderation = await getAdminModerationAnalytics(env, range);
+  const membershipDistribution = await getAdminMembershipDistribution(env);
+
+  const community = {
+    posts: normalizeAdminSeries(trends.communityPosts, range),
+    comments: normalizeAdminSeries(trends.communityComments, range),
+    reactions: normalizeAdminSeries(trends.communityReactions, range)
+  };
+  const creator = {
+    accounts: creatorSeries[0],
+    channels: creatorSeries[1],
+    publishedContent: creatorSeries[2]
+  };
+  const creatorEngagement = await getAdminCreatorEngagement(env);
+  const rangeTotals = {
+    posts: sumAdminSeries(community.posts),
+    comments: sumAdminSeries(community.comments),
+    reactions: sumAdminSeries(community.reactions)
+  };
+
+  return {
+    definitions: {
+      members: "Contributor accounts created per day; total membership is cumulative through each day.",
+      communityPosts: "Visible and historical Community Feed posts grouped by created_at day.",
+      communityComments: "Community Feed comments grouped by created_at day.",
+      communityReactions: "Community Feed reactions grouped by created_at day.",
+      videos: "Published TPI Videos grouped by created_at day.",
+      events: "Event records grouped by created_at day.",
+      membershipDistribution: membershipDistribution.definition,
+      websiteActivity: "Unavailable: the current application does not expose a reliable first-party visits or page-views table."
+    },
+    series: {
+      memberGrowth,
+      communityEngagement: community,
+      creatorActivity: creator,
+      moderation: moderation.series
+    },
+    summary: {
+      communityEngagement: { ...rangeTotals, range: range.preset },
+      creatorActivity: {
+        accounts: metricNumber(metrics.creatorAccounts, "total"),
+        channels: metricNumber(metrics.creatorChannels, "total"),
+        publishedContent: metricNumber(metrics.videos, "published") + metricNumber(metrics.articles, "published"),
+        engagement: creatorEngagement
+      },
+      moderation: moderation.summary,
+      content: [
+        { key: "communityPosts", label: "Community posts", count: metricNumber(metrics.communityPosts, "visible") },
+        { key: "articles", label: "Education articles", count: metricNumber(metrics.articles, "published") },
+        { key: "videos", label: "TPI Videos", count: metricNumber(metrics.videos, "published") },
+        { key: "events", label: "Published events", count: metricNumber(metrics.events, "published") }
+      ]
+    },
+    membershipDistribution,
+    contentOverview: [
+      { key: "communityPosts", label: "Community posts", count: metricNumber(metrics.communityPosts, "visible") },
+      { key: "articles", label: "Education articles", count: metricNumber(metrics.articles, "published") },
+      { key: "videos", label: "TPI Videos", count: metricNumber(metrics.videos, "published") },
+      { key: "events", label: "Published events", count: metricNumber(metrics.events, "published") }
+    ],
+    websiteActivity: {
+      unavailable: true,
+      reason: "No reliable first-party visits or page-views data source is configured."
+    }
+  };
+}
+
+function metricNumber(metric, key) {
+  if (!metric || metric.unavailable) return 0;
+  return Number(metric[key] || 0);
+}
+
+function sumAdminSeries(series) {
+  return Array.isArray(series) ? series.reduce((total, point) => total + Number(point.count || 0), 0) : 0;
+}
+
+function adminDateKeys(range) {
+  const dates = [];
+  const cursor = new Date(`${range.start}T00:00:00Z`);
+  const end = new Date(`${range.end}T00:00:00Z`);
+  while (cursor <= end) {
+    dates.push(cursor.toISOString().slice(0, 10));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return dates;
+}
+
+function normalizeAdminSeries(series, range) {
+  if (series && !Array.isArray(series)) return series;
+  const byDay = new Map((series || []).map(point => [point.day, Number(point.count || 0)]));
+  return adminDateKeys(range).map(day => ({ day, count: byDay.get(day) || 0 }));
+}
+
+async function getAdminDailySeries(env, sql, range) {
+  try {
+    const { results } = await env.TPI_DB.prepare(sql).bind(`${range.start}T00:00:00`, `${range.end}T23:59:59`).all();
+    return normalizeAdminSeries((results || []).map(row => ({ day: row.day, count: Number(row.count || 0) })), range);
+  } catch (error) {
+    return { unavailable: true, reason: "The source table or timestamp field is unavailable." };
+  }
+}
+
+async function getAdminMemberGrowthSeries(env, range) {
+  try {
+    const [baseline, daily] = await Promise.all([
+      env.TPI_DB.prepare("SELECT COUNT(*) AS count FROM contributors WHERE created_at < ?").bind(`${range.start}T00:00:00`).first(),
+      env.TPI_DB.prepare("SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM contributors WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day").bind(`${range.start}T00:00:00`, `${range.end}T23:59:59`).all()
+    ]);
+    const byDay = new Map((daily.results || []).map(row => [row.day, Number(row.count || 0)]));
+    let total = Number(baseline?.count || 0);
+    const newMembers = [];
+    const totalMembers = [];
+    for (const day of adminDateKeys(range)) {
+      const count = byDay.get(day) || 0;
+      total += count;
+      newMembers.push({ day, count });
+      totalMembers.push({ day, count: total });
+    }
+    return { newMembers, totalMembers };
+  } catch (error) {
+    return { unavailable: true, reason: "Member creation timestamps are unavailable." };
+  }
+}
+
+async function getAdminCreatorEngagement(env) {
+  const queries = [
+    ["videoReactions", "SELECT COUNT(*) AS count FROM video_reactions"],
+    ["videoComments", "SELECT COUNT(*) AS count FROM video_comments"]
+  ];
+  const values = await Promise.all(queries.map(async ([key, sql]) => {
+    try {
+      const row = await env.TPI_DB.prepare(sql).first();
+      return [key, Number(row?.count || 0)];
+    } catch (error) {
+      return [key, null];
+    }
+  }));
+  const available = values.some(([, value]) => value !== null);
+  if (!available) return { unavailable: true, reason: "No creator-specific engagement tables are available." };
+  return { available: true, videoReactions: values[0][1], videoComments: values[1][1] };
+}
+
+async function getAdminMembershipDistribution(env) {
+  try {
+    const { results } = await env.TPI_DB.prepare("SELECT membership_type AS category, COUNT(*) AS count FROM creator_partnership_memberships GROUP BY membership_type ORDER BY count DESC, category ASC").all();
+    return {
+      available: true,
+      source: "creator_partnership_memberships",
+      definition: "Actual creator partnership membership records grouped by membership_type. General free/paid plan categories are not present in the current schema.",
+      categories: (results || []).map(row => ({ key: row.category || "unknown", label: row.category || "Unknown", count: Number(row.count || 0) }))
+    };
+  } catch (error) {
+    return {
+      available: false,
+      source: "none",
+      definition: "Unavailable: the current schema does not expose a general membership-category table.",
+      categories: [],
+      reason: "No membership distribution source is available."
+    };
+  }
+}
+
+async function getAdminModerationAnalytics(env, range) {
+  const tables = ["video_reports", "messenger_reports"];
+  const summaries = await Promise.all(tables.map(async table => {
+    try {
+      const row = await env.TPI_DB.prepare(`SELECT COUNT(*) AS total, SUM(CASE WHEN status IN ('pending', 'open') THEN 1 ELSE 0 END) AS pending, SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) AS resolved, SUM(CASE WHEN status = 'dismissed' THEN 1 ELSE 0 END) AS dismissed FROM ${table}`).first();
+      return { table, available: true, values: { total: Number(row?.total || 0), pending: Number(row?.pending || 0), resolved: Number(row?.resolved || 0), dismissed: Number(row?.dismissed || 0) } };
+    } catch (error) {
+      return { table, available: false, values: { total: 0, pending: 0, resolved: 0, dismissed: 0 } };
+    }
+  }));
+  const seriesRows = await Promise.all(tables.map(table => getAdminDailySeries(env, `SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count FROM ${table} WHERE created_at >= ? AND created_at <= ? GROUP BY day ORDER BY day`, range)));
+  const availableSeries = seriesRows.some(series => Array.isArray(series));
+  const byDay = new Map();
+  for (const series of seriesRows) {
+    if (!Array.isArray(series)) continue;
+    for (const point of series) byDay.set(point.day, (byDay.get(point.day) || 0) + point.count);
+  }
+  const summary = summaries.reduce((total, item) => ({
+    total: total.total + item.values.total,
+    pending: total.pending + item.values.pending,
+    resolved: total.resolved + item.values.resolved,
+    dismissed: total.dismissed + item.values.dismissed
+  }), { total: 0, pending: 0, resolved: 0, dismissed: 0 });
+  return {
+    summary: { ...summary, available: summaries.some(item => item.available) },
+    series: { available: availableSeries, reports: availableSeries ? adminDateKeys(range).map(day => ({ day, count: byDay.get(day) || 0 })) : { unavailable: true, reason: "No moderation report source is available." } }
+  };
 }
 
 async function getAdminTrends(env, range) {

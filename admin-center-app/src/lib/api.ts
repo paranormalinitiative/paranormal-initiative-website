@@ -6,8 +6,27 @@ export type AdminOverview = {
   trends: Record<string, Array<{ day: string; count: number }> | { unavailable: boolean }>;
 };
 
+export type AnalyticsPoint = { day: string; count: number };
+export type AnalyticsUnavailable = { unavailable: true; reason?: string };
+export type AnalyticsSeries = AnalyticsPoint[] | AnalyticsUnavailable;
+
 export type AdminAnalytics = Pick<AdminOverview, "range" | "trends"> & {
   definitions?: Record<string, string>;
+  series?: {
+    memberGrowth?: { newMembers: AnalyticsSeries; totalMembers: AnalyticsSeries } | AnalyticsUnavailable;
+    communityEngagement?: { posts: AnalyticsSeries; comments: AnalyticsSeries; reactions: AnalyticsSeries };
+    creatorActivity?: { accounts: AnalyticsSeries; channels: AnalyticsSeries; publishedContent: AnalyticsSeries };
+    moderation?: { available: boolean; reports: AnalyticsSeries };
+  };
+  summary?: {
+    communityEngagement?: { posts: number; comments: number; reactions: number; range?: string };
+    creatorActivity?: { accounts: number; channels: number; publishedContent: number; engagement?: { available?: boolean; unavailable?: boolean; reason?: string; videoReactions?: number | null; videoComments?: number | null } };
+    moderation?: { available?: boolean; total: number; pending: number; resolved: number; dismissed: number };
+    content?: Array<{ key: string; label: string; count: number }>;
+  };
+  membershipDistribution?: { available: boolean; source?: string; definition?: string; reason?: string; categories: Array<{ key: string; label: string; count: number }> };
+  contentOverview?: Array<{ key: string; label: string; count: number }>;
+  websiteActivity?: { unavailable: boolean; reason?: string };
 };
 
 export type Member = {
