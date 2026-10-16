@@ -4858,11 +4858,15 @@ async function handleUpdateStudioWorkspace(path, request, env, user) {
   const state = data.state === undefined ? { serialized: existing.state_json } : normalizeStudioWorkspaceState(data.state);
   if (state.error) return json({ error: state.error, code: "workspace_too_large" }, 413);
   const now = new Date().toISOString();
-  await env.TPI_DB.prepare(`
+  const updateResult = await env.TPI_DB.prepare(`
     UPDATE studio_workspaces
     SET title = ?, description = ?, state_json = ?, version = version + 1, updated_at = ?, last_opened_at = ?
     WHERE id = ? AND owner_id = ? AND version = ?
   `).bind(title, description, state.serialized, now, now, id, user.id, Number(existing.version)).run();
+  if (!Number(updateResult.meta?.changes || 0)) {
+    const current = await getOwnedStudioWorkspace(env, id, user.id);
+    return json({ error: "This workspace changed elsewhere. Refresh before saving again.", code: "workspace_conflict", workspace: studioWorkspacePayload(current) }, 409, { "Cache-Control": "no-store" });
+  }
   const updated = await getOwnedStudioWorkspace(env, id, user.id);
   return json({ ok: true, workspace: studioWorkspacePayload(updated) }, 200, { "Cache-Control": "private, no-store" });
   } catch (error) {
