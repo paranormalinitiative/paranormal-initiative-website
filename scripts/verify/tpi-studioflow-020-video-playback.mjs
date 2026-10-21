@@ -10,7 +10,7 @@ const bundle = readFileSync(moduleReference.replace(/^\//, ""), "utf8");
 const checks = [];
 const check = (name, passed) => checks.push({ name, passed: Boolean(passed) });
 
-check("the playback reset bridge is loaded before the current StudioFlow module", index.indexOf("video-playback-reset-bridge.js?tpi020=stale-canvas-v1") < index.indexOf(moduleReference));
+check("the playback reset bridge is loaded before the current StudioFlow module", index.indexOf("video-playback-reset-bridge.js?tpi031=video-overlay-v1") < index.indexOf(moduleReference));
 check("fresh stage activations reset the visible video to zero", bridge.includes('video.addEventListener("play"') && bridge.includes("video.currentTime = 0"));
 check("natural completion resets the visible video", bridge.includes('video.addEventListener("ended"') && bridge.includes('video.addEventListener("emptied"'));
 check("removed stage videos are paused and reset", bridge.includes("record.removedNodes.forEach") && bridge.includes("reset(node)"));

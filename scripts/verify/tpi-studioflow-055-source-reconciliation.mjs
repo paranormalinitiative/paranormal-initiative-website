@@ -22,7 +22,7 @@ check("the integrated entry point does not reference historical bundle names", !
 check("the workspace bridge remains integrated", /workspace-bridge\.js(?:\?[^\"]+)?/.test(index) && bridge.includes("/api/studio/workspaces"));
 check("the workspace asset bridge remains integrated", /workspace-asset-state-bridge\.js(?:\?[^\"]+)?/.test(index));
 check("the production lock bridge remains integrated", index.includes("/studio/production-lock-bridge.js") && existsSync("studio/production-lock-bridge.js"));
-check("the video playback and overlay bridge remains integrated", index.includes("video-playback-reset-bridge.js?tpi020=stale-canvas-v1") && existsSync("studio/video-playback-reset-bridge.js"));
+check("the video playback and overlay bridge remains integrated", index.includes("video-playback-reset-bridge.js?tpi031=video-overlay-v1") && existsSync("studio/video-playback-reset-bridge.js"));
 check("the backup bridge remains integrated", /backup-bridge\.js(?:\?[^\"]+)?/.test(index) && existsSync("studio/backup-bridge.js") && existsSync("studio/backup-core.mjs"));
 check("the navigation bridge remains integrated", index.includes("/studio/navigation-bridge.js") && existsSync("studio/navigation-bridge.js"));
 check("the local asset staging script discovers assets from the entry point", staging.includes("studioAssetUrls(html)") && staging.includes("versionStudioAssetReferences"));

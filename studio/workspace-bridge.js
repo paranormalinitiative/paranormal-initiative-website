@@ -94,7 +94,22 @@
     setMessage("BACKUP PREPARED — CONFIRM FILE SAVED");
   }
   function confirmPortableBackup() { if (!selectedWorkspace) { setMessage("Select a project before confirming a backup.", true); return; } savePortableState(selectedWorkspace.id, { status: "BACKUP CURRENT", confirmedVersion: Number(selectedWorkspace.version) || null, preparedVersion: Number(selectedWorkspace.version) || null, lastError: null }); }
-  function backupCompleteProject() { if (!selectedWorkspace) { setMessage("Select a project before starting a complete backup.", true); return; } var backup = window.__tpiStudioBackup; if (!backup || typeof backup.backupNow !== "function") { savePortableState(selectedWorkspace.id, { status: "BACKUP FAILED", lastError: "Complete backup integration is unavailable." }); return; } backup.backupNow({ force: true }).then(function (result) { if (result && result.manifest) { savePortableState(selectedWorkspace.id, { status: "BACKUP CURRENT", confirmedVersion: Number(result.manifest.configurationVersion) || Number(selectedWorkspace.version) || null, preparedVersion: Number(result.manifest.configurationVersion) || Number(selectedWorkspace.version) || null, lastError: null }); } }).catch(function (error) { savePortableState(selectedWorkspace.id, { status: "BACKUP FAILED", failedAt: new Date().toISOString(), lastError: error && error.message ? error.message : "Complete backup failed." }); }); }
+  function backupCompleteProject() {
+    if (!selectedWorkspace) { setMessage("Select a project before starting a complete backup.", true); return; }
+    var backup = window.__tpiStudioBackup;
+    if (!backup || typeof backup.backupNow !== "function") { savePortableState(selectedWorkspace.id, { status: "BACKUP FAILED", lastError: "Complete backup integration is unavailable." }); return; }
+    var capabilities = typeof backup.capabilities === "function" ? backup.capabilities() : {};
+    var currentSettings = typeof backup.readSettings === "function" ? backup.readSettings(selectedWorkspace.id) : null;
+    if (!capabilities.automaticFolderBackup || !currentSettings || !currentSettings.destinationName) {
+      var messageText = !capabilities.directoryPicker || !capabilities.automaticFolderBackup
+        ? "Complete media backup requires a supported browser folder destination. Use Export Project for a browser download."
+        : "Choose a backup folder before starting a complete backup.";
+      setMessage(messageText, true);
+      updateBackupMessage();
+      return;
+    }
+    backup.backupNow({ force: true }).then(function (result) { if (result && result.manifest) { savePortableState(selectedWorkspace.id, { status: "BACKUP CURRENT", confirmedVersion: Number(result.manifest.configurationVersion) || Number(selectedWorkspace.version) || null, preparedVersion: Number(result.manifest.configurationVersion) || Number(selectedWorkspace.version) || null, lastError: null }); } }).catch(function (error) { savePortableState(selectedWorkspace.id, { status: "BACKUP FAILED", failedAt: new Date().toISOString(), lastError: error && error.message ? error.message : "Complete backup failed." }); });
+  }
   function snapshotApi(workspaceId, options) { return api("/api/studio/workspaces/" + encodeURIComponent(workspaceId) + "/snapshots", options); }
   function snapshotDetailApi(workspaceId, snapshotId) { return api("/api/studio/workspaces/" + encodeURIComponent(workspaceId) + "/snapshots/" + encodeURIComponent(snapshotId)); }
   function createRecoverySnapshot(workspace) { if (!workspace || !workspace.id || !workspace.version) return Promise.resolve(false); return snapshotApi(workspace.id, { method: "POST", body: JSON.stringify({ expectedVersion: workspace.version }) }).then(function (body) { window.dispatchEvent(new CustomEvent("tpi:workspace-snapshot-created", { detail: body.snapshot || null })); return true; }).catch(function (error) { window.dispatchEvent(new CustomEvent("tpi:workspace-snapshot-failed", { detail: { error: error } })); return false; }); }
@@ -128,7 +143,7 @@
   }
   function positionMenu(menu) {
     if (!menu || menu.hidden || !menuAnchor || menu.parentNode !== document.body) return;
-    var anchor = menuAnchor.getBoundingClientRect(), width = Math.max(anchor.width, Math.min(360, window.innerWidth - 16));
+    var anchor = menuAnchor.getBoundingClientRect(), availableWidth = Math.max(160, window.innerWidth - 16), width = Math.min(Math.max(anchor.width, 280), availableWidth);
     var left = Math.min(Math.max(8, anchor.left), Math.max(8, window.innerWidth - width - 8));
     var top = anchor.bottom + 6, maxHeight = Math.max(120, window.innerHeight - top - 8);
     if (top + 180 > window.innerHeight && anchor.top > 180) { maxHeight = Math.max(120, anchor.top - 14); top = Math.max(8, anchor.top - Math.min(420, maxHeight) - 6); }

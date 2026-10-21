@@ -35,3 +35,128 @@
   max-width: 100%;
   aspect-ratio: 16 / 9;
 }
+
+/* TPI-STUDIOFLOW-017: keep the existing custom My Studios menu readable and
+   separate from its save/backup status rows at every panel width. */
+.tpi-my-studios-panel {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.tpi-studio-picker {
+  min-width: 0;
+}
+
+.tpi-studio-selector {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.35rem;
+  padding: 0.55rem 0.7rem;
+  overflow: hidden;
+  border: 1px solid var(--line, #34403a);
+  border-radius: 0.45rem;
+  background: var(--panel-2, #323d38);
+  color: var(--text, #f2f7f3);
+  font: inherit;
+  line-height: 1.25;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tpi-studio-menu,
+.tpi-studio-manage-menu {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-width: calc(100vw - 1rem);
+  padding: 0.45rem;
+  overflow-x: hidden;
+  border: 1px solid var(--line, #34403a);
+  border-radius: 0.55rem;
+  background: var(--panel, #2a3430);
+  box-shadow: 0 0.7rem 2rem rgb(0 0 0 / 32%);
+  color: var(--text, #f2f7f3);
+}
+
+.tpi-studio-menu[hidden],
+.tpi-studio-manage-menu[hidden] {
+  display: none !important;
+}
+
+.tpi-studio-menu[data-tpi-portal],
+.tpi-studio-manage-menu[data-tpi-portal] {
+  max-width: calc(100vw - 1rem);
+}
+
+.tpi-studio-menu-heading {
+  padding: 0.35rem 0.55rem 0.45rem;
+  color: var(--muted, #9ba8a0);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tpi-studio-menu button,
+.tpi-studio-manage-menu button {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  text-align: left;
+  white-space: normal;
+}
+
+.tpi-studio-menu button:hover,
+.tpi-studio-menu button:focus-visible,
+.tpi-studio-manage-menu button:hover,
+.tpi-studio-manage-menu button:focus-visible {
+  background: var(--line-soft, #2e3a34);
+}
+
+.tpi-studio-menu button.selected,
+.tpi-studio-menu button.selected.secondary {
+  background: var(--blue-deep, #257e37);
+}
+
+.tpi-studio-status,
+.tpi-studio-backup-status {
+  min-width: 0;
+  min-height: 1.2em;
+  padding: 0.05rem 0.15rem;
+  color: var(--muted, #9ba8a0);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.tpi-studio-status.error,
+.tpi-studio-backup-status.error {
+  color: #ffb4ab;
+}
+
+@media (max-width: 520px) {
+  .tpi-studio-selector {
+    min-height: 2.6rem;
+  }
+
+  .tpi-studio-menu,
+  .tpi-studio-manage-menu {
+    width: min(22rem, calc(100vw - 1rem));
+  }
+}
