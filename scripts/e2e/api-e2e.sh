@@ -588,7 +588,7 @@ R=$(req POST /community/posts tok-c '{"title":"Pref test 2","body":"Notification
 R=$(req GET /notifications/unread-count tok-b)
 check "regenerated post increments B's unread again" 200 "$R" "d['unreadCount']>$B1"
 R=$(req GET /notifications tok-a)
-check "A received community_post notification with canonical href" 200 "$R" "any(n.get('type')=='community_post' and 'member-home.html' in (n.get('actionHref') or n.get('action_href') or '') for n in d['notifications'] if not n.get('chat'))"
+check "A received community_post notification with canonical href" 200 "$R" "any(n.get('type')=='community_post' and '/member-home' in (n.get('actionHref') or n.get('action_href') or '') for n in d['notifications'] if not n.get('chat'))"
 
 ######################## 7. ADMIN CENTER 002 APIs ########################
 echo "== ADMINISTRATION CENTER 002 =="
