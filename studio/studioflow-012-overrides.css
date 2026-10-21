@@ -1,0 +1,37 @@
+/* TPI-STUDIOFLOW-012: keep the Go Live control's border even while retaining focus visibility. */
+.go-live-button {
+  border: 1px solid #7b8ca8;
+}
+
+.go-live-button:focus-visible {
+  outline: 2px solid #91b9fa;
+  outline-offset: 2px;
+}
+
+/* TPI-STUDIOFLOW-019: prerecorded intro/outro clips are the program frame.
+   Keep the video itself full-bleed inside the already-16:9 stage while using
+   contain so non-16:9 source media stays proportional and uncropped. */
+.program-stage > video.stage-video.contain {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Opera/WebKit can stretch a grid item to the full stage row height while
+   leaving its width at the desktop cap. Size landscape stages from height so
+   the containing frame itself remains 16:9 in every browser. */
+.program-stage:not(.orientation-portrait) {
+  width: auto;
+  height: min(100%, 612px);
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+}

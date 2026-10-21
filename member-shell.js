@@ -254,9 +254,13 @@
     // Set up mobile nav before badges so desktop and mobile alerts update together.
     injectMobileNav();
 
-    // Set notification badge
-    setupNotificationBadge();
-    startNotificationBadgePolling();
+    // Notification counts belong to authenticated members. Guest pages can
+    // still use the shared shell, but polling an authenticated-only endpoint
+    // every 15 seconds from those pages creates avoidable Worker traffic.
+    if (!user.guest) {
+      setupNotificationBadge();
+      startNotificationBadgePolling();
+    }
     setupExploreBadge();
 
     // Set up logout
@@ -569,7 +573,9 @@
 
   function startNotificationBadgePolling() {
     if (notificationBadgeTimer) return;
-    notificationBadgeTimer = window.setInterval(setupNotificationBadge, 15000);
+    notificationBadgeTimer = window.setInterval(function() {
+      if (!document.hidden) setupNotificationBadge();
+    }, 15000);
     window.addEventListener("focus", setupNotificationBadge);
     window.addEventListener("tpi:notifications-changed", setupNotificationBadge);
     document.addEventListener("visibilitychange", function() {
@@ -2697,6 +2703,8 @@
     var activeSearchMatches = [];
     var activeMessageSyncTimer = null;
     var conversationListSyncTimer = null;
+    var conversationListSyncInFlight = false;
+    var presenceHeartbeatInFlight = false;
     syncChatMinimizeButton();
 
     renderOnline();
@@ -2731,8 +2739,14 @@
     }
 
     async function syncConversationList() {
-      await loadChatListFromRemote();
-      await syncRosterPresence();
+      if (conversationListSyncInFlight) return;
+      conversationListSyncInFlight = true;
+      try {
+        await loadChatListFromRemote();
+        await syncRosterPresence();
+      } finally {
+        conversationListSyncInFlight = false;
+      }
     }
 
     async function syncRosterPresence() {
@@ -2799,11 +2813,21 @@
       }
     }
     async function sendPresenceHeartbeat() {
+      if (presenceHeartbeatInFlight || document.hidden) return;
+      presenceHeartbeatInFlight = true;
       try {
         await apiFetch("POST", "/api/messenger/presence");
-      } catch (e) {}
+      } catch (e) {} finally {
+        presenceHeartbeatInFlight = false;
+      }
     }
     function setSyncForVisibility() {
+      if (document.hidden) {
+        stopActiveSync();
+        stopListSync();
+        stopPresenceHeartbeat();
+        return;
+      }
       if (chat.classList.contains("is-collapsed")) {
         stopActiveSync();
         startListSync();
@@ -2822,9 +2846,8 @@
     });
 
     document.addEventListener("visibilitychange", function() {
-      if (document.visibilityState === "visible") {
-        sendPresenceHeartbeat();
-      }
+      setSyncForVisibility();
+      if (document.visibilityState === "visible") sendPresenceHeartbeat();
     });
 
     chat.querySelector("[data-chat-new]").addEventListener("click", function () {

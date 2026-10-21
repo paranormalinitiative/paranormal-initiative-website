@@ -93,6 +93,40 @@ const CONTRIBUTOR_GATE_HTML = MEMBER_GATE_HTML
 
 const DEVELOPMENT_BANNER = `<div data-tpi-development-environment style="position:fixed;z-index:2147483647;top:0;left:0;right:0;padding:7px 12px;background:#5b2a86;color:#fff;font:700 12px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.35)">DEVELOPMENT ENVIRONMENT</div>`;
 
+// Browser-side fail-closed protection for the local Worker. This covers the
+// request APIs available to page JavaScript; it does not pretend to govern
+// passive HTML media/font loads or a separately running browser extension.
+const LOCAL_REQUEST_GUARD = `<script data-tpi-local-request-guard>(function(){
+  if (window.__TPI_LOCAL_REQUEST_GUARD__) return;
+  window.__TPI_LOCAL_REQUEST_GUARD__ = true;
+  var allowed = new Set([location.origin, "http://127.0.0.1:8788", "http://localhost:8788"]);
+  var blocked = new Set(["https://paranormalinitiative.com", "https://theparanormalinitiative-dev.paranormalsomerset.workers.dev"]);
+  function target(value) { try { return new URL(String(value), location.href); } catch (_) { return null; } }
+  function assert(value) {
+    var url = target(value);
+    if (!url || blocked.has(url.origin) || !allowed.has(url.origin)) {
+      var origin = url ? url.origin : "invalid target";
+      console.warn("TPI local request blocked", origin);
+      throw new Error("TPI local development blocked an external request");
+    }
+    return url;
+  }
+  var nativeFetch = window.fetch.bind(window);
+  window.fetch = function(input, init) { assert(typeof input === "string" ? input : input && input.url); return nativeFetch(input, init); };
+  var nativeOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) { assert(url); return nativeOpen.apply(this, arguments); };
+  var NativeWebSocket = window.WebSocket;
+  window.WebSocket = function(url, protocols) { assert(url); return protocols === undefined ? new NativeWebSocket(url) : new NativeWebSocket(url, protocols); };
+  window.WebSocket.prototype = NativeWebSocket.prototype;
+  var NativeEventSource = window.EventSource;
+  window.EventSource = function(url, config) { assert(url); return new NativeEventSource(url, config); };
+  window.EventSource.prototype = NativeEventSource.prototype;
+  if (navigator.sendBeacon) {
+    var nativeBeacon = navigator.sendBeacon.bind(navigator);
+    navigator.sendBeacon = function(url, data) { assert(url); return nativeBeacon(url, data); };
+  }
+})();</script>`;
+
 // Keep the first paint on the same dark surface as the TPI design system.
 // This is deliberately limited to the browser's existing local theme choice;
 // it does not inspect authentication state or expose account information.
@@ -108,23 +142,70 @@ html[data-theme="gothicnight"],html[data-theme="gothicnight"] body{background:#0
 async function serveAssets(request, env) {
   const response = await env.ASSETS.fetch(request);
   if (!response.ok) return response;
+  const isDevelopmentAsset = env.TPI_ENV === "development" || env.TPI_ENV === "local";
   const contentType = response.headers.get("content-type") || "";
-  if (!contentType.includes("text/html")) return response;
+  if (!contentType.includes("text/html")) {
+    if (!isDevelopmentAsset) return response;
+    const headers = new Headers(response.headers);
+    headers.set("Cache-Control", "no-store");
+    headers.delete("etag");
+    headers.delete("last-modified");
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+  }
   const html = await response.text();
   let body = html;
   if (!html.includes("data-tpi-theme-bootstrap")) {
     body = body.replace(/<head([^>]*)>/i, `<head$1>${EARLY_THEME_BOOTSTRAP}`);
   }
+  if (env.TPI_ENV === "local" && !body.includes("data-tpi-local-request-guard")) {
+    body = body.replace(/<head([^>]*)>/i, `<head$1>${LOCAL_REQUEST_GUARD}`);
+  }
   if (env.TPI_ENV === "development" && !body.includes("data-tpi-development-environment")) {
     body = body.replace(/<body([^>]*)>/i, `<body$1>${DEVELOPMENT_BANNER}`);
   }
-  if (body === html) return response;
+  // Reading an HTML response consumes its body. Return a fresh response when
+  // no local wrapper was needed instead of handing the consumed response back
+  // to the runtime. This matters for extensionless local HTML asset routes.
+  if (body === html) {
+    const headers = new Headers(response.headers);
+    if (isDevelopmentAsset) {
+      headers.set("Cache-Control", "no-store");
+      headers.delete("etag");
+      headers.delete("last-modified");
+    }
+    return new Response(html, { status: response.status, statusText: response.statusText, headers });
+  }
   const headers = new Headers(response.headers);
   headers.delete("content-length");
   headers.delete("etag");
   headers.delete("last-modified");
-  if (env.TPI_ENV === "development") headers.set("Cache-Control", "no-store");
+  if (isDevelopmentAsset) headers.set("Cache-Control", "no-store");
   return new Response(body, { status: response.status, statusText: response.statusText, headers });
+}
+
+// Wrangler's local asset handler does not consistently apply the hosted
+// clean-URL fallback for extensionless HTML routes. Keep the browser-facing
+// URLs stable by retrying only an existing, deterministic HTML counterpart
+// after the original asset lookup returns 404. Authentication gates run before
+// this helper for protected surfaces such as Creator Studio.
+function cleanUrlAssetPath(pathname) {
+  if (pathname === "/studio" || pathname === "/studio/") return "/studio/index.html";
+  if (pathname.endsWith("/")) return `${pathname}index.html`;
+  if (!pathname.endsWith(".html") && !pathname.includes(".")) return `${pathname}.html`;
+  return null;
+}
+
+async function servePageAsset(request, env) {
+  const response = await serveAssets(request, env);
+  if (response.status !== 404) return response;
+
+  const url = new URL(request.url);
+  const fallbackPath = cleanUrlAssetPath(url.pathname);
+  if (!fallbackPath || fallbackPath === url.pathname) return response;
+
+  const fallbackUrl = new URL(request.url);
+  fallbackUrl.pathname = fallbackPath;
+  return serveAssets(new Request(fallbackUrl, request), env);
 }
 
 // The React Administration Center is the canonical implementation. Keep the
@@ -187,7 +268,7 @@ export default {
           }
         });
       }
-      const publicHome = await serveAssets(request, env);
+      const publicHome = await servePageAsset(request, env);
       const publicHeaders = new Headers(publicHome.headers);
       publicHeaders.set("Cache-Control", "private, no-store");
       return new Response(publicHome.body, {
@@ -240,7 +321,7 @@ export default {
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return serveAssets(request, env);
+      return servePageAsset(request, env);
     }
 
     // TPI-ADMIN-005 isolated React preview. Gate the entry document and every
@@ -336,7 +417,7 @@ export default {
     }
 
     // Default: serve normal website static assets
-    return serveAssets(request, env);
+    return servePageAsset(request, env);
   },
 
   // Cron trigger: every 6 hours (see wrangler.toml crons). Events refresh

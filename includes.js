@@ -173,11 +173,14 @@
     host.innerHTML = await res.text();
   }
 
-  await inject("#site-header", "header.html");
+  // Shared fragments live at the application root. Root-relative URLs keep
+  // clean nested routes such as /published-article/ from requesting
+  // /published-article/header.html and /published-article/footer.txt.
+  await inject("#site-header", "/header.html");
   // Cloudflare's clean-URL handling can rewrite standalone footer.html
   // requests before the Worker sees them. Guarded deployments stage the same
   // source-of-truth markup under footer.txt for a stable include URL.
-  await inject("#site-footer", "footer.txt");
+  await inject("#site-footer", "/footer.txt");
   installContentProtection();
   installMemberGreeting();
   installHeaderSearch();

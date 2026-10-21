@@ -1,0 +1,18 @@
+{
+  "name": "paranormal-initiative-website-local-tools",
+  "private": true,
+  "scripts": {
+    "dev:local": "node scripts/local-dev.mjs",
+    "dev:local:status": "node scripts/local-dev.mjs status",
+    "dev:local:stop": "node scripts/local-dev.mjs stop",
+    "dev:local:service:install": "node scripts/local-dev-service.mjs install",
+    "dev:local:service:start": "node scripts/local-dev-service.mjs start",
+    "dev:local:service:stop": "node scripts/local-dev-service.mjs stop",
+    "dev:local:service:restart": "node scripts/local-dev-service.mjs restart",
+    "dev:local:service:status": "node scripts/local-dev-service.mjs status",
+    "dev:local:service:uninstall": "node scripts/local-dev-service.mjs uninstall"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
+}

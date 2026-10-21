@@ -132,6 +132,7 @@
     var currentUser = null;
     var liveCommentsTimer = null;
     var liveCommentsVideoId = null;
+    var liveCommentsInFlight = false;
     var userReaction = null;
     var reactionCounts = {};
     var isSaved = false;
@@ -819,12 +820,14 @@
         await loadComments(videoId);
         if (isLive) {
             liveCommentsTimer = setInterval(function () {
-                if (liveCommentsVideoId === videoId) loadComments(videoId);
+                if (!document.hidden && liveCommentsVideoId === videoId) loadComments(videoId);
             }, 2500);
         }
     }
 
     async function loadComments(videoId) {
+        if (liveCommentsInFlight) return;
+        liveCommentsInFlight = true;
         var listArea = document.getElementById("video-comments-list");
         try {
             var res = await fetch("/api/video-comments?videoId=" + encodeURIComponent(videoId), { credentials: "same-origin" });
@@ -839,6 +842,8 @@
             }
         } catch (e) {
             listArea.innerHTML = '<p class="video-comment-status">No comments yet. Be the first to join the discussion.</p>';
+        } finally {
+            liveCommentsInFlight = false;
         }
     }
 

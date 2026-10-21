@@ -1,4 +1,4 @@
-import { SESSION_COOKIE, getCookie, getSessionUser, hasCreatorStudioAccess } from "../../lib/auth.js";
+import { SESSION_COOKIE, getCookie, getSessionUser, hasCreatorStudioAccess, sessionCookieAttributes } from "../../lib/auth.js";
 import { scrapeAndUpdateEvents } from "../../lib/event-scraper.js";
 import { scrapeNews } from "../../lib/news-scraper.js";
 import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
@@ -6,6 +6,7 @@ import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-librar
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
+import { localFetch } from "../../lib/outbound-fetch.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -27,7 +28,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/uploads/library") return requireMember(request, env, user => handleMediaUpload(request, env, user, "private-library", "library", ["image/", "video/", "application/pdf", "text/plain", "text/csv", "application/json", "application/rtf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/zip", "application/octet-stream"]));
     if (request.method === "GET" && path === "/me/pulse") return requireMember(request, env, user => handleMyPulse(request, env, user));
     if (request.method === "POST" && path === "/auth/login") return handleLogin(request, env);
-    if (request.method === "POST" && path === "/auth/logout") return handleLogout();
+    if (request.method === "POST" && path === "/auth/logout") return handleLogout(request, env);
     if (request.method === "POST" && path === "/auth/password-reset/request") return handlePasswordResetRequest(request, env);
     if (request.method === "POST" && path === "/members/register") return handleMemberRegister(request, env);
     if (request.method === "POST" && path === "/owner/bootstrap") return handleOwnerBootstrap(request, env);
@@ -146,10 +147,20 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/studio/rooms") return requireStudioAccess(request, env, user => handleCreateStudioRoom(request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/guest-token$/)) return requireStudioAccess(request, env, user => handleStudioGuestToken(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/close$/)) return requireStudioAccess(request, env, user => handleCloseStudioRoom(path, env, user));
+    if (request.method === "POST" && path === "/studio/production/start") return requireStudioAccess(request, env, user => handleStartStudioProduction(request, env, user));
+    if (request.method === "POST" && path === "/studio/production/heartbeat") return requireStudioAccess(request, env, user => handleHeartbeatStudioProduction(request, env, user));
+    if (request.method === "POST" && path === "/studio/production/stop") return requireStudioAccess(request, env, user => handleStopStudioProduction(request, env, user));
+    if (request.method === "GET" && path === "/studio/production/active") return requireStudioAccess(request, env, user => handleGetActiveStudioProduction(env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/start$/)) return requireStudioAccess(request, env, user => handleStartStudioLivestream(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/rooms\/[^/]+\/livestream\/stop$/)) return requireStudioAccess(request, env, user => handleStopStudioLivestream(path, env, user));
     if (request.method === "GET" && path === "/studio/workspaces") return requireStudioAccess(request, env, user => handleListStudioWorkspaces(request, env, user));
     if (request.method === "POST" && path === "/studio/workspaces") return requireStudioAccess(request, env, user => handleCreateStudioWorkspace(request, env, user));
+    if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+\/snapshots$/)) return requireStudioAccess(request, env, user => handleListStudioWorkspaceSnapshots(path, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/snapshots$/)) return requireStudioAccess(request, env, user => handleCreateStudioWorkspaceSnapshot(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+\/snapshots\/[^/]+$/)) return requireStudioAccess(request, env, user => handleGetStudioWorkspaceSnapshot(path, env, user));
+    if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+\/media$/)) return requireStudioAccess(request, env, user => handleListStudioMedia(path, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/media$/)) return requireStudioAccess(request, env, user => handleUploadStudioMedia(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+\/media\/[^/]+$/)) return requireStudioAccess(request, env, user => handleGetStudioMedia(path, env, user));
     if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+$/)) return requireStudioAccess(request, env, user => handleGetStudioWorkspace(path, request, env, user));
     if ((request.method === "PUT" || request.method === "PATCH") && path.match(/^\/studio\/workspaces\/[^/]+$/)) return requireStudioAccess(request, env, user => handleUpdateStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/duplicate$/)) return requireStudioAccess(request, env, user => handleDuplicateStudioWorkspace(path, request, env, user));
@@ -336,7 +347,7 @@ async function handleLogin(request, env) {
     .run();
 
   return json({ user: privateMemberUser(user) }, 200, {
-    "Set-Cookie": `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 14}`
+    "Set-Cookie": `${SESSION_COOKIE}=${token}; ${sessionCookieAttributes(request, env, 60 * 60 * 24 * 14)}`
   });
 }
 
@@ -365,9 +376,16 @@ async function handlePasswordResetRequest(request, env) {
   });
 }
 
-async function handleLogout() {
+async function handleLogout(request, env) {
+  // Local fixtures must not leave replayable session tokens behind. Hosted
+  // behavior remains unchanged: clearing the browser cookie is the existing
+  // logout contract, and hosted session lifecycle remains untouched here.
+  if (env?.TPI_ENV === "local" && env?.TPI_LOCAL_ONLY === "1") {
+    const token = getCookie(request, SESSION_COOKIE);
+    if (token) await env.TPI_DB.prepare("DELETE FROM sessions WHERE token = ?").bind(token).run();
+  }
   return json({ ok: true }, 200, {
-    "Set-Cookie": `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
+    "Set-Cookie": `${SESSION_COOKIE}=; ${sessionCookieAttributes(request, env, 0)}`
   });
 }
 
@@ -3911,6 +3929,7 @@ function liveBroadcastPayload(row) {
     creatorId: row.creator_id,
     videoId: row.video_id || null,
     videoSlug: row.videoSlug || null,
+    studioWorkspaceId: row.studio_workspace_id || null,
     title: row.title,
     status: row.status,
     scheduledAt: row.scheduled_at || null,
@@ -4062,14 +4081,36 @@ async function handleRegisterLiveBroadcast(request, env, user) {
       || (existing.status === requestedStatus);
     if (!allowed) return json({ error: `Invalid broadcast transition from ${existing.status} to ${requestedStatus}.` }, 409);
   }
+  const ownerId = existing?.creator_id || user.id;
+  const studioWorkspaceId = clean(data.studioWorkspaceId || existing?.studio_workspace_id) || null;
+  let productionReservation = null;
+  const productionSessionId = clean(data.productionSessionId || existing?.production_session_id) || `broadcast-${id}`;
+  if (status === "live") {
+    const workspace = await getProductionWorkspace(env, ownerId, studioWorkspaceId, id);
+    if (!workspace) return json({ error: "A saved Studio is required before starting production.", code: "workspace_required" }, 409, { "Cache-Control": "no-store" });
+    try {
+      productionReservation = await reserveCreatorProduction(env, {
+        creatorId: ownerId,
+        studioWorkspaceId: workspace.id,
+        sessionId: productionSessionId,
+        mode: "live",
+        metadata: { source: "studioflow-broadcast", broadcastId: id }
+      });
+    } catch (error) {
+      return productionLockStorageError(error);
+    }
+    if (!productionReservation.ok) return json(studioProductionConflict(productionReservation.conflict), 409, { "Cache-Control": "no-store" });
+  }
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
-    INSERT INTO live_broadcasts (id, creator_id, video_id, title, status, started_at, ended_at, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO live_broadcasts (id, creator_id, video_id, title, status, started_at, ended_at, studio_workspace_id, production_session_id, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       video_id = excluded.video_id,
       title = excluded.title,
       status = excluded.status,
+      studio_workspace_id = COALESCE(excluded.studio_workspace_id, live_broadcasts.studio_workspace_id),
+      production_session_id = CASE WHEN excluded.status = 'live' THEN excluded.production_session_id ELSE live_broadcasts.production_session_id END,
       started_at = CASE WHEN excluded.status = 'live' THEN COALESCE(live_broadcasts.started_at, excluded.started_at) ELSE live_broadcasts.started_at END,
       ended_at = CASE WHEN excluded.status IN ('ended', 'cancelled') THEN COALESCE(live_broadcasts.ended_at, excluded.ended_at) ELSE live_broadcasts.ended_at END,
       updated_at = excluded.updated_at
@@ -4081,9 +4122,14 @@ async function handleRegisterLiveBroadcast(request, env, user) {
     status,
     status === "live" ? now : null,
     ["ended", "cancelled"].includes(status) ? now : null,
+    studioWorkspaceId,
+    status === "live" ? productionSessionId : null,
     existing?.created_at || now,
     now
   ).run();
+  if (["ended", "cancelled"].includes(status) && existing?.production_session_id) {
+    try { await releaseCreatorProduction(env, { creatorId: ownerId, sessionId: existing.production_session_id }); } catch (error) { return productionLockStorageError(error); }
+  }
   const broadcast = await env.TPI_DB.prepare("SELECT lb.*, tv.slug AS videoSlug FROM live_broadcasts lb LEFT JOIN tpi_videos tv ON tv.id = lb.video_id WHERE lb.id = ?").bind(id).first();
   await syncTpiVideoFromLiveBroadcast(env, id, status);
   const syncedBroadcast = await env.TPI_DB.prepare("SELECT lb.*, tv.slug AS videoSlug FROM live_broadcasts lb LEFT JOIN tpi_videos tv ON tv.id = lb.video_id WHERE lb.id = ?").bind(id).first();
@@ -4101,6 +4147,24 @@ async function handleSetLiveBroadcastStatus(path, request, env, user) {
   if ((broadcast.status === "ready" && status !== "live") || (broadcast.status === "live" && status !== "ended") || ["ended", "cancelled"].includes(broadcast.status)) {
     if (broadcast.status !== status) return json({ error: `Invalid broadcast transition from ${broadcast.status} to ${status}.` }, 409);
   }
+  const productionSessionId = clean(broadcast.production_session_id || `broadcast-${broadcast.id}`);
+  if (status === "live") {
+    const workspace = await getProductionWorkspace(env, broadcast.creator_id, broadcast.studio_workspace_id, broadcast.id);
+    if (!workspace) return json({ error: "A saved Studio is required before starting production.", code: "workspace_required" }, 409, { "Cache-Control": "no-store" });
+    try {
+      const reservation = await reserveCreatorProduction(env, {
+        creatorId: broadcast.creator_id,
+        studioWorkspaceId: workspace.id,
+        sessionId: productionSessionId,
+        mode: "live",
+        metadata: { source: "studioflow-broadcast", broadcastId: broadcast.id }
+      });
+      if (!reservation.ok) return json(studioProductionConflict(reservation.conflict), 409, { "Cache-Control": "no-store" });
+    } catch (error) {
+      return productionLockStorageError(error);
+    }
+    await env.TPI_DB.prepare("UPDATE live_broadcasts SET production_session_id = ? WHERE id = ?").bind(productionSessionId, broadcast.id).run();
+  }
   const now = new Date().toISOString();
   await env.TPI_DB.prepare(`
     UPDATE live_broadcasts
@@ -4110,6 +4174,9 @@ async function handleSetLiveBroadcastStatus(path, request, env, user) {
     WHERE id = ?
   `).bind(status, status, now, status, now, now, broadcast.id).run();
   await syncTpiVideoFromLiveBroadcast(env, broadcast.id, status);
+  if (status === "ended" && broadcast.production_session_id) {
+    try { await releaseCreatorProduction(env, { creatorId: broadcast.creator_id, sessionId: broadcast.production_session_id }); } catch (error) { return productionLockStorageError(error); }
+  }
   const updated = await getLiveBroadcast(env, broadcast.id);
   return json({ ok: true, broadcast: liveBroadcastPayload(updated) }, 200, { "Cache-Control": "no-store" });
 }
@@ -4537,6 +4604,23 @@ function normalizeStudioConfiguration(value) {
   })) : [];
   const accentColor = clean(style.accentColor);
   const ticker = source.bannerScrollTicker && typeof source.bannerScrollTicker === "object" ? source.bannerScrollTicker : {};
+  const normalizeAsset = (value) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    return {
+      id: clean(value.id).slice(0, 120) || null,
+      blobKey: clean(value.blobKey).slice(0, 180) || null,
+      fileName: cleanVideoText(value.fileName || "", 180),
+      kind: clean(value.kind).slice(0, 40) || null,
+      mediaType: clean(value.mediaType).slice(0, 40) || null,
+      size: Number.isFinite(Number(value.size)) && Number(value.size) >= 0 ? Math.min(Number(value.size), 250 * 1024 * 1024) : null,
+      title: cleanVideoText(value.title || "", 160),
+      uploadedAt: clean(value.uploadedAt).slice(0, 80) || null
+    };
+  };
+  const normalizeAssetList = (value, limit = 50) => Array.isArray(value) ? value.slice(0, limit).map(normalizeAsset).filter(Boolean) : [];
+  const videoClips = source.videoClips && typeof source.videoClips === "object" ? source.videoClips : {};
+  const backgroundMusic = normalizeAsset(source.backgroundMusic);
+  const customSounds = normalizeAssetList(source.customSounds, 50);
   return {
     selectedBackground: clean(source.selectedBackground).slice(0, 100) || "default",
     activeSceneId: clean(source.activeSceneId).slice(0, 100) || null,
@@ -4571,6 +4655,19 @@ function normalizeStudioConfiguration(value) {
       mustAuthenticate: guest.mustAuthenticate === true,
       canControlSlides: guest.canControlSlides === true
     },
+    customBackground: normalizeAsset(source.customBackground),
+    customLogo: normalizeAsset(source.customLogo),
+    overlayAssets: normalizeAssetList(source.overlayAssets, 50),
+    activeOverlayId: clean(source.activeOverlayId).slice(0, 120) || null,
+    videoClips: {
+      intro: normalizeAsset(videoClips.intro),
+      outro: normalizeAsset(videoClips.outro)
+    },
+    backgroundMusic,
+    backgroundMusicVolume: Number.isFinite(Number(source.backgroundMusicVolume)) ? Math.max(0, Math.min(1, Number(source.backgroundMusicVolume))) : 0.42,
+    customSounds,
+    customSound: normalizeAsset(source.customSound),
+    soundVolume: Number.isFinite(Number(source.soundVolume)) ? Math.max(0, Math.min(1, Number(source.soundVolume))) : 0.72,
     studioScenes: scenes,
     bannerScrollTicker: {
       enabled: ticker.enabled === true,
@@ -4632,6 +4729,149 @@ function studioWorkspaceStorageFailure(error) {
   }, 503, { "Cache-Control": "no-store" });
 }
 
+const STUDIO_MEDIA_MAX_BYTES = Object.freeze({ image: 32 * 1024 * 1024, video: 200 * 1024 * 1024, audio: 10 * 1024 * 1024 });
+
+function studioMediaPath(path, includeAsset = false) {
+  const match = path.match(includeAsset
+    ? /^\/studio\/workspaces\/([^/]+)\/media\/([^/]+)$/
+    : /^\/studio\/workspaces\/([^/]+)\/media$/);
+  if (!match) return { workspaceId: "", assetId: "" };
+  return {
+    workspaceId: snapshotSegment(match[1]),
+    assetId: includeAsset ? snapshotSegment(match[2]) : ""
+  };
+}
+
+function studioMediaKind(contentType) {
+  if (contentType.startsWith("image/")) return "image";
+  if (contentType.startsWith("video/")) return "video";
+  if (contentType.startsWith("audio/")) return "audio";
+  return "";
+}
+
+function studioMediaPayload(row, workspaceId) {
+  return {
+    id: row.id,
+    workspaceId: workspaceId || row.workspace_id,
+    fileName: row.original_name,
+    contentType: row.content_type,
+    mediaKind: row.media_kind,
+    size: Number(row.size_bytes || 0),
+    uploadedAt: row.created_at,
+    serverAssetId: row.id,
+    serverUrl: `/api/studio/workspaces/${encodeURIComponent(workspaceId || row.workspace_id)}/media/${encodeURIComponent(row.id)}`
+  };
+}
+
+function studioMediaStorageFailure(error) {
+  const detail = String(error?.message || error || "").toLowerCase();
+  const schemaUnavailable = /no such table|no such column|unknown table|schema.*not.*available|table.*does not exist/.test(detail);
+  return json({
+    error: schemaUnavailable
+      ? "Studio media storage is not available in this environment yet. Apply the additive StudioFlow media schema before uploading custom media."
+      : "Studio media storage is temporarily unavailable. Keep the browser-local copy and try again later.",
+    code: schemaUnavailable ? "studio_media_schema_unsupported" : "studio_media_backend_unavailable"
+  }, 503, { "Cache-Control": "no-store" });
+}
+
+async function handleListStudioMedia(path, env, user) {
+  const { workspaceId } = studioMediaPath(path);
+  if (!workspaceId) return json({ error: "Invalid Studio media path." }, 400);
+  try {
+    const workspace = await getOwnedStudioWorkspace(env, workspaceId, user.id);
+    if (!workspace || workspace.deleted_at) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT id, workspace_id, original_name, content_type, media_kind, size_bytes, created_at
+      FROM studio_media_assets
+      WHERE workspace_id = ? AND owner_id = ?
+      ORDER BY created_at DESC, id DESC
+      LIMIT 200
+    `).bind(workspaceId, user.id).all();
+    return json({ assets: (results || []).map(row => studioMediaPayload(row, workspaceId)), available: true }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioMediaStorageFailure(error);
+  }
+}
+
+async function handleUploadStudioMedia(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Studio media mutations are not allowed." }, 403);
+  const { workspaceId } = studioMediaPath(path);
+  if (!workspaceId) return json({ error: "Invalid Studio media path." }, 400);
+  if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.put !== "function") return json({ error: "Persistent Studio media storage is not configured in this environment.", code: "studio_media_unavailable" }, 503, { "Cache-Control": "no-store" });
+  let objectKey = "";
+  try {
+    const workspace = await getOwnedStudioWorkspace(env, workspaceId, user.id);
+    if (!workspace || workspace.deleted_at) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+    const upload = await readUploadFile(request);
+    if (!upload) return json({ error: "Choose an image, video, or audio file to upload." }, 400);
+    const contentType = clean(upload.type).toLowerCase();
+    const mediaKind = studioMediaKind(contentType);
+    if (!mediaKind) return json({ error: "Studio media must be an image, video, or audio file." }, 400);
+    const maxBytes = STUDIO_MEDIA_MAX_BYTES[mediaKind];
+    if (!Number.isFinite(upload.size) || upload.size < 1 || upload.size > maxBytes) {
+      return json({ error: `This ${mediaKind} file exceeds the StudioFlow limit.` }, 413);
+    }
+    const assetId = crypto.randomUUID();
+    objectKey = `studio-media/${user.id}/${workspaceId}/${assetId}`;
+    const originalName = clean(upload.name || "studio-media").slice(0, 180) || "studio-media";
+    await env.TPI_MEDIA.put(objectKey, upload.body, {
+      httpMetadata: { contentType, cacheControl: "private, no-store" },
+      customMetadata: { ownerId: user.id, workspaceId, assetId, purpose: "studio-custom-media", originalName, mediaKind }
+    });
+    const now = new Date().toISOString();
+    try {
+      await env.TPI_DB.prepare(`
+        INSERT INTO studio_media_assets
+          (id, workspace_id, owner_id, object_key, original_name, content_type, media_kind, size_bytes, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(assetId, workspaceId, user.id, objectKey, originalName, contentType, mediaKind, upload.size, now, now).run();
+    } catch (error) {
+      try { await env.TPI_MEDIA.delete(objectKey); } catch (cleanupError) { /* best effort; never hide the DB failure */ }
+      objectKey = "";
+      throw error;
+    }
+    const row = await env.TPI_DB.prepare(`
+      SELECT id, workspace_id, original_name, content_type, media_kind, size_bytes, created_at
+      FROM studio_media_assets WHERE id = ? AND workspace_id = ? AND owner_id = ? LIMIT 1
+    `).bind(assetId, workspaceId, user.id).first();
+    return json({ ok: true, asset: studioMediaPayload(row, workspaceId) }, 201, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    if (objectKey) {
+      try { await env.TPI_MEDIA.delete(objectKey); } catch (cleanupError) { /* best effort */ }
+    }
+    return studioMediaStorageFailure(error);
+  }
+}
+
+async function handleGetStudioMedia(path, env, user) {
+  const { workspaceId, assetId } = studioMediaPath(path, true);
+  if (!workspaceId || !assetId) return json({ error: "Invalid Studio media path." }, 400);
+  if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.get !== "function") return json({ error: "Persistent Studio media storage is not configured in this environment.", code: "studio_media_unavailable" }, 503, { "Cache-Control": "no-store" });
+  try {
+    const workspace = await getOwnedStudioWorkspace(env, workspaceId, user.id);
+    if (!workspace || workspace.deleted_at) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
+    const row = await env.TPI_DB.prepare(`
+      SELECT id, workspace_id, object_key, original_name, content_type, media_kind, size_bytes, created_at
+      FROM studio_media_assets
+      WHERE id = ? AND workspace_id = ? AND owner_id = ?
+      LIMIT 1
+    `).bind(assetId, workspaceId, user.id).first();
+    if (!row) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
+    const object = await env.TPI_MEDIA.get(row.object_key);
+    if (!object) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    headers.set("Content-Type", row.content_type);
+    headers.set("Cache-Control", "private, no-store");
+    headers.set("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(row.original_name)}`);
+    headers.set("X-Content-Type-Options", "nosniff");
+    headers.set("Content-Security-Policy", "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'none'");
+    return new Response(object.body, { headers });
+  } catch (error) {
+    return studioMediaStorageFailure(error);
+  }
+}
+
 function studioWorkspacePayload(row) {
   if (!row) return null;
   return {
@@ -4683,6 +4923,117 @@ async function handleListStudioWorkspaces(request, env, user) {
   }
 }
 
+const STUDIO_RECOVERY_SNAPSHOT_LIMIT = 20;
+const STUDIO_RECOVERY_SNAPSHOT_PREFIX = "studioflow-project-snapshots";
+
+function snapshotSegment(value) {
+  const segment = clean(decodeURIComponent(String(value || "")));
+  return /^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$/.test(segment) ? segment : "";
+}
+
+function studioSnapshotPath(path, includeSnapshot = false) {
+  const match = path.match(includeSnapshot
+    ? /^\/studio\/workspaces\/([^/]+)\/snapshots\/([^/]+)$/
+    : /^\/studio\/workspaces\/([^/]+)\/snapshots$/);
+  if (!match) return { workspaceId: "", snapshotId: "" };
+  return { workspaceId: snapshotSegment(match[1]), snapshotId: includeSnapshot ? snapshotSegment(match[2]) : "" };
+}
+
+function studioSnapshotKey(userId, workspaceId, snapshotId) {
+  return `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(userId)}/${snapshotSegment(workspaceId)}/${snapshotSegment(snapshotId)}.json`;
+}
+
+function studioSnapshotPayload(object, snapshotId) {
+  const metadata = object?.customMetadata || {};
+  return {
+    snapshotId,
+    title: cleanVideoText(metadata.title || "Untitled Studio", 180),
+    version: Number(metadata.version || 0) || null,
+    createdAt: metadata.createdAt || object?.uploaded?.toISOString?.() || null,
+    size: Number(object?.size || 0) || null
+  };
+}
+
+async function handleListStudioWorkspaceSnapshots(path, env, user) {
+  const { workspaceId } = studioSnapshotPath(path);
+  if (!workspaceId) return json({ error: "Invalid workspace snapshot path." }, 400);
+  const workspace = await getOwnedStudioWorkspace(env, workspaceId, user.id);
+  if (!workspace) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+  if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.list !== "function") {
+    return json({ snapshots: [], available: false, error: "Recovery snapshots are unavailable in this environment." }, 200, { "Cache-Control": "private, no-store" });
+  }
+  try {
+    const listed = await env.TPI_MEDIA.list({ prefix: `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${workspaceId}/`, limit: STUDIO_RECOVERY_SNAPSHOT_LIMIT });
+    const snapshots = (listed.objects || []).map(object => {
+      const name = String(object.key || "").split("/").pop() || "";
+      return studioSnapshotPayload(object, name.endsWith(".json") ? name.slice(0, -5) : name);
+    }).filter(snapshot => snapshot.snapshotId).sort((left, right) => String(right.createdAt || "").localeCompare(String(left.createdAt || "")));
+    return json({ snapshots, available: true }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return json({ snapshots: [], available: false, error: "Recovery snapshots could not be listed." }, 200, { "Cache-Control": "private, no-store" });
+  }
+}
+
+async function handleCreateStudioWorkspaceSnapshot(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  const { workspaceId } = studioSnapshotPath(path);
+  if (!workspaceId) return json({ error: "Invalid workspace snapshot path." }, 400);
+  if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.put !== "function") {
+    return json({ error: "Recovery snapshots are unavailable in this environment.", code: "workspace_snapshot_unavailable" }, 503, { "Cache-Control": "no-store" });
+  }
+  try {
+    const workspace = await getOwnedStudioWorkspace(env, workspaceId, user.id);
+    if (!workspace || workspace.deleted_at) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+    const data = await readJson(request);
+    const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
+    if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
+    if (expectedVersion !== null && expectedVersion !== Number(workspace.version)) {
+      return json({ error: "This workspace changed elsewhere. Refresh before creating a recovery snapshot.", code: "workspace_conflict", workspace: studioWorkspacePayload(workspace) }, 409, { "Cache-Control": "no-store" });
+    }
+    const createdAt = new Date().toISOString();
+    const snapshotId = `${Date.now()}-${crypto.randomUUID()}`;
+    const snapshot = {
+      applicationId: "tpi-studioflow",
+      snapshotFormatVersion: 1,
+      snapshotId,
+      createdAt,
+      workspace: studioWorkspacePayload(workspace)
+    };
+    const body = JSON.stringify(snapshot);
+    if (body.length > 128 * 1024) return json({ error: "Recovery snapshot is too large.", code: "workspace_too_large" }, 413);
+    const key = studioSnapshotKey(user.id, workspaceId, snapshotId);
+    await env.TPI_MEDIA.put(key, body, {
+      httpMetadata: { contentType: "application/json", cacheControl: "no-store" },
+      customMetadata: { title: workspace.title, version: String(workspace.version), createdAt }
+    });
+    const listed = await env.TPI_MEDIA.list({ prefix: `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${workspaceId}/`, limit: 1000 });
+    const objects = (listed.objects || []).sort((left, right) => String(right.uploaded || "").localeCompare(String(left.uploaded || "")));
+    await Promise.all(objects.slice(STUDIO_RECOVERY_SNAPSHOT_LIMIT).map(object => env.TPI_MEDIA.delete(object.key)));
+    return json({ ok: true, snapshot: { snapshotId, title: workspace.title, version: Number(workspace.version), createdAt } }, 201, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
+}
+
+async function handleGetStudioWorkspaceSnapshot(path, env, user) {
+  const { workspaceId, snapshotId } = studioSnapshotPath(path, true);
+  if (!workspaceId || !snapshotId) return json({ error: "Invalid workspace snapshot path." }, 400);
+  const workspace = await getOwnedStudioWorkspace(env, workspaceId, user.id);
+  if (!workspace) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+  if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.get !== "function") return json({ error: "Recovery snapshots are unavailable in this environment.", code: "workspace_snapshot_unavailable" }, 503, { "Cache-Control": "no-store" });
+  try {
+    const object = await env.TPI_MEDIA.get(studioSnapshotKey(user.id, workspaceId, snapshotId));
+    if (!object) return json({ error: "Recovery snapshot not found.", code: "snapshot_not_found" }, 404, { "Cache-Control": "no-store" });
+    const snapshot = await object.json();
+    if (!snapshot || snapshot.applicationId !== "tpi-studioflow" || snapshot.snapshotFormatVersion !== 1 || snapshot.snapshotId !== snapshotId || snapshot.workspace?.id !== workspaceId) {
+      return json({ error: "Recovery snapshot is invalid.", code: "snapshot_invalid" }, 422, { "Cache-Control": "no-store" });
+    }
+    return json({ snapshot }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return json({ error: "Recovery snapshot could not be read.", code: "snapshot_invalid" }, 422, { "Cache-Control": "no-store" });
+  }
+}
+
 async function handleCreateStudioWorkspace(request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
   try {
@@ -4716,6 +5067,7 @@ async function handleCreateStudioWorkspace(request, env, user) {
 }
 
 const STUDIO_ACTIVE_PRODUCTION_STATUSES = new Set(["recording", "live", "stopping", "finalizing", "recovery"]);
+const STUDIO_PRODUCTION_CONFLICT_MESSAGE = "Another studio is currently in production.\n\nFinish your active session before starting a production in this studio.";
 
 function studioProductionGuard(row, deleteOnly = false) {
   const state = safeJsonParse(row?.state_json) || {};
@@ -4728,6 +5080,172 @@ function studioProductionGuard(row, deleteOnly = false) {
     return { code: "studio_scheduled_production", error: "This Studio has a scheduled production. Reassign or cancel it before deleting the Studio." };
   }
   return null;
+}
+
+function studioProductionConflict(active) {
+  const title = clean(active?.studio_title || active?.workspace_title);
+  return {
+    code: "studio_production_conflict",
+    error: title ? `${STUDIO_PRODUCTION_CONFLICT_MESSAGE}\n\nActive Studio: ${title}` : STUDIO_PRODUCTION_CONFLICT_MESSAGE,
+    activeStudioId: active?.studio_workspace_id || null,
+    activeStudioTitle: title || null,
+    sessionId: active?.session_id || null
+  };
+}
+
+async function getCreatorProductionSession(env, creatorId) {
+  return env.TPI_DB.prepare(`
+    SELECT s.*, w.title AS studio_title, w.studio_number
+    FROM studio_production_sessions s
+    LEFT JOIN studio_workspaces w ON w.id = s.studio_workspace_id
+    WHERE s.creator_id = ? AND s.status = 'active'
+    LIMIT 1
+  `).bind(creatorId).first();
+}
+
+async function getProductionWorkspace(env, creatorId, workspaceId, localBroadcastId) {
+  const id = clean(workspaceId);
+  const localId = cleanBroadcastId(localBroadcastId);
+  if (id) {
+    return env.TPI_DB.prepare(`
+      SELECT * FROM studio_workspaces
+      WHERE id = ? AND owner_id = ? AND deleted_at IS NULL
+      LIMIT 1
+    `).bind(id, creatorId).first();
+  }
+  if (localId) {
+    return env.TPI_DB.prepare(`
+      SELECT * FROM studio_workspaces
+      WHERE local_broadcast_id = ? AND owner_id = ? AND deleted_at IS NULL
+      LIMIT 1
+    `).bind(localId, creatorId).first();
+  }
+  return null;
+}
+
+async function reserveCreatorProduction(env, { creatorId, studioWorkspaceId, sessionId, mode = "live", metadata = {} }) {
+  const creator = clean(creatorId);
+  const workspace = clean(studioWorkspaceId);
+  const session = clean(sessionId);
+  if (!creator || !workspace || !session || !["recording", "live", "combined"].includes(mode)) {
+    throw new Error("Production lock requires a creator, Studio, session, and valid mode.");
+  }
+  const existing = await getCreatorProductionSession(env, creator);
+  if (existing && existing.session_id !== session) return { ok: false, conflict: existing };
+  const now = new Date().toISOString();
+  await env.TPI_DB.prepare(`
+    INSERT INTO studio_production_sessions
+      (creator_id, studio_workspace_id, session_id, mode, status, started_at, last_heartbeat_at, ended_at, metadata_json)
+    VALUES (?, ?, ?, ?, 'active', ?, ?, NULL, ?)
+    ON CONFLICT(creator_id) DO UPDATE SET
+      studio_workspace_id = excluded.studio_workspace_id,
+      session_id = excluded.session_id,
+      mode = excluded.mode,
+      status = 'active',
+      started_at = CASE WHEN studio_production_sessions.session_id = excluded.session_id THEN studio_production_sessions.started_at ELSE excluded.started_at END,
+      last_heartbeat_at = excluded.last_heartbeat_at,
+      ended_at = NULL,
+      metadata_json = excluded.metadata_json
+    WHERE studio_production_sessions.status <> 'active'
+       OR studio_production_sessions.session_id = excluded.session_id
+  `).bind(creator, workspace, session, mode, now, now, JSON.stringify(metadata || {})).run();
+  const current = await getCreatorProductionSession(env, creator);
+  if (current && current.session_id !== session) return { ok: false, conflict: current };
+  return { ok: true, session: current || { creator_id: creator, studio_workspace_id: workspace, session_id: session, mode, status: "active" } };
+}
+
+async function releaseCreatorProduction(env, { creatorId, sessionId, status = "ended" }) {
+  const result = await env.TPI_DB.prepare(`
+    UPDATE studio_production_sessions
+    SET status = ?, ended_at = CURRENT_TIMESTAMP, last_heartbeat_at = CURRENT_TIMESTAMP
+    WHERE creator_id = ? AND session_id = ? AND status = 'active'
+  `).bind(["ended", "abandoned"].includes(status) ? status : "ended", clean(creatorId), clean(sessionId)).run();
+  return Number(result.meta?.changes || 0) > 0;
+}
+
+async function heartbeatCreatorProduction(env, { creatorId, sessionId }) {
+  const result = await env.TPI_DB.prepare(`
+    UPDATE studio_production_sessions
+    SET last_heartbeat_at = CURRENT_TIMESTAMP
+    WHERE creator_id = ? AND session_id = ? AND status = 'active'
+  `).bind(clean(creatorId), clean(sessionId)).run();
+  return Number(result.meta?.changes || 0) > 0;
+}
+
+function productionLockStorageError(error) {
+  const detail = String(error?.message || error || "").toLowerCase();
+  const unavailable = /no such table|no such column|unknown table|schema.*not.*available|table.*does not exist/.test(detail);
+  return json({
+    code: unavailable ? "production_lock_schema_unsupported" : "production_lock_unavailable",
+    error: unavailable
+      ? "Creator production locking is not available in this environment yet. Apply the additive StudioFlow production-lock migration before starting production."
+      : "Creator production locking is temporarily unavailable. Production cannot start until the lock can be verified."
+  }, 503, { "Cache-Control": "no-store" });
+}
+
+async function handleStartStudioProduction(request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin production mutations are not allowed." }, 403);
+  try {
+    const data = await readJson(request);
+    const workspace = await getProductionWorkspace(env, user.id, data.studioWorkspaceId, data.localBroadcastId || data.broadcastId);
+    if (!workspace) return json({ error: "Studio not found.", code: "workspace_not_found" }, 404);
+    const mode = ["recording", "live", "combined"].includes(clean(data.mode)) ? clean(data.mode) : "recording";
+    const sessionId = clean(data.sessionId) || `browser-${crypto.randomUUID()}`;
+    const reservation = await reserveCreatorProduction(env, {
+      creatorId: user.id,
+      studioWorkspaceId: workspace.id,
+      sessionId,
+      mode,
+      metadata: { source: "studioflow-browser", requestedAt: new Date().toISOString() }
+    });
+    if (!reservation.ok) return json(studioProductionConflict(reservation.conflict), 409, { "Cache-Control": "no-store" });
+    return json({ ok: true, sessionId, studioWorkspaceId: workspace.id, mode: reservation.session.mode }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return productionLockStorageError(error);
+  }
+}
+
+async function handleHeartbeatStudioProduction(request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin production mutations are not allowed." }, 403);
+  try {
+    const data = await readJson(request);
+    if (!clean(data.sessionId)) return json({ error: "sessionId is required.", code: "production_session_invalid" }, 400);
+    const active = await getCreatorProductionSession(env, user.id);
+    if (!active || active.session_id !== clean(data.sessionId)) return json({ error: STUDIO_PRODUCTION_CONFLICT_MESSAGE, code: "studio_production_conflict" }, 409, { "Cache-Control": "no-store" });
+    await heartbeatCreatorProduction(env, { creatorId: user.id, sessionId: data.sessionId });
+    return json({ ok: true, sessionId: data.sessionId, studioWorkspaceId: active.studio_workspace_id }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return productionLockStorageError(error);
+  }
+}
+
+async function handleStopStudioProduction(request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin production mutations are not allowed." }, 403);
+  try {
+    const data = await readJson(request);
+    if (!clean(data.sessionId)) return json({ error: "sessionId is required.", code: "production_session_invalid" }, 400);
+    const released = await releaseCreatorProduction(env, { creatorId: user.id, sessionId: data.sessionId });
+    return json({ ok: true, released, sessionId: data.sessionId }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return productionLockStorageError(error);
+  }
+}
+
+async function handleGetActiveStudioProduction(env, user) {
+  try {
+    const active = await getCreatorProductionSession(env, user.id);
+    return json({ active: active ? {
+      studioWorkspaceId: active.studio_workspace_id,
+      studioTitle: active.studio_title || null,
+      studioNumber: Number(active.studio_number || 0) || null,
+      sessionId: active.session_id,
+      mode: active.mode,
+      startedAt: active.started_at,
+      lastHeartbeatAt: active.last_heartbeat_at
+    } : null }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return productionLockStorageError(error);
+  }
 }
 
 async function allocateStudioNumber(env, userId) {
@@ -5276,7 +5794,7 @@ async function handleLinkPreview(request, env) {
     return json({ url: safe.url.toString(), title: "The Paranormal Initiative", description: "", image: "", host, fetched: false }, 200, { "Cache-Control": "public, max-age=300" });
   }
 
-  const result = await fetchExternalLinkPreview(safe.url.toString());
+  const result = await fetchExternalLinkPreview(safe.url.toString(), { env });
   if (!result.ok) return json({ error: result.error }, result.status || 502, { "Cache-Control": "no-store" });
   return json(result.preview || { url: safe.url.toString(), title: safe.url.hostname, description: "", image: "", host, fetched: false }, 200, { "Cache-Control": "public, max-age=300" });
 }
@@ -5970,7 +6488,7 @@ function assertRealtimeKitConfigured(env) {
 
 async function realtimeKitRequest(env, apiPath, options = {}) {
   assertRealtimeKitConfigured(env);
-  const response = await fetch(
+  const response = await localFetch(env,
     `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(env.CLOUDFLARE_ACCOUNT_ID)}/realtime/kit/${encodeURIComponent(env.REALTIMEKIT_APP_ID)}${apiPath}`,
     {
       ...options,
@@ -6130,6 +6648,14 @@ async function handleCloseStudioRoom(path, env, user) {
   const room = await getOwnedStudioRoom(env, roomId, user);
   if (room === false) return json({ error: "Only the room host can close this studio." }, 403);
   if (!room) return json({ error: "Studio room not found." }, 404);
+  if (room.production_session_id) {
+    try {
+      const active = await getCreatorProductionSession(env, user.id);
+      if (active?.session_id === room.production_session_id) return json({ error: "Finish the active production before closing this Studio room.", code: "studio_production_active" }, 409, { "Cache-Control": "no-store" });
+    } catch (error) {
+      return productionLockStorageError(error);
+    }
+  }
   await env.TPI_DB.prepare(`
     UPDATE studio_rooms
     SET status = 'closed', closed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
@@ -6147,30 +6673,51 @@ async function handleStartStudioLivestream(path, request, env, user) {
   const data = await readJson(request);
   const rtmpUrl = clean(data.rtmpUrl);
   if (rtmpUrl && !/^rtmps?:\/\//i.test(rtmpUrl)) return json({ error: "The RTMP destination must start with rtmp:// or rtmps://." }, 400);
-  const livestream = rtmpUrl
-    ? await realtimeKitRequest(env, "/recordings", {
-        method: "POST",
-        body: JSON.stringify({
-          meeting_id: room.realtimekit_meeting_id,
-          file_name_prefix: clean(data.name || room.title).replace(/[^a-z0-9_-]+/gi, "-").slice(0, 100),
-          max_seconds: 86400,
-          video_config: { codec: "H264" },
-          audio_config: { codec: "AAC", channel: "stereo" },
-          rtmp_out_config: { rtmp_url: rtmpUrl }
+  const workspace = await getProductionWorkspace(env, user.id, data.studioWorkspaceId, room.broadcast_key);
+  if (!workspace) return json({ error: "A saved Studio is required before starting production.", code: "workspace_required" }, 409, { "Cache-Control": "no-store" });
+  const productionSessionId = clean(room.production_session_id) || `room-${room.id}-livestream`;
+  try {
+    const reservation = await reserveCreatorProduction(env, {
+      creatorId: user.id,
+      studioWorkspaceId: workspace.id,
+      sessionId: productionSessionId,
+      mode: "live",
+      metadata: { source: "studioflow-room", roomId: room.id }
+    });
+    if (!reservation.ok) return json(studioProductionConflict(reservation.conflict), 409, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return productionLockStorageError(error);
+  }
+  let livestream;
+  try {
+    livestream = rtmpUrl
+      ? await realtimeKitRequest(env, "/recordings", {
+          method: "POST",
+          body: JSON.stringify({
+            meeting_id: room.realtimekit_meeting_id,
+            file_name_prefix: clean(data.name || room.title).replace(/[^a-z0-9_-]+/gi, "-").slice(0, 100),
+            max_seconds: 86400,
+            video_config: { codec: "H264" },
+            audio_config: { codec: "AAC", channel: "stereo" },
+            rtmp_out_config: { rtmp_url: rtmpUrl }
+          })
         })
-      })
-    : await realtimeKitRequest(env, `/meetings/${encodeURIComponent(room.realtimekit_meeting_id)}/livestreams`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: clean(data.name || room.title).slice(0, 180),
-          video_config: { width: 1280, height: 720 }
-        })
-      });
+      : await realtimeKitRequest(env, `/meetings/${encodeURIComponent(room.realtimekit_meeting_id)}/livestreams`, {
+          method: "POST",
+          body: JSON.stringify({
+            name: clean(data.name || room.title).slice(0, 180),
+            video_config: { width: 1280, height: 720 }
+          })
+        });
+  } catch (error) {
+    try { await releaseCreatorProduction(env, { creatorId: user.id, sessionId: productionSessionId, status: "abandoned" }); } catch {}
+    throw error;
+  }
   await env.TPI_DB.prepare(`
     UPDATE studio_rooms
-    SET livestream_id = ?, livestream_kind = ?, livestream_playback_url = ?, updated_at = CURRENT_TIMESTAMP
+    SET livestream_id = ?, livestream_kind = ?, livestream_playback_url = ?, production_session_id = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
-  `).bind(livestream.id || livestream.recording?.id || null, rtmpUrl ? "rtmp" : "cloudflare", livestream.playback_url || null, room.id).run();
+  `).bind(livestream.id || livestream.recording?.id || null, rtmpUrl ? "rtmp" : "cloudflare", livestream.playback_url || null, productionSessionId, room.id).run();
   return json({ livestream, mode: rtmpUrl ? "rtmp" : "cloudflare" }, 201, { "Cache-Control": "no-store" });
 }
 
@@ -6191,9 +6738,12 @@ async function handleStopStudioLivestream(path, env, user) {
       });
   await env.TPI_DB.prepare(`
     UPDATE studio_rooms
-    SET livestream_id = NULL, livestream_kind = NULL, updated_at = CURRENT_TIMESTAMP
+    SET livestream_id = NULL, livestream_kind = NULL, production_session_id = NULL, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `).bind(room.id).run();
+  if (room.production_session_id) {
+    try { await releaseCreatorProduction(env, { creatorId: user.id, sessionId: room.production_session_id }); } catch (error) { return productionLockStorageError(error); }
+  }
   return json({ ok: true, result });
 }
 
