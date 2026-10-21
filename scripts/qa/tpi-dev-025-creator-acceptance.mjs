@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
+import { createRequestBudget } from "./request-budget.mjs";
 
 const baseUrl = (process.env.TPI_DEV025_BASE_URL || "https://theparanormalinitiative-dev.paranormalsomerset.workers.dev").replace(/\/$/, "");
+const requestBudget = createRequestBudget({ baseUrl, label: "TPI-DEV-025 creator QA" });
 const credentialPath = process.env.TPI_DEV025_CREDENTIALS_FILE || "/Users/toddknipple/.config/tpi/dev-014/credentials.json";
 const credentials = JSON.parse(readFileSync(credentialPath, "utf8"));
 const accountByName = name => credentials.accounts.find(account => account.username === name);
@@ -32,7 +34,7 @@ async function request(path, options = {}, cookie = "") {
   const headers = new Headers(options.headers || {});
   if (options.body != null && !headers.has("content-type")) headers.set("content-type", "application/json");
   if (cookie) headers.set("cookie", cookie);
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers, redirect: "manual" });
+  const response = await requestBudget.fetch(`${baseUrl}${path}`, { ...options, headers, redirect: "manual" });
   const text = await response.text();
   let body = null;
   try { body = text ? JSON.parse(text) : null; } catch { body = text.slice(0, 200); }

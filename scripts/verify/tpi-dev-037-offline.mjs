@@ -14,11 +14,11 @@ check("duplicate, soft-delete, and restore routes are owner-scoped", api.include
 check("production-state and scheduled-delete guards exist", api.includes("studio_production_active") && api.includes("studio_scheduled_production") && api.includes("STUDIO_ACTIVE_PRODUCTION_STATUSES"));
 check("configuration is allow-listed", api.includes("normalizeStudioConfiguration") && bridge.includes("configurationForSave") && !bridge.includes("customLogo") && !bridge.includes("/api/uploads"));
 check("My Studios is placed in the existing asset panel", bridge.includes("tpi-my-studios-panel") && bridge.includes("querySelector(\".asset-panel\")") && bridge.includes(".brand-row"));
-check("required management actions are present", bridge.includes("Rename Studio") && bridge.includes("Duplicate Studio") && bridge.includes("Delete Studio") && bridge.includes("Recently Deleted Studios"));
-check("autosave reports only server-confirmed success", bridge.includes("setMessage(\"Saving\")") && bridge.includes("setMessage(existing ? \"Workspace saved.\""));
+check("required management actions are present", bridge.includes("Rename Project") && bridge.includes("Duplicate Project") && bridge.includes("Delete Project") && bridge.includes("Recently Deleted Studios"));
+check("autosave reports only server-confirmed success", bridge.includes("setMessage(\"SAVING...\")") && bridge.includes("setMessage(\"PROJECT SAVED\")") && bridge.includes("saveInFlight"));
 check("recording files remain local", bridge.includes("Recording files remain in Browser Storage") && !bridge.includes("indexedDB.deleteDatabase") && !bridge.includes("/api/uploads"));
 check("cross-tab and unload production safeguards exist", bridge.includes("BroadcastChannel") && bridge.includes("beforeunload") && bridge.includes("productionLock"));
-check("server access remains entitlement-gated", bridge.includes("creatorStudioAccess === true") && api.includes("requireStudioAccess"));
+check("server access remains entitlement-gated", api.includes("requireStudioAccess") && api.includes("/studio/workspaces") && !bridge.includes("creatorStudioAccess === true"));
 
 for (const result of checks) console.log(`${result.ok ? "PASS" : "FAIL"} ${result.name}`);
 const failed = checks.filter(result => !result.ok);

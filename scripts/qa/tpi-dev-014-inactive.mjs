@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
+import { createRequestBudget } from "./request-budget.mjs";
 const baseUrl = (process.env.TPI_DEV014_BASE_URL || "https://theparanormalinitiative-dev.paranormalsomerset.workers.dev").replace(/\/$/, "");
+const requestBudget = createRequestBudget({ baseUrl, label: "TPI-DEV-014 inactive-account QA" });
 const credentials = JSON.parse(readFileSync(process.env.TPI_DEV014_CREDENTIALS_FILE || "/Users/toddknipple/.config/tpi/dev-014/credentials.json", "utf8"));
 const owner = credentials.accounts.find(account => account.username === "tpi-dev014-owner");
 const rejected = credentials.accounts.find(account => account.username === "tpi-dev014-rejected");
@@ -7,7 +9,7 @@ async function request(path, options = {}, cookie = "") {
   const headers = new Headers(options.headers || {});
   if (options.body != null) headers.set("content-type", "application/json");
   if (cookie) headers.set("cookie", cookie);
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers });
+  const response = await requestBudget.fetch(`${baseUrl}${path}`, { ...options, headers });
   return response;
 }
 const ownerLogin = await request("/api/auth/login", { method: "POST", body: JSON.stringify({ username: owner.username, password: owner.password }) });

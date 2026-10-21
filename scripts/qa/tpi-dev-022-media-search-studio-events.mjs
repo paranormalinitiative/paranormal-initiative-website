@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
+import { createRequestBudget } from "./request-budget.mjs";
 
 const baseUrl = (process.env.TPI_DEV022_BASE_URL || "https://theparanormalinitiative-dev.paranormalsomerset.workers.dev").replace(/\/$/, "");
+const requestBudget = createRequestBudget({ baseUrl, label: "TPI-DEV-022 media/search/studio QA" });
 const memberCredentialPath = process.env.TPI_DEV021_CREDENTIALS_FILE || "/Users/toddknipple/.config/tpi/dev-021/credentials.json";
 const adminCredentialPath = process.env.TPI_DEV014_CREDENTIALS_FILE || "/Users/toddknipple/.config/tpi/dev-014/credentials.json";
 const memberCredentials = JSON.parse(readFileSync(memberCredentialPath, "utf8"));
@@ -18,7 +20,7 @@ async function request(path, options = {}, cookie = "") {
   const headers = new Headers(options.headers || {});
   if (cookie) headers.set("cookie", cookie);
   if (options.body != null && typeof options.body === "string" && !headers.has("content-type")) headers.set("content-type", "application/json");
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers, redirect: "manual" });
+  const response = await requestBudget.fetch(`${baseUrl}${path}`, { ...options, headers, redirect: "manual" });
   const text = await response.text();
   let body = null;
   try { body = text ? JSON.parse(text) : null; } catch { body = text.slice(0, 300); }

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180" role="img" aria-label="TPI OPS-012 synthetic thumbnail">
+  <rect width="320" height="180" fill="#17132a"/>
+  <circle cx="160" cy="84" r="42" fill="#7c3aed" opacity="0.8"/>
+  <path d="M145 84h30M160 69v30" stroke="#f5f3ff" stroke-width="6" stroke-linecap="round"/>
+  <text x="160" y="155" fill="#f5f3ff" font-family="sans-serif" font-size="16" text-anchor="middle">TPI LOCAL TEST</text>
+</svg>

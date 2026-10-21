@@ -1,0 +1,32 @@
+import { readFileSync } from "node:fs";
+
+const bridge = readFileSync("studio/workspace-bridge.js", "utf8");
+const bundle = readFileSync("studio/assets/index-j2x9m9vI.js", "utf8");
+const source = readFileSync(process.env.STUDIOFLOW_SOURCE ?? "/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx", "utf8");
+const checks = [];
+const check = (name, passed) => checks.push({ name, passed: Boolean(passed) });
+
+check("the bridge persists the existing StudioFlow studio route key", bridge.includes('route: "studioflow.route"'));
+check("the bridge writes the active broadcast in React's JSON storage format", bridge.includes('localStorage.setItem(KEYS.active, JSON.stringify(restored.id))'));
+check("a successfully loaded workspace selects the existing studio route", bridge.includes('localStorage.setItem(KEYS.route, JSON.stringify("studio"))'));
+check("the app accepts the existing studio route on startup", source.includes('type Route = "home"') && source.includes('| "studio"') && source.includes('route === "studio"'));
+check("returning to StudioFlow verifies the remembered Studio through the workspace API", bridge.includes('rememberedWorkspace = workspaces.find(function (item) { return item.id === remembered; }) || null'));
+check("an unavailable remembered Studio falls back to the normal home route", bridge.includes('if (!selectedWorkspace && (!hostBroadcast || !hostHasIdentity)') && bridge.includes('localStorage.setItem(KEYS.route, JSON.stringify("home"))'));
+check("last-Studio restoration does not require the asset panel to exist first", bridge.includes("watchAssetPanel();") && bridge.includes("refresh().catch(function () {})"));
+check("workspace reconciliation avoids document reload loops", !bridge.includes("window.location.reload()"));
+check("save-in-flight state is represented by a Promise", bridge.includes('saveInFlight = null') && bridge.includes('return saveInFlight.then(function (saved)'));
+check("switching waits for an in-flight save before retrying the save", bridge.includes('return saved ? saveCurrent(options) : false'));
+check("switching stops when the current Studio cannot be saved", bridge.includes('if (!saved) { setMessage("The current Studio could not be saved. It remains active; retry the save before switching.", true); return; }'));
+check("production status is checked before switching", bridge.includes('/api/studio/production/active') && bridge.includes('Another studio is currently in production'));
+check("the existing creator production lock still gates switching", bridge.includes('function canChangeStudio()') && bridge.includes('productionLock()'));
+check("workspace state is applied without document reload", bridge.includes('applyState(selectedWorkspace)') && bridge.includes('setMessage("PROJECT SAVED")'));
+check("switching requests activation through the mounted React application", bridge.includes("activateReactWorkspace") && bridge.includes("__tpiStudioFlowActivateBroadcast") && source.includes("__tpiStudioFlowActivateBroadcast"));
+check("React confirms the selected broadcast after state commit", source.includes("setActiveBroadcastId(broadcastId)") && source.includes("pending.resolve({ ok: true, broadcastId: activeBroadcastId })"));
+check("the selected Studio editor remounts from its persisted workspace state", source.includes("key={activeBroadcastId ?? \"studio\"}"));
+check("refresh hydration reactivates the selected React workspace", bridge.includes("hydrateWorkspace(selectedWorkspace); if (typeof window.__tpiStudioFlowActivateBroadcast === \"function\") void activateReactWorkspace(selectedWorkspace)"));
+check("switch failures restore the previous valid workspace", bridge.includes("previousWorkspace") && bridge.includes("hydrateWorkspace(previousWorkspace)") && source.includes("Studio activation was superseded"));
+check("historical recording bytes remain excluded from workspace saves", bridge.includes('Recording files remain in Browser Storage') && !bridge.includes('/api/uploads'));
+for (const result of checks) console.log(`${result.passed ? "PASS" : "FAIL"} ${result.name}`);
+const failed = checks.filter((result) => !result.passed);
+console.log(JSON.stringify({ directive: "TPI-STUDIOFLOW-017", checks: checks.length, passed: checks.length - failed.length, failed: failed.length, externalRequests: 0 }));
+if (failed.length) process.exit(1);

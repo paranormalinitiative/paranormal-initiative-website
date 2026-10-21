@@ -1,0 +1,134 @@
+#!/usr/bin/env node
+
+// Bounded localhost-only authentication verification for TPI-OPS-009.
+// This script never contacts a hosted Worker and never prints credentials.
+import { existsSync, readFileSync } from "node:fs";
+import { sessionCookieAttributes } from "../../lib/auth.js";
+
+const base = process.env.TPI_LOCAL_ORIGIN || "http://127.0.0.1:8787";
+const credentialPath = ".local-dev/local-auth-credentials.json";
+if (!/^http:\/\/(127\.0\.0\.1|localhost):8787$/.test(base)) {
+  throw new Error("TPI-OPS-009 QA requires the approved loopback origin http://127.0.0.1:8787");
+}
+if (!existsSync(credentialPath)) throw new Error("local authentication fixtures are missing; run scripts/local-auth-fixtures.mjs --local-only");
+const credentials = JSON.parse(readFileSync(credentialPath, "utf8"));
+
+const checks = [];
+function check(name, condition, detail = "") {
+  if (!condition) throw new Error(`${name} failed${detail ? `: ${detail}` : ""}`);
+  checks.push(name);
+}
+
+async function request(path, options = {}) {
+  const response = await fetch(`${base}${path}`, {
+    redirect: "manual",
+    ...options,
+    headers: { ...(options.headers || {}) },
+  });
+  const text = await response.text();
+  let body = null;
+  try { body = JSON.parse(text); } catch (error) { /* non-JSON page */ }
+  return { response, body, text };
+}
+
+check("local cookie policy is HTTP loopback only", !sessionCookieAttributes(
+  new Request("http://127.0.0.1:8787/api/auth/login"),
+  { TPI_ENV: "local", TPI_LOCAL_ONLY: "1" },
+  60
+).includes("Secure"));
+check("hosted cookie policy remains Secure", sessionCookieAttributes(
+  new Request("https://example.test/api/auth/login"),
+  { TPI_ENV: "development", TPI_LOCAL_ONLY: "0" },
+  60
+).includes("Secure"));
+check("forwarded host cannot grant local cookie policy", sessionCookieAttributes(
+  new Request("http://198.51.100.10:8787/api/auth/login", { headers: { "X-Forwarded-Host": "127.0.0.1:8787" } }),
+  { TPI_ENV: "local", TPI_LOCAL_ONLY: "1" },
+  60
+).includes("Secure"));
+
+function cookieFrom(response) {
+  const setCookie = response.headers.get("set-cookie") || "";
+  const match = setCookie.match(/tpi_session=([^;]*)/);
+  return match?.[1] || "";
+}
+
+async function login(key) {
+  const account = credentials.accounts[key];
+  const result = await request("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: account.username, password: account.password }),
+  });
+  const setCookie = result.response.headers.get("set-cookie") || "";
+  check(`${key} login`, result.response.status === 200 && Boolean(result.body?.user));
+  check(`${key} loopback cookie`, setCookie.includes("HttpOnly") && setCookie.includes("SameSite=Lax") && setCookie.includes("Path=/") && !setCookie.includes("Secure"));
+  return { token: cookieFrom(result.response), user: result.body.user };
+}
+
+const anonymous = await request("/api/auth/me");
+check("anonymous auth/me status", anonymous.response.status === 200);
+check("anonymous auth/me is null", anonymous.body?.user === null);
+
+const homepage = await request("/");
+check("local homepage status", homepage.response.status === 200);
+check("local browser request guard", homepage.text.includes("data-tpi-local-request-guard"));
+
+const admin = await login("local_admin");
+const contributor = await login("local_contributor");
+const member = await login("local_member");
+
+for (const [key, session] of [["local_admin", admin], ["local_contributor", contributor], ["local_member", member]]) {
+  const me = await request("/api/auth/me", { headers: { Cookie: `tpi_session=${session.token}` } });
+  check(`${key} auth/me`, me.response.status === 200 && me.body?.user?.username === credentials.accounts[key].username && me.body?.user?.role === key.replace("local_", ""));
+}
+
+// /admin/overview is an existing protected read-only route whose optional
+// metric sources fail closed when a fresh local schema does not contain them.
+const adminRoute = await request("/api/admin/overview", { headers: { Cookie: `tpi_session=${admin.token}` } });
+check("administrator read-only authorization", adminRoute.response.status === 200);
+const contributorRoute = await request("/api/admin/overview", { headers: { Cookie: `tpi_session=${contributor.token}` } });
+check("contributor denied administrator route", contributorRoute.response.status === 403);
+const memberRoute = await request("/api/admin/overview", { headers: { Cookie: `tpi_session=${member.token}` } });
+check("member denied administrator route", memberRoute.response.status === 403);
+
+const invalid = await request("/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ username: credentials.accounts.local_member.username, password: "invalid-local-password" }),
+});
+check("invalid credentials rejected", invalid.response.status === 401);
+
+const disabled = await request("/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ username: credentials.accounts.local_disabled.username, password: credentials.accounts.local_disabled.password }),
+});
+check("disabled account rejected", disabled.response.status === 401);
+
+const expired = await request("/api/auth/me", { headers: { Cookie: `tpi_session=${credentials.expiredSessionToken}` } });
+check("expired session rejected", expired.response.status === 200 && expired.body?.user === null);
+
+const logout = await request("/api/auth/logout", {
+  method: "POST",
+  headers: { Cookie: `tpi_session=${admin.token}` },
+});
+const logoutCookie = logout.response.headers.get("set-cookie") || "";
+check("logout status", logout.response.status === 200 && logout.body?.ok === true);
+check("logout clears loopback cookie", logoutCookie.includes("Max-Age=0") && !logoutCookie.includes("Secure"));
+const replay = await request("/api/auth/me", { headers: { Cookie: `tpi_session=${admin.token}` } });
+check("logout invalidates local session", replay.response.status === 200 && replay.body?.user === null);
+
+const contributorPage = await request("/", { headers: { Cookie: `tpi_session=${contributor.token}` } });
+check("authenticated local root navigation", contributorPage.response.status >= 300 && contributorPage.response.status < 400 && (contributorPage.response.headers.get("location") || "").endsWith("/member-home"));
+const memberHome = await request("/member-home", { headers: { Cookie: `tpi_session=${contributor.token}` } });
+check("authenticated local member home remains available", memberHome.response.status === 200 && memberHome.text.includes("TPI"));
+
+console.log(JSON.stringify({
+  status: "PASSED",
+  origin: base,
+  checksPassed: checks.length,
+  checks,
+  remoteRequests: 0,
+  credentialsPrinted: false,
+}));

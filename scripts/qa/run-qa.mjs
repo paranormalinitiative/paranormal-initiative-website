@@ -57,6 +57,8 @@ const nodeChecks = [
 ].filter((path) => existsSync(resolve(root, path)));
 for (const path of nodeChecks) run(`Node syntax: ${path}`, process.execPath, ["--check", path]);
 run("Bash syntax: existing E2E and migration checks", "bash", ["-n", "scripts/e2e/api-e2e.sh", "scripts/e2e/verify-0010-equivalence.sh"]);
+run("TPI-OPS-002 traffic protection regression", process.execPath, ["scripts/qa/tpi-ops-002-traffic-protection.mjs"]);
+run("TPI-OPS-007 local foundation guard regression", process.execPath, ["scripts/qa/tpi-ops-007-local-foundation.mjs"]);
 
 if (e2e) {
   run(

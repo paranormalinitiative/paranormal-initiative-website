@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
+import { createRequestBudget } from "./request-budget.mjs";
 
 const baseUrl = (process.env.TPI_DEV021_BASE_URL || "https://theparanormalinitiative-dev.paranormalsomerset.workers.dev").replace(/\/$/, "");
+const requestBudget = createRequestBudget({ baseUrl, label: "TPI-DEV-021 integration QA" });
 const memberCredentialPath = process.env.TPI_DEV021_CREDENTIALS_FILE || "/Users/toddknipple/.config/tpi/dev-021/credentials.json";
 const memberCredentials = JSON.parse(readFileSync(memberCredentialPath, "utf8"));
 const memberAccounts = Object.fromEntries(memberCredentials.accounts.map(account => [account.username, account]));
@@ -16,7 +18,7 @@ async function request(path, options = {}, cookie = "") {
   if (options.body != null && !headers.has("content-type")) headers.set("content-type", "application/json");
   if (cookie) headers.set("cookie", cookie);
   const started = performance.now();
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers, redirect: "manual" });
+  const response = await requestBudget.fetch(`${baseUrl}${path}`, { ...options, headers, redirect: "manual" });
   const elapsedMs = Math.round(performance.now() - started);
   const text = await response.text();
   let body = null;

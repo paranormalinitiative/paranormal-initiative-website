@@ -1,7 +1,15 @@
 import { createRequire } from "node:module";
 import { readFileSync, statSync } from "node:fs";
+import { createRequestBudget } from "../qa/request-budget.mjs";
 
 const baseUrl = (process.env.TPI_DEV017_BASE_URL || "https://theparanormalinitiative-dev.paranormalsomerset.workers.dev").replace(/\/$/, "");
+let requestBudget;
+try {
+  requestBudget = createRequestBudget({ baseUrl, label: "TPI-DEV-017 browser QA" });
+} catch (error) {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: error instanceof Error ? error.message : "request budget setup failed" }));
+  process.exit(0);
+}
 const credentialPath = process.env.TPI_DEV017_CREDENTIALS_FILE || "/Users/toddknipple/.config/tpi/dev-014/credentials.json";
 const browserPath = process.env.TPI_DEV017_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const viewports = [
@@ -88,6 +96,13 @@ try {
   for (const username of Object.keys(expected)) {
     const account = accounts[username];
     const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    await context.route("**/*", async route => {
+      if (!requestBudget.reserveBrowserRequest(route.request().url())) {
+        await route.abort("blockedbyclient");
+        return;
+      }
+      await route.continue();
+    });
     const page = await context.newPage();
     try {
       await login(page, account);
