@@ -20,11 +20,33 @@ The Vite development server is configured with --host 127.0.0.1; the exact free 
 
 ## Public Worker
 
-The root repository has no root package.json or root npm development script. Historical project documentation records Wrangler local development using:
+The canonical local Worker is managed through the repository-scoped launcher:
 
-    npx wrangler dev --compatibility-date 2026-07-15
+    npm run dev:local
 
-That command was not re-run in this audit, so its current local port and current local D1 setup are not verified here. Do not use remote D1 or R2 mutation commands while experimenting locally.
+Use the owner-controlled LaunchAgent commands in the local user guide for
+service lifecycle operations. Do not substitute an unscoped `npx wrangler dev`
+command: the guarded launcher selects `wrangler.local.toml`, loopback port
+8787, local D1/R2 simulations, and outbound-disabled environment variables.
+Do not use remote D1 or R2 mutation commands while experimenting locally.
+
+## StudioFlow source and asset staging
+
+The authoritative StudioFlow source is
+`/Users/toddknipple/Documents/StudioFlow/web`; the integrated website copy is
+`studio/`. Verify the source/integration candidate with:
+
+    node scripts/stage-studioflow-authoritative.mjs
+
+This builds twice in isolated temporary directories, preserves the maintained
+TPI bridge layer, and checks generated asset equivalence. Local staged delivery
+uses the current entry-point asset names and deterministic content versions:
+
+    node scripts/stage-local-studio-assets.mjs
+
+Do not hand-edit generated bundle filenames or introduce a second cache-busting
+system. Keep local D1/R2 state, browser storage, recordings, owner media, and
+credentials outside any release checkpoint.
 
 ## Checks
 

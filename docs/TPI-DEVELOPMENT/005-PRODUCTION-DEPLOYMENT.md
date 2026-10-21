@@ -44,6 +44,22 @@ The development branch `codex/tpi-development` and development Worker `theparano
 - Verify account 221ea5479876fd303ddc87002b9e892d, Worker theparanormalinitiative, bindings, changed files, tests, and rollback before any authorized release.
 - Never treat a workers.dev URL or a successful build as proof of environment isolation.
 
+## StudioFlow release checkpoint status
+
+The current StudioFlow release is **NOT DEPLOYED / RELEASE CHECKPOINT PENDING**.
+The authoritative source is `/Users/toddknipple/Documents/StudioFlow/web`; the
+website integration is the reviewed `studio/` candidate produced by
+`node scripts/stage-studioflow-authoritative.mjs`. A source/build revision and
+the generated asset hashes must be recorded together.
+
+Before production promotion, review the exact manifest for StudioFlow source,
+generated JavaScript/CSS, TPI bridge files, API/Worker integration, and any
+schema migration. Exclude local D1/R2 state, credentials, browser storage,
+recordings, owner media, recovery artifacts, `.dev.vars`, `.local-dev/`, and
+unrelated dirty-worktree files. Production readiness also requires authenticated
+StudioFlow acceptance, verified server-side media persistence, HTTPS/WebRTC
+guest signaling, and a rollback plan. Local tests alone are insufficient.
+
 ## Rollback preparation
 
 Record the pre-release Git commit and Cloudflare deployment version, retain the previous verified deployment, and verify the route after rollback. No rollback or production mutation was performed in this directive.

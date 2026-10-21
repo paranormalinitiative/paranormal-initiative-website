@@ -28,6 +28,27 @@ TPI-DEV-005 created and tested:
 
 No production D1 or R2 resource was used by those tests.
 
+## StudioFlow persistence boundary
+
+StudioFlow configuration and project metadata use the server-backed
+`studio_workspaces` persistence path. Workspace versioning and conflict checks
+protect saves, while recovery snapshots are separate configuration copies in
+the existing R2 binding. Portable configuration exports are user-initiated
+files; complete project backups can include supported media bytes when the
+browser-local media store is available and readable.
+
+Browser-local media and recording bytes are not implied by a D1 workspace row
+or a configuration JSON export. Missing required media must prevent a backup
+from being reported as complete. Existing Crossroads recovery snapshots and
+local backup artifacts must be preserved, but no automatic restore is allowed
+without an owner-directed recovery decision. The owner has decided to rebuild
+Crossroads; that decision does not authorize deleting or overwriting its prior
+records or snapshots.
+
+Production release requires separate verification of the production D1 schema,
+R2 media persistence, authenticated workspace operations, and guest signaling.
+Local build or synthetic backup tests do not establish production readiness.
+
 ## Prohibited actions in the current state
 
 Do not run remote migrations, seed production D1, upload test files to the production bucket, or test destructive actions against production records. No such actions were performed by TPI-DEV-001.
