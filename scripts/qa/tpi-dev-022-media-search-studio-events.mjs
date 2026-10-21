@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { createRequestBudget } from "./request-budget.mjs";
+import { readStudioAssetManifest } from "../verify/studio-asset-manifest.mjs";
 
 const baseUrl = (process.env.TPI_DEV022_BASE_URL || "https://theparanormalinitiative-dev.paranormalsomerset.workers.dev").replace(/\/$/, "");
 const requestBudget = createRequestBudget({ baseUrl, label: "TPI-DEV-022 media/search/studio QA" });
@@ -144,7 +145,7 @@ async function main() {
     ["search loads published API content", readFileSync("search.js", "utf8").includes("/api/articles") && readFileSync("search.js", "utf8").includes("/api/contributors")],
     ["media retrieval enforces private-library ownership", readFileSync("functions/api/[[path]].js", "utf8").includes("customMetadata?.contributorId !== user.id")],
     ["event admin page calls API", readFileSync("admin-events.html", "utf8").includes("/api/admin/events") && !readFileSync("admin-events.html", "utf8").includes("TODO: Send to API")],
-    ["StudioFlow browser library boundary is explicit", readFileSync("studio/assets/index-j2x9m9vI.js", "utf8").includes("Browser Storage")]
+    ["StudioFlow browser library boundary is explicit", readFileSync(readStudioAssetManifest().javascript.path, "utf8").includes("Browser Storage")]
   ];
   sourceChecks.forEach(([name, ok]) => record(name, ok, ok ? "source contract present" : "source contract missing"));
 

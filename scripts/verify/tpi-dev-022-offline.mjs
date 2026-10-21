@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { readStudioAssetManifest } from "./studio-asset-manifest.mjs";
 
 const checks = [];
 const check = (name, ok, detail = "") => checks.push({ name, ok: Boolean(ok), detail });
@@ -8,7 +9,7 @@ const api = read("functions/api/[[path]].js");
 const eventsPage = read("admin-events.html");
 const search = read("search.js");
 const mediaLibrary = read("lib/member-library.js");
-const studioBundle = read("studio/assets/index-j2x9m9vI.js");
+const studioBundle = read(readStudioAssetManifest().javascript.path);
 
 check("media upload requires configured R2 binding", api.includes("if (!env.TPI_MEDIA) return json({ error: \"R2 media bucket binding TPI_MEDIA is not configured yet.\" }, 501)"));
 check("private media retrieval requires authentication", api.includes("if (!user) return json({ error: \"Member login required.\" }, 401"));

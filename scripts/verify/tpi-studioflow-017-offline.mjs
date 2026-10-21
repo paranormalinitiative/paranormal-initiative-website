@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
+import { readStudioAssetManifest } from "./studio-asset-manifest.mjs";
 
 const bridge = readFileSync("studio/workspace-bridge.js", "utf8");
-const bundle = readFileSync("studio/assets/index-j2x9m9vI.js", "utf8");
+const assetManifest = readStudioAssetManifest();
 const source = readFileSync(process.env.STUDIOFLOW_SOURCE ?? "/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx", "utf8");
 const checks = [];
 const check = (name, passed) => checks.push({ name, passed: Boolean(passed) });
@@ -23,6 +24,7 @@ check("workspace state is applied without document reload", bridge.includes('app
 check("switching requests activation through the mounted React application", bridge.includes("activateReactWorkspace") && bridge.includes("__tpiStudioFlowActivateBroadcast") && source.includes("__tpiStudioFlowActivateBroadcast"));
 check("React confirms the selected broadcast after state commit", source.includes("setActiveBroadcastId(broadcastId)") && source.includes("pending.resolve({ ok: true, broadcastId: activeBroadcastId })"));
 check("the selected Studio editor remounts from its persisted workspace state", source.includes("key={activeBroadcastId ?? \"studio\"}"));
+check("the current generated StudioFlow assets are present", Boolean(assetManifest.javascript && assetManifest.stylesheet));
 check("refresh hydration reactivates the selected React workspace", bridge.includes("hydrateWorkspace(selectedWorkspace); if (typeof window.__tpiStudioFlowActivateBroadcast === \"function\") void activateReactWorkspace(selectedWorkspace)"));
 check("switch failures restore the previous valid workspace", bridge.includes("previousWorkspace") && bridge.includes("hydrateWorkspace(previousWorkspace)") && source.includes("Studio activation was superseded"));
 check("historical recording bytes remain excluded from workspace saves", bridge.includes('Recording files remain in Browser Storage') && !bridge.includes('/api/uploads'));

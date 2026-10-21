@@ -1,11 +1,12 @@
 import { readFileSync } from "node:fs";
+import { readStudioAssetManifest } from "./studio-asset-manifest.mjs";
 
 const read = (path) => readFileSync(path, "utf8");
 const assetBridge = read("studio/workspace-asset-state-bridge.js");
 const workspaceBridge = read("studio/workspace-bridge.js");
 const productionBridge = read("studio/production-lock-bridge.js");
 const shell = read("studio/index.html");
-const bundle = read("studio/assets/index-j2x9m9vI.js");
+const bundle = read(readStudioAssetManifest().javascript.path);
 const checks = [];
 const check = (name, passed, detail = "") => checks.push({ name, passed: Boolean(passed), detail });
 

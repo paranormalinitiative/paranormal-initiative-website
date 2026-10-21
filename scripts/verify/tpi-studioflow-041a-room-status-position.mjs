@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
+import { readStudioAssetManifest } from "./studio-asset-manifest.mjs";
 
-const bundle = readFileSync("studio/assets/index-j2x9m9vI.js", "utf8");
-const css = readFileSync("studio/assets/index-DXjilBOR.css", "utf8");
+const assetManifest = readStudioAssetManifest();
+const bundle = readFileSync(assetManifest.javascript.path, "utf8");
+const css = readFileSync(assetManifest.stylesheet.path, "utf8");
 const source = readFileSync(process.env.STUDIOFLOW_SOURCE ?? "/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx", "utf8");
 const sourceCss = readFileSync(process.env.STUDIOFLOW_STYLES ?? "/Users/toddknipple/Documents/StudioFlow/web/src/styles.css", "utf8");
 const checks = [];

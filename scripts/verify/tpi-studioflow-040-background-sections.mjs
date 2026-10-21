@@ -3,9 +3,11 @@
 // Read-only UI verification for TPI-STUDIOFLOW-040. No browser storage,
 // database, media, or owner Studio data is accessed.
 import { readFileSync } from "node:fs";
+import { readStudioAssetManifest } from "./studio-asset-manifest.mjs";
 
-const bundle = readFileSync("studio/assets/index-j2x9m9vI.js", "utf8");
-const styles = readFileSync("studio/assets/index-DXjilBOR.css", "utf8");
+const assetManifest = readStudioAssetManifest();
+const bundle = readFileSync(assetManifest.javascript.path, "utf8");
+const styles = readFileSync(assetManifest.stylesheet.path, "utf8");
 const source = readFileSync(process.env.STUDIOFLOW_SOURCE ?? "/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx", "utf8");
 const checks = [];
 
