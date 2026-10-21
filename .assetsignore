@@ -9,6 +9,8 @@
 .github/**
 .wrangler
 .wrangler/**
+.local-dev
+.local-dev/**
 node_modules
 node_modules/**
 admin-center-app
