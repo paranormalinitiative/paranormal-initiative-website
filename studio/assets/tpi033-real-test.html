@@ -1,0 +1,177 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>TPI-033 Synthetic Opera Backup Test</title>
+<style>
+  :root { color-scheme: dark; font: 16px/1.45 system-ui, sans-serif; background: #10141f; color: #f6f7fb; }
+  body { max-width: 920px; margin: 32px auto; padding: 0 20px 60px; }
+  .settings-panel { padding: 20px; border: 1px solid #2a3040; border-radius: 12px; background: #151a26; }
+  button { margin: 8px 8px 0 0; padding: 9px 12px; border: 1px solid #53617a; border-radius: 7px; background: #1d2433; color: inherit; cursor: pointer; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; border-radius: 8px; background: #090b10; }
+</style>
+<main>
+  <h1>TPI-033 isolated synthetic backup test</h1>
+  <p>This page uses an in-memory API fixture and a dedicated IndexedDB database. It never reads or writes the owner workspace, owner localStorage, or owner recording database.</p>
+  <div class="settings-panel"></div>
+  <button id="change-scene" type="button">Change synthetic scene</button>
+  <button id="show-result" type="button">Show test state</button>
+  <pre id="test-state">Preparing synthetic fixture…</pre>
+</main>
+<script>
+(() => {
+  window.addEventListener("error", event => {
+    const node = document.querySelector("#test-state");
+    if (node) node.textContent = "Synthetic fixture error: " + (event.error?.stack || event.message || "unknown error");
+  });
+  // The native confirmation dialog is not exposed by Opera's automation surface.
+  // This override is confined to the synthetic fixture and cannot affect StudioFlow.
+  window.confirm = () => true;
+  document.querySelector("#test-state").textContent = "Synthetic fixture script started…";
+  const DB_NAME = "tpi033-recordings";
+  const memory = new Map();
+  const storage = {
+    get length() { return memory.size; },
+    clear() { memory.clear(); },
+    getItem(key) { return memory.has(String(key)) ? memory.get(String(key)) : null; },
+    key(index) { return Array.from(memory.keys())[index] || null; },
+    removeItem(key) { memory.delete(String(key)); },
+    setItem(key, value) { memory.set(String(key), String(value)); },
+  };
+  try { Object.defineProperty(window, "localStorage", { configurable: true, value: storage }); }
+  catch { for (const method of ["getItem", "setItem", "removeItem", "clear", "key"]) Storage.prototype[method] = storage[method].bind(storage); }
+  const databases = new Map();
+  const fakeIndexedDb = {
+    open(name) {
+      const key = name === "studioflow-recordings" ? DB_NAME : name;
+      const record = databases.get(key) || { stores: new Map(), initialized: false };
+      databases.set(key, record);
+      const request = { result: null, error: null, onupgradeneeded: null, onsuccess: null, onerror: null };
+      window.setTimeout(() => {
+        request.result = {
+          objectStoreNames: { contains: store => record.stores.has(store) },
+          createObjectStore(store) { record.stores.set(store, new Map()); return {}; },
+          transaction(storeNames) {
+            const names = Array.isArray(storeNames) ? storeNames : [storeNames];
+            names.forEach(store => { if (!record.stores.has(store)) record.stores.set(store, new Map()); });
+            const tx = { error: null, oncomplete: null, onerror: null, onabort: null };
+            tx.objectStore = store => {
+              if (!names.includes(store)) throw new Error("Synthetic store is unavailable.");
+              const values = record.stores.get(store);
+              return {
+                put(value, id) { values.set(id, value); if (!tx.completeScheduled) { tx.completeScheduled = true; window.setTimeout(() => tx.oncomplete?.(), 0); } return {}; },
+                get(id) { const result = { result: values.get(id) }; window.setTimeout(() => result.onsuccess?.(), 0); return result; },
+                delete(id) { values.delete(id); window.setTimeout(() => tx.oncomplete?.(), 0); return {}; },
+              };
+            };
+            return tx;
+          },
+          close() {},
+        };
+        if (!record.initialized) { record.initialized = true; request.onupgradeneeded?.(); }
+        request.onsuccess?.();
+      }, 0);
+      return request;
+    },
+  };
+  try { Object.defineProperty(window, "indexedDB", { configurable: true, value: fakeIndexedDb }); }
+  catch (error) {
+    try { window.indexedDB.open = fakeIndexedDb.open; }
+    catch (fallbackError) { document.querySelector("#test-state").textContent = "Synthetic IndexedDB shim could not be installed: " + fallbackError.message; return; }
+  }
+  const bytes = {
+    "tpi033-intro": new Blob(["TPI-033 synthetic intro video"], { type: "video/mp4" }),
+    "tpi033-outro": new Blob(["TPI-033 synthetic outro video"], { type: "video/mp4" }),
+    "tpi033-background": new Blob(["TPI-033 synthetic background video"], { type: "video/mp4" }),
+    "tpi033-logo": new Blob(["TPI-033 synthetic logo"], { type: "image/png" }),
+    "tpi033-banner": new Blob(["TPI-033 synthetic banner"], { type: "image/png" }),
+    "tpi033-audio": new Blob(["TPI-033 synthetic audio"], { type: "audio/mpeg" }),
+  };
+  const configuration = {
+    activeSceneId: "tpi033-scene-main",
+    selectedBackground: "custom-video",
+    studioScenes: [
+      { id: "tpi033-scene-intro", kind: "intro", title: "Synthetic Intro", layout: "Speaker view" },
+      { id: "tpi033-scene-main", kind: "standard", title: "Synthetic Main", layout: "Group discussion" },
+      { id: "tpi033-scene-outro", kind: "outro", title: "Synthetic Outro", layout: "Media presentation" },
+    ],
+    customBackground: { id: "tpi033-background", blobKey: "tpi033-background", fileName: "synthetic-background.mp4", mediaType: "video/mp4" },
+    customLogo: { id: "tpi033-logo", blobKey: "tpi033-logo", fileName: "synthetic-logo.png", mediaType: "image/png" },
+    overlayAssets: [{ id: "tpi033-banner", blobKey: "tpi033-banner", fileName: "synthetic-banner.png", mediaType: "image/png" }],
+    videoClips: {
+      intro: { id: "tpi033-intro", blobKey: "tpi033-intro", fileName: "synthetic-intro.mp4", mediaType: "video/mp4" },
+      outro: { id: "tpi033-outro", blobKey: "tpi033-outro", fileName: "synthetic-outro.mp4", mediaType: "video/mp4" },
+    },
+    backgroundMusic: { id: "tpi033-audio", blobKey: "tpi033-audio", fileName: "synthetic-audio.mp3", mediaType: "audio/mpeg" },
+    tpi033Fixture: true,
+  };
+  const fixture = {
+    id: "tpi033-source-workspace",
+    localBroadcastId: "studio-tpi033-source",
+    title: "TPI-033 Backup Test",
+    description: "Synthetic StudioFlow end-to-end backup fixture",
+    version: 1,
+    state: {
+      broadcast: { id: "studio-tpi033-source", title: "TPI-033 Backup Test" },
+      settings: { programOrientation: "landscape", saveAutomatically: true },
+      recording: { storageMode: "browser", localLibraryCount: 0 },
+      configuration,
+    },
+  };
+  storage.setItem("studioflow.activeStudioId", fixture.id);
+  storage.setItem("studioflow.tpiActiveStudioId.v1", fixture.id);
+  storage.setItem("studioflow.activeBroadcastId", JSON.stringify(fixture.localBroadcastId));
+  const originalFetch = window.fetch.bind(window);
+  const output = document.querySelector("#test-state");
+  output.textContent = "Synthetic fixture script running…";
+  function state() {
+    return {
+      fixture: fixture.title,
+      workspaceId: fixture.id,
+      broadcastId: fixture.localBroadcastId,
+      activeSceneId: configuration.activeSceneId,
+      restoreRequest: window.__tpi033?.restoreRequest || null,
+      restoreError: window.__tpi033?.restoreError || null,
+      restoreStage: window.__tpi033?.restoreStage || null,
+      backupSettings: window.__tpiStudioBackup?.readSettings?.(fixture.id) || null,
+    };
+  }
+  function renderState() { output.textContent = JSON.stringify(state(), null, 2); }
+  window.fetch = async (input, init = {}) => {
+    const url = new URL(typeof input === "string" ? input : input.url, window.location.href);
+    if (url.pathname === "/api/studio/workspaces" && (init.method || "GET").toUpperCase() === "GET") return new Response(JSON.stringify({ workspaces: [fixture] }), { status: 200, headers: { "Content-Type": "application/json" } });
+    if (url.pathname === "/api/studio/workspaces" && (init.method || "GET").toUpperCase() === "POST") {
+      const body = JSON.parse(init.body || "{}");
+      const workspace = { id: "tpi033-restored-workspace", localBroadcastId: body.localBroadcastId, title: body.title, version: 1, state: body.state };
+      window.__tpi033.restoreRequest = { restoreFromBackup: body.restoreFromBackup === true, workspaceId: workspace.id, broadcastId: body.localBroadcastId, state: body.state };
+      renderState();
+      return new Response(JSON.stringify({ workspace }), { status: 201, headers: { "Content-Type": "application/json" } });
+    }
+    return originalFetch(input, init);
+  };
+  window.__tpi033 = { fixture, bytes, restoreRequest: null };
+  document.querySelector("#change-scene").addEventListener("click", () => { configuration.activeSceneId = configuration.activeSceneId === "tpi033-scene-main" ? "tpi033-scene-intro" : "tpi033-scene-main"; window.dispatchEvent(new Event("tpi:workspace-saved")); renderState(); });
+  document.querySelector("#show-result").addEventListener("click", renderState);
+  let request;
+  try { request = indexedDB.open("studioflow-recordings", 3); }
+  catch (error) { output.textContent = "Synthetic IndexedDB open threw: " + error.message; return; }
+  window.setTimeout(() => { if (!request.result && !request.error) output.textContent = "Synthetic IndexedDB open did not complete."; }, 1000);
+  request.onerror = () => { output.textContent = "Synthetic IndexedDB setup failed: " + (request.error?.message || "unknown error"); };
+  request.onblocked = () => { output.textContent = "Synthetic IndexedDB setup is blocked."; };
+  request.onupgradeneeded = () => { if (!request.result.objectStoreNames.contains("recordingBlobs")) request.result.createObjectStore("recordingBlobs"); };
+  request.onsuccess = () => {
+    output.textContent = "Synthetic media ready; loading backup bridge…";
+    const db = request.result;
+    const tx = db.transaction("recordingBlobs", "readwrite");
+    for (const [key, blob] of Object.entries(bytes)) tx.objectStore("recordingBlobs").put({ blob, type: blob.type, size: blob.size }, key);
+    tx.onerror = () => { output.textContent = "Synthetic media setup failed: " + (tx.error?.message || "unknown error"); db.close(); };
+    tx.onabort = () => { output.textContent = "Synthetic media setup aborted."; db.close(); };
+      tx.oncomplete = () => {
+        db.close();
+        const script = document.createElement("script");
+        script.src = "/studio/backup-bridge.js?tpi033=opera-real-test-19";
+        script.onload = () => { document.dispatchEvent(new Event("DOMContentLoaded")); output.textContent = "Backup bridge loaded; backup API: " + Boolean(window.__tpiStudioBackup) + "; settings panels: " + document.querySelectorAll(".settings-panel").length; window.setTimeout(renderState, 50); };
+        script.onerror = () => { output.textContent = "Backup bridge failed to load."; };
+        document.head.appendChild(script);
+      };
+  };
+})();
+</script>
