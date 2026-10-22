@@ -16,6 +16,7 @@ function check(name, condition, detail = "") { checks.push({ name, ok: Boolean(c
 check("Video organization bridge exists", existsSync(bridgePath), bridgePath);
 check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v10"));
 check("Assigned videos can hydrate a preview from IndexedDB", bridge.includes("function preloadPreview") && bridge.includes("getBlob(asset.blobKey)") && bridge.includes("preloadPreview(card, asset)"));
+check("Existing assigned videos generate a visible preview when thumbnail metadata is absent", bridge.includes("tpiGeneratedPreview") && bridge.includes("thumbnail(media)") && bridge.includes("fallback.remove()"));
 check("Visible video slots include six general clip cards", bridge.includes("VISIBLE_VIDEO_SLOTS = [0, 1, 4, 5, 6, 7, 8, 9]") && bridge.includes("Intro Video") && bridge.includes("Video 10"));
 check("Intro and Outro have a separate section from general clips", bridge.includes("INTRO & OUTRO") && bridge.includes("INTRO_OUTRO_SLOTS = [0, 1]") && bridge.includes("VIDEO_ONLY_SLOTS = [4, 5, 6, 7, 8, 9]"));
 check("General clips can play through the stage bridge", bridge.includes("function playAssetOnStage") && bridge.includes("tpi-video-clip-stage-video"));

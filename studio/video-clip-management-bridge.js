@@ -74,7 +74,33 @@
   }
   function removeAsset(slot) { var slots = videoSlots(), asset = slots[slot]; if (!asset) return; if (!requestSlotChange(slot, "remove")) return; slots[slot] = null; saveSlots(slots); updateReactClip(slot, null); restoreSceneAssignments(slot, null); dispatchChange(); deleteBlob(asset.blobKey).catch(function () {}).then(function () { setStatus(labelFor(slot) + " removed."); render(); }); }
   function previewAsset(card, asset) { if (!asset) return; var video = card.querySelector("video[data-tpi-preview]"); if (!video) return; if (!video.src) { setStatus("Loading " + asset.fileName + "…"); getBlob(asset.blobKey).then(function (blob) { if (!blob) throw new Error("The video file is no longer available."); var url = URL.createObjectURL(blob); previewUrls[asset.blobKey] = url; video.src = url; video.hidden = false; return video.play(); }).then(function () { setStatus("Playing " + asset.fileName + "."); }).catch(function (error) { setStatus(error.message || "Video playback failed.", true); }); return; } video.hidden = false; var playback = video.paused ? video.play() : video.pause(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); }
-  function preloadPreview(card, asset) { if (!asset) return; var video = card.querySelector("video[data-tpi-preview]"); if (!video || video.src) return; getBlob(asset.blobKey).then(function (blob) { var badge = card.querySelector("[data-tpi-preview-label]"); if (!blob) { if (badge) badge.textContent = "Clip loaded"; return; } var url = URL.createObjectURL(blob); previewUrls[asset.blobKey] = url; video.src = url; video.hidden = false; video.load(); if (badge) badge.textContent = "Preview"; }).catch(function () {}); }
+  function preloadPreview(card, asset) {
+    if (!asset) return;
+    var video = card.querySelector("video[data-tpi-preview]");
+    if (!video || video.src) return;
+    getBlob(asset.blobKey).then(function (blob) {
+      var badge = card.querySelector("[data-tpi-preview-label]"), preview = card.querySelector(".tpi-video-card-preview");
+      if (!blob) { if (badge) badge.textContent = "Clip loaded"; return; }
+      var media = blob instanceof Blob ? blob : new Blob([blob], { type: asset.mediaType || "video/mp4" });
+      var url = URL.createObjectURL(media);
+      previewUrls[asset.blobKey] = url;
+      video.src = url;
+      video.hidden = true;
+      video.load();
+      return thumbnail(media).then(function (thumb) {
+        if (thumb && preview) {
+          var image = document.createElement("img");
+          image.src = thumb;
+          image.alt = (asset.title || asset.fileName || "Assigned video") + " thumbnail";
+          image.dataset.tpiGeneratedPreview = "true";
+          preview.insertBefore(image, video);
+          var fallback = preview.querySelector(".tpi-video-card-fallback");
+          if (fallback) fallback.remove();
+        }
+        if (badge) badge.textContent = thumb ? "Preview" : "Clip loaded";
+      });
+    }).catch(function () {});
+  }
   function clearStagePlayback(restore) { var stage = document.querySelector(".program-stage"), video = stage && stage.querySelector("video.tpi-video-clip-stage-video"); if (video) { try { video.pause(); } catch (error) {} video.remove(); } if (stagePreviewUrl) { try { URL.revokeObjectURL(stagePreviewUrl); } catch (error) {} stagePreviewUrl = ""; } if (restore && stageRestoreVideo && stageRestoreVideo.isConnected && stageRestoreWasPlaying) { var playback = stageRestoreVideo.play(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); } stageRestoreVideo = null; stageRestoreWasPlaying = false; }
   function playAssetOnStage(asset) { if (!asset) return; var stage = document.querySelector(".program-stage"); if (!stage) { setStatus("The StudioFlow stage is unavailable.", true); return; } clearStagePlayback(true); stageRestoreVideo = stage.querySelector("video.stage-video:not(.tpi-video-clip-stage-video)"); stageRestoreWasPlaying = !!(stageRestoreVideo && !stageRestoreVideo.paused); if (stageRestoreVideo) { try { stageRestoreVideo.pause(); } catch (error) {} } setStatus("Loading " + asset.fileName + " on stage…"); var existingUrl = previewUrls[asset.blobKey] || ""; var load = existingUrl ? Promise.resolve(null) : getBlob(asset.blobKey); load.then(function (blob) { if (!existingUrl && !blob) throw new Error("The video file is no longer available."); var url = existingUrl || URL.createObjectURL(blob); stagePreviewUrl = existingUrl ? "" : url; var video = document.createElement("video"); video.className = "stage-video contain tpi-video-clip-stage-video"; video.dataset.tpiVideoStagePlayback = "true"; video.autoplay = true; video.controls = false; video.muted = false; video.playsInline = true; video.preload = "auto"; video.src = url; video.addEventListener("ended", function () { clearStagePlayback(true); setStatus(asset.fileName + " finished on stage."); }, { once: true }); video.addEventListener("error", function () { clearStagePlayback(true); setStatus("The video could not play on stage.", true); }, { once: true }); stage.appendChild(video); var playback = video.play(); if (playback && typeof playback.catch === "function") playback.catch(function () { setStatus("Click the stage video to start playback.", true); }); setStatus("Playing " + asset.fileName + " on stage."); }).catch(function (error) { clearStagePlayback(true); setStatus(error.message || "Video playback failed.", true); }); }
   function clearPreviewUrls() { Object.keys(previewUrls).forEach(function (key) { try { URL.revokeObjectURL(previewUrls[key]); } catch (error) {} }); previewUrls = {}; }
