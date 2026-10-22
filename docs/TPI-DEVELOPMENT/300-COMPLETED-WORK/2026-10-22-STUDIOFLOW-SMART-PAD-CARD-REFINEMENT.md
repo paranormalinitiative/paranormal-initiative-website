@@ -37,9 +37,19 @@ stack of cramped utility buttons.
 - `node --check studio/audio-soundboard-bridge.js`: passed.
 - `node scripts/verify/tpi-studioflow-021-audio-soundboards.mjs`: passed
   (29/29 static checks).
-- Full release preflight and isolated browser acceptance are required before
-  the guarded production release; the preflight must run against the committed
-  tree and the current production baseline.
+- Full guarded release preflight: READY.
+- Isolated Firefox Developer Edition release acceptance: passed 22/22.
+- Anonymous production smoke: passed 10/10.
+
+## Release
+
+- Source commit: `096b52b530c851619005500161a0a229123ef2f5`.
+- Production Worker: `theparanormalinitiative`.
+- Deployed Worker version: `597e5389-715c-49d9-9f94-3c4ea2b4be69`.
+- Rollback target: `08437189-267b-4d11-8bb1-4ba74e2f09d5`.
+- Release result: `DEPLOYED_AND_VERIFIED`.
+- The acceptance profile was disposable; the owner's Firefox profile and
+  Crossroads of the Unknown were not accessed or modified.
 
 ## Data protection
 
