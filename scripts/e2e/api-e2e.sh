@@ -12,6 +12,21 @@ BASE="http://127.0.0.1:$PORT/api"
 # Keep the default regression deterministic and local-only. The authorized
 # provider refresh checks remain available with TPI_E2E_LIVE_SCRAPERS=1.
 LIVE_SCRAPERS="${TPI_E2E_LIVE_SCRAPERS:-0}"
+REUSE_LOCAL="${TPI_E2E_REUSE_LOCAL:-0}"
+
+if [ "$REUSE_LOCAL" = "1" ]; then
+  if [ "${TPI_E2E_BASE_URL:-http://127.0.0.1:8787}" != "http://127.0.0.1:8787" ]; then
+    echo "REUSE MODE FAILED: TPI_E2E_BASE_URL must remain http://127.0.0.1:8787"
+    exit 1
+  fi
+  BASE="http://127.0.0.1:8787/api"
+  WRANGLER_LOCAL="${WRANGLER_BIN:-wrangler}"
+  "$WRANGLER_LOCAL" d1 execute tpi-local-foundation --config wrangler.local.toml --local --persist-to .local-dev/state --file scripts/e2e/seed-local.sql --yes >/dev/null \
+    || { echo "LOCAL SEED FAILED"; exit 1; }
+  code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:8787/api/community/categories")
+  [ "$code" = "200" ] || { echo "LaunchAgent-backed local Worker did not respond with HTTP 200"; exit 1; }
+  echo "reusing LaunchAgent-backed local Worker on :8787 with disposable local D1 seed"
+else
 
 # ---- detect or start the dev server on a FRESH database ----
 if curl -s -o /dev/null --max-time 2 "http://127.0.0.1:$PORT/api/community/categories"; then
@@ -36,6 +51,7 @@ for i in $(seq 1 30); do
   sleep 1
 done
 [ "$code" = "200" ] || { echo "dev server did not come up"; exit 1; }
+fi
 
 PASS=0; FAIL=0; FAILED_NAMES=()
 

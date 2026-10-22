@@ -3,7 +3,7 @@
 -- Password hash = sha256('e2e-password') (login itself unused; auth via session tokens).
 
 DELETE FROM sessions WHERE token LIKE 'tok-%';
-DELETE FROM contributors WHERE username LIKE 'e2e-%';
+DELETE FROM contributors WHERE username LIKE 'e2e_%';
 
 INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, active)
 VALUES
