@@ -67,18 +67,20 @@ finish with `READY`. `release:production` must finish with
 
 ## Latest verified release record
 
-The latest successful execution of this runbook used source commit
-`07ad157f68aaa9f5afdc2801d1089ab66b9cf10d` and deployed Worker version
-`106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic on 2026-10-22 1:34:39 PM
-EDT (`2026-10-22T17:34:39.861Z`). The recorded rollback target was
-`7c5ea692-e2e9-41f1-9b34-651230e03997`.
+The latest successful production deployment used source commit
+`07aa0139035a2ab858ec4c21be02c56766b7d149` and deployed Worker version
+`f6b87433-5b35-466b-b536-b6ef1ec7fa2e` on 2026-10-22. The prior production
+Worker was `0955bca0-2ff2-4849-bfa5-1015d637486d` and remains the immediate
+rollback reference for this release. The detailed feature record is
+`300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-VIDEO-CLIP-STAGE-PLAYBACK-RESULT.md`.
 
-That release passed anonymous live smoke 10/10, isolated Firefox Developer
-Edition acceptance 23/23, local authentication lifecycle 38/38, complete
-preflight, asset/build integrity, and the guarded Wrangler dry-run. It made no
-D1 migration, R2 mutation, Crossroads mutation, or owner-browser storage
-change. This record is evidence of the last successful run; every future
-release must execute the commands above again.
+That release passed the focused Video Clips checks 13/13, media organization
+checks 18/18, release-safety checks 15/15, two reproducible authoritative
+StudioFlow builds, the guarded Wrangler dry-run, and anonymous live smoke
+10/10. It made no D1 migration, R2 mutation, Crossroads mutation, or
+owner-browser storage change. Authenticated card-click acceptance remains a
+manual Firefox confirmation because the owner's existing tab was not reloaded.
+Every future release must execute the commands above again.
 
 The production command opens a new isolated Firefox Developer Edition profile.
 If it requests a production sign-in, the owner signs into the window titled

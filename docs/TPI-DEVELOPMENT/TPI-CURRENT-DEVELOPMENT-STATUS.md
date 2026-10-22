@@ -9,18 +9,21 @@ older incident records in this document remain valuable provenance, but they
 must not be interpreted as the active production state.
 
 - Release branch: `codex/tpi-development`
-- Source commit: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
+- Source commit: `07aa0139035a2ab858ec4c21be02c56766b7d149`
 - Worker: `theparanormalinitiative`
-- Active production Worker version: `106c3d6a-5cbb-4a62-917d-644f850b4287` at 100%
-- Deployment time: `2026-10-22T17:34:39.861Z` / 1:34:39 PM EDT
-- Verified rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`
+- Active production Worker version: `f6b87433-5b35-466b-b536-b6ef1ec7fa2e` at 100%
+- Deployment date: `2026-10-22`
+- Immediate rollback reference: `0955bca0-2ff2-4849-bfa5-1015d637486d`
 - Anonymous live smoke: PASS, 10/10
-- Isolated Firefox Developer Edition acceptance: PASS, 23/23
-- Local authentication lifecycle: PASS, 38/38
-- Complete release preflight, build/reproducibility, asset integrity, and guarded
-  Wrangler dry-run: PASS
+- Video Clips focused checks: PASS, 13/13
+- Media organization focused checks: PASS, 18/18
+- Release safety checks: PASS, 15/15
+- Authoritative StudioFlow build: PASS, reproducible twice
+- Guarded Wrangler dry-run: PASS
 - Protected resources: Crossroads of the Unknown untouched; no D1 migration, R2
   mutation, or owner-browser storage access
+- Current StudioFlow release record:
+  `300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-VIDEO-CLIP-STAGE-PLAYBACK-RESULT.md`
 - Workflow repair: the acceptance runner now labels and foregrounds the exact
   disposable Firefox window `TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE` and
   rejects other Firefox windows as evidence for production acceptance.
