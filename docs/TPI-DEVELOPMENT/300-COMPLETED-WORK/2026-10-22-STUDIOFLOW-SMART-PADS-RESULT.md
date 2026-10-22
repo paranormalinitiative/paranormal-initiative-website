@@ -56,7 +56,12 @@ Directive: [TPI-STUDIOFLOW-017 SMART Pads](../100-DIRECTIVES/TPI-STUDIOFLOW-017-
 - Firefox Developer Edition live inspection found the previous per-scene music
   selectors and “Start after Intro” controls visually intrusive. This repair
   replaces them with the single scene-level Background Music button described
-  above; final live verification follows the guarded release.
+  above. After the guarded release, Firefox Developer Edition showed Intro
+  video and Background music as separate scene buttons, with no per-scene
+  selectors or checkboxes.
+- Final correction commit: `6af5b2a2eaaf7133a25202564bcf4e66a6fc71a8`.
+- Final Worker version: `0b58762c-c779-4c3a-aba0-f6c1f4ac5d17`.
+- Deployment timestamp: `2026-10-22T19:24:43Z`.
 - Crossroads remained untouched; no owner media was played, replaced, or
   reassigned.
 

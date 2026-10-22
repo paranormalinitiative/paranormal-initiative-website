@@ -1,6 +1,6 @@
 # TPI-STUDIOFLOW-017 — SMART Pads for Sound Effects and Background Music
 
-Status: implementation in progress; production deployment follows the guarded release workflow.
+Status: deployed and live-verified through the guarded release workflow.
 
 This is an implementation addendum to the existing TPI-STUDIOFLOW-017 Studio
 switching directive. It does not replace the save-before-switch, studio
