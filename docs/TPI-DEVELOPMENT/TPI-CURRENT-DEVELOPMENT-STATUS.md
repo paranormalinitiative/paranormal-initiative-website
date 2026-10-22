@@ -45,8 +45,39 @@ and application source commit above.
 | Directive | Git commit | Branch | Cloudflare Worker version | Production verification |
 | --- | --- | --- | --- | --- |
 | TPI-STUDIOFLOW-026 to 029 release (isolated E2E harness, synthetic admin seed, configuration integrity, studio bridge fixes) | `db7e1c5` | `codex/tpi-development` (pushed; local and remote match) | `7c5ea692-e2e9-41f1-9b34-651230e03997` at 100%, deployed 2026-10-22 05:43 UTC | Read-only HTTP only: `/` and `/api/auth/me` return 200 on the Worker host and `paranormalinitiative.com`; `/studio/` returns 403 Coming Soon page. Browser and authenticated production acceptance not yet run. |
+| Worker request-budget repair | `0657ab0` | `codex/tpi-development` (pushed; local and remote match) | Not deployed; rollback baseline `7c5ea692-e2e9-41f1-9b34-651230e03997` remains at 100% | Local Firefox 23/23, API E2E 225/225, focused StudioFlow regressions, reproducible build, and guarded Wrangler dry-run passed. Production release waits for the Cloudflare daily request allowance to reset. |
 
-Rollback target: `530d6f93`, the previous production version. Roll back with `wrangler rollback 530d6f93` only if live verification fails.
+Current rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`, the active
+production version. The guarded release workflow records and verifies this
+target immediately before any later deployment.
+
+### Worker request-budget incident and permanent repair — 2026-10-22
+
+- Cloudflare recorded 160,573 successful Worker events in the preceding 24
+  hours while static asset requests accounted for only about 2,400 requests.
+  This was automated API traffic, not traffic from the five registered members.
+- The isolated production Firefox acceptance runner called `/api/auth/me`
+  every 200 milliseconds while waiting as long as ten minutes for manual login.
+  It now waits on browser-local navigation or DOM state and performs one final
+  authenticated-session confirmation.
+- The maintained StudioFlow React source also polled production room signals
+  every 900 milliseconds and guests plus status every two seconds. Source
+  commit `9f0e24e` replaces those fixed intervals with non-overlapping,
+  visibility-aware scheduling: visible signal polling every two seconds,
+  visible guest/status refresh every ten seconds, and substantially slower
+  background-tab polling. The request-budget regression is mandatory in the
+  authoritative build and complete QA gate.
+- Canonical implementation commit `0657ab0` also excludes Markdown files from
+  production asset packages and repairs authoritative staging so Video Clips,
+  Soundboards, cache tags, and the verified existing CSS remain preserved.
+- Verification: API E2E 225/225, isolated Firefox Developer Edition 23/23,
+  local authentication 38/38, focused StudioFlow regression suites passed,
+  source builds were reproducible, and the guarded Wrangler dry-run passed.
+- Production remained safely rolled back to
+  `7c5ea692-e2e9-41f1-9b34-651230e03997` at 100%. No D1 rows, R2 objects,
+  Crossroads data, or owner browser storage were changed. Deployment and live
+  acceptance must occur only after the Cloudflare allowance resets and the
+  full guarded preflight succeeds.
 
 ### TPI-STUDIOFLOW-026 Addendum A — permanent local authentication and release workflow
 
