@@ -3,7 +3,7 @@
 // Local-only OPS-014 service checks. This suite never deploys, imports, or
 // contacts a hosted TPI Worker. It does not stop or restart the owner service.
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { resolve } from "node:path";
 
 const repoRoot = process.cwd();
@@ -15,6 +15,8 @@ const service = readFileSync(resolve(repoRoot, "scripts/local-dev-service.mjs"),
 const plistPath = resolve(process.env.HOME || "", "Library/LaunchAgents/com.tpi.local-development.plist");
 const packageJson = JSON.parse(readFileSync(resolve(repoRoot, "package.json"), "utf8"));
 const config = readFileSync(resolve(repoRoot, "wrangler.local.toml"), "utf8");
+const currentNodeRealpath = realpathSync(process.execPath);
+const installedNodeRealpath = existsSync("/opt/homebrew/bin/node") ? realpathSync("/opt/homebrew/bin/node") : "";
 
 check("service script syntax is present", service.includes("com.tpi.local-development") && service.includes("TPI_LOCAL_SERVICE_MANAGED"));
 check("service uses the existing local launcher", service.includes("scripts/local-dev.mjs") && !service.includes("wrangler dev"));
@@ -32,7 +34,7 @@ if (existsSync(plistPath)) {
   const plist = readFileSync(plistPath, "utf8");
   check("installed plist has the expected label", plist.includes("com.tpi.local-development"));
   check("installed plist points to this repository", plist.includes(repoRoot));
-  check("installed plist uses the current absolute Node executable", plist.includes(process.execPath));
+  check("installed plist uses the current absolute Node executable", plist.includes(process.execPath) || (installedNodeRealpath && installedNodeRealpath === currentNodeRealpath && plist.includes("/opt/homebrew/bin/node")));
   check("installed plist is loopback/local-only", plist.includes('TPI_LOCAL_ONLY</key><string>1') && plist.includes('TPI_DISABLE_OUTBOUND</key><string>1'));
   check("installed plist has no hosted TPI target", !/paranormalinitiative\.com|workers\.dev|tpi_contributor_portal_dev|tpi-contributor-media-dev/.test(plist));
 }

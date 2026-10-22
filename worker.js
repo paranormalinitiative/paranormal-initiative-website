@@ -217,7 +217,7 @@ async function serveCanonicalAdminCenter(request, env) {
   const targetPath = sourceUrl.pathname === "/admin-panel" ||
     sourceUrl.pathname === "/admin-panel/" ||
     sourceUrl.pathname === "/admin-panel/index.html"
-    ? "/admin-center-preview/"
+    ? "/admin-center-preview/index.html"
     : sourceUrl.pathname.replace(/^\/admin-panel(?:\.html)?/, "/admin-center-preview");
   const targetUrl = new URL(targetPath + sourceUrl.search, sourceUrl.origin);
   return serveAssets(new Request(targetUrl, request), env);
@@ -413,7 +413,7 @@ export default {
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
       }
-      return serveAssets(request, env);
+      return servePageAsset(request, env);
     }
 
     // Default: serve normal website static assets

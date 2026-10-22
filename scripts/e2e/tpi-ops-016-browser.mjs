@@ -295,6 +295,7 @@ async function focusedChecks(sessions) {
   } else focus("messenger control is present", false, "selector missing", "Member");
   for (const route of ["/member-notifications", "/member-profile", "/member-dashboard"]) {
     const pageResponse = await member.page.goto(`${base}${route}`, { waitUntil: "domcontentloaded", timeout: 10000 });
+    await member.page.waitForTimeout(350);
     const text = await member.page.locator("body").innerText().catch(() => "");
     focus(`member route renders: ${route}`, pageResponse?.status() === 200 && text.trim().length > 10, `HTTP ${pageResponse?.status() ?? "unknown"}`, "Member");
   }
