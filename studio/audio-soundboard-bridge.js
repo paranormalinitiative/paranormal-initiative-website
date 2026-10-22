@@ -271,15 +271,24 @@
   }
   function makeCard(category, slot, asset) {
     var card = document.createElement("article"); card.className = "tpi-audio-slot" + (asset ? " assigned" : " empty"); card.dataset.tpiAudioCategory = category; card.dataset.tpiAudioSlot = String(slot); card.setAttribute("aria-label", (category === "sound" ? "Sound effect " : "Background music ") + (slot + 1) + (asset ? ": " + asset.title : ": empty"));
-    var icon = document.createElement("span"); icon.className = "tpi-audio-slot-icon"; icon.textContent = "♫"; icon.setAttribute("aria-hidden", "true");
+    var topLine = document.createElement("div"); topLine.className = "tpi-audio-slot-topline";
+    var icon = document.createElement("span"); icon.className = "tpi-audio-slot-icon"; icon.textContent = category === "sound" ? "♬" : "♫"; icon.setAttribute("aria-hidden", "true");
+    var slotLabel = document.createElement("span"); slotLabel.className = "tpi-audio-slot-label"; slotLabel.textContent = (category === "sound" ? "Sound effect" : "Music") + " " + String(slot + 1).padStart(2, "0");
+    topLine.append(icon, slotLabel);
     var heading = document.createElement("strong"); heading.className = "tpi-audio-slot-title"; heading.textContent = asset ? asset.title : (category === "sound" ? "Sound " : "Music ") + (slot + 1);
     var detail = document.createElement("span"); detail.className = "tpi-audio-slot-detail"; detail.textContent = asset ? text(asset.fileName) : "Empty slot";
     var copy = document.createElement("span"); copy.className = "tpi-audio-slot-copy"; copy.append(heading, detail);
-    var actions = document.createElement("span"); actions.className = "tpi-audio-slot-actions";
-    function button(label, action, disabled) { var button = document.createElement("button"); button.type = "button"; button.className = "tpi-audio-slot-action"; button.dataset.tpiAudioAction = action; button.textContent = label; button.disabled = !!disabled; return button; }
-    if (asset) actions.append(button(category === "sound" ? "Play live" : "Smart Play", "play", false), button("Rename", "rename", false), button("Color", "color", false), button("Replace", "replace", false), button("Remove", "remove", false));
-    else actions.append(button("Upload", "upload", false));
-    card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(icon, copy, actions);
+    var actions = document.createElement("div"); actions.className = "tpi-audio-slot-actions";
+    function button(label, action, disabled) { var button = document.createElement("button"); button.type = "button"; button.className = "tpi-audio-slot-action"; button.dataset.tpiAudioAction = action; button.textContent = label; button.disabled = !!disabled; button.title = label; return button; }
+    if (asset) {
+      var playButton = button(category === "sound" ? "Play live" : "Smart Play", "play", false); playButton.classList.add("primary");
+      var secondary = document.createElement("div"); secondary.className = "tpi-audio-slot-secondary";
+      secondary.append(button("Rename", "rename", false), button("Color", "color", false), button("Replace", "replace", false), button("Remove", "remove", false));
+      actions.append(playButton, secondary);
+    } else {
+      var uploadButton = button("Upload audio", "upload", false); uploadButton.classList.add("primary", "empty-action"); actions.append(uploadButton);
+    }
+    card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(topLine, copy, actions);
     if (asset && ((category === "sound" && soundSlot === slot) || (category === "music" && musicSlot === slot))) card.classList.add("playing");
     card.addEventListener("click", function (event) {
       var target = event.target.closest("button[data-tpi-audio-action]");
