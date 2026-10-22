@@ -17,6 +17,7 @@
   var MUSIC_VOLUME_KEY = "studioflow.backgroundMusicVolume";
   var MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop";
   var SCENE_MUSIC_KEY = "studioflow.sceneMusicAssignments";
+  var AUDIO_ACCEPT = "audio/*,.mp3,.m4a,.wav,.wave,.ogg,.oga,.aac,.flac,.aif,.aiff,.webm,.opus,.amr";
   var PAD_COLORS = ["#5f3b8f", "#8c3f67", "#315d87", "#2f7668", "#7a5b2c", "#704c75"];
   var SLOT_COUNT = 9;
   var scheduled = false;
@@ -130,7 +131,11 @@
     var type = text(file && file.type).toLowerCase();
     if (type.indexOf("audio/") === 0) return type;
     var extension = text(file && file.name).toLowerCase().split(".").pop();
-    return { mp3: "audio/mpeg", wav: "audio/wav", ogg: "audio/ogg", m4a: "audio/mp4", aac: "audio/aac", webm: "audio/webm" }[extension] || "";
+    return {
+      mp3: "audio/mpeg", wav: "audio/wav", wave: "audio/wav", ogg: "audio/ogg", oga: "audio/ogg",
+      m4a: "audio/mp4", aac: "audio/aac", flac: "audio/flac", aif: "audio/aiff", aiff: "audio/aiff",
+      webm: "audio/webm", opus: "audio/opus", amr: "audio/amr"
+    }[extension] || "";
   }
   function validAudio(file, maxBytes) {
     if (!file || !audioType(file)) throw new Error("Choose an audio file.");
@@ -250,12 +255,23 @@
     if (node) node.textContent = message || "";
   }
   function fileInput(category, slot) {
-    var input = document.createElement("input"); input.type = "file"; input.accept = "audio/*,.mp3,.wav,.ogg,.m4a,.aac,.webm"; input.multiple = slot === null; input.hidden = true;
+    var input = document.createElement("input"); input.type = "file"; input.accept = AUDIO_ACCEPT; input.multiple = slot === null; input.hidden = true; input.dataset.tpiAudioInput = category;
     input.addEventListener("change", function () {
       var files = Array.prototype.slice.call(input.files || []), prefix = category === "sound" ? "Sound" : "Music", slots = category === "sound" ? soundSlots() : musicSlots(), max = category === "sound" ? 24 * 1024 * 1024 : 80 * 1024 * 1024;
       if (slot === null && firstOpen(slots) < 0) { setStatus("All nine " + prefix.toLowerCase() + " slots are occupied. Replace an individual slot instead."); input.remove(); return; }
       var next = slot === null ? firstOpen(slots) : slot;
-      files.reduce(function (promise, file) { return promise.then(function () { if (next < 0 || next >= SLOT_COUNT) throw new Error("All nine " + prefix.toLowerCase() + " slots are occupied. Replace an individual slot instead."); validAudio(file, max); return decode(file).then(function () { return embeddedTitle(file); }).then(function (embedded) { return category === "sound" ? persistSound(file, next, embedded) : persistMusic(file, next, embedded); }).then(function () { next = slot === null ? firstOpen(category === "sound" ? soundSlots() : musicSlots()) : next; }); }); }, Promise.resolve()).then(function () { setStatus(prefix + " saved."); renderState(); }).catch(function (error) { setStatus(error.message || prefix + " could not be saved."); }).finally(function () { input.remove(); });
+      files.reduce(function (promise, file) { return promise.then(function () {
+        if (next < 0 || next >= SLOT_COUNT) throw new Error("All nine " + prefix.toLowerCase() + " slots are occupied. Replace an individual slot instead.");
+        validAudio(file, max);
+        // Sound effects use the Web Audio playback path and must be decoded
+        // before saving. Background music uses the browser Audio element;
+        // requiring AudioContext decoding here rejects valid M4A/AAC files in
+        // Firefox before they can be saved or played by that supported path.
+        var prepared = category === "sound" ? decode(file) : Promise.resolve(true);
+        return prepared.then(function () { return embeddedTitle(file); }).then(function (embedded) {
+          return category === "sound" ? persistSound(file, next, embedded) : persistMusic(file, next, embedded);
+        }).then(function () { next = slot === null ? firstOpen(category === "sound" ? soundSlots() : musicSlots()) : next; });
+      }); }, Promise.resolve()).then(function () { setStatus(prefix + " saved."); renderState(); }).catch(function (error) { setStatus(error.message || prefix + " could not be saved."); }).finally(function () { input.remove(); });
     });
     document.body.appendChild(input); input.click();
   }
