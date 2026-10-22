@@ -274,6 +274,17 @@ try {
   check("soundboards upload and play independently", true);
   await click('[data-tpi-audio-stop="music"]');
 
+  const audioMenuTriggerCount = await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned .tpi-audio-slot-menu-trigger');
+  check("assigned sound exposes an audio options trigger", audioMenuTriggerCount === 1, `count=${audioMenuTriggerCount}`);
+  const audioMenuClicked = await click('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned .tpi-audio-slot-menu-trigger');
+  check("audio options trigger opens the menu", audioMenuClicked === true);
+  const audioMenuImmediate = await js("var menus=Array.from(document.querySelectorAll('.tpi-audio-slot-menu')); return menus.map(function(menu){return {floating:menu.getAttribute('data-tpi-audio-floating'),hidden:menu.hidden,parent:menu.parentElement&&menu.parentElement.tagName,connected:menu.isConnected};});");
+  check("floating audio menu is created in the document", audioMenuImmediate.some(menu => menu.floating === "true" && menu.hidden === false && menu.parent === "BODY" && menu.connected === true), JSON.stringify(audioMenuImmediate));
+  await waitFor("floating audio management menu", async () => count('.tpi-audio-slot-menu[data-tpi-audio-floating]:not([hidden])'));
+  const audioMenuLayout = await js("var menu=document.querySelector('.tpi-audio-slot-menu[data-tpi-audio-floating]:not([hidden])'), rect=menu&&menu.getBoundingClientRect(); return {visible:!!menu,body:!!(menu&&menu.parentElement===document.body),fixed:!!(menu&&getComputedStyle(menu).position==='fixed'),left:rect&&rect.left,right:rect&&rect.right,top:rect&&rect.top,bottom:rect&&rect.bottom,viewportWidth:innerWidth,viewportHeight:innerHeight};");
+  check("audio management menu floats above the panel and stays in the viewport", audioMenuLayout.visible && audioMenuLayout.body && audioMenuLayout.fixed && audioMenuLayout.left >= 0 && audioMenuLayout.top >= 0 && audioMenuLayout.right <= audioMenuLayout.viewportWidth + 1 && audioMenuLayout.bottom <= audioMenuLayout.viewportHeight + 1, JSON.stringify(audioMenuLayout));
+  await js("document.body.click();");
+
   check("existing timer controls remain selectable", await click('[data-tpi-native-video-timer-controls] button:first-child') && await count('[data-tpi-video-timer-section]') === 1);
 
   await click(".tpi-studio-selector");

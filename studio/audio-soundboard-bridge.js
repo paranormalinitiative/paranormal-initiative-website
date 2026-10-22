@@ -302,8 +302,49 @@
     function menuItem(label, action) { var item = document.createElement("button"); item.type = "button"; item.className = "tpi-audio-slot-menu-item"; item.dataset.tpiAudioMenuAction = action; item.textContent = label; return item; }
     var menu = document.createElement("div"); menu.className = "tpi-audio-slot-menu"; menu.hidden = true; menu.setAttribute("role", "menu");
     if (asset) menu.append(menuItem("Rename", "rename"), menuItem("Change color", "color"), menuItem("Replace audio", "replace"), menuItem("Remove", "remove"));
-    function closeMenu() { menu.hidden = true; menuTrigger.setAttribute("aria-expanded", "false"); card.classList.remove("menu-open"); }
-    function openMenu() { if (!asset) return; document.querySelectorAll(".tpi-audio-slot-menu").forEach(function (item) { if (item !== menu) item.hidden = true; }); document.querySelectorAll(".tpi-audio-slot.menu-open").forEach(function (item) { if (item !== card) item.classList.remove("menu-open"); }); menu.hidden = false; menuTrigger.setAttribute("aria-expanded", "true"); card.classList.add("menu-open"); }
+    function positionMenu() {
+      if (menu.hidden || !menu.isConnected) return;
+      var triggerRect = menuTrigger.getBoundingClientRect();
+      var margin = 8;
+      var left = triggerRect.right - menu.offsetWidth;
+      var top = triggerRect.bottom + 6;
+      if (top + menu.offsetHeight > window.innerHeight - margin) top = triggerRect.top - menu.offsetHeight - 6;
+      left = Math.max(margin, Math.min(left, window.innerWidth - menu.offsetWidth - margin));
+      top = Math.max(margin, Math.min(top, window.innerHeight - menu.offsetHeight - margin));
+      menu.style.left = Math.round(left) + "px";
+      menu.style.top = Math.round(top) + "px";
+    }
+    function dismissMenu(event) {
+      if (event.target === menuTrigger || menu.contains(event.target)) return;
+      closeMenu();
+    }
+    function closeMenu() {
+      menu.hidden = true;
+      menuTrigger.setAttribute("aria-expanded", "false");
+      card.classList.remove("menu-open");
+      window.removeEventListener("resize", positionMenu);
+      window.removeEventListener("scroll", positionMenu, true);
+      document.removeEventListener("click", dismissMenu, true);
+      if (menu.parentNode) menu.parentNode.removeChild(menu);
+    }
+    menu.__tpiClose = closeMenu;
+    function openMenu() {
+      if (!asset) return;
+      document.querySelectorAll(".tpi-audio-slot-menu").forEach(function (item) {
+        if (item !== menu && typeof item.__tpiClose === "function") item.__tpiClose();
+        else if (item !== menu && item.parentNode) item.parentNode.removeChild(item);
+      });
+      document.querySelectorAll(".tpi-audio-slot.menu-open").forEach(function (item) { if (item !== card) item.classList.remove("menu-open"); });
+      menu.dataset.tpiAudioFloating = "true";
+      menu.hidden = false;
+      document.body.appendChild(menu);
+      menuTrigger.setAttribute("aria-expanded", "true");
+      card.classList.add("menu-open");
+      positionMenu();
+      window.addEventListener("resize", positionMenu);
+      window.addEventListener("scroll", positionMenu, true);
+      document.addEventListener("click", dismissMenu, true);
+    }
     function manage(action) {
       if (!asset) return;
       closeMenu();
@@ -318,7 +359,7 @@
     } else {
       var uploadButton = button("＋ Add audio", "upload", false); uploadButton.classList.add("primary", "empty-action"); actions.append(uploadButton);
     }
-    card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(topLine, copy); if (actions) card.append(actions); card.append(menu);
+    card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(topLine, copy); if (actions) card.append(actions);
     if (asset && ((category === "sound" && soundSlot === slot) || (category === "music" && musicSlot === slot))) card.classList.add("playing");
     menuTrigger.setAttribute("aria-expanded", "false");
     menuTrigger.addEventListener("click", function (event) { event.preventDefault(); event.stopPropagation(); if (menu.hidden) openMenu(); else closeMenu(); });
@@ -417,6 +458,8 @@
     var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), sceneMusic: sceneAssignments(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42), musicLoop: musicLoopEnabled() });
     if (signature === lastSignature && root.childElementCount) { sceneMusicButton(); return; }
     lastSignature = signature;
+    document.querySelectorAll(".tpi-audio-slot-menu[data-tpi-audio-floating]").forEach(function (menu) { if (typeof menu.__tpiClose === "function") menu.__tpiClose(); else if (menu.parentNode) menu.parentNode.removeChild(menu); });
+    document.querySelectorAll(".tpi-audio-slot.menu-open").forEach(function (card) { card.classList.remove("menu-open"); });
     var existing = root.firstChild; if (existing) root.replaceChildren();
     var soundSection = document.createElement("section"); soundSection.className = "tpi-audio-original-section"; soundSection.dataset.tpiAudioOriginal = "sounds"; var soundHeading = document.createElement("h3"); soundHeading.textContent = "Sounds"; soundSection.appendChild(soundHeading);
     var musicSection = document.createElement("section"); musicSection.className = "tpi-audio-original-section"; musicSection.dataset.tpiAudioOriginal = "background-music"; var musicHeading = document.createElement("h3"); musicHeading.textContent = "Background music"; musicSection.appendChild(musicHeading);
