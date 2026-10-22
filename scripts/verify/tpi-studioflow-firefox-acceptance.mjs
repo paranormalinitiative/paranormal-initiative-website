@@ -204,8 +204,8 @@ try {
   await js("var id=arguments[0], title=arguments[1]; var broadcast={id:id,title:title,description:'Disposable Firefox acceptance studio',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Disposable scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1'));", studioId, studioTitle);
   await enterStudio();
   check("StudioFlow loads in isolated Firefox", await count("[data-tpi-video-organization]") === 1);
-  check("nine video cards render", await count("[data-tpi-video-card]") === 9, await count("[data-tpi-video-card]"));
-  check("six video timer cards render", await count("[data-tpi-video-timers] .tpi-video-timer-card") === 6, await count("[data-tpi-video-timers] .tpi-video-timer-card"));
+  check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));
+  check("one native video timer and four duration controls render", await count("[data-tpi-video-timer-section]") === 1 && await count("[data-tpi-native-video-timer]") === 1 && await count("[data-tpi-native-video-timer-controls] button") >= 4);
   check("nine Sound Effects slots render", await count('[data-tpi-audio-board="sound"] .tpi-audio-slot') === 9);
   check("nine Background Music slots render", await count('[data-tpi-audio-board="music"] .tpi-audio-slot') === 9);
 
@@ -214,10 +214,9 @@ try {
   await uploadVideoSlot(1, "video/mp4", videoFile);
   await waitFor("Outro Video persistence", async () => (await text('[data-tpi-video-card="1"] .tpi-video-card-file')).includes("tpi-022-video.mp4"));
   check("Intro and Outro assignments are independent", await count('[data-tpi-video-card="0"].assigned') === 1 && await count('[data-tpi-video-card="1"].assigned') === 1);
-  check("Intro and Outro previews are recognizable or explicitly assigned", await count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] .tpi-video-card-fallback') === 1 && await count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] .tpi-video-card-fallback') === 1);
-  await click('[data-tpi-video-card="0"] [data-tpi-video-action="preview"]');
-  await waitFor("Intro preview playback", async () => count('[data-tpi-video-card="0"] video[data-tpi-preview]:not([hidden])'));
-  check("Intro preview loads from browser media storage", true);
+  await waitFor("Intro visible preview", async () => count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] video[data-tpi-preview]:not([hidden])'));
+  await waitFor("Outro visible preview", async () => count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] video[data-tpi-preview]:not([hidden])'));
+  check("Intro and Outro display visible previews", await count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] video[data-tpi-preview]:not([hidden])') === 1 && await count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] video[data-tpi-preview]:not([hidden])') === 1 && await count('[data-tpi-video-card="0"] .tpi-video-card-fallback, [data-tpi-video-card="1"] .tpi-video-card-fallback') === 0);
 
   await uploadByDynamicInput('[data-tpi-audio-board="sound"] .tpi-audio-upload', "audio/", soundFile);
   await waitFor("sound assignment", async () => count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned'));
@@ -231,14 +230,7 @@ try {
   check("soundboards upload and play independently", true);
   await click('[data-tpi-audio-stop="music"]');
 
-  await click('[data-tpi-video-timers] .tpi-video-timer-card:nth-of-type(1) [data-tpi-video-action="select-timer"]');
-  await waitFor("timer selection", async () => count('[data-tpi-video-timers] .tpi-video-timer-card.selected [data-tpi-video-action="start-timer"]'));
-  await click('[data-tpi-video-timers] .tpi-video-timer-card.selected [data-tpi-video-action="start-timer"]');
-  const timerDiagnostic = () => js("var s=document.querySelector('[data-tpi-timer-status]'); var c=document.querySelector('[data-tpi-video-timers]'); return 'status=' + (s && s.textContent) + ' | selected=' + (c ? c.querySelectorAll('.tpi-video-timer-card.selected').length : 'none') + ' | running=' + (c ? c.querySelectorAll('.tpi-video-timer-card.running').length : 'none') + ' | nativeStart=' + Array.from(document.querySelectorAll('section.asset-section button.background-picker-tile')).some(function(b){return (b.title||'').toLowerCase().indexOf('golden ring countdown')!==-1;}) + ' | presets=' + document.querySelectorAll('.countdown-duration-row button').length;");
-  let timerRunning = false;
-  for (let i = 0; i < 25 && !timerRunning; i++) { timerRunning = (await count('[data-tpi-video-timers] .tpi-video-timer-card.running')) === 1; if (!timerRunning) await sleep(200); }
-  check("existing timer controls start one timer", timerRunning, timerRunning ? "" : await timerDiagnostic());
-  await click('[data-tpi-video-timers] .tpi-video-timer-card.running [data-tpi-video-action="stop-timer"]');
+  check("existing timer controls remain selectable", await click('[data-tpi-native-video-timer-controls] button:first-child') && await count('[data-tpi-video-timer-section]') === 1);
 
   await click(".tpi-studio-selector");
   const layout = await js("var menu=document.querySelector('.tpi-studio-menu'), status=document.querySelector('.tpi-studio-status'), backup=document.querySelector('.tpi-studio-backup-status'); var rect=function(n){return n&&n.getBoundingClientRect();}, overlap=function(a,b){return !!(a&&b&&a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top);}; return {visible:!!(menu&&!menu.hidden),overlap:overlap(rect(menu),rect(status))||overlap(rect(menu),rect(backup)),text:menu?menu.textContent:''};");

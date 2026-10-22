@@ -55,9 +55,8 @@ try {
   check("one native video timer has its own section", await timerSection.count() === 1 && await timerSection.locator(".countdown-duration-row button").count() >= 4 && await timerSection.locator('button[title*="golden ring countdown"]').count() === 1);
 
   let chooser = page.waitForEvent("filechooser"); await cards.nth(0).getByRole("button", { name: "Upload" }).click(); await (await chooser).setFiles(videoFile); await page.waitForTimeout(1000);
-  await cards.nth(0).locator("button[data-tpi-video-menu-toggle]").click();
-  check("Intro Video upload assigns slot one", await cards.nth(0).getByText("tpi-022-video.mp4", { exact: true }).count() === 1 && await cards.nth(0).getByRole("button", { name: "Preview" }).count() === 1);
-  check("Intro Video gets a recognizable thumbnail or assigned fallback", await cards.nth(0).locator("img, .tpi-video-card-fallback").count() === 1);
+  check("Intro Video upload assigns slot one", await cards.nth(0).getByText("tpi-022-video.mp4", { exact: true }).count() === 1);
+  check("Intro Video gets a visible recognizable preview", await cards.nth(0).locator("img, video:not([hidden])").count() === 1 && await cards.nth(0).locator(".tpi-video-card-fallback").count() === 0);
   const persisted = await page.evaluate(async () => {
     const slots = JSON.parse(localStorage.getItem("studioflow.videoClipSlots") || "[]");
     const db = await new Promise((resolve, reject) => { const request = indexedDB.open("studioflow-recordings"); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
@@ -66,10 +65,7 @@ try {
     db.close(); return { slots, found };
   });
   check("video metadata and media bytes persist locally", persisted.slots.filter(Boolean).length === 1 && persisted.found);
-  const introToggle = cards.nth(0).locator("button[data-tpi-video-menu-toggle]");
-  if (await introToggle.getAttribute("aria-expanded") !== "true") await introToggle.click();
-  await cards.nth(0).getByRole("button", { name: "Preview" }).click(); await page.waitForTimeout(500);
-  check("video preview loads from IndexedDB", await cards.nth(0).locator('video[data-tpi-preview]:not([hidden])').count() === 1);
+  check("Intro and Outro preview cards remain display-only", await cards.nth(0).locator("button[data-tpi-video-menu-toggle]").count() === 1 && await cards.nth(0).getByRole("button", { name: "Preview" }).count() === 0);
 
   let generalChooser = page.waitForEvent("filechooser"); await cards.nth(2).getByRole("button", { name: "Upload" }).click(); await (await generalChooser).setFiles(videoFile); await page.waitForTimeout(1000);
   await cards.nth(2).locator(".tpi-video-card-body").click(); await page.waitForTimeout(500);
