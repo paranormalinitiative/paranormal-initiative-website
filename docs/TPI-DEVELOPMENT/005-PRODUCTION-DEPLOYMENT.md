@@ -44,11 +44,40 @@ The development branch `codex/tpi-development` and development Worker `theparano
 - Verify account 221ea5479876fd303ddc87002b9e892d, Worker theparanormalinitiative, bindings, changed files, tests, and rollback before any authorized release.
 - Never treat a workers.dev URL or a successful build as proof of environment isolation.
 
+## Maintained release command
+
+The permanent, guarded workflow is implemented by `scripts/tpi-release.mjs`:
+
+```sh
+npm run verify:local-auth-lifecycle
+npm run release:preflight
+TPI_PRODUCTION_DEPLOY=approved npm run release:production
+```
+
+Preflight requires `codex/tpi-development`, an empty Git working tree, and an
+exact match with the GitHub branch. It runs persistent local authentication,
+disposable port-8789 API E2E, the StudioFlow build, Firefox Developer Edition
+acceptance in a new profile, authoritative asset staging verification,
+read-only production smoke, Wrangler account/version/rollback checks, and the
+existing guarded Wrangler dry-run.
+
+Production mode repeats preflight, records the current Worker version, deploys
+only through `scripts/deploy-production-guarded.mjs`, performs live smoke and
+isolated Firefox acceptance, verifies the new version at 100% traffic, and
+automatically restores the recorded version if acceptance fails. The workflow
+contains no database migration, D1 mutation, or R2 deletion command.
+
+Production Firefox acceptance requires the owner to sign in inside the new
+disposable Firefox Developer Edition profile. Local credential files are
+blocked from production targets.
+
 ## StudioFlow release checkpoint status
 
-The current StudioFlow release is **NOT DEPLOYED / RELEASE CHECKPOINT PENDING**.
-The authoritative source is `/Users/toddknipple/Documents/StudioFlow/web`; the
-website integration is the reviewed `studio/` candidate produced by
+Current commit-to-Worker traceability is recorded in
+`TPI-CURRENT-DEVELOPMENT-STATUS.md`; this procedure intentionally does not pin a
+version that becomes stale after the next release. The authoritative source is
+`/Users/toddknipple/Documents/StudioFlow/web`; the website integration is the
+reviewed `studio/` candidate produced by
 `node scripts/stage-studioflow-authoritative.mjs`. A source/build revision and
 the generated asset hashes must be recorded together.
 

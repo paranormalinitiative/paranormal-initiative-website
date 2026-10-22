@@ -25,6 +25,28 @@ and application source commit above.
 
 Rollback target: `530d6f93`, the previous production version. Roll back with `wrangler rollback 530d6f93` only if live verification fails.
 
+### TPI-STUDIOFLOW-026 Addendum A — permanent local authentication and release workflow
+
+- Implementation commit: `7aae32a` on `codex/tpi-development`.
+- Root cause confirmed: the persistent D1 `local_admin` password hash had
+  drifted from the protected mode-0600 credential store. The active admin row
+  was restored in place; its identity and role were preserved and only its
+  prior sessions were invalidated.
+- Permanent boundary: API E2E can no longer seed `.local-dev/state`; the
+  former reuse mode fails closed and full E2E uses disposable port 8789 state.
+- Lifecycle acceptance: OPS-009 38/38 before restart, 38/38 after the managed
+  restart, 38/38 after a StudioFlow build, and isolated Firefox Developer
+  Edition 23/23. Credential and D1 fingerprints remained unchanged.
+- Maintained commands: `npm run verify:local-auth-lifecycle`,
+  `npm run release:preflight`, and owner-authorized
+  `TPI_PRODUCTION_DEPLOY=approved npm run release:production`.
+- The release command enforces clean Git/GitHub parity, Cloudflare account and
+  rollback checks, isolated E2E, Firefox acceptance, guarded dry-run, guarded
+  deployment, live smoke, and automatic Worker rollback. It contains no D1
+  migration or R2 deletion step.
+- No production deployment or production-data mutation was performed by this
+  addendum.
+
 ### TPI-OPS-031 final authenticated acceptance — 2026-10-22 (BLOCKED)
 
 - Production version re-verified: `7c5ea692-e2e9-41f1-9b34-651230e03997` at 100%.

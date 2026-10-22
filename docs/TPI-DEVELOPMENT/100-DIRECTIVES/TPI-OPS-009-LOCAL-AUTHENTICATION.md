@@ -49,15 +49,23 @@ stored only in `.local-dev/local-auth-credentials.json` with mode `0600`.
 The file, generated SQL, local D1, and local R2 state are gitignored and must
 not be copied into hosted environments.
 
-Synthetic identities are fictional and local-only:
+Local identities are fictional and local-only:
 
-- `local_admin` — `admin`, active.
+- `local_admin` — the protected development administrator used by the owner;
+  created only when absent and never overwritten by normal fixtures.
+- `tpi_test_admin` — the automation-only administrator used by browser tests.
 - `local_contributor` — `contributor`, active.
 - `local_member` — `member`, active.
 - `local_disabled` — `member`, inactive.
 
-The fixture also seeds one expired session marker for rejection testing. The
-process is safe to rerun and removes prior sessions for these fixture IDs only.
+The fixture also seeds one expired session marker for rejection testing. It
+never updates an existing password. The protected credential file and
+persistent D1 hash are checked by OPS-009 before login.
+
+API E2E is prohibited from reusing `.local-dev/state`. The former
+`TPI_E2E_REUSE_LOCAL=1` path is now a hard failure. Full E2E must use the
+disposable LaunchAgent Worker on port 8789 and temporary state under macOS's
+temporary directory.
 
 ## Verification boundary
 
@@ -71,10 +79,18 @@ D1/R2, email provider, identity provider, RealtimeKit, Facebook, or scraper.
 ## Owner administrator recovery
 
 The owner's development administrator `local_admin` lives in the persistent
-local D1 state (`.local-dev/state`), separate from the synthetic fixture
-accounts. The fixture script never rotates an existing fixture password and
-refuses to run if its credential file is missing while fixture rows exist.
-The end-to-end seed (`scripts/e2e/seed-local.sql`) deletes only `e2e-*` rows.
+local D1 state (`.local-dev/state`). Automated browser tests use the separate
+`tpi_test_admin` identity. The fixture script never rotates an existing
+password and refuses to run if its protected credential is missing while its
+row exists. The API E2E seed cannot access this database.
+
+If the D1 hash and protected credential drift, this targeted noninteractive
+repair restores only `local_admin`, invalidates only its sessions, verifies the
+account count and role, and never prints the password:
+
+```sh
+TPI_LOCAL_OWNER_CONTROL=1 node scripts/reset-local-master-admin.mjs --restore-protected-local-admin
+```
 
 To regain access without deleting data, the owner runs the reset from their own
 terminal (it reads the new password from a TTY and never prints it):
@@ -85,7 +101,20 @@ TPI_LOCAL_OWNER_CONTROL=1 node scripts/reset-local-master-admin.mjs --target-use
 
 This updates only the password hash of the named active `admin` or `owner`
 account, invalidates its sessions, and leaves other accounts and Studio records
-unchanged. Do not run it from automated tests or fixture scripts.
+unchanged. When the target is `local_admin`, the protected credential file is
+updated atomically so the browser, API regression, and D1 cannot drift apart
+again. Do not run it from automated tests or fixture scripts.
+
+The permanent lifecycle proof is:
+
+```sh
+npm run verify:local-auth-lifecycle
+```
+
+It verifies login before and after a managed Worker restart, rebuilds
+StudioFlow, verifies login again, compares protected credential/D1
+fingerprints, and runs complete acceptance in a disposable Firefox Developer
+Edition profile.
 
 The local D1 is intentionally the minimal OPS-008 foundation schema. Some
 later administrative routes require additive capability columns that are not
