@@ -46,6 +46,12 @@
   function openMediaDb() { return new Promise(function (resolve, reject) { if (!window.indexedDB) { reject(new Error("Browser media storage is unavailable.")); return; } var request = window.indexedDB.open("studioflow-recordings", 3); request.onsuccess = function () { resolve(request.result); }; request.onerror = function () { reject(request.error || new Error("Browser media storage could not be opened.")); }; }); }
   function putBlob(key, file) { return openMediaDb().then(function (db) { return new Promise(function (resolve, reject) { var transaction; try { transaction = db.transaction("recordingBlobs", "readwrite"); } catch (error) { db.close(); reject(error); return; } transaction.objectStore("recordingBlobs").put(file, key); transaction.oncomplete = function () { db.close(); resolve(true); }; transaction.onerror = function () { db.close(); reject(transaction.error || new Error("Video could not be saved.")); }; transaction.onabort = function () { db.close(); reject(transaction.error || new Error("Video could not be saved.")); }; }); }); }
   function getBlob(key) { return openMediaDb().then(function (db) { return new Promise(function (resolve, reject) { var request; try { request = db.transaction("recordingBlobs", "readonly").objectStore("recordingBlobs").get(key); } catch (error) { db.close(); reject(error); return; } request.onsuccess = function () { db.close(); resolve(request.result || null); }; request.onerror = function () { db.close(); reject(request.error || new Error("Video could not be read.")); }; }); }); }
+  function getVideoBlob(asset, slot) {
+    var fallback = slot === 0 ? "media-video-intro" : slot === 1 ? "media-video-outro" : "";
+    var keys = [text(asset && asset.blobKey), fallback].filter(function (key, index, all) { return key && all.indexOf(key) === index; });
+    function readNext(index) { if (index >= keys.length) return Promise.resolve(null); return getBlob(keys[index]).then(function (blob) { return blob || readNext(index + 1); }); }
+    return readNext(0);
+  }
   function deleteBlob(key) { if (!key) return Promise.resolve(true); return openMediaDb().then(function (db) { return new Promise(function (resolve, reject) { var transaction; try { transaction = db.transaction("recordingBlobs", "readwrite"); } catch (error) { db.close(); reject(error); return; } transaction.objectStore("recordingBlobs").delete(key); transaction.oncomplete = function () { db.close(); resolve(true); }; transaction.onerror = function () { db.close(); reject(transaction.error || new Error("Video could not be removed.")); }; }); }); }
   function slotArray(value) { var slots = new Array(SLOT_COUNT).fill(null); if (!Array.isArray(value)) return slots; value.forEach(function (asset, index) { if (!asset || typeof asset !== "object") return; var slot = Number.isInteger(asset.slot) && asset.slot >= 0 && asset.slot < SLOT_COUNT ? asset.slot : index; if (slot >= 0 && slot < SLOT_COUNT && !slots[slot]) slots[slot] = Object.assign({}, asset, { slot: slot }); }); return slots; }
   function syncFromReact(clips, slots) { var changed = false; ["intro", "outro"].forEach(function (kind, index) { var reactAsset = clips && clips[kind] && typeof clips[kind] === "object" ? clips[kind] : null; var storedAsset = slots[index]; var reactKey = reactAsset && text(reactAsset.blobKey); var storedKey = storedAsset && text(storedAsset.blobKey); if (reactKey && reactKey !== storedKey) { slots[index] = Object.assign({}, reactAsset, { slot: index, label: LABELS[index] }); changed = true; } else if (!reactKey && storedKey) { var matchingScene = (Array.isArray(read("studioflow.studioScenes", [])) ? read("studioflow.studioScenes", []) : []).some(function (scene) { var clip = scene && scene.videoClip; return scene && scene.kind === kind && clip && clip.blobKey === storedKey; }); if (matchingScene) { clips[kind] = Object.assign({}, storedAsset); write(VIDEO_CLIPS_KEY, clips); } else { slots[index] = null; changed = true; } } }); return changed; }
@@ -74,11 +80,11 @@
   }
   function removeAsset(slot) { var slots = videoSlots(), asset = slots[slot]; if (!asset) return; if (!requestSlotChange(slot, "remove")) return; slots[slot] = null; saveSlots(slots); updateReactClip(slot, null); restoreSceneAssignments(slot, null); dispatchChange(); deleteBlob(asset.blobKey).catch(function () {}).then(function () { setStatus(labelFor(slot) + " removed."); render(); }); }
   function previewAsset(card, asset) { if (!asset) return; var video = card.querySelector("video[data-tpi-preview]"); if (!video) return; if (!video.src) { setStatus("Loading " + asset.fileName + "…"); getBlob(asset.blobKey).then(function (blob) { if (!blob) throw new Error("The video file is no longer available."); var url = URL.createObjectURL(blob); previewUrls[asset.blobKey] = url; video.src = url; video.hidden = false; return video.play(); }).then(function () { setStatus("Playing " + asset.fileName + "."); }).catch(function (error) { setStatus(error.message || "Video playback failed.", true); }); return; } video.hidden = false; var playback = video.paused ? video.play() : video.pause(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); }
-  function preloadPreview(card, asset) {
+  function preloadPreview(card, asset, slot) {
     if (!asset) return;
     var video = card.querySelector("video[data-tpi-preview]");
     if (!video || video.src) return;
-    getBlob(asset.blobKey).then(function (blob) {
+    getVideoBlob(asset, slot).then(function (blob) {
       var badge = card.querySelector("[data-tpi-preview-label]"), preview = card.querySelector(".tpi-video-card-preview");
       if (!blob) { if (badge) badge.textContent = "Clip loaded"; return; }
       var media = blob instanceof Blob ? blob : new Blob([blob], { type: asset.mediaType || "video/mp4" });
@@ -124,7 +130,7 @@
     } else {
       actions.appendChild(makeButton("Upload", "upload", false));
     }
-    card.append(preview, body, actions); if (asset && !asset.thumbnailDataUrl) preloadPreview(card, asset);
+    card.append(preview, body, actions); if (asset && !asset.thumbnailDataUrl) preloadPreview(card, asset, slot);
 
     card.addEventListener("click", function (event) { var toggle = event.target.closest("button[data-tpi-video-menu-toggle]"); if (toggle && actionMenu && actionToggle) { var opening = actionMenu.hidden; actionMenu.hidden = !opening; toggle.setAttribute("aria-expanded", String(opening)); return; } var target = event.target.closest("button[data-tpi-video-action]"); if (!target) { if (asset && slot >= 4) playAssetOnStage(asset); else if (!asset) chooseFile(slot); return; } var action = target.dataset.tpiVideoAction; if (action === "stage-play") playAssetOnStage(asset); if (action === "preview") previewAsset(card, asset); if (action === "replace" && requestSlotChange(slot, "replace")) chooseFile(slot); if (action === "upload") chooseFile(slot); if (action === "remove") removeAsset(slot); if (actionMenu && actionToggle) { actionMenu.hidden = true; actionToggle.setAttribute("aria-expanded", "false"); } });
     return card;
