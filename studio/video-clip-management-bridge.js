@@ -87,7 +87,7 @@
     getVideoBlob(asset, slot).then(function (blob) {
       var badge = card.querySelector("[data-tpi-preview-label]"), preview = card.querySelector(".tpi-video-card-preview");
       if (!blob) { if (badge) badge.textContent = "Clip loaded"; return; }
-      var media = blob instanceof Blob ? blob : new Blob([blob], { type: asset.mediaType || "video/mp4" });
+      var media = blob && typeof blob.arrayBuffer === "function" && typeof blob.size === "number" ? blob : new Blob([blob], { type: asset.mediaType || "video/mp4" });
       var url = URL.createObjectURL(media);
       previewUrls[asset.blobKey] = url;
       video.src = url;
