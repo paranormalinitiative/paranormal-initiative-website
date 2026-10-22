@@ -68,14 +68,14 @@ finish with `READY`. `release:production` must finish with
 ## Latest verified release record
 
 The latest successful production deployment used source commit
-`07aa0139035a2ab858ec4c21be02c56766b7d149` and deployed Worker version
-`f6b87433-5b35-466b-b536-b6ef1ec7fa2e` on 2026-10-22. The prior production
-Worker was `0955bca0-2ff2-4849-bfa5-1015d637486d` and remains the immediate
+`3ed53c8805d1ff338ab86e7e9c59ad4f1f420d94` and deployed Worker version
+`b41a8582-4558-4391-bf37-188049125853` on 2026-10-22. The prior production
+Worker was `f6b87433-5b35-466b-b536-b6ef1ec7fa2e` and remains the immediate
 rollback reference for this release. The detailed feature record is
-`300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-VIDEO-CLIP-STAGE-PLAYBACK-RESULT.md`.
+`300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-INTRO-OUTRO-CARD-FIX-RESULT.md`.
 
 That release passed the focused Video Clips checks 13/13, media organization
-checks 18/18, release-safety checks 15/15, two reproducible authoritative
+checks 21/21, release-safety checks 15/15, two reproducible authoritative
 StudioFlow builds, the guarded Wrangler dry-run, and anonymous live smoke
 10/10. It made no D1 migration, R2 mutation, Crossroads mutation, or
 owner-browser storage change. Authenticated card-click acceptance remains a
