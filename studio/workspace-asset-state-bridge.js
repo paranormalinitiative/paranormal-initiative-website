@@ -23,7 +23,9 @@
     overlayAssets: "studioflow.overlayAssets",
     activeOverlayId: "studioflow.activeOverlayId",
     videoClips: "studioflow.videoClips",
+    videoClipSlots: "studioflow.videoClipSlots",
     backgroundMusic: "studioflow.backgroundMusic",
+    backgroundMusicSlots: "studioflow.backgroundMusicSlots",
     backgroundMusicVolume: "studioflow.backgroundMusicVolume",
     customSounds: "studioflow.customSounds",
     customSound: "studioflow.customSound",
@@ -59,7 +61,9 @@
       overlayAssets: [],
       activeOverlayId: null,
       videoClips: { intro: null, outro: null },
+      videoClipSlots: [],
       backgroundMusic: null,
+      backgroundMusicSlots: [],
       backgroundMusicVolume: 0.42,
       customSounds: [],
       customSound: null,
@@ -109,7 +113,7 @@
       var value = configuration[name] !== undefined ? configuration[name] : fallback[name];
       if (name === "studioScenes") value = normalizeStudioScenes(value);
       if (["customBackground", "customLogo", "backgroundMusic", "customSound"].includes(name)) value = serverPreview(value);
-      if (["overlayAssets", "customSounds"].includes(name)) value = Array.isArray(value) ? value.map(serverPreview) : value;
+      if (["overlayAssets", "customSounds", "backgroundMusicSlots", "videoClipSlots"].includes(name)) value = Array.isArray(value) ? value.map(serverPreview) : value;
       if (name === "videoClips" && value && typeof value === "object") value = { intro: serverPreview(value.intro), outro: serverPreview(value.outro) };
       write(KEYS[name], value);
     });
@@ -142,8 +146,15 @@
     (Array.isArray(configuration.overlayAssets) ? configuration.overlayAssets : []).forEach(function (asset) { visit(asset, "overlay"); });
     var clips = configuration.videoClips && typeof configuration.videoClips === "object" ? configuration.videoClips : {};
     visit(clips.intro, "intro"); visit(clips.outro, "outro");
-    visit(configuration.backgroundMusic, "background-music"); visit(configuration.customSound, "sound");
+    var videoSlots = Array.isArray(configuration.videoClipSlots) ? configuration.videoClipSlots : [];
+    var videoKeys = {};
+    [clips.intro, clips.outro].forEach(function (asset) { if (asset && typeof asset.blobKey === "string" && asset.blobKey) videoKeys[asset.blobKey] = true; });
+    videoSlots.forEach(function (asset) { if (asset && (!asset.blobKey || !videoKeys[asset.blobKey])) visit(asset, "video-clip"); });
+    var musicSlots = Array.isArray(configuration.backgroundMusicSlots) ? configuration.backgroundMusicSlots : [];
+    if (!musicSlots.some(function (asset) { return asset && typeof asset === "object" && text(asset.blobKey); })) visit(configuration.backgroundMusic, "background-music");
+    visit(configuration.customSound, "sound");
     (Array.isArray(configuration.customSounds) ? configuration.customSounds : []).forEach(function (asset) { visit(asset, "sound"); });
+    musicSlots.forEach(function (asset) { visit(asset, "background-music"); });
   }
   function extensionType(fileName) {
     var extension = text(fileName).toLowerCase().split(".").pop();
@@ -212,9 +223,11 @@
     if (configuration.customLogo) configuration.customLogo = replace(configuration.customLogo);
     configuration.overlayAssets = Array.isArray(configuration.overlayAssets) ? configuration.overlayAssets.map(replace) : configuration.overlayAssets;
     if (configuration.videoClips && typeof configuration.videoClips === "object") { configuration.videoClips.intro = replace(configuration.videoClips.intro); configuration.videoClips.outro = replace(configuration.videoClips.outro); }
+    configuration.videoClipSlots = Array.isArray(configuration.videoClipSlots) ? configuration.videoClipSlots.map(replace) : configuration.videoClipSlots;
     configuration.backgroundMusic = replace(configuration.backgroundMusic);
     configuration.customSound = replace(configuration.customSound);
     configuration.customSounds = Array.isArray(configuration.customSounds) ? configuration.customSounds.map(replace) : configuration.customSounds;
+    configuration.backgroundMusicSlots = Array.isArray(configuration.backgroundMusicSlots) ? configuration.backgroundMusicSlots.map(replace) : configuration.backgroundMusicSlots;
   }
   function syncMedia(workspaceId, configuration) {
     var next = clone(configuration || {}), assets = [], replacements = [];

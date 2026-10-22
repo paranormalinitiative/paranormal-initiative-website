@@ -11,7 +11,7 @@
 (function () {
   "use strict";
   var KEYS = { active: "studioflow.activeBroadcastId", broadcasts: "studioflow.broadcasts", preferences: "studioflow.recordingPreferences.v2", storage: "studioflow.recordingStorage.v1", activeStudio: "studioflow.tpiActiveStudioId.v1", route: "studioflow.route", workspaceCache: "studioflow.tpiWorkspaceCache.v2", portableBackups: "studioflow.portableBackupStatus.v1", localSnapshots: "studioflow.tpiLocalStudioSnapshots.v1" };
-  var CONFIG_KEYS = { selectedBackground: "studioflow.selectedBackground", activeSceneId: "studioflow.activeSceneId", showLogo: "studioflow.showLogo", logoPlacement: "studioflow.logoPlacement", styleSettings: "studioflow.styleSettings", widgetSettings: "studioflow.widgetSettings", generalSettings: "studioflow.generalSettings.v1", guestPermissionSettings: "studioflow.guestPermissionSettings", studioScenes: "studioflow.studioScenes", bannerScrollTicker: "studioflow.bannerScrollTicker", programOrientation: "studioflow.programOrientation" };
+  var CONFIG_KEYS = { selectedBackground: "studioflow.selectedBackground", activeSceneId: "studioflow.activeSceneId", showLogo: "studioflow.showLogo", logoPlacement: "studioflow.logoPlacement", styleSettings: "studioflow.styleSettings", widgetSettings: "studioflow.widgetSettings", generalSettings: "studioflow.generalSettings.v1", guestPermissionSettings: "studioflow.guestPermissionSettings", studioScenes: "studioflow.studioScenes", bannerScrollTicker: "studioflow.bannerScrollTicker", programOrientation: "studioflow.programOrientation", customBackground: "studioflow.customBackground", customLogo: "studioflow.customLogo", overlayAssets: "studioflow.overlayAssets", activeOverlayId: "studioflow.activeOverlayId", videoClips: "studioflow.videoClips", videoClipSlots: "studioflow.videoClipSlots", backgroundMusic: "studioflow.backgroundMusic", backgroundMusicSlots: "studioflow.backgroundMusicSlots", backgroundMusicVolume: "studioflow.backgroundMusicVolume", customSounds: "studioflow.customSounds", customSound: "studioflow.customSound", soundVolume: "studioflow.soundVolume" };
   var panel, selector, selectorMenu, manageMenu, message, backupMessage, saveTimer, channel, assetPanelTimer, assetPanelObserver, assetPanelHost, assetRootObserver, menuAnchor = null, menuPositioningBound = false, started = false;
   var workspaces = [], deletedWorkspaces = [], selectedWorkspace = null, saveInFlight = null, saveAgain = false, lastSavedFingerprint = "", remoteProductionLock = false, lastIntegrityError = null, suppressAutosave = false;
   function archiveWorkspace(workspace) { return deleteWorkspace(workspace); }
@@ -145,8 +145,12 @@
     if (!menu || menu.hidden || !menuAnchor || menu.parentNode !== document.body) return;
     var anchor = menuAnchor.getBoundingClientRect(), availableWidth = Math.max(160, window.innerWidth - 16), width = Math.min(Math.max(anchor.width, 280), availableWidth);
     var left = Math.min(Math.max(8, anchor.left), Math.max(8, window.innerWidth - width - 8));
-    var top = anchor.bottom + 6, maxHeight = Math.max(120, window.innerHeight - top - 8);
-    if (top + 180 > window.innerHeight && anchor.top > 180) { maxHeight = Math.max(120, anchor.top - 14); top = Math.max(8, anchor.top - Math.min(420, maxHeight) - 6); }
+    // Keep the portal below the complete picker/status block so the menu never
+    // covers PROJECT SAVED or portable-backup state. Flip above the block only
+    // when the viewport cannot fit the menu below it.
+    var panelRect = panel && panel.getBoundingClientRect ? panel.getBoundingClientRect() : anchor;
+    var top = panelRect.bottom + 6, maxHeight = Math.max(120, window.innerHeight - top - 8);
+    if (top + 180 > window.innerHeight && panelRect.top > 180) { maxHeight = Math.max(120, panelRect.top - 14); top = Math.max(8, panelRect.top - Math.min(420, maxHeight) - 6); }
     menu.style.position = "fixed";
     menu.style.left = left + "px";
     menu.style.top = top + "px";

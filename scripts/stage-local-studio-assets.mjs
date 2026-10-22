@@ -11,6 +11,8 @@ export const STUDIO_RUNTIME_FILES = [
   "production-lock-bridge.js",
   "workspace-bridge.js",
   "video-playback-reset-bridge.js",
+  "video-clip-management-bridge.js",
+  "audio-soundboard-bridge.js",
   "backup-bridge.js",
   "backup-core.mjs",
   "navigation-bridge.js",
