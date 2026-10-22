@@ -67,6 +67,12 @@ check("production Firefox login waits locally and confirms auth once", () => {
   assert.match(firefoxAcceptance, /other Firefox windows cannot satisfy this acceptance/);
   assert.doesNotMatch(firefoxAcceptance, /waitFor\(\"authenticated isolated session\"/);
 });
+check("production Firefox release acceptance uses the synthetic QA account", () => {
+  assert.match(release, /TPI_FIREFOX_PRODUCTION_QA: "approved"/);
+  assert.match(release, /TPI_FIREFOX_ACCOUNT: "production_qa"/);
+  assert.match(release, /qa-studioflow-prod\.json/);
+  assert.doesNotMatch(release, /TPI_FIREFOX_MANUAL_LOGIN: "1"/);
+});
 check("Firefox acceptance retries only a transient empty StudioFlow shell", () => {
   assert.match(firefoxAcceptance, /for \(let attempt = 1; attempt <= 2; attempt \+= 1\)/);
   assert.match(firefoxAcceptance, /if \(body\.trim\(\) \|\| attempt === 2\) throw error/);

@@ -28,8 +28,9 @@ check("owner development D1 cannot be reused by API E2E", () => {
 check("release workflow uses isolated E2E and Firefox Developer Edition", () => {
   assert.match(release, /TPI_E2E_ISOLATED: "1"/);
   assert.match(release, /tpi-studioflow-firefox-acceptance\.mjs/);
-  assert.match(release, /TPI_FIREFOX_MANUAL_LOGIN: "1"/);
-  assert.match(release, /TPI_FIREFOX_ACCOUNT: "local_admin"/);
+  assert.match(release, /TPI_FIREFOX_ACCOUNT: "production_qa"/);
+  assert.match(release, /TPI_FIREFOX_PRODUCTION_QA: "approved"/);
+  assert.match(release, /qa-studioflow-prod\.json/);
 });
 
 check("release workflow has guarded dry-run and automatic rollback", () => {
@@ -46,8 +47,11 @@ check("local service ownership has sandbox-safe process proof", () => {
 });
 
 check("production Firefox cannot receive local fixture credentials", () => {
-  assert.match(firefox, /productionTarget && !manualLogin/);
+  assert.match(firefox, /productionTarget && !manualLogin && !productionQa/);
   assert.match(firefox, /local credentials are never sent to production/);
+  assert.match(firefox, /qa-studioflow-\[a-z0-9-\]/);
+  assert.match(release, /TPI_FIREFOX_PRODUCTION_QA: "approved"/);
+  assert.match(release, /qa-studioflow-prod\.json/);
   assert.match(firefox, /waitForManualLoginTransition/);
   assert.match(firefox, /await authenticatedSession\(\)/);
   assert.doesNotMatch(firefox, /waitFor\(\"authenticated isolated session\"/);

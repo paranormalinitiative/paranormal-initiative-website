@@ -82,14 +82,23 @@ owner-browser storage change. Authenticated card-click acceptance remains a
 manual Firefox confirmation because the owner's existing tab was not reloaded.
 Every future release must execute the commands above again.
 
-The production command opens a new isolated Firefox Developer Edition profile.
-If it requests a production sign-in, the owner signs into the window titled
-`TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE` with a real production account.
-The runner foregrounds that window and uses a disposable profile. The agent
-must not use local credentials on production and must not close or reuse the
-owner's existing local or live tabs; another Firefox window cannot satisfy this
-acceptance. The runner waits on browser-local state while sign-in is pending and
-performs only one final authentication confirmation.
+The production command opens a new isolated Firefox Developer Edition profile
+and authenticates with the dedicated synthetic `qa-studioflow-*` member account
+stored in `.local-dev/qa-studioflow-prod.json` (mode `0600`). The password is
+never printed, committed, or placed in this document. The release runner must
+set `TPI_FIREFOX_PRODUCTION_QA=approved`, use account key `production_qa`, and
+pass the credential-file path explicitly. Production acceptance must reject
+`local_admin`, local fixture accounts, and owner accounts. The temporary profile
+is disposable; the owner's existing Firefox tabs and browser storage are never
+opened, reused, or cleared. If the synthetic credential file is missing or the
+username does not begin with `qa-studioflow-`, acceptance stops before launch.
+
+The account was provisioned through the double-gated
+`scripts/qa/tpi-ops-033-qa-accounts.mjs` tool as a regular member with the
+`creator_studio_lifetime` entitlement. It is used only for authenticated
+production smoke/acceptance. It does not grant administration and must not be
+elevated. If the account must be recreated or revoked, use that tool's explicit
+production-D1 safety gates; never edit production rows ad hoc.
 
 The Cloudflare Workers Paid plan is active as of 2026-10-22. That removes the
 Free-plan daily request cutoff, but it does not authorize wasteful polling.
@@ -294,19 +303,18 @@ isolated Firefox Developer Edition profile for authenticated production
 acceptance, verifies the new Worker at 100% traffic, and automatically rolls
 back on a critical acceptance failure.
 
-Sign in manually when the isolated production Firefox window requests it. The
-runner labels that window **TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE** and
-raises it before waiting. Sign in only in that exact window; a successful login
-in another Firefox window cannot satisfy the acceptance because the profiles
-do not share cookies. Local credentials must never be sent to production. Do
-not close or repurpose the owner's already-open Firefox tabs.
+The production acceptance runner authenticates automatically inside the isolated
+disposable profile with the approved synthetic QA account. Manual sign-in is
+not part of the maintained production release path. The synthetic account is
+loaded only from the protected credential file; local fixture and owner
+accounts are rejected. The disposable profile does not share cookies or
+storage with any existing Firefox window, and the owner's tabs are never
+closed or repurposed.
 
-The production acceptance runner must observe the isolated browser's local
-navigation or authenticated DOM state while waiting for the owner. It may make
-one final `/api/auth/me` request after that transition, but it must never poll a
-production API endpoint while waiting for manual input. StudioFlow production
-room polling must remain non-overlapping and visibility-aware so an inactive
-browser tab cannot consume the Worker daily request allowance.
+The production acceptance runner performs authenticated checks after login. It
+must never poll a production API while waiting for manual input. StudioFlow
+production-room polling must remain non-overlapping and visibility-aware so an
+inactive browser tab cannot consume the Worker request allowance.
 
 Application directives are not complete until this guarded deployment and live
 acceptance pass. Documentation-only or local-tooling-only commits are pushed to

@@ -16,8 +16,11 @@ const soundFile = process.env.TPI_FIREFOX_SOUND_FILE || "/private/tmp/tpi-021-so
 const musicFile = process.env.TPI_FIREFOX_MUSIC_FILE || "/private/tmp/tpi-021-music.wav";
 const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
 const manualLogin = process.env.TPI_FIREFOX_MANUAL_LOGIN === "1";
-const accountKey = process.env.TPI_FIREFOX_ACCOUNT || "test_admin";
 const productionTarget = !/^http:\/\/(127\.0\.0\.1|localhost):(8787|8789)$/.test(base);
+const productionQa = process.env.TPI_FIREFOX_PRODUCTION_QA === "approved";
+const productionCredentialsFile = process.env.TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/qa-studioflow-prod.json");
+const accountKey = process.env.TPI_FIREFOX_ACCOUNT || (productionTarget ? "production_qa" : "test_admin");
+const credentialPath = productionTarget ? productionCredentialsFile : credentialsFile;
 const evidenceRoot = process.env.TPI_FIREFOX_EVIDENCE || mkdtempSync(join(tmpdir(), "tpi-firefox-acceptance-"));
 const profile = join(evidenceRoot, "profile");
 const downloads = join(evidenceRoot, "downloads");
@@ -61,20 +64,27 @@ if (productionTarget && process.env.TPI_FIREFOX_ALLOW_PRODUCTION !== "1") {
   console.log(JSON.stringify({ status: "BLOCKED", reason: "Firefox acceptance defaults to the disposable local Worker only." }));
   process.exit(1);
 }
-if (productionTarget && !manualLogin) {
-  console.log(JSON.stringify({ status: "BLOCKED", reason: "Production Firefox acceptance requires manual login in the isolated profile; local credentials are never sent to production." }));
+if (productionTarget && !manualLogin && !productionQa) {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: "Production Firefox acceptance requires the explicitly approved synthetic QA credential gate; local credentials are never sent to production." }));
   process.exit(1);
 }
-for (const file of [firefoxBinary, geckodriver, videoFile, soundFile, musicFile, ...(manualLogin ? [] : [credentialsFile])]) {
+for (const file of [firefoxBinary, geckodriver, videoFile, soundFile, musicFile, ...(manualLogin ? [] : [credentialPath])]) {
   if (!existsSync(file)) {
     console.log(JSON.stringify({ status: "BLOCKED", reason: `Required Firefox acceptance input is unavailable: ${file}` }));
     process.exit(1);
   }
 }
-const credentials = manualLogin ? { accounts: {} } : JSON.parse(readFileSync(credentialsFile, "utf8"));
+const rawCredentials = manualLogin ? {} : JSON.parse(readFileSync(credentialPath, "utf8"));
+const credentials = manualLogin
+  ? { accounts: {} }
+  : rawCredentials.accounts ? rawCredentials : { accounts: { production_qa: rawCredentials } };
 const account = credentials.accounts?.[accountKey];
 if (!manualLogin && (!account?.username || !account?.password)) {
   console.log(JSON.stringify({ status: "BLOCKED", reason: `The synthetic ${accountKey} account is unavailable.` }));
+  process.exit(1);
+}
+if (productionTarget && !manualLogin && (!productionQa || !/^qa-studioflow-[a-z0-9-]{0,26}$/.test(account.username))) {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: "Production acceptance may use only an explicitly approved qa-studioflow-* account." }));
   process.exit(1);
 }
 

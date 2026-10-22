@@ -178,7 +178,13 @@ async function deploy() {
     if (!deployedVersion) fail("deployment completed without a readable Worker version ID");
     run("Live anonymous production smoke", process.execPath, ["scripts/qa/production-smoke.mjs"]);
     run("Live isolated Firefox Developer Edition acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
-      env: { TPI_FIREFOX_BASE_URL: "https://paranormalinitiative.com", TPI_FIREFOX_ALLOW_PRODUCTION: "1", TPI_FIREFOX_MANUAL_LOGIN: "1" },
+      env: {
+        TPI_FIREFOX_BASE_URL: "https://paranormalinitiative.com",
+        TPI_FIREFOX_ALLOW_PRODUCTION: "1",
+        TPI_FIREFOX_PRODUCTION_QA: "approved",
+        TPI_FIREFOX_ACCOUNT: "production_qa",
+        TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE: resolve(repoRoot, ".local-dev/qa-studioflow-prod.json"),
+      },
     });
     if (activeProductionVersion() !== deployedVersion) fail("new Worker version is not receiving 100% traffic");
     console.log(JSON.stringify({ status: "DEPLOYED_AND_VERIFIED", sourceCommit: release.sourceCommit, worker, deployedVersion, rollbackVersion: release.rollbackVersion }, null, 2));
