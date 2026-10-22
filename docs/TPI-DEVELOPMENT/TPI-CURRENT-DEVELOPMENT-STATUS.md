@@ -2,6 +2,29 @@
 
 Last verified: 2026-10-22
 
+## Latest verified production release — 2026-10-22
+
+The current production baseline is the release below. Historical rows and
+older incident records in this document remain valuable provenance, but they
+must not be interpreted as the active production state.
+
+- Release branch: `codex/tpi-development`
+- Source commit: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
+- Worker: `theparanormalinitiative`
+- Active production Worker version: `106c3d6a-5cbb-4a62-917d-644f850b4287` at 100%
+- Deployment time: `2026-10-22T17:34:39.861Z` / 1:34:39 PM EDT
+- Verified rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`
+- Anonymous live smoke: PASS, 10/10
+- Isolated Firefox Developer Edition acceptance: PASS, 23/23
+- Local authentication lifecycle: PASS, 38/38
+- Complete release preflight, build/reproducibility, asset integrity, and guarded
+  Wrangler dry-run: PASS
+- Protected resources: Crossroads of the Unknown untouched; no D1 migration, R2
+  mutation, or owner-browser storage access
+- Workflow repair: the acceptance runner now labels and foregrounds the exact
+  disposable Firefox window `TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE` and
+  rejects other Firefox windows as evidence for production acceptance.
+
 ## Controlling agent authority
 
 `100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md` is the active
@@ -29,13 +52,17 @@ tree.
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified release-workflow source: `c0a9952`
-- Current deployed development application source: 7385f0c
+- Last fully verified release-workflow source: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
+- Current verified production release source: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
 - Development version: cf58029d-62be-409f-98ff-58591b020641
-- Production version: f3422853-8a81-4aa1-8412-27a14af234bd
-- Production: TPI-DEV-037 and later StudioFlow routes are live; the TPI-STUDIOFLOW-085 performance repair is deployed and production-verified. Firefox verified the live My Studios selector, direct A/B switching, responsive panels, valid synthetic MP4 rendering, same-A reload/reopen persistence, and separation of scene-assignment removal from uploaded-asset deletion.
+- Production version: `106c3d6a-5cbb-4a62-917d-644f850b4287`
+- Production: the verified release includes the existing TPI-DEV-037 and later
+  StudioFlow functionality plus the completed StudioFlow 020–023 release scope.
+  Live Firefox acceptance verified the StudioFlow shell, video cards, timers,
+  soundboards, My Studios layout, browser-local save, portable media-inclusive
+  backup, restore-as-new, switching, and persistence with disposable data.
 
 The development and production deployment records report the verified branch
 and application source commit above.
@@ -47,9 +74,10 @@ and application source commit above.
 | TPI-STUDIOFLOW-026 to 029 release (isolated E2E harness, synthetic admin seed, configuration integrity, studio bridge fixes) | `db7e1c5` | `codex/tpi-development` (pushed; local and remote match) | `7c5ea692-e2e9-41f1-9b34-651230e03997` at 100%, deployed 2026-10-22 05:43 UTC | Read-only HTTP only: `/` and `/api/auth/me` return 200 on the Worker host and `paranormalinitiative.com`; `/studio/` returns 403 Coming Soon page. Browser and authenticated production acceptance not yet run. |
 | Worker request-budget repair | `0657ab0` | `codex/tpi-development` (pushed; local and remote match) | Not deployed; rollback baseline `7c5ea692-e2e9-41f1-9b34-651230e03997` remains at 100% | Local Firefox 23/23, API E2E 225/225, focused StudioFlow regressions, reproducible build, and guarded Wrangler dry-run passed. Production release waits for the Cloudflare daily request allowance to reset. |
 
-Current rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`, the active
-production version. The guarded release workflow records and verifies this
-target immediately before any later deployment.
+Current rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`. The guarded
+release workflow records and verifies the active version immediately before
+each later deployment and restores it automatically if critical live acceptance
+fails.
 
 ### Worker request-budget incident and permanent repair — 2026-10-22
 

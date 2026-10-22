@@ -65,11 +65,28 @@ divergence `0 0`, and matching local/remote hashes. `release:preflight` must
 finish with `READY`. `release:production` must finish with
 `DEPLOYED_AND_VERIFIED`; any other result is not a completed release.
 
+## Latest verified release record
+
+The latest successful execution of this runbook used source commit
+`07ad157f68aaa9f5afdc2801d1089ab66b9cf10d` and deployed Worker version
+`106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic on 2026-10-22 1:34:39 PM
+EDT (`2026-10-22T17:34:39.861Z`). The recorded rollback target was
+`7c5ea692-e2e9-41f1-9b34-651230e03997`.
+
+That release passed anonymous live smoke 10/10, isolated Firefox Developer
+Edition acceptance 23/23, local authentication lifecycle 38/38, complete
+preflight, asset/build integrity, and the guarded Wrangler dry-run. It made no
+D1 migration, R2 mutation, Crossroads mutation, or owner-browser storage
+change. This record is evidence of the last successful run; every future
+release must execute the commands above again.
+
 The production command opens a new isolated Firefox Developer Edition profile.
-If it requests a production sign-in, the owner signs into that isolated window
-with a real production account. The agent must not use local credentials on
-production and must not close or reuse the owner's existing local or live tabs.
-The acceptance runner waits on browser-local state while sign-in is pending and
+If it requests a production sign-in, the owner signs into the window titled
+`TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE` with a real production account.
+The runner foregrounds that window and uses a disposable profile. The agent
+must not use local credentials on production and must not close or reuse the
+owner's existing local or live tabs; another Firefox window cannot satisfy this
+acceptance. The runner waits on browser-local state while sign-in is pending and
 performs only one final authentication confirmation.
 
 The Cloudflare Workers Paid plan is active as of 2026-10-22. That removes the

@@ -16,7 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `c0a9952`
+- Last fully verified workflow baseline: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
+- Active production Worker version: `106c3d6a-5cbb-4a62-917d-644f850b4287`
+- Recorded rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -30,6 +32,20 @@ build twice and compare the candidate before any reviewed `--apply` operation.
 Preserve unrelated tracked and untracked changes. Focused commits and pushes to
 `codex/tpi-development` are authorized after the applicable checks pass. Do not
 reset, clean, stash, force-push, or rewrite history as a routine shortcut.
+
+## Latest verified production release
+
+Source commit `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d` was deployed to
+Worker `theparanormalinitiative` as version
+`106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic on 2026-10-22. The
+release passed anonymous smoke 10/10, isolated Firefox Developer Edition
+acceptance 23/23, local authentication lifecycle 38/38, complete preflight,
+asset/build integrity, and the guarded Wrangler dry-run. Crossroads, D1, R2,
+and owner browser storage were not modified.
+
+For production acceptance, use only the disposable Firefox window titled
+`TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE`. Other Firefox windows and the
+owner's existing tabs do not satisfy the acceptance gate.
 
 ## Current browser workflow
 

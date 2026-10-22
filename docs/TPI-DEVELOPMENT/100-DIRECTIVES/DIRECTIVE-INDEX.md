@@ -10,6 +10,22 @@ Current operational authority is
 It grants standing full-lifecycle authority and defines how historical scope
 limits interact with later directives.
 
+## Current production reconciliation
+
+The latest consolidated StudioFlow release was deployed and verified from
+`codex/tpi-development` commit
+`07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`. Worker
+`theparanormalinitiative` is running version
+`106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic. Anonymous live smoke
+passed 10/10, isolated Firefox Developer Edition acceptance passed 23/23, and
+the local authentication lifecycle passed 38/38. The documented rollback target
+is `7c5ea692-e2e9-41f1-9b34-651230e03997`.
+
+This release record supersedes stale “not deployed” or “acceptance pending”
+language in older directive rows only for the behavior covered by the verified
+consolidated release. Those rows remain unchanged as historical evidence of
+their original execution and limitations.
+
 | Directive | Title / feature | Status | Evidence or dependency |
 | --- | --- | --- | --- |
 | TPI-MASTER-AUTONOMOUS | Standing autonomous agent authority | ACTIVE / CONTROLLING | Agents may investigate, repair, test, commit, push, perform guarded production deployment, verify live in Firefox Developer Edition, and roll back without obtaining a new directive for each ordinary lifecycle step. Irreversible owner-data operations and security bypasses remain separately controlled. |

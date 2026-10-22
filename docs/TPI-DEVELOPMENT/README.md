@@ -44,6 +44,18 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
+Latest verified production release:
+
+- Worker: `theparanormalinitiative`
+- Source commit: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
+- Worker version: `106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic
+- Deployed: 2026-10-22 1:34:39 PM EDT (`2026-10-22T17:34:39.861Z`)
+- Rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`
+- Acceptance: anonymous smoke 10/10, isolated Firefox Developer Edition 23/23,
+  local authentication lifecycle 38/38, complete preflight and guarded dry-run passed
+- Data protection: no D1 migration, R2 mutation, Crossroads mutation, or owner-browser
+  storage access was performed
+
 ## Standing release authority
 
 The operational workflow is local development, isolated tests, Firefox
