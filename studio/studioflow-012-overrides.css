@@ -552,6 +552,24 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   display: none;
 }
 
+.tpi-video-card-preview-label {
+  position: absolute;
+  z-index: 2;
+  top: 0.35rem;
+  left: 0.35rem;
+  padding: 0.16rem 0.35rem;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 999px;
+  background: rgb(12 16 24 / 78%);
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
 .tpi-video-card-empty-icon {
   color: var(--blue, #4bb263);
   font-size: 1.5rem;
