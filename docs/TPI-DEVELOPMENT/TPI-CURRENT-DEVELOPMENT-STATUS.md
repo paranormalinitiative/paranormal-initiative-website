@@ -25,6 +25,15 @@ and application source commit above.
 
 Rollback target: `530d6f93`, the previous production version. Roll back with `wrangler rollback 530d6f93` only if live verification fails.
 
+### TPI-OPS-031 final authenticated acceptance — 2026-10-22 (BLOCKED)
+
+- Production version re-verified: `7c5ea692-e2e9-41f1-9b34-651230e03997` at 100%.
+- Git: `codex/tpi-development` local and remote at `065b480`; working tree clean.
+- Access control, sign-in, StudioFlow load, feature controls, backup controls, and console checks: NOT TESTED.
+- Blocker: no safe, supported way was found to provision a synthetic production account with a Creator Studio entitlement. Public member registration (`/members/register`) creates a plain member with no `creator_studio_entitlements` row, and no admin session was used. The existing owner-authorized fixtures `TPI Acceptance Test A/B` (TPI-STUDIOFLOW-081) are not in the repository and their credentials are not available.
+- Release status: STATE B for authenticated acceptance. The release is deployed and unauthenticated checks pass, but it does not qualify for STATE A.
+- No production data, secrets, Crossroads studio, or migrations were changed.
+
 Isolated release-gate results for this release were run against the local isolated Worker on 127.0.0.1:8789, not production: API E2E 225/225, Firefox acceptance 23/23, Chromium 021 17/17, Chromium 022 16/16, backup and restore 13/13, configuration integrity 6/6.
 
 TPI-MASTER-001C is active under the mandatory completion policy. The current production-facing repair is the deployed
