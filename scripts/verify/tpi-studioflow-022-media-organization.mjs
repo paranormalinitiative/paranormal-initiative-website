@@ -14,7 +14,7 @@ const checks = [];
 function check(name, condition, detail = "") { checks.push({ name, ok: Boolean(condition), detail }); }
 
 check("Video organization bridge exists", existsSync(bridgePath), bridgePath);
-check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v1"));
+check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v2"));
 check("Nine approved video labels are present", ["Intro Video", "Outro Video", "Thank You", "Be Right Back", "Video 5", "Video 9"].every((label) => bridge.includes(label)));
 check("Video cards use a 3x3-capable grid", bridge.includes("tpi-video-grid") && css.includes(".tpi-video-grid") && css.includes("repeat(3"));
 check("Video uploads persist in the existing IndexedDB store", bridge.includes('VIDEO_SLOTS_KEY = "studioflow.videoClipSlots"') && bridge.includes("studioflow-recordings") && bridge.includes("recordingBlobs"));
