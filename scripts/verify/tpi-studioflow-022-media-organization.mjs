@@ -14,7 +14,7 @@ const checks = [];
 function check(name, condition, detail = "") { checks.push({ name, ok: Boolean(condition), detail }); }
 
 check("Video organization bridge exists", existsSync(bridgePath), bridgePath);
-check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v10"));
+check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v11"));
 check("Assigned videos can hydrate a preview from IndexedDB", bridge.includes("function preloadPreview") && bridge.includes("function getVideoBlob") && bridge.includes("preloadPreview(card, asset, slot)"));
 check("Intro and Outro preview loading supports the canonical React media keys", bridge.includes('"media-video-intro"') && bridge.includes('"media-video-outro"') && bridge.includes("getVideoBlob(asset, slot)"));
 check("Existing assigned videos generate a visible preview when thumbnail metadata is absent", bridge.includes("tpiGeneratedPreview") && bridge.includes("thumbnail(media)") && bridge.includes("fallback.remove()"));
