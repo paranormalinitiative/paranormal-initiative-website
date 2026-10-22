@@ -599,6 +599,7 @@ section.asset-section[data-tpi-legacy-audio="true"] {
 
 .tpi-video-card-actions {
   position: relative;
+  z-index: 1;
   justify-content: flex-end;
 }
 
@@ -610,17 +611,18 @@ section.asset-section[data-tpi-legacy-audio="true"] {
 
 .tpi-video-card-action-menu {
   position: absolute;
-  z-index: 2;
+  z-index: 20;
   top: calc(100% + 0.25rem);
-  right: 0;
+  left: 0;
   display: grid;
-  min-width: 7.5rem;
+  width: 100%;
+  min-width: 0;
   gap: 0.2rem;
   padding: 0.3rem;
-  border: 1px solid var(--line, #34403a);
-  border-radius: 0.4rem;
-  background: var(--panel, #202924);
-  box-shadow: 0 0.5rem 1.4rem rgb(0 0 0 / 35%);
+  border: 1px solid color-mix(in srgb, var(--blue, #4bb263) 58%, var(--line, #34403a));
+  border-radius: 0.55rem;
+  background: color-mix(in srgb, var(--panel, #202924) 94%, #000 6%);
+  box-shadow: 0 0.65rem 1.6rem rgb(0 0 0 / 45%);
 }
 
 .tpi-video-card-action-menu[hidden] {
@@ -629,7 +631,22 @@ section.asset-section[data-tpi-legacy-audio="true"] {
 
 .tpi-video-card-action-menu .tpi-video-card-action {
   width: 100%;
+  min-height: 1.9rem;
+  padding: 0.35rem 0.55rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--text, #f2f7f3);
   text-align: left;
+}
+
+.tpi-video-card-action-menu .tpi-video-card-action:hover,
+.tpi-video-card-action-menu .tpi-video-card-action:focus-visible {
+  background: color-mix(in srgb, var(--blue, #4bb263) 18%, transparent);
+}
+
+.tpi-video-card-action-menu .tpi-video-card-action[data-tpi-video-action="remove"] {
+  color: #ffb4ab;
 }
 
 .tpi-video-card-action {
