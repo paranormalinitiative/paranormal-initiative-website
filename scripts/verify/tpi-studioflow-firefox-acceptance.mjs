@@ -14,6 +14,9 @@ const videoFile = process.env.TPI_FIREFOX_VIDEO_FILE || "/private/tmp/tpi-022-vi
 const soundFile = process.env.TPI_FIREFOX_SOUND_FILE || "/private/tmp/tpi-021-sound.wav";
 const musicFile = process.env.TPI_FIREFOX_MUSIC_FILE || "/private/tmp/tpi-021-music.wav";
 const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
+const manualLogin = process.env.TPI_FIREFOX_MANUAL_LOGIN === "1";
+const accountKey = process.env.TPI_FIREFOX_ACCOUNT || "test_admin";
+const productionTarget = !/^http:\/\/(127\.0\.0\.1|localhost):(8787|8789)$/.test(base);
 const evidenceRoot = process.env.TPI_FIREFOX_EVIDENCE || mkdtempSync(join(tmpdir(), "tpi-firefox-acceptance-"));
 const profile = join(evidenceRoot, "profile");
 const downloads = join(evidenceRoot, "downloads");
@@ -25,20 +28,24 @@ const check = (name, passed, detail = "") => results.push({ name, passed: Boolea
 const sleep = ms => new Promise(resolvePromise => setTimeout(resolvePromise, ms));
 const safe = error => error instanceof Error ? error.message : String(error);
 
-if (!/^http:\/\/(127\.0\.0\.1|localhost):(8787|8789)$/.test(base) && process.env.TPI_FIREFOX_ALLOW_PRODUCTION !== "1") {
+if (productionTarget && process.env.TPI_FIREFOX_ALLOW_PRODUCTION !== "1") {
   console.log(JSON.stringify({ status: "BLOCKED", reason: "Firefox acceptance defaults to the disposable local Worker only." }));
   process.exit(1);
 }
-for (const file of [firefoxBinary, geckodriver, videoFile, soundFile, musicFile, credentialsFile]) {
+if (productionTarget && !manualLogin) {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: "Production Firefox acceptance requires manual login in the isolated profile; local credentials are never sent to production." }));
+  process.exit(1);
+}
+for (const file of [firefoxBinary, geckodriver, videoFile, soundFile, musicFile, ...(manualLogin ? [] : [credentialsFile])]) {
   if (!existsSync(file)) {
     console.log(JSON.stringify({ status: "BLOCKED", reason: `Required Firefox acceptance input is unavailable: ${file}` }));
     process.exit(1);
   }
 }
-const credentials = JSON.parse(readFileSync(credentialsFile, "utf8"));
-const account = credentials.accounts?.test_admin;
-if (!account?.username || !account?.password) {
-  console.log(JSON.stringify({ status: "BLOCKED", reason: "The synthetic test_admin account is unavailable." }));
+const credentials = manualLogin ? { accounts: {} } : JSON.parse(readFileSync(credentialsFile, "utf8"));
+const account = credentials.accounts?.[accountKey];
+if (!manualLogin && (!account?.username || !account?.password)) {
+  console.log(JSON.stringify({ status: "BLOCKED", reason: `The synthetic ${accountKey} account is unavailable.` }));
   process.exit(1);
 }
 
@@ -138,9 +145,15 @@ try {
 
   await driver.get(`${base}/member-login.html`);
   check("isolated Firefox login page renders", await count('form[data-member-login]') === 1);
-  await js("var form=document.querySelector('form[data-member-login]'), user=form&&form.querySelector('input[name=\"username\"]'), password=form&&form.querySelector('input[name=\"password\"]'); if(!form||!user||!password) return false; user.value=arguments[0]; password.value=arguments[1]; ['input','change'].forEach(function(type){user.dispatchEvent(new Event(type,{bubbles:true}));password.dispatchEvent(new Event(type,{bubbles:true}));}); form.querySelector('button[type=\"submit\"]').click(); return true;", account.username, account.password);
-  await waitFor("authenticated local session", async () => asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});"));
-  check("synthetic test_admin authentication succeeds", true);
+  if (manualLogin) {
+    console.log("ACTION REQUIRED: Sign in to the isolated Firefox Developer Edition window. Acceptance continues automatically after authentication.");
+    await waitFor("authenticated isolated session", async () => asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});"), 600_000);
+    check("manual authentication succeeds in the isolated profile", true);
+  } else {
+    await js("var form=document.querySelector('form[data-member-login]'), user=form&&form.querySelector('input[name=\"username\"]'), password=form&&form.querySelector('input[name=\"password\"]'); if(!form||!user||!password) return false; user.value=arguments[0]; password.value=arguments[1]; ['input','change'].forEach(function(type){user.dispatchEvent(new Event(type,{bubbles:true}));password.dispatchEvent(new Event(type,{bubbles:true}));}); form.querySelector('button[type=\"submit\"]').click(); return true;", account.username, account.password);
+    await waitFor("authenticated local session", async () => asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});"));
+    check(`synthetic ${accountKey} authentication succeeds`, true);
+  }
 
   await js("var id=arguments[0], title=arguments[1]; var broadcast={id:id,title:title,description:'Disposable Firefox acceptance studio',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Disposable scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1'));", studioId, studioTitle);
   await enterStudio();

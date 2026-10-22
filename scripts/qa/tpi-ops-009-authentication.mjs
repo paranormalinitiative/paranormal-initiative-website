@@ -2,7 +2,7 @@
 
 // Bounded localhost-only authentication verification for TPI-OPS-009.
 // This script never contacts a hosted Worker and never prints credentials.
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { sessionCookieAttributes } from "../../lib/auth.js";
@@ -15,7 +15,32 @@ if (!/^http:\/\/(127\.0\.0\.1|localhost):8787$/.test(base)) {
 }
 if (!existsSync(credentialPath)) throw new Error("local authentication fixtures are missing; run scripts/local-auth-fixtures.mjs --local-only");
 const credentials = JSON.parse(readFileSync(credentialPath, "utf8"));
-const databasePath = process.env.TPI_LOCAL_D1_SQLITE_PATH || "";
+
+function filesUnder(root) {
+  if (!existsSync(root)) return [];
+  const files = [];
+  for (const entry of readdirSync(root, { withFileTypes: true })) {
+    const path = `${root}/${entry.name}`;
+    if (entry.isDirectory()) files.push(...filesUnder(path));
+    else if (entry.isFile() && /\.sqlite(?:3)?$/.test(entry.name)) files.push(path);
+  }
+  return files;
+}
+
+function findPersistentAuthDatabase() {
+  const explicit = process.env.TPI_LOCAL_D1_SQLITE_PATH || "";
+  if (explicit) return explicit;
+  const root = ".local-dev/state/v3/d1";
+  for (const candidate of filesUnder(root)) {
+    try {
+      const row = execFileSync("sqlite3", [candidate, "SELECT username FROM contributors WHERE username='local_admin' LIMIT 1;"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+      if (row === "local_admin") return candidate;
+    } catch { /* metadata databases and unrelated D1 files are ignored */ }
+  }
+  throw new Error("persistent local_admin D1 database was not found under .local-dev/state; no account was changed");
+}
+
+const databasePath = findPersistentAuthDatabase();
 
 const checks = [];
 function check(name, condition, detail = "") {
@@ -59,13 +84,11 @@ check("development Worker config remains isolated from production", (() => {
     && !config.includes("tpi_contributor_portal_dev")
     && !config.includes('database_name = "tpi_contributor_portal"');
 })());
-if (databasePath) {
-  const row = execFileSync("sqlite3", [databasePath, "SELECT password_hash || '|' || role || '|' || active FROM contributors WHERE username='local_admin' LIMIT 1;"], { encoding: "utf8" }).trim().split("|");
-  check("persistent local_admin row matches protected credential store", row.length === 3
-    && row[0] === hashPassword(credentials.accounts.local_admin.password)
-    && row[1] === "admin"
-    && row[2] === "1");
-}
+const row = execFileSync("sqlite3", [databasePath, "SELECT password_hash || '|' || role || '|' || active FROM contributors WHERE username='local_admin' LIMIT 1;"], { encoding: "utf8" }).trim().split("|");
+check("persistent local_admin row matches protected credential store", row.length === 3
+  && row[0] === hashPassword(credentials.accounts.local_admin.password)
+  && row[1] === "admin"
+  && row[2] === "1");
 
 function cookieFrom(response) {
   const setCookie = response.headers.get("set-cookie") || "";

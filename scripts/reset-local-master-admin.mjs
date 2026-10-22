@@ -4,7 +4,7 @@
 // Plaintext passwords are read from a TTY, hashed in memory, and never written
 // to command arguments, logs, Git-tracked files, or browser storage.
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { createInterface } from "node:readline";
 import { resolve } from "node:path";
 import {
@@ -18,6 +18,7 @@ const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const configPath = resolve(repoRoot, "wrangler.local.toml");
 const statePath = resolve(repoRoot, ".local-dev/state");
 const tempDir = resolve(repoRoot, ".local-dev/credential-reset");
+const credentialPath = resolve(repoRoot, ".local-dev/local-auth-credentials.json");
 const database = "tpi-local-foundation";
 const wrangler = process.env.WRANGLER_BIN || "/opt/homebrew/bin/wrangler";
 
@@ -99,7 +100,7 @@ function promptSecret(label) {
 }
 
 function parseTargetUsername() {
-  const args = process.argv.slice(2);
+  const args = process.argv.slice(2).filter(argument => argument !== "--restore-protected-local-admin");
   let targetUsername = null;
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
@@ -117,6 +118,29 @@ function parseTargetUsername() {
     }
   }
   return targetUsername;
+}
+
+function protectedLocalAdminCredential() {
+  if (!existsSync(credentialPath)) throw new Error("protected local credential file is missing");
+  if ((statSync(credentialPath).mode & 0o777) !== 0o600) throw new Error("protected local credential file must be mode 0600");
+  let credentials;
+  try { credentials = JSON.parse(readFileSync(credentialPath, "utf8")); }
+  catch { throw new Error("protected local credential file is not valid JSON"); }
+  const account = credentials?.accounts?.local_admin;
+  if (account?.username !== "local_admin" || typeof account?.password !== "string" || account.password.length < 12) {
+    throw new Error("protected local_admin credential is unavailable or invalid");
+  }
+  return { credentials, account };
+}
+
+function persistProtectedLocalAdminPassword(credentials, password) {
+  const updated = structuredClone(credentials);
+  updated.accounts.local_admin.password = password;
+  const temporaryPath = `${credentialPath}.${process.pid}.tmp`;
+  writeFileSync(temporaryPath, `${JSON.stringify(updated, null, 2)}\n`, { mode: 0o600, flag: "wx" });
+  chmodSync(temporaryPath, 0o600);
+  renameSync(temporaryPath, credentialPath);
+  chmodSync(credentialPath, 0o600);
 }
 
 function validateUsername(username) {
@@ -172,12 +196,38 @@ async function resetExistingAccount(targetUsername) {
   if (!verified || verified.id !== account.id || verified.username !== targetUsername || verified.role !== account.role || Number(verified.active) !== Number(account.active) || Number(verified.password_matches) !== 1 || Number(verified.session_count) !== 0 || accountCountAfter !== accountCountBefore) {
     throw new Error("targeted local account postcondition verification failed; no success was reported");
   }
+  if (targetUsername === "local_admin") {
+    const { credentials } = protectedLocalAdminCredential();
+    persistProtectedLocalAdminPassword(credentials, password);
+  }
   console.log(`Local account password reset: ${targetUsername} (role preserved: ${account.role}).`);
-  console.log("Password configured but not displayed. Existing sessions for this account were invalidated.");
+  console.log(targetUsername === "local_admin"
+    ? "Password configured, synchronized to the protected local credential store, and not displayed. Existing sessions were invalidated."
+    : "Password configured but not displayed. Existing sessions for this account were invalidated.");
+}
+
+function restoreProtectedLocalAdmin() {
+  const { account: stored } = protectedLocalAdminCredential();
+  const account = firstResult(d1Json("SELECT id, username, role, active FROM contributors WHERE username = 'local_admin' LIMIT 1;"));
+  if (!account || !isEligibleTargetAccount(account, "local_admin")) throw new Error("local_admin must be an active local administrator or owner");
+  const accountCountBefore = Number(firstResult(d1Json("SELECT COUNT(*) AS account_count FROM contributors;"))?.account_count || 0);
+  executeSensitiveBatch(buildTargetPasswordResetSql({ accountId: account.id, username: "local_admin", password: stored.password }));
+  const expectedHash = hashPassword(stored.password);
+  const verified = firstResult(d1Json(`SELECT id, username, role, active, password_hash = ${sqlString(expectedHash)} AS password_matches, (SELECT COUNT(*) FROM sessions WHERE contributor_id = ${sqlString(account.id)}) AS session_count FROM contributors WHERE id = ${sqlString(account.id)} LIMIT 1;`));
+  const accountCountAfter = Number(firstResult(d1Json("SELECT COUNT(*) AS account_count FROM contributors;"))?.account_count || 0);
+  if (!verified || verified.username !== "local_admin" || !["admin", "owner"].includes(verified.role) || Number(verified.active) !== 1 || Number(verified.password_matches) !== 1 || Number(verified.session_count) !== 0 || accountCountAfter !== accountCountBefore) {
+    throw new Error("protected local_admin restore postcondition verification failed");
+  }
+  console.log("local_admin restored from the protected local credential store; password was not displayed and all prior sessions were invalidated.");
 }
 
 async function main() {
   assertLocalOnly();
+  if (process.argv.includes("--restore-protected-local-admin")) {
+    if (process.argv.length !== 3) throw new Error("--restore-protected-local-admin cannot be combined with other options");
+    restoreProtectedLocalAdmin();
+    return;
+  }
   if (!process.stdin.isTTY || !process.stdout.isTTY) throw new Error("run from an interactive owner Terminal; no password was read");
 
   const targetUsername = parseTargetUsername();

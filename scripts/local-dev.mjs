@@ -165,6 +165,28 @@ function processCommand(pid) {
   }
 }
 
+function processInfo(pid) {
+  if (!processAlive(pid)) return null;
+  try {
+    const output = execFileSync("lsof", ["-nP", "-p", String(pid), "-a", "-d", "cwd,txt", "-FpcRfn"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    });
+    const info = { pid: null, parentPid: null, command: "", cwd: "" };
+    let descriptor = "";
+    for (const line of output.split("\n")) {
+      if (line.startsWith("p")) info.pid = Number(line.slice(1));
+      else if (line.startsWith("R")) info.parentPid = Number(line.slice(1));
+      else if (line.startsWith("c")) info.command = line.slice(1);
+      else if (line.startsWith("f")) descriptor = line.slice(1);
+      else if (line.startsWith("n") && descriptor === "cwd") info.cwd = line.slice(1);
+    }
+    return info.pid === pid ? info : null;
+  } catch {
+    return null;
+  }
+}
+
 function listenersForPort(port) {
   try {
     const output = execFileSync("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-Fpct"], {
@@ -216,10 +238,21 @@ function ownedWorkerState(state) {
   if (!state || state.port !== workerPort) return false;
   const launcherCommand = processCommand(state.launcherPid);
   const childCommand = processCommand(state.childPid);
+  const launcherInfo = processInfo(state.launcherPid);
+  const childInfo = processInfo(state.childPid);
+  const commandProof = isTpiLauncherCommand(launcherCommand) && isWranglerCommand(childCommand);
+  // Some managed/sandboxed macOS processes deny `ps` while still allowing
+  // read-only `lsof` process metadata. The parent relationship plus both
+  // working directories gives an equivalent ownership proof without turning
+  // a healthy LaunchAgent into a false "OCCUPIED" state.
+  const lsofProof = launcherInfo?.cwd === repoRoot
+    && childInfo?.cwd === repoRoot
+    && childInfo?.parentPid === state.launcherPid
+    && launcherInfo?.command === "node"
+    && childInfo?.command === "node";
   return processAlive(state.launcherPid)
     && processAlive(state.childPid)
-    && isTpiLauncherCommand(launcherCommand)
-    && isWranglerCommand(childCommand)
+    && (commandProof || lsofProof)
     && state.configPath === configPath;
 }
 

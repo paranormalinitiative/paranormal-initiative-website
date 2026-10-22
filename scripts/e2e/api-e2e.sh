@@ -12,10 +12,14 @@ BASE="http://127.0.0.1:$PORT/api"
 # Keep the default regression deterministic and local-only. The authorized
 # provider refresh checks remain available with TPI_E2E_LIVE_SCRAPERS=1.
 LIVE_SCRAPERS="${TPI_E2E_LIVE_SCRAPERS:-0}"
-REUSE_LOCAL="${TPI_E2E_REUSE_LOCAL:-0}"
 # TPI-OPS-029: isolated mode drives the disposable Worker on 8789 with its own
 # /tmp state and config. It never touches .local-dev or the owner's port 8787.
 ISOLATED="${TPI_E2E_ISOLATED:-0}"
+if [ "${TPI_E2E_REUSE_LOCAL:-0}" = "1" ]; then
+  echo "SAFETY GUARD: TPI_E2E_REUSE_LOCAL is permanently disabled. Tests may not seed the owner's persistent .local-dev database."
+  echo "Use TPI_E2E_ISOLATED=1 with scripts/e2e/isolated-launchagent.sh instead."
+  exit 2
+fi
 if [ "$ISOLATED" = "1" ]; then
   TEST_ROOT="$(node -e 'console.log(require("os").tmpdir())')/tpi-isolated-e2e"
   ISOLATED_CONFIG="$TEST_ROOT/wrangler.isolated.toml"
@@ -39,18 +43,6 @@ fi
 
 if [ "$ISOLATED" = "1" ]; then
   : # isolated Worker on :8789 was prepared above; do not reset or start a server
-elif [ "$REUSE_LOCAL" = "1" ]; then
-  if [ "${TPI_E2E_BASE_URL:-http://127.0.0.1:8787}" != "http://127.0.0.1:8787" ]; then
-    echo "REUSE MODE FAILED: TPI_E2E_BASE_URL must remain http://127.0.0.1:8787"
-    exit 1
-  fi
-  BASE="http://127.0.0.1:8787/api"
-  WRANGLER_LOCAL="${WRANGLER_BIN:-wrangler}"
-  "$WRANGLER_LOCAL" d1 execute tpi-local-foundation --config wrangler.local.toml --local --persist-to .local-dev/state --file scripts/e2e/seed-local.sql --yes >/dev/null \
-    || { echo "LOCAL SEED FAILED"; exit 1; }
-  code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:8787/api/community/categories")
-  [ "$code" = "200" ] || { echo "LaunchAgent-backed local Worker did not respond with HTTP 200"; exit 1; }
-  echo "reusing LaunchAgent-backed local Worker on :8787 with disposable local D1 seed"
 else
 
 # ---- detect or start the dev server on a FRESH database ----

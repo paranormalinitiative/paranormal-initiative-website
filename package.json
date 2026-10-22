@@ -11,7 +11,10 @@
     "dev:local:service:restart": "node scripts/local-dev-service.mjs restart",
     "dev:local:service:status": "node scripts/local-dev-service.mjs status",
     "dev:local:service:uninstall": "node scripts/local-dev-service.mjs uninstall",
-    "test:studioflow:firefox": "node scripts/verify/tpi-studioflow-firefox-acceptance.mjs"
+    "test:studioflow:firefox": "node scripts/verify/tpi-studioflow-firefox-acceptance.mjs",
+    "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",
+    "release:preflight": "node scripts/tpi-release.mjs preflight",
+    "release:production": "node scripts/tpi-release.mjs deploy"
   },
   "devDependencies": {
     "playwright": "1.64.1",
