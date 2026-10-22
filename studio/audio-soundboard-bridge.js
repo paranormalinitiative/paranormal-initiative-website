@@ -334,7 +334,7 @@
     hideLegacy();
     var root = document.querySelector("[data-tpi-audio-soundboards]"); if (!root) return;
     var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), sceneMusic: sceneAssignments(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42), musicLoop: musicLoopEnabled() });
-    if (signature === lastSignature && root.childElementCount) return;
+    if (signature === lastSignature && root.childElementCount) { sceneMusicControls(); return; }
     lastSignature = signature;
     var existing = root.firstChild; if (existing) root.replaceChildren();
     var soundSection = document.createElement("section"); soundSection.className = "tpi-audio-original-section"; soundSection.dataset.tpiAudioOriginal = "sounds"; var soundHeading = document.createElement("h3"); soundHeading.textContent = "Sounds"; soundSection.appendChild(soundHeading);
