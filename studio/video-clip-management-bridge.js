@@ -71,6 +71,7 @@
   }
   function removeAsset(slot) { var slots = videoSlots(), asset = slots[slot]; if (!asset) return; if (!requestSlotChange(slot, "remove")) return; slots[slot] = null; saveSlots(slots); updateReactClip(slot, null); restoreSceneAssignments(slot, null); dispatchChange(); deleteBlob(asset.blobKey).catch(function () {}).then(function () { setStatus(labelFor(slot) + " removed."); render(); }); }
   function previewAsset(card, asset) { if (!asset) return; var video = card.querySelector("video[data-tpi-preview]"); if (!video) return; if (!video.src) { setStatus("Loading " + asset.fileName + "…"); getBlob(asset.blobKey).then(function (blob) { if (!blob) throw new Error("The video file is no longer available."); var url = URL.createObjectURL(blob); previewUrls[asset.blobKey] = url; video.src = url; video.hidden = false; return video.play(); }).then(function () { setStatus("Playing " + asset.fileName + "."); }).catch(function (error) { setStatus(error.message || "Video playback failed.", true); }); return; } video.hidden = false; var playback = video.paused ? video.play() : video.pause(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); }
+  function preloadPreview(card, asset) { if (!asset) return; var video = card.querySelector("video[data-tpi-preview]"); if (!video || video.src) return; getBlob(asset.blobKey).then(function (blob) { if (!blob) return; var url = URL.createObjectURL(blob); previewUrls[asset.blobKey] = url; video.src = url; video.hidden = false; video.load(); }).catch(function () {}); }
   function clearPreviewUrls() { Object.keys(previewUrls).forEach(function (key) { try { URL.revokeObjectURL(previewUrls[key]); } catch (error) {} }); previewUrls = {}; }
   function makeButton(label, action, disabled) { var button = document.createElement("button"); button.type = "button"; button.className = "outline-button tpi-video-card-action"; button.dataset.tpiVideoAction = action; button.textContent = label; button.disabled = !!disabled; return button; }
   function protectedSlot(slot) { return slot < 2; }
@@ -92,7 +93,7 @@
     } else {
       actions.appendChild(makeButton("Upload", "upload", false));
     }
-    card.append(preview, body, actions);
+    card.append(preview, body, actions); if (asset && !asset.thumbnailDataUrl) preloadPreview(card, asset);
 
     card.addEventListener("click", function (event) { var toggle = event.target.closest("button[data-tpi-video-menu-toggle]"); if (toggle && actionMenu && actionToggle) { var opening = actionMenu.hidden; actionMenu.hidden = !opening; toggle.setAttribute("aria-expanded", String(opening)); return; } var target = event.target.closest("button[data-tpi-video-action]"); if (!target) { if (asset) previewAsset(card, asset); else chooseFile(slot); return; } var action = target.dataset.tpiVideoAction; if (action === "preview") previewAsset(card, asset); if (action === "replace" && requestSlotChange(slot, "replace")) chooseFile(slot); if (action === "upload") chooseFile(slot); if (action === "remove") removeAsset(slot); if (actionMenu && actionToggle) { actionMenu.hidden = true; actionToggle.setAttribute("aria-expanded", "false"); } });
     return card;

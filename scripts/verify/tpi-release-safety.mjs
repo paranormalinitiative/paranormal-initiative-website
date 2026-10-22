@@ -72,9 +72,9 @@ check("Firefox acceptance retries only a transient empty StudioFlow shell", () =
   assert.match(firefoxAcceptance, /if \(body\.trim\(\) \|\| attempt === 2\) throw error/);
 });
 check("StudioFlow staging preserves maintained media bridges", () => {
-  assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v6/);
+  assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v7/);
   assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v2/);
-  assert.match(studioflowStage, /studioflow-012-overrides\.css\?tpi022=video-organization-v6/);
+  assert.match(studioflowStage, /studioflow-012-overrides\.css\?tpi022=video-organization-v7/);
   assert.match(studioflowStage, /check-request-budget\.mjs/);
 });
 check("complete QA runs the StudioFlow request-budget guard", () => {
