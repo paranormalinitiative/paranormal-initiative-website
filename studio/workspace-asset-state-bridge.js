@@ -27,6 +27,7 @@
     backgroundMusic: "studioflow.backgroundMusic",
     backgroundMusicSlots: "studioflow.backgroundMusicSlots",
     backgroundMusicVolume: "studioflow.backgroundMusicVolume",
+    backgroundMusicLoop: "studioflow.backgroundMusicLoop",
     customSounds: "studioflow.customSounds",
     customSound: "studioflow.customSound",
     soundVolume: "studioflow.soundVolume"
@@ -65,6 +66,7 @@
       backgroundMusic: null,
       backgroundMusicSlots: [],
       backgroundMusicVolume: 0.42,
+      backgroundMusicLoop: true,
       customSounds: [],
       customSound: null,
       soundVolume: 0.72

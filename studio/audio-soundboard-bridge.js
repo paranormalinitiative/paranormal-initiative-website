@@ -14,6 +14,7 @@
   var LEGACY_MUSIC_KEY = "studioflow.backgroundMusic";
   var SOUND_VOLUME_KEY = "studioflow.soundVolume";
   var MUSIC_VOLUME_KEY = "studioflow.backgroundMusicVolume";
+  var MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop";
   var SLOT_COUNT = 9;
   var scheduled = false;
   var soundSource = null;
@@ -70,6 +71,7 @@
     }
     return slotArray(legacy && typeof legacy === "object" ? [legacy] : []);
   }
+  function musicLoopEnabled() { return read(MUSIC_LOOP_KEY, true) !== false; }
   function dispatchChange() {
     try { window.dispatchEvent(new Event("storage")); } catch (error) {}
     try { window.dispatchEvent(new CustomEvent("studioflow:storage-changed", { detail: { source: "audio-soundboards" } })); } catch (error) {}
@@ -201,7 +203,7 @@
     getBlob(asset.blobKey).then(function (blob) {
       if (!blob) throw new Error("The music file is no longer available.");
       musicUrl = URL.createObjectURL(blob);
-      musicAudio = new Audio(musicUrl); musicAudio.loop = true; musicAudio.volume = Math.max(0, Math.min(1, Number(read(MUSIC_VOLUME_KEY, 0.42))));
+      musicAudio = new Audio(musicUrl); musicAudio.loop = musicLoopEnabled(); musicAudio.volume = Math.max(0, Math.min(1, Number(read(MUSIC_VOLUME_KEY, 0.42))));
       musicSlot = slot; renderState();
       var playing = musicAudio.play();
       return playing && typeof playing.catch === "function" ? playing.catch(function () { setStatus("Click the music card again to start playback."); }) : playing;
@@ -265,14 +267,22 @@
   }
   function stopButton(label, action) { var button = document.createElement("button"); button.type = "button"; button.className = "outline-button tpi-audio-stop"; button.textContent = label; button.dataset.tpiAudioStop = action; button.disabled = action === "sound" ? !soundSource : !musicAudio; button.addEventListener("click", action === "sound" ? stopSound : stopMusic); return button; }
   function volumeControl(label, key, kind) {    var wrap = document.createElement("label"); wrap.className = "tpi-audio-volume"; var name = document.createElement("span"); name.textContent = label; var input = document.createElement("input"); input.type = "range"; input.min = "0"; input.max = "1"; input.step = "0.01"; input.value = String(Number(read(key, kind === "sound" ? 0.72 : 0.42))); input.setAttribute("aria-label", label); input.addEventListener("input", function () { write(key, Number(input.value)); if (kind === "music" && musicAudio) musicAudio.volume = Number(input.value); dispatchChange(); }); wrap.append(name, input); return wrap; }
+  function loopControl() { var wrap = document.createElement("label"); wrap.className = "tpi-audio-loop-control"; var input = document.createElement("input"); input.type = "checkbox"; input.checked = musicLoopEnabled(); input.setAttribute("aria-label", "Loop background music"); var textNode = document.createElement("span"); textNode.textContent = "Loop music"; input.addEventListener("change", function () { write(MUSIC_LOOP_KEY, input.checked); if (musicAudio) musicAudio.loop = input.checked; dispatchChange(); renderState(); }); wrap.append(input, textNode); return wrap; }
 
   function headingText(section) { var heading = section.querySelector("h3"); return heading ? (heading.textContent || "").replace(/\s+/g, " ").trim().toLowerCase() : ""; }
-  function hideLegacy() { Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).forEach(function (section) { if (headingText(section) === "background music") { section.dataset.tpiLegacyAudio = "true"; section.hidden = true; } }); }
-  function host() { return Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).find(function (candidate) { return headingText(candidate) === "sounds"; }) || null; }
+  function hideLegacy() { Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).forEach(function (section) { var heading = headingText(section); if (heading === "sounds" || heading === "background music") { section.dataset.tpiLegacyAudio = "true"; section.hidden = true; } }); }
+  function host() {
+    var panel = document.querySelector(".asset-panel");
+    if (!panel) return null;
+    var hasMediaSections = Array.prototype.some.call(panel.querySelectorAll("section.asset-section"), function (section) {
+      return ["video clips", "backgrounds", "sounds", "background music"].includes(headingText(section));
+    });
+    return hasMediaSections ? panel : null;
+  }
   function renderState() {
     hideLegacy();
     var root = document.querySelector("[data-tpi-audio-soundboards]"); if (!root) return;
-    var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42) });
+    var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42), musicLoop: musicLoopEnabled() });
     if (signature === lastSignature && root.childElementCount) return;
     lastSignature = signature;
     var existing = root.firstChild; if (existing) root.replaceChildren();
@@ -280,7 +290,7 @@
     var musicSection = document.createElement("section"); musicSection.className = "tpi-audio-original-section"; musicSection.dataset.tpiAudioOriginal = "background-music"; var musicHeading = document.createElement("h3"); musicHeading.textContent = "Background music"; musicSection.appendChild(musicHeading);
     root.append(soundSection, musicSection);
     var controls = document.createElement("div"); controls.className = "tpi-audio-controls"; controls.append(volumeControl("Sound effects volume", SOUND_VOLUME_KEY, "sound"), stopButton("Stop sound", "sound")); soundSection.appendChild(controls);
-    var musicControls = document.createElement("div"); musicControls.className = "tpi-audio-controls"; musicControls.append(volumeControl("Background music volume", MUSIC_VOLUME_KEY, "music"), stopButton("Stop music", "music")); musicSection.appendChild(musicControls);
+    var musicControls = document.createElement("div"); musicControls.className = "tpi-audio-controls"; musicControls.append(volumeControl("Background music volume", MUSIC_VOLUME_KEY, "music"), loopControl(), stopButton("Stop music", "music")); musicSection.appendChild(musicControls);
     soundSection.append(board("sound", "Sound effects", soundSlots())); musicSection.append(board("music", "Background music", musicSlots()));
     var status = document.createElement("p"); status.dataset.tpiAudioStatus = "true"; root.insertBefore(status, root.firstChild);
   }
@@ -288,7 +298,10 @@
     scheduled = false; hideLegacy();
     var hostSection = host(); if (!hostSection) return;
     var root = hostSection.querySelector("[data-tpi-audio-soundboards]");
-    if (!root) { root = document.createElement("div"); root.dataset.tpiAudioSoundboards = "true"; root.className = "tpi-audio-soundboards"; var heading = hostSection.querySelector("h3"); var hostNode = heading && heading.parentElement || hostSection; hostNode.appendChild(root); }
+    if (!root) { root = document.createElement("div"); root.dataset.tpiAudioSoundboards = "true"; root.className = "tpi-audio-soundboards"; }
+    var firstLegacyAudio = Array.prototype.slice.call(hostSection.querySelectorAll("section.asset-section")).find(function (section) { var heading = headingText(section); return heading === "sounds" || heading === "background music"; });
+    if (firstLegacyAudio) hostSection.insertBefore(root, firstLegacyAudio);
+    else if (!root.parentElement) hostSection.appendChild(root);
     renderState();
   }
   function schedule() { if (scheduled) return; scheduled = true; window.setTimeout(sync, 0); }

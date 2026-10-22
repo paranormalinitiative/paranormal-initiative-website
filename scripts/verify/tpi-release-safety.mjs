@@ -73,7 +73,7 @@ check("Firefox acceptance retries only a transient empty StudioFlow shell", () =
 });
 check("StudioFlow staging preserves maintained media bridges", () => {
   assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v1/);
-  assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v1/);
+  assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v2/);
   assert.match(studioflowStage, /studioflow-012-overrides\.css\?tpi022=video-organization-v1/);
   assert.match(studioflowStage, /check-request-budget\.mjs/);
 });

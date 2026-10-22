@@ -70,6 +70,8 @@ try {
   check("background-music board renders", await musicBoard.count() === 1);
   check("nine sound-effect slots render", await soundBoard.locator(".tpi-audio-slot").count() === 9);
   check("nine background-music slots render", await musicBoard.locator(".tpi-audio-slot").count() === 9);
+  check("legacy audio sections are not visible", await page.locator('section.asset-section[data-tpi-legacy-audio="true"]:visible').count() === 0);
+  check("background music loop toggle renders enabled by default", await page.getByLabel("Loop background music").count() === 1 && await page.getByLabel("Loop background music").isChecked());
   const heartbeat = page.locator('[data-tpi-audio-soundboards]').getByText("Heartbeat Fast", { exact: true });
   let heartbeatVisible = false;
   for (const item of await heartbeat.all()) heartbeatVisible = heartbeatVisible || await item.isVisible();
