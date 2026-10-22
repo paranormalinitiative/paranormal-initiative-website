@@ -21,6 +21,7 @@ check("StudioFlow shell loads all persistence bridges", ["workspace-asset-state-
 check("browser storage and folder storage are explicit", bundle.includes("Local Browser Storage") && bundle.includes("Computer Folder / External Drive") && bundle.includes("showDirectoryPicker"));
 check("folder permission is requested before folder recording", bundle.includes("queryPermission") && bundle.includes("requestPermission"));
 check("recording recovery keeps a browser-local fallback", bundle.includes("recordingChunks") && bundle.includes("Recover recording?") && bundle.includes("Browser Library checkpoint remains the recovery fallback"));
+check("recording recovery reports progress and times out safely", bundle.includes("Reading saved recording chunks") && bundle.includes("Saving ") && bundle.includes(" recovered chunk") && bundle.includes("timed out after") && bundle.includes("The recovery checkpoint was kept"));
 check("schedule and destination state are represented in the workspace model", workspaceBridge.includes("scheduledAt") && workspaceBridge.includes("recordingDestination"));
 
 for (const result of checks) console.log(`${result.passed ? "PASS" : "FAIL"} ${result.name}${result.detail ? ` — ${result.detail}` : ""}`);
