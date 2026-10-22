@@ -511,10 +511,14 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   opacity: 0.78;
 }
 
-.tpi-video-card.assigned,
 .tpi-video-timer-card.running {
   border-color: #91b9fa;
   box-shadow: 0 0 0 1px #91b9fa inset;
+}
+
+.tpi-video-card.assigned {
+  border-color: var(--line, #34403a);
+  box-shadow: none;
 }
 
 .tpi-video-card-preview {
