@@ -68,6 +68,25 @@ existing read-only `/api/admin/overview` route, and authenticated
 `/member-home` navigation. It does not contact any hosted TPI Worker, remote
 D1/R2, email provider, identity provider, RealtimeKit, Facebook, or scraper.
 
+## Owner administrator recovery
+
+The owner's development administrator `local_admin` lives in the persistent
+local D1 state (`.local-dev/state`), separate from the synthetic fixture
+accounts. The fixture script never rotates an existing fixture password and
+refuses to run if its credential file is missing while fixture rows exist.
+The end-to-end seed (`scripts/e2e/seed-local.sql`) deletes only `e2e-*` rows.
+
+To regain access without deleting data, the owner runs the reset from their own
+terminal (it reads the new password from a TTY and never prints it):
+
+```sh
+TPI_LOCAL_OWNER_CONTROL=1 node scripts/reset-local-master-admin.mjs --target-username local_admin
+```
+
+This updates only the password hash of the named active `admin` or `owner`
+account, invalidates its sessions, and leaves other accounts and Studio records
+unchanged. Do not run it from automated tests or fixture scripts.
+
 The local D1 is intentionally the minimal OPS-008 foundation schema. Some
 later administrative routes require additive capability columns that are not
 part of that local schema; those routes are not silently upgraded or tested as

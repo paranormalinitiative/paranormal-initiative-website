@@ -4,8 +4,8 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
 const repoRoot = resolve(import.meta.dirname, "../..");
-const credentials = JSON.parse(readFileSync(resolve(repoRoot, ".local-dev/local-auth-credentials.json"), "utf8"));
-const account = credentials.accounts?.local_admin;
+const credentials = JSON.parse(readFileSync(process.env.TPI_021_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json"), "utf8"));
+const account = credentials.accounts?.test_admin;
 const base = process.env.TPI_021_BASE_URL || "http://127.0.0.1:8787";
 const browserPath = process.env.TPI_021_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const soundFile = process.env.TPI_021_SOUND_FILE || "/private/tmp/tpi-021-sound.wav";
@@ -45,13 +45,11 @@ try {
   await page.locator('form[data-member-login] button[type="submit"]').click();
   await page.waitForTimeout(250);
   const session = await page.request.get(`${base}/api/auth/me`);
-  check("synthetic local_admin login succeeds", session.ok() && Boolean((await session.json()).user), `HTTP ${session.status()}`);
+  check("synthetic test_admin login succeeds", session.ok() && Boolean((await session.json()).user), `HTTP ${session.status()}`);
 
   await page.goto(`${base}/studio/`, { waitUntil: "domcontentloaded", timeout: 30000 });
-  const libraryNav = page.getByRole("button", { name: "Library", exact: true });
-  if (await libraryNav.count()) { await libraryNav.click(); await page.waitForTimeout(700); }
   if (!(await page.locator("[data-tpi-audio-soundboards]").count())) {
-    const homeNav = page.getByRole("button", { name: "Home", exact: true });
+    const homeNav = page.getByRole("button", { name: /Home/i }).first();
     if (await homeNav.count()) { await homeNav.click(); await page.waitForTimeout(500); }
     const recordControl = page.getByRole("button", { name: /Record without going live/i }).first();
     if (await recordControl.count()) {
@@ -64,10 +62,6 @@ try {
       if (await enterControl.count()) await enterControl.click();
       await page.waitForTimeout(1000);
     }
-  }
-  if (!(await page.locator("[data-tpi-audio-soundboards]").count())) {
-    const createControl = page.getByText("Create", { exact: true }).first();
-    if (await createControl.count()) { await createControl.click(); await page.waitForTimeout(700); }
   }
   await page.locator("[data-tpi-audio-soundboards]").waitFor({ state: "visible", timeout: 30000 });
   const soundBoard = page.locator('[data-tpi-audio-board="sound"]');
@@ -106,10 +100,6 @@ try {
   const persisted = await page.evaluate(() => ({ sounds: JSON.parse(localStorage.getItem("studioflow.customSounds") || "[]"), music: JSON.parse(localStorage.getItem("studioflow.backgroundMusicSlots") || "[]") }));
   check("audio metadata persists in workspace storage", persisted.sounds.length === 1 && persisted.music.length === 1);
   await page.reload({ waitUntil: "domcontentloaded" });
-  if (!(await page.getByRole("button", { name: /Enter studio/i }).count())) {
-    const libraryAfterRefresh = page.getByRole("button", { name: "Library", exact: true });
-    if (await libraryAfterRefresh.count()) { await libraryAfterRefresh.click(); await page.waitForTimeout(600); }
-  }
   const enterAfterRefresh = page.getByRole("button", { name: /Enter studio/i }).first();
   if (await enterAfterRefresh.count()) { await enterAfterRefresh.click(); await page.waitForTimeout(800); }
   const secondEnterAfterRefresh = page.getByRole("button", { name: /Enter studio/i }).first();

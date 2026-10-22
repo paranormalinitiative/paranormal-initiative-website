@@ -13,8 +13,33 @@ BASE="http://127.0.0.1:$PORT/api"
 # provider refresh checks remain available with TPI_E2E_LIVE_SCRAPERS=1.
 LIVE_SCRAPERS="${TPI_E2E_LIVE_SCRAPERS:-0}"
 REUSE_LOCAL="${TPI_E2E_REUSE_LOCAL:-0}"
+# TPI-OPS-029: isolated mode drives the disposable Worker on 8789 with its own
+# /tmp state and config. It never touches .local-dev or the owner's port 8787.
+ISOLATED="${TPI_E2E_ISOLATED:-0}"
+if [ "$ISOLATED" = "1" ]; then
+  TEST_ROOT="$(node -e 'console.log(require("os").tmpdir())')/tpi-isolated-e2e"
+  ISOLATED_CONFIG="$TEST_ROOT/wrangler.isolated.toml"
+  ISOLATED_STATE="$TEST_ROOT/state"
+  case "$ISOLATED_STATE" in
+    *"/.local-dev"*|*"/.wrangler/state"*) echo "ISOLATED GUARD: refusing owner state path $ISOLATED_STATE"; exit 1 ;;
+  esac
+  [ -f "$ISOLATED_CONFIG" ] || { echo "ISOLATED GUARD: start the disposable Worker first (node scripts/e2e/isolated-worker.mjs start)"; exit 1; }
+  curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:8789/api/community/categories" | grep -q 200 \
+    || { echo "ISOLATED GUARD: disposable Worker is not answering on 127.0.0.1:8789"; exit 1; }
+  BASE="http://127.0.0.1:8789/api"
+  WRANGLER_LOCAL="${WRANGLER_BIN:-wrangler}"
+  for f in migrations/*.sql; do
+    "$WRANGLER_LOCAL" d1 execute TPI_DB --config "$ISOLATED_CONFIG" --local --persist-to "$ISOLATED_STATE" --file "$f" --yes >/dev/null 2>&1 \
+      || { echo "ISOLATED MIGRATION FAILED: $f"; exit 1; }
+  done
+  "$WRANGLER_LOCAL" d1 execute TPI_DB --config "$ISOLATED_CONFIG" --local --persist-to "$ISOLATED_STATE" --file scripts/e2e/seed-local.sql --yes >/dev/null 2>&1 \
+    || { echo "ISOLATED SEED FAILED"; exit 1; }
+  echo "isolated mode: disposable Worker on :8789, state $ISOLATED_STATE"
+fi
 
-if [ "$REUSE_LOCAL" = "1" ]; then
+if [ "$ISOLATED" = "1" ]; then
+  : # isolated Worker on :8789 was prepared above; do not reset or start a server
+elif [ "$REUSE_LOCAL" = "1" ]; then
   if [ "${TPI_E2E_BASE_URL:-http://127.0.0.1:8787}" != "http://127.0.0.1:8787" ]; then
     echo "REUSE MODE FAILED: TPI_E2E_BASE_URL must remain http://127.0.0.1:8787"
     exit 1

@@ -13,7 +13,7 @@ const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodrive
 const videoFile = process.env.TPI_FIREFOX_VIDEO_FILE || "/private/tmp/tpi-022-video.mp4";
 const soundFile = process.env.TPI_FIREFOX_SOUND_FILE || "/private/tmp/tpi-021-sound.wav";
 const musicFile = process.env.TPI_FIREFOX_MUSIC_FILE || "/private/tmp/tpi-021-music.wav";
-const credentialsFile = resolve(repoRoot, ".local-dev/local-auth-credentials.json");
+const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
 const evidenceRoot = process.env.TPI_FIREFOX_EVIDENCE || mkdtempSync(join(tmpdir(), "tpi-firefox-acceptance-"));
 const profile = join(evidenceRoot, "profile");
 const downloads = join(evidenceRoot, "downloads");
@@ -25,7 +25,7 @@ const check = (name, passed, detail = "") => results.push({ name, passed: Boolea
 const sleep = ms => new Promise(resolvePromise => setTimeout(resolvePromise, ms));
 const safe = error => error instanceof Error ? error.message : String(error);
 
-if (!/^http:\/\/(127\.0\.0\.1|localhost):8787$/.test(base) && process.env.TPI_FIREFOX_ALLOW_PRODUCTION !== "1") {
+if (!/^http:\/\/(127\.0\.0\.1|localhost):(8787|8789)$/.test(base) && process.env.TPI_FIREFOX_ALLOW_PRODUCTION !== "1") {
   console.log(JSON.stringify({ status: "BLOCKED", reason: "Firefox acceptance defaults to the disposable local Worker only." }));
   process.exit(1);
 }
@@ -36,9 +36,9 @@ for (const file of [firefoxBinary, geckodriver, videoFile, soundFile, musicFile,
   }
 }
 const credentials = JSON.parse(readFileSync(credentialsFile, "utf8"));
-const account = credentials.accounts?.local_admin;
+const account = credentials.accounts?.test_admin;
 if (!account?.username || !account?.password) {
-  console.log(JSON.stringify({ status: "BLOCKED", reason: "The synthetic local_admin account is unavailable." }));
+  console.log(JSON.stringify({ status: "BLOCKED", reason: "The synthetic test_admin account is unavailable." }));
   process.exit(1);
 }
 
@@ -62,7 +62,7 @@ async function asyncJs(script, ...args) { return driver.executeAsyncScript(scrip
 async function count(selector) { return Number(await js("return document.querySelectorAll(arguments[0]).length;", selector)); }
 async function text(selector) { return String(await js("var node=document.querySelector(arguments[0]); return node ? node.textContent : '';", selector)); }
 async function click(selector) { return js("var node=document.querySelector(arguments[0]); if(!node) return false; node.click(); return true;", selector); }
-async function clickButton(label) { return js("var label=arguments[0].toLowerCase(); var node=Array.from(document.querySelectorAll('button')).find(function(button){ return (button.textContent||'').trim().toLowerCase()===label; }); if(!node) return false; node.click(); return true;", label); }
+async function clickButton(label) { return js("var label=arguments[0].toLowerCase(); var node=Array.from(document.querySelectorAll('button')).find(function(button){ return (button.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase().indexOf(label)!==-1; }); if(!node) return false; node.click(); return true;", label); }
 async function waitFor(description, predicate, timeout = 30_000) {
   const started = Date.now();
   let detail = "";
@@ -81,24 +81,33 @@ async function uploadByDynamicInput(triggerSelector, acceptToken, path) {
   });
   await input.sendKeys(path);
 }
+async function uploadVideoSlot(index, acceptToken, path) {
+  const card = `[data-tpi-video-card="${index}"]`;
+  if (await count(`${card} [data-tpi-video-action="upload"]`)) {
+    return uploadByDynamicInput(`${card} [data-tpi-video-action="upload"]`, acceptToken, path);
+  }
+  await click(`${card} button[data-tpi-video-menu-toggle]`);
+  await waitFor(`video slot ${index} menu`, async () => count(`${card} .tpi-video-card-action-menu:not([hidden])`));
+  return uploadByDynamicInput(`${card} [data-tpi-video-action="replace"]`, acceptToken, path);
+}
 async function enterStudio() {
   await driver.get(`${base}/studio/`);
-  await waitFor("StudioFlow shell", async () => /StudioFlow|Home|Library|Destinations/i.test(await driver.findElement(By.css("body")).getText()));
-  await clickButton("Library");
-  if (!(await waitFor("StudioFlow library", async () => (await count("[data-tpi-video-organization]")) || (await count("button")), 10_000))) throw new Error("StudioFlow library did not load.");
+  await waitFor("StudioFlow shell", async () => /StudioFlow|Home|Library|Destinations|Record without going live/i.test(await driver.findElement(By.css("body")).getText()));
   if (!(await count("[data-tpi-video-organization]"))) {
-    await clickButton("Home");
-    await sleep(350);
-    if (await clickButton("Record without going live")) {
-      await sleep(350);
-      await clickButton("Continue to setup");
-      await sleep(700);
-      await clickButton("Enter studio");
-      await sleep(900);
-    }
-    await clickButton("Library");
+    await clickButton("Record without going live");
+    await sleep(400);
+    await clickButton("Continue to setup");
+    await sleep(800);
+    await clickButton("Enter studio");
+    await sleep(1000);
   }
-  await waitFor("organized StudioFlow media controls", async () => (await count("[data-tpi-video-organization]")) === 1 && (await count("[data-tpi-audio-soundboards]")) === 1);
+  try {
+    await waitFor("organized StudioFlow media controls", async () => (await count("[data-tpi-video-organization]")) === 1 && (await count("[data-tpi-audio-soundboards]")) === 1);
+  } catch (error) {
+    const video = await count("[data-tpi-video-organization]");
+    const audio = await count("[data-tpi-audio-soundboards]");
+    throw new Error(`${safe(error)}; video=${video}; audio=${audio}`);
+  }
 }
 async function waitForDownload() {
   return waitFor("portable backup download", async () => {
@@ -130,8 +139,8 @@ try {
   await driver.get(`${base}/member-login.html`);
   check("isolated Firefox login page renders", await count('form[data-member-login]') === 1);
   await js("var form=document.querySelector('form[data-member-login]'), user=form&&form.querySelector('input[name=\"username\"]'), password=form&&form.querySelector('input[name=\"password\"]'); if(!form||!user||!password) return false; user.value=arguments[0]; password.value=arguments[1]; ['input','change'].forEach(function(type){user.dispatchEvent(new Event(type,{bubbles:true}));password.dispatchEvent(new Event(type,{bubbles:true}));}); form.querySelector('button[type=\"submit\"]').click(); return true;", account.username, account.password);
-  await waitFor("authenticated local session", async () => js("return fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok;});"));
-  check("synthetic local_admin authentication succeeds", true);
+  await waitFor("authenticated local session", async () => asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});"));
+  check("synthetic test_admin authentication succeeds", true);
 
   await js("var id=arguments[0], title=arguments[1]; var broadcast={id:id,title:title,description:'Disposable Firefox acceptance studio',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Disposable scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1'));", studioId, studioTitle);
   await enterStudio();
@@ -141,9 +150,9 @@ try {
   check("nine Sound Effects slots render", await count('[data-tpi-audio-board="sound"] .tpi-audio-slot') === 9);
   check("nine Background Music slots render", await count('[data-tpi-audio-board="music"] .tpi-audio-slot') === 9);
 
-  await uploadByDynamicInput('[data-tpi-video-card="0"] [data-tpi-video-action="replace"]', "video/mp4", videoFile);
+  await uploadVideoSlot(0, "video/mp4", videoFile);
   await waitFor("Intro Video persistence", async () => (await text('[data-tpi-video-card="0"] .tpi-video-card-file')).includes("tpi-022-video.mp4"));
-  await uploadByDynamicInput('[data-tpi-video-card="1"] [data-tpi-video-action="replace"]', "video/mp4", videoFile);
+  await uploadVideoSlot(1, "video/mp4", videoFile);
   await waitFor("Outro Video persistence", async () => (await text('[data-tpi-video-card="1"] .tpi-video-card-file')).includes("tpi-022-video.mp4"));
   check("Intro and Outro assignments are independent", await count('[data-tpi-video-card="0"].assigned') === 1 && await count('[data-tpi-video-card="1"].assigned') === 1);
   check("Intro and Outro previews are recognizable or explicitly assigned", await count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] .tpi-video-card-fallback') === 1 && await count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] .tpi-video-card-fallback') === 1);
@@ -163,9 +172,13 @@ try {
   check("soundboards upload and play independently", true);
   await click('[data-tpi-audio-stop="music"]');
 
-  await click('[data-tpi-video-timers] .tpi-video-timer-card:nth-of-type(1) [data-tpi-video-action="start-timer"]');
-  await waitFor("timer start", async () => count('[data-tpi-video-timers] .tpi-video-timer-card.running'));
-  check("existing timer controls start one timer", await count('[data-tpi-video-timers] .tpi-video-timer-card.running') === 1);
+  await click('[data-tpi-video-timers] .tpi-video-timer-card:nth-of-type(1) [data-tpi-video-action="select-timer"]');
+  await waitFor("timer selection", async () => count('[data-tpi-video-timers] .tpi-video-timer-card.selected [data-tpi-video-action="start-timer"]'));
+  await click('[data-tpi-video-timers] .tpi-video-timer-card.selected [data-tpi-video-action="start-timer"]');
+  const timerDiagnostic = () => js("var s=document.querySelector('[data-tpi-timer-status]'); var c=document.querySelector('[data-tpi-video-timers]'); return 'status=' + (s && s.textContent) + ' | selected=' + (c ? c.querySelectorAll('.tpi-video-timer-card.selected').length : 'none') + ' | running=' + (c ? c.querySelectorAll('.tpi-video-timer-card.running').length : 'none') + ' | nativeStart=' + Array.from(document.querySelectorAll('section.asset-section button.background-picker-tile')).some(function(b){return (b.title||'').toLowerCase().indexOf('golden ring countdown')!==-1;}) + ' | presets=' + document.querySelectorAll('.countdown-duration-row button').length;");
+  let timerRunning = false;
+  for (let i = 0; i < 25 && !timerRunning; i++) { timerRunning = (await count('[data-tpi-video-timers] .tpi-video-timer-card.running')) === 1; if (!timerRunning) await sleep(200); }
+  check("existing timer controls start one timer", timerRunning, timerRunning ? "" : await timerDiagnostic());
   await click('[data-tpi-video-timers] .tpi-video-timer-card.running [data-tpi-video-action="stop-timer"]');
 
   await click(".tpi-studio-selector");

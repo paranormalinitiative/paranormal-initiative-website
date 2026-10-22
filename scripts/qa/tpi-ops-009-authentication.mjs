@@ -2,8 +2,11 @@
 
 // Bounded localhost-only authentication verification for TPI-OPS-009.
 // This script never contacts a hosted Worker and never prints credentials.
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { sessionCookieAttributes } from "../../lib/auth.js";
+import { hashPassword } from "../local-credential-reset.mjs";
 
 const base = process.env.TPI_LOCAL_ORIGIN || "http://127.0.0.1:8787";
 const credentialPath = ".local-dev/local-auth-credentials.json";
@@ -12,6 +15,7 @@ if (!/^http:\/\/(127\.0\.0\.1|localhost):8787$/.test(base)) {
 }
 if (!existsSync(credentialPath)) throw new Error("local authentication fixtures are missing; run scripts/local-auth-fixtures.mjs --local-only");
 const credentials = JSON.parse(readFileSync(credentialPath, "utf8"));
+const databasePath = process.env.TPI_LOCAL_D1_SQLITE_PATH || "";
 
 const checks = [];
 function check(name, condition, detail = "") {
@@ -46,6 +50,22 @@ check("forwarded host cannot grant local cookie policy", sessionCookieAttributes
   { TPI_ENV: "local", TPI_LOCAL_ONLY: "1" },
   60
 ).includes("Secure"));
+
+check("synthetic credentials are stored with owner-only permissions", (statSync(credentialPath).mode & 0o777) === 0o600);
+check("development Worker config remains isolated from production", (() => {
+  const config = readFileSync("wrangler.local.toml", "utf8");
+  return config.includes('name = "tpi-local"')
+    && config.includes('database_name = "tpi-local-foundation"')
+    && !config.includes("tpi_contributor_portal_dev")
+    && !config.includes('database_name = "tpi_contributor_portal"');
+})());
+if (databasePath) {
+  const row = execFileSync("sqlite3", [databasePath, "SELECT password_hash || '|' || role || '|' || active FROM contributors WHERE username='local_admin' LIMIT 1;"], { encoding: "utf8" }).trim().split("|");
+  check("persistent local_admin row matches protected credential store", row.length === 3
+    && row[0] === hashPassword(credentials.accounts.local_admin.password)
+    && row[1] === "admin"
+    && row[2] === "1");
+}
 
 function cookieFrom(response) {
   const setCookie = response.headers.get("set-cookie") || "";
@@ -99,6 +119,13 @@ const invalid = await request("/api/auth/login", {
 });
 check("invalid credentials rejected", invalid.response.status === 401);
 
+const wrongAdminPassword = await request("/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ username: credentials.accounts.local_admin.username, password: "invalid-local-admin-password" }),
+});
+check("incorrect administrator password is rejected", wrongAdminPassword.response.status === 401);
+
 const disabled = await request("/api/auth/login", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -119,10 +146,27 @@ check("logout clears loopback cookie", logoutCookie.includes("Max-Age=0") && !lo
 const replay = await request("/api/auth/me", { headers: { Cookie: `tpi_session=${admin.token}` } });
 check("logout invalidates local session", replay.response.status === 200 && replay.body?.user === null);
 
+// The logout checks above invalidate the admin session, so re-authenticate
+// before exercising the protected administrator pages.
+const adminAgain = await login("local_admin");
+const adminRoutes = ["/admin-panel", "/studio/"];
+for (const path of adminRoutes) {
+  const result = await request(path, { headers: { Cookie: `tpi_session=${adminAgain.token}` } });
+  check(`local_admin can access ${path}`, result.response.status === 200 && result.text.length > 0);
+}
+const anonymousAdminRoute = await request("/admin-panel");
+check("anonymous Administration Center remains protected", anonymousAdminRoute.response.status === 403);
+
 const contributorPage = await request("/", { headers: { Cookie: `tpi_session=${contributor.token}` } });
 check("authenticated local root navigation", contributorPage.response.status >= 300 && contributorPage.response.status < 400 && (contributorPage.response.headers.get("location") || "").endsWith("/member-home"));
 const memberHome = await request("/member-home", { headers: { Cookie: `tpi_session=${contributor.token}` } });
 check("authenticated local member home remains available", memberHome.response.status === 200 && memberHome.text.includes("TPI"));
+
+// Verify all synthetic local users can sign out without altering passwords or roles.
+for (const [key, session] of [["local_contributor", contributor], ["local_member", member]]) {
+  const result = await request("/api/auth/logout", { method: "POST", headers: { Cookie: `tpi_session=${session.token}` } });
+  check(`${key} logout succeeds`, result.response.status === 200);
+}
 
 console.log(JSON.stringify({
   status: "PASSED",

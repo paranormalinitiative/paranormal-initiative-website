@@ -19,9 +19,9 @@ check("Nine approved video labels are present", ["Intro Video", "Outro Video", "
 check("Video cards use a 3x3-capable grid", bridge.includes("tpi-video-grid") && css.includes(".tpi-video-grid") && css.includes("repeat(3"));
 check("Video uploads persist in the existing IndexedDB store", bridge.includes('VIDEO_SLOTS_KEY = "studioflow.videoClipSlots"') && bridge.includes("studioflow-recordings") && bridge.includes("recordingBlobs"));
 check("Representative thumbnail generation avoids black opening frames", bridge.includes("thumbnailDataUrl") && bridge.includes("samples = [0.25, 0.5, 0.75, 0.05]") && bridge.includes("average >= 12"));
-check("Assigned-video fallback remains readable", bridge.includes("Assigned video") && bridge.includes("fileName"));
+check("Assigned-video fallback remains readable", bridge.includes("Video assigned · preview unavailable") && bridge.includes("fileName"));
 check("Video Timers are separate and contain six cards", bridge.includes("VIDEO TIMERS") && bridge.includes("TIMER_PRESETS = [10, 20, 30, 60]") && bridge.includes("Custom Timer 1") && bridge.includes("Custom Timer 2"));
-check("Timer state prevents duplicate timers", bridge.includes("stopTimer(); timerSlot = slot; timerEnd"));
+check("Timer state prevents duplicate timers", /function startTimer\(slot, seconds\)[\s\S]*?clearInterval\(timerHandle\)[\s\S]*?setTimerState\(slot, seconds, seconds \* 1000\)/.test(bridge));
 check("Video slot configuration is saved with workspaces", assetState.includes("videoClipSlots") && workspace.includes("videoClipSlots"));
 check("Portable backup collects video slots without duplicate media paths", backup.includes("videoClipSlots") && backup.includes("var result = [], seen = {}") && backup.includes('add("video-clip"'));
 check("My Studios portal is positioned below the status block", workspace.includes("panelRect.bottom + 6") && workspace.includes("PROJECT SAVED"));

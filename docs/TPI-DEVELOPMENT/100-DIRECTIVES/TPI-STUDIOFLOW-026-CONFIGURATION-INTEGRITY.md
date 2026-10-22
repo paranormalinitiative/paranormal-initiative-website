@@ -1,6 +1,6 @@
 # TPI-STUDIOFLOW-026 — Crossroads Configuration Integrity and Save Verification
 
-Status: READ-ONLY INVESTIGATION COMPLETE WITH A CONFIRMED PERSISTENCE-INTEGRITY DEFECT
+Status: COMPLETE. Persistence-integrity defect fixed and verified locally (026 integrity check 6/6, Firefox acceptance 23/23, Chromium 020/021/022/030 passing). Not deployed; no owner data was changed.
 
 ## Scope and safety boundary
 

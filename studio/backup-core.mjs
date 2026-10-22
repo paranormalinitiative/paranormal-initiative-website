@@ -161,6 +161,11 @@ export function normalizeStudioForBackup(studio) {
   const title = text(studio.title || studio.name).trim();
   if (!title) throw new BackupValidationError("Studio title is required.");
   const sourceKind = studio.sourceKind === "local-broadcast" ? "local-broadcast" : "server-workspace";
+  const nestedTitle = text(studio.broadcast?.title).trim();
+  if (nestedTitle && nestedTitle !== title) throw new BackupValidationError("Studio title conflicts with the saved broadcast title.", { studioTitle: title, broadcastTitle: nestedTitle });
+  const nestedId = text(studio.broadcast?.id).trim();
+  const localId = text(studio.localBroadcastId).trim();
+  if (nestedId && localId && nestedId !== localId) throw new BackupValidationError("Studio broadcast identity conflicts with the saved workspace.", { localBroadcastId: localId, broadcastId: nestedId });
   const snapshot = {
     sourceKind,
     studioId,
@@ -171,7 +176,7 @@ export function normalizeStudioForBackup(studio) {
     description: text(studio.description),
     configurationVersion: Number.isInteger(studio.version) ? studio.version : null,
     applicationVersion: text(studio.applicationVersion) || null,
-    broadcast: isObject(studio.broadcast) ? clone(studio.broadcast) : null,
+    broadcast: isObject(studio.broadcast) ? { ...clone(studio.broadcast), title: nestedTitle || title } : null,
     settings: isObject(studio.settings) ? clone(studio.settings) : null,
     recording: isObject(studio.recording) ? clone(studio.recording) : null,
     configuration: sanitizeConfiguration(studio.configuration || {}),
