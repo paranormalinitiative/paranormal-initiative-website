@@ -34,9 +34,22 @@ function focusIsolatedFirefoxWindow() {
   const script = `tell application "Firefox Developer Edition" to activate
 tell application "System Events"
   tell process "Firefox Developer Edition"
-    repeat with candidate in windows
+    set frontmost to true
+    set windowCount to count of windows
+    repeat with windowIndex from windowCount to 1 by -1
+      set candidate to window windowIndex
       try
-        if (name of candidate contains "TPI ISOLATED LIVE ACCEPTANCE") then perform action "AXRaise" of candidate
+        set candidateName to name of candidate as text
+        -- Firefox may expose a newly launched Selenium window as a blank,
+        -- zero-sized native window before it receives its document title.
+        -- The newest window is the disposable acceptance window in that
+        -- case; size and raise it explicitly so it is visible to the owner.
+        if candidateName contains "TPI ISOLATED LIVE ACCEPTANCE" or windowIndex = windowCount then
+          set position of candidate to {80, 80}
+          set size of candidate to {1280, 1000}
+          perform action "AXRaise" of candidate
+          exit repeat
+        end if
       end try
     end repeat
   end tell
@@ -70,6 +83,9 @@ const studioTitle = `Firefox Acceptance ${Date.now()}`;
 const options = new firefox.Options()
   .setBinary(firefoxBinary)
   .setProfile(profile)
+  // Prevent an already-running Firefox Developer Edition session from
+  // absorbing this disposable profile into an invisible secondary window.
+  .addArguments("-no-remote", "-new-instance")
   .setPreference("browser.download.folderList", 2)
   .setPreference("browser.download.dir", downloads)
   .setPreference("browser.download.useDownloadDir", true)
@@ -187,8 +203,26 @@ try {
   await driver.get(`${base}/member-login.html`);
   check("isolated Firefox login page renders", await count('form[data-member-login]') === 1);
   if (manualLogin) {
+    // Some macOS Firefox/Selenium combinations expose the Marionette window
+    // as a zero-sized native window. Open a regular, explicitly sized popup
+    // inside the same disposable profile and attach the test to that window
+    // so the owner can always see the login form.
+    const initialHandles = await driver.getAllWindowHandles();
+    await js("window.open(location.href, 'tpi-live-acceptance-login', 'popup=yes,width=1280,height=1000,left=80,top=80');");
+    await sleep(750);
+    const popupHandles = await driver.getAllWindowHandles();
+    if (popupHandles.length > initialHandles.length) {
+      await driver.switchTo().window(popupHandles[popupHandles.length - 1]);
+      await waitFor("isolated login popup", async () => await count('form[data-member-login]') === 1, 30_000);
+      await driver.manage().window().setRect({ width: 1280, height: 1000, x: 80, y: 80 });
+    }
     await js("document.title = 'TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE';");
+    // Firefox can finish creating the native window shortly after the
+    // document title changes. Raise it more than once so the owner sees the
+    // disposable login window even when another Firefox window was focused.
     focusIsolatedFirefoxWindow();
+    setTimeout(focusIsolatedFirefoxWindow, 500);
+    setTimeout(focusIsolatedFirefoxWindow, 1500);
     console.log(`ACTION REQUIRED: Sign in only in the Firefox window titled \"TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE\". This is a disposable profile (${profile}); other Firefox windows cannot satisfy this acceptance. Acceptance continues automatically after authentication.`);
     // Observe browser-local navigation/DOM state while the owner signs in.
     // Do not poll the production Worker: a prior 200 ms auth loop consumed
