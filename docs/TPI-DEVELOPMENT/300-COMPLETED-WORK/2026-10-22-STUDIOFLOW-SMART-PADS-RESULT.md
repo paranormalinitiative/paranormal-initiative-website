@@ -43,10 +43,24 @@ Directive: [TPI-STUDIOFLOW-017 SMART Pads](../100-DIRECTIVES/TPI-STUDIOFLOW-017-
 - Release-safety checks: 15/15 passed.
 - `git diff --check`: passed.
 
-## Not yet claimed
+## Deployment and live verification
 
-Firefox live acceptance, Chromium folder-selection acceptance, full API E2E,
-guarded production dry-run, deployment, and live production acceptance remain
-release gates. This record must be updated after those checks rather than
-treated as production verification.
+- Commit `5f32c07b48003736d6814138d00809678948a34c` deployed the SMART Pad
+  release package through the guarded Wrangler process.
+- Hydration correction commit `c8bd536bc8f5eb2b26ef07e9f1281e59f25151f4` was
+  pushed and deployed through the same guard.
+- Active Worker: `115a9bd2-e462-407f-8ca7-47736ef07fe4`.
+- Production smoke: 10/10 passed.
+- Firefox Developer Edition live reload confirmed scene music selectors and
+  “Start after Intro” controls on Intro and demo scenes.
+- Crossroads remained untouched; no owner media was played, replaced, or
+  reassigned.
+
+## Remaining acceptance boundary
+
+The complete isolated API E2E suite passed. A disposable authenticated browser
+test with synthetic audio remains unperformed because the available Firefox
+session is the owner's protected Crossroads session and the automated Chromium
+launcher is blocked by the host (`SIGABRT`/`EPERM`). This is an acceptance
+limitation, not a reported application failure.
 

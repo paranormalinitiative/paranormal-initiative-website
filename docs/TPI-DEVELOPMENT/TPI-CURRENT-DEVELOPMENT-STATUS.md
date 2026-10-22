@@ -954,8 +954,10 @@ program audio bus so they can be heard in the live stage/program path; music
 uses the existing background-music path and loop setting. Pad names and colors
 persist with each studio, MP3 title metadata is used when available, and scene
 cards can assign music with an optional Start after Intro handoff. Focused
-build, bridge, media, release-safety, and diff checks pass. Browser acceptance,
-full E2E, guarded deployment, and live production verification remain open.
+build, isolated E2E, bridge, media, release-safety, production smoke, guarded
+deployment, and Firefox live scene-control checks passed. Worker
+`115a9bd2-e462-407f-8ca7-47736ef07fe4` is active. Disposable authenticated audio
+playback was not exercised against protected Crossroads media.
 See the [SMART Pads implementation record](300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-SMART-PADS-RESULT.md).
 
 ## TPI-STUDIOFLOW-019 intro/outro full-stage video rendering
