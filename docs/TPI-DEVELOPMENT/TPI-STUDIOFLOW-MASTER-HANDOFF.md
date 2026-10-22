@@ -1,5 +1,12 @@
 # TPI StudioFlow Master Handoff
 
+> **Current authority:**
+> `100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md` supersedes any
+> interpretation of historical task limits as permanent restrictions. Agents
+> may complete current StudioFlow directives through repair, testing, commit,
+> push, guarded deployment, Firefox Developer Edition live verification, and
+> rollback. Historical status and evidence below remain preserved.
+
 ## Purpose
 
 This document is the current operational handoff for reconciling the
@@ -24,7 +31,7 @@ relevant files reached the live Worker. It is marked `VERIFIED` only when the
 behavior was observed or tested. A local test or a historical report is not
 treated as proof of current live behavior.
 
-Last updated: 2026-10-20
+Last updated: 2026-10-22
 
 ## Current executive status
 

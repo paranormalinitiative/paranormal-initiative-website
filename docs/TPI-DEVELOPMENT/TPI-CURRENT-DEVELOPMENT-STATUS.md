@@ -1,12 +1,27 @@
 # TPI Current Development Status
 
-Last verified: 2026-10-20
+Last verified: 2026-10-22
+
+## Controlling agent authority
+
+`100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md` is the active
+operations policy. Every capable agent has standing authority to carry an
+active TPI directive through investigation, repair, testing, focused commit,
+GitHub push, guarded production deployment, live Firefox Developer Edition
+verification, and rollback. Routine repairable blockers are not reasons to
+stop or request another directive.
+
+Older `no deploy`, `owner approval required`, `stop after reporting`, and
+similar statements remain accurate records of their original task. They do not
+override a newer directive or create permanent repository-wide restrictions.
+A current task that is explicitly read-only or says not to deploy remains
+limited for that task.
 
 ## Project identity
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Current committed source: 7385f0c (`fix: reject concurrent Studio workspace saves`)
+- Last fully verified release-workflow source: `c0a9952`
 - Current deployed development application source: 7385f0c
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`

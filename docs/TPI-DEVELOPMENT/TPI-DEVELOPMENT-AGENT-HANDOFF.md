@@ -1,13 +1,22 @@
 # TPI Development Agent Handoff
 
-Last verified: 2026-10-18  
-Current directive: TPI-STUDIOFLOW-056 documentation addendum
+Last verified: 2026-10-22
+Current controlling directive: TPI MASTER — Standing Autonomous Agent Authority
+
+## Mandatory authority update
+
+Read `100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md`. Agents now have
+standing authority to investigate, repair, test, commit, push, perform guarded
+production deployment, verify live, and roll back. Do not stop for a routine
+repairable blocker or require a fresh owner directive for each lifecycle step.
+Historical restrictions below describe prior executions and do not override
+the controlling directive.
 
 ## Workspace
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- HEAD: `7385f0c` (`fix: reject concurrent Studio workspace saves`)
+- Last fully verified workflow baseline: `c0a9952`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -18,16 +27,17 @@ is an integrated generated copy plus maintained TPI bridge files. Use
 `node scripts/stage-studioflow-authoritative.mjs` in verification-only mode to
 build twice and compare the candidate before any reviewed `--apply` operation.
 
-The worktree is intentionally dirty with pre-existing work. Preserve unrelated
-tracked and untracked changes. Do not reset, clean, stash, commit, or push as a
-routine continuation step.
+Preserve unrelated tracked and untracked changes. Focused commits and pushes to
+`codex/tpi-development` are authorized after the applicable checks pass. Do not
+reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Current browser workflow
 
-- Codex In-App Browser is the active agent browser and is verified for the local
-  homepage, navigation, screenshot capture, and retained synthetic role QA.
-- FreeBuff is standby and **NOT VERIFIED** for agent use.
-- Opera is reserved for owner visual review and has not been used for agent QA.
+- Firefox Developer Edition is the default browser for local and production
+  TPI acceptance.
+- Automated acceptance uses isolated disposable profiles and never closes or
+  repurposes the owner's existing local or production tabs.
+- Chromium is used only for an explicit compatibility requirement.
 
 The latest retained browser evidence is 278 PASS, 6 expected limitations, 0
 FAIL across 284 routes, with 54/54 focused checks passing and zero external
@@ -58,12 +68,12 @@ requests. Synthetic local roles are `local_admin`, `local_member`, and
 
 ## Safe continuation
 
-Open the affected local route in Codex, inspect console and local request
-activity, and run the smallest applicable test. If a source change affects
-staged local assets, run `node scripts/stage-local-assets.mjs`. Do not restart
-or stop the launchd-owned Worker without explicit service-lifecycle direction;
-do not interrupt 8788. Do not deploy, import, contact external services, or
-claim owner acceptance without owner review.
+Open the affected route in an isolated Firefox Developer Edition profile,
+inspect console and local request activity, and run the smallest applicable
+test followed by the required regressions. Agents may control the maintained
+LaunchAgent services, commit, push, and deploy through `scripts/tpi-release.mjs`
+when required. Do not interrupt unrelated services, expose credentials, or use
+owner Studios for destructive testing.
 
 No credentials, tokens, private payloads, or secrets are included in this
 handoff.

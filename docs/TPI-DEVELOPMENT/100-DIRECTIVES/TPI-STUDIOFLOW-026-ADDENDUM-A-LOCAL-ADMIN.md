@@ -2,6 +2,11 @@
 
 Status: IMPLEMENTED AND LOCALLY VERIFIED on 2026-10-22.
 
+Operational authority for future repair, commit, push, deployment, live
+verification, and rollback is provided by
+`TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md`. No additional directive is needed
+to execute the maintained workflow after a repair passes its safety gates.
+
 ## Root cause
 
 The persistent D1 `local_admin` row and the protected mode-0600 credential

@@ -14,7 +14,7 @@
     DEVELOPMENT ACCEPTANCE
             |
             v
-    OWNER APPROVAL
+    STANDING OWNER AUTHORITY
             |
             v
     PRODUCTION DEPLOYMENT
@@ -22,7 +22,11 @@
             v
     PRODUCTION VERIFICATION
 
-Production promotion requires explicit owner authorization for the specific release. TPI-DEV-001 does not authorize a production deployment.
+Production promotion is authorized under
+`100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md` when the active
+directive calls for production completion and every maintained safety gate
+passes. A separate approval message for each ordinary release is no longer
+required.
 
 ## Official approval workflow
 
@@ -31,11 +35,15 @@ Production promotion requires explicit owner authorization for the specific rele
 3. Create a recoverable checkpoint before substantial work.
 4. Run local tests and build checks.
 5. Deploy only to the isolated development Worker after its separate D1, R2, authentication, and scheduling boundaries are verified.
-6. Todd reviews the actual development website and either approves or rejects the change.
-7. Only approved changes may be merged into `main`.
-8. Production deployment requires separate explicit authorization and live verification.
+6. Complete isolated Firefox Developer Edition acceptance and record evidence.
+7. Commit and push the verified release to `codex/tpi-development`.
+8. Continue through guarded production deployment and live verification when
+   the active directive requires production completion.
 
-The development branch `codex/tpi-development` and development Worker `theparanormalinitiative-dev` are now operational for preview testing. Production promotion still requires separate explicit owner authorization.
+The development branch `codex/tpi-development` is the maintained release
+source. Production promotion uses the standing authority and the guarded
+release command below; it must not be performed from an uncommitted overlay or
+an older branch.
 
 ## Current production guardrails
 
@@ -101,7 +109,11 @@ Record the pre-release Git commit and Cloudflare deployment version, retain the 
 - Failed development deployment: keep the prior verified deployment, inspect the deployment output, and roll back only the development target.
 - Production rollback: use the recorded prior verified deployment or a reviewed revert commit. A code rollback does not roll back D1 or R2 data; state recovery requires a separately reviewed procedure.
 
-Todd should not need to operate Git to approve or reject a change: review the development URL and report the page or workflow result. A developer must preserve the evidence and perform any targeted recovery.
+Todd should not need to operate Git, Wrangler, or Cloudflare for an ordinary
+release. The agent owns implementation, evidence, deployment, verification,
+and targeted recovery. Owner interaction is reserved for private login,
+operating-system permission, unavailable account authorization, or an
+irreversible owner-data operation.
 
 ## Current preview destination
 

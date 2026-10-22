@@ -5,8 +5,14 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+Current operational authority is
+[`TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md`](TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md).
+It grants standing full-lifecycle authority and defines how historical scope
+limits interact with later directives.
+
 | Directive | Title / feature | Status | Evidence or dependency |
 | --- | --- | --- | --- |
+| TPI-MASTER-AUTONOMOUS | Standing autonomous agent authority | ACTIVE / CONTROLLING | Agents may investigate, repair, test, commit, push, perform guarded production deployment, verify live in Firefox Developer Edition, and roll back without obtaining a new directive for each ordinary lifecycle step. Irreversible owner-data operations and security bypasses remain separately controlled. |
 | TPI-DEV-001 | Development environment standardization | BLOCKED / NON-PRODUCTION | Separate development Worker/D1/R2/auth resources are not present; production was not changed. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/TPI-MASTER-001A-PROGRESS-2026-10-20.md`. |
 | TPI-MASTER-001 | Chronological production implementation register | BLOCKED — AUTHENTICATED PRODUCTION ACCEPTANCE REQUIRED | The selector repair and TPI-DEV-010 login repair are deployed; live Chrome renders Acceptance Test B and the editor controls, but production save/switch/refresh/media/guest acceptance cannot be claimed while reliable authenticated selector control is unavailable. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/TPI-MASTER-001C-RESULT.md`. |
 | TPI-DEV-002 | Cloudflare development/production separation audit and migration plan | SUPERSEDED / BLOCKED FOR EXECUTION | Read-only topology audit and plan remain preserved; the current mission targets the existing production Worker and does not authorize a development infrastructure migration. |

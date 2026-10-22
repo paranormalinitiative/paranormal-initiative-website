@@ -4,15 +4,16 @@ This directory is the authoritative index for The Paranormal Initiative developm
 
 ## Read first
 
-1. [Developer onboarding — READ BEFORE MODIFYING TPI](010-DEVELOPER-ONBOARDING.md)
-2. [Project overview](000-PROJECT-OVERVIEW.md)
-3. [Local development](003-LOCAL-DEVELOPMENT.md)
-4. [Cloudflare development](004-CLOUDFLARE-DEVELOPMENT.md)
-5. [Production deployment and approval](005-PRODUCTION-DEPLOYMENT.md)
-6. [Security and permissions](007-SECURITY-AND-PERMISSIONS.md)
-7. [Administration Center](008-ADMINISTRATION-CENTER.md)
-8. [Testing and verification](009-TESTING-AND-VERIFICATION.md)
-9. [Directive index](100-DIRECTIVES/DIRECTIVE-INDEX.md)
+1. [Standing autonomous agent authority](100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md)
+2. [Developer onboarding — READ BEFORE MODIFYING TPI](010-DEVELOPER-ONBOARDING.md)
+3. [Project overview](000-PROJECT-OVERVIEW.md)
+4. [Local development](003-LOCAL-DEVELOPMENT.md)
+5. [Cloudflare development](004-CLOUDFLARE-DEVELOPMENT.md)
+6. [Production deployment and approval](005-PRODUCTION-DEPLOYMENT.md)
+7. [Security and permissions](007-SECURITY-AND-PERMISSIONS.md)
+8. [Administration Center](008-ADMINISTRATION-CENTER.md)
+9. [Testing and verification](009-TESTING-AND-VERIFICATION.md)
+10. [Directive index](100-DIRECTIVES/DIRECTIVE-INDEX.md)
 
 ## Official locations
 
@@ -42,6 +43,12 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-## Approval gate
+## Standing release authority
 
-The operational workflow is local development, local tests, isolated development deployment, Todd review, explicit approval, merge to `main`, and separately authorized production deployment. TPI-DEV-005 created only development resources and did not merge to `main` or deploy production.
+The operational workflow is local development, isolated tests, Firefox
+Developer Edition acceptance, focused commit and GitHub push, guarded Wrangler
+preflight, production deployment, live verification, and rollback on critical
+failure. The owner has granted standing authority for this lifecycle when an
+active directive calls for production completion. Historical records that say
+an older execution was not authorized remain accurate for that execution but
+do not impose a permanent release prohibition.
