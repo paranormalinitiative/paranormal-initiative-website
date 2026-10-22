@@ -53,4 +53,16 @@ unchanged.
 - Owner browser profile/Crossroads: not accessed
 - Production data/D1/R2: not modified by the repair
 
-The repair is ready for the normal guarded preflight and deployment workflow.
+## Production release
+
+- Source commit: `3ea4f3b89e57a36bfda36cbe8d4f87701c8f06a8`
+- Worker version: `08437189-267b-4d11-8bb1-4ba74e2f09d5`
+- Previous rollback version: `b83a222e-fd55-4dd8-935c-9b397736ee10`
+- Anonymous production smoke: 10/10 PASS
+- Live isolated Firefox acceptance: 22/22 PASS
+- Final synthetic live recovery click: PASS; the temporary recovery prompt
+  closed after the synthetic chunk was saved, in approximately 574 ms
+
+The repair is deployed and verified. The owner's existing recovery checkpoint
+was not inspected or modified; it remains available for retry after refreshing
+the live StudioFlow page.
