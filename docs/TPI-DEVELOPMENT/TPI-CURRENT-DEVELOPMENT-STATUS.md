@@ -17,6 +17,16 @@ Last verified: 2026-10-20
 The development and production deployment records report the verified branch
 and application source commit above.
 
+## Release traceability (TPI-OPS-030)
+
+| Directive | Git commit | Branch | Cloudflare Worker version | Production verification |
+| --- | --- | --- | --- | --- |
+| TPI-STUDIOFLOW-026 to 029 release (isolated E2E harness, synthetic admin seed, configuration integrity, studio bridge fixes) | `db7e1c5` | `codex/tpi-development` (pushed; local and remote match) | `7c5ea692-e2e9-41f1-9b34-651230e03997` at 100%, deployed 2026-10-22 05:43 UTC | Read-only HTTP only: `/` and `/api/auth/me` return 200 on the Worker host and `paranormalinitiative.com`; `/studio/` returns 403 Coming Soon page. Browser and authenticated production acceptance not yet run. |
+
+Rollback target: `530d6f93`, the previous production version. Roll back with `wrangler rollback 530d6f93` only if live verification fails.
+
+Isolated release-gate results for this release were run against the local isolated Worker on 127.0.0.1:8789, not production: API E2E 225/225, Firefox acceptance 23/23, Chromium 021 17/17, Chromium 022 16/16, backup and restore 13/13, configuration integrity 6/6.
+
 TPI-MASTER-001C is active under the mandatory completion policy. The current production-facing repair is the deployed
 My Studios dropdown clipping correction recorded in
 `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/TPI-MASTER-001-RESULT.md`. No
