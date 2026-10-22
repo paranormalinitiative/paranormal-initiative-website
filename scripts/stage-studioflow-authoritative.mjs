@@ -46,10 +46,10 @@ const maintainedBridgeFiles = [
 const bridgeTags = [
   '<script src="/studio/workspace-asset-state-bridge.js?tpi080=scene-normalization-v2" defer></script>',
   '<script src="/studio/production-lock-bridge.js" defer></script>',
-  '<script src="/studio/workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1" defer></script>',
+  '<script src="/studio/workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1" defer></script>',
   '<script src="/studio/brand-heading-bridge.js?tpi074=legacy-brand-suppression-v1&tpi085=freeze-repair-v1" defer></script>',
   '<script src="/studio/video-playback-reset-bridge.js?tpi020=stale-canvas-v1" defer></script>',
-  '<script src="/studio/backup-bridge.js?tpi032=restore-v2-local-broadcast" defer></script>'
+  '<script src="/studio/backup-bridge.js?tpi032=restore-v2-local-broadcast&tpi-portable-media=v1" defer></script>'
 ];
 
 function assertExists(target, label) {
@@ -185,10 +185,10 @@ function createIntegratedCandidate(generatedRoot) {
   if (stagedIndex.includes("index-j2x9m9vI.js") || stagedIndex.includes("index-DXjilBOR.css")) {
     throw new Error("Integrated entry point still references obsolete website bundle assets");
   }
-  if (!stagedIndex.includes("workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1")) {
+  if (!stagedIndex.includes("workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1")) {
     throw new Error("Integrated entry point is missing the workspace bridge");
   }
-  if (!stagedIndex.includes("backup-bridge.js?tpi032=restore-v2-local-broadcast")) {
+  if (!stagedIndex.includes("backup-bridge.js?tpi032=restore-v2-local-broadcast&tpi-portable-media=v1")) {
     throw new Error("Integrated entry point is missing the backup bridge");
   }
 

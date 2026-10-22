@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const bridge = readFileSync("studio/workspace-bridge.js", "utf8");
+const backup = readFileSync("studio/backup-bridge.js", "utf8");
 const css = readFileSync("studio/studioflow-012-overrides.css", "utf8");
 const checks = [];
 const check = (name, fn) => {
@@ -13,20 +14,27 @@ const check = (name, fn) => {
   }
 };
 
-check("complete backup requires a supported folder destination", () => {
+check("complete backup preserves the verified folder destination path", () => {
   assert.match(bridge, /capabilities\.automaticFolderBackup/);
   assert.match(bridge, /currentSettings\.destinationName/);
+  assert.match(bridge, /backup\.backupNow\(\{ force: true \}\)/);
 });
-check("unsupported browsers receive an explicit fallback message", () => {
-  assert.match(bridge, /Complete media backup requires a supported browser folder destination/);
-  assert.match(bridge, /Use Export Project for a browser download/);
+check("unsupported folder browsers receive a media-inclusive download fallback", () => {
+  assert.match(bridge, /backup\.portableBackupNow\(\)/);
+  assert.match(backup, /backupType: "complete-portable-studio"/);
+  assert.match(backup, /Download Complete Backup/);
+  assert.match(backup, /media: collected\.includedMedia\.map/);
 });
-check("missing destination does not claim a backup failure", () => {
-  const start = bridge.indexOf("function backupCompleteProject");
-  const end = bridge.indexOf("function confirmPortableBackup", start);
-  const section = bridge.slice(start, end);
-  const prerequisite = section.slice(section.indexOf("if (!capabilities.automaticFolderBackup"), section.indexOf("backup.backupNow"));
-  assert.doesNotMatch(prerequisite, /BACKUP FAILED/);
+check("portable download is verified before it is offered", () => {
+  assert.match(backup, /verifyPortableArchive\(archive\)\.then/);
+  assert.match(backup, /Portable backup media failed integrity verification/);
+  assert.match(bridge, /BACKUP PREPARED — CONFIRM FILE SAVED/);
+});
+check("portable restore creates a new Studio and rolls media back on failure", () => {
+  assert.match(backup, /Restore Backup File/);
+  assert.match(backup, /restorePortableFile/);
+  assert.match(backup, /restorePackageAsNew/);
+  assert.match(backup, /Promise\.all\(writtenKeys\.map\(deleteBlob\)\)/);
 });
 check("My Studios menu has readable responsive styling", () => {
   [".tpi-my-studios-panel", ".tpi-studio-selector", ".tpi-studio-menu", ".tpi-studio-status", "overflow-wrap: anywhere", ".tpi-studio-menu[hidden]", "@media (max-width: 520px)"].forEach((token) => assert.match(css, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))));
