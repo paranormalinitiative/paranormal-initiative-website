@@ -94,8 +94,12 @@ Use the URL printed by Vite. Build with npm run build; preview the build with np
 
 Run `git diff --check`, review only the intended files, run the relevant tests,
 and preserve unrelated dirty files. Push only to the approved repository and
-verified development branch. When the current directive requires production,
-continue with `npm run release:production` under the standing authority.
+verified development branch. Then follow the exact sequence in
+`TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`: run
+`npm run verify:local-auth-lifecycle`, run `npm run release:preflight`, and only
+after it reports `READY` run
+`TPI_PRODUCTION_DEPLOY=approved npm run release:production`. Never invoke the
+production Wrangler deployment directly or omit the preflight.
 
 ## Always-protected operations
 

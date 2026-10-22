@@ -25,6 +25,69 @@ manually copy an old bundle, or skip Firefox Developer Edition acceptance.
 Use `127.0.0.1` consistently for authenticated local work. Do not alternate
 between it and `localhost` while diagnosing cookies.
 
+## Exact copy-and-paste release sequence
+
+This is the single maintained local-development-to-production procedure. An
+agent must run it from the canonical checkout in this order; do not substitute
+an improvised Wrangler command or deploy a generated folder directly.
+
+```sh
+cd /Users/toddknipple/Documents/GitHub/paranormal-initiative-website
+
+# 1. Prove the intended clean Git source is checked out and pushed.
+git branch --show-current
+git status --short --untracked-files=all
+git rev-parse HEAD
+git fetch origin codex/tpi-development
+git rev-list --left-right --count HEAD...origin/codex/tpi-development
+
+# 2. Prove permanent local development authentication survives a managed
+#    Worker restart and a StudioFlow source build.
+npm run verify:local-auth-lifecycle
+
+# 3. Run the complete clean-tree, GitHub-parity, isolated D1/R2, 225-API-E2E,
+#    Firefox, reproducible-build, Cloudflare, rollback, and dry-run gates.
+npm run release:preflight
+
+# 4. Only after preflight prints READY, deploy that exact commit. This repeats
+#    every gate, records the active version, deploys, verifies live, and rolls
+#    back automatically if critical acceptance fails.
+TPI_PRODUCTION_DEPLOY=approved npm run release:production
+
+# 5. After DEPLOYED_AND_VERIFIED, prove the tree and GitHub remain identical.
+git status --short --untracked-files=all
+git rev-parse HEAD
+git rev-parse origin/codex/tpi-development
+```
+
+Expected Git requirements are: branch `codex/tpi-development`, empty status,
+divergence `0 0`, and matching local/remote hashes. `release:preflight` must
+finish with `READY`. `release:production` must finish with
+`DEPLOYED_AND_VERIFIED`; any other result is not a completed release.
+
+The production command opens a new isolated Firefox Developer Edition profile.
+If it requests a production sign-in, the owner signs into that isolated window
+with a real production account. The agent must not use local credentials on
+production and must not close or reuse the owner's existing local or live tabs.
+The acceptance runner waits on browser-local state while sign-in is pending and
+performs only one final authentication confirmation.
+
+The Cloudflare Workers Paid plan is active as of 2026-10-22. That removes the
+Free-plan daily request cutoff, but it does not authorize wasteful polling.
+The request-budget regression remains mandatory, and StudioFlow room polling
+must remain non-overlapping and visibility-aware.
+
+The maintained preflight stages `.local-dev/assets` before restarting the local
+Worker. Do not reverse this order: replacing the watched asset directory after
+Wrangler starts can leave HTML and the local asset manifest out of sync, which
+renders a blank StudioFlow shell. If an isolated Firefox run still receives a
+completely empty document during a transient local reload, the maintained
+runner retries that one navigation once. It does not retry a rendered
+application error and does not weaken any functional assertion. If the second
+navigation fails, the release stops before deployment. Confirm
+`npm run dev:local:status`, repair the local runtime, and rerun the complete
+preflight rather than bypassing Firefox.
+
 ## 1. Enter and inspect the repository
 
 ```sh

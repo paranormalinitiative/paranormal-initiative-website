@@ -11,6 +11,7 @@ const agents = read("AGENTS.md");
 const packageSource = read("package.json");
 const studioflowStage = read("scripts/stage-studioflow-authoritative.mjs");
 const qaRunner = read("scripts/qa/run-qa.mjs");
+const firefoxAcceptance = read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs");
 
 const checks = [];
 function check(name, assertion) {
@@ -38,6 +39,12 @@ check("runbook requires commit, push, preflight and guarded deployment", () => {
 check("release preflight includes the full local_admin lifecycle", () => {
   assert.match(release, /await verifyAuthLifecycle\(\)/);
 });
+check("local assets are staged before the managed Worker lifecycle", () => {
+  const stage = release.indexOf('run("Stage local assets"');
+  const lifecycle = release.indexOf("await verifyAuthLifecycle()");
+  assert.ok(stage >= 0 && lifecycle > stage);
+  assert.equal(release.indexOf('run("Stage local assets"', stage + 1), -1);
+});
 check("release rechecks exact Git state after staging and verification", () => {
   assert.match(release, /const finalSourceCommit = assertGitReleaseState\(\)/);
 });
@@ -54,9 +61,13 @@ check("deployment package excludes Markdown documentation", () => {
   assert.ok(deployGuard.includes('endsWith(".md")'));
 });
 check("production Firefox login waits locally and confirms auth once", () => {
-  assert.match(read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs"), /waitForManualLoginTransition/);
-  assert.match(read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs"), /await authenticatedSession\(\)/);
-  assert.doesNotMatch(read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs"), /waitFor\(\"authenticated isolated session\"/);
+  assert.match(firefoxAcceptance, /waitForManualLoginTransition/);
+  assert.match(firefoxAcceptance, /await authenticatedSession\(\)/);
+  assert.doesNotMatch(firefoxAcceptance, /waitFor\(\"authenticated isolated session\"/);
+});
+check("Firefox acceptance retries only a transient empty StudioFlow shell", () => {
+  assert.match(firefoxAcceptance, /for \(let attempt = 1; attempt <= 2; attempt \+= 1\)/);
+  assert.match(firefoxAcceptance, /if \(body\.trim\(\) \|\| attempt === 2\) throw error/);
 });
 check("StudioFlow staging preserves maintained media bridges", () => {
   assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v1/);

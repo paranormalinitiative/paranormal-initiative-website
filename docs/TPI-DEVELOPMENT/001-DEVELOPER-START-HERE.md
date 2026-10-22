@@ -28,9 +28,13 @@ become permanent restrictions on later work.
 
 ## Safe workflow
 
-Use the sequence in `005-PRODUCTION-DEPLOYMENT.md`. Standing owner authority now
-covers ordinary verified production releases, so agents continue through the
-guarded release when the active directive requires production completion.
+Use the exact copy-and-paste sequence in
+`TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`. It is the only maintained production
+path and includes local authentication, complete isolated E2E, Firefox
+Developer Edition, clean Git/GitHub parity, guarded Wrangler deployment, live
+verification, and automatic rollback. Standing owner authority covers ordinary
+verified production releases, so agents continue through that guard when the
+active directive requires production completion.
 
 ## Evidence rules
 

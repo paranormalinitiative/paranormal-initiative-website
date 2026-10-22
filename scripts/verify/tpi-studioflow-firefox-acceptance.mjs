@@ -110,8 +110,21 @@ async function uploadVideoSlot(index, acceptToken, path) {
   return uploadByDynamicInput(`${card} [data-tpi-video-action="replace"]`, acceptToken, path);
 }
 async function enterStudio() {
-  await driver.get(`${base}/studio/`);
-  await waitFor("StudioFlow shell", async () => /StudioFlow|Home|Library|Destinations|Record without going live/i.test(await driver.findElement(By.css("body")).getText()));
+  let shellError;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    await driver.get(`${base}/studio/`);
+    try {
+      await waitFor("StudioFlow shell", async () => /StudioFlow|Home|Library|Destinations|Record without going live/i.test(await driver.findElement(By.css("body")).getText()));
+      shellError = null;
+      break;
+    } catch (error) {
+      const body = await driver.findElement(By.css("body")).getText().catch(() => "");
+      if (body.trim() || attempt === 2) throw error;
+      shellError = error;
+      await sleep(1_000);
+    }
+  }
+  if (shellError) throw shellError;
   if (!(await count("[data-tpi-video-organization]"))) {
     await clickButton("Record without going live");
     await sleep(400);

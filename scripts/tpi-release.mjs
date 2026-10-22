@@ -128,10 +128,13 @@ async function verifyAuthLifecycle() {
 async function preflight() {
   const sourceCommit = assertGitReleaseState();
   run("Release workflow safety contract", process.execPath, ["scripts/verify/tpi-release-safety.mjs"]);
+  // Build the complete local asset tree before restarting Wrangler. Replacing
+  // the watched directory after startup can leave Miniflare serving the new
+  // HTML with an old asset manifest, which presents as a blank StudioFlow page.
+  run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"]);
   await verifyAuthLifecycle();
   const adminBefore = localAdminFingerprint();
   run("Persistent development authentication", process.execPath, ["scripts/qa/tpi-ops-009-authentication.mjs"]);
-  run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"]);
   startIsolatedE2E();
   try {
     await waitFor("http://127.0.0.1:8789/api/community/categories");
