@@ -9,24 +9,26 @@ older incident records in this document remain valuable provenance, but they
 must not be interpreted as the active production state.
 
 - Release branch: `codex/tpi-development`
-- Source commit: `3ed53c8805d1ff338ab86e7e9c59ad4f1f420d94`
+- Source commit: `5ffe238b9a88023f6feabb27f0a30ef9e0bd6e52`
 - Worker: `theparanormalinitiative`
-- Active production Worker version: `b41a8582-4558-4391-bf37-188049125853` at 100%
+- Active production Worker version: `68dc36ac-a3bf-47c6-b1b0-8500abd3ffa1` at 100%
 - Deployment date: `2026-10-22`
-- Immediate rollback reference: `f6b87433-5b35-466b-b536-b6ef1ec7fa2e`
+- Immediate rollback reference: `b41a8582-4558-4391-bf37-188049125853`
 - Anonymous live smoke: PASS, 10/10
 - Video Clips focused checks: PASS, 13/13
-- Media organization focused checks: PASS, 21/21
+- Media organization focused checks: PASS, 22/22
 - Release safety checks: PASS, 15/15
 - Authoritative StudioFlow build: PASS, reproducible twice
 - Guarded Wrangler dry-run: PASS
 - Intro/Outro card behavior: PASS — assigned cards are display-only, omit card
   Preview, have no fullscreen controls, and defer playback to the left-side
-  Intro/Outro scene cards; general Video Clips remain stage-playable.
+  Intro/Outro scene cards; visible thumbnails or control-free stored-video
+  previews confirm that a clip is loaded; general Video Clips remain
+  stage-playable.
 - Protected resources: Crossroads of the Unknown untouched; no D1 migration, R2
   mutation, or owner-browser storage access
 - Current StudioFlow release record:
-  `300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-INTRO-OUTRO-CARD-FIX-RESULT.md`
+  `300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-INTRO-OUTRO-PREVIEW-RESULT.md`
 - Workflow repair: the acceptance runner now labels and foregrounds the exact
   disposable Firefox window `TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE` and
   rejects other Firefox windows as evidence for production acceptance.
