@@ -15,9 +15,11 @@ Directive: [TPI-STUDIOFLOW-017 SMART Pads](../100-DIRECTIVES/TPI-STUDIOFLOW-017-
 - Pad rename and color metadata persist with the existing slot records.
 - MP3 uploads use embedded TIT2 metadata when available, then the filename;
   custom renamed titles remain authoritative during replacement.
-- Scene cards receive a music assignment control and optional “Start after
-  Intro” behavior. Assignments are included in the existing workspace
-  configuration save/restore keys.
+- The Scenes section now receives one Background Music button beside Intro
+  Video. It uses the selected Background Music SMART Pad, preserves the
+  optional “Start after Intro” handoff, and does not inject per-scene selects
+  or checkboxes into the scene cards. Assignments remain in the existing
+  workspace configuration save/restore keys.
 - No owner studio, Crossroads data, D1 record, or R2 object was modified.
 
 ## Files changed
@@ -51,8 +53,10 @@ Directive: [TPI-STUDIOFLOW-017 SMART Pads](../100-DIRECTIVES/TPI-STUDIOFLOW-017-
   pushed and deployed through the same guard.
 - Active Worker: `115a9bd2-e462-407f-8ca7-47736ef07fe4`.
 - Production smoke: 10/10 passed.
-- Firefox Developer Edition live reload confirmed scene music selectors and
-  “Start after Intro” controls on Intro and demo scenes.
+- Firefox Developer Edition live inspection found the previous per-scene music
+  selectors and “Start after Intro” controls visually intrusive. This repair
+  replaces them with the single scene-level Background Music button described
+  above; final live verification follows the guarded release.
 - Crossroads remained untouched; no owner media was played, replaced, or
   reassigned.
 

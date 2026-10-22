@@ -22,8 +22,11 @@ identity, or owner-data protections already recorded for that directive.
   extension. A user-renamed title has priority and survives replacement.
 - Persist pad titles, colors, audio slots, and the loop setting with the
   current studio.
-- Allow a scene to select a music pad and opt into “Start after Intro.” Manual
-  “Smart Play” remains available for music that should start on demand.
+- Keep one Background Music button beside the existing Intro Video scene button.
+  The button uses the currently selected music SMART Pad and can opt that track
+  into the existing “Start after Intro” handoff. Manual “Smart Play” remains
+  available for music that should start on demand. Do not inject selectors or
+  checkboxes into every scene card.
 - Keep sound effects and background music on separate playback channels.
 - Preserve existing studio switching, portable-backup, restore-as-new, and
   Crossroads owner-data protections.

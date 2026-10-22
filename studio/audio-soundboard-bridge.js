@@ -5,7 +5,7 @@
  * boards without replacing StudioFlow's workspace, IndexedDB, or backup
  * contracts. Audio metadata remains in the existing localStorage workspace
  * state and media bytes remain in the existing recordingBlobs object store.
- * TPI-STUDIOFLOW-017: reusable SMART Pad presentation and scene music controls.
+ * TPI-STUDIOFLOW-017: reusable SMART Pad presentation and scene music button.
  */
 (function () {
   "use strict";
@@ -303,18 +303,59 @@
     var grid = document.createElement("div"); grid.className = "tpi-audio-grid"; slots.forEach(function (asset, slot) { grid.appendChild(makeCard(category, slot, asset)); }); section.appendChild(grid);
     return section;
   }
-  function sceneMusicControls() {
+  function selectedSceneMusic() {
     var assignments = sceneAssignments();
-    Array.prototype.slice.call(document.querySelectorAll("[data-tpi-scene-id]")).forEach(function (card) {
-      var sceneId = card.getAttribute("data-tpi-scene-id"); if (!sceneId || card.querySelector("[data-tpi-scene-music]") || sceneId === "outro") return;
-      var wrap = document.createElement("div"); wrap.className = "tpi-scene-music-control"; wrap.dataset.tpiSceneMusic = "true"; wrap.addEventListener("click", function (event) { event.stopPropagation(); });
-      var select = document.createElement("select"); select.className = "tpi-scene-music-select"; select.setAttribute("aria-label", "Scene background music"); var none = document.createElement("option"); none.value = ""; none.textContent = "No scene music"; select.appendChild(none);
-      musicSlots().filter(Boolean).forEach(function (asset) { var option = document.createElement("option"); option.value = asset.blobKey; option.textContent = asset.title || titleFor(asset.fileName); select.appendChild(option); });
-      var assignment = assignments[sceneId] || null; select.value = assignment ? text(assignment.blobKey) : "";
-      select.addEventListener("change", function () { var next = sceneAssignments(); if (!select.value) delete next[sceneId]; else { var asset = musicSlots().find(function (item) { return item && item.blobKey === select.value; }); if (asset) next[sceneId] = { blobKey: asset.blobKey, assetId: asset.id, title: asset.title, startAfterIntro: !!(next[sceneId] && next[sceneId].startAfterIntro) }; } writeSceneAssignments(next); sceneMusicControls(); });
-      var label = document.createElement("label"); label.className = "tpi-scene-music-auto"; var checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.checked = !!(assignment && assignment.startAfterIntro); checkbox.disabled = !assignment; checkbox.addEventListener("change", function () { var next = sceneAssignments(); if (next[sceneId]) { next[sceneId].startAfterIntro = checkbox.checked; writeSceneAssignments(next); } }); label.append(checkbox, document.createTextNode("Start after Intro")); wrap.append(select, label); card.appendChild(wrap);
-    });
-    var active = text(read("studioflow.activeSceneId", "")); if (lastSceneId === "intro" && active && active !== "intro") { var nextAssignment = assignments[active]; if (nextAssignment && nextAssignment.startAfterIntro) { var musicIndex = musicSlots().findIndex(function (item) { return item && item.blobKey === nextAssignment.blobKey; }); if (musicIndex >= 0) playMusic(musicIndex); } } lastSceneId = active;
+    if (assignments.global && typeof assignments.global === "object") return assignments.global;
+    var legacyKey = Object.keys(assignments).find(function (key) { return assignments[key] && typeof assignments[key] === "object"; });
+    return legacyKey ? assignments[legacyKey] : null;
+  }
+  function saveSceneMusic(asset, startAfterIntro) {
+    var next = sceneAssignments();
+    if (!asset) delete next.global;
+    else next.global = { blobKey: asset.blobKey, assetId: asset.id, title: asset.title || titleFor(asset.fileName), startAfterIntro: !!startAfterIntro };
+    writeSceneAssignments(next);
+  }
+  function sceneMusicButton() {
+    var intro = document.querySelector('[data-tpi-scene-id="intro"]');
+    if (!intro || !intro.parentElement) return;
+    var button = intro.parentElement.querySelector("[data-tpi-scene-music-button]");
+    if (!button) {
+      button = document.createElement("button");
+      button.type = "button";
+      button.className = "scene-card compact dashed tpi-scene-music-button";
+      button.dataset.tpiSceneMusicButton = "true";
+      var icon = document.createElement("span"); icon.className = "tpi-scene-music-icon"; icon.textContent = "♫"; icon.setAttribute("aria-hidden", "true");
+      var label = document.createElement("span"); label.className = "tpi-scene-music-label";
+      button.append(icon, label);
+      button.addEventListener("click", function (event) {
+        event.preventDefault(); event.stopPropagation();
+        var assignment = selectedSceneMusic();
+        var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
+        if (!current && musicSlot !== null) current = musicSlots()[musicSlot] || null;
+        if (!current) { setStatus("Choose a Background Music SMART Pad first."); return; }
+        saveSceneMusic(current, !(assignment && assignment.startAfterIntro));
+        setStatus(assignment && assignment.startAfterIntro ? "Background music removed from Intro handoff." : "Background music will start after Intro.");
+        sceneMusicButton();
+      });
+      intro.parentElement.insertBefore(button, intro.nextSibling);
+    }
+    var assignment = selectedSceneMusic();
+    var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
+    var label = button.querySelector(".tpi-scene-music-label");
+    if (label) label.textContent = current && assignment ? (assignment.title || current.title || titleFor(current.fileName)) : "Background music";
+    button.classList.toggle("selected", !!(current && assignment && assignment.startAfterIntro));
+    button.setAttribute("aria-pressed", String(!!(current && assignment && assignment.startAfterIntro)));
+    button.title = current && assignment ? (assignment.startAfterIntro ? "Background music starts after Intro" : "Enable background music after Intro") : "Choose a music SMART Pad, then click to add it to the Scenes";
+  }
+  function syncSceneMusic() {
+    var assignment = selectedSceneMusic();
+    var active = text(read("studioflow.activeSceneId", ""));
+    if (lastSceneId === "intro" && active && active !== "intro" && assignment && assignment.startAfterIntro) {
+      var musicIndex = musicSlots().findIndex(function (item) { return item && item.blobKey === assignment.blobKey; });
+      if (musicIndex >= 0) playMusic(musicIndex);
+    }
+    lastSceneId = active;
+    sceneMusicButton();
   }
   function stopButton(label, action) { var button = document.createElement("button"); button.type = "button"; button.className = "outline-button tpi-audio-stop"; button.textContent = label; button.dataset.tpiAudioStop = action; button.disabled = action === "sound" ? !soundSource : !musicAudio; button.addEventListener("click", action === "sound" ? stopSound : stopMusic); return button; }
   function volumeControl(label, key, kind) {    var wrap = document.createElement("label"); wrap.className = "tpi-audio-volume"; var name = document.createElement("span"); name.textContent = label; var input = document.createElement("input"); input.type = "range"; input.min = "0"; input.max = "1"; input.step = "0.01"; input.value = String(Number(read(key, kind === "sound" ? 0.72 : 0.42))); input.setAttribute("aria-label", label); input.addEventListener("input", function () { write(key, Number(input.value)); if (kind === "music" && musicAudio) musicAudio.volume = Number(input.value); dispatchChange(); }); wrap.append(name, input); return wrap; }
@@ -334,7 +375,7 @@
     hideLegacy();
     var root = document.querySelector("[data-tpi-audio-soundboards]"); if (!root) return;
     var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), sceneMusic: sceneAssignments(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42), musicLoop: musicLoopEnabled() });
-    if (signature === lastSignature && root.childElementCount) { sceneMusicControls(); return; }
+    if (signature === lastSignature && root.childElementCount) { sceneMusicButton(); return; }
     lastSignature = signature;
     var existing = root.firstChild; if (existing) root.replaceChildren();
     var soundSection = document.createElement("section"); soundSection.className = "tpi-audio-original-section"; soundSection.dataset.tpiAudioOriginal = "sounds"; var soundHeading = document.createElement("h3"); soundHeading.textContent = "Sounds"; soundSection.appendChild(soundHeading);
@@ -344,7 +385,7 @@
     var musicControls = document.createElement("div"); musicControls.className = "tpi-audio-controls"; musicControls.append(volumeControl("Background music volume", MUSIC_VOLUME_KEY, "music"), loopControl(), stopButton("Stop music", "music")); musicSection.appendChild(musicControls);
     soundSection.append(board("sound", "Sound effects", soundSlots())); musicSection.append(board("music", "Background music", musicSlots()));
     var status = document.createElement("p"); status.dataset.tpiAudioStatus = "true"; root.insertBefore(status, root.firstChild);
-    sceneMusicControls();
+    sceneMusicButton();
   }
   function sync() {
     scheduled = false; hideLegacy();
@@ -355,7 +396,7 @@
     if (firstLegacyAudio) hostSection.insertBefore(root, firstLegacyAudio);
     else if (!root.parentElement) hostSection.appendChild(root);
     renderState();
-    sceneMusicControls();
+    sceneMusicButton();
   }
   function schedule() { if (scheduled) return; scheduled = true; window.setTimeout(sync, 0); }
   function start() {
@@ -363,7 +404,7 @@
     if (document.body && window.MutationObserver) new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     window.addEventListener("storage", schedule);
     window.addEventListener("studioflow:storage-changed", schedule);
-    window.addEventListener("studioflow:scene-changed", function () { sceneMusicControls(); });
+    window.addEventListener("studioflow:scene-changed", syncSceneMusic);
     window.addEventListener("studioflow:audio-ended", function (event) { var detail = event.detail || {}; if (detail.category === "sound") { soundSource = null; soundSlot = null; renderState(); } if (detail.category === "music") { musicExternal = false; musicSlot = null; renderState(); } });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();
