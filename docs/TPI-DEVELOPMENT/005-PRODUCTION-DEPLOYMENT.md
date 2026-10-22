@@ -1,5 +1,10 @@
 # Production Deployment
 
+The exact agent procedure is
+[`TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`](TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md).
+That runbook is mandatory and takes precedence over abbreviated or historical
+release descriptions in this file.
+
 ## Release sequence
 
     LOCAL DEVELOPMENT
@@ -63,11 +68,16 @@ TPI_PRODUCTION_DEPLOY=approved npm run release:production
 ```
 
 Preflight requires `codex/tpi-development`, an empty Git working tree, and an
-exact match with the GitHub branch. It runs persistent local authentication,
+exact match with the GitHub branch. It runs the complete persistent
+`local_admin` restart/build/Firefox lifecycle,
 disposable port-8789 API E2E, the StudioFlow build, Firefox Developer Edition
 acceptance in a new profile, authoritative asset staging verification,
 read-only production smoke, Wrangler account/version/rollback checks, and the
 existing guarded Wrangler dry-run.
+
+The preflight rechecks the clean tree and exact GitHub commit after staging and
+verification. The lower-level guarded deploy script also rejects every
+uncommitted or untracked path, including documentation and generated leftovers.
 
 Production mode repeats preflight, records the current Worker version, deploys
 only through `scripts/deploy-production-guarded.mjs`, performs live smoke and

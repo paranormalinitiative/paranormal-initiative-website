@@ -11,11 +11,12 @@ const changedFiles = git(["status", "--porcelain=v1", "--untracked-files=all"])
   .split("\n")
   .filter(Boolean)
   .map((line) => line.slice(3));
-const documentationOnly = (file) => file.startsWith("docs/") || file.endsWith(".md");
-const safeLocalState = (file) => file === ".DS_Store" || file === "DS_Store" || file.endsWith("/.DS_Store") || file.startsWith(".wrangler/") || file.startsWith("node_modules/") || file.startsWith("admin-center-app/node_modules/") || file.startsWith("backups/") || file.startsWith("data/");
-const uncommittedApplicationFiles = changedFiles.filter((file) => !documentationOnly(file) && !safeLocalState(file));
 if (branch !== "codex/tpi-development") throw new Error(`Production promotion requires codex/tpi-development; current branch is ${branch || "detached"}`);
-if (uncommittedApplicationFiles.length) throw new Error(`Production promotion aborted because application files are not committed: ${uncommittedApplicationFiles.join(", ")}`);
+if (changedFiles.length) throw new Error(`Production promotion aborted because the working tree is not clean: ${changedFiles.join(", ")}`);
+const sourceCommit = git(["rev-parse", "HEAD"]);
+const remoteLine = git(["ls-remote", "origin", `refs/heads/${branch}`]);
+const remoteCommit = remoteLine.split(/\s+/)[0] || "";
+if (sourceCommit !== remoteCommit) throw new Error(`Production promotion requires exact GitHub parity; local ${sourceCommit} does not match origin/${branch} ${remoteCommit || "missing"}`);
 
 const configSource = readFileSync(join(repoRoot, "wrangler.toml"), "utf8");
 for (const required of ['name = "theparanormalinitiative"', 'database_name = "tpi_contributor_portal"', 'bucket_name = "tpi-contributor-media"']) {
@@ -46,7 +47,6 @@ try {
   // standalone clean-URL rewrite that affects footer.html/member-sidebar.html.
   cpSync(join(stage, "footer.html"), join(stage, "footer.txt"));
   cpSync(join(stage, "member-sidebar.html"), join(stage, "member-sidebar.txt"));
-  const sourceCommit = git(["rev-parse", "HEAD"]);
   const sourceBranch = branch;
   const adminRoot = join(stage, "admin-center-preview");
   const adminFiles = readdirSync(adminRoot, { withFileTypes: true })

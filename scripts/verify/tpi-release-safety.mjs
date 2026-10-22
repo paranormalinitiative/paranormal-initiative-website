@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+const read = path => readFileSync(path, "utf8");
+const runbook = read("docs/TPI-DEVELOPMENT/TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md");
+const release = read("scripts/tpi-release.mjs");
+const deployGuard = read("scripts/deploy-production-guarded.mjs");
+const agents = read("AGENTS.md");
+const packageSource = read("package.json");
+
+const checks = [];
+function check(name, assertion) {
+  assertion();
+  checks.push(name);
+}
+
+check("agents must read the release runbook", () => {
+  assert.match(agents, /TPI-LOCAL-TO-PRODUCTION-RUNBOOK\.md/);
+});
+check("runbook uses the canonical repository and branch", () => {
+  assert.match(runbook, /\/Users\/toddknipple\/Documents\/GitHub\/paranormal-initiative-website/);
+  assert.match(runbook, /codex\/tpi-development/);
+});
+check("runbook includes secure local_admin access and recovery", () => {
+  assert.match(runbook, /show-local-admin-credentials\.sh/);
+  assert.match(runbook, /--restore-protected-local-admin/);
+});
+check("runbook requires commit, push, preflight and guarded deployment", () => {
+  assert.match(runbook, /git commit/);
+  assert.match(runbook, /git push origin codex\/tpi-development/);
+  assert.match(runbook, /npm run release:preflight/);
+  assert.match(runbook, /TPI_PRODUCTION_DEPLOY=approved npm run release:production/);
+});
+check("release preflight includes the full local_admin lifecycle", () => {
+  assert.match(release, /await verifyAuthLifecycle\(\)/);
+});
+check("release rechecks exact Git state after staging and verification", () => {
+  assert.match(release, /const finalSourceCommit = assertGitReleaseState\(\)/);
+});
+check("direct deployment guard rejects every uncommitted file", () => {
+  assert.match(deployGuard, /if \(changedFiles\.length\)/);
+  assert.doesNotMatch(deployGuard, /documentationOnly/);
+  assert.doesNotMatch(deployGuard, /safeLocalState/);
+});
+check("direct deployment guard requires exact GitHub parity", () => {
+  assert.match(deployGuard, /ls-remote/);
+  assert.match(deployGuard, /Production promotion requires exact GitHub parity/);
+});
+check("package exposes credential and safety commands", () => {
+  const pkg = JSON.parse(packageSource);
+  assert.equal(pkg.scripts["local:credentials"], "zsh scripts/show-local-admin-credentials.sh");
+  assert.equal(pkg.scripts["verify:release-safety"], "node scripts/verify/tpi-release-safety.mjs");
+});
+
+console.log(JSON.stringify({ status: "PASSED", checksPassed: checks.length, checks }, null, 2));

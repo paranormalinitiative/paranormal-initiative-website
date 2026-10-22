@@ -17,6 +17,14 @@ override a newer directive or create permanent repository-wide restrictions.
 A current task that is explicitly read-only or says not to deploy remains
 limited for that task.
 
+The mandatory implementation procedure is
+`TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`. It requires permanent local-admin
+verification, exact disposition of every working-tree file, focused staging,
+commit and GitHub parity, complete release preflight, guarded production
+deployment for every completed application directive, live Firefox Developer
+Edition acceptance, automatic rollback on critical failure, and a clean final
+tree.
+
 ## Project identity
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`

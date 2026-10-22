@@ -70,6 +70,11 @@ acceptance are separate evidence gates and must be reported separately.
 
 ## Maintained release control
 
+Every agent must follow
+`../TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`. It is the plain-language, exact
+staging, cleanup, commit, push, preflight, deployment, verification, rollback,
+and final-cleanliness procedure.
+
 The only maintained production path is:
 
 ```sh

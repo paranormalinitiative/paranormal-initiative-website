@@ -4,6 +4,10 @@ All agents working in this repository must first read:
 
 `docs/TPI-DEVELOPMENT/100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md`
 
+They must then follow the exact release procedure in:
+
+`docs/TPI-DEVELOPMENT/TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`
+
 That directive is the controlling operational authority for current TPI work.
 It grants standing authority to investigate, repair, refactor, test, build,
 commit, push, deploy through the guarded production workflow, verify live, and
@@ -31,3 +35,8 @@ TPI_PRODUCTION_DEPLOY=approved npm run release:production
 Firefox Developer Edition is the default browser for both local and production
 acceptance. Use isolated disposable profiles and data unless the owner directly
 authorizes use of an existing profile or owner Studio.
+
+Every completed user-facing application directive proceeds through the
+runbook's guarded production deployment and live acceptance unless the current
+directive explicitly says not to deploy. Documentation-only and local-tooling
+changes are committed and pushed but are not deployed as no-op Worker releases.

@@ -117,14 +117,14 @@ anonymous access must remain anonymous.
 
 ### Owner review handoff
 
-The owner can review the current local build in Opera by opening
+The owner can review the current local build in Firefox Developer Edition by opening
 `http://127.0.0.1:8787/` and navigating normally. This is a visual review of
 the same local Worker, not a deployment or a second site. The owner should
 report the route, browser, viewport, and observed issue in plain language;
 the agent then reproduces the issue in Codex and records the focused result.
 
-FreeBuff remains standby and should not be treated as verified merely because
-the application is installed or available on the machine.
+Automated verification uses a separate disposable Firefox Developer Edition
+profile and does not close or reuse the owner's existing tabs.
 
 ## Retrieve the local administrator credentials
 
@@ -135,6 +135,12 @@ Terminal interactively in the canonical repository and run:
 
 ```sh
 zsh scripts/show-local-admin-credentials.sh
+```
+
+The same viewer is available as:
+
+```sh
+npm run local:credentials
 ```
 
 The viewer requires an interactive terminal and verifies that the credential

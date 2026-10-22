@@ -127,6 +127,8 @@ async function verifyAuthLifecycle() {
 }
 async function preflight() {
   const sourceCommit = assertGitReleaseState();
+  run("Release workflow safety contract", process.execPath, ["scripts/verify/tpi-release-safety.mjs"]);
+  await verifyAuthLifecycle();
   const adminBefore = localAdminFingerprint();
   run("Persistent development authentication", process.execPath, ["scripts/qa/tpi-ops-009-authentication.mjs"]);
   run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"]);
@@ -144,6 +146,8 @@ async function preflight() {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
   });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
+  const finalSourceCommit = assertGitReleaseState();
+  if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
   const rollbackVersion = activeProductionVersion();
   ensureCloudflareAccess(rollbackVersion);
   run("Guarded Wrangler dry-run", process.execPath, ["scripts/deploy-production-guarded.mjs", "--dry-run"], { env: { TPI_WRANGLER_BIN: wrangler } });
@@ -155,6 +159,7 @@ async function preflight() {
 async function deploy() {
   if (process.env.TPI_PRODUCTION_DEPLOY !== "approved") fail("deployment requires TPI_PRODUCTION_DEPLOY=approved");
   const release = await preflight();
+  if (assertGitReleaseState() !== release.sourceCommit) fail("release source changed after preflight");
   let deployedVersion = "";
   try {
     const result = spawnSync(process.execPath, ["scripts/deploy-production-guarded.mjs"], {
