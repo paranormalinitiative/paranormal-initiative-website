@@ -274,32 +274,45 @@
     var topLine = document.createElement("div"); topLine.className = "tpi-audio-slot-topline";
     var icon = document.createElement("span"); icon.className = "tpi-audio-slot-icon"; icon.textContent = category === "sound" ? "♬" : "♫"; icon.setAttribute("aria-hidden", "true");
     var slotLabel = document.createElement("span"); slotLabel.className = "tpi-audio-slot-label"; slotLabel.textContent = (category === "sound" ? "Sound effect" : "Music") + " " + String(slot + 1).padStart(2, "0");
-    topLine.append(icon, slotLabel);
+    var menuTrigger = document.createElement("button"); menuTrigger.type = "button"; menuTrigger.className = "tpi-audio-slot-menu-trigger"; menuTrigger.textContent = "⋯"; menuTrigger.title = "Audio options"; menuTrigger.setAttribute("aria-label", "Audio options");
+    if (!asset) menuTrigger.hidden = true;
+    topLine.append(icon, slotLabel, menuTrigger);
     var heading = document.createElement("strong"); heading.className = "tpi-audio-slot-title"; heading.textContent = asset ? asset.title : (category === "sound" ? "Sound " : "Music ") + (slot + 1);
     var detail = document.createElement("span"); detail.className = "tpi-audio-slot-detail"; detail.textContent = asset ? text(asset.fileName) : "Empty slot";
     var copy = document.createElement("span"); copy.className = "tpi-audio-slot-copy"; copy.append(heading, detail);
     var actions = document.createElement("div"); actions.className = "tpi-audio-slot-actions";
     function button(label, action, disabled) { var button = document.createElement("button"); button.type = "button"; button.className = "tpi-audio-slot-action"; button.dataset.tpiAudioAction = action; button.textContent = label; button.disabled = !!disabled; button.title = label; return button; }
-    if (asset) {
-      var playButton = button(category === "sound" ? "Play live" : "Smart Play", "play", false); playButton.classList.add("primary");
-      var secondary = document.createElement("div"); secondary.className = "tpi-audio-slot-secondary";
-      secondary.append(button("Rename", "rename", false), button("Color", "color", false), button("Replace", "replace", false), button("Remove", "remove", false));
-      actions.append(playButton, secondary);
-    } else {
-      var uploadButton = button("Upload audio", "upload", false); uploadButton.classList.add("primary", "empty-action"); actions.append(uploadButton);
+    function menuItem(label, action) { var item = document.createElement("button"); item.type = "button"; item.className = "tpi-audio-slot-menu-item"; item.dataset.tpiAudioMenuAction = action; item.textContent = label; return item; }
+    var menu = document.createElement("div"); menu.className = "tpi-audio-slot-menu"; menu.hidden = true; menu.setAttribute("role", "menu");
+    if (asset) menu.append(menuItem("Rename", "rename"), menuItem("Change color", "color"), menuItem("Replace audio", "replace"), menuItem("Remove", "remove"));
+    function closeMenu() { menu.hidden = true; menuTrigger.setAttribute("aria-expanded", "false"); }
+    function openMenu() { if (!asset) return; menu.hidden = false; menuTrigger.setAttribute("aria-expanded", "true"); }
+    function manage(action) {
+      if (!asset) return;
+      closeMenu();
+      if (action === "rename") { var nextTitle = window.prompt("Name this " + (category === "sound" ? "sound effect" : "music track"), asset.title || titleFor(asset.fileName)); if (nextTitle && nextTitle.trim()) { asset.title = nextTitle.trim(); asset.titleCustomized = true; var renamed = category === "sound" ? soundSlots() : musicSlots(); renamed[slot] = asset; write(category === "sound" ? SOUND_KEY : MUSIC_KEY, renamed.filter(Boolean)); dispatchChange(); renderState(); } }
+      if (action === "color") { var nextColor = window.prompt("Pad color (hex, for example #7b4bb7)", padColor(asset, category, slot)); if (nextColor && /^#[0-9a-f]{6}$/i.test(nextColor.trim())) { asset.color = nextColor.trim(); var colored = category === "sound" ? soundSlots() : musicSlots(); colored[slot] = asset; write(category === "sound" ? SOUND_KEY : MUSIC_KEY, colored.filter(Boolean)); dispatchChange(); renderState(); } }
+      if (action === "replace") fileInput(category, slot);
+      if (action === "remove") removeAsset(category, slot);
     }
-    card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(topLine, copy, actions);
+    if (asset) {
+      var playLabel = category === "sound" ? "Play live" : "Smart Play";
+      var playButton = button(playLabel, "play", false); playButton.classList.add("primary", "icon-only"); playButton.textContent = ((category === "sound" && soundSlot === slot) || (category === "music" && musicSlot === slot)) ? "Ⅱ" : "▶"; playButton.setAttribute("aria-label", playLabel); actions.append(playButton);
+    } else {
+      var uploadButton = button("＋ Add audio", "upload", false); uploadButton.classList.add("primary", "empty-action"); actions.append(uploadButton);
+    }
+    card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(topLine, copy, actions, menu);
     if (asset && ((category === "sound" && soundSlot === slot) || (category === "music" && musicSlot === slot))) card.classList.add("playing");
+    menuTrigger.setAttribute("aria-expanded", "false");
+    menuTrigger.addEventListener("click", function (event) { event.preventDefault(); event.stopPropagation(); if (menu.hidden) openMenu(); else closeMenu(); });
+    menu.addEventListener("click", function (event) { event.preventDefault(); event.stopPropagation(); var item = event.target.closest("button[data-tpi-audio-menu-action]"); if (item) manage(item.dataset.tpiAudioMenuAction); });
+    card.addEventListener("contextmenu", function (event) { if (!asset) return; event.preventDefault(); openMenu(); });
     card.addEventListener("click", function (event) {
       var target = event.target.closest("button[data-tpi-audio-action]");
       if (!target) { if (asset) category === "sound" ? playSound(slot) : playMusic(slot); else fileInput(category, slot); return; }
       var action = target.dataset.tpiAudioAction;
       if (action === "play") { if (asset) category === "sound" ? playSound(slot) : playMusic(slot); else fileInput(category, slot); }
-      if (action === "rename" && asset) { var nextTitle = window.prompt("Name this " + (category === "sound" ? "sound effect" : "music track"), asset.title || titleFor(asset.fileName)); if (nextTitle && nextTitle.trim()) { asset.title = nextTitle.trim(); asset.titleCustomized = true; var renamed = category === "sound" ? soundSlots() : musicSlots(); renamed[slot] = asset; write(category === "sound" ? SOUND_KEY : MUSIC_KEY, renamed.filter(Boolean)); dispatchChange(); renderState(); } }
-      if (action === "color" && asset) { var nextColor = window.prompt("Pad color (hex, for example #7b4bb7)", padColor(asset, category, slot)); if (nextColor && /^#[0-9a-f]{6}$/i.test(nextColor.trim())) { asset.color = nextColor.trim(); var colored = category === "sound" ? soundSlots() : musicSlots(); colored[slot] = asset; write(category === "sound" ? SOUND_KEY : MUSIC_KEY, colored.filter(Boolean)); dispatchChange(); renderState(); } }
       if (action === "upload") fileInput(category, slot);
-      if (action === "replace") fileInput(category, slot);
-      if (action === "remove") removeAsset(category, slot);
     });
     return card;
   }

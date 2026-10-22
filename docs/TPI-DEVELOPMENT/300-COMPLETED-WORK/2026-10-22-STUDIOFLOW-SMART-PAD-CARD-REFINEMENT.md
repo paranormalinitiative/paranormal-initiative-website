@@ -27,6 +27,15 @@ stack of cramped utility buttons.
 - Added hover, active/playing, focus-compatible contrast, and responsive sizing
   while retaining the three-column desktop board and narrow-screen fallback.
 
+## Follow-up simplification
+
+- Assigned pads now show the track name, filename, category identity, and a
+  compact play/pause control without the previous stack of visible utility
+  buttons.
+- Rename, Change color, Replace audio, and Remove are available from the
+  compact `⋯` menu and the card's right-click context menu.
+- Empty pads retain one simple Add audio action.
+
 ## Files changed
 
 - `studio/audio-soundboard-bridge.js`
@@ -36,7 +45,7 @@ stack of cramped utility buttons.
 
 - `node --check studio/audio-soundboard-bridge.js`: passed.
 - `node scripts/verify/tpi-studioflow-021-audio-soundboards.mjs`: passed
-  (29/29 static checks).
+  (33/33 static checks, including the context-menu contract).
 - Full guarded release preflight: READY.
 - Isolated Firefox Developer Edition release acceptance: passed 22/22.
 - Anonymous production smoke: passed 10/10.
