@@ -38,3 +38,12 @@ Manual sign-in in the visible isolated/private Firefox window is still
 required before live production acceptance can continue. Credentials must be
 entered by the owner in the browser; they are not stored in the repository or
 sent through the test command.
+
+## Safety finding during follow-up
+
+The visible Firefox Private Browsing window authenticated successfully, but
+then displayed the protected `Crossroads of the Unknown` identity. It is
+therefore not accepted as an isolated test context. No studio switch, upload,
+delete, backup, restore, or other StudioFlow mutation was performed in that
+window. Live acceptance and deployment remain stopped until Firefox provides a
+genuinely separate profile/storage context.
