@@ -91,8 +91,21 @@
       var url = URL.createObjectURL(media);
       previewUrls[asset.blobKey] = url;
       video.src = url;
-      video.hidden = true;
+      // Reveal the real media as soon as the browser-local bytes are readable.
+      // Thumbnail extraction is best-effort; it must not keep a valid assigned
+      // clip behind the "preview unavailable" fallback while Firefox decodes it.
+      video.hidden = false;
+      video.setAttribute("aria-label", (asset.title || asset.fileName || "Assigned video") + " preview");
+      var fallback = preview && preview.querySelector(".tpi-video-card-fallback");
+      if (fallback) fallback.remove();
+      if (badge) badge.textContent = "Preview";
       video.load();
+      video.addEventListener("loadedmetadata", function () {
+        var duration = Number(video.duration);
+        if (isFinite(duration) && duration > 0) {
+          try { video.currentTime = Math.min(Math.max(0, duration * 0.25), Math.max(0, duration - 0.05)); } catch (error) {}
+        }
+      }, { once: true });
       return thumbnail(media).then(function (thumb) {
         if (thumb && preview) {
           var image = document.createElement("img");
@@ -100,8 +113,6 @@
           image.alt = (asset.title || asset.fileName || "Assigned video") + " thumbnail";
           image.dataset.tpiGeneratedPreview = "true";
           preview.insertBefore(image, video);
-          var fallback = preview.querySelector(".tpi-video-card-fallback");
-          if (fallback) fallback.remove();
         }
         if (badge) badge.textContent = thumb ? "Preview" : "Clip loaded";
       });
