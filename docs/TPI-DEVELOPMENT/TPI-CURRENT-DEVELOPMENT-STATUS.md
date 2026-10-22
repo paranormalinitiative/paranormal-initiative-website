@@ -34,6 +34,14 @@ Rollback target: `530d6f93`, the previous production version. Roll back with `wr
 - Release status: STATE B for authenticated acceptance. The release is deployed and unauthenticated checks pass, but it does not qualify for STATE A.
 - No production data, secrets, Crossroads studio, or migrations were changed.
 
+### TPI-OPS-032 account recovery and entitlement check — 2026-10-22 (BLOCKED)
+
+- Read-only production D1 query: no contributor row matches `TPI Acceptance Test A` or `B` (by username or display name). They do not exist under those names, so their StudioFlow entitlement state cannot be confirmed.
+- Supported entitlement path: the only admin route that writes `creator_studio_entitlements` is the Founding 50 award (`handleAdminAllocateFounding50`). It returns 423 unless `FOUNDING50_PRODUCTION_ACTIVATION` is `approved`, and the Admin Panel award button is disabled pending owner approval. Invitations and public registration grant no StudioFlow entitlement.
+- Account recovery: not possible without the existing credentials or an owner-authorized path. No password was reset.
+- Owner action required: either approve the Founding 50 activation gate for one synthetic acceptance account, or provide an existing StudioFlow-entitled synthetic account. Then authenticated acceptance can run.
+- Authenticated acceptance: NOT TESTED. Release remains STATE B.
+
 Isolated release-gate results for this release were run against the local isolated Worker on 127.0.0.1:8789, not production: API E2E 225/225, Firefox acceptance 23/23, Chromium 021 17/17, Chromium 022 16/16, backup and restore 13/13, configuration integrity 6/6.
 
 TPI-MASTER-001C is active under the mandatory completion policy. The current production-facing repair is the deployed
