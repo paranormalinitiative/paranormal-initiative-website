@@ -36,6 +36,8 @@ stack of cramped utility buttons.
   compact `⋯` menu and the card's right-click context menu.
 - Empty pads retain one simple Add audio action.
 
+Follow-up release source commit: `247b37db144c1f1d39762ca5a459fc3d34a4e805`.
+
 ## Files changed
 
 - `studio/audio-soundboard-bridge.js`
@@ -59,6 +61,13 @@ stack of cramped utility buttons.
 - Release result: `DEPLOYED_AND_VERIFIED`.
 - The acceptance profile was disposable; the owner's Firefox profile and
   Crossroads of the Unknown were not accessed or modified.
+
+Follow-up card simplification release:
+
+- Deployed Worker version: `a117ecb7-4864-4c50-a41a-eac6a945ffbb`.
+- Rollback target: `597e5389-715c-49d9-9f94-3c4ea2b4be69`.
+- Live smoke: 10/10 passed.
+- Live isolated Firefox acceptance: 22/22 passed.
 
 ## Data protection
 
