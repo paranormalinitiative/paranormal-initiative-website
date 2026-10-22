@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -27,6 +28,21 @@ const results = [];
 const check = (name, passed, detail = "") => results.push({ name, passed: Boolean(passed), detail: passed ? "" : String(detail || "") });
 const sleep = ms => new Promise(resolvePromise => setTimeout(resolvePromise, ms));
 const safe = error => error instanceof Error ? error.message : String(error);
+
+function focusIsolatedFirefoxWindow() {
+  if (process.platform !== "darwin") return;
+  const script = `tell application "Firefox Developer Edition" to activate
+tell application "System Events"
+  tell process "Firefox Developer Edition"
+    repeat with candidate in windows
+      try
+        if (name of candidate contains "TPI ISOLATED LIVE ACCEPTANCE") then perform action "AXRaise" of candidate
+      end try
+    end repeat
+  end tell
+end tell`;
+  spawnSync("osascript", ["-e", script], { stdio: "ignore" });
+}
 
 if (productionTarget && process.env.TPI_FIREFOX_ALLOW_PRODUCTION !== "1") {
   console.log(JSON.stringify({ status: "BLOCKED", reason: "Firefox acceptance defaults to the disposable local Worker only." }));
@@ -171,7 +187,9 @@ try {
   await driver.get(`${base}/member-login.html`);
   check("isolated Firefox login page renders", await count('form[data-member-login]') === 1);
   if (manualLogin) {
-    console.log("ACTION REQUIRED: Sign in to the isolated Firefox Developer Edition window. Acceptance continues automatically after authentication.");
+    await js("document.title = 'TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE';");
+    focusIsolatedFirefoxWindow();
+    console.log(`ACTION REQUIRED: Sign in only in the Firefox window titled \"TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE\". This is a disposable profile (${profile}); other Firefox windows cannot satisfy this acceptance. Acceptance continues automatically after authentication.`);
     // Observe browser-local navigation/DOM state while the owner signs in.
     // Do not poll the production Worker: a prior 200 ms auth loop consumed
     // thousands of requests per acceptance attempt on the Free plan.

@@ -275,9 +275,12 @@ isolated Firefox Developer Edition profile for authenticated production
 acceptance, verifies the new Worker at 100% traffic, and automatically rolls
 back on a critical acceptance failure.
 
-Sign in manually when the isolated production Firefox window requests it.
-Local credentials must never be sent to production. Do not close or repurpose
-the owner's already-open Firefox tabs.
+Sign in manually when the isolated production Firefox window requests it. The
+runner labels that window **TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE** and
+raises it before waiting. Sign in only in that exact window; a successful login
+in another Firefox window cannot satisfy the acceptance because the profiles
+do not share cookies. Local credentials must never be sent to production. Do
+not close or repurpose the owner's already-open Firefox tabs.
 
 The production acceptance runner must observe the isolated browser's local
 navigation or authenticated DOM state while waiting for the owner. It may make
