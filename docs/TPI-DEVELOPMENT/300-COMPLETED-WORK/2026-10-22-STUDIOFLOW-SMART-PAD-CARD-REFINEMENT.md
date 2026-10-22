@@ -29,9 +29,8 @@ stack of cramped utility buttons.
 
 ## Follow-up simplification
 
-- Assigned pads now show the track name, filename, category identity, and a
-  compact play/pause control without the previous stack of visible utility
-  buttons.
+- Assigned pads now show the track name, filename, and category identity; the
+  whole pad is the play surface, with no separate visible play button.
 - Rename, Change color, Replace audio, and Remove are available from the
   compact `⋯` menu and the card's right-click context menu.
 - Empty pads retain one simple Add audio action.

@@ -266,10 +266,10 @@ try {
   await waitFor("sound assignment", async () => count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned'));
   await uploadByDynamicInput('[data-tpi-audio-board="music"] .tpi-audio-upload', "audio/", musicFile);
   await waitFor("music assignment", async () => count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned'));
-  await click('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned [data-tpi-audio-action="play"]');
+  await click('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned');
   await waitFor("sound playback", async () => count('[data-tpi-audio-board="sound"] .tpi-audio-slot.playing'));
   await click('[data-tpi-audio-stop="sound"]');
-  await click('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned [data-tpi-audio-action="play"]');
+  await click('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned');
   await waitFor("music playback", async () => count('[data-tpi-audio-board="music"] .tpi-audio-slot.playing'));
   check("soundboards upload and play independently", true);
   await click('[data-tpi-audio-stop="music"]');

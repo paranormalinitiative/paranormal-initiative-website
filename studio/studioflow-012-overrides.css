@@ -293,7 +293,7 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   flex-direction: column;
   gap: 0.65rem;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   min-height: 8.6rem;
   padding: 0.65rem;
   border: 1px solid var(--line, #34403a);
@@ -312,6 +312,10 @@ section.asset-section[data-tpi-legacy-audio="true"] {
 .tpi-audio-slot:hover {
   border-color: rgb(255 255 255 / 56%);
   transform: translateY(-1px);
+}
+
+.tpi-audio-slot.menu-open {
+  z-index: 30;
 }
 
 .tpi-audio-slot.playing {
@@ -433,37 +437,15 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
 }
 
-.tpi-audio-slot-action.icon-only {
-  width: 2.1rem;
-  min-height: 2.1rem;
-  padding: 0;
-  border-color: rgb(255 255 255 / 68%);
-  background: rgb(255 255 255 / 16%);
-  font-size: 0.84rem;
-  justify-self: start;
-}
-
 .tpi-audio-slot-action:hover:not(:disabled) {
   border-color: rgb(255 255 255 / 78%);
   background: rgb(255 255 255 / 17%);
   transform: translateY(-1px);
 }
 
-.tpi-audio-slot-action[data-tpi-audio-action="play"] {
-  min-height: 2.15rem;
-  border-color: rgb(255 255 255 / 76%);
-  background: rgb(255 255 255 / 17%);
-  font-size: 0.74rem;
-}
-
 .tpi-audio-slot-action.primary.empty-action {
   border-color: rgb(178 205 255 / 68%);
   background: rgb(83 119 181 / 27%);
-}
-
-.tpi-audio-slot-action[data-tpi-audio-action="remove"] {
-  border-color: rgb(255 181 181 / 55%);
-  color: #ffe2e2;
 }
 
 .tpi-audio-slot-menu {
