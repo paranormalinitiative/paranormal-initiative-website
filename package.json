@@ -10,9 +10,11 @@
     "dev:local:service:stop": "node scripts/local-dev-service.mjs stop",
     "dev:local:service:restart": "node scripts/local-dev-service.mjs restart",
     "dev:local:service:status": "node scripts/local-dev-service.mjs status",
-    "dev:local:service:uninstall": "node scripts/local-dev-service.mjs uninstall"
+    "dev:local:service:uninstall": "node scripts/local-dev-service.mjs uninstall",
+    "test:studioflow:firefox": "node scripts/verify/tpi-studioflow-firefox-acceptance.mjs"
   },
   "devDependencies": {
-    "playwright": "1.64.1"
+    "playwright": "1.64.1",
+    "selenium-webdriver": "4.51.0"
   }
 }
