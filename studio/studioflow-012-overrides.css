@@ -452,6 +452,24 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   text-transform: uppercase;
 }
 
+.tpi-video-timer-section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tpi-video-timer-content {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.tpi-native-video-timer-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.tpi-native-video-timer-controls {
+  justify-content: flex-start;
+}
+
 .tpi-video-grid,
 .tpi-video-timer-grid {
   display: grid;

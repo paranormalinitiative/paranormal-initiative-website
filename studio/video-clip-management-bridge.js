@@ -108,24 +108,58 @@
   function timerCard(slot, label, seconds, customKey) { var selected = timerSlot === slot, card = document.createElement("article"); card.className = "tpi-video-timer-card" + (selected ? " selected" : "") + (selected && timerEnd ? " running" : ""); card.setAttribute("aria-label", label + (selected ? ", selected" : "")); var heading = document.createElement("strong"); heading.textContent = label; var detail = document.createElement("span"); detail.className = "tpi-video-timer-duration"; detail.textContent = customKey ? seconds + " seconds" : seconds + " seconds"; card.append(heading, detail); if (customKey) { var input = document.createElement("input"); input.type = "number"; input.min = "1"; input.max = "3600"; input.value = String(seconds); input.setAttribute("aria-label", label + " duration in seconds"); input.addEventListener("change", function () { var next = timerSettings(); next[customKey] = Math.max(1, Math.min(3600, Number(input.value) || seconds)); write(TIMER_KEY, next); render(); }); card.appendChild(input); } var actions = document.createElement("div"); actions.className = "tpi-video-timer-actions"; var select = makeButton(selected ? "Selected" : "Select", "select-timer", false); select.dataset.tpiTimerSlot = String(slot); select.dataset.tpiTimerSeconds = String(seconds); actions.appendChild(select); if (selected && !timerEnd && timerRemaining > 0) actions.appendChild(makeButton("Resume", "resume-timer", false)); if (selected && timerEnd) actions.appendChild(makeButton("Pause", "pause-timer", false)); if (selected) { var start = makeButton("Start", "start-timer", false); start.dataset.tpiTimerSlot = String(slot); start.dataset.tpiTimerSeconds = String(seconds); actions.appendChild(start); } if (selected && (timerEnd || timerRemaining > 0)) actions.appendChild(makeButton("Stop", "stop-timer", false)); if (selected) actions.appendChild(makeButton("Reset", "reset-timer", false)); card.appendChild(actions); return card; }
   function makeTimerSection() { var section = document.createElement("section"); section.className = "tpi-video-timers"; section.dataset.tpiVideoTimers = "true"; var heading = document.createElement("h4"); heading.textContent = "VIDEO TIMERS"; section.appendChild(heading); var status = document.createElement("p"); status.dataset.tpiTimerStatus = "true"; status.className = "tpi-video-timer-status"; section.appendChild(status); var output = document.createElement("output"); output.className = "tpi-video-timer-countdown"; output.dataset.tpiTimerCountdown = "true"; output.setAttribute("aria-live", "off"); section.appendChild(output); var grid = document.createElement("div"); grid.className = "tpi-video-timer-grid"; var settings = timerSettings(); TIMER_PRESETS.forEach(function (seconds, index) { grid.appendChild(timerCard(index, seconds + " seconds", seconds, null)); }); grid.appendChild(timerCard(4, "Custom Timer 1", settings.custom1, "custom1")); grid.appendChild(timerCard(5, "Custom Timer 2", settings.custom2, "custom2")); section.appendChild(grid); return section; }
   function videoSection() { return Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).find(function (section) { var heading = section.querySelector("h3"); return normalize(heading && heading.textContent) === "video clips"; }) || null; }
+  function nativeTimerSection(section) {
+    var timerSection = document.querySelector("section[data-tpi-video-timer-section='true']");
+    if (timerSection) return timerSection;
+    timerSection = document.createElement("section");
+    timerSection.className = "asset-section tpi-video-timer-section";
+    timerSection.dataset.tpiVideoTimerSection = "true";
+    var heading = document.createElement("h3");
+    heading.textContent = "Video Timers";
+    var content = document.createElement("div");
+    content.className = "tpi-video-timer-content";
+    var grid = document.createElement("div");
+    grid.className = "background-picker-grid tpi-native-video-timer-grid";
+    grid.dataset.tpiNativeVideoTimerGrid = "true";
+    var controls = document.createElement("div");
+    controls.className = "countdown-duration-row tpi-native-video-timer-controls";
+    controls.dataset.tpiNativeVideoTimerControls = "true";
+    content.append(grid, controls);
+    timerSection.append(heading, content);
+    section.insertAdjacentElement("afterend", timerSection);
+    return timerSection;
+  }
+  function isCountdownTile(tile) { var label = normalize(tile.textContent), title = normalize(tile.getAttribute("title")); return title.indexOf("golden ring countdown") !== -1 || label.indexOf("countdown") !== -1 || label.indexOf("timer") !== -1; }
   function hideLegacyVideoPlaceholders(section) { Array.prototype.slice.call(section.querySelectorAll(".asset-grid button")).forEach(function (button) { var label = normalize(button.textContent); if (label === "thank you" || label === "be right back") { button.hidden = true; button.dataset.tpiLegacyVideoPlaceholder = "true"; } }); }
   function prepareNativeTimer(section, nativeGrid, nativeTimers) {
     hideLegacyVideoPlaceholders(section);
-    if (nativeTimers) nativeTimers.hidden = false;
-    if (!nativeGrid) return;
-    nativeGrid.hidden = false;
-    nativeGrid.removeAttribute("data-tpi-native-video-hidden");
-    Array.prototype.slice.call(nativeGrid.querySelectorAll(".background-picker-tile")).forEach(function (tile) {
-      var label = normalize(tile.textContent), title = normalize(tile.getAttribute("title"));
-      var legacy = label === "thank you" || label === "be right back";
-      var introOutro = label === "intro video" || label === "outro video";
-      var countdown = title.indexOf("golden ring countdown") !== -1 || label.indexOf("countdown") !== -1 || label.indexOf("timer") !== -1;
-      tile.hidden = legacy || introOutro || !countdown;
-      if (countdown) {
-        tile.dataset.tpiNativeVideoTimer = "true";
-        tile.setAttribute("data-tpi-native-video-timer", "true");
-      }
+    var timerSection = nativeTimerSection(section);
+    var timerGrid = timerSection.querySelector("[data-tpi-native-video-timer-grid]");
+    var timerControls = timerSection.querySelector("[data-tpi-native-video-timer-controls]");
+    var tiles = Array.prototype.slice.call(document.querySelectorAll(".background-picker-tile"));
+    var countdownTiles = tiles.filter(isCountdownTile);
+    var countdownTile = (nativeGrid && countdownTiles.find(function (tile) { return nativeGrid.contains(tile); })) || countdownTiles[0] || null;
+    countdownTiles.forEach(function (tile) {
+      if (tile === countdownTile) return;
+      tile.hidden = true;
+      if (timerGrid.contains(tile)) tile.remove();
     });
+    if (countdownTile) {
+      countdownTile.hidden = false;
+      countdownTile.dataset.tpiNativeVideoTimer = "true";
+      countdownTile.setAttribute("data-tpi-native-video-timer", "true");
+      if (countdownTile.parentNode !== timerGrid) timerGrid.appendChild(countdownTile);
+    }
+    if (nativeTimers) {
+      nativeTimers.hidden = false;
+      if (nativeTimers.parentNode !== timerControls) timerControls.appendChild(nativeTimers);
+    }
+    if (nativeGrid) {
+      Array.prototype.slice.call(nativeGrid.querySelectorAll(".background-picker-tile")).forEach(function (tile) { tile.hidden = true; });
+      nativeGrid.hidden = true;
+      nativeGrid.setAttribute("data-tpi-native-video-hidden", "true");
+    }
+    timerSection.hidden = !countdownTile && !nativeTimers;
   }
   function render() { var section = videoSection(); if (!section) return; var nativeGrid = section.querySelector(".background-picker-grid"); var nativeTimers = section.querySelector(".countdown-duration-row"); prepareNativeTimer(section, nativeGrid, nativeTimers); if (!root || !root.isConnected || !section.contains(root)) { root = section.querySelector("[data-tpi-video-organization]"); if (!root) { root = document.createElement("div"); root.className = "tpi-video-organization"; root.dataset.tpiVideoOrganization = "true"; (nativeGrid || section).insertAdjacentElement("afterend", root); } } var slots = videoSlots(), signature = JSON.stringify({ slots: slots, running: timerSlot, end: timerEnd ? Math.ceil((timerEnd - Date.now()) / 1000) : 0, remaining: Math.ceil(timerRemaining / 1000) }); if (signature === lastSignature && root.childElementCount) { updateTimerDisplay(); return; } lastSignature = signature; clearPreviewUrls(); root.replaceChildren(); var clipHeading = document.createElement("h4"); clipHeading.textContent = "VIDEO CLIPS"; root.appendChild(clipHeading); var grid = document.createElement("div"); grid.className = "tpi-video-grid"; VISIBLE_VIDEO_SLOTS.forEach(function (slot) { grid.appendChild(makeCard(slots[slot], slot)); }); root.appendChild(grid); var status = document.createElement("p"); status.dataset.tpiVideoStatus = "true"; status.className = "tpi-video-status"; root.appendChild(status); updateTimerDisplay(); }
   function sync() { scheduled = false; render(); }

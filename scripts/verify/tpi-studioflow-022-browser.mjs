@@ -49,7 +49,8 @@ try {
   const cards = page.locator("[data-tpi-video-organization] [data-tpi-video-card]");
   check("seven visible video cards render", await cards.count() === 7);
   check("visible video card labels omit legacy placeholders", await page.locator("[data-tpi-video-card]").allTextContents().then(values => ["Intro Video", "Outro Video", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"].every(label => values.some(value => value.includes(label))) && !values.some(value => /Thank You|Be Right Back/i.test(value))));
-  check("one native video timer uses duration presets", await page.locator("[data-tpi-video-timers]").count() === 0 && await page.locator(".countdown-duration-row button").count() >= 4 && await page.locator('button[title*="golden ring countdown"]').count() === 1);
+  const timerSection = page.locator("[data-tpi-video-timer-section]");
+  check("one native video timer has its own section", await timerSection.count() === 1 && await timerSection.locator(".countdown-duration-row button").count() >= 4 && await timerSection.locator('button[title*="golden ring countdown"]').count() === 1);
 
   let chooser = page.waitForEvent("filechooser"); await cards.nth(0).getByRole("button", { name: "Upload" }).click(); await (await chooser).setFiles(videoFile); await page.waitForTimeout(1000);
   await cards.nth(0).locator("button[data-tpi-video-menu-toggle]").click();
@@ -69,7 +70,7 @@ try {
   check("video preview loads from IndexedDB", await cards.nth(0).locator('video[data-tpi-preview]:not([hidden])').count() === 1);
 
   await page.getByRole("button", { name: "10s", exact: true }).click(); await page.waitForTimeout(200);
-  check("native video timer changes to the selected duration", await page.getByRole("button", { name: "10s", exact: true }).evaluate(button => button.classList.contains("active")) && await page.locator("[data-tpi-video-timers]").count() === 0);
+  check("native video timer changes to the selected duration", await timerSection.getByRole("button", { name: "10s", exact: true }).evaluate(button => button.classList.contains("active")) && await page.locator("[data-tpi-video-timer-section]").count() === 1);
 
   await page.reload({ waitUntil: "domcontentloaded" }); await enterStudio();
   check("video assignments survive refresh and reopening", await page.locator('[data-tpi-video-card="0"] .tpi-video-card-file').textContent() === "tpi-022-video.mp4" && await page.locator('[data-tpi-video-card="2"]').count() === 0);

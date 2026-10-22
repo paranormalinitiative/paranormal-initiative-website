@@ -14,13 +14,13 @@ const checks = [];
 function check(name, condition, detail = "") { checks.push({ name, ok: Boolean(condition), detail }); }
 
 check("Video organization bridge exists", existsSync(bridgePath), bridgePath);
-check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v3"));
+check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v4"));
 check("Visible video slots omit legacy placeholders", bridge.includes("VISIBLE_VIDEO_SLOTS = [0, 1, 4, 5, 6, 7, 8]") && bridge.includes("Intro Video") && bridge.includes("Video 9"));
 check("Video cards use a 3x3-capable grid", bridge.includes("tpi-video-grid") && css.includes(".tpi-video-grid") && css.includes("repeat(3"));
 check("Video uploads persist in the existing IndexedDB store", bridge.includes('VIDEO_SLOTS_KEY = "studioflow.videoClipSlots"') && bridge.includes("studioflow-recordings") && bridge.includes("recordingBlobs"));
 check("Representative thumbnail generation avoids black opening frames", bridge.includes("thumbnailDataUrl") && bridge.includes("samples = [0.25, 0.5, 0.75, 0.05]") && bridge.includes("average >= 12"));
 check("Assigned-video fallback remains readable", bridge.includes("Video assigned · preview unavailable") && bridge.includes("fileName"));
-check("One native video timer remains with duration presets", bridge.includes("prepareNativeTimer") && bridge.includes("nativeTimers.hidden = false") && bridge.includes("data-tpi-native-video-timer") && bridge.includes("TIMER_PRESETS = [10, 20, 30, 60]") && !bridge.includes("root.appendChild(makeTimerSection())"));
+check("One native video timer has its own section with duration presets", bridge.includes("nativeTimerSection") && bridge.includes("data-tpi-video-timer-section") && bridge.includes("data-tpi-native-video-timer") && bridge.includes("TIMER_PRESETS = [10, 20, 30, 60]") && !bridge.includes("root.appendChild(makeTimerSection())"));
 check("Legacy Thank You and Be Right Back placeholders are hidden", bridge.includes('label === "thank you" || label === "be right back"') && bridge.includes("tpiLegacyVideoPlaceholder"));
 check("Timer state prevents duplicate timers", /function startTimer\(slot, seconds\)[\s\S]*?clearInterval\(timerHandle\)[\s\S]*?setTimerState\(slot, seconds, seconds \* 1000\)/.test(bridge));
 check("Video slot configuration is saved with workspaces", assetState.includes("videoClipSlots") && workspace.includes("videoClipSlots"));
