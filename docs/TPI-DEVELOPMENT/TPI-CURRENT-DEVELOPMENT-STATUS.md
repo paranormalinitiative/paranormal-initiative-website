@@ -946,6 +946,18 @@ occurred; local synthetic workspace autosaves were exercised as required by
 the test. No commit or push occurred. See the
 [TPI-STUDIOFLOW-017 result](300-COMPLETED-WORK/TPI-STUDIOFLOW-017-RESULT.md).
 
+## TPI-STUDIOFLOW-017 SMART Pads addendum
+
+The existing Sound Effects and Background Music libraries now have reusable
+colored SMART Pads. Sound-effect clicks dispatch through the maintained React
+program audio bus so they can be heard in the live stage/program path; music
+uses the existing background-music path and loop setting. Pad names and colors
+persist with each studio, MP3 title metadata is used when available, and scene
+cards can assign music with an optional Start after Intro handoff. Focused
+build, bridge, media, release-safety, and diff checks pass. Browser acceptance,
+full E2E, guarded deployment, and live production verification remain open.
+See the [SMART Pads implementation record](300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-SMART-PADS-RESULT.md).
+
 ## TPI-STUDIOFLOW-019 intro/outro full-stage video rendering
 
 TPI-STUDIOFLOW-019 added an explicit full-frame rule for the shared

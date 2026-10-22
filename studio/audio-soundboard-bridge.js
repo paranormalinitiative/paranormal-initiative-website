@@ -5,6 +5,7 @@
  * boards without replacing StudioFlow's workspace, IndexedDB, or backup
  * contracts. Audio metadata remains in the existing localStorage workspace
  * state and media bytes remain in the existing recordingBlobs object store.
+ * TPI-STUDIOFLOW-017: reusable SMART Pad presentation and scene music controls.
  */
 (function () {
   "use strict";
@@ -15,6 +16,8 @@
   var SOUND_VOLUME_KEY = "studioflow.soundVolume";
   var MUSIC_VOLUME_KEY = "studioflow.backgroundMusicVolume";
   var MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop";
+  var SCENE_MUSIC_KEY = "studioflow.sceneMusicAssignments";
+  var PAD_COLORS = ["#5f3b8f", "#8c3f67", "#315d87", "#2f7668", "#7a5b2c", "#704c75"];
   var SLOT_COUNT = 9;
   var scheduled = false;
   var soundSource = null;
@@ -23,7 +26,9 @@
   var musicAudio = null;
   var musicUrl = "";
   var musicSlot = null;
+  var musicExternal = false;
   var lastSignature = "";
+  var lastSceneId = "";
 
   function text(value) { return typeof value === "string" ? value : ""; }
   function read(key, fallback) {
@@ -38,6 +43,11 @@
   function titleFor(fileName) {
     return text(fileName).replace(/\.[^.]+$/, "").trim() || "Untitled audio";
   }
+  function padColor(asset, category, slot) { return text(asset && asset.color) || PAD_COLORS[(slot + (category === "music" ? 2 : 0)) % PAD_COLORS.length]; }
+  function sceneAssignments() { var value = read(SCENE_MUSIC_KEY, {}); return value && typeof value === "object" && !Array.isArray(value) ? value : {}; }
+  function writeSceneAssignments(value) { write(SCENE_MUSIC_KEY, value); dispatchChange(); }
+  function audioCommand(category, action, asset) { var event = new CustomEvent("studioflow:audio-command", { cancelable: true, detail: Object.assign({ category: category, action: action }, asset || {}) }); window.dispatchEvent(event); return event.defaultPrevented; }
+  function audioEnded(category, asset) { try { window.dispatchEvent(new CustomEvent("studioflow:audio-ended", { detail: Object.assign({ category: category }, asset || {}) })); } catch (error) {} }
   function idFor(prefix, slot) {
     var random = window.crypto && typeof window.crypto.randomUUID === "function" ? window.crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2);
     return prefix + "-slot-" + (slot + 1) + "-" + random;
@@ -134,11 +144,32 @@
       context.decodeAudioData(bytes, function () { context.close(); resolve(true); }, function () { context.close(); reject(new Error("The selected audio file could not be decoded.")); });
     }); });
   }
-  function metadata(file, slot, category, prefix) {
-    return { id: idFor(prefix, slot), slot: slot, category: category, blobKey: blobKeyFor(prefix, slot), fileName: text(file.name), mediaType: audioType(file), size: file.size, title: titleFor(file.name), uploadedAt: new Date().toISOString() };
+  function embeddedTitle(file) {
+    if (!file || !/\.mp3$/i.test(text(file.name))) return Promise.resolve("");
+    return file.slice(0, 256 * 1024).arrayBuffer().then(function (bytes) {
+      var view = new DataView(bytes); if (view.byteLength < 10 || view.getUint8(0) !== 73 || view.getUint8(1) !== 68 || view.getUint8(2) !== 51) return "";
+      var version = view.getUint8(3), position = 10, tagSize = (view.getUint8(6) << 21) | (view.getUint8(7) << 14) | (view.getUint8(8) << 7) | view.getUint8(9);
+      var limit = Math.min(view.byteLength, 10 + tagSize);
+      while (position + 10 <= limit) {
+        var frameId = String.fromCharCode(view.getUint8(position), view.getUint8(position + 1), view.getUint8(position + 2), view.getUint8(position + 3));
+        var frameSize = version >= 4 ? ((view.getUint8(position + 4) << 21) | (view.getUint8(position + 5) << 14) | (view.getUint8(position + 6) << 7) | view.getUint8(position + 7)) : view.getUint8(position + 4) * 16777216 + view.getUint8(position + 5) * 65536 + view.getUint8(position + 6) * 256 + view.getUint8(position + 7);
+        if (!frameId.trim() || !frameSize) break;
+        if (frameId === "TIT2" && position + 10 + frameSize <= limit) {
+          var data = new Uint8Array(bytes, position + 11, Math.max(0, frameSize - 1)), encoding = view.getUint8(position + 10), decoded;
+          try { decoded = new TextDecoder(encoding === 1 || encoding === 2 ? "utf-16" : "utf-8").decode(data); } catch (error) { decoded = ""; }
+          return decoded.replace(/\u0000/g, "").trim();
+        }
+        position += 10 + frameSize;
+      }
+      return "";
+    }).catch(function () { return ""; });
   }
-  function persistSound(file, slot) {
-    var slots = soundSlots(), previous = slots[slot], asset = metadata(file, slot, "sound-effect", "custom-sound");
+  function metadata(file, slot, category, prefix, titleOverride, previous) {
+    var isMusic = category === "background-music";
+    return { id: idFor(prefix, slot), slot: slot, category: category, blobKey: blobKeyFor(prefix, slot), fileName: text(file.name), mediaType: audioType(file), size: file.size, title: previous && previous.titleCustomized ? previous.title : (text(titleOverride).trim() || titleFor(file.name)), titleCustomized: !!(previous && previous.titleCustomized), color: padColor(previous, isMusic ? "music" : "sound", slot), uploadedAt: new Date().toISOString() };
+  }
+  function persistSound(file, slot, titleOverride) {
+    var slots = soundSlots(), previous = slots[slot], asset = metadata(file, slot, "sound-effect", "custom-sound", titleOverride, previous);
     return putBlob(asset.blobKey, file).then(function () {
       slots[slot] = asset;
       write(SOUND_KEY, slots.filter(Boolean));
@@ -150,8 +181,8 @@
       return previous && previous.blobKey ? deleteBlob(previous.blobKey) : true;
     });
   }
-  function persistMusic(file, slot) {
-    var slots = musicSlots(), previous = slots[slot], asset = metadata(file, slot, "background-music", "background-music");
+  function persistMusic(file, slot, titleOverride) {
+    var slots = musicSlots(), previous = slots[slot], asset = metadata(file, slot, "background-music", "background-music", titleOverride, previous);
     return putBlob(asset.blobKey, file).then(function () {
       slots[slot] = asset;
       write(MUSIC_KEY, slots.filter(Boolean));
@@ -163,6 +194,7 @@
   }
   function stopSound() {
     soundGeneration += 1;
+    if (soundSource && soundSource.external) audioCommand("sound", "stop");
     if (soundSource) { var context = soundSource.context; try { soundSource.stop(); } catch (error) {} try { soundSource.disconnect(); } catch (error) {} if (context) context.close().catch(function () {}); }
     soundSource = null;
     soundSlot = null;
@@ -172,6 +204,7 @@
     var asset = soundSlots()[slot];
     if (!asset) return;
     stopSound();
+    if (audioCommand("sound", "play", Object.assign({}, asset, { title: asset.title || titleFor(asset.fileName) }))) { soundSource = { external: true }; soundSlot = slot; renderState(); return; }
     var generation = soundGeneration, playbackContext = null;
     getBlob(asset.blobKey).then(function (blob) {
       if (!blob) throw new Error("The sound file is no longer available.");
@@ -190,16 +223,19 @@
     }).catch(function (error) { if (playbackContext && playbackContext.state !== "closed") playbackContext.close().catch(function () {}); setStatus(error.message || "Sound playback failed."); });
   }
   function stopMusic() {
+    if (musicExternal) audioCommand("music", "stop");
     if (musicAudio) { try { musicAudio.pause(); } catch (error) {} musicAudio.removeAttribute("src"); musicAudio.load(); }
     musicAudio = null;
     if (musicUrl) { URL.revokeObjectURL(musicUrl); musicUrl = ""; }
     musicSlot = null;
+    musicExternal = false;
     renderState();
   }
   function playMusic(slot) {
     var asset = musicSlots()[slot];
     if (!asset) return;
     stopMusic();
+    if (audioCommand("music", "play", Object.assign({}, asset, { title: asset.title || titleFor(asset.fileName), loop: musicLoopEnabled() }))) { musicExternal = true; musicSlot = slot; renderState(); return; }
     getBlob(asset.blobKey).then(function (blob) {
       if (!blob) throw new Error("The music file is no longer available.");
       musicUrl = URL.createObjectURL(blob);
@@ -219,7 +255,7 @@
       var files = Array.prototype.slice.call(input.files || []), prefix = category === "sound" ? "Sound" : "Music", slots = category === "sound" ? soundSlots() : musicSlots(), max = category === "sound" ? 24 * 1024 * 1024 : 80 * 1024 * 1024;
       if (slot === null && firstOpen(slots) < 0) { setStatus("All nine " + prefix.toLowerCase() + " slots are occupied. Replace an individual slot instead."); input.remove(); return; }
       var next = slot === null ? firstOpen(slots) : slot;
-      files.reduce(function (promise, file) { return promise.then(function () { if (next < 0 || next >= SLOT_COUNT) throw new Error("All nine " + prefix.toLowerCase() + " slots are occupied. Replace an individual slot instead."); validAudio(file, max); return decode(file).then(function () { return category === "sound" ? persistSound(file, next) : persistMusic(file, next); }).then(function () { next = slot === null ? firstOpen(category === "sound" ? soundSlots() : musicSlots()) : next; }); }); }, Promise.resolve()).then(function () { setStatus(prefix + " saved."); renderState(); }).catch(function (error) { setStatus(error.message || prefix + " could not be saved."); }).finally(function () { input.remove(); });
+      files.reduce(function (promise, file) { return promise.then(function () { if (next < 0 || next >= SLOT_COUNT) throw new Error("All nine " + prefix.toLowerCase() + " slots are occupied. Replace an individual slot instead."); validAudio(file, max); return decode(file).then(function () { return embeddedTitle(file); }).then(function (embedded) { return category === "sound" ? persistSound(file, next, embedded) : persistMusic(file, next, embedded); }).then(function () { next = slot === null ? firstOpen(category === "sound" ? soundSlots() : musicSlots()) : next; }); }); }, Promise.resolve()).then(function () { setStatus(prefix + " saved."); renderState(); }).catch(function (error) { setStatus(error.message || prefix + " could not be saved."); }).finally(function () { input.remove(); });
     });
     document.body.appendChild(input); input.click();
   }
@@ -241,15 +277,17 @@
     var copy = document.createElement("span"); copy.className = "tpi-audio-slot-copy"; copy.append(heading, detail);
     var actions = document.createElement("span"); actions.className = "tpi-audio-slot-actions";
     function button(label, action, disabled) { var button = document.createElement("button"); button.type = "button"; button.className = "tpi-audio-slot-action"; button.dataset.tpiAudioAction = action; button.textContent = label; button.disabled = !!disabled; return button; }
-    if (asset) actions.append(button("Play", "play", false), button("Replace", "replace", false), button("Remove", "remove", false));
+    if (asset) actions.append(button(category === "sound" ? "Play live" : "Smart Play", "play", false), button("Rename", "rename", false), button("Color", "color", false), button("Replace", "replace", false), button("Remove", "remove", false));
     else actions.append(button("Upload", "upload", false));
-    card.append(icon, copy, actions);
+    card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(icon, copy, actions);
     if (asset && ((category === "sound" && soundSlot === slot) || (category === "music" && musicSlot === slot))) card.classList.add("playing");
     card.addEventListener("click", function (event) {
       var target = event.target.closest("button[data-tpi-audio-action]");
       if (!target) { if (asset) category === "sound" ? playSound(slot) : playMusic(slot); else fileInput(category, slot); return; }
       var action = target.dataset.tpiAudioAction;
       if (action === "play") { if (asset) category === "sound" ? playSound(slot) : playMusic(slot); else fileInput(category, slot); }
+      if (action === "rename" && asset) { var nextTitle = window.prompt("Name this " + (category === "sound" ? "sound effect" : "music track"), asset.title || titleFor(asset.fileName)); if (nextTitle && nextTitle.trim()) { asset.title = nextTitle.trim(); asset.titleCustomized = true; var renamed = category === "sound" ? soundSlots() : musicSlots(); renamed[slot] = asset; write(category === "sound" ? SOUND_KEY : MUSIC_KEY, renamed.filter(Boolean)); dispatchChange(); renderState(); } }
+      if (action === "color" && asset) { var nextColor = window.prompt("Pad color (hex, for example #7b4bb7)", padColor(asset, category, slot)); if (nextColor && /^#[0-9a-f]{6}$/i.test(nextColor.trim())) { asset.color = nextColor.trim(); var colored = category === "sound" ? soundSlots() : musicSlots(); colored[slot] = asset; write(category === "sound" ? SOUND_KEY : MUSIC_KEY, colored.filter(Boolean)); dispatchChange(); renderState(); } }
       if (action === "upload") fileInput(category, slot);
       if (action === "replace") fileInput(category, slot);
       if (action === "remove") removeAsset(category, slot);
@@ -265,9 +303,22 @@
     var grid = document.createElement("div"); grid.className = "tpi-audio-grid"; slots.forEach(function (asset, slot) { grid.appendChild(makeCard(category, slot, asset)); }); section.appendChild(grid);
     return section;
   }
+  function sceneMusicControls() {
+    var assignments = sceneAssignments();
+    Array.prototype.slice.call(document.querySelectorAll("[data-tpi-scene-id]")).forEach(function (card) {
+      var sceneId = card.getAttribute("data-tpi-scene-id"); if (!sceneId || card.querySelector("[data-tpi-scene-music]") || sceneId === "outro") return;
+      var wrap = document.createElement("div"); wrap.className = "tpi-scene-music-control"; wrap.dataset.tpiSceneMusic = "true"; wrap.addEventListener("click", function (event) { event.stopPropagation(); });
+      var select = document.createElement("select"); select.className = "tpi-scene-music-select"; select.setAttribute("aria-label", "Scene background music"); var none = document.createElement("option"); none.value = ""; none.textContent = "No scene music"; select.appendChild(none);
+      musicSlots().filter(Boolean).forEach(function (asset) { var option = document.createElement("option"); option.value = asset.blobKey; option.textContent = asset.title || titleFor(asset.fileName); select.appendChild(option); });
+      var assignment = assignments[sceneId] || null; select.value = assignment ? text(assignment.blobKey) : "";
+      select.addEventListener("change", function () { var next = sceneAssignments(); if (!select.value) delete next[sceneId]; else { var asset = musicSlots().find(function (item) { return item && item.blobKey === select.value; }); if (asset) next[sceneId] = { blobKey: asset.blobKey, assetId: asset.id, title: asset.title, startAfterIntro: !!(next[sceneId] && next[sceneId].startAfterIntro) }; } writeSceneAssignments(next); sceneMusicControls(); });
+      var label = document.createElement("label"); label.className = "tpi-scene-music-auto"; var checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.checked = !!(assignment && assignment.startAfterIntro); checkbox.disabled = !assignment; checkbox.addEventListener("change", function () { var next = sceneAssignments(); if (next[sceneId]) { next[sceneId].startAfterIntro = checkbox.checked; writeSceneAssignments(next); } }); label.append(checkbox, document.createTextNode("Start after Intro")); wrap.append(select, label); card.appendChild(wrap);
+    });
+    var active = text(read("studioflow.activeSceneId", "")); if (lastSceneId === "intro" && active && active !== "intro") { var nextAssignment = assignments[active]; if (nextAssignment && nextAssignment.startAfterIntro) { var musicIndex = musicSlots().findIndex(function (item) { return item && item.blobKey === nextAssignment.blobKey; }); if (musicIndex >= 0) playMusic(musicIndex); } } lastSceneId = active;
+  }
   function stopButton(label, action) { var button = document.createElement("button"); button.type = "button"; button.className = "outline-button tpi-audio-stop"; button.textContent = label; button.dataset.tpiAudioStop = action; button.disabled = action === "sound" ? !soundSource : !musicAudio; button.addEventListener("click", action === "sound" ? stopSound : stopMusic); return button; }
   function volumeControl(label, key, kind) {    var wrap = document.createElement("label"); wrap.className = "tpi-audio-volume"; var name = document.createElement("span"); name.textContent = label; var input = document.createElement("input"); input.type = "range"; input.min = "0"; input.max = "1"; input.step = "0.01"; input.value = String(Number(read(key, kind === "sound" ? 0.72 : 0.42))); input.setAttribute("aria-label", label); input.addEventListener("input", function () { write(key, Number(input.value)); if (kind === "music" && musicAudio) musicAudio.volume = Number(input.value); dispatchChange(); }); wrap.append(name, input); return wrap; }
-  function loopControl() { var wrap = document.createElement("label"); wrap.className = "tpi-audio-loop-control"; var input = document.createElement("input"); input.type = "checkbox"; input.checked = musicLoopEnabled(); input.setAttribute("aria-label", "Loop background music"); var textNode = document.createElement("span"); textNode.textContent = "Loop music"; input.addEventListener("change", function () { write(MUSIC_LOOP_KEY, input.checked); if (musicAudio) musicAudio.loop = input.checked; dispatchChange(); renderState(); }); wrap.append(input, textNode); return wrap; }
+  function loopControl() { var wrap = document.createElement("label"); wrap.className = "tpi-audio-loop-control"; var input = document.createElement("input"); input.type = "checkbox"; input.checked = musicLoopEnabled(); input.setAttribute("aria-label", "Loop background music"); var textNode = document.createElement("span"); textNode.textContent = "Loop music"; input.addEventListener("change", function () { write(MUSIC_LOOP_KEY, input.checked); if (musicAudio) musicAudio.loop = input.checked; audioCommand("music", "settings", { loop: input.checked }); dispatchChange(); renderState(); }); wrap.append(input, textNode); return wrap; }
 
   function headingText(section) { var heading = section.querySelector("h3"); return heading ? (heading.textContent || "").replace(/\s+/g, " ").trim().toLowerCase() : ""; }
   function hideLegacy() { Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).forEach(function (section) { var heading = headingText(section); if (heading === "sounds" || heading === "background music") { section.dataset.tpiLegacyAudio = "true"; section.hidden = true; } }); }
@@ -282,7 +333,7 @@
   function renderState() {
     hideLegacy();
     var root = document.querySelector("[data-tpi-audio-soundboards]"); if (!root) return;
-    var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42), musicLoop: musicLoopEnabled() });
+    var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), sceneMusic: sceneAssignments(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42), musicLoop: musicLoopEnabled() });
     if (signature === lastSignature && root.childElementCount) return;
     lastSignature = signature;
     var existing = root.firstChild; if (existing) root.replaceChildren();
@@ -293,6 +344,7 @@
     var musicControls = document.createElement("div"); musicControls.className = "tpi-audio-controls"; musicControls.append(volumeControl("Background music volume", MUSIC_VOLUME_KEY, "music"), loopControl(), stopButton("Stop music", "music")); musicSection.appendChild(musicControls);
     soundSection.append(board("sound", "Sound effects", soundSlots())); musicSection.append(board("music", "Background music", musicSlots()));
     var status = document.createElement("p"); status.dataset.tpiAudioStatus = "true"; root.insertBefore(status, root.firstChild);
+    sceneMusicControls();
   }
   function sync() {
     scheduled = false; hideLegacy();
@@ -303,6 +355,7 @@
     if (firstLegacyAudio) hostSection.insertBefore(root, firstLegacyAudio);
     else if (!root.parentElement) hostSection.appendChild(root);
     renderState();
+    sceneMusicControls();
   }
   function schedule() { if (scheduled) return; scheduled = true; window.setTimeout(sync, 0); }
   function start() {
@@ -310,6 +363,8 @@
     if (document.body && window.MutationObserver) new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
     window.addEventListener("storage", schedule);
     window.addEventListener("studioflow:storage-changed", schedule);
+    window.addEventListener("studioflow:scene-changed", function () { sceneMusicControls(); });
+    window.addEventListener("studioflow:audio-ended", function (event) { var detail = event.detail || {}; if (detail.category === "sound") { soundSource = null; soundSlot = null; renderState(); } if (detail.category === "music") { musicExternal = false; musicSlot = null; renderState(); } });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();
 })();
