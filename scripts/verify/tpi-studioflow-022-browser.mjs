@@ -47,10 +47,10 @@ try {
   await enterStudio();
 
   const cards = page.locator("[data-tpi-video-organization] [data-tpi-video-card]");
-  check("seven visible video cards render", await cards.count() === 7);
+  check("eight visible video cards render", await cards.count() === 8);
   check("Intro and Outro are separated from general video clips", await page.locator('[data-tpi-video-subsection="intro-&-outro"]').count() === 1 && await page.locator('[data-tpi-video-subsection="video-clips"]').count() === 1);
   check("Intro and Outro fill an even two-column row", await page.locator('[data-tpi-video-subsection="intro-&-outro"] .tpi-video-grid').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(" ").length === 2));
-  check("visible video card labels omit legacy placeholders", await page.locator("[data-tpi-video-card]").allTextContents().then(values => ["Intro Video", "Outro Video", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"].every(label => values.some(value => value.includes(label))) && !values.some(value => /Thank You|Be Right Back/i.test(value))));
+  check("visible video card labels include six general clips", await page.locator("[data-tpi-video-card]").allTextContents().then(values => ["Intro Video", "Outro Video", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9", "Video 10"].every(label => values.some(value => value.includes(label))) && !values.some(value => /Thank You|Be Right Back/i.test(value))));
   const timerSection = page.locator("[data-tpi-video-timer-section]");
   check("one native video timer has its own section", await timerSection.count() === 1 && await timerSection.locator(".countdown-duration-row button").count() >= 4 && await timerSection.locator('button[title*="golden ring countdown"]').count() === 1);
 
@@ -70,6 +70,10 @@ try {
   if (await introToggle.getAttribute("aria-expanded") !== "true") await introToggle.click();
   await cards.nth(0).getByRole("button", { name: "Preview" }).click(); await page.waitForTimeout(500);
   check("video preview loads from IndexedDB", await cards.nth(0).locator('video[data-tpi-preview]:not([hidden])').count() === 1);
+
+  let generalChooser = page.waitForEvent("filechooser"); await cards.nth(2).getByRole("button", { name: "Upload" }).click(); await (await generalChooser).setFiles(videoFile); await page.waitForTimeout(1000);
+  await cards.nth(2).locator(".tpi-video-card-body").click(); await page.waitForTimeout(500);
+  check("general video card plays on the StudioFlow stage", await page.locator(".program-stage video.tpi-video-clip-stage-video").count() === 1);
 
   await page.getByRole("button", { name: "10s", exact: true }).click(); await page.waitForTimeout(200);
   check("native video timer changes to the selected duration", await timerSection.getByRole("button", { name: "10s", exact: true }).evaluate(button => button.classList.contains("active")) && await page.locator("[data-tpi-video-timer-section]").count() === 1);

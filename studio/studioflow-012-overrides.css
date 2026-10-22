@@ -26,6 +26,11 @@
   object-position: center;
 }
 
+.program-stage > video.tpi-video-clip-stage-video,
+.program-stage > video.tpi-video-clip-stage-video + canvas.tpi-stage-video-surface {
+  z-index: 20 !important;
+}
+
 /* Opera/WebKit can stretch a grid item to the full stage row height while
    leaving its width at the desktop cap. Size landscape stages from height so
    the containing frame itself remains 16:9 in every browser. */

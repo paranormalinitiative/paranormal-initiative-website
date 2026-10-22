@@ -13,16 +13,19 @@
   var VIDEO_CLIPS_KEY = "studioflow.videoClips";
   var VIDEO_SLOTS_KEY = "studioflow.videoClipSlots";
   var TIMER_KEY = "studioflow.videoTimers";
-  var LABELS = ["Intro Video", "Outro Video", "", "", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"];
-  var VISIBLE_VIDEO_SLOTS = [0, 1, 4, 5, 6, 7, 8];
+  var LABELS = ["Intro Video", "Outro Video", "", "", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9", "Video 10"];
+  var VISIBLE_VIDEO_SLOTS = [0, 1, 4, 5, 6, 7, 8, 9];
   var INTRO_OUTRO_SLOTS = [0, 1];
-  var VIDEO_ONLY_SLOTS = [4, 5, 6, 7, 8];
+  var VIDEO_ONLY_SLOTS = [4, 5, 6, 7, 8, 9];
   var TIMER_PRESETS = [10, 20, 30, 60];
-  var SLOT_COUNT = 9;
+  var SLOT_COUNT = 10;
   var scheduled = false;
   var root = null;
   var lastSignature = "";
   var previewUrls = {};
+  var stagePreviewUrl = "";
+  var stageRestoreVideo = null;
+  var stageRestoreWasPlaying = false;
   var timerHandle = null;
   var timerEnd = null;
   var timerRemaining = 0;
@@ -72,6 +75,8 @@
   function removeAsset(slot) { var slots = videoSlots(), asset = slots[slot]; if (!asset) return; if (!requestSlotChange(slot, "remove")) return; slots[slot] = null; saveSlots(slots); updateReactClip(slot, null); restoreSceneAssignments(slot, null); dispatchChange(); deleteBlob(asset.blobKey).catch(function () {}).then(function () { setStatus(labelFor(slot) + " removed."); render(); }); }
   function previewAsset(card, asset) { if (!asset) return; var video = card.querySelector("video[data-tpi-preview]"); if (!video) return; if (!video.src) { setStatus("Loading " + asset.fileName + "…"); getBlob(asset.blobKey).then(function (blob) { if (!blob) throw new Error("The video file is no longer available."); var url = URL.createObjectURL(blob); previewUrls[asset.blobKey] = url; video.src = url; video.hidden = false; return video.play(); }).then(function () { setStatus("Playing " + asset.fileName + "."); }).catch(function (error) { setStatus(error.message || "Video playback failed.", true); }); return; } video.hidden = false; var playback = video.paused ? video.play() : video.pause(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); }
   function preloadPreview(card, asset) { if (!asset) return; var video = card.querySelector("video[data-tpi-preview]"); if (!video || video.src) return; getBlob(asset.blobKey).then(function (blob) { if (!blob) return; var url = URL.createObjectURL(blob); previewUrls[asset.blobKey] = url; video.src = url; video.hidden = false; video.load(); }).catch(function () {}); }
+  function clearStagePlayback(restore) { var stage = document.querySelector(".program-stage"), video = stage && stage.querySelector("video.tpi-video-clip-stage-video"); if (video) { try { video.pause(); } catch (error) {} video.remove(); } if (stagePreviewUrl) { try { URL.revokeObjectURL(stagePreviewUrl); } catch (error) {} stagePreviewUrl = ""; } if (restore && stageRestoreVideo && stageRestoreVideo.isConnected && stageRestoreWasPlaying) { var playback = stageRestoreVideo.play(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); } stageRestoreVideo = null; stageRestoreWasPlaying = false; }
+  function playAssetOnStage(asset) { if (!asset) return; var stage = document.querySelector(".program-stage"); if (!stage) { setStatus("The StudioFlow stage is unavailable.", true); return; } clearStagePlayback(true); stageRestoreVideo = stage.querySelector("video.stage-video:not(.tpi-video-clip-stage-video)"); stageRestoreWasPlaying = !!(stageRestoreVideo && !stageRestoreVideo.paused); if (stageRestoreVideo) { try { stageRestoreVideo.pause(); } catch (error) {} } setStatus("Loading " + asset.fileName + " on stage…"); var existingUrl = previewUrls[asset.blobKey] || ""; var load = existingUrl ? Promise.resolve(null) : getBlob(asset.blobKey); load.then(function (blob) { if (!existingUrl && !blob) throw new Error("The video file is no longer available."); var url = existingUrl || URL.createObjectURL(blob); stagePreviewUrl = existingUrl ? "" : url; var video = document.createElement("video"); video.className = "stage-video contain tpi-video-clip-stage-video"; video.dataset.tpiVideoStagePlayback = "true"; video.autoplay = true; video.controls = false; video.muted = false; video.playsInline = true; video.preload = "auto"; video.src = url; video.addEventListener("ended", function () { clearStagePlayback(true); setStatus(asset.fileName + " finished on stage."); }, { once: true }); video.addEventListener("error", function () { clearStagePlayback(true); setStatus("The video could not play on stage.", true); }, { once: true }); stage.appendChild(video); var playback = video.play(); if (playback && typeof playback.catch === "function") playback.catch(function () { setStatus("Click the stage video to start playback.", true); }); setStatus("Playing " + asset.fileName + " on stage."); }).catch(function (error) { clearStagePlayback(true); setStatus(error.message || "Video playback failed.", true); }); }
   function clearPreviewUrls() { Object.keys(previewUrls).forEach(function (key) { try { URL.revokeObjectURL(previewUrls[key]); } catch (error) {} }); previewUrls = {}; }
   function makeButton(label, action, disabled) { var button = document.createElement("button"); button.type = "button"; button.className = "outline-button tpi-video-card-action"; button.dataset.tpiVideoAction = action; button.textContent = label; button.disabled = !!disabled; return button; }
   function protectedSlot(slot) { return slot < 2; }
@@ -89,13 +94,13 @@
     var actionToggle = null, actionMenu = null;
     if (asset) {
       actionToggle = document.createElement("button"); actionToggle.type = "button"; actionToggle.className = "outline-button tpi-video-card-menu-toggle"; actionToggle.dataset.tpiVideoMenuToggle = "true"; actionToggle.setAttribute("aria-label", labelFor(slot) + " video actions"); actionToggle.setAttribute("aria-expanded", "false"); actionToggle.textContent = "•••";
-      actionMenu = document.createElement("div"); actionMenu.className = "tpi-video-card-action-menu"; actionMenu.hidden = true; actionMenu.setAttribute("role", "group"); actionMenu.append(makeButton("Preview", "preview", false), makeButton("Replace", "replace", false), makeButton("Remove", "remove", false)); actions.append(actionToggle, actionMenu);
+      actionMenu = document.createElement("div"); actionMenu.className = "tpi-video-card-action-menu"; actionMenu.hidden = true; actionMenu.setAttribute("role", "group"); if (slot >= 4) actionMenu.append(makeButton("Play in stage", "stage-play", false)); actionMenu.append(makeButton("Preview", "preview", false), makeButton("Replace", "replace", false), makeButton("Remove", "remove", false)); actions.append(actionToggle, actionMenu);
     } else {
       actions.appendChild(makeButton("Upload", "upload", false));
     }
     card.append(preview, body, actions); if (asset && !asset.thumbnailDataUrl) preloadPreview(card, asset);
 
-    card.addEventListener("click", function (event) { var toggle = event.target.closest("button[data-tpi-video-menu-toggle]"); if (toggle && actionMenu && actionToggle) { var opening = actionMenu.hidden; actionMenu.hidden = !opening; toggle.setAttribute("aria-expanded", String(opening)); return; } var target = event.target.closest("button[data-tpi-video-action]"); if (!target) { if (asset) previewAsset(card, asset); else chooseFile(slot); return; } var action = target.dataset.tpiVideoAction; if (action === "preview") previewAsset(card, asset); if (action === "replace" && requestSlotChange(slot, "replace")) chooseFile(slot); if (action === "upload") chooseFile(slot); if (action === "remove") removeAsset(slot); if (actionMenu && actionToggle) { actionMenu.hidden = true; actionToggle.setAttribute("aria-expanded", "false"); } });
+    card.addEventListener("click", function (event) { var toggle = event.target.closest("button[data-tpi-video-menu-toggle]"); if (toggle && actionMenu && actionToggle) { var opening = actionMenu.hidden; actionMenu.hidden = !opening; toggle.setAttribute("aria-expanded", String(opening)); return; } var target = event.target.closest("button[data-tpi-video-action]"); if (!target) { if (asset) { if (slot >= 4) playAssetOnStage(asset); else previewAsset(card, asset); } else chooseFile(slot); return; } var action = target.dataset.tpiVideoAction; if (action === "stage-play") playAssetOnStage(asset); if (action === "preview") previewAsset(card, asset); if (action === "replace" && requestSlotChange(slot, "replace")) chooseFile(slot); if (action === "upload") chooseFile(slot); if (action === "remove") removeAsset(slot); if (actionMenu && actionToggle) { actionMenu.hidden = true; actionToggle.setAttribute("aria-expanded", "false"); } });
     return card;
   }
   function timerSettings() { var value = read(TIMER_KEY, {}); return value && typeof value === "object" ? { custom1: Math.max(1, Math.min(3600, Number(value.custom1) || 90)), custom2: Math.max(1, Math.min(3600, Number(value.custom2) || 120)) } : { custom1: 90, custom2: 120 }; }
