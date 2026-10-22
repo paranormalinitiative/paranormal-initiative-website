@@ -9,6 +9,8 @@ const release = read("scripts/tpi-release.mjs");
 const deployGuard = read("scripts/deploy-production-guarded.mjs");
 const agents = read("AGENTS.md");
 const packageSource = read("package.json");
+const studioflowStage = read("scripts/stage-studioflow-authoritative.mjs");
+const qaRunner = read("scripts/qa/run-qa.mjs");
 
 const checks = [];
 function check(name, assertion) {
@@ -47,6 +49,24 @@ check("direct deployment guard rejects every uncommitted file", () => {
 check("direct deployment guard requires exact GitHub parity", () => {
   assert.match(deployGuard, /ls-remote/);
   assert.match(deployGuard, /Production promotion requires exact GitHub parity/);
+});
+check("deployment package excludes Markdown documentation", () => {
+  assert.ok(deployGuard.includes('endsWith(".md")'));
+});
+check("production Firefox login waits locally and confirms auth once", () => {
+  assert.match(read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs"), /waitForManualLoginTransition/);
+  assert.match(read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs"), /await authenticatedSession\(\)/);
+  assert.doesNotMatch(read("scripts/verify/tpi-studioflow-firefox-acceptance.mjs"), /waitFor\(\"authenticated isolated session\"/);
+});
+check("StudioFlow staging preserves maintained media bridges", () => {
+  assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v1/);
+  assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v1/);
+  assert.match(studioflowStage, /studioflow-012-overrides\.css\?tpi022=video-organization-v1/);
+  assert.match(studioflowStage, /check-request-budget\.mjs/);
+});
+check("complete QA runs the StudioFlow request-budget guard", () => {
+  assert.match(qaRunner, /StudioFlow production request-budget guard/);
+  assert.match(qaRunner, /check:request-budget/);
 });
 check("package exposes credential and safety commands", () => {
   const pkg = JSON.parse(packageSource);

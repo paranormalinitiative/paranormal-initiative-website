@@ -37,6 +37,8 @@ const maintainedBridgeFiles = [
   "production-lock-bridge.js",
   "workspace-bridge.js",
   "video-playback-reset-bridge.js",
+  "video-clip-management-bridge.js",
+  "audio-soundboard-bridge.js",
   "backup-bridge.js",
   "backup-core.mjs",
   "navigation-bridge.js",
@@ -48,7 +50,9 @@ const bridgeTags = [
   '<script src="/studio/production-lock-bridge.js" defer></script>',
   '<script src="/studio/workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1" defer></script>',
   '<script src="/studio/brand-heading-bridge.js?tpi074=legacy-brand-suppression-v1&tpi085=freeze-repair-v1" defer></script>',
-  '<script src="/studio/video-playback-reset-bridge.js?tpi020=stale-canvas-v1" defer></script>',
+  '<script src="/studio/video-playback-reset-bridge.js?tpi031=video-overlay-v1" defer></script>',
+  '<script src="/studio/video-clip-management-bridge.js?tpi020=clip-management-v1&tpi022=video-organization-v1" defer></script>',
+  '<script src="/studio/audio-soundboard-bridge.js?tpi021=soundboards-v1" defer></script>',
   '<script src="/studio/backup-bridge.js?tpi032=restore-v2-local-broadcast&tpi-portable-media=v1" defer></script>'
 ];
 
@@ -158,7 +162,7 @@ function mergeEntryPoint(generatedIndexHtml, maintainedIndexHtml) {
   let merged = generatedIndexHtml.replace(generatedModule[0], integrations);
   merged = merged.replace(
     generatedCss[0],
-    `${generatedCss[0]}\n    <link rel="stylesheet" href="/studio/studioflow-012-overrides.css">`
+    `${generatedCss[0]}\n    <link rel="stylesheet" href="/studio/studioflow-012-overrides.css?tpi022=video-organization-v1">`
   );
   return merged;
 }
@@ -190,6 +194,12 @@ function createIntegratedCandidate(generatedRoot) {
   }
   if (!stagedIndex.includes("backup-bridge.js?tpi032=restore-v2-local-broadcast&tpi-portable-media=v1")) {
     throw new Error("Integrated entry point is missing the backup bridge");
+  }
+  if (!stagedIndex.includes("video-clip-management-bridge.js?tpi020=clip-management-v1&tpi022=video-organization-v1")) {
+    throw new Error("Integrated entry point is missing the video clip management bridge");
+  }
+  if (!stagedIndex.includes("audio-soundboard-bridge.js?tpi021=soundboards-v1")) {
+    throw new Error("Integrated entry point is missing the audio soundboard bridge");
   }
 
   return candidateRoot;
@@ -246,6 +256,10 @@ function printSummary({ generatedRoot, candidateRoot, reproducible }) {
 function main() {
   assertExists(sourceRoot, "authoritative StudioFlow source");
   assertExists(repoStudioRoot, "website StudioFlow directory");
+  execFileSync(process.execPath, [path.join(sourceRoot, "scripts/check-request-budget.mjs")], {
+    cwd: sourceRoot,
+    stdio: "inherit"
+  });
 
   const temporaryRoots = [];
   try {

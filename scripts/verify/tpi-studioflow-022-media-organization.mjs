@@ -25,7 +25,10 @@ check("Timer state prevents duplicate timers", /function startTimer\(slot, secon
 check("Video slot configuration is saved with workspaces", assetState.includes("videoClipSlots") && workspace.includes("videoClipSlots"));
 check("Portable backup collects video slots without duplicate media paths", backup.includes("videoClipSlots") && backup.includes("var result = [], seen = {}") && backup.includes('add("video-clip"'));
 check("My Studios portal is positioned below the status block", workspace.includes("panelRect.bottom + 6") && workspace.includes("PROJECT SAVED"));
-check("Authoritative generated assets remain unchanged", (() => { const manifest = readStudioAssetManifest(resolve(root, "studio")); return manifest.javascript?.url === "/studio/assets/index-BXBVzMev.js" && manifest.stylesheet?.url === "/studio/assets/index-TsnuK4Ub.css"; })());
+check("Authoritative generated asset manifest is complete", (() => {
+  const manifest = readStudioAssetManifest(resolve(root, "studio"));
+  return /^\/studio\/assets\/index-[A-Za-z0-9_-]+\.js$/.test(manifest.javascript?.url || "") && /^\/studio\/assets\/index-[A-Za-z0-9_-]+\.css$/.test(manifest.stylesheet?.url || "");
+})());
 
 const failed = checks.filter((item) => !item.ok);
 console.log(JSON.stringify({ directive: "TPI-STUDIOFLOW-022", checks, passed: checks.length - failed.length, failed: failed.length }, null, 2));

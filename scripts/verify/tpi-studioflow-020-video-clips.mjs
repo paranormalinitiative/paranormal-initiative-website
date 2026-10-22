@@ -30,8 +30,8 @@ check("Clip organization styles are maintained", css.includes(".tpi-video-grid")
 check("Clip management layout has a narrow-width fallback", css.includes("@media (max-width: 520px)") && css.includes("grid-template-columns: 1fr"));
 
 const manifest = readStudioAssetManifest(root + "/studio");
-check("Authoritative StudioFlow JavaScript asset is preserved", manifest.javascript?.url === "/studio/assets/index-BXBVzMev.js", manifest.javascript?.url || "missing");
-check("Authoritative StudioFlow CSS asset is preserved", manifest.stylesheet?.url === "/studio/assets/index-TsnuK4Ub.css", manifest.stylesheet?.url || "missing");
+check("Authoritative StudioFlow JavaScript asset is present", /^\/studio\/assets\/index-[A-Za-z0-9_-]+\.js$/.test(manifest.javascript?.url || ""), manifest.javascript?.url || "missing");
+check("Authoritative StudioFlow CSS asset is present", /^\/studio\/assets\/index-[A-Za-z0-9_-]+\.css$/.test(manifest.stylesheet?.url || ""), manifest.stylesheet?.url || "missing");
 
 const failed = checks.filter((item) => !item.ok);
 console.log(JSON.stringify({

@@ -216,6 +216,13 @@ Sign in manually when the isolated production Firefox window requests it.
 Local credentials must never be sent to production. Do not close or repurpose
 the owner's already-open Firefox tabs.
 
+The production acceptance runner must observe the isolated browser's local
+navigation or authenticated DOM state while waiting for the owner. It may make
+one final `/api/auth/me` request after that transition, but it must never poll a
+production API endpoint while waiting for manual input. StudioFlow production
+room polling must remain non-overlapping and visibility-aware so an inactive
+browser tab cannot consume the Worker daily request allowance.
+
 Application directives are not complete until this guarded deployment and live
 acceptance pass. Documentation-only or local-tooling-only commits are pushed to
 GitHub but do not require a no-op Worker deployment because those files are

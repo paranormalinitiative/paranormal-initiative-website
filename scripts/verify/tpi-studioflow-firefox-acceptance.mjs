@@ -70,14 +70,26 @@ async function count(selector) { return Number(await js("return document.querySe
 async function text(selector) { return String(await js("var node=document.querySelector(arguments[0]); return node ? node.textContent : '';", selector)); }
 async function click(selector) { return js("var node=document.querySelector(arguments[0]); if(!node) return false; node.click(); return true;", selector); }
 async function clickButton(label) { return js("var label=arguments[0].toLowerCase(); var node=Array.from(document.querySelectorAll('button')).find(function(button){ return (button.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase().indexOf(label)!==-1; }); if(!node) return false; node.click(); return true;", label); }
-async function waitFor(description, predicate, timeout = 30_000) {
+async function waitFor(description, predicate, timeout = 30_000, interval = 200) {
   const started = Date.now();
   let detail = "";
   while (Date.now() - started < timeout) {
     try { const value = await predicate(); if (value) return value; detail = String(value); } catch (error) { detail = safe(error); }
-    await sleep(200);
+    await sleep(interval);
   }
   throw new Error(`${description} timed out${detail ? `: ${detail}` : ""}`);
+}
+async function authenticatedSession() {
+  return asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});");
+}
+async function waitForManualLoginTransition(timeout = 600_000) {
+  await waitFor("manual login transition", async () => {
+    const url = new URL(await driver.getCurrentUrl());
+    const stillOnLogin = /\/member-login(?:\.html)?\/?$/.test(url.pathname);
+    const authenticatedCard = await count("[data-authenticated-login-state]:not([hidden])");
+    return !stillOnLogin || authenticatedCard === 1;
+  }, timeout, 1_000);
+  if (!(await authenticatedSession())) throw new Error("The browser left the login form, but the authenticated session could not be confirmed.");
 }
 async function uploadByDynamicInput(triggerSelector, acceptToken, path) {
   const before = await count(`input[type=file][accept*="${acceptToken}"]`);
@@ -147,11 +159,14 @@ try {
   check("isolated Firefox login page renders", await count('form[data-member-login]') === 1);
   if (manualLogin) {
     console.log("ACTION REQUIRED: Sign in to the isolated Firefox Developer Edition window. Acceptance continues automatically after authentication.");
-    await waitFor("authenticated isolated session", async () => asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});"), 600_000);
+    // Observe browser-local navigation/DOM state while the owner signs in.
+    // Do not poll the production Worker: a prior 200 ms auth loop consumed
+    // thousands of requests per acceptance attempt on the Free plan.
+    await waitForManualLoginTransition();
     check("manual authentication succeeds in the isolated profile", true);
   } else {
     await js("var form=document.querySelector('form[data-member-login]'), user=form&&form.querySelector('input[name=\"username\"]'), password=form&&form.querySelector('input[name=\"password\"]'); if(!form||!user||!password) return false; user.value=arguments[0]; password.value=arguments[1]; ['input','change'].forEach(function(type){user.dispatchEvent(new Event(type,{bubbles:true}));password.dispatchEvent(new Event(type,{bubbles:true}));}); form.querySelector('button[type=\"submit\"]').click(); return true;", account.username, account.password);
-    await waitFor("authenticated local session", async () => asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});"));
+    await waitFor("authenticated local session", authenticatedSession);
     check(`synthetic ${accountKey} authentication succeeds`, true);
   }
 

@@ -48,6 +48,9 @@ check("local service ownership has sandbox-safe process proof", () => {
 check("production Firefox cannot receive local fixture credentials", () => {
   assert.match(firefox, /productionTarget && !manualLogin/);
   assert.match(firefox, /local credentials are never sent to production/);
+  assert.match(firefox, /waitForManualLoginTransition/);
+  assert.match(firefox, /await authenticatedSession\(\)/);
+  assert.doesNotMatch(firefox, /waitFor\(\"authenticated isolated session\"/);
 });
 
 check("synthetic production QA account tool is double-gated", () => {

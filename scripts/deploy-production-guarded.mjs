@@ -37,6 +37,7 @@ const filter = (source) => {
   if (excludedDirectories.has(parts[0])) return false;
   const base = parts.at(-1);
   if (excludedFiles.has(base) || base.startsWith(".env.")) return false;
+  if (base.toLowerCase().endsWith(".md")) return false;
   if (parts.some((part) => part === ".git" || part === ".wrangler")) return false;
   return true;
 };

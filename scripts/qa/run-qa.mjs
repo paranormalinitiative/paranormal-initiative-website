@@ -76,6 +76,7 @@ if (studioflowRoot) {
   const resolvedStudioFlow = resolve(studioflowRoot);
   if (existsSync(resolve(resolvedStudioFlow, "package.json"))) {
     run("StudioFlow production build", "npm", ["run", "build"], { cwd: resolvedStudioFlow });
+    run("StudioFlow production request-budget guard", "npm", ["run", "check:request-budget"], { cwd: resolvedStudioFlow });
     run("StudioFlow room-server syntax", "npm", ["run", "check:room"], { cwd: resolvedStudioFlow });
     run("StudioFlow RTMP bridge syntax", "npm", ["run", "check:rtmp"], { cwd: resolvedStudioFlow });
   } else {
