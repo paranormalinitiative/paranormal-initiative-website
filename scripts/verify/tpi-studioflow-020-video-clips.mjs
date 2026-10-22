@@ -19,11 +19,11 @@ check("Studio shell loads the bridge", readFileSync(shellPath, "utf8").includes(
 check("Local staging includes the bridge", readFileSync(stagingPath, "utf8").includes('"video-clip-management-bridge.js"'));
 
 const bridge = readFileSync(bridgePath, "utf8");
-check("Bridge exposes the nine approved video labels", ["Intro Video", "Outro Video", "Thank You", "Be Right Back", "Video 5", "Video 9"].every((label) => bridge.includes(label)));
+check("Bridge exposes the visible video labels", bridge.includes("VISIBLE_VIDEO_SLOTS = [0, 1, 4, 5, 6, 7, 8]") && ["Intro Video", "Outro Video", "Video 5", "Video 9"].every((label) => bridge.includes(label)));
 check("Bridge exposes Preview, Replace, and Remove", ["Preview", "Replace", "Remove"].every((label) => bridge.includes(`makeButton("${label}"`)));
 check("Bridge preserves the existing React Intro/Outro contract", bridge.includes("VIDEO_CLIPS_KEY") && bridge.includes("updateReactClip") && bridge.includes("studioflow-recordings"));
 check("Bridge persists a separate nine-slot video configuration", bridge.includes('VIDEO_SLOTS_KEY = "studioflow.videoClipSlots"') && bridge.includes("SLOT_COUNT = 9"));
-check("Thank You and Be Right Back remain empty placeholders", bridge.includes('"Thank You"') && bridge.includes('"Be Right Back"') && !bridge.includes("item.remove()"));
+check("Thank You and Be Right Back are hidden from the active UI", bridge.includes('label === "thank you" || label === "be right back"') && bridge.includes("tpiLegacyVideoPlaceholder"));
 
 const css = readFileSync(cssPath, "utf8");
 check("Clip organization styles are maintained", css.includes(".tpi-video-grid") && css.includes(".tpi-video-card"));

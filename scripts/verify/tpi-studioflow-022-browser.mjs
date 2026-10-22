@@ -47,18 +47,14 @@ try {
   await enterStudio();
 
   const cards = page.locator("[data-tpi-video-organization] [data-tpi-video-card]");
-  const timers = page.locator("[data-tpi-video-timers] .tpi-video-timer-card");
-  check("nine video cards render", await cards.count() === 9);
-  check("video card labels are complete", await page.locator("[data-tpi-video-card]").allTextContents().then(values => ["Intro Video", "Outro Video", "Thank You", "Be Right Back", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"].every(label => values.some(value => value.includes(label)))));
-  check("six separate timer cards render", await timers.count() === 6);
-  check("custom timer controls render", await page.getByLabel("Custom Timer 1 duration in seconds").count() === 1 && await page.getByLabel("Custom Timer 2 duration in seconds").count() === 1);
+  check("seven visible video cards render", await cards.count() === 7);
+  check("visible video card labels omit legacy placeholders", await page.locator("[data-tpi-video-card]").allTextContents().then(values => ["Intro Video", "Outro Video", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9"].every(label => values.some(value => value.includes(label))) && !values.some(value => /Thank You|Be Right Back/i.test(value))));
+  check("one native video timer uses duration presets", await page.locator("[data-tpi-video-timers]").count() === 0 && await page.locator(".countdown-duration-row button").count() >= 4 && await page.locator('button[title*="golden ring countdown"]').count() === 1);
 
   let chooser = page.waitForEvent("filechooser"); await cards.nth(0).getByRole("button", { name: "Upload" }).click(); await (await chooser).setFiles(videoFile); await page.waitForTimeout(1000);
   await cards.nth(0).locator("button[data-tpi-video-menu-toggle]").click();
   check("Intro Video upload assigns slot one", await cards.nth(0).getByText("tpi-022-video.mp4", { exact: true }).count() === 1 && await cards.nth(0).getByRole("button", { name: "Preview" }).count() === 1);
   check("Intro Video gets a recognizable thumbnail or assigned fallback", await cards.nth(0).locator("img, .tpi-video-card-fallback").count() === 1);
-  chooser = page.waitForEvent("filechooser"); await cards.nth(2).getByRole("button", { name: "Upload" }).click(); await (await chooser).setFiles(videoFile); await page.waitForTimeout(900);
-  check("Thank You remains a customizable placeholder slot", await cards.nth(2).getByText("tpi-022-video.mp4", { exact: true }).count() === 1);
   const persisted = await page.evaluate(async () => {
     const slots = JSON.parse(localStorage.getItem("studioflow.videoClipSlots") || "[]");
     const db = await new Promise((resolve, reject) => { const request = indexedDB.open("studioflow-recordings"); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
@@ -66,20 +62,17 @@ try {
     const found = await new Promise((resolve, reject) => { const tx = db.transaction("recordingBlobs", "readonly"); const store = tx.objectStore("recordingBlobs"); const values = []; keys.forEach(key => { const request = store.get(key); request.onsuccess = () => values.push(Boolean(request.result)); request.onerror = () => reject(request.error); }); tx.oncomplete = () => resolve(values.every(Boolean)); tx.onerror = () => reject(tx.error); });
     db.close(); return { slots, found };
   });
-  check("video metadata and media bytes persist locally", persisted.slots.filter(Boolean).length === 2 && persisted.found);
+  check("video metadata and media bytes persist locally", persisted.slots.filter(Boolean).length === 1 && persisted.found);
   const introToggle = cards.nth(0).locator("button[data-tpi-video-menu-toggle]");
   if (await introToggle.getAttribute("aria-expanded") !== "true") await introToggle.click();
   await cards.nth(0).getByRole("button", { name: "Preview" }).click(); await page.waitForTimeout(500);
   check("video preview loads from IndexedDB", await cards.nth(0).locator('video[data-tpi-preview]:not([hidden])').count() === 1);
 
-  await page.getByLabel("Custom Timer 1 duration in seconds").fill("45"); await page.getByLabel("Custom Timer 1 duration in seconds").press("Tab"); await page.waitForTimeout(200);
-  await timers.nth(4).getByRole("button", { name: "Select" }).click(); await page.waitForTimeout(200);
-  await timers.nth(4).getByRole("button", { name: "Start" }).click(); await page.waitForTimeout(200);
-  check("custom timer starts without duplicating a timer", await page.locator('[data-tpi-timer-status]').textContent().then(text => /Timer 5/.test(text)) && await page.locator(".tpi-video-timer-card.running").count() === 1);
-  await page.locator(".tpi-video-timer-card.running").getByRole("button", { name: "Stop" }).click();
+  await page.getByRole("button", { name: "10s", exact: true }).click(); await page.waitForTimeout(200);
+  check("native video timer changes to the selected duration", await page.getByRole("button", { name: "10s", exact: true }).evaluate(button => button.classList.contains("active")) && await page.locator("[data-tpi-video-timers]").count() === 0);
 
   await page.reload({ waitUntil: "domcontentloaded" }); await enterStudio();
-  check("video assignments survive refresh and reopening", await page.locator('[data-tpi-video-card="0"] .assigned').count() === 0 && await page.locator('[data-tpi-video-card="0"] .tpi-video-card-file').textContent() === "tpi-022-video.mp4" && await page.locator('[data-tpi-video-card="2"] .tpi-video-card-file').textContent() === "tpi-022-video.mp4");
+  check("video assignments survive refresh and reopening", await page.locator('[data-tpi-video-card="0"] .tpi-video-card-file').textContent() === "tpi-022-video.mp4" && await page.locator('[data-tpi-video-card="2"]').count() === 0);
 
   const selector = page.locator(".tpi-studio-selector");
   if (await selector.count()) {

@@ -429,6 +429,10 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   display: none !important;
 }
 
+[data-tpi-legacy-video-placeholder="true"] {
+  display: none !important;
+}
+
 .tpi-video-organization {
   display: grid;
   box-sizing: border-box;
