@@ -443,6 +443,12 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   margin-top: 0.75rem;
 }
 
+.tpi-video-subsection {
+  display: grid;
+  min-width: 0;
+  gap: 0.55rem;
+}
+
 .tpi-video-organization h4,
 .tpi-video-timers h4 {
   margin: 0;

@@ -14,8 +14,9 @@ const checks = [];
 function check(name, condition, detail = "") { checks.push({ name, ok: Boolean(condition), detail }); }
 
 check("Video organization bridge exists", existsSync(bridgePath), bridgePath);
-check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v5"));
+check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v6"));
 check("Visible video slots omit legacy placeholders", bridge.includes("VISIBLE_VIDEO_SLOTS = [0, 1, 4, 5, 6, 7, 8]") && bridge.includes("Intro Video") && bridge.includes("Video 9"));
+check("Intro and Outro have a separate section from general clips", bridge.includes("INTRO & OUTRO") && bridge.includes("INTRO_OUTRO_SLOTS = [0, 1]") && bridge.includes("VIDEO_ONLY_SLOTS = [4, 5, 6, 7, 8]"));
 check("Video cards use a 3x3-capable grid", bridge.includes("tpi-video-grid") && css.includes(".tpi-video-grid") && css.includes("repeat(3"));
 check("Video uploads persist in the existing IndexedDB store", bridge.includes('VIDEO_SLOTS_KEY = "studioflow.videoClipSlots"') && bridge.includes("studioflow-recordings") && bridge.includes("recordingBlobs"));
 check("Representative thumbnail generation avoids black opening frames", bridge.includes("thumbnailDataUrl") && bridge.includes("samples = [0.25, 0.5, 0.75, 0.05]") && bridge.includes("average >= 12"));
