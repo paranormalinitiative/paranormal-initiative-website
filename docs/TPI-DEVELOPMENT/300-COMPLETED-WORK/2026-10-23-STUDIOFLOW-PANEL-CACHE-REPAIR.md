@@ -2,6 +2,22 @@
 
 Date: 2026-10-23
 
+Status: SUPERSEDED BY THE LIVE PANEL DISPLAY REPAIR
+
+## Correction
+
+This cache rotation was valid but did not fully resolve the production defect.
+The live owner session later proved that the media bridge elements were marked
+hidden yet still rendered because their author stylesheet applied
+`display: grid`. The complete root cause and deployed correction are recorded
+in
+`2026-10-23-STUDIOFLOW-LIVE-PANEL-DISPLAY-REPAIR.md`.
+
+The 59/59 result below used an assertion that trusted `node.hidden`; it did not
+prove that the browser had removed the element from the rendered layout. The
+replacement acceptance test checks computed display and rendered client
+rectangles.
+
 ## Problem
 
 The maintained media bridges had already been changed to hide their injected

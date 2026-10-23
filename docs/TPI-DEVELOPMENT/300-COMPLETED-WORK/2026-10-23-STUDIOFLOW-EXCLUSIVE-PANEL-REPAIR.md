@@ -4,6 +4,12 @@ Date: 2026-10-23
 Status: DEPLOYED AND VERIFIED  
 Worker: theparanormalinitiative
 
+> Historical correction: this repair established the intended visibility
+> state but did not fully remove the bridge content from the production
+> layout. Author CSS overrode the HTML `hidden` state. The complete production
+> correction is documented in
+> `2026-10-23-STUDIOFLOW-LIVE-PANEL-DISPLAY-REPAIR.md`.
+
 ## Problem
 
 The maintained video and audio bridges injected Media Assets content into the

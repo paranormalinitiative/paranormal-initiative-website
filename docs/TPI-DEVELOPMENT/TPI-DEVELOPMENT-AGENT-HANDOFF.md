@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `983601d74cad700a9b14148ff4b7dcab3fca93bc`
-- Active production Worker version: `a4e1f565-21fb-449d-878a-388beabac36c`
-- Recorded rollback target: `41c7c0bf-5b46-4fd7-b2af-4bdf3f101bc3`
+- Last fully verified workflow baseline: `f1603710545447b072fbe6160acc3bccbcf456e4`
+- Active production Worker version: `0862ff17-3003-4e27-8ab3-dc7218dbbff3`
+- Recorded rollback target: `a4e1f565-21fb-449d-878a-388beabac36c`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -35,36 +35,43 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Deployment commit `983601d74cad700a9b14148ff4b7dcab3fca93bc`, built from
-authoritative StudioFlow source commit `17bbd4a` plus the maintained bridge
-cache repair, was deployed to Worker `theparanormalinitiative` as version
-`a4e1f565-21fb-449d-878a-388beabac36c` at 100% traffic on 2026-10-23. The
+Deployment commit `f1603710545447b072fbe6160acc3bccbcf456e4`, built from
+authoritative StudioFlow source commit `17bbd4a` plus the maintained bridge and
+stylesheet repair, was deployed to Worker `theparanormalinitiative` as version
+`0862ff17-3003-4e27-8ab3-dc7218dbbff3` at 100% traffic on 2026-10-23. The
 release passed anonymous smoke 10/10, isolated Firefox Developer Edition
 acceptance 59/59, all 11 exclusive right-rail panel checks, local
 authentication lifecycle 38/38, complete preflight, asset/build integrity,
-and the guarded Wrangler dry-run. Crossroads, D1, R2, and owner browser
-storage were not modified.
+and the guarded Wrangler dry-run. An authenticated owner Firefox production
+tab was then reloaded and all 11 tabs were checked non-destructively. Crossroads,
+D1, R2, and owner browser storage were not modified.
 
 ## Latest StudioFlow repair
 
 The deployed repair is documented in
-`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-PANEL-CACHE-REPAIR.md`.
-Media bridge URLs now carry an `exclusive-v2` cache identifier, and the video
-timer bridge is included in the active-panel gate. This prevents existing
-browsers from retaining the prior cumulative panel behavior. The regression
-harness checks both that the requested panel opens and that Media Assets-only
-sections disappear.
+`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-LIVE-PANEL-DISPLAY-REPAIR.md`.
+The live defect was an author-style cascade conflict: bridge roots were marked
+hidden, but `display: grid` kept them visibly rendered. The production bridges
+now force `display: none !important` outside Media Assets, the stylesheet has
+matching `[hidden]` protections, and all related assets use `exclusive-v3`.
+The regression harness checks computed visibility and rendered client
+rectangles instead of trusting `node.hidden` alone.
 Use the disposable Firefox acceptance profile for future checks; do not use
 the owner profile for destructive testing.
 
-For production acceptance, use only the disposable Firefox window titled
-`TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE`. Other Firefox windows and the
-owner's existing tabs do not satisfy the acceptance gate.
+The automated production acceptance gate must use the disposable Firefox
+window titled `TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE`. After that gate
+passes, StudioFlow's final user-facing acceptance target is the authenticated
+live production page. When the owner has authorized live verification, the
+existing production tab may be used non-destructively to confirm the exact
+visible behavior; do not alter stored studios, media, recordings, or settings.
 
 ## Current browser workflow
 
 - Firefox Developer Edition is the default browser for local and production
   TPI acceptance.
+- StudioFlow completion is judged against the live production site. Local
+  checks remain safety gates but are not substitutes for live acceptance.
 - Automated acceptance uses isolated disposable profiles and never closes or
   repurposes the owner's existing local or production tabs.
 - Chromium is used only for an explicit compatibility requirement.

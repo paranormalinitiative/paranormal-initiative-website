@@ -2,27 +2,36 @@
 
 Last verified: 2026-10-23
 
-## Latest verified production release — 2026-10-23 (cache repair)
+## Latest verified production release — 2026-10-23 (live panel display repair)
 
-The latest release forces existing browsers to load the corrected exclusive
-StudioFlow panel bridges.
+The latest release fixes the actual production cause of the cumulative
+StudioFlow right rail. The bridges set their injected media elements to
+`hidden`, but production grid styles kept those elements visibly rendered.
+The bridges and stylesheet now enforce a true rendered `display: none` outside
+Media Assets, and the acceptance harness checks computed layout rather than
+trusting the hidden property alone.
 
-- Release commit: 983601d74cad700a9b14148ff4b7dcab3fca93bc
+- Release commit: f1603710545447b072fbe6160acc3bccbcf456e4
 - Worker: theparanormalinitiative
-- Active production Worker version: a4e1f565-21fb-449d-878a-388beabac36c at 100%
-- Immediate rollback reference: 41c7c0bf-5b46-4fd7-b2af-4bdf3f101bc3
+- Active production Worker version: 0862ff17-3003-4e27-8ab3-dc7218dbbff3 at 100%
+- Immediate rollback reference: a4e1f565-21fb-449d-878a-388beabac36c
 - Live anonymous smoke: PASS, 10/10
 - Live isolated Firefox Developer Edition acceptance: PASS, 59/59
-- All 11 right-rail panels: exclusive and verified
-- Bridge cache identifiers: exclusive-v2
-- No rollback required; protected resources and owner browser storage were untouched.
+- Authenticated owner Firefox production verification: PASS for all 11 tabs
+- Every non-media tab omitted rendered Video Timers, Sounds, and Background Music
+- Media Assets retained video, timer, sound, and music controls
+- Bridge and stylesheet cache identifier: exclusive-v3
+- Owner production browser storage was not changed; the owner profile was used
+  only for non-destructive live tab verification.
+- No rollback required; protected resources were untouched.
 - Current release record:
-  300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-PANEL-CACHE-REPAIR.md
+  300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-LIVE-PANEL-DISPLAY-REPAIR.md
 
-## Latest verified production release — 2026-10-23
+## Prior production release — 2026-10-23 (historical)
 
-The latest verified release is the exclusive StudioFlow right-rail panel
-repair.
+This earlier release attempted the exclusive StudioFlow right-rail panel
+repair. It is retained as deployment history and is superseded by the live
+panel display repair above.
 
 - Release branch: codex/tpi-development
 - Deployment commit: 0ce8774ff62b437e7a7862e47e60f3302d306d37
@@ -39,8 +48,11 @@ repair.
 - Protected resources: Crossroads of the Unknown untouched; no D1 migration,
   R2 mutation, or owner-browser storage access.
 
-The latest verified release is the StudioFlow panel-navigation and program-cue
-repair below. It supersedes the previous release details in this document.
+## Earlier StudioFlow panel-navigation and program-cue release (historical)
+
+This earlier release repaired StudioFlow panel navigation and program cues. It
+is retained as deployment history and is superseded by the live panel display
+repair above.
 
 - Release branch: codex/tpi-development
 - Source commit: 17bbd4a in /Users/toddknipple/Documents/StudioFlow/web
@@ -60,9 +72,10 @@ repair below. It supersedes the previous release details in this document.
 - Protected resources: Crossroads of the Unknown untouched; no D1 migration,
   R2 mutation, or owner-browser storage access.
 
-The current production baseline is the release below. Historical rows and
-older incident records in this document remain valuable provenance, but they
-must not be interpreted as the active production state.
+## Earlier production baseline record (historical)
+
+The release below is retained as historical provenance and must not be
+interpreted as the active production state.
 
 - Release branch: `codex/tpi-development`
 - Source commit: `68e44b7ff0c294db72aaef1bc1f21307af8c765d`
