@@ -15,7 +15,7 @@ const css = readFileSync(join(root, "studio/studioflow-012-overrides.css"), "utf
 
 const required = [
   [html, "audio-soundboard-bridge.js", "Studio shell includes the soundboard bridge"],
-  [html, "tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v2", "Shell cache tag identifies the scene-aware volume-aware SMART Pad soundboard bridge"],
+  [html, "tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v3", "Shell cache tag identifies the scene-aware volume-aware SMART Pad soundboard bridge"],
   [stage, '"audio-soundboard-bridge.js"', "Local staging includes the soundboard bridge"],
   [bridge, "SLOT_COUNT = 9", "Nine-slot capacity is explicit"],
   [bridge, 'dataset.tpiAudioBoard = category', "Separate category boards are rendered"],

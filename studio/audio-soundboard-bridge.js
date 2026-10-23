@@ -17,6 +17,7 @@
   var MUSIC_VOLUME_KEY = "studioflow.backgroundMusicVolume";
   var MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop";
   var SCENE_MUSIC_KEY = "studioflow.sceneMusicAssignments";
+  var AFTER_INTRO_SCENE_ID = "after-intro";
   var PROGRAM_ACTIVE_KEY = "studioflow.programActive";
   var AUDIO_ACCEPT = "audio/*,.mp3,.m4a,.wav,.wave,.ogg,.oga,.aac,.flac,.aif,.aiff,.webm,.opus,.amr";
   var MUSIC_MAX_BYTES = 512 * 1024 * 1024;
@@ -88,6 +89,7 @@
     return slotArray(legacy && typeof legacy === "object" ? [legacy] : []);
   }
   function musicLoopEnabled() { return read(MUSIC_LOOP_KEY, true) !== false; }
+  function isAfterIntroScene(sceneId) { return text(sceneId) === AFTER_INTRO_SCENE_ID; }
   function dispatchChange() {
     try { window.dispatchEvent(new Event("storage")); } catch (error) {}
     try { window.dispatchEvent(new CustomEvent("studioflow:storage-changed", { detail: { source: "audio-soundboards" } })); } catch (error) {}
@@ -392,21 +394,29 @@
   }
   function sceneMusicFor(sceneId) {
     var assignments = sceneAssignments();
-    var key = text(sceneId) || "intro";
+    var key = text(sceneId) || AFTER_INTRO_SCENE_ID;
+    // The original shortcut stored the post-intro assignment under the Intro
+    // scene ID. Preserve that track, but give the shortcut its own stable
+    // identity so clicking Intro cannot activate the handoff assignment.
+    if (key === AFTER_INTRO_SCENE_ID && !assignments[key] && assignments.intro && typeof assignments.intro === "object") {
+      assignments[key] = assignments.intro;
+      delete assignments.intro;
+      writeSceneAssignments(assignments);
+    }
     if (assignments[key] && typeof assignments[key] === "object") return assignments[key];
-    // Migrate the former one-button assignment to the Intro handoff without
-    // changing the selected track or its media reference.
+    // Migrate the former one-button assignment to the independent post-intro
+    // shortcut without changing the selected track or its media reference.
     if (assignments.global && typeof assignments.global === "object") {
-      assignments.intro = assignments.global;
+      assignments[AFTER_INTRO_SCENE_ID] = assignments.global;
       delete assignments.global;
       writeSceneAssignments(assignments);
-      return assignments.intro;
+      return assignments[AFTER_INTRO_SCENE_ID];
     }
     return null;
   }
   function saveSceneMusic(sceneId, asset) {
     var next = sceneAssignments();
-    var key = text(sceneId) || "intro";
+    var key = text(sceneId) || AFTER_INTRO_SCENE_ID;
     if (!asset) delete next[key];
     else next[key] = { blobKey: asset.blobKey, assetId: asset.id, title: asset.title || titleFor(asset.fileName), assignedAt: new Date().toISOString() };
     delete next.global;
@@ -435,7 +445,7 @@
     menu.setAttribute("role", "menu");
     var heading = document.createElement("div");
     heading.className = "tpi-scene-music-menu-heading";
-    heading.textContent = sceneId === "intro" ? "Music after Intro" : "Music for " + sceneTitle;
+    heading.textContent = isAfterIntroScene(sceneId) ? "Music after Intro" : "Music for " + sceneTitle;
     menu.appendChild(heading);
     var currentAssignment = sceneMusicFor(sceneId);
     musicSlots().forEach(function (asset, slot) {
@@ -452,8 +462,8 @@
         saveSceneMusic(sceneId, asset);
         closeSceneMusicMenu();
         var active = text(read("studioflow.activeSceneId", ""));
-        if (active === sceneId && sceneId !== "intro") playMusic(slot);
-        setStatus(sceneId === "intro" ? "Background music will start after Intro." : "Background music assigned to " + sceneTitle + ".");
+        if (active === sceneId && !isAfterIntroScene(sceneId)) playMusic(slot);
+        setStatus(isAfterIntroScene(sceneId) ? "Background music will start after Intro." : "Background music assigned to " + sceneTitle + ".");
         sceneMusicButton();
       });
       menu.appendChild(item);
@@ -467,7 +477,7 @@
       event.stopPropagation();
       saveSceneMusic(sceneId, null);
       closeSceneMusicMenu();
-      setStatus("Background music removed from " + (sceneId === "intro" ? "the Intro handoff." : sceneTitle + "."));
+      setStatus("Background music removed from " + (isAfterIntroScene(sceneId) ? "the Intro handoff." : sceneTitle + "."));
       sceneMusicButton();
     });
     menu.appendChild(remove);
@@ -485,37 +495,50 @@
     var scenes = Array.prototype.slice.call(document.querySelectorAll("[data-tpi-scene-id]"));
     scenes.forEach(function (scene) {
       var sceneId = text(scene.getAttribute("data-tpi-scene-id"));
+      var shortcutId = sceneId === "intro" ? AFTER_INTRO_SCENE_ID : sceneId;
       if (!sceneId || sceneId === "outro" || !scene.parentElement) return;
       var button = Array.prototype.slice.call(scene.parentElement.children).find(function (child) {
-        return child.getAttribute && child.getAttribute("data-tpi-scene-music-for") === sceneId;
+        return child.getAttribute && child.getAttribute("data-tpi-scene-music-for") === shortcutId;
       });
       if (!button) {
         button = document.createElement("button");
         button.type = "button";
         button.className = "scene-card compact dashed tpi-scene-music-button";
         button.dataset.tpiSceneMusicButton = "true";
-        button.dataset.tpiSceneMusicFor = sceneId;
+        button.dataset.tpiSceneMusicFor = shortcutId;
         var icon = document.createElement("span"); icon.className = "tpi-scene-music-icon"; icon.textContent = "♫"; icon.setAttribute("aria-hidden", "true");
         var label = document.createElement("span"); label.className = "tpi-scene-music-label";
         button.append(icon, label);
         button.addEventListener("click", function (event) {
           event.preventDefault();
           event.stopPropagation();
-          openSceneMusicMenu(button, sceneId, scene.querySelector(".scene-label > span")?.textContent || (scene.textContent || "Scene").trim());
+          var assignment = sceneMusicFor(shortcutId);
+          var musicIndex = assignment && musicSlots().findIndex(function (item) { return item && item.blobKey === assignment.blobKey; });
+          if (musicIndex >= 0 && playAssignedSceneMusic(assignment)) {
+            setStatus("Playing " + (assignment.title || titleFor(assignment.fileName)) + ".");
+            sceneMusicButton();
+            return;
+          }
+          openSceneMusicMenu(button, shortcutId, scene.querySelector(".scene-label > span")?.textContent || (scene.textContent || "Scene").trim());
+        });
+        button.addEventListener("contextmenu", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          openSceneMusicMenu(button, shortcutId, scene.querySelector(".scene-label > span")?.textContent || (scene.textContent || "Scene").trim());
         });
         scene.parentElement.insertBefore(button, scene.nextSibling);
       }
-      var assignment = sceneMusicFor(sceneId);
+      var assignment = sceneMusicFor(shortcutId);
       var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
       var label = button.querySelector(".tpi-scene-music-label");
-      if (label) label.textContent = current ? (sceneId === "intro" ? "After Intro: " : "Music: ") + (assignment.title || current.title || titleFor(current.fileName)) : (sceneId === "intro" ? "Add music after Intro" : "Add background music");
+      if (label) label.textContent = current ? (isAfterIntroScene(shortcutId) ? "After Intro: " : "Music: ") + (assignment.title || current.title || titleFor(current.fileName)) : (isAfterIntroScene(shortcutId) ? "Add music after Intro" : "Add background music");
       button.classList.toggle("selected", false);
       button.classList.toggle("assigned", !!current);
       button.disabled = musicSlots().filter(Boolean).length === 0;
       button.removeAttribute("aria-pressed");
       button.title = current
-        ? "Assigned only — this track starts after Intro when Live or Record is engaged. Click to change it."
-        : "Choose background music for this scene. It will not start until Live or Record is engaged.";
+        ? (isAfterIntroScene(shortcutId) ? "Play the assigned Background Music track after Intro. Right-click to change it." : "Play the assigned Background Music track for this scene. Right-click to change it.")
+        : "Choose background music for this scene.";
     });
   }
   function playAssignedSceneMusic(assignment) {
@@ -530,16 +553,16 @@
     var previous = lastSceneId;
     var showActive = read(PROGRAM_ACTIVE_KEY, false) === true;
     if (!showActive) {
-      if (programWasActive) stopMusic();
+      if (programWasActive || active === "intro") stopMusic();
       programWasActive = false;
       lastSceneId = active;
       sceneMusicButton();
       return;
     }
-    if (active === "intro" && (previous !== "intro" || !programWasActive) && sceneMusicFor("intro")) {
+    if (active === "intro" && (previous !== "intro" || !programWasActive) && sceneMusicFor(AFTER_INTRO_SCENE_ID)) {
       stopMusic();
     } else if (active && active !== "intro" && active !== "outro" && (!programWasActive || previous === "intro" || !previous || previous !== active)) {
-      playAssignedSceneMusic(sceneMusicFor(active) || (previous === "intro" ? sceneMusicFor("intro") : null));
+      playAssignedSceneMusic(sceneMusicFor(active) || (previous === "intro" ? sceneMusicFor(AFTER_INTRO_SCENE_ID) : null));
     }
     programWasActive = true;
     lastSceneId = active;

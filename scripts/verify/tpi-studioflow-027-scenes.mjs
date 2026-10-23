@@ -35,8 +35,19 @@ check("Intro and Outro remain independent assignments", () => {
 });
 
 check("Missing Intro or Outro media stays in the existing empty state", () => {
-  assert.match(app, /if \(!mediaAssetUrl\(clip\)\)/);
+  assert.match(app, /if \(!mediaAssetUrl\(clip\) && !clip\?\.blobKey\)/);
   assert.match(app, /Add a video clip from Media assets to play it here\./);
+});
+
+check("Intro and Outro stage playback starts on scene activation", () => {
+  assert.match(app, /autoPlay\s*\n\s*className="stage-video contain"/);
+  assert.match(app, /onEnded=\{\(\) => finishVideoClipPlayback\(activeScene\?\.kind\)\}/);
+});
+
+check("Scene playback never starts or stops recording or livestreaming", () => {
+  const finishBody = app.match(/function finishVideoClipPlayback[\s\S]*?\n  \}/)?.[0] ?? "";
+  assert.match(finishBody, /setActiveSceneId/);
+  assert.doesNotMatch(finishBody, /stopProgramRecording|stopLiveStream/);
 });
 
 check("Background Music resolves through the existing audio element", () => {

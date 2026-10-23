@@ -84,7 +84,7 @@ check("Firefox acceptance retries only a transient empty StudioFlow shell", () =
 });
 check("StudioFlow staging preserves maintained media bridges", () => {
   assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v13&tpi-panels=exclusive-v3/);
-  assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v2&tpi-panels=exclusive-v3/);
+  assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v3&tpi-panels=exclusive-v3/);
   assert.match(studioflowStage, /studioflow-012-overrides\.css\?tpi022=video-organization-v10&tpi-panels=exclusive-v3/);
   assert.match(studioflowStage, /check-request-budget\.mjs/);
 });

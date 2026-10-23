@@ -50,9 +50,9 @@ const bridgeTags = [
   '<script src="/studio/production-lock-bridge.js" defer></script>',
   '<script src="/studio/workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1" defer></script>',
   '<script src="/studio/brand-heading-bridge.js?tpi074=legacy-brand-suppression-v1&tpi085=freeze-repair-v1" defer></script>',
-  '<script src="/studio/video-playback-reset-bridge.js?tpi031=video-overlay-v1" defer></script>',
+  '<script src="/studio/video-playback-reset-bridge.js?tpi031=video-overlay-v2" defer></script>',
   '<script src="/studio/video-clip-management-bridge.js?tpi020=clip-management-v1&tpi022=video-organization-v13&tpi-panels=exclusive-v3" defer></script>',
-  '<script src="/studio/audio-soundboard-bridge.js?tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v2&tpi-panels=exclusive-v3" defer></script>',
+  '<script src="/studio/audio-soundboard-bridge.js?tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v3&tpi-panels=exclusive-v3" defer></script>',
   '<script src="/studio/backup-bridge.js?tpi032=restore-v2-local-broadcast&tpi-portable-media=v1" defer></script>'
 ];
 
@@ -198,7 +198,7 @@ function createIntegratedCandidate(generatedRoot) {
   if (!stagedIndex.includes("video-clip-management-bridge.js?tpi020=clip-management-v1&tpi022=video-organization-v13&tpi-panels=exclusive-v3")) {
     throw new Error("Integrated entry point is missing the video clip management bridge");
   }
-  if (!stagedIndex.includes("audio-soundboard-bridge.js?tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v2&tpi-panels=exclusive-v3")) {
+  if (!stagedIndex.includes("audio-soundboard-bridge.js?tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v3&tpi-panels=exclusive-v3")) {
     throw new Error("Integrated entry point is missing the audio soundboard bridge");
   }
 

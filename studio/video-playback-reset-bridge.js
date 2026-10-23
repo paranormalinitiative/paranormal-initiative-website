@@ -180,17 +180,35 @@
   }
 
   function sceneKind(card) {
-    if (!card) return "";
-    var label = (card.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
-    if (label.indexOf("intro video") !== -1) return "intro";
-    if (label.indexOf("outro video") !== -1) return "outro";
-    return "demo";
+    // My Scenes identities come from the stable data-tpi-scene-id attribute.
+    // Text labels are user-editable titles and the music-shortcut buttons share
+    // the scene-card styling, so neither may decide scene behavior.
+    if (!card || !card.getAttribute) return "";
+    var sceneId = card.getAttribute("data-tpi-scene-id") || "";
+    if (sceneId === "intro") return "intro";
+    if (sceneId === "outro") return "outro";
+    return sceneId ? "demo" : "";
+  }
+
+  var returnSceneId = "";
+  function rememberReturnScene(card) {
+    if (card && card.getAttribute && sceneKind(card) === "demo") {
+      returnSceneId = card.getAttribute("data-tpi-scene-id") || returnSceneId;
+      return;
+    }
+    var selected = document.querySelector("[data-tpi-scene-id].selected");
+    if (selected && sceneKind(selected) === "demo") {
+      returnSceneId = selected.getAttribute("data-tpi-scene-id") || returnSceneId;
+    }
   }
 
   function restoreDemoScene() {
-    var cards = Array.prototype.slice.call(document.querySelectorAll(".scene-card"));
-    var demo = cards.find(function (card) { return sceneKind(card) === "demo"; });
-    if (demo) demo.click();
+    var cards = Array.prototype.slice.call(document.querySelectorAll("[data-tpi-scene-id]"));
+    var scene = returnSceneId
+      ? cards.find(function (card) { return card.getAttribute("data-tpi-scene-id") === returnSceneId; })
+      : null;
+    if (!scene) scene = cards.find(function (card) { return sceneKind(card) === "demo"; });
+    if (scene) scene.click();
   }
 
   function stopProgramPreview(restoreScene) {
@@ -203,21 +221,28 @@
 
   function handleStudioClick(event) {
     var target = event.target;
+    // Music shortcut buttons share scene-card styling but are Background Music
+    // controls: they must never reset or switch the program preview.
+    if (target && target.closest && target.closest("[data-tpi-scene-music-button]")) return;
     var card = target && target.closest ? target.closest(".scene-card") : null;
-    if (card && !target.closest(".scene-menu-trigger") && stageVideo()) {
+    if (card && !target.closest(".scene-menu-trigger")) {
       var kind = sceneKind(card);
+      if (kind) rememberReturnScene(card);
       var selected = card.classList.contains("selected");
-      if (selected && (kind === "intro" || kind === "outro")) {
-        // The selected Intro/Outro card is the existing Play/Stop toggle.
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        stopProgramPreview(true);
+      if (stageVideo()) {
+        if (selected && (kind === "intro" || kind === "outro")) {
+          // The selected Intro/Outro card is the existing Play/Stop toggle.
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          stopProgramPreview(true);
+          return;
+        }
+        if (!selected && (kind === "intro" || kind === "outro" || kind === "demo")) {
+          // Switching scenes stops the previous program moment before React
+          // mounts the next one, preventing overlapping playback.
+          stopProgramPreview(false);
+        }
         return;
-      }
-      if (!selected && (kind === "intro" || kind === "outro" || kind === "demo")) {
-        // Switching scenes stops the previous program moment before React
-        // mounts the next one, preventing overlapping playback.
-        stopProgramPreview(false);
       }
       return;
     }
@@ -226,10 +251,9 @@
     if (!button || !stageVideo()) return;
     var label = (button.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
     if (label === "record" || label === "go live") {
-      // React starts the selected Intro/Outro only after its recording/live
-      // state becomes active. Do not stop or restore the scene here: doing so
-      // races that state transition and prevents the intentional program cue.
-      return;
+      // A preview must never leak a stale timestamp into a new production.
+      // Do not start playback here; the host still controls Intro/Outro.
+      stopProgramPreview(true);
     }
   }
 
