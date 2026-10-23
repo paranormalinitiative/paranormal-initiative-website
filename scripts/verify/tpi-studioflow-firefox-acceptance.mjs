@@ -112,6 +112,12 @@ async function count(selector) { return Number(await js("return document.querySe
 async function text(selector) { return String(await js("var node=document.querySelector(arguments[0]); return node ? node.textContent : '';", selector)); }
 async function click(selector) { return js("var node=document.querySelector(arguments[0]); if(!node) return false; node.click(); return true;", selector); }
 async function clickButton(label) { return js("var label=arguments[0].toLowerCase(); var node=Array.from(document.querySelectorAll('button')).find(function(button){ return (button.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase().indexOf(label)!==-1; }); if(!node) return false; node.click(); return true;", label); }
+async function visibleAssetSectionTitles() {
+  return js("return Array.from(document.querySelectorAll('.asset-panel .asset-section h3')).filter(function(node){ var style=getComputedStyle(node); return style.display !== 'none' && style.visibility !== 'hidden'; }).map(function(node){ return (node.textContent||'').replace(/\\s+/g,' ').trim(); });");
+}
+async function visibleMediaBridgeContent() {
+  return Boolean(await js("return Array.from(document.querySelectorAll('[data-tpi-video-organization], [data-tpi-video-timer-section], [data-tpi-audio-soundboards], [data-tpi-audio-original]')).some(function(node){ var style=getComputedStyle(node); return !node.hidden && style.display !== 'none' && style.visibility !== 'hidden'; });"));
+}
 async function waitFor(description, predicate, timeout = 30_000, interval = 200) {
   const started = Date.now();
   let detail = "";
@@ -271,6 +277,10 @@ try {
     const opened = await click(`[data-studio-panel-tab="${label}"]`);
     await waitFor(`${label} panel`, async () => (await text(".asset-panel")).includes(expected));
     check(`${label} panel opens from the right rail`, opened && (await text(".asset-panel")).includes(expected));
+    const sectionTitles = await visibleAssetSectionTitles();
+    const mediaOnlyTitles = ["Video clips", "Backgrounds", "Sounds", "Background music"];
+    check(`${label} panel is exclusive`, label === "Media assets" || !mediaOnlyTitles.some((title) => sectionTitles.includes(title)), JSON.stringify(sectionTitles));
+    check(`${label} panel hides media bridge content`, label === "Media assets" || !(await visibleMediaBridgeContent()));
   }
   await click('[data-studio-panel-tab="Media assets"]');
   check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));

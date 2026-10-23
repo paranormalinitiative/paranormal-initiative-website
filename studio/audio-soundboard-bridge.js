@@ -550,6 +550,16 @@
   function loopControl() { var wrap = document.createElement("label"); wrap.className = "tpi-audio-loop-control"; var input = document.createElement("input"); input.type = "checkbox"; input.checked = musicLoopEnabled(); input.setAttribute("aria-label", "Loop background music"); var textNode = document.createElement("span"); textNode.textContent = "Loop music"; input.addEventListener("change", function () { write(MUSIC_LOOP_KEY, input.checked); if (musicAudio) musicAudio.loop = input.checked; audioCommand("music", "settings", { loop: input.checked }); dispatchChange(); renderState(); }); wrap.append(input, textNode); return wrap; }
 
   function headingText(section) { var heading = section.querySelector("h3"); return heading ? (heading.textContent || "").replace(/\s+/g, " ").trim().toLowerCase() : ""; }
+  function mediaAssetsTabActive() {
+    var tab = document.querySelector('[data-studio-panel-tab="Media assets"]');
+    return !tab || tab.classList.contains("selected");
+  }
+  function syncPanelVisibility() {
+    var visible = mediaAssetsTabActive();
+    document.querySelectorAll("[data-tpi-audio-soundboards], [data-tpi-audio-original]").forEach(function (node) {
+      node.hidden = !visible;
+    });
+  }
   function hideLegacy() { Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).forEach(function (section) { var heading = headingText(section); if (heading === "sounds" || heading === "background music") { section.dataset.tpiLegacyAudio = "true"; section.hidden = true; } }); }
   function host() {
     var panel = document.querySelector(".asset-panel");
@@ -563,7 +573,7 @@
     hideLegacy();
     var root = document.querySelector("[data-tpi-audio-soundboards]"); if (!root) return;
     var signature = JSON.stringify({ sounds: soundSlots(), music: musicSlots(), sceneMusic: sceneAssignments(), soundSlot: soundSlot, musicSlot: musicSlot, soundVolume: read(SOUND_VOLUME_KEY, 0.72), musicVolume: read(MUSIC_VOLUME_KEY, 0.42), musicLoop: musicLoopEnabled() });
-    if (signature === lastSignature && root.childElementCount) { sceneMusicButton(); return; }
+    if (signature === lastSignature && root.childElementCount) { sceneMusicButton(); syncPanelVisibility(); return; }
     lastSignature = signature;
     document.querySelectorAll(".tpi-audio-slot-menu[data-tpi-audio-floating]").forEach(function (menu) { if (typeof menu.__tpiClose === "function") menu.__tpiClose(); else if (menu.parentNode) menu.parentNode.removeChild(menu); });
     document.querySelectorAll(".tpi-audio-slot.menu-open").forEach(function (card) { card.classList.remove("menu-open"); });
@@ -576,10 +586,11 @@
     soundSection.append(board("sound", "Sound effects", soundSlots())); musicSection.append(board("music", "Background music", musicSlots()));
     var status = document.createElement("p"); status.dataset.tpiAudioStatus = "true"; root.insertBefore(status, root.firstChild);
     sceneMusicButton();
+    syncPanelVisibility();
   }
   function sync() {
     scheduled = false; hideLegacy();
-    var hostSection = host(); if (!hostSection) return;
+    var hostSection = host(); if (!hostSection) { syncPanelVisibility(); return; }
     var root = hostSection.querySelector("[data-tpi-audio-soundboards]");
     if (!root) { root = document.createElement("div"); root.dataset.tpiAudioSoundboards = "true"; root.className = "tpi-audio-soundboards"; }
     var firstLegacyAudio = Array.prototype.slice.call(hostSection.querySelectorAll("section.asset-section")).find(function (section) { var heading = headingText(section); return heading === "sounds" || heading === "background music"; });
@@ -591,7 +602,7 @@
   function schedule() { if (scheduled) return; scheduled = true; window.setTimeout(sync, 0); }
   function start() {
     schedule();
-    if (document.body && window.MutationObserver) new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+    if (document.body && window.MutationObserver) new MutationObserver(function () { schedule(); syncPanelVisibility(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
     window.addEventListener("storage", schedule);
     window.addEventListener("studioflow:storage-changed", schedule);
     window.addEventListener("studioflow:scene-changed", syncSceneMusic);
