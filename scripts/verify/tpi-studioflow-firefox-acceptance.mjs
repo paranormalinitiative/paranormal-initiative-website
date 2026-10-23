@@ -153,17 +153,23 @@ async function uploadVideoSlot(index, acceptToken, path) {
 }
 async function enterStudio() {
   let shellError;
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
     await driver.get(`${base}/studio/`);
     try {
-      await waitFor("StudioFlow shell", async () => /StudioFlow|Home|Library|Destinations|Record without going live/i.test(await driver.findElement(By.css("body")).getText()));
+      await waitFor("StudioFlow shell", async () => {
+        const url = new URL(await driver.getCurrentUrl());
+        if (/\/member-login(?:\.html)?\/?$/.test(url.pathname)) return false;
+        return /StudioFlow|Library|Destinations|Record without going live/i.test(await driver.findElement(By.css("body")).getText());
+      }, 8_000, 200);
       shellError = null;
       break;
     } catch (error) {
       const body = await driver.findElement(By.css("body")).getText().catch(() => "");
-      if (body.trim() || attempt === 2) throw error;
+      const url = new URL(await driver.getCurrentUrl());
+      const redirectedToLogin = /\/member-login(?:\.html)?\/?$/.test(url.pathname);
+      if ((!redirectedToLogin && body.trim()) || attempt === 4) throw error;
       shellError = error;
-      await sleep(1_000);
+      await sleep(750 * attempt);
     }
   }
   if (shellError) throw shellError;
