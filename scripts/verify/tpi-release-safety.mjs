@@ -45,6 +45,10 @@ check("local assets are staged before the managed Worker lifecycle", () => {
   assert.ok(stage >= 0 && lifecycle > stage);
   assert.equal(release.indexOf('run("Stage local assets"', stage + 1), -1);
 });
+check("local release readiness rejects transient missing homepage responses", () => {
+  assert.match(release, /waitFor\("http:\/\/127\.0\.0\.1:8787\/", 30_000, \[200\]\)/);
+  assert.match(release, /waitFor\("http:\/\/127\.0\.0\.1:8787\/studio\/", 30_000, \[200, 401, 403\]\)/);
+});
 check("release rechecks exact Git state after staging and verification", () => {
   assert.match(release, /const finalSourceCommit = assertGitReleaseState\(\)/);
 });

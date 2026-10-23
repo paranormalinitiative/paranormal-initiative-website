@@ -70,17 +70,20 @@ function localAdminFingerprint() {
   }
   fail("persistent local_admin row was not found; no database was changed");
 }
-async function waitFor(url, timeoutMs = 30_000) {
+async function waitFor(url, timeoutMs = 30_000, acceptedStatuses = null) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    try { if ((await fetch(url)).status < 500) return; } catch { /* retry */ }
+    try {
+      const status = (await fetch(url)).status;
+      if (acceptedStatuses ? acceptedStatuses.includes(status) : status < 500) return;
+    } catch { /* retry */ }
     await new Promise(resolvePromise => setTimeout(resolvePromise, 250));
   }
   fail(`timed out waiting for ${url}`);
 }
 async function waitForLocalReleaseSurfaces() {
-  await waitFor("http://127.0.0.1:8787/");
-  await waitFor("http://127.0.0.1:8787/studio/");
+  await waitFor("http://127.0.0.1:8787/", 30_000, [200]);
+  await waitFor("http://127.0.0.1:8787/studio/", 30_000, [200, 401, 403]);
 }
 async function runLocalAuthCheck(label) {
   let lastError;
