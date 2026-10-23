@@ -21,6 +21,7 @@ const required = [
   [bridge, 'MUSIC_KEY = "studioflow.backgroundMusicSlots"', "Music slot state has a separate persisted key"],
   [bridge, 'MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop"', "Music loop preference has a separate persisted key"],
   [bridge, "AUDIO_ACCEPT", "Audio upload input accepts common browser audio formats"],
+  [bridge, "MUSIC_MAX_BYTES = 512 * 1024 * 1024", "Background music supports long-form local tracks up to the documented browser-safe limit"],
   [bridge, ".m4a,.wav,.wave,.ogg,.oga,.aac,.flac,.aif,.aiff,.webm,.opus,.amr", "Audio upload input includes M4A, WAV, FLAC, AIFF, and other common formats"],
   [bridge, 'flac: "audio/flac"', "Extension fallback recognizes FLAC files when the browser omits MIME metadata"],
   [bridge, 'category === "sound" ? decode(file) : Promise.resolve(true)', "Background music is not blocked by strict Web Audio pre-decoding"],

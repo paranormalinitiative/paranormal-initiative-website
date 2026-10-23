@@ -18,6 +18,7 @@
   var MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop";
   var SCENE_MUSIC_KEY = "studioflow.sceneMusicAssignments";
   var AUDIO_ACCEPT = "audio/*,.mp3,.m4a,.wav,.wave,.ogg,.oga,.aac,.flac,.aif,.aiff,.webm,.opus,.amr";
+  var MUSIC_MAX_BYTES = 512 * 1024 * 1024;
   var PAD_COLORS = ["#5f3b8f", "#8c3f67", "#315d87", "#2f7668", "#7a5b2c", "#704c75"];
   var SLOT_COUNT = 9;
   var scheduled = false;
@@ -257,7 +258,7 @@
   function fileInput(category, slot) {
     var input = document.createElement("input"); input.type = "file"; input.accept = AUDIO_ACCEPT; input.multiple = slot === null; input.hidden = true; input.dataset.tpiAudioInput = category;
     input.addEventListener("change", function () {
-      var files = Array.prototype.slice.call(input.files || []), prefix = category === "sound" ? "Sound" : "Music", slots = category === "sound" ? soundSlots() : musicSlots(), max = category === "sound" ? 24 * 1024 * 1024 : 80 * 1024 * 1024;
+      var files = Array.prototype.slice.call(input.files || []), prefix = category === "sound" ? "Sound" : "Music", slots = category === "sound" ? soundSlots() : musicSlots(), max = category === "sound" ? 24 * 1024 * 1024 : MUSIC_MAX_BYTES;
       if (slot === null && firstOpen(slots) < 0) { setStatus("All nine " + prefix.toLowerCase() + " slots are occupied. Replace an individual slot instead."); input.remove(); return; }
       var next = slot === null ? firstOpen(slots) : slot;
       files.reduce(function (promise, file) { return promise.then(function () {

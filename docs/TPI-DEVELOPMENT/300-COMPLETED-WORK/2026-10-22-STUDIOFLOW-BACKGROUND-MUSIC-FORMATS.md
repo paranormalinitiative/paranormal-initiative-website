@@ -15,7 +15,9 @@ that should be usable in the Firefox Developer Edition production workflow.
   looping, and playback architecture.
 - Expanded the file input and extension fallback to cover MP3, M4A, WAV/WAVE,
   OGG/OGA, AAC, FLAC, AIFF/AIF, WebM, Opus, and AMR audio files.
-- Kept the existing size limit and fail-with-status behavior.
+- Raised the arbitrary Background Music limit from 80 MiB to 512 MiB so
+  long-form MP3/M4A tracks can be stored locally; browser quota failures still
+  surface through the existing status message.
 - Kept strict Web Audio decoding for Sound Effects, which use the Web Audio
   playback path.
 - Removed the unnecessary Web Audio pre-decoding gate from Background Music.
@@ -35,3 +37,5 @@ existing browser media was modified. Verification uses disposable media.
   non-decoding upload path.
 - Firefox acceptance continues to use disposable audio and verifies upload,
   playback, persistence, backup, restore-as-new, and studio isolation.
+- Isolated Firefox verified a real M4A file and a 115 MB MP3 background track;
+  both were assigned successfully and survived the existing acceptance flow.
