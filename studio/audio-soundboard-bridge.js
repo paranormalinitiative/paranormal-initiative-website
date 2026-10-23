@@ -23,6 +23,7 @@
   var SLOT_COUNT = 9;
   var scheduled = false;
   var soundSource = null;
+  var soundGain = null;
   var soundSlot = null;
   var soundGeneration = 0;
   var musicAudio = null;
@@ -203,6 +204,7 @@
     if (soundSource && soundSource.external) audioCommand("sound", "stop");
     if (soundSource) { var context = soundSource.context; try { soundSource.stop(); } catch (error) {} try { soundSource.disconnect(); } catch (error) {} if (context) context.close().catch(function () {}); }
     soundSource = null;
+    soundGain = null;
     soundSlot = null;
     renderState();
   }
@@ -224,8 +226,8 @@
       if (generation !== soundGeneration) { decoded.context.close().catch(function () {}); return; }
       var source = decoded.context.createBufferSource(), gain = decoded.context.createGain();
       gain.gain.value = Math.max(0, Math.min(1, Number(read(SOUND_VOLUME_KEY, 0.72))));
-      source.buffer = decoded.buffer; source.connect(gain); gain.connect(decoded.context.destination); source.onended = function () { if (soundSource === source) { soundSource = null; soundSlot = null; renderState(); } decoded.context.close().catch(function () {}); };
-      soundSource = source; soundSlot = slot; source.start(0); renderState();
+      source.buffer = decoded.buffer; source.connect(gain); gain.connect(decoded.context.destination); source.onended = function () { if (soundSource === source) { soundSource = null; soundGain = null; soundSlot = null; renderState(); } decoded.context.close().catch(function () {}); };
+      soundSource = source; soundGain = gain; soundSlot = slot; source.start(0); renderState();
     }).catch(function (error) { if (playbackContext && playbackContext.state !== "closed") playbackContext.close().catch(function () {}); setStatus(error.message || "Sound playback failed."); });
   }
   function stopMusic() {
@@ -440,7 +442,7 @@
     sceneMusicButton();
   }
   function stopButton(label, action) { var button = document.createElement("button"); button.type = "button"; button.className = "outline-button tpi-audio-stop"; button.textContent = label; button.dataset.tpiAudioStop = action; button.disabled = action === "sound" ? !soundSource : !musicAudio; button.addEventListener("click", action === "sound" ? stopSound : stopMusic); return button; }
-  function volumeControl(label, key, kind) {    var wrap = document.createElement("label"); wrap.className = "tpi-audio-volume"; var name = document.createElement("span"); name.textContent = label; var input = document.createElement("input"); input.type = "range"; input.min = "0"; input.max = "1"; input.step = "0.01"; input.value = String(Number(read(key, kind === "sound" ? 0.72 : 0.42))); input.setAttribute("aria-label", label); input.addEventListener("input", function () { write(key, Number(input.value)); if (kind === "music" && musicAudio) musicAudio.volume = Number(input.value); dispatchChange(); }); wrap.append(name, input); return wrap; }
+  function volumeControl(label, key, kind) {    var wrap = document.createElement("label"); wrap.className = "tpi-audio-volume"; var name = document.createElement("span"); name.textContent = label; var input = document.createElement("input"); input.type = "range"; input.min = "0"; input.max = "1"; input.step = "0.01"; input.value = String(Number(read(key, kind === "sound" ? 0.72 : 0.42))); input.setAttribute("aria-label", label); input.addEventListener("input", function () { var volume = Number(input.value); write(key, volume); if (kind === "sound" && soundGain) soundGain.gain.value = volume; if (kind === "music" && musicAudio) musicAudio.volume = volume; audioCommand(kind, "settings", { volume: volume }); dispatchChange(); }); wrap.append(name, input); return wrap; }
   function loopControl() { var wrap = document.createElement("label"); wrap.className = "tpi-audio-loop-control"; var input = document.createElement("input"); input.type = "checkbox"; input.checked = musicLoopEnabled(); input.setAttribute("aria-label", "Loop background music"); var textNode = document.createElement("span"); textNode.textContent = "Loop music"; input.addEventListener("change", function () { write(MUSIC_LOOP_KEY, input.checked); if (musicAudio) musicAudio.loop = input.checked; audioCommand("music", "settings", { loop: input.checked }); dispatchChange(); renderState(); }); wrap.append(input, textNode); return wrap; }
 
   function headingText(section) { var heading = section.querySelector("h3"); return heading ? (heading.textContent || "").replace(/\s+/g, " ").trim().toLowerCase() : ""; }

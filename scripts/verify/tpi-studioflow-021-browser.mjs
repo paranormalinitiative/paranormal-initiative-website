@@ -32,6 +32,26 @@ if (!account || !existsSync(soundFile) || !existsSync(musicFile)) {
 
 const browser = await chromium.launch({ executablePath: browserPath, headless: true, args: ["--no-sandbox", "--autoplay-policy=no-user-gesture-required"] });
 const context = await browser.newContext({ viewport: { width: 1280, height: 1000 }, acceptDownloads: true });
+await context.addInitScript(() => {
+  const audioContext = window.AudioContext;
+  if (!audioContext || audioContext.prototype.__tpiVolumeProbe) return;
+  const createGain = audioContext.prototype.createGain;
+  audioContext.prototype.createGain = function (...args) {
+    const gain = createGain.apply(this, args);
+    window.__tpiVolumeProbeGains = window.__tpiVolumeProbeGains || [];
+    window.__tpiVolumeProbeGains.push(gain);
+    return gain;
+  };
+  audioContext.prototype.__tpiVolumeProbe = true;
+  const NativeAudio = window.Audio;
+  window.__tpiMusicProbe = [];
+  window.Audio = function (...args) {
+    const audio = new NativeAudio(...args);
+    window.__tpiMusicProbe.push(audio);
+    return audio;
+  };
+  window.Audio.prototype = NativeAudio.prototype;
+});
 const page = await context.newPage();
 const consoleErrors = [];
 page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
@@ -88,14 +108,37 @@ try {
   check("music upload fills first slot", (await musicBoard.locator(".tpi-audio-slot.assigned").count()) === 1 && (await musicBoard.locator(".tpi-audio-slot.assigned").first().innerText()).includes("tpi-021-music"));
 
   await soundBoard.locator(".tpi-audio-slot.assigned").first().click();
-  await page.waitForTimeout(500);
+  await page.locator('input[aria-label="Sound effects volume"]').evaluate((input) => {
+    input.value = "0.18";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await page.waitForTimeout(250);
   check("sound playback marks the active card", await soundBoard.locator(".tpi-audio-slot.playing").count() === 1);
+  check("sound volume slider updates persisted value", await page.evaluate(() => JSON.parse(localStorage.getItem("studioflow.soundVolume") || "null") === 0.18));
+  check("sound volume slider updates active playback gain", await page.evaluate(() => (window.__tpiVolumeProbeGains || []).some((gain) => Math.abs(gain.gain.value - 0.18) < 0.01)));
   await page.locator('[data-tpi-audio-stop="sound"]').click();
   check("sound stop clears the active card", await soundBoard.locator(".tpi-audio-slot.playing").count() === 0);
 
   await musicBoard.locator(".tpi-audio-slot.assigned").first().click();
+  await page.waitForTimeout(1000);
+  const musicRuntime = await page.evaluate(() => ({
+    audioSources: Array.from(document.querySelectorAll("audio")).map((audio) => audio.getAttribute("src") || ""),
+    musicErrors: Array.from(document.querySelectorAll("[role=alert], .inline-error")).map((node) => node.textContent || "").filter(Boolean),
+    musicKeys: Object.keys(localStorage).filter((key) => /music/i.test(key))
+  }));
+  await page.locator('input[aria-label="Background music volume"]').evaluate((input) => {
+    input.value = "0.24";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
   await page.waitForTimeout(300);
   check("music playback marks the active card", await musicBoard.locator(".tpi-audio-slot.playing").count() === 1);
+  check("music volume slider updates persisted value", await page.evaluate(() => JSON.parse(localStorage.getItem("studioflow.backgroundMusicVolume") || "null") === 0.24));
+  check("music volume slider updates active playback output", await page.evaluate(() => {
+    const webAudioUpdated = (window.__tpiVolumeProbeGains || []).some((gain) => Math.abs(gain.gain.value - 0.24) < 0.01);
+    const elementAudioUpdated = Array.from(document.querySelectorAll("audio")).some((audio) => Math.abs(audio.volume - 0.24) < 0.01);
+    const fallbackAudioUpdated = (window.__tpiMusicProbe || []).some((audio) => Math.abs(audio.volume - 0.24) < 0.01);
+    return webAudioUpdated || elementAudioUpdated || fallbackAudioUpdated;
+  }), JSON.stringify(musicRuntime));
   await page.locator('[data-tpi-audio-stop="music"]').click();
   check("music stop clears the active card", await musicBoard.locator(".tpi-audio-slot.playing").count() === 0);
 

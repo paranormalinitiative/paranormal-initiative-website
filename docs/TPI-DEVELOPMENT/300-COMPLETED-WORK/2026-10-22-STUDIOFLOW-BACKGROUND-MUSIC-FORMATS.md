@@ -39,3 +39,15 @@ existing browser media was modified. Verification uses disposable media.
   playback, persistence, backup, restore-as-new, and studio isolation.
 - Isolated Firefox verified a real M4A file and a 115 MB MP3 background track;
   both were assigned successfully and survived the existing acceptance flow.
+
+## Volume-control repair
+
+The Sound Effects and Background Music sliders were persisting their values but
+were not sending live changes to the React playback engine. The maintained
+audio bridge now emits a volume settings command for both channels. React
+handles those commands, updates its persisted state, and routes active sound
+effects through an adjustable master gain. The direct browser fallback also
+updates its active audio node immediately.
+
+The repair is source-integrated and uses the cache-busted bridge tag
+`tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1`.

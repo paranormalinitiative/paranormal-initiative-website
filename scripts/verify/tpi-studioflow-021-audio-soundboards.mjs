@@ -5,6 +5,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const html = readFileSync(join(root, "studio/index.html"), "utf8");
 const bridge = readFileSync(join(root, "studio/audio-soundboard-bridge.js"), "utf8");
+const app = readFileSync(process.env.STUDIOFLOW_SOURCE ?? "/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx", "utf8");
 const assetState = readFileSync(join(root, "studio/workspace-asset-state-bridge.js"), "utf8");
 const workspace = readFileSync(join(root, "studio/workspace-bridge.js"), "utf8");
 const backup = readFileSync(join(root, "studio/backup-bridge.js"), "utf8");
@@ -13,7 +14,7 @@ const css = readFileSync(join(root, "studio/studioflow-012-overrides.css"), "utf
 
 const required = [
   [html, "audio-soundboard-bridge.js", "Studio shell includes the soundboard bridge"],
-  [html, "tpi021=soundboards-v3&tpi017=smart-pads", "Shell cache tag identifies the SMART Pad soundboard bridge"],
+  [html, "tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1", "Shell cache tag identifies the volume-aware SMART Pad soundboard bridge"],
   [stage, '"audio-soundboard-bridge.js"', "Local staging includes the soundboard bridge"],
   [bridge, "SLOT_COUNT = 9", "Nine-slot capacity is explicit"],
   [bridge, 'dataset.tpiAudioBoard = category', "Separate category boards are rendered"],
@@ -46,6 +47,13 @@ const required = [
   [css, "position: fixed", "Audio management menus are not constrained by the card or panel overflow"],
   [bridge, "data-tpi-scene-id", "Scene cards expose stable IDs for music assignment"],
   [bridge, 'musicAudio.loop = musicLoopEnabled()', "Music playback honors the loop preference"],
+  [bridge, 'audioCommand(kind, "settings", { volume: volume })', "Volume changes are sent to the active playback engine"],
+  [app, 'command.category === "sound" && command.action === "settings"', "React handles live soundboard volume changes"],
+  [app, 'command.category === "music" && command.action === "settings"', "React handles live background-music volume changes"],
+  [app, "ensureSoundPlaybackMasterGain", "Active sound playback uses a shared adjustable output gain"],
+  [app, "soundPlaybackMasterGainRef.current.gain.value = soundVolume", "Sound volume changes update active playback"],
+  [app, "backgroundMusicMonitorGainRef.current.gain.value = backgroundMusicVolume", "Music monitor volume changes update active playback"],
+  [app, "programMusicGainRef.current.gain.value = backgroundMusicVolume", "Program music volume changes update the recording mix"],
   [bridge, 'section.dataset.tpiLegacyAudio = "true"', "Legacy audio sections are hidden before the maintained boards render"],
   [assetState, "backgroundMusicSlots", "Asset state bridge persists music slots"],
   [assetState, "backgroundMusicLoop", "Asset state bridge persists the music loop preference"],
