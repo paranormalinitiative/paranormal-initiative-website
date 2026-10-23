@@ -52,7 +52,8 @@ try {
   check("Intro and Outro fill an even two-column row", await page.locator('[data-tpi-video-subsection="intro-&-outro"] .tpi-video-grid').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(" ").length === 2));
   check("visible video card labels include six general clips", await page.locator("[data-tpi-video-card]").allTextContents().then(values => ["Intro Video", "Outro Video", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9", "Video 10"].every(label => values.some(value => value.includes(label))) && !values.some(value => /Thank You|Be Right Back/i.test(value))));
   const timerSection = page.locator("[data-tpi-video-timer-section]");
-  check("one native video timer has its own section", await timerSection.count() === 1 && await timerSection.locator(".countdown-duration-row button").count() >= 4 && await timerSection.locator('button[title*="golden ring countdown"]').count() === 1);
+  const timerButtons = timerSection.locator(".countdown-duration-row button");
+  check("one native video timer has one duration row", await timerSection.count() === 1 && await timerSection.locator(".countdown-duration-row").count() === 1 && await timerButtons.count() === 4 && JSON.stringify(await timerButtons.allTextContents()) === JSON.stringify(["10s", "20s", "30s", "60s"]) && await timerSection.locator('button[title*="golden ring countdown"]').count() === 1);
 
   let chooser = page.waitForEvent("filechooser"); await cards.nth(0).getByRole("button", { name: "Upload" }).click(); await (await chooser).setFiles(videoFile); await page.waitForTimeout(1000);
   check("Intro Video upload assigns slot one", await cards.nth(0).getByText("tpi-022-video.mp4", { exact: true }).count() === 1);

@@ -284,7 +284,8 @@ try {
   }
   await click('[data-studio-panel-tab="Media assets"]');
   check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));
-  check("one native video timer and four duration controls render", await count("[data-tpi-video-timer-section]") === 1 && await count("[data-tpi-native-video-timer]") === 1 && await count("[data-tpi-native-video-timer-controls] button") >= 4);
+  const timerDurationState = await js("var rows=Array.from(document.querySelectorAll('[data-tpi-native-video-timer-controls] .countdown-duration-row')); return {rows:rows.length,labels:rows.length===1?Array.from(rows[0].querySelectorAll('button')).map(function(button){return (button.textContent||'').trim();}):[]};");
+  check("one native video timer and one four-button duration row render", await count("[data-tpi-video-timer-section]") === 1 && await count("[data-tpi-native-video-timer]") === 1 && timerDurationState.rows === 1 && JSON.stringify(timerDurationState.labels) === JSON.stringify(["10s", "20s", "30s", "60s"]), JSON.stringify(timerDurationState));
   check("nine Sound Effects slots render", await count('[data-tpi-audio-board="sound"] .tpi-audio-slot') === 9);
   check("nine Background Music slots render", await count('[data-tpi-audio-board="music"] .tpi-audio-slot') === 9);
 
@@ -364,6 +365,11 @@ try {
   await enterStudio();
   const afterRefresh = await asyncJs("var expected=arguments[0], done=arguments[arguments.length-1]; var id=JSON.parse(localStorage.getItem('studioflow.activeBroadcastId')||'\"\"'), slots=JSON.parse(localStorage.getItem('studioflow.videoClipSlots')||'[]').filter(Boolean), sounds=JSON.parse(localStorage.getItem('studioflow.customSounds')||'[]').filter(Boolean), music=JSON.parse(localStorage.getItem('studioflow.backgroundMusicSlots')||'[]').filter(Boolean), keys=slots.concat(sounds,music).map(function(item){return item.blobKey;}).filter(Boolean), request=indexedDB.open('studioflow-recordings'); request.onerror=function(){done({ok:false});}; request.onsuccess=function(){var db=request.result,tx=db.transaction('recordingBlobs','readonly'),found=0; keys.forEach(function(key){var get=tx.objectStore('recordingBlobs').get(key);get.onsuccess=function(){if(get.result)found+=1;};});tx.oncomplete=function(){db.close();done({ok:id===expected&&keys.length>=4&&found===keys.length,id:id,keys:keys.length,found:found});};};", studioId);
   check("studio identity and media persist after reopening", afterRefresh?.ok === true, JSON.stringify(afterRefresh));
+
+  await click('[data-studio-panel-tab="Media assets"]');
+  await waitFor("timer controls after full Studio refresh", async () => count("[data-tpi-native-video-timer-controls] .countdown-duration-row"));
+  const finalTimerDurationState = await js("var rows=Array.from(document.querySelectorAll('[data-tpi-native-video-timer-controls] .countdown-duration-row')); return {rows:rows.length,labels:rows.length===1?Array.from(rows[0].querySelectorAll('button')).map(function(button){return (button.textContent||'').trim();}):[]};");
+  check("timer duration row remains singular after uploads, Studio switching, and refresh", finalTimerDurationState.rows === 1 && JSON.stringify(finalTimerDurationState.labels) === JSON.stringify(["10s", "20s", "30s", "60s"]), JSON.stringify(finalTimerDurationState));
 
   await driver.takeScreenshot().then(data => { writeFileSync(join(evidenceRoot, "firefox-desktop.png"), data, "base64"); });
   await driver.manage().window().setRect({ width: 390, height: 844, x: 20, y: 20 });

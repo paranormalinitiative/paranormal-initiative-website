@@ -160,7 +160,7 @@
   }
   function timerSettings() { var value = read(TIMER_KEY, {}); return value && typeof value === "object" ? { custom1: Math.max(1, Math.min(3600, Number(value.custom1) || 90)), custom2: Math.max(1, Math.min(3600, Number(value.custom2) || 120)) } : { custom1: 90, custom2: 120 }; }
   function updateTimerDisplay() { if (!root) return; var display = root.querySelector("[data-tpi-timer-status]"), countdown = root.querySelector("[data-tpi-timer-countdown]"); if (!display) return; var remaining = timerEnd ? Math.max(0, timerEnd - Date.now()) : timerRemaining; if (countdown) { var totalSeconds = Math.ceil(remaining / 1000); countdown.textContent = String(Math.floor(totalSeconds / 60)).padStart(2, "0") + ":" + String(totalSeconds % 60).padStart(2, "0"); } if (timerSlot === null) { display.textContent = "Select a timer"; return; } display.textContent = "Timer " + (timerSlot + 1) + (timerEnd ? " running · " : timerRemaining > 0 ? " paused · " : " selected · ") + Math.ceil(remaining / 1000) + " seconds"; }
-  function timerControls() { var controls = Array.prototype.slice.call(document.querySelectorAll(".countdown-duration-row button")); return { presets: controls.filter(function (button) { return /^\d+s$/.test(normalize(button.textContent)); }), stop: controls.find(function (button) { return normalize(button.textContent) === "stop"; }), start: Array.prototype.slice.call(document.querySelectorAll("section.asset-section button.background-picker-tile")).find(function (button) { return normalize(button.title).indexOf("golden ring countdown") !== -1; }) }; }
+  function timerControls() { var host = document.querySelector("[data-tpi-native-video-timer-controls]"); var row = host && host.querySelector(".countdown-duration-row"); var controls = Array.prototype.slice.call(row ? row.querySelectorAll("button") : document.querySelectorAll(".countdown-duration-row button")); return { presets: controls.filter(function (button) { return /^\d+s$/.test(normalize(button.textContent)); }), stop: controls.find(function (button) { return normalize(button.textContent) === "stop"; }), start: Array.prototype.slice.call(document.querySelectorAll("section.asset-section button.background-picker-tile")).find(function (button) { return normalize(button.title).indexOf("golden ring countdown") !== -1; }) }; }
   function selectTimerDuration(seconds) { var control = timerControls(), preset = control.presets.find(function (button) { return normalize(button.textContent) === String(seconds) + "s"; }); if (!preset || !control.start) { setStatus("The StudioFlow countdown controls are unavailable.", true); return false; } preset.click(); control.start.click(); return true; }
   function setTimerState(slot, seconds, remaining) { timerSlot = slot; timerDuration = seconds; timerRemaining = Math.max(0, remaining); timerEnd = timerRemaining > 0 ? Date.now() + timerRemaining : null; }
   function pauseTimer() { if (!timerEnd) return; timerRemaining = Math.max(0, timerEnd - Date.now()); timerEnd = null; if (timerHandle) window.clearInterval(timerHandle); timerHandle = null; render(); }
@@ -214,6 +214,9 @@
       if (countdownTile.parentNode !== timerGrid) timerGrid.appendChild(countdownTile);
     }
     if (nativeTimers) {
+      Array.prototype.slice.call(timerControls.querySelectorAll(".countdown-duration-row")).forEach(function (row) {
+        if (row !== nativeTimers) row.remove();
+      });
       nativeTimers.hidden = false;
       if (nativeTimers.parentNode !== timerControls) timerControls.appendChild(nativeTimers);
     }
