@@ -4,6 +4,24 @@ Last verified: 2026-10-23
 
 ## Latest verified production release — 2026-10-23
 
+The latest verified release is the exclusive StudioFlow right-rail panel
+repair.
+
+- Release branch: codex/tpi-development
+- Deployment commit: 0ce8774ff62b437e7a7862e47e60f3302d306d37
+- Worker: theparanormalinitiative
+- Active production Worker version: 41c7c0bf-5b46-4fd7-b2af-4bdf3f101bc3 at 100%
+- Immediate rollback reference: 78693444-4f7b-4115-b77b-5039be40db3f
+- Anonymous live smoke: PASS, 10/10
+- Isolated production Firefox Developer Edition acceptance: PASS, 59/59
+- Exclusive right-rail panel checks: PASS for all 11 panels
+- Release preflight, API E2E, build, staging, request-budget guard, and guarded
+  Wrangler dry-run: PASS
+- Current StudioFlow release record:
+  300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-EXCLUSIVE-PANEL-REPAIR.md
+- Protected resources: Crossroads of the Unknown untouched; no D1 migration,
+  R2 mutation, or owner-browser storage access.
+
 The latest verified release is the StudioFlow panel-navigation and program-cue
 repair below. It supersedes the previous release details in this document.
 
