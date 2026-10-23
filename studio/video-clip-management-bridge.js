@@ -41,7 +41,7 @@
   }
   function syncPanelVisibility() {
     var visible = mediaAssetsTabActive();
-    document.querySelectorAll("[data-tpi-video-organization], [data-tpi-video-timer-section]").forEach(function (node) {
+    document.querySelectorAll("[data-tpi-video-organization], [data-tpi-video-timer-section], [data-tpi-video-timers]").forEach(function (node) {
       node.hidden = !visible;
     });
   }
