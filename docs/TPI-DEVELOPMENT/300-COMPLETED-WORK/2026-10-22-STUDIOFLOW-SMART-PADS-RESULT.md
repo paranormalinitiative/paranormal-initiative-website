@@ -15,11 +15,12 @@ Directive: [TPI-STUDIOFLOW-017 SMART Pads](../100-DIRECTIVES/TPI-STUDIOFLOW-017-
 - Pad rename and color metadata persist with the existing slot records.
 - MP3 uploads use embedded TIT2 metadata when available, then the filename;
   custom renamed titles remain authoritative during replacement.
-- The Scenes section now receives one Background Music button beside Intro
-  Video. It uses the selected Background Music SMART Pad, preserves the
-  optional “Start after Intro” handoff, and does not inject per-scene selects
-  or checkboxes into the scene cards. Assignments remain in the existing
-  workspace configuration save/restore keys.
+- The original release added one Background Music button beside Intro Video.
+  The follow-up scene-music repair recorded in
+  `2026-10-22-STUDIOFLOW-SCENE-BACKGROUND-MUSIC.md` supersedes that limitation:
+  Intro and regular scenes now expose a floating track picker backed by the
+  same workspace configuration key, while direct SMART Pad playback remains
+  available.
 - No owner studio, Crossroads data, D1 record, or R2 object was modified.
 
 ## Files changed

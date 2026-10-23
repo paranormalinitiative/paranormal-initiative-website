@@ -9,12 +9,13 @@ const app = readFileSync(process.env.STUDIOFLOW_SOURCE ?? "/Users/toddknipple/Do
 const assetState = readFileSync(join(root, "studio/workspace-asset-state-bridge.js"), "utf8");
 const workspace = readFileSync(join(root, "studio/workspace-bridge.js"), "utf8");
 const backup = readFileSync(join(root, "studio/backup-bridge.js"), "utf8");
+const browser = readFileSync(join(root, "scripts/verify/tpi-studioflow-021-browser.mjs"), "utf8");
 const stage = readFileSync(join(root, "scripts/stage-local-studio-assets.mjs"), "utf8");
 const css = readFileSync(join(root, "studio/studioflow-012-overrides.css"), "utf8");
 
 const required = [
   [html, "audio-soundboard-bridge.js", "Studio shell includes the soundboard bridge"],
-  [html, "tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1", "Shell cache tag identifies the volume-aware SMART Pad soundboard bridge"],
+  [html, "tpi021=soundboards-v4&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v2", "Shell cache tag identifies the scene-aware volume-aware SMART Pad soundboard bridge"],
   [stage, '"audio-soundboard-bridge.js"', "Local staging includes the soundboard bridge"],
   [bridge, "SLOT_COUNT = 9", "Nine-slot capacity is explicit"],
   [bridge, 'dataset.tpiAudioBoard = category', "Separate category boards are rendered"],
@@ -32,9 +33,13 @@ const required = [
   [bridge, "Smart Play", "Background music exposes Smart Play controls"],
   [bridge, "studioflow:audio-command", "Audio playback can use the StudioFlow program audio bridge"],
   [bridge, "studioflow.sceneMusicAssignments", "Scene music assignments are persisted"],
-  [bridge, "data-tpi-scene-music-button", "Scenes expose one dedicated background-music button"],
-  [bridge, "Choose a Background Music SMART Pad first.", "The scene music button requires an intentional music selection"],
-  [bridge, "Background music will start after Intro.", "The scene music button preserves optional Intro handoff"],
+  [bridge, "tpiSceneMusicButton", "Scenes expose scene-specific background-music controls"],
+  [bridge, "sceneMusicFor", "Scene music assignments are resolved per scene with legacy migration"],
+  [bridge, "tpi-scene-music-menu", "Scene music uses a floating track-selection menu"],
+  [bridge, "No background music", "Scene music can be removed without deleting the uploaded track"],
+  [bridge, "Background music will start after Intro.", "The scene music button preserves Intro handoff"],
+  [bridge, "playAssignedSceneMusic", "Assigned scene music starts when its scene becomes active"],
+  [browser, "scene music picker opens outside panel overflow", "Browser regression covers scene music assignment"],
   [bridge, "PAD_COLORS", "SMART Pads use a coordinated persisted color palette"],
   [bridge, "Rename", "SMART Pads support custom display names"],
   [bridge, "color", "SMART Pad color changes are persisted"],

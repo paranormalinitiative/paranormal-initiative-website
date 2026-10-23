@@ -32,6 +32,7 @@
   var musicExternal = false;
   var lastSignature = "";
   var lastSceneId = "";
+  var sceneMusicMenu = null;
 
   function text(value) { return typeof value === "string" ? value : ""; }
   function read(key, fallback) {
@@ -387,56 +388,145 @@
     var grid = document.createElement("div"); grid.className = "tpi-audio-grid"; slots.forEach(function (asset, slot) { grid.appendChild(makeCard(category, slot, asset)); }); section.appendChild(grid);
     return section;
   }
-  function selectedSceneMusic() {
+  function sceneMusicFor(sceneId) {
     var assignments = sceneAssignments();
-    if (assignments.global && typeof assignments.global === "object") return assignments.global;
-    var legacyKey = Object.keys(assignments).find(function (key) { return assignments[key] && typeof assignments[key] === "object"; });
-    return legacyKey ? assignments[legacyKey] : null;
+    var key = text(sceneId) || "intro";
+    if (assignments[key] && typeof assignments[key] === "object") return assignments[key];
+    // Migrate the former one-button assignment to the Intro handoff without
+    // changing the selected track or its media reference.
+    if (assignments.global && typeof assignments.global === "object") {
+      assignments.intro = assignments.global;
+      delete assignments.global;
+      writeSceneAssignments(assignments);
+      return assignments.intro;
+    }
+    return null;
   }
-  function saveSceneMusic(asset, startAfterIntro) {
+  function saveSceneMusic(sceneId, asset) {
     var next = sceneAssignments();
-    if (!asset) delete next.global;
-    else next.global = { blobKey: asset.blobKey, assetId: asset.id, title: asset.title || titleFor(asset.fileName), startAfterIntro: !!startAfterIntro };
+    var key = text(sceneId) || "intro";
+    if (!asset) delete next[key];
+    else next[key] = { blobKey: asset.blobKey, assetId: asset.id, title: asset.title || titleFor(asset.fileName), assignedAt: new Date().toISOString() };
+    delete next.global;
     writeSceneAssignments(next);
   }
-  function sceneMusicButton() {
-    var intro = document.querySelector('[data-tpi-scene-id="intro"]');
-    if (!intro || !intro.parentElement) return;
-    var button = intro.parentElement.querySelector("[data-tpi-scene-music-button]");
-    if (!button) {
-      button = document.createElement("button");
-      button.type = "button";
-      button.className = "scene-card compact dashed tpi-scene-music-button";
-      button.dataset.tpiSceneMusicButton = "true";
-      var icon = document.createElement("span"); icon.className = "tpi-scene-music-icon"; icon.textContent = "♫"; icon.setAttribute("aria-hidden", "true");
-      var label = document.createElement("span"); label.className = "tpi-scene-music-label";
-      button.append(icon, label);
-      button.addEventListener("click", function (event) {
-        event.preventDefault(); event.stopPropagation();
-        var assignment = selectedSceneMusic();
-        var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
-        if (!current && musicSlot !== null) current = musicSlots()[musicSlot] || null;
-        if (!current) { setStatus("Choose a Background Music SMART Pad first."); return; }
-        saveSceneMusic(current, !(assignment && assignment.startAfterIntro));
-        setStatus(assignment && assignment.startAfterIntro ? "Background music removed from Intro handoff." : "Background music will start after Intro.");
+  function closeSceneMusicMenu() {
+    if (!sceneMusicMenu) return;
+    if (sceneMusicMenu.parentNode) sceneMusicMenu.parentNode.removeChild(sceneMusicMenu);
+    sceneMusicMenu = null;
+  }
+  function positionSceneMusicMenu(button) {
+    if (!sceneMusicMenu || !button || !sceneMusicMenu.isConnected) return;
+    var rect = button.getBoundingClientRect(), margin = 8;
+    var left = rect.right - sceneMusicMenu.offsetWidth;
+    var top = rect.bottom + 6;
+    if (top + sceneMusicMenu.offsetHeight > window.innerHeight - margin) top = rect.top - sceneMusicMenu.offsetHeight - 6;
+    left = Math.max(margin, Math.min(left, window.innerWidth - sceneMusicMenu.offsetWidth - margin));
+    top = Math.max(margin, Math.min(top, window.innerHeight - sceneMusicMenu.offsetHeight - margin));
+    sceneMusicMenu.style.left = Math.round(left) + "px";
+    sceneMusicMenu.style.top = Math.round(top) + "px";
+  }
+  function openSceneMusicMenu(button, sceneId, sceneTitle) {
+    closeSceneMusicMenu();
+    var menu = document.createElement("div");
+    menu.className = "tpi-scene-music-menu";
+    menu.setAttribute("role", "menu");
+    var heading = document.createElement("div");
+    heading.className = "tpi-scene-music-menu-heading";
+    heading.textContent = sceneId === "intro" ? "Music after Intro" : "Music for " + sceneTitle;
+    menu.appendChild(heading);
+    var currentAssignment = sceneMusicFor(sceneId);
+    musicSlots().forEach(function (asset, slot) {
+      if (!asset) return;
+      var item = document.createElement("button");
+      item.type = "button";
+      item.className = "tpi-scene-music-menu-item";
+      item.dataset.tpiSceneMusicSlot = String(slot);
+      item.textContent = asset.title || titleFor(asset.fileName);
+      if (currentAssignment && currentAssignment.blobKey === asset.blobKey) item.classList.add("selected");
+      item.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        saveSceneMusic(sceneId, asset);
+        closeSceneMusicMenu();
+        var active = text(read("studioflow.activeSceneId", ""));
+        if (active === sceneId && sceneId !== "intro") playMusic(slot);
+        setStatus(sceneId === "intro" ? "Background music will start after Intro." : "Background music assigned to " + sceneTitle + ".");
         sceneMusicButton();
       });
-      intro.parentElement.insertBefore(button, intro.nextSibling);
-    }
-    var assignment = selectedSceneMusic();
-    var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
-    var label = button.querySelector(".tpi-scene-music-label");
-    if (label) label.textContent = current && assignment ? (assignment.title || current.title || titleFor(current.fileName)) : "Background music";
-    button.classList.toggle("selected", !!(current && assignment && assignment.startAfterIntro));
-    button.setAttribute("aria-pressed", String(!!(current && assignment && assignment.startAfterIntro)));
-    button.title = current && assignment ? (assignment.startAfterIntro ? "Background music starts after Intro" : "Enable background music after Intro") : "Choose a music SMART Pad, then click to add it to the Scenes";
+      menu.appendChild(item);
+    });
+    var remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "tpi-scene-music-menu-item remove";
+    remove.textContent = "No background music";
+    remove.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      saveSceneMusic(sceneId, null);
+      closeSceneMusicMenu();
+      setStatus("Background music removed from " + (sceneId === "intro" ? "the Intro handoff." : sceneTitle + "."));
+      sceneMusicButton();
+    });
+    menu.appendChild(remove);
+    document.body.appendChild(menu);
+    sceneMusicMenu = menu;
+    positionSceneMusicMenu(button);
+    var reposition = function () { positionSceneMusicMenu(button); };
+    var dismiss = function (event) { if (event.target !== button && !menu.contains(event.target)) { closeSceneMusicMenu(); document.removeEventListener("click", dismiss, true); window.removeEventListener("resize", reposition); window.removeEventListener("scroll", reposition, true); } };
+    menu.__tpiClose = function () { document.removeEventListener("click", dismiss, true); window.removeEventListener("resize", reposition); window.removeEventListener("scroll", reposition, true); closeSceneMusicMenu(); };
+    document.addEventListener("click", dismiss, true);
+    window.addEventListener("resize", reposition);
+    window.addEventListener("scroll", reposition, true);
+  }
+  function sceneMusicButton() {
+    var scenes = Array.prototype.slice.call(document.querySelectorAll("[data-tpi-scene-id]"));
+    scenes.forEach(function (scene) {
+      var sceneId = text(scene.getAttribute("data-tpi-scene-id"));
+      if (!sceneId || sceneId === "outro" || !scene.parentElement) return;
+      var button = Array.prototype.slice.call(scene.parentElement.children).find(function (child) {
+        return child.getAttribute && child.getAttribute("data-tpi-scene-music-for") === sceneId;
+      });
+      if (!button) {
+        button = document.createElement("button");
+        button.type = "button";
+        button.className = "scene-card compact dashed tpi-scene-music-button";
+        button.dataset.tpiSceneMusicButton = "true";
+        button.dataset.tpiSceneMusicFor = sceneId;
+        var icon = document.createElement("span"); icon.className = "tpi-scene-music-icon"; icon.textContent = "♫"; icon.setAttribute("aria-hidden", "true");
+        var label = document.createElement("span"); label.className = "tpi-scene-music-label";
+        button.append(icon, label);
+        button.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          openSceneMusicMenu(button, sceneId, scene.querySelector(".scene-label > span")?.textContent || (scene.textContent || "Scene").trim());
+        });
+        scene.parentElement.insertBefore(button, scene.nextSibling);
+      }
+      var assignment = sceneMusicFor(sceneId);
+      var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
+      var label = button.querySelector(".tpi-scene-music-label");
+      if (label) label.textContent = current ? (sceneId === "intro" ? "After Intro: " : "Music: ") + (assignment.title || current.title || titleFor(current.fileName)) : (sceneId === "intro" ? "Add music after Intro" : "Add background music");
+      button.classList.toggle("selected", !!current);
+      button.disabled = musicSlots().filter(Boolean).length === 0;
+      button.setAttribute("aria-pressed", String(!!current));
+      button.title = current ? "Change this scene's background music" : "Choose a music track for this scene";
+    });
+  }
+  function playAssignedSceneMusic(assignment) {
+    if (!assignment) return false;
+    var musicIndex = musicSlots().findIndex(function (item) { return item && item.blobKey === assignment.blobKey; });
+    if (musicIndex < 0) return false;
+    if (musicSlot !== musicIndex || (!musicExternal && !musicAudio)) playMusic(musicIndex);
+    return true;
   }
   function syncSceneMusic() {
-    var assignment = selectedSceneMusic();
     var active = text(read("studioflow.activeSceneId", ""));
-    if (lastSceneId === "intro" && active && active !== "intro" && assignment && assignment.startAfterIntro) {
-      var musicIndex = musicSlots().findIndex(function (item) { return item && item.blobKey === assignment.blobKey; });
-      if (musicIndex >= 0) playMusic(musicIndex);
+    var previous = lastSceneId;
+    if (active === "intro" && previous !== "intro" && sceneMusicFor("intro")) {
+      stopMusic();
+    } else if (active && active !== "intro" && active !== "outro" && (previous === "intro" || !previous || previous !== active)) {
+      playAssignedSceneMusic(sceneMusicFor(active) || (previous === "intro" ? sceneMusicFor("intro") : null));
     }
     lastSceneId = active;
     sceneMusicButton();
@@ -482,7 +572,7 @@
     if (firstLegacyAudio) hostSection.insertBefore(root, firstLegacyAudio);
     else if (!root.parentElement) hostSection.appendChild(root);
     renderState();
-    sceneMusicButton();
+    syncSceneMusic();
   }
   function schedule() { if (scheduled) return; scheduled = true; window.setTimeout(sync, 0); }
   function start() {

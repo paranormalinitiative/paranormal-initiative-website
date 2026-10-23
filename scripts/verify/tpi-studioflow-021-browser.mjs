@@ -107,6 +107,30 @@ try {
   await page.waitForTimeout(450);
   check("music upload fills first slot", (await musicBoard.locator(".tpi-audio-slot.assigned").count()) === 1 && (await musicBoard.locator(".tpi-audio-slot.assigned").first().innerText()).includes("tpi-021-music"));
 
+  const introMusicButton = page.locator('[data-tpi-scene-music-for="intro"]');
+  const firstSceneMusicButton = page.locator('[data-tpi-scene-music-for="scene-1"]');
+  check("Intro scene exposes background-music assignment", await introMusicButton.count() === 1 && await introMusicButton.isVisible());
+  check("regular scenes expose background-music assignment", await firstSceneMusicButton.count() === 1 && await firstSceneMusicButton.isVisible());
+  await introMusicButton.click();
+  const sceneMusicMenu = page.locator(".tpi-scene-music-menu");
+  check("scene music picker opens outside panel overflow", await sceneMusicMenu.count() === 1 && await sceneMusicMenu.isVisible());
+  await sceneMusicMenu.getByRole("button", { name: /tpi-021-music/i }).click();
+  const introAssignment = await page.evaluate(() => ({
+    assignment: JSON.parse(localStorage.getItem("studioflow.sceneMusicAssignments") || "{}").intro,
+    music: JSON.parse(localStorage.getItem("studioflow.backgroundMusicSlots") || "[]").find((item) => item)
+  }));
+  check("Intro handoff stores the selected music track", Boolean(introAssignment.assignment?.blobKey) && introAssignment.assignment.blobKey === introAssignment.music?.blobKey);
+
+  await firstSceneMusicButton.click();
+  await page.locator(".tpi-scene-music-menu").getByRole("button", { name: /tpi-021-music/i }).click();
+  const sceneAssignment = await page.evaluate(() => ({
+    assignment: JSON.parse(localStorage.getItem("studioflow.sceneMusicAssignments") || "{}")["scene-1"],
+    music: JSON.parse(localStorage.getItem("studioflow.backgroundMusicSlots") || "[]").find((item) => item)
+  }));
+  check("scene assignment stores the selected music track", Boolean(sceneAssignment.assignment?.blobKey) && sceneAssignment.assignment.blobKey === sceneAssignment.music?.blobKey);
+  await page.waitForTimeout(700);
+  check("assigned scene music starts on the active stage", await musicBoard.locator(".tpi-audio-slot.playing").count() === 1);
+
   await soundBoard.locator(".tpi-audio-slot.assigned").first().click();
   await page.locator('input[aria-label="Sound effects volume"]').evaluate((input) => {
     input.value = "0.18";
