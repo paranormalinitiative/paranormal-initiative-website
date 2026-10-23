@@ -18,7 +18,6 @@
   var MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop";
   var SCENE_MUSIC_KEY = "studioflow.sceneMusicAssignments";
   var AFTER_INTRO_SCENE_ID = "after-intro";
-  var PROGRAM_ACTIVE_KEY = "studioflow.programActive";
   var AUDIO_ACCEPT = "audio/*,.mp3,.m4a,.wav,.wave,.ogg,.oga,.aac,.flac,.aif,.aiff,.webm,.opus,.amr";
   var MUSIC_MAX_BYTES = 512 * 1024 * 1024;
   var PAD_COLORS = ["#5f3b8f", "#8c3f67", "#315d87", "#2f7668", "#7a5b2c", "#704c75"];
@@ -34,7 +33,6 @@
   var musicExternal = false;
   var lastSignature = "";
   var lastSceneId = "";
-  var programWasActive = false;
   var sceneMusicMenu = null;
 
   function text(value) { return typeof value === "string" ? value : ""; }
@@ -549,22 +547,18 @@
     return true;
   }
   function syncSceneMusic() {
+    // Sol's approved scene-music workflow (TPI-STUDIOFLOW-028 Addendum A):
+    // entering the Intro scene clears music for the video moment, and leaving
+    // the Intro scene hands off to the assigned After Intro track (or the
+    // entered scene's own assignment). This transition is intentionally not
+    // gated by Live or Record state.
     var active = text(read("studioflow.activeSceneId", ""));
     var previous = lastSceneId;
-    var showActive = read(PROGRAM_ACTIVE_KEY, false) === true;
-    if (!showActive) {
-      if (programWasActive || active === "intro") stopMusic();
-      programWasActive = false;
-      lastSceneId = active;
-      sceneMusicButton();
-      return;
-    }
-    if (active === "intro" && (previous !== "intro" || !programWasActive) && sceneMusicFor(AFTER_INTRO_SCENE_ID)) {
+    if (active === "intro" && previous !== "intro" && sceneMusicFor(AFTER_INTRO_SCENE_ID)) {
       stopMusic();
-    } else if (active && active !== "intro" && active !== "outro" && (!programWasActive || previous === "intro" || !previous || previous !== active)) {
+    } else if (active && active !== "intro" && active !== "outro" && (previous === "intro" || !previous || previous !== active)) {
       playAssignedSceneMusic(sceneMusicFor(active) || (previous === "intro" ? sceneMusicFor(AFTER_INTRO_SCENE_ID) : null));
     }
-    programWasActive = true;
     lastSceneId = active;
     sceneMusicButton();
   }
@@ -631,7 +625,6 @@
     window.addEventListener("storage", schedule);
     window.addEventListener("studioflow:storage-changed", schedule);
     window.addEventListener("studioflow:scene-changed", syncSceneMusic);
-    window.addEventListener("studioflow:program-state", syncSceneMusic);
     window.addEventListener("studioflow:audio-ended", function (event) { var detail = event.detail || {}; if (detail.category === "sound") { soundSource = null; soundSlot = null; renderState(); } if (detail.category === "music") { musicExternal = false; musicSlot = null; renderState(); } });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();

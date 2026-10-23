@@ -128,6 +128,7 @@ try {
     check("After Intro click plays assigned Background Music", await musicPlayingCount() === 1);
     check("After Intro click preserves independent active scene", await activeSceneId() === "scene-1");
   }
+  check("After Intro music shortcut never mounts stage video", await count(".program-stage > video.stage-video:not(.tpi-video-clip-stage-video)") === 0);
 
   // Test A — Intro Video first click starts playback of the Video Clips asset.
   await click('[data-tpi-scene-id="intro"]');
@@ -148,7 +149,7 @@ try {
   await sleep(300);
   check("Second Intro Video click stops playback", (await stageClipState()) === null || (await stageClipState()).paused === true);
   check("Stopping Intro Video restores the previous production scene", await activeSceneId() === "scene-1");
-  check("Stopping Intro Video does not activate After Intro music", await musicPlayingCount() === 0);
+  check("Sol's preserved handoff starts After Intro music when the Intro segment ends", await musicPlayingCount() === 1);
 
   // Test C — every subsequent playback restarts at 00:00 and progresses.
   await click('[data-tpi-scene-id="intro"]');
@@ -161,6 +162,18 @@ try {
   await sleep(700);
   const introAdvanced = await stageClipState();
   check("Intro Video playback progresses", Boolean(introAdvanced) && introAdvanced.currentTime > (introRestart?.currentTime ?? 0), JSON.stringify({ introRestart, introAdvanced }));
+
+  // Addendum A — the After Intro music control is independent of the Intro
+  // Video: playing it must not restart, stop, or reset the Intro clip.
+  const introBeforeMusic = await stageClipState();
+  await click('[data-tpi-scene-music-for="after-intro"]');
+  await sleep(500);
+  const introAfterMusic = await stageClipState();
+  check("After Intro music playback does not restart the Intro Video", Boolean(introBeforeMusic && introAfterMusic) && introAfterMusic.paused === false && introAfterMusic.currentTime >= (introBeforeMusic.currentTime ?? 0), JSON.stringify({ introBeforeMusic, introAfterMusic }));
+  check("After Intro music shortcut plays its assigned track without leaving the Intro scene", await musicPlayingCount() === 1 && await activeSceneId() === "intro");
+  await click('[data-tpi-audio-stop="music"]');
+  await sleep(300);
+  check("Stop music leaves the Intro Video running", (await stageClipState())?.paused === false);
 
   // Test D/E — Outro Video first click plays its own clip; Intro and Outro never overlap.
   await click('[data-tpi-scene-id="outro"]');
@@ -187,7 +200,7 @@ try {
   await waitFor("Intro Video natural completion", async () => (await activeSceneId()) === "scene-1", 25_000);
   await sleep(300);
   check("Natural completion resets controls and restores the production scene", await activeSceneId() === "scene-1" && ((await stageClipState()) === null || (await stageClipState()).paused === true));
-  check("Natural completion leaves After Intro music inactive", await musicPlayingCount() === 0);
+  check("Sol's approved automatic After Intro playback runs when the Intro Video finishes", await musicPlayingCount() === 1);
 
   // Test — Background Music card playback remains its own independent system.
   const musicCard = (await driver.findElements(By.css('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')))[0];
