@@ -260,7 +260,7 @@ try {
     ["Banners", "Banner text"],
     ["Media assets", "Video clips"],
     ["Voice FX", "Voice FX"],
-    ["Style", "Logo"],
+    ["Style", "Brand Presets"],
     ["Widgets", "Widgets"],
     ["Notes", "Notes"],
     ["People", "People"],
