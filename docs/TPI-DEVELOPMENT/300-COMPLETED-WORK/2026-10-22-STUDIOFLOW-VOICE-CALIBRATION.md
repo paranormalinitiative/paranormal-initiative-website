@@ -3,7 +3,7 @@
 Date: 2026-10-22  
 Status: Local implementation complete; audible acceptance pending; production not authorized
 
-Related implementation commit: `836ff01f125a0a9d8ccb1cac6b9ad94dc7badb2b`  
+Related implementation commit: `836ff015a692f36b6152fa41a415f42ff835d666`  
 OpenVoiceChanger integration: [original-source integration record](./2026-10-22-STUDIOFLOW-OPENVOICECHANGER-INTEGRATION.md)
 
 ## Root cause identified
