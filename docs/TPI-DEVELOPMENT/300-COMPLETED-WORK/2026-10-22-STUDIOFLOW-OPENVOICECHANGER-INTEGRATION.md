@@ -76,7 +76,9 @@ The adapter maps the existing StudioFlow controls to the upstream protocol:
 pitch semitones, resonance/formant shift, clarity/EQ, output gain, gate,
 robot, telephone, megaphone, ghost, echo, and reverb. Existing host/guest
 processed-track routing remains the integration seam; raw audio is not added
-as a second track by this adapter.
+as a second track by this adapter. The first settings message negotiates the
+browser AudioContext sample rate and the 4,096-sample frame size with the
+bridge so pitch and formant processing use the actual browser rate.
 
 ## Verification completed
 
