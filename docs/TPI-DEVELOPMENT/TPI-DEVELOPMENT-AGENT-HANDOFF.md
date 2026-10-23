@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `0ce8774ff62b437e7a7862e47e60f3302d306d37`
-- Active production Worker version: `41c7c0bf-5b46-4fd7-b2af-4bdf3f101bc3`
-- Recorded rollback target: `78693444-4f7b-4115-b77b-5039be40db3f`
+- Last fully verified workflow baseline: `983601d74cad700a9b14148ff4b7dcab3fca93bc`
+- Active production Worker version: `a4e1f565-21fb-449d-878a-388beabac36c`
+- Recorded rollback target: `41c7c0bf-5b46-4fd7-b2af-4bdf3f101bc3`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -35,10 +35,10 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Deployment commit `0ce8774ff62b437e7a7862e47e60f3302d306d37`, built from
+Deployment commit `983601d74cad700a9b14148ff4b7dcab3fca93bc`, built from
 authoritative StudioFlow source commit `17bbd4a` plus the maintained bridge
-repair, was deployed to Worker `theparanormalinitiative` as version
-`41c7c0bf-5b46-4fd7-b2af-4bdf3f101bc3` at 100% traffic on 2026-10-23. The
+cache repair, was deployed to Worker `theparanormalinitiative` as version
+`a4e1f565-21fb-449d-878a-388beabac36c` at 100% traffic on 2026-10-23. The
 release passed anonymous smoke 10/10, isolated Firefox Developer Edition
 acceptance 59/59, all 11 exclusive right-rail panel checks, local
 authentication lifecycle 38/38, complete preflight, asset/build integrity,
@@ -48,11 +48,12 @@ storage were not modified.
 ## Latest StudioFlow repair
 
 The deployed repair is documented in
-`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-EXCLUSIVE-PANEL-REPAIR.md`.
-Media bridge content is now explicitly hidden unless Media Assets is selected,
-so Live Interaction, Comments, Banners, Voice FX, Style, and the other right-
-rail panels show only their own content. The regression harness checks both
-that the requested panel opens and that Media Assets-only sections disappear.
+`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-PANEL-CACHE-REPAIR.md`.
+Media bridge URLs now carry an `exclusive-v2` cache identifier, and the video
+timer bridge is included in the active-panel gate. This prevents existing
+browsers from retaining the prior cumulative panel behavior. The regression
+harness checks both that the requested panel opens and that Media Assets-only
+sections disappear.
 Use the disposable Firefox acceptance profile for future checks; do not use
 the owner profile for destructive testing.
 

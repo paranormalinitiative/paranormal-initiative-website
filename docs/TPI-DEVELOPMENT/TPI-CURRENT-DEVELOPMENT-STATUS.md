@@ -2,6 +2,23 @@
 
 Last verified: 2026-10-23
 
+## Latest verified production release — 2026-10-23 (cache repair)
+
+The latest release forces existing browsers to load the corrected exclusive
+StudioFlow panel bridges.
+
+- Release commit: 983601d74cad700a9b14148ff4b7dcab3fca93bc
+- Worker: theparanormalinitiative
+- Active production Worker version: a4e1f565-21fb-449d-878a-388beabac36c at 100%
+- Immediate rollback reference: 41c7c0bf-5b46-4fd7-b2af-4bdf3f101bc3
+- Live anonymous smoke: PASS, 10/10
+- Live isolated Firefox Developer Edition acceptance: PASS, 59/59
+- All 11 right-rail panels: exclusive and verified
+- Bridge cache identifiers: exclusive-v2
+- No rollback required; protected resources and owner browser storage were untouched.
+- Current release record:
+  300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-PANEL-CACHE-REPAIR.md
+
 ## Latest verified production release — 2026-10-23
 
 The latest verified release is the exclusive StudioFlow right-rail panel
