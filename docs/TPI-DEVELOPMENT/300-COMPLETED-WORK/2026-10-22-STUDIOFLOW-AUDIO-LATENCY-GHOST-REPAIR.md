@@ -3,7 +3,7 @@
 Date: 2026-10-22  
 Status: Local implementation and synthetic bridge validation complete; human microphone acceptance pending; production not authorized
 
-Source implementation commit: `0eb009d`  
+Source implementation commit: `0eb009d798143f51b3cd66218fa00dac30a2bf50`  
 OpenVoiceChanger upstream inspected: `8e6a00c628eafc0fd1d68c6bc13f2c17b8a46ea1`
 
 ## Root causes
