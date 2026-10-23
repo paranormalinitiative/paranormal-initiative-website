@@ -95,6 +95,9 @@ bridge so pitch and formant processing use the actual browser rate.
   worklet registrations and the opt-in engine path.
 - Bridge worklet JavaScript syntax check: passed.
 - StudioFlow production build: passed.
+- Prototype loading correction: the browser prototype now uses a relative
+  worklet URL and explicitly rejects `file://` startup with the required
+  `http://127.0.0.1:8892/` instruction.
 
 These are source, synthetic, and protocol checks. They do not establish
 acceptable perceived voice quality.
@@ -102,10 +105,12 @@ acceptable perceived voice quality.
 ## Pending acceptance
 
 Actual microphone capture, headphone monitoring, and human listening tests in
-Firefox Developer Edition remain pending. The browser session was not reused
-because it contained the owner's existing tabs and browser storage. No claim
-is made that masculine, feminine, formant, or custom transformations are
-audibly acceptable until a disposable Firefox profile is used for that test.
+Firefox Developer Edition remain pending. The in-app browser could display
+the served prototype, but microphone startup did not complete in that browser
+session. The owner's existing Firefox tabs and browser storage were not used
+for testing. No claim is made that masculine, feminine, formant, or custom
+transformations are audibly acceptable until microphone capture succeeds in a
+disposable Firefox profile.
 
 The bridge also remains a development prototype. Releasing it would require a
 maintained service/runtime decision, authentication and lifecycle handling,
