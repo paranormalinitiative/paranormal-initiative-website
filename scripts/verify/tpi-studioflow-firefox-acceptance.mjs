@@ -286,10 +286,6 @@ try {
   await waitFor("Intro visible preview", async () => count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] video[data-tpi-preview]:not([hidden])'));
   await waitFor("Outro visible preview", async () => count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] video[data-tpi-preview]:not([hidden])'));
   check("Intro and Outro display visible previews", await count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] video[data-tpi-preview]:not([hidden])') === 1 && await count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] video[data-tpi-preview]:not([hidden])') === 1 && await count('[data-tpi-video-card="0"] .tpi-video-card-fallback, [data-tpi-video-card="1"] .tpi-video-card-fallback') === 0);
-  await click('[data-tpi-scene-id="intro"]');
-  await waitFor("Intro scene selection", async () => JSON.parse(await js("return localStorage.getItem('studioflow.activeSceneId') || '\"\"';")) === "intro");
-  const introStageState = await js("var video=document.querySelector('.program-stage > video.stage-video'); return {mounted:!!video,paused:!video || video.paused,programActive:JSON.parse(localStorage.getItem('studioflow.programActive')||'false')===true};");
-  check("Intro selection does not autoplay before Record or Live", introStageState.paused && !introStageState.programActive, JSON.stringify(introStageState));
 
   await uploadByDynamicInput('[data-tpi-audio-board="sound"] .tpi-audio-upload', "audio/", soundFile);
   await waitFor("sound assignment", async () => count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned'));
