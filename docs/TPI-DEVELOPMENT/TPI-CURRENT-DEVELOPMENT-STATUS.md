@@ -1,20 +1,21 @@
 # TPI Current Development Status
 
-Last verified: 2026-10-22
+Last verified: 2026-10-23
 
-## Latest verified production release — 2026-10-22
+## Latest verified production release — 2026-10-23
 
 The current production baseline is the release below. Historical rows and
 older incident records in this document remain valuable provenance, but they
 must not be interpreted as the active production state.
 
 - Release branch: `codex/tpi-development`
-- Source commit: `5ffe238b9a88023f6feabb27f0a30ef9e0bd6e52`
+- Source commit: `68e44b7ff0c294db72aaef1bc1f21307af8c765d`
 - Worker: `theparanormalinitiative`
-- Active production Worker version: `68dc36ac-a3bf-47c6-b1b0-8500abd3ffa1` at 100%
-- Deployment date: `2026-10-22`
-- Immediate rollback reference: `b41a8582-4558-4391-bf37-188049125853`
+- Active production Worker version: `e04b6691-6f35-453b-8780-1015e5a55cb5` at 100%
+- Deployment date: `2026-10-23`
+- Immediate rollback reference: `ad3b6211-ca07-4156-9cef-e99ab9484035`
 - Anonymous live smoke: PASS, 10/10
+- Isolated production Firefox Developer Edition acceptance: PASS, 26/26
 - Video Clips focused checks: PASS, 13/13
 - Media organization focused checks: PASS, 22/22
 - Release safety checks: PASS, 15/15
@@ -28,7 +29,7 @@ must not be interpreted as the active production state.
 - Protected resources: Crossroads of the Unknown untouched; no D1 migration, R2
   mutation, or owner-browser storage access
 - Current StudioFlow release record:
-  `300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-INTRO-OUTRO-PREVIEW-RESULT.md`
+  `300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-GHOST-PRESET-REPAIR.md`
 - Workflow repair: the acceptance runner now labels and foregrounds the exact
   disposable Firefox window `TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE` and
   rejects other Firefox windows as evidence for production acceptance.
@@ -60,12 +61,12 @@ tree.
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified release-workflow source: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
-- Current verified production release source: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
+- Last fully verified release-workflow source: `68e44b7ff0c294db72aaef1bc1f21307af8c765d`
+- Current verified production release source: `68e44b7ff0c294db72aaef1bc1f21307af8c765d`
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
 - Development version: cf58029d-62be-409f-98ff-58591b020641
-- Production version: `106c3d6a-5cbb-4a62-917d-644f850b4287`
+- Production version: `e04b6691-6f35-453b-8780-1015e5a55cb5`
 - Production: the verified release includes the existing TPI-DEV-037 and later
   StudioFlow functionality plus the completed StudioFlow 020–023 release scope.
   Live Firefox acceptance verified the StudioFlow shell, video cards, timers,

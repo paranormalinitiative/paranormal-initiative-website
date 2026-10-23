@@ -1,6 +1,6 @@
 # TPI Development Agent Handoff
 
-Last verified: 2026-10-22
+Last verified: 2026-10-23
 Current controlling directive: TPI MASTER — Standing Autonomous Agent Authority
 
 ## Mandatory authority update
@@ -17,8 +17,8 @@ the controlling directive.
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
 - Last fully verified workflow baseline: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
-- Active production Worker version: `106c3d6a-5cbb-4a62-917d-644f850b4287`
-- Recorded rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`
+- Active production Worker version: `e04b6691-6f35-453b-8780-1015e5a55cb5`
+- Recorded rollback target: `ad3b6211-ca07-4156-9cef-e99ab9484035`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -35,11 +35,11 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Source commit `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d` was deployed to
+Source commit `68e44b7ff0c294db72aaef1bc1f21307af8c765d` was deployed to
 Worker `theparanormalinitiative` as version
-`106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic on 2026-10-22. The
+`e04b6691-6f35-453b-8780-1015e5a55cb5` at 100% traffic on 2026-10-23. The
 release passed anonymous smoke 10/10, isolated Firefox Developer Edition
-acceptance 23/23, local authentication lifecycle 38/38, complete preflight,
+acceptance 26/26, local authentication lifecycle 38/38, complete preflight,
 asset/build integrity, and the guarded Wrangler dry-run. Crossroads, D1, R2,
 and owner browser storage were not modified.
 
