@@ -72,14 +72,15 @@ finish with `READY`. `release:production` must finish with
 ## Latest verified release record
 
 The latest successful application deployment used website source commit
-`f1603710545447b072fbe6160acc3bccbcf456e4` and authoritative StudioFlow source
+`b922102ae59e6e01738f86ca1c8991c2598966f5` and authoritative StudioFlow source
 commit `17bbd4a9d0a604b731d68fae915ceffacdc14025`. It deployed Worker version
-`0862ff17-3003-4e27-8ab3-dc7218dbbff3` on 2026-10-23. The immediate rollback
-reference is `a4e1f565-21fb-449d-878a-388beabac36c`. The detailed record is
-`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-LIVE-PANEL-DISPLAY-REPAIR.md`.
+`dcb6ad62-d496-44fc-bfa2-20be076f0617` on 2026-10-23. The immediate rollback
+reference is `0862ff17-3003-4e27-8ab3-dc7218dbbff3`. The detailed record is
+`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`.
 
 That release passed anonymous live smoke 10/10, isolated Firefox Developer
-Edition acceptance 59/59, all 11 exclusive right-rail panel checks, local
+Edition acceptance 60/60, the exact one-row/four-duration countdown checks,
+all 11 exclusive right-rail panel checks, local
 authentication lifecycle 38/38, reproducible StudioFlow integration, and the
 guarded Wrangler dry-run. It made no D1 migration, R2 mutation, Crossroads
 mutation, or owner-browser storage change. The owner production tab was used

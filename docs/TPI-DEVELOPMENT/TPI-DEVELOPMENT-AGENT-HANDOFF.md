@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `f1603710545447b072fbe6160acc3bccbcf456e4`
-- Active production Worker version: `0862ff17-3003-4e27-8ab3-dc7218dbbff3`
-- Recorded rollback target: `a4e1f565-21fb-449d-878a-388beabac36c`
+- Last fully verified workflow baseline: `b922102ae59e6e01738f86ca1c8991c2598966f5`
+- Active production Worker version: `dcb6ad62-d496-44fc-bfa2-20be076f0617`
+- Recorded rollback target: `0862ff17-3003-4e27-8ab3-dc7218dbbff3`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -38,27 +38,24 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Deployment commit `f1603710545447b072fbe6160acc3bccbcf456e4`, built from
-authoritative StudioFlow source commit `17bbd4a` plus the maintained bridge and
-stylesheet repair, was deployed to Worker `theparanormalinitiative` as version
-`0862ff17-3003-4e27-8ab3-dc7218dbbff3` at 100% traffic on 2026-10-23. The
+Deployment commit `b922102ae59e6e01738f86ca1c8991c2598966f5`, including
+the maintained countdown-row bridge repair, was deployed to Worker
+`theparanormalinitiative` as version
+`dcb6ad62-d496-44fc-bfa2-20be076f0617` at 100% traffic on 2026-10-23. The
 release passed anonymous smoke 10/10, isolated Firefox Developer Edition
-acceptance 59/59, all 11 exclusive right-rail panel checks, local
+acceptance 60/60, the exact one-row/four-duration timer checks, all 11 exclusive right-rail panel checks, local
 authentication lifecycle 38/38, complete preflight, asset/build integrity,
-and the guarded Wrangler dry-run. An authenticated owner Firefox production
-tab was then reloaded and all 11 tabs were checked non-destructively. Crossroads,
-D1, R2, and owner browser storage were not modified.
+and the guarded Wrangler dry-run. Crossroads, D1, R2, and owner browser storage
+were not modified.
 
 ## Latest StudioFlow repair
 
 The deployed repair is documented in
-`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-LIVE-PANEL-DISPLAY-REPAIR.md`.
-The live defect was an author-style cascade conflict: bridge roots were marked
-hidden, but `display: grid` kept them visibly rendered. The production bridges
-now force `display: none !important` outside Media Assets, the stylesheet has
-matching `[hidden]` protections, and all related assets use `exclusive-v3`.
-The regression harness checks computed visibility and rendered client
-rectangles instead of trusting `node.hidden` alone.
+`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`.
+The bridge previously accumulated React-created `.countdown-duration-row`
+elements after rerenders. It now removes stale rows and retains only the
+current canonical row. Firefox verifies exactly `10s`, `20s`, `30s`, and `60s`
+both initially and after uploads, Studio switching, and refresh.
 Use the disposable Firefox acceptance profile for future checks; do not use
 the owner profile for destructive testing.
 

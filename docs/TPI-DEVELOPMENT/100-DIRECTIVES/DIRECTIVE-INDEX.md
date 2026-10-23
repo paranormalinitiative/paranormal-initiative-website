@@ -20,13 +20,14 @@ for current commit, push, deployment, and live-verification procedure.
 
 The latest consolidated StudioFlow release was deployed and verified from
 `codex/tpi-development` commit
-`f1603710545447b072fbe6160acc3bccbcf456e4`. Worker
+`b922102ae59e6e01738f86ca1c8991c2598966f5`. Worker
 `theparanormalinitiative` is running version
-`0862ff17-3003-4e27-8ab3-dc7218dbbff3` at 100% traffic. Anonymous live smoke
-passed 10/10, isolated Firefox Developer Edition acceptance passed 59/59, all
-11 exclusive right-rail panels passed, and the local authentication lifecycle
+`dcb6ad62-d496-44fc-bfa2-20be076f0617` at 100% traffic. Anonymous live smoke
+passed 10/10, isolated Firefox Developer Edition acceptance passed 60/60, the
+countdown duration row remained singular with exactly four choices, all 11
+exclusive right-rail panels passed, and the local authentication lifecycle
 passed 38/38. The documented rollback target is
-`a4e1f565-21fb-449d-878a-388beabac36c`.
+`0862ff17-3003-4e27-8ab3-dc7218dbbff3`.
 
 This release record supersedes stale “not deployed” or “acceptance pending”
 language in older directive rows only for the behavior covered by the verified

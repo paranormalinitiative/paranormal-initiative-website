@@ -12,7 +12,28 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## Latest verified production release — 2026-10-23 (live panel display repair)
+## Latest verified production release — 2026-10-23 (countdown timer deduplication)
+
+StudioFlow's Video Timers controls now render one duration row containing
+exactly `10s`, `20s`, `30s`, and `60s`. The maintained media bridge previously
+moved each React-created row without removing the stale row retained from the
+prior render, causing the four choices to repeat. The bridge now scopes timer
+controls to the canonical container and removes stale duration rows before
+attaching the current row.
+
+- Release commit: `b922102ae59e6e01738f86ca1c8991c2598966f5`
+- Functional fix commit: `aabbb48`
+- Worker: `theparanormalinitiative`
+- Active production Worker version: `dcb6ad62-d496-44fc-bfa2-20be076f0617`
+- Immediate rollback reference: `0862ff17-3003-4e27-8ab3-dc7218dbbff3`
+- Live anonymous smoke: PASS, 10/10
+- Live isolated Firefox Developer Edition acceptance: PASS, 60/60
+- Countdown row: PASS initially and after uploads, Studio switching, and refresh
+- No D1 migration, R2 mutation, Crossroads mutation, or owner-browser access
+- Current release record:
+  `300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`
+
+## Prior production release — 2026-10-23 (live panel display repair)
 
 The latest release fixes the actual production cause of the cumulative
 StudioFlow right rail. The bridges set their injected media elements to
@@ -140,12 +161,12 @@ tree.
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified release-workflow source: `68e44b7ff0c294db72aaef1bc1f21307af8c765d`
-- Current verified production release source: `68e44b7ff0c294db72aaef1bc1f21307af8c765d`
+- Last fully verified release-workflow source: `b922102ae59e6e01738f86ca1c8991c2598966f5`
+- Current verified production release source: `b922102ae59e6e01738f86ca1c8991c2598966f5`
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
 - Development version: cf58029d-62be-409f-98ff-58591b020641
-- Production version: `e04b6691-6f35-453b-8780-1015e5a55cb5`
+- Production version: `dcb6ad62-d496-44fc-bfa2-20be076f0617`
 - Production: the verified release includes the existing TPI-DEV-037 and later
   StudioFlow functionality plus the completed StudioFlow 020–023 release scope.
   Live Firefox acceptance verified the StudioFlow shell, video cards, timers,

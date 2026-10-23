@@ -53,14 +53,14 @@ Verified development resources:
 Latest verified production release:
 
 - Worker: `theparanormalinitiative`
-- Source commit: `f1603710545447b072fbe6160acc3bccbcf456e4`
+- Source commit: `b922102ae59e6e01738f86ca1c8991c2598966f5`
 - StudioFlow source commit: `17bbd4a9d0a604b731d68fae915ceffacdc14025`
-- Worker version: `0862ff17-3003-4e27-8ab3-dc7218dbbff3` at 100% traffic
+- Worker version: `dcb6ad62-d496-44fc-bfa2-20be076f0617` at 100% traffic
 - Deployed: 2026-10-23
-- Rollback target: `a4e1f565-21fb-449d-878a-388beabac36c`
-- Acceptance: anonymous smoke 10/10, isolated Firefox Developer Edition 59/59,
-  all 11 right-rail tabs, local authentication lifecycle 38/38, complete
-  preflight, and guarded dry-run passed
+- Rollback target: `0862ff17-3003-4e27-8ab3-dc7218dbbff3`
+- Acceptance: anonymous smoke 10/10, isolated Firefox Developer Edition 60/60,
+  exact one-row/four-duration countdown checks, all 11 right-rail tabs, local
+  authentication lifecycle 38/38, complete preflight, and guarded dry-run passed
 - Data protection: no D1 migration, R2 mutation, Crossroads mutation, or owner-browser
   storage access was performed
 
