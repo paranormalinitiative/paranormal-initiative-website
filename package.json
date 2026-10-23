@@ -13,6 +13,7 @@
     "dev:local:service:uninstall": "node scripts/local-dev-service.mjs uninstall",
     "local:credentials": "zsh scripts/show-local-admin-credentials.sh",
     "test:studioflow:firefox": "node scripts/verify/tpi-studioflow-firefox-acceptance.mjs",
+    "verify:studioflow-027": "node scripts/verify/tpi-studioflow-027-scenes.mjs",
     "verify:release-safety": "node scripts/verify/tpi-release-safety.mjs",
     "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",
     "release:preflight": "node scripts/tpi-release.mjs preflight",

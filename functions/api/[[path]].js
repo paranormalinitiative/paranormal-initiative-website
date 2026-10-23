@@ -4609,6 +4609,7 @@ function normalizeStudioConfiguration(value) {
     return {
       id: clean(value.id).slice(0, 120) || null,
       blobKey: clean(value.blobKey).slice(0, 180) || null,
+      serverAssetId: clean(value.serverAssetId).slice(0, 120) || null,
       fileName: cleanVideoText(value.fileName || "", 180),
       kind: clean(value.kind).slice(0, 40) || null,
       mediaType: clean(value.mediaType).slice(0, 40) || null,
@@ -4716,6 +4717,31 @@ function normalizeStudioWorkspaceState(value) {
   const bytes = typeof TextEncoder === "function" ? new TextEncoder().encode(serialized).length : serialized.length;
   if (bytes > STUDIO_WORKSPACE_MAX_STATE_BYTES) return { error: "Workspace state is too large to save." };
   return { value: normalized, serialized };
+}
+
+function studioWorkspaceStateWithMediaUrls(state, workspaceId) {
+  const next = JSON.parse(JSON.stringify(state && typeof state === "object" ? state : {}));
+  const configuration = next.configuration && typeof next.configuration === "object" ? next.configuration : {};
+  const mediaUrl = (asset) => {
+    if (!asset || typeof asset !== "object" || Array.isArray(asset) || !clean(asset.serverAssetId)) return asset;
+    return {
+      ...asset,
+      serverUrl: `/api/studio/workspaces/${encodeURIComponent(workspaceId)}/media/${encodeURIComponent(clean(asset.serverAssetId))}`
+    };
+  };
+  configuration.customBackground = mediaUrl(configuration.customBackground);
+  configuration.customLogo = mediaUrl(configuration.customLogo);
+  configuration.overlayAssets = Array.isArray(configuration.overlayAssets) ? configuration.overlayAssets.map(mediaUrl) : configuration.overlayAssets;
+  configuration.videoClips = configuration.videoClips && typeof configuration.videoClips === "object"
+    ? { ...configuration.videoClips, intro: mediaUrl(configuration.videoClips.intro), outro: mediaUrl(configuration.videoClips.outro) }
+    : configuration.videoClips;
+  configuration.videoClipSlots = Array.isArray(configuration.videoClipSlots) ? configuration.videoClipSlots.map(mediaUrl) : configuration.videoClipSlots;
+  configuration.backgroundMusic = mediaUrl(configuration.backgroundMusic);
+  configuration.backgroundMusicSlots = Array.isArray(configuration.backgroundMusicSlots) ? configuration.backgroundMusicSlots.map(mediaUrl) : configuration.backgroundMusicSlots;
+  configuration.customSound = mediaUrl(configuration.customSound);
+  configuration.customSounds = Array.isArray(configuration.customSounds) ? configuration.customSounds.map(mediaUrl) : configuration.customSounds;
+  next.configuration = configuration;
+  return next;
 }
 
 function studioWorkspaceStorageFailure(error) {
@@ -4874,6 +4900,7 @@ async function handleGetStudioMedia(path, env, user) {
 
 function studioWorkspacePayload(row) {
   if (!row) return null;
+  const state = studioWorkspaceStateWithMediaUrls(safeJsonParse(row.state_json) || {}, row.id);
   return {
     id: row.id,
     channelId: row.channel_id || null,
@@ -4885,7 +4912,7 @@ function studioWorkspacePayload(row) {
     status: row.status,
     studioNumber: Number(row.studio_number || 0) || null,
     deletedAt: row.deleted_at || null,
-    state: safeJsonParse(row.state_json) || {},
+    state,
     version: Number(row.version || 1),
     lastOpenedAt: row.last_opened_at || null,
     createdAt: row.created_at,
