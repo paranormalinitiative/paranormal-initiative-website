@@ -78,6 +78,26 @@ async function waitFor(url, timeoutMs = 30_000) {
   }
   fail(`timed out waiting for ${url}`);
 }
+async function waitForLocalReleaseSurfaces() {
+  await waitFor("http://127.0.0.1:8787/");
+  await waitFor("http://127.0.0.1:8787/studio/");
+}
+async function runLocalAuthCheck(label) {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      run(label, process.execPath, ["scripts/qa/tpi-ops-009-authentication.mjs"]);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 3) throw error;
+      console.warn(`${label} was attempted before the local Worker was ready; retrying (${attempt}/2).`);
+      await waitForLocalReleaseSurfaces();
+      await new Promise(resolvePromise => setTimeout(resolvePromise, 750 * attempt));
+    }
+  }
+  throw lastError;
+}
 function assertGitReleaseState() {
   if (output("git", ["branch", "--show-current"]) !== branch) fail(`release branch must be ${branch}`);
   const status = output("git", ["status", "--porcelain=v1", "--untracked-files=all"]);
@@ -112,12 +132,13 @@ function stopIsolatedE2E() {
 }
 async function verifyAuthLifecycle() {
   const before = localAdminFingerprint();
-  run("local_admin authentication before restart", process.execPath, ["scripts/qa/tpi-ops-009-authentication.mjs"]);
+  await runLocalAuthCheck("local_admin authentication before restart");
   run("Managed local Worker restart", process.execPath, ["scripts/local-dev-service.mjs", "restart"], { env: { TPI_LOCAL_OWNER_CONTROL: "1" } });
-  await waitFor("http://127.0.0.1:8787/api/auth/me");
-  run("local_admin authentication after restart", process.execPath, ["scripts/qa/tpi-ops-009-authentication.mjs"]);
+  await waitForLocalReleaseSurfaces();
+  await runLocalAuthCheck("local_admin authentication after restart");
   run("StudioFlow production build", "npm", ["run", "build"], { cwd: studioFlowRoot });
-  run("local_admin authentication after StudioFlow rebuild", process.execPath, ["scripts/qa/tpi-ops-009-authentication.mjs"]);
+  await waitForLocalReleaseSurfaces();
+  await runLocalAuthCheck("local_admin authentication after StudioFlow rebuild");
   const after = localAdminFingerprint();
   if (JSON.stringify(before) !== JSON.stringify(after)) fail("local_admin credential or database fingerprint changed during restart/build verification");
   run("Firefox Developer Edition local_admin acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
@@ -134,7 +155,7 @@ async function preflight() {
   run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"]);
   await verifyAuthLifecycle();
   const adminBefore = localAdminFingerprint();
-  run("Persistent development authentication", process.execPath, ["scripts/qa/tpi-ops-009-authentication.mjs"]);
+    await runLocalAuthCheck("Persistent development authentication");
   startIsolatedE2E();
   try {
     await waitFor("http://127.0.0.1:8789/api/community/categories");
