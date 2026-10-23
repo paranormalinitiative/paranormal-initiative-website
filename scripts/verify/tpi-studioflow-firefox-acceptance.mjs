@@ -116,7 +116,7 @@ async function visibleAssetSectionTitles() {
   return js("return Array.from(document.querySelectorAll('.asset-panel .asset-section h3')).filter(function(node){ var style=getComputedStyle(node); return style.display !== 'none' && style.visibility !== 'hidden'; }).map(function(node){ return (node.textContent||'').replace(/\\s+/g,' ').trim(); });");
 }
 async function visibleMediaBridgeContent() {
-  return Boolean(await js("return Array.from(document.querySelectorAll('[data-tpi-video-organization], [data-tpi-video-timer-section], [data-tpi-audio-soundboards], [data-tpi-audio-original]')).some(function(node){ var style=getComputedStyle(node); return !node.hidden && style.display !== 'none' && style.visibility !== 'hidden'; });"));
+  return Boolean(await js("return Array.from(document.querySelectorAll('[data-tpi-video-organization], [data-tpi-video-timer-section], [data-tpi-audio-soundboards], [data-tpi-audio-original]')).some(function(node){ var style=getComputedStyle(node); return style.display !== 'none' && style.visibility !== 'hidden' && node.getClientRects().length > 0; });"));
 }
 async function waitFor(description, predicate, timeout = 30_000, interval = 200) {
   const started = Date.now();

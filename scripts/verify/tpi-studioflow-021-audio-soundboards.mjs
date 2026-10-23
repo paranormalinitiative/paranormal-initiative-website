@@ -60,6 +60,8 @@ const required = [
   [app, "backgroundMusicMonitorGainRef.current.gain.value = backgroundMusicVolume", "Music monitor volume changes update active playback"],
   [app, "programMusicGainRef.current.gain.value = backgroundMusicVolume", "Program music volume changes update the recording mix"],
   [bridge, 'section.dataset.tpiLegacyAudio = "true"', "Legacy audio sections are hidden before the maintained boards render"],
+  [bridge, 'node.style.setProperty("display", "none", "important")', "Non-media tabs force the injected audio boards out of the rendered layout"],
+  [css, "[data-tpi-audio-soundboards][hidden]", "Hidden audio boards cannot be redisplayed by their grid styling"],
   [assetState, "backgroundMusicSlots", "Asset state bridge persists music slots"],
   [assetState, "backgroundMusicLoop", "Asset state bridge persists the music loop preference"],
   [workspace, "backgroundMusicSlots", "Workspace save/local snapshot includes music slots"],

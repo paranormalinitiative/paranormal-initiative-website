@@ -558,6 +558,8 @@
     var visible = mediaAssetsTabActive();
     document.querySelectorAll("[data-tpi-audio-soundboards], [data-tpi-audio-original]").forEach(function (node) {
       node.hidden = !visible;
+      if (visible) node.style.removeProperty("display");
+      else node.style.setProperty("display", "none", "important");
     });
   }
   function hideLegacy() { Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).forEach(function (section) { var heading = headingText(section); if (heading === "sounds" || heading === "background music") { section.dataset.tpiLegacyAudio = "true"; section.hidden = true; } }); }

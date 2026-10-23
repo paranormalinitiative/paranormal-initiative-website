@@ -43,6 +43,8 @@
     var visible = mediaAssetsTabActive();
     document.querySelectorAll("[data-tpi-video-organization], [data-tpi-video-timer-section], [data-tpi-video-timers]").forEach(function (node) {
       node.hidden = !visible;
+      if (visible) node.style.removeProperty("display");
+      else node.style.setProperty("display", "none", "important");
     });
   }
   function read(key, fallback) { try { var raw = localStorage.getItem(key); return raw === null ? fallback : JSON.parse(raw); } catch (error) { return fallback; } }

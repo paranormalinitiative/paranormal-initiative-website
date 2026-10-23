@@ -14,7 +14,7 @@ const checks = [];
 function check(name, condition, detail = "") { checks.push({ name, ok: Boolean(condition), detail }); }
 
 check("Video organization bridge exists", existsSync(bridgePath), bridgePath);
-check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v11"));
+check("Shell cache tag identifies TPI-022", html.includes("tpi022=video-organization-v12&tpi-panels=exclusive-v3"));
 check("Assigned videos can hydrate a preview from IndexedDB", bridge.includes("function preloadPreview") && bridge.includes("function getVideoBlob") && bridge.includes("preloadPreview(card, asset, slot)"));
 check("Intro and Outro preview loading supports the canonical React media keys", bridge.includes('"media-video-intro"') && bridge.includes('"media-video-outro"') && bridge.includes("getVideoBlob(asset, slot)"));
 check("Existing assigned videos generate a visible preview when thumbnail metadata is absent", bridge.includes("tpiGeneratedPreview") && bridge.includes("thumbnail(media)") && bridge.includes("fallback.remove()"));
@@ -33,6 +33,7 @@ check("Intro and Outro cards show a visible loaded preview", bridge.includes("tp
 check("Assigned video cards are not styled as selected", css.includes(".tpi-video-card.assigned {\n  border-color: var(--line"));
 check("One native video timer has its own section with duration presets", bridge.includes("nativeTimerSection") && bridge.includes("data-tpi-video-timer-section") && bridge.includes("data-tpi-native-video-timer") && bridge.includes("TIMER_PRESETS = [10, 20, 30, 60]") && !bridge.includes("root.appendChild(makeTimerSection())"));
 check("Legacy Thank You and Be Right Back placeholders are hidden", bridge.includes('label === "thank you" || label === "be right back"') && bridge.includes("tpiLegacyVideoPlaceholder"));
+check("Non-media tabs force injected video controls out of the rendered layout", bridge.includes('node.style.setProperty("display", "none", "important")') && css.includes("[data-tpi-video-organization][hidden]") && css.includes("[data-tpi-video-timer-section][hidden]"));
 check("Timer state prevents duplicate timers", /function startTimer\(slot, seconds\)[\s\S]*?clearInterval\(timerHandle\)[\s\S]*?setTimerState\(slot, seconds, seconds \* 1000\)/.test(bridge));
 check("Video slot configuration is saved with workspaces", assetState.includes("videoClipSlots") && workspace.includes("videoClipSlots"));
 check("Portable backup collects video slots without duplicate media paths", backup.includes("videoClipSlots") && backup.includes("var result = [], seen = {}") && backup.includes('add("video-clip"'));

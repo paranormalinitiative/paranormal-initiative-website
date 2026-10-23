@@ -228,6 +228,11 @@
 }
 
 /* TPI-STUDIOFLOW-021: separate nine-slot sound-effect and music boards. */
+[data-tpi-audio-soundboards][hidden],
+[data-tpi-audio-original][hidden] {
+  display: none !important;
+}
+
 section.asset-section[data-tpi-legacy-audio="true"] {
   display: none !important;
 }
@@ -643,6 +648,12 @@ section.asset-section[data-tpi-legacy-audio="true"] {
 }
 
 /* TPI-STUDIOFLOW-022: organized video clips and separate timer cards. */
+[data-tpi-video-organization][hidden],
+[data-tpi-video-timer-section][hidden],
+[data-tpi-video-timers][hidden] {
+  display: none !important;
+}
+
 [data-tpi-native-video-hidden="true"] {
   display: none !important;
 }
