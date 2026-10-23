@@ -71,20 +71,17 @@ owner-managed service. Use the exact owner controls first.
 
 ## Browser-based development workflow
 
-The supported multi-browser workflow is intentionally asymmetric:
-
-- **Codex In-App Browser:** active development and agent verification browser.
-- **FreeBuff:** standby only; not an agent verification target unless a future
-  directive explicitly verifies it.
-- **Opera:** owner-review browser; the owner may use it to inspect the local
-  site, but it is not an agent QA surface.
+Firefox Developer Edition is the default browser for active local development,
+owner review, and automated acceptance. Automated runs use a disposable profile
+and must not close, clear, or repurpose the owner's open Firefox windows.
+Chromium or another browser is used only for an explicit compatibility test.
 
 The canonical site origin is `http://127.0.0.1:8787/`. StudioFlow's separate
 local room server is `http://127.0.0.1:8788/`. Keep both addresses on the local
 machine; do not substitute a public development or production origin for local
 review.
 
-For normal work, open the affected route in Codex, inspect the rendered page,
+For normal work, open the affected route in Firefox Developer Edition, inspect the rendered page,
 console, and request activity, then run the smallest applicable local test.
 The local Worker is launchd-owned and may already be serving a staged asset
 copy. A source edit that affects served assets may require:
@@ -104,6 +101,10 @@ This is verification-only unless `--apply` is supplied. It builds the separate
 StudioFlow source twice, compares the generated artifacts, and confirms that
 the integrated website entry point preserves the TPI bridge files and current
 asset names. Do not treat a local build as production approval.
+
+See `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md` before applying, committing,
+pushing, or deploying StudioFlow changes. The local site never auto-syncs to
+the development Worker or production.
 
 Do not restart or stop the owner-managed Worker as part of ordinary agent work.
 Use the explicit owner-control commands above only when the owner has asked for

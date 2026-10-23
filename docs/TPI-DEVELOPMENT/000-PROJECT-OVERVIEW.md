@@ -16,7 +16,15 @@ The canonical application source is:
 
 All approved application development must use this checkout. The Desktop workspace at `/Users/toddknipple/Desktop/paranormal-initiative-website` is an older checkout containing unique uncommitted StudioFlow/member-site work and approximately 188 MB of Paranormal Teams research, verification data, review queues, evidence, and scripts. It is preserved archive/research material. Do not delete, overwrite, automatically synchronize, merge, or deploy from it. Any useful work must be separately reviewed before incorporation.
 
-The development branch is `codex/tpi-development`; it was created and selected under TPI-DEV-005. Preserve `main` and do not merge or deploy production without separate approval.
+The maintained website release branch is `codex/tpi-development`. Preserve
+`main` and do not merge to it unless the owner explicitly changes branch
+policy. Guarded production deployment from `codex/tpi-development` is covered
+by the standing authority when the current task calls for a live release.
+
+StudioFlow has a separate authoritative source at
+`/Users/toddknipple/Documents/StudioFlow/web`. Follow
+`TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`; local source, local runtime,
+development Worker, GitHub, and production are not automatically synchronized.
 
 ## Environment status
 

@@ -2,6 +2,16 @@
 
 Last verified: 2026-10-23
 
+## Current source-to-live workflow
+
+`TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md` is the canonical map for moving
+StudioFlow from `/Users/toddknipple/Documents/StudioFlow/web` into the website
+repository, committing and pushing the deployable checkpoint, running the
+guarded production release, and verifying the live site in Firefox Developer
+Edition. Source saves, local tests, Git pushes, development-Worker deployments,
+and production deployments are separate events and must not be reported as if
+they automatically synchronize.
+
 ## Latest verified production release — 2026-10-23 (live panel display repair)
 
 The latest release fixes the actual production cause of the cumulative

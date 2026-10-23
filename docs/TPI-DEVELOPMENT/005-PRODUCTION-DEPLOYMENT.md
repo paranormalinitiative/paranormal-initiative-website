@@ -5,21 +5,26 @@ The exact agent procedure is
 That runbook is mandatory and takes precedence over abbreviated or historical
 release descriptions in this file.
 
+StudioFlow releases must also follow
+[`TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
+so the authoritative source commit, integrated website commit, GitHub push,
+Worker deployment, and live result cannot be confused.
+
 ## Release sequence
 
-    LOCAL DEVELOPMENT
+    AUTHORITATIVE SOURCE / LOCAL DEVELOPMENT
             |
             v
     LOCAL TESTING
             |
             v
-    CLOUDFLARE DEVELOPMENT
+    INTEGRATE REVIEWED ASSETS
             |
             v
-    DEVELOPMENT ACCEPTANCE
+    COMMIT AND PUSH EXACT CHECKPOINT
             |
             v
-    STANDING OWNER AUTHORITY
+    GUARDED RELEASE PREFLIGHT
             |
             v
     PRODUCTION DEPLOYMENT
@@ -39,10 +44,12 @@ required.
 2. Record status and preserve unrelated changes.
 3. Create a recoverable checkpoint before substantial work.
 4. Run local tests and build checks.
-5. Deploy only to the isolated development Worker after its separate D1, R2, authentication, and scheduling boundaries are verified.
-6. Complete isolated Firefox Developer Edition acceptance and record evidence.
-7. Commit and push the verified release to `codex/tpi-development`.
-8. Continue through guarded production deployment and live verification when
+5. Optionally deploy to the isolated development Worker when a public preview
+   is useful. This does not promote or synchronize production.
+6. Complete isolated Firefox Developer Edition local acceptance and record evidence.
+7. Commit and push the exact verified release to `codex/tpi-development`.
+8. Run the complete guarded preflight from that clean, pushed commit.
+9. Continue through guarded production deployment and live verification when
    the active directive requires production completion.
 
 The development branch `codex/tpi-development` is the maintained release
@@ -85,9 +92,11 @@ isolated Firefox acceptance, verifies the new version at 100% traffic, and
 automatically restores the recorded version if acceptance fails. The workflow
 contains no database migration, D1 mutation, or R2 deletion command.
 
-Production Firefox acceptance requires the owner to sign in inside the new
-disposable Firefox Developer Edition profile. Local credential files are
-blocked from production targets.
+Production Firefox acceptance uses the dedicated synthetic production QA
+account from the protected credential file in a new disposable Firefox
+Developer Edition profile. Local fixture accounts and owner accounts are
+rejected by the maintained runner. Owner-profile verification is optional,
+non-destructive, and never replaces isolated automated acceptance.
 
 ## StudioFlow release checkpoint status
 

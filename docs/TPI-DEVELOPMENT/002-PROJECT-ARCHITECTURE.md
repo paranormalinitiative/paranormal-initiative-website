@@ -16,7 +16,18 @@ admin-center-app/ is the existing Refine + shadcn/ui application. Its protected 
 
 ## Data boundary
 
-The current configuration does not define a development data boundary. The same production D1/R2 bindings must therefore be treated as shared and unsafe for development mutation until a separate approved environment exists.
+Production uses `tpi_contributor_portal` and `tpi-contributor-media`.
+Development uses the separate `tpi_contributor_portal_dev` D1 database and
+`tpi-contributor-media-dev` bucket through `wrangler.dev.toml`. Local work uses
+isolated simulated state. Never substitute the root production configuration
+for development or local testing.
+
+## StudioFlow source boundary
+
+Core StudioFlow source lives in `/Users/toddknipple/Documents/StudioFlow/web`.
+The website repository's `studio/` directory is a deployable integration of its
+generated build plus maintained TPI bridge files. The complete source-to-live
+procedure is `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`.
 
 ## Documentation boundary
 

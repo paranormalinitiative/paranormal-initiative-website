@@ -8,6 +8,10 @@ They must then follow the exact release procedure in:
 
 `docs/TPI-DEVELOPMENT/TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`
 
+StudioFlow work must also follow the source-to-live map in:
+
+`docs/TPI-DEVELOPMENT/TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`
+
 That directive is the controlling operational authority for current TPI work.
 It grants standing authority to investigate, repair, refactor, test, build,
 commit, push, deploy through the guarded production workflow, verify live, and
@@ -40,3 +44,8 @@ Every completed user-facing application directive proceeds through the
 runbook's guarded production deployment and live acceptance unless the current
 directive explicitly says not to deploy. Documentation-only and local-tooling
 changes are committed and pushed but are not deployed as no-op Worker releases.
+
+Saving or testing StudioFlow in `/Users/toddknipple/Documents/StudioFlow/web`
+does not update the website repository, GitHub, the development Worker, or the
+live site. A GitHub push also does not deploy. Production changes only after the
+guarded production command completes and live Firefox acceptance passes.

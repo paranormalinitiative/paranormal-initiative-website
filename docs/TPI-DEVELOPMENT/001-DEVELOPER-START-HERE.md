@@ -18,6 +18,11 @@ become permanent restrictions on later work.
 5. Use the maintained guarded release workflow for production; never use the
    production configuration as an improvised development deployment.
 
+For StudioFlow, read `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md` before editing.
+The StudioFlow source repository, website repository, local site, development
+Worker, and production site are separate states; none automatically syncs to
+the next.
+
 ## Source and feature locations
 
 - Public pages and site assets are in the repository root.
@@ -25,6 +30,9 @@ become permanent restrictions on later work.
 - Wrangler configuration is wrangler.toml.
 - The new Administration Center source is admin-center-app/.
 - Historical audits and implementation reports remain under docs/.
+- Authoritative StudioFlow application source is in
+  `/Users/toddknipple/Documents/StudioFlow/web`; deployable integrated assets
+  and TPI bridge files are in this repository's `studio/` directory.
 
 ## Safe workflow
 

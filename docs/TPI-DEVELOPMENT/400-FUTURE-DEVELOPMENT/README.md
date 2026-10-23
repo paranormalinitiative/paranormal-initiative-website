@@ -1,6 +1,16 @@
 # Future Development
 
-## Required before Cloudflare development deployment
+This directory contains proposals and historical planning. It is not an
+operational release guide. Current commit, push, and deployment instructions
+are in `../TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`; StudioFlow source integration is
+in `../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`.
+
+## Historical development-environment requirements
+
+The isolated development Worker, D1, R2, configuration, and authentication
+boundary have since been implemented. The list below is retained to explain
+the original design requirements, not to claim those resources are still
+missing.
 
 - Provision or identify an owner-approved development Worker.
 - Provision or identify separate development D1 and R2 resources.

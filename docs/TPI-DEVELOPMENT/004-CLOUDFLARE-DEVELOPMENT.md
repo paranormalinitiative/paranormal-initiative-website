@@ -33,9 +33,12 @@ The root production configuration remains protected. The isolated development co
 
 The historical workers.dev response and production response were byte-identical before separation. The current development response includes the development-only banner and separate runtime bindings. Production was not redeployed.
 
-## Required safe correction
+## Historical pre-provisioning checklist — completed
 
-Before any dev deployment, the owner must approve or identify:
+The following checklist explains the boundary that was required before the
+isolated development Worker was created. The resources listed at the top of
+this document now satisfy it; this is retained as design history, not as a
+current deployment blocker:
 
 1. A distinct development Worker and deployment configuration.
 2. A separate development D1 database with sanitized or synthetic data.
@@ -44,7 +47,9 @@ Before any dev deployment, the owner must approve or identify:
 5. A reviewed development secret and environment-variable set.
 6. A rollback procedure that cannot affect production.
 
-The future deployment configuration must make the target environment explicit. A current-folder assumption, the root `wrangler.toml`, or the existing workers.dev hostname is not an acceptable development safeguard.
+Every development deployment must still make the target environment explicit.
+A current-folder assumption or root `wrangler.toml` is not an acceptable
+development safeguard.
 
 The development resources and migrations were created under TPI-DEV-005 only. Production resource creation and migration remain prohibited.
 

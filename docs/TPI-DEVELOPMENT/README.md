@@ -7,22 +7,28 @@ This directory is the authoritative index for The Paranormal Initiative developm
 1. [Standing autonomous agent authority](100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md)
 2. [Developer onboarding — READ BEFORE MODIFYING TPI](010-DEVELOPER-ONBOARDING.md)
 3. [Mandatory local-to-production runbook](TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md)
-4. [Project overview](000-PROJECT-OVERVIEW.md)
-5. [Local development](003-LOCAL-DEVELOPMENT.md)
-6. [Cloudflare development](004-CLOUDFLARE-DEVELOPMENT.md)
-7. [Production deployment and approval](005-PRODUCTION-DEPLOYMENT.md)
-8. [Security and permissions](007-SECURITY-AND-PERMISSIONS.md)
-9. [Administration Center](008-ADMINISTRATION-CENTER.md)
-10. [Testing and verification](009-TESTING-AND-VERIFICATION.md)
-11. [Directive index](100-DIRECTIVES/DIRECTIVE-INDEX.md)
+4. [StudioFlow source-to-live workflow](TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
+5. [Project overview](000-PROJECT-OVERVIEW.md)
+6. [Local development](003-LOCAL-DEVELOPMENT.md)
+7. [Cloudflare development](004-CLOUDFLARE-DEVELOPMENT.md)
+8. [Production deployment and approval](005-PRODUCTION-DEPLOYMENT.md)
+9. [Security and permissions](007-SECURITY-AND-PERMISSIONS.md)
+10. [Administration Center](008-ADMINISTRATION-CENTER.md)
+11. [Testing and verification](009-TESTING-AND-VERIFICATION.md)
+12. [Directive index](100-DIRECTIVES/DIRECTIVE-INDEX.md)
 
 ## Official locations
 
 - Canonical application source: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
+- Authoritative StudioFlow source: `/Users/toddknipple/Documents/StudioFlow/web`
 - Desktop archive/research workspace: `/Users/toddknipple/Desktop/paranormal-initiative-website`
 - Official GitHub remote: `git@github.com:paranormalinitiative/paranormal-initiative-website.git`
 
-The canonical checkout is the only approved application-development source. The Desktop workspace is preserved archive/research material and must not be synchronized, overwritten, or used for Cloudflare deployment without a separate audit.
+The canonical checkout is the only approved website and Cloudflare deployment
+source. StudioFlow application code is authored in the separate StudioFlow
+source above and integrated into the website repository with the maintained
+staging script. The Desktop workspace is preserved archive/research material
+and must not be synchronized, overwritten, or used for Cloudflare deployment.
 
 ## Environment status
 
@@ -47,12 +53,14 @@ Verified development resources:
 Latest verified production release:
 
 - Worker: `theparanormalinitiative`
-- Source commit: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
-- Worker version: `106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic
-- Deployed: 2026-10-22 1:34:39 PM EDT (`2026-10-22T17:34:39.861Z`)
-- Rollback target: `7c5ea692-e2e9-41f1-9b34-651230e03997`
-- Acceptance: anonymous smoke 10/10, isolated Firefox Developer Edition 23/23,
-  local authentication lifecycle 38/38, complete preflight and guarded dry-run passed
+- Source commit: `f1603710545447b072fbe6160acc3bccbcf456e4`
+- StudioFlow source commit: `17bbd4a9d0a604b731d68fae915ceffacdc14025`
+- Worker version: `0862ff17-3003-4e27-8ab3-dc7218dbbff3` at 100% traffic
+- Deployed: 2026-10-23
+- Rollback target: `a4e1f565-21fb-449d-878a-388beabac36c`
+- Acceptance: anonymous smoke 10/10, isolated Firefox Developer Edition 59/59,
+  all 11 right-rail tabs, local authentication lifecycle 38/38, complete
+  preflight, and guarded dry-run passed
 - Data protection: no D1 migration, R2 mutation, Crossroads mutation, or owner-browser
   storage access was performed
 

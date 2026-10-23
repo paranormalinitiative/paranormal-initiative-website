@@ -28,6 +28,9 @@ The authoritative StudioFlow source is the separate repository:
 is an integrated generated copy plus maintained TPI bridge files. Use
 `node scripts/stage-studioflow-authoritative.mjs` in verification-only mode to
 build twice and compare the candidate before any reviewed `--apply` operation.
+The complete commit/push/deploy distinction is documented in
+`TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`; use it instead of inferring current
+procedure from historical directive or completion records.
 
 Preserve unrelated tracked and untracked changes. Focused commits and pushes to
 `codex/tpi-development` are authorized after the applicable checks pass. Do not

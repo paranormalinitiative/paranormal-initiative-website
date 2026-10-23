@@ -10,16 +10,23 @@ Current operational authority is
 It grants standing full-lifecycle authority and defines how historical scope
 limits interact with later directives.
 
+Historical directive rows are not current deployment instructions. Use
+[`../TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`](../TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md)
+and
+[`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
+for current commit, push, deployment, and live-verification procedure.
+
 ## Current production reconciliation
 
 The latest consolidated StudioFlow release was deployed and verified from
 `codex/tpi-development` commit
-`07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`. Worker
+`f1603710545447b072fbe6160acc3bccbcf456e4`. Worker
 `theparanormalinitiative` is running version
-`106c3d6a-5cbb-4a62-917d-644f850b4287` at 100% traffic. Anonymous live smoke
-passed 10/10, isolated Firefox Developer Edition acceptance passed 23/23, and
-the local authentication lifecycle passed 38/38. The documented rollback target
-is `7c5ea692-e2e9-41f1-9b34-651230e03997`.
+`0862ff17-3003-4e27-8ab3-dc7218dbbff3` at 100% traffic. Anonymous live smoke
+passed 10/10, isolated Firefox Developer Edition acceptance passed 59/59, all
+11 exclusive right-rail panels passed, and the local authentication lifecycle
+passed 38/38. The documented rollback target is
+`a4e1f565-21fb-449d-878a-388beabac36c`.
 
 This release record supersedes stale “not deployed” or “acceptance pending”
 language in older directive rows only for the behavior covered by the verified

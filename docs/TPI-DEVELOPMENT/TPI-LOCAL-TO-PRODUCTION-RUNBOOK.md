@@ -22,6 +22,10 @@ manually copy an old bundle, or skip Firefox Developer Edition acceptance.
 - Production R2: `tpi-contributor-media`
 - Default acceptance browser: Firefox Developer Edition
 
+For StudioFlow source ownership and the distinction between source commits,
+website commits, GitHub pushes, development previews, and production deploys,
+also follow `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`.
+
 Use `127.0.0.1` consistently for authenticated local work. Do not alternate
 between it and `localhost` while diagnosing cookies.
 
@@ -67,20 +71,20 @@ finish with `READY`. `release:production` must finish with
 
 ## Latest verified release record
 
-The latest successful production deployment used source commit
-`5ffe238b9a88023f6feabb27f0a30ef9e0bd6e52` and deployed Worker version
-`68dc36ac-a3bf-47c6-b1b0-8500abd3ffa1` on 2026-10-22. The prior production
-Worker was `b41a8582-4558-4391-bf37-188049125853` and remains the immediate
-rollback reference for this release. The detailed feature record is
-`300-COMPLETED-WORK/2026-10-22-STUDIOFLOW-INTRO-OUTRO-PREVIEW-RESULT.md`.
+The latest successful application deployment used website source commit
+`f1603710545447b072fbe6160acc3bccbcf456e4` and authoritative StudioFlow source
+commit `17bbd4a9d0a604b731d68fae915ceffacdc14025`. It deployed Worker version
+`0862ff17-3003-4e27-8ab3-dc7218dbbff3` on 2026-10-23. The immediate rollback
+reference is `a4e1f565-21fb-449d-878a-388beabac36c`. The detailed record is
+`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-LIVE-PANEL-DISPLAY-REPAIR.md`.
 
-That release passed the focused Video Clips checks 13/13, media organization
-checks 22/22, release-safety checks 15/15, two reproducible authoritative
-StudioFlow builds, the guarded Wrangler dry-run, and anonymous live smoke
-10/10. It made no D1 migration, R2 mutation, Crossroads mutation, or
-owner-browser storage change. Authenticated card-click acceptance remains a
-manual Firefox confirmation because the owner's existing tab was not reloaded.
-Every future release must execute the commands above again.
+That release passed anonymous live smoke 10/10, isolated Firefox Developer
+Edition acceptance 59/59, all 11 exclusive right-rail panel checks, local
+authentication lifecycle 38/38, reproducible StudioFlow integration, and the
+guarded Wrangler dry-run. It made no D1 migration, R2 mutation, Crossroads
+mutation, or owner-browser storage change. The owner production tab was used
+only for non-destructive final confirmation. Every future release must execute
+the commands above again.
 
 The production command opens a new isolated Firefox Developer Edition profile
 and authenticates with the dedicated synthetic `qa-studioflow-*` member account

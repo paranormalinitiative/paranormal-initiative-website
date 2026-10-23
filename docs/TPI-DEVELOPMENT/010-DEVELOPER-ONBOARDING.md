@@ -53,7 +53,11 @@ security-sensitive state changes require separate explicit owner approval.
 3. Create a recoverable checkpoint before substantial work.
 4. Run the smallest relevant tests and build checks.
 5. Use isolated fixtures; never use production data for destructive testing.
-6. Use `./scripts/deploy-development.sh` for remote preview. Its preflight requires `codex/tpi-development` and the development bindings, and its staging step excludes secrets and internal files.
+6. When an optional public development preview is needed, use
+   `./scripts/deploy-development.sh`. Its preflight requires
+   `codex/tpi-development` and the development bindings, and its staging step
+   excludes secrets and internal files. This preview does not update or prove
+   production.
 7. Preserve evidence, including the exact URL and deployment identifier.
 
 The deployment gate also requires the package to be reproducible from the
@@ -81,6 +85,11 @@ Preserve unrelated changes. Prefer targeted restoration, revert commits, and the
     git rev-parse HEAD
 
 Read 001-DEVELOPER-START-HERE.md, the applicable directive index entry, and the relevant audit before changing code.
+
+For StudioFlow, also read
+`TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`. A source edit, local test,
+development-Worker deploy, GitHub push, and production deploy are five distinct
+events. Never describe one as proof of another.
 
 ## Local Administration Center
 

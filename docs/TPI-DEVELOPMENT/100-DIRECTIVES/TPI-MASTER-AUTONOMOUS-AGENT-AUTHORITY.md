@@ -75,6 +75,12 @@ Every agent must follow
 staging, cleanup, commit, push, preflight, deployment, verification, rollback,
 and final-cleanliness procedure.
 
+StudioFlow work must also follow
+`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`, which defines the separate
+authoritative source, website integration, local runtime, development preview,
+GitHub push, and production deployment states. None automatically updates the
+next state.
+
 The only maintained production path is:
 
 ```sh

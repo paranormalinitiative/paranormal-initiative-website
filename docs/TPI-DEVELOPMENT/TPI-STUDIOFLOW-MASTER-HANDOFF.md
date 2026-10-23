@@ -6,6 +6,12 @@
 > may complete current StudioFlow directives through repair, testing, commit,
 > push, guarded deployment, Firefox Developer Edition live verification, and
 > rollback. Historical status and evidence below remain preserved.
+>
+> **Current release procedure:**
+> `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md` and
+> `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md` control current source staging, commit,
+> push, deployment, and Firefox verification. Older revisions and status rows
+> below are historical unless the current-status record confirms them.
 
 ## Purpose
 
@@ -31,26 +37,26 @@ relevant files reached the live Worker. It is marked `VERIFIED` only when the
 behavior was observed or tested. A local test or a historical report is not
 treated as proof of current live behavior.
 
-Last updated: 2026-10-22
+Last updated: 2026-10-23
 
 ## Current executive status
 
 | Area | Current status |
 | --- | --- |
-| Authoritative StudioFlow source | Present at `/Users/toddknipple/Documents/StudioFlow/web`, branch `main`, current inspected HEAD `2e877a7d213d7f6d19335a7ce41dbacd898ceb4d` |
-| Website repository | `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`, branch `codex/tpi-development`, inspected HEAD `7385f0cf24155f121bdc967a0985553daa8a05df` |
-| Working tree | Substantially dirty and intentionally preserved; no reset, clean, stash, commit, or push performed in this handoff |
+| Authoritative StudioFlow source | `/Users/toddknipple/Documents/StudioFlow/web`, branch `main`, current inspected HEAD `17bbd4a9d0a604b731d68fae915ceffacdc14025` |
+| Website repository | `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`, branch `codex/tpi-development`; deployed application commit `f1603710545447b072fbe6160acc3bccbcf456e4`; later documentation commit `fdbf1aa02a18a403f9bf427924a42e5d2acb3dfe` |
+| Source-to-live procedure | `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`; source save, local test, Git push, development deploy, and production deploy are distinct events |
 | Live Worker | `theparanormalinitiative` |
-| Latest deployment in this work | Worker version `93e5acef-6dc2-4d2d-aeed-edb72dda1c3c` |
-| Latest live asset change | `studio/index.html` and `studio/workspace-bridge.js` only |
-| Latest bridge cache-buster | `workspace-bridge.js?tpi080=single-dropdown-v5` |
+| Latest deployment in this work | Worker version `0862ff17-3003-4e27-8ab3-dc7218dbbff3`; rollback `a4e1f565-21fb-449d-878a-388beabac36c` |
+| Latest live asset change | Exclusive right-rail panel display repair in the maintained StudioFlow bridges and override stylesheet |
+| Latest bridge cache-buster | `exclusive-v3` |
 | Production D1 | Existing `tpi_contributor_portal`; no migration or production D1 write in the latest repair |
 | Production R2 | Existing `tpi-contributor-media`; no R2 write in the latest repair |
 | Protected Crossroads workspace | Preserved; no intentional owner-workspace mutation |
 | Local focused StudioFlow contracts | Passing; see the test matrix below |
 | Live StudioFlow home | Authenticated shell loaded and displayed Crossroads |
-| Live editor My Studios acceptance | Not conclusively captured because browser automation times out while the WebRTC/media editor frame tree initializes |
-| Overall release state | `PARTIAL / DEPLOYED / LIVE UI ACCEPTED / SERVER-BACKED MUTATION ACCEPTANCE PENDING` |
+| Live right-rail acceptance | PASS: isolated Firefox 59/59 and authenticated owner Firefox verification for all 11 tabs |
+| Overall release state | Latest panel repair `DEPLOYED / LIVE VERIFIED`; broader historical server-backed mutation limitations remain documented separately |
 
 ## Source-of-truth hierarchy
 

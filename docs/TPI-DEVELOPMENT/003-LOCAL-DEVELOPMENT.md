@@ -44,6 +44,12 @@ uses the current entry-point asset names and deterministic content versions:
 
     node scripts/stage-local-studio-assets.mjs
 
+Verification-only staging does not copy a new build into `studio/`. To integrate
+a reviewed source revision for commit and release, use
+`node scripts/stage-studioflow-authoritative.mjs --apply`, then review every
+changed website file. Neither command pushes Git nor deploys a Worker. Follow
+`TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md` for the complete chain.
+
 Do not hand-edit generated bundle filenames or introduce a second cache-busting
 system. Keep local D1/R2 state, browser storage, recordings, owner media, and
 credentials outside any release checkpoint.
@@ -61,3 +67,7 @@ From the canonical checkout on `codex/tpi-development`, run:
     ./scripts/deploy-development.sh
 
 The script verifies the branch and development bindings, stages a sanitized asset directory that excludes secrets and internal files, and deploys with `wrangler.dev.toml`. It must not be replaced with a generic `npx wrangler deploy` command.
+
+This updates only the optional isolated development Worker. It does not update
+`paranormalinitiative.com` and is not a substitute for the guarded production
+release or live production acceptance.
