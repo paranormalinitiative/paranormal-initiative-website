@@ -92,13 +92,13 @@ website repository's `codex/tpi-development` branch.
 ## Current verified live baseline
 
 - Website production source commit:
-  `592028a599d2fff64e9d81f2e28856aead63c822`
+  `cb9746411398df16282c305101cb0b41425bcd39`
 - Authoritative StudioFlow source commit:
   `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
 - Active production Worker version:
-  `210f4610-ff8a-4192-a944-4668892dd669`
+  `21ea05f7-588d-4b5a-b039-c6063f7fd248`
 - Immediate rollback version:
-  `d6ee132b-59f6-4694-a64b-09d6de37d3e5`
+  `210f4610-ff8a-4192-a944-4668892dd669`
 
 The website repository HEAD may be newer than the deployed application commit
 when later commits contain only Markdown or local tooling. Those changes are

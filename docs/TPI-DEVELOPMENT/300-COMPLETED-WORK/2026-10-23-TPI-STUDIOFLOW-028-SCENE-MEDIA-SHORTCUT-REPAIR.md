@@ -218,3 +218,100 @@ timer check passes singular.
    guests.
 5. The local StudioFlow room server at `127.0.0.1:8788` is stopped;
    only the 022 browser test's background room polling notices it.
+
+---
+
+# Addendum A — Preserve Sol's After Intro Background Music
+
+Date: 2026-10-23
+Status: IMPLEMENTED / TESTED / DEPLOYED AND LIVE-VERIFIED
+
+## Historical determination (Addendum A §3)
+
+Sol's approved implementation is commit `d262867` "Repair StudioFlow scene
+background music" (2026-10-22), documented in
+`2026-10-22-STUDIOFLOW-SCENE-BACKGROUND-MUSIC.md`: "The Intro control assigns
+a track for automatic playback after Intro ends." Automatic post-Intro
+activation therefore WAS part of Sol's approved implementation and is
+preserved, not introduced. Sol's original `syncSceneMusic` handoff ran on the
+scene transition out of the Intro scene (natural completion and manual stop
+alike, since both restore the prior scene) and was not gated by Live or Record
+state.
+
+## What had been lost
+
+Commit `0241dc7` (the program-cue regression family) wrapped Sol's
+`syncSceneMusic` in a `studioflow.programActive` gate, so the Intro-scene
+music clear and the After Intro handoff ran only while Live or Record was
+engaged. In ordinary studio use Sol's approved transition never fired, which
+altered the original functionality.
+
+## What was restored
+
+- `studio/audio-soundboard-bridge.js` now runs Sol's original transition
+  semantics verbatim (adapted only to the maintained `after-intro` scene ID
+  with its legacy migration): entering the Intro scene clears music for the
+  video moment; leaving the Intro scene plays the entered scene's assigned
+  track or the assigned After Intro track. The program-state gate, its
+  `programWasActive` tracking, and the `studioflow:program-state` listener
+  are removed from the music path.
+- Preserved from the main 028 repair: the After Intro shortcut's own
+  click-to-play control (click plays the assigned Background Music track,
+  right-click reassigns), music-shortcut exclusion from scene/video
+  handling, and independent Intro/Outro scene identity.
+- Unchanged per Addendum §5: the existing Background Music media system,
+  assignments (`studioflow.sceneMusicAssignments`), track slots, loop
+  preference, volume configuration, program/monitor audio routing, and
+  Studio-scoped persistence. No duplicate player or asset record exists.
+
+## Independence guarantees (Addendum §2/§4/§6)
+
+- Intro Video and After Intro music do not share a playback handler or scene
+  identifier; clicking the music shortcut never starts, stops, or restarts
+  the Intro Video (tested during active playback), and stopping music leaves
+  the Intro Video running.
+- Clicking to play the Intro Video clears music (Sol's Intro-scene clear) and
+  never triggers the After Intro track.
+- The video stop path restores the actual previous scene and never clicks the
+  music shortcut (the removed unintended connection).
+- Sol's intentional transition is preserved exactly as originally
+  implemented: the After Intro handoff fires when production leaves the Intro
+  scene, whether the Intro Video finished naturally or was stopped early.
+  This trigger condition is Sol's original design and was not redesigned; if
+  the owner wants activation limited to natural completion only, that is a
+  deliberate one-line deviation from Sol's implementation and was not made
+  unilaterally.
+
+## Verification
+
+- TPI-STUDIOFLOW-028 Firefox interaction suite: 33/33, including new
+  Addendum-A checks: music-shortcut playback never mounts stage video;
+  music playback does not restart the Intro Video mid-playback; the music
+  shortcut plays its assigned track without leaving the Intro scene; Stop
+  music leaves the Intro Video running; Sol's preserved handoff starts After
+  Intro music when the Intro segment ends; Sol's approved automatic After
+  Intro playback runs when the Intro Video finishes.
+- TPI-STUDIOFLOW-021 static contract: 58/58, including four new pins of
+  Sol's handoff, Intro-clear, assignment-only After Intro handoff, and
+  distinct After Intro scene identity.
+- TPI-STUDIOFLOW-021 Firefox: 29/29. TPI-STUDIOFLOW-027: 12/12.
+  TPI-STUDIOFLOW-020: 14/14. TPI-STUDIOFLOW-031: 12/12.
+- Release safety contract: 17/17. Local authentication lifecycle: PASS
+  (38 API checks per phase, 60 browser checks). Maintained local Firefox
+  acceptance gate: 60/60.
+
+## Release
+
+- Website source commit: `cb9746411398df16282c305101cb0b41425bcd39`
+- Authoritative StudioFlow source commit unchanged: `ce7c389` (bridge-only
+  release; no React source change).
+- `release:preflight`: `READY` with exact commit parity.
+- Production result: `DEPLOYED_AND_VERIFIED`.
+- Worker: `theparanormalinitiative`, deployed version
+  `21ea05f7-588d-4b5a-b039-c6063f7fd248`, rollback version
+  `210f4610-ff8a-4192-a944-4668892dd669`.
+- Live anonymous production smoke: 10/10. Live isolated Firefox Developer
+  Edition acceptance: 60/60.
+- No production files, D1 records, R2 objects, Crossroads data, or owner
+  browser storage were modified. Audible confirmation of the music handoff in
+  a real studio session remains the owner-facing check.

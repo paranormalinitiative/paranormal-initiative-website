@@ -72,15 +72,18 @@ finish with `READY`. `release:production` must finish with
 ## Latest verified release record
 
 The latest successful application deployment used website source commit
-`592028a599d2fff64e9d81f2e28856aead63c822` and authoritative StudioFlow source
-commit `ce7c389d23db65bd5ebb92597695d9854d21c7ab`. It deployed Worker version
-`210f4610-ff8a-4192-a944-4668892dd669` on 2026-10-23. The immediate rollback
-reference is `d6ee132b-59f6-4694-a64b-09d6de37d3e5`. The detailed record is
-`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`.
+`cb9746411398df16282c305101cb0b41425bcd39` and authoritative StudioFlow source
+commit `ce7c389d23db65bd5ebb92597695d9854d21c7ab` (unchanged; the Addendum A
+release is bridge-only). It deployed Worker version
+`21ea05f7-588d-4b5a-b039-c6063f7fd248` on 2026-10-23. The immediate rollback
+reference is `210f4610-ff8a-4192-a944-4668892dd669`. The detailed record is
+`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`
+(including its Addendum A section preserving Sol's After Intro Background
+Music workflow).
 
 That release passed anonymous live smoke 10/10, isolated Firefox Developer
-Edition acceptance 60/60, the TPI-STUDIOFLOW-028 scene playback and
-cross-scene independence checks 29/29, local
+Edition acceptance 60/60, the TPI-STUDIOFLOW-028 scene playback,
+cross-scene independence, and Addendum-A handoff checks 33/33, local
 authentication lifecycle 38/38, reproducible StudioFlow integration, and the
 guarded Wrangler dry-run. It made no D1 migration, R2 mutation, Crossroads
 mutation, or owner-browser storage change. The owner production tab was used
