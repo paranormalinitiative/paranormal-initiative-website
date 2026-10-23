@@ -17,6 +17,7 @@
   var MUSIC_VOLUME_KEY = "studioflow.backgroundMusicVolume";
   var MUSIC_LOOP_KEY = "studioflow.backgroundMusicLoop";
   var SCENE_MUSIC_KEY = "studioflow.sceneMusicAssignments";
+  var PROGRAM_ACTIVE_KEY = "studioflow.programActive";
   var AUDIO_ACCEPT = "audio/*,.mp3,.m4a,.wav,.wave,.ogg,.oga,.aac,.flac,.aif,.aiff,.webm,.opus,.amr";
   var MUSIC_MAX_BYTES = 512 * 1024 * 1024;
   var PAD_COLORS = ["#5f3b8f", "#8c3f67", "#315d87", "#2f7668", "#7a5b2c", "#704c75"];
@@ -32,6 +33,7 @@
   var musicExternal = false;
   var lastSignature = "";
   var lastSceneId = "";
+  var programWasActive = false;
   var sceneMusicMenu = null;
 
   function text(value) { return typeof value === "string" ? value : ""; }
@@ -507,10 +509,13 @@
       var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
       var label = button.querySelector(".tpi-scene-music-label");
       if (label) label.textContent = current ? (sceneId === "intro" ? "After Intro: " : "Music: ") + (assignment.title || current.title || titleFor(current.fileName)) : (sceneId === "intro" ? "Add music after Intro" : "Add background music");
-      button.classList.toggle("selected", !!current);
+      button.classList.toggle("selected", false);
+      button.classList.toggle("assigned", !!current);
       button.disabled = musicSlots().filter(Boolean).length === 0;
-      button.setAttribute("aria-pressed", String(!!current));
-      button.title = current ? "Change this scene's background music" : "Choose a music track for this scene";
+      button.removeAttribute("aria-pressed");
+      button.title = current
+        ? "Assigned only — this track starts after Intro when Live or Record is engaged. Click to change it."
+        : "Choose background music for this scene. It will not start until Live or Record is engaged.";
     });
   }
   function playAssignedSceneMusic(assignment) {
@@ -523,11 +528,20 @@
   function syncSceneMusic() {
     var active = text(read("studioflow.activeSceneId", ""));
     var previous = lastSceneId;
-    if (active === "intro" && previous !== "intro" && sceneMusicFor("intro")) {
+    var showActive = read(PROGRAM_ACTIVE_KEY, false) === true;
+    if (!showActive) {
+      if (programWasActive) stopMusic();
+      programWasActive = false;
+      lastSceneId = active;
+      sceneMusicButton();
+      return;
+    }
+    if (active === "intro" && (previous !== "intro" || !programWasActive) && sceneMusicFor("intro")) {
       stopMusic();
-    } else if (active && active !== "intro" && active !== "outro" && (previous === "intro" || !previous || previous !== active)) {
+    } else if (active && active !== "intro" && active !== "outro" && (!programWasActive || previous === "intro" || !previous || previous !== active)) {
       playAssignedSceneMusic(sceneMusicFor(active) || (previous === "intro" ? sceneMusicFor("intro") : null));
     }
+    programWasActive = true;
     lastSceneId = active;
     sceneMusicButton();
   }
@@ -581,6 +595,7 @@
     window.addEventListener("storage", schedule);
     window.addEventListener("studioflow:storage-changed", schedule);
     window.addEventListener("studioflow:scene-changed", syncSceneMusic);
+    window.addEventListener("studioflow:program-state", syncSceneMusic);
     window.addEventListener("studioflow:audio-ended", function (event) { var detail = event.detail || {}; if (detail.category === "sound") { soundSource = null; soundSlot = null; renderState(); } if (detail.category === "music") { musicExternal = false; musicSlot = null; renderState(); } });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();

@@ -226,9 +226,10 @@
     if (!button || !stageVideo()) return;
     var label = (button.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
     if (label === "record" || label === "go live") {
-      // A preview must never leak a stale timestamp into a new production.
-      // Do not start playback here; the host still controls Intro/Outro.
-      stopProgramPreview(true);
+      // React starts the selected Intro/Outro only after its recording/live
+      // state becomes active. Do not stop or restore the scene here: doing so
+      // races that state transition and prevents the intentional program cue.
+      return;
     }
   }
 

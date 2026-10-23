@@ -254,6 +254,25 @@ try {
   await js("var id=arguments[0], title=arguments[1]; var broadcast={id:id,title:title,description:'Disposable Firefox acceptance studio',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Disposable scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1'));", studioId, studioTitle);
   await enterStudio();
   check("StudioFlow loads in isolated Firefox", await count("[data-tpi-video-organization]") === 1);
+  const panelTargets = [
+    ["Live interaction", "Destinations"],
+    ["Comments", "Comments"],
+    ["Banners", "Banner text"],
+    ["Media assets", "Video clips"],
+    ["Voice FX", "Voice FX"],
+    ["Style", "Logo"],
+    ["Widgets", "Widgets"],
+    ["Notes", "Notes"],
+    ["People", "People"],
+    ["Private chat", "Private chat"],
+    ["Recording", "Recording"]
+  ];
+  for (const [label, expected] of panelTargets) {
+    const opened = await click(`[data-studio-panel-tab="${label}"]`);
+    await waitFor(`${label} panel`, async () => (await text(".asset-panel")).includes(expected));
+    check(`${label} panel opens from the right rail`, opened && (await text(".asset-panel")).includes(expected));
+  }
+  await click('[data-studio-panel-tab="Media assets"]');
   check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));
   check("one native video timer and four duration controls render", await count("[data-tpi-video-timer-section]") === 1 && await count("[data-tpi-native-video-timer]") === 1 && await count("[data-tpi-native-video-timer-controls] button") >= 4);
   check("nine Sound Effects slots render", await count('[data-tpi-audio-board="sound"] .tpi-audio-slot') === 9);
@@ -267,6 +286,10 @@ try {
   await waitFor("Intro visible preview", async () => count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] video[data-tpi-preview]:not([hidden])'));
   await waitFor("Outro visible preview", async () => count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] video[data-tpi-preview]:not([hidden])'));
   check("Intro and Outro display visible previews", await count('[data-tpi-video-card="0"] img, [data-tpi-video-card="0"] video[data-tpi-preview]:not([hidden])') === 1 && await count('[data-tpi-video-card="1"] img, [data-tpi-video-card="1"] video[data-tpi-preview]:not([hidden])') === 1 && await count('[data-tpi-video-card="0"] .tpi-video-card-fallback, [data-tpi-video-card="1"] .tpi-video-card-fallback') === 0);
+  await click('[data-tpi-scene-id="intro"]');
+  await waitFor("Intro stage clip is mounted without program engagement", async () => count(".program-stage > video.stage-video"));
+  const introStageState = await js("var video=document.querySelector('.program-stage > video.stage-video'); return {paused:!!(video&&video.paused),programActive:JSON.parse(localStorage.getItem('studioflow.programActive')||'false')===true};");
+  check("Intro selection does not autoplay before Record or Live", introStageState.paused && !introStageState.programActive, JSON.stringify(introStageState));
 
   await uploadByDynamicInput('[data-tpi-audio-board="sound"] .tpi-audio-upload', "audio/", soundFile);
   await waitFor("sound assignment", async () => count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned'));
