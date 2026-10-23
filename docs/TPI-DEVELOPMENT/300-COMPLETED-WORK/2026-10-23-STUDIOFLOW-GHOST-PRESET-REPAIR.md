@@ -2,7 +2,7 @@
 
 Date: 2026-10-23  
 Directive: TPI-STUDIOFLOW-026 follow-up  
-Status: Local implementation verified; human microphone listening pending; production deployment not authorized
+Status: Implemented, deployed, and live acceptance verified
 
 ## User-reported issue
 
@@ -78,6 +78,23 @@ Passed:
 - `npm run build`
 - Local OpenVoiceChanger Ghost comparison without clipping or invalid samples
 
+## Release and live verification
+
+The verified StudioFlow build was integrated into the maintained deployment
+checkout and released after the guarded production workflow passed.
+
+- Source commit: `776e83d26511034acb2ea65f6cebcdd9c55b85f8`
+- Deployment checkout commit: `68e44b7ff0c294db72aaef1bc1f21307af8c765d`
+- GitHub branch: `codex/tpi-development` (local and remote match)
+- Production Worker: `theparanormalinitiative`
+- Deployed Worker version: `e04b6691-6f35-453b-8780-1015e5a55cb5`
+- Recorded rollback version: `ad3b6211-ca07-4156-9cef-e99ab9484035`
+- Anonymous production smoke: `10/10 PASS`
+- Isolated production Firefox Developer Edition acceptance: `26/26 PASS`
+- Production D1/R2, Crossroads data, owner browser storage, and recordings:
+  unchanged
+- Rollback: not required
+
 ## Source and safety
 
 Modified source files:
@@ -85,7 +102,7 @@ Modified source files:
 - `/Users/toddknipple/Documents/StudioFlow/web/src/voiceFx.ts`
 - `/Users/toddknipple/Documents/StudioFlow/web/scripts/check-voice-fx.mjs`
 
-No production Worker, Cloudflare setting, D1 database, R2 object, owner
-browser storage, Crossroads data, or production recording was modified. No
-production deployment was performed.
+No production Worker configuration, D1 database, R2 object, owner browser
+storage, Crossroads data, or production recording was modified. The verified
+application bundle was deployed through the guarded Wrangler workflow.
 
