@@ -1,9 +1,9 @@
 # StudioFlow live podcast audio routing
 
-Date: 2026-10-22  
+Date: 2026-10-22
 Status: Local routing repair complete; two-participant audible acceptance pending; production not authorized
 
-Source implementation commit: `2c6d2320e2b618e9e659e493e42786f91de545e5`  
+Source implementation commit: `5619e1b9052731dab126b5aefdf7137ad8018d0e`
 Previous Voice FX repair: `0eb009d798143f51b3cd66218fa00dac30a2bf50`
 
 ## Routing verified in source
@@ -15,13 +15,15 @@ Microphone -> Voice FX input gain -> OpenVoiceChanger -> output gain/limiter
            -> processed MediaStream track
            -> WebRTC sender
            -> program audio mix and recording
-           -> independent local monitor element
+           -> independent direct Web Audio monitor gain
 ```
 
-The local monitor uses the processed destination stream and its own HTML audio
-volume. Changing Monitor Volume therefore does not change the WebRTC track or
-program recording. Turning monitoring off pauses only that monitor element; it
-does not disable Voice FX or replace the outgoing track.
+The local monitor uses a dedicated `monitorGain` branch from the processed
+analyser to `AudioContext.destination`. Changing Monitor Volume therefore does
+not change the WebRTC track or program recording. Turning monitoring off ramps
+only that gain to zero; it does not disable Voice FX or replace the outgoing
+track. The hidden HTML audio element is retained only for output-device
+bookkeeping and is not the authoritative playback path.
 
 ## Repair made
 
