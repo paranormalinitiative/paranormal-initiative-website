@@ -4,6 +4,27 @@ Last verified: 2026-10-23
 
 ## Latest verified production release — 2026-10-23
 
+The latest verified release is the StudioFlow panel-navigation and program-cue
+repair below. It supersedes the previous release details in this document.
+
+- Release branch: codex/tpi-development
+- Source commit: 17bbd4a in /Users/toddknipple/Documents/StudioFlow/web
+- Deployment commit: ee679bcd2d29b83659dbcdc4fc6ccc1c6862dd47
+- Worker: theparanormalinitiative
+- Active production Worker version: 5a092da4-cab0-4551-bb60-4ce0f40f6573 at 100%
+- Immediate rollback reference: e04b6691-6f35-453b-8780-1015e5a55cb5
+- Anonymous live smoke: PASS, 10/10
+- Isolated production Firefox Developer Edition acceptance: PASS, 37/37
+- Right-rail panels: PASS, 11/11
+- Release preflight, local authentication lifecycle, API E2E, build, staging,
+  request-budget guard, room/RTMP syntax, and guarded Wrangler dry-run: PASS
+- Program cue behavior: Intro, Outro, and assigned scene music remain idle
+  until Live or Record is engaged; explicit pad playback remains available.
+- Current StudioFlow release record:
+  300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-PANEL-AND-PROGRAM-CUE-REPAIR.md
+- Protected resources: Crossroads of the Unknown untouched; no D1 migration,
+  R2 mutation, or owner-browser storage access.
+
 The current production baseline is the release below. Historical rows and
 older incident records in this document remain valuable provenance, but they
 must not be interpreted as the active production state.

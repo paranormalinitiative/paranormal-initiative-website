@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `07ad157f68aaa9f5afdc2801d1089ab66b9cf10d`
-- Active production Worker version: `e04b6691-6f35-453b-8780-1015e5a55cb5`
-- Recorded rollback target: `ad3b6211-ca07-4156-9cef-e99ab9484035`
+- Last fully verified workflow baseline: `ee679bcd2d29b83659dbcdc4fc6ccc1c6862dd47`
+- Active production Worker version: `5a092da4-cab0-4551-bb60-4ce0f40f6573`
+- Recorded rollback target: `e04b6691-6f35-453b-8780-1015e5a55cb5`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -35,13 +35,25 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Source commit `68e44b7ff0c294db72aaef1bc1f21307af8c765d` was deployed to
-Worker `theparanormalinitiative` as version
-`e04b6691-6f35-453b-8780-1015e5a55cb5` at 100% traffic on 2026-10-23. The
+Deployment commit `ee679bcd2d29b83659dbcdc4fc6ccc1c6862dd47`, built from
+authoritative StudioFlow source commit `17bbd4a`, was deployed to Worker
+`theparanormalinitiative` as version
+`5a092da4-cab0-4551-bb60-4ce0f40f6573` at 100% traffic on 2026-10-23. The
 release passed anonymous smoke 10/10, isolated Firefox Developer Edition
-acceptance 26/26, local authentication lifecycle 38/38, complete preflight,
-asset/build integrity, and the guarded Wrangler dry-run. Crossroads, D1, R2,
-and owner browser storage were not modified.
+acceptance 37/37, all 11 right-rail panel checks, local authentication
+lifecycle 38/38, complete preflight, asset/build integrity, and the guarded
+Wrangler dry-run. Crossroads, D1, R2, and owner browser storage were not
+modified.
+
+## Latest StudioFlow repair
+
+The deployed repair is documented in
+`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-PANEL-AND-PROGRAM-CUE-REPAIR.md`.
+Right-rail panel controls now have explicit hit targets and stacking. Intro,
+Outro, and assigned scene music are assignment/preview state only until the
+program enters Live or Record. Explicit sound and music pad playback remains
+available. Use the disposable Firefox acceptance profile for future checks;
+do not use the owner profile for destructive testing.
 
 For production acceptance, use only the disposable Firefox window titled
 `TPI ISOLATED LIVE ACCEPTANCE — SIGN IN HERE`. Other Firefox windows and the
