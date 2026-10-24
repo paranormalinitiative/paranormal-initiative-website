@@ -61,6 +61,16 @@ Latest verified production release (TPI-STUDIOFLOW-034 DOM mutation repair):
   mutation
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
 
+Current local follow-up (TPI-STUDIOFLOW-033 configuration persistence):
+
+- `videoClipSlots`, validated slot positions, and scalar `programOrientation`
+  are repaired in the API normalizer and StudioFlow workspace bridges.
+- The real API/Firefox round-trip regression passes 26/26 locally.
+- Production remains on the TPI-034 baseline until guarded release and live
+  acceptance complete.
+- [Configuration contract and inventory](TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md)
+- [TPI-STUDIOFLOW-033 completion record](300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md)
+
 Latest verified production release (TPI-STUDIOFLOW-032 Background Music
 and Sound Effects icon replacement):
 

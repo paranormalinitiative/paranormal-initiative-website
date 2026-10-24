@@ -34,6 +34,22 @@ attribute updates over 5 seconds and 35 over 30 seconds.
 - Data protection: no D1, R2, Crossroads, owner-browser, or user-media mutation
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
 
+## TPI-STUDIOFLOW-033 configuration persistence repair — 2026-10-24
+
+The local implementation is complete and the maintained API/Firefox round-trip
+regression passes 26/26. The API now preserves `videoClipSlots`, validated pad
+slots, and both supported program-orientation representations. The bridge
+serializes the historical local-storage orientation object as the scalar
+workspace contract, and the authoritative React activation path rehydrates the
+restored orientation before the next save. Studio A/B isolation, switching,
+refresh restoration, Background Music fields, and stale-save rejection passed.
+
+- Production remains at the TPI-STUDIOFLOW-034 baseline until guarded release.
+- StudioFlow source commit: `53bf8dc`
+- Local regression: `npm run verify:studioflow-033-roundtrip` — 26/26
+- Configuration inventory: `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`
+- Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md`
+
 ## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-032 pad artwork replacement)
 
 StudioFlow's audio pads now show distinct, approved per-category artwork

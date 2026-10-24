@@ -36,6 +36,25 @@ Preserve unrelated tracked and untracked changes. Focused commits and pushes to
 `codex/tpi-development` are authorized after the applicable checks pass. Do not
 reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
+## TPI-STUDIOFLOW-033 current handoff
+
+The configuration persistence repair is implemented in the website checkout
+and locally verified but is not yet deployed. The focused regression
+`npm run verify:studioflow-033-roundtrip` passed 26/26 against the local Worker
+with disposable Firefox Studios. It covers `videoClipSlots`, validated slot
+positions, scalar `programOrientation`, existing Background Music fields,
+stale-save rejection, Studio A/B switching, isolation, and refresh restoration.
+
+Authoritative StudioFlow source commit: `53bf8dc` in
+`/Users/toddknipple/Documents/StudioFlow/web`. The completion record and field
+inventory are:
+
+- `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md`
+- `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`
+
+Production remains the TPI-STUDIOFLOW-034 Worker until the required feature
+push, preflight, guarded deployment, and live Firefox acceptance complete.
+
 ## Latest verified production release
 
 The latest release is TPI-STUDIOFLOW-034: application commit `8d7185b`, Worker

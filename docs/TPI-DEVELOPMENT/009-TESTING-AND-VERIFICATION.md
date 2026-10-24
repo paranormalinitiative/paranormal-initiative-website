@@ -23,6 +23,20 @@ Music, Background Picker, active playback, post-playback idle, and switching to
 a second disposable studio. It is integrated into the package verification
 surface and documented in the TPI-034 completion record.
 
+## TPI-STUDIOFLOW-033 workspace configuration round-trip — 2026-10-24
+
+`npm run verify:studioflow-033-roundtrip` is the maintained API and Firefox
+Developer Edition regression for the workspace configuration contract. It uses
+disposable local Studios and exercises the real server normalizer, current and
+stale workspace versions, Video Clips metadata and slot positions, program
+orientation, existing Background Music fields, browser hydration, Studio A/B
+switching, isolation, and refresh restoration. The current run passed 26/26.
+
+The complete field inventory is maintained in
+`TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`. The test does not replace the
+existing media upload/playback suites; it covers their shared configuration
+round-trip boundary without creating media records or touching owner data.
+
 ## TPI-DEV-001 audit results
 
 | Check | Result | Evidence |

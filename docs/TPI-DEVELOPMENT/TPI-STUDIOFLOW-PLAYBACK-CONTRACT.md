@@ -3,7 +3,8 @@
 Status: ACTIVE / CURRENT APPROVED BEHAVIOR
 Maintained under: TPI-STUDIOFLOW-029 (documentation synchronization),
 updated by TPI-STUDIOFLOW-030 (Sound Effects interface),
-TPI-STUDIOFLOW-031 (Background Music interface), and
+TPI-STUDIOFLOW-031 (Background Music interface),
+TPI-STUDIOFLOW-033 (workspace configuration persistence), and
 TPI-STUDIOFLOW-034 (DOM mutation stability)
 Last verified: 2026-10-24
 
@@ -14,6 +15,16 @@ again. It supplements the historical completion records; it does not replace
 them. Historical records under `100-DIRECTIVES`, `200-AUDITS`, and
 `300-COMPLETED-WORK` preserve the conditions of their own execution and are
 not current commands.
+
+### Workspace persistence invariant — TPI-STUDIOFLOW-033
+
+Video Clips assignments, their validated slot positions, program orientation,
+Background Music assignments, loop state, and After Intro stable asset
+references are per-Studio workspace configuration. They must round-trip through
+the server normalizer and restore before the existing playback controls are
+used. A Studio switch or refresh must never reuse another Studio's media or
+orientation. The maintained regression is
+`npm run verify:studioflow-033-roundtrip`.
 
 ## Approved playback contract
 
