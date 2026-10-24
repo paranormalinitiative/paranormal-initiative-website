@@ -37,7 +37,20 @@ relevant files reached the live Worker. It is marked `VERIFIED` only when the
 behavior was observed or tested. A local test or a historical report is not
 treated as proof of current live behavior.
 
-Last updated: 2026-10-23
+Last updated: 2026-10-24
+
+## TPI-STUDIOFLOW-034 resolution
+
+The 032 handoff's pre-existing DOM mutation-storm finding is resolved by the
+bridge-only TPI-034 release. The exact cycle was an audio soundboard observer
+responding to its own unchanged scene-label text-node replacement, amplified
+by redundant visibility writes and unguarded menu rendering. The repair is in
+website commit `8d7185b`, deployed as Worker
+`0c0a8660-21cf-47e1-ac66-98c91b26972c`, with rollback
+`7029c6c5-3994-42a1-9570-d6119a5792f3`. The maintained mutation regression
+passed twice and production Firefox acceptance passed 64/64. The authoritative
+source remained unchanged; older future-work entries must not be interpreted as
+evidence that this storm remains active.
 
 > Superseded baseline note (2026-10-23, TPI-STUDIOFLOW-029): after this
 > handoff was written, TPI-STUDIOFLOW-027 (authenticated media resolution),

@@ -50,6 +50,17 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
+Latest verified production release (TPI-STUDIOFLOW-034 DOM mutation repair):
+
+- Application commit: `8d7185b`
+- StudioFlow source commit: `ce7c389` (website bridge-only release)
+- Worker version: `0c0a8660-21cf-47e1-ac66-98c91b26972c`
+- Rollback: `7029c6c5-3994-42a1-9570-d6119a5792f3`
+- Acceptance: mutation regression twice; production smoke 10/10; isolated
+  Firefox production acceptance 64/64; no owner profile or production data
+  mutation
+- Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
+
 Latest verified production release (TPI-STUDIOFLOW-032 Background Music
 and Sound Effects icon replacement):
 

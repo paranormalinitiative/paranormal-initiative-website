@@ -12,6 +12,28 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-034 DOM mutation repair)
+
+The idle StudioFlow mutation storm was reproduced and resolved in the maintained
+bridge layer. The root cycle was an audio soundboard observer responding to its
+own unchanged scene-label text-node replacement; redundant visibility writes and
+unguarded studio-menu rendering amplified the churn. The repair preserves the
+existing playback, persistence, studio-switching, and panel architecture. The
+maintained mutation regression passed twice consecutively: settled idle windows
+had 0 child-list churn, 0 redundant writes, and only 5 expected checkbox
+attribute updates over 5 seconds and 35 over 30 seconds.
+
+- Directive: TPI-STUDIOFLOW-034
+- Application commit: `8d7185b`
+- StudioFlow source commit: `ce7c389` (website bridge-only release; source unchanged)
+- Active production Worker: `0c0a8660-21cf-47e1-ac66-98c91b26972c`
+- Rollback: `7029c6c5-3994-42a1-9570-d6119a5792f3`
+- Validation: mutation regression twice; local auth lifecycle; complete QA/API
+  E2E; focused 020/021/027/028/030/031/032 checks; release safety; production
+  smoke 10/10; production Firefox acceptance 64/64
+- Data protection: no D1, R2, Crossroads, owner-browser, or user-media mutation
+- Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
+
 ## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-032 pad artwork replacement)
 
 StudioFlow's audio pads now show distinct, approved per-category artwork

@@ -8,6 +8,21 @@
 - Blocked: a safety or environment prerequisite prevents execution.
 - Not tested: no current evidence.
 
+## TPI-STUDIOFLOW-034 mutation regression — 2026-10-24
+
+`npm run verify:studioflow-034-mutation` is the maintained Firefox Developer
+Edition regression for the StudioFlow idle mutation storm. It uses disposable
+browser-local studios and measures observer callbacks, attribute and child-list
+records, node additions/removals, redundant hidden/style/attribute writes, menu
+churn, storage writes, and network activity. Two consecutive final runs passed.
+The settled 5-second windows recorded 0 added nodes, 0 removed nodes, 0
+child-list records, 0 redundant writes, and 5 expected checkbox updates; the
+30-second window recorded 35 expected checkbox updates and 0 child-list churn.
+The test covers bootstrap, existing/fresh studios, Sound Effects, Background
+Music, Background Picker, active playback, post-playback idle, and switching to
+a second disposable studio. It is integrated into the package verification
+surface and documented in the TPI-034 completion record.
+
 ## TPI-DEV-001 audit results
 
 | Check | Result | Evidence |

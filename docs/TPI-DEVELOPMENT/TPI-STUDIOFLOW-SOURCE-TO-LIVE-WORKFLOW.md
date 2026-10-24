@@ -92,15 +92,27 @@ website repository's `codex/tpi-development` branch.
 ## Current verified live baseline
 
 - Website production source commit:
-  `6a1f8ad77649f1ef175a5191396d55a45141764c`
-  (TPI-STUDIOFLOW-032; feature commit `02056c1`)
+  `8d7185b279de2b33c9e1b657c1d60dffa80143c8`
+  (TPI-STUDIOFLOW-034 bridge repair)
 - Authoritative StudioFlow source commit:
   `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
   (website-only release; source unchanged)
 - Active production Worker version:
-  `7029c6c5-3994-42a1-9570-d6119a5792f3`
+  `0c0a8660-21cf-47e1-ac66-98c91b26972c`
 - Immediate rollback version:
-  `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+  `7029c6c5-3994-42a1-9570-d6119a5792f3`
+
+## TPI-STUDIOFLOW-034 verified release
+
+The 2026-10-24 TPI-034 release was bridge-only: the authoritative StudioFlow
+source remained at `ce7c389`; website checkpoint `8d7185b` carried the
+idempotent bridge repair, maintained mutation regression, and `tpi034` cache
+busters. Preflight, guarded deployment, production smoke, and isolated Firefox
+acceptance completed successfully. Worker
+`0c0a8660-21cf-47e1-ac66-98c91b26972c` is active at 100% traffic. The previous
+Worker `7029c6c5-3994-42a1-9570-d6119a5792f3` is the rollback reference. No
+source staging `--apply` was required because no authoritative source files
+changed.
 
 The website repository HEAD may be newer than the deployed application commit
 when later commits contain only Markdown or local tooling. Those changes are

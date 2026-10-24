@@ -38,6 +38,15 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
+The latest release is TPI-STUDIOFLOW-034: application commit `8d7185b`, Worker
+`0c0a8660-21cf-47e1-ac66-98c91b26972c`, rollback
+`7029c6c5-3994-42a1-9570-d6119a5792f3`. It is `DEPLOYED / LIVE VERIFIED`.
+The DOM mutation storm was repaired in the maintained bridge layer and the
+maintained mutation regression passed twice. The authoritative StudioFlow
+source was unchanged at `ce7c389`; no D1, R2, Crossroads, owner-browser, or
+user-media mutation occurred. Full evidence is in the TPI-034 completion
+record.
+
 Deployment commit `6a1f8ad77649f1ef175a5191396d55a45141764c`
 (TPI-STUDIOFLOW-032 — Background Music and Sound Effects icon replacement;
 feature commit `02056c1`) was deployed to Worker `theparanormalinitiative`
@@ -71,11 +80,8 @@ browser-local recording broadcast — the same empty-state studio the home
 which also ends the disposable test-account studio pollution recorded as
 TPI-030 finding 3. Known gaps for future work: the API workspace normalizer
 still drops `videoClipSlots` and `programOrientation`, and the bridge layer
-carries a pre-existing DOM mutation storm (self-sustaining observer churn,
-~25k attribute mutations per 5 s in every studio, measured identically in a
-pristine studio and unchanged by this release) that burns CPU and makes
-transient sidebar controls hard to click for automation; both are recorded
-in the 032 completion record for a future directive. The 028 scene playback
+carries the pre-existing DOM mutation storm recorded in the 032 completion
+record; TPI-STUDIOFLOW-034 has now resolved that storm. The 028 scene playback
 workflow
 (`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`,
 including its Addendum A section), the TPI-030 Sound Effects work

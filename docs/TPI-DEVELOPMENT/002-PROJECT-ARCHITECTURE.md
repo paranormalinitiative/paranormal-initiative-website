@@ -29,6 +29,17 @@ The website repository's `studio/` directory is a deployable integration of its
 generated build plus maintained TPI bridge files. The complete source-to-live
 procedure is `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`.
 
+### StudioFlow bridge observer boundary
+
+The maintained audio, video, and workspace bridges may observe the rendered DOM
+to connect the generated StudioFlow interface to TPI behavior. Their
+synchronization writes are required to be idempotent: unchanged labels,
+attributes, styles, visibility, timer state, and studio-menu data must not be
+rewritten. TPI-STUDIOFLOW-034 established this boundary after reproducing an
+audio scene-label observer responding to its own child-node replacement. The
+core React source and media/persistence architecture remain separate from this
+bridge-level integration.
+
 ## Documentation boundary
 
 The numbered workflow documents are an index and operating guide, not a replacement for historical directives. Existing documents remain in place and are linked through the directive index.

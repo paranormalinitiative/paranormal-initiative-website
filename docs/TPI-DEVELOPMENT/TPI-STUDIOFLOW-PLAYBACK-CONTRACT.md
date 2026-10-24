@@ -2,8 +2,9 @@
 
 Status: ACTIVE / CURRENT APPROVED BEHAVIOR
 Maintained under: TPI-STUDIOFLOW-029 (documentation synchronization),
-updated by TPI-STUDIOFLOW-030 (Sound Effects interface) and
-TPI-STUDIOFLOW-031 (Background Music interface)
+updated by TPI-STUDIOFLOW-030 (Sound Effects interface),
+TPI-STUDIOFLOW-031 (Background Music interface), and
+TPI-STUDIOFLOW-034 (DOM mutation stability)
 Last verified: 2026-10-24
 
 This document is the single current-state record of what StudioFlow's scene
@@ -18,6 +19,17 @@ not current commands.
 
 The following is the current approved StudioFlow behavior, confirmed live in
 production after TPI-STUDIOFLOW-028 and TPI-STUDIOFLOW-028 Addendum A.
+
+### DOM stability invariant — TPI-STUDIOFLOW-034
+
+Scene shortcut synchronization, audio/video panel visibility, native timer
+preparation, and My Studios menu rendering are idempotent. A bridge observer
+must not respond indefinitely to DOM writes made by its own synchronization
+callback. Unchanged labels, attributes, styles, and menu data are retained;
+legitimate changes still update the existing elements and playback paths. The
+maintained regression is `npm run verify:studioflow-034-mutation`; its settled
+idle target is fewer than 100 unnecessary mutations in five seconds, with zero
+self-sustaining child-list churn.
 
 ### Intro Video
 
