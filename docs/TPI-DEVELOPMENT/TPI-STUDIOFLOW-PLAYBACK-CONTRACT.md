@@ -106,6 +106,13 @@ production after TPI-STUDIOFLOW-028 and TPI-STUDIOFLOW-028 Addendum A.
   affordance at their position; pad colors, labels, the three-column grid,
   and the media system are unchanged. No duplicate players or asset
   records exist.
+- TPI-STUDIOFLOW-032: the icon inside each pad's unchanged circular
+  container is the approved per-category artwork — Waveform on Background
+  Music pads and Microphone on Sound Effects pads
+  (`/studio/Waveform.png`, `/studio/Microphone.png`, served through the
+  established staging and cache-tag pipeline). The artwork keeps its
+  proportions (`object-fit: contain`), never captures pointer events, and
+  changes nothing about pad layout, colors, labels, or playback.
 
 ## Verified regression history
 
@@ -265,9 +272,10 @@ the standing authority in
   suite (33 checks), including the Addendum-A independence and preserved
   automatic-transition checks.
 - `scripts/verify/tpi-studioflow-021-audio-soundboards.mjs` — static
-  contract (69 checks), including pins of Sol's handoff, the Intro-scene
+  contract (86 checks), including pins of Sol's handoff, the Intro-scene
   music clear, assignment-only After Intro handoff, distinct After Intro
-  scene identity, and the TPI-STUDIOFLOW-030 save-echo guard.
+  scene identity, the TPI-STUDIOFLOW-030 save-echo guard, and the
+  TPI-STUDIOFLOW-032 pad-artwork delivery and pointer-safety contracts.
 - `scripts/verify/tpi-studioflow-030-browser.mjs` — Sound Effects pad
   suite (25 checks): interface cleanup, context menu, drag/keyboard
   reordering, automatic persistence, and multi-studio isolation.
@@ -275,9 +283,14 @@ the standing authority in
   suite (34 checks): interface cleanup, context menu, drag/keyboard
   reordering, playback protection, automatic persistence, multi-studio
   isolation, and the mandatory After Intro assignment regression test.
-- `scripts/verify/tpi-studioflow-021-browser.mjs` (31 checks),
+- `scripts/verify/tpi-studioflow-021-browser.mjs` (31 checks — since
+  TPI-STUDIOFLOW-032 each run starts a fresh browser-local recording
+  broadcast, the same empty-state studio the home "Record without going
+  live" flow creates, replacing that flow's now-unreachable home-screen
+  entry; every assertion is unchanged),
   `tpi-studioflow-027-scenes.mjs` (12), `tpi-studioflow-020-video-playback.mjs`
-  (14), `tpi-studioflow-031-video-overlays.mjs` (12),
+  (14), `tpi-studioflow-020-video-clips.mjs` (13),
+  `tpi-studioflow-031-video-overlays.mjs` (12),
   `tpi-release-safety.mjs` (17).
 
 ## Current production baseline
@@ -285,23 +298,25 @@ the standing authority in
 Latest reported successful production deployment (verified against the
 guarded release records before publishing this baseline):
 
-- Directive: TPI-STUDIOFLOW-031 (Background Music interface cleanup and
-  drag-and-drop pad reordering)
-- Application commit: `4cacb3a`
-- Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
-- Previous Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
-  (TPI-STUDIOFLOW-030)
-- Reported validation: 031 music pad browser interactions 34/34 (two
-  consecutive runs); 030 sound effects browser 25/25; 028 browser 33/33;
-  021 browser interactions 31/31; 021 static contracts 78/78; 020
-  contracts 14/14; 027 contracts 12/12; 031 overlays 12/12; release safety
-  17/17; local auth lifecycle (Node 38/38, isolated Firefox 64/64);
-  guarded live acceptance 64/64.
+- Directive: TPI-STUDIOFLOW-032 (Background Music and Sound Effects icon
+  replacement)
+- Application commit: `6a1f8ad` (feature `02056c1`)
+- Worker version: `7029c6c5-3994-42a1-9570-d6119a5792f3`
+- Previous Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+  (TPI-STUDIOFLOW-031)
+- Reported validation: 021 browser interactions 31/31 (two consecutive
+  runs); 028 browser 33/33 (two consecutive runs); 030 sound effects
+  browser 25/25 (two consecutive runs); 031 music pad browser 34/34 (two
+  consecutive runs); 021 static contracts 86/86; 020 contracts 14/14; 020
+  video clips 13/13; 027 contracts 12/12; 031 overlays 12/12; release
+  safety 17/17; local auth lifecycle PASS (isolated Firefox acceptance
+  64/64); guarded live acceptance against production 64/64; live asset
+  verification (both pad artwork files serve byte-identical).
 
 The Intro/Outro and After Intro playback sections above remain exactly as
-verified after TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030 and
-TPI-STUDIOFLOW-031 changed only the pad interfaces and persistence
-documented in their own sections.
+verified after TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030,
+TPI-STUDIOFLOW-031, and TPI-STUDIOFLOW-032 changed only the pad interfaces,
+persistence, and artwork documented in their own sections.
 
 See `TPI-CURRENT-DEVELOPMENT-STATUS.md` and
 `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md` for the maintained baseline and release

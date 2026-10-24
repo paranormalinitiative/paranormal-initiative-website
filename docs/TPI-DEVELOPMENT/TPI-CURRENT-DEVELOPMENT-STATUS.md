@@ -1,6 +1,6 @@
 # TPI Current Development Status
 
-Last verified: 2026-10-23
+Last verified: 2026-10-24
 
 ## Current source-to-live workflow
 
@@ -12,9 +12,52 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-031 Background Music pad reordering)
+## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-032 pad artwork replacement)
 
-StudioFlow's Background Music pads now match the Sound Effects experience:
+StudioFlow's audio pads now show distinct, approved per-category artwork
+inside the unchanged circular icon container: the Waveform image on
+Background Music pads and the Microphone image on Sound Effects pads,
+replacing the music-note glyphs. The two approved PNGs
+(`/studio/Waveform.png`, `/studio/Microphone.png`) are maintained StudioFlow
+assets delivered through the established staging and cache-tag pipeline;
+the artwork keeps its proportions, never captures pointer events, and the
+pad layout, colors, labels, playback, drag-and-drop, context menus, and
+persistence are all unchanged. Both files serve byte-identical on
+production (authenticated fetch, SHA-256 compared).
+
+One test-harness repair accompanied the release: the 021 browser suite's
+home-screen entry was obsolete (StudioFlow now boots straight into the
+active Studio and its Home nav exists only during the boot route
+transition), leaving the suite hanging on a transient nav click. Each run
+now seeds a fresh browser-local recording broadcast — the same empty-state
+studio the home "Record without going live" flow creates — so the suite's
+31 assertions run against a clean studio and no longer leave server-side
+test studios behind. All assertions are unchanged.
+
+- Directive: TPI-STUDIOFLOW-032
+- Application commit: `6a1f8ad` (feature `02056c1`)
+- StudioFlow source commit: `ce7c389` (website-only release; source unchanged)
+- Worker: `theparanormalinitiative`
+- Active production Worker version: `7029c6c5-3994-42a1-9570-d6119a5792f3`
+- Immediate rollback reference: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+  (the TPI-STUDIOFLOW-031 release)
+- Reported validation, verified against the guarded release records:
+  021 browser interactions 31/31 (two consecutive runs); 028 browser
+  33/33 (two consecutive runs); 030 sound effects browser 25/25 (two
+  consecutive runs); 031 music pad browser 34/34 (two consecutive runs);
+  021 static contracts 86/86; 020 contracts 14/14; 020 video clips 13/13;
+  027 contracts 12/12; 031 overlays 12/12; release safety 17/17; local
+  auth lifecycle PASS (isolated Firefox acceptance 64/64); guarded live
+  acceptance against production 64/64; live asset verification (icons
+  byte-identical on production)
+- No D1 migration, R2 mutation, Crossroads mutation, or owner-browser access
+- Current release record:
+  `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-032-PAD-ARTWORK-REPLACEMENT.md`
+
+## Prior production release — 2026-10-24 (TPI-STUDIOFLOW-031 Background Music pad reordering)
+
+Superseded as the current baseline by the TPI-STUDIOFLOW-032 release above;
+retained as deployment history. StudioFlow's Background Music pads now match the Sound Effects experience:
 the permanent three-dot menu buttons are gone (the unchanged options menu
 opens on right-click, Shift+F10 / the ContextMenu key, or touch long-press),
 and creators can arrange their music pads by drag-and-drop or Alt+Arrow

@@ -50,23 +50,26 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release (TPI-STUDIOFLOW-031 Background Music pad
-reordering):
+Latest verified production release (TPI-STUDIOFLOW-032 Background Music
+and Sound Effects icon replacement):
 
 - Worker: `theparanormalinitiative`
-- Source commit: `4cacb3aac1b28e9159e2511108956776f931b0e3`
+- Source commit: `6a1f8ad77649f1ef175a5191396d55a45141764c`
+  (feature commit `02056c1`)
 - StudioFlow source commit: `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
   (website-only release; source unchanged)
-- Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5` at 100% traffic
+- Worker version: `7029c6c5-3994-42a1-9570-d6119a5792f3` at 100% traffic
 - Deployed: 2026-10-24
-- Rollback target: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
-- Acceptance: 031 music pad browser interactions 34/34 (two consecutive
-  runs), 030 sound effects browser 25/25, 028 browser 33/33, 021 browser
-  31/31, 021 static contracts 78/78, 020 contracts 14/14, 027 contracts
-  12/12, 031 overlays 12/12, release safety 17/17, local auth lifecycle
-  (Node 38/38, isolated Firefox Developer Edition 64/64), guarded live
-  acceptance against production 64/64, complete preflight, and guarded
-  dry-run passed
+- Rollback target: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+- Acceptance: 021 browser interactions 31/31 (two consecutive runs), 028
+  browser 33/33 (two consecutive runs), 030 sound effects browser 25/25
+  (two consecutive runs), 031 music pad browser interactions 34/34 (two
+  consecutive runs), 021 static contracts 86/86, 020 playback 14/14, 020
+  video clips 13/13, 027 contracts 12/12, 031 overlays 12/12, release
+  safety 17/17, local auth lifecycle (isolated Firefox Developer Edition
+  64/64), guarded live acceptance against production 64/64, live asset
+  verification (pad artwork byte-identical), complete preflight, and
+  guarded dry-run passed
 - Approved behavior: `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`
 - Data protection: no D1 migration, R2 mutation, Crossroads mutation, or owner-browser
   storage access was performed

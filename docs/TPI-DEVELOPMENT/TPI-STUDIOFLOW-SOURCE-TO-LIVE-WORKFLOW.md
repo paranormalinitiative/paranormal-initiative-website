@@ -2,7 +2,7 @@
 
 Status: ACTIVE / CANONICAL
 
-Last verified: 2026-10-23
+Last verified: 2026-10-24
 
 This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
@@ -92,15 +92,15 @@ website repository's `codex/tpi-development` branch.
 ## Current verified live baseline
 
 - Website production source commit:
-  `4cacb3aac1b28e9159e2511108956776f931b0e3`
-  (TPI-STUDIOFLOW-031)
+  `6a1f8ad77649f1ef175a5191396d55a45141764c`
+  (TPI-STUDIOFLOW-032; feature commit `02056c1`)
 - Authoritative StudioFlow source commit:
   `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
   (website-only release; source unchanged)
 - Active production Worker version:
-  `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+  `7029c6c5-3994-42a1-9570-d6119a5792f3`
 - Immediate rollback version:
-  `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+  `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
 
 The website repository HEAD may be newer than the deployed application commit
 when later commits contain only Markdown or local tooling. Those changes are

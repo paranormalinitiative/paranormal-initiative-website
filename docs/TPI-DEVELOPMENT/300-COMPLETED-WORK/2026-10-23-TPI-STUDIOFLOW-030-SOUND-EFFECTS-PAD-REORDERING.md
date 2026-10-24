@@ -44,6 +44,14 @@ Three defects surfaced during verification and were repaired:
    name-based row matching in the suites pick stale studios. The suites now
    create uniquely titled studios per run and switch by `data-workspace-id`;
    the disposable account was cleaned. No product change.
+   > Clarification added 2026-10-24 (TPI-STUDIOFLOW-032): the
+   > `data-workspace-id` switching landed in the 030/031 suites. The 021
+   > browser suite's share of this remediation was not in `8f6035a` and
+   > landed in TPI-032 commit `02056c1` as a seeded fresh browser-local
+   > recording broadcast per run (the same empty-state studio the home
+   > "Record without going live" flow creates), which also prevents that
+   > suite from leaving server-side studios behind in the future. Its 31
+   > assertions are unchanged.
 
 ## 2. Files modified (commit `8f6035a`, plus `e18d327`)
 
