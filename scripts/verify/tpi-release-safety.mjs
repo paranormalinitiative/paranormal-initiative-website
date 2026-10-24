@@ -83,8 +83,8 @@ check("Firefox acceptance retries only a transient empty StudioFlow shell", () =
   assert.match(firefoxAcceptance, /if \(\(!redirectedToLogin && body\.trim\(\)\) \|\| attempt === 4\) throw error/);
 });
 check("StudioFlow staging preserves maintained media bridges", () => {
-  assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v13&tpi-panels=exclusive-v3/);
-  assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v8&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v4&tpi-panels=exclusive-v3/);
+  assert.match(studioflowStage, /video-clip-management-bridge\.js\?tpi020=clip-management-v1&tpi022=video-organization-v13&tpi-panels=exclusive-v3&tpi034=dom-stability-v1/);
+  assert.match(studioflowStage, /audio-soundboard-bridge\.js\?tpi021=soundboards-v8&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v4&tpi-panels=exclusive-v3&tpi034=dom-stability-v1/);
   assert.match(studioflowStage, /studioflow-012-overrides\.css\?tpi022=video-organization-v12&tpi-panels=exclusive-v3/);
   assert.match(studioflowStage, /check-request-budget\.mjs/);
 });

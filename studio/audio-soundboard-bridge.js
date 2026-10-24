@@ -680,14 +680,18 @@
       var assignment = sceneMusicFor(shortcutId);
       var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
       var label = button.querySelector(".tpi-scene-music-label");
-      if (label) label.textContent = current ? (isAfterIntroScene(shortcutId) ? "After Intro: " : "Music: ") + (assignment.title || current.title || titleFor(current.fileName)) : (isAfterIntroScene(shortcutId) ? "Add music after Intro" : "Add background music");
-      button.classList.toggle("selected", false);
-      button.classList.toggle("assigned", !!current);
-      button.disabled = musicSlots().filter(Boolean).length === 0;
-      button.removeAttribute("aria-pressed");
-      button.title = current
+      var labelText = current ? (isAfterIntroScene(shortcutId) ? "After Intro: " : "Music: ") + (assignment.title || current.title || titleFor(current.fileName)) : (isAfterIntroScene(shortcutId) ? "Add music after Intro" : "Add background music");
+      if (label && label.textContent !== labelText) label.textContent = labelText;
+      if (button.classList.contains("selected")) button.classList.remove("selected");
+      var assigned = !!current;
+      if (button.classList.contains("assigned") !== assigned) button.classList.toggle("assigned", assigned);
+      var disabled = musicSlots().filter(Boolean).length === 0;
+      if (button.disabled !== disabled) button.disabled = disabled;
+      if (button.hasAttribute("aria-pressed")) button.removeAttribute("aria-pressed");
+      var title = current
         ? (isAfterIntroScene(shortcutId) ? "Play the assigned Background Music track after Intro. Right-click to change it." : "Play the assigned Background Music track for this scene. Right-click to change it.")
         : "Choose background music for this scene.";
+      if (button.title !== title) button.title = title;
     });
   }
   function playAssignedSceneMusic(assignment) {
@@ -725,12 +729,16 @@
   function syncPanelVisibility() {
     var visible = mediaAssetsTabActive();
     document.querySelectorAll("[data-tpi-audio-soundboards], [data-tpi-audio-original]").forEach(function (node) {
-      node.hidden = !visible;
-      if (visible) node.style.removeProperty("display");
-      else node.style.setProperty("display", "none", "important");
+      var hidden = !visible;
+      if (node.hidden !== hidden) node.hidden = hidden;
+      if (visible) {
+        if (node.style.getPropertyValue("display")) node.style.removeProperty("display");
+      } else if (node.style.getPropertyValue("display") !== "none" || node.style.getPropertyPriority("display") !== "important") {
+        node.style.setProperty("display", "none", "important");
+      }
     });
   }
-  function hideLegacy() { Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).forEach(function (section) { var heading = headingText(section); if (heading === "sounds" || heading === "background music") { section.dataset.tpiLegacyAudio = "true"; section.hidden = true; } }); }
+  function hideLegacy() { Array.prototype.slice.call(document.querySelectorAll("section.asset-section")).forEach(function (section) { var heading = headingText(section); if (heading === "sounds" || heading === "background music") { if (section.dataset.tpiLegacyAudio !== "true") section.dataset.tpiLegacyAudio = "true"; if (!section.hidden) section.hidden = true; } }); }
   function host() {
     var panel = document.querySelector(".asset-panel");
     if (!panel) return null;

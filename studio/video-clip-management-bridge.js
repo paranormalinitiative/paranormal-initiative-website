@@ -42,9 +42,13 @@
   function syncPanelVisibility() {
     var visible = mediaAssetsTabActive();
     document.querySelectorAll("[data-tpi-video-organization], [data-tpi-video-timer-section], [data-tpi-video-timers]").forEach(function (node) {
-      node.hidden = !visible;
-      if (visible) node.style.removeProperty("display");
-      else node.style.setProperty("display", "none", "important");
+      var hidden = !visible;
+      if (node.hidden !== hidden) node.hidden = hidden;
+      if (visible) {
+        if (node.style.getPropertyValue("display")) node.style.removeProperty("display");
+      } else if (node.style.getPropertyValue("display") !== "none" || node.style.getPropertyPriority("display") !== "important") {
+        node.style.setProperty("display", "none", "important");
+      }
     });
   }
   function read(key, fallback) { try { var raw = localStorage.getItem(key); return raw === null ? fallback : JSON.parse(raw); } catch (error) { return fallback; } }
@@ -193,7 +197,7 @@
     return timerSection;
   }
   function isCountdownTile(tile) { var label = normalize(tile.textContent), title = normalize(tile.getAttribute("title")); return title.indexOf("golden ring countdown") !== -1 || label.indexOf("countdown") !== -1 || label.indexOf("timer") !== -1; }
-  function hideLegacyVideoPlaceholders(section) { Array.prototype.slice.call(section.querySelectorAll(".asset-grid button")).forEach(function (button) { var label = normalize(button.textContent); if (label === "thank you" || label === "be right back") { button.hidden = true; button.dataset.tpiLegacyVideoPlaceholder = "true"; } }); }
+  function hideLegacyVideoPlaceholders(section) { Array.prototype.slice.call(section.querySelectorAll(".asset-grid button")).forEach(function (button) { var label = normalize(button.textContent); if (label === "thank you" || label === "be right back") { if (!button.hidden) button.hidden = true; if (button.dataset.tpiLegacyVideoPlaceholder !== "true") button.dataset.tpiLegacyVideoPlaceholder = "true"; } }); }
   function prepareNativeTimer(section, nativeGrid, nativeTimers) {
     hideLegacyVideoPlaceholders(section);
     var timerSection = nativeTimerSection(section);
@@ -204,28 +208,28 @@
     var countdownTile = (nativeGrid && countdownTiles.find(function (tile) { return nativeGrid.contains(tile); })) || countdownTiles[0] || null;
     countdownTiles.forEach(function (tile) {
       if (tile === countdownTile) return;
-      tile.hidden = true;
+      if (!tile.hidden) tile.hidden = true;
       if (timerGrid.contains(tile)) tile.remove();
     });
     if (countdownTile) {
-      countdownTile.hidden = false;
-      countdownTile.dataset.tpiNativeVideoTimer = "true";
-      countdownTile.setAttribute("data-tpi-native-video-timer", "true");
+      if (countdownTile.hidden) countdownTile.hidden = false;
+      if (countdownTile.dataset.tpiNativeVideoTimer !== "true") countdownTile.dataset.tpiNativeVideoTimer = "true";
       if (countdownTile.parentNode !== timerGrid) timerGrid.appendChild(countdownTile);
     }
     if (nativeTimers) {
       Array.prototype.slice.call(timerControls.querySelectorAll(".countdown-duration-row")).forEach(function (row) {
         if (row !== nativeTimers) row.remove();
       });
-      nativeTimers.hidden = false;
+      if (nativeTimers.hidden) nativeTimers.hidden = false;
       if (nativeTimers.parentNode !== timerControls) timerControls.appendChild(nativeTimers);
     }
     if (nativeGrid) {
-      Array.prototype.slice.call(nativeGrid.querySelectorAll(".background-picker-tile")).forEach(function (tile) { tile.hidden = true; });
-      nativeGrid.hidden = true;
-      nativeGrid.setAttribute("data-tpi-native-video-hidden", "true");
+      Array.prototype.slice.call(nativeGrid.querySelectorAll(".background-picker-tile")).forEach(function (tile) { if (!tile.hidden) tile.hidden = true; });
+      if (!nativeGrid.hidden) nativeGrid.hidden = true;
+      if (nativeGrid.dataset.tpiNativeVideoHidden !== "true") nativeGrid.dataset.tpiNativeVideoHidden = "true";
     }
-    timerSection.hidden = !countdownTile && !nativeTimers;
+    var timerHidden = !countdownTile && !nativeTimers;
+    if (timerSection.hidden !== timerHidden) timerSection.hidden = timerHidden;
   }
   function videoGroup(title, slots, assets) { var group = document.createElement("section"); group.className = "tpi-video-subsection"; group.dataset.tpiVideoSubsection = normalize(title).replace(/\s+/g, "-"); var heading = document.createElement("h4"); heading.textContent = title; var grid = document.createElement("div"); grid.className = "tpi-video-grid"; slots.forEach(function (slot) { grid.appendChild(makeCard(assets[slot], slot)); }); group.append(heading, grid); return group; }
   function render() { var section = videoSection(); if (!section) return; var nativeGrid = section.querySelector(".background-picker-grid"); var nativeTimers = section.querySelector(".countdown-duration-row"); prepareNativeTimer(section, nativeGrid, nativeTimers); if (!root || !root.isConnected || !section.contains(root)) { root = section.querySelector("[data-tpi-video-organization]"); if (!root) { root = document.createElement("div"); root.className = "tpi-video-organization"; root.dataset.tpiVideoOrganization = "true"; (nativeGrid || section).insertAdjacentElement("afterend", root); } } var slots = videoSlots(), signature = JSON.stringify({ slots: slots, running: timerSlot, end: timerEnd ? Math.ceil((timerEnd - Date.now()) / 1000) : 0, remaining: Math.ceil(timerRemaining / 1000) }); if (signature === lastSignature && root.childElementCount) { updateTimerDisplay(); syncPanelVisibility(); return; } lastSignature = signature; clearPreviewUrls(); root.replaceChildren(); root.append(videoGroup("INTRO & OUTRO", INTRO_OUTRO_SLOTS, slots), videoGroup("VIDEO CLIPS", VIDEO_ONLY_SLOTS, slots)); var status = document.createElement("p"); status.dataset.tpiVideoStatus = "true"; status.className = "tpi-video-status"; root.appendChild(status); updateTimerDisplay(); syncPanelVisibility(); }
