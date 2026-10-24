@@ -232,7 +232,17 @@
     return persistLocalAsset(workspaceId, asset, role);
   }
   function replaceAssets(configuration, replacements) {
-    var index = 0, replace = function (asset) { return asset && replacements[index++] ? replacements[index - 1] : asset; };
+    // Replacements arrive in visitAssets order, but the fields are walked
+    // below in a different order and some are visited conditionally (the
+    // legacy singular background music is skipped whenever the music slots
+    // hold assets). Positional indexing therefore wired one asset's uploaded
+    // replacement onto a different field — a music upload could land in
+    // customSounds and duplicate across slots. Key the lookup by blobKey so
+    // every asset receives exactly its own uploaded replacement
+    // (TPI-STUDIOFLOW-031).
+    var byKey = {};
+    replacements.forEach(function (asset) { if (asset && typeof asset === "object" && text(asset.blobKey)) byKey[asset.blobKey] = asset; });
+    var replace = function (asset) { if (!asset || typeof asset !== "object") return asset; var key = text(asset.blobKey); return key && byKey[key] ? byKey[key] : asset; };
     if (configuration.customBackground) configuration.customBackground = replace(configuration.customBackground);
     if (configuration.customLogo) configuration.customLogo = replace(configuration.customLogo);
     configuration.overlayAssets = Array.isArray(configuration.overlayAssets) ? configuration.overlayAssets.map(replace) : configuration.overlayAssets;

@@ -12,10 +12,11 @@ const backup = readFileSync(join(root, "studio/backup-bridge.js"), "utf8");
 const browser = readFileSync(join(root, "scripts/verify/tpi-studioflow-021-browser.mjs"), "utf8");
 const stage = readFileSync(join(root, "scripts/stage-local-studio-assets.mjs"), "utf8");
 const css = readFileSync(join(root, "studio/studioflow-012-overrides.css"), "utf8");
+const api = readFileSync(join(root, "functions/api/[[path]].js"), "utf8");
 
 const required = [
   [html, "audio-soundboard-bridge.js", "Studio shell includes the soundboard bridge"],
-  [html, "tpi021=soundboards-v6&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v4", "Shell cache tag identifies the reorderable Addendum-A-preserving SMART Pad soundboard bridge"],
+  [html, "tpi021=soundboards-v7&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v4", "Shell cache tag identifies the reorderable Addendum-A-preserving SMART Pad soundboard bridge"],
   [html, "tpi022=video-organization-v11", "Shell cache tag identifies the reorder-aware audio stylesheet"],
   [stage, '"audio-soundboard-bridge.js"', "Local staging includes the soundboard bridge"],
   [bridge, "SLOT_COUNT = 9", "Nine-slot capacity is explicit"],
@@ -50,12 +51,15 @@ const required = [
   [bridge, "color", "SMART Pad color changes are persisted"],
   [bridge, "data-tpi-audio-menu-action", "Audio management actions use the compact menu contract"],
   [bridge, "contextmenu", "Audio cards expose the requested right-click menu"],
-  [bridge, "Audio options", "Music pads retain the visible menu trigger; sound pads open the same menu from right-click, Shift+F10, or touch long-press"],
-  [bridge, "moveSoundSlot", "Sound pad reordering persists through the existing workspace state"],
+  [bridge, "longPressTimer", "Touch long-press opens the pad options menu on both boards"],
+  [bridge, "moveSlot(category, from, to, restoreFocus)", "Pad reordering persists through the existing workspace state on both boards"],
+  [bridge, "slots[activeIndex].blobKey : null", "Reordering remaps the active playback indicator instead of stopping playback"],
+  [bridge, 'write(isSound ? SOUND_KEY : MUSIC_KEY, slots.filter(Boolean))', "Reordering writes only its own category's persisted slot key"],
+  [bridge, 'next[key] = { blobKey: asset.blobKey, assetId: asset.id', "Scene music assignments reference stable asset identifiers, not pad positions"],
   [bridge, "tpi-audio-drop-placeholder", "Drag reordering shows an explicit drop location"],
-  [bridge, 'dataset.tpiAudioDraggable = "true"', "Sound pads expose a drag affordance without a permanent menu button"],
-  [bridge, "Alt+ArrowLeft", "Sound pads support accessible keyboard reordering"],
-  [bridge, "ContextMenu", "Sound pads open their options menu from the keyboard"],
+  [bridge, 'dataset.tpiAudioDraggable = "true"', "Both boards expose a drag affordance without a permanent menu button"],
+  [bridge, "Alt+ArrowLeft", "Both boards support accessible keyboard reordering"],
+  [bridge, "ContextMenu", "Pads open their options menu from the keyboard on both boards"],
   [bridge, 'controls.append(volumeControl("Sound effects volume", SOUND_VOLUME_KEY, "sound")); soundSection.appendChild(controls);', "Sound controls keep the volume slider without a Stop sound button"],
   [css, "tpi-audio-dragging", "Dragged sound pads render lifted above the grid"],
   [css, ".tpi-audio-drop-placeholder", "Drop placeholder styling exists"],
@@ -77,6 +81,12 @@ const required = [
   [css, "[data-tpi-audio-soundboards][hidden]", "Hidden audio boards cannot be redisplayed by their grid styling"],
   [assetState, "backgroundMusicSlots", "Asset state bridge persists music slots"],
   [assetState, "backgroundMusicLoop", "Asset state bridge persists the music loop preference"],
+  [api, "const backgroundMusicSlots = normalizeAssetList(source.backgroundMusicSlots, 50);", "API workspace saves persist the Background Music pad slots and their order"],
+  [api, "sceneMusicAssignments", "API workspace saves persist scene music assignments including the After Intro handoff"],
+  [api, "backgroundMusicLoop: source.backgroundMusicLoop !== false", "API workspace saves persist the Background Music loop preference"],
+  [api, "titleCustomized: value.titleCustomized === true", "API asset normalization preserves pad title customizations"],
+  [api, "/^#[0-9a-f]{6}$/i.test(clean(value.color))", "API asset normalization preserves pad colors"],
+  [assetState, "byKey[asset.blobKey] = asset", "Uploaded media replacements are matched to their own assets by blobKey, never by visit position"],
   [assetState, "captureKeyGuard", "Workspace response echoes snapshot stored keys before applying saved configuration"],
   [assetState, "keyGuard[name] !== localStorage.getItem(KEYS[name])", "A workspace response echo never overwrites a key changed locally while the request was in flight"],
   [workspace, "backgroundMusicSlots", "Workspace save/local snapshot includes music slots"],

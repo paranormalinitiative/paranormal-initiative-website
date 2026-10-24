@@ -292,23 +292,34 @@
     else { write(MUSIC_KEY, slots.filter(Boolean)); var next = slots.find(function (item) { return item; }) || null; var current = read(LEGACY_MUSIC_KEY, null); if (current && current.blobKey === asset.blobKey) write(LEGACY_MUSIC_KEY, next); }
     deleteBlob(asset.blobKey).catch(function () {}).then(function () { dispatchChange(); renderState(); setStatus("Audio removed."); });
   }
-  // TPI-STUDIOFLOW-030: sound pad order is part of the existing
-  // studioflow.customSounds workspace state, so reordering persists through
-  // the existing per-Studio save/restore architecture without a new store.
-  function moveSoundSlot(from, to, restoreFocus) {
+  // TPI-STUDIOFLOW-030/031: pad order is part of the existing per-category
+  // workspace state (studioflow.customSounds / studioflow.backgroundMusicSlots),
+  // so reordering persists through the existing per-Studio save/restore
+  // architecture without a new store. Reordering never starts or stops
+  // playback; the active playback slot is remapped to the moved asset so the
+  // playing indicator follows the track that is actually playing.
+  function moveSlot(category, from, to, restoreFocus) {
     if (from === to) return;
-    var slots = soundSlots(), moving = slots[from];
+    var isSound = category === "sound";
+    var slots = isSound ? soundSlots() : musicSlots(), moving = slots[from];
     if (!moving) return;
     var blobKey = moving.blobKey;
+    var activeIndex = isSound ? soundSlot : musicSlot;
+    var playingKey = activeIndex !== null && activeIndex !== undefined && slots[activeIndex] ? slots[activeIndex].blobKey : null;
     slots[from] = null;
     if (to < from) { for (var i = from; i > to; i -= 1) slots[i] = slots[i - 1]; }
     else { for (var j = from; j < to; j += 1) slots[j] = slots[j + 1]; }
     slots[to] = moving;
     slots.forEach(function (asset, index) { if (asset) asset.slot = index; });
-    write(SOUND_KEY, slots.filter(Boolean));
+    if (playingKey) {
+      var newIndex = -1;
+      slots.forEach(function (asset, index) { if (asset && asset.blobKey === playingKey) newIndex = index; });
+      if (newIndex >= 0) { if (isSound) soundSlot = newIndex; else musicSlot = newIndex; }
+    }
+    write(isSound ? SOUND_KEY : MUSIC_KEY, slots.filter(Boolean));
     dispatchChange();
     renderState();
-    setStatus("Sound pad order saved.");
+    setStatus((isSound ? "Sound" : "Music") + " pad order saved.");
     if (restoreFocus) {
       var cards = Array.prototype.slice.call(document.querySelectorAll("[data-tpi-audio-blob-key]"));
       var moved = cards.find(function (node) { return node.dataset.tpiAudioBlobKey === blobKey; });
@@ -321,15 +332,10 @@
     var topLine = document.createElement("div"); topLine.className = "tpi-audio-slot-topline";
     var icon = document.createElement("span"); icon.className = "tpi-audio-slot-icon"; icon.textContent = category === "sound" ? "♬" : "♫"; icon.setAttribute("aria-hidden", "true");
     var slotLabel = document.createElement("span"); slotLabel.className = "tpi-audio-slot-label"; slotLabel.textContent = (category === "sound" ? "Sound effect" : "Music") + " " + String(slot + 1).padStart(2, "0");
-    // TPI-STUDIOFLOW-030: sound-effect pads no longer carry a permanent
-    // three-dot trigger. Their menu opens from right-click, Shift+F10 / the
-    // context-menu key, or a touch long-press. Music pads keep the existing
-    // visible trigger and all existing menu actions.
+    // TPI-STUDIOFLOW-030/031: no pad carries a permanent three-dot trigger.
+    // The unchanged options menu opens from right-click, Shift+F10 / the
+    // context-menu key, or a touch long-press on either board.
     var menuTrigger = null;
-    if (category !== "sound") {
-      menuTrigger = document.createElement("button"); menuTrigger.type = "button"; menuTrigger.className = "tpi-audio-slot-menu-trigger"; menuTrigger.textContent = "⋯"; menuTrigger.title = "Audio options"; menuTrigger.setAttribute("aria-label", "Audio options");
-      if (!asset) menuTrigger.hidden = true;
-    }
     topLine.append(icon, slotLabel);
     if (menuTrigger) topLine.append(menuTrigger);
     var heading = document.createElement("strong"); heading.className = "tpi-audio-slot-title"; heading.textContent = asset ? asset.title : (category === "sound" ? "Sound " : "Music ") + (slot + 1);
@@ -408,14 +414,12 @@
     card.addEventListener("contextmenu", function (event) { if (!asset) return; event.preventDefault(); openMenu(); });
     card.addEventListener("keydown", function (event) {
       if (!asset) return;
-      if (category === "sound") {
-        if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) { event.preventDefault(); if (menu.hidden) openMenu(); else closeMenu(); return; }
-        if (event.altKey && !event.ctrlKey && !event.metaKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
-          event.preventDefault();
-          var target = event.key === "ArrowLeft" ? Math.max(0, slot - 1) : Math.min(SLOT_COUNT - 1, slot + 1);
-          if (target !== slot) moveSoundSlot(slot, target, true);
-          return;
-        }
+      if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) { event.preventDefault(); if (menu.hidden) openMenu(); else closeMenu(); return; }
+      if (event.altKey && !event.ctrlKey && !event.metaKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+        event.preventDefault();
+        var target = event.key === "ArrowLeft" ? Math.max(0, slot - 1) : Math.min(SLOT_COUNT - 1, slot + 1);
+        if (target !== slot) moveSlot(category, slot, target, true);
+        return;
       }
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault(); category === "sound" ? playSound(slot) : playMusic(slot);
@@ -429,10 +433,10 @@
       if (action === "upload") fileInput(category, slot);
     });
     if (asset) card.dataset.tpiAudioBlobKey = asset.blobKey;
-    // TPI-STUDIOFLOW-030: pointer-based drag reordering for sound pads.
-    // Mouse and trackpad use press-drag-release; touch uses the same pointer
-    // path, with a long-press reserved for opening the options menu.
-    if (asset && category === "sound") {
+    // TPI-STUDIOFLOW-030/031: pointer-based drag reordering for both
+    // boards. Mouse and trackpad use press-drag-release; touch uses the same
+    // pointer path, with a long-press reserved for opening the options menu.
+    if (asset) {
       card.dataset.tpiAudioDraggable = "true";
       card.setAttribute("aria-keyshortcuts", "Alt+ArrowLeft Alt+ArrowRight Shift+F10");
       card.title = "Drag to reorder. Right-click or Shift+F10 for options. Alt+arrow keys move the pad.";
@@ -485,7 +489,7 @@
         ["width", "height", "left", "top"].forEach(function (name) { card.style.removeProperty(name); });
         if (state.placeholder && state.placeholder.parentNode) state.placeholder.parentNode.removeChild(state.placeholder);
         suppressClickUntil = Date.now() + 400;
-        if (!cancelled && to >= 0 && to !== state.from) moveSoundSlot(state.from, to);
+        if (!cancelled && to >= 0 && to !== state.from) moveSlot(category, state.from, to);
         else renderState();
       }
       function endDrag(event) { if (drag && event.pointerId === drag.id) finishDrag(false); }

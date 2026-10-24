@@ -4615,12 +4615,33 @@ function normalizeStudioConfiguration(value) {
       mediaType: clean(value.mediaType).slice(0, 40) || null,
       size: Number.isFinite(Number(value.size)) && Number(value.size) >= 0 ? Math.min(Number(value.size), 250 * 1024 * 1024) : null,
       title: cleanVideoText(value.title || "", 160),
+      titleCustomized: value.titleCustomized === true,
+      color: /^#[0-9a-f]{6}$/i.test(clean(value.color)) ? clean(value.color).toLowerCase() : null,
       uploadedAt: clean(value.uploadedAt).slice(0, 80) || null
     };
   };
   const normalizeAssetList = (value, limit = 50) => Array.isArray(value) ? value.slice(0, limit).map(normalizeAsset).filter(Boolean) : [];
   const videoClips = source.videoClips && typeof source.videoClips === "object" ? source.videoClips : {};
   const backgroundMusic = normalizeAsset(source.backgroundMusic);
+  // TPI-STUDIOFLOW-031: the multi-slot Background Music board, its loop
+  // preference, and the scene music assignments (including Sol's After Intro
+  // handoff) are part of the per-Studio configuration and must round-trip
+  // through the workspace save like the sound slots already do.
+  const backgroundMusicSlots = normalizeAssetList(source.backgroundMusicSlots, 50);
+  const rawSceneMusic = source.sceneMusicAssignments && typeof source.sceneMusicAssignments === "object" && !Array.isArray(source.sceneMusicAssignments) ? source.sceneMusicAssignments : {};
+  const sceneMusicAssignments = {};
+  Object.keys(rawSceneMusic).slice(0, 50).forEach((key) => {
+    const assignment = rawSceneMusic[key];
+    const sceneKey = clean(key).slice(0, 100);
+    const blobKey = assignment && typeof assignment === "object" && !Array.isArray(assignment) ? clean(assignment.blobKey).slice(0, 180) : "";
+    if (!sceneKey || !blobKey) return;
+    sceneMusicAssignments[sceneKey] = {
+      blobKey,
+      assetId: clean(assignment.assetId).slice(0, 120) || null,
+      title: cleanVideoText(assignment.title || "", 160),
+      assignedAt: clean(assignment.assignedAt).slice(0, 80) || null
+    };
+  });
   const customSounds = normalizeAssetList(source.customSounds, 50);
   return {
     selectedBackground: clean(source.selectedBackground).slice(0, 100) || "default",
@@ -4665,11 +4686,14 @@ function normalizeStudioConfiguration(value) {
       outro: normalizeAsset(videoClips.outro)
     },
     backgroundMusic,
+    backgroundMusicSlots,
+    backgroundMusicLoop: source.backgroundMusicLoop !== false,
     backgroundMusicVolume: Number.isFinite(Number(source.backgroundMusicVolume)) ? Math.max(0, Math.min(1, Number(source.backgroundMusicVolume))) : 0.42,
     customSounds,
     customSound: normalizeAsset(source.customSound),
     soundVolume: Number.isFinite(Number(source.soundVolume)) ? Math.max(0, Math.min(1, Number(source.soundVolume))) : 0.72,
     studioScenes: scenes,
+    sceneMusicAssignments,
     bannerScrollTicker: {
       enabled: ticker.enabled === true,
       text: cleanVideoText(ticker.text || "", 300),

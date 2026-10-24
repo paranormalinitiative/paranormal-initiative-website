@@ -325,6 +325,19 @@ try {
   check("audio management menu floats above the panel and stays in the viewport", audioMenuLayout.visible && audioMenuLayout.body && audioMenuLayout.fixed && audioMenuLayout.left >= 0 && audioMenuLayout.top >= 0 && audioMenuLayout.right <= audioMenuLayout.viewportWidth + 1 && audioMenuLayout.bottom <= audioMenuLayout.viewportHeight + 1, JSON.stringify(audioMenuLayout));
   await js("document.body.click();");
 
+  const musicMenuTriggerCount = await count('[data-tpi-audio-board="music"] .tpi-audio-slot-menu-trigger');
+  check("Background Music pads omit the permanent three-dot menu trigger", musicMenuTriggerCount === 0, `count=${musicMenuTriggerCount}`);
+  const musicPadForMenu = (await driver.findElements(By.css('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')))[0];
+  if (musicPadForMenu) {
+    await driver.executeScript("arguments[0].scrollIntoView({block:'center', inline:'center'});", musicPadForMenu);
+    await driver.sleep(150);
+    await driver.actions().contextClick(musicPadForMenu).perform();
+    check("right-click opens the Background Music pad options menu", (await count('.tpi-audio-slot-menu[data-tpi-audio-floating]:not([hidden])')) === 1);
+    await js("document.body.click();");
+    await driver.sleep(200);
+  }
+  check("Background Music pad drag reorder affordance is present", Boolean(await js("var card = document.querySelector('[data-tpi-audio-board=\"music\"] .tpi-audio-slot.assigned'); return card && card.dataset.tpiAudioDraggable === 'true';")));
+
   check("existing timer controls remain selectable", await click('[data-tpi-native-video-timer-controls] button:first-child') && await count('[data-tpi-video-timer-section]') === 1);
 
   await click(".tpi-studio-selector");
