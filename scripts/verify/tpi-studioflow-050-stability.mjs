@@ -15,7 +15,7 @@ check(
   "save responses do not navigate the document",
   bridge.includes("tpi:workspace-saved") && !bridge.includes("location.href"),
 );
-check("asset persistence does not reload after applying configuration", assetBridge.includes("applyConfiguration(body.workspace.state.configuration)") && !assetBridge.includes("location.reload"));
+check("asset persistence does not reload after applying configuration", assetBridge.includes("applyConfiguration(body.workspace.state.configuration, keyGuard)") && !assetBridge.includes("location.reload"));
 check("asset staging does not inject a browser reload", html.includes("workspace-asset-state-bridge.js") && !assetBridge.includes("window.location.reload"));
 check("autosave remains guarded against overlapping requests", bridge.includes("if (saveInFlight)") && bridge.includes("saveAgain = true"));
 check("workspace switching remains save-gated", bridge.includes("if (!saved) { setMessage(\"The current Studio could not be saved."));

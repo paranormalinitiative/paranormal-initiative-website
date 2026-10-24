@@ -304,16 +304,18 @@ try {
   await waitFor("music assignment", async () => count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned'));
   await click('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned');
   await waitFor("sound playback", async () => count('[data-tpi-audio-board="sound"] .tpi-audio-slot.playing'));
-  await click('[data-tpi-audio-stop="sound"]');
+  check("Stop sound button is removed from the sound controls", (await count('[data-tpi-audio-stop="sound"]')) === 0);
   await click('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned');
   await waitFor("music playback", async () => count('[data-tpi-audio-board="music"] .tpi-audio-slot.playing'));
   check("soundboards upload and play independently", true);
   await click('[data-tpi-audio-stop="music"]');
+  await waitFor("sound playback to end without a stop control", async () => (await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.playing')) === 0, 20_000);
 
   const audioMenuTriggerCount = await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned .tpi-audio-slot-menu-trigger');
-  check("assigned sound exposes an audio options trigger", audioMenuTriggerCount === 1, `count=${audioMenuTriggerCount}`);
-  const audioMenuClicked = await click('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned .tpi-audio-slot-menu-trigger');
-  check("audio options trigger opens the menu", audioMenuClicked === true);
+  check("sound pads omit the permanent three-dot menu trigger", audioMenuTriggerCount === 0, `count=${audioMenuTriggerCount}`);
+  const soundPadForMenu = (await driver.findElements(By.css('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned')))[0];
+  await driver.actions().contextClick(soundPadForMenu).perform();
+  check("right-click opens the sound pad options menu", (await count('.tpi-audio-slot-menu[data-tpi-audio-floating]:not([hidden])')) === 1);
   const audioMenuImmediate = await js("var menus=Array.from(document.querySelectorAll('.tpi-audio-slot-menu')); return menus.map(function(menu){return {floating:menu.getAttribute('data-tpi-audio-floating'),hidden:menu.hidden,parent:menu.parentElement&&menu.parentElement.tagName,connected:menu.isConnected};});");
   check("floating audio menu is created in the document", audioMenuImmediate.some(menu => menu.floating === "true" && menu.hidden === false && menu.parent === "BODY" && menu.connected === true), JSON.stringify(audioMenuImmediate));
   await waitFor("floating audio management menu", async () => count('.tpi-audio-slot-menu[data-tpi-audio-floating]:not([hidden])'));

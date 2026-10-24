@@ -617,6 +617,33 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   font-size: 0.78rem;
 }
 
+/* TPI-STUDIOFLOW-030: drag-to-reorder sound pads. */
+.tpi-audio-slot[data-tpi-audio-draggable="true"] {
+  touch-action: none;
+  cursor: grab;
+}
+
+.tpi-audio-slot[data-tpi-audio-draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.tpi-audio-slot.tpi-audio-dragging {
+  position: fixed;
+  z-index: 1200;
+  margin: 0;
+  pointer-events: none;
+  opacity: 0.92;
+  transform: scale(1.03);
+  cursor: grabbing;
+  box-shadow: 0 1rem 2rem rgb(4 8 16 / 45%);
+}
+
+.tpi-audio-drop-placeholder {
+  border: 2px dashed rgb(255 255 255 / 38%);
+  border-radius: 0.7rem;
+  background: rgb(255 255 255 / 6%);
+}
+
 [data-tpi-audio-status] {
   min-height: 1.2rem;
   color: var(--muted, #9ba8a0);

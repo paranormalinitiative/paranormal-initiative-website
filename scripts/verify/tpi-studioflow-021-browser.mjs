@@ -140,8 +140,10 @@ try {
   check("sound playback marks the active card", await soundBoard.locator(".tpi-audio-slot.playing").count() === 1);
   check("sound volume slider updates persisted value", await page.evaluate(() => JSON.parse(localStorage.getItem("studioflow.soundVolume") || "null") === 0.18));
   check("sound volume slider updates active playback gain", await page.evaluate(() => (window.__tpiVolumeProbeGains || []).some((gain) => Math.abs(gain.gain.value - 0.18) < 0.01)));
-  await page.locator('[data-tpi-audio-stop="sound"]').click();
-  check("sound stop clears the active card", await soundBoard.locator(".tpi-audio-slot.playing").count() === 0);
+  check("Stop sound button is removed from the sound controls", await page.locator('[data-tpi-audio-stop="sound"]').count() === 0);
+  check("sound pads omit the permanent three-dot menu trigger", await soundBoard.locator(".tpi-audio-slot-menu-trigger").count() === 0);
+  for (let i = 0; i < 30 && (await soundBoard.locator(".tpi-audio-slot.playing").count()) > 0; i += 1) await page.waitForTimeout(500);
+  check("sound playback ends naturally and clears the active card", await soundBoard.locator(".tpi-audio-slot.playing").count() === 0);
 
   await musicBoard.locator(".tpi-audio-slot.assigned").first().click();
   await page.waitForTimeout(1000);

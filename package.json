@@ -15,6 +15,7 @@
     "test:studioflow:firefox": "node scripts/verify/tpi-studioflow-firefox-acceptance.mjs",
     "verify:studioflow-027": "node scripts/verify/tpi-studioflow-027-scenes.mjs",
     "verify:studioflow-028-browser": "node scripts/verify/tpi-studioflow-028-browser.mjs",
+    "verify:studioflow-030-browser": "node scripts/verify/tpi-studioflow-030-browser.mjs",
     "verify:release-safety": "node scripts/verify/tpi-release-safety.mjs",
     "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",
     "release:preflight": "node scripts/tpi-release.mjs preflight",

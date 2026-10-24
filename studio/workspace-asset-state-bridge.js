@@ -110,10 +110,20 @@
     } catch (error) {}
   }
   function serverPreview(asset) { if (!asset || typeof asset !== "object") return asset; return text(asset.serverUrl) && text(asset.serverAssetId) ? Object.assign({}, asset, { previewUrl: asset.serverUrl }) : asset; }
-  function applyConfiguration(configuration) {
+  // Snapshot of each stored key's raw value at request-send time. A response
+  // echo must never overwrite a key the creator changed while the request was
+  // in flight (TPI-STUDIOFLOW-030: a pad reorder made during a slow save was
+  // reverted by the save's own response echo).
+  function captureKeyGuard() {
+    var guard = {};
+    Object.keys(KEYS).forEach(function (name) { guard[name] = localStorage.getItem(KEYS[name]); });
+    return guard;
+  }
+  function applyConfiguration(configuration, keyGuard) {
     if (!configuration || typeof configuration !== "object") return;
     var fallback = defaults();
     Object.keys(KEYS).forEach(function (name) {
+      if (keyGuard && keyGuard[name] !== localStorage.getItem(KEYS[name])) return;
       var value = configuration[name] !== undefined ? configuration[name] : fallback[name];
       if (name === "studioScenes") value = normalizeStudioScenes(value);
       if (["customBackground", "customLogo", "backgroundMusic", "customSound"].includes(name)) value = serverPreview(value);
@@ -252,6 +262,9 @@
     if (requestInit.body && typeof requestInit.body === "string") { try { parsedBody = JSON.parse(requestInit.body); } catch (error) {} }
     var isCreate = parsedBody && isWorkspaceCreate(url, method, parsedBody);
     var isPatch = parsedBody && method === "PATCH" && /\/api\/studio\/workspaces\//.test(url);
+    // Captured at send time — before syncMedia's upload window — so edits made
+    // while the request (and its media uploads) are in flight are preserved.
+    var keyGuard = captureKeyGuard();
     var prepare = Promise.resolve();
     if (parsedBody && (isCreate || isPatch)) {
       var restoringFromBackup = isCreate && parsedBody.restoreFromBackup === true;
@@ -282,7 +295,7 @@
         }
       }
       if (response.ok && /\/api\/studio\/workspaces(?:\/[^/]+)?$/.test(url)) {
-        try { var body = await response.clone().json(); if (body && body.workspace && body.workspace.state) applyConfiguration(body.workspace.state.configuration); } catch (error) {}
+        try { var body = await response.clone().json(); if (body && body.workspace && body.workspace.state) applyConfiguration(body.workspace.state.configuration, keyGuard); } catch (error) {}
       }
       return response;
     });

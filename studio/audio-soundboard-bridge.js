@@ -34,6 +34,7 @@
   var lastSignature = "";
   var lastSceneId = "";
   var sceneMusicMenu = null;
+  var suppressClickUntil = 0;
 
   function text(value) { return typeof value === "string" ? value : ""; }
   function read(key, fallback) {
@@ -291,15 +292,46 @@
     else { write(MUSIC_KEY, slots.filter(Boolean)); var next = slots.find(function (item) { return item; }) || null; var current = read(LEGACY_MUSIC_KEY, null); if (current && current.blobKey === asset.blobKey) write(LEGACY_MUSIC_KEY, next); }
     deleteBlob(asset.blobKey).catch(function () {}).then(function () { dispatchChange(); renderState(); setStatus("Audio removed."); });
   }
+  // TPI-STUDIOFLOW-030: sound pad order is part of the existing
+  // studioflow.customSounds workspace state, so reordering persists through
+  // the existing per-Studio save/restore architecture without a new store.
+  function moveSoundSlot(from, to, restoreFocus) {
+    if (from === to) return;
+    var slots = soundSlots(), moving = slots[from];
+    if (!moving) return;
+    var blobKey = moving.blobKey;
+    slots[from] = null;
+    if (to < from) { for (var i = from; i > to; i -= 1) slots[i] = slots[i - 1]; }
+    else { for (var j = from; j < to; j += 1) slots[j] = slots[j + 1]; }
+    slots[to] = moving;
+    slots.forEach(function (asset, index) { if (asset) asset.slot = index; });
+    write(SOUND_KEY, slots.filter(Boolean));
+    dispatchChange();
+    renderState();
+    setStatus("Sound pad order saved.");
+    if (restoreFocus) {
+      var cards = Array.prototype.slice.call(document.querySelectorAll("[data-tpi-audio-blob-key]"));
+      var moved = cards.find(function (node) { return node.dataset.tpiAudioBlobKey === blobKey; });
+      if (moved && moved.focus) moved.focus();
+    }
+  }
   function makeCard(category, slot, asset) {
     var card = document.createElement("article"); card.className = "tpi-audio-slot" + (asset ? " assigned" : " empty"); card.dataset.tpiAudioCategory = category; card.dataset.tpiAudioSlot = String(slot); card.setAttribute("aria-label", (category === "sound" ? "Sound effect " : "Background music ") + (slot + 1) + (asset ? ": " + asset.title : ": empty"));
     if (asset) card.tabIndex = 0;
     var topLine = document.createElement("div"); topLine.className = "tpi-audio-slot-topline";
     var icon = document.createElement("span"); icon.className = "tpi-audio-slot-icon"; icon.textContent = category === "sound" ? "♬" : "♫"; icon.setAttribute("aria-hidden", "true");
     var slotLabel = document.createElement("span"); slotLabel.className = "tpi-audio-slot-label"; slotLabel.textContent = (category === "sound" ? "Sound effect" : "Music") + " " + String(slot + 1).padStart(2, "0");
-    var menuTrigger = document.createElement("button"); menuTrigger.type = "button"; menuTrigger.className = "tpi-audio-slot-menu-trigger"; menuTrigger.textContent = "⋯"; menuTrigger.title = "Audio options"; menuTrigger.setAttribute("aria-label", "Audio options");
-    if (!asset) menuTrigger.hidden = true;
-    topLine.append(icon, slotLabel, menuTrigger);
+    // TPI-STUDIOFLOW-030: sound-effect pads no longer carry a permanent
+    // three-dot trigger. Their menu opens from right-click, Shift+F10 / the
+    // context-menu key, or a touch long-press. Music pads keep the existing
+    // visible trigger and all existing menu actions.
+    var menuTrigger = null;
+    if (category !== "sound") {
+      menuTrigger = document.createElement("button"); menuTrigger.type = "button"; menuTrigger.className = "tpi-audio-slot-menu-trigger"; menuTrigger.textContent = "⋯"; menuTrigger.title = "Audio options"; menuTrigger.setAttribute("aria-label", "Audio options");
+      if (!asset) menuTrigger.hidden = true;
+    }
+    topLine.append(icon, slotLabel);
+    if (menuTrigger) topLine.append(menuTrigger);
     var heading = document.createElement("strong"); heading.className = "tpi-audio-slot-title"; heading.textContent = asset ? asset.title : (category === "sound" ? "Sound " : "Music ") + (slot + 1);
     var detail = document.createElement("span"); detail.className = "tpi-audio-slot-detail"; detail.textContent = asset ? text(asset.fileName) : "Empty slot";
     var copy = document.createElement("span"); copy.className = "tpi-audio-slot-copy"; copy.append(heading, detail);
@@ -308,9 +340,10 @@
     function menuItem(label, action) { var item = document.createElement("button"); item.type = "button"; item.className = "tpi-audio-slot-menu-item"; item.dataset.tpiAudioMenuAction = action; item.textContent = label; return item; }
     var menu = document.createElement("div"); menu.className = "tpi-audio-slot-menu"; menu.hidden = true; menu.setAttribute("role", "menu");
     if (asset) menu.append(menuItem("Rename", "rename"), menuItem("Change color", "color"), menuItem("Replace audio", "replace"), menuItem("Remove", "remove"));
+    var menuAnchor = menuTrigger || card;
     function positionMenu() {
       if (menu.hidden || !menu.isConnected) return;
-      var triggerRect = menuTrigger.getBoundingClientRect();
+      var triggerRect = menuAnchor.getBoundingClientRect();
       var margin = 8;
       var left = triggerRect.right - menu.offsetWidth;
       var top = triggerRect.bottom + 6;
@@ -321,12 +354,12 @@
       menu.style.top = Math.round(top) + "px";
     }
     function dismissMenu(event) {
-      if (event.target === menuTrigger || menu.contains(event.target)) return;
+      if ((menuTrigger && menuTrigger.contains(event.target)) || menu.contains(event.target)) return;
       closeMenu();
     }
     function closeMenu() {
       menu.hidden = true;
-      menuTrigger.setAttribute("aria-expanded", "false");
+      if (menuTrigger) menuTrigger.setAttribute("aria-expanded", "false");
       card.classList.remove("menu-open");
       window.removeEventListener("resize", positionMenu);
       window.removeEventListener("scroll", positionMenu, true);
@@ -344,7 +377,7 @@
       menu.dataset.tpiAudioFloating = "true";
       menu.hidden = false;
       document.body.appendChild(menu);
-      menuTrigger.setAttribute("aria-expanded", "true");
+      if (menuTrigger) menuTrigger.setAttribute("aria-expanded", "true");
       card.classList.add("menu-open");
       positionMenu();
       window.addEventListener("resize", positionMenu);
@@ -367,18 +400,126 @@
     }
     card.style.setProperty("--tpi-pad-color", padColor(asset, category, slot)); card.append(topLine, copy); if (actions) card.append(actions);
     if (asset && ((category === "sound" && soundSlot === slot) || (category === "music" && musicSlot === slot))) card.classList.add("playing");
-    menuTrigger.setAttribute("aria-expanded", "false");
-    menuTrigger.addEventListener("click", function (event) { event.preventDefault(); event.stopPropagation(); if (menu.hidden) openMenu(); else closeMenu(); });
+    if (menuTrigger) {
+      menuTrigger.setAttribute("aria-expanded", "false");
+      menuTrigger.addEventListener("click", function (event) { event.preventDefault(); event.stopPropagation(); if (menu.hidden) openMenu(); else closeMenu(); });
+    }
     menu.addEventListener("click", function (event) { event.preventDefault(); event.stopPropagation(); var item = event.target.closest("button[data-tpi-audio-menu-action]"); if (item) manage(item.dataset.tpiAudioMenuAction); });
     card.addEventListener("contextmenu", function (event) { if (!asset) return; event.preventDefault(); openMenu(); });
-    card.addEventListener("keydown", function (event) { if (!asset || (event.key !== "Enter" && event.key !== " ")) return; event.preventDefault(); category === "sound" ? playSound(slot) : playMusic(slot); });
+    card.addEventListener("keydown", function (event) {
+      if (!asset) return;
+      if (category === "sound") {
+        if (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10")) { event.preventDefault(); if (menu.hidden) openMenu(); else closeMenu(); return; }
+        if (event.altKey && !event.ctrlKey && !event.metaKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+          event.preventDefault();
+          var target = event.key === "ArrowLeft" ? Math.max(0, slot - 1) : Math.min(SLOT_COUNT - 1, slot + 1);
+          if (target !== slot) moveSoundSlot(slot, target, true);
+          return;
+        }
+      }
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault(); category === "sound" ? playSound(slot) : playMusic(slot);
+    });
     card.addEventListener("click", function (event) {
+      if (Date.now() < suppressClickUntil) return;
       var target = event.target.closest("button[data-tpi-audio-action]");
       if (!target) { if (asset) category === "sound" ? playSound(slot) : playMusic(slot); else fileInput(category, slot); return; }
       var action = target.dataset.tpiAudioAction;
       if (action === "play") { if (asset) category === "sound" ? playSound(slot) : playMusic(slot); else fileInput(category, slot); }
       if (action === "upload") fileInput(category, slot);
     });
+    if (asset) card.dataset.tpiAudioBlobKey = asset.blobKey;
+    // TPI-STUDIOFLOW-030: pointer-based drag reordering for sound pads.
+    // Mouse and trackpad use press-drag-release; touch uses the same pointer
+    // path, with a long-press reserved for opening the options menu.
+    if (asset && category === "sound") {
+      card.dataset.tpiAudioDraggable = "true";
+      card.setAttribute("aria-keyshortcuts", "Alt+ArrowLeft Alt+ArrowRight Shift+F10");
+      card.title = "Drag to reorder. Right-click or Shift+F10 for options. Alt+arrow keys move the pad.";
+      var drag = null, longPressTimer = null;
+      function clearLongPress() { if (longPressTimer) { window.clearTimeout(longPressTimer); longPressTimer = null; } }
+      function beginDrag(event) {
+        drag.active = true;
+        clearLongPress();
+        var rect = card.getBoundingClientRect();
+        drag.grid = card.parentElement;
+        drag.grabX = event.clientX - rect.left;
+        drag.grabY = event.clientY - rect.top;
+        drag.placeholder = document.createElement("div");
+        drag.placeholder.className = "tpi-audio-drop-placeholder";
+        drag.placeholder.style.height = Math.round(rect.height) + "px";
+        drag.grid.insertBefore(drag.placeholder, card);
+        card.classList.add("tpi-audio-dragging");
+        card.style.width = Math.round(rect.width) + "px";
+        card.style.height = Math.round(rect.height) + "px";
+        card.style.left = Math.round(rect.left) + "px";
+        card.style.top = Math.round(rect.top) + "px";
+        document.body.style.userSelect = "none";
+        window.addEventListener("pointermove", updateDrag);
+        window.addEventListener("pointerup", endDrag);
+        window.addEventListener("pointercancel", cancelDrag);
+      }
+      function updateDrag(event) {
+        if (!drag || !drag.active || event.pointerId !== drag.id) return;
+        card.style.left = Math.round(event.clientX - drag.grabX) + "px";
+        card.style.top = Math.round(event.clientY - drag.grabY) + "px";
+        var under = document.elementFromPoint(event.clientX, event.clientY);
+        var tile = under && under.closest ? under.closest(".tpi-audio-slot, .tpi-audio-drop-placeholder") : null;
+        if (!tile || tile === card || tile === drag.placeholder || !drag.grid.contains(tile)) return;
+        var tileRect = tile.getBoundingClientRect();
+        var insertBefore = event.clientX < tileRect.left + tileRect.width / 2;
+        drag.grid.insertBefore(drag.placeholder, insertBefore ? tile : tile.nextSibling);
+      }
+      function finishDrag(cancelled) {
+        window.removeEventListener("pointermove", updateDrag);
+        window.removeEventListener("pointerup", endDrag);
+        window.removeEventListener("pointercancel", cancelDrag);
+        document.body.style.removeProperty("user-select");
+        if (!drag) return;
+        var state = drag; drag = null;
+        clearLongPress();
+        if (!state.active) return;
+        var others = Array.prototype.slice.call(state.grid.children).filter(function (node) { return node !== card; });
+        var to = others.indexOf(state.placeholder);
+        card.classList.remove("tpi-audio-dragging");
+        ["width", "height", "left", "top"].forEach(function (name) { card.style.removeProperty(name); });
+        if (state.placeholder && state.placeholder.parentNode) state.placeholder.parentNode.removeChild(state.placeholder);
+        suppressClickUntil = Date.now() + 400;
+        if (!cancelled && to >= 0 && to !== state.from) moveSoundSlot(state.from, to);
+        else renderState();
+      }
+      function endDrag(event) { if (drag && event.pointerId === drag.id) finishDrag(false); }
+      function cancelDrag(event) { if (drag && event.pointerId === drag.id) finishDrag(true); }
+      card.addEventListener("pointerdown", function (event) {
+        if (typeof event.button === "number" && event.button !== 0) return;
+        if (event.target.closest && event.target.closest("button")) return;
+        if (drag) return;
+        drag = { id: event.pointerId, startX: event.clientX, startY: event.clientY, from: slot, active: false, pointerType: event.pointerType || "" };
+        if (drag.pointerType === "touch") {
+          longPressTimer = window.setTimeout(function () {
+            longPressTimer = null;
+            if (drag && !drag.active) { drag.cancelled = true; openMenu(); }
+          }, 500);
+        }
+      });
+      card.addEventListener("pointermove", function (event) {
+        if (!drag || event.pointerId !== drag.id || drag.cancelled || drag.active) return;
+        if (Math.abs(event.clientX - drag.startX) < 6 && Math.abs(event.clientY - drag.startY) < 6) return;
+        if (drag.pointerType === "touch" && longPressTimer === null) return;
+        beginDrag(event);
+        updateDrag(event);
+      });
+      card.addEventListener("pointerup", function (event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        if (!drag.active) { clearLongPress(); drag = null; return; }
+        finishDrag(false);
+      });
+      card.addEventListener("pointercancel", function (event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        if (!drag.active) { clearLongPress(); drag = null; return; }
+        finishDrag(true);
+      });
+    }
     return card;
   }
   function board(category, label, slots) {
@@ -387,7 +528,7 @@
     var heading = document.createElement("h4"); heading.textContent = label;
     var upload = document.createElement("button"); upload.type = "button"; upload.className = "outline-button tpi-audio-upload"; upload.textContent = "Upload " + (category === "sound" ? "Sound" : "Music"); upload.disabled = firstOpen(slots) < 0; upload.addEventListener("click", function () { fileInput(category, null); });
     header.append(heading, upload); section.appendChild(header);
-    var grid = document.createElement("div"); grid.className = "tpi-audio-grid"; slots.forEach(function (asset, slot) { grid.appendChild(makeCard(category, slot, asset)); }); section.appendChild(grid);
+    var grid = document.createElement("div"); grid.className = "tpi-audio-grid"; grid.dataset.tpiAudioGrid = category; slots.forEach(function (asset, slot) { grid.appendChild(makeCard(category, slot, asset)); }); section.appendChild(grid);
     return section;
   }
   function sceneMusicFor(sceneId) {
@@ -600,7 +741,10 @@
     var soundSection = document.createElement("section"); soundSection.className = "tpi-audio-original-section"; soundSection.dataset.tpiAudioOriginal = "sounds"; var soundHeading = document.createElement("h3"); soundHeading.textContent = "Sounds"; soundSection.appendChild(soundHeading);
     var musicSection = document.createElement("section"); musicSection.className = "tpi-audio-original-section"; musicSection.dataset.tpiAudioOriginal = "background-music"; var musicHeading = document.createElement("h3"); musicHeading.textContent = "Background music"; musicSection.appendChild(musicHeading);
     root.append(soundSection, musicSection);
-    var controls = document.createElement("div"); controls.className = "tpi-audio-controls"; controls.append(volumeControl("Sound effects volume", SOUND_VOLUME_KEY, "sound"), stopButton("Stop sound", "sound")); soundSection.appendChild(controls);
+    // TPI-STUDIOFLOW-030: the Stop sound button is removed from the visible
+    // interface. The sound engine still stops playback when a new sound is
+    // started, a pad is removed, or the active engine reports its end.
+    var controls = document.createElement("div"); controls.className = "tpi-audio-controls"; controls.append(volumeControl("Sound effects volume", SOUND_VOLUME_KEY, "sound")); soundSection.appendChild(controls);
     var musicControls = document.createElement("div"); musicControls.className = "tpi-audio-controls"; musicControls.append(volumeControl("Background music volume", MUSIC_VOLUME_KEY, "music"), loopControl(), stopButton("Stop music", "music")); musicSection.appendChild(musicControls);
     soundSection.append(board("sound", "Sound effects", soundSlots())); musicSection.append(board("music", "Background music", musicSlots()));
     var status = document.createElement("p"); status.dataset.tpiAudioStatus = "true"; root.insertBefore(status, root.firstChild);
@@ -613,8 +757,13 @@
     var root = hostSection.querySelector("[data-tpi-audio-soundboards]");
     if (!root) { root = document.createElement("div"); root.dataset.tpiAudioSoundboards = "true"; root.className = "tpi-audio-soundboards"; }
     var firstLegacyAudio = Array.prototype.slice.call(hostSection.querySelectorAll("section.asset-section")).find(function (section) { var heading = headingText(section); return heading === "sounds" || heading === "background music"; });
-    if (firstLegacyAudio) hostSection.insertBefore(root, firstLegacyAudio);
-    else if (!root.parentElement) hostSection.appendChild(root);
+    // Only reposition the root when it is out of place. Unconditionally
+    // calling insertBefore on an attached root fires remove/add mutations,
+    // which retrigger this observer and detach the boards ~100 times a
+    // second, breaking hit-testing for context menus and drag gestures.
+    if (firstLegacyAudio) {
+      if (root.parentElement !== hostSection || root.nextSibling !== firstLegacyAudio) hostSection.insertBefore(root, firstLegacyAudio);
+    } else if (!root.parentElement) hostSection.appendChild(root);
     renderState();
     syncSceneMusic();
   }
