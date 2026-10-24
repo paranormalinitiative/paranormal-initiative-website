@@ -39,6 +39,16 @@ treated as proof of current live behavior.
 
 Last updated: 2026-10-23
 
+> Superseded baseline note (2026-10-23, TPI-STUDIOFLOW-029): after this
+> handoff was written, TPI-STUDIOFLOW-027 (authenticated media resolution),
+> TPI-STUDIOFLOW-028 (independent scene playback and restoration), and
+> TPI-STUDIOFLOW-028 Addendum A (preservation of Sol's After Intro Background
+> Music) were deployed and live-verified. The current production baseline is
+> Worker `21ea05f7-588d-4b5a-b039-c6063f7fd248` from commit `cb97464`; the
+> current approved playback contract is `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`
+> and the maintained baseline is `TPI-CURRENT-DEVELOPMENT-STATUS.md`. The
+> table below is preserved as the state of this handoff's own work.
+
 ## Current executive status
 
 | Area | Current status |

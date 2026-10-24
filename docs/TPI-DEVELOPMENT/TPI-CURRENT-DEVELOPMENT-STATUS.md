@@ -12,7 +12,36 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## Latest verified production release — 2026-10-23 (countdown timer deduplication)
+## Latest verified production release — 2026-10-23 (TPI-STUDIOFLOW-028 Addendum A)
+
+StudioFlow's My Scenes controls again operate as independent production
+shortcuts: Intro Video and Outro Video play their assigned Video Clips from
+00:00 with Play/Stop toggles and scene restoration, and Sol's original After
+Intro Background Music automatic transition is preserved. The current
+approved playback contract and the verified regression history are recorded
+in `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
+
+- Directive: TPI-STUDIOFLOW-028 Addendum A, following TPI-STUDIOFLOW-027
+  (authenticated media resolution, application commit `eee0cff`) and
+  TPI-STUDIOFLOW-028 (scene playback and restoration, application commit
+  `592028a`) the same day
+- Application commit: `cb97464`
+- Documentation commit: `89baade`
+- Worker: `theparanormalinitiative`
+- Active production Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
+- Immediate rollback reference: `210f4610-ff8a-4192-a944-4668892dd669`
+  (the TPI-STUDIOFLOW-028 release; its own rollback reference is
+  `d6ee132b-59f6-4694-a64b-09d6de37d3e5`, the TPI-STUDIOFLOW-027 release)
+- Reported validation, verified against the guarded release records:
+  028 browser interactions 33/33; 021 static contracts 58/58; 021 browser
+  interactions 29/29; 020 contracts 14/14; release safety 17/17; live smoke
+  10/10; live isolated Firefox Developer Edition acceptance 60/60
+- No D1 migration, R2 mutation, Crossroads mutation, or owner-browser access
+- Current release record:
+  `300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`
+  (including its Addendum A section)
+
+## Prior production release — 2026-10-23 (countdown timer deduplication)
 
 StudioFlow's Video Timers controls now render one duration row containing
 exactly `10s`, `20s`, `30s`, and `60s`. The maintained media bridge previously
@@ -21,6 +50,8 @@ prior render, causing the four choices to repeat. The bridge now scopes timer
 controls to the canonical container and removes stale duration rows before
 attaching the current row.
 
+- Superseded as the current baseline by the TPI-STUDIOFLOW-028 Addendum A
+  release above; retained as deployment history.
 - Release commit: `b922102ae59e6e01738f86ca1c8991c2598966f5`
 - Functional fix commit: `aabbb48`
 - Worker: `theparanormalinitiative`
@@ -98,6 +129,11 @@ repair above.
   request-budget guard, room/RTMP syntax, and guarded Wrangler dry-run: PASS
 - Program cue behavior: Intro, Outro, and assigned scene music remain idle
   until Live or Record is engaged; explicit pad playback remains available.
+  (Historical record of this release only: the program-state playback gating
+  and scene-music gating were later identified as regressions of the
+  TPI-STUDIOFLOW-020 click-to-play contract and Sol's approved After Intro
+  music transition, and were repaired by TPI-STUDIOFLOW-028 and its Addendum
+  A. See `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.)
 - Current StudioFlow release record:
   300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-PANEL-AND-PROGRAM-CUE-REPAIR.md
 - Protected resources: Crossroads of the Unknown untouched; no D1 migration,
@@ -161,17 +197,19 @@ tree.
 
 - Canonical repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified release-workflow source: `b922102ae59e6e01738f86ca1c8991c2598966f5`
-- Current verified production release source: `b922102ae59e6e01738f86ca1c8991c2598966f5`
+- Last fully verified release-workflow source: `cb9746411398df16282c305101cb0b41425bcd39`
+- Current verified production release source: `cb9746411398df16282c305101cb0b41425bcd39`
 - Development Worker: `theparanormalinitiative-dev`
 - Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
 - Development version: cf58029d-62be-409f-98ff-58591b020641
-- Production version: `dcb6ad62-d496-44fc-bfa2-20be076f0617`
+- Production version: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
 - Production: the verified release includes the existing TPI-DEV-037 and later
-  StudioFlow functionality plus the completed StudioFlow 020–023 release scope.
-  Live Firefox acceptance verified the StudioFlow shell, video cards, timers,
-  soundboards, My Studios layout, browser-local save, portable media-inclusive
-  backup, restore-as-new, switching, and persistence with disposable data.
+  StudioFlow functionality, the completed StudioFlow 020–023 release scope,
+  and the 2026-10-23 scene-media release scope (TPI-STUDIOFLOW-027, 028, and
+  028 Addendum A; see `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`). Live Firefox
+  acceptance verified the StudioFlow shell, video cards, timers, soundboards,
+  My Studios layout, browser-local save, portable media-inclusive backup,
+  restore-as-new, switching, and persistence with disposable data.
 
 The development and production deployment records report the verified branch
 and application source commit above.

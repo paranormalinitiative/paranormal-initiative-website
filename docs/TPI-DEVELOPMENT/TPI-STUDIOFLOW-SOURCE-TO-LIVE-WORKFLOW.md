@@ -104,6 +104,10 @@ The website repository HEAD may be newer than the deployed application commit
 when later commits contain only Markdown or local tooling. Those changes are
 intentionally pushed without creating a no-op Worker release.
 
+The current approved StudioFlow playback and scene-media behavior is recorded
+in `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`. Keep that contract current when
+approved behavior deliberately changes.
+
 ## Historical-document rule
 
 Files under `100-DIRECTIVES`, `200-AUDITS`, `300-COMPLETED-WORK`, and

@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `b922102ae59e6e01738f86ca1c8991c2598966f5`
-- Active production Worker version: `dcb6ad62-d496-44fc-bfa2-20be076f0617`
-- Recorded rollback target: `0862ff17-3003-4e27-8ab3-dc7218dbbff3`
+- Last fully verified workflow baseline: `cb9746411398df16282c305101cb0b41425bcd39`
+- Active production Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
+- Recorded rollback target: `210f4610-ff8a-4192-a944-4668892dd669`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -38,24 +38,29 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Deployment commit `b922102ae59e6e01738f86ca1c8991c2598966f5`, including
-the maintained countdown-row bridge repair, was deployed to Worker
-`theparanormalinitiative` as version
-`dcb6ad62-d496-44fc-bfa2-20be076f0617` at 100% traffic on 2026-10-23. The
-release passed anonymous smoke 10/10, isolated Firefox Developer Edition
-acceptance 60/60, the exact one-row/four-duration timer checks, all 11 exclusive right-rail panel checks, local
-authentication lifecycle 38/38, complete preflight, asset/build integrity,
-and the guarded Wrangler dry-run. Crossroads, D1, R2, and owner browser storage
-were not modified.
+Deployment commit `cb9746411398df16282c305101cb0b41425bcd39`
+(TPI-STUDIOFLOW-028 Addendum A — preservation of Sol's After Intro Background
+Music automatic transition) was deployed to Worker `theparanormalinitiative`
+as version `21ea05f7-588d-4b5a-b039-c6063f7fd248` at 100% traffic on
+2026-10-23. The release passed anonymous smoke 10/10, isolated Firefox
+Developer Edition acceptance 60/60, the 028 Firefox interaction suite 33/33,
+021 static contracts 58/58, 021 browser 29/29, 020 contracts 14/14, release
+safety 17/17, complete preflight, and the guarded Wrangler dry-run.
+Crossroads, D1, R2, and owner browser storage were not modified. The current
+approved StudioFlow playback contract and regression history are in
+`TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
 
 ## Latest StudioFlow repair
 
 The deployed repair is documented in
-`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`.
-The bridge previously accumulated React-created `.countdown-duration-row`
-elements after rerenders. It now removes stale rows and retains only the
-current canonical row. Firefox verifies exactly `10s`, `20s`, `30s`, and `60s`
-both initially and after uploads, Studio switching, and refresh.
+`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`
+(including its Addendum A section). My Scenes again operate as independent
+production shortcuts: Intro/Outro play their assigned Video Clips at 00:00
+with Play/Stop toggles and scene restoration, the After Intro music shortcut
+plays its assigned Background Music track independently, and Sol's approved
+automatic post-Intro music transition is preserved. The earlier countdown-row
+repair (`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`)
+remains in the deployed baseline and its record is retained as history.
 Use the disposable Firefox acceptance profile for future checks; do not use
 the owner profile for destructive testing.
 

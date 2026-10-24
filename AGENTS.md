@@ -49,3 +49,19 @@ Saving or testing StudioFlow in `/Users/toddknipple/Documents/StudioFlow/web`
 does not update the website repository, GitHub, the development Worker, or the
 live site. A GitHub push also does not deploy. Production changes only after the
 guarded production command completes and live Firefox acceptance passes.
+
+The current approved StudioFlow playback and scene-media behavior is recorded
+in `docs/TPI-DEVELOPMENT/TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`. Agents changing
+existing functionality must:
+
+1. Review the historical directives and completion records for the feature
+   being changed before modifying it.
+2. Compare Git history in both repositories when repairing a suspected
+   regression, and identify the last known working implementation by commit.
+3. Preserve previously approved behavior; recover lost functionality rather
+   than redesign it.
+4. Exercise user-facing controls with browser interaction testing, not only
+   static source contracts.
+5. Add regression tests covering restored functionality before release.
+6. Report every intentional behavior change explicitly in the completion
+   record and to the owner.

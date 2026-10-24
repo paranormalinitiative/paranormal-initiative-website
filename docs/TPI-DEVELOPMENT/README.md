@@ -50,17 +50,21 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release:
+Latest verified production release (TPI-STUDIOFLOW-028 Addendum A):
 
 - Worker: `theparanormalinitiative`
-- Source commit: `b922102ae59e6e01738f86ca1c8991c2598966f5`
-- StudioFlow source commit: `17bbd4a9d0a604b731d68fae915ceffacdc14025`
-- Worker version: `dcb6ad62-d496-44fc-bfa2-20be076f0617` at 100% traffic
+- Source commit: `cb9746411398df16282c305101cb0b41425bcd39`
+- StudioFlow source commit: `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
+  (bridge-only release; source unchanged)
+- Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248` at 100% traffic
 - Deployed: 2026-10-23
-- Rollback target: `0862ff17-3003-4e27-8ab3-dc7218dbbff3`
+- Rollback target: `210f4610-ff8a-4192-a944-4668892dd669`
 - Acceptance: anonymous smoke 10/10, isolated Firefox Developer Edition 60/60,
-  exact one-row/four-duration countdown checks, all 11 right-rail tabs, local
-  authentication lifecycle 38/38, complete preflight, and guarded dry-run passed
+  028 browser interactions 33/33 (including the Addendum-A After Intro music
+  preservation checks), 021 static contracts 58/58, 021 browser 29/29, 020
+  contracts 14/14, release safety 17/17, complete preflight, and guarded
+  dry-run passed
+- Approved behavior: `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`
 - Data protection: no D1 migration, R2 mutation, Crossroads mutation, or owner-browser
   storage access was performed
 

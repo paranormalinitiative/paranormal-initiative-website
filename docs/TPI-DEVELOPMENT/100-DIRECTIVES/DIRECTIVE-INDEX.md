@@ -18,16 +18,18 @@ for current commit, push, deployment, and live-verification procedure.
 
 ## Current production reconciliation
 
-The latest consolidated StudioFlow release was deployed and verified from
+The latest StudioFlow release was deployed and verified from
 `codex/tpi-development` commit
-`b922102ae59e6e01738f86ca1c8991c2598966f5`. Worker
-`theparanormalinitiative` is running version
-`dcb6ad62-d496-44fc-bfa2-20be076f0617` at 100% traffic. Anonymous live smoke
-passed 10/10, isolated Firefox Developer Edition acceptance passed 60/60, the
-countdown duration row remained singular with exactly four choices, all 11
-exclusive right-rail panels passed, and the local authentication lifecycle
-passed 38/38. The documented rollback target is
-`0862ff17-3003-4e27-8ab3-dc7218dbbff3`.
+`cb9746411398df16282c305101cb0b41425bcd39`
+(TPI-STUDIOFLOW-028 Addendum A). Worker `theparanormalinitiative` is running
+version `21ea05f7-588d-4b5a-b039-c6063f7fd248` at 100% traffic. Anonymous live
+smoke passed 10/10 and isolated Firefox Developer Edition acceptance passed
+60/60; the focused suites passed 33/33 (028 browser interactions), 58/58
+(021 static contracts), 29/29 (021 browser), 14/14 (020), and 17/17 (release
+safety). The documented rollback target is
+`210f4610-ff8a-4192-a944-4668892dd669`. The current approved StudioFlow
+playback contract and verified regression history are recorded in
+[`../TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`](../TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md).
 
 This release record supersedes stale “not deployed” or “acceptance pending”
 language in older directive rows only for the behavior covered by the verified
@@ -163,6 +165,10 @@ their original execution and limitations.
 | TPI-STUDIOFLOW-085 | Production editor performance and freeze repair | VERIFIED COMPLETE / PRODUCTION VERIFIED | Firefox Profiler identified the persistent root-subtree `MutationObserver` as the freeze cause: 5,459 samples / 99% before repair. Worker `f3422853-8a81-4aa1-8412-27a14af234bd` is deployed. In Firefox Developer Edition, valid synthetic `tpi085-valid-background.mp4` rendered in Acceptance Test A, survived reload/reopen, and remained listed after its scene assignment was removed. The live delete confirmation was verified and canceled; Crossroads and owner data were untouched. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/TPI-STUDIOFLOW-085-RESULT.md`. |
 
 | TPI-MASTER-002 | Historical directive archive integration and My Studios recovery | PARTIAL / OWNER-DATA IDENTITY BLOCKER | The unified archive is copied, hashed, integrity-checked, extracted, and indexed under `docs/TPI-MASTER-DEVELOPMENT/HISTORICAL-SOURCES/`. The My Studios historical specification and compliance matrix are in `docs/TPI-MASTER-DEVELOPMENT/FEATURE-HISTORY/MY-STUDIOS-HISTORICAL-SPECIFICATION.md`. Read-only Firefox evidence shows Crossroads in the editor title but only Acceptance A/B in the server-backed selector; no owner data was changed. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/TPI-MASTER-002-RESULT.md`. |
+| TPI-STUDIOFLOW-027 (2026-10-23 media series) | My Scenes media connection repair (authenticated media resolution) | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Preserved `serverAssetId` during API normalization, reconstructed Studio-scoped authenticated media URLs on workspace read, and resolved local or server-backed media for Intro Video, Outro Video, and Background Music. Application commit `eee0cff`; Worker `d6ee132b-59f6-4694-a64b-09d6de37d3e5`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-027-SCENE-MEDIA-CONNECTION-REPAIR.md`. |
+| TPI-STUDIOFLOW-028 (2026-10-23 media series) | My Scenes independent media shortcut and playback repair | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Restored click-to-play Intro/Outro playback at 00:00, Play/Stop toggles with previous-scene restoration, stable `data-tpi-scene-id` scene identity, music-shortcut exclusion from scene handling, and independent After Intro shortcut identity. Application commit `592028a`; Worker `210f4610-ff8a-4192-a944-4668892dd669`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`. |
+| TPI-STUDIOFLOW-028 Addendum A (2026-10-23 media series) | Preserve Sol's After Intro Background Music functionality | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Verified Sol's approved automatic post-Intro music transition (commit `d262867`) and restored it verbatim by removing the `0241dc7` program-state gate from the music path, keeping all independence fixes. Application commit `cb97464`; Worker `21ea05f7-588d-4b5a-b039-c6063f7fd248`. See the Addendum A section of `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`. |
+| TPI-STUDIOFLOW-029 (2026-10-23 media series) | Documentation synchronization for 027, 028, and Addendum A | COMPLETE / DOCUMENTATION ONLY / NOT DEPLOYED | Recorded the approved playback contract and verified regression history in `docs/TPI-DEVELOPMENT/TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`, updated the current production baseline in this index and `TPI-CURRENT-DEVELOPMENT-STATUS.md`, and added regression-prevention requirements to `AGENTS.md`. No application source or production change. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-029-DOCUMENTATION-SYNCHRONIZATION.md`. |
 
 When a directive has no matching local file, retain this index entry and document the missing source rather than fabricating a completion status.
 

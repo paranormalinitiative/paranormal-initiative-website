@@ -4,6 +4,15 @@ Date: 2026-10-23
 Status: DEPLOYED AND VERIFIED  
 Worker: theparanormalinitiative
 
+> Later correction (2026-10-23, TPI-STUDIOFLOW-028 and Addendum A): the
+> program-cue playback gating and the scene-music program-state gating
+> described below were later verified as regressions of the TPI-STUDIOFLOW-020
+> click-to-play contract and Sol's approved After Intro Background Music
+> transition (commit `d262867`), and were repaired in production. The panel
+> navigation repairs below remain in effect. This record is preserved as
+> executed; the current approved behavior is
+> `docs/TPI-DEVELOPMENT/TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
+
 ## Repairs completed
 
 - Repaired right-rail tab hit testing and accessibility so the StudioFlow

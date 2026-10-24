@@ -2,6 +2,12 @@
 
 Date: 2026-10-22
 
+> Preservation note (2026-10-23, TPI-STUDIOFLOW-028 Addendum A): this is Sol's
+> approved After Intro Background Music implementation (commit `d262867`). Its
+> automatic post-Intro handoff is approved behavior and remains in the current
+> production baseline after Addendum A restored it verbatim. See
+> `docs/TPI-DEVELOPMENT/TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
+
 ## Problem
 
 The existing audio board could play a selected Background Music pad, but the
