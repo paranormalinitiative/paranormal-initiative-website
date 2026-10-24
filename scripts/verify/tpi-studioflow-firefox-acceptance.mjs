@@ -314,6 +314,8 @@ try {
   const audioMenuTriggerCount = await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned .tpi-audio-slot-menu-trigger');
   check("sound pads omit the permanent three-dot menu trigger", audioMenuTriggerCount === 0, `count=${audioMenuTriggerCount}`);
   const soundPadForMenu = (await driver.findElements(By.css('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned')))[0];
+  await driver.executeScript("arguments[0].scrollIntoView({block:'center', inline:'center'});", soundPadForMenu);
+  await driver.sleep(150);
   await driver.actions().contextClick(soundPadForMenu).perform();
   check("right-click opens the sound pad options menu", (await count('.tpi-audio-slot-menu[data-tpi-audio-floating]:not([hidden])')) === 1);
   const audioMenuImmediate = await js("var menus=Array.from(document.querySelectorAll('.tpi-audio-slot-menu')); return menus.map(function(menu){return {floating:menu.getAttribute('data-tpi-audio-floating'),hidden:menu.hidden,parent:menu.parentElement&&menu.parentElement.tagName,connected:menu.isConnected};});");
