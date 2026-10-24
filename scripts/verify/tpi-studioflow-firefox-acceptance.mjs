@@ -260,18 +260,20 @@ try {
   await js("var id=arguments[0], title=arguments[1]; var broadcast={id:id,title:title,description:'Disposable Firefox acceptance studio',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Disposable scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1'));", studioId, studioTitle);
   await enterStudio();
   check("StudioFlow loads in isolated Firefox", await count("[data-tpi-video-organization]") === 1);
+  // TPI-STUDIOFLOW-035: Live interaction, Comments, and Widgets were removed
+  // from the right rail; Teleprompter sits beneath Notes and Recording &
+  // Storage is the authoritative management section.
   const panelTargets = [
-    ["Live interaction", "Destinations"],
-    ["Comments", "Comments"],
     ["Banners", "Banner text"],
     ["Media assets", "Video clips"],
     ["Voice FX", "Voice FX"],
     ["Style", "Brand Presets"],
-    ["Widgets", "Widgets"],
     ["Notes", "Notes"],
+    ["Teleprompter", "Open teleprompter"],
     ["People", "People"],
     ["Private chat", "Private chat"],
-    ["Recording", "Recording"]
+    ["Recording", "Recording"],
+    ["Recording & Storage", "Save Destination"]
   ];
   for (const [label, expected] of panelTargets) {
     const opened = await click(`[data-studio-panel-tab="${label}"]`);
@@ -282,6 +284,10 @@ try {
     check(`${label} panel is exclusive`, label === "Media assets" || !mediaOnlyTitles.some((title) => sectionTitles.includes(title)), JSON.stringify(sectionTitles));
     check(`${label} panel hides media bridge content`, label === "Media assets" || !(await visibleMediaBridgeContent()));
   }
+  const removedTabsGone = await count('[data-studio-panel-tab="Live interaction"]') === 0 && await count('[data-studio-panel-tab="Comments"]') === 0 && await count('[data-studio-panel-tab="Widgets"]') === 0;
+  check("Live interaction, Comments, and Widgets are removed from the right rail", removedTabsGone);
+  const railOrder = await js("return Array.from(document.querySelectorAll('.right-rail-tab span')).map(function (node) { return node.textContent.trim(); });");
+  check("Teleprompter sits directly beneath Notes", railOrder.indexOf("Teleprompter") === railOrder.indexOf("Notes") + 1 && railOrder.includes("Recording & Storage"), JSON.stringify(railOrder));
   await click('[data-studio-panel-tab="Media assets"]');
   check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));
   const timerDurationState = await js("var rows=Array.from(document.querySelectorAll('[data-tpi-native-video-timer-controls] .countdown-duration-row')); return {rows:rows.length,labels:rows.length===1?Array.from(rows[0].querySelectorAll('button')).map(function(button){return (button.textContent||'').trim();}):[]};");
