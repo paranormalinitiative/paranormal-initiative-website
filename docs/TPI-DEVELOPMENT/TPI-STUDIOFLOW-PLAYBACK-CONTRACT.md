@@ -321,25 +321,28 @@ the standing authority in
 Latest reported successful production deployment (verified against the
 guarded release records before publishing this baseline):
 
-- Directive: TPI-STUDIOFLOW-032 (Background Music and Sound Effects icon
-  replacement)
-- Application commit: `6a1f8ad` (feature `02056c1`)
-- Worker version: `7029c6c5-3994-42a1-9570-d6119a5792f3`
-- Previous Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
-  (TPI-STUDIOFLOW-031)
-- Reported validation: 021 browser interactions 31/31 (two consecutive
-  runs); 028 browser 33/33 (two consecutive runs); 030 sound effects
-  browser 25/25 (two consecutive runs); 031 music pad browser 34/34 (two
-  consecutive runs); 021 static contracts 86/86; 020 contracts 14/14; 020
-  video clips 13/13; 027 contracts 12/12; 031 overlays 12/12; release
-  safety 17/17; local auth lifecycle PASS (isolated Firefox acceptance
-  64/64); guarded live acceptance against production 64/64; live asset
-  verification (both pad artwork files serve byte-identical).
+- Directive: TPI-STUDIOFLOW-035 (right navigation cleanup and Recording &
+  Storage consolidation)
+- Application commit: `d0b1f70da86e6c5490bb89a644f07c5f50a53a1e`
+- StudioFlow source commit: `60af530db1d53536975ac910b9501526c54c7600`
+- Worker version: `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
+- Previous Worker version: `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
+  (TPI-STUDIOFLOW-033)
+- Reported validation: TPI-035 suite 33/33; TPI-033 round-trip 26/26;
+  TPI-034 mutation regression twice; 021 browser interactions 31/31; 028
+  browser 33/33; 030 sound effects browser 25/25; 031 music pad browser
+  34/34; 021 static contracts 86/86; 020 contracts 14/14; 020 video clips
+  13/13; 027 contracts 12/12; 031 overlays 12/12; release safety 17/17;
+  local auth lifecycle PASS; local Firefox acceptance 63/63; guarded live
+  acceptance against production 63/63; live artifact verification (shell,
+  bundle, and CSS serve 200 with the new panels).
 
 The Intro/Outro and After Intro playback sections above remain exactly as
-verified after TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030,
-TPI-STUDIOFLOW-031, and TPI-STUDIOFLOW-032 changed only the pad interfaces,
-persistence, and artwork documented in their own sections.
+verified after TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030 through
+TPI-STUDIOFLOW-035 changed only pad interfaces, persistence, artwork, DOM
+stability, workspace configuration mapping, and the right-rail/recording
+management surfaces documented in their own records. Playback behavior is
+unchanged by TPI-STUDIOFLOW-035.
 
 See `TPI-CURRENT-DEVELOPMENT-STATUS.md` and
 `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md` for the maintained baseline and release

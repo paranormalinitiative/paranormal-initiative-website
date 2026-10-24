@@ -39,7 +39,14 @@ Workspace `settings` also preserves `recordingDestination`, `keepLocalBackup`,
 `saveAutomatically`, `recordBackstageAutomatically`, and
 `resumeBackstageAfterShow`. The separate `recording` object preserves browser
 library/session counts and storage mode. These fields are validated by the
-workspace-state normalizer and are not arbitrary client keys.
+workspace-state normalizer and are not arbitrary client keys. As of
+TPI-STUDIOFLOW-035 the workspace bridge maps them to their real owners:
+`recordingDestination`, `keepLocalBackup`, and `saveAutomatically` live in
+`studioflow.recordingStorage.v1` (creator device settings with a per-Studio
+workspace copy), while `recordBackstageAutomatically` and
+`resumeBackstageAfterShow` live in `studioflow.recordingPreferences.v2`.
+Device-specific values (`libraryLocation`, `folderName`) do not travel with a
+workspace.
 
 ## TPI-STUDIOFLOW-033 repairs
 
@@ -60,6 +67,33 @@ from being written back over the restored one.
 Supported orientation values remain `landscape`, `portrait`, and `square`.
 Invalid or omitted values use the established `landscape` default. No schema,
 D1, R2, stable media identifier, or media storage migration was introduced.
+
+## TPI-STUDIOFLOW-035 repairs
+
+The 2026-10-24 recording/settings consolidation traced four partially
+connected defects and repaired them without schema changes:
+
+1. Workspace save read `recordingDestination` from nonexistent fields
+   (`storage.mode`/`destination`/`storageMode`), so every workspace saved
+   `"browser"`. It now reads `storage.recordingDestination` first, keeping the
+   legacy names as fallbacks (also for `recording.storageMode`).
+2. Workspace save read `keepLocalBackup`/`saveAutomatically` from the
+   preferences key where the application never wrote them, so
+   `saveAutomatically` always saved as `false`. They are now read from
+   `studioflow.recordingStorage.v1` with the legacy source as fallback.
+3. Workspace hydration merged those two fields into the preferences key; it
+   now patches each field into its owning key and only when the workspace
+   actually carries the field, so absent fields never clobber local values.
+4. React re-reads `recordingPreferences` and `recordingStorage` during
+   workspace activation (the TPI-033 orientation-re-read pattern), so a
+   Studio switch never shows or saves the previous Studio's values.
+
+Workspaces saved before the repair carry the previously derived values and
+restore them faithfully; they re-save with correct values on their next save.
+The maintained coverage is
+`npm run verify:studioflow-035-recording-storage` (33/33, including
+per-studio isolation of `recordBackstageAutomatically` across real Studio
+switching) alongside the existing `verify:studioflow-033-roundtrip` (26/26).
 
 ## Verification
 

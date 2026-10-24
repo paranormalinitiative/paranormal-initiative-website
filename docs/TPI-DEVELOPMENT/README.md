@@ -50,6 +50,22 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
+Latest verified production release (TPI-STUDIOFLOW-035 right navigation
+cleanup and Recording & Storage consolidation):
+
+- Application commit: `d0b1f70da86e6c5490bb89a644f07c5f50a53a1e`
+- StudioFlow source commit: `60af530db1d53536975ac910b9501526c54c7600`
+- Worker version: `aa9bff15-6252-4ae5-9422-17d63b99ab5a` at 100% traffic
+- Rollback: `5c8e78b5-f920-4335-940f-a5e4d6df0e49` (TPI-033)
+- Acceptance: TPI-035 suite 33/33; 033 round-trip 26/26; 034 mutation
+  regression twice; 021 browser 31/31; 028 browser 33/33; 030 browser
+  25/25; 031 music pads 34/34; 021 static 86/86; 020 playback 14/14; 020
+  clips 13/13; 027 contracts 12/12; 031 overlays 12/12; release safety
+  17/17; local auth lifecycle PASS; local Firefox acceptance 63/63;
+  production smoke PASS; guarded live Firefox acceptance 63/63; live
+  artifact verification (shell, bundle, CSS all 200 with the new panels)
+- Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-035-RECORDING-STORAGE-CONSOLIDATION.md`
+
 Prior verified production release (TPI-STUDIOFLOW-034 DOM mutation repair):
 
 - Application commit: `8d7185b`
@@ -61,7 +77,7 @@ Prior verified production release (TPI-STUDIOFLOW-034 DOM mutation repair):
   mutation
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
 
-Latest verified production release (TPI-STUDIOFLOW-033 configuration persistence):
+Prior verified production release (TPI-STUDIOFLOW-033 configuration persistence):
 
 - `videoClipSlots`, validated slot positions, and scalar `programOrientation`
   are repaired in the API normalizer and StudioFlow workspace bridges.

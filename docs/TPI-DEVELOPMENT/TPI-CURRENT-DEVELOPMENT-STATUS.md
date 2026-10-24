@@ -12,6 +12,39 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-035 Recording & Storage consolidation)
+
+TPI-STUDIOFLOW-035 is deployed and live-verified. The far-right production
+navigation was cleaned up (Live interaction, Comments, and Widgets removed;
+Teleprompter placed directly beneath Notes and reusing the existing studio
+teleprompter reader), and a first-class Recording & Storage rail section now
+hosts every recording/storage setting with truthful save status and honest
+destination capability reporting. Settings > Recording and Settings >
+Recording & Storage redirect to that section instead of keeping duplicate
+controls. Recording saves now report confirmed outcomes with the destination
+actually used, an unavailable folder destination requires explicit fallback
+confirmation (declining leaves the recording in the awaiting-action state),
+and cloud providers are presented only as "Not connected" until verified
+OAuth integration exists. Four partially connected workspace recording-
+settings defects were repaired (wrong save fields, wrong hydration keys, and
+stale React state on Studio activation). The maintained 035 suite passed
+33/33 with disposable Firefox and fake media devices.
+
+- Directive: TPI-STUDIOFLOW-035
+- Application commit: `d0b1f70da86e6c5490bb89a644f07c5f50a53a1e`
+- StudioFlow source commit: `60af530db1d53536975ac910b9501526c54c7600`
+- Active production Worker: `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
+- Rollback: `5c8e78b5-f920-4335-940f-a5e4d6df0e49` (TPI-033)
+- Validation: 035 suite 33/33; 033 round-trip 26/26; 034 mutation regression
+  twice; 021 browser 31/31; 028 browser 33/33; 030 browser 25/25; 031
+  music pads 34/34; static contracts (021 86/86, 020 14/14 and 13/13, 027
+  12/12, 031 overlays 12/12); release safety 17/17; local auth lifecycle
+  PASS; local Firefox acceptance 63/63; production smoke PASS; guarded live
+  Firefox acceptance 63/63; live artifact verification 200s
+- Data protection: no D1, R2, Crossroads, owner-recording, or owner-browser
+  mutation; live acceptance non-destructive
+- Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-035-RECORDING-STORAGE-CONSOLIDATION.md`
+
 ## Prior verified production release — 2026-10-24 (TPI-STUDIOFLOW-034 DOM mutation repair)
 
 The idle StudioFlow mutation storm was reproduced and resolved in the maintained
@@ -34,7 +67,7 @@ attribute updates over 5 seconds and 35 over 30 seconds.
 - Data protection: no D1, R2, Crossroads, owner-browser, or user-media mutation
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
 
-## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-033 configuration persistence)
+## Prior verified production release — 2026-10-24 (TPI-STUDIOFLOW-033 configuration persistence)
 
 TPI-STUDIOFLOW-033 is deployed and live-verified. The API normalizer preserves
 Video Clips assignments and validated pad slots, the bridges serialize scalar

@@ -36,7 +36,38 @@ Preserve unrelated tracked and untracked changes. Focused commits and pushes to
 `codex/tpi-development` are authorized after the applicable checks pass. Do not
 reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
-## TPI-STUDIOFLOW-033 current handoff
+## TPI-STUDIOFLOW-035 current handoff
+
+The right-navigation cleanup, Teleprompter placement, and Recording & Storage
+consolidation are deployed and live-verified. The maintained regression
+`npm run verify:studioflow-035-recording-storage` passed 33/33 against the
+local Worker in disposable Firefox with fake media devices
+(`media.navigator.streams.fake`, `media.navigator.audio.fake`,
+`media.navigator.permission.disabled`). It covers the three rail removals,
+Teleprompter beneath Notes reusing the existing reader, the seven
+consolidated sections, both Settings redirects, connected/persisted
+recording settings, the confirmed save lifecycle with the actual destination
+reported, destination-fallback decline (awaiting-action) and approval, and
+per-studio preference isolation across real Studio switching.
+
+Authoritative StudioFlow source commit: `60af530db1d53536975ac910b9501526c54c7600`.
+The workspace bridge recording-settings save/hydrate mapping was repaired in
+`studio/workspace-bridge.js` and the activation re-read in `src/App.tsx` —
+see the completion record for the four documented defects and the settings
+inventory.
+
+- `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-035-RECORDING-STORAGE-CONSOLIDATION.md`
+- `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`
+
+Production Worker `aa9bff15-6252-4ae5-9422-17d63b99ab5a` is active at 100%
+traffic; the immediate rollback is `5c8e78b5-f920-4335-940f-a5e4d6df0e49`.
+Guarded live Firefox acceptance passed 63/63 and anonymous smoke passed; the
+standalone acceptance runner refuses production targets outside the guarded
+release. Cloud storage destinations remain unimplemented and are presented
+only as "Not connected"; implementing one requires owner direction and
+registered OAuth credentials.
+
+## Prior handoff — TPI-STUDIOFLOW-033
 
 The configuration persistence repair is deployed and live-verified. The focused regression
 `npm run verify:studioflow-033-roundtrip` passed 26/26 against the local Worker
@@ -59,7 +90,14 @@ live acceptance did not mutate production Studio configuration.
 
 ## Latest verified production release
 
-The latest release is TPI-STUDIOFLOW-033: application commit `cb38061`, Worker
+The latest release is TPI-STUDIOFLOW-035: application commit `d0b1f70`, source
+commit `60af530`, Worker `aa9bff15-6252-4ae5-9422-17d63b99ab5a`, rollback
+`5c8e78b5-f920-4335-940f-a5e4d6df0e49`. It is `DEPLOYED / LIVE VERIFIED`.
+The 035 suite passed 33/33; guarded live smoke and Firefox acceptance passed
+and the deployed bundle serves the new Recording & Storage and Teleprompter
+panels. Full evidence is in the TPI-035 completion record.
+
+Prior release TPI-STUDIOFLOW-033: application commit `cb38061`, Worker
 `5c8e78b5-f920-4335-940f-a5e4d6df0e49`, rollback
 `0c0a8660-21cf-47e1-ac66-98c91b26972c`. It is `DEPLOYED / LIVE VERIFIED`.
 The configuration normalizer and hydration repair passed the focused 26/26
@@ -86,7 +124,7 @@ contract and regression history are in `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
 ## Latest StudioFlow repair
 
 The deployed change is documented in
-`300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md`.
+`300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-035-RECORDING-STORAGE-CONSOLIDATION.md`.
 The API now preserves Video Clips assignments, validated slot positions, and
 scalar program orientation through server round-trips and Studio activation.
 The focused disposable API/Firefox regression passed 26/26. The prior

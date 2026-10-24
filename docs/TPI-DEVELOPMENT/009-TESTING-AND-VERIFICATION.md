@@ -8,6 +8,34 @@
 - Blocked: a safety or environment prerequisite prevents execution.
 - Not tested: no current evidence.
 
+## TPI-STUDIOFLOW-035 recording/storage consolidation — 2026-10-24
+
+`npm run verify:studioflow-035-recording-storage` is the maintained Firefox
+Developer Edition regression for the right-navigation cleanup, Teleprompter
+placement, and Recording & Storage consolidation. It runs in a disposable
+profile with fake capture devices (`media.navigator.streams.fake`,
+`media.navigator.audio.fake`, and `media.navigator.permission.disabled` so
+getUserMedia answers without a prompt) and uses disposable synthetic studios
+and generated recordings only. The current run passed 33/33, covering: the
+three removed rail items, Notes preservation and Teleprompter directly beneath
+Notes, Recording & Storage visibility and exact rail order, reuse of the
+existing studio teleprompter reader, all seven consolidated panel sections,
+honest folder-destination gating and cloud "Not connected" reporting, both
+Settings redirect notices and the link into the rail section, connected and
+persisted configuration toggles with refresh restoration, the full recording
+save lifecycle (recording → preparing → saving → saved) with confirmed
+destination and file reporting, Library landing and IndexedDB byte storage,
+recording survival across unrelated panel navigation, destination-fallback
+decline (awaiting-action) and approval (fallback destination identified), and
+per-studio recording-preference isolation across real Studio switching.
+
+Harness notes for future suites: right-rail panels render only their selected
+tab, so state assertions must run with the owning panel open; native confirm
+dialogs are answered through the WebDriver alert API; and inline `find`
+callbacks must capture `arguments` in locals before use. The updated
+`tpi-studioflow-firefox-acceptance.mjs` asserts the removals and the
+Teleprompter/Recording & Storage placement on both local and production runs.
+
 ## TPI-STUDIOFLOW-034 mutation regression — 2026-10-24
 
 `npm run verify:studioflow-034-mutation` is the maintained Firefox Developer

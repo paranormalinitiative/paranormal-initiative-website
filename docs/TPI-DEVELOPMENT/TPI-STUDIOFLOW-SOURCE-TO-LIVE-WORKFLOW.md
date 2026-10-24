@@ -92,17 +92,34 @@ website repository's `codex/tpi-development` branch.
 ## Current verified live baseline
 
 - Website production source commit:
-  `cb38061656565d8e4bd7702a7d627335fe2d4993`
-  (TPI-STUDIOFLOW-033 configuration persistence repair)
+  `d0b1f70da86e6c5490bb89a644f07c5f50a53a1e`
+  (TPI-STUDIOFLOW-035 Recording & Storage consolidation)
 - Authoritative StudioFlow source commit:
-  `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
-  (website-only release; source unchanged)
+  `60af530db1d53536975ac910b9501526c54c7600`
 - Active production Worker version:
-  `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
+  `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
 - Immediate rollback version:
-  `0c0a8660-21cf-47e1-ac66-98c91b26972c`
+  `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
+  (TPI-STUDIOFLOW-033 release)
 
-## TPI-STUDIOFLOW-033 verified release
+## TPI-STUDIOFLOW-035 verified release
+
+The 2026-10-24 TPI-035 release cleaned the far-right production navigation
+(removed Live interaction, Comments, and Widgets; placed Teleprompter beneath
+Notes), added the authoritative Recording & Storage rail section, redirected
+the Settings recording/storage tabs to it, added truthful recording save
+status with explicit destination-fallback confirmation, and repaired the
+workspace recording-settings save/hydrate mapping plus the React activation
+re-read. The maintained 035 suite passed 33/33 in disposable Firefox with
+fake media devices; the guarded release completed local auth lifecycle,
+isolated QA/API E2E, local Firefox acceptance 63/63, production smoke, and
+isolated live Firefox acceptance 63/63. Worker
+`aa9bff15-6252-4ae5-9422-17d63b99ab5a` is active at 100% traffic;
+`5c8e78b5-f920-4335-940f-a5e4d6df0e49` is the rollback reference. Live
+acceptance is non-destructive; no production recordings or Studio
+configuration were mutated for testing.
+
+## Prior TPI-STUDIOFLOW-033 verified release
 
 The 2026-10-24 TPI-033 release preserved `videoClipSlots`, validated slot
 positions, and scalar program orientation through the existing workspace API and
