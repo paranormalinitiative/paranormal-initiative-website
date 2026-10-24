@@ -1,7 +1,8 @@
 # StudioFlow Playback and Scene-Media Contract
 
 Status: ACTIVE / CURRENT APPROVED BEHAVIOR
-Maintained under: TPI-STUDIOFLOW-029 (documentation synchronization)
+Maintained under: TPI-STUDIOFLOW-029 (documentation synchronization),
+updated by TPI-STUDIOFLOW-030 (Sound Effects interface)
 Last verified: 2026-10-23
 
 This document is the single current-state record of what StudioFlow's scene
@@ -71,6 +72,27 @@ production after TPI-STUDIOFLOW-028 and TPI-STUDIOFLOW-028 Addendum A.
 - Preserves the existing production scene workflow: general Video Clips
   remain stage-playable, and the left-side Intro/Outro scene cards are the
   playback entry point for the Intro and Outro videos.
+
+### Sound Effects pads (TPI-STUDIOFLOW-030)
+
+- Sound effects play on pad click from the existing assignments; playback
+  ends naturally or is replaced by clicking another pad. The Stop Sound
+  button is intentionally absent from the visible sound controls (the
+  volume slider, playback, and audio routing are unchanged; the internal
+  stop control remains for programmatic use). Background Music keeps its
+  own stop control.
+- Pads show no permanent three-dot menu button. The unchanged options menu
+  (Rename, Change color, Replace audio, Remove) opens on right-click and,
+  for touch and keyboard users, with the ContextMenu key or Shift+F10.
+- Pads reorder by drag-and-drop (pointer events with long-press, covering
+  mouse, trackpad, and touch) and by Alt+ArrowLeft/Alt+ArrowRight on the
+  focused pad. A drag never fires playback.
+- The pad order saves automatically per studio through the existing
+  workspace configuration (`studioflow.customSounds`); there is no Save
+  button, and each studio restores its own arrangement on switching.
+- Empty pads keep their Add Audio affordance at their position; pad colors,
+  labels, the three-column grid, volume controls, and the media system are
+  unchanged. No duplicate players or asset records exist.
 
 ## Verified regression history
 
@@ -170,6 +192,11 @@ minified fragments or silently changed bridge text.
 5. All scene media comes from the existing media sections (Video Clips for
    Intro/Outro, Background Music for music) through the existing players,
    routing, and persistence. No duplicate playback systems or asset records.
+6. Sound pad order and assignments are ordinary per-studio workspace
+   configuration. A remote workspace response must never overwrite a
+   configuration key that changed locally while that request was in flight
+   (the asset-state bridge echo guard, TPI-STUDIOFLOW-030). Do not remove
+   the guard or reintroduce a second persistence system for pad ordering.
 
 ## Regression-prevention requirements (TPI-STUDIOFLOW-029)
 
@@ -199,10 +226,13 @@ the standing authority in
   suite (33 checks), including the Addendum-A independence and preserved
   automatic-transition checks.
 - `scripts/verify/tpi-studioflow-021-audio-soundboards.mjs` — static
-  contract (58 checks), including pins of Sol's handoff, the Intro-scene
-  music clear, assignment-only After Intro handoff, and distinct After Intro
-  scene identity.
-- `scripts/verify/tpi-studioflow-021-browser.mjs` (29 checks),
+  contract (69 checks), including pins of Sol's handoff, the Intro-scene
+  music clear, assignment-only After Intro handoff, distinct After Intro
+  scene identity, and the TPI-STUDIOFLOW-030 save-echo guard.
+- `scripts/verify/tpi-studioflow-030-browser.mjs` — Sound Effects pad
+  suite (25 checks): interface cleanup, context menu, drag/keyboard
+  reordering, automatic persistence, and multi-studio isolation.
+- `scripts/verify/tpi-studioflow-021-browser.mjs` (31 checks),
   `tpi-studioflow-027-scenes.mjs` (12), `tpi-studioflow-020-video-playback.mjs`
   (14), `tpi-studioflow-031-video-overlays.mjs` (12),
   `tpi-release-safety.mjs` (17).
@@ -212,14 +242,21 @@ the standing authority in
 Latest reported successful production deployment (verified against the
 guarded release records before publishing this baseline):
 
-- Directive: TPI-STUDIOFLOW-028 Addendum A
-- Application commit: `cb97464`
-- Documentation commit: `89baade`
-- Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
-- Previous Worker version: `210f4610-ff8a-4192-a944-4668892dd669`
-- Reported validation: 028 browser interactions 33/33; 021 static contracts
-  58/58; 021 browser interactions 29/29; 020 contracts 14/14; release safety
-  17/17; live smoke 10/10; live Firefox acceptance 60/60.
+- Directive: TPI-STUDIOFLOW-030 (Sound Effects interface cleanup and
+  drag-and-drop pad reordering)
+- Application commit: `e18d327` (feature `8f6035a`)
+- Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+- Previous Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
+  (TPI-STUDIOFLOW-028 Addendum A)
+- Reported validation: 030 sound effects browser interactions 25/25 (two
+  consecutive runs); 021 static contracts 69/69; 021 browser interactions
+  31/31; 028 browser interactions 33/33; 020 contracts 14/14; 031 overlays
+  12/12; release safety 17/17; local auth lifecycle (Node 38/38, isolated
+  Firefox 61/61); guarded live acceptance 61/61.
+
+The playback sections above remain exactly as verified after
+TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030 changed only the Sound
+Effects interface documented in its own section.
 
 See `TPI-CURRENT-DEVELOPMENT-STATUS.md` and
 `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md` for the maintained baseline and release

@@ -50,19 +50,22 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release (TPI-STUDIOFLOW-028 Addendum A):
+Latest verified production release (TPI-STUDIOFLOW-030 Sound Effects pad
+reordering):
 
 - Worker: `theparanormalinitiative`
-- Source commit: `cb9746411398df16282c305101cb0b41425bcd39`
+- Source commit: `e18d3271b61c34adf2099448521e263dbcd13e70`
+  (feature commit `8f6035a`)
 - StudioFlow source commit: `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
   (bridge-only release; source unchanged)
-- Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248` at 100% traffic
+- Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78` at 100% traffic
 - Deployed: 2026-10-23
-- Rollback target: `210f4610-ff8a-4192-a944-4668892dd669`
-- Acceptance: anonymous smoke 10/10, isolated Firefox Developer Edition 60/60,
-  028 browser interactions 33/33 (including the Addendum-A After Intro music
-  preservation checks), 021 static contracts 58/58, 021 browser 29/29, 020
-  contracts 14/14, release safety 17/17, complete preflight, and guarded
+- Rollback target: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
+- Acceptance: 030 sound effects browser interactions 25/25 (two consecutive
+  runs), 021 static contracts 69/69, 021 browser 31/31, 028 browser 33/33,
+  020 contracts 14/14, 031 overlays 12/12, release safety 17/17, local auth
+  lifecycle (Node 38/38, isolated Firefox Developer Edition 61/61), guarded
+  live acceptance against production 61/61, complete preflight, and guarded
   dry-run passed
 - Approved behavior: `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`
 - Data protection: no D1 migration, R2 mutation, Crossroads mutation, or owner-browser

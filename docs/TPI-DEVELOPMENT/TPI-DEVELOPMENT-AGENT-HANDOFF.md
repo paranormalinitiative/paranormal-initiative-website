@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `cb9746411398df16282c305101cb0b41425bcd39`
-- Active production Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
-- Recorded rollback target: `210f4610-ff8a-4192-a944-4668892dd669`
+- Last fully verified workflow baseline: `e18d3271b61c34adf2099448521e263dbcd13e70`
+- Active production Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+- Recorded rollback target: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -38,29 +38,36 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Deployment commit `cb9746411398df16282c305101cb0b41425bcd39`
-(TPI-STUDIOFLOW-028 Addendum A — preservation of Sol's After Intro Background
-Music automatic transition) was deployed to Worker `theparanormalinitiative`
-as version `21ea05f7-588d-4b5a-b039-c6063f7fd248` at 100% traffic on
-2026-10-23. The release passed anonymous smoke 10/10, isolated Firefox
-Developer Edition acceptance 60/60, the 028 Firefox interaction suite 33/33,
-021 static contracts 58/58, 021 browser 29/29, 020 contracts 14/14, release
-safety 17/17, complete preflight, and the guarded Wrangler dry-run.
-Crossroads, D1, R2, and owner browser storage were not modified. The current
-approved StudioFlow playback contract and regression history are in
-`TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
+Deployment commit `e18d3271b61c34adf2099448521e263dbcd13e70`
+(TPI-STUDIOFLOW-030 — Sound Effects interface cleanup and drag-and-drop pad
+reordering; feature commit `8f6035a`) was deployed to Worker
+`theparanormalinitiative` as version `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+at 100% traffic on 2026-10-23. The release passed the 030 sound-effects
+browser suite 25/25 (two consecutive runs), 021 static contracts 69/69,
+021 browser 31/31, 028 browser 33/33, 020 contracts 14/14, 031 overlays
+12/12, release safety 17/17, the complete local auth lifecycle (Node 38/38,
+isolated Firefox 61/61), complete preflight, the guarded Wrangler dry-run,
+and the guarded live acceptance against production 61/61
+(`DEPLOYED_AND_VERIFIED`). Crossroads, D1, R2, and owner browser storage
+were not modified. The current approved StudioFlow playback contract and
+regression history are in `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
 
 ## Latest StudioFlow repair
 
-The deployed repair is documented in
-`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`
-(including its Addendum A section). My Scenes again operate as independent
-production shortcuts: Intro/Outro play their assigned Video Clips at 00:00
-with Play/Stop toggles and scene restoration, the After Intro music shortcut
-plays its assigned Background Music track independently, and Sol's approved
-automatic post-Intro music transition is preserved. The earlier countdown-row
-repair (`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`)
-remains in the deployed baseline and its record is retained as history.
+The deployed change is documented in
+`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-030-SOUND-EFFECTS-PAD-REORDERING.md`.
+The Sound Effects panel no longer shows the Stop Sound button or the
+permanent per-pad three-dot menu triggers; the existing options menu opens
+on right-click and on Shift+F10/ContextMenu; pads reorder by drag-and-drop
+or Alt+Arrow keys and each studio's order saves automatically through the
+existing workspace configuration. The in-flight save-echo race in the
+asset-state bridge that could clobber pad order was repaired with a guard
+pinned by the 021 static contract. The 028 scene playback workflow
+(`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`,
+including its Addendum A section) remains untouched in the deployed
+baseline, and the earlier countdown-row repair
+(`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`)
+remains deployed as history.
 Use the disposable Firefox acceptance profile for future checks; do not use
 the owner profile for destructive testing.
 

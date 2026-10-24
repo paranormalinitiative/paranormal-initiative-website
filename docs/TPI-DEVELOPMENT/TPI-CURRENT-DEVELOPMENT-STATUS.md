@@ -12,9 +12,40 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## Latest verified production release — 2026-10-23 (TPI-STUDIOFLOW-028 Addendum A)
+## Latest verified production release — 2026-10-23 (TPI-STUDIOFLOW-030 Sound Effects pad reordering)
 
-StudioFlow's My Scenes controls again operate as independent production
+StudioFlow's Sound Effects panel is cleaner and the sound pads are
+organizable by the creator. The Stop Sound button is removed from the sound
+controls (the volume slider, playback, and routing are unchanged; Background
+Music keeps its own stop control), the permanent three-dot menu buttons are
+removed from pads while the existing options menu (Rename, Change color,
+Replace audio, Remove) stays available on right-click and on Shift+F10 or
+the ContextMenu key, and pads can be reordered by drag-and-drop or by
+Alt+ArrowLeft/Alt+ArrowRight. The new order saves automatically per studio
+through the existing workspace configuration — no Save button — and each
+studio restores its own arrangement on switching.
+
+- Directive: TPI-STUDIOFLOW-030
+- Application commit: `e18d327` (feature `8f6035a`)
+- StudioFlow source commit: `ce7c389` (bridge-only release; source unchanged)
+- Worker: `theparanormalinitiative`
+- Active production Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+- Immediate rollback reference: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
+  (the TPI-STUDIOFLOW-028 Addendum A release)
+- Reported validation, verified against the guarded release records:
+  030 sound effects browser interactions 25/25 (two consecutive runs);
+  021 static contracts 69/69; 021 browser interactions 31/31; 028 browser
+  interactions 33/33; 020 contracts 14/14; 031 overlays 12/12; release
+  safety 17/17; local auth lifecycle (Node) 38/38 and isolated Firefox
+  acceptance 61/61; guarded live acceptance against production 61/61
+- No D1 migration, R2 mutation, Crossroads mutation, or owner-browser access
+- Current release record:
+  `300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-030-SOUND-EFFECTS-PAD-REORDERING.md`
+
+## Prior production release — 2026-10-23 (TPI-STUDIOFLOW-028 Addendum A)
+
+Superseded as the current baseline by the TPI-STUDIOFLOW-030 release above;
+retained as deployment history. StudioFlow's My Scenes controls again operate as independent production
 shortcuts: Intro Video and Outro Video play their assigned Video Clips from
 00:00 with Play/Stop toggles and scene restoration, and Sol's original After
 Intro Background Music automatic transition is preserved. The current
