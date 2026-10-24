@@ -12,9 +12,48 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## Latest verified production release — 2026-10-23 (TPI-STUDIOFLOW-030 Sound Effects pad reordering)
+## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-031 Background Music pad reordering)
 
-StudioFlow's Sound Effects panel is cleaner and the sound pads are
+StudioFlow's Background Music pads now match the Sound Effects experience:
+the permanent three-dot menu buttons are gone (the unchanged options menu
+opens on right-click, Shift+F10 / the ContextMenu key, or touch long-press),
+and creators can arrange their music pads by drag-and-drop or Alt+Arrow
+keys. The new order saves automatically per studio with no Save button, and
+each studio restores its own arrangement on switching. Pad reordering moves
+the complete configuration — media assignment and pad metadata — and never
+starts, stops, or restarts playback. Sol's After Intro Background Music
+assignment is tracked by stable asset identifier and is verified unchanged
+across reorders, with the approved automatic post-Intro transition intact.
+
+Two pre-existing persistence defects were repaired to make this possible:
+the API workspace normalizer silently dropped `backgroundMusicSlots`,
+`backgroundMusicLoop`, and `sceneMusicAssignments` (music never survived a
+studio switch), and the asset-state bridge matched uploaded media
+replacements by visit position instead of by asset, cross-wiring the music
+and sound lists on save. The TPI-030 Sound Effects improvements are intact.
+
+- Directive: TPI-STUDIOFLOW-031
+- Application commit: `4cacb3a`
+- StudioFlow source commit: `ce7c389` (website-only release; source unchanged)
+- Worker: `theparanormalinitiative`
+- Active production Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+- Immediate rollback reference: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+  (the TPI-STUDIOFLOW-030 release)
+- Reported validation, verified against the guarded release records:
+  031 music pad browser interactions 34/34 (two consecutive runs); 030
+  sound effects browser 25/25; 028 browser 33/33; 021 browser 31/31;
+  021 static contracts 78/78; 020 contracts 14/14; 027 contracts 12/12;
+  031 video overlays 12/12; release safety 17/17; local auth lifecycle
+  (Node 38/38, isolated Firefox acceptance 64/64); guarded live acceptance
+  against production 64/64
+- No D1 migration, R2 mutation, Crossroads mutation, or owner-browser access
+- Current release record:
+  `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-031-BACKGROUND-MUSIC-PAD-REORDERING.md`
+
+## Prior production release — 2026-10-23 (TPI-STUDIOFLOW-030 Sound Effects pad reordering)
+
+Superseded as the current baseline by the TPI-STUDIOFLOW-031 release above;
+retained as deployment history. StudioFlow's Sound Effects panel is cleaner and the sound pads are
 organizable by the creator. The Stop Sound button is removed from the sound
 controls (the volume slider, playback, and routing are unchanged; Background
 Music keeps its own stop control), the permanent three-dot menu buttons are

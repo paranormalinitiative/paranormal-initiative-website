@@ -50,22 +50,22 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release (TPI-STUDIOFLOW-030 Sound Effects pad
+Latest verified production release (TPI-STUDIOFLOW-031 Background Music pad
 reordering):
 
 - Worker: `theparanormalinitiative`
-- Source commit: `e18d3271b61c34adf2099448521e263dbcd13e70`
-  (feature commit `8f6035a`)
+- Source commit: `4cacb3aac1b28e9159e2511108956776f931b0e3`
 - StudioFlow source commit: `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
-  (bridge-only release; source unchanged)
-- Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78` at 100% traffic
-- Deployed: 2026-10-23
-- Rollback target: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
-- Acceptance: 030 sound effects browser interactions 25/25 (two consecutive
-  runs), 021 static contracts 69/69, 021 browser 31/31, 028 browser 33/33,
-  020 contracts 14/14, 031 overlays 12/12, release safety 17/17, local auth
-  lifecycle (Node 38/38, isolated Firefox Developer Edition 61/61), guarded
-  live acceptance against production 61/61, complete preflight, and guarded
+  (website-only release; source unchanged)
+- Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5` at 100% traffic
+- Deployed: 2026-10-24
+- Rollback target: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+- Acceptance: 031 music pad browser interactions 34/34 (two consecutive
+  runs), 030 sound effects browser 25/25, 028 browser 33/33, 021 browser
+  31/31, 021 static contracts 78/78, 020 contracts 14/14, 027 contracts
+  12/12, 031 overlays 12/12, release safety 17/17, local auth lifecycle
+  (Node 38/38, isolated Firefox Developer Edition 64/64), guarded live
+  acceptance against production 64/64, complete preflight, and guarded
   dry-run passed
 - Approved behavior: `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`
 - Data protection: no D1 migration, R2 mutation, Crossroads mutation, or owner-browser

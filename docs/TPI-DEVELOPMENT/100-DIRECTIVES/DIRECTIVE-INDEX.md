@@ -20,17 +20,18 @@ for current commit, push, deployment, and live-verification procedure.
 
 The latest StudioFlow release was deployed and verified from
 `codex/tpi-development` commit
-`e18d3271b61c34adf2099448521e263dbcd13e70`
-(TPI-STUDIOFLOW-030 Sound Effects interface cleanup and drag-and-drop pad
+`4cacb3aac1b28e9159e2511108956776f931b0e3`
+(TPI-STUDIOFLOW-031 Background Music interface cleanup and drag-and-drop pad
 reordering). Worker `theparanormalinitiative` is running version
-`9e7cf4ba-1262-4c8d-9b3a-249670eb6a78` at 100% traffic. The guarded live
-isolated Firefox Developer Edition acceptance passed 61/61; the focused
-suites passed 25/25 (030 sound effects browser interactions, twice), 69/69
-(021 static contracts), 31/31 (021 browser), 33/33 (028 browser), 14/14
-(020), 12/12 (031), and 17/17 (release safety). The documented rollback
-target is `21ea05f7-588d-4b5a-b039-c6063f7fd248` (the TPI-STUDIOFLOW-028
-Addendum A release). The current approved StudioFlow playback contract and
-verified regression history are recorded in
+`48cdb81d-efcc-4f03-8717-eaa5a51e45d5` at 100% traffic. The guarded live
+isolated Firefox Developer Edition acceptance passed 64/64; the focused
+suites passed 34/34 (031 music pad browser interactions, twice), 25/25
+(030 sound effects browser), 33/33 (028 browser), 31/31 (021 browser),
+78/78 (021 static contracts), 14/14 (020), 12/12 (027), 12/12 (031 video
+overlays), and 17/17 (release safety). The documented rollback target is
+`9e7cf4ba-1262-4c8d-9b3a-249670eb6a78` (the TPI-STUDIOFLOW-030 release).
+The current approved StudioFlow playback contract and verified regression
+history are recorded in
 [`../TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`](../TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md).
 
 This release record supersedes stale “not deployed” or “acceptance pending”
@@ -172,6 +173,7 @@ their original execution and limitations.
 | TPI-STUDIOFLOW-028 Addendum A (2026-10-23 media series) | Preserve Sol's After Intro Background Music functionality | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Verified Sol's approved automatic post-Intro music transition (commit `d262867`) and restored it verbatim by removing the `0241dc7` program-state gate from the music path, keeping all independence fixes. Application commit `cb97464`; Worker `21ea05f7-588d-4b5a-b039-c6063f7fd248`. See the Addendum A section of `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`. |
 | TPI-STUDIOFLOW-029 (2026-10-23 media series) | Documentation synchronization for 027, 028, and Addendum A | COMPLETE / DOCUMENTATION ONLY / NOT DEPLOYED | Recorded the approved playback contract and verified regression history in `docs/TPI-DEVELOPMENT/TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`, updated the current production baseline in this index and `TPI-CURRENT-DEVELOPMENT-STATUS.md`, and added regression-prevention requirements to `AGENTS.md`. No application source or production change. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-029-DOCUMENTATION-SYNCHRONIZATION.md`. |
 | TPI-STUDIOFLOW-030 (2026-10-23 sound-effects series) | Sound Effects interface cleanup and drag-and-drop pad reordering | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Removed the Stop Sound button and the permanent per-pad three-dot menu triggers while preserving the volume slider, playback, routing, and the existing options menu (right-click and Shift+F10/ContextMenu key). Added pointer drag-and-drop and Alt+Arrow keyboard pad reordering with automatic per-studio order persistence through the existing workspace configuration, and repaired the in-flight save-echo race in the asset-state bridge that could clobber pad order. Application commit `8f6035a` (+ `e18d327`); Worker `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-030-SOUND-EFFECTS-PAD-REORDERING.md`. |
+| TPI-STUDIOFLOW-031 (2026-10-24 background-music series) | Background Music interface cleanup and drag-and-drop pad reordering | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Removed the permanent three-dot menu triggers from Background Music pads (menu preserved on right-click, Shift+F10/ContextMenu, touch long-press) and added pointer drag-and-drop and Alt+Arrow keyboard reordering with automatic per-studio persistence. Sol's After Intro assignment is blobKey-based and verified unchanged across reorders (the directive's mandatory §6 test). Two pre-existing persistence defects were repaired: the API workspace normalizer dropped `backgroundMusicSlots`, `backgroundMusicLoop`, and `sceneMusicAssignments`, and the asset-state bridge wired uploaded media replacements by visit position instead of by blobKey. Application commit `4cacb3a`; Worker `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-031-BACKGROUND-MUSIC-PAD-REORDERING.md`. |
 
 When a directive has no matching local file, retain this index entry and document the missing source rather than fabricating a completion status.
 

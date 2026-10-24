@@ -2,8 +2,9 @@
 
 Status: ACTIVE / CURRENT APPROVED BEHAVIOR
 Maintained under: TPI-STUDIOFLOW-029 (documentation synchronization),
-updated by TPI-STUDIOFLOW-030 (Sound Effects interface)
-Last verified: 2026-10-23
+updated by TPI-STUDIOFLOW-030 (Sound Effects interface) and
+TPI-STUDIOFLOW-031 (Background Music interface)
+Last verified: 2026-10-24
 
 This document is the single current-state record of what StudioFlow's scene
 and media playback is supposed to do, how the approved implementation was
@@ -73,26 +74,38 @@ production after TPI-STUDIOFLOW-028 and TPI-STUDIOFLOW-028 Addendum A.
   remain stage-playable, and the left-side Intro/Outro scene cards are the
   playback entry point for the Intro and Outro videos.
 
-### Sound Effects pads (TPI-STUDIOFLOW-030)
+### Sound Effects and Background Music pads (TPI-STUDIOFLOW-030 / 031)
 
 - Sound effects play on pad click from the existing assignments; playback
   ends naturally or is replaced by clicking another pad. The Stop Sound
   button is intentionally absent from the visible sound controls (the
   volume slider, playback, and audio routing are unchanged; the internal
   stop control remains for programmatic use). Background Music keeps its
-  own stop control.
-- Pads show no permanent three-dot menu button. The unchanged options menu
-  (Rename, Change color, Replace audio, Remove) opens on right-click and,
-  for touch and keyboard users, with the ContextMenu key or Shift+F10.
-- Pads reorder by drag-and-drop (pointer events with long-press, covering
-  mouse, trackpad, and touch) and by Alt+ArrowLeft/Alt+ArrowRight on the
-  focused pad. A drag never fires playback.
+  own Stop control — music tracks can run long and creators must be able to
+  stop them manually.
+- Pads on both boards show no permanent three-dot menu button. The
+  unchanged options menu (Rename, Change color, Replace audio, Remove)
+  opens on right-click and, for touch and keyboard users, with the
+  ContextMenu key, Shift+F10, or a touch long-press.
+- Pads on both boards reorder by drag-and-drop (pointer events with
+  long-press, covering mouse, trackpad, and touch) and by
+  Alt+ArrowLeft/Alt+ArrowRight on the focused pad. A drag never fires
+  playback, and dropping neither starts nor stops an already playing
+  track. Reordering moves the pad's complete configuration (media
+  assignment and pad metadata) and keeps the playing indicator attached to
+  the actually-playing track.
 - The pad order saves automatically per studio through the existing
-  workspace configuration (`studioflow.customSounds`); there is no Save
-  button, and each studio restores its own arrangement on switching.
-- Empty pads keep their Add Audio affordance at their position; pad colors,
-  labels, the three-column grid, volume controls, and the media system are
-  unchanged. No duplicate players or asset records exist.
+  workspace configuration (`studioflow.customSounds` /
+  `studioflow.backgroundMusicSlots`); there is no Save button, and each
+  studio restores its own arrangement on switching. Music pad order and
+  the After Intro assignment are independent: the assignment references a
+  stable asset identifier (`blobKey`), so reordering never changes which
+  track is assigned.
+- Music volume, looping, program routing, monitoring routing, and the
+  existing media system are unchanged. Empty pads keep their Add Audio
+  affordance at their position; pad colors, labels, the three-column grid,
+  and the media system are unchanged. No duplicate players or asset
+  records exist.
 
 ## Verified regression history
 
@@ -167,6 +180,22 @@ beyond those sources.
    post-Intro activation is preserved Sol behavior, not a reintroduction.
    Record: the Addendum A section of
    `300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`.
+9. **Workspace persistence gap — repaired by TPI-STUDIOFLOW-031 (commit
+   `4cacb3a`, 2026-10-24).** The API's `normalizeStudioConfiguration`
+   allow-list silently dropped `backgroundMusicSlots`,
+   `backgroundMusicLoop`, and `sceneMusicAssignments`, so the music board's
+   assignments, order, loop preference, and the After Intro assignment
+   never survived a studio switch (hydration reset them to defaults).
+   Verified by server-state probes; the normalizer now persists all three
+   and preserves pad `color`/`titleCustomized` metadata.
+10. **Cross-wired media replacements — repaired by TPI-STUDIOFLOW-031
+    (commit `4cacb3a`, 2026-10-24).** `replaceAssets` in the asset-state
+    bridge matched uploaded media replacements by visit position while
+    `visitAssets` visits fields in a different, partially conditional order,
+    so one asset's uploaded replacement landed on a different field (music
+    assets observed inside `customSounds`, duplicated pad entries in saved
+    state). Replacement matching is now keyed by `blobKey`. Record:
+    `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-031-BACKGROUND-MUSIC-PAD-REORDERING.md`.
 
 Why earlier tests missed the regressions: the 027 static checks asserted URL
 resolution rather than playback, the 028 starter test asserted only that a
@@ -192,11 +221,21 @@ minified fragments or silently changed bridge text.
 5. All scene media comes from the existing media sections (Video Clips for
    Intro/Outro, Background Music for music) through the existing players,
    routing, and persistence. No duplicate playback systems or asset records.
-6. Sound pad order and assignments are ordinary per-studio workspace
-   configuration. A remote workspace response must never overwrite a
-   configuration key that changed locally while that request was in flight
-   (the asset-state bridge echo guard, TPI-STUDIOFLOW-030). Do not remove
-   the guard or reintroduce a second persistence system for pad ordering.
+6. Sound and music pad order and assignments are ordinary per-studio
+   workspace configuration. A remote workspace response must never
+   overwrite a configuration key that changed locally while that request
+   was in flight (the asset-state bridge echo guard, TPI-STUDIOFLOW-030).
+   Do not remove the guard or reintroduce a second persistence system for
+   pad ordering.
+7. Everything the boards persist must round-trip through the workspace
+   save: `backgroundMusicSlots`, `backgroundMusicLoop`, and
+   `sceneMusicAssignments` must remain in the API's configuration
+   normalizer, and uploaded media replacements must be matched to their
+   assets by `blobKey`, never by visit position (TPI-STUDIOFLOW-031). The
+   After Intro assignment must keep referencing stable asset identifiers,
+   not pad positions.
+8. Music pad reordering must never start, stop, or restart playback, and
+   must never change the After Intro assigned track.
 
 ## Regression-prevention requirements (TPI-STUDIOFLOW-029)
 
@@ -232,6 +271,10 @@ the standing authority in
 - `scripts/verify/tpi-studioflow-030-browser.mjs` — Sound Effects pad
   suite (25 checks): interface cleanup, context menu, drag/keyboard
   reordering, automatic persistence, and multi-studio isolation.
+- `scripts/verify/tpi-studioflow-031-music-pads.mjs` — Background Music pad
+  suite (34 checks): interface cleanup, context menu, drag/keyboard
+  reordering, playback protection, automatic persistence, multi-studio
+  isolation, and the mandatory After Intro assignment regression test.
 - `scripts/verify/tpi-studioflow-021-browser.mjs` (31 checks),
   `tpi-studioflow-027-scenes.mjs` (12), `tpi-studioflow-020-video-playback.mjs`
   (14), `tpi-studioflow-031-video-overlays.mjs` (12),
@@ -242,21 +285,23 @@ the standing authority in
 Latest reported successful production deployment (verified against the
 guarded release records before publishing this baseline):
 
-- Directive: TPI-STUDIOFLOW-030 (Sound Effects interface cleanup and
+- Directive: TPI-STUDIOFLOW-031 (Background Music interface cleanup and
   drag-and-drop pad reordering)
-- Application commit: `e18d327` (feature `8f6035a`)
-- Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
-- Previous Worker version: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
-  (TPI-STUDIOFLOW-028 Addendum A)
-- Reported validation: 030 sound effects browser interactions 25/25 (two
-  consecutive runs); 021 static contracts 69/69; 021 browser interactions
-  31/31; 028 browser interactions 33/33; 020 contracts 14/14; 031 overlays
-  12/12; release safety 17/17; local auth lifecycle (Node 38/38, isolated
-  Firefox 61/61); guarded live acceptance 61/61.
+- Application commit: `4cacb3a`
+- Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+- Previous Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
+  (TPI-STUDIOFLOW-030)
+- Reported validation: 031 music pad browser interactions 34/34 (two
+  consecutive runs); 030 sound effects browser 25/25; 028 browser 33/33;
+  021 browser interactions 31/31; 021 static contracts 78/78; 020
+  contracts 14/14; 027 contracts 12/12; 031 overlays 12/12; release safety
+  17/17; local auth lifecycle (Node 38/38, isolated Firefox 64/64);
+  guarded live acceptance 64/64.
 
-The playback sections above remain exactly as verified after
-TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030 changed only the Sound
-Effects interface documented in its own section.
+The Intro/Outro and After Intro playback sections above remain exactly as
+verified after TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030 and
+TPI-STUDIOFLOW-031 changed only the pad interfaces and persistence
+documented in their own sections.
 
 See `TPI-CURRENT-DEVELOPMENT-STATUS.md` and
 `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md` for the maintained baseline and release

@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `e18d3271b61c34adf2099448521e263dbcd13e70`
-- Active production Worker version: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
-- Recorded rollback target: `21ea05f7-588d-4b5a-b039-c6063f7fd248`
+- Last fully verified workflow baseline: `4cacb3aac1b28e9159e2511108956776f931b0e3`
+- Active production Worker version: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+- Recorded rollback target: `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -38,36 +38,40 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## Latest verified production release
 
-Deployment commit `e18d3271b61c34adf2099448521e263dbcd13e70`
-(TPI-STUDIOFLOW-030 — Sound Effects interface cleanup and drag-and-drop pad
-reordering; feature commit `8f6035a`) was deployed to Worker
-`theparanormalinitiative` as version `9e7cf4ba-1262-4c8d-9b3a-249670eb6a78`
-at 100% traffic on 2026-10-23. The release passed the 030 sound-effects
-browser suite 25/25 (two consecutive runs), 021 static contracts 69/69,
-021 browser 31/31, 028 browser 33/33, 020 contracts 14/14, 031 overlays
-12/12, release safety 17/17, the complete local auth lifecycle (Node 38/38,
-isolated Firefox 61/61), complete preflight, the guarded Wrangler dry-run,
-and the guarded live acceptance against production 61/61
-(`DEPLOYED_AND_VERIFIED`). Crossroads, D1, R2, and owner browser storage
-were not modified. The current approved StudioFlow playback contract and
-regression history are in `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
+Deployment commit `4cacb3aac1b28e9159e2511108956776f931b0e3`
+(TPI-STUDIOFLOW-031 — Background Music interface cleanup and drag-and-drop
+pad reordering) was deployed to Worker `theparanormalinitiative` as version
+`48cdb81d-efcc-4f03-8717-eaa5a51e45d5` at 100% traffic on 2026-10-24. The
+release passed the 031 music-pad browser suite 34/34 (two consecutive
+runs), the 030 sound-effects suite 25/25, 028 browser 33/33, 021 browser
+31/31, 021 static contracts 78/78, 020 contracts 14/14, 027 contracts
+12/12, 031 overlays 12/12, release safety 17/17, the complete local auth
+lifecycle (Node 38/38, isolated Firefox 64/64), complete preflight, the
+guarded Wrangler dry-run, and the guarded live acceptance against
+production 64/64 (`DEPLOYED_AND_VERIFIED`). Crossroads, D1, R2, and owner
+browser storage were not modified. The current approved StudioFlow playback
+contract and regression history are in `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
 
 ## Latest StudioFlow repair
 
 The deployed change is documented in
-`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-030-SOUND-EFFECTS-PAD-REORDERING.md`.
-The Sound Effects panel no longer shows the Stop Sound button or the
-permanent per-pad three-dot menu triggers; the existing options menu opens
-on right-click and on Shift+F10/ContextMenu; pads reorder by drag-and-drop
-or Alt+Arrow keys and each studio's order saves automatically through the
-existing workspace configuration. The in-flight save-echo race in the
-asset-state bridge that could clobber pad order was repaired with a guard
-pinned by the 021 static contract. The 028 scene playback workflow
+`300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-031-BACKGROUND-MUSIC-PAD-REORDERING.md`.
+Background Music pads no longer show the permanent three-dot menu triggers
+(menu preserved on right-click, Shift+F10/ContextMenu, and touch
+long-press) and now reorder by drag-and-drop or Alt+Arrow keys with
+automatic per-studio persistence, matching the TPI-030 Sound Effects
+experience. Sol's After Intro assignment is blobKey-based and verified
+unchanged across reorders. Two pre-existing persistence defects were
+repaired: the API workspace normalizer dropped `backgroundMusicSlots`,
+`backgroundMusicLoop`, and `sceneMusicAssignments`, and the asset-state
+bridge wired uploaded media replacements by visit position instead of by
+blobKey. Known gap for future work: the normalizer still drops
+`videoClipSlots` and `programOrientation` (Video Clips area, unchanged by
+this release). The 028 scene playback workflow
 (`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`,
-including its Addendum A section) remains untouched in the deployed
-baseline, and the earlier countdown-row repair
-(`300-COMPLETED-WORK/2026-10-23-STUDIOFLOW-COUNTDOWN-TIMER-DEDUPLICATION.md`)
-remains deployed as history.
+including its Addendum A section) and the TPI-030 Sound Effects work
+(`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-030-SOUND-EFFECTS-PAD-REORDERING.md`)
+remain untouched in the deployed baseline.
 Use the disposable Firefox acceptance profile for future checks; do not use
 the owner profile for destructive testing.
 
