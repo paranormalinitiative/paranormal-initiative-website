@@ -50,7 +50,7 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release (TPI-STUDIOFLOW-034 DOM mutation repair):
+Prior verified production release (TPI-STUDIOFLOW-034 DOM mutation repair):
 
 - Application commit: `8d7185b`
 - StudioFlow source commit: `ce7c389` (website bridge-only release)
@@ -61,13 +61,14 @@ Latest verified production release (TPI-STUDIOFLOW-034 DOM mutation repair):
   mutation
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
 
-Current local follow-up (TPI-STUDIOFLOW-033 configuration persistence):
+Latest verified production release (TPI-STUDIOFLOW-033 configuration persistence):
 
 - `videoClipSlots`, validated slot positions, and scalar `programOrientation`
   are repaired in the API normalizer and StudioFlow workspace bridges.
 - The real API/Firefox round-trip regression passes 26/26 locally.
-- Production remains on the TPI-034 baseline until guarded release and live
-  acceptance complete.
+- Worker `5c8e78b5-f920-4335-940f-a5e4d6df0e49` is deployed and live-verified;
+  rollback is `0c0a8660-21cf-47e1-ac66-98c91b26972c`.
+- Live release acceptance passed 64/64 and anonymous smoke passed 10/10.
 - [Configuration contract and inventory](TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md)
 - [TPI-STUDIOFLOW-033 completion record](300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md)
 

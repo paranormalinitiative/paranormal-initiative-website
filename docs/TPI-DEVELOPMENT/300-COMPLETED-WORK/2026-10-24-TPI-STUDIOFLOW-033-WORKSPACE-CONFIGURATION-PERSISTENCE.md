@@ -3,7 +3,7 @@
 Date: 2026-10-24  
 Agent: GPT-5.6 Luna  
 Directive: TPI-STUDIOFLOW-033  
-Status: IMPLEMENTED / LOCAL VALIDATION COMPLETE / PRODUCTION RELEASE PENDING
+Status: COMPLETE / DEPLOYED AND LIVE-VERIFIED
 
 ## Summary
 
@@ -118,8 +118,18 @@ focused round-trip test.
 
 ## Release state
 
-Feature commit, guarded production preflight, production Worker version, live
-Firefox acceptance, and rollback reference will be recorded here after the
-required push and guarded release complete. Until then this record is
-implemented and locally verified, but not production-deployed.
+- Application commit: `cb38061656565d8e4bd7702a7d627335fe2d4993`
+- Documentation checkpoint before release: `d51d9de7f86f1b64c80bbcfd427f9c206a120cba`
+- StudioFlow source commit: `53bf8dc`
+- Production Worker: `theparanormalinitiative`
+- Deployed Worker version: `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
+- Rollback reference: `0c0a8660-21cf-47e1-ac66-98c91b26972c`
+- Live anonymous smoke: 10/10
+- Live isolated Firefox acceptance: 64/64
+- Deployment result: `DEPLOYED_AND_VERIFIED`
+
+The new configuration-specific disposable round-trip remains a local
+26/26 evidence run. Live acceptance was intentionally non-destructive and did
+not alter a production Studio, D1 row, R2 object, Crossroads workspace, or
+owner browser profile.
 

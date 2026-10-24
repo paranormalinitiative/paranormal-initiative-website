@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `6a1f8ad77649f1ef175a5191396d55a45141764c`
-- Active production Worker version: `7029c6c5-3994-42a1-9570-d6119a5792f3`
-- Recorded rollback target: `48cdb81d-efcc-4f03-8717-eaa5a51e45d5`
+- Last fully verified workflow baseline: `cb38061656565d8e4bd7702a7d627335fe2d4993`
+- Active production Worker version: `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
+- Recorded rollback target: `0c0a8660-21cf-47e1-ac66-98c91b26972c`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -38,8 +38,7 @@ reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
 ## TPI-STUDIOFLOW-033 current handoff
 
-The configuration persistence repair is implemented in the website checkout
-and locally verified but is not yet deployed. The focused regression
+The configuration persistence repair is deployed and live-verified. The focused regression
 `npm run verify:studioflow-033-roundtrip` passed 26/26 against the local Worker
 with disposable Firefox Studios. It covers `videoClipSlots`, validated slot
 positions, scalar `programOrientation`, existing Background Music fields,
@@ -52,19 +51,21 @@ inventory are:
 - `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md`
 - `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`
 
-Production remains the TPI-STUDIOFLOW-034 Worker until the required feature
-push, preflight, guarded deployment, and live Firefox acceptance complete.
+Production Worker `5c8e78b5-f920-4335-940f-a5e4d6df0e49` is active at 100%
+traffic. The immediate rollback is `0c0a8660-21cf-47e1-ac66-98c91b26972c`.
+The live non-destructive release acceptance passed 64/64 and anonymous smoke
+passed 10/10. The new 033 disposable server round-trip remains local evidence;
+live acceptance did not mutate production Studio configuration.
 
 ## Latest verified production release
 
-The latest release is TPI-STUDIOFLOW-034: application commit `8d7185b`, Worker
-`0c0a8660-21cf-47e1-ac66-98c91b26972c`, rollback
-`7029c6c5-3994-42a1-9570-d6119a5792f3`. It is `DEPLOYED / LIVE VERIFIED`.
-The DOM mutation storm was repaired in the maintained bridge layer and the
-maintained mutation regression passed twice. The authoritative StudioFlow
-source was unchanged at `ce7c389`; no D1, R2, Crossroads, owner-browser, or
-user-media mutation occurred. Full evidence is in the TPI-034 completion
-record.
+The latest release is TPI-STUDIOFLOW-033: application commit `cb38061`, Worker
+`5c8e78b5-f920-4335-940f-a5e4d6df0e49`, rollback
+`0c0a8660-21cf-47e1-ac66-98c91b26972c`. It is `DEPLOYED / LIVE VERIFIED`.
+The configuration normalizer and hydration repair passed the focused 26/26
+local round-trip; guarded live smoke and Firefox acceptance passed 10/10 and
+64/64. The prior TPI-034 mutation repair remains in the deployed baseline.
+Full evidence is in the TPI-033 completion record.
 
 Deployment commit `6a1f8ad77649f1ef175a5191396d55a45141764c`
 (TPI-STUDIOFLOW-032 — Background Music and Sound Effects icon replacement;
@@ -85,7 +86,11 @@ contract and regression history are in `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`.
 ## Latest StudioFlow repair
 
 The deployed change is documented in
-`300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-032-PAD-ARTWORK-REPLACEMENT.md`.
+`300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md`.
+The API now preserves Video Clips assignments, validated slot positions, and
+scalar program orientation through server round-trips and Studio activation.
+The focused disposable API/Firefox regression passed 26/26. The prior
+TPI-032 pad-artwork behavior remains in the deployed baseline.
 The audio pads now show the owner-approved per-category artwork inside the
 unchanged circular icon container — Waveform on Background Music pads,
 Microphone on Sound Effects pads (`studio/Waveform.png` and
@@ -97,10 +102,8 @@ obsolete home-screen entry was repaired (each run seeds a fresh
 browser-local recording broadcast — the same empty-state studio the home
 "Record without going live" flow creates — with all assertions unchanged),
 which also ends the disposable test-account studio pollution recorded as
-TPI-030 finding 3. Known gaps for future work: the API workspace normalizer
-still drops `videoClipSlots` and `programOrientation`, and the bridge layer
-carries the pre-existing DOM mutation storm recorded in the 032 completion
-record; TPI-STUDIOFLOW-034 has now resolved that storm. The 028 scene playback
+TPI-030 finding 3. The TPI-033 normalizer gaps are resolved, and the TPI-034
+bridge mutation storm repair remains in the deployed baseline. The 028 scene playback
 workflow
 (`300-COMPLETED-WORK/2026-10-23-TPI-STUDIOFLOW-028-SCENE-MEDIA-SHORTCUT-REPAIR.md`,
 including its Addendum A section), the TPI-030 Sound Effects work

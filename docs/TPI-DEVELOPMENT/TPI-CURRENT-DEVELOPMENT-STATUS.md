@@ -12,7 +12,7 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-034 DOM mutation repair)
+## Prior verified production release — 2026-10-24 (TPI-STUDIOFLOW-034 DOM mutation repair)
 
 The idle StudioFlow mutation storm was reproduced and resolved in the maintained
 bridge layer. The root cycle was an audio soundboard observer responding to its
@@ -34,20 +34,24 @@ attribute updates over 5 seconds and 35 over 30 seconds.
 - Data protection: no D1, R2, Crossroads, owner-browser, or user-media mutation
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-034-DOM-MUTATION-REPAIR.md`
 
-## TPI-STUDIOFLOW-033 configuration persistence repair — 2026-10-24
+## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-033 configuration persistence)
 
-The local implementation is complete and the maintained API/Firefox round-trip
-regression passes 26/26. The API now preserves `videoClipSlots`, validated pad
-slots, and both supported program-orientation representations. The bridge
-serializes the historical local-storage orientation object as the scalar
-workspace contract, and the authoritative React activation path rehydrates the
-restored orientation before the next save. Studio A/B isolation, switching,
-refresh restoration, Background Music fields, and stale-save rejection passed.
+TPI-STUDIOFLOW-033 is deployed and live-verified. The API normalizer preserves
+Video Clips assignments and validated pad slots, the bridges serialize scalar
+program orientation, and StudioFlow rehydrates program-output state on Studio
+activation. The focused local API/Firefox round-trip passed 26/26. The guarded
+production release also passed the complete local auth/QA gates, production
+smoke 10/10, and isolated live Firefox acceptance 64/64.
 
-- Production remains at the TPI-STUDIOFLOW-034 baseline until guarded release.
+- Application commit: `cb38061656565d8e4bd7702a7d627335fe2d4993`
+- Documentation checkpoint: this post-deployment synchronization commit
 - StudioFlow source commit: `53bf8dc`
-- Local regression: `npm run verify:studioflow-033-roundtrip` — 26/26
-- Configuration inventory: `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`
+- Worker: `theparanormalinitiative`
+- Active production Worker: `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
+- Rollback: `0c0a8660-21cf-47e1-ac66-98c91b26972c`
+- Release source checkpoint: `d51d9de7f86f1b64c80bbcfd427f9c206a120cba`
+- Data protection: no D1 migration, R2 mutation, Crossroads mutation, or
+  owner-browser access
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-033-WORKSPACE-CONFIGURATION-PERSISTENCE.md`
 
 ## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-032 pad artwork replacement)

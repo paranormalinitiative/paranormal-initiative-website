@@ -92,17 +92,29 @@ website repository's `codex/tpi-development` branch.
 ## Current verified live baseline
 
 - Website production source commit:
-  `8d7185b279de2b33c9e1b657c1d60dffa80143c8`
-  (TPI-STUDIOFLOW-034 bridge repair)
+  `cb38061656565d8e4bd7702a7d627335fe2d4993`
+  (TPI-STUDIOFLOW-033 configuration persistence repair)
 - Authoritative StudioFlow source commit:
   `ce7c389d23db65bd5ebb92597695d9854d21c7ab`
   (website-only release; source unchanged)
 - Active production Worker version:
-  `0c0a8660-21cf-47e1-ac66-98c91b26972c`
+  `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
 - Immediate rollback version:
-  `7029c6c5-3994-42a1-9570-d6119a5792f3`
+  `0c0a8660-21cf-47e1-ac66-98c91b26972c`
 
-## TPI-STUDIOFLOW-034 verified release
+## TPI-STUDIOFLOW-033 verified release
+
+The 2026-10-24 TPI-033 release preserved `videoClipSlots`, validated slot
+positions, and scalar program orientation through the existing workspace API and
+bridges. The authoritative StudioFlow source commit is `53bf8dc`; the website
+application commit is `cb38061`. The guarded release completed local auth,
+complete QA/API E2E, production smoke 10/10, and isolated live Firefox
+acceptance 64/64. Worker `5c8e78b5-f920-4335-940f-a5e4d6df0e49` is active at
+100% traffic; `0c0a8660-21cf-47e1-ac66-98c91b26972c` is the rollback reference.
+The new disposable configuration round-trip remains local evidence so that live
+production Studio configuration was not mutated for testing.
+
+## Prior TPI-STUDIOFLOW-034 verified release
 
 The 2026-10-24 TPI-034 release was bridge-only: the authoritative StudioFlow
 source remained at `ce7c389`; website checkpoint `8d7185b` carried the

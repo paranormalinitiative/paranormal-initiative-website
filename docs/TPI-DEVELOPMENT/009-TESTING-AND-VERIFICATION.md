@@ -36,6 +36,9 @@ The complete field inventory is maintained in
 `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`. The test does not replace the
 existing media upload/playback suites; it covers their shared configuration
 round-trip boundary without creating media records or touching owner data.
+The guarded production release completed the non-destructive smoke and Firefox
+acceptance gates at 10/10 and 64/64; it did not mutate production Studio
+configuration to manufacture a live round-trip fixture.
 
 ## TPI-DEV-001 audit results
 
