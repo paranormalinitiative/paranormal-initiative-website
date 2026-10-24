@@ -349,6 +349,17 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 22%);
 }
 
+/* TPI-STUDIOFLOW-032: approved pad artwork inside the existing circular
+   container. object-fit preserves the artwork proportions; pointer-events
+   keeps drags, clicks, and right-clicks on the pad itself. */
+.tpi-audio-slot-icon-image {
+  display: block;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
 .tpi-audio-slot-label {
   overflow: hidden;
   color: rgb(255 255 255 / 72%);

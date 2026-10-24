@@ -33,6 +33,20 @@ if (!account || !existsSync(soundFile) || !existsSync(musicFile)) {
 const browser = await chromium.launch({ executablePath: browserPath, headless: true, args: ["--no-sandbox", "--autoplay-policy=no-user-gesture-required"] });
 const context = await browser.newContext({ viewport: { width: 1280, height: 1000 }, acceptDownloads: true });
 await context.addInitScript(() => {
+  // TPI-STUDIOFLOW-032: each run starts a fresh browser-local recording
+  // broadcast — the same empty-state studio the home "Record without going
+  // live" flow creates — so the slot-count assertions start from a clean
+  // studio and the run leaves no server-side test studios behind (TPI-030
+  // finding 3: repeated runs polluted the disposable test account).
+  try {
+    const id = `broadcast-021-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    localStorage.setItem("studioflow.broadcasts", JSON.stringify([{ id, kind: "recording", title: `TPI-021 ${id}`, createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }]));
+    localStorage.setItem("studioflow.activeBroadcastId", JSON.stringify(id));
+    localStorage.setItem("studioflow.route", JSON.stringify("studio"));
+    window.__tpi021BroadcastId = id;
+  } catch {}
+});
+await context.addInitScript(() => {
   const audioContext = window.AudioContext;
   if (!audioContext || audioContext.prototype.__tpiVolumeProbe) return;
   const createGain = audioContext.prototype.createGain;
@@ -68,21 +82,11 @@ try {
   check("synthetic test_admin login succeeds", session.ok() && Boolean((await session.json()).user), `HTTP ${session.status()}`);
 
   await page.goto(`${base}/studio/`, { waitUntil: "domcontentloaded", timeout: 30000 });
-  if (!(await page.locator("[data-tpi-audio-soundboards]").count())) {
-    const homeNav = page.getByRole("button", { name: /Home/i }).first();
-    if (await homeNav.count()) { await homeNav.click(); await page.waitForTimeout(500); }
-    const recordControl = page.getByRole("button", { name: /Record without going live/i }).first();
-    if (await recordControl.count()) {
-      await recordControl.click();
-      await page.waitForTimeout(400);
-      const continueControl = page.getByRole("button", { name: /Continue to setup/i }).first();
-      if (await continueControl.count()) await continueControl.click();
-      await page.waitForTimeout(900);
-      const enterControl = page.getByRole("button", { name: /Enter studio/i }).first();
-      if (await enterControl.count()) await enterControl.click();
-      await page.waitForTimeout(1000);
-    }
-  }
+  // StudioFlow now boots straight into the active Studio; the home-screen
+  // "Record without going live" flow is no longer reachable at boot (its Home
+  // nav exists only during the boot route transition). The seeded browser-local
+  // broadcast above replaces that flow's fresh-studio setup without relying on
+  // the transient home screen; every assertion below is unchanged.
   await page.locator("[data-tpi-audio-soundboards]").waitFor({ state: "visible", timeout: 30000 });
   const soundBoard = page.locator('[data-tpi-audio-board="sound"]');
   const musicBoard = page.locator('[data-tpi-audio-board="music"]');

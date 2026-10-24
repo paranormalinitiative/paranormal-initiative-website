@@ -16,8 +16,8 @@ const api = readFileSync(join(root, "functions/api/[[path]].js"), "utf8");
 
 const required = [
   [html, "audio-soundboard-bridge.js", "Studio shell includes the soundboard bridge"],
-  [html, "tpi021=soundboards-v7&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v4", "Shell cache tag identifies the reorderable Addendum-A-preserving SMART Pad soundboard bridge"],
-  [html, "tpi022=video-organization-v11", "Shell cache tag identifies the reorder-aware audio stylesheet"],
+  [html, "tpi021=soundboards-v8&tpi017=smart-pads&tpi-volume=v1&tpi-scene-music=v4", "Shell cache tag identifies the reorderable Addendum-A-preserving SMART Pad soundboard bridge"],
+  [html, "tpi022=video-organization-v12", "Shell cache tag identifies the reorder-aware audio stylesheet"],
   [stage, '"audio-soundboard-bridge.js"', "Local staging includes the soundboard bridge"],
   [bridge, "SLOT_COUNT = 9", "Nine-slot capacity is explicit"],
   [bridge, 'dataset.tpiAudioBoard = category', "Separate category boards are rendered"],
@@ -93,6 +93,14 @@ const required = [
   [workspace, "backgroundMusicLoop", "Workspace save/local snapshot includes the music loop preference"],
   [backup, "backgroundMusicSlots", "Portable backup collects music slots"],
   [css, ".tpi-audio-grid", "Soundboard grid styling exists"],
+  [bridge, '"/studio/Microphone.png"', "Sound Effects pads render the approved Microphone artwork"],
+  [bridge, '"/studio/Waveform.png"', "Background Music pads render the approved Waveform artwork"],
+  [bridge, "iconImage.draggable = false", "Pad artwork never starts a native image drag"],
+  [css, ".tpi-audio-slot-icon-image", "Pad artwork sizing exists inside the circular container"],
+  [css, "object-fit: contain", "Pad artwork keeps its proportions without stretching or cropping"],
+  [css, "pointer-events: none", "Pad artwork never captures pad clicks, drags, or right-clicks"],
+  [stage, '"Waveform.png"', "Local staging ships the Background Music pad artwork"],
+  [stage, '"Microphone.png"', "Local staging ships the Sound Effects pad artwork"],
 ];
 const failures = required.filter(([source, needle]) => !source.includes(needle));
 if (failures.length) {

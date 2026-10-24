@@ -330,7 +330,13 @@
     var card = document.createElement("article"); card.className = "tpi-audio-slot" + (asset ? " assigned" : " empty"); card.dataset.tpiAudioCategory = category; card.dataset.tpiAudioSlot = String(slot); card.setAttribute("aria-label", (category === "sound" ? "Sound effect " : "Background music ") + (slot + 1) + (asset ? ": " + asset.title : ": empty"));
     if (asset) card.tabIndex = 0;
     var topLine = document.createElement("div"); topLine.className = "tpi-audio-slot-topline";
-    var icon = document.createElement("span"); icon.className = "tpi-audio-slot-icon"; icon.textContent = category === "sound" ? "♬" : "♫"; icon.setAttribute("aria-hidden", "true");
+    // TPI-STUDIOFLOW-032: the approved per-category pad artwork (Waveform
+    // for Background Music, Microphone for Sound Effects) replaces the
+    // music-note glyph inside the same circular container. The image never
+    // captures pointer events, so clicking, dragging, and right-clicking
+    // keep hitting the pad itself.
+    var icon = document.createElement("span"); icon.className = "tpi-audio-slot-icon"; icon.setAttribute("aria-hidden", "true");
+    var iconImage = document.createElement("img"); iconImage.className = "tpi-audio-slot-icon-image"; iconImage.src = (category === "sound" ? "/studio/Microphone.png" : "/studio/Waveform.png") + "?tpi032=pad-icons-v1"; iconImage.alt = ""; iconImage.draggable = false; icon.appendChild(iconImage);
     var slotLabel = document.createElement("span"); slotLabel.className = "tpi-audio-slot-label"; slotLabel.textContent = (category === "sound" ? "Sound effect" : "Music") + " " + String(slot + 1).padStart(2, "0");
     // TPI-STUDIOFLOW-030/031: no pad carries a permanent three-dot trigger.
     // The unchanged options menu opens from right-click, Shift+F10 / the

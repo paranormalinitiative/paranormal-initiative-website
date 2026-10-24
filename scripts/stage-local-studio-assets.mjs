@@ -17,6 +17,9 @@ export const STUDIO_RUNTIME_FILES = [
   "backup-core.mjs",
   "navigation-bridge.js",
   "studioflow-012-overrides.css",
+  // TPI-STUDIOFLOW-032: approved pad artwork served to the soundboard cards.
+  "Waveform.png",
+  "Microphone.png",
 ];
 
 export function stageStudioAssets({ repoRoot = process.cwd(), stage = join(repoRoot, ".local-dev/assets") } = {}) {
