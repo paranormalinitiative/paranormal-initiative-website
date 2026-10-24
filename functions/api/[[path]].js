@@ -4620,8 +4620,18 @@ function normalizeStudioConfiguration(value) {
       uploadedAt: clean(value.uploadedAt).slice(0, 80) || null
     };
   };
-  const normalizeAssetList = (value, limit = 50) => Array.isArray(value) ? value.slice(0, limit).map(normalizeAsset).filter(Boolean) : [];
+  const normalizeAssetList = (value, limit = 50) => Array.isArray(value) ? value.slice(0, limit).map((item) => {
+    const normalized = normalizeAsset(item);
+    if (!normalized) return null;
+    const slot = Number(item.slot);
+    if (Number.isInteger(slot) && slot >= 0 && slot < 50) normalized.slot = slot;
+    return normalized;
+  }).filter(Boolean) : [];
   const videoClips = source.videoClips && typeof source.videoClips === "object" ? source.videoClips : {};
+  const videoClipSlots = normalizeAssetList(source.videoClipSlots, 50);
+  const programOrientation = ["landscape", "portrait", "square"].includes(clean(source.programOrientation))
+    ? clean(source.programOrientation)
+    : "landscape";
   const backgroundMusic = normalizeAsset(source.backgroundMusic);
   // TPI-STUDIOFLOW-031: the multi-slot Background Music board, its loop
   // preference, and the scene music assignments (including Sol's After Intro
@@ -4685,6 +4695,13 @@ function normalizeStudioConfiguration(value) {
       intro: normalizeAsset(videoClips.intro),
       outro: normalizeAsset(videoClips.outro)
     },
+    // TPI-STUDIOFLOW-033: preserve the Video Clips board and the legacy
+    // configuration copy of the program orientation during server round trips.
+    // The settings.programOrientation field remains authoritative for the
+    // workspace state contract; this configuration copy is retained because
+    // the client serializes it with the rest of its per-studio configuration.
+    videoClipSlots,
+    programOrientation,
     backgroundMusic,
     backgroundMusicSlots,
     backgroundMusicLoop: source.backgroundMusicLoop !== false,

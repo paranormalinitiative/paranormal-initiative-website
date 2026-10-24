@@ -41,7 +41,13 @@
     var result = {};
     Object.keys(KEYS).forEach(function (name) {
       var value = read(KEYS[name], undefined);
-      if (value !== undefined) result[name] = value;
+      if (value === undefined) return;
+      if (name === "programOrientation") {
+        var orientation = value && typeof value === "object" ? value.orientation : value;
+        result[name] = ["landscape", "portrait", "square"].includes(text(orientation)) ? text(orientation) : "landscape";
+        return;
+      }
+      result[name] = value;
     });
     return result;
   }
