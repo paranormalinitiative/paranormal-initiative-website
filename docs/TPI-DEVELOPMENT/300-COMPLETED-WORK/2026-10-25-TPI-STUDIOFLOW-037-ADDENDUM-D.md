@@ -1,7 +1,7 @@
 # TPI-STUDIOFLOW-037 Addendum D — Production Button Playback & Rehearsal Controls
 
-Date: 2026-10-25  
-Agent: GPT-5.6 Luna  
+Date: 2026-10-25
+Agent: GPT-5.6 Luna
 Status: DEPLOYED AND LIVE-VERIFIED / OWNER ACCEPTANCE PENDING
 
 ## Who, what, when, why, and how
