@@ -15,9 +15,15 @@ const repoRoot = resolve(import.meta.dirname, "../..");
 const base = (process.env.TPI_037_BASE_URL || "http://127.0.0.1:8787").replace(/\/$/, "");
 const firefoxBinary = process.env.TPI_FIREFOX_BINARY || "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox";
 const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodriver";
-const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
-const credentials = existsSync(credentialsFile) ? JSON.parse(readFileSync(credentialsFile, "utf8")) : null;
-const account = credentials?.accounts?.test_admin;
+const productionTarget = !/^http:\/\/(127\.0\.0\.1|localhost):(8787|8789)$/.test(base);
+const productionQa = process.env.TPI_FIREFOX_PRODUCTION_QA === "approved";
+const localCredentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
+const productionCredentialsFile = process.env.TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/qa-studioflow-prod.json");
+const accountKey = process.env.TPI_FIREFOX_ACCOUNT || (productionTarget ? "production_qa" : "test_admin");
+const credentialsFile = productionTarget ? productionCredentialsFile : localCredentialsFile;
+const rawCredentials = existsSync(credentialsFile) ? JSON.parse(readFileSync(credentialsFile, "utf8")) : null;
+const credentials = rawCredentials ? (rawCredentials.accounts ? rawCredentials : { accounts: { production_qa: rawCredentials } }) : null;
+const account = credentials?.accounts?.[accountKey];
 const evidenceRoot = mkdtempSync(join(tmpdir(), "tpi-studioflow-037-addendum-c-"));
 const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });
@@ -53,6 +59,14 @@ function wavFile(name, frequency, seconds = 1.2) {
 }
 const musicFile = wavFile("tpi-037c-music.wav", 220);
 
+if (productionTarget && process.env.TPI_FIREFOX_ALLOW_PRODUCTION !== "1") {
+  console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-C", status: "BLOCKED", reason: "Addendum C acceptance defaults to the disposable local Worker only." }));
+  process.exit(1);
+}
+if (productionTarget && !productionQa) {
+  console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-C", status: "BLOCKED", reason: "Production Addendum C acceptance requires the explicitly approved synthetic QA credential gate; local credentials are never sent to production." }));
+  process.exit(1);
+}
 for (const file of [firefoxBinary, geckodriver, credentialsFile]) {
   if (!existsSync(file)) {
     console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-C", status: "BLOCKED", reason: `Required verification input is unavailable: ${file}` }));
@@ -60,7 +74,11 @@ for (const file of [firefoxBinary, geckodriver, credentialsFile]) {
   }
 }
 if (!account?.username || !account?.password) {
-  console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-C", status: "BLOCKED", reason: "The synthetic test_admin account is unavailable." }));
+  console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-C", status: "BLOCKED", reason: `The synthetic ${accountKey} account is unavailable.` }));
+  process.exit(1);
+}
+if (productionTarget && !/^qa-studioflow-[a-z0-9-]{0,26}$/.test(account.username)) {
+  console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-C", status: "BLOCKED", reason: "Production acceptance may use only an explicitly approved qa-studioflow-* account." }));
   process.exit(1);
 }
 
@@ -256,19 +274,33 @@ try {
   await waitFor("overflowing Scenes panel", async () => (await count("[data-tpi-scene-panel-item]")) >= 20, 10_000);
   const scrollBefore = await js("var list=document.querySelector('.scene-panel-items'); if(!list||list.scrollHeight<=list.clientHeight) return null; list.scrollTop=0; return { scrollTop: list.scrollTop, scrollHeight: list.scrollHeight, clientHeight: list.clientHeight };");
   if (scrollBefore) {
+    await js("window.__tpiDragLog=[]; window.__tpiScrollLog=[]; document.addEventListener('dragover', function(e){ window.__tpiDragLog.push({ y: Math.round(e.clientY), t: ((e.target && e.target.className) || '').toString().slice(0,60) }); }, true); return true;");
     const start = await handlePoint("intro");
     const actions = driver.actions({ async: true });
     await actions.move({ x: start.x, y: start.y }).press().perform();
     await sleep(180);
     const listBottom = await js("var r=document.querySelector('.scene-panel-items').getBoundingClientRect(); return Math.round(r.bottom);");
-    await actions.move({ x: start.x, y: listBottom - 12 }).perform();
-    for (let i = 0; i < 10; i += 1) {
-      await actions.move({ x: start.x + (i % 2 === 0 ? 2 : -2), y: listBottom - 12 }).perform();
-      await sleep(180);
+    // Sweep the pointer through the 48px auto-scroll band plus a margin past
+    // the edge. geckodriver's synthesized drag coordinates can drift a dozen
+    // pixels from the commanded viewport position (observed: dragover clientY
+    // past the list bottom for a commanded position 12px above it), so a
+    // single fixed probe can fall outside the band even though a real pointer
+    // drag is inside it. The sweep guarantees the genuine pointer traverses
+    // the band while the assertion stays unchanged: the overflowing list must
+    // scroll during the edge drag.
+    const sweep = [];
+    for (let y = listBottom - 46; y <= listBottom + 16; y += 6) sweep.push(y);
+    const edgeTarget = await js("var el=document.elementFromPoint(arguments[0], arguments[1]); return el ? { cls: (el.className||'').toString().slice(0,60), tag: el.tagName } : null;", start.x, listBottom - 24);
+    for (let i = 0; i < sweep.length; i += 1) {
+      await actions.move({ x: start.x + (i % 2 === 0 ? 2 : -2), y: sweep[i] }).perform();
+      await sleep(140);
+      await js("var list=document.querySelector('.scene-panel-items'); if(list) window.__tpiScrollLog.push(list.scrollTop); return true;");
     }
-    const scrollAfter = await js("var list=document.querySelector('.scene-panel-items'); return { scrollTop: list.scrollTop };");
+    const scrollAfter = await js("var list=document.querySelector('.scene-panel-items'); return { scrollTop: list.scrollTop, scrollHeight: list.scrollHeight, clientHeight: list.clientHeight, bounds: (function(){var r=list.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom)};})() };");
+    const dragLog = await js("return window.__tpiDragLog.slice(-30);");
+    const scrollLog = await js("return window.__tpiScrollLog;");
     await screenshot("07-autoscroll");
-    check("Genuine pointer drag near the panel edge auto-scrolls overflowing items", scrollAfter.scrollTop > scrollBefore.scrollTop, JSON.stringify({ scrollBefore, scrollAfter }));
+    check("Genuine pointer drag near the panel edge auto-scrolls overflowing items", scrollAfter.scrollTop > scrollBefore.scrollTop, JSON.stringify({ scrollBefore, scrollAfter, listBottom, sweep: [sweep[0], sweep[sweep.length - 1]], edgeTarget, scrollLog, dragLog }));
     await js("window.dispatchEvent(new KeyboardEvent('keydown',{bubbles:true,cancelable:true,key:'Escape',code:'Escape'}));");
     await driver.actions({ async: true }).release().perform().catch(() => {});
     await sleep(300);
