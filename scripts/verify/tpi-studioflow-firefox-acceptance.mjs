@@ -291,7 +291,9 @@ try {
   await click('[data-studio-panel-tab="Media assets"]');
   check("eight video cards render", await count("[data-tpi-video-card]") === 8, await count("[data-tpi-video-card]"));
   const timerDurationState = await js("var rows=Array.from(document.querySelectorAll('[data-tpi-native-video-timer-controls] .countdown-duration-row')); return {rows:rows.length,labels:rows.length===1?Array.from(rows[0].querySelectorAll('button')).map(function(button){return (button.textContent||'').trim();}):[]};");
-  check("one native video timer and one four-button duration row render", await count("[data-tpi-video-timer-section]") === 1 && await count("[data-tpi-native-video-timer]") === 1 && timerDurationState.rows === 1 && JSON.stringify(timerDurationState.labels) === JSON.stringify(["10s", "20s", "30s", "60s"]), JSON.stringify(timerDurationState));
+  const timerInventory = await js("return Array.from(document.querySelectorAll('[data-video-timer-theme]')).map(function(button){return {id:button.getAttribute('data-video-timer-theme'),name:(button.textContent||'').trim()};});");
+  check("one native video timer, nine approved designs, and one four-button duration row render", await count("[data-tpi-video-timer-section]") === 1 && await count("[data-tpi-native-video-timer]") === 1 && timerInventory.length === 9 && timerInventory.map(function(item){return item.id;}).join(",") === "classic,stargate,alien,haunted,spirit,evp,itc,vortex,ghost" && timerDurationState.rows === 1 && JSON.stringify(timerDurationState.labels) === JSON.stringify(["10s", "20s", "30s", "60s"]), JSON.stringify({ timerDurationState, timerInventory }));
+  check("video timer designs use a three-column desktop grid", await js("var node=document.querySelector('[data-video-timer-theme-grid]'); return Boolean(node && getComputedStyle(node).gridTemplateColumns.split(' ').length === 3);"));
   check("nine Sound Effects slots render", await count('[data-tpi-audio-board="sound"] .tpi-audio-slot') === 9);
   check("nine Background Music slots render", await count('[data-tpi-audio-board="music"] .tpi-audio-slot') === 9);
 

@@ -4632,6 +4632,12 @@ function normalizeStudioConfiguration(value) {
   const programOrientation = ["landscape", "portrait", "square"].includes(clean(source.programOrientation))
     ? clean(source.programOrientation)
     : "landscape";
+  const videoTimerTheme = ["classic", "stargate", "alien", "haunted", "spirit", "evp", "itc", "vortex", "ghost"].includes(clean(source.videoTimerTheme))
+    ? clean(source.videoTimerTheme)
+    : "classic";
+  const videoTimerDuration = [10, 20, 30, 60].includes(Number(source.videoTimerDuration))
+    ? Number(source.videoTimerDuration)
+    : 20;
   const backgroundMusic = normalizeAsset(source.backgroundMusic);
   // TPI-STUDIOFLOW-031: the multi-slot Background Music board, its loop
   // preference, and the scene music assignments (including Sol's After Intro
@@ -4702,6 +4708,8 @@ function normalizeStudioConfiguration(value) {
     // the client serializes it with the rest of its per-studio configuration.
     videoClipSlots,
     programOrientation,
+    videoTimerTheme,
+    videoTimerDuration,
     backgroundMusic,
     backgroundMusicSlots,
     backgroundMusicLoop: source.backgroundMusicLoop !== false,

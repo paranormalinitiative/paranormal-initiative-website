@@ -53,7 +53,8 @@ try {
   check("visible video card labels include six general clips", await page.locator("[data-tpi-video-card]").allTextContents().then(values => ["Intro Video", "Outro Video", "Video 5", "Video 6", "Video 7", "Video 8", "Video 9", "Video 10"].every(label => values.some(value => value.includes(label))) && !values.some(value => /Thank You|Be Right Back/i.test(value))));
   const timerSection = page.locator("[data-tpi-video-timer-section]");
   const timerButtons = timerSection.locator(".countdown-duration-row button");
-  check("one native video timer has one duration row", await timerSection.count() === 1 && await timerSection.locator(".countdown-duration-row").count() === 1 && await timerButtons.count() === 4 && JSON.stringify(await timerButtons.allTextContents()) === JSON.stringify(["10s", "20s", "30s", "60s"]) && await timerSection.locator('button[title*="golden ring countdown"]').count() === 1);
+  const timerNames = await timerSection.locator("[data-video-timer-theme]").allTextContents();
+  check("nine approved video timers share one native duration row", await timerSection.count() === 1 && await timerSection.locator(".countdown-duration-row").count() === 1 && await timerButtons.count() === 4 && JSON.stringify(await timerButtons.allTextContents()) === JSON.stringify(["10s", "20s", "30s", "60s"]) && timerNames.length === 9 && timerNames[0].includes("Classic Countdown") && timerNames[1].includes("Stargate Portal") && timerNames[8].includes("Ghostly Countdown"));
 
   let chooser = page.waitForEvent("filechooser"); await cards.nth(0).getByRole("button", { name: "Upload" }).click(); await (await chooser).setFiles(videoFile); await page.waitForTimeout(1000);
   check("Intro Video upload assigns slot one", await cards.nth(0).getByText("tpi-022-video.mp4", { exact: true }).count() === 1);
@@ -74,6 +75,8 @@ try {
 
   await page.getByRole("button", { name: "10s", exact: true }).click(); await page.waitForTimeout(200);
   check("native video timer changes to the selected duration", await timerSection.getByRole("button", { name: "10s", exact: true }).evaluate(button => button.classList.contains("active")) && await page.locator("[data-tpi-video-timer-section]").count() === 1);
+  await timerSection.locator('[data-video-timer-theme="stargate"]').click(); await page.waitForTimeout(200);
+  check("video timer theme selection is independent from duration", await timerSection.locator('[data-video-timer-theme="stargate"]').evaluate(button => button.classList.contains("selected") && button.getAttribute("aria-pressed") === "true") && await timerSection.getByRole("button", { name: "10s", exact: true }).evaluate(button => button.classList.contains("active")));
 
   await page.reload({ waitUntil: "domcontentloaded" }); await enterStudio();
   check("video assignments survive refresh and reopening", await page.locator('[data-tpi-video-card="0"] .tpi-video-card-file').textContent() === "tpi-022-video.mp4" && await page.locator('[data-tpi-video-card="2"]').count() === 0);
