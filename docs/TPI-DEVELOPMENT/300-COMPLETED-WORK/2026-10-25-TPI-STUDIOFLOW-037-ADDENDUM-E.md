@@ -143,7 +143,7 @@ disposable production workspace.
 - Source commit: `8fdabf4` (`fix(studioflow): make scene renaming editable`)
 - Website application commit: `b1c21a085be679eb156c1c83277119c861068921`
 - Verification-support commit: `3ed49347a1ad0d80af366da01b0f0764897d209a`
-- Documentation commit: pending post-release documentation commit
+- Documentation commit: `f67768b78abd56934cbf1b59a4b895914581bb09`
 - Production Worker: `d58d7e1e-5f86-4c87-93b3-110999d200a9`, deployed at 100%
 - Rollback reference: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Production deployment: `DEPLOYED_AND_VERIFIED`; anonymous smoke 10/10 and
