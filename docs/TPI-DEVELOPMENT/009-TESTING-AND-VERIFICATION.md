@@ -8,6 +8,24 @@
 - Blocked: a safety or environment prerequisite prevents execution.
 - Not tested: no current evidence.
 
+## TPI-STUDIOFLOW-036 cinematic video timers — 2026-10-24
+
+`npm run verify:studioflow-036-video-timers` is the maintained server/browser
+round-trip regression for the nine approved silent Video Timers. It passed
+28/28 using the real local API, disposable workspace configuration, and an
+isolated Firefox Developer Edition session. It verifies the exact nine-theme
+inventory and order, one three-column grid, all nine selections, all four
+durations, program-output integration, restart/stop behavior, no timer audio,
+server persistence, refresh restoration, and disposable cleanup.
+
+The guarded release also passed local Firefox acceptance 64/64, production
+smoke 10/10, live isolated Firefox acceptance 64/64, release safety 17/17,
+local authentication lifecycle, complete isolated QA/API E2E, reproducible
+StudioFlow staging, and the prior maintained StudioFlow suites through
+TPI-STUDIOFLOW-035. A legacy Chromium-only 021/022 browser runner remains
+environment-blocked by Chrome SIGABRT/EPERM; Firefox is the governing browser
+for this release.
+
 ## TPI-STUDIOFLOW-035 recording/storage consolidation — 2026-10-24
 
 `npm run verify:studioflow-035-recording-storage` is the maintained Firefox

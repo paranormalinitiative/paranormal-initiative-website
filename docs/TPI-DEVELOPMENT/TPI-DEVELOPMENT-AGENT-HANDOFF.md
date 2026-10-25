@@ -36,6 +36,37 @@ Preserve unrelated tracked and untracked changes. Focused commits and pushes to
 `codex/tpi-development` are authorized after the applicable checks pass. Do not
 reset, clean, stash, force-push, or rewrite history as a routine shortcut.
 
+## TPI-STUDIOFLOW-036 current handoff
+
+TPI-STUDIOFLOW-036 is deployed and live-verified. The nine approved silent
+timer themes are available in the existing Video Timers section: Classic
+Countdown, Stargate Portal, Alien Transmission, Haunted Clock, Spirit
+Manifestation, EVP Signal, ITC Communication, Paranormal Energy Vortex, and
+Ghostly Countdown. They share one countdown engine and program-output path;
+the four existing durations remain 10, 20, 30, and 60 seconds.
+
+The source revision is `37c6598` in
+`/Users/toddknipple/Documents/StudioFlow/web`. The deployable website
+checkpoint is `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`, and production Worker
+`076c9614-9251-4efd-b047-0e7033f4ad9c` is active at 100% traffic. Immediate
+rollback is `aa9bff15-6252-4ae5-9422-17d63b99ab5a`.
+
+The maintained `npm run verify:studioflow-036-video-timers` test passed 28/28.
+Local and live isolated Firefox acceptance passed 64/64, production smoke
+passed 10/10, and the complete guarded preflight passed. One initial disposable
+API gate attempt hit a transient isolated migration startup failure; the
+isolated migration was verified independently and the clean retry passed.
+
+The implementation uses `src/videoTimerThemes.ts`, the existing React timer
+engine in `src/App.tsx`, the existing workspace configuration bridge, and the
+API normalizer. A startup hydration race and a stale duplicate React-owned
+timer grid were corrected during validation. No separate timer player,
+browser-only persistence system, audio path, or owner-data mutation was added.
+
+- `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-036-CINEMATIC-VIDEO-TIMERS.md`
+- `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md`
+- `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md`
+
 ## TPI-STUDIOFLOW-035 current handoff
 
 The right-navigation cleanup, Teleprompter placement, and Recording & Storage

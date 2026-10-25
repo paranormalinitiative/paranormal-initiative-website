@@ -12,7 +12,31 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-035 Recording & Storage consolidation)
+## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-036 cinematic video timers)
+
+TPI-STUDIOFLOW-036 is deployed and live-verified. The supplied owner-approved
+Spectacular Cinematic Edition was integrated into the existing Video Timers
+engine as nine silent selectable themes in a three-column desktop grid. The
+existing Classic Countdown remains the native renderer; the other eight themes
+share the same countdown engine, duration state, program-output path, and
+cleanup lifecycle. Timer design and duration now round-trip through the
+existing per-Studio workspace configuration without a competing persistence or
+playback system.
+
+- Directive: TPI-STUDIOFLOW-036
+- Application commit: `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`
+- StudioFlow source commit: `37c6598`
+- Active production Worker: `076c9614-9251-4efd-b047-0e7033f4ad9c`
+- Rollback: `aa9bff15-6252-4ae5-9422-17d63b99ab5a` (TPI-035)
+- Validation: TPI-036 timer regression 28/28; local Firefox 64/64; live
+  Firefox 64/64; production smoke 10/10; release safety 17/17; local auth
+  lifecycle PASS; complete isolated QA/API E2E PASS; reproducible staging
+  PASS; prior 020/021/027/028/030/031/032/033/034/035 coverage retained
+- Data protection: no owner Studio, Crossroads data, production D1 records,
+  R2 objects, recordings, or production media were mutated for testing
+- Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-036-CINEMATIC-VIDEO-TIMERS.md`
+
+## Prior verified production release — 2026-10-24 (TPI-STUDIOFLOW-035 Recording & Storage consolidation)
 
 TPI-STUDIOFLOW-035 is deployed and live-verified. The far-right production
 navigation was cleaned up (Live interaction, Comments, and Widgets removed;

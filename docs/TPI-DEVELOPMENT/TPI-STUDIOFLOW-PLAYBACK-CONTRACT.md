@@ -5,7 +5,8 @@ Maintained under: TPI-STUDIOFLOW-029 (documentation synchronization),
 updated by TPI-STUDIOFLOW-030 (Sound Effects interface),
 TPI-STUDIOFLOW-031 (Background Music interface),
 TPI-STUDIOFLOW-033 (workspace configuration persistence), and
-TPI-STUDIOFLOW-034 (DOM mutation stability)
+TPI-STUDIOFLOW-034 (DOM mutation stability), updated by
+TPI-STUDIOFLOW-036 (cinematic Video Timers)
 Last verified: 2026-10-24
 
 This document is the single current-state record of what StudioFlow's scene
@@ -41,6 +42,24 @@ legitimate changes still update the existing elements and playback paths. The
 maintained regression is `npm run verify:studioflow-034-mutation`; its settled
 idle target is fewer than 100 unnecessary mutations in five seconds, with zero
 self-sustaining child-list churn.
+
+### Video Timers — TPI-STUDIOFLOW-036
+
+- The Video Timers section exposes exactly nine approved designs in the
+  maintained order: Classic Countdown, Stargate Portal, Alien Transmission,
+  Haunted Clock, Spirit Manifestation, EVP Signal, ITC Communication,
+  Paranormal Energy Vortex, and Ghostly Countdown.
+- All designs use the existing shared countdown engine and support 10, 20, 30,
+  and 60 seconds. Changing a design does not change duration, and changing
+  duration does not change design.
+- Classic Countdown remains the existing native renderer. The eight cinematic
+  designs are silent canvas renderers driven by the same countdown deadline;
+  they do not create separate playback engines or audio paths.
+- The selected timer renders in the established program output, reaches zero,
+  can be restarted or stopped, and cleans up its animation frame when replaced
+  or closed. No automatic scene transition, music, or sound effect is added.
+- `videoTimerTheme` and `videoTimerDuration` are per-Studio workspace fields
+  and must survive server save, refresh, and Studio switching.
 
 ### Intro Video
 
@@ -321,21 +340,20 @@ the standing authority in
 Latest reported successful production deployment (verified against the
 guarded release records before publishing this baseline):
 
-- Directive: TPI-STUDIOFLOW-035 (right navigation cleanup and Recording &
-  Storage consolidation)
-- Application commit: `d0b1f70da86e6c5490bb89a644f07c5f50a53a1e`
-- StudioFlow source commit: `60af530db1d53536975ac910b9501526c54c7600`
-- Worker version: `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
-- Previous Worker version: `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
-  (TPI-STUDIOFLOW-033)
+- Directive: TPI-STUDIOFLOW-036 (cinematic Video Timers)
+- Application commit: `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`
+- StudioFlow source commit: `37c6598`
+- Worker version: `076c9614-9251-4efd-b047-0e7033f4ad9c`
+- Previous Worker version: `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
+  (TPI-STUDIOFLOW-035)
 - Reported validation: TPI-035 suite 33/33; TPI-033 round-trip 26/26;
   TPI-034 mutation regression twice; 021 browser interactions 31/31; 028
   browser 33/33; 030 sound effects browser 25/25; 031 music pad browser
   34/34; 021 static contracts 86/86; 020 contracts 14/14; 020 video clips
   13/13; 027 contracts 12/12; 031 overlays 12/12; release safety 17/17;
-  local auth lifecycle PASS; local Firefox acceptance 63/63; guarded live
-  acceptance against production 63/63; live artifact verification (shell,
-  bundle, and CSS serve 200 with the new panels).
+  local auth lifecycle PASS; local Firefox acceptance 64/64; guarded live
+  acceptance against production 64/64; TPI-036 timer regression 28/28;
+  live artifact verification and complete isolated QA/API E2E.
 
 The Intro/Outro and After Intro playback sections above remain exactly as
 verified after TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030 through

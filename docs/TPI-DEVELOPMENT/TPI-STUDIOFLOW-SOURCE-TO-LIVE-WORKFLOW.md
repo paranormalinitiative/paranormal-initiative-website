@@ -92,15 +92,30 @@ website repository's `codex/tpi-development` branch.
 ## Current verified live baseline
 
 - Website production source commit:
-  `d0b1f70da86e6c5490bb89a644f07c5f50a53a1e`
-  (TPI-STUDIOFLOW-035 Recording & Storage consolidation)
+  `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`
+  (TPI-STUDIOFLOW-036 cinematic video timers)
 - Authoritative StudioFlow source commit:
-  `60af530db1d53536975ac910b9501526c54c7600`
+  `37c6598`
 - Active production Worker version:
-  `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
+  `076c9614-9251-4efd-b047-0e7033f4ad9c`
 - Immediate rollback version:
-  `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
-  (TPI-STUDIOFLOW-033 release)
+  `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
+  (TPI-STUDIOFLOW-035 release)
+
+## TPI-STUDIOFLOW-036 verified release
+
+The 2026-10-24 release integrated the owner-supplied
+`StudioFlow_Video_Timers_Spectacular.html` collection into the existing
+Video Timers engine. The release contains nine silent selectable designs, the
+existing four durations, one shared countdown engine, program-output
+integration, and per-Studio workspace persistence. The guarded release
+completed release safety 17/17, local auth lifecycle, complete isolated QA/API
+E2E, production smoke 10/10, and isolated Firefox acceptance 64/64. Worker
+`076c9614-9251-4efd-b047-0e7033f4ad9c` is active at 100% traffic; the prior
+Worker `aa9bff15-6252-4ae5-9422-17d63b99ab5a` is the rollback reference.
+The prototype SHA-256 is `26996bd0d1017ba00736f880930e2c01099af0cb1bcc14b9b3bc19252db59f4e`.
+No production Studio configuration, D1 record, R2 object, recording, or
+owner-browser data was mutated for acceptance.
 
 ## TPI-STUDIOFLOW-035 verified release
 

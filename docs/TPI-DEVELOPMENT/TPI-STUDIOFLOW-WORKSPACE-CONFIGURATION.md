@@ -1,6 +1,6 @@
 # StudioFlow Workspace Configuration Contract
 
-Status: ACTIVE / TPI-STUDIOFLOW-033
+Status: ACTIVE / TPI-STUDIOFLOW-036
 
 Last verified: 2026-10-24
 
@@ -29,6 +29,8 @@ validated metadata and stable media references.
 | `programOrientation` (state settings) | Program output / workspace state | Yes, supported scalar | Yes | Yes | Studio | Pass |
 | `videoClips.intro`, `videoClips.outro` | Intro/Outro Video | Yes, stable asset metadata | Yes | Yes | Studio | Pass |
 | `videoClipSlots` | Video Clips board | Yes, stable asset metadata and `slot` | Yes | Yes | Studio | Pass |
+| `videoTimerTheme` | Video Timers | Yes, one of nine approved theme IDs | Yes | Yes | Studio | Pass |
+| `videoTimerDuration` | Video Timers | Yes, 10/20/30/60 seconds | Yes | Yes | Studio | Pass |
 | `customBackground`, `customLogo` | Asset panel | Yes, stable asset metadata | Yes | Yes | Studio | Pass |
 | `overlayAssets`, `activeOverlayId` | Overlay panel | Yes, validated | Yes | Yes | Studio | Pass |
 | `backgroundMusic`, `backgroundMusicSlots` | Background Music board | Yes, stable asset metadata and `slot` | Yes | Yes | Studio | Pass |
@@ -94,6 +96,22 @@ The maintained coverage is
 `npm run verify:studioflow-035-recording-storage` (33/33, including
 per-studio isolation of `recordBackstageAutomatically` across real Studio
 switching) alongside the existing `verify:studioflow-033-roundtrip` (26/26).
+
+## TPI-STUDIOFLOW-036 repairs
+
+The Video Timers selection is part of the existing workspace configuration
+contract. `videoTimerTheme` is normalized against the nine approved stable
+theme IDs and defaults to `classic`; `videoTimerDuration` is normalized to the
+supported 10, 20, 30, or 60 second values and defaults to 20. The workspace
+bridge includes both fields in its established save/hydration key set, and the
+React timer state writes through the existing local hydration cache so Studio
+activation and autosave see the same values. No competing browser-only store,
+asset record, media upload, or D1/R2 migration was introduced.
+
+The maintained `npm run verify:studioflow-036-video-timers` regression passed
+28/28 against the real local API and disposable Firefox session, including
+server round-trip, refresh, selection of all nine themes, all four durations,
+program output, restart/stop, no timer audio, and cleanup.
 
 ## Verification
 

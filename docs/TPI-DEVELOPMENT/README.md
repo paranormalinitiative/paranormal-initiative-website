@@ -50,7 +50,19 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release (TPI-STUDIOFLOW-035 right navigation
+Latest verified production release (TPI-STUDIOFLOW-036 cinematic video timers):
+
+- Application commit: `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`
+- StudioFlow source commit: `37c6598`
+- Worker version: `076c9614-9251-4efd-b047-0e7033f4ad9c` at 100% traffic
+- Rollback: `aa9bff15-6252-4ae5-9422-17d63b99ab5a` (TPI-035)
+- Acceptance: TPI-036 timer regression 28/28; local and live Firefox
+  acceptance 64/64; production smoke 10/10; release safety 17/17; local
+  auth lifecycle PASS; complete isolated API/QA gate PASS; reproducible
+  StudioFlow staging PASS
+- Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-036-CINEMATIC-VIDEO-TIMERS.md`
+
+Prior verified production release (TPI-STUDIOFLOW-035 right navigation
 cleanup and Recording & Storage consolidation):
 
 - Application commit: `d0b1f70da86e6c5490bb89a644f07c5f50a53a1e`
