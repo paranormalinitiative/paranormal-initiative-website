@@ -15,7 +15,8 @@ const videoFile = process.env.TPI_FIREFOX_VIDEO_FILE || "/private/tmp/tpi-022-vi
 const musicFile = process.env.TPI_FIREFOX_MUSIC_FILE || "/private/tmp/tpi-021-music.wav";
 const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
 const credentials = existsSync(credentialsFile) ? JSON.parse(readFileSync(credentialsFile, "utf8")) : null;
-const account = credentials?.accounts?.test_admin;
+const accountKey = process.env.TPI_FIREFOX_ACCOUNT || "test_admin";
+const account = credentials?.accounts?.[accountKey] || (accountKey === "production_qa" && credentials?.username && credentials?.password ? credentials : null);
 const evidenceRoot = mkdtempSync(join(tmpdir(), "tpi-studioflow-037e-"));
 const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });
@@ -32,7 +33,7 @@ for (const file of [firefoxBinary, geckodriver, videoFile, musicFile, credential
   }
 }
 if (!account?.username || !account?.password) {
-  console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-E", status: "BLOCKED", reason: "The synthetic test_admin account is unavailable." }));
+  console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-037-ADDENDUM-E", status: "BLOCKED", reason: `The synthetic ${accountKey} account is unavailable.` }));
   process.exit(1);
 }
 
