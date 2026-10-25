@@ -140,7 +140,7 @@ isolated.
 
 - Source commit: `8fdabf4` (`fix(studioflow): make scene renaming editable`)
 - Website application commit: `b1c21a085be679eb156c1c83277119c861068921`
-- Documentation commit: pending post-release documentation commit
+- Documentation commit: `c19c029ac62d9ecd47bc717bd120b052a071c463`
 - Production Worker: `d58d7e1e-5f86-4c87-93b3-110999d200a9`, deployed at 100%
 - Rollback reference: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Production deployment: `DEPLOYED_AND_VERIFIED`; anonymous smoke 10/10 and
