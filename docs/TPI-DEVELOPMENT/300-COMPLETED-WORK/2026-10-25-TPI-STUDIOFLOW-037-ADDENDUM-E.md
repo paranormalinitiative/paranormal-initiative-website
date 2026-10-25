@@ -67,8 +67,12 @@ scoped to their slot. Saved scene-layout deletion now asks for confirmation.
    production transition.
 4. Naming failure: `addScene()` used the selected layout as the scene title.
    It now selects the smallest unused sequential `Scene N` name without
-   renaming existing custom scenes. The timer shortcut uses the stable `timer`
-   identifier.
+   renaming existing custom scenes. The panel Rename action also previously
+   used a browser prompt and did not synchronize the panel row through the
+   scene-editor rename path. It now opens the existing editable modal, supports
+   Enter save and Escape cancel, rejects empty names, limits names to 120
+   characters, and updates the stable scene ID and panel title together. The
+   timer shortcut uses the stable `timer` identifier.
 
 The authoritative assignments remain unchanged:
 
@@ -134,11 +138,11 @@ isolated.
 
 ## Git and release state
 
-- Source commit: `3bf3acf` (`fix(studioflow): repair scenes removal and preview isolation`)
-- Website application commit: `41f36688c0fc2d38f99ca5559494390af68c59c3`
-- Documentation commit: `02e4bd4c37bcd1c8ab84456bae9c8fc765f21553`
-- Production Worker: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`, deployed at 100%
-- Rollback reference: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+- Source commit: `8fdabf4` (`fix(studioflow): make scene renaming editable`)
+- Website application commit: `b1c21a085be679eb156c1c83277119c861068921`
+- Documentation commit: pending post-release documentation commit
+- Production Worker: `d58d7e1e-5f86-4c87-93b3-110999d200a9`, deployed at 100%
+- Rollback reference: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Production deployment: `DEPLOYED_AND_VERIFIED`; anonymous smoke 10/10 and
   isolated Firefox Developer Edition acceptance 64/64
 - Owner acceptance: pending; this record must not claim owner acceptance

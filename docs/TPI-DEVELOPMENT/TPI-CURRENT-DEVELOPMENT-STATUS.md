@@ -23,14 +23,15 @@ confirmation-backed. An individual Intro preview stop no longer starts After
 Intro music. Natural Intro completion and sequence rehearsal retain the
 configured production handoff.
 
-- Source commit: `3bf3acf`
+- Source commit: `8fdabf4`
+- Website application commit: `b1c21a0`
 - Local Firefox Addendum E: 20/20
 - Regressions: TPI-037 20/20; Addendum C 26/26; Addendum D 10/10; TPI-028
   33/33; TPI-030 25/25; TPI-031 34/34; TPI-033 26/26; TPI-034 PASS; TPI-035
   33/33; TPI-036 28/28; TPI-021 31/31
 - Production status: deployed and live-verified in Worker
-  `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
-- Rollback: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+  `d58d7e1e-5f86-4c87-93b3-110999d200a9`
+- Rollback: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Guarded release: 17/17 safety contract, 10/10 anonymous smoke, and 64/64
   isolated Firefox Developer Edition checks passed
 - Owner acceptance: pending

@@ -66,11 +66,11 @@ TPI-037 20/20, Addendum C 26/26, Addendum D 10/10, TPI-028 33/33, TPI-030
 production deployment, 10/10 anonymous smoke checks, and 64/64 isolated live
 Firefox checks passed.
 
-- Source checkpoint: `3bf3acf` in `/Users/toddknipple/Documents/StudioFlow/web`
-- Website application checkpoint: `41f36688c0fc2d38f99ca5559494390af68c59c3`
+- Source checkpoint: `8fdabf4` in `/Users/toddknipple/Documents/StudioFlow/web`
+- Website application checkpoint: `b1c21a085be679eb156c1c83277119c861068921`
 - Production status: deployed and live-verified in Worker
-  `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
-- Rollback: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+  `d58d7e1e-5f86-4c87-93b3-110999d200a9`
+- Rollback: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
 
 Latest verified production release (TPI-STUDIOFLOW-037 Addendum D playback

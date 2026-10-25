@@ -16,9 +16,9 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `41f36688c0fc2d38f99ca5559494390af68c59c3` (application) / `3bf3acf` (source)
-- Active production Worker version: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
-- Recorded rollback target: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+- Last fully verified workflow baseline: `b1c21a085be679eb156c1c83277119c861068921` (application) / `8fdabf4` (source)
+- Active production Worker version: `d58d7e1e-5f86-4c87-93b3-110999d200a9`
+- Recorded rollback target: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
@@ -36,10 +36,10 @@ Intro preview stop does not start After Intro music, while natural completion
 and sequence rehearsal preserve the production handoff.
 
 The maintained Firefox Addendum E suite passed 20/20. The source commit is
-`3bf3acf` in `/Users/toddknipple/Documents/StudioFlow/web`; the website
-application commit is `41f36688c0fc2d38f99ca5559494390af68c59c3`. Production
-Worker `4b44e41d-7fb1-43a8-b9d9-510a90672cb0` is live with rollback
-`3a9b090f-78b5-43d6-bb11-17a1ba54d41b`. Guarded live smoke passed 10/10 and
+`8fdabf4` in `/Users/toddknipple/Documents/StudioFlow/web`; the website
+application commit is `b1c21a085be679eb156c1c83277119c861068921`. Production
+Worker `d58d7e1e-5f86-4c87-93b3-110999d200a9` is live with rollback
+`4b44e41d-7fb1-43a8-b9d9-510a90672cb0`. Guarded live smoke passed 10/10 and
 isolated Firefox acceptance passed 64/64. Owner acceptance remains pending
 until the owner confirms the corrected interface.
 
