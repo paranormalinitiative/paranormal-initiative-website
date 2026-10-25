@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // TPI-STUDIOFLOW-037 Addendum E — scene shortcut ownership, context menus,
 // removal persistence, sequential naming, and preview isolation.
-import { existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { Builder, By, Key } from "selenium-webdriver";
@@ -18,6 +18,7 @@ const credentials = existsSync(credentialsFile) ? JSON.parse(readFileSync(creden
 const accountKey = process.env.TPI_FIREFOX_ACCOUNT || "test_admin";
 const account = credentials?.accounts?.[accountKey] || (accountKey === "production_qa" && credentials?.username && credentials?.password ? credentials : null);
 const evidenceRoot = mkdtempSync(join(tmpdir(), "tpi-studioflow-037e-"));
+const captureEvidence = process.env.TPI_FIREFOX_CAPTURE_EVIDENCE === "1";
 const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });
 const results = [];
@@ -40,8 +41,20 @@ if (!account?.username || !account?.password) {
 let driver;
 async function js(script, ...args) { return driver.executeScript(script, ...args); }
 async function asyncJs(script, ...args) { return driver.executeAsyncScript(script, ...args); }
+async function capture(label) {
+  if (!captureEvidence || !driver) return;
+  writeFileSync(join(evidenceRoot, `${label}.png`), Buffer.from(await driver.takeScreenshot(), "base64"));
+}
 async function count(selector) { return Number(await js("return document.querySelectorAll(arguments[0]).length;", selector)); }
 async function click(selector) { return js("var node=document.querySelector(arguments[0]); if(!node) return false; node.click(); return true;", selector); }
+async function pointerClick(selector) {
+  const node = await driver.findElement(By.css(selector));
+  await node.click();
+  return true;
+}
+async function visible(selector) {
+  return Boolean(await js("var node=document.querySelector(arguments[0]); if(!node) return false; var rect=node.getBoundingClientRect(), style=getComputedStyle(node); return rect.width > 0 && rect.height > 0 && rect.right > 0 && rect.bottom > 0 && rect.left < innerWidth && rect.top < innerHeight && style.display !== 'none' && style.visibility !== 'hidden';", selector));
+}
 async function waitFor(description, predicate, timeout = 45_000) {
   const started = Date.now();
   let detail = "";
@@ -71,8 +84,8 @@ async function openReactMenu(itemId) {
     await js("var menu=document.querySelector('.scene-item-context-menu'), row=menu&&menu.closest('[data-tpi-scene-panel-item]'), trigger=row&&row.querySelector('.scene-item-menu-trigger'); if(trigger) trigger.click();");
     await waitFor("previous React context menu to close", async () => (await count(".scene-item-context-menu")) === 0);
   }
-  await click(`[data-tpi-scene-panel-item="${itemId}"] .scene-item-menu-trigger`);
-  await waitFor(`${itemId} context menu`, async () => (await count(".scene-item-context-menu")) === 1);
+  await pointerClick(`[data-tpi-scene-panel-item="${itemId}"] .scene-item-menu-trigger`);
+  await waitFor(`${itemId} context menu`, async () => (await count(".scene-item-context-menu")) === 1 && await visible(".scene-item-context-menu"));
   return js("return document.querySelector('.scene-item-context-menu')?.innerText || ''; ");
 }
 async function addShortcut(label, selector) {
@@ -112,8 +125,8 @@ try {
     await click(`[data-tpi-scene-panel-item="${itemId}"] .scene-item-menu-trigger`);
   }
   await addShortcut("Background Music", '[data-tpi-scene-music-for="after-intro"]');
-  const musicMenuOpened = await click('[data-tpi-scene-music-for="after-intro"] .scene-item-menu-trigger');
-  await waitFor("Background Music context menu", async () => (await count(".tpi-scene-music-menu")) === 1);
+  const musicMenuOpened = await pointerClick('[data-tpi-scene-music-for="after-intro"] .scene-item-menu-trigger');
+  await waitFor("Background Music context menu", async () => (await count(".tpi-scene-music-menu")) === 1 && await visible(".tpi-scene-music-menu"));
   const musicMenuText = await js("return document.querySelector('.tpi-scene-music-menu')?.innerText || ''; ");
   check("Background Music exposes its bridge context menu", musicMenuOpened && musicMenuText.includes("Remove from Scenes"), musicMenuText);
   await js("document.body.dispatchEvent(new MouseEvent('click',{bubbles:true}));");
@@ -122,14 +135,17 @@ try {
   const videoMenuText = await openReactMenu("video-clip:4");
   check("Video Clip exposes Remove from Scenes", videoMenuText.includes("Remove from Scenes"), videoMenuText);
   await click('[data-tpi-scene-panel-item="video-clip:4"] .scene-item-menu-trigger');
-  await js("var node=document.querySelector('[data-tpi-scene-panel-item=\"scene:scene-1\"]'); if(!node) throw new Error('Scene 1 row unavailable'); node.dispatchEvent(new MouseEvent('contextmenu',{bubbles:true,cancelable:true,button:2}));");
-  await waitFor("right-click scene context menu", async () => (await count(".scene-item-context-menu")) === 1);
+  const sceneOne = await driver.findElement(By.css('[data-tpi-scene-panel-item="scene:scene-1"]'));
+  await driver.actions().contextClick(sceneOne).perform();
+  await waitFor("right-click scene context menu", async () => (await count(".scene-item-context-menu")) === 1 && await visible(".scene-item-context-menu"));
   check("right-click opens the same Scene context menu", (await js("return document.querySelector('.scene-item-context-menu')?.innerText || ''; ")).includes("Remove from Scenes"));
+  await capture("01-scene-context-menu");
   await js("document.body.dispatchEvent(new MouseEvent('click',{bubbles:true}));");
 
   // Rename a scene through the actual menu and verify the scene ID remains stable.
   await openReactMenu("scene:scene-1");
   await js("var button=Array.from(document.querySelectorAll('.scene-item-context-menu button')).find(function(node){return node.textContent.includes('Rename Scene');}); if(!button) throw new Error('Rename Scene action unavailable'); button.click();");
+  await capture("02-rename-scene-modal");
   const renameInput = await driver.findElement(By.css('input[aria-label="Scene title"]'));
   await renameInput.clear();
   await renameInput.sendKeys("Investigation", Key.ENTER);
@@ -145,8 +161,8 @@ try {
   await click('.scene-item-context-menu button.danger');
   await waitFor("Scene 2 shortcut removal", async () => (await count('[data-tpi-scene-panel-item="scene:scene-2"]')) === 0);
   check("Remove from Scenes removes only the Scene 2 shortcut", await count('[data-tpi-scene-panel-item="scene:scene-2"]') === 0);
-  await click('[data-tpi-scene-music-for="after-intro"] .scene-item-menu-trigger');
-  await waitFor("Background Music menu for removal", async () => (await count(".tpi-scene-music-menu")) === 1);
+  await pointerClick('[data-tpi-scene-music-for="after-intro"] .scene-item-menu-trigger');
+  await waitFor("Background Music menu for removal", async () => (await count(".tpi-scene-music-menu")) === 1 && await visible(".tpi-scene-music-menu"));
   await js("var button=Array.from(document.querySelectorAll('.tpi-scene-music-menu button')).find(function(node){return node.textContent.includes('Remove from Scenes');}); if(!button) throw new Error('Music Remove from Scenes action unavailable'); button.click();");
   await waitFor("Background Music shortcut removal", async () => (await count('[data-tpi-scene-music-for="after-intro"]')) === 0);
   check("Remove from Scenes removes the music shortcut without deleting its assignment store", await count('[data-tpi-scene-music-for="after-intro"]') === 0 && Boolean(await js("return localStorage.getItem('studioflow.sceneMusicAssignments') !== null;")));
@@ -166,6 +182,7 @@ try {
   const refreshedRows = await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(node){return node.getAttribute('data-tpi-scene-panel-item');});");
   check("removed shortcuts stay removed after refresh", !refreshedRows.includes("scene:scene-2") && !refreshedRows.includes("timer") && !refreshedRows.includes("video-clip:4") && !refreshedRows.includes("music:after-intro"), JSON.stringify(refreshedRows));
   check("renamed scene persists after refresh", await count('[data-tpi-scene-panel-item="scene:scene-1"] strong') === 1 && (await js("return document.querySelector('[data-tpi-scene-panel-item=\"scene:scene-1\"] strong')?.textContent.trim();")) === "Investigation");
+  await capture("03-renamed-scene-after-refresh");
   const persisted = await authenticatedFetch(`/api/studio/workspaces/${encodeURIComponent(workspaceId)}`);
   const persistedState = persisted.body?.workspace?.state || {};
   check("server persistence keeps removed shortcuts absent", !(persistedState.configuration?.scenePanelItems || []).some((item) => ["scene:scene-2", "timer", "video-clip:4", "music:after-intro"].includes(item.id)));
@@ -179,7 +196,7 @@ try {
   await upload('[data-tpi-audio-board="music"] .tpi-audio-upload', "audio/", musicFile);
   await waitFor("Background Music assignment", async () => (await count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')) === 1);
   await click('[data-tpi-scene-music-for="after-intro"] .scene-item-menu-trigger');
-  await waitFor("After Intro assignment menu", async () => (await count(".tpi-scene-music-menu")) === 1);
+  await waitFor("After Intro assignment menu", async () => (await count(".tpi-scene-music-menu")) === 1 && await visible(".tpi-scene-music-menu"));
   await click(".tpi-scene-music-menu-item:not(.remove)");
   await waitFor("After Intro assignment", async () => Boolean(await js("return JSON.parse(localStorage.getItem('studioflow.sceneMusicAssignments')||'{}')['after-intro'];")));
   await click('[data-tpi-scene-panel-item="intro"] .scene-panel-item-button');
@@ -189,6 +206,10 @@ try {
   await sleep(600);
   check("stopping individual Intro preview does not start After Intro music", await count('[data-tpi-audio-board="music"] .tpi-audio-slot.playing') === 0);
   check("stopping individual Intro preview restores the prior scene without transition", await js("return JSON.parse(localStorage.getItem('studioflow.activeSceneId')||'\"\"') !== 'intro';"));
+  await capture("04-intro-stopped-no-music");
+  if (captureEvidence) {
+    writeFileSync(join(evidenceRoot, "production-resources.json"), JSON.stringify(await js("return performance.getEntriesByType('resource').map(function(entry){return entry.name;}).filter(function(name){return name.indexOf('/studio/') >= 0;});"), null, 2));
+  }
 
   const latestWorkspace = await authenticatedFetch(`/api/studio/workspaces/${encodeURIComponent(workspaceId)}`);
   const cleanup = await authenticatedFetch(`/api/studio/workspaces/${encodeURIComponent(workspaceId)}/archive`, { method: "POST", body: JSON.stringify({ expectedVersion: latestWorkspace.body?.workspace?.version }) });
