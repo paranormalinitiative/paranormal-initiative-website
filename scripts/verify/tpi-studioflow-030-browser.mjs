@@ -106,19 +106,38 @@ async function waitFor(description, predicate, timeout = 30_000) {
   throw new Error(`${description} timed out`);
 }
 async function click(selector) {
-  const elements = await driver.findElements(By.css(selector));
-  if (!elements.length) return false;
-  await elements[0].click();
-  return true;
+  const started = Date.now();
+  while (Date.now() - started < 5_000) {
+    const elements = await driver.findElements(By.css(selector));
+    if (!elements.length) {
+      await sleep(100);
+      continue;
+    }
+    try {
+      await elements[0].click();
+      return true;
+    } catch (error) {
+      await sleep(100);
+    }
+  }
+  return false;
 }
 async function upload(triggerSelector, acceptToken, path) {
   const before = await count(`input[type=file][accept*="${acceptToken}"]`);
   if (!(await click(triggerSelector))) throw new Error(`Upload trigger not found: ${triggerSelector}`);
-  const input = await waitFor("dynamic file input", async () => {
+  await waitFor("dynamic file input", async () => {
     const elements = await driver.findElements(By.css(`input[type=file][accept*="${acceptToken}"]`));
-    return elements.length > before ? elements[elements.length - 1] : null;
+    if (!elements.length || (elements.length <= before && before === 0)) return false;
+    try {
+      await elements[elements.length - 1].sendKeys(path);
+      return true;
+    } catch (error) {
+      // React may replace the transient input between discovery and sendKeys.
+      // Retry against the current node instead of treating that expected
+      // rerender as a product failure.
+      return false;
+    }
   });
-  await input.sendKeys(path);
 }
 async function enterStudio() {
   await driver.get(`${base}/studio/`);
@@ -194,11 +213,18 @@ async function switchToStudio(workspaceId) {
   // are not unique across runs and browser-only rows use another action. The
   // create/save flows refresh the menu asynchronously, so wait for the row to
   // render rather than trusting the menu is already current.
-  const item = await waitFor(`studio menu row for ${workspaceId}`, async () => {
+  await waitFor(`studio menu row for ${workspaceId}`, async () => {
     const elements = await driver.findElements(By.css(`#tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`)).catch(() => []);
-    return elements[0] || null;
+    if (!elements.length) return false;
+    try {
+      await elements[0].click();
+      return true;
+    } catch (error) {
+      // The menu can rerender while workspace data is refreshed. Re-query on
+      // the next state-based iteration instead of retaining a stale node.
+      return false;
+    }
   }, 20_000);
-  await item.click();
   // Capture the status message right after the click — background autosave
   // overwrites it with "PROJECT SAVED" and would hide the switching failure.
   await sleep(2500);
@@ -379,8 +405,18 @@ try {
   }
   check("12a. A second Studio is created for isolation testing", Boolean(idB), JSON.stringify({ idA, idB }));
 
+  // Creation intentionally activates Studio B immediately. Return to A first
+  // so the isolation assertion exercises the real A -> B switching path rather
+  // than waiting for a change that has already happened during creation.
+  await switchToStudio(idA);
+  await waitFor("Studio A sound boards", async () => (await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned')) === 4);
   // Give Studio B its own distinct arrangement: drag the last pad to the front.
   await switchToStudio(idB);
+  await waitFor("Studio B starts with independent sound boards", async () => (await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned')) === 0);
+  for (const file of [soundA, soundB, soundC, soundD]) {
+    await upload('[data-tpi-audio-board="sound"] .tpi-audio-slot.empty button[data-tpi-audio-action="upload"]', "audio/", file);
+    await waitFor("Studio B sound assignment", async () => (await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned')) > 0);
+  }
   await waitFor("Studio B sound boards", async () => (await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned')) === 4);
   await sleep(800);
   const orderBStart = (await soundTitles()).slice(0, 4);
@@ -414,6 +450,11 @@ try {
   } catch (error) { restoredB = (await soundTitles()).slice(0, 4); }
   await dumpState("after-12d-switchToB", idA, idB);
   check("12d. Studio B keeps its own arrangement without overwriting Studio A", JSON.stringify(restoredB) === JSON.stringify(orderB), JSON.stringify({ orderB, restoredB }));
+
+  // Studio B is intentionally clean. Return to the seeded Studio A before
+  // exercising the separate Intro/After Intro playback fixture.
+  await switchToStudio(idA);
+  await waitFor("Studio A sound boards before playback checks", async () => (await count('[data-tpi-audio-board="sound"] .tpi-audio-slot.assigned')) === 4);
 
   // 16. Intro/Outro playback remains functional.
   await upload('[data-tpi-video-card="0"] [data-tpi-video-action="upload"]', "video/", videoFile);

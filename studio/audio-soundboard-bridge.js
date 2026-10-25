@@ -641,21 +641,6 @@
       window.dispatchEvent(new CustomEvent("studioflow:scene-panel-remove", { detail: { itemId: "music:" + sceneId } }));
     });
     menu.appendChild(removeFromScenes);
-    // Addendum C: the music row is reorderable like every production item.
-    // Moving it only changes its panel position — never its assignment.
-    [[-1, "Move up"], [1, "Move down"]].forEach(function (entry) {
-      var mover = document.createElement("button");
-      mover.type = "button";
-      mover.className = "tpi-scene-music-menu-item";
-      mover.textContent = entry[1];
-      mover.addEventListener("click", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        closeSceneMusicMenu();
-        window.dispatchEvent(new CustomEvent("studioflow:scene-music-move", { detail: { itemId: "music:" + sceneId, direction: entry[0] } }));
-      });
-      menu.appendChild(mover);
-    });
     document.body.appendChild(menu);
     sceneMusicMenu = menu;
     positionSceneMusicMenu(button);

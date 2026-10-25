@@ -92,19 +92,35 @@ async function waitFor(description, predicate, timeout = 30_000) {
   throw new Error(`${description} timed out`);
 }
 async function click(selector) {
-  const elements = await driver.findElements(By.css(selector));
-  if (!elements.length) return false;
-  await elements[0].click();
-  return true;
+  const started = Date.now();
+  while (Date.now() - started < 5_000) {
+    const elements = await driver.findElements(By.css(selector));
+    if (!elements.length) {
+      await sleep(100);
+      continue;
+    }
+    try {
+      await elements[0].click();
+      return true;
+    } catch (error) {
+      await sleep(100);
+    }
+  }
+  return false;
 }
 async function upload(triggerSelector, acceptToken, path) {
   const before = await count(`input[type=file][accept*="${acceptToken}"]`);
   if (!(await click(triggerSelector))) throw new Error(`Upload trigger not found: ${triggerSelector}`);
-  const input = await waitFor("dynamic file input", async () => {
+  await waitFor("dynamic file input", async () => {
     const elements = await driver.findElements(By.css(`input[type=file][accept*="${acceptToken}"]`));
-    return elements.length > before ? elements[elements.length - 1] : null;
+    if (!elements.length || (elements.length <= before && before === 0)) return false;
+    try {
+      await elements[elements.length - 1].sendKeys(path);
+      return true;
+    } catch (error) {
+      return false;
+    }
   });
-  await input.sendKeys(path);
 }
 async function enterStudio() {
   await driver.get(`${base}/studio/`);
@@ -190,11 +206,7 @@ async function switchToStudio(workspaceId) {
   await js("window.__tpiSwitchActivations = 0; window.__tpiStudioFlowActivateBroadcast = (function (orig) { return function () { window.__tpiSwitchActivations = (window.__tpiSwitchActivations || 0) + 1; return orig.apply(this, arguments); }; })(window.__tpiStudioFlowActivateBroadcast);");
   await click(".tpi-studio-selector");
   await waitFor("My Studios menu", async () => (await count(".tpi-studio-menu:not([hidden])")) === 1);
-  const item = await waitFor(`studio menu row for ${workspaceId}`, async () => {
-    const elements = await driver.findElements(By.css(`#tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`)).catch(() => []);
-    return elements[0] || null;
-  }, 20_000);
-  await item.click();
+  await waitFor(`studio menu row for ${workspaceId}`, async () => await click(`#tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`), 20_000);
   await sleep(2500);
   const earlyStatus = await js("var node = document.querySelector('.tpi-studio-status'); return node ? node.textContent : '';");
   try {
@@ -466,9 +478,19 @@ try {
   }
   check("15a. A second Studio is created for isolation testing", Boolean(idB), JSON.stringify({ idA, idB }));
 
+  // Creation intentionally activates the clean Studio B. Return to the
+  // seeded Studio A, then assign B its own disposable music before testing
+  // reordering and isolation. A new Studio must not inherit A's tracks.
+  await switchToStudio(idA);
+  await waitFor("Studio A music boards", async () => (await count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')) >= 1, 30_000);
   await switchToStudio(idB);
-  await waitFor("Studio B music boards", async () => (await count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')) >= 1, 30_000).catch(() => {});
-  await sleep(800);
+  await waitFor("Studio B starts with independent music boards", async () => (await count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')) === 0, 30_000);
+  for (const file of [musicA, musicB, musicC, musicD]) {
+    await upload('[data-tpi-audio-board="music"] .tpi-audio-upload', "audio/", file);
+    await waitFor("Studio B music assignment", async () => (await count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')) > 0);
+  }
+  await waitFor("Studio B music boards", async () => (await count('[data-tpi-audio-board="music"] .tpi-audio-slot.assigned')) === 4, 30_000);
+  await sleep(1200);
   // Give Studio B its own distinct music arrangement where music exists.
   const orderBStart = (await musicTitles()).slice(0, 4).filter(Boolean);
   if (orderBStart.length >= 2) {

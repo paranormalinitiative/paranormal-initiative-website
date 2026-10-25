@@ -61,7 +61,7 @@
       widgetSettings: { showClock: false, showElapsed: false, showCountdown: false, placement: "bottom-right" },
       generalSettings: { resolution: "1080p", orientation: "landscape" },
       guestPermissionSettings: { canStreamToOwnDestination: false, canSeeViewerComments: true, playEntrySound: true, mustAuthenticate: false, canControlSlides: false },
-      studioScenes: [{ id: "intro", kind: "intro", title: "Intro video", layout: "Speaker view" }, { id: "scene-1", kind: "demo", title: "Scene 1", layout: "Speaker view" }, { id: "scene-2", kind: "demo", title: "Scene 2", layout: "Group discussion" }, { id: "outro", kind: "outro", title: "Outro video", layout: "Speaker view" }],
+      studioScenes: [{ id: "intro", kind: "intro", title: "Intro Video", layout: "Speaker view" }, { id: "scene-1", kind: "demo", title: "Scene 1", layout: "Speaker view" }, { id: "scene-2", kind: "demo", title: "Scene 2", layout: "Group discussion" }, { id: "outro", kind: "outro", title: "Outro Video", layout: "Speaker view" }],
       sceneMusicAssignments: {},
       bannerScrollTicker: { enabled: false, text: "", position: "bottom" },
       programOrientation: "landscape",
@@ -97,14 +97,14 @@
     var hasOutro = incoming.some(function (scene) { return scene.kind === "outro"; });
     var demoCount = incoming.filter(function (scene) { return scene.kind === "demo"; }).length;
     var result = incoming.slice();
-    if (!hasIntro) result.unshift(baseline("intro", "intro", "Intro video", "Speaker view"));
+    if (!hasIntro) result.unshift(baseline("intro", "intro", "Intro Video", "Speaker view"));
     if (demoCount < 2) {
       var needed = 2 - demoCount;
       for (var index = 0; index < needed; index += 1) {
         result.push(baseline(index === 0 ? "scene-1" : "scene-2", "demo", index === 0 ? "Scene 1" : "Scene 2", index === 0 ? "Speaker view" : "Group discussion"));
       }
     }
-    if (!hasOutro) result.push(baseline("outro", "outro", "Outro video", "Speaker view"));
+    if (!hasOutro) result.push(baseline("outro", "outro", "Outro Video", "Speaker view"));
     return result;
   }
   function normalizeStoredStudioScenes() {
@@ -284,7 +284,12 @@
     var prepare = Promise.resolve();
     if (parsedBody && (isCreate || isPatch)) {
       var restoringFromBackup = isCreate && parsedBody.restoreFromBackup === true;
-      var configuration = isCreate ? (restoringFromBackup ? Object.assign({}, parsedBody.state && parsedBody.state.configuration || {}) : Object.assign({}, defaults(), parsedBody.state && parsedBody.state.configuration || {}, assetConfiguration())) : Object.assign({}, parsedBody.state && parsedBody.state.configuration || {}, assetConfiguration());
+      // A normal create request already contains the new Studio's explicit
+      // clean defaults. Merging active localStorage here would copy the
+      // previous Studio's media assignments into the new workspace. Only
+      // updates to an existing workspace may supplement their payload from
+      // the active local asset state; backup restores remain explicit copies.
+      var configuration = isCreate ? (restoringFromBackup ? Object.assign({}, parsedBody.state && parsedBody.state.configuration || {}) : Object.assign({}, defaults(), parsedBody.state && parsedBody.state.configuration || {})) : Object.assign({}, parsedBody.state && parsedBody.state.configuration || {}, assetConfiguration());
       if (isCreate) {
         if (!restoringFromBackup) applyConfiguration(configuration);
         parsedBody.state = { broadcast: parsedBody.state && parsedBody.state.broadcast || { id: parsedBody.localBroadcastId, title: parsedBody.title || "Untitled Studio", description: parsedBody.description || "", scheduledAt: null, visibility: "private", status: "draft", tpiSync: null }, settings: parsedBody.state && parsedBody.state.settings || { programOrientation: "landscape", recordingDestination: "browser", keepLocalBackup: true, saveAutomatically: false, recordBackstageAutomatically: false, resumeBackstageAfterShow: false }, recording: parsedBody.state && parsedBody.state.recording || { localLibraryCount: 0, incompleteSessionCount: 0, storageMode: "browser" }, configuration: configuration };

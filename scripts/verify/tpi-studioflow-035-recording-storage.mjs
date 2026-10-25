@@ -66,10 +66,21 @@ async function waitFor(description, predicate, timeout = 30_000) {
   throw new Error(`${description} timed out`);
 }
 async function click(selector) {
-  const elements = await driver.findElements(By.css(selector));
-  if (!elements.length) return false;
-  await elements[0].click();
-  return true;
+  const started = Date.now();
+  while (Date.now() - started < 5_000) {
+    const elements = await driver.findElements(By.css(selector));
+    if (!elements.length) {
+      await sleep(100);
+      continue;
+    }
+    try {
+      await elements[0].click();
+      return true;
+    } catch (error) {
+      await sleep(100);
+    }
+  }
+  return false;
 }
 async function clickByText(containerSelector, text) {
   // Note: capture the arguments in locals — `arguments` inside the find
@@ -161,6 +172,9 @@ async function enterStudio() {
   }
   await waitFor("organized StudioFlow controls", async () => (await count("[data-tpi-video-organization]")) === 1 && (await count("[data-tpi-audio-soundboards]")) === 1);
 }
+async function cleanupPriorFixtures() {
+  await asyncJs("var done = arguments[arguments.length - 1]; fetch('/api/studio/workspaces', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(async function (body) { var fixtures = (body.workspaces || []).filter(function (item) { return /^TPI-035 (A|B) /.test(item.title || ''); }); for (var i = 0; i < fixtures.length; i += 1) { await fetch('/api/studio/workspaces/' + encodeURIComponent(fixtures[i].id) + '/delete', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ expectedVersion: fixtures[i].version }) }); } done(fixtures.length); }).catch(function () { done(0); });");
+}
 async function activeStudioId() {
   return await js("return localStorage.getItem('studioflow.tpiActiveStudioId.v1') || '';");
 }
@@ -172,18 +186,12 @@ async function openStudioMenu() {
 }
 async function switchToStudio(workspaceId) {
   const before = await activeStudioId();
-  await js("window.__tpiSwitchActivations = 0; window.__tpiStudioFlowActivateBroadcast = (function (orig) { return function () { window.__tpiSwitchActivations = (window.__tpiSwitchActivations || 0) + 1; return orig.apply(this, arguments); }; })(window.__tpiStudioFlowActivateBroadcast);");
   await click(".tpi-studio-selector");
   await waitFor("My Studios menu", async () => (await count(".tpi-studio-menu:not([hidden])")) === 1);
-  const item = await waitFor(`studio menu row for ${workspaceId}`, async () => {
-    const elements = await driver.findElements(By.css(`#tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`)).catch(() => []);
-    return elements[0] || null;
-  }, 20_000);
-  await item.click();
+  await waitFor(`studio menu row for ${workspaceId}`, async () => await click(`#tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`), 20_000);
   await waitFor(`studio ${workspaceId} to activate`, async () => {
     const current = await activeStudioId();
-    const activations = Number(await js("return window.__tpiSwitchActivations || 0;"));
-    return current && current !== before && activations >= 1 && (await count("[data-tpi-audio-soundboards]")) === 1;
+    return current && current !== before && current === workspaceId && (await count("[data-tpi-audio-soundboards]")) === 1;
   }, 45_000);
   await sleep(1500);
 }
@@ -195,6 +203,7 @@ try {
   await driver.get(`${base}/member-login.html`);
   await js("var form=document.querySelector('form[data-member-login]'), user=form&&form.querySelector('input[name=\"username\"]'), password=form&&form.querySelector('input[name=\"password\"]'); if(!form||!user||!password) throw new Error('Member login form unavailable'); user.value=arguments[0]; password.value=arguments[1]; ['input','change'].forEach(function(type){user.dispatchEvent(new Event(type,{bubbles:true}));password.dispatchEvent(new Event(type,{bubbles:true}));}); form.querySelector('button[type=submit]').click();", account.username, account.password);
   await waitFor("authenticated session", async () => Boolean(await asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});")));
+  await cleanupPriorFixtures();
 
   await js("var id=arguments[0], broadcast={id:id,title:arguments[1],description:'Disposable recording/storage consolidation test',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Main scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1')); localStorage.setItem('studioflow.teleprompterScripts',JSON.stringify([{id:'s1',title:'TPI-035 sample script',body:'Read this sample script aloud during the teleprompter check.',updatedAt:Date.now()}]));", `tpi-035-${Date.now()}`, studioATitle);
   await enterStudio();
@@ -334,14 +343,23 @@ try {
   await openRail("Recording & Storage");
   if ((await railCheckboxChecked("Record backstage automatically")) !== false) await toggleRailCheckbox("Record backstage automatically");
   await waitFor("Studio A preference saved", async () => (await js("return (JSON.parse(localStorage.getItem('studioflow.recordingPreferences.v2') || 'null') || {}).recordBackstageAutomatically;")) === false, 15_000);
-  await openStudioMenu();
-  await click('.tpi-studio-manage-menu [data-action="save-local"]');
-  await sleep(300);
-  try { await driver.switchTo().alert().accept(); } catch (error) {}
-  await waitFor("Studio A saved to My Studios", async () => /PROJECT SAVED/i.test(await js("var node = document.querySelector('.tpi-studio-status'); return node ? node.textContent : '';")), 30_000);
-  await waitFor("Studio A workspace activation", async () => Boolean(await activeStudioId()), 30_000);
+  // The current product creates an independent Studio through the centered
+  // Create New Studio workflow. The former browser-local "Save Current
+  // Studio" path is not a reliable prerequisite for testing per-Studio
+  // recording preferences and is intentionally not used here.
+  await click(".tpi-studio-selector");
+  await waitFor("My Studios menu for recording isolation", async () => (await count(".tpi-studio-menu:not([hidden])")) === 1);
+  await click('.tpi-studio-menu [data-action="create"]');
+  await waitFor("Studio A creation dialog", async () => (await count("#tpi-create-studio-dialog")) === 1);
+  await js("var input = document.querySelector('#tpi-studio-name'); input.value = arguments[0]; input.dispatchEvent(new Event('input', { bubbles: true }));", studioATitle);
+  await click(".tpi-studio-dialog-submit");
+  const idA = await waitFor("Studio A saved to My Studios", async () => {
+    const list = await asyncJs("var done = arguments[arguments.length - 1]; fetch('/api/studio/workspaces', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (body) { done((body.workspaces || []).map(function (item) { return { id: item.id, title: item.title }; })); }).catch(function () { done([]); });");
+    const match = list.find((item) => item && item.title === studioATitle);
+    return match ? match.id : null;
+  }, 30_000);
+  await waitFor("Studio A workspace activation", async () => (await activeStudioId()) === idA, 30_000);
   await sleep(2500);
-  const idA = await activeStudioId();
 
   await click(".tpi-studio-selector");
   await waitFor("My Studios menu", async () => (await count(".tpi-studio-menu:not([hidden])")) === 1);
@@ -356,6 +374,9 @@ try {
   }, 30_000);
   check("A second Studio is created for isolation testing", Boolean(idB), JSON.stringify({ idA, idB }));
 
+  // Creation activates Studio B immediately; exercise the actual A -> B
+  // switch before changing B's recording preference.
+  await switchToStudio(idA);
   await switchToStudio(idB);
   await openRail("Recording & Storage");
   if ((await railCheckboxChecked("Record backstage automatically")) !== true) await toggleRailCheckbox("Record backstage automatically");

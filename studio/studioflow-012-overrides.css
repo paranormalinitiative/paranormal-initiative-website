@@ -155,6 +155,125 @@
   color: #ffb4ab;
 }
 
+/* TPI integrated recovery: workspace dialogs must be viewport overlays rather
+   than normal-flow content appended below the Studio layout. */
+.tpi-studio-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 1rem;
+  background: rgb(4 8 14 / 72%);
+}
+
+.tpi-studio-dialog {
+  box-sizing: border-box;
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1.1rem;
+  border: 1px solid #6ea8ff;
+  border-radius: 0.7rem;
+  background: #17233c;
+  box-shadow: 0 1.2rem 3rem rgb(0 0 0 / 48%);
+  color: #f3f7ff;
+}
+
+.tpi-studio-dialog-header,
+.tpi-studio-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.tpi-studio-dialog-header {
+  margin-bottom: 1rem;
+}
+
+.tpi-studio-dialog-header h2 {
+  margin: 0;
+  color: inherit;
+  font-size: 1.15rem;
+}
+
+.tpi-studio-dialog-close {
+  min-width: 2rem;
+  min-height: 2rem;
+  border: 1px solid #6ea8ff;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.tpi-studio-dialog-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #b8c7df;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.tpi-studio-dialog-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 2.65rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid #6ea8ff;
+  border-radius: 0.4rem;
+  background: #0e1729;
+  color: #f3f7ff;
+  font: inherit;
+}
+
+.tpi-studio-dialog-error {
+  margin: 0.6rem 0 0;
+  color: #ffb4ab;
+  font-size: 0.82rem;
+}
+
+.tpi-studio-dialog-actions {
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.tpi-studio-dialog-actions button {
+  min-height: 2.4rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #6ea8ff;
+  border-radius: 0.4rem;
+  background: #20365b;
+  color: #f3f7ff;
+  font: inherit;
+}
+
+.tpi-studio-dialog-actions .tpi-studio-dialog-submit {
+  background: #6ea8ff;
+  color: #08111f;
+  font-weight: 700;
+}
+
+.tpi-studio-dialog button:focus-visible,
+.tpi-studio-dialog input:focus-visible {
+  outline: 2px solid #b9d5ff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .tpi-studio-dialog-backdrop {
+    padding: 0.65rem;
+  }
+
+  .tpi-studio-dialog {
+    width: min(32rem, calc(100vw - 1.3rem));
+    max-height: calc(100vh - 1.3rem);
+  }
+}
+
 /* TPI-STUDIOFLOW-020: make Intro/Outro ownership and actions explicit. */
 .tpi-video-clip-management {
   display: grid;
