@@ -35,7 +35,9 @@ const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodrive
 const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
 const credentials = existsSync(credentialsFile) ? JSON.parse(readFileSync(credentialsFile, "utf8")) : null;
 const accountKey = process.env.TPI_FIREFOX_ACCOUNT || "test_admin";
-const account = credentials?.accounts?.[accountKey];
+// Local harness credentials live under accounts.<key>; the production QA
+// profile is a flat { username, password } record.
+const account = credentials?.accounts?.[accountKey] || (credentials?.username && credentials?.password ? { username: credentials.username, password: credentials.password } : null);
 const evidenceRoot = mkdtempSync(join(tmpdir(), "tpi-studio-lifecycle-"));
 const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });

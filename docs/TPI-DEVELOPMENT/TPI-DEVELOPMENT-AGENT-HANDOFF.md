@@ -12,7 +12,22 @@ repairable blocker or require a fresh owner directive for each lifecycle step.
 Historical restrictions below describe prior executions and do not override
 the controlling directive.
 
-## Current integrated recovery release
+## Current Studio lifecycle recovery release
+
+The Studio Creation, Switching & Workspace Isolation Recovery is deployed and
+live-verified; owner acceptance remains pending. Source commit `44f9478`
+(StudioFlow canonical repository, local-only), website application commit
+`161d03d` (pushed to `codex/tpi-development`). Production Worker
+`9d3aa40c-9a44-4bf9-bcf1-8efcbf837683` is active with rollback checkpoint
+`7bddac9c-bda3-41c1-95d2-13aacc09cb28`; the live application serves
+`/studio/assets/index-Drm85nEM.js` and `/studio/assets/index-8wAEEeJ8.css`.
+Guarded release preflight passed and `DEPLOYED_AND_VERIFIED` ran 64/64 live
+acceptance checks. The maintained `npm run verify:studioflow-studio-lifecycle`
+suite (Directive Tests 1–10 plus owner-flow checks) passes locally and
+against production with the isolated QA account. See
+`300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-STUDIO-LIFECYCLE-RECOVERY.md`.
+
+## Previous integrated recovery release
 
 The integrated StudioFlow management and Scenes recovery is deployed and
 visually verified in production; owner acceptance remains pending. Source

@@ -33,6 +33,27 @@ anonymous production smoke passed 10/10, and live isolated Firefox acceptance
 passed 64/64. See
 [`../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md`](../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md).
 
+## Studio Creation, Switching & Workspace Isolation Recovery — 2026-10-25
+
+Status: `IMPLEMENTED / DEPLOYED / LIVE VERIFIED / OWNER ACCEPTANCE PENDING`.
+The owner-rejected Studio Management recovery was re-investigated at runtime
+and repaired at root cause: home-screen creation now starts every new Studio
+from the clean four-item default configuration (no inherited Crossroads-style
+scenes or media), Studio switching loads the selected Studio's own
+configuration into every per-Studio slice, browser-local Studios without a
+saved snapshot open with the default configuration and a visible notice
+instead of silently reverting, failed pre-switch saves keep a local recovery
+copy and explain themselves instead of vanishing into autosave noise, and
+Home/Library entry preserves the outgoing Studio before activating the next
+one. The maintained `verify:studioflow-studio-lifecycle` suite (Directive
+Tests 1–10 plus owner-flow checks) passes locally and against production with
+the isolated QA account. Source `44f9478` (StudioFlow canonical repository,
+local-only); application `161d03d` (website integration, pushed); Worker
+`9d3aa40c-9a44-4bf9-bcf1-8efcbf837683`; rollback checkpoint
+`7bddac9c-bda3-41c1-95d2-13aacc09cb28`. Crossroads of the Unknown was not
+modified. See
+[`../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-STUDIO-LIFECYCLE-RECOVERY.md`](../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-STUDIO-LIFECYCLE-RECOVERY.md).
+
 ## Integrated Studio Management & Scene System Recovery — 2026-10-25
 
 The recovery repair is committed locally but not released. Source `657f80e`
@@ -209,6 +230,7 @@ their original execution and limitations.
 | TPI-STUDIOFLOW-035 (2026-10-24 workspace consolidation series) | Right navigation cleanup, Teleprompter placement, and Recording & Storage consolidation | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Removed Live interaction, Comments, and Widgets from the far-right rail (presentation code removed; underlying state and program services preserved), placed Teleprompter directly beneath Notes reusing the existing studio teleprompter reader, and added the authoritative Recording & Storage rail section (Recording Configuration, Save Destination, Local & External Storage, Cloud Storage, Save Status, Recording Information, Errors & Recovery). Settings > Recording and Settings > Recording & Storage now redirect to that section with preserved saved values. Recordings report confirmed save outcomes with the destination actually used; an unavailable folder destination requires explicit fallback confirmation (declining records the awaiting-action state); cloud providers appear only as Not connected pending verified OAuth integration. Repaired four partially connected workspace recording-settings defects (wrong save fields, wrong hydration keys, stale React state on Studio activation). Application commit `d0b1f70`; source commit `60af530`; Worker `aa9bff15-6252-4ae5-9422-17d63b99ab5a`; rollback `5c8e78b5-f920-4335-940f-a5e4d6df0e49`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-035-RECORDING-STORAGE-CONSOLIDATION.md`. |
 | TPI-STUDIOFLOW-036 (2026-10-24 timer series) | Nine cinematic Video Timers integration | COMPLETE / DEPLOYED AND LIVE-VERIFIED | Integrated the owner-approved Spectacular Cinematic Edition into the existing Video Timers engine: nine silent selectable designs in a three-column grid, four preserved durations, shared countdown/program-output behavior, per-Studio persistence, and cleanup without duplicate loops or audio. Repaired the activation hydration race and stale duplicate React-owned timer grid found during browser validation. Maintained timer regression passed 28/28; local and live Firefox acceptance passed 64/64; production smoke passed 10/10. Application commit `7bd8c46`; source commit `37c6598`; Worker `076c9614-9251-4efd-b047-0e7033f4ad9c`; rollback `aa9bff15-6252-4ae5-9422-17d63b99ab5a`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-036-CINEMATIC-VIDEO-TIMERS.md`. |
 | TPI-STUDIOFLOW-037 (2026-10-24 Scenes panel series) | Scenes Panel redesign, Addenda A-E uniformity, reactive drag-and-drop, independent playback, scene management, context menus, and rehearsal controls | PRODUCTION RECOVERY DEPLOYED / LIVE-VISUALLY-VERIFIED / OWNER ACCEPTANCE PENDING | Prior automated menu checks were false-positive because they did not verify visibility; the recovery moved the React menu inside the clipped rail and added visible-menu assertions. Addendum E 20/20 locally and live; TPI-037 20/20; Addendum C 26/26; Addendum D 10/10; TPI-028 33/33; TPI-030 25/25; TPI-031 34/34; TPI-033 26/26; TPI-034 mutation PASS; TPI-035 33/33; TPI-036 28/28; production smoke 10/10; live Firefox 64/64. Source `eff6b69`; application/test `877efb3`; Worker `871c0ae7-33c5-46ae-b635-19ec3100c989`; rollback `d58d7e1e-5f86-4c87-93b3-110999d200a9`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`. |
+| (unnumbered) Studio Creation, Switching & Workspace Isolation Recovery (2026-10-25 recovery series) | Root-cause repair of Studio creation inheritance, silent Studio switching failures, missing browser-local snapshot recovery, and partial workspace hydration | IMPLEMENTED / DEPLOYED / LIVE VERIFIED / OWNER ACCEPTANCE PENDING | Maintained `verify:studioflow-studio-lifecycle` suite (Directive Tests 1–10 + owner-flow checks) passes locally and on production with the isolated QA account; integrated recovery 21/21; TPI-027 12/12; TPI-028 33/33; TPI-030 25/25 (one flaky timing failure in four runs of the rapid upload step); TPI-031 34/34; TPI-033 26/26; TPI-034 mutation PASS; TPI-036 28/28; TPI-037 20/20; release safety PASSED; local auth lifecycle PASS; live release acceptance 64/64. Source `44f9478`; application `161d03d`; Worker `9d3aa40c-9a44-4bf9-bcf1-8efcbf837683`; rollback `7bddac9c-bda3-41c1-95d2-13aacc09cb28`. See `docs/TPI-DEVELOPMENT/300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-STUDIO-LIFECYCLE-RECOVERY.md`. |
 
 When a directive has no matching local file, retain this index entry and document the missing source rather than fabricating a completion status.
 

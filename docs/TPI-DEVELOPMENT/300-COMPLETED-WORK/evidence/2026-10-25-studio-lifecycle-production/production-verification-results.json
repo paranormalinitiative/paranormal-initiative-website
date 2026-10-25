@@ -1,0 +1,214 @@
+{
+  "suite": "TPI-STUDIOFLOW-STUDIO-LIFECYCLE",
+  "status": "PASS",
+  "base": "https://paranormalinitiative.com",
+  "account": "test_admin",
+  "evidenceRoot": "/var/folders/kk/hg_q6yqx6qs1t542myrbdj580000gn/T/tpi-studio-lifecycle-HypDac",
+  "diagnostics": {
+    "test8": {
+      "switchClicked": true,
+      "ui8": {
+        "activeBroadcastId": "studio-adea06cb-5567-4872-b994-b253a45e5c57",
+        "activeStudioId": "4008469c-68df-4f05-b264-174afa57306d",
+        "localClipSlots": 1,
+        "localMusicSlots": 1,
+        "localPanelItems": [
+          "intro",
+          "scene:scene-1",
+          "scene:scene-2",
+          "outro"
+        ],
+        "panelRows": [
+          "intro",
+          "scene:scene-1",
+          "scene:scene-2",
+          "outro"
+        ],
+        "sceneTitles": [
+          "Intro Video",
+          "Isolation Scene A",
+          "Scene 2",
+          "Outro Video"
+        ],
+        "selectorText": "My Studios: Lifecycle A mvoe1xps ▾",
+        "statusText": "The current Studio could not be saved. It remains active; retry the save before switching."
+      }
+    },
+    "homeCreate": {
+      "activeBroadcastId": "broadcast-1792966683375",
+      "activeStudioId": null,
+      "localClipSlots": 0,
+      "localMusicSlots": 0,
+      "localPanelItems": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "panelRows": [],
+      "sceneTitles": [
+        "Intro Video",
+        "Scene 1",
+        "Scene 2",
+        "Outro Video"
+      ],
+      "selectorText": "",
+      "statusText": ""
+    },
+    "h2": {
+      "activeBroadcastId": "broadcast-lifecycle-mvoe1xps",
+      "activeStudioId": null,
+      "localClipSlots": 0,
+      "localMusicSlots": 0,
+      "localPanelItems": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "panelRows": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "sceneTitles": [
+        "Intro Video",
+        "Scene 1",
+        "Scene 2",
+        "Outro Video"
+      ],
+      "selectorText": "My Studios: Browser Only Lifecycle mvoe1xps ▾",
+      "statusText": "No saved configuration was found for this Studio. It opened with the default Studio configuration."
+    }
+  },
+  "checks": [
+    {
+      "name": "fixture: seeded pre-existing Studio created",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "fixture: seeded Studio renders its saved configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1a: new Studio has a unique identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1b: new Studio opens with exactly four default production items",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1c: the new Studio renders its own clean configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2a: second Studio has an independent identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2b: second Studio configuration is independent",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3a: switching activates Studio B (persisted ID)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3b: the displayed workspace belongs to Studio B",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4: Studio B scenes are untouched by Studio A edits",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 5: Studio B does not inherit Studio A media assignments",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3c: switching back activates Studio A with its own scenes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7: unsaved changes are saved before switching and restore on return",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8a: a switch blocked by a failed save keeps the current Studio active",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8b: the failed save is explained to the creator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8c: the failed save never overwrites the target Studio's configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 9: rapid switching settles on the last selection with its own workspace",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 6: refresh restores the selected Studio and its configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 10: pre-existing Studio configuration is preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H1: a home-created Studio opens with the clean default configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H2a: browser-local Studio without a snapshot activates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H2b: the Studio opens with the default configuration and says so",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cleanup archived disposable workspace 9bb97f63-230d-46da-a55a-361f7f3a9bbd",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cleanup archived disposable workspace 4008469c-68df-4f05-b264-174afa57306d",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cleanup archived disposable workspace 9fbcfa0f-9fd8-4128-90c3-aa579ef90222",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "passed": 25,
+  "failed": 0
+}

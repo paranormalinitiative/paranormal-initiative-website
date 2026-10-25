@@ -12,6 +12,31 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## Studio Creation, Switching & Workspace Isolation Recovery — 2026-10-25
+
+The owner-observed Studio Management failures (new Studio inheriting the
+active Studio's configuration; Studio switching silently failing; workspace
+identity confusion) are repaired, deployed, and live-verified. Source commit
+`44f9478` (StudioFlow canonical repository), application commit `161d03d`
+(website integration, pushed), production Worker
+`9d3aa40c-9a44-4bf9-bcf1-8efcbf837683` with rollback checkpoint
+`7bddac9c-bda3-41c1-95d2-13aacc09cb28`; the live application serves
+`/studio/assets/index-Drm85nEM.js` and `/studio/assets/index-8wAEEeJ8.css`.
+Root causes: home-screen creation never reset per-Studio configuration;
+browser-local Studios without snapshots made `openLocalWorkspace` silently
+revert; failed pre-switch saves blocked switching with only a transient
+message; only scene slices re-hydrated on switches. Repairs live in
+`/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx` (clean creation
+reset, complete per-Studio re-hydration, outgoing-Studio preservation) and
+`studio/workspace-bridge.js` (per-broadcast configuration sync,
+missing-snapshot recovery with visible notice, local recovery copies on save
+failure, sticky truthful messaging). The maintained suite
+`npm run verify:studioflow-studio-lifecycle` (Directive Tests 1–10 plus
+owner-flow checks) passes locally and against production with the isolated QA
+account; disposable Studios only, Crossroads untouched. Owner acceptance
+remains pending. Full record:
+`300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-STUDIO-LIFECYCLE-RECOVERY.md`.
+
 ## Production parity investigation — 2026-10-25
 
 Read-only investigation under the archived parity-investigation

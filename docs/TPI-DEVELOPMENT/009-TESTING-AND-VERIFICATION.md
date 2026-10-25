@@ -17,6 +17,22 @@ clipping, stacking, and pointer-event defects from being reported as passes.
 - Blocked: a safety or environment prerequisite prevents execution.
 - Not tested: no current evidence.
 
+## Studio lifecycle regression suite — 2026-10-25
+
+`npm run verify:studioflow-studio-lifecycle` is the maintained Firefox
+Developer Edition regression for Studio creation, switching, and workspace
+isolation (Directive Tests 1–10 plus the owner-flow checks). It asserts
+persisted Studio IDs and scene ownership — not just visible labels — and
+passes both locally and against production (`TPI_REPRO_BASE_URL` +
+`TPI_FIREFOX_CREDENTIALS_FILE` select the environment and QA profile). It
+covers: clean four-item creation, independent second Studio, A→B→A switching
+with identity assertions, scene isolation, media isolation, refresh
+restoration, unsaved-change preservation, failed-save handling (no silent
+switch, no overwrite), rapid switching, existing-Studio compatibility, clean
+home-screen creation, and the browser-local Studio that lacks a snapshot
+(opens with defaults and a visible notice). Only disposable Studios are
+created; they are archived at the end of each run.
+
 ## TPI-STUDIOFLOW-037 Addendum E scene-management repair — 2026-10-25
 
 `npm run verify:studioflow-037-addendum-e` is the maintained Firefox Developer
