@@ -23,7 +23,7 @@ validated metadata and stable media references.
 | `generalSettings` | General output settings | Yes, validated | Yes | Yes | Studio | Pass |
 | `guestPermissionSettings` | Guest controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `studioScenes` | Scene editor | Yes, normalized | Yes | Yes | Studio | Pass |
-| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder | Yes, validated | Yes | Yes | Studio | Pass — TPI-037; Addendum B drag autosave verified 19/19 |
+| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder | Yes, validated | Yes | Yes | Studio | Pass — TPI-037; Addendum B drag/autoscroll/autosave verified 20/20 |
 | `sceneMusicAssignments` | Background Music / After Intro | Yes, stable `blobKey` | Yes | Yes | Studio | Pass |
 | `bannerScrollTicker` | Ticker controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `programOrientation` (configuration) | Program output / bridge | Yes, supported scalar | Yes | Yes | Studio | Pass |

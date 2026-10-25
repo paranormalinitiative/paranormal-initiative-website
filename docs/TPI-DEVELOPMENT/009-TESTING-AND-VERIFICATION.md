@@ -208,7 +208,7 @@ guarded Addendum B release passed live Firefox acceptance 64/64 and production
 smoke 10/10; the existing Background Music regression remained 34/34.
 
 The Addendum B reactive drag-and-drop correction extended the maintained suite
-to 19/19. Firefox verified handle-based dragging, a continuously updated blue
+to 20/20. Firefox verified handle-based dragging, a continuously updated blue
 insertion placeholder, Escape cancellation and order restoration, committed
 reordering, no timer/media activation during drag, exact shared button
 dimensions, and autosave through the real workspace API. The local auth gate,

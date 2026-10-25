@@ -56,7 +56,7 @@ Latest verified production release (TPI-STUDIOFLOW-037 Addendum B reactive drag)
 - StudioFlow source commit: `322b132`
 - Worker version: `1c752f3f-8af3-461f-8082-3dd8a447fd3d` at 100% traffic
 - Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f` (prior TPI-037 Addendum B)
-- Acceptance: TPI-037 19/19; TPI-031 34/34; local and live
+- Acceptance: TPI-037 20/20; TPI-031 34/34; local and live
   Firefox acceptance 64/64; production smoke 10/10; release safety 17/17;
   local auth lifecycle PASS; complete isolated API/QA gate PASS;
   reproducible StudioFlow staging PASS
@@ -67,7 +67,7 @@ Latest verified production release (TPI-STUDIOFLOW-037 Addendum B reactive drag)
 The Scenes panel redesign, Addendum A uniform production-button correction,
 Addendum B final uniformity correction, and Addendum B reactive drag repair are
 deployed and live-verified from source commit `322b132` and website
-application commit `da9bfab`. The maintained TPI-037 suite passed 19/19;
+application commit `da9bfab`. The maintained TPI-037 suite passed 20/20;
 the focused TPI-031 suite remained 34/34. Production smoke passed 10/10 and
 isolated Firefox live acceptance passed 64/64. Dragging now exposes a live
 blue insertion placeholder, supports Escape cancellation and edge scrolling,

@@ -114,6 +114,16 @@ try {
     : [];
   check("scene reorder autosaves through the workspace API", savedOrder.join("|") === reorderedScenePanelOrder.join("|"), JSON.stringify(savedOrder));
 
+  await js("var scenes=[{id:'intro',kind:'intro',title:'Intro video'}]; for(var index=1;index<=20;index++) scenes.push({id:'overflow-scene-'+index,kind:'demo',title:'Overflow Scene '+index,layout:'Speaker view'}); scenes.push({id:'outro',kind:'outro',title:'Outro video'}); var panel=[{id:'intro',kind:'intro',title:'Intro Video',sceneId:'intro',opening:true},{id:'timer',kind:'timer',title:'Countdown Timer',opening:true}]; scenes.slice(1,-1).forEach(function(scene){panel.push({id:'scene:'+scene.id,kind:'scene',title:scene.title,sceneId:scene.id});}); panel.push({id:'outro',kind:'outro',title:'Outro Video',sceneId:'outro',closing:true}); localStorage.setItem('studioflow.studioScenes',JSON.stringify(scenes)); localStorage.setItem('studioflow.scenePanelItems',JSON.stringify(panel)); window.dispatchEvent(new Event('studioflow:storage-changed')); return panel.length;");
+  await waitFor("overflowing Scenes panel", async () => (await count("[data-tpi-scene-panel-item]")) >= 20, 10_000);
+  const autoScrollStart = await js("var list=document.querySelector('.scene-panel-items'); if(!list||list.scrollHeight<=list.clientHeight) return {overflow:false}; list.scrollTop=0; var source=document.querySelector('[data-tpi-scene-panel-item] .scene-drag-handle'), transfer=new DataTransfer(); window.__tpi037DragTransfer=transfer; source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer:transfer})); return {overflow:true,scrollTop:list.scrollTop};");
+  await sleep(250);
+  await js("var list=document.querySelector('.scene-panel-items'), target=document.querySelector('[data-tpi-scene-panel-item]:last-of-type'), transfer=window.__tpi037DragTransfer; if(!list||!target||!transfer) return false; var bounds=list.getBoundingClientRect(); target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,clientX:bounds.left+8,clientY:bounds.bottom-4,dataTransfer:transfer})); return true;");
+  await sleep(250);
+  const autoScrollEnd = await js("var list=document.querySelector('.scene-panel-items'); return list ? {scrollTop:list.scrollTop,scrollHeight:list.scrollHeight,clientHeight:list.clientHeight} : null;");
+  check("dragging near the panel edge auto-scrolls overflowing items", autoScrollStart?.overflow === true && autoScrollEnd?.scrollTop > autoScrollStart.scrollTop, JSON.stringify({autoScrollStart, autoScrollEnd}));
+  await js("window.dispatchEvent(new KeyboardEvent('keydown',{bubbles:true,cancelable:true,key:'Escape',code:'Escape'}));");
+
   await click('[data-tpi-scene-panel-item="timer"] .scene-panel-item-button');
   await waitFor("timer shortcut preview", async () => (await count(".program-stage.ring-timer-active .stage-ring-timer")) === 1);
   check("Countdown Timer shortcut uses the existing timer output", await count(".program-stage.ring-timer-active .stage-ring-timer") === 1);

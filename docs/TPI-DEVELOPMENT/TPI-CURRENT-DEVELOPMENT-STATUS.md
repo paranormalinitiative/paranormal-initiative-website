@@ -18,7 +18,7 @@ The Scenes panel redesign, Addenda A/B visual corrections, and Addendum B
 reactive drag-and-drop repair are deployed and live-verified. The uniform
 shortcut layer preserves the existing timer, Video Clips, scene, and
 Background Music owners; its panel manifest is validated and saved through
-the established per-Studio workspace configuration. TPI-037 passed 19/19 and
+the established per-Studio workspace configuration. TPI-037 passed 20/20 and
 the maintained TPI-031 suite passed 34/34.
 
 Addendum A corrected the injected Add Background Music / After Intro shortcut
@@ -40,7 +40,7 @@ and autosave through the existing workspace configuration.
 - Website application commit: `da9bfab` (reactive drag repair; prior `23dd5a1`)
 - Active production Worker: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
 - Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f` (prior Addendum B)
-- Acceptance: TPI-037 19/19; TPI-031 34/34; production smoke 10/10;
+- Acceptance: TPI-037 20/20; TPI-031 34/34; production smoke 10/10;
   isolated Firefox live acceptance 64/64;
   owner profile access false; release preflight and auth lifecycle PASS
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`

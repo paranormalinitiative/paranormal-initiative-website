@@ -152,7 +152,7 @@ Validation:
 
 - Canonical source TypeScript/build: PASS.
 - Reproducible authoritative staging: PASS.
-- TPI-037 browser regression: 19/19.
+- TPI-037 browser regression: 20/20.
 - TPI-031 Background Music/Sound Effects regression: 34/34.
 - Local auth lifecycle: PASS; local Firefox acceptance: 64/64.
 - Full guarded preflight: PASS; production smoke: 10/10.

@@ -28,7 +28,7 @@ the controlling directive.
 The Scenes panel redesign, Addenda A/B uniformity corrections, and the
 reactive drag-and-drop repair are deployed and live-verified. Source commit is
 `322b132`; website application/test commit is `da9bfab`. The maintained
-Firefox suite `npm run verify:studioflow-037-scenes-panel` passes 19/19. The
+Firefox suite `npm run verify:studioflow-037-scenes-panel` passes 20/20. The
 panel uses uniform stable shortcut items for Intro Video, Countdown Timer,
 Production Scene, Video Clip, and Outro Video, with per-Studio ordering, skip
 flags, context actions, rehearsal-only Play Sequence, live blue insertion
