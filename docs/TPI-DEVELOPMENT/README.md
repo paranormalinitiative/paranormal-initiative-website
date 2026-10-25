@@ -50,13 +50,13 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release (TPI-STUDIOFLOW-037 Addendum B):
+Latest verified production release (TPI-STUDIOFLOW-037 Addendum B reactive drag):
 
-- Application commit: `23dd5a1`
-- StudioFlow source commit: `7f233df`
-- Worker version: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f` at 100% traffic
-- Rollback: `273390fa-8018-439f-b3bc-6a7ff935cc1e` (prior TPI-037)
-- Acceptance: TPI-037 Addendum B 13/13; TPI-031 34/34; local and live
+- Application commit: `da9bfab`
+- StudioFlow source commit: `322b132`
+- Worker version: `1c752f3f-8af3-461f-8082-3dd8a447fd3d` at 100% traffic
+- Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f` (prior TPI-037 Addendum B)
+- Acceptance: TPI-037 19/19; TPI-031 34/34; local and live
   Firefox acceptance 64/64; production smoke 10/10; release safety 17/17;
   local auth lifecycle PASS; complete isolated API/QA gate PASS;
   reproducible StudioFlow staging PASS
@@ -64,15 +64,17 @@ Latest verified production release (TPI-STUDIOFLOW-037 Addendum B):
 
 ## TPI-STUDIOFLOW-037 verified production release
 
-The Scenes panel redesign, Addendum A uniform production-button correction, and
-Addendum B final uniformity correction are deployed and live-verified from
-source commit `7f233df` and website application commit `23dd5a1`. The extended
-TPI-037 suite passed 13/13; the
-focused TPI-031 suite remained 34/34. Production smoke passed 10/10 and
-isolated Firefox live acceptance passed 64/64.
+The Scenes panel redesign, Addendum A uniform production-button correction,
+Addendum B final uniformity correction, and Addendum B reactive drag repair are
+deployed and live-verified from source commit `322b132` and website
+application commit `da9bfab`. The maintained TPI-037 suite passed 19/19;
+the focused TPI-031 suite remained 34/34. Production smoke passed 10/10 and
+isolated Firefox live acceptance passed 64/64. Dragging now exposes a live
+blue insertion placeholder, supports Escape cancellation and edge scrolling,
+does not preview media, and autosaves the existing per-Studio order.
 
-- Active Worker: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
-- Rollback: `273390fa-8018-439f-b3bc-6a7ff935cc1e`
+- Active Worker: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
+- Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
 
 Prior verified production release (TPI-STUDIOFLOW-035 right navigation

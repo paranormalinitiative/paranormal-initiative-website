@@ -14,13 +14,12 @@ they automatically synchronize.
 
 ## TPI-STUDIOFLOW-037 verified production release — 2026-10-24
 
-The Scenes panel redesign, Addendum A styling correction, and Addendum B final
-uniformity correction are deployed and live-verified. The uniform shortcut
-layer preserves the existing timer, Video Clips, scene, and Background Music
-owners; its panel manifest is validated and saved through the established
-per-Studio workspace configuration. TPI-037 passed 11/11, TPI-036 passed
-28/28, TPI-035 passed 33/33, TPI-031 passed 34/34, and TPI-034 mutation
-stability remained green.
+The Scenes panel redesign, Addenda A/B visual corrections, and Addendum B
+reactive drag-and-drop repair are deployed and live-verified. The uniform
+shortcut layer preserves the existing timer, Video Clips, scene, and
+Background Music owners; its panel manifest is validated and saved through
+the established per-Studio workspace configuration. TPI-037 passed 19/19 and
+the maintained TPI-031 suite passed 34/34.
 
 Addendum A corrected the injected Add Background Music / After Intro shortcut
 to use the same 56px solid production surface, blue icon treatment, readable
@@ -32,14 +31,17 @@ Addendum B standardizes the exact Intro Video outer dimensions across
 Background Music, Countdown Timer, Add Production Item, and Play Sequence;
 keeps `Background Music` and `Countdown Timer` as stable visible labels;
 preserves creator scene names with fixed-height controlled truncation/tooltips;
-and leaves all saved assignments and playback architecture unchanged.
+and leaves all saved assignments and playback architecture unchanged. Its
+reactive drag repair adds live blue insertion feedback, surrounding-item
+movement, Escape cancellation, edge auto-scroll, no-playback drag handling,
+and autosave through the existing workspace configuration.
 
-- Source commit: `7f233df` (Addendum B; prior `f31bd95`)
-- Website application commit: `23dd5a1` (Addendum B; prior `b2972f3`)
-- Documentation/release checkpoint: `ad1ea7c`
-- Active production Worker: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
-- Rollback: `273390fa-8018-439f-b3bc-6a7ff935cc1e` (prior Addendum A)
-- Acceptance: production smoke 10/10; isolated Firefox live acceptance 64/64;
+- Source commit: `322b132` (reactive drag repair; prior `7f233df`)
+- Website application commit: `da9bfab` (reactive drag repair; prior `23dd5a1`)
+- Active production Worker: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
+- Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f` (prior Addendum B)
+- Acceptance: TPI-037 19/19; TPI-031 34/34; production smoke 10/10;
+  isolated Firefox live acceptance 64/64;
   owner profile access false; release preflight and auth lifecycle PASS
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
 

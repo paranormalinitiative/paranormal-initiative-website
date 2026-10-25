@@ -73,6 +73,12 @@ self-sustaining child-list churn.
   interrupt recording/livestreaming. Skip flags omit optional opening/closing
   items without deleting their assignments, and manual Preview remains
   available through the item menu when the item is included.
+- Dragging begins only from the existing handle and exposes a live blue
+  insertion placeholder; surrounding items shift with the indicated position.
+  Escape restores the original order, edge movement auto-scrolls the existing
+  list, reduced-motion preferences remove transition animation, and a drop
+  saves through the existing per-Studio workspace configuration without
+  invoking playback.
 - A manual Intro/Timer/Outro preview is isolated from automatic progression and
   does not trigger the After Intro Background Music handoff. Actual automatic
   Intro completion and manual stop retain the approved After Intro transition.

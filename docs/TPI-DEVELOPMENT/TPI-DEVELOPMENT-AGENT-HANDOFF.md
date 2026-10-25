@@ -16,30 +16,30 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `cb38061656565d8e4bd7702a7d627335fe2d4993`
-- Active production Worker version: `5c8e78b5-f920-4335-940f-a5e4d6df0e49`
-- Recorded rollback target: `0c0a8660-21cf-47e1-ac66-98c91b26972c`
+- Last fully verified workflow baseline: `da9bfab13fcc28ffeaa6874ad07e4cf16e5ee731`
+- Active production Worker version: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
+- Recorded rollback target: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
 
 ## TPI-STUDIOFLOW-037 current handoff
 
-The Scenes panel redesign, Addendum A uniform production-button correction, and
-Addendum B final uniformity correction are deployed and live-verified. Source
-commit is `7f233df`; website application commit is `23dd5a1`; the post-release
-documentation checkpoint is `27cf38e`. The maintained Firefox suite
-`npm run verify:studioflow-037-scenes-panel` passes 13/13. The panel uses
-uniform stable shortcut items for Intro Video, Countdown Timer, Production
-Scene, Video Clip, and Outro Video, with per-Studio ordering, skip flags,
-context actions, and a rehearsal-only Play Sequence control. Existing timer and
-Video Clips engines remain authoritative. Manual preview events are isolated
-from the automatic After Intro music handoff; TPI-031 remains 34/34.
+The Scenes panel redesign, Addenda A/B uniformity corrections, and the
+reactive drag-and-drop repair are deployed and live-verified. Source commit is
+`322b132`; website application/test commit is `da9bfab`. The maintained
+Firefox suite `npm run verify:studioflow-037-scenes-panel` passes 19/19. The
+panel uses uniform stable shortcut items for Intro Video, Countdown Timer,
+Production Scene, Video Clip, and Outro Video, with per-Studio ordering, skip
+flags, context actions, rehearsal-only Play Sequence, live blue insertion
+feedback, Escape cancellation, edge auto-scroll, and existing workspace
+autosave. Dragging does not preview media. Existing timer, Video Clips, and
+Background Music engines remain authoritative; TPI-031 remains 34/34.
 
-The active production Worker is `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`; the
-rollback reference is `273390fa-8018-439f-b3bc-6a7ff935cc1e`. Production smoke
-passed 10/10 and isolated Firefox live acceptance passed 64/64. No further
-deployment is required for the documentation-only synchronization commit.
+The active production Worker is `1c752f3f-8af3-461f-8082-3dd8a447fd3d`; the
+rollback reference is `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`. Production smoke
+passed 10/10 and isolated Firefox live acceptance passed 64/64. Documentation
+is being synchronized after this release.
 
 The authoritative StudioFlow source is the separate repository:
 `/Users/toddknipple/Documents/StudioFlow/web`. The website `studio/` directory

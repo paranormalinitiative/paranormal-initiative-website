@@ -113,3 +113,57 @@ The release completed only after `verify:local-auth-lifecycle`,
 `release:preflight`, the guarded production command, and isolated live Firefox
 acceptance all passed. Documentation was synchronized after deployment; the
 documentation-only commit does not require a second Worker release.
+
+## Addendum B — reactive drag-and-drop completion
+
+Date: 2026-10-24
+Agent: GPT-5.6 Luna
+Status: COMPLETE / DEPLOYED AND LIVE-VERIFIED
+
+The remaining Scenes-panel interaction defect was the old target-based native
+drag handler: it only reordered after a drop, had no insertion index or visual
+placeholder, had no Escape cancellation, and did not scroll the list at its
+edges. It therefore provided no reliable indication of the destination and
+could allow a drag gesture to reach the preview surface.
+
+The repair remains inside the existing panel and persistence architecture:
+
+- `src/App.tsx` now starts drag only from the existing handle, tracks the
+  destination index, renders a blue insertion placeholder, updates that index
+  on each dragover, cancels on Escape, suppresses the post-drag click, and
+  scrolls the existing list near its top or bottom edge. Drop changes only the
+  existing `scenePanelItems` order, so the established per-Studio autosave path
+  persists it and no media playback is invoked.
+- `src/styles.css` adds the bounded scroll surface, subtle movement/drag
+  styling, reduced-motion handling, hidden scrollbar chrome, and the shared
+  fixed production-item dimensions.
+- `studio/studioflow-012-overrides.css` applies the same fixed dimensions to
+  bridge-injected Background Music shortcuts without changing their assigned
+  track, context menu, volume, looping, or playback behavior.
+- `scripts/verify/tpi-studioflow-037-scenes-panel.mjs` now exercises the live
+  placeholder, Escape restoration, committed reorder, no-playback guarantee,
+  exact shared dimensions, and workspace-API autosave in a disposable
+  authenticated Firefox workspace.
+
+Root cause and scope were verified without changing media assignments, scene
+playback, recording, livestreaming, audio routing, D1, R2, or owner data.
+
+Validation:
+
+- Canonical source TypeScript/build: PASS.
+- Reproducible authoritative staging: PASS.
+- TPI-037 browser regression: 19/19.
+- TPI-031 Background Music/Sound Effects regression: 34/34.
+- Local auth lifecycle: PASS; local Firefox acceptance: 64/64.
+- Full guarded preflight: PASS; production smoke: 10/10.
+- Live isolated Firefox acceptance: 64/64.
+
+Release:
+
+- Source commit: `322b132`.
+- Website application/test commit: `da9bfab`.
+- Production Worker: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`.
+- Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`.
+- Production status: `DEPLOYED_AND_VERIFIED`.
+- Documentation commit: recorded after this release; documentation changes do
+  not require a second Worker release.

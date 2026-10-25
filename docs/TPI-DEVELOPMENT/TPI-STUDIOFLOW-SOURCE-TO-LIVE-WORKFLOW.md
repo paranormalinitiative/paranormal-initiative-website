@@ -115,18 +115,21 @@ The prototype SHA-256 is `26996bd0d1017ba00736f880930e2c01099af0cb1bcc14b9b3bc19
 No production Studio configuration, D1 record, R2 object, recording, or
 owner-browser data was mutated for acceptance.
 
-## TPI-STUDIOFLOW-037 verified release
+## TPI-STUDIOFLOW-037 verified release — Addendum B reactive drag
 
-The Scenes panel redesign, Addendum A uniform production-button correction, and
-Addendum B final uniformity correction are deployed and live-verified. Source
-commit `7f233df`, website application commit `23dd5a1`, and documentation
-checkpoint `27cf38e` passed the complete release sequence. TPI-037 passed
-13/13, TPI-036 28/28, TPI-035
-33/33, TPI-031 34/34, and TPI-034 mutation stability PASS.
-Production smoke passed 10/10 and isolated Firefox Developer Edition live
+The reactive Scenes-panel drag repair is deployed and live-verified. Source
+commit `322b132` and website application/test commit `da9bfab` passed the
+complete release sequence. TPI-037 passed 19/19 and TPI-031 passed 34/34;
+production smoke passed 10/10 and isolated Firefox Developer Edition live
 acceptance passed 64/64. Worker
-`9b3353a6-8f5d-4468-af89-1d71d8fcc39f` is active at 100% traffic; rollback is
-`273390fa-8018-439f-b3bc-6a7ff935cc1e`.
+`1c752f3f-8af3-461f-8082-3dd8a447fd3d` is active at 100% traffic; rollback is
+`9b3353a6-8f5d-4468-af89-1d71d8fcc39f`.
+
+The release preserves the established source-to-live separation. The canonical
+source was built and staged reproducibly, the website artifact was committed
+and pushed, the guarded preflight completed, and Wrangler uploaded only the
+intended StudioFlow bundles/HTML/CSS plus the release metadata. No production
+D1/R2 data or owner Studio content was modified.
 
 ## TPI-STUDIOFLOW-035 verified release
 
