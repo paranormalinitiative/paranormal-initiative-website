@@ -1,7 +1,7 @@
 # StudioFlow Integrated Studio Management & Scene System Recovery
 
 Date: 2026-10-25  
-Status: FIXED LOCALLY — PRODUCTION VERIFICATION PENDING  
+Status: DEPLOYED AND VISUALLY VERIFIED — OWNER ACCEPTANCE PENDING
 Directive: Owner integrated recovery order for TPI-STUDIOFLOW-033 through 037
 
 ## WHO
@@ -106,15 +106,22 @@ owner media, D1, R2, recordings, and livestreams were not modified.
 ## RELEASE
 
 - Source commit: `657f80e`
-- Website application commit: `a952796`
-- Documentation commit: pending
-- Production status: not deployed
-- Production Worker: unchanged from prior baseline
-- Rollback: not applicable to this unreleased checkpoint
-- Current release status: `FIXED LOCALLY — PRODUCTION VERIFICATION PENDING`
+- Website application/verification commit: `e83b732`
+- Documentation checkpoint before deployment: `bae6ce0`
+- Production status: deployed and live-verified
+- Production Worker: `7bddac9c-bda3-41c1-95d2-13aacc09cb28`
+- Rollback: `871c0ae7-33c5-46ae-b635-19ec3100c989`
+- Current release status: `DEPLOYED AND VISUALLY VERIFIED — OWNER ACCEPTANCE PENDING`
 
-Deployment remains withheld until the complete guarded release preflight and
-live browser acceptance pass. No production acceptance claim is made.
+The guarded release completed with the 17/17 safety contract, reproducible
+source staging, isolated API/browser gates, 10/10 anonymous production smoke,
+and 64/64 isolated Firefox Developer Edition live checks using the synthetic
+production QA account. The live acceptance profile was isolated and did not
+access the owner's browser profile. No owner acceptance claim is made.
+
+The deployed application serves the verified StudioFlow bundles
+`/studio/assets/index-BZ_tF0DV.js` and `/studio/assets/index-8wAEEeJ8.css`.
+Documentation-only follow-up commit after deployment: pending.
 
 ## DOCUMENTATION AUDIT
 

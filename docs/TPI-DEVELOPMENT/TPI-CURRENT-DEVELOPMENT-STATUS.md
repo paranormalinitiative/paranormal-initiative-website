@@ -14,8 +14,9 @@ they automatically synchronize.
 
 ## Integrated Studio Management & Scene System Recovery — 2026-10-25
 
-The integrated recovery is fixed locally and committed, but is not deployed.
-The confirmed source/application checkpoints are `657f80e` and `a952796`.
+The integrated recovery is deployed and live-verified, with owner acceptance
+pending. The confirmed source/application checkpoints are `657f80e` and
+`e83b732` (website application/verification commit).
 Local Firefox Developer Edition verification passed the new 21-check recovery
 suite plus TPI-027 (12/12), TPI-028 (33/33), TPI-030 (25/25), TPI-031 (34/34),
 TPI-033 (26/26), TPI-034 mutation regression, TPI-036 (28/28), TPI-037
@@ -32,8 +33,12 @@ canonical source build is reproducible and the staged entry point references
 `/studio/assets/index-BZ_tF0DV.js` and `/studio/assets/index-8wAEEeJ8.css`.
 
 Production remains on the previously recorded Worker until the complete
-release preflight and guarded deployment pass. No production D1, R2, owner
-Studio, recording, livestream, or media data was changed under this recovery.
+release preflight and guarded deployment pass. The release deployed Worker
+`7bddac9c-bda3-41c1-95d2-13aacc09cb28`, passed 10/10 anonymous production
+smoke, and passed 64/64 isolated Firefox Developer Edition live checks.
+Rollback is `871c0ae7-33c5-46ae-b635-19ec3100c989`. No production D1, R2,
+owner Studio, recording, livestream, or media data was changed under this
+recovery.
 
 ## TPI-STUDIOFLOW-037 Addendum E deployed repair — 2026-10-25
 
@@ -52,15 +57,15 @@ configured production handoff.
 - Regressions: TPI-037 20/20; Addendum C 26/26; Addendum D 10/10; TPI-028
   33/33; TPI-030 25/25; TPI-031 34/34; TPI-033 26/26; TPI-034 PASS; TPI-035
   33/33; TPI-036 28/28; TPI-021 31/31
-- Production status: deployed and live-verified in Worker
-  `d58d7e1e-5f86-4c87-93b3-110999d200a9`
-- Rollback: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
+- Production status: superseded by the integrated recovery deployment in Worker
+  `7bddac9c-bda3-41c1-95d2-13aacc09cb28`
+- Rollback: `871c0ae7-33c5-46ae-b635-19ec3100c989`
 - Guarded release: 17/17 safety contract, 10/10 anonymous smoke, and 64/64
   isolated Firefox Developer Edition checks passed
 - Focused live Addendum E Firefox workflow: 20/20 with disposable production
   QA workspace archived after verification
 - Owner acceptance: pending
-- Completion record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
+- Completion record: `300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md`
 
 ## TPI-STUDIOFLOW-037 production recovery reconciliation — 2026-10-25
 

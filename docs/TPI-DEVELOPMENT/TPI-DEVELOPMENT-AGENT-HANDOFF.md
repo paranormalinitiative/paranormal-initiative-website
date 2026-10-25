@@ -12,6 +12,19 @@ repairable blocker or require a fresh owner directive for each lifecycle step.
 Historical restrictions below describe prior executions and do not override
 the controlling directive.
 
+## Current integrated recovery release
+
+The integrated StudioFlow management and Scenes recovery is deployed and
+visually verified in production; owner acceptance remains pending. Source
+commit `657f80e`, website application/verification commit `e83b732`, and
+documentation checkpoint `bae6ce0` are recorded in the completion record.
+Production Worker `7bddac9c-bda3-41c1-95d2-13aacc09cb28` is active at 100%
+traffic with rollback `871c0ae7-33c5-46ae-b635-19ec3100c989`. Guarded release
+preflight passed, anonymous production smoke passed 10/10, and isolated live
+Firefox Developer Edition acceptance passed 64/64 with a disposable synthetic
+production QA account. The live application loaded the verified bundles
+`/studio/assets/index-BZ_tF0DV.js` and `/studio/assets/index-8wAEEeJ8.css`.
+
 ## Workspace
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
@@ -25,8 +38,8 @@ the controlling directive.
 
 ## Integrated recovery checkpoint — 2026-10-25
 
-The current local repair is committed as source `657f80e` and website
-application `a952796`. It corrects the Studio lifecycle and Scenes integration
+The current repair is committed as source `657f80e` and website application
+`e83b732`. It corrects the Studio lifecycle and Scenes integration
 as one path: new Studios use a clean independent configuration, creation
 activates the returned workspace, Studio switching is generation-guarded,
 scene menus are fixed-position viewport-safe overlays, legacy Move Up/Move Down
@@ -37,9 +50,8 @@ The maintained integrated Firefox suite passes 21/21. TPI-027, 028, 030, 031,
 033, 034, 035 (33/33), 036, 037, Addendum D, and Addendum E pass locally. The
 035 run exposed and verified the fix for a denied production reservation that
 left the browser lock marked active and blocked later Studio switching.
-Production has not been changed and the release status is `FIXED LOCALLY —
-PRODUCTION VERIFICATION PENDING` until guarded preflight and live acceptance
-complete.
+The guarded release and live acceptance are complete; the release status is
+`DEPLOYED AND VISUALLY VERIFIED — OWNER ACCEPTANCE PENDING`.
 
 ## TPI-STUDIOFLOW-037 production recovery — current handoff
 

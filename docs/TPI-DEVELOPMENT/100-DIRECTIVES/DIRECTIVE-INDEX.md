@@ -20,6 +20,21 @@ for current commit, push, deployment, and live-verification procedure.
 
 ## Integrated Studio Management & Scene System Recovery — 2026-10-25
 
+The integrated recovery is `DEPLOYED AND VISUALLY VERIFIED — OWNER
+ACCEPTANCE PENDING`. It repaired independent Studio creation, active-Studio
+switching, workspace isolation, viewport-safe Scenes menus, removal of legacy
+Move Up/Move Down commands, meaningful autosave signals, and the denied
+production-lock state that could poison later Studio switching. Source
+`657f80e`, website application/verification `e83b732`, documentation
+checkpoint `bae6ce0`; Worker
+`7bddac9c-bda3-41c1-95d2-13aacc09cb28`; rollback
+`871c0ae7-33c5-46ae-b635-19ec3100c989`. Guarded release safety passed 17/17,
+anonymous production smoke passed 10/10, and live isolated Firefox acceptance
+passed 64/64. See
+[`../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md`](../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md).
+
+## Integrated Studio Management & Scene System Recovery — 2026-10-25
+
 The recovery repair is committed locally but not released. Source `657f80e`
 and website application `a952796` contain the verified lifecycle, clean
 creation, Studio isolation, viewport-safe Scenes menus, and autosave changes.
