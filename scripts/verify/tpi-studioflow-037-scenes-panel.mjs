@@ -75,9 +75,44 @@ try {
   check("Scenes panel has uniform production items", labels.includes("Intro Video") && labels.includes("Countdown Timer") && labels.includes("Outro Video"), JSON.stringify(labels));
   check("Scenes panel has one item surface per persisted shortcut", await count("[data-tpi-scene-panel-item] button.scene-panel-item-button") === await count("[data-tpi-scene-panel-item]"));
   check("drag handles and context controls are visible", await count(".scene-drag-handle") >= 4 && await count(".scene-item-menu-trigger") >= 4);
-  const sceneButtonMetrics = await js("var intro=document.querySelector('[data-tpi-scene-panel-item=\\\"intro\\\"]'), music=document.querySelector('[data-tpi-scene-music-for=\\\"after-intro\\\"]'), add=document.querySelector('.scene-panel-add-button'), sequence=document.querySelector('.scene-panel-rehearsal-button'), a=intro&&intro.getBoundingClientRect(), nodes=[music,add,sequence], rects=nodes.map(function(node){var r=node&&node.getBoundingClientRect(); return r&&{width:Math.round(r.width),height:Math.round(r.height)};}), style=music&&getComputedStyle(music); return {sameSize:rects.every(function(r){return r&&a&&r.width===Math.round(a.width)&&r.height===Math.round(a.height);}), rects:rects, borderStyle:style&&style.borderTopStyle, radius:style&&style.borderTopLeftRadius, primary:music?.querySelector('.tpi-scene-music-primary')?.textContent.trim(), secondary:music?.querySelector('.tpi-scene-music-secondary')?.textContent.trim(), iconColor:music?.querySelector('.tpi-scene-music-icon')&&getComputedStyle(music.querySelector('.tpi-scene-music-icon')).color, musicLabel:music?.getAttribute('aria-label')};");
+  check("drag handles are the active drag sources", await js("return Array.from(document.querySelectorAll('.scene-drag-handle')).every(function(node){return node.draggable;});"));
+  const sceneButtonMetrics = await js("var intro=document.querySelector('[data-tpi-scene-panel-item=\\\"intro\\\"]'), music=document.querySelector('[data-tpi-scene-music-for=\\\"after-intro\\\"]'), add=document.querySelector('.scene-panel-add-button'), sequence=document.querySelector('.scene-panel-rehearsal-button'), a=intro&&intro.getBoundingClientRect(), nodes=[music,add,sequence], rects=nodes.map(function(node){var r=node&&node.getBoundingClientRect(); return r&&{width:Math.round(r.width),height:Math.round(r.height)};}), style=music&&getComputedStyle(music), introStyle=intro&&getComputedStyle(intro), parent=intro&&intro.parentElement, parentStyle=parent&&getComputedStyle(parent); return {sameSize:rects.every(function(r){return r&&a&&r.width===Math.round(a.width)&&r.height===Math.round(a.height);}), rects:rects, introWidth:a&&Math.round(a.width), introCssWidth:introStyle&&introStyle.width, parentWidth:parent&&Math.round(parent.getBoundingClientRect().width), parentCssWidth:parentStyle&&parentStyle.width, parentOverflow:parentStyle&&parentStyle.overflow, borderStyle:style&&style.borderTopStyle, radius:style&&style.borderTopLeftRadius, primary:music?.querySelector('.tpi-scene-music-primary')?.textContent.trim(), secondary:music?.querySelector('.tpi-scene-music-secondary')?.textContent.trim(), iconColor:music?.querySelector('.tpi-scene-music-icon')&&getComputedStyle(music.querySelector('.tpi-scene-music-icon')).color, musicLabel:music?.getAttribute('aria-label')};");
   check("All Scenes production surfaces use the Intro Video dimensions", sceneButtonMetrics.sameSize, JSON.stringify(sceneButtonMetrics));
   check("Background Music uses a simplified label and accessible assignment details", sceneButtonMetrics.borderStyle === "solid" && sceneButtonMetrics.primary === "Background Music" && sceneButtonMetrics.secondary === "After Intro" && sceneButtonMetrics.iconColor === "rgb(117, 213, 255)" && /no track assigned/i.test(sceneButtonMetrics.musicLabel || ""), JSON.stringify(sceneButtonMetrics));
+
+  const originalScenePanelOrder = await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(node){return node.getAttribute('data-tpi-scene-panel-item');});");
+  const dispatchDragStart = async (sourceId) => js("var source=document.querySelector('[data-tpi-scene-panel-item=\\\"'+arguments[0]+'\\\"] .scene-drag-handle'); if(!source||typeof DataTransfer==='undefined'||typeof DragEvent==='undefined') return false; var transfer=new DataTransfer(); window.__tpi037DragTransfer=transfer; source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer:transfer})); return true;", sourceId);
+  const dispatchDragOver = async (targetId) => js("var target=document.querySelector('[data-tpi-scene-panel-item=\\\"'+arguments[0]+'\\\"]'), transfer=window.__tpi037DragTransfer; if(!target||!transfer||typeof DragEvent==='undefined') return false; var rect=target.getBoundingClientRect(); target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,clientX:rect.left+8,clientY:rect.bottom-2,dataTransfer:transfer})); return true;", targetId);
+  const sourceId = originalScenePanelOrder[0];
+  const targetId = originalScenePanelOrder[originalScenePanelOrder.length - 1];
+  const dragStarted = sourceId && targetId && sourceId !== targetId ? await dispatchDragStart(sourceId) : false;
+  await sleep(250);
+  const dragOverSent = dragStarted ? await dispatchDragOver(targetId) : false;
+  await waitFor("live drag insertion placeholder", async () => dragStarted && (await count("[data-tpi-scene-drop-placeholder]")) === 1, 10_000).catch(() => {});
+  check("dragging shows a live blue insertion placeholder", dragStarted && dragOverSent && await count("[data-tpi-scene-drop-placeholder]") === 1);
+  await js("window.dispatchEvent(new KeyboardEvent('keydown',{bubbles:true,cancelable:true,key:'Escape',code:'Escape'}));");
+  await waitFor("drag cancellation", async () => (await count("[data-tpi-scene-drop-placeholder]")) === 0 && (await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(node){return node.getAttribute('data-tpi-scene-panel-item');});")).join('|') === originalScenePanelOrder.join('|'), 10_000).catch(() => {});
+  const canceledOrder = await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(node){return node.getAttribute('data-tpi-scene-panel-item');});");
+  check("Escape cancels the drag and restores the original order", canceledOrder.join("|") === originalScenePanelOrder.join("|"));
+
+  const committedDrag = sourceId && targetId && sourceId !== targetId ? await dispatchDragStart(sourceId) : false;
+  await sleep(250);
+  const committedDragOver = committedDrag ? await dispatchDragOver(targetId) : false;
+  await waitFor("second live drag placeholder", async () => committedDrag && (await count("[data-tpi-scene-drop-placeholder]")) === 1, 10_000).catch(() => {});
+  await js("var target=document.querySelector('[data-tpi-scene-panel-item=\\\"'+arguments[0]+'\\\"]'), transfer=new DataTransfer(); if(target) target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:transfer})); return Boolean(target);", targetId);
+  await waitFor("scene panel reorder", async () => {
+    const order = await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(node){return node.getAttribute('data-tpi-scene-panel-item');});");
+    return order.join("|") !== originalScenePanelOrder.join("|") && (await count("[data-tpi-scene-drop-placeholder]")) === 0;
+  }, 10_000).catch(() => {});
+  const reorderedScenePanelOrder = await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(node){return node.getAttribute('data-tpi-scene-panel-item');});");
+  check("dropping places the item at the indicated position", committedDragOver && reorderedScenePanelOrder.join("|") !== originalScenePanelOrder.join("|"), `${originalScenePanelOrder} -> ${reorderedScenePanelOrder}`);
+  check("dragging does not activate timer playback", await count(".program-stage.ring-timer-active .stage-ring-timer") === 0);
+  await sleep(3_000);
+  const savedAfterReorder = await authenticatedFetch(`/api/studio/workspaces/${encodeURIComponent(workspaceId)}`);
+  const savedOrder = Array.isArray(savedAfterReorder.body?.workspace?.state?.configuration?.scenePanelItems)
+    ? savedAfterReorder.body.workspace.state.configuration.scenePanelItems.map((item) => item.id)
+    : [];
+  check("scene reorder autosaves through the workspace API", savedOrder.join("|") === reorderedScenePanelOrder.join("|"), JSON.stringify(savedOrder));
 
   await click('[data-tpi-scene-panel-item="timer"] .scene-panel-item-button');
   await waitFor("timer shortcut preview", async () => (await count(".program-stage.ring-timer-active .stage-ring-timer")) === 1);

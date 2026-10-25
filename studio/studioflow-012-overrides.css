@@ -520,6 +520,13 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
 }
 
+.scene-panel-item {
+  width: calc(100% + 4px);
+  min-width: calc(100% + 4px);
+  margin-left: -2px;
+  justify-self: start;
+}
+
 .scene-panel-item-copy strong,
 .tpi-scene-music-copy strong {
   display: -webkit-box;
@@ -536,9 +543,10 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   display: grid;
   grid-template-columns: 30px minmax(0, 1fr);
   align-items: center;
-  width: 100%;
-  min-width: 0;
-  margin: 0;
+  width: calc(100% + 4px);
+  min-width: calc(100% + 4px);
+  justify-self: start;
+  margin-left: -2px;
   padding: 8px 8px 8px 10px;
   overflow: hidden;
   gap: 8px;
