@@ -684,8 +684,10 @@
       var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
       var primary = button.querySelector(".tpi-scene-music-primary");
       var secondary = button.querySelector(".tpi-scene-music-secondary");
-      var primaryText = current ? (assignment.title || current.title || titleFor(current.fileName)) : "Add Background Music";
-      var secondaryText = isAfterIntroScene(shortcutId) ? "After Intro" : "For " + (scene.querySelector(".scene-label > span")?.textContent || (scene.textContent || "Scene").trim());
+      var sceneInfo = isAfterIntroScene(shortcutId) ? "After Intro" : "Scene Music";
+      var trackName = current ? (assignment.title || current.title || titleFor(current.fileName)) : "No track assigned";
+      var primaryText = "Background Music";
+      var secondaryText = sceneInfo;
       if (primary && primary.textContent !== primaryText) primary.textContent = primaryText;
       if (secondary && secondary.textContent !== secondaryText) secondary.textContent = secondaryText;
       if (button.classList.contains("selected")) button.classList.remove("selected");
@@ -695,9 +697,13 @@
       if (button.disabled !== disabled) button.disabled = disabled;
       if (button.hasAttribute("aria-pressed")) button.removeAttribute("aria-pressed");
       var title = current
-        ? (isAfterIntroScene(shortcutId) ? "Play the assigned Background Music track after Intro. Right-click to change it." : "Play the assigned Background Music track for this scene. Right-click to change it.")
-        : "Choose background music for this scene.";
+        ? "Background Music: " + trackName + ". " + sceneInfo + ". Right-click to change it."
+        : "Background Music: no track assigned. " + sceneInfo + ". Right-click to choose one.";
       if (button.title !== title) button.title = title;
+      var ariaLabel = current
+        ? "Background Music, " + trackName + ", " + sceneInfo + ". Right-click to change it."
+        : "Background Music, no track assigned, " + sceneInfo + ". Right-click to choose one.";
+      if (button.getAttribute("aria-label") !== ariaLabel) button.setAttribute("aria-label", ariaLabel);
     });
   }
   function playAssignedSceneMusic(assignment) {
