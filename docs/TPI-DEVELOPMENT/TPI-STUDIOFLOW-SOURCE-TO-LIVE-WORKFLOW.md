@@ -91,14 +91,14 @@ website repository's `codex/tpi-development` branch.
 
 ## Current verified live baseline
 
-- Website production source commit: `8a954ad`
-  (TPI-STUDIOFLOW-037 Addendum C)
-- Authoritative StudioFlow source commit: `d6b8f03`
+- Website production source commit: `8d46a45`
+  (TPI-STUDIOFLOW-037 Addendum D)
+- Authoritative StudioFlow source commit: `5186e28`
 - Active production Worker version:
-  `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
+  `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
 - Immediate rollback version:
-  `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
-  (prior TPI-STUDIOFLOW-037 Addendum B release)
+  `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
+  (prior TPI-STUDIOFLOW-037 Addendum C release)
 
 ## TPI-STUDIOFLOW-036 verified release
 
@@ -114,6 +114,24 @@ Worker `aa9bff15-6252-4ae5-9422-17d63b99ab5a` is the rollback reference.
 The prototype SHA-256 is `26996bd0d1017ba00736f880930e2c01099af0cb1bcc14b9b3bc19252db59f4e`.
 No production Studio configuration, D1 record, R2 object, recording, or
 owner-browser data was mutated for acceptance.
+
+## TPI-STUDIOFLOW-037 verified release — Addendum D playback and rehearsal controls
+
+The guarded Addendum D release repaired independent production-button playback
+and rehearsal cancellation. Source commit `5186e28` and website application
+commit `8d46a45` passed the local build, reproducible staging, release
+preflight, focused Addendum D regression 10/10, TPI-037 20/20, TPI-028 33/33,
+TPI-031 34/34, and TPI-034 mutation regression. Production smoke passed
+10/10 and isolated Firefox acceptance passed 64/64. Worker
+`3a9b090f-78b5-43d6-bb11-17a1ba54d41b` is active at 100% traffic; rollback is
+`5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`.
+
+The repair reused the existing playback engines and added only same-item
+toggle handling, rehearsal cancellation tokens, stop events, and the
+non-destructive `Remove from Scenes` context action. No D1, R2, recording,
+livestream, or owner Studio data was changed. Documentation was committed
+after deployment; per this workflow, no second no-op Worker deployment is
+required for documentation-only changes. Owner acceptance remains pending.
 
 ## TPI-STUDIOFLOW-037 verified release — Addendum C visual consistency and drag repair
 

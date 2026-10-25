@@ -290,3 +290,75 @@ binding and that the reordered row still plays its assigned track.
   behaves correctly before Addendum C is considered accepted.
 - Documentation synchronization commit: recorded after this section; doc-only
   changes do not require a second Worker release.
+
+## Addendum D — production button playback and rehearsal controls
+
+Date: 2026-10-25
+
+### Authority and objective
+
+This correction was completed by GPT-5.6 Luna under the standing TPI agent
+authority for TPI-STUDIOFLOW-037 Addendum D. The objective was to make each
+playable Scenes-panel shortcut an independent play/stop control, make Play
+Sequence a cancellable rehearsal toggle, and remove panel shortcuts without
+deleting their underlying media assets.
+
+### Root causes
+
+The Video Clips bridge treated a repeated click on the same staged asset as a
+new playback request instead of a stop request. The Background Music bridge
+always called the assigned-track start path and had no same-track toggle. The
+timer shortcut started the shared countdown engine but did not use its running
+state to stop on a second click. Rehearsal advancement used delayed callbacks
+without a generation/token invalidation path, so stopping rehearsal could
+leave a later item eligible to start. The context menu also exposed the
+ambiguous `Remove` label rather than the required `Remove from Scenes` action.
+
+### Implementation
+
+- `/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx`: added independent
+  timer and Intro/Outro toggles, rehearsal token/timeout cancellation,
+  Stop Sequence state, stop-event dispatch, and the non-destructive removal
+  action while preserving required fixed Intro/Outro assignments.
+- `studio/audio-soundboard-bridge.js`: repeated clicks on the same assigned
+  scene track use the existing `stopMusic()` path; rehearsal stop uses the
+  existing music stop path.
+- `studio/video-clip-management-bridge.js`: repeated clicks on the same
+  staged asset stop the existing stage player, add guarded async playback
+  invalidation, and expose the existing row playing state without adding a
+  second player.
+- `scripts/verify/tpi-studioflow-037-addendum-d.mjs`: maintained isolated
+  Firefox regression for toggle playback, rehearsal cancellation, context
+  action naming, and asset-preserving shortcut removal.
+
+No production playback engine, media assignment schema, D1 record, R2 object,
+recording, livestream, or owner Studio configuration was changed.
+
+### Validation
+
+- Addendum D focused regression: 10/10 locally.
+- TPI-037 maintained Scenes suite: 20/20.
+- TPI-028 browser suite: 33/33.
+- TPI-031 Background Music pad suite: 34/34.
+- TPI-034 mutation regression: PASS; no idle mutation loop reintroduced.
+- Local and live isolated Firefox acceptance: 64/64.
+- Production smoke: 10/10.
+- Release safety, auth lifecycle, reproducible staging, and guarded preflight:
+  PASS.
+
+The focused Addendum D test used disposable browser state and synthetic media
+locally. The live release acceptance used the governed isolated production QA
+suite; no focused Addendum D mutation was performed against owner production
+data. Owner acceptance remains pending.
+
+### Release
+
+- Authoritative StudioFlow source commit: `5186e28` (local source repository;
+  no configured source remote)
+- Website application/test commit: `8d46a45`
+- Production Worker: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+- Rollback Worker: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
+- Production status: `DEPLOYED_AND_VERIFIED` through the guarded source-to-live
+  workflow.
+- Documentation commit: recorded after this completion record; documentation
+  only, so no second no-op Worker deployment is required.

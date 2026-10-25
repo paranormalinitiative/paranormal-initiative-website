@@ -1,8 +1,8 @@
 # StudioFlow Workspace Configuration Contract
 
-Status: ACTIVE / TPI-STUDIOFLOW-037
+Status: ACTIVE / TPI-STUDIOFLOW-037 Addendum D
 
-Last verified: 2026-10-24
+Last verified: 2026-10-25
 
 This document records the supported per-Studio configuration fields that travel
 through the StudioFlow workspace save and restore path. The authoritative
@@ -23,7 +23,7 @@ validated metadata and stable media references.
 | `generalSettings` | General output settings | Yes, validated | Yes | Yes | Studio | Pass |
 | `guestPermissionSettings` | Guest controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `studioScenes` | Scene editor | Yes, normalized | Yes | Yes | Studio | Pass |
-| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder | Yes, validated | Yes | Yes | Studio | Pass — TPI-037; Addendum B drag/autoscroll/autosave verified 20/20 |
+| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder and non-destructive shortcut removal | Yes, validated | Yes | Yes | Studio | Pass — TPI-037 20/20; Addendum D playback/removal 10/10 |
 | `sceneMusicAssignments` | Background Music / After Intro | Yes, stable `blobKey` | Yes | Yes | Studio | Pass |
 | `bannerScrollTicker` | Ticker controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `programOrientation` (configuration) | Program output / bridge | Yes, supported scalar | Yes | Yes | Studio | Pass |

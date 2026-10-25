@@ -7,8 +7,8 @@ TPI-STUDIOFLOW-031 (Background Music interface),
 TPI-STUDIOFLOW-033 (workspace configuration persistence), and
 TPI-STUDIOFLOW-034 (DOM mutation stability), updated by
 TPI-STUDIOFLOW-036 (cinematic Video Timers) and
-TPI-STUDIOFLOW-037 (Scenes panel shortcuts)
-Last verified: 2026-10-24
+TPI-STUDIOFLOW-037 (Scenes panel shortcuts and Addendum D controls)
+Last verified: 2026-10-25
 
 This document is the single current-state record of what StudioFlow's scene
 and media playback is supposed to do, how the approved implementation was
@@ -85,6 +85,16 @@ self-sustaining child-list churn.
 - Play Sequence is rehearsal-only: it uses existing preview and timer paths,
   does not start real output, does not alter saved configuration, and remains in
   rehearsal until the operator manually selects a scene or requests closing.
+- Every playable media shortcut is an independent toggle: the first click
+  starts its existing preview and the second click stops that same preview.
+  Manual stopping never advances to another production item.
+- Play Sequence changes to Stop Sequence while rehearsal is active. Stopping
+  rehearsal cancels delayed transitions, clears rehearsal timers, stops active
+  rehearsal media, and does not end a real recording or livestream.
+- `Remove from Scenes` removes a panel shortcut without deleting its assigned
+  media asset. Required Intro and Outro assignment rows remain protected;
+  optional shortcuts and user-created scene entries use the existing removal
+  path.
 
 ### Intro Video
 

@@ -1,6 +1,6 @@
 # TPI Development Agent Handoff
 
-Last verified: 2026-10-24
+Last verified: 2026-10-25
 Current controlling directive: TPI MASTER — Standing Autonomous Agent Authority
 
 ## Mandatory authority update
@@ -24,6 +24,20 @@ the controlling directive.
 - Worker ownership: launchd-owned by `com.tpi.local-development`
 
 ## TPI-STUDIOFLOW-037 current handoff
+
+Addendum D is deployed and live-verified. Playable production shortcuts use
+independent first-click play/second-click stop behavior through the existing
+timer, Video Clips, and Background Music engines. Play Sequence is now a
+visible Play Sequence/Stop Sequence rehearsal toggle with cancellation tokens
+and timeout cleanup. The context menu's `Remove from Scenes` action removes a
+panel shortcut without deleting its underlying asset. The focused Addendum D
+regression passed 10/10. Source commit is `5186e28`, website application/test
+commit is `8d46a45`, production Worker is
+`3a9b090f-78b5-43d6-bb11-17a1ba54d41b`, and rollback is
+`5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`. Local/live isolated Firefox
+acceptance passed 64/64 and production smoke passed 10/10. Owner acceptance
+remains pending. See
+`300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-D.md`.
 
 The Scenes panel redesign, Addenda A/B uniformity corrections, the reactive
 drag-and-drop repair, and the Addendum C visual-consistency and drag

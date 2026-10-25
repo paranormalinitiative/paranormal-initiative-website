@@ -26,6 +26,22 @@ TPI-STUDIOFLOW-035. A legacy Chromium-only 021/022 browser runner remains
 environment-blocked by Chrome SIGABRT/EPERM; Firefox is the governing browser
 for this release.
 
+## TPI-STUDIOFLOW-037 Addendum D playback and rehearsal controls — 2026-10-25
+
+`npm run verify:studioflow-037-addendum-d` passed 10/10 in an isolated
+Firefox Developer Edition session. It verified first-click play and
+second-click stop for the Countdown Timer, Background Music, and Video Clips;
+Play Sequence/Stop Sequence cancellation; the `Remove from Scenes` label; and
+non-destructive shortcut removal that preserved the underlying Video Clips
+asset. The test uses disposable browser state and synthetic media only.
+
+The maintained regression set also passed TPI-037 20/20, TPI-028 browser
+33/33, TPI-031 music pads 34/34, and TPI-034 mutation regression. The guarded
+release preflight passed, production smoke passed 10/10, and local and live
+isolated Firefox acceptance passed 64/64. The live acceptance is the governed
+full StudioFlow acceptance suite; the focused Addendum D test was run locally
+to avoid mutating production data.
+
 ## TPI-STUDIOFLOW-035 recording/storage consolidation — 2026-10-24
 
 `npm run verify:studioflow-035-recording-storage` is the maintained Firefox

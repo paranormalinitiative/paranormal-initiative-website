@@ -50,20 +50,21 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
 
-Latest verified production release (TPI-STUDIOFLOW-037 Addendum C visual
-consistency and drag interaction repair):
+Latest verified production release (TPI-STUDIOFLOW-037 Addendum D playback
+and rehearsal repair):
 
-- Application commit: `8a954ad` (test commit `dd22fc5`)
-- StudioFlow source commit: `d6b8f03`
-- Worker version: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb` at 100% traffic
-- Rollback: `1c752f3f-8af3-461f-8082-3dd8a447fd3d` (TPI-037 Addendum B)
-- Acceptance: TPI-037 20/20; Addendum C 26/26 local and 26/26 production;
-  TPI-020–036 suites pass; local and live Firefox acceptance 64/64;
-  production smoke 10/10; release safety 17/17;
+- Application commit: `8d46a45`
+- StudioFlow source commit: `5186e28`
+- Worker version: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b` at 100% traffic
+- Rollback: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb` (TPI-037 Addendum C)
+- Acceptance: Addendum D 10/10 locally; TPI-037 20/20; TPI-028 33/33;
+  TPI-031 34/34; TPI-034 mutation regression PASS; local and live Firefox
+  acceptance 64/64; production smoke 10/10; release safety 17/17;
   local auth lifecycle PASS; complete isolated API/QA gate PASS;
   reproducible StudioFlow staging PASS
 - Owner acceptance: pending
-- Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
+- Owner acceptance: pending
+- Record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-D.md`
 
 ## TPI-STUDIOFLOW-037 verified production release
 

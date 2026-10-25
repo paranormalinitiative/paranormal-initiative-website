@@ -1,6 +1,6 @@
 # TPI Current Development Status
 
-Last verified: 2026-10-24
+Last verified: 2026-10-25
 
 ## Current source-to-live workflow
 
@@ -57,6 +57,33 @@ interface remains pending.
   isolated Firefox live acceptance 64/64;
   owner profile access false; release preflight and auth lifecycle PASS
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
+
+## TPI-STUDIOFLOW-037 Addendum D verified production release — 2026-10-25
+
+Addendum D repairs production-item playback controls without replacing the
+existing timer, Video Clips, Background Music, or rehearsal engines. Playable
+media shortcuts now toggle their own existing preview on first and second
+click; Play Sequence toggles rehearsal and Stop Sequence cancels pending
+rehearsal transitions and active rehearsal media. The context menu now uses
+the non-destructive `Remove from Scenes` action; underlying media assets are
+never deleted.
+
+The root causes were missing same-item toggle handling in the Video Clips and
+Background Music bridges, a timer shortcut that only started the shared ring
+engine, and rehearsal advancement that used uncancellable delayed callbacks.
+The repair adds generation/token cancellation guards and reuses the existing
+stop paths, so individual previews cannot advance rehearsal or create a second
+player.
+
+- StudioFlow source commit: `5186e28` (local authoritative source)
+- Website application/test commit: `8d46a45`
+- Active production Worker: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+- Rollback: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
+- Validation: Addendum D 10/10 locally; TPI-037 20/20; TPI-028 33/33;
+  TPI-031 34/34; TPI-034 mutation regression PASS; local/live isolated
+  Firefox acceptance 64/64; production smoke 10/10; release preflight PASS
+- Completion record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-D.md`
+- Owner acceptance: pending
 
 ## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-036 cinematic video timers)
 
