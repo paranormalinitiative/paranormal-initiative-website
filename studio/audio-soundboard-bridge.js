@@ -652,11 +652,14 @@
       if (!button) {
         button = document.createElement("button");
         button.type = "button";
-        button.className = "scene-card compact dashed tpi-scene-music-button";
+        button.className = "scene-panel-item tpi-scene-music-button";
         button.dataset.tpiSceneMusicButton = "true";
         button.dataset.tpiSceneMusicFor = shortcutId;
         var icon = document.createElement("span"); icon.className = "tpi-scene-music-icon"; icon.textContent = "♫"; icon.setAttribute("aria-hidden", "true");
-        var label = document.createElement("span"); label.className = "tpi-scene-music-label";
+        var label = document.createElement("span"); label.className = "scene-panel-item-copy tpi-scene-music-copy";
+        var primary = document.createElement("strong"); primary.className = "tpi-scene-music-primary";
+        var secondary = document.createElement("small"); secondary.className = "tpi-scene-music-secondary";
+        label.append(primary, secondary);
         button.append(icon, label);
         button.addEventListener("click", function (event) {
           event.preventDefault();
@@ -679,9 +682,12 @@
       }
       var assignment = sceneMusicFor(shortcutId);
       var current = assignment && musicSlots().find(function (item) { return item && item.blobKey === assignment.blobKey; });
-      var label = button.querySelector(".tpi-scene-music-label");
-      var labelText = current ? (isAfterIntroScene(shortcutId) ? "After Intro: " : "Music: ") + (assignment.title || current.title || titleFor(current.fileName)) : (isAfterIntroScene(shortcutId) ? "Add music after Intro" : "Add background music");
-      if (label && label.textContent !== labelText) label.textContent = labelText;
+      var primary = button.querySelector(".tpi-scene-music-primary");
+      var secondary = button.querySelector(".tpi-scene-music-secondary");
+      var primaryText = current ? (assignment.title || current.title || titleFor(current.fileName)) : "Add Background Music";
+      var secondaryText = isAfterIntroScene(shortcutId) ? "After Intro" : "For " + (scene.querySelector(".scene-label > span")?.textContent || (scene.textContent || "Scene").trim());
+      if (primary && primary.textContent !== primaryText) primary.textContent = primaryText;
+      if (secondary && secondary.textContent !== secondaryText) secondary.textContent = secondaryText;
       if (button.classList.contains("selected")) button.classList.remove("selected");
       var assigned = !!current;
       if (button.classList.contains("assigned") !== assigned) button.classList.toggle("assigned", assigned);

@@ -505,25 +505,65 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   color: #ffdede;
 }
 
+.scene-panel-item,
+.tpi-scene-music-button {
+  min-height: 56px;
+  height: 56px;
+  border: 1px solid rgba(105, 189, 255, 0.5);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(22, 42, 72, 0.96), rgba(17, 27, 50, 0.96));
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
+}
+
+.scene-panel-item-copy strong,
+.tpi-scene-music-copy strong {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.15;
+}
+
 .tpi-scene-music-button {
   position: relative;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
   width: 100%;
   min-width: 0;
-  min-height: 38px;
-  margin: -8px 0 0;
-  padding: 0.45rem 0.65rem;
+  margin: 0;
+  padding: 8px 8px 8px 10px;
   overflow: hidden;
-  justify-content: flex-start;
-  gap: 0.45rem;
-  font-size: 0.72rem;
+  gap: 8px;
   color: var(--text, #f2f7f3);
+  font: inherit;
+  text-align: left;
+  appearance: none;
+  cursor: pointer;
+}
+
+.tpi-scene-music-button,
+.tpi-scene-music-button:hover,
+.tpi-scene-music-button:focus-visible {
+  border-style: solid;
 }
 
 .tpi-scene-music-button .tpi-scene-music-icon {
-  color: #d77a9b;
-  font-size: 1.05rem;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  color: #75d5ff;
+  font-size: 18px;
   line-height: 1;
 }
+
+.tpi-scene-music-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.tpi-scene-music-copy strong { font-size: 12px; font-weight: 700; }
+.tpi-scene-music-copy small { color: rgba(220, 236, 255, 0.68); font-size: 10px; }
 
 .tpi-scene-music-button.selected {
   border-color: var(--blue, #91b9fa);
