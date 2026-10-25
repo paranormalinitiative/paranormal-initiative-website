@@ -50,6 +50,27 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
 
+## TPI-STUDIOFLOW-037 Addendum E repair checkpoint — 2026-10-25
+
+The current local repair corrects Scenes-panel ownership and playback
+boundaries: new Studios use Intro Video → Scene 1 → Scene 2 → Outro Video;
+every production item has a working context menu and non-destructive removal;
+new scenes use the next available `Scene N` name; and an individual Intro
+preview stop no longer advances into After Intro music. Natural Intro
+completion and sequence rehearsal retain the configured production handoff.
+
+Local Firefox verification passed the focused Addendum E suite 20/20 plus
+TPI-037 20/20, Addendum C 26/26, Addendum D 10/10, TPI-028 33/33, TPI-030
+25/25, TPI-031 34/34, TPI-033 26/26, TPI-034 mutation regression, TPI-035
+33/33, TPI-036 28/28, and TPI-021 31/31. Production deployment is not yet
+recorded; guarded release preflight and live acceptance remain required.
+
+- Source checkpoint: `3bf3acf` in `/Users/toddknipple/Documents/StudioFlow/web`
+- Website application checkpoint: pending commit
+- Production status: previous Addendum D Worker remains active until guarded
+  deployment is completed
+- Record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
+
 Latest verified production release (TPI-STUDIOFLOW-037 Addendum D playback
 and rehearsal repair):
 

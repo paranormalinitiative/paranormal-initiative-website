@@ -12,6 +12,27 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## TPI-STUDIOFLOW-037 Addendum E local repair — 2026-10-25
+
+The owner-reported Scenes-panel failures are repaired in the canonical source
+and verified locally. New Studios use Intro Video → Scene 1 → Scene 2 → Outro
+Video; every production item has a working context menu; `Remove from Scenes`
+persists without deleting media or saved scene configuration; new scenes use
+the next available sequential name; and saved scene-layout deletion is
+confirmation-backed. An individual Intro preview stop no longer starts After
+Intro music. Natural Intro completion and sequence rehearsal retain the
+configured production handoff.
+
+- Source commit: `3bf3acf`
+- Local Firefox Addendum E: 20/20
+- Regressions: TPI-037 20/20; Addendum C 26/26; Addendum D 10/10; TPI-028
+  33/33; TPI-030 25/25; TPI-031 34/34; TPI-033 26/26; TPI-034 PASS; TPI-035
+  33/33; TPI-036 28/28; TPI-021 31/31
+- Production status: not deployed yet; previous Addendum D Worker remains
+  active until guarded preflight, deployment, and live Firefox acceptance
+- Owner acceptance: pending
+- Completion record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
+
 ## TPI-STUDIOFLOW-037 verified production release — 2026-10-24
 
 The Scenes panel redesign, Addenda A/B visual corrections, Addendum B

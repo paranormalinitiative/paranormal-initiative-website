@@ -1,6 +1,6 @@
 # StudioFlow Workspace Configuration Contract
 
-Status: ACTIVE / TPI-STUDIOFLOW-037 Addendum D
+Status: ACTIVE / TPI-STUDIOFLOW-037 Addendum E
 
 Last verified: 2026-10-25
 
@@ -23,8 +23,8 @@ validated metadata and stable media references.
 | `generalSettings` | General output settings | Yes, validated | Yes | Yes | Studio | Pass |
 | `guestPermissionSettings` | Guest controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `studioScenes` | Scene editor | Yes, normalized | Yes | Yes | Studio | Pass |
-| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder and non-destructive shortcut removal | Yes, validated | Yes | Yes | Studio | Pass — TPI-037 20/20; Addendum D playback/removal 10/10 |
-| `sceneMusicAssignments` | Background Music / After Intro | Yes, stable `blobKey` | Yes | Yes | Studio | Pass |
+| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder, independent context-menu removal, and sequential new-scene naming | Yes, validated | Yes | Yes | Studio | Pass — TPI-037 20/20; Addenda C/D/E 26/26, 10/10, 20/20 |
+| `sceneMusicAssignments` | Background Music / After Intro | Yes, stable `blobKey`; manual Intro preview stop does not mutate or trigger the assignment | Yes | Yes | Studio | Pass |
 | `bannerScrollTicker` | Ticker controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `programOrientation` (configuration) | Program output / bridge | Yes, supported scalar | Yes | Yes | Studio | Pass |
 | `programOrientation` (state settings) | Program output / workspace state | Yes, supported scalar | Yes | Yes | Studio | Pass |

@@ -7,7 +7,7 @@ TPI-STUDIOFLOW-031 (Background Music interface),
 TPI-STUDIOFLOW-033 (workspace configuration persistence), and
 TPI-STUDIOFLOW-034 (DOM mutation stability), updated by
 TPI-STUDIOFLOW-036 (cinematic Video Timers) and
-TPI-STUDIOFLOW-037 (Scenes panel shortcuts and Addendum D controls)
+TPI-STUDIOFLOW-037 (Scenes panel shortcuts and Addenda D-E controls)
 Last verified: 2026-10-25
 
 This document is the single current-state record of what StudioFlow's scene
@@ -80,8 +80,10 @@ self-sustaining child-list churn.
   saves through the existing per-Studio workspace configuration without
   invoking playback.
 - A manual Intro/Timer/Outro preview is isolated from automatic progression and
-  does not trigger the After Intro Background Music handoff. Actual automatic
-  Intro completion and manual stop retain the approved After Intro transition.
+  does not trigger the After Intro Background Music handoff when it is stopped.
+  Entering Intro clears any currently previewing music for the video moment.
+  Actual automatic Intro completion and sequence rehearsal completion retain
+  the configured After Intro transition.
 - Play Sequence is rehearsal-only: it uses existing preview and timer paths,
   does not start real output, does not alter saved configuration, and remains in
   rehearsal until the operator manually selects a scene or requests closing.
@@ -91,10 +93,10 @@ self-sustaining child-list churn.
 - Play Sequence changes to Stop Sequence while rehearsal is active. Stopping
   rehearsal cancels delayed transitions, clears rehearsal timers, stops active
   rehearsal media, and does not end a real recording or livestream.
-- `Remove from Scenes` removes a panel shortcut without deleting its assigned
-  media asset. Required Intro and Outro assignment rows remain protected;
-  optional shortcuts and user-created scene entries use the existing removal
-  path.
+- `Remove from Scenes` removes any panel shortcut without deleting its assigned
+  media asset or the saved scene configuration. Intro and Outro shortcuts are
+  removable panel entries; deleting a saved scene layout remains a separate
+  confirmation-backed action in the existing scene editor.
 
 ### Intro Video
 
@@ -127,10 +129,12 @@ self-sustaining child-list churn.
 - Uses its assigned track from the Background Music media section.
 - Remains independently controllable: the shortcut has its own identity,
   click plays the assigned track, and right-click reassigns it.
-- Automatically activates when leaving the Intro scene — including natural
-  Intro completion and manual stop — exactly as implemented by Sol
-  (commit `d262867`). Entering the Intro scene clears music for the video
-  moment. This transition is approved intentional behavior, not a coupling.
+- Automatically activates when leaving the Intro scene after natural Intro
+  completion or sequence rehearsal completion, exactly as implemented by Sol
+  (commit `d262867`). A manual individual preview stop is explicitly excluded
+  from the handoff by TPI-STUDIOFLOW-037 Addendum E. Entering the Intro scene
+  clears music for the video moment. This transition remains production-owned,
+  not a shared preview handler.
 - Does not share the Intro Video playback handler or scene identifier, and
   never starts, stops, or restarts the Intro Video.
 - Preserves existing assigned music track, playback controls, volume

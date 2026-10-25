@@ -8,6 +8,26 @@
 - Blocked: a safety or environment prerequisite prevents execution.
 - Not tested: no current evidence.
 
+## TPI-STUDIOFLOW-037 Addendum E scene-management repair — 2026-10-25
+
+`npm run verify:studioflow-037-addendum-e` is the maintained Firefox Developer
+Edition regression for the owner-reported Scenes-panel failures. It passed
+20/20 in a disposable authenticated workspace. The suite verifies the new
+Studio arrangement (Intro Video, Scene 1, Scene 2, Outro Video), every React
+production-item context menu, the Background Music bridge menu, right-click
+behavior, stable scene IDs during rename, next-available sequential naming,
+non-destructive shortcut removal, server-backed persistence after refresh, and
+the explicit rule that stopping an individual Intro preview does not start
+After Intro music. Synthetic media is used only in the disposable workspace.
+
+The repair also reran the maintained TPI-037 suite (20/20), Addendum C
+uniformity/drag suite (26/26), Addendum D playback/removal suite (10/10),
+TPI-028 (33/33), TPI-030 (25/25), TPI-031 (34/34), TPI-033 (26/26), TPI-034
+mutation regression, TPI-035 (33/33), TPI-036 (28/28), and TPI-021 (31/31).
+Natural Intro completion still activates configured After Intro music; manual
+preview stopping remains isolated. No owner Studio, Crossroads data,
+production D1 record, R2 object, recording, or live broadcast was mutated.
+
 ## TPI-STUDIOFLOW-036 cinematic video timers — 2026-10-24
 
 `npm run verify:studioflow-036-video-timers` is the maintained server/browser

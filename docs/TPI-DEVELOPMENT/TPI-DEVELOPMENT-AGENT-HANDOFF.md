@@ -23,6 +23,24 @@ the controlling directive.
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
 
+## TPI-STUDIOFLOW-037 Addendum E current handoff
+
+Addendum E is locally repaired and validated; it is not yet deployed. The
+confirmed defects were durable shortcut recreation after removal, missing
+shared context-menu coverage for Background Music, and preview lifecycle
+state being mistaken for a production scene transition. New Studios now use
+Intro Video → Scene 1 → Scene 2 → Outro Video; `Remove from Scenes` removes
+only the panel shortcut; new scenes use the next available sequential name;
+and deleting a saved scene layout remains confirmation-backed. Individual
+Intro preview stop does not start After Intro music, while natural completion
+and sequence rehearsal preserve the production handoff.
+
+The maintained Firefox Addendum E suite passed 20/20. The source commit is
+`3bf3acf` in `/Users/toddknipple/Documents/StudioFlow/web`. The website
+application/test commit and Worker are pending the guarded release. Owner
+acceptance remains pending until the corrected interface is verified on the
+live site by the owner.
+
 ## TPI-STUDIOFLOW-037 current handoff
 
 Addendum D is deployed and live-verified. Playable production shortcuts use
