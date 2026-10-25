@@ -12,6 +12,24 @@ repairable blocker or require a fresh owner directive for each lifecycle step.
 Historical restrictions below describe prior executions and do not override
 the controlling directive.
 
+## Owner Verification 001 — 2026-10-25
+
+`AGENT VERIFIED — OWNER ACCEPTANCE PENDING`. The Studio lifecycle recovery was
+re-verified on authenticated production with the isolated QA account (lifecycle
+suite 25/25 production, 25/25 local; active Worker `9d3aa40c`, rollback
+`7bddac9c`; live assets byte-identical to the website integration). Read-only
+D1 inspection: the owner's "Testing 123" (`a75afc38-c7a6-452d-9460-5d746712d411`)
+saved state retains the historically inherited eight-item Crossroads-like
+configuration from the pre-repair build (created 16:37Z, repair deployed
+22:16Z); remediation is proposed in the completion record and awaits explicit
+owner authorization — nothing was modified. "Browser Only Crossroads" has no
+server record (browser-local only) and cannot be inspected server-side.
+`release:preflight` now runs `verify:studioflow-studio-lifecycle` (enforced by
+a release-safety contract check). The five static-contract suite failures
+(048/049/dev-024/dev-037/022) and the flaky 030 rapid-upload step remain open
+and documented. See
+`300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-OWNER-VERIFICATION-001.md`.
+
 ## Current Studio lifecycle recovery release
 
 The Studio Creation, Switching & Workspace Isolation Recovery is deployed and

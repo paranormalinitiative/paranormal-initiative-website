@@ -39,6 +39,9 @@ check("runbook requires commit, push, preflight and guarded deployment", () => {
 check("release preflight includes the full local_admin lifecycle", () => {
   assert.match(release, /await verifyAuthLifecycle\(\)/);
 });
+check("release preflight runs the Studio Management lifecycle regression", () => {
+  assert.match(release, /tpi-studioflow-studio-lifecycle\.mjs/);
+});
 check("local assets are staged before the managed Worker lifecycle", () => {
   const stage = release.indexOf('run("Stage local assets"');
   const lifecycle = release.indexOf("await verifyAuthLifecycle()");

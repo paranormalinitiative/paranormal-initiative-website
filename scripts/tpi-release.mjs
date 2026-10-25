@@ -172,6 +172,13 @@ async function preflight() {
   run("Firefox Developer Edition release acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
   });
+  // Studio Management lifecycle regression (Directive Tests 1-10 plus owner
+  // workflow checks H1-H2). Required in the maintained release verification so
+  // a Studio creation, switching, isolation, or persistence regression blocks
+  // the release instead of reaching production (TPI-STUDIOFLOW-OWNER-VERIFICATION-001 §11).
+  run("Studio Management lifecycle regression", process.execPath, ["scripts/verify/tpi-studioflow-studio-lifecycle.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");

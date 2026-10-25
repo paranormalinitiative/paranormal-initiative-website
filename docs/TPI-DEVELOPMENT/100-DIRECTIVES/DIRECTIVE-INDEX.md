@@ -18,6 +18,30 @@ for current commit, push, deployment, and live-verification procedure.
 
 ## Current production reconciliation
 
+## TPI-STUDIOFLOW-OWNER-VERIFICATION-001 — 2026-10-25
+
+Post-Deployment Studio Management Verification & Owner Workflow Recovery.
+Archived verbatim at
+[`TPI-STUDIOFLOW-OWNER-VERIFICATION-001-POST-DEPLOYMENT-STUDIO-MANAGEMENT.md`](TPI-STUDIOFLOW-OWNER-VERIFICATION-001-POST-DEPLOYMENT-STUDIO-MANAGEMENT.md).
+Requires authenticated production verification of the Studio lifecycle
+recovery (creation, switching, isolation, persistence) with the isolated QA
+account, read-only investigation of the owner Studios "Testing 123" and
+"Browser Only Crossroads", and a completion report. Owner data is protected;
+no destructive remediation without separate owner authorization. Status:
+`AGENT VERIFIED — OWNER ACCEPTANCE PENDING`. Verified 2026-10-25: lifecycle
+suite 25/25 on authenticated production and 25/25 locally; active Worker
+`9d3aa40c-9a44-4bf9-bcf1-8efcbf837683` (rollback
+`7bddac9c-bda3-41c1-95d2-13aacc09cb28`); live assets byte-identical to the
+website integration. Read-only D1 inspection showed "Testing 123"
+(`a75afc38-c7a6-452d-9460-5d746712d411`) retains historically inherited
+Crossroads-like configuration saved by the pre-repair build (remediation
+proposed, awaiting owner authorization); "Browser Only Crossroads" is
+browser-local with no server record. `release:preflight` now runs the
+lifecycle suite (release-safety contract check added); five pre-existing
+static-contract failures and the flaky 030 rapid-upload step remain open and
+documented. See
+[`../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-OWNER-VERIFICATION-001.md`](../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-OWNER-VERIFICATION-001.md).
+
 ## Integrated Studio Management & Scene System Recovery — 2026-10-25
 
 The integrated recovery is `DEPLOYED AND VISUALLY VERIFIED — OWNER

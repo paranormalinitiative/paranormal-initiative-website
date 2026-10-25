@@ -12,6 +12,30 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## Owner Verification 001 — post-deployment Studio Management verification — 2026-10-25
+
+Status: `AGENT VERIFIED — OWNER ACCEPTANCE PENDING`. The deployed Studio
+lifecycle recovery was independently re-verified against authenticated
+production with the isolated QA account: deployed Worker `9d3aa40c` confirmed
+as the active 100% version (rollback `7bddac9c` intact), live application and
+bridge assets byte-identical to the website integration, and the maintained
+`verify:studioflow-studio-lifecycle` suite passing 25/25 on production and
+25/25 locally (both creation workflows, A→B→A switching, isolation, refresh,
+unsaved changes, failed-save handling, rapid switching, missing-snapshot
+recovery). Read-only D1 inspection established that the owner's "Testing 123"
+workspace (`a75afc38-c7a6-452d-9460-5d746712d411`) was created at 16:37Z
+before the repair deployed and its saved state retains the historically
+inherited eight-item Crossroads-like configuration (proposed remediation
+awaiting owner authorization; nothing modified); "Browser Only Crossroads" is
+browser-local with no server record and cannot be inspected from the server
+side. The four-item vs eight-item difference is workspace data, not an
+application mismatch. §11 gap closed: `release:preflight` now runs the
+lifecycle suite, enforced by a release-safety contract check. The five
+pre-existing static-contract suite failures (048/049/dev-024/dev-037/022) and
+the timing-sensitive 030 rapid-upload step remain documented and open. No new
+deployment was necessary. Full record:
+`300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-OWNER-VERIFICATION-001.md`.
+
 ## Studio Creation, Switching & Workspace Isolation Recovery — 2026-10-25
 
 The owner-observed Studio Management failures (new Studio inheriting the

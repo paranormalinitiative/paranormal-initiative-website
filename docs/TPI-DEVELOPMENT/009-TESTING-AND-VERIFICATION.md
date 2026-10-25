@@ -31,7 +31,20 @@ restoration, unsaved-change preservation, failed-save handling (no silent
 switch, no overwrite), rapid switching, existing-Studio compatibility, clean
 home-screen creation, and the browser-local Studio that lacks a snapshot
 (opens with defaults and a visible notice). Only disposable Studios are
-created; they are archived at the end of each run.
+created; they are archived at the end of each run. Since 2026-10-25
+(TPI-STUDIOFLOW-OWNER-VERIFICATION-001 §11) the suite also runs inside
+`npm run release:preflight`, enforced by a `verify:release-safety` contract
+check, so a Studio lifecycle regression blocks a release. Verified results
+2026-10-25: 25/25 on authenticated production (isolated QA account) and
+25/25 locally.
+
+Known open failures — documented, not resolved: the static-contract suites
+`tpi-studioflow-048-project-persistence`, `tpi-studioflow-049-portable-backups`,
+`tpi-dev-024-offline`, `tpi-dev-037-offline`, and
+`tpi-studioflow-022-media-organization` fail on stale source-literal
+expectations (pre-existing baseline; they were left untouched rather than
+rewritten to pass), and `verify:studioflow-030-browser`'s rapid-upload step is
+timing-sensitive (one flaky failure observed in four runs; passes on re-run).
 
 ## TPI-STUDIOFLOW-037 Addendum E scene-management repair — 2026-10-25
 
