@@ -36,7 +36,7 @@ and leaves all saved assignments and playback architecture unchanged.
 
 - Source commit: `7f233df` (Addendum B; prior `f31bd95`)
 - Website application commit: `23dd5a1` (Addendum B; prior `b2972f3`)
-- Documentation/release checkpoint: pending post-deployment sync
+- Documentation/release checkpoint: `ad1ea7c`
 - Active production Worker: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
 - Rollback: `273390fa-8018-439f-b3bc-6a7ff935cc1e` (prior Addendum A)
 - Acceptance: production smoke 10/10; isolated Firefox live acceptance 64/64;
