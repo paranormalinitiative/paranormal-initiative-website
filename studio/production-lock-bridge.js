@@ -103,7 +103,10 @@
       beginHeartbeat();
       return body;
     }).catch(function (error) {
-      window.__tpiStudioProductionLock = { locked: true, denied: true };
+      // A denied reservation means this browser does not own the active
+      // production lock. Keep the denial visible to the recording gate, but
+      // do not poison Studio switching with a lock that this tab never held.
+      window.__tpiStudioProductionLock = { locked: false, denied: true };
       showMessage(error.message, true);
       throw error;
     }).finally(function () { reservationInFlight = null; });

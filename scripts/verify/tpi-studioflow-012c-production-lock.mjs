@@ -22,6 +22,7 @@ check("production stops release only the matching creator session", api.includes
 check("switching checks the authoritative active-session endpoint", workspaceBridge.includes("/api/studio/production/active") && workspaceBridge.includes("Studio switching is paused until the active session can be checked."));
 check("local recording uses the authoritative lock before the existing recorder click", bridge.includes("installClickGate") && bridge.includes("event.stopImmediatePropagation()") && bridge.includes("/api/studio/production/start"));
 check("local recording heartbeats and does not release on pagehide", bridge.includes("/api/studio/production/heartbeat") && bridge.includes("Do not release here"));
+check("a denied reservation does not poison later Studio switching", bridge.includes("{ locked: false, denied: true }") && bridge.includes("do not poison Studio switching"));
 check("recording bytes remain in browser storage", bridge.includes("recording-checkpoint") || (bridge.includes("IndexedDB") && !bridge.includes("/api/uploads")));
 check("the production lock bridge is loaded by StudioFlow", shell.includes("/studio/production-lock-bridge.js"));
 check("no external provider or streaming request is added by the bridge", !/https?:\/\//i.test(bridge) && !bridge.includes("Tavily") && !bridge.includes("RealtimeKit"));

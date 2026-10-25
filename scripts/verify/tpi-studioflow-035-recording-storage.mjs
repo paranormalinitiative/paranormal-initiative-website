@@ -189,10 +189,15 @@ async function switchToStudio(workspaceId) {
   await click(".tpi-studio-selector");
   await waitFor("My Studios menu", async () => (await count(".tpi-studio-menu:not([hidden])")) === 1);
   await waitFor(`studio menu row for ${workspaceId}`, async () => await click(`#tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`), 20_000);
-  await waitFor(`studio ${workspaceId} to activate`, async () => {
-    const current = await activeStudioId();
-    return current && current !== before && current === workspaceId && (await count("[data-tpi-audio-soundboards]")) === 1;
-  }, 45_000);
+  try {
+    await waitFor(`studio ${workspaceId} to activate`, async () => {
+      const current = await activeStudioId();
+      return current && current !== before && current === workspaceId && (await count("[data-tpi-audio-soundboards]")) === 1;
+    }, 45_000);
+  } catch (error) {
+    const diagnostic = await asyncJs("var done = arguments[arguments.length - 1]; var indexed = new Promise(function (resolve) { try { var request = indexedDB.open('studioflow-recordings'); request.onerror = function () { resolve({ error: 'indexeddb-open' }); }; request.onsuccess = function () { var db = request.result; if (!db.objectStoreNames.contains('recordingSessions')) { db.close(); resolve([]); return; } var tx = db.transaction('recordingSessions', 'readonly'); var get = tx.objectStore('recordingSessions').getAll(); get.onsuccess = function () { var rows = Array.isArray(get.result) ? get.result : []; db.close(); resolve(rows.map(function (row) { return { sessionId: row.sessionId, status: row.status, updatedAt: row.updatedAt, age: Date.now() - Number(row.updatedAt || 0) }; })); }; get.onerror = function () { db.close(); resolve({ error: 'indexeddb-read' }); }; }; } catch (error) { resolve({ error: String(error) }); } }); Promise.all([fetch('/api/studio/production/active', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).catch(function () { return null; }), fetch('/api/studio/workspaces', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).catch(function () { return null; }), indexed]).then(function (values) { done({ active: values[0], workspaces: values[1], localActiveStudio: localStorage.getItem('studioflow.tpiActiveStudioId.v1'), localBroadcast: localStorage.getItem('studioflow.activeBroadcastId'), productionLock: window.__tpiStudioProductionLock || null, recordingSessions: localStorage.getItem('studioflow.recordingSessions'), indexedRecordingSessions: values[2], recordingStatus: localStorage.getItem('studioflow.recordingStatus'), message: (document.querySelector('.tpi-studio-status') || document.body).textContent.slice(-500) }); }).catch(function (cause) { done({ error: String(cause) }); });");
+    throw new Error(`studio ${workspaceId} to activate timed out (before=${JSON.stringify(before)} after=${JSON.stringify(await activeStudioId())} diagnostic=${JSON.stringify(diagnostic)}; ${error.message})`);
+  }
   await sleep(1500);
 }
 
