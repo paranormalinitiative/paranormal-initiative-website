@@ -14,18 +14,25 @@ they automatically synchronize.
 
 ## TPI-STUDIOFLOW-037 verified production release — 2026-10-24
 
-The Scenes panel redesign is deployed and live-verified. The uniform shortcut
+The Scenes panel redesign and Addendum A styling correction are deployed and
+live-verified. The uniform shortcut
 layer preserves the existing timer, Video Clips, scene, and Background Music
 owners; its panel manifest is validated and saved through the established
 per-Studio workspace configuration. TPI-037 passed 11/11, TPI-036 passed
 28/28, TPI-035 passed 33/33, TPI-031 passed 34/34, and TPI-034 mutation
 stability remained green.
 
+Addendum A corrected the injected Add Background Music / After Intro shortcut
+to use the same 56px solid production surface, blue icon treatment, readable
+two-line labels, and non-truncated standard labels as the other production
+items. The extended TPI-037 suite passed 13/13 and the existing Background
+Music suite remained 34/34.
+
 - Source commit: `f31bd95`
-- Website application commit: `44ed241`
+- Website application commit: `b2972f3` (Addendum A; base `44ed241`)
 - Documentation/release checkpoint: `f5d6b01`
-- Active production Worker: `d307b732-ddd7-4874-bcac-4aa153e0a3c4`
-- Rollback: `076c9614-9251-4efd-b047-0e7033f4ad9c` (TPI-036)
+- Active production Worker: `273390fa-8018-439f-b3bc-6a7ff935cc1e`
+- Rollback: `d307b732-ddd7-4874-bcac-4aa153e0a3c4` (prior TPI-037)
 - Acceptance: production smoke 10/10; isolated Firefox live acceptance 64/64;
   owner profile access false; release preflight and auth lifecycle PASS
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`

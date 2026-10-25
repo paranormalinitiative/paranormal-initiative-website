@@ -50,27 +50,28 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
-Latest verified production release (TPI-STUDIOFLOW-036 cinematic video timers):
+Latest verified production release (TPI-STUDIOFLOW-037 Addendum A):
 
-- Application commit: `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`
-- StudioFlow source commit: `37c6598`
-- Worker version: `076c9614-9251-4efd-b047-0e7033f4ad9c` at 100% traffic
-- Rollback: `aa9bff15-6252-4ae5-9422-17d63b99ab5a` (TPI-035)
-- Acceptance: TPI-036 timer regression 28/28; local and live Firefox
-  acceptance 64/64; production smoke 10/10; release safety 17/17; local
-  auth lifecycle PASS; complete isolated API/QA gate PASS; reproducible
-  StudioFlow staging PASS
-- Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-036-CINEMATIC-VIDEO-TIMERS.md`
+- Application commit: `b2972f3`
+- StudioFlow source commit: `f31bd95`
+- Worker version: `273390fa-8018-439f-b3bc-6a7ff935cc1e` at 100% traffic
+- Rollback: `d307b732-ddd7-4874-bcac-4aa153e0a3c4` (prior TPI-037)
+- Acceptance: TPI-037 Addendum A 13/13; TPI-031 34/34; local and live
+  Firefox acceptance 64/64; production smoke 10/10; release safety 17/17;
+  local auth lifecycle PASS; complete isolated API/QA gate PASS;
+  reproducible StudioFlow staging PASS
+- Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
 
 ## TPI-STUDIOFLOW-037 verified production release
 
-The Scenes panel redesign is deployed and live-verified from source commit
-`f31bd95` and website application commit `44ed241`. TPI-037 passed 11/11 plus
-the focused TPI-031, 034, 035, and 036 regressions. Production smoke passed
-10/10 and isolated Firefox live acceptance passed 64/64.
+The Scenes panel redesign and Addendum A uniform production-button correction
+are deployed and live-verified from source commit `f31bd95` and website
+application commit `b2972f3`. The extended TPI-037 suite passed 13/13; the
+focused TPI-031 suite remained 34/34. Production smoke passed 10/10 and
+isolated Firefox live acceptance passed 64/64.
 
-- Active Worker: `d307b732-ddd7-4874-bcac-4aa153e0a3c4`
-- Rollback: `076c9614-9251-4efd-b047-0e7033f4ad9c`
+- Active Worker: `273390fa-8018-439f-b3bc-6a7ff935cc1e`
+- Rollback: `d307b732-ddd7-4874-bcac-4aa153e0a3c4`
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
 
 Prior verified production release (TPI-STUDIOFLOW-035 right navigation

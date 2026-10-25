@@ -91,16 +91,14 @@ website repository's `codex/tpi-development` branch.
 
 ## Current verified live baseline
 
-- Website production source commit:
-  `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`
-  (TPI-STUDIOFLOW-036 cinematic video timers)
-- Authoritative StudioFlow source commit:
-  `37c6598`
+- Website production source commit: `b2972f3`
+  (TPI-STUDIOFLOW-037 Addendum A)
+- Authoritative StudioFlow source commit: `f31bd95`
 - Active production Worker version:
-  `076c9614-9251-4efd-b047-0e7033f4ad9c`
+  `273390fa-8018-439f-b3bc-6a7ff935cc1e`
 - Immediate rollback version:
-  `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
-  (TPI-STUDIOFLOW-035 release)
+  `d307b732-ddd7-4874-bcac-4aa153e0a3c4`
+  (prior TPI-STUDIOFLOW-037 release)
 
 ## TPI-STUDIOFLOW-036 verified release
 
@@ -119,14 +117,15 @@ owner-browser data was mutated for acceptance.
 
 ## TPI-STUDIOFLOW-037 verified release
 
-The Scenes panel redesign is deployed and live-verified. Source commit
-`f31bd95`, website application commit `44ed241`, and documentation checkpoint
-`f5d6b01` passed the complete release sequence. TPI-037 passed 11/11, TPI-036
-28/28, TPI-035 33/33, TPI-031 34/34, and TPI-034 mutation stability PASS.
+The Scenes panel redesign and Addendum A uniform production-button correction
+are deployed and live-verified. Source commit `f31bd95`, website application
+commit `b2972f3`, and the post-release documentation checkpoint passed the
+complete release sequence. TPI-037 passed 13/13, TPI-036 28/28, TPI-035
+33/33, TPI-031 34/34, and TPI-034 mutation stability PASS.
 Production smoke passed 10/10 and isolated Firefox Developer Edition live
 acceptance passed 64/64. Worker
-`d307b732-ddd7-4874-bcac-4aa153e0a3c4` is active at 100% traffic; rollback is
-`076c9614-9251-4efd-b047-0e7033f4ad9c`.
+`273390fa-8018-439f-b3bc-6a7ff935cc1e` is active at 100% traffic; rollback is
+`d307b732-ddd7-4874-bcac-4aa153e0a3c4`.
 
 ## TPI-STUDIOFLOW-035 verified release
 
