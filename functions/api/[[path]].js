@@ -4606,7 +4606,7 @@ function normalizeStudioConfiguration(value) {
     if (!item || typeof item !== "object" || Array.isArray(item)) return items;
     const id = clean(item.id).slice(0, 120);
     const kind = clean(item.kind).slice(0, 20);
-    if (!id || items.some((candidate) => candidate.id === id) || !["intro", "timer", "scene", "video-clip", "outro"].includes(kind)) return items;
+    if (!id || items.some((candidate) => candidate.id === id) || !["intro", "timer", "scene", "music", "video-clip", "outro"].includes(kind)) return items;
     const normalized = {
       id,
       kind,

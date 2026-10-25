@@ -527,29 +527,34 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   justify-self: start;
 }
 
+/* TPI-STUDIOFLOW-037 Addendum C: one-line labels everywhere. The standard
+   production labels (Intro Video, Countdown Timer, Background Music, Outro
+   Video) must fit without wrapping; long creator names truncate with a
+   tooltip instead of wrapping awkwardly inside the fixed row height. */
 .scene-panel-item-copy strong,
 .tpi-scene-music-copy strong {
-  display: -webkit-box;
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
-  line-height: 1.15;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  white-space: nowrap;
+  line-height: 1.25;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
 }
 
 .tpi-scene-music-button {
   position: relative;
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) 16px 18px;
+  column-gap: 4px;
+  align-items: stretch;
   width: calc(100% + 4px);
   min-width: calc(100% + 4px);
   justify-self: start;
   margin-left: -2px;
-  padding: 8px 8px 8px 10px;
+  padding: 0;
   overflow: hidden;
-  gap: 8px;
   color: var(--text, #f2f7f3);
   font: inherit;
   text-align: left;
@@ -564,11 +569,13 @@ section.asset-section[data-tpi-legacy-audio="true"] {
 }
 
 .tpi-scene-music-button .tpi-scene-music-icon {
-  display: grid;
+  display: inline-grid;
   place-items: center;
-  width: 30px;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
   color: #75d5ff;
-  font-size: 18px;
+  font-size: 13px;
   line-height: 1;
 }
 
@@ -579,16 +586,60 @@ section.asset-section[data-tpi-legacy-audio="true"] {
 }
 
 .tpi-scene-music-copy strong { font-size: 12px; font-weight: 700; }
-.tpi-scene-music-copy small { color: rgba(220, 236, 255, 0.68); font-size: 10px; }
+.tpi-scene-music-copy small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: rgba(220, 236, 255, 0.68);
+  font-size: 10px;
+  line-height: 1.2;
+}
+.tpi-scene-music-copy small .tpi-scene-music-secondary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .tpi-scene-music-button.selected {
   border-color: var(--blue, #91b9fa);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--blue, #91b9fa) 24%, transparent);
 }
 
-.tpi-scene-music-button:disabled {
+.tpi-scene-music-button[data-tpi-music-disabled] {
   cursor: not-allowed;
   opacity: 0.52;
+}
+
+/* TPI-STUDIOFLOW-037 Addendum C: an assigned track tints its Background
+   Music row with that track's existing SmartPad color — no second color
+   system, no color inferred from names. Neutral when unassigned; selected
+   and actively-playing states stay visually distinct. */
+.tpi-scene-music-button[data-tpi-music-assigned] {
+  border-color: color-mix(in srgb, var(--tpi-scene-music-color, #75d5ff) 58%, rgba(105, 189, 255, 0.5));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tpi-scene-music-color, #75d5ff) 22%, rgba(22, 42, 72, 0.96)), rgba(17, 27, 50, 0.96));
+}
+
+.tpi-scene-music-button[data-tpi-music-assigned] .tpi-scene-music-icon {
+  color: var(--tpi-scene-music-color, #75d5ff);
+}
+
+.tpi-scene-music-button[data-tpi-music-playing] {
+  border-color: color-mix(in srgb, var(--tpi-scene-music-color, #75d5ff) 82%, #ffffff);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tpi-scene-music-color, #75d5ff) 45%, transparent), 0 8px 22px color-mix(in srgb, var(--tpi-scene-music-color, #75d5ff) 32%, transparent);
+}
+
+.tpi-scene-music-button[data-tpi-music-playing] .tpi-scene-music-icon {
+  animation: tpi-scene-music-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tpi-scene-music-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.88); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tpi-scene-music-button[data-tpi-music-playing] .tpi-scene-music-icon { animation: none; }
 }
 
 .scene-panel-add-button,

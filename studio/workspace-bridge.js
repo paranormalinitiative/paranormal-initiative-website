@@ -39,7 +39,7 @@
   function normalizeScenePanelItems(value) {
     if (!Array.isArray(value)) return [];
     var seen = {};
-    return value.filter(function (item) { return item && typeof item === "object" && text(item.id) && ["intro", "timer", "scene", "video-clip", "outro"].includes(text(item.kind)); }).slice(0, 100).map(function (item) {
+    return value.filter(function (item) { return item && typeof item === "object" && text(item.id) && ["intro", "timer", "scene", "music", "video-clip", "outro"].includes(text(item.kind)); }).slice(0, 100).map(function (item) {
       var id = text(item.id).slice(0, 120);
       if (seen[id]) return null;
       seen[id] = true;
