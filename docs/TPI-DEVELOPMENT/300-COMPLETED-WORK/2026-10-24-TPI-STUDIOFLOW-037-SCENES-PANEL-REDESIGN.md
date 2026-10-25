@@ -165,5 +165,5 @@ Release:
 - Production Worker: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`.
 - Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`.
 - Production status: `DEPLOYED_AND_VERIFIED`.
-- Documentation commit: recorded after this release; documentation changes do
-  not require a second Worker release.
+- Documentation/test synchronization commit: `3b509d1`; documentation changes
+  do not require a second Worker release.
