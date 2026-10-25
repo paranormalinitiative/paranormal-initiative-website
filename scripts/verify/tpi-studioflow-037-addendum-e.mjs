@@ -189,7 +189,8 @@ try {
   check("stopping individual Intro preview does not start After Intro music", await count('[data-tpi-audio-board="music"] .tpi-audio-slot.playing') === 0);
   check("stopping individual Intro preview restores the prior scene without transition", await js("return JSON.parse(localStorage.getItem('studioflow.activeSceneId')||'\"\"') !== 'intro';"));
 
-  const cleanup = await authenticatedFetch(`/api/studio/workspaces/${encodeURIComponent(workspaceId)}/archive`, { method: "POST", body: JSON.stringify({ expectedVersion: persisted.body?.workspace?.version }) });
+  const latestWorkspace = await authenticatedFetch(`/api/studio/workspaces/${encodeURIComponent(workspaceId)}`);
+  const cleanup = await authenticatedFetch(`/api/studio/workspaces/${encodeURIComponent(workspaceId)}/archive`, { method: "POST", body: JSON.stringify({ expectedVersion: latestWorkspace.body?.workspace?.version }) });
   check("disposable Addendum E workspace is archived", cleanup.status === 200, `HTTP ${cleanup.status}`);
 } catch (error) {
   check("Firefox Addendum E interaction test completed", false, safe(error));
