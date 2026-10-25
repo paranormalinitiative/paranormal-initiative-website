@@ -121,7 +121,7 @@ access the owner's browser profile. No owner acceptance claim is made.
 
 The deployed application serves the verified StudioFlow bundles
 `/studio/assets/index-BZ_tF0DV.js` and `/studio/assets/index-8wAEEeJ8.css`.
-Documentation-only follow-up commit after deployment: pending.
+Documentation-only follow-up commit after deployment: `6850598`.
 
 ## DOCUMENTATION AUDIT
 
