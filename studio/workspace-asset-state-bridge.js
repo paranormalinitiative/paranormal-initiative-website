@@ -61,7 +61,7 @@
       widgetSettings: { showClock: false, showElapsed: false, showCountdown: false, placement: "bottom-right" },
       generalSettings: { resolution: "1080p", orientation: "landscape" },
       guestPermissionSettings: { canStreamToOwnDestination: false, canSeeViewerComments: true, playEntrySound: true, mustAuthenticate: false, canControlSlides: false },
-      studioScenes: [{ id: "intro", kind: "intro", title: "Intro video", layout: "Speaker view" }, { id: "scene-1", kind: "demo", title: "Demo scene 1", layout: "Speaker view" }, { id: "scene-2", kind: "demo", title: "Demo scene 2", layout: "Group discussion" }, { id: "outro", kind: "outro", title: "Outro video", layout: "Speaker view" }],
+      studioScenes: [{ id: "intro", kind: "intro", title: "Intro video", layout: "Speaker view" }, { id: "scene-1", kind: "demo", title: "Scene 1", layout: "Speaker view" }, { id: "scene-2", kind: "demo", title: "Scene 2", layout: "Group discussion" }, { id: "outro", kind: "outro", title: "Outro video", layout: "Speaker view" }],
       sceneMusicAssignments: {},
       bannerScrollTicker: { enabled: false, text: "", position: "bottom" },
       programOrientation: "landscape",
@@ -101,7 +101,7 @@
     if (demoCount < 2) {
       var needed = 2 - demoCount;
       for (var index = 0; index < needed; index += 1) {
-        result.push(baseline(index === 0 ? "scene-1" : "scene-2", "demo", index === 0 ? "Demo scene 1" : "Demo scene 2", index === 0 ? "Speaker view" : "Group discussion"));
+        result.push(baseline(index === 0 ? "scene-1" : "scene-2", "demo", index === 0 ? "Scene 1" : "Scene 2", index === 0 ? "Speaker view" : "Group discussion"));
       }
     }
     if (!hasOutro) result.push(baseline("outro", "outro", "Outro video", "Speaker view"));

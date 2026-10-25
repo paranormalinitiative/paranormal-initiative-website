@@ -43,6 +43,13 @@ await context.addInitScript(() => {
     localStorage.setItem("studioflow.broadcasts", JSON.stringify([{ id, kind: "recording", title: `TPI-021 ${id}`, createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }]));
     localStorage.setItem("studioflow.activeBroadcastId", JSON.stringify(id));
     localStorage.setItem("studioflow.route", JSON.stringify("studio"));
+    localStorage.setItem("studioflow.scenePanelItems", JSON.stringify([
+      { id: "intro", kind: "intro", title: "Intro Video", sceneId: "intro", opening: true },
+      { id: "music:after-intro", kind: "music", title: "Background Music", sceneId: "after-intro" },
+      { id: "scene:scene-1", kind: "scene", title: "Scene 1", sceneId: "scene-1" },
+      { id: "music:scene-1", kind: "music", title: "Background Music", sceneId: "scene-1" },
+      { id: "outro", kind: "outro", title: "Outro Video", sceneId: "outro", closing: true }
+    ]));
     window.__tpi021BroadcastId = id;
   } catch {}
 });

@@ -630,6 +630,17 @@
       sceneMusicButton();
     });
     menu.appendChild(remove);
+    var removeFromScenes = document.createElement("button");
+    removeFromScenes.type = "button";
+    removeFromScenes.className = "tpi-scene-music-menu-item remove";
+    removeFromScenes.textContent = "Remove from Scenes";
+    removeFromScenes.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeSceneMusicMenu();
+      window.dispatchEvent(new CustomEvent("studioflow:scene-panel-remove", { detail: { itemId: "music:" + sceneId } }));
+    });
+    menu.appendChild(removeFromScenes);
     // Addendum C: the music row is reorderable like every production item.
     // Moving it only changes its panel position — never its assignment.
     [[-1, "Move up"], [1, "Move down"]].forEach(function (entry) {
@@ -701,6 +712,10 @@
   function sceneMusicButton() {
     var scenes = Array.prototype.slice.call(document.querySelectorAll("[data-tpi-scene-id]"));
     scenes.forEach(function (scene) {
+      // The authoritative React Scenes panel owns explicit music rows. The
+      // legacy fallback must not inject hidden/non-persisted rows into the
+      // standard new-Studio arrangement.
+      if (document.querySelector('[data-tpi-scenes-panel="true"]')) return;
       var sceneId = text(scene.getAttribute("data-tpi-scene-id"));
       var shortcutId = sceneId === "intro" ? AFTER_INTRO_SCENE_ID : sceneId;
       if (!sceneId || sceneId === "outro" || !scene.parentElement) return;
@@ -790,6 +805,9 @@
       // A manual Scenes-panel preview is isolated from the approved automatic
       // Intro -> After Intro handoff. Production automation dispatches the
       // same event without preview=true and keeps the existing behavior.
+      var previewActive = text(read("studioflow.activeSceneId", ""));
+      if (previewActive === "intro") stopMusic();
+      lastSceneId = previewActive;
       sceneMusicButton();
       return;
     }
@@ -894,6 +912,14 @@
     });
     window.addEventListener("studioflow:scene-music-stop", function () {
       stopMusic();
+    });
+    window.addEventListener("studioflow:scene-music-remove", function (event) {
+      var detail = (event && event.detail) || {};
+      var shortcutId = text(detail.shortcutId);
+      if (!shortcutId) return;
+      var state = sceneMusicState(shortcutId);
+      var playing = state.musicIndex >= 0 && state.musicIndex === musicSlot && (musicExternal || (musicAudio && !musicAudio.paused));
+      if (playing) stopMusic();
     });
     window.addEventListener("studioflow:audio-ended", function (event) { var detail = event.detail || {}; if (detail.category === "sound") { soundSource = null; soundSlot = null; renderState(); } if (detail.category === "music") { musicExternal = false; musicSlot = null; renderState(); } });
   }

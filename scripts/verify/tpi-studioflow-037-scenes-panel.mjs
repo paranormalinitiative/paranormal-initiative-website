@@ -62,7 +62,7 @@ try {
 
   const title = `TPI-037 Scenes Panel ${runId}`;
   const localBroadcastId = `tpi-037-scenes-${runId}`;
-  const state = { broadcast: { id: localBroadcastId, title, description: "Disposable Scenes panel regression studio", status: "draft", visibility: "private" }, settings: { programOrientation: "landscape" }, configuration: { programOrientation: "landscape", videoTimerTheme: "classic", videoTimerDuration: 20, videoClipSlots: [], scenePanelItems: [], backgroundMusicSlots: [], backgroundMusicLoop: true, sceneMusicAssignments: {} } };
+  const state = { broadcast: { id: localBroadcastId, title, description: "Disposable Scenes panel regression studio", status: "draft", visibility: "private" }, settings: { programOrientation: "landscape" }, configuration: { programOrientation: "landscape", videoTimerTheme: "classic", videoTimerDuration: 20, videoClipSlots: [], scenePanelItems: [{ id: "intro", kind: "intro", title: "Intro Video", sceneId: "intro", opening: true }, { id: "scene:scene-1", kind: "scene", title: "Scene 1", sceneId: "scene-1" }, { id: "scene:scene-2", kind: "scene", title: "Scene 2", sceneId: "scene-2" }, { id: "outro", kind: "outro", title: "Outro Video", sceneId: "outro", closing: true }], backgroundMusicSlots: [], backgroundMusicLoop: true, sceneMusicAssignments: {} } };
   const created = await authenticatedFetch("/api/studio/workspaces", { method: "POST", body: JSON.stringify({ title, localBroadcastId, state }) });
   const workspaceId = created.body?.workspace?.id;
   check("server creates disposable Scenes workspace", created.status === 201 && Boolean(workspaceId), `HTTP ${created.status}`);
@@ -72,7 +72,15 @@ try {
   await driver.navigate().refresh();
   await waitFor("Scenes panel", async () => (await count('[data-tpi-scenes-panel]')) === 1 && (await count('[data-tpi-scene-panel-item]')) >= 4);
   const labels = await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item] strong')).map(function(node){return node.textContent.trim();});");
-  check("Scenes panel has uniform production items", labels.includes("Intro Video") && labels.includes("Countdown Timer") && labels.includes("Outro Video"), JSON.stringify(labels));
+  check("New Studio uses the simple Intro -> Scene 1 -> Scene 2 -> Outro arrangement", labels.join("|") === "Intro Video|Scene 1|Scene 2|Outro Video" && !labels.some((label) => /Demo Scene/i.test(label)), JSON.stringify(labels));
+  const addOptionalShortcut = async (label, selector) => {
+    await click(".scene-panel-add-button");
+    await waitFor(`${label} add menu`, async () => (await count(".scene-panel-add-menu")) === 1);
+    await js("var wanted=arguments[0], button=Array.from(document.querySelectorAll('.scene-panel-add-menu button')).find(function(node){return String(node.textContent || '').includes(wanted);}); if(!button) throw new Error('Add menu option unavailable: '+wanted); button.click();", label);
+    await waitFor(`${label} shortcut`, async () => (await count(selector)) === 1);
+  };
+  await addOptionalShortcut("Background Music", '[data-tpi-scene-music-for="after-intro"]');
+  await addOptionalShortcut("Countdown Timer", '[data-tpi-scene-panel-item="timer"]');
   check("Scenes panel has one item surface per persisted shortcut", await count("[data-tpi-scene-panel-item] button.scene-panel-item-button") === await count("[data-tpi-scene-panel-item]"));
   check("drag handles and context controls are visible", await count(".scene-drag-handle") >= 4 && await count(".scene-item-menu-trigger") >= 4);
   check("drag handles are the active drag sources", await js("return Array.from(document.querySelectorAll('.scene-drag-handle')).every(function(node){return node.draggable;});"));

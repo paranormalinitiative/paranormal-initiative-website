@@ -98,6 +98,14 @@ try {
   const studioEntry = (await driver.findElements(By.xpath("//button[contains(., 'Enter studio')]")).catch(() => []))[0];
   if (studioEntry) await studioEntry.click();
   await waitFor("organized StudioFlow controls", async () => (await count("[data-tpi-video-organization]")) === 1 && (await count("[data-tpi-audio-soundboards]")) === 1);
+  async function addSceneShortcut(label, selector) {
+    await click(".scene-panel-add-button");
+    await waitFor("Scenes add menu", async () => (await count(".scene-panel-add-menu")) === 1);
+    await js("var wanted=arguments[0], button=Array.from(document.querySelectorAll('.scene-panel-add-menu button')).find(function(node){return String(node.textContent || '').includes(wanted);}); if(!button) throw new Error('Scenes add option unavailable: '+wanted); button.click();", label);
+    await waitFor(`${label} shortcut`, async () => (await count(selector)) === 1);
+  }
+  await addSceneShortcut("Background Music", '[data-tpi-scene-music-for="after-intro"]');
+  await addSceneShortcut("Countdown Timer", '[data-tpi-scene-panel-item="timer"]');
   // The preceding maintained TPI-028/TPI-031 suites provision the synthetic
   // local workspace. Do not upload or overwrite test-account media here. Use
   // the existing assigned Intro blob as a disposable Video Clips slot alias

@@ -218,7 +218,7 @@ try {
   await js("var form=document.querySelector('form[data-member-login]'), user=form&&form.querySelector('input[name=\"username\"]'), password=form&&form.querySelector('input[name=\"password\"]'); if(!form||!user||!password) throw new Error('Member login form unavailable'); user.value=arguments[0]; password.value=arguments[1]; ['input','change'].forEach(function(type){user.dispatchEvent(new Event(type,{bubbles:true}));password.dispatchEvent(new Event(type,{bubbles:true}));}); form.querySelector('button[type=submit]').click();", account.username, account.password);
   await waitFor("authenticated session", async () => Boolean(await asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});")));
 
-  await js("var id=arguments[0], broadcast={id:id,title:arguments[1],description:'Disposable music pad ordering test',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Main scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1')); localStorage.removeItem('studioflow.sceneMusicAssignments');", `tpi-031-${Date.now()}`, studioATitle);
+  await js("var id=arguments[0], broadcast={id:id,title:arguments[1],description:'Disposable music pad ordering test',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Main scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.scenePanelItems',JSON.stringify([{id:'intro',kind:'intro',title:'Intro Video',sceneId:'intro',opening:true},{id:'music:after-intro',kind:'music',title:'Background Music',sceneId:'after-intro'},{id:'scene:scene-1',kind:'scene',title:'Main scene',sceneId:'scene-1'},{id:'music:scene-1',kind:'music',title:'Background Music',sceneId:'scene-1'},{id:'outro',kind:'outro',title:'Outro Video',sceneId:'outro',closing:true}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1')); localStorage.removeItem('studioflow.sceneMusicAssignments');", `tpi-031-${Date.now()}`, studioATitle);
   await enterStudio();
 
   // Sound fixtures so check 16 can prove music reordering never disturbs the
@@ -395,23 +395,15 @@ try {
   await click('[data-tpi-audio-stop="music"]');
   await sleep(400);
 
-  // 24. Automatic activation after manually stopping Intro.
+  // 24. Individual preview stop is isolated from the production handoff.
   await click('[data-tpi-scene-id="intro"]');
   await waitFor("Intro Video playback before manual stop", async () => {
     const state = await js("var v=document.querySelector('.program-stage > video.stage-video:not(.tpi-video-clip-stage-video)'); return v ? { paused: v.paused, currentTime: v.currentTime } : null;");
     return state && !state.paused && state.currentTime > 0.05;
   }, 10_000);
   await click('[data-tpi-scene-id="intro"]');
-  let manualHandoff = false;
-  try {
-    await waitFor("music handoff after manual Intro stop", async () => {
-      const slot = await playingMusicSlot();
-      if (slot === null) return false;
-      return (await playingMusicTitle()) === assignedTrackTitle;
-    }, 15_000);
-    manualHandoff = true;
-  } catch (error) {}
-  check("24. Automatic music activation after manually stopping Intro plays the assigned track", manualHandoff, `title=${JSON.stringify(await playingMusicTitle())}`);
+  await sleep(600);
+  check("24. Manual Intro preview stop does not activate After Intro music", (await playingMusicSlot()) === null, `title=${JSON.stringify(await playingMusicTitle())}`);
   const assignmentFinal = await js("return (JSON.parse(localStorage.getItem('studioflow.sceneMusicAssignments')||'{}')['after-intro']||{}).blobKey || '';");
   check("8c. Changing pad order does not change the assigned After Intro track", assignmentFinal === assignmentBlobBefore, JSON.stringify({ assignmentFinal, assignmentBlobBefore }));
   await click('[data-tpi-audio-stop="music"]');

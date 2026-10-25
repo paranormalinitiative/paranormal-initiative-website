@@ -250,7 +250,10 @@
       var asset = Number.isInteger(slot) ? videoSlots()[slot] : null;
       if (asset) playAssetOnStage(asset);
     });
-    window.addEventListener("studioflow:video-clip-stop", function () {
+    window.addEventListener("studioflow:video-clip-stop", function (event) {
+      var detail = (event && event.detail) || {};
+      var currentSlot = stagePreviewAssetKey ? videoSlots().findIndex(function (asset) { return asset && asset.blobKey === stagePreviewAssetKey; }) : -1;
+      if (detail.slot !== undefined && Number(detail.slot) !== currentSlot) return;
       if (stagePreviewAssetKey) {
         clearStagePlayback(true);
         setStatus("Video preview stopped.");

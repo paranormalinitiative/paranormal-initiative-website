@@ -29,10 +29,10 @@
       return candidate;
     }
     function baseline(id, kind, title, layout) { return { id: nextId(id), kind: kind, title: title, layout: layout }; }
-    if (!incoming.length) return [baseline("intro", "intro", "Intro video", "Speaker view"), baseline("scene-1", "demo", "Demo scene 1", "Speaker view"), baseline("scene-2", "demo", "Demo scene 2", "Group discussion"), baseline("outro", "outro", "Outro video", "Speaker view")];
+    if (!incoming.length) return [baseline("intro", "intro", "Intro video", "Speaker view"), baseline("scene-1", "demo", "Scene 1", "Speaker view"), baseline("scene-2", "demo", "Scene 2", "Group discussion"), baseline("outro", "outro", "Outro video", "Speaker view")];
     var result = incoming.slice(), hasIntro = incoming.some(function (scene) { return scene.kind === "intro"; }), hasOutro = incoming.some(function (scene) { return scene.kind === "outro"; }), demoCount = incoming.filter(function (scene) { return scene.kind === "demo"; }).length;
     if (!hasIntro) result.unshift(baseline("intro", "intro", "Intro video", "Speaker view"));
-    if (demoCount < 2) { for (var index = demoCount; index < 2; index += 1) result.push(baseline(index === 0 ? "scene-1" : "scene-2", "demo", index === 0 ? "Demo scene 1" : "Demo scene 2", index === 0 ? "Speaker view" : "Group discussion")); }
+    if (demoCount < 2) { for (var index = demoCount; index < 2; index += 1) result.push(baseline(index === 0 ? "scene-1" : "scene-2", "demo", index === 0 ? "Scene 1" : "Scene 2", index === 0 ? "Speaker view" : "Group discussion")); }
     if (!hasOutro) result.push(baseline("outro", "outro", "Outro video", "Speaker view"));
     return result;
   }
