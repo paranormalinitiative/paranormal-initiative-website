@@ -676,6 +676,16 @@
     if (!button) return;
     if (button.getAttribute("data-tpi-music-disabled") === "true") return;
     var state = sceneMusicState(shortcutId);
+    // TPI-STUDIOFLOW-037 Addendum D: My Scenes is a shortcut to the existing
+    // music engine. A second click on the same active assignment stops that
+    // engine; it never starts a second Audio element or external command.
+    var currentlyPlaying = state.musicIndex >= 0 && state.musicIndex === musicSlot
+      && (musicExternal || (musicAudio && !musicAudio.paused));
+    if (currentlyPlaying) {
+      stopMusic();
+      setStatus("Background music stopped.");
+      return;
+    }
     if (state.musicIndex >= 0 && playAssignedSceneMusic(state.assignment)) {
       setStatus("Playing " + (state.assignment.title || titleFor(state.assignment.fileName)) + ".");
       sceneMusicButton();
@@ -881,6 +891,9 @@
       var button = findSceneMusicButton(shortcutId);
       if (!button) return;
       openSceneMusicMenu(button, shortcutId, text(detail.sceneTitle) || sceneMusicTitleFor(shortcutId));
+    });
+    window.addEventListener("studioflow:scene-music-stop", function () {
+      stopMusic();
     });
     window.addEventListener("studioflow:audio-ended", function (event) { var detail = event.detail || {}; if (detail.category === "sound") { soundSource = null; soundSlot = null; renderState(); } if (detail.category === "music") { musicExternal = false; musicSlot = null; renderState(); } });
   }

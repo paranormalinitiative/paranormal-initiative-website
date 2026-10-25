@@ -24,6 +24,8 @@
   var stagePreviewUrl = "";
   var stageRestoreVideo = null;
   var stageRestoreWasPlaying = false;
+  var stagePreviewAssetKey = "";
+  var stagePlaybackGeneration = 0;
 
   function text(value) { return typeof value === "string" ? value : ""; }
   function clean(value) { return text(value).replace(/\s+/g, " ").trim(); }
@@ -127,8 +129,19 @@
       });
     }).catch(function () {});
   }
-  function clearStagePlayback(restore) { var stage = document.querySelector(".program-stage"), video = stage && stage.querySelector("video.tpi-video-clip-stage-video"); if (video) { try { video.pause(); } catch (error) {} video.remove(); } if (stagePreviewUrl) { try { URL.revokeObjectURL(stagePreviewUrl); } catch (error) {} stagePreviewUrl = ""; } if (restore && stageRestoreVideo && stageRestoreVideo.isConnected && stageRestoreWasPlaying) { var playback = stageRestoreVideo.play(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); } stageRestoreVideo = null; stageRestoreWasPlaying = false; }
-  function playAssetOnStage(asset) { if (!asset) return; var stage = document.querySelector(".program-stage"); if (!stage) { setStatus("The StudioFlow stage is unavailable.", true); return; } clearStagePlayback(true); stageRestoreVideo = stage.querySelector("video.stage-video:not(.tpi-video-clip-stage-video)"); stageRestoreWasPlaying = !!(stageRestoreVideo && !stageRestoreVideo.paused); if (stageRestoreVideo) { try { stageRestoreVideo.pause(); } catch (error) {} } setStatus("Loading " + asset.fileName + " on stage…"); var existingUrl = previewUrls[asset.blobKey] || ""; var load = existingUrl ? Promise.resolve(null) : getBlob(asset.blobKey); load.then(function (blob) { if (!existingUrl && !blob) throw new Error("The video file is no longer available."); var url = existingUrl || URL.createObjectURL(blob); stagePreviewUrl = existingUrl ? "" : url; var video = document.createElement("video"); video.className = "stage-video contain tpi-video-clip-stage-video"; video.dataset.tpiVideoStagePlayback = "true"; video.autoplay = true; video.controls = false; video.muted = false; video.playsInline = true; video.preload = "auto"; video.src = url; video.addEventListener("ended", function () { clearStagePlayback(true); setStatus(asset.fileName + " finished on stage."); }, { once: true }); video.addEventListener("error", function () { clearStagePlayback(true); setStatus("The video could not play on stage.", true); }, { once: true }); stage.appendChild(video); var playback = video.play(); if (playback && typeof playback.catch === "function") playback.catch(function () { setStatus("Click the stage video to start playback.", true); }); setStatus("Playing " + asset.fileName + " on stage."); }).catch(function (error) { clearStagePlayback(true); setStatus(error.message || "Video playback failed.", true); }); }
+  function setSceneClipPlaying(slot, playing) {
+    var row = document.querySelector('[data-tpi-scene-panel-item="video-clip:' + String(slot) + '"]');
+    if (!row) return;
+    if (playing) {
+      row.setAttribute("data-tpi-video-clip-playing", "true");
+      row.classList.add("selected");
+    } else {
+      row.removeAttribute("data-tpi-video-clip-playing");
+      row.classList.remove("selected");
+    }
+  }
+  function clearStagePlayback(restore) { var previousAssetKey = stagePreviewAssetKey; var stage = document.querySelector(".program-stage"), video = stage && stage.querySelector("video.tpi-video-clip-stage-video"); stagePlaybackGeneration += 1; stagePreviewAssetKey = ""; if (previousAssetKey) { var previousSlot = videoSlots().findIndex(function (asset) { return asset && asset.blobKey === previousAssetKey; }); if (previousSlot >= 0) setSceneClipPlaying(previousSlot, false); } if (video) { try { video.pause(); } catch (error) {} video.remove(); } if (stagePreviewUrl) { try { URL.revokeObjectURL(stagePreviewUrl); } catch (error) {} stagePreviewUrl = ""; } if (restore && stageRestoreVideo && stageRestoreVideo.isConnected && stageRestoreWasPlaying) { var playback = stageRestoreVideo.play(); if (playback && typeof playback.catch === "function") playback.catch(function () {}); } stageRestoreVideo = null; stageRestoreWasPlaying = false; }
+  function playAssetOnStage(asset) { if (!asset) return; var stage = document.querySelector(".program-stage"); if (!stage) { setStatus("The StudioFlow stage is unavailable.", true); return; } if (stagePreviewAssetKey === asset.blobKey) { clearStagePlayback(true); setStatus("Stopped " + asset.fileName + " on stage."); return; } clearStagePlayback(true); stagePreviewAssetKey = asset.blobKey; var slot = Number(asset.slot); if (Number.isInteger(slot)) setSceneClipPlaying(slot, true); var generation = stagePlaybackGeneration; stageRestoreVideo = stage.querySelector("video.stage-video:not(.tpi-video-clip-stage-video)"); stageRestoreWasPlaying = !!(stageRestoreVideo && !stageRestoreVideo.paused); if (stageRestoreVideo) { try { stageRestoreVideo.pause(); } catch (error) {} } setStatus("Loading " + asset.fileName + " on stage…"); var existingUrl = previewUrls[asset.blobKey] || ""; var load = existingUrl ? Promise.resolve(null) : getBlob(asset.blobKey); load.then(function (blob) { if (generation !== stagePlaybackGeneration || stagePreviewAssetKey !== asset.blobKey) return; if (!existingUrl && !blob) throw new Error("The video file is no longer available."); var url = existingUrl || URL.createObjectURL(blob); stagePreviewUrl = existingUrl ? "" : url; var video = document.createElement("video"); video.className = "stage-video contain tpi-video-clip-stage-video"; video.dataset.tpiVideoStagePlayback = "true"; video.autoplay = true; video.controls = false; video.muted = false; video.playsInline = true; video.preload = "auto"; video.src = url; video.addEventListener("ended", function () { clearStagePlayback(true); setStatus(asset.fileName + " finished on stage."); }, { once: true }); video.addEventListener("error", function () { clearStagePlayback(true); setStatus("The video could not play on stage.", true); }, { once: true }); stage.appendChild(video); var playback = video.play(); if (playback && typeof playback.catch === "function") playback.catch(function () { setStatus("Click the stage video to start playback.", true); }); setStatus("Playing " + asset.fileName + " on stage."); }).catch(function (error) { if (generation !== stagePlaybackGeneration) return; clearStagePlayback(true); setStatus(error.message || "Video playback failed.", true); }); }
   function clearPreviewUrls() { Object.keys(previewUrls).forEach(function (key) { try { URL.revokeObjectURL(previewUrls[key]); } catch (error) {} }); previewUrls = {}; }
   function makeButton(label, action, disabled) { var button = document.createElement("button"); button.type = "button"; button.className = "outline-button tpi-video-card-action"; button.dataset.tpiVideoAction = action; button.textContent = label; button.disabled = !!disabled; return button; }
   function protectedSlot(slot) { return slot < 2; }
@@ -236,6 +249,12 @@
       var slot = Number(event && event.detail && event.detail.slot);
       var asset = Number.isInteger(slot) ? videoSlots()[slot] : null;
       if (asset) playAssetOnStage(asset);
+    });
+    window.addEventListener("studioflow:video-clip-stop", function () {
+      if (stagePreviewAssetKey) {
+        clearStagePlayback(true);
+        setStatus("Video preview stopped.");
+      }
     });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();

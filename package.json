@@ -22,6 +22,7 @@
     "verify:studioflow-035-recording-storage": "node scripts/verify/tpi-studioflow-035-recording-storage.mjs",
     "verify:studioflow-036-video-timers": "node scripts/verify/tpi-studioflow-036-video-timers.mjs",
     "verify:studioflow-037-scenes-panel": "node scripts/verify/tpi-studioflow-037-scenes-panel.mjs",
+    "verify:studioflow-037-addendum-d": "node scripts/verify/tpi-studioflow-037-addendum-d.mjs",
     "verify:release-safety": "node scripts/verify/tpi-release-safety.mjs",
     "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",
     "release:preflight": "node scripts/tpi-release.mjs preflight",
