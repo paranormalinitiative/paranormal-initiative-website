@@ -34,6 +34,8 @@ configured production handoff.
 - Rollback: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Guarded release: 17/17 safety contract, 10/10 anonymous smoke, and 64/64
   isolated Firefox Developer Edition checks passed
+- Focused live Addendum E Firefox workflow: 20/20 with disposable production
+  QA workspace archived after verification
 - Owner acceptance: pending
 - Completion record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
 

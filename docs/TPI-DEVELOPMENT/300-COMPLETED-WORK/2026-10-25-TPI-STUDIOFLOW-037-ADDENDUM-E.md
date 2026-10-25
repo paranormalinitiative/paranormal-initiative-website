@@ -131,16 +131,19 @@ Website integration and verification:
 The Addendum E browser run used Firefox Developer Edition, an isolated
 profile, a disposable authenticated workspace, and synthetic media. It
 verified all supported context menus, right-click, durable shortcut removal,
-rename persistence without changing scene IDs, next-available naming, and
-Intro play/stop without After Intro activation. Natural completion still
+editable rename persistence without changing scene IDs, next-available naming,
+and Intro play/stop without After Intro activation. Natural completion still
 triggered After Intro music. Studio-specific workspace state remained
-isolated.
+isolated. The same 20-check suite was then run against the live website with
+the approved synthetic production QA account; it passed 20/20 and archived its
+disposable production workspace.
 
 ## Git and release state
 
 - Source commit: `8fdabf4` (`fix(studioflow): make scene renaming editable`)
 - Website application commit: `b1c21a085be679eb156c1c83277119c861068921`
-- Documentation commit: `c19c029ac62d9ecd47bc717bd120b052a071c463`
+- Verification-support commit: `3ed49347a1ad0d80af366da01b0f0764897d209a`
+- Documentation commit: pending post-release documentation commit
 - Production Worker: `d58d7e1e-5f86-4c87-93b3-110999d200a9`, deployed at 100%
 - Rollback reference: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
 - Production deployment: `DEPLOYED_AND_VERIFIED`; anonymous smoke 10/10 and

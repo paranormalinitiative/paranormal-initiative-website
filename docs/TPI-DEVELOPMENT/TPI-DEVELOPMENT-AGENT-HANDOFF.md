@@ -40,8 +40,10 @@ The maintained Firefox Addendum E suite passed 20/20. The source commit is
 application commit is `b1c21a085be679eb156c1c83277119c861068921`. Production
 Worker `d58d7e1e-5f86-4c87-93b3-110999d200a9` is live with rollback
 `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`. Guarded live smoke passed 10/10 and
-isolated Firefox acceptance passed 64/64. Owner acceptance remains pending
-until the owner confirms the corrected interface.
+isolated Firefox acceptance passed 64/64. The focused Addendum E suite passed
+20/20 against production with the disposable synthetic production QA account;
+its workspace was archived after verification. Owner acceptance remains
+pending until the owner confirms the corrected interface.
 
 ## TPI-STUDIOFLOW-037 current handoff
 

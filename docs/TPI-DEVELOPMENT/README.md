@@ -64,7 +64,8 @@ TPI-037 20/20, Addendum C 26/26, Addendum D 10/10, TPI-028 33/33, TPI-030
 25/25, TPI-031 34/34, TPI-033 26/26, TPI-034 mutation regression, TPI-035
 33/33, TPI-036 28/28, and TPI-021 31/31. The guarded release preflight,
 production deployment, 10/10 anonymous smoke checks, and 64/64 isolated live
-Firefox checks passed.
+Firefox checks passed. The focused Addendum E suite also passed 20/20 against
+the live site using the disposable synthetic production QA account.
 
 - Source checkpoint: `8fdabf4` in `/Users/toddknipple/Documents/StudioFlow/web`
 - Website application checkpoint: `b1c21a085be679eb156c1c83277119c861068921`
