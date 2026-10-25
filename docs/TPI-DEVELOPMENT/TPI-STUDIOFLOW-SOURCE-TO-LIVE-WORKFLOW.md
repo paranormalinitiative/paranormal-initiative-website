@@ -119,7 +119,7 @@ owner-browser data was mutated for acceptance.
 
 The Scenes panel redesign and Addendum A uniform production-button correction
 are deployed and live-verified. Source commit `f31bd95`, website application
-commit `b2972f3`, and the post-release documentation checkpoint passed the
+commit `b2972f3`, and documentation checkpoint `35f8fc5` passed the
 complete release sequence. TPI-037 passed 13/13, TPI-036 28/28, TPI-035
 33/33, TPI-031 34/34, and TPI-034 mutation stability PASS.
 Production smoke passed 10/10 and isolated Firefox Developer Edition live
