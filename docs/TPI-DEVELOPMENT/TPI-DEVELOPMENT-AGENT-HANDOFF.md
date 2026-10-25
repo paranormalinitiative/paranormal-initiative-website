@@ -16,16 +16,16 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `8a954ad` (application) / `d6b8f03` (source)
-- Active production Worker version: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
-- Recorded rollback target: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
+- Last fully verified workflow baseline: `41f36688c0fc2d38f99ca5559494390af68c59c3` (application) / `3bf3acf` (source)
+- Active production Worker version: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
+- Recorded rollback target: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
 
 ## TPI-STUDIOFLOW-037 Addendum E current handoff
 
-Addendum E is locally repaired and validated; it is not yet deployed. The
+Addendum E is repaired, deployed, and live-verified. The
 confirmed defects were durable shortcut recreation after removal, missing
 shared context-menu coverage for Background Music, and preview lifecycle
 state being mistaken for a production scene transition. New Studios now use
@@ -36,10 +36,12 @@ Intro preview stop does not start After Intro music, while natural completion
 and sequence rehearsal preserve the production handoff.
 
 The maintained Firefox Addendum E suite passed 20/20. The source commit is
-`3bf3acf` in `/Users/toddknipple/Documents/StudioFlow/web`. The website
-application/test commit and Worker are pending the guarded release. Owner
-acceptance remains pending until the corrected interface is verified on the
-live site by the owner.
+`3bf3acf` in `/Users/toddknipple/Documents/StudioFlow/web`; the website
+application commit is `41f36688c0fc2d38f99ca5559494390af68c59c3`. Production
+Worker `4b44e41d-7fb1-43a8-b9d9-510a90672cb0` is live with rollback
+`3a9b090f-78b5-43d6-bb11-17a1ba54d41b`. Guarded live smoke passed 10/10 and
+isolated Firefox acceptance passed 64/64. Owner acceptance remains pending
+until the owner confirms the corrected interface.
 
 ## TPI-STUDIOFLOW-037 current handoff
 

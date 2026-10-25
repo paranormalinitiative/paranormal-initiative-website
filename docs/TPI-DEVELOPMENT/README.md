@@ -62,13 +62,15 @@ completion and sequence rehearsal retain the configured production handoff.
 Local Firefox verification passed the focused Addendum E suite 20/20 plus
 TPI-037 20/20, Addendum C 26/26, Addendum D 10/10, TPI-028 33/33, TPI-030
 25/25, TPI-031 34/34, TPI-033 26/26, TPI-034 mutation regression, TPI-035
-33/33, TPI-036 28/28, and TPI-021 31/31. Production deployment is not yet
-recorded; guarded release preflight and live acceptance remain required.
+33/33, TPI-036 28/28, and TPI-021 31/31. The guarded release preflight,
+production deployment, 10/10 anonymous smoke checks, and 64/64 isolated live
+Firefox checks passed.
 
 - Source checkpoint: `3bf3acf` in `/Users/toddknipple/Documents/StudioFlow/web`
-- Website application checkpoint: pending commit
-- Production status: previous Addendum D Worker remains active until guarded
-  deployment is completed
+- Website application checkpoint: `41f36688c0fc2d38f99ca5559494390af68c59c3`
+- Production status: deployed and live-verified in Worker
+  `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
+- Rollback: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
 - Record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
 
 Latest verified production release (TPI-STUDIOFLOW-037 Addendum D playback

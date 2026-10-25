@@ -1,6 +1,6 @@
 # TPI-STUDIOFLOW-037 Addendum E — Scene Management, Context Menus & Playback Corrections
 
-Status: LOCAL REPAIR VERIFIED / GUARDED RELEASE PENDING
+Status: DEPLOYED AND LIVE-VERIFIED / OWNER ACCEPTANCE PENDING
 
 Date: 2026-10-25
 
@@ -30,8 +30,8 @@ the integrated `studio/audio-soundboard-bridge.js` and
 `studio/video-clip-management-bridge.js`, workspace default bridges, and the
 maintained Firefox verification scripts.
 
-When: investigated and implemented 2026-10-25; local validation completed
-2026-10-25. Production deployment remains pending this release record update.
+When: investigated, implemented, and locally validated 2026-10-25; deployed and
+live-verified 2026-10-25.
 
 Why: the panel normalizer recreated missing Intro/Outro/music rows, fixed
 Intro/Outro cards were protected from removal, Background Music used a
@@ -135,13 +135,13 @@ isolated.
 ## Git and release state
 
 - Source commit: `3bf3acf` (`fix(studioflow): repair scenes removal and preview isolation`)
-- Website application commit: pending guarded release commit
-- Documentation commit: pending
-- Production Worker: previous Addendum D Worker remains active until release
-- Rollback reference: previous Addendum D Worker, to be recorded with the
-  release preflight result
-- Production deployment: pending; no production change has been made in this
-  local validation phase
+- Website application commit: `41f36688c0fc2d38f99ca5559494390af68c59c3`
+- Documentation commits: `41f3668` plus the post-release documentation commit
+  recorded in the final release report
+- Production Worker: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`, deployed at 100%
+- Rollback reference: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+- Production deployment: `DEPLOYED_AND_VERIFIED`; anonymous smoke 10/10 and
+  isolated Firefox Developer Edition acceptance 64/64
 - Owner acceptance: pending; this record must not claim owner acceptance
 
 The next release steps are the governed `verify:local-auth-lifecycle`,

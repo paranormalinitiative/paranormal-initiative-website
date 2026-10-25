@@ -12,7 +12,7 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## TPI-STUDIOFLOW-037 Addendum E local repair — 2026-10-25
+## TPI-STUDIOFLOW-037 Addendum E deployed repair — 2026-10-25
 
 The owner-reported Scenes-panel failures are repaired in the canonical source
 and verified locally. New Studios use Intro Video → Scene 1 → Scene 2 → Outro
@@ -28,8 +28,11 @@ configured production handoff.
 - Regressions: TPI-037 20/20; Addendum C 26/26; Addendum D 10/10; TPI-028
   33/33; TPI-030 25/25; TPI-031 34/34; TPI-033 26/26; TPI-034 PASS; TPI-035
   33/33; TPI-036 28/28; TPI-021 31/31
-- Production status: not deployed yet; previous Addendum D Worker remains
-  active until guarded preflight, deployment, and live Firefox acceptance
+- Production status: deployed and live-verified in Worker
+  `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`
+- Rollback: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+- Guarded release: 17/17 safety contract, 10/10 anonymous smoke, and 64/64
+  isolated Firefox Developer Edition checks passed
 - Owner acceptance: pending
 - Completion record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
 
