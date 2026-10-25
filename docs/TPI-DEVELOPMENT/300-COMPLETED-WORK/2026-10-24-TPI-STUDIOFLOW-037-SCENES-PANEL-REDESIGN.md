@@ -102,7 +102,7 @@ smoke 10/10 and isolated Firefox Developer Edition live acceptance 64/64.
 - Source commit: `7f233df` (Addendum B; prior TPI-037 source `f31bd95`).
 - Website application commit: `23dd5a1` (Addendum B; prior Addendum A
   application `b2972f3`).
-- Documentation/release checkpoint commit: pending post-deployment sync.
+- Documentation/release checkpoint commit: `27cf38e`.
 - Production Worker: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`.
 - Rollback: prior TPI-037 Worker `273390fa-8018-439f-b3bc-6a7ff935cc1e`.
 - Production status: `DEPLOYED_AND_VERIFIED`.

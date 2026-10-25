@@ -28,7 +28,7 @@ the controlling directive.
 The Scenes panel redesign, Addendum A uniform production-button correction, and
 Addendum B final uniformity correction are deployed and live-verified. Source
 commit is `7f233df`; website application commit is `23dd5a1`; the post-release
-documentation checkpoint is pending. The maintained Firefox suite
+documentation checkpoint is `27cf38e`. The maintained Firefox suite
 `npm run verify:studioflow-037-scenes-panel` passes 13/13. The panel uses
 uniform stable shortcut items for Intro Video, Countdown Timer, Production
 Scene, Video Clip, and Outro Video, with per-Studio ordering, skip flags,
