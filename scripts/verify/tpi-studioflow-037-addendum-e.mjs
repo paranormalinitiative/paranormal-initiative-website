@@ -4,7 +4,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { Builder, By } from "selenium-webdriver";
+import { Builder, By, Key } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 
 const repoRoot = resolve(import.meta.dirname, "../..");
@@ -128,7 +128,10 @@ try {
 
   // Rename a scene through the actual menu and verify the scene ID remains stable.
   await openReactMenu("scene:scene-1");
-  await js("var original=window.prompt; window.prompt=function(){window.prompt=original; return 'Investigation';}; var button=Array.from(document.querySelectorAll('.scene-item-context-menu button')).find(function(node){return node.textContent.includes('Rename');}); if(!button) throw new Error('Rename action unavailable'); button.click();");
+  await js("var button=Array.from(document.querySelectorAll('.scene-item-context-menu button')).find(function(node){return node.textContent.includes('Rename Scene');}); if(!button) throw new Error('Rename Scene action unavailable'); button.click();");
+  const renameInput = await driver.findElement(By.css('input[aria-label="Scene title"]'));
+  await renameInput.clear();
+  await renameInput.sendKeys("Investigation", Key.ENTER);
   await waitFor("renamed Scene 1", async () => Boolean(await js("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item=\"scene:scene-1\"] strong')).some(function(node){return node.textContent.trim()==='Investigation';});")));
   check("scene rename preserves the stable scene ID", await count('[data-tpi-scene-panel-item="scene:scene-1"]') === 1);
 
