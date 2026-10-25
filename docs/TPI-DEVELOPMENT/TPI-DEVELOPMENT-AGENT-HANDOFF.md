@@ -16,30 +16,38 @@ the controlling directive.
 
 - Repository: `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website`
 - Branch: `codex/tpi-development`
-- Last fully verified workflow baseline: `da9bfab13fcc28ffeaa6874ad07e4cf16e5ee731`
-- Active production Worker version: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
-- Recorded rollback target: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
+- Last fully verified workflow baseline: `8a954ad` (application) / `d6b8f03` (source)
+- Active production Worker version: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
+- Recorded rollback target: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
 - Local website: `http://127.0.0.1:8787/`
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
 
 ## TPI-STUDIOFLOW-037 current handoff
 
-The Scenes panel redesign, Addenda A/B uniformity corrections, and the
-reactive drag-and-drop repair are deployed and live-verified. Source commit is
-`322b132`; website application/test commit is `da9bfab`. The maintained
-Firefox suite `npm run verify:studioflow-037-scenes-panel` passes 20/20. The
-panel uses uniform stable shortcut items for Intro Video, Countdown Timer,
-Production Scene, Video Clip, and Outro Video, with per-Studio ordering, skip
-flags, context actions, rehearsal-only Play Sequence, live blue insertion
-feedback, Escape cancellation, edge auto-scroll, and existing workspace
-autosave. Dragging does not preview media. Existing timer, Video Clips, and
-Background Music engines remain authoritative; TPI-031 remains 34/34.
+The Scenes panel redesign, Addenda A/B uniformity corrections, the reactive
+drag-and-drop repair, and the Addendum C visual-consistency and drag
+interaction corrections are deployed and live-verified. Source commit is
+`d6b8f03`; website application commit is `8a954ad` (test commit `dd22fc5`).
+The maintained Firefox suites `npm run verify:studioflow-037-scenes-panel`
+(20/20) and the Addendum C acceptance suite (26/26) pass. The panel uses
+uniform stable shortcut items for Intro Video, Countdown Timer, Production
+Scene, Video Clip, and Outro Video with single-line labels and full-name
+tooltips, per-Studio ordering, skip flags, context actions, rehearsal-only
+Play Sequence, the same drag handle on every movable item, a live `Move here`
+gap with surrounding rows visibly repositioning as the pointer moves, Escape
+cancellation, edge auto-scroll, Background Music SmartPad color indicators,
+and existing workspace autosave. Dragging does not preview media. Existing
+timer, Video Clips, and Background Music engines (including After Intro
+Background Music and Background Music Stop) remain authoritative; TPI-031
+remains passing.
 
-The active production Worker is `1c752f3f-8af3-461f-8082-3dd8a447fd3d`; the
-rollback reference is `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`. Production smoke
-passed 10/10 and isolated Firefox live acceptance passed 64/64. Documentation
-is being synchronized after this release.
+The active production Worker is `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`; the
+rollback reference is `1c752f3f-8af3-461f-8082-3dd8a447fd3d`. Production smoke
+passed 10/10, isolated Firefox live acceptance passed 64/64, and the Addendum
+C suite passed 26/26 against the deployed interface with the synthetic
+production QA account. Owner acceptance of the corrected interface is
+pending.
 
 The authoritative StudioFlow source is the separate repository:
 `/Users/toddknipple/Documents/StudioFlow/web`. The website `studio/` directory

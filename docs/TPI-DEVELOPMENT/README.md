@@ -48,33 +48,42 @@ Verified development resources:
 - D1: `tpi_contributor_portal_dev` / `4948ecc5-35de-4782-8f6b-b07fa1782b66`
 - R2: `tpi-contributor-media-dev`
 - Branch: `codex/tpi-development`
-- Latest verified deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
+- Latest verified deployment: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
 
-Latest verified production release (TPI-STUDIOFLOW-037 Addendum B reactive drag):
+Latest verified production release (TPI-STUDIOFLOW-037 Addendum C visual
+consistency and drag interaction repair):
 
-- Application commit: `da9bfab`
-- StudioFlow source commit: `322b132`
-- Worker version: `1c752f3f-8af3-461f-8082-3dd8a447fd3d` at 100% traffic
-- Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f` (prior TPI-037 Addendum B)
-- Acceptance: TPI-037 20/20; TPI-031 34/34; local and live
-  Firefox acceptance 64/64; production smoke 10/10; release safety 17/17;
+- Application commit: `8a954ad` (test commit `dd22fc5`)
+- StudioFlow source commit: `d6b8f03`
+- Worker version: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb` at 100% traffic
+- Rollback: `1c752f3f-8af3-461f-8082-3dd8a447fd3d` (TPI-037 Addendum B)
+- Acceptance: TPI-037 20/20; Addendum C 26/26 local and 26/26 production;
+  TPI-020–036 suites pass; local and live Firefox acceptance 64/64;
+  production smoke 10/10; release safety 17/17;
   local auth lifecycle PASS; complete isolated API/QA gate PASS;
   reproducible StudioFlow staging PASS
+- Owner acceptance: pending
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
 
 ## TPI-STUDIOFLOW-037 verified production release
 
 The Scenes panel redesign, Addendum A uniform production-button correction,
-Addendum B final uniformity correction, and Addendum B reactive drag repair are
-deployed and live-verified from source commit `322b132` and website
-application commit `da9bfab`. The maintained TPI-037 suite passed 20/20;
-the focused TPI-031 suite remained 34/34. Production smoke passed 10/10 and
-isolated Firefox live acceptance passed 64/64. Dragging now exposes a live
-blue insertion placeholder, supports Escape cancellation and edge scrolling,
-does not preview media, and autosaves the existing per-Studio order.
+Addendum B final uniformity correction and reactive drag repair, and the
+Addendum C visual-consistency and drag interaction corrections are deployed
+and live-verified from source commit `d6b8f03` and website application commit
+`8a954ad`. The maintained TPI-037 suite passed 20/20 and the Addendum C
+acceptance suite passed 26/26 locally and against production. Production smoke
+passed 10/10 and isolated Firefox live acceptance passed 64/64. Labels render
+on one line with full-name tooltips, Background Music buttons show their
+assigned SmartPad track color, every movable item exposes the same drag
+handle, and dragging visibly repositions surrounding rows around a live
+`Move here` gap that follows the pointer, with Escape cancellation and edge
+auto-scroll. Dragging does not preview media and the per-Studio order
+autosaves.
 
-- Active Worker: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
-- Rollback: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
+- Active Worker: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
+- Rollback: `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
+- Owner acceptance: pending
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
 
 Prior verified production release (TPI-STUDIOFLOW-035 right navigation

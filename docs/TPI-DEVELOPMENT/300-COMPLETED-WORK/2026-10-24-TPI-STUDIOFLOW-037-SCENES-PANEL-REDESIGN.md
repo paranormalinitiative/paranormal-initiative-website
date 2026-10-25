@@ -167,3 +167,126 @@ Release:
 - Production status: `DEPLOYED_AND_VERIFIED`.
 - Documentation/test synchronization commit: `3b509d1`; documentation changes
   do not require a second Worker release.
+
+## Addendum C — Scenes panel visual consistency and drag interaction repair
+
+Date: 2026-10-24
+Agent: FreeBuff / MiMO 2.6 Pro execution path
+Status: CORRECTIONS DEPLOYED AND LIVE-VERIFIED / OWNER ACCEPTANCE PENDING
+
+The owner reviewed the deployed panel and reported that it was not yet
+acceptable: production button labels wrapped inconsistently, Intro Video and
+Outro Video presented their labels differently, Countdown Timer was
+unnecessarily truncated, some scene names wrapped awkwardly, Background Music
+buttons did not show their assigned SmartPad track color, Background Music
+items lacked consistent drag handles, drag-and-drop did not visibly reposition
+surrounding buttons during movement, and the drag destination was not
+sufficiently obvious.
+
+### Root causes
+
+1. The uniform 56px production surface constrained only the outer box; each
+   button's internal label layout still wrapped and truncated on its own, so
+   `Intro Video`, `Countdown Timer`, and custom scene names presented
+   inconsistently.
+2. Background Music shortcuts were rendered by the audio bridge
+   (`studio/audio-soundboard-bridge.js`, `tpiSceneMusicButton`) as a separate
+   surface family. They never received the shared drag handle, and their
+   button styling never consumed the assigned track's persisted SmartPad color
+   (`backgroundMusicSlots[].color`), even though that color already existed in
+   the data model.
+3. The Addendum B drag repair positioned the insertion placeholder correctly
+   but did not displace or animate the surrounding rows, so during movement the
+   list looked static until the drop and the destination was hard to read.
+
+### Repairs
+
+Authoritative source change is commit `d6b8f03` in
+`/Users/toddknipple/Documents/StudioFlow/web`.
+
+- `src/App.tsx` and `src/styles.css`: every production button keeps the exact
+  uniform outer dimensions while its internal layout enforces single-line
+  primary labels (`Intro Video`, `Countdown Timer`, `Background Music`,
+  `Outro Video`) with a consistent secondary label line (for example
+  `Opening - Ready`, `After Intro`, `Scene - Ready`). Creator scene names keep
+  their real names with fixed-height controlled truncation and a full-name
+  tooltip/accessible label. Countdown Timer is no longer truncated.
+- `studio/studioflow-012-overrides.css` and `studio/audio-soundboard-bridge.js`:
+  the bridge-rendered Background Music shortcuts use the same internal label
+  layout and expose the same visible drag handle in the same position as the
+  React items. When a music item's assigned track has a persisted SmartPad
+  color, the button receives a subtle corresponding tint via
+  `--tpi-scene-music-color`; unassigned items stay neutral; assigned, selected,
+  and actively-playing states remain visually distinct. The track's full name
+  stays available through the title/accessible label and the context menu. No
+  second color system was created and no color is inferred from a name.
+- `src/App.tsx` drag lifecycle: while a row is dragged, surrounding rows glide
+  into their would-be positions (FLIP animation with reduced-motion opt-out)
+  around a live `Move here` insertion gap that follows the pointer across
+  positions. The gap is visible before release, Escape cancels, the list
+  auto-scrolls at its edges, and dropping moves only the existing
+  `scenePanelItems` order through the established per-Studio autosave. The
+  drag handle never triggers playback, never opens a context menu, and never
+  alters the item's media assignment.
+
+### Preserved systems
+
+Addendum C did not modify Intro/Outro automation, the countdown engine,
+Background Music playback (including the Background Music Stop control and the
+After Intro handoff from TPI-028 Addendum A), recording, livestreaming, media
+storage, the production compositor, or any Studio configuration. The Addendum
+C regression re-verifies that reordering never reassigns the After Intro music
+binding and that the reordered row still plays its assigned track.
+
+### Validation
+
+- Authoritative source TypeScript/build: PASS.
+- Reproducible authoritative staging: PASS.
+- TPI-STUDIOFLOW-037 Addendum C Firefox regression: 26/26, including uniform
+  button dimensions, non-wrapping labels with full-name tooltips, drag handles
+  on every movable item, neutral/unassigned vs tinted/assigned music color
+  states, genuine pointer drag with live gap following the pointer, visible
+  displacement of surrounding buttons, Escape cancellation, completed drop at
+  the indicated position, workspace-API autosave, refresh restoration,
+  per-Studio isolation, After Intro binding preservation, keyboard row
+  reordering, Background Music Stop, and edge auto-scroll.
+- Full regression battery: TPI-020 14/14; TPI-021 86 static + 31 browser;
+  TPI-027 12/12; TPI-028 33/33; TPI-030 full pass including After Intro music
+  and Stop control; TPI-031 pass; TPI-033 pass; TPI-034 mutation regression
+  PASS; TPI-035 33/33; TPI-036 28/28; TPI-037 20/20; release safety 17/17;
+  local auth lifecycle 64/64.
+- Evidence: genuine-pointer-drag screenshots (initial positions, dragging with
+  displaced rows, highlighted insertion gap, completed drop, Escape-cancelled,
+  music color indicator, auto-scroll) saved under `.local-dev/evidence/tpi-037c/`
+  (local) and `.local-dev/evidence/tpi-037c-prod/acceptance/` (production
+  acceptance run) and visually inspected.
+- Production acceptance: the Addendum C suite was run in isolated Firefox
+  Developer Edition against the deployed interface at
+  `https://paranormalinitiative.com` using the approved synthetic production QA
+  account (`qa-studioflow-*`, double-gated credential file) with disposable
+  studios archived afterwards: 26/26 PASS. Local synthetic credentials are
+  never sent to production.
+- Acceptance tooling notes (test-only, no application behavior change): the
+  Addendum C suite gained the production QA credential gate mirroring
+  `tpi-studioflow-firefox-acceptance.mjs`, and its auto-scroll probe sweeps the
+  48px edge band instead of a single point because geckodriver's synthesized
+  drag coordinates can drift ~14px from the commanded pointer position. The
+  application's edge auto-scroll logic is unchanged and verified against real
+  pointer input.
+
+### Release record
+
+- Source commit: `d6b8f03` (Addendum C; prior Addendum B `322b132`).
+- Website application commit: `8a954ad` (Addendum C; prior `da9bfab`).
+- Website test commit: `dd22fc5` (Addendum C acceptance suite).
+- Production Worker: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`.
+- Rollback: `1c752f3f-8af3-461f-8082-3dd8a447fd3d` (Addendum B release).
+- Production status: `DEPLOYED_AND_VERIFIED` via the guarded release path
+  (`verify:local-auth-lifecycle`, `release:preflight`,
+  `TPI_PRODUCTION_DEPLOY=approved release:production`); production smoke and
+  isolated live Firefox acceptance passed, followed by the Addendum C
+  production acceptance run above.
+- Owner acceptance: PENDING. The owner must confirm the corrected interface
+  behaves correctly before Addendum C is considered accepted.
+- Documentation synchronization commit: recorded after this section; doc-only
+  changes do not require a second Worker release.

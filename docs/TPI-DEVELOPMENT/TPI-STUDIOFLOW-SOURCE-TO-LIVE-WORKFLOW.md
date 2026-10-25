@@ -91,14 +91,14 @@ website repository's `codex/tpi-development` branch.
 
 ## Current verified live baseline
 
-- Website production source commit: `23dd5a1`
-  (TPI-STUDIOFLOW-037 Addendum B)
-- Authoritative StudioFlow source commit: `7f233df`
+- Website production source commit: `8a954ad`
+  (TPI-STUDIOFLOW-037 Addendum C)
+- Authoritative StudioFlow source commit: `d6b8f03`
 - Active production Worker version:
-  `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
+  `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
 - Immediate rollback version:
-  `273390fa-8018-439f-b3bc-6a7ff935cc1e`
-  (prior TPI-STUDIOFLOW-037 Addendum A release)
+  `1c752f3f-8af3-461f-8082-3dd8a447fd3d`
+  (prior TPI-STUDIOFLOW-037 Addendum B release)
 
 ## TPI-STUDIOFLOW-036 verified release
 
@@ -114,6 +114,25 @@ Worker `aa9bff15-6252-4ae5-9422-17d63b99ab5a` is the rollback reference.
 The prototype SHA-256 is `26996bd0d1017ba00736f880930e2c01099af0cb1bcc14b9b3bc19252db59f4e`.
 No production Studio configuration, D1 record, R2 object, recording, or
 owner-browser data was mutated for acceptance.
+
+## TPI-STUDIOFLOW-037 verified release — Addendum C visual consistency and drag repair
+
+The Addendum C corrections are deployed and live-verified against the
+production interface. Source commit `d6b8f03` and website application commit
+`8a954ad` (test commit `dd22fc5`) passed the complete release sequence. The
+Addendum C Firefox acceptance suite passed 26/26 locally and 26/26 against the
+deployed interface in isolated Firefox Developer Edition using the approved
+synthetic production QA account with disposable studios archived afterwards.
+Worker `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb` is active at 100% traffic;
+rollback is `1c752f3f-8af3-461f-8082-3dd8a447fd3d`.
+
+The repair standardizes single-line production labels with full-name tooltips,
+shows the assigned SmartPad track color on Background Music buttons, gives
+every movable item the same drag handle, and makes dragging visibly glide
+surrounding rows around a live `Move here` gap that follows the pointer, with
+Escape cancellation and edge auto-scroll. After Intro Background Music,
+playback, recording, and livestreaming behavior are unchanged. Owner
+acceptance of the corrected interface remains pending.
 
 ## TPI-STUDIOFLOW-037 verified release — Addendum B reactive drag
 
