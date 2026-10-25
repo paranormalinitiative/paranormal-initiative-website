@@ -50,7 +50,19 @@ Verified development resources:
 - Branch: `codex/tpi-development`
 - Latest verified deployment: `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
 
-## TPI-STUDIOFLOW-037 Addendum E repair checkpoint — 2026-10-25
+## TPI-STUDIOFLOW-037 production recovery checkpoint — 2026-10-25
+
+The Addendum E production recovery corrected a real visual acceptance defect:
+React scene context menus were present in the DOM but positioned outside the
+clipped Studio rail. Source commit `eff6b69` changes only the menu positioning;
+website commit `877efb3` stages the generated bundle and strengthens the
+Firefox regression to require visible menus after real pointer interaction.
+Worker `871c0ae7-33c5-46ae-b635-19ec3100c989` is deployed and live-verified;
+rollback is `d58d7e1e-5f86-4c87-93b3-110999d200a9`. Local and live Addendum E
+runs passed 20/20, with the live disposable production workspace archived.
+Owner acceptance remains pending.
+
+## TPI-STUDIOFLOW-037 Addendum E repair checkpoint — historical 2026-10-25
 
 The current local repair corrects Scenes-panel ownership and playback
 boundaries: new Studios use Intro Video → Scene 1 → Scene 2 → Outro Video;

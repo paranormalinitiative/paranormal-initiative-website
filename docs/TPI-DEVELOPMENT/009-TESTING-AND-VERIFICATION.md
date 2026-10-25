@@ -1,5 +1,14 @@
 # Testing and Verification
 
+## Production recovery lesson — visible UI assertions are mandatory
+
+For StudioFlow context menus and other overlays, a DOM node count or text
+assertion is insufficient. Maintained Firefox tests must use a browser
+interaction, confirm the element is visible and in the viewport using its
+bounding rectangle and computed visibility, and capture evidence when a
+production acceptance failure is being reconciled. This prevents ancestor
+clipping, stacking, and pointer-event defects from being reported as passes.
+
 ## Evidence categories
 
 - Verified: directly executed in the current environment with recorded output.

@@ -23,6 +23,22 @@ the controlling directive.
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
 
+## TPI-STUDIOFLOW-037 production recovery — current handoff
+
+The live Addendum E acceptance failure was traced to menu visibility, not stale
+source: `.scene-item-context-menu` was positioned at `right: -204px` and was
+clipped by the Studio grid's `overflow: hidden`. The source repair is
+`eff6b69`; the website application/test commit is `877efb3`; the active
+production Worker is `871c0ae7-33c5-46ae-b635-19ec3100c989`; rollback is
+`d58d7e1e-5f86-4c87-93b3-110999d200a9`.
+
+The maintained Addendum E test now uses a real Firefox element click and fails
+unless the menu has a non-zero, in-viewport bounding rectangle. Local and live
+focused runs passed 20/20, including context-menu visibility, right-click,
+rename persistence, non-destructive removal, and Intro preview stop isolation.
+Live resources loaded `/studio/assets/index-BfmRc0ua.js` and
+`/studio/assets/index-DB0QL1ns.css`. Owner acceptance remains pending.
+
 ## TPI-STUDIOFLOW-037 Addendum E current handoff
 
 Addendum E is repaired, deployed, and live-verified. The

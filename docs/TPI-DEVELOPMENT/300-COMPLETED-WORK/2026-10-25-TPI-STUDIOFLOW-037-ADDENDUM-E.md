@@ -150,7 +150,69 @@ disposable production workspace.
   isolated Firefox Developer Edition acceptance 64/64
 - Owner acceptance: pending; this record must not claim owner acceptance
 
-The next release steps are the governed `verify:local-auth-lifecycle`,
-`release:preflight`, application commit/push, and
-`TPI_PRODUCTION_DEPLOY=approved npm run release:production`, followed by
-non-destructive live Firefox acceptance and a final documentation commit.
+The release steps listed above were the planned next steps at the original
+checkpoint; the production recovery below records their later execution and
+the corrected live evidence.
+
+## Production recovery reconciliation — 2026-10-25
+
+The owner-reported live failure was independently reproduced. The deployed
+application was not stale: production loaded the intended StudioFlow bundle,
+but the test only asserted that a `.scene-item-context-menu` node existed and
+contained text. The menu CSS used `right: -204px`; because the Studio grid has
+`overflow: hidden`, the menu was clipped outside the left rail. Firefox showed
+no usable menu even though the DOM assertion passed.
+
+The smallest repair changed the authoritative rule to `right: 4px`, keeping
+the menu inside the existing Scenes rail. No scene data model, media
+assignment, playback engine, bridge ownership, D1 record, or R2 object was
+changed. The maintained test now uses a real Firefox element click for the
+three-dot control, a real context-click for right-click coverage, and requires
+computed visibility plus a non-zero in-viewport bounding rectangle. Evidence
+screenshots were captured for the visible menu, rename modal, renamed scene
+after refresh, and Intro stopped without music.
+
+### Recovery evidence
+
+| Item | Result |
+| --- | --- |
+| Local focused Addendum E | 20/20 in Firefox Developer Edition |
+| Live focused Addendum E | 20/20 with synthetic production QA and archived disposable workspace |
+| Loaded live JavaScript | `/studio/assets/index-BfmRc0ua.js` |
+| Loaded live CSS | `/studio/assets/index-DB0QL1ns.css` |
+| Guarded release | `DEPLOYED_AND_VERIFIED` |
+| Production smoke | 10/10 |
+| Full live Firefox acceptance | 64/64 |
+
+### Recovery release identifiers
+
+- Source commit: `eff6b69` (`fix(studioflow): keep scene menus inside panel`)
+- Website application/test commit: `877efb3`
+- Production Worker: `871c0ae7-33c5-46ae-b635-19ec3100c989`
+- Rollback Worker: `d58d7e1e-5f86-4c87-93b3-110999d200a9`
+- Live evidence directory: `/var/folders/kk/hg_q6yqx6qs1t542myrbdj580000gn/T/tpi-studioflow-037e-6GW5P7`
+
+The previous completion claims remain preserved above as historical evidence;
+this recovery section is the current verified release state. Owner acceptance
+is still pending and has not been claimed.
+
+## Documentation reconciliation audit
+
+| Document | Result | Recovery update |
+| --- | --- | --- |
+| `AGENTS.md` | Reviewed | Governing authority followed; no change |
+| `100-DIRECTIVES/TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md` | Reviewed | Standing release authority followed; no change |
+| `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md` | Reviewed | Guarded release procedure followed; no change |
+| `TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md` | Updated | Current source, Worker, rollback, and visible-UI acceptance rule |
+| `TPI-STUDIOFLOW-PLAYBACK-CONTRACT.md` | Reviewed | No playback-contract change required |
+| `TPI-STUDIOFLOW-WORKSPACE-CONFIGURATION.md` | Reviewed | No persistence change required |
+| `TPI-DEVELOPMENT-AGENT-HANDOFF.md` | Updated | Current recovery root cause and release state |
+| `TPI-CURRENT-DEVELOPMENT-STATUS.md` | Updated | Current production reconciliation and identifiers |
+| `README.md` | Updated | Recovery checkpoint and current live state |
+| `009-TESTING-AND-VERIFICATION.md` | Updated | Visible overlay assertions are now explicit |
+| `100-DIRECTIVES/DIRECTIVE-INDEX.md` | Updated | Current recovery release replaces stale baseline |
+| `2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md` | Updated | Historical record preserved; recovery appended |
+| Historical records for TPI-STUDIOFLOW-033–037 | Reviewed | Preserved unchanged |
+
+Documentation changes are committed after the application deployment as a
+documentation-only checkpoint; no second no-op Worker release is required.

@@ -39,6 +39,27 @@ configured production handoff.
 - Owner acceptance: pending
 - Completion record: `300-COMPLETED-WORK/2026-10-25-TPI-STUDIOFLOW-037-ADDENDUM-E.md`
 
+## TPI-STUDIOFLOW-037 production recovery reconciliation — 2026-10-25
+
+The prior Addendum E release was serving the intended application bundle, but
+its automated menu assertion only checked DOM existence. Firefox evidence
+showed the React scene menu positioned outside the left rail and clipped by
+the ancestor `.studio { overflow: hidden; }`. The canonical CSS now keeps the
+menu inside the rail, and the maintained test requires a real Firefox click
+plus a visible, in-viewport bounding rectangle.
+
+- Source commit: `eff6b69`
+- Website application/test commit: `877efb3`
+- Loaded production assets: `/studio/assets/index-BfmRc0ua.js` and
+  `/studio/assets/index-DB0QL1ns.css`
+- Production Worker: `871c0ae7-33c5-46ae-b635-19ec3100c989`
+- Rollback: `d58d7e1e-5f86-4c87-93b3-110999d200a9`
+- Local focused Firefox Addendum E: 20/20 with visible-menu assertions
+- Live focused Firefox Addendum E: 20/20 with disposable production QA
+  workspace archived after verification
+- Guarded release: `DEPLOYED_AND_VERIFIED`; smoke 10/10; live acceptance 64/64
+- Owner acceptance: pending
+
 ## TPI-STUDIOFLOW-037 verified production release — 2026-10-24
 
 The Scenes panel redesign, Addenda A/B visual corrections, Addendum B

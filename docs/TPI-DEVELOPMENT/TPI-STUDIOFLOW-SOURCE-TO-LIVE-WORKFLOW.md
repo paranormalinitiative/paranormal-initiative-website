@@ -2,7 +2,7 @@
 
 Status: ACTIVE / CANONICAL
 
-Last verified: 2026-10-24
+Last verified: 2026-10-25
 
 This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
@@ -75,6 +75,15 @@ website repository's `codex/tpi-development` branch.
 10. Commit and push the documentation update. Do not perform a second no-op
     Worker deployment for documentation-only changes.
 
+### Visible acceptance requirement
+
+For overlays, context menus, modals, and other interactive surfaces, a
+successful DOM query is not sufficient evidence. The Firefox acceptance step
+must perform the user interaction, confirm computed visibility and a non-zero
+in-viewport bounding rectangle, and retain a screenshot or equivalent visible
+evidence when reconciling a reported production failure. This guards against
+ancestor clipping, stacking, pointer-event, and stale-bundle defects.
+
 ## What commit, push, and deploy mean
 
 - A StudioFlow source commit preserves the core application revision. It does
@@ -91,14 +100,21 @@ website repository's `codex/tpi-development` branch.
 
 ## Current verified live baseline
 
-- Website production source commit: `8d46a45`
-  (TPI-STUDIOFLOW-037 Addendum D)
-- Authoritative StudioFlow source commit: `5186e28`
+- Website production source commit: `877efb3`
+  (TPI-STUDIOFLOW-037 production recovery)
+- Authoritative StudioFlow source commit: `eff6b69`
 - Active production Worker version:
-  `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
+  `871c0ae7-33c5-46ae-b635-19ec3100c989`
 - Immediate rollback version:
-  `5536bcc5-8c50-4851-b6e4-4a660eb1b0fb`
-  (prior TPI-STUDIOFLOW-037 Addendum C release)
+  `d58d7e1e-5f86-4c87-93b3-110999d200a9`
+  (prior TPI-STUDIOFLOW-037 Addendum E release)
+
+The production recovery established that the prior bundle was current but the
+scene context menu was visually clipped. The corrected live entry point loads
+`/studio/assets/index-BfmRc0ua.js` and
+`/studio/assets/index-DB0QL1ns.css`. The focused Addendum E Firefox suite
+passed 20/20 locally and 20/20 against production with disposable QA data;
+owner acceptance remains pending.
 
 ## TPI-STUDIOFLOW-036 verified release
 
