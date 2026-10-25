@@ -6,7 +6,8 @@ updated by TPI-STUDIOFLOW-030 (Sound Effects interface),
 TPI-STUDIOFLOW-031 (Background Music interface),
 TPI-STUDIOFLOW-033 (workspace configuration persistence), and
 TPI-STUDIOFLOW-034 (DOM mutation stability), updated by
-TPI-STUDIOFLOW-036 (cinematic Video Timers)
+TPI-STUDIOFLOW-036 (cinematic Video Timers) and
+TPI-STUDIOFLOW-037 (Scenes panel shortcuts)
 Last verified: 2026-10-24
 
 This document is the single current-state record of what StudioFlow's scene
@@ -60,6 +61,24 @@ self-sustaining child-list churn.
   or closed. No automatic scene transition, music, or sound effect is added.
 - `videoTimerTheme` and `videoTimerDuration` are per-Studio workspace fields
   and must survive server save, refresh, and Studio switching.
+
+### Scenes panel — TPI-STUDIOFLOW-037
+
+- My Scenes is a shortcut layer over the existing production owners. Intro and
+  Outro use the assigned Video Clips scene controls, Countdown Timer uses the
+  existing shared timer engine, Scene uses the existing active-scene path, and
+  Video Clip uses the maintained Video Clips bridge stage-preview path.
+- Panel items have stable ids and per-Studio ordering. Drag/drop and keyboard
+  Move Up/Down change only panel configuration; they do not play media or
+  interrupt recording/livestreaming. Skip flags omit optional opening/closing
+  items without deleting their assignments, and manual Preview remains
+  available through the item menu when the item is included.
+- A manual Intro/Timer/Outro preview is isolated from automatic progression and
+  does not trigger the After Intro Background Music handoff. Actual automatic
+  Intro completion and manual stop retain the approved After Intro transition.
+- Play Sequence is rehearsal-only: it uses existing preview and timer paths,
+  does not start real output, does not alter saved configuration, and remains in
+  rehearsal until the operator manually selects a scene or requests closing.
 
 ### Intro Video
 

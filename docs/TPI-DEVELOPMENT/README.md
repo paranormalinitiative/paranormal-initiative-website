@@ -62,6 +62,15 @@ Latest verified production release (TPI-STUDIOFLOW-036 cinematic video timers):
   StudioFlow staging PASS
 - Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-036-CINEMATIC-VIDEO-TIMERS.md`
 
+## TPI-STUDIOFLOW-037 local validation checkpoint
+
+The Scenes panel redesign is implemented in source commit `f31bd95` and has
+passed the maintained TPI-037 Firefox suite 11/11 plus the focused TPI-031,
+034, 035, and 036 regressions. It is not yet a production release; the guarded
+release workflow and live Firefox acceptance remain required.
+
+- Record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
+
 Prior verified production release (TPI-STUDIOFLOW-035 right navigation
 cleanup and Recording & Storage consolidation):
 

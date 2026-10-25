@@ -1,6 +1,6 @@
 # StudioFlow Workspace Configuration Contract
 
-Status: ACTIVE / TPI-STUDIOFLOW-036
+Status: ACTIVE / TPI-STUDIOFLOW-037
 
 Last verified: 2026-10-24
 
@@ -23,6 +23,7 @@ validated metadata and stable media references.
 | `generalSettings` | General output settings | Yes, validated | Yes | Yes | Studio | Pass |
 | `guestPermissionSettings` | Guest controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `studioScenes` | Scene editor | Yes, normalized | Yes | Yes | Studio | Pass |
+| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags | Yes, validated | Yes | Yes | Studio | Pass — TPI-037 |
 | `sceneMusicAssignments` | Background Music / After Intro | Yes, stable `blobKey` | Yes | Yes | Studio | Pass |
 | `bannerScrollTicker` | Ticker controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `programOrientation` (configuration) | Program output / bridge | Yes, supported scalar | Yes | Yes | Studio | Pass |

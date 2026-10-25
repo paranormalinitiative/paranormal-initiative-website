@@ -177,3 +177,16 @@ added to historical totals:
 | Deployment enforcement | VERIFIED | Normal preflight exits nonzero until application files are approved and committed |
 | New development deployment | NOT PERFORMED | Safe stop preserved active `c8432743`; no incomplete replacement was uploaded |
 | Production protection | VERIFIED | Production homepage 200, anonymous `/admin-panel` 403, `/live-video` Coming Soon; no production deployment or data mutation |
+# TPI-STUDIOFLOW-037 Scenes panel — 2026-10-24
+
+`npm run verify:studioflow-037-scenes-panel` passed 11/11 in isolated Firefox
+Developer Edition. It created and archived a disposable workspace, verified the
+uniform Intro/Timer/Scene/Outro shortcut inventory, drag handles and context
+controls, timer program-output activation, supported Intro actions, skip-state
+server persistence through the real workspace API, refresh restoration, and
+safe non-playable skipped items. The maintained test is
+`scripts/verify/tpi-studioflow-037-scenes-panel.mjs`.
+
+The same change retained TPI-036 timers at 28/28, TPI-031 Background Music and
+After Intro at 34/34, TPI-035 Recording & Storage at 33/33, and TPI-034 mutation
+stability PASS. No owner or production Studio data was used.
