@@ -136,8 +136,7 @@ isolated.
 
 - Source commit: `3bf3acf` (`fix(studioflow): repair scenes removal and preview isolation`)
 - Website application commit: `41f36688c0fc2d38f99ca5559494390af68c59c3`
-- Documentation commits: `41f3668` plus the post-release documentation commit
-  recorded in the final release report
+- Documentation commit: `02e4bd4c37bcd1c8ab84456bae9c8fc765f21553`
 - Production Worker: `4b44e41d-7fb1-43a8-b9d9-510a90672cb0`, deployed at 100%
 - Rollback reference: `3a9b090f-78b5-43d6-bb11-17a1ba54d41b`
 - Production deployment: `DEPLOYED_AND_VERIFIED`; anonymous smoke 10/10 and
