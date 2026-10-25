@@ -45,11 +45,14 @@ The authoritative source change is commit `f31bd95` in
 - `studio/audio-soundboard-bridge.js` isolates manual preview transitions from
   automatic After Intro music handoff.
 - `studio/studioflow-012-overrides.css` and the audio bridge now use the same
-  56px production surface contract for the injected Background Music shortcut:
-  solid border/background, blue music-note icon, readable primary/secondary
-  labels, and no unnecessary text truncation. With no assignment it displays
-  `Add Background Music` / `After Intro`; with an assignment it displays the
-  track name / `After Intro`.
+  56px production surface contract for every Scenes-panel production surface:
+  solid border/background, blue icon treatment, consistent alignment, and
+  controlled text handling. Background Music always displays the primary label
+  `Background Music`; the assigned track and scene remain available through
+  the existing title, accessible label, and context menu.
+- `src/App.tsx` keeps the visible timer label `Countdown Timer` independent of
+  persisted custom metadata, preserves creator scene names, and supplies full
+  button titles for longer names without changing saved configuration.
 - `studio/video-clip-management-bridge.js` reuses `playAssetOnStage()` for
   Video Clip shortcut previews.
 - `scripts/verify/tpi-studioflow-037-scenes-panel.mjs` is the maintained
@@ -77,6 +80,10 @@ existing configuration keys.
 - TPI-STUDIOFLOW-037 Addendum A Firefox regression: 13/13, including shared
   production-button dimensions, solid styling, blue icon color, and readable
   `Add Background Music` / `After Intro` labels.
+- TPI-STUDIOFLOW-037 Addendum B Firefox regression: 13/13, including exact
+  Intro Video dimensions for Background Music, Countdown Timer, Add Production
+  Item, and Play Sequence surfaces, simplified labels, and accessible track
+  details.
 - TPI-STUDIOFLOW-036 timer regression: 28/28.
 - TPI-STUDIOFLOW-034 mutation regression: PASS; settled 5-second windows had
   zero child-list churn and zero redundant writes.
@@ -92,12 +99,12 @@ smoke 10/10 and isolated Firefox Developer Edition live acceptance 64/64.
 
 ## Release record
 
-- Source commit: `f31bd95`.
-- Website application commit: `b2972f3` (Addendum A; prior TPI-037 base
-  application commit `44ed241`).
-- Documentation/release checkpoint commit: `35f8fc5`.
-- Production Worker: `273390fa-8018-439f-b3bc-6a7ff935cc1e`.
-- Rollback: prior TPI-037 Worker `d307b732-ddd7-4874-bcac-4aa153e0a3c4`.
+- Source commit: `7f233df` (Addendum B; prior TPI-037 source `f31bd95`).
+- Website application commit: `23dd5a1` (Addendum B; prior Addendum A
+  application `b2972f3`).
+- Documentation/release checkpoint commit: pending post-deployment sync.
+- Production Worker: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`.
+- Rollback: prior TPI-037 Worker `273390fa-8018-439f-b3bc-6a7ff935cc1e`.
 - Production status: `DEPLOYED_AND_VERIFIED`.
 - Live verification: production smoke 10/10; isolated Firefox Developer
   Edition acceptance 64/64; owner profile access false.

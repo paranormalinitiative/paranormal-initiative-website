@@ -177,7 +177,7 @@ added to historical totals:
 | Deployment enforcement | VERIFIED | Normal preflight exits nonzero until application files are approved and committed |
 | New development deployment | NOT PERFORMED | Safe stop preserved active `c8432743`; no incomplete replacement was uploaded |
 | Production protection | VERIFIED | Production homepage 200, anonymous `/admin-panel` 403, `/live-video` Coming Soon; no production deployment or data mutation |
-# TPI-STUDIOFLOW-037 Scenes panel and Addendum A — 2026-10-24
+# TPI-STUDIOFLOW-037 Scenes panel, Addendum A, and Addendum B — 2026-10-24
 
 `npm run verify:studioflow-037-scenes-panel` passed 13/13 in isolated Firefox
 Developer Edition. It created and archived a disposable workspace, verified the
@@ -197,3 +197,12 @@ Addendum A uses the existing scene-music bridge and preserves automatic After
 Intro playback, volume, looping, context-menu assignment, drag-and-drop, and
 per-Studio persistence. The guarded Addendum A release passed local and live
 Firefox acceptance 64/64 and production smoke 10/10.
+
+Addendum B passed the same maintained Firefox test at 13/13 after verifying
+that Background Music, Countdown Timer, Add Production Item, and Play Sequence
+all match the Intro Video outer dimensions. Background Music now presents the
+stable `Background Music` label while preserving track and scene details in
+the existing title, accessible label, and context menu. Creator scene names
+remain available through controlled two-line truncation and tooltips. The
+guarded Addendum B release passed live Firefox acceptance 64/64 and production
+smoke 10/10; the existing Background Music regression remained 34/34.

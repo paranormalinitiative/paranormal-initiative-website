@@ -14,8 +14,8 @@ they automatically synchronize.
 
 ## TPI-STUDIOFLOW-037 verified production release — 2026-10-24
 
-The Scenes panel redesign and Addendum A styling correction are deployed and
-live-verified. The uniform shortcut
+The Scenes panel redesign, Addendum A styling correction, and Addendum B final
+uniformity correction are deployed and live-verified. The uniform shortcut
 layer preserves the existing timer, Video Clips, scene, and Background Music
 owners; its panel manifest is validated and saved through the established
 per-Studio workspace configuration. TPI-037 passed 11/11, TPI-036 passed
@@ -28,11 +28,17 @@ two-line labels, and non-truncated standard labels as the other production
 items. The extended TPI-037 suite passed 13/13 and the existing Background
 Music suite remained 34/34.
 
-- Source commit: `f31bd95`
-- Website application commit: `b2972f3` (Addendum A; base `44ed241`)
-- Documentation/release checkpoint: `f5d6b01`
-- Active production Worker: `273390fa-8018-439f-b3bc-6a7ff935cc1e`
-- Rollback: `d307b732-ddd7-4874-bcac-4aa153e0a3c4` (prior TPI-037)
+Addendum B standardizes the exact Intro Video outer dimensions across
+Background Music, Countdown Timer, Add Production Item, and Play Sequence;
+keeps `Background Music` and `Countdown Timer` as stable visible labels;
+preserves creator scene names with fixed-height controlled truncation/tooltips;
+and leaves all saved assignments and playback architecture unchanged.
+
+- Source commit: `7f233df` (Addendum B; prior `f31bd95`)
+- Website application commit: `23dd5a1` (Addendum B; prior `b2972f3`)
+- Documentation/release checkpoint: pending post-deployment sync
+- Active production Worker: `9b3353a6-8f5d-4468-af89-1d71d8fcc39f`
+- Rollback: `273390fa-8018-439f-b3bc-6a7ff935cc1e` (prior Addendum A)
 - Acceptance: production smoke 10/10; isolated Firefox live acceptance 64/64;
   owner profile access false; release preflight and auth lifecycle PASS
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
