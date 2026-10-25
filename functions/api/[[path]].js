@@ -4602,6 +4602,26 @@ function normalizeStudioConfiguration(value) {
     title: cleanVideoText(scene && scene.title || `Scene ${index + 1}`, 120),
     layout: cleanVideoText(scene && scene.layout || "Speaker view", 80)
   })) : [];
+  const scenePanelItems = Array.isArray(source.scenePanelItems) ? source.scenePanelItems.slice(0, 100).reduce((items, item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return items;
+    const id = clean(item.id).slice(0, 120);
+    const kind = clean(item.kind).slice(0, 20);
+    if (!id || items.some((candidate) => candidate.id === id) || !["intro", "timer", "scene", "video-clip", "outro"].includes(kind)) return items;
+    const normalized = {
+      id,
+      kind,
+      title: cleanVideoText(item.title || "Production item", 120),
+      skipped: item.skipped === true,
+      opening: item.opening === true,
+      closing: item.closing === true
+    };
+    const sceneId = clean(item.sceneId).slice(0, 100);
+    const slot = Number(item.slot);
+    if (sceneId) normalized.sceneId = sceneId;
+    if (Number.isInteger(slot) && slot >= 4 && slot < 50) normalized.slot = slot;
+    items.push(normalized);
+    return items;
+  }, []) : [];
   const accentColor = clean(style.accentColor);
   const ticker = source.bannerScrollTicker && typeof source.bannerScrollTicker === "object" ? source.bannerScrollTicker : {};
   const normalizeAsset = (value) => {
@@ -4718,6 +4738,7 @@ function normalizeStudioConfiguration(value) {
     customSound: normalizeAsset(source.customSound),
     soundVolume: Number.isFinite(Number(source.soundVolume)) ? Math.max(0, Math.min(1, Number(source.soundVolume))) : 0.72,
     studioScenes: scenes,
+    scenePanelItems,
     sceneMusicAssignments,
     bannerScrollTicker: {
       enabled: ticker.enabled === true,

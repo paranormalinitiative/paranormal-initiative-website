@@ -11,7 +11,7 @@
 (function () {
   "use strict";
   var KEYS = { active: "studioflow.activeBroadcastId", broadcasts: "studioflow.broadcasts", preferences: "studioflow.recordingPreferences.v2", storage: "studioflow.recordingStorage.v1", activeStudio: "studioflow.tpiActiveStudioId.v1", route: "studioflow.route", workspaceCache: "studioflow.tpiWorkspaceCache.v2", portableBackups: "studioflow.portableBackupStatus.v1", localSnapshots: "studioflow.tpiLocalStudioSnapshots.v1" };
-  var CONFIG_KEYS = { selectedBackground: "studioflow.selectedBackground", activeSceneId: "studioflow.activeSceneId", showLogo: "studioflow.showLogo", logoPlacement: "studioflow.logoPlacement", styleSettings: "studioflow.styleSettings", widgetSettings: "studioflow.widgetSettings", generalSettings: "studioflow.generalSettings.v1", guestPermissionSettings: "studioflow.guestPermissionSettings", studioScenes: "studioflow.studioScenes", sceneMusicAssignments: "studioflow.sceneMusicAssignments", bannerScrollTicker: "studioflow.bannerScrollTicker", programOrientation: "studioflow.programOrientation", customBackground: "studioflow.customBackground", customLogo: "studioflow.customLogo", overlayAssets: "studioflow.overlayAssets", activeOverlayId: "studioflow.activeOverlayId", videoClips: "studioflow.videoClips", videoClipSlots: "studioflow.videoClipSlots", videoTimerTheme: "studioflow.videoTimerTheme", videoTimerDuration: "studioflow.videoTimerDuration", backgroundMusic: "studioflow.backgroundMusic", backgroundMusicSlots: "studioflow.backgroundMusicSlots", backgroundMusicVolume: "studioflow.backgroundMusicVolume", backgroundMusicLoop: "studioflow.backgroundMusicLoop", customSounds: "studioflow.customSounds", customSound: "studioflow.customSound", soundVolume: "studioflow.soundVolume" };
+  var CONFIG_KEYS = { selectedBackground: "studioflow.selectedBackground", activeSceneId: "studioflow.activeSceneId", showLogo: "studioflow.showLogo", logoPlacement: "studioflow.logoPlacement", styleSettings: "studioflow.styleSettings", widgetSettings: "studioflow.widgetSettings", generalSettings: "studioflow.generalSettings.v1", guestPermissionSettings: "studioflow.guestPermissionSettings", studioScenes: "studioflow.studioScenes", scenePanelItems: "studioflow.scenePanelItems", sceneMusicAssignments: "studioflow.sceneMusicAssignments", bannerScrollTicker: "studioflow.bannerScrollTicker", programOrientation: "studioflow.programOrientation", customBackground: "studioflow.customBackground", customLogo: "studioflow.customLogo", overlayAssets: "studioflow.overlayAssets", activeOverlayId: "studioflow.activeOverlayId", videoClips: "studioflow.videoClips", videoClipSlots: "studioflow.videoClipSlots", videoTimerTheme: "studioflow.videoTimerTheme", videoTimerDuration: "studioflow.videoTimerDuration", backgroundMusic: "studioflow.backgroundMusic", backgroundMusicSlots: "studioflow.backgroundMusicSlots", backgroundMusicVolume: "studioflow.backgroundMusicVolume", backgroundMusicLoop: "studioflow.backgroundMusicLoop", customSounds: "studioflow.customSounds", customSound: "studioflow.customSound", soundVolume: "studioflow.soundVolume" };
   var panel, selector, selectorMenu, manageMenu, message, backupMessage, saveTimer, channel, assetPanelTimer, assetPanelObserver, assetPanelHost, assetRootObserver, menuAnchor = null, menuPositioningBound = false, started = false;
   var workspaces = [], deletedWorkspaces = [], selectedWorkspace = null, saveInFlight = null, saveAgain = false, lastSavedFingerprint = "", remoteProductionLock = false, lastIntegrityError = null, suppressAutosave = false;
   function archiveWorkspace(workspace) { return deleteWorkspace(workspace); }
@@ -36,7 +36,20 @@
     if (!hasOutro) result.push(baseline("outro", "outro", "Outro video", "Speaker view"));
     return result;
   }
-  function write(key, value) { try { if (key === CONFIG_KEYS.studioScenes) value = normalizeStudioScenes(value); localStorage.setItem(key, JSON.stringify(value)); } catch (error) {} }
+  function normalizeScenePanelItems(value) {
+    if (!Array.isArray(value)) return [];
+    var seen = {};
+    return value.filter(function (item) { return item && typeof item === "object" && text(item.id) && ["intro", "timer", "scene", "video-clip", "outro"].includes(text(item.kind)); }).slice(0, 100).map(function (item) {
+      var id = text(item.id).slice(0, 120);
+      if (seen[id]) return null;
+      seen[id] = true;
+      var normalized = { id: id, kind: text(item.kind), title: text(item.title).slice(0, 120) || "Production item", skipped: item.skipped === true, opening: item.opening === true, closing: item.closing === true };
+      if (text(item.sceneId)) normalized.sceneId = text(item.sceneId).slice(0, 100);
+      if (Number.isInteger(Number(item.slot)) && Number(item.slot) >= 4 && Number(item.slot) < 50) normalized.slot = Number(item.slot);
+      return normalized;
+    }).filter(Boolean);
+  }
+  function write(key, value) { try { if (key === CONFIG_KEYS.studioScenes) value = normalizeStudioScenes(value); if (key === CONFIG_KEYS.scenePanelItems) value = normalizeScenePanelItems(value); localStorage.setItem(key, JSON.stringify(value)); } catch (error) {} }
   function clone(value) { try { return JSON.parse(JSON.stringify(value)); } catch (error) { return {}; } }
   function uuid(prefix) { return prefix + "-" + (window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : String(Date.now()) + "-" + Math.random().toString(16).slice(2)); }
   function activeBroadcast() { var id = text(read(KEYS.active, "")); var broadcasts = read(KEYS.broadcasts, []); return Array.isArray(broadcasts) ? broadcasts.find(function (item) { return item && item.id === id; }) || null : null; }

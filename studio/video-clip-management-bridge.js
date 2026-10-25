@@ -227,6 +227,16 @@
   function render() { var section = videoSection(); if (!section) return; var nativeGrid = section.querySelector(".background-picker-grid"); var nativeTimers = section.querySelector(".countdown-duration-row"); prepareNativeTimer(section, nativeGrid, nativeTimers); if (!root || !root.isConnected || !section.contains(root)) { root = section.querySelector("[data-tpi-video-organization]"); if (!root) { root = document.createElement("div"); root.className = "tpi-video-organization"; root.dataset.tpiVideoOrganization = "true"; (nativeGrid || section).insertAdjacentElement("afterend", root); } } var slots = videoSlots(), signature = JSON.stringify({ slots: slots }); if (signature === lastSignature && root.childElementCount) { syncPanelVisibility(); return; } lastSignature = signature; clearPreviewUrls(); root.replaceChildren(); root.append(videoGroup("INTRO & OUTRO", INTRO_OUTRO_SLOTS, slots), videoGroup("VIDEO CLIPS", VIDEO_ONLY_SLOTS, slots)); var status = document.createElement("p"); status.dataset.tpiVideoStatus = "true"; status.className = "tpi-video-status"; root.appendChild(status); syncPanelVisibility(); }
   function sync() { scheduled = false; render(); }
   function schedule() { if (scheduled) return; scheduled = true; window.setTimeout(sync, 0); }
-  function start() { schedule(); if (document.body && window.MutationObserver) new MutationObserver(function () { schedule(); syncPanelVisibility(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] }); window.addEventListener("storage", schedule); window.addEventListener("studioflow:storage-changed", schedule); }
+  function start() {
+    schedule();
+    if (document.body && window.MutationObserver) new MutationObserver(function () { schedule(); syncPanelVisibility(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("storage", schedule);
+    window.addEventListener("studioflow:storage-changed", schedule);
+    window.addEventListener("studioflow:video-clip-preview", function (event) {
+      var slot = Number(event && event.detail && event.detail.slot);
+      var asset = Number.isInteger(slot) ? videoSlots()[slot] : null;
+      if (asset) playAssetOnStage(asset);
+    });
+  }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();
 })();

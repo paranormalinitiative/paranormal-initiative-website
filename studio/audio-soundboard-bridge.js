@@ -701,12 +701,19 @@
     if (musicSlot !== musicIndex || (!musicExternal && !musicAudio)) playMusic(musicIndex);
     return true;
   }
-  function syncSceneMusic() {
+  function syncSceneMusic(event) {
     // Sol's approved scene-music workflow (TPI-STUDIOFLOW-028 Addendum A):
     // entering the Intro scene clears music for the video moment, and leaving
     // the Intro scene hands off to the assigned After Intro track (or the
     // entered scene's own assignment). This transition is intentionally not
     // gated by Live or Record state.
+    if (event && event.detail && event.detail.preview === true) {
+      // A manual Scenes-panel preview is isolated from the approved automatic
+      // Intro -> After Intro handoff. Production automation dispatches the
+      // same event without preview=true and keeps the existing behavior.
+      sceneMusicButton();
+      return;
+    }
     var active = text(read("studioflow.activeSceneId", ""));
     var previous = lastSceneId;
     if (active === "intro" && previous !== "intro" && sceneMusicFor(AFTER_INTRO_SCENE_ID)) {
