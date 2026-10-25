@@ -23,6 +23,24 @@ the controlling directive.
 - StudioFlow room server: `http://127.0.0.1:8788/`
 - Worker ownership: launchd-owned by `com.tpi.local-development`
 
+## Integrated recovery checkpoint — 2026-10-25
+
+The current local repair is committed as source `657f80e` and website
+application `a952796`. It corrects the Studio lifecycle and Scenes integration
+as one path: new Studios use a clean independent configuration, creation
+activates the returned workspace, Studio switching is generation-guarded,
+scene menus are fixed-position viewport-safe overlays, legacy Move Up/Move Down
+commands are removed, and scene/panel changes emit one meaningful autosave
+signal only when their serialized value changes.
+
+The maintained integrated Firefox suite passes 21/21. TPI-027, 028, 030, 031,
+033, 034, 035 (33/33), 036, 037, Addendum D, and Addendum E pass locally. The
+035 run exposed and verified the fix for a denied production reservation that
+left the browser lock marked active and blocked later Studio switching.
+Production has not been changed and the release status is `FIXED LOCALLY —
+PRODUCTION VERIFICATION PENDING` until guarded preflight and live acceptance
+complete.
+
 ## TPI-STUDIOFLOW-037 production recovery — current handoff
 
 The live Addendum E acceptance failure was traced to menu visibility, not stale

@@ -404,3 +404,11 @@ unchanged by TPI-STUDIOFLOW-035.
 See `TPI-CURRENT-DEVELOPMENT-STATUS.md` and
 `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md` for the maintained baseline and release
 procedure.
+## Integrated recovery compatibility — 2026-10-25
+
+The Studio lifecycle repair does not change the playback contract. Individual
+Intro, Outro, Background Music, Countdown, and Video Clip previews remain
+independent; sequence rehearsal remains separate from live production; and
+stopping an individual Intro preview does not invoke the After Intro music
+handoff. The local 028, 031, 036, 037 Addendum D, and Addendum E browser
+regressions remain green against the repaired build.

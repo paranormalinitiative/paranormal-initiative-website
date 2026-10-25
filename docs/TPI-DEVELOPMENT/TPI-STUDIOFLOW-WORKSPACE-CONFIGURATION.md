@@ -116,6 +116,28 @@ program output, restart/stop, no timer audio, and cleanup.
 
 ## Verification
 
+## Integrated recovery lifecycle verification — 2026-10-25
+
+The canonical Studio lifecycle is now tested as:
+
+`Create → assign identity → initialize clean workspace → activate → edit → save → switch → reload → restore`.
+
+`workspace-bridge.js` creates a clean default configuration for an ordinary
+new Studio instead of cloning the active Studio. The asset-state bridge no
+longer merges the active Studio's asset configuration into a create payload.
+Normal saves still use the active Studio merge and stable asset identifiers;
+backup restoration still uses its explicit saved state. Creation activates the
+returned workspace before refreshing the library, and switching ignores stale
+GET responses by generation and cancels pending saves before hydration.
+
+The default production panel is exactly `Intro Video`, `Scene 1`, `Scene 2`,
+and `Outro Video`; media shortcuts and assignments remain empty until the
+creator adds them. `scenePanelItems`, scene names, order, Video Clips,
+Background Music, timer settings, orientation, and recording settings remain
+per-Studio configuration fields. The integrated recovery suite verifies
+server-backed A/B isolation, refresh restoration, menu geometry, removal
+persistence, and scene rename persistence.
+
 `npm run verify:studioflow-033-roundtrip` exercises the real local API and an
 isolated Firefox Developer Edition session. The current run passed 26/26
 checks, including server normalization, Video Clips metadata and slot

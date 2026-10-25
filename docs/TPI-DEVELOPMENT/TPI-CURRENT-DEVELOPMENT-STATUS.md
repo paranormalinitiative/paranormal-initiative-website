@@ -12,6 +12,29 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## Integrated Studio Management & Scene System Recovery — 2026-10-25
+
+The integrated recovery is fixed locally and committed, but is not deployed.
+The confirmed source/application checkpoints are `657f80e` and `a952796`.
+Local Firefox Developer Edition verification passed the new 21-check recovery
+suite plus TPI-027 (12/12), TPI-028 (33/33), TPI-030 (25/25), TPI-031 (34/34),
+TPI-033 (26/26), TPI-034 mutation regression, TPI-036 (28/28), TPI-037
+(20/20), Addendum D (10/10), and Addendum E (20/20). The recording/storage
+suite initially exposed a stale denied production-lock state after recording
+finalization. The lock bridge now leaves denied reservations unlocked, and the
+corrected Firefox suite passes 33/33.
+
+Confirmed repairs include clean independent Studio creation, immediate
+activation of the returned Studio identity, generation-guarded switching,
+fixed in-viewport scene menus, removal of legacy Move Up/Move Down commands,
+and meaningful scene configuration change notifications for autosave. The
+canonical source build is reproducible and the staged entry point references
+`/studio/assets/index-BZ_tF0DV.js` and `/studio/assets/index-8wAEEeJ8.css`.
+
+Production remains on the previously recorded Worker until the complete
+release preflight and guarded deployment pass. No production D1, R2, owner
+Studio, recording, livestream, or media data was changed under this recovery.
+
 ## TPI-STUDIOFLOW-037 Addendum E deployed repair — 2026-10-25
 
 The owner-reported Scenes-panel failures are repaired in the canonical source

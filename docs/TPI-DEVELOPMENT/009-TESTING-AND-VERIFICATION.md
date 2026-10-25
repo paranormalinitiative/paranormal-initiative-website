@@ -260,3 +260,18 @@ dimensions, and autosave through the real workspace API. The local auth gate,
 full release preflight, production smoke (10/10), and live isolated Firefox
 acceptance (64/64) all passed. The test uses a disposable workspace and
 archives it during cleanup.
+## StudioFlow integrated recovery verification — 2026-10-25
+
+`npm run verify:studioflow-integrated-recovery` is the maintained end-to-end
+Firefox Developer Edition check for Studio creation, clean defaults, active
+identity, viewport-safe context menus, removal persistence, sequential scene
+naming, rename persistence, refresh, and bidirectional Studio isolation. It
+passed 21/21 locally using disposable server workspaces.
+
+Browser acceptance must evaluate rendered behavior, not DOM existence alone:
+menus and dialogs require visible non-zero geometry inside the viewport,
+pointer clicks must open the intended control, and persistence assertions must
+read the server without triggering the application's hydration bridge. The
+test uses an isolated Firefox profile, synthetic metadata-only assets where
+possible, server-side reads that do not mutate the browser state, and archives
+disposable workspaces during cleanup.

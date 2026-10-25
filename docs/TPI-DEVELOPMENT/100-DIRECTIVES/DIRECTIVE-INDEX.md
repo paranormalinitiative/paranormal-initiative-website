@@ -18,6 +18,18 @@ for current commit, push, deployment, and live-verification procedure.
 
 ## Current production reconciliation
 
+## Integrated Studio Management & Scene System Recovery — 2026-10-25
+
+The recovery repair is committed locally but not released. Source `657f80e`
+and website application `a952796` contain the verified lifecycle, clean
+creation, Studio isolation, viewport-safe Scenes menus, and autosave changes.
+The dedicated integrated Firefox suite passes 21/21. The complete regression
+battery remains release-blocked by the maintained TPI-035 recording/storage
+fixture's final cross-Studio preference switch (30 functional assertions pass;
+the final switch assertion does not). Production Worker and data remain
+unchanged. See
+[`../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md`](../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md).
+
 The latest StudioFlow release was deployed and verified from
 `codex/tpi-development` commit `877efb3`
 (TPI-STUDIOFLOW-037 production recovery; source commit `eff6b69`). Worker
