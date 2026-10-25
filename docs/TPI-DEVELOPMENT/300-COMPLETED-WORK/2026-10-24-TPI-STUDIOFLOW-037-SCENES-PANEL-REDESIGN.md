@@ -3,7 +3,7 @@
 Date: 2026-10-24
 Agent: GPT-5.6 Luna / NiMo 2.6 Pro execution path
 Authority: TPI standing autonomous-agent authority and TPI-STUDIOFLOW-037
-Status: COMPLETE / LOCAL VALIDATION PASSED / DEPLOYMENT PENDING
+Status: COMPLETE / DEPLOYED AND LIVE-VERIFIED
 
 ## Scope and root cause
 
@@ -78,19 +78,21 @@ existing configuration keys.
 
 The TPI-037 browser test verified the new shortcut layer and real workspace
 round trip. It used a disposable synthetic workspace and did not mutate an
-owner or production Studio. Full live acceptance and production deployment
-remain release-gated until the application and documentation commits pass the
-guarded workflow.
+owner or production Studio. The guarded release completed with production
+smoke 10/10 and isolated Firefox Developer Edition live acceptance 64/64.
 
 ## Release record
 
 - Source commit: `f31bd95`.
-- Website application commit: pending until final diff review.
-- Documentation commit: pending.
-- Production Worker: unchanged from TPI-036 until guarded deployment.
-- Rollback: current TPI-036 Worker `076c9614-9251-4efd-b047-0e7033f4ad9c`.
-- Production status: NOT DEPLOYED in this local-validation record.
+- Website application commit: `44ed241`.
+- Documentation/release checkpoint commit: `f5d6b01`.
+- Production Worker: `d307b732-ddd7-4874-bcac-4aa153e0a3c4`.
+- Rollback: prior TPI-036 Worker `076c9614-9251-4efd-b047-0e7033f4ad9c`.
+- Production status: `DEPLOYED_AND_VERIFIED`.
+- Live verification: production smoke 10/10; isolated Firefox Developer
+  Edition acceptance 64/64; owner profile access false.
 
-Any deployment update must be appended here only after
-`verify:local-auth-lifecycle`, `release:preflight`, the guarded production
-command, and isolated live Firefox acceptance all pass.
+The release completed only after `verify:local-auth-lifecycle`,
+`release:preflight`, the guarded production command, and isolated live Firefox
+acceptance all passed. Documentation was synchronized after deployment; the
+documentation-only commit does not require a second Worker release.

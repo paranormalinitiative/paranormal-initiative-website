@@ -25,19 +25,20 @@ the controlling directive.
 
 ## TPI-STUDIOFLOW-037 current handoff
 
-The Scenes panel redesign is implemented and locally validated, but has not
-yet been deployed. Source commit is `f31bd95`. The maintained Firefox suite
-`npm run verify:studioflow-037-scenes-panel` passes 11/11. The panel now uses
+The Scenes panel redesign is deployed and live-verified. Source commit is
+`f31bd95`; website application commit is `44ed241`; the post-release
+documentation checkpoint is `f5d6b01`. The maintained Firefox suite
+`npm run verify:studioflow-037-scenes-panel` passes 11/11. The panel uses
 uniform stable shortcut items for Intro Video, Countdown Timer, Production
 Scene, Video Clip, and Outro Video, with per-Studio ordering, skip flags,
 context actions, and a rehearsal-only Play Sequence control. Existing timer and
 Video Clips engines remain authoritative. Manual preview events are isolated
 from the automatic After Intro music handoff; TPI-031 remains 34/34.
 
-Website application staging is ready for final diff review. Required release
-gates remain: local auth lifecycle, `release:preflight`, guarded production
-deploy, and isolated live Firefox acceptance. Do not report TPI-037 as live
-until those gates complete.
+The active production Worker is `d307b732-ddd7-4874-bcac-4aa153e0a3c4`; the
+rollback reference is `076c9614-9251-4efd-b047-0e7033f4ad9c`. Production smoke
+passed 10/10 and isolated Firefox live acceptance passed 64/64. No further
+deployment is required for the documentation-only synchronization commit.
 
 The authoritative StudioFlow source is the separate repository:
 `/Users/toddknipple/Documents/StudioFlow/web`. The website `studio/` directory

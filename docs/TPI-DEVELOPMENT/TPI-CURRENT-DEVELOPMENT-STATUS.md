@@ -12,20 +12,22 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
-## TPI-STUDIOFLOW-037 local validation checkpoint — 2026-10-24
+## TPI-STUDIOFLOW-037 verified production release — 2026-10-24
 
-The Scenes panel redesign is complete in local validation and is not yet
-deployed. The new uniform shortcut layer preserves the existing timer, Video
-Clips, scene, and Background Music owners; its panel manifest is validated and
-saved through the established per-Studio workspace configuration. TPI-037
-passed 11/11, TPI-036 passed 28/28, TPI-035 passed 33/33, TPI-031 passed
-34/34, and TPI-034 mutation stability remained green. The next required step
-is guarded release preflight followed by production deployment and isolated live
-Firefox acceptance.
+The Scenes panel redesign is deployed and live-verified. The uniform shortcut
+layer preserves the existing timer, Video Clips, scene, and Background Music
+owners; its panel manifest is validated and saved through the established
+per-Studio workspace configuration. TPI-037 passed 11/11, TPI-036 passed
+28/28, TPI-035 passed 33/33, TPI-031 passed 34/34, and TPI-034 mutation
+stability remained green.
 
 - Source commit: `f31bd95`
-- Current production Worker remains TPI-036: `076c9614-9251-4efd-b047-0e7033f4ad9c`
-- Rollback remains `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
+- Website application commit: `44ed241`
+- Documentation/release checkpoint: `f5d6b01`
+- Active production Worker: `d307b732-ddd7-4874-bcac-4aa153e0a3c4`
+- Rollback: `076c9614-9251-4efd-b047-0e7033f4ad9c` (TPI-036)
+- Acceptance: production smoke 10/10; isolated Firefox live acceptance 64/64;
+  owner profile access false; release preflight and auth lifecycle PASS
 - Completion record: `300-COMPLETED-WORK/2026-10-24-TPI-STUDIOFLOW-037-SCENES-PANEL-REDESIGN.md`
 
 ## Latest verified production release — 2026-10-24 (TPI-STUDIOFLOW-036 cinematic video timers)

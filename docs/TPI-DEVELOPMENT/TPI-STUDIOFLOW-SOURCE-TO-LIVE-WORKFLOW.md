@@ -117,15 +117,16 @@ The prototype SHA-256 is `26996bd0d1017ba00736f880930e2c01099af0cb1bcc14b9b3bc19
 No production Studio configuration, D1 record, R2 object, recording, or
 owner-browser data was mutated for acceptance.
 
-## TPI-STUDIOFLOW-037 local release checkpoint
+## TPI-STUDIOFLOW-037 verified release
 
-The Scenes panel redesign is locally validated but is not part of the current
-live baseline. Source commit `f31bd95` and the staged website application
-changes must still pass the complete release sequence. Local evidence includes
-TPI-037 11/11, TPI-036 28/28, TPI-035 33/33, TPI-031 34/34, and TPI-034
-mutation stability PASS. The production Worker remains
-`076c9614-9251-4efd-b047-0e7033f4ad9c` until the guarded production command and
-live Firefox acceptance complete.
+The Scenes panel redesign is deployed and live-verified. Source commit
+`f31bd95`, website application commit `44ed241`, and documentation checkpoint
+`f5d6b01` passed the complete release sequence. TPI-037 passed 11/11, TPI-036
+28/28, TPI-035 33/33, TPI-031 34/34, and TPI-034 mutation stability PASS.
+Production smoke passed 10/10 and isolated Firefox Developer Edition live
+acceptance passed 64/64. Worker
+`d307b732-ddd7-4874-bcac-4aa153e0a3c4` is active at 100% traffic; rollback is
+`076c9614-9251-4efd-b047-0e7033f4ad9c`.
 
 ## TPI-STUDIOFLOW-035 verified release
 
