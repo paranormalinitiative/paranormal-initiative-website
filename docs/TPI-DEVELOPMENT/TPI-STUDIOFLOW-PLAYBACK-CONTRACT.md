@@ -376,23 +376,31 @@ the standing authority in
 
 ## Current production baseline
 
-Latest reported successful production deployment (verified against the
-guarded release records before publishing this baseline):
+Updated 2026-10-25 after the read-only production parity investigation,
+distinguishing independently verified facts from releasing-agent reports:
 
-- Directive: TPI-STUDIOFLOW-036 (cinematic Video Timers)
-- Application commit: `7bd8c4606660c959c6b3409b4a46a319fc11ec8a`
-- StudioFlow source commit: `37c6598`
-- Worker version: `076c9614-9251-4efd-b047-0e7033f4ad9c`
-- Previous Worker version: `aa9bff15-6252-4ae5-9422-17d63b99ab5a`
-  (TPI-STUDIOFLOW-035)
-- Reported validation: TPI-035 suite 33/33; TPI-033 round-trip 26/26;
-  TPI-034 mutation regression twice; 021 browser interactions 31/31; 028
-  browser 33/33; 030 sound effects browser 25/25; 031 music pad browser
-  34/34; 021 static contracts 86/86; 020 contracts 14/14; 020 video clips
-  13/13; 027 contracts 12/12; 031 overlays 12/12; release safety 17/17;
-  local auth lifecycle PASS; local Firefox acceptance 64/64; guarded live
-  acceptance against production 64/64; TPI-036 timer regression 28/28;
-  live artifact verification and complete isolated QA/API E2E.
+- Directive: Integrated Studio Management & Scene System Recovery
+- Website application commit: `e83b732` (bundle parity re-verified at
+  `2f656e7`; later commits are documentation only)
+- Loaded production assets (independently verified in an authenticated
+  isolated-QA session): `/studio/assets/index-BZ_tF0DV.js` and
+  `/studio/assets/index-8wAEEeJ8.css`, byte-identical to the website
+  integration and to the reproducible source build
+  (`generatedAssetsMatchIntegratedCandidate: true`)
+- Worker version: `7bddac9c-bda3-41c1-95d2-13aacc09cb28` (reported by the
+  guarded release record; Worker version IDs are not exposed to HTTP clients
+  and are not independently verified)
+- Previous Worker version: `871c0ae7-33c5-46ae-b635-19ec3100c989`
+  (TPI-STUDIOFLOW-037 production recovery reconciliation)
+- Reported validation (releasing agent's records; not re-run during the
+  parity investigation): release safety 17/17; anonymous smoke 10/10;
+  isolated Firefox Developer Edition live acceptance 64/64; local suites per
+  `300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-INTEGRATED-RECOVERY.md`.
+
+The previous baseline (TPI-STUDIOFLOW-036, Worker
+`076c9614-9251-4efd-b047-0e7033f4ad9c`) is superseded; its record remains in
+the historical completion records. Playback behavior is unchanged by the
+studio-lifecycle recovery.
 
 The Intro/Outro and After Intro playback sections above remain exactly as
 verified after TPI-STUDIOFLOW-028 Addendum A; TPI-STUDIOFLOW-030 through

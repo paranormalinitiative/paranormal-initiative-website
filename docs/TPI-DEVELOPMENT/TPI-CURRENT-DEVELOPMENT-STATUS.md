@@ -12,6 +12,23 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## Production parity investigation — 2026-10-25
+
+Read-only investigation under the archived parity-investigation
+authorization. Authenticated production asset parity is verified three ways
+(live ↔ website integration ↔ reproducible source build; all
+byte-identical), so the owner's Studio symptoms are not caused by stale or
+mixed deployments. The production Studio "Testing 123" discrepancy is a
+pre-recovery create-path data condition: before the Studio Management
+recovery, workspace creation merged the active Studio's localStorage asset
+configuration into the new workspace, and the deployed bridge now creates
+Studios from explicit clean defaults. "Testing 123" is owner-account data
+whose stored state was not inspected; remediation requires owner
+authorization. Reported deployments and suite counts remain labeled as
+reported where they were not independently re-verified. Full evidence and
+the proposed repair plan:
+`300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-PRODUCTION-PARITY-INVESTIGATION.md`.
+
 ## Integrated Studio Management & Scene System Recovery — 2026-10-25
 
 The integrated recovery is deployed and live-verified, with owner acceptance
@@ -32,13 +49,29 @@ and meaningful scene configuration change notifications for autosave. The
 canonical source build is reproducible and the staged entry point references
 `/studio/assets/index-BZ_tF0DV.js` and `/studio/assets/index-8wAEEeJ8.css`.
 
-Production remains on the previously recorded Worker until the complete
-release preflight and guarded deployment pass. The release deployed Worker
-`7bddac9c-bda3-41c1-95d2-13aacc09cb28`, passed 10/10 anonymous production
-smoke, and passed 64/64 isolated Firefox Developer Edition live checks.
-Rollback is `871c0ae7-33c5-46ae-b635-19ec3100c989`. No production D1, R2,
-owner Studio, recording, livestream, or media data was changed under this
-recovery.
+The guarded release deployed Worker
+`7bddac9c-bda3-41c1-95d2-13aacc09cb28` and reported 10/10 anonymous
+production smoke and 64/64 isolated Firefox Developer Edition live checks,
+with rollback `871c0ae7-33c5-46ae-b635-19ec3100c989`. (An earlier draft of
+this paragraph claimed production "remains on the previously recorded
+Worker" pending the release; that sentence predated the deploy and is
+corrected here. The suite counts are the releasing agent's reported results
+and were not re-run during the 2026-10-25 parity investigation.)
+
+Independently verified 2026-10-25 (production parity investigation): an
+authenticated isolated-QA session on production loads
+`/studio/assets/index-BZ_tF0DV.js` and `/studio/assets/index-8wAEEeJ8.css`
+byte-identical to the GitHub website integration, and
+`stage-studioflow-authoritative.mjs --verify-only` reports
+`generatedAssetsMatchIntegratedCandidate: true` with reproducible source
+builds — original source, website integration, and production run the same
+implementation. All eleven maintained bridge/override files are
+byte-identical live versus the repository; the live HTML differs from
+`studio/index.html` only by the intentional Worker theme bootstrap
+(`worker.js`, `EARLY_THEME_BOOTSTRAP`) and the Cloudflare analytics beacon.
+See `300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-PRODUCTION-PARITY-INVESTIGATION.md`.
+No production D1, R2, owner Studio, recording, livestream, or media data was
+changed under this recovery.
 
 ## TPI-STUDIOFLOW-037 Addendum E deployed repair — 2026-10-25
 
