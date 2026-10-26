@@ -469,10 +469,34 @@
       cacheWorkspaces();
     });
   }
+  // A browser-side production latch can outlive its server session (a wedged
+  // request or a closed recording). Verify the authoritative server row before
+  // refusing a permanent deletion on a phantom "recording is active" lock.
+  function deleteProductionBlock() {
+    var locked = "Studio deletion is unavailable while a recording or livestream is active. Finish the production before deleting a Studio.";
+    var unchecked = "Studio deletion could not verify the production lock with the server. Nothing was deleted.";
+    if (!productionLock()) return Promise.resolve(null);
+    return new Promise(function (resolve) {
+      var settled = false;
+      var timer = window.setTimeout(function () { if (!settled) { settled = true; resolve(unchecked); } }, 10000);
+      api("/api/studio/production/active").then(function (body) {
+        if (settled) return;
+        settled = true; window.clearTimeout(timer);
+        if (body && body.active) { resolve(locked); return; }
+        if (window.__tpiStudioProductionLock && window.__tpiStudioProductionLock.locked === true) window.__tpiStudioProductionLock = { locked: false, cleared: "stale-latch" };
+        resolve(productionLock() ? locked : null);
+      }, function () {
+        if (settled) return;
+        settled = true; window.clearTimeout(timer);
+        resolve(unchecked);
+      });
+    });
+  }
   function deleteStudioAttempt(key) {
     var id = text(key).trim();
     if (!id) return Promise.reject(new Error("Select a Studio to delete."));
-    if (productionLock()) return Promise.reject(new Error("Studio deletion is unavailable while a recording or livestream is active. Finish the production before deleting a Studio."));
+    return deleteProductionBlock().then(function (blocked) {
+      if (blocked) throw new Error(blocked);
     var located = Promise.resolve(findServerWorkspaceEntry(id));
     if (!findServerWorkspaceEntry(id)) {
       // Never trust the cached list alone: confirm against the server before
@@ -517,6 +541,7 @@
         return { key: id, source: "browser" };
       }
       throw new Error("That Studio is no longer available.");
+    });
     });
   }
   function deleteStudioPermanently(key) {

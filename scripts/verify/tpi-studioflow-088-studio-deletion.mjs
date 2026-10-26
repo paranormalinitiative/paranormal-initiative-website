@@ -374,6 +374,20 @@ try {
   const keepProductionTitle = `TPI-088 Keep Production ${runId}`;
   const keepProduction = await createProductionInStudio(keepTitle, keepProductionTitle);
   const keepKey = studioKeep.localBroadcastId || studioKeep.id;
+  // TPI-STUDIOFLOW-088: creating a production reserves the production lock at
+  // the Start Recording click. With no local recording started, that
+  // reservation must release on its own — a lingering latch must never block
+  // Studio deletion with a phantom "recording is active".
+  let lockReleaseDetail = "";
+  const lockReleased = await waitFor("production-lock reservation releases", async () => {
+    const lock = await js("return window.__tpiStudioProductionLock || null;");
+    lockReleaseDetail = JSON.stringify(lock);
+    return !lock || lock.locked !== true;
+  }, 15_000).then(() => true).catch((error) => {
+    lockReleaseDetail = `${lockReleaseDetail} (${safe(error)})`;
+    return false;
+  });
+  check("fixture: the production-lock reservation releases when no recording started", lockReleased, lockReleaseDetail);
 
   // ---- Test 1: the confirmation dialog deletes nothing -------------------
   await openDeleteDialog(killTitle);

@@ -75,12 +75,22 @@
     options = options || {};
     options.credentials = "same-origin";
     options.headers = Object.assign({ "content-type": "application/json" }, options.headers || {});
+    // TPI-STUDIOFLOW-088: a wedged request must never freeze the lock state.
+    // Reserves, heartbeats and releases time out so the bridge keeps
+    // self-healing instead of leaving a stale "recording is active" latch
+    // behind that blocks Studio deletion and switching.
+    var timer = null;
+    if (window.AbortController && !options.signal) {
+      var controller = new AbortController();
+      options.signal = controller.signal;
+      timer = window.setTimeout(function () { try { controller.abort(); } catch (_) {} }, 10000);
+    }
     return window.fetch(path, options).then(function (response) {
       return response.json().catch(function () { return {}; }).then(function (body) {
         if (!response.ok) { var error = new Error(errorMessage(body)); error.body = body; error.status = response.status; throw error; }
         return body;
       });
-    });
+    }).finally(function () { if (timer) window.clearTimeout(timer); });
   }
 
   function productionSessionId() {
@@ -119,6 +129,13 @@
       var lock = window.__tpiStudioProductionLock;
       if (!lock || !lock.locked || !lock.sessionId) return;
       api("/api/studio/production/heartbeat", { method: "POST", body: JSON.stringify({ sessionId: lock.sessionId }) }).catch(function (error) {
+        if (error && (error.status === 409 || error.status === 404)) {
+          // The server no longer recognizes this session (it expired or was
+          // taken over). Drop the latch instead of claiming a phantom lock.
+          window.__tpiStudioProductionLock = { locked: false, cleared: "session-gone" };
+          return;
+        }
+        if (error && error.name === "AbortError") return;
         showMessage(error.message, true);
       });
     }, 5000);
@@ -130,7 +147,14 @@
     return api("/api/studio/production/stop", { method: "POST", body: JSON.stringify({ sessionId: lock.sessionId }) }).then(function () {
       window.__tpiStudioProductionLock = { locked: false };
       return true;
-    }).catch(function () { return false; });
+    }).catch(function () { return false; }).finally(function () {
+      // release() only runs when no local recording session exists, so the
+      // latch must not survive the release attempt even when the request
+      // fails: a stale latch would keep blocking Studio deletion and
+      // switching with a phantom "recording is active".
+      var current = window.__tpiStudioProductionLock;
+      if (current && current.locked && current.sessionId === lock.sessionId) window.__tpiStudioProductionLock = { locked: false, cleared: "release-incomplete" };
+    });
   }
 
   function syncFromIndexedDb() {
@@ -160,6 +184,11 @@
       reserve().then(function () {
         bypassNextClick = true;
         button.click();
+        // The re-click consumes the bypass synchronously. If it never reached
+        // this listener (the button was replaced mid-flight), clear the flag so
+        // the next click is gated again instead of silently skipping its
+        // reservation.
+        bypassNextClick = false;
       }).catch(function () {});
     }, true);
   }

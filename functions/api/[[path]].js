@@ -5194,12 +5194,30 @@ function studioProductionConflict(active) {
   };
 }
 
+// The browser bridge heartbeats every 5 seconds while it holds a production
+// session. A session whose heartbeat stopped (closed tab, sleeping laptop,
+// wedged request) must not block Studio switching, recording starts, or
+// Studio deletion forever: after 30 seconds without a heartbeat it is treated
+// as abandoned and free to take over.
+const STUDIO_PRODUCTION_HEARTBEAT_STALE_SECONDS = 30;
+
+async function getCreatorProductionSessionRow(env, creatorId) {
+  return env.TPI_DB.prepare(`
+    SELECT s.*, w.title AS studio_title, w.studio_number
+    FROM studio_production_sessions s
+    LEFT JOIN studio_workspaces w ON w.id = s.studio_workspace_id
+    WHERE s.creator_id = ? AND s.status = 'active'
+    LIMIT 1
+  `).bind(creatorId).first();
+}
+
 async function getCreatorProductionSession(env, creatorId) {
   return env.TPI_DB.prepare(`
     SELECT s.*, w.title AS studio_title, w.studio_number
     FROM studio_production_sessions s
     LEFT JOIN studio_workspaces w ON w.id = s.studio_workspace_id
     WHERE s.creator_id = ? AND s.status = 'active'
+      AND julianday(s.last_heartbeat_at) >= julianday('now', '-${STUDIO_PRODUCTION_HEARTBEAT_STALE_SECONDS} seconds')
     LIMIT 1
   `).bind(creatorId).first();
 }
@@ -5249,6 +5267,7 @@ async function reserveCreatorProduction(env, { creatorId, studioWorkspaceId, ses
       metadata_json = excluded.metadata_json
     WHERE studio_production_sessions.status <> 'active'
        OR studio_production_sessions.session_id = excluded.session_id
+       OR julianday(studio_production_sessions.last_heartbeat_at) < julianday('now', '-${STUDIO_PRODUCTION_HEARTBEAT_STALE_SECONDS} seconds')
   `).bind(creator, workspace, session, mode, now, now, JSON.stringify(metadata || {})).run();
   const current = await getCreatorProductionSession(env, creator);
   if (current && current.session_id !== session) return { ok: false, conflict: current };
@@ -5311,7 +5330,9 @@ async function handleHeartbeatStudioProduction(request, env, user) {
   try {
     const data = await readJson(request);
     if (!clean(data.sessionId)) return json({ error: "sessionId is required.", code: "production_session_invalid" }, 400);
-    const active = await getCreatorProductionSession(env, user.id);
+    // A heartbeat revives its own session even after a stall; it only conflicts
+    // when the session is gone or another session has taken over.
+    const active = await getCreatorProductionSessionRow(env, user.id);
     if (!active || active.session_id !== clean(data.sessionId)) return json({ error: STUDIO_PRODUCTION_CONFLICT_MESSAGE, code: "studio_production_conflict" }, 409, { "Cache-Control": "no-store" });
     await heartbeatCreatorProduction(env, { creatorId: user.id, sessionId: data.sessionId });
     return json({ ok: true, sessionId: data.sessionId, studioWorkspaceId: active.studio_workspace_id }, 200, { "Cache-Control": "no-store" });
