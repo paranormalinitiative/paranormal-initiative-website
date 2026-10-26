@@ -18,6 +18,19 @@ for current commit, push, deployment, and live-verification procedure.
 
 ## Current production reconciliation
 
+## TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001 — 2026-10-25
+
+Emergency live production repair: remediates the owner's "Testing 123"
+workspace (`a75afc38-c7a6-452d-9460-5d746712d411`) from its historically
+inherited eight-item configuration to the clean four-item default (exact
+operation requires owner approval; full state exported first), establishes the
+"Browser Only Crossroads" browser-local switching recovery path with an
+owner-executable diagnostic, and re-verifies Studio creation and switching on
+authenticated production. Archived verbatim at
+[`TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md`](TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md).
+Crossroads of the Unknown and all other owner Studios are protected. Status:
+`REPAIR IN PROGRESS`.
+
 ## TPI-STUDIOFLOW-OWNER-VERIFICATION-001 — 2026-10-25
 
 Post-Deployment Studio Management Verification & Owner Workflow Recovery.

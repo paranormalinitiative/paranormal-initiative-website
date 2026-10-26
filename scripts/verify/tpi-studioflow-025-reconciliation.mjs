@@ -8,6 +8,7 @@ const checks = [
   ["reconciliation uses the persisted broadcast identity", bridge.includes("text(savedBroadcast.id) === text(hostBroadcast.id)") && bridge.includes("persistedId = localId || savedId")],
   ["reconciliation requires a matching Studio title", bridge.includes("sameTitle(hostBroadcast.title, savedBroadcast.title || workspace.title)")],
   ["ambiguous or unmatched broadcasts remain unbound", bridge.includes("return matches.length === 1 ? matches[0] : null") && bridge.includes("selectedWorkspace = null; workspace = { title: hostBroadcast.title }")],
+  ["a title-only conflict keeps the workspace bound so saving stays integrity-gated", bridge.includes("if (!identityMatched) selectedWorkspace = null; workspace = { title: hostBroadcast.title }")],
   ["active reconciliation is preferred during workspace refresh", bridge.includes("reconciledWorkspace = activeWorkspaceCandidate()") && bridge.includes("selectedWorkspace = reconciledWorkspace || (!hostHasIdentity ?")],
   ["reconciliation does not create a workspace", reconciliationStart >= 0 && reconciliationEnd > reconciliationStart && !reconciliationSource.includes("method: \"POST\"")],
   ["restoration preserves the persisted broadcast ID", bridge.includes("var broadcastId = text(broadcast.id) || text(saved.localBroadcastId) || text(saved.id)") && bridge.includes("localStorage.setItem(KEYS.active, JSON.stringify(restored.id))")],

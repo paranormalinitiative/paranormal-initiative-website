@@ -64,6 +64,24 @@ if (!account?.username || !account?.password) {
 
 async function js(script, ...args) { return driver.executeScript(script, ...args); }
 async function asyncJs(script, ...args) { return driver.executeAsyncScript(script, ...args); }
+// Menu and panel DOM can be rebuilt between finding an element and acting on
+// it (bridge render, React re-injection). Retry stale nodes instead of failing.
+async function withElement(css, action, timeout = 20_000) {
+  const started = Date.now();
+  let lastError = "element not present";
+  while (Date.now() - started < timeout) {
+    try {
+      const elements = await driver.findElements(By.css(css));
+      if (elements.length) { await action(elements[0]); return true; }
+    } catch (error) {
+      lastError = safe(error);
+      if (!/stale/i.test(lastError)) throw error;
+    }
+    await sleep(200);
+  }
+  throw new Error(`${css} interaction timed out: ${lastError}`);
+}
+async function clickStaleSafe(css) { return withElement(css, (element) => element.click()); }
 async function waitFor(description, predicate, timeout = 30_000) {
   const started = Date.now();
   let detail = "";
@@ -116,23 +134,34 @@ async function openStudio(id) {
   await waitFor("selected Studio activation", async () => (await js("return localStorage.getItem('studioflow.tpiActiveStudioId.v1')")) === id);
 }
 async function openSelector() {
-  const selector = await driver.findElement(By.css(".tpi-studio-selector"));
-  await selector.click();
   await waitFor("My Studios menu", async () => {
     const menus = await driver.findElements(By.css(".tpi-studio-menu"));
-    return menus.length === 1 && (await menus[0].isDisplayed());
-  });
+    if (menus.length === 1 && (await menus[0].isDisplayed())) return true;
+    try {
+      const selectors = await driver.findElements(By.css(".tpi-studio-selector"));
+      if (selectors.length) await selectors[0].click();
+    } catch (error) {
+      if (!/stale/i.test(safe(error))) throw error;
+    }
+    return false;
+  }, 25_000);
 }
-async function switchTo(workspaceId) {
+async function switchTo(workspaceId, title) {
   await openSelector();
-  await driver.findElement(By.css(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`)).click();
+  await clickStaleSafe(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${workspaceId}"]`);
   await waitFor(`Studio ${workspaceId} active`, async () => (await js("return localStorage.getItem('studioflow.tpiActiveStudioId.v1')")) === workspaceId, 25_000);
+  if (title) {
+    // The active ID is set synchronously while hydration (which rewrites the
+    // local broadcast entry's title from the workspace state) completes
+    // asynchronously. Wait for hydration to settle so later steps never race it.
+    await waitFor(`Studio ${workspaceId} hydration settles`, async () => (await js("var id=JSON.parse(localStorage.getItem('studioflow.activeBroadcastId')||'null');var b=JSON.parse(localStorage.getItem('studioflow.broadcasts')||'[]')||[];var e=Array.isArray(b)?b.find(function(x){return x&&x.id===id;}):null;return (e?e.title:'')===arguments[0];", title)) === true, 25_000);
+  }
 }
 async function createStudio(title) {
   await openSelector();
-  await driver.findElement(By.css('.tpi-studio-menu [data-action="create"]')).click();
+  await clickStaleSafe('.tpi-studio-menu [data-action="create"]');
   await waitFor("Create New Studio dialog", async () => (await driver.findElements(By.css("#tpi-create-studio-dialog .tpi-studio-dialog"))).length === 1);
-  await driver.findElement(By.css("#tpi-studio-name")).sendKeys(title, Key.ENTER);
+  await withElement("#tpi-studio-name", (element) => element.sendKeys(title, Key.ENTER));
   const workspace = await waitFor(`server record for ${title}`, async () => {
     const response = await authenticatedFetch("/api/studio/workspaces");
     return response.body?.workspaces?.find((w) => w.title === title) || null;
@@ -224,14 +253,14 @@ try {
   }, 30_000);
 
   // ---- Test 3: Switch A→B→A with identity assertions ------------------
-  await switchTo(studioB.id);
+  await switchTo(studioB.id, studioB.title);
   const uiB = await uiState();
   const serverB2 = await serverWorkspace(studioB.id);
   check("Test 3a: switching activates Studio B (persisted ID)", uiB.activeStudioId === studioB.id, JSON.stringify({ active: uiB.activeStudioId, expected: studioB.id }));
   check("Test 3b: the displayed workspace belongs to Studio B", uiB.selectorText.includes(studioB.title), uiB.selectorText);
   check("Test 4: Studio B scenes are untouched by Studio A edits", !(serverB2?.state?.configuration?.studioScenes || []).some((s) => s.title === "Isolation Scene A") && JSON.stringify(uiB.sceneTitles) === JSON.stringify(["Intro Video", "Scene 1", "Scene 2", "Outro Video"]), JSON.stringify(uiB.sceneTitles));
   check("Test 5: Studio B does not inherit Studio A media assignments", (serverB2?.state?.configuration?.backgroundMusicSlots || []).length === 0 && (serverB2?.state?.configuration?.videoClipSlots || []).length === 0 && uiB.localMusicSlots === 0 && uiB.localClipSlots === 0, JSON.stringify({ server: serverB2?.state?.configuration?.backgroundMusicSlots, ui: uiB }));
-  await switchTo(studioA.id);
+  await switchTo(studioA.id, studioA.title);
   const uiA2 = await uiState();
   check("Test 3c: switching back activates Studio A with its own scenes", uiA2.activeStudioId === studioA.id && uiA2.sceneTitles.includes("Isolation Scene A"), JSON.stringify({ active: uiA2.activeStudioId, titles: uiA2.sceneTitles }));
 
@@ -239,7 +268,7 @@ try {
   await writeConfiguration({ videoTimerDuration: 60 });
   // Switch immediately: the pre-switch save must preserve the pending edit.
   await openSelector();
-  await driver.findElement(By.css(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${studioB.id}"]`)).click();
+  await clickStaleSafe(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${studioB.id}"]`);
   await waitFor("Studio B active after unsaved-change switch", async () => (await js("return localStorage.getItem('studioflow.tpiActiveStudioId.v1')")) === studioB.id, 25_000);
   await waitFor("pending edit saved before the switch completed", async () => {
     const server = await serverWorkspace(studioA.id);
@@ -248,14 +277,14 @@ try {
   check("Test 7: unsaved changes are saved before switching and restore on return", true);
 
   // ---- Test 8: failed save must not switch silently -------------------
-  await switchTo(studioA.id);
+  await switchTo(studioA.id, studioA.title);
   const serverBBefore = await serverWorkspace(studioB.id);
   await js("var b=JSON.parse(localStorage.getItem('studioflow.broadcasts')||'[]'); b=b.map(function(x){ if(x.id===JSON.parse(localStorage.getItem('studioflow.activeBroadcastId'))) x.title='INTENTIONAL CONFLICT ' + Date.now(); return x;}); localStorage.setItem('studioflow.broadcasts', JSON.stringify(b));");
   await sleep(1500);
   let switchClicked = false;
   try {
     await openSelector();
-    await driver.findElement(By.css(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${studioB.id}"]`)).click();
+    await clickStaleSafe(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${studioB.id}"]`);
     switchClicked = true;
   } catch (error) { diagnostics.test8SwitchError = safe(error); }
   await sleep(2500);
@@ -274,7 +303,7 @@ try {
   // ---- Test 9: rapid switching ---------------------------------------
   for (const [index, target] of [studioB.id, studioA.id, studioB.id, studioA.id].entries()) {
     await openSelector();
-    await driver.findElement(By.css(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${target}"]`)).click();
+    await clickStaleSafe(`.tpi-studio-menu button[data-action="open"][data-workspace-id="${target}"]`);
     await sleep(400 + index * 150);
   }
   await waitFor("rapid switching settles on the last selected Studio", async () => (await js("return localStorage.getItem('studioflow.tpiActiveStudioId.v1')")) === studioA.id, 30_000);
@@ -321,15 +350,55 @@ try {
   let localButtonFound = false;
   try {
     await openSelector();
-    const localButton = await driver.findElement(By.css(`.tpi-studio-menu button[data-action="open-local"][data-broadcast-id="${localBroadcastId}"]`));
-    localButtonFound = Boolean(localButton);
-    await localButton.click();
+    localButtonFound = await clickStaleSafe(`.tpi-studio-menu button[data-action="open-local"][data-broadcast-id="${localBroadcastId}"]`);
   } catch (error) { diagnostics.h2Error = safe(error); }
   await sleep(3000);
   const uiH2 = await uiState();
   diagnostics.h2 = uiH2;
   check("H2a: browser-local Studio without a snapshot activates", localButtonFound && uiH2.activeBroadcastId === localBroadcastId, JSON.stringify(uiH2));
   check("H2b: the Studio opens with the default configuration and says so", uiH2.localPanelItems.length === 4 && /default Studio configuration|BROWSER-LOCAL/i.test(uiH2.statusText), JSON.stringify(uiH2));
+
+  // ---- H3: malformed browser-local snapshot records are preserved ----------
+  const malformedId = `broadcast-malformed-${runId}`;
+  await js(`var broadcasts = JSON.parse(localStorage.getItem('studioflow.broadcasts') || '[]');
+    broadcasts.push({ id: arguments[0], title: arguments[1], kind: 'recording', createdAt: new Date().toLocaleTimeString() });
+    localStorage.setItem('studioflow.broadcasts', JSON.stringify(broadcasts));
+    var snapshots = JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioSnapshots.v1') || '{}');
+    snapshots[arguments[0]] = { savedAt: new Date().toISOString(), state: { broadcast: { id: 'wrong-identity', title: 'Corrupt record' } } };
+    localStorage.setItem('studioflow.tpiLocalStudioSnapshots.v1', JSON.stringify(snapshots));`, malformedId, `Malformed Lifecycle ${runId}`);
+  await sleep(1500);
+  let malformedOpened = false;
+  try {
+    await openSelector();
+    malformedOpened = await clickStaleSafe(`.tpi-studio-menu button[data-action="open-local"][data-broadcast-id="${malformedId}"]`);
+  } catch (error) { diagnostics.h3Error = safe(error); }
+  await sleep(3000);
+  const uiH3 = await uiState();
+  diagnostics.h3 = uiH3;
+  const recoveryH3 = await js("return JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioSnapshots.recovery.v1') || '{}')");
+  diagnostics.h3Recovery = recoveryH3;
+  check("H3a: a Studio with a malformed snapshot record activates with defaults", malformedOpened && uiH3.activeBroadcastId === malformedId && uiH3.localPanelItems.length === 4 && JSON.stringify(uiH3.localPanelItems) === JSON.stringify(defaultPanelIds), JSON.stringify(uiH3));
+  check("H3b: the malformed record is preserved for recovery before replacement", Boolean(recoveryH3[malformedId]) && Boolean(recoveryH3[malformedId].record) && Boolean(recoveryH3[malformedId].record.state) && recoveryH3[malformedId].record.state.broadcast.id === "wrong-identity", JSON.stringify(recoveryH3));
+
+  // ---- H4: a corrupt snapshot store is preserved before replacement --------
+  const corruptId = `broadcast-corrupt-${runId}`;
+  await js(`var broadcasts = JSON.parse(localStorage.getItem('studioflow.broadcasts') || '[]');
+    broadcasts.push({ id: arguments[0], title: arguments[1], kind: 'recording', createdAt: new Date().toLocaleTimeString() });
+    localStorage.setItem('studioflow.broadcasts', JSON.stringify(broadcasts));
+    localStorage.setItem('studioflow.tpiLocalStudioSnapshots.v1', '{corrupt snapshot store');`, corruptId, `Corrupt Store Lifecycle ${runId}`);
+  await sleep(1500);
+  let corruptOpened = false;
+  try {
+    await openSelector();
+    corruptOpened = await clickStaleSafe(`.tpi-studio-menu button[data-action="open-local"][data-broadcast-id="${corruptId}"]`);
+  } catch (error) { diagnostics.h4Error = safe(error); }
+  await sleep(3000);
+  const uiH4 = await uiState();
+  diagnostics.h4 = uiH4;
+  const recoveryH4 = await js("return JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioSnapshots.recovery.v1') || '{}')");
+  diagnostics.h4Recovery = recoveryH4;
+  check("H4a: a Studio opened with a corrupt snapshot store activates with defaults", corruptOpened && uiH4.activeBroadcastId === corruptId && uiH4.localPanelItems.length === 4, JSON.stringify(uiH4));
+  check("H4b: the corrupt snapshot store is preserved for recovery before replacement", Boolean(recoveryH4.__store__) && Boolean(recoveryH4.__store__.record) && recoveryH4.__store__.record.raw === "{corrupt snapshot store", JSON.stringify(recoveryH4));
 
   writeFileSync(join(evidenceRoot, "lifecycle-final.png"), Buffer.from(await driver.takeScreenshot(), "base64"));
 } catch (error) {
