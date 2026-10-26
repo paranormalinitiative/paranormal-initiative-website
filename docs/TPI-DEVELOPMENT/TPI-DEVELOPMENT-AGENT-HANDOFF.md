@@ -12,6 +12,25 @@ repairable blocker or require a fresh owner directive for each lifecycle step.
 Historical restrictions below describe prior executions and do not override
 the controlling directive.
 
+## TPI-STUDIOFLOW-088 Deletion & Archive — Production Verification — 2026-10-26
+
+`LIVE VERIFIED — OWNER ACCEPTANCE PENDING`. Production verification of the
+deletion suite reproduced two production-only defects, both repaired and
+re-verified live: background Studio activations (boot replay, identity
+convergence) no longer navigate the owner out of the view they chose —
+activations carry a `background` flag and the first pointer/keyboard/click
+input arms the guard — and Studio archive/restore now retry once with the
+fresh version from a `workspace_conflict` (409) response and report failures
+in the panel status instead of swallowing them. `deleteStudio` compares every
+Studio identity before selecting the safe Home destination. Regression: 088
+suite 39/39 including the new Test 11 view-guard checks, on authenticated
+production with disposable QA Studios and locally; 087 40/40, lifecycle
+29/29, auth lifecycle 64/64. Source `9f85f9d` (StudioFlow repo, local-only);
+website commits `5e206a7`, `6d9facb`, `7da1fb5` (pushed); live Worker
+`fb9ffdb9-137f-4e9e-b5a3-6c5c5fe1e91b`, rollback `5ee8b6d2` (earlier
+checkpoints `25f3d4ea`, `d0dc37a5` preserved). See
+`300-COMPLETED-WORK/2026-10-26-TPI-STUDIOFLOW-088-DELETION-PRODUCTION-VERIFICATION.md`.
+
 ## TPI-STUDIOFLOW-087 Independent Studios & Dashboards — 2026-10-26
 
 `LIVE VERIFIED — OWNER ACCEPTANCE PENDING`. The homepage/My Studios identity

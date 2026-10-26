@@ -17,6 +17,33 @@ clipping, stacking, and pointer-event defects from being reported as passes.
 - Blocked: a safety or environment prerequisite prevents execution.
 - Not tested: no current evidence.
 
+## TPI-STUDIOFLOW-088 Studio deletion and archive regression — 2026-10-26
+
+`npm run verify:studioflow-088-studio-deletion` is the maintained Firefox
+Developer Edition regression for permanent Studio deletion and archive
+management (Directive Tests 1–9 plus fixture hygiene and release-gate
+checks; 39 checks). It asserts: the typed-name confirmation safeguards
+(exact name, productions/recordings counts, media impact, permanent warning,
+disabled until the name matches, cancel is non-destructive); permanent
+deletion removes the record and its saved scenes while productions survive
+detached and the identity is tombstoned against stale-record recreation;
+other Studios keep their own configuration, productions and cards; browser-
+local deletion removes only the target's listing and snapshot while unrelated
+snapshots and recovery copies survive; archive hides without deleting and
+restore returns the Studio with its configuration intact; archived Studios
+can be permanently deleted with confirmation; deleting the active Studio
+lands on a safe destination. Since 2026-10-26 the suite also carries Test
+11a/11b: a background Studio activation (boot replay, identity convergence)
+restores state without navigating the owner out of the view they chose, while
+a foreground activation still opens the Studio environment — the production
+regression guard for the background-activation view hijack. The suite runs
+inside `npm run release:preflight`, enforced by a `verify:release-safety`
+contract check. Verified results 2026-10-26: 39/39 locally and 39/39 on
+authenticated production with disposable QA Studios (evidence in
+`300-COMPLETED-WORK/evidence/2026-10-26-studioflow-088-production-suite.json`).
+Known open items: the five pre-existing static-contract suite failures and
+the timing-sensitive 030 rapid-upload step remain documented and open.
+
 ## TPI-STUDIOFLOW-087 Studio ownership and dashboard regression — 2026-10-26
 
 `npm run verify:studioflow-087-studio-ownership` is the maintained Firefox

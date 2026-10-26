@@ -12,6 +12,34 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## TPI-STUDIOFLOW-088 Deletion & Archive — Production Verification and Production Repairs — 2026-10-26
+
+Status: `DEPLOYED / LIVE VERIFIED (agent) / OWNER ACCEPTANCE PENDING`.
+Authenticated production verification of the Studio deletion suite reproduced
+two production-only defects and both were repaired through the maintained
+release path. (1) The boot-time Studio replay and identity convergence called
+the React activation bridge, whose callback unconditionally opened the studio
+view; on production latency the replay landed seconds after load and yanked
+the owner (and the QA suite) out of Home mid-flow (`route: "studio"`, empty
+card grid). Activations now carry a `background` flag: they restore Studio
+state but never navigate after the owner has touched the interface, and
+activation resolution is keyed on identity rather than route so bridge switch
+bookkeeping cannot jam. (2) Archive/restore sent the menu's cached
+`expectedVersion` with no retry and swallowed `workspace_conflict` (409)
+failures silently — an autosave racing the request left the owner with a
+ignored click. Archive/restore now retry once with the fresh version the
+conflict response carries and report every failure in the panel status.
+Verified: 088 deletion suite 39/39 including the new Test 11 view-guard
+checks, on authenticated production with disposable QA Studios (evidence:
+`300-COMPLETED-WORK/evidence/2026-10-26-studioflow-088-production-suite.json`)
+and locally 39/39, 087 40/40, lifecycle 29/29, auth lifecycle 64/64. Three
+guarded releases: source `9f85f9d` (StudioFlow repo); website commits
+`5e206a7`, `6d9facb`, `7da1fb5` (pushed); live production Worker
+`fb9ffdb9-137f-4e9e-b5a3-6c5c5fe1e91b`, rollback checkpoints `25f3d4ea` →
+`d0dc37a5` → `5ee8b6d2` preserved. No database or storage changes; Crossroads
+and all owner Studios untouched. Full record:
+`300-COMPLETED-WORK/2026-10-26-TPI-STUDIOFLOW-088-DELETION-PRODUCTION-VERIFICATION.md`.
+
 ## TPI-STUDIOFLOW-087 Independent Studios, Studio Dashboards & Production Ownership — 2026-10-26
 
 Status: `IMPLEMENTED / LOCAL TESTED / DEPLOYED / LIVE VERIFIED / OWNER
