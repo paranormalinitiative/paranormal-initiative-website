@@ -220,15 +220,29 @@ async function broadcastRecords() {
 }
 async function goHome() {
   if (await buttonExists("Create new Studio", ".home-page")) return;
-  const exit = await driver.findElements(By.css(".exit-button"));
-  if (exit.length) {
-    await exit[0].click().catch(() => {});
-  } else {
+  // Retry the exit interaction and report the control's state on failure: a
+  // single click can be swallowed by a transient overlay or a mid-render
+  // re-click, and a bare timeout hides whether the app itself is stuck
+  // (an Exit button showing "Saving" waits for recording state to settle).
+  const started = Date.now();
+  let lastDetail = "no exit attempt";
+  while (Date.now() - started < 45_000) {
+    if (await buttonExists("Create new Studio", ".home-page")) return;
+    lastDetail = String(await js(
+      "var btn = document.querySelector('.production-bar .exit-button') || document.querySelector('.exit-button'); if (!btn) return 'no-exit-button'; var label = (btn.textContent || '').trim(); btn.click(); return 'clicked ' + label;"
+    ).catch((error) => `click-error: ${safe(error)}`));
+    const reachedHome = await waitFor("StudioFlow home", async () => await buttonExists("Create new Studio", ".home-page"), 5_000).then(() => true).catch(() => false);
+    if (reachedHome) return;
+    // The setup view exits through `.back-button` ("Back"), the Studio
+    // dashboard through "Back to Home" — cover both before retrying.
     const back = await driver.findElements(By.css(".back-button"));
     if (back.length) await back[0].click().catch(() => {});
-    else await clickButtonByText("Back to Home", ".home-page").catch(() => {});
+    else await clickButtonByText("Back to Home", "body").catch(() => {});
   }
-  await waitFor("StudioFlow home", async () => await buttonExists("Create new Studio", ".home-page"), 25_000);
+  const exitState = await js(
+    "var btn = document.querySelector('.production-bar .exit-button') || document.querySelector('.exit-button'); return { exit: btn ? (btn.textContent || '').trim() : null, hasHome: Boolean(document.querySelector('.home-page:not(.studio-dashboard)')), hasDashboard: Boolean(document.querySelector('.home-page.studio-dashboard')), hasSetup: Boolean(document.querySelector('.setup-top-bar')), hasScenesPanel: Boolean(document.querySelector('[data-tpi-scenes-panel]')), productionLock: window.__tpiStudioProductionLock || null };"
+  ).catch(() => ({}));
+  throw new Error(`StudioFlow home timed out: ${lastDetail}; exit state ${JSON.stringify(exitState)}`);
 }
 async function waitForCreationSettle() {
   await waitFor("creation chain to settle", async () => {
@@ -310,9 +324,28 @@ async function createProductionInStudio(dashboardTitle, productionTitle) {
 // open the confirmation dialog (directive §4: opening the menu never deletes).
 async function openDeleteDialog(title) {
   await goHome();
-  if (!(await clickCardButton(title, "More Actions"))) throw new Error(`More Actions is unavailable for ${title}`);
-  await sleep(200);
-  if (!(await clickCardButton(title, "Delete Studio"))) throw new Error(`Delete Studio is unavailable for ${title}`);
+  // The card grid re-renders around catalog updates, so a single More Actions
+  // pass can land between two renders and find no card. Retry the menu
+  // interaction; the dialog assertions below are unchanged.
+  let opened = false;
+  let lastError = "";
+  for (let attempt = 0; attempt < 4 && !opened; attempt += 1) {
+    if (attempt) await sleep(1000);
+    if (!(await clickCardButton(title, "More Actions"))) {
+      lastError = `More Actions is unavailable for ${title}`;
+      continue;
+    }
+    await sleep(200);
+    if (!(await clickCardButton(title, "Delete Studio"))) {
+      lastError = `Delete Studio is unavailable for ${title}`;
+      continue;
+    }
+    opened = true;
+  }
+  if (!opened) {
+    const cards = await js("return Array.from(document.querySelectorAll('.studio-card .studio-card-title strong')).map(function (n) { return (n.textContent || '').trim(); });").catch(() => []);
+    throw new Error(`${lastError}; visible cards: ${JSON.stringify(cards)}`);
+  }
   await waitFor("Delete Studio confirmation dialog", async () => (await count(".studio-delete-warning")) === 1, 15_000);
 }
 async function confirmDeleteDialog(title) {
@@ -502,7 +535,23 @@ try {
   check("Test 8a: browser-local deletion removes the Studio's own listing and configuration", localState.snapshotA === false && localState.tombstoned === true, JSON.stringify(localState));
   check("Test 8b: the other browser-local Studio's snapshot is untouched", localState.snapshotB === true, JSON.stringify(localState));
   check("Test 8c: unrelated recovery snapshots are preserved", localState.recoveryA === true && localState.recoveryB === true, JSON.stringify(localState));
-  check("Test 8d: the other browser-local Studio remains listed", (await cardIndexFor(browserBTitle)) >= 0, browserBTitle);
+  // Settled read with diagnostics: the catalog re-renders around the delete,
+  // and a single DOM snapshot can land between two renders. If B really
+  // disappears the wait fails and the detail names the visible cards and
+  // stored records instead of a bare title.
+  let bListedDetail = "";
+  const bListed = await waitFor("the other browser-local Studio remains listed", async () => {
+    const index = await cardIndexFor(browserBTitle);
+    bListedDetail = `card index ${index}`;
+    return index >= 0;
+  }, 10_000).then(() => true).catch(async () => {
+    const dump = await js(
+      "return { cards: Array.from(document.querySelectorAll('.studio-card .studio-card-title strong')).map(function (n) { return (n.textContent || '').trim(); }), broadcasts: JSON.parse(localStorage.getItem('studioflow.broadcasts') || '[]').map(function (b) { return b && b.id; }), tombstones: JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioDeleted.v1') || '[]'), route: JSON.parse(localStorage.getItem('studioflow.route') || '\"home\"'), hasHome: Boolean(document.querySelector('.home-page:not(.studio-dashboard)')), hasScenesPanel: Boolean(document.querySelector('[data-tpi-scenes-panel]')), hasSetup: Boolean(document.querySelector('.setup-top-bar')) };"
+    ).catch(() => ({}));
+    bListedDetail += ` | ${JSON.stringify(dump)}`;
+    return false;
+  });
+  check("Test 8d: the other browser-local Studio remains listed", bListed, bListedDetail);
   await driver.navigate().refresh();
   await waitFor("StudioFlow after refresh", async () => (await count("[data-tpi-scenes-panel]")) > 0 || await buttonExists("Create new Studio", ".home-page"), 30_000);
   await goHome();
@@ -546,6 +595,37 @@ try {
   await confirmDeleteDialog(archTitle);
   await waitFor("archived Studio permanently deleted", async () => await workspaceGone(archTitle), 30_000);
   check("Test 9d: archived Studios can be permanently deleted with confirmation", (await cardIndexFor(archTitle)) < 0 && !(await workspaceById(studioArch.id)), archTitle);
+
+  // ---- Test 11: a background Studio activation never hijacks the view -----
+  // Regression guard for the production-only failure this suite used to hit:
+  // the boot-time Studio replay completed seconds after load and forced the
+  // interface into the studio view while the owner was working on Home (mid-
+  // delete it emptied the card grid and the card-menu clicks found nothing).
+  // Establish a known active Studio first: deleting the active Studio in
+  // Test 9d correctly clears the active identity.
+  await enterStudioFromCard(keepTitle);
+  await goHome();
+  await js("document.body.click();");
+  const guardState = await uiState();
+  const activeHost = guardState.activeBroadcastId;
+  const runActivation = (extra) => asyncJs(
+    "var done = arguments[arguments.length - 1], id = arguments[0], background = arguments[1]; var activate = window.__tpiStudioFlowActivateBroadcast; if (!activate) { done({ ok: false, reason: 'activation bridge unavailable' }); return; } activate({ workspaceId: '', broadcastId: id, title: 'Activation guard probe', background: background }).then(done).catch(function (error) { done({ ok: false, reason: String(error) }); });",
+    activeHost || "",
+    extra
+  );
+  if (activeHost) {
+    const backgroundResult = await runActivation(true);
+    await sleep(600);
+    const stillHome = await buttonExists("Create new Studio", ".home-page");
+    check("Test 11a: a background activation restores state without navigating the owner", Boolean(backgroundResult && backgroundResult.ok === true) && stillHome === true, JSON.stringify({ backgroundResult, stillHome }));
+    const foregroundResult = await runActivation(false);
+    const openedStudio = await waitFor("foreground activation opens the Studio environment", async () => (await count("[data-tpi-scenes-panel]")) > 0, 15_000).then(() => true).catch(() => false);
+    check("Test 11b: a foreground activation still opens the Studio environment", Boolean(foregroundResult && foregroundResult.ok === true) && openedStudio === true, JSON.stringify({ foregroundResult, openedStudio }));
+    await goHome();
+  } else {
+    check("Test 11a: a background activation restores state without navigating the owner", false, "no active Studio identity is available");
+    check("Test 11b: a foreground activation still opens the Studio environment", false, "no active Studio identity is available");
+  }
 
   // ---- Test 10: the maintained regressions stay in the release gate ------
   const releaseScript = readFileSync(resolve(repoRoot, "scripts/tpi-release.mjs"), "utf8");
