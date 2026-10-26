@@ -596,11 +596,27 @@ try {
   const activeGridText = await js("var grid = document.querySelector('.studio-card-grid'); return grid ? grid.textContent : '';");
   check("Test 9a: archived Studios are excluded from the active listing", activeGridText.indexOf(keepTitle) < 0, activeGridText.slice(0, 200));
   check("Test 9b: the Archived Studios view keeps restore and delete actions", await buttonExists("Restore Archived Studio", ".studio-archive-section") && await buttonExists("Delete Studio", ".studio-archive-section"));
-  if (!(await clickCardButton(keepTitle, "Restore Archived Studio"))) throw new Error("Restore Archived Studio is unavailable");
-  const restoredEntry = await waitFor("Studio restored", async () => {
-    const entries = await studioEntriesViaBridge();
-    return entries.find((entry) => entry && entry.title === keepTitle && entry.archived === false) || null;
-  }, 30_000);
+  let restoredEntry = null;
+  let restoreDetail = "";
+  for (let attempt = 0; attempt < 3 && !restoredEntry; attempt += 1) {
+    if (attempt) await sleep(1500);
+    // After a succeeded restore the card moves to the active grid and the
+    // Restore button is gone — only re-click while the card is still archived.
+    const restoreVisible = await clickCardButton(keepTitle, "Restore Archived Studio");
+    if (!restoreVisible) {
+      restoreDetail = `attempt ${attempt + 1}: Restore Archived Studio is unavailable`;
+      continue;
+    }
+    restoredEntry = await waitFor("Studio restored", async () => {
+      const entries = await studioEntriesViaBridge();
+      return entries.find((entry) => entry && entry.title === keepTitle && entry.archived === false) || null;
+    }, 15_000).catch(() => null);
+  }
+  if (!restoredEntry) {
+    const probe = await js("var s = document.querySelector('.tpi-studio-status'); return { status: s ? s.textContent : null, deleteDialog: document.querySelectorAll('.studio-delete-warning').length, archiveSection: Boolean(document.querySelector('.studio-archive-section')), entries: (window.__tpiStudioWorkspace && window.__tpiStudioWorkspace.listStudios ? window.__tpiStudioWorkspace.listStudios() : []).map(function (e) { return { title: e.title, archived: e.archived, source: e.source }; }) };").catch(() => ({}));
+    const restoredRecordProbe = await workspaceById(studioKeep.id).catch(() => null);
+    throw new Error(`Studio was never restored to the active listing: ${restoreDetail} | ${JSON.stringify(probe)} | server record: ${JSON.stringify({ version: restoredRecordProbe?.version, status: restoredRecordProbe?.status, deletedAt: restoredRecordProbe?.deletedAt || restoredRecordProbe?.deleted_at || null })}`);
+  }
   const keepConfigFinal = (await workspaceById(studioKeep.id))?.state?.configuration || {};
   check("Test 9c: restore returns the Studio with its configuration intact", Boolean(restoredEntry) && (keepConfigFinal.studioScenes || []).some((scene) => scene.title === "TPI-088 Keep Scene"), JSON.stringify((keepConfigFinal.studioScenes || []).map((scene) => scene.title)));
   // Archived Studios also support permanent deletion with confirmation.
