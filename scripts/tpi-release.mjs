@@ -179,6 +179,13 @@ async function preflight() {
   run("Studio Management lifecycle regression", process.execPath, ["scripts/verify/tpi-studioflow-studio-lifecycle.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Studio ownership and dashboard regression (TPI-STUDIOFLOW-087 Directive
+  // Tests 1-13): homepage Studio cards, per-Studio dashboards, production
+  // ownership, rename/archive/restore, and existing-data preservation. A
+  // regression here blocks the release (TPI-STUDIOFLOW-087 §13).
+  run("Studio ownership and dashboard regression", process.execPath, ["scripts/verify/tpi-studioflow-087-studio-ownership.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");

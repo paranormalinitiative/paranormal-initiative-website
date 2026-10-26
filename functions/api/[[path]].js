@@ -5424,7 +5424,10 @@ async function handleRestoreStudioWorkspace(path, request, env, user) {
   try {
     const id = workspacePathId(path, "/restore");
     const existing = await getOwnedStudioWorkspace(env, id, user.id);
-    if (!existing || !existing.deleted_at) return json({ error: "Deleted Studio not found.", code: "workspace_not_found" }, 404);
+    // Restore returns a hidden Studio to the active listing: both Recently
+    // Deleted Studios (deleted_at set) and archived Studios (status archived)
+    // are restored here. An active Studio is not restorable.
+    if (!existing || (!existing.deleted_at && existing.status !== "archived")) return json({ error: "Deleted Studio not found.", code: "workspace_not_found" }, 404);
     const data = await readJson(request);
     const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
     if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);

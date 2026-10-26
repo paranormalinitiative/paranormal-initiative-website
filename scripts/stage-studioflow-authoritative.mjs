@@ -48,7 +48,7 @@ const maintainedBridgeFiles = [
 const bridgeTags = [
   '<script src="/studio/workspace-asset-state-bridge.js?tpi080=scene-normalization-v2" defer></script>',
   '<script src="/studio/production-lock-bridge.js" defer></script>',
-  '<script src="/studio/workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1&tpi034=dom-stability-v1&tpi-recovery=preserve-v1" defer></script>',
+  '<script src="/studio/workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1&tpi034=dom-stability-v1&tpi-recovery=preserve-v1&tpi087=studio-management-v2" defer></script>',
   '<script src="/studio/brand-heading-bridge.js?tpi074=legacy-brand-suppression-v1&tpi085=freeze-repair-v1" defer></script>',
   '<script src="/studio/video-playback-reset-bridge.js?tpi031=video-overlay-v2" defer></script>',
   '<script src="/studio/video-clip-management-bridge.js?tpi020=clip-management-v1&tpi022=video-organization-v13&tpi-panels=exclusive-v3&tpi034=dom-stability-v1&tpi037=scenes-panel-v1" defer></script>',
@@ -189,7 +189,7 @@ function createIntegratedCandidate(generatedRoot) {
   if (stagedIndex.includes("index-j2x9m9vI.js") || stagedIndex.includes("index-DXjilBOR.css")) {
     throw new Error("Integrated entry point still references obsolete website bundle assets");
   }
-  if (!stagedIndex.includes("workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1&tpi034=dom-stability-v1&tpi-recovery=preserve-v1")) {
+  if (!stagedIndex.includes("workspace-bridge.js?tpi080=scene-normalization-v2&tpi085=freeze-repair-v2&tpi-local-save-v1&tpi-portable-media=v1&tpi034=dom-stability-v1&tpi-recovery=preserve-v1&tpi087=studio-management-v2")) {
     throw new Error("Integrated entry point is missing the workspace bridge");
   }
   if (!stagedIndex.includes("backup-bridge.js?tpi032=restore-v2-local-broadcast&tpi-portable-media=v1")) {
