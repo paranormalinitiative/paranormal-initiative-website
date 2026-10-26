@@ -28,8 +28,14 @@ operation requires owner approval; full state exported first), establishes the
 owner-executable diagnostic, and re-verifies Studio creation and switching on
 authenticated production. Archived verbatim at
 [`TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md`](TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md).
-Crossroads of the Unknown and all other owner Studios are protected. Status:
-`REPAIR IN PROGRESS`.
+Crossroads of the Unknown and all other owner Studios are protected. Testing
+123 was reset to the clean four-item default under explicit owner approval
+(backed up first) and verified in the database and live interface; Studio
+switching, creation and browser-local recovery were repaired and re-verified
+on authenticated production (lifecycle suite 29/29, Worker `6bbdae3d`, source
+`af7fbc0`). Status: `DEPLOYED AND AGENT-VERIFIED — OWNER ACCEPTANCE PENDING`.
+Completion record:
+[`../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md`](../300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md).
 
 ## TPI-STUDIOFLOW-OWNER-VERIFICATION-001 — 2026-10-25
 

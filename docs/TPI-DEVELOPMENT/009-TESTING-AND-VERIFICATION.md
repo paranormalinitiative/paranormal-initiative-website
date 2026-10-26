@@ -30,8 +30,11 @@ with identity assertions, scene isolation, media isolation, refresh
 restoration, unsaved-change preservation, failed-save handling (no silent
 switch, no overwrite), rapid switching, existing-Studio compatibility, clean
 home-screen creation, and the browser-local Studio that lacks a snapshot
-(opens with defaults and a visible notice). Only disposable Studios are
-created; they are archived at the end of each run. Since 2026-10-25
+(opens with defaults and a visible notice). The H3/H4 checks verify that a
+malformed browser-local snapshot record and a fully corrupt snapshot store
+are preserved under `studioflow.tpiLocalStudioSnapshots.recovery.v1` before
+any replacement (TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001). Only disposable
+Studios are created; they are archived at the end of each run. Since 2026-10-25
 (TPI-STUDIOFLOW-OWNER-VERIFICATION-001 §11) the suite also runs inside
 `npm run release:preflight`, enforced by a `verify:release-safety` contract
 check, so a Studio lifecycle regression blocks a release. Verified results

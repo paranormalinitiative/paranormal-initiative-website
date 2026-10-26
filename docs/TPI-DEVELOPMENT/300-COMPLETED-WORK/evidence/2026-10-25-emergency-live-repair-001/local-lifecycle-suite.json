@@ -1,0 +1,324 @@
+
+> verify:studioflow-studio-lifecycle
+> node scripts/verify/tpi-studioflow-studio-lifecycle.mjs
+
+{
+  "suite": "TPI-STUDIOFLOW-STUDIO-LIFECYCLE",
+  "status": "PASS",
+  "base": "http://127.0.0.1:8787",
+  "account": "test_admin",
+  "evidenceRoot": "/var/folders/kk/hg_q6yqx6qs1t542myrbdj580000gn/T/tpi-studio-lifecycle-1WAZNC",
+  "diagnostics": {
+    "test8": {
+      "switchClicked": true,
+      "ui8": {
+        "activeBroadcastId": "studio-c9b1ce1c-e8bb-479e-9039-50913e314e2e",
+        "activeStudioId": "66ae3fb2-829c-44d7-886d-b6aeb0e4671b",
+        "localClipSlots": 1,
+        "localMusicSlots": 1,
+        "localPanelItems": [
+          "intro",
+          "scene:scene-1",
+          "scene:scene-2",
+          "outro"
+        ],
+        "panelRows": [
+          "intro",
+          "scene:scene-1",
+          "scene:scene-2",
+          "outro"
+        ],
+        "sceneTitles": [
+          "Intro Video",
+          "Isolation Scene A",
+          "Scene 2",
+          "Outro Video"
+        ],
+        "selectorText": "My Studios: INTENTIONAL CONFLICT 1792977886215 ▾",
+        "statusText": "The current Studio could not be saved. It remains active; retry the save before switching."
+      }
+    },
+    "homeCreate": {
+      "activeBroadcastId": "broadcast-1792977898938",
+      "activeStudioId": null,
+      "localClipSlots": 0,
+      "localMusicSlots": 0,
+      "localPanelItems": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "panelRows": [],
+      "sceneTitles": [
+        "Intro Video",
+        "Scene 1",
+        "Scene 2",
+        "Outro Video"
+      ],
+      "selectorText": "",
+      "statusText": ""
+    },
+    "h2": {
+      "activeBroadcastId": "broadcast-lifecycle-mvokqh45",
+      "activeStudioId": null,
+      "localClipSlots": 0,
+      "localMusicSlots": 0,
+      "localPanelItems": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "panelRows": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "sceneTitles": [
+        "Intro Video",
+        "Scene 1",
+        "Scene 2",
+        "Outro Video"
+      ],
+      "selectorText": "My Studios: Browser Only Lifecycle mvokqh45 ▾",
+      "statusText": "No saved configuration was found for this Studio. It opened with the default Studio configuration."
+    },
+    "h3": {
+      "activeBroadcastId": "broadcast-malformed-mvokqh45",
+      "activeStudioId": null,
+      "localClipSlots": 0,
+      "localMusicSlots": 0,
+      "localPanelItems": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "panelRows": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "sceneTitles": [
+        "Intro Video",
+        "Scene 1",
+        "Scene 2",
+        "Outro Video"
+      ],
+      "selectorText": "My Studios: Malformed Lifecycle mvokqh45 ▾",
+      "statusText": "No saved configuration was found for this Studio. It opened with the default Studio configuration."
+    },
+    "h3Recovery": {
+      "broadcast-malformed-mvokqh45": {
+        "preservedAt": "2026-10-26T01:25:07.156Z",
+        "record": {
+          "savedAt": "2026-10-26T01:25:05.349Z",
+          "state": {
+            "broadcast": {
+              "id": "wrong-identity",
+              "title": "Corrupt record"
+            }
+          }
+        }
+      }
+    },
+    "h4": {
+      "activeBroadcastId": "broadcast-corrupt-mvokqh45",
+      "activeStudioId": null,
+      "localClipSlots": 0,
+      "localMusicSlots": 0,
+      "localPanelItems": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "panelRows": [
+        "intro",
+        "scene:scene-1",
+        "scene:scene-2",
+        "outro"
+      ],
+      "sceneTitles": [
+        "Intro Video",
+        "Scene 1",
+        "Scene 2",
+        "Outro Video"
+      ],
+      "selectorText": "My Studios: Corrupt Store Lifecycle mvokqh45 ▾",
+      "statusText": "No saved configuration was found for this Studio. It opened with the default Studio configuration."
+    },
+    "h4Recovery": {
+      "__store__": {
+        "preservedAt": "2026-10-26T01:25:12.029Z",
+        "record": {
+          "raw": "{corrupt snapshot store"
+        }
+      },
+      "broadcast-malformed-mvokqh45": {
+        "preservedAt": "2026-10-26T01:25:07.156Z",
+        "record": {
+          "savedAt": "2026-10-26T01:25:05.349Z",
+          "state": {
+            "broadcast": {
+              "id": "wrong-identity",
+              "title": "Corrupt record"
+            }
+          }
+        }
+      }
+    }
+  },
+  "checks": [
+    {
+      "name": "fixture: seeded pre-existing Studio created",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "fixture: seeded Studio renders its saved configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1a: new Studio has a unique identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1b: new Studio opens with exactly four default production items",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1c: the new Studio renders its own clean configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2a: second Studio has an independent identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2b: second Studio configuration is independent",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3a: switching activates Studio B (persisted ID)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3b: the displayed workspace belongs to Studio B",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4: Studio B scenes are untouched by Studio A edits",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 5: Studio B does not inherit Studio A media assignments",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3c: switching back activates Studio A with its own scenes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7: unsaved changes are saved before switching and restore on return",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8a: a switch blocked by a failed save keeps the current Studio active",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8b: the failed save is explained to the creator",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8c: the failed save never overwrites the target Studio's configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 9: rapid switching settles on the last selection with its own workspace",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 6: refresh restores the selected Studio and its configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 10: pre-existing Studio configuration is preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H1: a home-created Studio opens with the clean default configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H2a: browser-local Studio without a snapshot activates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H2b: the Studio opens with the default configuration and says so",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H3a: a Studio with a malformed snapshot record activates with defaults",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H3b: the malformed record is preserved for recovery before replacement",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H4a: a Studio opened with a corrupt snapshot store activates with defaults",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "H4b: the corrupt snapshot store is preserved for recovery before replacement",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cleanup archived disposable workspace 05b3ed24-56c3-46a7-a1c6-0a1ac40ba3ec",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cleanup archived disposable workspace 66ae3fb2-829c-44d7-886d-b6aeb0e4671b",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "cleanup archived disposable workspace e2a9ce5f-7366-4924-a16e-a3016f9a8f2c",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "passed": 29,
+  "failed": 0
+}

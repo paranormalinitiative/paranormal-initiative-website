@@ -12,6 +12,23 @@ repairable blocker or require a fresh owner directive for each lifecycle step.
 Historical restrictions below describe prior executions and do not override
 the controlling directive.
 
+## Emergency Live Production Repair 001 — 2026-10-25/26
+
+`DEPLOYED AND AGENT-VERIFIED — OWNER ACCEPTANCE PENDING`. Studio switching
+and browser-local recovery were repaired in `studio/workspace-bridge.js`:
+malformed/corrupt snapshot records are preserved under
+`studioflow.tpiLocalStudioSnapshots.recovery.v1` before replacement, the
+My Studios menu refreshes on open, stale selections explain themselves, and a
+title conflict no longer disarms the save integrity gate (a blocked switch
+stays put and explains the failure). Testing 123
+(`a75afc38-c7a6-452d-9460-5d746712d411`) was reset to the clean four-item
+default under explicit owner approval and verified in the database and live
+interface. Lifecycle suite 29/29 local and 29/29 production; deployed Worker
+`6bbdae3d-f424-4373-87ff-84030df50a49`, rollback `9d3aa40c`, source `af7fbc0`.
+"Browser Only Crossroads" is browser-local-only; a read-only owner diagnostic
+is in the completion record (section J):
+`300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md`.
+
 ## Owner Verification 001 — 2026-10-25
 
 `AGENT VERIFIED — OWNER ACCEPTANCE PENDING`. The Studio lifecycle recovery was

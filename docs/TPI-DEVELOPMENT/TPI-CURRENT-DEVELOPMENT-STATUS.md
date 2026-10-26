@@ -12,6 +12,28 @@ Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
 
+## Emergency Live Production Repair 001 — 2026-10-25/26
+
+Status: `DEPLOYED AND AGENT-VERIFIED — OWNER ACCEPTANCE PENDING`. Four Studio
+Management defects were repaired in `studio/workspace-bridge.js`: malformed
+browser-local snapshot records (and a corrupt snapshot store) were silently
+overwritten instead of preserved for recovery; the My Studios menu could hide
+an existing browser-local Studio until an unrelated re-render; a stale menu
+selection did nothing and said nothing; and a title conflict silently
+disarmed the save integrity gate so a blocked switch fell through to the
+browser-local save path and switched anyway. The cache-buster advanced to
+`tpi-recovery=preserve-v1`. The owner-approved Testing 123 reset was executed
+(one guarded UPDATE on `a75afc38-c7a6-452d-9460-5d746712d411`, full backup and
+rollback SQL in `backups/`) and re-verified post-deploy: the stored row and
+its live rendering are exactly the four clean default items with no inherited
+Crossroads media. Verified with the maintained lifecycle suite 29/29 locally
+and 29/29 on authenticated production (including the new H3/H4 preservation
+checks), plus the Testing 123 render check 6/6. Deployed Worker
+`6bbdae3d-f424-4373-87ff-84030df50a49`, rollback checkpoint `9d3aa40c`.
+"Browser Only Crossroads" remains browser-local-only; a read-only owner
+diagnostic procedure is in the completion record. Full record:
+`300-COMPLETED-WORK/2026-10-25-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001.md`.
+
 ## Owner Verification 001 — post-deployment Studio Management verification — 2026-10-25
 
 Status: `AGENT VERIFIED — OWNER ACCEPTANCE PENDING`. The deployed Studio
