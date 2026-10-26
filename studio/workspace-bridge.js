@@ -451,44 +451,73 @@
   // the operation so its version bumps cannot race the purge marker, a
   // concurrent-change conflict retries once with a fresh version, and every
   // failure is surfaced in the panel status instead of dying silently.
+  function findServerWorkspaceEntry(id) {
+    return [].concat(workspaces || [], archivedWorkspaces || [], deletedWorkspaces || []).find(function (workspace) {
+      return workspace && (text(workspace.id).trim() === id || text(workspace.localBroadcastId).trim() === id);
+    }) || null;
+  }
+  // The cached Studio lists can be stale (a failed refresh, an older tab, or a
+  // restored browser profile). Re-read the authoritative server lists before a
+  // deletion falls through to the browser-local branch — otherwise a
+  // server-backed Studio could be "deleted" locally while its server row
+  // survives untouched and the Studio reappears after refresh.
+  function reloadWorkspaceLists() {
+    return Promise.all([api("/api/studio/workspaces"), api("/api/studio/workspaces?includeDeleted=true"), api("/api/studio/workspaces?includeArchived=true").catch(function () { return { workspaces: [] }; })]).then(function (responses) {
+      workspaces = Array.isArray(responses[0].workspaces) ? responses[0].workspaces : [];
+      deletedWorkspaces = Array.isArray(responses[1].workspaces) ? responses[1].workspaces : [];
+      archivedWorkspaces = Array.isArray(responses[2] && responses[2].workspaces) ? responses[2].workspaces : [];
+      cacheWorkspaces();
+    });
+  }
   function deleteStudioAttempt(key) {
     var id = text(key).trim();
     if (!id) return Promise.reject(new Error("Select a Studio to delete."));
     if (productionLock()) return Promise.reject(new Error("Studio deletion is unavailable while a recording or livestream is active. Finish the production before deleting a Studio."));
-    var target = [].concat(workspaces || [], archivedWorkspaces || [], deletedWorkspaces || []).find(function (workspace) { return workspace && (text(workspace.id).trim() === id || text(workspace.localBroadcastId).trim() === id); });
-    if (target) {
-      var hostId = text(target.localBroadcastId).trim() || id;
-      var previousSuppression = suppressAutosave;
-      suppressAutosave = true;
-      function purgeAttempt(tries) {
-        return api("/api/studio/workspaces/" + encodeURIComponent(target.id)).then(function (current) {
-          var record = current && current.workspace ? current.workspace : target;
-          return api("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/purge", { method: "POST", body: JSON.stringify({ expectedVersion: record.version }) });
-        }).catch(function (error) {
-          if (tries > 0 && error && error.body && error.body.code === "workspace_conflict") return purgeAttempt(tries - 1);
-          throw error;
-        });
+    var located = Promise.resolve(findServerWorkspaceEntry(id));
+    if (!findServerWorkspaceEntry(id)) {
+      // Never trust the cached list alone: confirm against the server before
+      // treating the Studio as browser-local.
+      located = reloadWorkspaceLists().catch(function (error) {
+        // Without a verified Studio list the Studio's storage scope is unknown.
+        // Refuse the deletion instead of guessing "browser-local".
+        throw new Error("Studio deletion could not verify the Studio list with the server. Nothing was deleted. " + (error && error.message ? error.message : ""));
+      }).then(function () { return findServerWorkspaceEntry(id); });
+    }
+    return located.then(function (target) {
+      if (target) {
+        var hostId = text(target.localBroadcastId).trim() || id;
+        var previousSuppression = suppressAutosave;
+        suppressAutosave = true;
+        function purgeAttempt(tries) {
+          return api("/api/studio/workspaces/" + encodeURIComponent(target.id)).then(function (current) {
+            var record = current && current.workspace ? current.workspace : target;
+            return api("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/purge", { method: "POST", body: JSON.stringify({ expectedVersion: record.version }) });
+          }).catch(function (error) {
+            if (tries > 0 && error && error.body && error.body.code === "workspace_conflict") return purgeAttempt(tries - 1);
+            throw error;
+          });
+        }
+        return purgeAttempt(2).then(function () {
+          removeLocalStudioRecord(hostId);
+          tombstoneStudio(hostId);
+          if (selectedWorkspace && selectedWorkspace.id === target.id) selectedWorkspace = null;
+          return refresh().then(function () {
+            window.dispatchEvent(new CustomEvent("tpi:studios-updated"));
+            return { key: hostId, source: "server" };
+          });
+        }).finally(function () { suppressAutosave = previousSuppression; });
       }
-      return purgeAttempt(2).then(function () {
-        removeLocalStudioRecord(hostId);
-        tombstoneStudio(hostId);
-        if (selectedWorkspace && selectedWorkspace.id === target.id) selectedWorkspace = null;
-        return refresh().then(function () {
-          window.dispatchEvent(new CustomEvent("tpi:studios-updated"));
-          return { key: hostId, source: "server" };
-        });
-      }).finally(function () { suppressAutosave = previousSuppression; });
-    }
-    var local = localBroadcastCandidates().find(function (broadcast) { return broadcast && text(broadcast.id).trim() === id; }) || broadcastById(id);
-    if (local && !text(local.studioId).trim() && local.isProduction !== true) {
-      removeLocalStudioRecord(id);
-      tombstoneStudio(id);
-      if (selectedWorkspace && (text(selectedWorkspace.localBroadcastId).trim() === id || text(selectedWorkspace.id).trim() === id)) selectedWorkspace = null;
-      render();
-      window.dispatchEvent(new CustomEvent("tpi:studios-updated"));
-      return Promise.resolve({ key: id, source: "browser" });
-    }
-    return Promise.reject(new Error("That Studio is no longer available."));
+      var local = localBroadcastCandidates().find(function (broadcast) { return broadcast && text(broadcast.id).trim() === id; }) || broadcastById(id);
+      if (local && !text(local.studioId).trim() && local.isProduction !== true) {
+        removeLocalStudioRecord(id);
+        tombstoneStudio(id);
+        if (selectedWorkspace && (text(selectedWorkspace.localBroadcastId).trim() === id || text(selectedWorkspace.id).trim() === id)) selectedWorkspace = null;
+        render();
+        window.dispatchEvent(new CustomEvent("tpi:studios-updated"));
+        return { key: id, source: "browser" };
+      }
+      throw new Error("That Studio is no longer available.");
+    });
   }
   function deleteStudioPermanently(key) {
     return deleteStudioAttempt(key).catch(function (error) {

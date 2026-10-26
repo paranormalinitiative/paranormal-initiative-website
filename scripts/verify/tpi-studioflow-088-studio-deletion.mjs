@@ -319,7 +319,16 @@ async function confirmDeleteDialog(title) {
   const disabledBefore = await js("var button = document.querySelector('.studio-delete-actions .ghost-button'); return button ? button.disabled : null;");
   if (disabledBefore !== false) throw new Error(`Delete Studio permanently should be enabled after typing the name (state: ${disabledBefore})`);
   if (!(await clickButtonByText("Delete Studio permanently", ".modal"))) throw new Error("Delete Studio permanently is unavailable");
-  await waitFor("Delete dialog to close", async () => (await count(".studio-delete-warning")) === 0, 15_000);
+  // The dialog closes only on a verified deletion; on failure it stays open
+  // with `.studio-delete-error`. Race both outcomes so a failure is reported
+  // immediately with its real reason instead of a bare timeout.
+  await waitFor("Studio deletion outcome", async () => (await count(".studio-delete-warning")) === 0 || (await count(".studio-delete-error")) > 0, 15_000);
+  if ((await count(".studio-delete-warning")) !== 0) {
+    const detail = await js(
+      "var error = document.querySelector('.studio-delete-error'); var status = document.querySelector('.tpi-studio-status'); return { dialogError: error ? (error.textContent || '').trim() : '', bridgeStatus: status ? (status.textContent || '').trim() : '', productionLock: window.__tpiStudioProductionLock || null };"
+    ).catch(() => ({}));
+    throw new Error(`Delete confirmation failed for ${title}: nothing was deleted. detail=${JSON.stringify(detail)}`);
+  }
 }
 async function typeConfirmationName(title) {
   await withElement(".studio-delete-actions", () => {}, 5_000);
