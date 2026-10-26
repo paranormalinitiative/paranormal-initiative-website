@@ -562,13 +562,37 @@ try {
   await typeConfirmationName(keepTitle);
   if (!(await clickButtonByText("Cancel", ".modal"))) throw new Error("Cancel is unavailable");
   await waitFor("Delete dialog to close", async () => (await count(".studio-delete-warning")) === 0, 15_000);
-  if (!(await clickCardButton(keepTitle, "More Actions"))) throw new Error("More Actions is unavailable");
-  await sleep(200);
-  if (!(await clickCardButton(keepTitle, "Archive Studio"))) throw new Error("Archive Studio is unavailable");
-  await waitFor("archived Studio appears in the Archived Studios view", async () => {
-    const section = await js("var node = document.querySelector('.studio-archive-section'); return node ? node.textContent : '';");
-    return section.indexOf(keepTitle) >= 0;
-  }, 30_000);
+  // Archive is retried like the delete-dialog interaction (the card grid
+  // re-renders around catalog updates), and a timeout reports the panel
+  // status, the visible card sources, and the server record so a silently
+  // rejected request cannot hide behind a bare wait.
+  let archivedShown = false;
+  let archiveDetail = "";
+  for (let attempt = 0; attempt < 3 && !archivedShown; attempt += 1) {
+    if (attempt) await sleep(1500);
+    if (!(await clickCardButton(keepTitle, "More Actions"))) {
+      archiveDetail = `attempt ${attempt + 1}: More Actions is unavailable`;
+      continue;
+    }
+    await sleep(250);
+    if (!(await clickCardButton(keepTitle, "Archive Studio"))) {
+      archiveDetail = `attempt ${attempt + 1}: Archive Studio is unavailable`;
+      continue;
+    }
+    archivedShown = await waitFor("archived Studio appears in the Archived Studios view", async () => {
+      const section = await js("var node = document.querySelector('.studio-archive-section'); return node ? node.textContent : '';");
+      return section.indexOf(keepTitle) >= 0;
+    }, 15_000).then(() => true).catch(() => false);
+    if (!archivedShown) {
+      const probe = await js("var s = document.querySelector('.tpi-studio-status'); var cards = Array.from(document.querySelectorAll('.studio-card')).map(function (c) { var t = c.querySelector('.studio-card-title strong'); var m = c.querySelectorAll('.studio-card-title small'); return { title: t ? (t.textContent || '').trim() : '', labels: Array.from(m).map(function (n) { return (n.textContent || '').trim(); }) }; }); return { status: s ? s.textContent : null, archiveSection: Boolean(document.querySelector('.studio-archive-section')), cards: cards };");
+      archiveDetail = `attempt ${attempt + 1}: ${JSON.stringify(probe)}`;
+    }
+  }
+  const archivedRecordProbe = await workspaceById(studioKeep.id).catch(() => null);
+  if (!archivedShown) {
+    archiveDetail += ` | server record: ${JSON.stringify({ version: archivedRecordProbe?.version, status: archivedRecordProbe?.status, deleted: archivedRecordProbe?.deletedAt || archivedRecordProbe?.deleted_at || null })}`;
+    throw new Error(`archived Studio never appeared in the Archived Studios view: ${archiveDetail}`);
+  }
   const activeGridText = await js("var grid = document.querySelector('.studio-card-grid'); return grid ? grid.textContent : '';");
   check("Test 9a: archived Studios are excluded from the active listing", activeGridText.indexOf(keepTitle) < 0, activeGridText.slice(0, 200));
   check("Test 9b: the Archived Studios view keeps restore and delete actions", await buttonExists("Restore Archived Studio", ".studio-archive-section") && await buttonExists("Delete Studio", ".studio-archive-section"));
