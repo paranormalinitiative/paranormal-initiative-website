@@ -18,6 +18,26 @@ for current commit, push, deployment, and live-verification procedure.
 
 ## Current production reconciliation
 
+## TPI-STUDIOFLOW-087 — 2026-10-25
+
+Independent Studios, Studio Dashboards, and Production Ownership. Riverside-inspired
+organization approved by the owner: every Studio is a permanent, independent
+production environment with its own dashboard (Enter Studio, Livestreams,
+Recordings, Webinars, Media, Studio Settings) and its own productions. Homepage
+and My Studios must resolve the same authorized Studio identities; every
+livestream, recording, and webinar carries a stable owning-Studio association.
+No Reusable Studios, no new organizational layers, no replacement of the
+working Studio identity or switching system. Phases: read-only architecture
+investigation with a report before implementation, then homepage/dashboards,
+production ownership for new productions, Studio management (rename, archive,
+restore; permanent deletion reported separately), and regression plus live
+verification. Destructive migrations, bulk historical production reassignment,
+irreversible deletion, identity-system replacement, and destructive
+browser-local/server reconciliation require separate owner approval. Archived
+verbatim at
+[`TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md`](TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md).
+Status: `REQUESTED / PHASE 1 ARCHITECTURE INVESTIGATION`.
+
 ## TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001 — 2026-10-25
 
 Emergency live production repair: remediates the owner's "Testing 123"
@@ -451,3 +471,4 @@ kept in both places so no issued text is lost.
 | (unnumbered) | STUDIOFLOW EMERGENCY DEVELOPMENT / PRODUCTION PARITY INVESTIGATION AND REPAIR — with Mandatory Addition (issued directly to the development agent, not via the directive conversation) | 2026-10-25 | [STUDIOFLOW-EMERGENCY-DEVELOPMENT-PRODUCTION-PARITY.md](STUDIOFLOW-EMERGENCY-DEVELOPMENT-PRODUCTION-PARITY.md) |
 | (unnumbered) | STUDIOFLOW PRODUCTION PARITY INVESTIGATION — AUTHORIZATION (authenticated parity investigation, Testing 123 persistence inquiry, documentation reconciliation, and archive Git-exclusion resolution) | 2026-10-25 | [STUDIOFLOW-PRODUCTION-PARITY-INVESTIGATION-AUTHORIZATION.md](STUDIOFLOW-PRODUCTION-PARITY-INVESTIGATION-AUTHORIZATION.md) |
 | (unnumbered) | TPI-STUDIOFLOW — CRITICAL STUDIO CREATION, SWITCHING & WORKSPACE ISOLATION RECOVERY (owner rejection of the Integrated Recovery; runtime Studio switching/creation repair required) | 2026-10-25 | [STUDIOFLOW-CRITICAL-STUDIO-CREATION-SWITCHING-WORKSPACE-ISOLATION-RECOVERY.md](STUDIOFLOW-CRITICAL-STUDIO-CREATION-SWITCHING-WORKSPACE-ISOLATION-RECOVERY.md) |
+| TPI-STUDIOFLOW-087 | INDEPENDENT STUDIOS, STUDIO DASHBOARDS, AND PRODUCTION OWNERSHIP | 2026-10-25 | [TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md](TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md) |
