@@ -1,0 +1,294 @@
+
+> verify:studioflow-089-deletion-safety
+> node scripts/verify/tpi-studioflow-089-deletion-safety.mjs
+
+{
+  "suite": "TPI-STUDIOFLOW-089-DELETION-SAFETY",
+  "base": "http://127.0.0.1:8787",
+  "runId": "mvpt3639",
+  "checks": [
+    {
+      "name": "Scenario 1a: the dialog shows the exact Studio name",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1b: the inventory identifies the immutable Studio ID",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1c: the inventory identifies the storage location",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1d: the inventory lists livestreams, recording sessions, webinars and scheduled productions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1e: the dialog offers two distinct delete options",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1f: the default option preserves recordings and media",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1g: the dialog warns that deletion is permanent",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1h: permanent deletion stays disabled until the name is typed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1i: a mismatched name keeps deletion disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 1j: cancelling leaves the Studio completely untouched",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 2a: the deleted empty Studio disappears from Home",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 2b: the deleted empty Studio disappears from My Studios",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 2c: the empty Studio record is permanently unreadable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 2d: the deleted identity is tombstoned against recreation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3a-i: the inventory counts the Studio's saved recordings",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3a-ii: studio-only deletion preserves the recording in the Library",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3a-iii: the preserved recording is detached (explicitly unassigned)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3a-iv: the preserved recording's media blob survives",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3b-i: the contents option describes deletion of exclusive content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3b-ii: contents deletion requires the additional confirmation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3b-iii: contents deletion removes the Studio's recording record",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 3b-iv: contents deletion removes the recording's media blob",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4a fixture: exclusive media uploads to the Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4a fixture: the exclusive asset is readable before deletion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4a-i: the inventory counts the Studio's media",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4a-ii: exclusive Studio media is permanently deleted with contents",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4b fixture: shared media uploads to the Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4b fixture: a second Studio exists to reference the same media",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4b fixture: the second Studio's configuration references the media",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4b-i: the inventory reports the media shared with another Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4b-ii: media shared with another Studio is never deleted",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 4b-iii: the referencing Studio keeps its configuration and reference",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 5a: browser-local deletion removes the Studio's own listing and configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 5b: the other browser-local Studio's snapshot is untouched",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 5c: unrelated recovery snapshots are preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 5d: the other browser-local Studio remains listed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 6a: an archived Studio can be permanently deleted",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 6b: the deleted archived Studio leaves the Archived Studios view",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 7 fixture: an active production session starts",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 7a: deletion during an active recording is blocked",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 7b: the blocked deletion deletes nothing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 7c: deletion succeeds after the production is safely stopped",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 8 fixture: another tab renames the Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 8a: a stale tab's deletion is refused against the confirmed inventory",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 8b: the interface reports the failure without claiming success",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 8c: the failed stale-tab deletion deletes nothing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 12a: failures carry a concrete reason",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 8d: a fresh confirmation deletes the Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 11a: a duplicate deletion request converges instead of failing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 11b: the reconciled deletion still reports what was deleted and retained",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 9a: deleted Studios stay deleted after refresh",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 10a: unrelated Studios keep their own saved configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 10b: unrelated Studios' recordings stay attached",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 10c: unrelated Studios' recordings keep their media",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 10d: the unrelated Studio's card remains",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario 10e: the retained (non-exclusive) production is preserved and detached",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "passed": 56,
+  "failed": 0
+}
+EXIT=0

@@ -329,7 +329,7 @@
   // verified switching, saving, and integrity paths as the My Studios menu.
   window.__tpiStudioWorkspace = Object.assign(window.__tpiStudioWorkspace || {}, { currentForBackup: currentStudioForBackup, restoreLocalStudioFromBackup: restoreLocalStudioFromBackup, integrityReport: function () { return selectedWorkspace ? integrityReport(selectedWorkspace) : null; }, lastStatusMessage: function () { return lastMessageState; },      listStudios: function () { return studioEntries(); }, studioTitle: function (key) { return studioTitleForKey(key); }, studioConfiguration: function (key) { return studioConfiguration(key); }, openStudioByKey: function (key) { var target = workspaces.find(function (workspace) { return workspace && (text(workspace.id).trim() === text(key).trim() || text(workspace.localBroadcastId).trim() === text(key).trim()); }); if (target) { openWorkspace(target); return true; } var local = localBroadcastCandidates().find(function (broadcast) { return text(broadcast.id).trim() === text(key).trim(); }); if (local) { openLocalWorkspace(local); return true; } return false; }, createStudio: function (title) { return createStudio(title); }, renameStudioByKey: function (key, title) { var name = text(title).trim().slice(0, 180); if (!name) return Promise.reject(new Error("Enter a Studio name.")); var target = workspaces.find(function (workspace) { return workspace && (text(workspace.id).trim() === text(key).trim() || text(workspace.localBroadcastId).trim() === text(key).trim()); });    if (target) { return saveCurrent({ force: true }).then(function (saved) { if (!saved) throw new Error("The current Studio could not be saved before renaming."); // The workspace list carries no `state`; renaming must PATCH the complete
     // saved configuration, so re-read the full record before writing it back.
-    return api("/api/studio/workspaces/" + encodeURIComponent(target.id)).then(function (current) { var record = current && current.workspace ? current.workspace : target; var state = clone(record.state || {}); state.broadcast = Object.assign({}, state.broadcast || {}, { id: text(state.broadcast && state.broadcast.id) || text(record.localBroadcastId) || text(target.localBroadcastId), title: name }); return api("/api/studio/workspaces/" + encodeURIComponent(target.id), { method: "PATCH", body: JSON.stringify({ title: name, state: state, expectedVersion: record.version }) }).then(function (body) { var updated = body.workspace; workspaces = workspaces.map(function (item) { return item.id === updated.id ? updated : item; }); if (selectedWorkspace && selectedWorkspace.id === updated.id) { selectedWorkspace = updated; applyState(updated); } var hostId = text(updated.localBroadcastId).trim(); if (hostId) { var entries = read(KEYS.broadcasts, []); if (Array.isArray(entries)) write(KEYS.broadcasts, entries.map(function (item) { return item && text(item.id).trim() === hostId ? Object.assign({}, item, { title: name }) : item; })); } cacheWorkspaces(); render(); window.dispatchEvent(new CustomEvent("tpi:studios-updated")); return updated; }); }); }); } var broadcast = broadcastById(key); if (!broadcast || text(broadcast.studioId).trim()) return Promise.reject(new Error("That Studio is no longer available.")); var broadcasts = read(KEYS.broadcasts, []).map(function (item) { return item && item.id === broadcast.id ? Object.assign({}, item, { title: name }) : item; }); write(KEYS.broadcasts, broadcasts); var entry = localSnapshot(broadcast.id); if (entry && entry.state) { entry.state.broadcast = Object.assign({}, entry.state.broadcast || {}, { title: name }); try { persistLocalSnapshot(entry.state); } catch (error) {} } render(); window.dispatchEvent(new CustomEvent("tpi:studios-updated")); return Promise.resolve({ id: broadcast.id, title: name }); }, archiveStudioByKey: function (key) { var target = workspaces.find(function (workspace) { return workspace && (text(workspace.id).trim() === text(key).trim() || text(workspace.localBroadcastId).trim() === text(key).trim()); }); if (!target) { setMessage("Only server-saved Studios can be archived.", true); return Promise.reject(new Error("Only server-saved Studios can be archived.")); } return lifecycleStudioRequest("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/archive", target.version, "Project could not be archived.").then(function () { workspaces = workspaces.filter(function (item) { return item.id !== target.id; }); if (selectedWorkspace && selectedWorkspace.id === target.id) selectedWorkspace = null; return refresh().then(function () { window.dispatchEvent(new CustomEvent("tpi:studios-updated")); }); }); }, restoreStudioByKey: function (key) { var target = (archivedWorkspaces || []).concat(deletedWorkspaces || []).find(function (workspace) { return workspace && (text(workspace.id).trim() === text(key).trim() || text(workspace.localBroadcastId).trim() === text(key).trim()); }); if (!target) { setMessage("That Studio is not archived.", true); return Promise.reject(new Error("That Studio is not archived.")); } return lifecycleStudioRequest("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/restore", target.version, "The archived Studio could not be restored.").then(function () { return refresh().then(function () { window.dispatchEvent(new CustomEvent("tpi:studios-updated")); }); }); }, deleteStudioByKey: function (key) { return deleteStudioPermanently(key); } });
+    return api("/api/studio/workspaces/" + encodeURIComponent(target.id)).then(function (current) { var record = current && current.workspace ? current.workspace : target; var state = clone(record.state || {}); state.broadcast = Object.assign({}, state.broadcast || {}, { id: text(state.broadcast && state.broadcast.id) || text(record.localBroadcastId) || text(target.localBroadcastId), title: name }); return api("/api/studio/workspaces/" + encodeURIComponent(target.id), { method: "PATCH", body: JSON.stringify({ title: name, state: state, expectedVersion: record.version }) }).then(function (body) { var updated = body.workspace; workspaces = workspaces.map(function (item) { return item.id === updated.id ? updated : item; }); if (selectedWorkspace && selectedWorkspace.id === updated.id) { selectedWorkspace = updated; applyState(updated); } var hostId = text(updated.localBroadcastId).trim(); if (hostId) { var entries = read(KEYS.broadcasts, []); if (Array.isArray(entries)) write(KEYS.broadcasts, entries.map(function (item) { return item && text(item.id).trim() === hostId ? Object.assign({}, item, { title: name }) : item; })); } cacheWorkspaces(); render(); window.dispatchEvent(new CustomEvent("tpi:studios-updated")); return updated; }); }); }); } var broadcast = broadcastById(key); if (!broadcast || text(broadcast.studioId).trim()) return Promise.reject(new Error("That Studio is no longer available.")); var broadcasts = read(KEYS.broadcasts, []).map(function (item) { return item && item.id === broadcast.id ? Object.assign({}, item, { title: name }) : item; }); write(KEYS.broadcasts, broadcasts); var entry = localSnapshot(broadcast.id); if (entry && entry.state) { entry.state.broadcast = Object.assign({}, entry.state.broadcast || {}, { title: name }); try { persistLocalSnapshot(entry.state); } catch (error) {} } render(); window.dispatchEvent(new CustomEvent("tpi:studios-updated")); return Promise.resolve({ id: broadcast.id, title: name }); }, archiveStudioByKey: function (key) { var target = workspaces.find(function (workspace) { return workspace && (text(workspace.id).trim() === text(key).trim() || text(workspace.localBroadcastId).trim() === text(key).trim()); }); if (!target) { setMessage("Only server-saved Studios can be archived.", true); return Promise.reject(new Error("Only server-saved Studios can be archived.")); } return lifecycleStudioRequest("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/archive", target.version, "Project could not be archived.").then(function () { workspaces = workspaces.filter(function (item) { return item.id !== target.id; }); if (selectedWorkspace && selectedWorkspace.id === target.id) selectedWorkspace = null; return refresh().then(function () { window.dispatchEvent(new CustomEvent("tpi:studios-updated")); }); }); }, restoreStudioByKey: function (key) { var target = (archivedWorkspaces || []).concat(deletedWorkspaces || []).find(function (workspace) { return workspace && (text(workspace.id).trim() === text(key).trim() || text(workspace.localBroadcastId).trim() === text(key).trim()); }); if (!target) { setMessage("That Studio is not archived.", true); return Promise.reject(new Error("That Studio is not archived.")); } return lifecycleStudioRequest("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/restore", target.version, "The archived Studio could not be restored.").then(function () { return refresh().then(function () { window.dispatchEvent(new CustomEvent("tpi:studios-updated")); }); }); }, deleteStudioByKey: function (key, options) { return deleteStudioPermanently(key, options); }, studioDeletionInventory: function (key) { return studioDeletionInventory(key); }, blobKeysSharedWithOtherStudios: function (key, candidateKeys) { return blobKeysSharedWithOtherStudios(key, candidateKeys); } });
   function backupPayload(workspace) { var state = workspace && workspace.state ? workspace.state : stateForSave(); if (!state) return null; var exportedAt = new Date().toISOString(); return { applicationId: "tpi-studioflow", formatVersion: 1, backupType: "workspace-configuration", exportedAt: exportedAt, project: { projectId: text(workspace && workspace.id), projectName: text(workspace && workspace.title) || text(state.broadcast && state.broadcast.title) || "Untitled Studio", createdAt: text(workspace && workspace.createdAt), lastSavedAt: text(workspace && (workspace.updatedAt || workspace.lastOpenedAt)) || exportedAt }, workspace: { title: text(workspace && workspace.title) || text(state.broadcast && state.broadcast.title) || "Untitled Studio", description: text(workspace && workspace.description) || text(state.broadcast && state.broadcast.description) || "", state: state } }; }
   function downloadBackup(payload) { if (!payload) { setMessage("Select or create a project before exporting.", true); return; } var blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" }), url = URL.createObjectURL(blob), anchor = document.createElement("a"), slug = String(payload.workspace.title || "project").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "project"; anchor.href = url; anchor.download = "tpi-studioflow-" + slug + "-project-backup.json"; document.body.appendChild(anchor); anchor.click(); anchor.remove(); URL.revokeObjectURL(url); savePortableState(text(payload.project && payload.project.projectId) || text(selectedWorkspace && selectedWorkspace.id), { status: "BACKUP PREPARED — CONFIRM FILE SAVED", preparedVersion: Number(selectedWorkspace && selectedWorkspace.version) || null, lastError: null }); }
   function exportCurrent() {
@@ -520,8 +520,113 @@
       });
     });
   }
-  function deleteStudioAttempt(key) {
+  // TPI-STUDIOFLOW-089 §2: pre-deletion inventory. Merges the server's view
+  // (Studio-owned productions with sharing analysis, Studio media, recovery
+  // snapshots) with the browser-local view (local Productions, saved
+  // recordings, snapshot presence, storage location) and pins the version the
+  // owner confirms against, so a stale dialog can never delete data it never
+  // showed. Read-only.
+  function studioDeletionInventory(key) {
     var id = text(key).trim();
+    if (!id) return Promise.reject(new Error("Select a Studio."));
+    var located = Promise.resolve(findServerWorkspaceEntry(id));
+    if (!findServerWorkspaceEntry(id)) {
+      located = reloadWorkspaceLists().catch(function () { return null; }).then(function () { return findServerWorkspaceEntry(id); });
+    }
+    return located.then(function (target) {
+      var entry = studioEntries().find(function (item) { return item && (item.key === id || item.workspaceId === id); }) || null;
+      var keys = {};
+      keys[id] = true;
+      if (entry && entry.workspaceId) keys[entry.workspaceId] = true;
+      var matches = function (item) { return item && (keys[text(item.studioId).trim()] === true); };
+      var allBroadcasts = read(KEYS.broadcasts, []);
+      var productions = (Array.isArray(allBroadcasts) ? allBroadcasts : []).filter(function (item) { return matches(item) && item.isProduction === true; });
+      var library = read("studioflow.libraryItems", []);
+      var recordings = (Array.isArray(library) ? library : []).filter(matches);
+      var snapshotPresent = Boolean(localSnapshot(id) || (entry && entry.workspaceId && localSnapshot(entry.workspaceId)));
+      var candidates = [];
+      productions.forEach(function (item) { [item.recordingBlobKey, item.thumbnailKey, item.sourceMediaKey].forEach(function (blobKey) { if (text(blobKey).trim()) candidates.push(text(blobKey).trim()); }); });
+      recordings.forEach(function (item) { [item.recordingBlobKey, item.thumbnailKey, item.sourceMediaKey].forEach(function (blobKey) { if (text(blobKey).trim()) candidates.push(text(blobKey).trim()); }); });
+      // Media owned by the Studio's saved configuration (intro/outro clips,
+      // backgrounds, logos, overlays, soundboards) counts as Studio media too.
+      referencedBlobKeys(studioConfiguration(id)).forEach(function (blobKey) { if (text(blobKey).trim()) candidates.push(text(blobKey).trim()); });
+      var shared = blobKeysSharedWithOtherStudios(id, candidates);
+      var inventory = {
+        key: id,
+        workspaceId: entry && entry.workspaceId ? entry.workspaceId : (target ? text(target.id).trim() : null),
+        title: entry ? entry.title : (target ? text(target.title).trim() : "Untitled Studio"),
+        storage: !target ? (snapshotPresent ? "both" : "browser-local") : (snapshotPresent ? "both" : "server"),
+        version: entry && Number.isSafeInteger(entry.version) ? entry.version : (target ? Number(target.version) || null : null),
+        productions: {
+          total: productions.length,
+          livestreams: productions.filter(function (item) { return text(item.kind).trim() === "live"; }).length,
+          recordingSessions: productions.filter(function (item) { return text(item.kind).trim() === "recording"; }).length,
+          webinars: productions.filter(function (item) { return text(item.kind).trim() === "webinar"; }).length,
+          scheduled: productions.filter(function (item) { return Boolean(item.scheduledAt) && Date.parse(item.scheduledAt) > Date.now(); }).length
+        },
+        recordings: recordings.length,
+        localRecoverySnapshot: snapshotPresent,
+        localBlobKeys: Array.from(new Set(candidates)),
+        sharedBlobKeys: Object.keys(shared),
+        server: null
+      };
+      if (!target) return inventory;
+      return api("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/deletion-inventory").then(function (body) {
+        inventory.server = body || null;
+        if (body && body.workspace && Number.isSafeInteger(Number(body.workspace.version))) inventory.version = Number(body.workspace.version);
+        // The server record is authoritative for identity facts: a rename in
+        // another tab must show and must change the confirmation digest.
+        if (body && body.workspace && text(body.workspace.title).trim()) inventory.title = text(body.workspace.title).trim();
+        return inventory;
+      }, function (error) {
+        // The inventory must never overstate what is known: if the server view
+        // is unavailable the dialog says so instead of showing zero counts.
+        inventory.serverUnavailable = describe(error, "The server-side inventory is unavailable.");
+        return inventory;
+      });
+    });
+  }
+  // TPI-STUDIOFLOW-089: which candidate local blob keys are still referenced by
+  // another Studio's saved configuration. Deletion must never remove media whose
+  // ownership cannot be proven exclusive to the Studio being deleted.
+  function blobKeysSharedWithOtherStudios(key, candidateKeys) {
+    var id = text(key).trim();
+    var candidates = {};
+    (Array.isArray(candidateKeys) ? candidateKeys : []).forEach(function (blobKey) { var value = text(blobKey).trim(); if (value) candidates[value] = true; });
+    var shared = {};
+    if (!Object.keys(candidates).length) return shared;
+    var states = [];
+    var snapshots = localSnapshots();
+    Object.keys(snapshots || {}).forEach(function (snapshotKey) {
+      if (snapshotKey === id) return;
+      var entry = snapshots[snapshotKey];
+      if (entry && entry.state) states.push(entry.state);
+    });
+    var cache = read(KEYS.workspaceCache, null);
+    var list = cache && Array.isArray(cache.active) ? cache.active : [];
+    list.forEach(function (workspace) {
+      if (!workspace) return;
+      var workspaceKey = text(workspace.localBroadcastId).trim() || text(workspace.id).trim();
+      if (!workspaceKey || workspaceKey === id || text(workspace.id).trim() === id) return;
+      if (workspace.state) states.push(workspace.state);
+    });
+    states.forEach(function (state) {
+      referencedBlobKeys(state).forEach(function (blobKey) { if (candidates[blobKey]) shared[blobKey] = true; });
+    });
+    return shared;
+  }
+  // TPI-STUDIOFLOW-088/089: permanent deletion. options.mode selects
+  // "studio-only" (default) or "with-contents". options.expectedVersion pins
+  // the version the owner confirmed against (from the deletion inventory): a
+  // stale dialog then fails with a workspace_conflict instead of silently
+  // retrying against data the owner never saw. Without a pinned version the
+  // established one-time fresh-version retry is kept. The server's
+  // alreadyDeleted convergence makes duplicate requests idempotent.
+  function deleteStudioAttempt(key, options) {
+    options = options || {};
+    var id = text(key).trim();
+    var mode = options.mode === "with-contents" ? "with-contents" : "studio-only";
+    var pinnedVersion = Number.isSafeInteger(options.expectedVersion) && options.expectedVersion >= 1 ? options.expectedVersion : null;
     if (!id) return Promise.reject(new Error("Select a Studio to delete."));
     return deleteProductionBlock().then(function (blocked) {
       if (blocked) throw new Error(blocked);
@@ -541,21 +646,27 @@
         var previousSuppression = suppressAutosave;
         suppressAutosave = true;
         function purgeAttempt(tries) {
-          return api("/api/studio/workspaces/" + encodeURIComponent(target.id)).then(function (current) {
+          var versionRequest = pinnedVersion !== null ? Promise.resolve({ version: pinnedVersion }) : api("/api/studio/workspaces/" + encodeURIComponent(target.id)).then(function (current) {
             var record = current && current.workspace ? current.workspace : target;
-            return api("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/purge", { method: "POST", body: JSON.stringify({ expectedVersion: record.version }) });
+            return { version: record.version };
+          });
+          return versionRequest.then(function (record) {
+            return api("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/purge", { method: "POST", body: JSON.stringify({ expectedVersion: record.version, mode: mode }) });
           }).catch(function (error) {
+            // A pinned-version conflict means the Studio changed after the
+            // owner reviewed the inventory — never retry past it silently.
+            if (pinnedVersion !== null) throw error;
             if (tries > 0 && error && error.body && error.body.code === "workspace_conflict") return purgeAttempt(tries - 1);
             throw error;
           });
         }
-        return purgeAttempt(2).then(function () {
+        return purgeAttempt(2).then(function (result) {
           removeLocalStudioRecord(hostId);
           tombstoneStudio(hostId);
           if (selectedWorkspace && selectedWorkspace.id === target.id) selectedWorkspace = null;
           return refresh().then(function () {
             window.dispatchEvent(new CustomEvent("tpi:studios-updated"));
-            return { key: hostId, source: "server" };
+            return Object.assign({ key: hostId, source: "server", mode: mode }, result && typeof result === "object" ? result : {});
           });
         }).finally(function () { suppressAutosave = previousSuppression; });
       }
@@ -566,14 +677,14 @@
         if (selectedWorkspace && (text(selectedWorkspace.localBroadcastId).trim() === id || text(selectedWorkspace.id).trim() === id)) selectedWorkspace = null;
         render();
         window.dispatchEvent(new CustomEvent("tpi:studios-updated"));
-        return { key: id, source: "browser" };
+        return { key: id, source: "browser", mode: mode, ok: true, purged: true };
       }
       throw new Error("That Studio is no longer available.");
     });
     });
   }
-  function deleteStudioPermanently(key) {
-    return deleteStudioAttempt(key).catch(function (error) {
+  function deleteStudioPermanently(key, options) {
+    return deleteStudioAttempt(key, options).catch(function (error) {
       setMessage(describe(error, "The Studio could not be deleted permanently."), true);
       throw error;
     });

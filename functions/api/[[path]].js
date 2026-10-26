@@ -168,6 +168,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/restore$/)) return requireStudioAccess(request, env, user => handleRestoreStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/archive$/)) return requireStudioAccess(request, env, user => handleArchiveStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/purge$/)) return requireStudioAccess(request, env, user => handlePurgeStudioWorkspace(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+\/deletion-inventory$/)) return requireStudioAccess(request, env, user => handleStudioDeletionInventory(path, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
@@ -4946,7 +4947,7 @@ async function handleGetStudioMedia(path, env, user) {
   if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.get !== "function") return json({ error: "Persistent Studio media storage is not configured in this environment.", code: "studio_media_unavailable" }, 503, { "Cache-Control": "no-store" });
   try {
     const workspace = await getOwnedStudioWorkspace(env, workspaceId, user.id);
-    if (!workspace || workspace.deleted_at) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
+    if (!workspace) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
     const row = await env.TPI_DB.prepare(`
       SELECT id, workspace_id, object_key, original_name, content_type, media_kind, size_bytes, created_at
       FROM studio_media_assets
@@ -4954,6 +4955,12 @@ async function handleGetStudioMedia(path, env, user) {
       LIMIT 1
     `).bind(assetId, workspaceId, user.id).first();
     if (!row) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
+    // TPI-STUDIOFLOW-089 preservation model: media retained by "Delete Studio
+    // only" (and shared media retained by "Delete Studio and its contents")
+    // keeps its asset row after the Studio is deleted, and that row — id +
+    // workspace_id + owner_id — is the ownership proof. The owner's saved URL
+    // keeps working for preserved media; a deleted Studio still never lists or
+    // recreates anything above.
     const object = await env.TPI_MEDIA.get(row.object_key);
     if (!object) return json({ error: "Media file not found." }, 404, { "Cache-Control": "private, no-store" });
     const headers = new Headers();
@@ -5468,57 +5475,244 @@ async function handleRestoreStudioWorkspace(path, request, env, user) {
   }
 }
 
-// TPI-STUDIOFLOW-088: permanent Studio deletion. The Studio's identity
+// TPI-STUDIOFLOW-088/089: permanent Studio deletion. The Studio's identity
 // content, saved configuration, and its own recovery snapshots are removed
-// permanently. Productions are preserved but detached (their
-// studio_workspace_id is cleared) and stored media is untouched — bulk media
-// deletion requires separate owner approval. The workspace row survives as a
-// stripped purge marker (empty title and state; the schema's status CHECK
-// allows only 'active'/'archived') so a stale browser cannot recreate the
-// deleted Studio through the create-by-host path. Every handler that must not
-// see a purged Studio detects the empty title.
+// permanently. The workspace row survives as a stripped purge marker (empty
+// title and state; the schema's status CHECK allows only 'active'/'archived')
+// so a stale browser cannot recreate the deleted Studio through the
+// create-by-host path. Every handler that must not see a purged Studio detects
+// the empty title.
+// TPI-STUDIOFLOW-089 makes deletion a controlled two-mode operation:
+//   mode "studio-only"   (default) permanently removes the Studio identity,
+//     scenes, saved configuration and its own recovery snapshots while its
+//     productions, recordings and media are preserved (detached and retained);
+//   mode "with-contents" additionally removes the Studio's EXCLUSIVELY owned
+//     productions and media. Anything shared — a public listing, member
+//     engagement, media referenced by another Studio — is retained and
+//     reported; ownership that cannot be proven is never deleted.
+// Commit-point ordering (TPI-STUDIOFLOW-089 §7): the version-checked tombstone
+// UPDATE commits the deletion first, before any other mutation, so a failed or
+// concurrent request leaves the Studio fully intact. The cleanup steps that
+// follow the commit are idempotent and re-runnable: an interrupted or duplicate
+// request finds the tombstone and finishes the remaining cleanup instead of
+// leaving partial state or claiming false success.
 async function handlePurgeStudioWorkspace(path, request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
   try {
     const id = workspacePathId(path, "/purge");
     const existing = await getOwnedStudioWorkspace(env, id, user.id);
-    if (!existing || !clean(existing.title)) return json({ error: "Studio not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
-    const guard = studioProductionGuard(existing, true);
+    if (!existing) return json({ error: "That Studio is no longer available.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+    const data = await readJson(request) || {};
+    const mode = data.mode === "with-contents" ? "with-contents" : "studio-only";
+    // Duplicate / interrupted deletion: the purge marker means the deletion is
+    // already committed. Re-run the idempotent cleanup and report success so a
+    // retried request converges instead of failing or double-deleting.
+    if (!clean(existing.title)) {
+      const cleanup = await cleanupPurgedStudio(env, user, existing, mode);
+      return json({ ok: true, purged: true, alreadyDeleted: true, mode, id, ...cleanup }, 200, { "Cache-Control": "private, no-store" });
+    }
+    // An active recording or livestream that cannot be safely finalized blocks
+    // both modes. A scheduled production only blocks "studio-only" deletion:
+    // under "with-contents" it is removed with the Studio's contents (or
+    // retained when shared), so neither option orphans it.
+    const guard = studioProductionGuard(existing, mode === "with-contents" ? false : true);
     if (guard) return json(guard, 409, { "Cache-Control": "no-store" });
-    const data = await readJson(request);
     const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
     if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
-    if (expectedVersion !== null && expectedVersion !== Number(existing.version)) return json({ error: "This Studio changed elsewhere. Refresh before deleting it permanently.", code: "workspace_conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
+    if (expectedVersion !== null && expectedVersion !== Number(existing.version)) return json({ error: "This Studio changed elsewhere. Review the updated Studio and confirm deletion again.", code: "workspace_conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
     const now = new Date().toISOString();
-    // Preserve productions and sessions; only detach them from the deleted
-    // Studio so nothing dangles and no other Studio's data is touched.
-    await env.TPI_DB.prepare("UPDATE live_broadcasts SET studio_workspace_id = NULL, updated_at = ? WHERE studio_workspace_id = ? AND creator_id = ?")
-      .bind(now, id, user.id).run();
-    await env.TPI_DB.prepare("UPDATE studio_production_sessions SET studio_workspace_id = NULL WHERE studio_workspace_id = ? AND creator_id = ?")
-      .bind(id, user.id).run();
-    // The Studio's own recovery snapshots are exclusive to it and go with its
-    // configuration. Cleanup failure never blocks the purge itself.
-    if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function") {
-      try {
-        const prefix = `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${snapshotSegment(id)}/`;
-        const listed = await env.TPI_MEDIA.list({ prefix, limit: 1000 });
-        await Promise.all((listed.objects || []).map(object => env.TPI_MEDIA.delete(object.key)));
-      } catch (error) {
-        // Snapshot cleanup is best-effort; the purge marker below already
-        // removes the Studio from every listing.
-      }
-    }
+    // Commit point. Nothing else has run before this version-checked purge
+    // marker; on a concurrent change zero rows update and the Studio — and all
+    // of its data — is untouched.
     const purgeResult = await env.TPI_DB.prepare("UPDATE studio_workspaces SET status = 'archived', deleted_at = ?, title = '', description = '', state_json = '', studio_number = NULL, version = version + 1, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
       .bind(now, now, id, user.id, Number(existing.version)).run();
     if (!Number(purgeResult.meta?.changes || 0)) {
       // A concurrent save landed between the read and the marker update. The
       // Studio is untouched; the client may refresh and retry.
       const current = await getOwnedStudioWorkspace(env, id, user.id);
-      return json({ error: "This Studio changed elsewhere. Refresh before deleting it permanently.", code: "workspace_conflict", workspace: studioWorkspacePayload(current) }, 409, { "Cache-Control": "no-store" });
+      return json({ error: "This Studio changed elsewhere. Review the updated Studio and confirm deletion again.", code: "workspace_conflict", workspace: studioWorkspacePayload(current) }, 409, { "Cache-Control": "no-store" });
     }
-    return json({ ok: true, purged: true, id }, 200, { "Cache-Control": "private, no-store" });
+    const cleanup = await cleanupPurgedStudio(env, user, existing, mode);
+    return json({ ok: true, purged: true, alreadyDeleted: false, mode, id, ...cleanup }, 200, { "Cache-Control": "private, no-store" });
   } catch (error) {
     return studioWorkspaceStorageFailure(error);
+  }
+}
+
+// TPI-STUDIOFLOW-089: idempotent post-commit cleanup for a purged Studio. Every
+// step is identity-scoped (studio_workspace_id / workspace_id / the Studio's own
+// snapshot prefix) and safe to run repeatedly, so a duplicate request after an
+// interruption completes the remaining work. Returns what was deleted and what
+// was retained — shared data is preserved with a stated reason and never
+// cascade-deleted — so the interface can report the real outcome.
+async function cleanupPurgedStudio(env, user, workspace, mode) {
+  // studio_workspaces.id is the immutable TEXT UUID; never coerce it to a
+  // number (Number(uuid) is NaN and would silently skip every cleanup below).
+  const id = workspace.id;
+  const now = new Date().toISOString();
+  const summary = {
+    deleted: { productions: 0, media: 0, snapshots: 0 },
+    retained: { productions: 0, media: 0, reasons: [], productionIds: [] }
+  };
+  // 1. Productions owned through this Studio. Exclusive rows (no public
+  // listing, no member engagement) are deleted only in "with-contents" mode;
+  // every other row is detached and retained with its stated reason.
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT lb.id, lb.title, lb.video_id,
+        (SELECT COUNT(*) FROM tpi_videos tv WHERE tv.broadcast_id = lb.id) AS listing_count,
+        (SELECT COUNT(*) FROM live_comments lc WHERE lc.broadcast_id = lb.id) AS comment_count,
+        (SELECT COUNT(*) FROM live_reactions lr WHERE lr.broadcast_id = lb.id) AS reaction_count
+      FROM live_broadcasts lb
+      WHERE lb.studio_workspace_id = ? AND lb.creator_id = ?
+    `).bind(id, user.id).all();
+    for (const row of results || []) {
+      const shared = [];
+      if (row.video_id || Number(row.listing_count)) shared.push("a public listing");
+      if (Number(row.comment_count)) shared.push("member comments");
+      if (Number(row.reaction_count)) shared.push("member reactions");
+      if (mode === "with-contents" && !shared.length) {
+        await env.TPI_DB.prepare("DELETE FROM live_broadcasts WHERE id = ? AND creator_id = ? AND studio_workspace_id = ?").bind(row.id, user.id, id).run();
+        summary.deleted.productions += 1;
+      } else {
+        await env.TPI_DB.prepare("UPDATE live_broadcasts SET studio_workspace_id = NULL, updated_at = ? WHERE id = ? AND creator_id = ? AND studio_workspace_id = ?").bind(now, row.id, user.id, id).run();
+        summary.retained.productions += 1;
+        summary.retained.productionIds.push(row.id);
+        if (mode === "with-contents") {
+          summary.retained.reasons.push(`Production "${row.title}" is retained because it shares ${shared.join(" and ")} with data outside this Studio.`);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Studio production cleanup failed", error);
+    summary.retained.reasons.push("Studio production cleanup could not finish and preserved the remaining records; re-issue the deletion to retry.");
+  }
+  // 2. Production session history is detached in both modes (it is operational
+  // history, not a production or media asset, and is never cascade-deleted).
+  try {
+    await env.TPI_DB.prepare("UPDATE studio_production_sessions SET studio_workspace_id = NULL WHERE studio_workspace_id = ? AND creator_id = ?").bind(id, user.id).run();
+  } catch (error) {
+    console.error("Studio session detach failed", error);
+  }
+  // 3. Studio-specific media. The asset row's (id, workspace_id, owner_id) is
+  // the ownership proof; "with-contents" deletes only assets no other Studio's
+  // saved configuration still references. Ownership that cannot be proven is
+  // preserved (TPI-STUDIOFLOW-089 §3: never delete unproven media).
+  try {
+    const assets = await env.TPI_DB.prepare("SELECT id, object_key FROM studio_media_assets WHERE workspace_id = ? AND owner_id = ?").bind(id, user.id).all();
+    const others = await env.TPI_DB.prepare("SELECT id, title, state_json FROM studio_workspaces WHERE owner_id = ? AND id != ? AND title != ''").bind(user.id, id).all();
+    for (const asset of assets.results || []) {
+      const referenced = (others.results || []).filter((other) => (other.state_json || "").includes(String(asset.id)));
+      if (mode === "with-contents" && !referenced.length) {
+        await env.TPI_DB.prepare("DELETE FROM studio_media_assets WHERE id = ? AND workspace_id = ? AND owner_id = ?").bind(asset.id, id, user.id).run();
+        summary.deleted.media += 1;
+        if (asset.object_key && env.TPI_MEDIA && typeof env.TPI_MEDIA.delete === "function") await env.TPI_MEDIA.delete(asset.object_key).catch(() => {});
+      } else if (mode === "with-contents") {
+        summary.retained.media += 1;
+        summary.retained.reasons.push(`Media asset ${asset.id} is retained because ${referenced.map((other) => other.title || other.id).join(", ")} still references it.`);
+      }
+    }
+  } catch (error) {
+    console.error("Studio media cleanup failed", error);
+    summary.retained.reasons.push("Studio media cleanup could not finish and preserved the remaining assets; re-issue the deletion to retry.");
+  }
+  // 4. The Studio's own recovery snapshots are exclusive to it and go with its
+  // configuration in both modes. Unrelated Studios' snapshot prefixes are never
+  // touched. Cleanup is idempotent — an already-removed object is a no-op.
+  try {
+    if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function") {
+      const prefix = `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${snapshotSegment(id)}/`;
+      const listed = await env.TPI_MEDIA.list({ prefix, limit: 1000 });
+      await Promise.all((listed.objects || []).map(object => env.TPI_MEDIA.delete(object.key)));
+      summary.deleted.snapshots += (listed.objects || []).length;
+    }
+  } catch (error) {
+    console.error("Studio recovery snapshot cleanup failed", error);
+    summary.retained.reasons.push("Recovery snapshot cleanup could not finish; re-issue the deletion to retry.");
+  }
+  return summary;
+}
+
+// TPI-STUDIOFLOW-089 §2: pre-deletion inventory. Identifies everything the
+// permanent-deletion confirmation must disclose before the owner confirms: the
+// Studio's immutable identity, its Studio-owned productions (and which of those
+// share data with the public site or member engagement), its Studio-specific
+// media (and which assets other Studios still reference), scheduled
+// productions, and existing recovery snapshots. Read-only.
+async function handleStudioDeletionInventory(path, env, user) {
+  try {
+    const id = workspacePathId(path, "/deletion-inventory");
+    const existing = await getOwnedStudioWorkspace(env, id, user.id);
+    if (!existing || !clean(existing.title)) return json({ error: "That Studio is no longer available.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+    const inventory = {
+      ok: true,
+      workspace: studioWorkspacePayload(existing),
+      guardStudioOnly: studioProductionGuard(existing, true),
+      guardWithContents: studioProductionGuard(existing, false),
+      productions: [],
+      media: [],
+      recoverySnapshots: 0
+    };
+    try {
+      const { results } = await env.TPI_DB.prepare(`
+        SELECT lb.id, lb.title, lb.status, lb.scheduled_at, lb.video_id,
+          (SELECT COUNT(*) FROM tpi_videos tv WHERE tv.broadcast_id = lb.id) AS listing_count,
+          (SELECT COUNT(*) FROM live_comments lc WHERE lc.broadcast_id = lb.id) AS comment_count,
+          (SELECT COUNT(*) FROM live_reactions lr WHERE lr.broadcast_id = lb.id) AS reaction_count
+        FROM live_broadcasts lb
+        WHERE lb.studio_workspace_id = ? AND lb.creator_id = ?
+      `).bind(id, user.id).all();
+      inventory.productions = (results || []).map((row) => {
+        const shared = [];
+        if (row.video_id || Number(row.listing_count)) shared.push("public listing");
+        if (Number(row.comment_count)) shared.push("member comments");
+        if (Number(row.reaction_count)) shared.push("member reactions");
+        return {
+          id: row.id,
+          title: row.title,
+          status: row.status,
+          scheduledAt: row.scheduled_at || null,
+          exclusive: !shared.length,
+          sharedWith: shared
+        };
+      });
+    } catch (error) {
+      console.error("Studio deletion inventory productions failed", error);
+      inventory.productionsUnavailable = true;
+    }
+    try {
+      const assets = await env.TPI_DB.prepare("SELECT id, original_name, media_kind, size_bytes, created_at FROM studio_media_assets WHERE workspace_id = ? AND owner_id = ?").bind(id, user.id).all();
+      const others = await env.TPI_DB.prepare("SELECT id, title, state_json FROM studio_workspaces WHERE owner_id = ? AND id != ? AND title != ''").bind(user.id, id).all();
+      inventory.media = (assets.results || []).map((row) => {
+        const referenced = (others.results || []).filter((other) => (other.state_json || "").includes(String(row.id)));
+        return {
+          id: row.id,
+          name: row.original_name,
+          kind: row.media_kind,
+          sizeBytes: Number(row.size_bytes || 0),
+          createdAt: row.created_at,
+          exclusive: !referenced.length,
+          referencedBy: referenced.map((other) => ({ workspaceId: other.id, title: other.title }))
+        };
+      });
+    } catch (error) {
+      console.error("Studio deletion inventory media failed", error);
+      inventory.mediaUnavailable = true;
+    }
+    try {
+      if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function") {
+        const prefix = `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${snapshotSegment(id)}/`;
+        const listed = await env.TPI_MEDIA.list({ prefix, limit: 1000 });
+        inventory.recoverySnapshots = (listed.objects || []).length;
+      }
+    } catch (error) {
+      console.error("Studio deletion inventory snapshots failed", error);
+      inventory.snapshotsUnavailable = true;
+    }
+    return json(inventory, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    console.error("Studio deletion inventory failed", error);
+    return json({ error: "The deletion inventory could not be prepared.", code: "inventory_failed" }, 500, { "Cache-Control": "no-store" });
   }
 }
 

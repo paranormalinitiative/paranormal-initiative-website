@@ -48,6 +48,9 @@ check("release preflight runs the Studio ownership and dashboard regression", ()
 check("release preflight runs the Studio deletion and archive regression", () => {
   assert.match(release, /tpi-studioflow-088-studio-deletion\.mjs/);
 });
+check("release preflight runs the Studio deletion safety and data integrity regression", () => {
+  assert.match(release, /tpi-studioflow-089-deletion-safety\.mjs/);
+});
 check("local assets are staged before the managed Worker lifecycle", () => {
   const stage = release.indexOf('run("Stage local assets"');
   const lifecycle = release.indexOf("await verifyAuthLifecycle()");

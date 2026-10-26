@@ -194,6 +194,15 @@ async function preflight() {
   run("Studio deletion and archive management regression", process.execPath, ["scripts/verify/tpi-studioflow-088-studio-deletion.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Studio deletion safety and data integrity regression (TPI-STUDIOFLOW-089
+  // supplemental QA scenarios 1-12): pre-deletion inventory disclosure, the two
+  // distinct delete options with the added contents confirmation, shared-data
+  // retention, active-recording blocking, stale-tab conflict reporting, and
+  // duplicate-deletion convergence. A regression here blocks the release
+  // (TPI-STUDIOFLOW-089 §8).
+  run("Studio deletion safety and data integrity regression", process.execPath, ["scripts/verify/tpi-studioflow-089-deletion-safety.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
