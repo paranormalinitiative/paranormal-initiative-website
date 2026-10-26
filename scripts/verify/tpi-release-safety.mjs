@@ -42,6 +42,12 @@ check("release preflight includes the full local_admin lifecycle", () => {
 check("release preflight runs the Studio Management lifecycle regression", () => {
   assert.match(release, /tpi-studioflow-studio-lifecycle\.mjs/);
 });
+check("release preflight runs the Studio ownership and dashboard regression", () => {
+  assert.match(release, /tpi-studioflow-087-studio-ownership\.mjs/);
+});
+check("release preflight runs the Studio deletion and archive regression", () => {
+  assert.match(release, /tpi-studioflow-088-studio-deletion\.mjs/);
+});
 check("local assets are staged before the managed Worker lifecycle", () => {
   const stage = release.indexOf('run("Stage local assets"');
   const lifecycle = release.indexOf("await verifyAuthLifecycle()");

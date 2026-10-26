@@ -186,6 +186,14 @@ async function preflight() {
   run("Studio ownership and dashboard regression", process.execPath, ["scripts/verify/tpi-studioflow-087-studio-ownership.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Studio deletion and archive management regression (TPI-STUDIOFLOW-088
+  // Directive Tests 1-10): typed-name delete confirmation, permanent deletion
+  // with tombstoning, active-Studio deletion safety, browser-local deletion
+  // with snapshot preservation, and the Archived Studios view. A regression
+  // here blocks the release (TPI-STUDIOFLOW-088 §8).
+  run("Studio deletion and archive management regression", process.execPath, ["scripts/verify/tpi-studioflow-088-studio-deletion.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");

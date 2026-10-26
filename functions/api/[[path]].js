@@ -167,6 +167,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/delete$/)) return requireStudioAccess(request, env, user => handleDeleteStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/restore$/)) return requireStudioAccess(request, env, user => handleRestoreStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/archive$/)) return requireStudioAccess(request, env, user => handleArchiveStudioWorkspace(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/purge$/)) return requireStudioAccess(request, env, user => handlePurgeStudioWorkspace(path, request, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
@@ -5005,7 +5006,7 @@ async function handleListStudioWorkspaces(request, env, user) {
     const url = new URL(request.url);
     const includeArchived = url.searchParams.get("includeArchived") === "1" || url.searchParams.get("includeArchived") === "true";
     const includeDeleted = url.searchParams.get("includeDeleted") === "1" || url.searchParams.get("includeDeleted") === "true";
-    const statusFilter = includeDeleted ? "AND deleted_at IS NOT NULL" : includeArchived ? "AND deleted_at IS NULL AND status = 'archived'" : "AND deleted_at IS NULL AND status = 'active'";
+    const statusFilter = includeDeleted ? "AND deleted_at IS NOT NULL AND title != ''" : includeArchived ? "AND deleted_at IS NULL AND status = 'archived'" : "AND deleted_at IS NULL AND status = 'active'";
     const { results } = await env.TPI_DB.prepare(`
     SELECT id, owner_id, channel_id, room_id, local_broadcast_id, title, description,
            workspace_type, status, studio_number, deleted_at, state_json, version, last_opened_at, created_at, updated_at
@@ -5145,6 +5146,9 @@ async function handleCreateStudioWorkspace(request, env, user) {
     .bind(user.id, localBroadcastId).first();
   if (existing) {
     const current = await getOwnedStudioWorkspace(env, existing.id, user.id);
+    // TPI-STUDIOFLOW-088: a stale browser must never recreate a permanently
+    // deleted Studio through the create-by-host path (empty purge marker).
+    if (current && !clean(current.title)) return json({ error: "This Studio was permanently deleted and cannot be recreated.", code: "workspace_purged" }, 409, { "Cache-Control": "no-store" });
     return json({ error: "A workspace already exists for this broadcast.", code: "workspace_exists", workspace: studioWorkspacePayload(current) }, 409, { "Cache-Control": "no-store" });
   }
   const channel = await env.TPI_DB.prepare("SELECT id FROM tpi_video_channels WHERE owner_id = ? LIMIT 1").bind(user.id).first();
@@ -5426,8 +5430,9 @@ async function handleRestoreStudioWorkspace(path, request, env, user) {
     const existing = await getOwnedStudioWorkspace(env, id, user.id);
     // Restore returns a hidden Studio to the active listing: both Recently
     // Deleted Studios (deleted_at set) and archived Studios (status archived)
-    // are restored here. An active Studio is not restorable.
-    if (!existing || (!existing.deleted_at && existing.status !== "archived")) return json({ error: "Deleted Studio not found.", code: "workspace_not_found" }, 404);
+    // are restored here. An active Studio is not restorable, and a permanently
+    // deleted Studio (empty purge marker) can never be restored (TPI-STUDIOFLOW-088).
+    if (!existing || !clean(existing.title) || (!existing.deleted_at && existing.status !== "archived")) return json({ error: "Deleted Studio not found.", code: "workspace_not_found" }, 404);
     const data = await readJson(request);
     const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
     if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
@@ -5442,11 +5447,65 @@ async function handleRestoreStudioWorkspace(path, request, env, user) {
   }
 }
 
+// TPI-STUDIOFLOW-088: permanent Studio deletion. The Studio's identity
+// content, saved configuration, and its own recovery snapshots are removed
+// permanently. Productions are preserved but detached (their
+// studio_workspace_id is cleared) and stored media is untouched — bulk media
+// deletion requires separate owner approval. The workspace row survives as a
+// stripped purge marker (empty title and state; the schema's status CHECK
+// allows only 'active'/'archived') so a stale browser cannot recreate the
+// deleted Studio through the create-by-host path. Every handler that must not
+// see a purged Studio detects the empty title.
+async function handlePurgeStudioWorkspace(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  try {
+    const id = workspacePathId(path, "/purge");
+    const existing = await getOwnedStudioWorkspace(env, id, user.id);
+    if (!existing || !clean(existing.title)) return json({ error: "Studio not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+    const guard = studioProductionGuard(existing, true);
+    if (guard) return json(guard, 409, { "Cache-Control": "no-store" });
+    const data = await readJson(request);
+    const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
+    if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
+    if (expectedVersion !== null && expectedVersion !== Number(existing.version)) return json({ error: "This Studio changed elsewhere. Refresh before deleting it permanently.", code: "workspace_conflict", workspace: studioWorkspacePayload(existing) }, 409, { "Cache-Control": "no-store" });
+    const now = new Date().toISOString();
+    // Preserve productions and sessions; only detach them from the deleted
+    // Studio so nothing dangles and no other Studio's data is touched.
+    await env.TPI_DB.prepare("UPDATE live_broadcasts SET studio_workspace_id = NULL, updated_at = ? WHERE studio_workspace_id = ? AND creator_id = ?")
+      .bind(now, id, user.id).run();
+    await env.TPI_DB.prepare("UPDATE studio_production_sessions SET studio_workspace_id = NULL WHERE studio_workspace_id = ? AND creator_id = ?")
+      .bind(id, user.id).run();
+    // The Studio's own recovery snapshots are exclusive to it and go with its
+    // configuration. Cleanup failure never blocks the purge itself.
+    if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function") {
+      try {
+        const prefix = `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${snapshotSegment(id)}/`;
+        const listed = await env.TPI_MEDIA.list({ prefix, limit: 1000 });
+        await Promise.all((listed.objects || []).map(object => env.TPI_MEDIA.delete(object.key)));
+      } catch (error) {
+        // Snapshot cleanup is best-effort; the purge marker below already
+        // removes the Studio from every listing.
+      }
+    }
+    const purgeResult = await env.TPI_DB.prepare("UPDATE studio_workspaces SET status = 'archived', deleted_at = ?, title = '', description = '', state_json = '', studio_number = NULL, version = version + 1, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
+      .bind(now, now, id, user.id, Number(existing.version)).run();
+    if (!Number(purgeResult.meta?.changes || 0)) {
+      // A concurrent save landed between the read and the marker update. The
+      // Studio is untouched; the client may refresh and retry.
+      const current = await getOwnedStudioWorkspace(env, id, user.id);
+      return json({ error: "This Studio changed elsewhere. Refresh before deleting it permanently.", code: "workspace_conflict", workspace: studioWorkspacePayload(current) }, 409, { "Cache-Control": "no-store" });
+    }
+    return json({ ok: true, purged: true, id }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return studioWorkspaceStorageFailure(error);
+  }
+}
+
 async function handleGetStudioWorkspace(path, request, env, user) {
   try {
   const id = workspacePathId(path);
   const workspace = await getOwnedStudioWorkspace(env, id, user.id);
-  if (!workspace) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
+  if (!workspace || !clean(workspace.title)) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
   const now = new Date().toISOString();
   await env.TPI_DB.prepare("UPDATE studio_workspaces SET last_opened_at = ?, updated_at = updated_at WHERE id = ? AND owner_id = ?")
     .bind(now, id, user.id).run();
@@ -5497,7 +5556,9 @@ async function handleArchiveStudioWorkspace(path, request, env, user) {
   try {
   const id = workspacePathId(path, "/archive");
   const existing = await getOwnedStudioWorkspace(env, id, user.id);
-  if (!existing) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404);
+  // Deleted or permanently deleted Studios cannot be archived (TPI-STUDIOFLOW-088):
+  // archiving a purge marker would put it back into a recoverable listing.
+  if (!existing || existing.deleted_at) return json({ error: "Workspace not found.", code: "workspace_not_found" }, 404);
   const data = await readJson(request);
   const expectedVersion = data.expectedVersion === undefined || data.expectedVersion === null || data.expectedVersion === "" ? null : Number(data.expectedVersion);
   if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 1)) return json({ error: "expectedVersion must be a positive integer.", code: "workspace_invalid" }, 400);
