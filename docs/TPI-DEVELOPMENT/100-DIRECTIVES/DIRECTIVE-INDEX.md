@@ -18,6 +18,23 @@ for current commit, push, deployment, and live-verification procedure.
 
 ## Current production reconciliation
 
+## TPI-STUDIOFLOW-088 — 2026-10-26
+
+Permanent Studio Deletion and Archive Management. Archive means preserve
+(existing status-archived behavior: excluded from the active listing,
+restorable, configuration and productions retained, available through an
+Archived Studios view). Delete means remove permanently, only after a
+confirmation dialog showing the exact Studio name, associated productions and
+recordings counts, media impact, and a permanent-deletion warning, with the
+Studio name typed to enable the action. The owner has approximately five test
+Studios to remove through the finished interface; nothing is auto-deleted.
+Browser-local Studios delete locally without damaging other Studios or
+unrelated recovery snapshots, with tombstoning so stale snapshots cannot
+recreate a deleted Studio. Testing uses disposable QA Studios only.
+Archived verbatim at
+[`TPI-STUDIOFLOW-088-PERMANENT-STUDIO-DELETION-AND-ARCHIVE-MANAGEMENT.md`](TPI-STUDIOFLOW-088-PERMANENT-STUDIO-DELETION-AND-ARCHIVE-MANAGEMENT.md).
+Status: `REQUESTED / IMPLEMENTATION`.
+
 ## TPI-STUDIOFLOW-087 — 2026-10-25
 
 Independent Studios, Studio Dashboards, and Production Ownership. Riverside-inspired
@@ -36,7 +53,7 @@ irreversible deletion, identity-system replacement, and destructive
 browser-local/server reconciliation require separate owner approval. Archived
 verbatim at
 [`TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md`](TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md).
-Status: `REQUESTED / PHASE 1 ARCHITECTURE INVESTIGATION`.
+Status: `IMPLEMENTED / LOCAL TESTED / DEPLOYED / LIVE VERIFIED / OWNER ACCEPTANCE PENDING` — homepage Studio cards, per-Studio dashboards, Studio vs production creation with Owning Studio selection, production ownership stamping, and rename/archive/restore are live (087 suite 40/40 local and 40/40 on authenticated production). Permanent Studio deletion is deferred for owner approval; unowned historical productions remain preserved and unassigned. Source `db3aab4`; integration `37803f3` + `815fb85`; production Worker `b4605f5f-f33e-4f1d-8082-b12fc8bf5bdf`, rollback `6bbdae3d`. See `../300-COMPLETED-WORK/2026-10-26-TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS.md`.
 
 ## TPI-STUDIOFLOW-EMERGENCY-LIVE-REPAIR-001 — 2026-10-25
 
@@ -471,4 +488,5 @@ kept in both places so no issued text is lost.
 | (unnumbered) | STUDIOFLOW EMERGENCY DEVELOPMENT / PRODUCTION PARITY INVESTIGATION AND REPAIR — with Mandatory Addition (issued directly to the development agent, not via the directive conversation) | 2026-10-25 | [STUDIOFLOW-EMERGENCY-DEVELOPMENT-PRODUCTION-PARITY.md](STUDIOFLOW-EMERGENCY-DEVELOPMENT-PRODUCTION-PARITY.md) |
 | (unnumbered) | STUDIOFLOW PRODUCTION PARITY INVESTIGATION — AUTHORIZATION (authenticated parity investigation, Testing 123 persistence inquiry, documentation reconciliation, and archive Git-exclusion resolution) | 2026-10-25 | [STUDIOFLOW-PRODUCTION-PARITY-INVESTIGATION-AUTHORIZATION.md](STUDIOFLOW-PRODUCTION-PARITY-INVESTIGATION-AUTHORIZATION.md) |
 | (unnumbered) | TPI-STUDIOFLOW — CRITICAL STUDIO CREATION, SWITCHING & WORKSPACE ISOLATION RECOVERY (owner rejection of the Integrated Recovery; runtime Studio switching/creation repair required) | 2026-10-25 | [STUDIOFLOW-CRITICAL-STUDIO-CREATION-SWITCHING-WORKSPACE-ISOLATION-RECOVERY.md](STUDIOFLOW-CRITICAL-STUDIO-CREATION-SWITCHING-WORKSPACE-ISOLATION-RECOVERY.md) |
+| TPI-STUDIOFLOW-088 | PERMANENT STUDIO DELETION AND ARCHIVE MANAGEMENT | 2026-10-26 | [TPI-STUDIOFLOW-088-PERMANENT-STUDIO-DELETION-AND-ARCHIVE-MANAGEMENT.md](TPI-STUDIOFLOW-088-PERMANENT-STUDIO-DELETION-AND-ARCHIVE-MANAGEMENT.md) |
 | TPI-STUDIOFLOW-087 | INDEPENDENT STUDIOS, STUDIO DASHBOARDS, AND PRODUCTION OWNERSHIP | 2026-10-25 | [TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md](TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md) |

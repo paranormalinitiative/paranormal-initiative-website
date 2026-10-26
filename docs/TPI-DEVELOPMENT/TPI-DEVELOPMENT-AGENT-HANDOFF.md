@@ -1,6 +1,6 @@
 # TPI Development Agent Handoff
 
-Last verified: 2026-10-25
+Last verified: 2026-10-26
 Current controlling directive: TPI MASTER — Standing Autonomous Agent Authority
 
 ## Mandatory authority update
@@ -11,6 +11,24 @@ production deployment, verify live, and roll back. Do not stop for a routine
 repairable blocker or require a fresh owner directive for each lifecycle step.
 Historical restrictions below describe prior executions and do not override
 the controlling directive.
+
+## TPI-STUDIOFLOW-087 Independent Studios & Dashboards — 2026-10-26
+
+`LIVE VERIFIED — OWNER ACCEPTANCE PENDING`. The homepage/My Studios identity
+mismatch (Broadcast records vs Studio identities) is repaired: the Home page
+now renders My Studios cards from the same authorized Studio collection as
+the My Studios selector, each Studio has its own dashboard with its own
+productions and recordings, Studio vs production creation are separate with
+an Owning Studio selector, and productions are stamped with their Studio's
+stable host key at creation. Rename/Archive/Restore round trip (the missing
+server restore route was added). Permanent deletion is deferred for owner
+approval; unowned historical productions stay preserved and unassigned.
+087 suite 40/40 local and 40/40 on authenticated production (isolated QA
+account). Source `db3aab4`; integration `37803f3` + `815fb85` (pushed);
+production Worker `b4605f5f-f33e-4f1d-8082-b12fc8bf5bdf`, rollback
+`6bbdae3d`. `release:preflight` now runs the 087 suite too, enforced by the
+release-safety contract. See
+`300-COMPLETED-WORK/2026-10-26-TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS.md`.
 
 ## Emergency Live Production Repair 001 — 2026-10-25/26
 

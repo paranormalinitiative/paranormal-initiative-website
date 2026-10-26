@@ -1,0 +1,192 @@
+{
+  "suite": "TPI-STUDIOFLOW-088-DELETION",
+  "status": "PASS",
+  "base": "http://127.0.0.1:8787",
+  "account": "test_admin",
+  "evidenceRoot": "/var/folders/kk/hg_q6yqx6qs1t542myrbdj580000gn/T/tpi-studioflow-088-a3DPw8",
+  "diagnostics": {},
+  "checks": [
+    {
+      "name": "fixture: the to-delete Studio owns its production",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1a: the dialog shows the exact Studio name",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1b: the dialog shows the associated productions count",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1c: the dialog shows the associated recordings count where available",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1d: the dialog states the media impact",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1e: the dialog warns that deletion is permanent",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1f: permanent deletion stays disabled until the name is typed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1g: opening the dialog deletes nothing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2a: a mismatched name keeps deletion disabled",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2b: typing the exact Studio name enables deletion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2c: cancelling leaves the Studio completely untouched",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3a: the deleted Studio disappears from the homepage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3b: the deleted Studio record is permanently unreadable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4a: the deleted Studio disappears from My Studios",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4b: the My Studios dropdown no longer lists the deleted Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 5a: other Studios keep their own saved configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 5b: other Studios' productions stay attached",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 5c: the other Studio's card remains",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 6a: the deleted Studio does not reappear after refresh",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 6b: its productions are preserved but detached",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 6c: the deleted Studio identity is tombstoned against stale-record recreation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "fixture: the to-delete Studio is active",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7a: deleting the active Studio lands on a safe destination",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7b: the application stays operational after active-Studio deletion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8a: browser-local deletion removes the Studio's own listing and configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8b: the other browser-local Studio's snapshot is untouched",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8c: unrelated recovery snapshots are preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8d: the other browser-local Studio remains listed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8e: the deleted browser-local Studio does not reappear after refresh",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 9a: archived Studios are excluded from the active listing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 9b: the Archived Studios view keeps restore and delete actions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 9c: restore returns the Studio with its configuration intact",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 9d: archived Studios can be permanently deleted with confirmation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 10a: the release gate still runs the Studio lifecycle regression",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 10b: the release gate still runs the Studio ownership regression",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 10c: the release gate runs this Studio deletion regression",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "passed": 36,
+  "failed": 0
+}

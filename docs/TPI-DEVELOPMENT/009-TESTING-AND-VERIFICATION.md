@@ -17,6 +17,24 @@ clipping, stacking, and pointer-event defects from being reported as passes.
 - Blocked: a safety or environment prerequisite prevents execution.
 - Not tested: no current evidence.
 
+## TPI-STUDIOFLOW-087 Studio ownership and dashboard regression — 2026-10-26
+
+`npm run verify:studioflow-087-studio-ownership` is the maintained Firefox
+Developer Edition regression for the Independent Studios, Studio Dashboards,
+and Production Ownership directive (Directive Tests 1–13 plus fixture hygiene
+and release-gate checks; 40 checks). It asserts persisted Studio identities
+and production ownership — not just visible labels: homepage cards equal the
+authorized Studio collection, dashboards list only their own Studio's
+productions and recordings, recording ownership stamps the owning Studio's
+stable key, Studio A never inherits Studio B's data, rename keeps the Studio
+ID and its attachments, archive/restore round-trips, and browser-local
+Studios remain visible with their snapshots preserved. Account-dependent
+checks report `HEADLESS_WARN` (never silently pass) without a QA account.
+Since 2026-10-26 the suite also runs inside `npm run release:preflight`,
+enforced by a `verify:release-safety` contract check. Verified results
+2026-10-26: 40/40 locally and 40/40 on authenticated production (isolated QA
+account; evidence in `300-COMPLETED-WORK/evidence/2026-10-26-studioflow-087-production-suite.json`).
+
 ## Studio lifecycle regression suite — 2026-10-25
 
 `npm run verify:studioflow-studio-lifecycle` is the maintained Firefox

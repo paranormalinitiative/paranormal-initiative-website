@@ -1,6 +1,6 @@
 # TPI Current Development Status
 
-Last verified: 2026-10-25
+Last verified: 2026-10-26
 
 ## Current source-to-live workflow
 
@@ -11,6 +11,35 @@ guarded production release, and verifying the live site in Firefox Developer
 Edition. Source saves, local tests, Git pushes, development-Worker deployments,
 and production deployments are separate events and must not be reported as if
 they automatically synchronize.
+
+## TPI-STUDIOFLOW-087 Independent Studios, Studio Dashboards & Production Ownership — 2026-10-26
+
+Status: `IMPLEMENTED / LOCAL TESTED / DEPLOYED / LIVE VERIFIED / OWNER
+ACCEPTANCE PENDING`. The homepage listed non-ended Broadcast records while
+My Studios listed Studio identities, so production titles masqueraded as
+Studios and a server-backed Studio like Crossroads with no local Broadcast
+record could never appear on the homepage. The Home page now shows a My
+Studios card section built from the same authorized Studio collection as the
+My Studios selector (server + browser-local, via
+`window.__tpiStudioWorkspace.listStudios()`), and every Studio has its own
+dashboard (Enter Studio, Create Livestream/Recording/Webinar, My Productions,
+Recordings, Studio Settings). Studio and production creation are separate;
+production creation offers an Owning Studio selector and every
+livestream/recording/webinar is stamped with its Studio's stable host key at
+creation (never from the dropdown selection or a title match). Rename,
+Archive, and Restore Archived Studio work end to end (the server restore route
+was missing and is now added). Permanent Studio deletion is deferred for
+owner approval; historical productions without reliable ownership remain
+preserved and unassigned. Verified: 087 suite 40/40 local and 40/40 on
+authenticated production (isolated QA account; durable evidence in
+`300-COMPLETED-WORK/evidence/2026-10-26-studioflow-087-production-suite.json`),
+lifecycle 29/29, 033 26/26, local auth lifecycle 64/64. Source `db3aab4`;
+integration `37803f3` + `815fb85` (pushed); production Worker
+`b4605f5f-f33e-4f1d-8082-b12fc8bf5bdf`; rollback `6bbdae3d` preserved. The
+five pre-existing static-contract suite failures and the timing-sensitive 030
+rapid-upload step remain documented and open. Crossroads, Testing 123, and
+Browser Only Crossroads were not modified. Full record:
+`300-COMPLETED-WORK/2026-10-26-TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS.md`.
 
 ## Emergency Live Production Repair 001 — 2026-10-25/26
 

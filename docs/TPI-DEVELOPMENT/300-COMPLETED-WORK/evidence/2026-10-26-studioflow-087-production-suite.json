@@ -1,0 +1,212 @@
+{
+  "suite": "TPI-STUDIOFLOW-087-OWNERSHIP",
+  "status": "PASS",
+  "base": "https://paranormalinitiative.com",
+  "account": "production_qa",
+  "evidenceRoot": "/var/folders/kk/hg_q6yqx6qs1t542myrbdj580000gn/T/tpi-studioflow-087-DtvpdO",
+  "diagnostics": {},
+  "checks": [
+    {
+      "name": "fixture: pre-existing Studio created",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 11a: a new Studio opens with exactly four default production items",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 11b: a new Studio inherits no media assignments",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 11c: a new Studio inherits no productions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 11d: the new Studio opens immediately after creation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2a: the Studio dashboard provides its production sections",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 2b: the dashboard actions match the approved Studio workflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 3: Enter Studio opens the Studio with its own saved configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 11e: My Studios creation is equally clean and independent",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1a: each Studio appears as its own homepage card",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1b: Studio cards are distinct identities, not production titles",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1c: the homepage resolves exactly the authorized Studio identities",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1d: each card states where the Studio is stored",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 1e: the My Studios dropdown lists the same identities as the homepage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4a: Studio A opens with Studio A's configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4b: Studio B opens with Studio B's configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4c: switching back preserves Studio A's configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4d: Studio A renders its saved portrait orientation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4e: Studio B renders its own orientation, not Studio A's",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 4f: switching back restores Studio A's saved orientation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 5: exit to Home keeps every Studio available and identifies the last active Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 6a: recording in Studio A completes and reaches the Library",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 6b: the recording is stamped with Studio A's identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7a: dashboard creation preselects that Studio as the owner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7b: the production records its owning Studio and is not a Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7c: creating a production never creates another permanent Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7d: the homepage lists the production as a production, not a Studio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7e: the production appears on its owner's dashboard only",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 7f: the recording appears only on its owning Studio's dashboard",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8a: refresh preserves the active Studio identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8b: refresh preserves recording ownership",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8c: production creation and refresh preserve the Studio's own configuration",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 8c: refresh preserves production ownership",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 9: rename keeps the Studio identity and its productions attached",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 10a: archiving hides the Studio without deleting its data",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 10b: restore returns the Studio with its configuration intact",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 12a: browser-local Studios remain visible on the homepage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 12b: the browser-local Studio activates and keeps its snapshot",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 12c: switching away preserves the browser-local snapshot record",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Test 13: a pre-existing Studio keeps its deliberate configuration",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "passed": 40,
+  "failed": 0
+}
