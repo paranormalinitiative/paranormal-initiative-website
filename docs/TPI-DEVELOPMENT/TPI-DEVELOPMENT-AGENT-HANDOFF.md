@@ -1,5 +1,23 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-104 — LOCAL ACCEPTANCE PASSED / GUARDED RELEASE BLOCKED (2026-10-26)
+
+Continue from `.local-dev/worktrees/website-104`, branch
+`codex/studioflow-104-release-acceptance`; application remains website `81a234a2`
+and source `6b9c3c4b`. Acceptance harness/documentation changes are uncommitted.
+Disposable credentials/state are ignored within that worktree; never print or commit them.
+Lifecycle 29/29, 035 33/33, 087 40/40, 088 31/31, 089 32/32,
+authenticated 091 9/9, Worker integration 23/23 PASS. Asset hashes unchanged.
+Both permanent deletion modes remain unavailable; 088/089 successful-deletion
+scenarios are explicitly excluded/replaced by rejection and preservation checks.
+Release safety contract 21/21 and local-config dry-run PASS, but guarded preflight
+stops at `release branch must be codex/tpi-development`; not READY.
+Do not merge/push/deploy without explicit authorization. Preserve dirty originals;
+reconcile authoritative clean source and release branch, establish origin parity,
+then run maintained auth lifecycle/full preflight. No source/asset repair needed.
+Physical-device and production/owner acceptance remain unverified.
+[Directive 104 detailed handoff and evidence](100-DIRECTIVES/TPI-STUDIOFLOW-104-RELEASE-ACCEPTANCE.md).
+
 ## TPI-STUDIOFLOW-103 — SOURCE INTEGRATED / RELEASE BLOCKED (2026-10-26)
 
 New isolated source branch `codex/studioflow-103-video-setup-release`, commit

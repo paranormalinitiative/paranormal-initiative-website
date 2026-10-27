@@ -39,7 +39,7 @@ for (const file of [firefoxBinary, geckodriver, credentialsFile]) {
 const options = new firefox.Options()
   .setBinary(firefoxBinary)
   .setProfile(profile)
-  .addArguments("-no-remote", "-new-instance")
+  .addArguments("-headless", "-no-remote", "-new-instance")
   .setPreference("media.autoplay.default", 0)
   .setPreference("media.autoplay.blocking_policy", 0)
   // Fake capture devices: recording tests need a real MediaRecorder stream

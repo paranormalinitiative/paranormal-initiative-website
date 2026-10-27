@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-104 — LOCAL ACCEPTANCE PASSED / GUARDED RELEASE BLOCKED (2026-10-26)
+
+Disposable local authentication and Worker acceptance completed on unchanged website
+candidate `81a234a2ce91844a1a9ad33be524282dbb7d2874`, source
+`6b9c3c4b6b40f0496012e5d718d32d75e149dcf6`. Lifecycle 29/29, 035 33/33,
+087 40/40, 088 31/31, 089 32/32, authenticated 091 9/9, Worker 23/23 PASS.
+Both permanent deletion modes remain blocked; successful-deletion test exclusions
+explicitly documented. Exact JS/CSS/entry-point hashes unchanged; 092 excluded.
+Acceptance branch `codex/studioflow-104-release-acceptance` contains uncommitted
+harness/documentation changes only. Full preflight rejects the non-release branch.
+Authorized integration/push, reconciliation of dirty originals/authoritative source,
+clean origin parity and complete maintained auth lifecycle/preflight remain pending.
+Original development not edited; no merge, push, deployment or owner acceptance.
+[Directive 104 evidence and remaining release gates](100-DIRECTIVES/TPI-STUDIOFLOW-104-RELEASE-ACCEPTANCE.md).
+
 ## TPI-STUDIOFLOW-103 — SOURCE INTEGRATED / RELEASE BLOCKED (2026-10-26)
 
 New isolated source branch `codex/studioflow-103-video-setup-release`, commit

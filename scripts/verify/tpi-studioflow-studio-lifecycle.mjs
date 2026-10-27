@@ -180,7 +180,7 @@ async function writeConfiguration(patch) {
 const defaultPanelIds = ["intro", "scene:scene-1", "scene:scene-2", "outro"];
 
 try {
-  const options = new firefox.Options().setBinary(firefoxBinary).setProfile(profile).addArguments("-no-remote", "-new-instance").setPreference("media.autoplay.default", 0).setPreference("media.autoplay.blocking_policy", 0);
+  const options = new firefox.Options().setBinary(firefoxBinary).setProfile(profile).addArguments("-headless", "-no-remote", "-new-instance").setPreference("media.autoplay.default", 0).setPreference("media.autoplay.blocking_policy", 0);
   driver = await new Builder().forBrowser("firefox").setFirefoxOptions(options).setFirefoxService(new firefox.ServiceBuilder(geckodriver)).build();
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 60_000 });
   await driver.manage().window().setRect({ width: 1280, height: 1100, x: 20, y: 20 });

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // TPI-STUDIOFLOW-091: isolated Firefox Developer Edition and synthetic capture.
-import { mkdirSync, mkdtempSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Builder, By } from 'selenium-webdriver';
@@ -27,7 +27,17 @@ async function button(label) {
 try {
   await driver.manage().setTimeouts({ pageLoad: 30000, script: 30000 });
   await driver.manage().window().setRect({ width: 1280, height: 900 });
-  await driver.get(base + '/');
+  if (process.env.TPI_091_AUTHENTICATED === '1') {
+    if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(base)) throw new Error('Authenticated fixture must use loopback');
+    const credentials = JSON.parse(readFileSync(process.env.TPI_FIREFOX_CREDENTIALS_FILE || new URL('../../.local-dev/local-auth-credentials.json', import.meta.url), 'utf8'));
+    await driver.get(base + '/member-login.html');
+    const login = await driver.executeAsyncScript("var account=arguments[0],done=arguments[arguments.length-1];fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(account)}).then(r=>done(r.status)).catch(e=>done(String(e)));", credentials.accounts.test_admin);
+    if (login !== 200) throw new Error('Disposable login failed: ' + login);
+    await driver.get(base + '/studio/');
+    await wait('application', async () => (await driver.findElements(By.css('.home-page, .production-bar'))).length);
+    await js("document.body.click();var exit=document.querySelector('.production-bar .exit-button');if(exit)exit.click();");
+    await button('Back to Home');
+  } else await driver.get(base + '/');
   await wait('home', async () => (await driver.findElements(By.xpath("//button[contains(., 'Record without going live')]"))).length);
   await driver.findElement(By.xpath("//button[contains(., 'Record without going live')]")).click();
   await wait('recording modal', async () => await button('Continue to setup'));

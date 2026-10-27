@@ -1,0 +1,819 @@
+{
+  "directive": "TPI-STUDIOFLOW-104",
+  "applicationWebsiteCommit": "81a234a2ce91844a1a9ad33be524282dbb7d2874",
+  "sourceCommit": "6b9c3c4b6b40f0496012e5d718d32d75e149dcf6",
+  "origin": "http://127.0.0.1:5194",
+  "production": false,
+  "checks": {
+    "lifecycle": {
+      "passed": 29,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "fixture: seeded pre-existing Studio created",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "fixture: seeded Studio renders its saved configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1a: new Studio has a unique identity",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1b: new Studio opens with exactly four default production items",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1c: the new Studio renders its own clean configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 2a: second Studio has an independent identity",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 2b: second Studio configuration is independent",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 3a: switching activates Studio B (persisted ID)",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 3b: the displayed workspace belongs to Studio B",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 4: Studio B scenes are untouched by Studio A edits",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 5: Studio B does not inherit Studio A media assignments",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 3c: switching back activates Studio A with its own scenes",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 7: unsaved changes are saved before switching and restore on return",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 8a: a switch blocked by a failed save keeps the current Studio active",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 8b: the failed save is explained to the creator",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 8c: the failed save never overwrites the target Studio's configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 9: rapid switching settles on the last selection with its own workspace",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 6: refresh restores the selected Studio and its configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 10: pre-existing Studio configuration is preserved",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "H1: a home-created Studio opens with the clean default configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "H2a: browser-local Studio without a snapshot activates",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "H2b: the Studio opens with the default configuration and says so",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "H3a: a Studio with a malformed snapshot record activates with defaults",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "H3b: the malformed record is preserved for recovery before replacement",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "H4a: a Studio opened with a corrupt snapshot store activates with defaults",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "H4b: the corrupt snapshot store is preserved for recovery before replacement",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "cleanup archived disposable workspace be31bf56-6347-4c17-970f-742a7f8ab191",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "cleanup archived disposable workspace 9ed93c90-2419-4974-a378-69847ac6cb89",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "cleanup archived disposable workspace b0192554-5f7b-4060-87e4-6079b18a8fda",
+          "passed": true,
+          "detail": ""
+        }
+      ]
+    },
+    "087": {
+      "passed": 40,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "fixture: pre-existing Studio created",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 11a: a new Studio opens with exactly four default production items",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 11b: a new Studio inherits no media assignments",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 11c: a new Studio inherits no productions",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 11d: the new Studio opens immediately after creation",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 2a: the Studio dashboard provides its production sections",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 2b: the dashboard actions match the approved Studio workflow",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 3: Enter Studio opens the Studio with its own saved configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 11e: My Studios creation is equally clean and independent",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1a: each Studio appears as its own homepage card",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1b: Studio cards are distinct identities, not production titles",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1c: the homepage resolves exactly the authorized Studio identities",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1d: each card states where the Studio is stored",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1e: the My Studios dropdown lists the same identities as the homepage",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 4a: Studio A opens with Studio A's configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 4b: Studio B opens with Studio B's configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 4c: switching back preserves Studio A's configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 4d: Studio A renders its saved portrait orientation",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 4e: Studio B renders its own orientation, not Studio A's",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 4f: switching back restores Studio A's saved orientation",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 5: exit to Home keeps every Studio available and identifies the last active Studio",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 6a: recording in Studio A completes and reaches the Library",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 6b: the recording is stamped with Studio A's identity",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 7a: dashboard creation preselects that Studio as the owner",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 7b: the production records its owning Studio and is not a Studio",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 7c: creating a production never creates another permanent Studio",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 7d: the homepage lists the production as a production, not a Studio",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 7e: the production appears on its owner's dashboard only",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 7f: the recording appears only on its owning Studio's dashboard",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 8a: refresh preserves the active Studio identity",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 8b: refresh preserves recording ownership",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 8c: production creation and refresh preserve the Studio's own configuration",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 8c: refresh preserves production ownership",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 9: rename keeps the Studio identity and its productions attached",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 10a: archiving hides the Studio without deleting its data",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 10b: restore returns the Studio with its configuration intact",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 12a: browser-local Studios remain visible on the homepage",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 12b: the browser-local Studio activates and keeps its snapshot",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 12c: switching away preserves the browser-local snapshot record",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 13: a pre-existing Studio keeps its deliberate configuration",
+          "passed": true,
+          "detail": ""
+        }
+      ]
+    },
+    "088": {
+      "passed": 31,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "fixture: the to-delete Studio owns its production",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "fixture: the production-lock reservation releases when no recording started",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1a: the dialog shows the exact Studio name",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1b: the dialog shows the associated productions count",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1c: the dialog shows the associated recordings count where available",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1d: the dialog states the media impact",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1e: the dialog warns that deletion is permanent",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1f: permanent deletion stays disabled until the name is typed",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 1g: opening the dialog deletes nothing",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 2a: a mismatched name keeps deletion disabled",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 2b: exact name cannot enable unavailable permanent deletion",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 2c: cancelling leaves the Studio completely untouched",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: legacy client studio-only purge is unavailable",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only rejection preserves workspace",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: legacy client with-contents purge is unavailable",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents rejection preserves workspace",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: Studio-only confirmation remains disabled",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: contents confirmation remains disabled after acknowledgement",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: unavailability is disclosed",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: blocked deletion preserves production ownership",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: unrelated configuration survives",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 9a: archived Studios are excluded from the active listing",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 9b: the Archived Studios view keeps restore and delete actions",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 9c: restore returns the Studio with its configuration intact",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: archived Studio permanent confirmation remains disabled",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: archived record is preserved",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 11a: a background activation restores state without navigating the owner",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 11b: a foreground activation still opens the Studio environment",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 10a: the release gate still runs the Studio lifecycle regression",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 10b: the release gate still runs the Studio ownership regression",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Test 10c: the release gate runs this Studio deletion regression",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "exclusions": [
+        "Successful permanent deletion scenarios 3-8 and 9d replaced by disabled-mode preservation checks under TPI-104"
+      ]
+    },
+    "089": {
+      "passed": 32,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "Scenario 1a: the dialog shows the exact Studio name",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1b: the inventory identifies the immutable Studio ID",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1c: the inventory identifies the storage location",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1d: the inventory lists livestreams, recording sessions, webinars and scheduled productions",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1e: the dialog offers two distinct delete options",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1f: the default option preserves recordings and media",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1g: the dialog warns that deletion is permanent",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1h: permanent deletion stays disabled until the name is typed",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1i: a mismatched name keeps deletion disabled",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Scenario 1j: cancelling leaves the Studio completely untouched",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104 fixture: server media uploaded",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only UI remains disabled",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only unavailability explained",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only browser bridge rejects",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: legacy studio-only server request rejected",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: unversioned studio-only retry also rejected",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only leaves workspace unchanged",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only preserves uploaded media",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only preserves library metadata",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: studio-only preserves unrelated recording blob",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents UI remains disabled",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents unavailability explained",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents browser bridge rejects",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: legacy with-contents server request rejected",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: unversioned with-contents retry also rejected",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents leaves workspace unchanged",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents preserves uploaded media",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents preserves library metadata",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: with-contents preserves unrelated recording blob",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: Studios remain after refresh",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: recording ownership survives refresh",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "TPI-104: unrelated configuration survives",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "exclusions": [
+        "Successful permanent deletion, scope-convergence and destructive failure scenarios 2-8/11 replaced by disabled-mode UI/bridge/server/storage assertions under TPI-104; underlying purge handler covered separately by 093"
+      ]
+    },
+    "091": {
+      "passed": 9,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "setup has no Voice FX interface",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "camera and microphone capture are live",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "camera microphone and speaker selectors remain",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "microphone meter responds to synthetic audio",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "microphone level control exists",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "display name and headline persist on entry",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "selected capture devices remain active on entry",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "Voice FX remains available inside Studio",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "name": "in-Studio Voice FX initializes with synthetic microphone",
+          "passed": true,
+          "detail": ""
+        }
+      ]
+    },
+    "035": {
+      "passed": 33,
+      "total": 33,
+      "status": "PASS"
+    },
+    "worker": {
+      "passed": 23,
+      "failed": 0,
+      "log": [
+        "PASS: signed-out private Studio API returns 401",
+        "PASS: incorrect password cannot authenticate",
+        "PASS: two synthetic accounts authenticate",
+        "PASS: owner creates persisted workspace",
+        "PASS: other account cannot read owned workspace",
+        "PASS: other account list excludes workspace",
+        "PASS: other account cannot rename workspace",
+        "PASS: foreign Origin cannot mutate workspace",
+        "PASS: anonymous studio-only purge returns 401",
+        "PASS: legacy studio-only purge cannot bypass server gate",
+        "PASS: studio-only rejected without workspace mutation",
+        "PASS: anonymous with-contents purge returns 401",
+        "PASS: legacy with-contents purge cannot bypass server gate",
+        "PASS: with-contents rejected without workspace mutation",
+        "PASS: foreign Origin purge rejected",
+        "PASS: served assets/index-D1h4nSZd.js matches Directive 103 hash and MIME",
+        "PASS: served assets/index-CcFjA_0p.css matches Directive 103 hash and MIME",
+        "PASS: tracked entry point matches Directive 103",
+        "PASS: local staging changes only documented content-version queries",
+        "PASS: served HTML equals staged candidate plus exact maintained local wrappers",
+        "PASS: voice-fx-worklet.js loads under /studio/",
+        "PASS: openvoicechanger-bridge-worklet.js loads under /studio/",
+        "PASS: logout terminates session",
+        "{\"suite\":\"TPI-STUDIOFLOW-104-WORKER\",\"passed\":23,\"failed\":0,\"base\":\"http://127.0.0.1:5194\",\"production\":false}"
+      ]
+    },
+    "releaseSafety": {
+      "status": "PASSED",
+      "checksPassed": 21,
+      "checks": [
+        "agents must read the release runbook",
+        "runbook uses the canonical repository and branch",
+        "runbook includes secure local_admin access and recovery",
+        "runbook requires commit, push, preflight and guarded deployment",
+        "release preflight includes the full local_admin lifecycle",
+        "release preflight runs the Studio Management lifecycle regression",
+        "release preflight runs the Studio ownership and dashboard regression",
+        "release preflight runs the Studio deletion and archive regression",
+        "release preflight runs the Studio deletion safety and data integrity regression",
+        "local assets are staged before the managed Worker lifecycle",
+        "local release readiness rejects transient missing homepage responses",
+        "release rechecks exact Git state after staging and verification",
+        "direct deployment guard rejects every uncommitted file",
+        "direct deployment guard requires exact GitHub parity",
+        "deployment package excludes Markdown documentation",
+        "production Firefox login waits locally and confirms auth once",
+        "production Firefox release acceptance uses the synthetic QA account",
+        "Firefox acceptance retries only a transient empty StudioFlow shell",
+        "StudioFlow staging preserves maintained media bridges",
+        "complete QA runs the StudioFlow request-budget guard",
+        "package exposes credential and safety commands"
+      ]
+    }
+  },
+  "dryRun": "PASS local config",
+  "preflight": "BLOCKED release branch must be codex/tpi-development",
+  "hashes": {
+    "studio/index.html": "08ba5857dc352c6642430a90f2cd773d69091bfd7bc76a31c8b2d5f5d5ef2a4f",
+    "studio/assets/index-D1h4nSZd.js": "4eed57a4f243c9474fb73957d9e567defb2bb43ef3bcc82c1749ba02fcf92557",
+    "studio/assets/index-CcFjA_0p.css": "8501862945034d73a08df30e81291891491536edd82f16e0074b98a933e4cf69"
+  }
+}

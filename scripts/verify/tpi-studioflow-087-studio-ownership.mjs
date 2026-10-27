@@ -413,7 +413,7 @@ async function recordProgramOnce(recordingTitle) {
 }
 
 try {
-  const options = new firefox.Options().setBinary(firefoxBinary).setProfile(profile).addArguments("-no-remote", "-new-instance")
+  const options = new firefox.Options().setBinary(firefoxBinary).setProfile(profile).addArguments("-headless", "-no-remote", "-new-instance")
     .setPreference("media.autoplay.default", 0)
     .setPreference("media.autoplay.blocking_policy", 0)
     .setPreference("media.navigator.streams.fake", true)

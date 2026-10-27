@@ -16,6 +16,15 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-104 — Release acceptance and production readiness
+
+Status: **LOCAL ACCEPTANCE PASSED / GUARDED RELEASE BLOCKED / NOT DEPLOYED**.
+[Acceptance evidence, exact artifacts and remaining authorization gates](TPI-STUDIOFLOW-104-RELEASE-ACCEPTANCE.md).
+Lifecycle 29/29; 035 33/33; 087 40/40; 088 31/31; 089 32/32;
+authenticated 091 9/9; Worker integration 23/23. Application candidate unchanged.
+Both permanent deletion modes unavailable. Authorized-branch integration/push,
+clean origin parity and full guarded preflight remain pending; no merge/push/deploy.
+
 ## TPI-STUDIOFLOW-103 — Video Setup release candidate
 
 Status: **SOURCE INTEGRATED / AUTOMATED PARTIAL / RELEASE BLOCKED / NOT DEPLOYED**.

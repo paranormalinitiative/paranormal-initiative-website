@@ -387,7 +387,7 @@ async function typeConfirmationName(title) {
 }
 
 try {
-  const options = new firefox.Options().setBinary(firefoxBinary).setProfile(profile).addArguments("-no-remote", "-new-instance")
+  const options = new firefox.Options().setBinary(firefoxBinary).setProfile(profile).addArguments("-headless", "-no-remote", "-new-instance")
     .setPreference("media.autoplay.default", 0)
     .setPreference("media.autoplay.blocking_policy", 0)
     .setPreference("media.navigator.streams.fake", true)
@@ -414,7 +414,7 @@ try {
   }
   if (!authenticated) throw new Error(`authenticated session timed out: ${loginDetail}`);
   await releaseStaleProductionSessions();
-  await purgeFixtures();
+  // TPI-104: permanent purge is disabled; disposable state is retained for evidence.
 
   // ---- Fixtures: one Studio to keep, one Studio to delete ----------------
   const keepTitle = `TPI-088 Keep ${runId}`;
@@ -466,122 +466,32 @@ try {
   check("Test 2a: a mismatched name keeps deletion disabled", disabledWithWrongName === true, String(disabledWithWrongName));
   await typeConfirmationName(killTitle);
   const enabledWithExactName = await js("var button = document.querySelector('.studio-delete-actions .ghost-button'); return button ? button.disabled : null;");
-  check("Test 2b: typing the exact Studio name enables deletion", enabledWithExactName === false, String(enabledWithExactName));
+  check("Test 2b: exact name cannot enable unavailable permanent deletion", enabledWithExactName === true, String(enabledWithExactName));
   if (!(await clickButtonByText("Cancel", ".modal"))) throw new Error("Cancel is unavailable");
   await waitFor("Delete dialog to close", async () => (await count(".studio-delete-warning")) === 0, 15_000);
   const killAfterCancel = await workspaceByTitle(killTitle);
   const killProductionAfterCancel = (await broadcastRecords()).find((record) => record && record.title === killProductionTitle);
   check("Test 2c: cancelling leaves the Studio completely untouched", Boolean(killAfterCancel) && Boolean(killProductionAfterCancel) && killProductionAfterCancel.studioId === killKey, JSON.stringify({ workspace: Boolean(killAfterCancel), production: killProductionAfterCancel }));
 
-  // ---- Tests 3-6: permanent deletion ------------------------------------
+  // TPI-104: successful permanent deletion scenarios 3-8 are intentionally
+  // inapplicable to this release. Verify both modes reject and preserve state.
+  for (const mode of ["studio-only", "with-contents"]) {
+    const before = (await workspaceList()).find(item => item.id === studioKill.id);
+    const response = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(studioKill.id)}/purge`, { method: "POST", body: { mode, expectedVersion: before.version } });
+    check(`TPI-104: legacy client ${mode} purge is unavailable`, response.status === 503 && response.body?.code === "studio_permanent_deletion_unavailable", JSON.stringify(response));
+    check(`TPI-104: ${mode} rejection preserves workspace`, JSON.stringify((await workspaceList()).find(item => item.id === studioKill.id)) === JSON.stringify(before));
+  }
   await openDeleteDialog(killTitle);
   await typeConfirmationName(killTitle);
-  await confirmDeleteDialog(killTitle);
-  await waitFor("deleted Studio removed from every server listing", async () => await workspaceGone(killTitle), 30_000).catch(async (error) => {
-    const bridgeMessage = await js("return window.__tpiStudioWorkspace && window.__tpiStudioWorkspace.lastStatusMessage ? JSON.stringify(window.__tpiStudioWorkspace.lastStatusMessage()) : 'unavailable';").catch(() => "n/a");
-    const active = await authenticatedFetch("/api/studio/production/active").catch(() => null);
-    throw new Error(`${error.message}; bridge message: ${bridgeMessage}; production: ${JSON.stringify(active && active.body)}`);
-  });
-  const killById = await workspaceById(studioKill.id);
-  check("Test 3a: the deleted Studio disappears from the homepage", (await cardIndexFor(killTitle)) < 0, `card index ${(await cardIndexFor(killTitle))}`);
-  check("Test 3b: the deleted Studio record is permanently unreadable", killById === null, JSON.stringify(killById));
-  const entriesAfterDelete = await studioEntriesViaBridge();
-  check("Test 4a: the deleted Studio disappears from My Studios", !entriesAfterDelete.some((entry) => entry && entry.title === killTitle), JSON.stringify(entriesAfterDelete.map((entry) => entry && entry.title)));
-  // The My Studios dropdown lives in the Studio environment's asset panel.
-  await enterStudioFromCard(keepTitle);
-  const menuTextsAfterDelete = await studioMenuTexts();
-  check("Test 4b: the My Studios dropdown no longer lists the deleted Studio", !menuTextsAfterDelete.some((text) => text.indexOf(killTitle) >= 0), JSON.stringify(menuTextsAfterDelete));
-  await goHome();
-  const keepWorkspaceAfter = await workspaceById(studioKeep.id);
-  const keepConfigAfter = keepWorkspaceAfter?.state?.configuration || {};
-  const keepProductionAfter = (await broadcastRecords()).find((record) => record && record.title === keepProductionTitle);
-  check("Test 5a: other Studios keep their own saved configuration", (keepConfigAfter.studioScenes || []).some((scene) => scene.title === "TPI-088 Keep Scene"), JSON.stringify((keepConfigAfter.studioScenes || []).map((scene) => scene.title)));
-  check("Test 5b: other Studios' productions stay attached", Boolean(keepProductionAfter) && keepProductionAfter.studioId === keepKey, JSON.stringify(keepProductionAfter));
-  check("Test 5c: the other Studio's card remains", (await cardIndexFor(keepTitle)) >= 0, keepTitle);
-  await driver.navigate().refresh();
-  await waitFor("StudioFlow after refresh", async () => (await count("[data-tpi-scenes-panel]")) > 0 || await buttonExists("Create new Studio", ".home-page"), 30_000);
-  await goHome();
-  check("Test 6a: the deleted Studio does not reappear after refresh", (await cardIndexFor(killTitle)) < 0 && (await workspaceGone(killTitle)), "deleted Studio reappeared");
-  const killProductionFinal = (await broadcastRecords()).find((record) => record && record.title === killProductionTitle);
-  check("Test 6b: its productions are preserved but detached", Boolean(killProductionFinal) && !killProductionFinal.studioId, JSON.stringify(killProductionFinal));
-  const tombstonesAfter = (await uiState()).tombstones;
-  check("Test 6c: the deleted Studio identity is tombstoned against stale-record recreation", Array.isArray(tombstonesAfter) && tombstonesAfter.indexOf(killKey) >= 0, JSON.stringify(tombstonesAfter));
-
-  // ---- Test 7: deleting the active Studio selects a safe destination ----
-  const studioActive = await createStudioViaHome(activeTitle);
-  const activeKey = studioActive.localBroadcastId || studioActive.id;
-  const activeState = await uiState();
-  check("fixture: the to-delete Studio is active", activeState.activeBroadcastId === activeKey, JSON.stringify(activeState));
-  await goHome();
-  await openDeleteDialog(activeTitle);
-  await typeConfirmationName(activeTitle);
-  await confirmDeleteDialog(activeTitle);
-  await waitFor("active Studio deletion completes", async () => await workspaceGone(activeTitle), 30_000);
-  const afterActiveDelete = await uiState();
-  const onHome = await buttonExists("Create new Studio", ".home-page");
-  check("Test 7a: deleting the active Studio lands on a safe destination", onHome === true && afterActiveDelete.activeBroadcastId !== activeKey, JSON.stringify({ onHome, active: afterActiveDelete.activeBroadcastId, activeKey }));
-  await enterStudioFromCard(keepTitle);
-  check("Test 7b: the application stays operational after active-Studio deletion", (await count("[data-tpi-scenes-panel]")) > 0, "studio environment did not open");
-
-  // ---- Test 8: browser-local deletion protects other snapshots ----------
-  const browserA = `tpi-088-browser-a-${runId}`;
-  const browserB = `tpi-088-browser-b-${runId}`;
-  const browserATitle = `TPI-088 Browser A ${runId}`;
-  const browserBTitle = `TPI-088 Browser B ${runId}`;
-  await goHome();
-  await js(`var a = arguments[0], b = arguments[1], ta = arguments[2], tb = arguments[3];
-    var broadcasts = JSON.parse(localStorage.getItem('studioflow.broadcasts') || '[]');
-    broadcasts.push({ id: a, title: ta, kind: 'recording', createdAt: new Date().toLocaleTimeString() });
-    broadcasts.push({ id: b, title: tb, kind: 'recording', createdAt: new Date().toLocaleTimeString() });
-    localStorage.setItem('studioflow.broadcasts', JSON.stringify(broadcasts));
-    var snapshots = JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioSnapshots.v1') || '{}');
-    snapshots[a] = { savedAt: new Date().toISOString(), state: { broadcast: { id: a, title: ta }, configuration: {} } };
-    snapshots[b] = { savedAt: new Date().toISOString(), state: { broadcast: { id: b, title: tb }, configuration: {} } };
-    localStorage.setItem('studioflow.tpiLocalStudioSnapshots.v1', JSON.stringify(snapshots));
-    var recovery = JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioSnapshots.recovery.v1') || '{}');
-    recovery[a] = { preservedAt: new Date().toISOString(), record: { note: 'recovery-a' } };
-    recovery[b] = { preservedAt: new Date().toISOString(), record: { note: 'recovery-b' } };
-    localStorage.setItem('studioflow.tpiLocalStudioSnapshots.recovery.v1', JSON.stringify(recovery));
-    window.dispatchEvent(new CustomEvent('tpi:studios-updated'));`, browserA, browserB, browserATitle, browserBTitle);
-  // Reload so the app's own broadcasts state (not just the bridge catalog)
-  // owns the seeded records, exactly as in a real browser session.
-  await driver.navigate().refresh();
-  await waitFor("StudioFlow after seeding refresh", async () => (await count("[data-tpi-scenes-panel]")) > 0 || await buttonExists("Create new Studio", ".home-page"), 30_000);
-  await goHome();
-  await waitFor("browser-local Studio cards", async () => (await cardIndexFor(browserATitle)) >= 0 && (await cardIndexFor(browserBTitle)) >= 0, 20_000);
-  await openDeleteDialog(browserATitle);
-  await typeConfirmationName(browserATitle);
-  await confirmDeleteDialog(browserATitle);
-  await waitFor("browser-local Studio removed", async () => (await cardIndexFor(browserATitle)) < 0, 20_000);
-  const localState = await js(`var a = arguments[0], b = arguments[1];
-    var snapshots = JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioSnapshots.v1') || '{}');
-    var recovery = JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioSnapshots.recovery.v1') || '{}');
-    var tombstones = JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioDeleted.v1') || '[]');
-    return { snapshotA: Boolean(snapshots[a]), snapshotB: Boolean(snapshots[b]), recoveryA: Boolean(recovery[a]), recoveryB: Boolean(recovery[b]), tombstoned: tombstones.indexOf(a) >= 0 };`, browserA, browserB);
-  check("Test 8a: browser-local deletion removes the Studio's own listing and configuration", localState.snapshotA === false && localState.tombstoned === true, JSON.stringify(localState));
-  check("Test 8b: the other browser-local Studio's snapshot is untouched", localState.snapshotB === true, JSON.stringify(localState));
-  check("Test 8c: unrelated recovery snapshots are preserved", localState.recoveryA === true && localState.recoveryB === true, JSON.stringify(localState));
-  // Settled read with diagnostics: the catalog re-renders around the delete,
-  // and a single DOM snapshot can land between two renders. If B really
-  // disappears the wait fails and the detail names the visible cards and
-  // stored records instead of a bare title.
-  let bListedDetail = "";
-  const bListed = await waitFor("the other browser-local Studio remains listed", async () => {
-    const index = await cardIndexFor(browserBTitle);
-    bListedDetail = `card index ${index}`;
-    return index >= 0;
-  }, 10_000).then(() => true).catch(async () => {
-    const dump = await js(
-      "return { cards: Array.from(document.querySelectorAll('.studio-card .studio-card-title strong')).map(function (n) { return (n.textContent || '').trim(); }), broadcasts: JSON.parse(localStorage.getItem('studioflow.broadcasts') || '[]').map(function (b) { return b && b.id; }), tombstones: JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioDeleted.v1') || '[]'), route: JSON.parse(localStorage.getItem('studioflow.route') || '\"home\"'), hasHome: Boolean(document.querySelector('.home-page:not(.studio-dashboard)')), hasScenesPanel: Boolean(document.querySelector('[data-tpi-scenes-panel]')), hasSetup: Boolean(document.querySelector('.setup-top-bar')) };"
-    ).catch(() => ({}));
-    bListedDetail += ` | ${JSON.stringify(dump)}`;
-    return false;
-  });
-  check("Test 8d: the other browser-local Studio remains listed", bListed, bListedDetail);
-  await driver.navigate().refresh();
-  await waitFor("StudioFlow after refresh", async () => (await count("[data-tpi-scenes-panel]")) > 0 || await buttonExists("Create new Studio", ".home-page"), 30_000);
-  await goHome();
-  check("Test 8e: the deleted browser-local Studio does not reappear after refresh", (await cardIndexFor(browserATitle)) < 0 && (await cardIndexFor(browserBTitle)) >= 0, JSON.stringify({ a: await cardIndexFor(browserATitle), b: await cardIndexFor(browserBTitle) }));
+  check("TPI-104: Studio-only confirmation remains disabled", await js("return document.querySelector('.studio-delete-actions .ghost-button').disabled"));
+  await clickButtonByText("Delete Studio and its contents", ".modal");
+  await clickButtonByText("I understand that this Studio's exclusively owned productions, recordings and media will be permanently deleted", ".modal");
+  check("TPI-104: contents confirmation remains disabled after acknowledgement", await js("return document.querySelector('.studio-delete-actions .ghost-button').disabled"));
+  check("TPI-104: unavailability is disclosed", (await js("return document.querySelector('.modal').textContent")).includes("Both permanent deletion options are temporarily unavailable"));
+  await clickButtonByText("Cancel", ".modal");
+  const keptProduction = (await broadcastRecords()).find(item => item.title === killProductionTitle);
+  check("TPI-104: blocked deletion preserves production ownership", keptProduction?.studioId === killKey);
+  check("TPI-104: unrelated configuration survives", (await workspaceById(studioKeep.id))?.state?.configuration?.studioScenes?.some(scene => scene.title === "TPI-088 Keep Scene"));
 
   // ---- Test 9: archive and restore still work ---------------------------
   await openDeleteDialog(keepTitle);
@@ -658,9 +568,9 @@ try {
   if (!(await clickCardButton(archTitle, "Delete Studio"))) throw new Error("Delete Studio is unavailable in the Archived Studios view");
   await waitFor("Delete Studio confirmation dialog", async () => (await count(".studio-delete-warning")) === 1, 15_000);
   await typeConfirmationName(archTitle);
-  await confirmDeleteDialog(archTitle);
-  await waitFor("archived Studio permanently deleted", async () => await workspaceGone(archTitle), 30_000);
-  check("Test 9d: archived Studios can be permanently deleted with confirmation", (await cardIndexFor(archTitle)) < 0 && !(await workspaceById(studioArch.id)), archTitle);
+  check("TPI-104: archived Studio permanent confirmation remains disabled", await js("return document.querySelector('.studio-delete-actions .ghost-button').disabled"));
+  await clickButtonByText("Cancel", ".modal");
+  check("TPI-104: archived record is preserved", Boolean(await workspaceById(studioArch.id)));
 
   // ---- Test 11: a background Studio activation never hijacks the view -----
   // Regression guard for the production-only failure this suite used to hit:
@@ -710,5 +620,5 @@ try {
 }
 
 const failed = results.filter((result) => !result.passed);
-console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-088-DELETION", status: failed.length ? "FAIL" : "PASS", base, account: accountKey, evidenceRoot, diagnostics, checks: results, passed: results.length - failed.length, failed: failed.length }, null, 2));
+console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-088-DELETION", status: failed.length ? "FAIL" : "PASS", base, account: accountKey, evidenceRoot, exclusions: ["Successful permanent deletion scenarios 3-8 and 9d replaced by disabled-mode preservation checks under TPI-104"], diagnostics, checks: results, passed: results.length - failed.length, failed: failed.length }, null, 2));
 process.exit(failed.length ? 1 : 0);
