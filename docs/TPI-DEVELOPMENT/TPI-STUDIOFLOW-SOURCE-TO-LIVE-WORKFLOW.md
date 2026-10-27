@@ -100,21 +100,24 @@ ancestor clipping, stacking, pointer-event, and stale-bundle defects.
 
 ## Current verified live baseline
 
-- Website production source commit: `877efb3`
-  (TPI-STUDIOFLOW-037 production recovery)
-- Authoritative StudioFlow source commit: `eff6b69`
+- Website production source commit: `9b3f033`
+  (TPI-STUDIOFLOW-106 production release; application byte-identical to `81a234a`)
+- Authoritative StudioFlow source commit: `6b9c3c4`
 - Active production Worker version:
-  `871c0ae7-33c5-46ae-b635-19ec3100c989`
+  `91a8460e-1db1-440c-9643-a85b6e178fba`
+  (deployed 2026-10-27T20:41:35Z)
 - Immediate rollback version:
-  `d58d7e1e-5f86-4c87-93b3-110999d200a9`
-  (prior TPI-STUDIOFLOW-037 Addendum E release)
+  `17b9f9d5-717e-42a9-92d1-14b0dd717ef6`
+  (prior TPI-STUDIOFLOW-105-era release)
 
-The production recovery established that the prior bundle was current but the
-scene context menu was visually clipped. The corrected live entry point loads
-`/studio/assets/index-BfmRc0ua.js` and
-`/studio/assets/index-DB0QL1ns.css`. The focused Addendum E Firefox suite
-passed 20/20 locally and 20/20 against production with disposable QA data;
-owner acceptance remains pending.
+The current live entry point loads `/studio/assets/index-D1h4nSZd.js` and
+`/studio/assets/index-CcFjA_0p.css` (SHA-256 `4eed57a4…` / `850186…`). The
+TPI-STUDIOFLOW-106 guarded release passed local auth lifecycle, complete preflight
+(lifecycle/ownership/deletion/safety, reproducible staging, Cloudflare, dry-run),
+live smoke 10/10, isolated Firefox production acceptance 64/0, and Video Setup 091
+9/0 on the byte-identical candidate. Both permanent deletion modes remain disabled.
+Physical-device and owner acceptance remain pending. Prior release baselines are
+recorded in the per-release sections below.
 
 ## TPI-STUDIOFLOW-036 verified release
 

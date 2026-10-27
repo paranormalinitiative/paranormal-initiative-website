@@ -16,6 +16,16 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-106 — Resolve authentication gate and complete production deployment
+
+Status: **COMPLETE — DEPLOYED_AND_VERIFIED / OWNER ACCEPTANCE PENDING**.
+[Deployment traceability, gate results and live verification](TPI-STUDIOFLOW-106-RESOLVE-AUTH-GATE-AND-PRODUCTION-DEPLOY.md).
+Auth prerequisite resolved: preserved development committed to `fc6fe45`, canonical
+checkout moved to clean `codex/tpi-development` @ `9b3f033` so the managed Worker
+serves the candidate. Auth lifecycle PASS, preflight READY, Worker `91a8460e`
+deployed at 100%, live smoke 10/10, Firefox 64/0, Video Setup 091 9/0.
+Both permanent deletion modes remain disabled. Physical-device/owner acceptance pending.
+
 ## TPI-STUDIOFLOW-105 — Authorized production integration and release
 
 Status: **INTEGRATED AND PUSHED / MANDATORY AUTH GATE FAILED / NOT DEPLOYED**.

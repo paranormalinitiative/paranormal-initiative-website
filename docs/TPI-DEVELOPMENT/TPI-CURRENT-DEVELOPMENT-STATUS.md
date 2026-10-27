@@ -1,5 +1,21 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-106 — DEPLOYED_AND_VERIFIED (2026-10-27)
+
+Directive 105's authentication blocker resolved: in-progress development preserved
+byte-for-byte to `codex/studioflow-105-preserved-development` (`fc6fe45`), then the
+canonical checkout moved to clean `codex/tpi-development` @ `9b3f033` (exact origin
+parity) so the managed local Worker serves the candidate. Protected credential and
+persistent `local_admin` present; auth lifecycle PASS (38/38 ×3, Firefox 64/0).
+Guarded preflight READY (lifecycle 29/0, ownership 40/0, deletion 31/0, safety 32/0,
+reproducible staging, Cloudflare + dry-run). Application byte-identical to verified
+candidate `81a234a` (JS `4eed57a4…`, CSS `850186…`). Deployed Worker
+`91a8460e-1db1-440c-9643-a85b6e178fba` at 100% traffic (rollback `17b9f9d5…`).
+Live smoke 10/10, Firefox production acceptance 64/0, Video Setup 091 9/0 on the
+byte-identical candidate. Both permanent deletion modes remain disabled. Physical
+camera/mic device capture and owner acceptance remain pending.
+[Directive 106 deployment record](100-DIRECTIVES/TPI-STUDIOFLOW-106-RESOLVE-AUTH-GATE-AND-PRODUCTION-DEPLOY.md).
+
 ## TPI-STUDIOFLOW-105 — INTEGRATED/PUSHED / RELEASE BLOCKED (2026-10-26)
 
 Directive 104 evidence committed as `20eba92d2dce2a1db985bc352bedbbe174139d8f`;

@@ -1,5 +1,23 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-106 — DEPLOYED_AND_VERIFIED (2026-10-27)
+
+The verified Video Setup 091 candidate is live at `https://paranormalinitiative.com/studio/`
+on Worker `91a8460e-1db1-440c-9643-a85b6e178fba` (100% traffic); rollback is
+`17b9f9d5-717e-42a9-92d1-14b0dd717ef6`. Release commit `9b3f033` (application
+byte-identical to `81a234a`; JS `4eed57a4…`, CSS `850186…`); source `6b9c3c4`.
+The 105 auth blocker is resolved: development preserved to `fc6fe45` on
+`codex/studioflow-105-preserved-development`, and the canonical checkout now runs
+clean `codex/tpi-development`, so the managed Worker/verification serves the candidate.
+Do not switch the canonical checkout away from `codex/tpi-development` without first
+preserving any new work. Auth lifecycle PASS, preflight READY, live smoke 10/10,
+Firefox acceptance 64/0, Video Setup 091 9/0. Both permanent deletion modes remain
+unavailable; 101–102 deletion-safety work stays on its branches, undeployed.
+Known gap: authoritative staging builds the mixed source tree, not the clean candidate
+commit — retarget it before the next source release. Physical-device/owner acceptance
+of the live interface remains pending owner action. No credentials are in this handoff.
+[Directive 106 deployment record](100-DIRECTIVES/TPI-STUDIOFLOW-106-RESOLVE-AUTH-GATE-AND-PRODUCTION-DEPLOY.md).
+
 ## TPI-STUDIOFLOW-105 — RELEASE STOPPED AT MANDATORY AUTH GATE (2026-10-26)
 
 Authorized branch is now in `.local-dev/worktrees/website-105`, with candidate and
