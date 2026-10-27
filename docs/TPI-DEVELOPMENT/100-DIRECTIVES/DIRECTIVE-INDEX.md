@@ -16,6 +16,12 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-102 — Cross-tab recording deletion safety
+
+Status: **BLOCKED / FAIL-CLOSED RETAINED / NOT DEPLOYED**.
+[Real Firefox boundary evidence and remaining requirements](TPI-STUDIOFLOW-102-CROSS-TAB-RECORDING-DELETION-SAFETY.md).
+Legacy tab bypass reproduced; 8/8 browser checks, 22/22 unit fixtures, TypeScript/build and 093 pass.
+
 ## TPI-STUDIOFLOW-101 — Local recording deletion safety
 
 Status: **BLOCKED / PARTIALLY IMPLEMENTED / NOT DEPLOYED**.

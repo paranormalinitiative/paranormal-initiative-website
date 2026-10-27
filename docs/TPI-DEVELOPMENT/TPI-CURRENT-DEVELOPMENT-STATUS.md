@@ -1,5 +1,17 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-102 — BLOCKED (2026-10-26)
+
+Real disposable Firefox tests reproduce a legacy tab writing ownership metadata while
+another tab holds an exclusive Web Lock. Current-writer locks cannot exclude older tabs;
+localStorage ownership and IndexedDB cleanup have no shared transaction. Explicit stop
+condition reached; content deletion remains blocked. Source stays clean at `0a104519`.
+Browser boundary/storage/helper-recovery checks 8/8, existing local fixtures 22/22,
+TypeScript, production build and unchanged 093 regression pass. Full application
+concurrent completion/switching and interrupted cleanup acceptance remain unverified.
+No source/server repair, 091/092 import, original-tree edit, push, merge or deployment.
+[Directive 102 evidence and writer inventory](100-DIRECTIVES/TPI-STUDIOFLOW-102-CROSS-TAB-RECORDING-DELETION-SAFETY.md).
+
 ## TPI-STUDIOFLOW-101 — BLOCKED (2026-10-26)
 
 Partial local deletion repairs committed in isolated source `0a10451997e19a09ef2aae94bb9b25395603bfac`.
