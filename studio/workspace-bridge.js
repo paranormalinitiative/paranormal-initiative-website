@@ -684,7 +684,8 @@
     });
   }
   function deleteStudioPermanently(key, options) {
-    return deleteStudioAttempt(key, options).catch(function (error) {
+    // TPI-103: browser-local and server-backed permanent modes are unavailable.
+    return Promise.reject(new Error("Permanent Studio deletion is temporarily unavailable pending recording safety verification. No Studio or recording was deleted. Archive and Restore remain available.")).catch(function (error) {
       setMessage(describe(error, "The Studio could not be deleted permanently."), true);
       throw error;
     });

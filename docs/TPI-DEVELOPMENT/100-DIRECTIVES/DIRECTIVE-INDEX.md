@@ -16,6 +16,12 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-103 — Video Setup release candidate
+
+Status: **SOURCE INTEGRATED / AUTOMATED PARTIAL / RELEASE BLOCKED / NOT DEPLOYED**.
+[Candidate commits, hashes, checks and acceptance blockers](TPI-STUDIOFLOW-103-VIDEO-SETUP-RELEASE-CANDIDATE.md).
+091 Firefox 9/9; both permanent deletion modes disabled; authenticated management acceptance pending.
+
 ## TPI-STUDIOFLOW-102 — Cross-tab recording deletion safety
 
 Status: **BLOCKED / FAIL-CLOSED RETAINED / NOT DEPLOYED**.

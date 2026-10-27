@@ -167,7 +167,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/delete$/)) return requireStudioAccess(request, env, user => handleDeleteStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/restore$/)) return requireStudioAccess(request, env, user => handleRestoreStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/archive$/)) return requireStudioAccess(request, env, user => handleArchiveStudioWorkspace(path, request, env, user));
-    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/purge$/)) return requireStudioAccess(request, env, user => handlePurgeStudioWorkspace(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/purge$/)) return requireStudioAccess(request, env, user => unavailablePermanentStudioDeletion(request));
     if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+\/deletion-inventory$/)) return requireStudioAccess(request, env, user => handleStudioDeletionInventory(path, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
@@ -5496,6 +5496,13 @@ async function handleRestoreStudioWorkspace(path, request, env, user) {
 // follow the commit are idempotent and re-runnable: an interrupted or duplicate
 // request finds the tombstone and finishes the remaining cleanup instead of
 // leaving partial state or claiming false success.
+// TPI-103: block both permanent modes for all clients, including legacy tabs.
+// Keep the guarded implementation below for regression evidence, not routing.
+function unavailablePermanentStudioDeletion(request) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  return json({ ok: false, code: "studio_permanent_deletion_unavailable", error: "Permanent Studio deletion is temporarily unavailable pending recording safety verification. No Studio, recording or shared media was deleted. Archive and Restore remain available." }, 503, { "Cache-Control": "no-store" });
+}
+
 async function handlePurgeStudioWorkspace(path, request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
   let committed = false;

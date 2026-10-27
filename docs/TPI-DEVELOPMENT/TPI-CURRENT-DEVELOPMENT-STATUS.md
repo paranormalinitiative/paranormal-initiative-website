@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-103 — SOURCE INTEGRATED / RELEASE BLOCKED (2026-10-26)
+
+New isolated source branch `codex/studioflow-103-video-setup-release`, commit
+`6b9c3c4b6b40f0496012e5d718d32d75e149dcf6`; website branch
+`codex/studioflow-103-website-release`. 091 integrated; both permanent deletion
+modes intentionally disabled in UI/handler/bridge and authenticated server purge route.
+Worklet BASE_URL compatibility fixed after exact staged Firefox failure; rerun 9/9 PASS.
+Reproducible staged builds, Voice FX architecture, 101 22/22, 102 8/8, 093 and
+website static guards PASS. Lifecycle/035/087/088/089 acceptance BLOCKED by missing
+isolated QA credentials. Preflight rejects non-release branch; origin parity and
+full Worker acceptance pending. Originals hash-verified unchanged; 092 excluded.
+No push, merge, deployment or owner acceptance. See
+[Directive 103 candidate evidence](100-DIRECTIVES/TPI-STUDIOFLOW-103-VIDEO-SETUP-RELEASE-CANDIDATE.md).
+
 ## TPI-STUDIOFLOW-102 — BLOCKED (2026-10-26)
 
 Real disposable Firefox tests reproduce a legacy tab writing ownership metadata while
