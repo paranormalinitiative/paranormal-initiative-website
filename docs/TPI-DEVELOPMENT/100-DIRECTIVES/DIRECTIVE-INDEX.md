@@ -16,6 +16,12 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-100 — Source isolation
+
+Status: **SOURCE ISOLATED / NOT SAFETY VERIFIED / NOT DEPLOYED**.
+[Owner directive and execution evidence](TPI-STUDIOFLOW-100-DELETION-ISOLATION.md).
+Deletion-only source and server branches exclude 091/092; original development preserved.
+
 ## Current production reconciliation
 
 ## TPI-STUDIOFLOW-088 — 2026-10-26

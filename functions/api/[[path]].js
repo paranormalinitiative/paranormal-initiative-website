@@ -5498,17 +5498,24 @@ async function handleRestoreStudioWorkspace(path, request, env, user) {
 // leaving partial state or claiming false success.
 async function handlePurgeStudioWorkspace(path, request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin workspace mutations are not allowed." }, 403);
+  let committed = false;
   try {
     const id = workspacePathId(path, "/purge");
     const existing = await getOwnedStudioWorkspace(env, id, user.id);
     if (!existing) return json({ error: "That Studio is no longer available.", code: "workspace_not_found" }, 404, { "Cache-Control": "no-store" });
     const data = await readJson(request) || {};
     const mode = data.mode === "with-contents" ? "with-contents" : "studio-only";
-    // Duplicate / interrupted deletion: the purge marker means the deletion is
-    // already committed. Re-run the idempotent cleanup and report success so a
-    // retried request converges instead of failing or double-deleting.
+    // Older tombstones did not record the authorized scope. Never infer it
+    // from a retry: a previous studio-only deletion must not become a content
+    // deletion. Those legacy operations require explicit reconciliation.
     if (!clean(existing.title)) {
-      const cleanup = await cleanupPurgedStudio(env, user, existing, mode);
+      const marker = safeJsonParse(existing.state_json);
+      if (!marker || marker.purgeVersion !== 1 || !["studio-only", "with-contents"].includes(marker.mode)) {
+        return json({ error: "This earlier deletion has no recorded cleanup scope and requires reconciliation. No additional data was deleted.", code: "purge_scope_unknown" }, 409, { "Cache-Control": "no-store" });
+      }
+      if (marker.mode !== mode) return json({ error: "The deletion scope cannot be changed on a retry.", code: "purge_scope_conflict" }, 409, { "Cache-Control": "no-store" });
+      committed = true;
+      const cleanup = await cleanupPurgedStudio(env, user, existing, marker.mode);
       return json({ ok: true, purged: true, alreadyDeleted: true, mode, id, ...cleanup }, 200, { "Cache-Control": "private, no-store" });
     }
     // An active recording or livestream that cannot be safely finalized blocks
@@ -5524,17 +5531,20 @@ async function handlePurgeStudioWorkspace(path, request, env, user) {
     // Commit point. Nothing else has run before this version-checked purge
     // marker; on a concurrent change zero rows update and the Studio — and all
     // of its data — is untouched.
-    const purgeResult = await env.TPI_DB.prepare("UPDATE studio_workspaces SET status = 'archived', deleted_at = ?, title = '', description = '', state_json = '', studio_number = NULL, version = version + 1, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
-      .bind(now, now, id, user.id, Number(existing.version)).run();
+    const marker = JSON.stringify({ purgeVersion: 1, mode });
+    const purgeResult = await env.TPI_DB.prepare("UPDATE studio_workspaces SET status = 'archived', deleted_at = ?, title = '', description = '', state_json = ?, studio_number = NULL, version = version + 1, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
+      .bind(now, marker, now, id, user.id, Number(existing.version)).run();
     if (!Number(purgeResult.meta?.changes || 0)) {
       // A concurrent save landed between the read and the marker update. The
       // Studio is untouched; the client may refresh and retry.
       const current = await getOwnedStudioWorkspace(env, id, user.id);
       return json({ error: "This Studio changed elsewhere. Review the updated Studio and confirm deletion again.", code: "workspace_conflict", workspace: studioWorkspacePayload(current) }, 409, { "Cache-Control": "no-store" });
     }
+    committed = true;
     const cleanup = await cleanupPurgedStudio(env, user, existing, mode);
     return json({ ok: true, purged: true, alreadyDeleted: false, mode, id, ...cleanup }, 200, { "Cache-Control": "private, no-store" });
   } catch (error) {
+    if (committed) return json({ error: "Studio deletion began but cleanup could not be verified. Reconciliation is required; do not assume all data was removed.", code: "purge_reconciliation_required" }, 503, { "Cache-Control": "no-store" });
     return studioWorkspaceStorageFailure(error);
   }
 }
@@ -5585,7 +5595,7 @@ async function cleanupPurgedStudio(env, user, workspace, mode) {
     }
   } catch (error) {
     console.error("Studio production cleanup failed", error);
-    summary.retained.reasons.push("Studio production cleanup could not finish and preserved the remaining records; re-issue the deletion to retry.");
+    throw new Error("Studio production cleanup did not finish; reconciliation is required before reporting success.", { cause: error });
   }
   // 2. Production session history is detached in both modes (it is operational
   // history, not a production or media asset, and is never cascade-deleted).
@@ -5593,6 +5603,7 @@ async function cleanupPurgedStudio(env, user, workspace, mode) {
     await env.TPI_DB.prepare("UPDATE studio_production_sessions SET studio_workspace_id = NULL WHERE studio_workspace_id = ? AND creator_id = ?").bind(id, user.id).run();
   } catch (error) {
     console.error("Studio session detach failed", error);
+    throw new Error("Studio session cleanup did not finish; reconciliation is required before reporting success.", { cause: error });
   }
   // 3. Studio-specific media. The asset row's (id, workspace_id, owner_id) is
   // the ownership proof; "with-contents" deletes only assets no other Studio's
@@ -5604,9 +5615,15 @@ async function cleanupPurgedStudio(env, user, workspace, mode) {
     for (const asset of assets.results || []) {
       const referenced = (others.results || []).filter((other) => (other.state_json || "").includes(String(asset.id)));
       if (mode === "with-contents" && !referenced.length) {
+        // Keep the row until the object is removed, so failed object cleanup
+        // retains the identity required for a retry.
+        if (asset.object_key) {
+          if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.delete !== "function" || typeof env.TPI_MEDIA.head !== "function") throw new Error("Studio media storage is unavailable for verified deletion.");
+          await env.TPI_MEDIA.delete(asset.object_key);
+          if (await env.TPI_MEDIA.head(asset.object_key)) throw new Error("Studio media object remains after deletion.");
+        }
         await env.TPI_DB.prepare("DELETE FROM studio_media_assets WHERE id = ? AND workspace_id = ? AND owner_id = ?").bind(asset.id, id, user.id).run();
         summary.deleted.media += 1;
-        if (asset.object_key && env.TPI_MEDIA && typeof env.TPI_MEDIA.delete === "function") await env.TPI_MEDIA.delete(asset.object_key).catch(() => {});
       } else if (mode === "with-contents") {
         summary.retained.media += 1;
         summary.retained.reasons.push(`Media asset ${asset.id} is retained because ${referenced.map((other) => other.title || other.id).join(", ")} still references it.`);
@@ -5614,21 +5631,27 @@ async function cleanupPurgedStudio(env, user, workspace, mode) {
     }
   } catch (error) {
     console.error("Studio media cleanup failed", error);
-    summary.retained.reasons.push("Studio media cleanup could not finish and preserved the remaining assets; re-issue the deletion to retry.");
+    throw new Error("Studio media cleanup did not finish; reconciliation is required before reporting success.", { cause: error });
   }
   // 4. The Studio's own recovery snapshots are exclusive to it and go with its
   // configuration in both modes. Unrelated Studios' snapshot prefixes are never
   // touched. Cleanup is idempotent — an already-removed object is a no-op.
   try {
-    if (env.TPI_MEDIA && typeof env.TPI_MEDIA.list === "function") {
-      const prefix = `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${snapshotSegment(id)}/`;
-      const listed = await env.TPI_MEDIA.list({ prefix, limit: 1000 });
+    if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.list !== "function" || typeof env.TPI_MEDIA.delete !== "function") throw new Error("Recovery snapshot storage is unavailable for verified deletion.");
+    const prefix = `${STUDIO_RECOVERY_SNAPSHOT_PREFIX}/${snapshotSegment(user.id)}/${snapshotSegment(id)}/`;
+    let cursor;
+    do {
+      const listed = await env.TPI_MEDIA.list({ prefix, limit: 1000, ...(cursor ? { cursor } : {}) });
       await Promise.all((listed.objects || []).map(object => env.TPI_MEDIA.delete(object.key)));
       summary.deleted.snapshots += (listed.objects || []).length;
-    }
+      cursor = listed.truncated ? listed.cursor : undefined;
+      if (listed.truncated && !cursor) throw new Error("Recovery snapshot listing could not be continued.");
+    } while (cursor);
+    const remaining = await env.TPI_MEDIA.list({ prefix, limit: 1 });
+    if ((remaining.objects || []).length) throw new Error("Recovery snapshots remain after deletion.");
   } catch (error) {
     console.error("Studio recovery snapshot cleanup failed", error);
-    summary.retained.reasons.push("Recovery snapshot cleanup could not finish; re-issue the deletion to retry.");
+    throw new Error("Studio recovery snapshot cleanup did not finish; reconciliation is required before reporting success.", { cause: error });
   }
   return summary;
 }

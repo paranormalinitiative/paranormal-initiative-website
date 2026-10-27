@@ -73,6 +73,20 @@ if (!account?.username || !account?.password) {
   console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-089-DELETION-SAFETY", status: "BLOCKED", reason: `QA account ${accountKey} is unavailable.` }));
   process.exit(1);
 }
+// TPI-LOCAL-TO-PRODUCTION-RUNBOOK: production acceptance runs only against the
+// dedicated synthetic qa-studioflow-* member account, and only with the
+// explicit production-QA approval. Local fixture accounts and owner accounts
+// are rejected before launch.
+if (!/^http:\/\/(127\.0\.0\.1|localhost)[:\/]/.test(base)) {
+  if (process.env.TPI_FIREFOX_PRODUCTION_QA !== "approved") {
+    console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-089-DELETION-SAFETY", status: "BLOCKED", reason: "Production acceptance requires TPI_FIREFOX_PRODUCTION_QA=approved." }));
+    process.exit(1);
+  }
+  if (!/^qa-studioflow-/.test(account.username || "")) {
+    console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-089-DELETION-SAFETY", status: "BLOCKED", reason: "Production acceptance must use the synthetic qa-studioflow-* member account." }));
+    process.exit(1);
+  }
+}
 
 async function js(script, ...args) { return driver.executeScript(script, ...args); }
 async function asyncJs(script, ...args) { return driver.executeAsyncScript(script, ...args); }
@@ -269,6 +283,11 @@ async function seedRecording(studioKey, itemId, title, blobKey) {
   return stored === true;
 }
 async function goHome() {
+  // A cold load legitimately routes into the last Studio while the owner has
+  // not touched the interface (the activation bridge's documented boot
+  // behavior). Real workflows always interact first; mark owner control the
+  // same way so the boot activation cannot land late and navigate mid-flow.
+  await js("window.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));").catch(() => {});
   if (await buttonExists("Create new Studio", ".home-page")) return;
   const started = Date.now();
   let lastDetail = "no exit attempt";
@@ -323,8 +342,26 @@ async function establishSceneTitle(workspaceId, sceneTitle, orientation) {
     return (configuration.studioScenes || []).some((scene) => scene.title === sceneTitle) && configuration.programOrientation === orientation;
   }, 45_000);
 }
+async function catalogDiagnostics() {
+  return js(`return {
+    cards: Array.from(document.querySelectorAll('.studio-card')).map(function (c) { var t = c.querySelector('.studio-card-title strong'); return t ? (t.textContent || '').trim() : '(untitled)'; }),
+    bridgeEntries: (window.__tpiStudioWorkspace && window.__tpiStudioWorkspace.listStudios ? window.__tpiStudioWorkspace.listStudios() : []).map(function (e) { return { key: e.key, title: e.title, source: e.source, archived: e.archived }; }),
+    broadcasts: JSON.parse(localStorage.getItem('studioflow.broadcasts') || '[]').map(function (b) { return b && { id: b.id, title: b.title, studioId: b.studioId || null, isProduction: b.isProduction === true }; }),
+    tombstones: JSON.parse(localStorage.getItem('studioflow.tpiLocalStudioDeleted.v1') || '[]'),
+    bridgeStatus: window.__tpiStudioWorkspace && window.__tpiStudioWorkspace.lastStatusMessage ? window.__tpiStudioWorkspace.lastStatusMessage() : null,
+    route: JSON.parse(localStorage.getItem('studioflow.route') || '"home"'),
+    hasHome: Boolean(document.querySelector('.home-page:not(.studio-dashboard)')),
+    hasDashboard: Boolean(document.querySelector('.home-page.studio-dashboard')),
+    hasScenesPanel: Boolean(document.querySelector('[data-tpi-scenes-panel]'))
+  };`).catch((error) => ({ diagnosticError: safe(error) }));
+}
 async function openDeleteDialog(title) {
   await goHome();
+  // The card grid re-renders around catalog updates (and production latency
+  // widens the window). Wait for the Studio's card before touching its menu.
+  await waitFor(`Studio card for ${title}`, async () => (await cardIndexFor(title)) >= 0, 30_000).catch(async (error) => {
+    throw new Error(`${error.message}; catalog: ${JSON.stringify(await catalogDiagnostics())}`);
+  });
   let opened = false;
   let lastError = "";
   for (let attempt = 0; attempt < 4 && !opened; attempt += 1) {
@@ -354,10 +391,23 @@ async function waitForInventory() {
 }
 async function typeConfirmationName(title) {
   await withElement(".studio-delete-actions", () => {}, 5_000);
-  await withElement(".modal label input", async (element) => {
-    await element.clear();
-    await element.sendKeys(title);
-  }, 15_000);
+  // The with-contents disclosure makes the dialog taller, and geckodriver
+  // refuses to type into an input it cannot scroll into view. Center the
+  // input first and retry once; the typed name still arrives as real key
+  // events so the dialog's typed-name gate behaves exactly as in the browser.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await withElement(".modal label input", async (element) => {
+        await js("var input = document.querySelector('.modal label input'); if (input && input.scrollIntoView) input.scrollIntoView({ block: 'center' });");
+        await element.clear();
+        await element.sendKeys(title);
+      }, 15_000);
+      return;
+    } catch (error) {
+      if (attempt) throw error;
+      await sleep(500);
+    }
+  }
 }
 async function confirmDeleteDialogWithLabel(title, label) {
   const button = await confirmButtonState();
@@ -398,10 +448,21 @@ try {
   await driver.manage().window().setRect({ width: 1440, height: 1100, x: 20, y: 20 });
 
   // ---- Authenticate ------------------------------------------------------
-  await driver.get(`${base}/member-login.html`);
-  await waitFor("member login form", async () => (await driver.findElements(By.css("form[data-member-login]"))).length === 1);
-  await js("var f=document.querySelector('form[data-member-login]'),u=f.querySelector('input[name=\"username\"]'),p=f.querySelector('input[name=\"password\"]'); u.value=arguments[0]; p.value=arguments[1]; ['input','change'].forEach(function(t){u.dispatchEvent(new Event(t,{bubbles:true}));p.dispatchEvent(new Event(t,{bubbles:true}))}); f.requestSubmit();", account.username, account.password);
-  await waitFor("authenticated session", async () => Boolean((await authenticatedFetch("/api/auth/me")).body?.user));
+  // The delegated submit handler is installed by member-login.js at the end of
+  // the page: the parser exposes the form before that script executes, and a
+  // premature requestSubmit() falls through to a native submit that never
+  // creates a session. Gate the submit on the handler's runtime, and retry the
+  // whole login step so one slow production load cannot fail the run.
+  let authenticated = false;
+  let loginDetail = "";
+  for (let attempt = 0; attempt < 3 && !authenticated; attempt += 1) {
+    await driver.get(`${base}/member-login.html`);
+    await waitFor("member login form", async () => (await driver.findElements(By.css("form[data-member-login]"))).length === 1, 30_000);
+    await waitFor("member login handler", async () => await js("return document.readyState !== 'loading' && Boolean(window.TPIApi);"), 30_000);
+    await js("var f=document.querySelector('form[data-member-login]'),u=f.querySelector('input[name=\"username\"]'),p=f.querySelector('input[name=\"password\"]'); u.value=arguments[0]; p.value=arguments[1]; ['input','change'].forEach(function(t){u.dispatchEvent(new Event(t,{bubbles:true}));p.dispatchEvent(new Event(t,{bubbles:true}))}); f.requestSubmit();", account.username, account.password);
+    authenticated = await waitFor("authenticated session", async () => Boolean((await authenticatedFetch("/api/auth/me")).body?.user), 15_000).then(() => true).catch((error) => { loginDetail = safe(error); return false; });
+  }
+  if (!authenticated) throw new Error(`authenticated session timed out: ${loginDetail}`);
   await releaseStaleProductionSessions();
   await purgeFixtures();
 

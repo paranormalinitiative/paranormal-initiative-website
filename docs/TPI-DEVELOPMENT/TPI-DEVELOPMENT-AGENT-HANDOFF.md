@@ -1,5 +1,24 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-100 — SOURCE ISOLATED (2026-10-26)
+
+Deletion source is isolated on `codex/studioflow-100-deletion-isolation`, source commit
+`8b72de811cf1623ac7d6caa5642a43e418d69924`. Paired website server branch:
+`codex/studioflow-100-deletion-server`. The website commit is the commit introducing
+[the Directive 100 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-100-DELETION-ISOLATION.md).
+Both worktrees are under the original website checkout's ignored `.local-dev/worktrees/`.
+Original development file bytes and statuses were fingerprinted and verified unchanged.
+TypeScript/build/isolation checks and 093 VM purge regression passed. 088 and 089 were
+attempted but blocked before browser launch by missing isolated `test_admin` credentials.
+No generated website assets, push, merge, deployment, or production mutation occurred.
+No 091 or 092 code is included. This is not implementation-complete, safety-verified,
+deployed, or owner-accepted. Preserve browser-local recordings; no new ownership DB.
+The existing browser bridge already constructs local/shared blob lists; earlier claims
+that the server must return them omitted that layer. Local error swallowing, reference
+ambiguity, cross-tab races and dialog overflow remain for subsequent implementation.
+See the execution record for exact files, build hashes, evidence and next actions.
+
+
 Last verified: 2026-10-26
 Current controlling directive: TPI MASTER — Standing Autonomous Agent Authority
 

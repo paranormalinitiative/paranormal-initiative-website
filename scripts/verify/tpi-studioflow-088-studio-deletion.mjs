@@ -95,7 +95,9 @@ async function withElement(css, action, timeout = 20_000) {
       if (elements.length) { await action(elements[0]); return true; }
     } catch (error) {
       lastError = safe(error);
-      if (!/stale/i.test(lastError)) throw error;
+      // WebDriver reports re-render detachments as either "stale element
+      // reference" or "no longer attached to the DOM"; both are retryable.
+      if (!/stale|no longer attached/i.test(lastError)) throw error;
     }
     await sleep(200);
   }
@@ -365,10 +367,23 @@ async function confirmDeleteDialog(title) {
 }
 async function typeConfirmationName(title) {
   await withElement(".studio-delete-actions", () => {}, 5_000);
-  await withElement(".modal label input", async (element) => {
-    await element.clear();
-    await element.sendKeys(title);
-  }, 15_000);
+  // The with-contents disclosure makes the dialog taller, and geckodriver
+  // refuses to type into an input it cannot scroll into view. Center the
+  // input first and retry once; the typed name still arrives as real key
+  // events so the dialog's typed-name gate behaves exactly as in the browser.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await withElement(".modal label input", async (element) => {
+        await js("var input = document.querySelector('.modal label input'); if (input && input.scrollIntoView) input.scrollIntoView({ block: 'center' });");
+        await element.clear();
+        await element.sendKeys(title);
+      }, 15_000);
+      return;
+    } catch (error) {
+      if (attempt) throw error;
+      await sleep(500);
+    }
+  }
 }
 
 try {
@@ -383,10 +398,21 @@ try {
   await driver.manage().window().setRect({ width: 1440, height: 1100, x: 20, y: 20 });
 
   // ---- Authenticate ------------------------------------------------------
-  await driver.get(`${base}/member-login.html`);
-  await waitFor("member login form", async () => (await driver.findElements(By.css("form[data-member-login]"))).length === 1);
-  await js("var f=document.querySelector('form[data-member-login]'),u=f.querySelector('input[name=\"username\"]'),p=f.querySelector('input[name=\"password\"]'); u.value=arguments[0]; p.value=arguments[1]; ['input','change'].forEach(function(t){u.dispatchEvent(new Event(t,{bubbles:true}));p.dispatchEvent(new Event(t,{bubbles:true}))}); f.requestSubmit();", account.username, account.password);
-  await waitFor("authenticated session", async () => Boolean((await authenticatedFetch("/api/auth/me")).body?.user));
+  // The delegated submit handler is installed by member-login.js at the end of
+  // the page: the parser exposes the form before that script executes, and a
+  // premature requestSubmit() falls through to a native submit that never
+  // creates a session. Gate the submit on the handler's runtime, and retry the
+  // whole login step so one slow production load cannot fail the run.
+  let authenticated = false;
+  let loginDetail = "";
+  for (let attempt = 0; attempt < 3 && !authenticated; attempt += 1) {
+    await driver.get(`${base}/member-login.html`);
+    await waitFor("member login form", async () => (await driver.findElements(By.css("form[data-member-login]"))).length === 1, 30_000);
+    await waitFor("member login handler", async () => await js("return document.readyState !== 'loading' && Boolean(window.TPIApi);"), 30_000);
+    await js("var f=document.querySelector('form[data-member-login]'),u=f.querySelector('input[name=\"username\"]'),p=f.querySelector('input[name=\"password\"]'); u.value=arguments[0]; p.value=arguments[1]; ['input','change'].forEach(function(t){u.dispatchEvent(new Event(t,{bubbles:true}));p.dispatchEvent(new Event(t,{bubbles:true}))}); f.requestSubmit();", account.username, account.password);
+    authenticated = await waitFor("authenticated session", async () => Boolean((await authenticatedFetch("/api/auth/me")).body?.user), 15_000).then(() => true).catch((error) => { loginDetail = safe(error); return false; });
+  }
+  if (!authenticated) throw new Error(`authenticated session timed out: ${loginDetail}`);
   await releaseStaleProductionSessions();
   await purgeFixtures();
 
