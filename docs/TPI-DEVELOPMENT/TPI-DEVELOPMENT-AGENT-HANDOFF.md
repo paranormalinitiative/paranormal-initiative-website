@@ -1,5 +1,17 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-101 — BLOCKED (2026-10-26)
+
+Partial local deletion repairs committed in isolated source `0a10451997e19a09ef2aae94bb9b25395603bfac`.
+Local injected fixture tests 22/22, TypeScript, production build and unchanged 093 VM regression pass.
+Existing ownership writers and older tabs do not coordinate with deletion locks; a last-moment
+localStorage read is not atomic with IndexedDB deletion. **Content deletion now fails closed
+before any mutation**; Studio-only retains blobs. This is an intentional blocked-development
+behavior change, not safety completion or release readiness. Actual browser/IndexedDB and
+cross-tab acceptance remain unverified. No 091/092 code, original-tree edits, push, merge or deployment.
+Resolve all-writer coordination and old-tab handling before enabling cleanup. See
+[Directive 101 evidence](100-DIRECTIVES/TPI-STUDIOFLOW-101-LOCAL-RECORDING-DELETION-SAFETY.md).
+
 ## TPI-STUDIOFLOW-100 — SOURCE ISOLATED (2026-10-26)
 
 Deletion source is isolated on `codex/studioflow-100-deletion-isolation`, source commit

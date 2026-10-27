@@ -16,6 +16,12 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-101 — Local recording deletion safety
+
+Status: **BLOCKED / PARTIALLY IMPLEMENTED / NOT DEPLOYED**.
+[Execution evidence and coordination blocker](TPI-STUDIOFLOW-101-LOCAL-RECORDING-DELETION-SAFETY.md).
+22/22 local fixtures, TypeScript/build and 093 pass; content deletion fails closed pending writer coordination.
+
 ## TPI-STUDIOFLOW-100 — Source isolation
 
 Status: **SOURCE ISOLATED / NOT SAFETY VERIFIED / NOT DEPLOYED**.
