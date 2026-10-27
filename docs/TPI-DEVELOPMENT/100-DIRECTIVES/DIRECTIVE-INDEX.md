@@ -16,6 +16,14 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-105 — Authorized production integration and release
+
+Status: **INTEGRATED AND PUSHED / MANDATORY AUTH GATE FAILED / NOT DEPLOYED**.
+[Release traceability, preserved development and exact gate failure](TPI-STUDIOFLOW-105-PRODUCTION-RELEASE.md).
+104 evidence/release commit `20eba92`; application unchanged from `81a234a`.
+Mandatory auth lifecycle exited 1: isolated release protected credential file missing.
+Full preflight/deployment/live verification not run. Both deletion modes remain blocked.
+
 ## TPI-STUDIOFLOW-104 — Release acceptance and production readiness
 
 Status: **LOCAL ACCEPTANCE PASSED / GUARDED RELEASE BLOCKED / NOT DEPLOYED**.

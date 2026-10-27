@@ -1,5 +1,22 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-105 — RELEASE STOPPED AT MANDATORY AUTH GATE (2026-10-26)
+
+Authorized branch is now in `.local-dev/worktrees/website-105`, with candidate and
+104 acceptance commit `20eba92` pushed fast-forward and origin parity verified.
+Original website dirty checkout remains at `6c48b45` on renamed branch
+`codex/studioflow-105-preserved-development`; its file bytes/status are preserved.
+Original StudioFlow and existing 091/source-103 worktrees untouched. No application
+changes or asset rebuild: exact JS/CSS hashes and 103 application parity pass.
+Mandatory auth lifecycle failed immediately because the isolated release worktree
+lacks its protected credential file/local state. Per 105, stopped before deployment;
+full preflight and live verification not run. No new authorization is needed merely
+because older 104 records required it, but all safety gates still must pass.
+Next: establish maintained isolated auth/service ownership and exact clean source
+provenance without building mixed originals or bypassing release scripts. Then rerun
+mandatory auth lifecycle/full preflight. Both permanent deletion modes stay unavailable.
+[Directive 105 traceability and exact failure](100-DIRECTIVES/TPI-STUDIOFLOW-105-PRODUCTION-RELEASE.md).
+
 ## TPI-STUDIOFLOW-104 — LOCAL ACCEPTANCE PASSED / GUARDED RELEASE BLOCKED (2026-10-26)
 
 Continue from `.local-dev/worktrees/website-104`, branch

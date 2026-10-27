@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-105 — INTEGRATED/PUSHED / RELEASE BLOCKED (2026-10-26)
+
+Directive 104 evidence committed as `20eba92d2dce2a1db985bc352bedbbe174139d8f`;
+fast-forward integrated/pushed on `codex/tpi-development` with live origin parity.
+Clean release worktree `.local-dev/worktrees/website-105`; exact approved assets
+and application unchanged. Release contract 21/21, 103 gates and 093 regression PASS.
+Original website dirty files/HEAD/status preserved under renamed local branch
+`codex/studioflow-105-preserved-development`; original source worktrees untouched.
+Mandatory `verify:local-auth-lifecycle` FAILED: protected local credential file missing
+or not mode 0600 in the new isolated worktree. Stopped as directed: full preflight,
+deployment and live verification NOT RUN. Both permanent deletion modes remain blocked.
+No Worker deployment ID; no production data operations; owner acceptance PENDING.
+[Directive 105 blocker and next release preparation](100-DIRECTIVES/TPI-STUDIOFLOW-105-PRODUCTION-RELEASE.md).
+
 ## TPI-STUDIOFLOW-104 — LOCAL ACCEPTANCE PASSED / GUARDED RELEASE BLOCKED (2026-10-26)
 
 Disposable local authentication and Worker acceptance completed on unchanged website
