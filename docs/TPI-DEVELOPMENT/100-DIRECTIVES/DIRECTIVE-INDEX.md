@@ -16,6 +16,16 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-108 — Integrate authoritative source-provenance workflow
+
+Status: **COMPLETE / TOOLING ONLY / PUSHED / NOT DEPLOYED**.
+[Integration, verification and artifact-preservation evidence](TPI-STUDIOFLOW-108-INTEGRATE-SOURCE-PROVENANCE-WORKFLOW.md).
+Directive 107 `3b55fe9` fast-forwarded onto `codex/tpi-development` (from
+`b5cd1b7`) and pushed with live origin parity. 107 suite 20/20, 025 12/12,
+055 17/17 pass. Production assets unchanged (`4eed57a4…`/`850186…`); Worker
+application code untouched; preserved development intact. Nothing deployed
+(Worker `91a8460e` unchanged).
+
 ## TPI-STUDIOFLOW-107 — Correct authoritative source provenance and reproducibility
 
 Status: **COMPLETE / TOOLING ONLY / NOT DEPLOYED**.

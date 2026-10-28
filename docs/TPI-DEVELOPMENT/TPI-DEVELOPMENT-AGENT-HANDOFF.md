@@ -1,5 +1,19 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-108 — SOURCE-PROVENANCE WORKFLOW INTEGRATED AND PUSHED (2026-10-28)
+
+Directive 107's staging correction (`3b55fe9`) is now on the authorized branch:
+fast-forwarded `codex/tpi-development` from `b5cd1b7` and pushed with exact origin
+parity. The maintained preflight staging check now builds only the baseline-approved
+source commit (`6b9c3c4` recorded in `scripts/studioflow-release-baseline.json`)
+from an isolated clean worktree. Verification: 107 suite 20/20, 025 12/12,
+055 17/17; production assets byte-identical (`4eed57a4…`/`850186…`); Worker and
+`studio/` application code unchanged. The 107 note "not pushed" is superseded by
+this integration. Preserved development intact. Nothing deployed; production
+unchanged. The next source release still updates the baseline commit + hashes in
+its release commit before verifying/applying.
+[Directive 108 record](100-DIRECTIVES/TPI-STUDIOFLOW-108-INTEGRATE-SOURCE-PROVENANCE-WORKFLOW.md).
+
 ## TPI-STUDIOFLOW-107 — SOURCE PROVENANCE FIXED / TOOLING ONLY (2026-10-28)
 
 The 106 known gap is closed: authoritative staging no longer compiles the mixed

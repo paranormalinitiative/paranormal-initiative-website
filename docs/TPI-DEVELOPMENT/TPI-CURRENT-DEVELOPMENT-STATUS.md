@@ -1,5 +1,18 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-108 — COMPLETE / TOOLING ONLY / PUSHED (2026-10-28)
+
+Directive 107's source-provenance workflow is integrated into the authorized
+branch: `3b55fe9` fast-forwarded onto `codex/tpi-development` (from `b5cd1b7`)
+and pushed; local and remote HEAD match. Scope verified limited to the staging
+workflow, release baseline, regression test, package script and documentation —
+no `studio/` assets, Worker code, migrations or Cloudflare config touched.
+107 suite 20/20; 025 12/12; 055 17/17. Entry point still references
+`index-D1h4nSZd.js`/`index-CcFjA_0p.css` with hashes `4eed57a4…`/`850186…`
+matching the approved baseline. Preserved development (`fc6fe45`) intact;
+nothing deployed; production unchanged (Worker `91a8460e`).
+[Directive 108 record](100-DIRECTIVES/TPI-STUDIOFLOW-108-INTEGRATE-SOURCE-PROVENANCE-WORKFLOW.md).
+
 ## TPI-STUDIOFLOW-107 — COMPLETE / TOOLING ONLY (2026-10-28)
 
 Source provenance corrected: `scripts/stage-studioflow-authoritative.mjs` builds
