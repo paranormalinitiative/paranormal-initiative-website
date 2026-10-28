@@ -1,5 +1,21 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-107 — SOURCE PROVENANCE FIXED / TOOLING ONLY (2026-10-28)
+
+The 106 known gap is closed: authoritative staging no longer compiles the mixed
+development tree. `scripts/stage-studioflow-authoritative.mjs` resolves its source
+identity from `scripts/studioflow-release-baseline.json` (repository + exact
+approved commit + known-good asset hashes) and builds exactly that commit from an
+isolated clean worktree. It rejects dirty worktrees, wrong/missing commits, foreign
+worktrees, unauthorized source paths and unauthorized staging surfaces; there are
+no bypass flags. Verify-only never writes; `--apply` stages and re-verifies. Future
+source releases update the baseline (commit + hashes) in their release commit
+before verifying/applying. Regression: `npm run verify:studioflow-107-provenance`
+(20/20). Work is committed on `codex/studioflow-107-source-provenance` and not
+pushed per the directive; nothing deployed; production unchanged. The mixed
+checkout keeps the unfinished 091/092 work and remains development-only.
+[Directive 107 record](100-DIRECTIVES/TPI-STUDIOFLOW-107-SOURCE-PROVENANCE-AND-REPRODUCIBILITY.md).
+
 ## TPI-STUDIOFLOW-106 — DEPLOYED_AND_VERIFIED (2026-10-27)
 
 The verified Video Setup 091 candidate is live at `https://paranormalinitiative.com/studio/`

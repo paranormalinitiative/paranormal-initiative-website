@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "recordedDirective": "TPI-STUDIOFLOW-106",
+  "description": "Approved StudioFlow release source identity and known-good production assets. The staging workflow builds exactly this source commit and compares its output against these hashes. Update this file only through the authorized release procedure (TPI-STUDIOFLOW-107); an update is the auditable record of which source commit is approved for staging.",
+  "source": {
+    "repository": "/Users/toddknipple/Documents/StudioFlow/web",
+    "approvedCommit": "6b9c3c4b6b40f0496012e5d718d32d75e149dcf6"
+  },
+  "expectedAssets": {
+    "javaScript": {
+      "name": "index-D1h4nSZd.js",
+      "sha256": "4eed57a4f243c9474fb73957d9e567defb2bb43ef3bcc82c1749ba02fcf92557"
+    },
+    "css": {
+      "name": "index-CcFjA_0p.css",
+      "sha256": "8501862945034d73a08df30e81291891491536edd82f16e0074b98a933e4cf69"
+    }
+  }
+}

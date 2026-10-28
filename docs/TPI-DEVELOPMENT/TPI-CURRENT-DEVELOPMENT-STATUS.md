@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-107 — COMPLETE / TOOLING ONLY (2026-10-28)
+
+Source provenance corrected: `scripts/stage-studioflow-authoritative.mjs` builds
+exactly the approved source commit recorded in `scripts/studioflow-release-baseline.json`
+(`6b9c3c4`) from a disposable clean worktree (or a provided clean pinned worktree),
+never from the mixed development checkout. Dirty, wrong-commit, missing-commit,
+foreign and unauthorized sources are rejected before any build; no bypass flags.
+Verify-only rebuilds and compares (never writes); `--apply` is the only staging path.
+Two clean builds identical; output reproduces the known-good assets
+(`4eed57a4…` / `850186…`); staged `studio/` matches byte-for-byte. Regression
+`verify:studioflow-107-provenance` 20/20 (12 required cases); release-safety 21
+and 055 pass. Branch `codex/studioflow-107-source-provenance`; nothing deployed;
+production unchanged. Owner acceptance of the live interface remains pending.
+[Directive 107 record](100-DIRECTIVES/TPI-STUDIOFLOW-107-SOURCE-PROVENANCE-AND-REPRODUCIBILITY.md).
+
 ## TPI-STUDIOFLOW-106 — DEPLOYED_AND_VERIFIED (2026-10-27)
 
 Directive 105's authentication blocker resolved: in-progress development preserved

@@ -2,7 +2,7 @@
 
 Status: ACTIVE / CANONICAL
 
-Last verified: 2026-10-25
+Last verified: 2026-10-28
 
 This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
@@ -42,16 +42,23 @@ website repository's `codex/tpi-development` branch.
 1. Inspect both repositories and preserve unrelated work.
 2. Change authoritative StudioFlow source when the defect belongs to the core
    application. Commit the verified source change in that repository.
-3. From the website repository, build and integrate the exact source revision:
+3. From the website repository, build and integrate the exact approved source
+   revision:
 
    ```sh
    cd /Users/toddknipple/Documents/GitHub/paranormal-initiative-website
+   node scripts/stage-studioflow-authoritative.mjs --verify-only
    node scripts/stage-studioflow-authoritative.mjs --apply
    ```
 
-   The staging tool builds the source twice, verifies reproducibility, copies
-   generated assets into `studio/`, and preserves the maintained TPI bridge
-   layer. It does not deploy.
+   The staging tool builds exactly the approved source commit recorded in
+   `scripts/studioflow-release-baseline.json`, twice, from an isolated clean
+   worktree of that commit — never from a working tree. It verifies
+   reproducibility, compares the generated JavaScript and CSS against the
+   recorded known-good hashes, compares the result against the staged website
+   assets, and preserves the maintained TPI bridge layer. `--verify-only` never
+   writes; `--apply` is the only way to copy the verified generated files into
+   `studio/`. It does not deploy.
 4. If the change is bridge-only, edit and test the maintained bridge files in
    the website repository; do not rebuild unrelated source merely to create a
    new bundle.
@@ -83,6 +90,33 @@ must perform the user interaction, confirm computed visibility and a non-zero
 in-viewport bounding rectangle, and retain a screenshot or equivalent visible
 evidence when reconciling a reported production failure. This guards against
 ancestor clipping, stacking, pointer-event, and stale-bundle defects.
+
+## Approved source selection and staging verification (TPI-STUDIOFLOW-107)
+
+The release source identity is recorded in
+`scripts/studioflow-release-baseline.json`: the approved source repository, the
+exact approved source commit, and the known-good production asset hashes. The
+staging workflow builds exactly that commit and refuses everything else:
+
+- A `--source-repo`, `--source-commit` or `--source-worktree` statement is
+  accepted only when it matches the recorded identity. Unauthorized source
+  paths, missing commits, unexpected commits, foreign worktrees, worktrees not
+  at the approved commit, and dirty worktrees are rejected before any build.
+  There are no bypass flags.
+- Build inputs are the tracked files of the approved commit, taken from a
+  disposable detached worktree of that commit or a provided clean worktree
+  pinned at it. The mixed development checkout is never a build source.
+- The build runs twice in clean conditions; both artifact trees must be
+  identical, and the generated JavaScript and CSS must reproduce the recorded
+  hashes exactly. A difference is reported, never repaired by editing code.
+- `--verify-only` (the default, and what `release:preflight` runs) rebuilds and
+  compares against the staged website assets and never writes. `--apply` stages
+  only the verified generated files into `studio/` and re-verifies afterwards.
+- To release a new source revision, record its approved commit and asset hashes
+  in the baseline inside the release commit, then verify and apply.
+
+Regression coverage: `npm run verify:studioflow-107-provenance` (disposable
+fixture rejection cases plus the real baseline reproduction).
 
 ## What commit, push, and deploy mean
 

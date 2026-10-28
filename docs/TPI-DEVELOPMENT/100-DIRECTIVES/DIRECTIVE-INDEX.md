@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-107 — Correct authoritative source provenance and reproducibility
+
+Status: **COMPLETE / TOOLING ONLY / NOT DEPLOYED**.
+[Workflow correction, rejection rules and regression evidence](TPI-STUDIOFLOW-107-SOURCE-PROVENANCE-AND-REPRODUCIBILITY.md).
+`stage-studioflow-authoritative.mjs` now builds exactly the baseline-approved
+source commit (`6b9c3c4`) recorded in `scripts/studioflow-release-baseline.json`
+from an isolated clean worktree — never a working tree. Dirty, wrong-commit,
+missing-commit, foreign and unauthorized sources are rejected with no bypass
+flags; verify-only never writes; `--apply` stages. Known-good hashes
+`4eed57a4…`/`850186…` reproduced; 107 suite 20/20; release-safety and 055 pass.
+Production unchanged (Worker `91a8460e`).
+
 ## TPI-STUDIOFLOW-106 — Resolve authentication gate and complete production deployment
 
 Status: **COMPLETE — DEPLOYED_AND_VERIFIED / OWNER ACCEPTANCE PENDING**.
