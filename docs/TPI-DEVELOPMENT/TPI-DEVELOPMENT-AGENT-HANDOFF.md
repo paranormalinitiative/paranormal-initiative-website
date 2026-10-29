@@ -1,5 +1,24 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-112 — COMPLETE / INTEGRATED FEATURE COMMITTED / NOT DEPLOYED (2026-10-29)
+
+Directive 111's verified audio repair is integrated into the preserved
+Teleprompter 092 worktree at
+`/Users/toddknipple/Documents/StudioFlow/web-109` on
+`codex/studioflow-109-teleprompter`. The completed feature commit is
+`05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`; the branch is clean and the
+pre-existing Directive 110 evidence remains locally preserved and excluded.
+The integrated build, default/explicit/invalid/blank microphone preferences,
+decoded saved audio/video, Voice FX modes, Teleprompter browser acceptance
+39/39, focused checks 23/23, two-Studio isolation, screen-share 9/9, recording
+privacy, isolated RTMP privacy, Video Setup 091 9/9 and authenticated Worker
+regressions all pass. The isolated lifecycle fixture passed 29/29, ownership
+40/40, recording/storage 33/33, deletion 31/31, deletion safety 32/32 and
+direct Worker 23/23. Permanent deletion remains disabled. Do not merge or
+deploy automatically; any future promotion must follow the authoritative
+source-to-live workflow and separate release authorization. See [Directive 112
+record](100-DIRECTIVES/TPI-STUDIOFLOW-112-INTEGRATE-AUDIO-TELEPROMPTER-ACCEPTANCE.md).
+
 ## TPI-STUDIOFLOW-111 — RECORDING AUDIO REPAIRED / INTEGRATION REQUIRED / NOT DEPLOYED (2026-10-29)
 
 The shared recording defect is repaired and verified in isolated source worktree

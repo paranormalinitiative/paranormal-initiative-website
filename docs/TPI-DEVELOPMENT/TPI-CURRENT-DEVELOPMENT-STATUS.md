@@ -1,5 +1,21 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-112 — COMPLETE / TELEPROMPTER 092 ACCEPTED / NOT DEPLOYED (2026-10-29)
+
+Directive 111's verified microphone-volume repair is integrated into the
+preserved Teleprompter 092 worktree at
+`/Users/toddknipple/Documents/StudioFlow/web-109`, branch
+`codex/studioflow-109-teleprompter`. The completed isolated feature commit is
+`05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`, containing the Teleprompter
+implementation, the exact audio fallback repair from `4b44d365e44a8daab6151ea4796f0c2344dd7296`,
+and focused checks only. Build, audio preference cases, Firefox saved-media
+decoding, Voice FX, Teleprompter 39/39, focused checks 23/23, screen-share 9/9,
+RTMP privacy, Video Setup 091 9/9, and the isolated authenticated Worker gates
+all pass. Lifecycle 29/29, ownership 40/40, recording/storage 33/33, deletion
+31/31, deletion safety 32/32 and direct Worker 23/23 pass. Permanent deletion
+remains disabled. Original development and production remain unchanged; no
+deployment occurred. See [Directive 112 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-112-INTEGRATE-AUDIO-TELEPROMPTER-ACCEPTANCE.md).
+
 ## TPI-STUDIOFLOW-111 — COMPLETE / ISOLATED AUDIO REPAIR / NOT DEPLOYED (2026-10-29)
 
 Directive 111 compared the approved Video Setup 091 commit against the preserved

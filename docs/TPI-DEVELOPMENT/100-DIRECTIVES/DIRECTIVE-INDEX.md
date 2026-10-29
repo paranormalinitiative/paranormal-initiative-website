@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-112 — Integrate verified audio repair and complete Teleprompter 092 acceptance
+
+Status: **COMPLETE / ISOLATED DEVELOPMENT ONLY / NOT DEPLOYED**.
+[Directive 112 execution record](TPI-STUDIOFLOW-112-INTEGRATE-AUDIO-TELEPROMPTER-ACCEPTANCE.md).
+Directive 111's verified repair is integrated and committed on the isolated
+Teleprompter branch at `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`. Integrated
+build, decoded non-silent audio/video, Teleprompter 39/39, focused checks 23/23,
+screen-share 9/9, RTMP privacy, Video Setup 091 9/9, direct Worker 23/23,
+lifecycle 29/29, ownership 40/40, recording/storage 33/33, deletion 31/31 and
+deletion safety 32/32 pass. Permanent deletion remains disabled. No production
+endpoint or deployment was used.
+
 ## TPI-STUDIOFLOW-111 — Diagnose and repair recording audio pipeline
 
 Status: **COMPLETE / ISOLATED DEVELOPMENT ONLY / NOT DEPLOYED**.
