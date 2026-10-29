@@ -16,6 +16,42 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-111 — Diagnose and repair recording audio pipeline
+
+Status: **COMPLETE / ISOLATED DEVELOPMENT ONLY / NOT DEPLOYED**.
+[Directive 111 execution record](TPI-STUDIOFLOW-111-RECORDING-AUDIO.md).
+The approved 091 baseline and Teleprompter branch both reproduced silent audio;
+the root cause was an absent microphone-volume preference becoming zero before
+the program audio destination. The isolated repair restores the intended unity
+fallback. Firefox saved-media decoding, playable video, all required Voice FX
+modes, Video Setup 091 9/9, Teleprompter acceptance 39/39, focused checks 23/23
+and screen-share privacy 9/9 pass. The repair remains isolated until a separate
+integration review ports it into the uncommitted Teleprompter worktree. No
+production endpoint or deployment was used.
+
+## TPI-STUDIOFLOW-110 — Teleprompter 092 browser acceptance and recording verification
+
+Status: **BLOCKED / DEVELOPMENT ONLY / NOT DEPLOYED**.
+[Directive 110 execution record](TPI-STUDIOFLOW-110-TELEPROMPTER-ACCEPTANCE.md).
+Firefox acceptance 39/39, screen-sharing 9/9, local RTMP output canary absent,
+Video Setup 091 9/9, Voice FX and release safety 21/21 pass. Recording video is
+playable/canary-free; active-recording Play/Pause/Resume/Close work. However, the
+saved Opus is silent/invalid; an independent Firefox tone was valid while the app
+program recorder stream measured 0.0 RMS from a non-silent injected source. The
+app audio mix/capture path remains blocked, reopen-during-recording is inconclusive,
+and authenticated Worker-backed Studio lifecycle checks remain unrun. Feature is
+uncommitted; no production endpoint or deployment was used.
+
+## TPI-STUDIOFLOW-109 — Complete and integrate Teleprompter 092
+
+Status: **DEVELOPMENT IMPLEMENTED / ACCEPTANCE PARTIAL / NOT DEPLOYED**.
+[Teleprompter implementation, focused verification and remaining acceptance gaps](TPI-STUDIOFLOW-109-TELEPROMPTER-092.md).
+Isolated source worktree `/Users/toddknipple/Documents/StudioFlow/web-109`, branch
+`codex/studioflow-109-teleprompter`, based on `6b9c3c4`; updated by Directive
+110, browser and media acceptance now mostly passed, with recorded-audio integrity
+and Worker-backed Studio management still blocked. No production changes; feature
+remains uncommitted.
+
 ## TPI-STUDIOFLOW-108 — Integrate authoritative source-provenance workflow
 
 Status: **COMPLETE / TOOLING ONLY / PUSHED / NOT DEPLOYED**.

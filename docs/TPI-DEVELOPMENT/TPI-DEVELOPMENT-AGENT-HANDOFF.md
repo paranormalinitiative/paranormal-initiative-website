@@ -1,5 +1,71 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-111 — RECORDING AUDIO REPAIRED / INTEGRATION REQUIRED / NOT DEPLOYED (2026-10-29)
+
+The shared recording defect is repaired and verified in isolated source worktree
+`/Users/toddknipple/Documents/StudioFlow/web-111`, branch
+`codex/studioflow-111-recording-audio`, based on approved commit `6b9c3c4`.
+Absent or blank `studioflow.micVolume` was converted to zero by
+`Number(localStorage.getItem(...))`, muting the microphone gain before the
+program recording destination. The focused repair restores fallback `1` and
+does not alter the recording architecture, Voice FX placement, compositor or
+Teleprompter implementation.
+
+Fresh Firefox recordings now contain live recorder audio, non-silent decoded
+48 kHz Opus at approximately 440 Hz, and playable VP8 video. Disabled,
+enabled, changed and bypassed Voice FX all pass; Video Setup 091 is 9/9;
+Teleprompter acceptance is 39/39; focused Teleprompter checks are 23/23; and
+screen-share privacy is 9/9. The original mixed checkout and `web-109` remain
+untouched and uncommitted. Do not merge automatically. The next directive must
+review and integrate the isolated commit into `web-109`, then repeat combined
+acceptance. Production remains unchanged and no deployment was performed.
+See [Directive 111 record](100-DIRECTIVES/TPI-STUDIOFLOW-111-RECORDING-AUDIO.md).
+
+## TPI-STUDIOFLOW-110 — TELEPROMPTER 092 ACCEPTANCE BLOCKED / NOT DEPLOYED (2026-10-29)
+
+Continue only in `/Users/toddknipple/Documents/StudioFlow/web-109`, branch
+`codex/studioflow-109-teleprompter`, based on `6b9c3c4b6b40f0496012e5d718d32d75e149dcf6`.
+Directive 109 work remains uncommitted and was snapshotted as
+`.directive110-evidence/directive109-source-recoverable.patch` (SHA-256
+`6ae6d1a7ff879819feca8e1b4142d973ef4f6f109dd5155419a74079d8b7ec45`). Browser
+acceptance 39/39, screen-share 9/9, local RTMP output canary check, Video Setup
+091 9/9, Voice FX readiness, build, focused checks 23/23 and website release
+safety 21/21 pass. Play/Pause/Resume/Close were confirmed during active recording
+with both A/V tracks live; reopen-during-recording remains inconclusive. The saved
+1080p video is playable/canary-free, but app program audio measured 0.0 RMS even
+though a generated source measured ~0.087 RMS, and the saved Opus decodes as silent
+with malformed packets. The program audio mix/capture path is therefore blocked.
+Independent Firefox tone/mic control recording was non-silent (-23 dB). Studio
+lifecycle/ownership/archive suites were not run because no isolated authenticated
+Worker fixture/account is available. Do not commit until the program audio path is
+verified with non-silent decodable output and isolated Worker-backed lifecycle
+regressions pass. Original mixed source changes remain
+preserved; website production baseline untouched; no production endpoint or
+deployment used. Full evidence and exact results are in
+`/Users/toddknipple/Documents/StudioFlow/web-109/.directive110-evidence/` and the
+[Directive 110 record](100-DIRECTIVES/TPI-STUDIOFLOW-110-TELEPROMPTER-ACCEPTANCE.md).
+
+## TPI-STUDIOFLOW-109 — TELEPROMPTER 092 DEVELOPMENT / ACCEPTANCE PARTIAL / NOT DEPLOYED (2026-10-28)
+
+Feature source is isolated in `/Users/toddknipple/Documents/StudioFlow/web-109`
+on branch `codex/studioflow-109-teleprompter`, based on approved Video Setup
+source `6b9c3c4`. Existing Teleprompter editor/script functionality was reused;
+new work adds Studio ownership/assignment, reader controls and per-Studio
+selection/settings/scroll persistence, presenter overlay, host screen-share
+close-before-capture guard and dedicated regression source checks (23/23).
+Build and Voice FX architecture check pass. Browser loaded the local app and
+verified script create/edit/save, but the preview harness stalled while entering
+recording setup, so no live recording, device or livestream test is claimed.
+Compositor source inspection establishes recording/RTMP video comes from the
+separate canvas path and excludes presenter DOM; supported screen-share safety
+is enforced by closing before host capture, but the actual captured output was
+not empirically tested. The directive requires browser acceptance of the reader
+and actual capture privacy; the preview stalled after entering the temporary
+recording setup and no browser automation package is available in the isolated
+source project. The feature is intentionally left uncommitted until those gates
+can be exercised, rather than recording a false complete state. Production
+unchanged; no deployment. See [Directive 109 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-109-TELEPROMPTER-092.md).
+
 ## TPI-STUDIOFLOW-108 — SOURCE-PROVENANCE WORKFLOW INTEGRATED AND PUSHED (2026-10-28)
 
 Directive 107's staging correction (`3b55fe9`) is now on the authorized branch:

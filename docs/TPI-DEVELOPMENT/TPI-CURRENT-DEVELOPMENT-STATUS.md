@@ -1,5 +1,74 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-111 — COMPLETE / ISOLATED AUDIO REPAIR / NOT DEPLOYED (2026-10-29)
+
+Directive 111 compared the approved Video Setup 091 commit against the preserved
+Teleprompter worktree with identical Firefox synthetic-media recording probes.
+Both the approved 091 baseline and the Teleprompter branch reproduced silent
+program audio, proving this was a pre-existing recording defect rather than a
+Teleprompter regression. The root cause was `Number(null)`/`Number("")` turning
+an absent `studioflow.micVolume` preference into zero before the host microphone
+entered the program `MediaStreamAudioDestinationNode`.
+
+The isolated repair branch
+`codex/studioflow-111-recording-audio` returns the intended fallback of `1` for
+absent, blank, invalid or non-finite stored volume. Firefox saved-media decoding
+now passes with non-silent 48 kHz Opus audio and playable 1920x1080 VP8 video;
+Voice FX disabled/enabled/changed/bypassed, Video Setup 091 9/9, Teleprompter
+acceptance 39/39, focused Teleprompter checks 23/23 and screen-share privacy
+9/9 pass. Original and Teleprompter worktrees remain preserved. No production
+endpoint or deployment was used. See [Directive 111 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-111-RECORDING-AUDIO.md).
+
+## TPI-STUDIOFLOW-110 — BLOCKED / TELEPROMPTER ACCEPTANCE (2026-10-29)
+
+Directive 110 resumed the preserved implementation in isolated source worktree
+`/Users/toddknipple/Documents/StudioFlow/web-109`, branch
+`codex/studioflow-109-teleprompter`, base `6b9c3c4b6b40f0496012e5d718d32d75e149dcf6`.
+Firefox Developer Edition browser acceptance passed 39/39 for in-Studio reader,
+script assignment, controls, persistence and two-Studio isolation. Host screen-share
+privacy passed 9/9. Actual local RTMP output was captured and the private canary is
+absent from decoded frames. Video Setup 091 passed 9/9; Voice FX was ready; static
+release safety passed 21/21. Build, focused teleprompter checks 23/23, Voice FX
+check and `git diff --check` pass.
+
+The saved 1080p recording plays and its video frames are canary-free, but its
+Opus audio decodes as silence (−91 dB; malformed packet headers). Independent
+Firefox synthetic audio records successfully (−23 dB; live tone RMS 0.0619),
+while an instrumented app run measured the generated source at ~0.087 RMS and the
+program recorder stream at 0.0 RMS with live tracks. This implicates the app's
+program audio mix/capture path in that run; recording audio is BLOCKED. Play,
+Pause, Resume and Close were confirmed while recording was active with live A/V;
+a final reopen-during-recording attempt was inconclusive after the recorder stopped.
+Authenticated Worker-backed Studio lifecycle/ownership/archive regressions remain
+NOT RUN because no isolated test fixture/account is available. The source patch is
+snapshotted and deliberately uncommitted; original mixed checkout and production
+are unchanged. No production endpoint was contacted.
+See [Directive 110 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-110-TELEPROMPTER-ACCEPTANCE.md)
+and local source-worktree evidence `directive110-results.json`.
+
+## TPI-STUDIOFLOW-109 — DEVELOPMENT IMPLEMENTATION / ACCEPTANCE PARTIAL / NOT DEPLOYED (2026-10-28)
+
+Recovered the existing Teleprompter workspace/editor and integrated a Studio-
+scoped reader into the current Studio presenter rail. The isolated source worktree
+is `/Users/toddknipple/Documents/StudioFlow/web-109`, branch
+`codex/studioflow-109-teleprompter`, based on approved Video Setup source
+`6b9c3c4`. Script ownership, per-Studio selected script/settings/scroll position,
+script-switch reset, and Studio-switch stop/remount behavior are implemented.
+Screen-sharing is fail-closed for the host: the presenter overlay is synchronously
+closed before the host display-capture picker is invoked, and cannot be reopened
+while host display capture is active. Recording/RTMP video originates from the
+separate program canvas compositor; the teleprompter DOM is not composited.
+`npm run build`, `npm run check:voice-fx`, and the new focused
+`npm run check:teleprompter` (23/23) pass. Local Vite UI loaded and script creation,
+editing, save, and control display were exercised in the browser; detailed reader
+playback and recording/livestream device-output acceptance could not be completed
+in this environment. Preview automation stalled after the temporary recording
+setup opened, and no browser automation dependency exists in the isolated source
+project. Because required interaction/output acceptance could not be completed,
+the source changes remain uncommitted for continuation; no deployment or production
+change. Permanent Studio deletion remains disabled. See Directive 109 record
+`100-DIRECTIVES/TPI-STUDIOFLOW-109-TELEPROMPTER-092.md`.
+
 ## TPI-STUDIOFLOW-108 — COMPLETE / TOOLING ONLY / PUSHED (2026-10-28)
 
 Directive 107's source-provenance workflow is integrated into the authorized
