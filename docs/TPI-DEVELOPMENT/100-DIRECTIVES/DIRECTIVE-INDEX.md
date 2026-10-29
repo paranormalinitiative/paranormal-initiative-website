@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-113 — Stage Teleprompter 092 for owner acceptance
+
+Status: **COMPLETE / DEVELOPMENT STAGED / OWNER ACCEPTANCE PENDING**.
+[Directive 113 staging record](TPI-STUDIOFLOW-113-DEVELOPMENT-STAGING.md).
+The exact feature commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb` is served
+from the clean detached staging worktree at
+`/Users/toddknipple/Documents/StudioFlow/web-113-staging` through the local-only
+preview `http://127.0.0.1:5192/studio/`. Reproducible asset hashes, browser
+acceptance, recording/audio/video privacy, RTMP privacy, Video Setup 091,
+screen-share and the isolated Worker regressions all pass. Owner approval is
+pending. No Worker or production deployment occurred.
+
 ## TPI-STUDIOFLOW-112 — Integrate verified audio repair and complete Teleprompter 092 acceptance
 
 Status: **COMPLETE / ISOLATED DEVELOPMENT ONLY / NOT DEPLOYED**.

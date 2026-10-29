@@ -1,5 +1,21 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-113 — COMPLETE / DEVELOPMENT STAGED / OWNER ACCEPTANCE PENDING (2026-10-29)
+
+The exact Directive 112 feature commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`
+is staged in detached worktree
+`/Users/toddknipple/Documents/StudioFlow/web-113-staging` and served from the
+generated preview at `http://127.0.0.1:5192/studio/`. The reproducible build
+served JS `index-Ce54wjuX.js` (`4440217bc7fb07807bf0e47630906c9b59c0050e8d6c8a97bbe29ecc9bc96fa6`)
+and CSS `index-D7-9JtPq.css` (`be00c2115d1f8014a015d7c07a527684b1c4b328b401177475fe52dd27441fed`).
+Firefox preview acceptance passed 39/39, focused checks 23/23, recording audio
+and video decoding, recording privacy, RTMP privacy, screen-share 9/9 and Video
+Setup 091 9/9. The isolated backend fixture passed lifecycle 29/29, ownership
+40/40, recording/storage 33/33, deletion 31/31, deletion safety 32/32 and
+direct Worker 23/23. The URL is local-only and returned HTTP 200 on the shared
+development machine; personal owner acceptance remains pending. No Worker was
+deployed and production is unchanged. See [Directive 113 staging record](100-DIRECTIVES/TPI-STUDIOFLOW-113-DEVELOPMENT-STAGING.md).
+
 ## TPI-STUDIOFLOW-112 — COMPLETE / TELEPROMPTER 092 ACCEPTED / NOT DEPLOYED (2026-10-29)
 
 Directive 111's verified microphone-volume repair is integrated into the

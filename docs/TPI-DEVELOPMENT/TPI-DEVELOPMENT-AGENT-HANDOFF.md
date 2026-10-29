@@ -1,5 +1,20 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-113 — DEVELOPMENT PREVIEW STAGED / OWNER ACCEPTANCE PENDING (2026-10-29)
+
+The exact approved feature commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`
+is staged in `/Users/toddknipple/Documents/StudioFlow/web-113-staging` and
+served at `http://127.0.0.1:5192/studio/` from the reproducible generated
+`dist/` output. The staging worktree and source worktree are clean. Preview
+Firefox acceptance passed Teleprompter/two-Studio 39/39, focused checks 23/23,
+recording decode/privacy, loopback RTMP privacy, screen-share 9/9 and Video
+Setup 091 9/9. Reused isolated backend regressions passed lifecycle 29/29,
+ownership 40/40, recording/storage 33/33, deletion 31/31, deletion safety
+32/32 and direct Worker 23/23. The URL is local-only and accessible on the
+shared development machine; this is an owner testing path, not owner approval.
+Do not deploy or promote. No Worker or production state changed. See [Directive
+113 staging record](100-DIRECTIVES/TPI-STUDIOFLOW-113-DEVELOPMENT-STAGING.md).
+
 ## TPI-STUDIOFLOW-112 — COMPLETE / INTEGRATED FEATURE COMMITTED / NOT DEPLOYED (2026-10-29)
 
 Directive 111's verified audio repair is integrated into the preserved
