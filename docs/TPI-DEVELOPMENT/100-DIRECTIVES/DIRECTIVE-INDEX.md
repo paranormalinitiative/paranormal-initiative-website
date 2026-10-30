@@ -23,10 +23,10 @@ Status: **COMPLETE / AUTHORITATIVE LOCALHOST VERIFIED / NOT DEPLOYED**.
 The established owner-used local environment is the loopback Worker at
 `http://127.0.0.1:8787/studio/`, backed by persistent local-only D1/R2 state.
 The D113 Vite preview at `127.0.0.1:5192` was classified as temporary and
-stopped after its evidence was preserved. Owner state was not migrated,
-cleared, recreated or deleted. The active 8787 asset remains the approved 091
-baseline; Teleprompter 092 is not claimed as integrated there. Production is
-unchanged.
+stopped after its evidence was preserved. Its clean generated staging worktree
+was removed by the mandatory amendment. Owner state was not migrated, cleared,
+recreated or deleted. The active 8787 asset remains the approved 091 baseline;
+Teleprompter 092 is not claimed as integrated there. Production is unchanged.
 
 ## TPI-STUDIOFLOW-113 — Stage Teleprompter 092 for owner acceptance
 

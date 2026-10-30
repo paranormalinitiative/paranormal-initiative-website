@@ -56,10 +56,14 @@ Vite production preview of Teleprompter 092 from detached commit
 R2, or authenticated backend and used a separate browser storage origin. It
 was suitable for isolated feature acceptance, not for the owner's existing
 Studio environment. The preview was retired after Directive 114 verified that
-no active test depended on it; its worktree and evidence remain preserved.
+no active test depended on it. Its clean generated staging worktree was removed
+under the mandatory amendment; the approved commit and evidence remain
+preserved.
 
 Temporary previews must always be labeled as temporary and must never be used
-interchangeably with the authoritative owner localhost or production.
+interchangeably with the authoritative owner localhost or production. Port 5192
+is retired and must not be restarted or recreated as a competing StudioFlow
+environment.
 
 ## MANDATORY ENVIRONMENT IDENTIFICATION CHECK
 

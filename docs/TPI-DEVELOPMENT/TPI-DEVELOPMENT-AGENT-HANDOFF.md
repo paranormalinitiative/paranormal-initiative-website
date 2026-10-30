@@ -11,9 +11,10 @@ and its existing Studio/browser storage. Do not clear or migrate data.
 
 The 5192 process from Directive 113 was only a Vite preview of detached
 Teleprompter commit `05a9aa5...`; it had no Worker backend or owner data. It has
-been stopped safely, while `/Users/toddknipple/Documents/StudioFlow/web-113-staging`
-and its evidence remain preserved. Brand 1 on that preview is not a source-age
-indicator; it is the feature's default label on a separate browser origin.
+been stopped safely and its clean generated staging worktree was removed under
+the mandatory amendment. The approved commit and D113 evidence remain
+preserved. Brand 1 on that preview is not a source-age indicator; it is the
+feature's default label on a separate browser origin.
 
 The active 8787 asset remains the approved 091 bundle and does not contain the
 092-specific Studio-scoped reader state or presenter-only markers. Do not say

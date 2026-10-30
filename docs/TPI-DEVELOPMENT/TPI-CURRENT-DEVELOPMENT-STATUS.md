@@ -15,7 +15,9 @@ The D113 Vite preview at `http://127.0.0.1:5192/studio/` was correctly
 classified as temporary isolated feature testing, not the owner environment.
 It served detached Teleprompter commit `05a9aa5...` without Worker/D1/R2/auth
 and used a separate browser origin. Its identified process was stopped after
-evidence was preserved; its worktree remains intact. The Brand 1 observation
+evidence was preserved, and its clean generated staging worktree was removed
+by the mandatory amendment. The approved commit and evidence remain intact.
+The Brand 1 observation
 does not prove source age: Brand 1 is a built-in StudioFlow default, while the
 actual difference was the separate origin/runtime and its empty or independent
 browser-local state.

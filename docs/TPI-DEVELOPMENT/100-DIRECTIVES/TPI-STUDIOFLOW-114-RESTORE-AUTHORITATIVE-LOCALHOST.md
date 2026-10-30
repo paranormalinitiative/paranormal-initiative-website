@@ -5,6 +5,34 @@ Result: **COMPLETE / AUTHORITATIVE LOCALHOST VERIFIED / NOT DEPLOYED**
 Production deployment: **PROHIBITED / NOT PERFORMED**
 Data migration: **PROHIBITED / NOT PERFORMED**
 
+## Mandatory amendment — remove redundant 5192 environment
+
+The owner confirmed that port 5192 is obsolete. The exact serving process was
+the Vite preview at PID 45602, working in
+`/Users/toddknipple/Documents/StudioFlow/web-113-staging`, started with
+`npm run preview -- --host 127.0.0.1 --port 5192`. It was already stopped; a
+final listener/process audit found no 5192 listener or preview process.
+
+The staging path was verified through the original StudioFlow repository's Git
+worktree metadata. It had no tracked changes, no non-ignored untracked files,
+no browser profile, no D1/R2 state and no unique user data; its only ignored
+content was reproducible generated `dist/` output. The approved commit remained
+referenced by `/Users/toddknipple/Documents/StudioFlow/web-109`.
+
+The exact obsolete worktree was then removed with:
+
+`git -C /Users/toddknipple/Documents/StudioFlow/web worktree remove --force /Users/toddknipple/Documents/StudioFlow/web-113-staging`
+
+The worktree registration and directory are gone. The approved Teleprompter
+commit, Directive 109–113 records, reusable checks and D113 evidence remain
+preserved. No temporary evidence or test scripts were deleted because they are
+historical/reusable evidence rather than disposable server state.
+
+The automatic-startup audit found no LaunchAgent, LaunchDaemon, local service,
+or maintained launcher entry for port 5192, `web-113-staging` or `vite
+preview`. The only matching maintained local service is the 8787 local Worker.
+No restart hook required disabling.
+
 ## Objective and outcome
 
 Directive 114 restored clarity around the owner-used StudioFlow localhost. The
@@ -56,7 +84,7 @@ workflow now make the distinction mandatory.
 | Website repository | `codex/tpi-development`, pre-change HEAD `fb74535495c076c2539467d395b86b72abdb5eab`; only the two pre-existing untracked historical directive files remained |
 | Original StudioFlow checkout | `/Users/toddknipple/Documents/StudioFlow/web`, branch `main`; pre-existing `src/App.tsx` and `src/styles.css` modifications preserved |
 | Teleprompter source worktree | `/Users/toddknipple/Documents/StudioFlow/web-109`, branch `codex/studioflow-109-teleprompter`, clean at `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb` |
-| D113 staging worktree | `/Users/toddknipple/Documents/StudioFlow/web-113-staging`, detached and clean at `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`; retained after stopping preview |
+| D113 staging worktree | `/Users/toddknipple/Documents/StudioFlow/web-113-staging`, detached and clean at `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`; removed safely by the mandatory amendment after evidence preservation |
 | Production Worker | Existing identity `91a8460e-1db1-440c-9643-a85b6e178fba`; not contacted or changed |
 | Production asset baseline | 091 baseline and production manifest unchanged |
 
@@ -97,7 +125,7 @@ RUNNING on port 8787.
 | Assets | `index-Ce54wjuX.js` SHA-256 `4440217bc7fb07807bf0e47630906c9b59c0050e8d6c8a97bbe29ecc9bc96fa6`; `index-D7-9JtPq.css` SHA-256 `be00c2115d1f8014a015d7c07a527684b1c4b328b401177475fe52dd27441fed` |
 | Browser origin/storage | `http://127.0.0.1:5192`; separate localStorage/IndexedDB/cookie origin from 8787; D113 used disposable browser profiles/data |
 | Owner data | No owner D1/R2 data, authenticated session or 8787 browser storage was used |
-| Final status | Stopped; port 5192 no longer had a listener. Worktree and D113 evidence remain intact |
+| Final status | Stopped; port 5192 has no listener. The staging worktree was removed safely; D113 evidence remains intact outside it |
 
 ### Brand 1 discrepancy
 
