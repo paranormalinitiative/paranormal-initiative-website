@@ -42,11 +42,30 @@ The authoritative owner-used StudioFlow development entry point is:
 | Production relationship | Development only; it does not update production and no production deployment is implied |
 
 The current local Worker serves the approved Video Setup 091 asset baseline,
-not Teleprompter 092. A source revision is not present on this localhost merely
-because it exists in an isolated StudioFlow worktree or preview. The current
-production source manifest remains pinned to the approved 091 commit until a
-separate, reviewed development integration updates the candidate manifest and
-stages the exact feature build.
+with the reviewed Directive 116 Teleprompter workstation candidate now staged
+in the development-only website assets. A source revision is not present on
+this localhost merely because it exists in an isolated StudioFlow worktree or
+preview. The production release manifest and production asset baseline remain
+pinned to the approved 091 baseline; the D116 candidate is a separate local
+development integration and has not been deployed.
+
+## Current local development candidate — TPI-STUDIOFLOW-116
+
+The authoritative `8787` Worker currently serves the exact isolated source
+revision `cf4afb9362fef8e4ec2d9ef82cafb3355805c611`, whose parent is the verified
+Teleprompter 092 commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`. The
+candidate assets are:
+
+- `/studio/assets/index-pFJX_rHg.js` — SHA-256
+  `b12be9d93069e18c2406668a2079fe832066d618ff159f7c5981da3681c7d9d3`
+- `/studio/assets/index-D4Sdah9n.css` — SHA-256
+  `68e6481ddef24bfe55f0c988a75d649cfc71a70971cf71c0f207ee6233d96446`
+
+The exact source-provenance workflow built the clean source twice, verified
+reproducibility, applied the generated assets, and compared the staged files
+with the Worker watcher output. The candidate was then verified on the actual
+`8787` Worker in disposable Firefox Developer Edition acceptance. It is a
+development candidate for owner testing, not a production release.
 
 ## STUDIOFLOW LOCAL DEVELOPMENT ENVIRONMENT POLICY
 

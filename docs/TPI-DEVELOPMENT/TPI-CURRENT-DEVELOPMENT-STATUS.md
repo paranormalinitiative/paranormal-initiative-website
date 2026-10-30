@@ -1,5 +1,23 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-116 — COMPLETE / TELEPROMPTER CONSOLIDATED ON AUTHORITATIVE LOCALHOST (2026-10-30)
+
+[Directive 116 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-116-TELEPROMPTER-WORKSTATION-CONSOLIDATION.md).
+
+The approved Teleprompter 092 source was consolidated in isolated source
+commit `cf4afb9362fef8e4ec2d9ef82cafb3355805c611`, preserving the complete Home
+workstation. The redundant recording bottom-toolbar entry was removed, and the
+right-sidebar Teleprompter entry now opens the same workstation in a private
+full-screen overlay with a Back to Studio return. Studio-specific scripts,
+selected scripts, reader settings and scroll position use the existing storage
+model. The local Worker at `http://127.0.0.1:8787/studio/` serves the verified
+candidate assets and the Firefox acceptance run passed 19/19, including saved
+VP8 video, decoded non-silent Opus audio and presenter-canary privacy.
+
+The original mixed StudioFlow checkout, owner data, production configuration
+and production release baseline remain unchanged. Owner acceptance is pending;
+production deployment is not authorized.
+
 ## TPI-STUDIOFLOW-115 — COMPLETE / AUTHORITATIVE DOCUMENTATION STANDARDIZED (2026-10-29)
 
 [Directive 115 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-115-STANDARDIZE-AUTHORITATIVE-LOCAL-DEVELOPMENT-DOCUMENTATION.md).

@@ -37,7 +37,20 @@ relevant files reached the live Worker. It is marked `VERIFIED` only when the
 behavior was observed or tested. A local test or a historical report is not
 treated as proof of current live behavior.
 
-Last updated: 2026-10-29
+Last updated: 2026-10-30
+
+## TPI-STUDIOFLOW-116 — Teleprompter workstation consolidation
+
+[Directive 116 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-116-TELEPROMPTER-WORKSTATION-CONSOLIDATION.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now serves
+source candidate `cf4afb9362fef8e4ec2d9ef82cafb3355805c611`. The Home
+Teleprompter remains the complete workstation; the redundant recording
+bottom-toolbar entry is removed; and the right-sidebar entry opens the shared
+workstation in a private full-screen overlay. The 19/19 Firefox acceptance
+passed with Studio A/B isolation, persisted reader state, saved decodable
+non-silent audio, playable video and presenter-canary privacy. Owner acceptance
+is pending. Production and owner persistent data were not changed.
 
 ## TPI-STUDIOFLOW-115 — authoritative local environment policy
 

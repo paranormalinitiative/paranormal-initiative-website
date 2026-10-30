@@ -1,5 +1,29 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-116 — TELEPROMPTER WORKSTATION CONSOLIDATED (2026-10-30)
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now serves
+the verified consolidation from StudioFlow source commit
+`cf4afb9362fef8e4ec2d9ef82cafb3355805c611`. The Home Teleprompter remains the
+complete workstation. The recording bottom-toolbar entry is removed, and the
+right-sidebar entry opens that same workstation as a private full-screen
+overlay. Back to Studio returns to the existing session. Do not recreate the
+old limited modal or add a second script library.
+
+Firefox Developer Edition acceptance on the real `8787` Worker passed 19/19
+with disposable browser-local Studios A/B, including Studio-scoped script and
+reader-state persistence, recording with the private canary visible, saved
+VP8/Opus media decoding and OCR privacy inspection. Owner acceptance remains
+pending. Production was not changed or deployed.
+
+When continuing this work, preserve the source worktree
+`/Users/toddknipple/Documents/StudioFlow/web-109`, branch
+`codex/studioflow-109-teleprompter`, the source commit above, and the original
+mixed checkout. Use only `npm run dev:local` and port 8787 for owner-facing
+verification. Do not use or recreate port 5192, clear local data, migrate
+Studios, enable permanent deletion, or deploy without a new explicit release
+decision.
+
 ## TPI-STUDIOFLOW-115 — AUTHORITATIVE LOCAL DEVELOPMENT POLICY (2026-10-29)
 
 [Directive 115 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-115-STANDARDIZE-AUTHORITATIVE-LOCAL-DEVELOPMENT-DOCUMENTATION.md).

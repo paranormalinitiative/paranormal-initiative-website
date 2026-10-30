@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-116 — Consolidate Teleprompter into one unified workstation
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / OWNER ACCEPTANCE PENDING**.
+[Directive 116 execution record](TPI-STUDIOFLOW-116-TELEPROMPTER-WORKSTATION-CONSOLIDATION.md).
+The verified source commit `cf4afb9362fef8e4ec2d9ef82cafb3355805c611` is
+staged on the authoritative local Worker at `127.0.0.1:8787`. The Home
+workstation is preserved, the redundant bottom-toolbar entry is removed, and
+the right-sidebar entry opens the shared full-screen workstation. Firefox
+acceptance passed 19/19, including Studio isolation, saved non-silent audio,
+playable video and presenter privacy. Production is unchanged and no release
+was performed.
+
 ## TPI-STUDIOFLOW-115 — Standardize authoritative local development documentation
 
 Status: **COMPLETE / DOCUMENTATION STANDARDIZED / NOT DEPLOYED**.
