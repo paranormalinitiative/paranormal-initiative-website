@@ -1,5 +1,36 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-114 — COMPLETE / AUTHORITATIVE LOCALHOST RESTORED (2026-10-29)
+
+The owner-used StudioFlow development environment is verified at
+`http://127.0.0.1:8787/studio/`. It is the maintained loopback Cloudflare
+Worker launched by `npm run dev:local`, on `codex/tpi-development`, backed by
+the persistent local-only D1/R2 state under `.local-dev/state/v3`. The Worker
+remained running throughout this directive. A verified read-only recovery
+snapshot of its D1, R2 metadata and all 3,894 local R2 blobs is preserved at
+`/private/tmp/tpi114-backup-20261029-2335`; integrity checks passed and Studio
+workspace/media counts remained 1,018/951.
+
+The D113 Vite preview at `http://127.0.0.1:5192/studio/` was correctly
+classified as temporary isolated feature testing, not the owner environment.
+It served detached Teleprompter commit `05a9aa5...` without Worker/D1/R2/auth
+and used a separate browser origin. Its identified process was stopped after
+evidence was preserved; its worktree remains intact. The Brand 1 observation
+does not prove source age: Brand 1 is a built-in StudioFlow default, while the
+actual difference was the separate origin/runtime and its empty or independent
+browser-local state.
+
+The active 8787 assets are the approved 091 bundle (`index-D1h4nSZd.js` /
+`index-CcFjA_0p.css`, SHA-256 `4eed57...` / `850186...`). They contain the
+older generic Teleprompter but not the 092-specific Studio-state and
+presenter-only markers. Teleprompter 092 is therefore **not deployed to 8787**.
+The safe integration path is a future reviewed development candidate update of
+the source-provenance manifest and local website assets, followed by
+authenticated acceptance against preserved owner state; no integration or
+data migration was performed here. Production is unchanged.
+
+See [Directive 114 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-114-RESTORE-AUTHORITATIVE-LOCALHOST.md).
+
 ## TPI-STUDIOFLOW-113 — COMPLETE / DEVELOPMENT STAGED / OWNER ACCEPTANCE PENDING (2026-10-29)
 
 The exact Directive 112 feature commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`

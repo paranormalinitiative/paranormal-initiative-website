@@ -22,6 +22,63 @@ The public development Worker at
 optional isolated preview target. It is not production, it does not update
 automatically, and deploying it does not update `paranormalinitiative.com`.
 
+## AUTHORITATIVE STUDIOFLOW LOCAL DEVELOPMENT ENVIRONMENT
+
+The authoritative owner-used StudioFlow development entry point is:
+
+| Field | Verified value |
+| --- | --- |
+| Primary local development URL | `http://127.0.0.1:8787/studio/` |
+| Purpose | Owner-used StudioFlow development environment and local integration target |
+| Source repository | `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website` for the local Worker, bridge layer and staged website assets; core StudioFlow source remains `/Users/toddknipple/Documents/StudioFlow/web` |
+| Source branch | `codex/tpi-development` |
+| Server startup | `npm run dev:local` (`node scripts/local-dev.mjs`) |
+| Server type | Loopback-bound Cloudflare Worker running in local `workerd`, not Vite |
+| Backend | `wrangler.local.toml`; local-only D1 `tpi-local-foundation`, local R2 `tpi-local-media`, outbound services disabled |
+| Durable state | `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website/.local-dev/state/v3` |
+| Browser origin | `http://127.0.0.1:8787`; use this exact origin for authenticated local work |
+| Authentication | Worker session authentication; anonymous `/api/auth/me` returns no user and protected Studio APIs return `401` |
+| Studio and media persistence | Server Studio workspace/media records in local D1/R2, with the existing StudioFlow browser-local broadcast/library/IndexedDB layers retained by the app |
+| Production relationship | Development only; it does not update production and no production deployment is implied |
+
+The current local Worker serves the approved Video Setup 091 asset baseline,
+not Teleprompter 092. A source revision is not present on this localhost merely
+because it exists in an isolated StudioFlow worktree or preview. The current
+production source manifest remains pinned to the approved 091 commit until a
+separate, reviewed development integration updates the candidate manifest and
+stages the exact feature build.
+
+## TEMPORARY TEST AND PREVIEW ENVIRONMENTS
+
+Directive 113 used `http://127.0.0.1:5192/studio/` as a temporary, local-only
+Vite production preview of Teleprompter 092 from detached commit
+`05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`. It had no Cloudflare Worker, D1,
+R2, or authenticated backend and used a separate browser storage origin. It
+was suitable for isolated feature acceptance, not for the owner's existing
+Studio environment. The preview was retired after Directive 114 verified that
+no active test depended on it; its worktree and evidence remain preserved.
+
+Temporary previews must always be labeled as temporary and must never be used
+interchangeably with the authoritative owner localhost or production.
+
+## MANDATORY ENVIRONMENT IDENTIFICATION CHECK
+
+Before staging or accepting any StudioFlow change, record all of the following:
+
+1. The exact URL and port being tested.
+2. The process, working directory, repository, branch and source commit.
+3. Whether the runtime is the authoritative local Worker, a temporary preview,
+   a remote development Worker, or production.
+4. The backend bindings, browser storage origin, and locations of Studio,
+   script, preference and recording state.
+5. Whether the environment is allowed to access owner data.
+
+Do not call a temporary preview "development" without this classification. Do
+not clear, migrate, recreate or overwrite owner browser/D1/R2 state to make two
+origins appear equivalent. Do not stage an unapproved feature into the owner
+localhost by changing the production release baseline; use a separate reviewed
+development candidate and the normal source-provenance workflow.
+
 ## Which repository receives which change
 
 Make core StudioFlow React, TypeScript, CSS, AudioWorklet, or public-asset

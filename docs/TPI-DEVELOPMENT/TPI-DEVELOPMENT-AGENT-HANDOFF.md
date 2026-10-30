@@ -1,5 +1,34 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-114 — AUTHORITATIVE LOCALHOST VERIFIED (2026-10-29)
+
+Use `http://127.0.0.1:8787/studio/` for the owner's existing StudioFlow
+development environment. It is the maintained local Cloudflare Worker from
+the website repository on `codex/tpi-development`, launched with
+`npm run dev:local`, using local-only D1/R2 state in
+`.local-dev/state/v3`. Preserve that browser origin, its authenticated session,
+and its existing Studio/browser storage. Do not clear or migrate data.
+
+The 5192 process from Directive 113 was only a Vite preview of detached
+Teleprompter commit `05a9aa5...`; it had no Worker backend or owner data. It has
+been stopped safely, while `/Users/toddknipple/Documents/StudioFlow/web-113-staging`
+and its evidence remain preserved. Brand 1 on that preview is not a source-age
+indicator; it is the feature's default label on a separate browser origin.
+
+The active 8787 asset remains the approved 091 bundle and does not contain the
+092-specific Studio-scoped reader state or presenter-only markers. Do not say
+Teleprompter 092 is on 8787. A future integration must update a separate
+development candidate through the source-provenance workflow, verify the exact
+feature assets, and test against preserved owner state without changing the
+production baseline.
+
+Every future StudioFlow handoff must identify URL/port, process and working
+directory, repository/branch/commit, runtime type, backend bindings, browser
+origin, storage locations and environment class (authoritative local,
+temporary isolated, remote development or production) before staging.
+
+See [Directive 114 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-114-RESTORE-AUTHORITATIVE-LOCALHOST.md).
+
 ## TPI-STUDIOFLOW-113 — DEVELOPMENT PREVIEW STAGED / OWNER ACCEPTANCE PENDING (2026-10-29)
 
 The exact approved feature commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`

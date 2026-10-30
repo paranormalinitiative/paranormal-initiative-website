@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-114 — Restore the authoritative local development environment
+
+Status: **COMPLETE / AUTHORITATIVE LOCALHOST VERIFIED / NOT DEPLOYED**.
+[Directive 114 execution record](TPI-STUDIOFLOW-114-RESTORE-AUTHORITATIVE-LOCALHOST.md).
+The established owner-used local environment is the loopback Worker at
+`http://127.0.0.1:8787/studio/`, backed by persistent local-only D1/R2 state.
+The D113 Vite preview at `127.0.0.1:5192` was classified as temporary and
+stopped after its evidence was preserved. Owner state was not migrated,
+cleared, recreated or deleted. The active 8787 asset remains the approved 091
+baseline; Teleprompter 092 is not claimed as integrated there. Production is
+unchanged.
+
 ## TPI-STUDIOFLOW-113 — Stage Teleprompter 092 for owner acceptance
 
 Status: **COMPLETE / DEVELOPMENT STAGED / OWNER ACCEPTANCE PENDING**.
