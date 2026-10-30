@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-115 — Standardize authoritative local development documentation
+
+Status: **COMPLETE / DOCUMENTATION STANDARDIZED / NOT DEPLOYED**.
+[Directive 115 execution record](TPI-STUDIOFLOW-115-STANDARDIZE-AUTHORITATIVE-LOCAL-DEVELOPMENT-DOCUMENTATION.md).
+The sole owner-facing StudioFlow localhost is
+`http://127.0.0.1:8787/studio/`, served by the local `workerd` Worker through
+`npm run dev:local` with local D1/R2 persistence under `.local-dev/state/v3`.
+Port 5192 is retired historical Directive 113 infrastructure. Teleprompter 092
+is engineering-verified at `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb` but is
+not integrated into the current 8787 Video Setup 091 frontend; owner acceptance
+is pending and production release is not authorized.
+
 ## TPI-STUDIOFLOW-114 — Restore the authoritative local development environment
 
 Status: **COMPLETE / AUTHORITATIVE LOCALHOST VERIFIED / NOT DEPLOYED**.
@@ -29,6 +41,9 @@ recreated or deleted. The active 8787 asset remains the approved 091 baseline;
 Teleprompter 092 is not claimed as integrated there. Production is unchanged.
 
 ## TPI-STUDIOFLOW-113 — Stage Teleprompter 092 for owner acceptance
+
+Historical execution record only. The 5192 preview was retired by Directive
+114; its URL and staging details remain preserved as historical evidence.
 
 Status: **COMPLETE / DEVELOPMENT STAGED / OWNER ACCEPTANCE PENDING**.
 [Directive 113 staging record](TPI-STUDIOFLOW-113-DEVELOPMENT-STAGING.md).

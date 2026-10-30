@@ -6,6 +6,15 @@ The canonical local Worker is:
 
 `http://127.0.0.1:8787/`
 
+The official owner-facing StudioFlow application is:
+
+`http://127.0.0.1:8787/studio/`
+
+This is the only authorized StudioFlow localhost. Do not substitute a Vite
+preview or another port for owner acceptance. The Worker uses local D1/R2
+persistence under the repository-relative `.local-dev/state/v3` directory;
+different localhost ports have separate browser-storage origins.
+
 The Finder launcher is:
 
 `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website/TPI Local Development.command`

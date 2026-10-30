@@ -27,15 +27,22 @@ instruction explicitly changes the branch policy.
 
 ### Know the environments
 
+- Official owner-facing StudioFlow local environment:
+  `http://127.0.0.1:8787/studio/`, started with `npm run dev:local` and backed
+  by local D1/R2 state under `.local-dev/state/v3`.
 - Production Worker: `theparanormalinitiative`
 - Production URL: `https://paranormalinitiative.com/`
 - Production D1: `tpi_contributor_portal`
 - Production R2: `tpi-contributor-media`
 - Existing workers.dev endpoint: production-bound; not safe for development
-- Development Worker: `theparanormalinitiative-dev`
-- Development URL: `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
+- Optional isolated remote development Worker: `theparanormalinitiative-dev`
+- Optional remote development URL:
+  `https://theparanormalinitiative-dev.paranormalsomerset.workers.dev`
 
-The development environment has separate D1, R2, host-scoped sessions, test accounts, and no cron or Resend configuration. Do not add production secrets or bindings to it.
+The optional remote development environment has separate D1, R2, host-scoped
+sessions, test accounts, and no cron or Resend configuration. It is not the
+owner-facing local StudioFlow environment and must not be substituted for port
+8787. Do not add production secrets or bindings to it.
 
 ### Standing authority and separate approval boundary
 

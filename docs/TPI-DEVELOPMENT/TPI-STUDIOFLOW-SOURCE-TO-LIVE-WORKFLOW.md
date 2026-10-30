@@ -2,7 +2,7 @@
 
 Status: ACTIVE / CANONICAL
 
-Last verified: 2026-10-28
+Last verified: 2026-10-29
 
 This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
@@ -48,9 +48,41 @@ production source manifest remains pinned to the approved 091 commit until a
 separate, reviewed development integration updates the candidate manifest and
 stages the exact feature build.
 
+## STUDIOFLOW LOCAL DEVELOPMENT ENVIRONMENT POLICY
+
+The Paranormal Initiative maintains one authoritative owner-facing StudioFlow
+local development environment.
+
+| Policy item | Official value |
+| --- | --- |
+| Official URL | `http://127.0.0.1:8787/studio/` |
+| Official runtime | Local Cloudflare Worker (`workerd`) |
+| Official startup | `npm run dev:local` |
+| Local backend | Cloudflare Worker development runtime with local D1 and local R2 |
+| Local persistent data | Repository-relative `.local-dev/state/v3`; absolute path `/Users/toddknipple/Documents/GitHub/paranormal-initiative-website/.local-dev/state/v3` |
+| Environment type | Local development; production is separate and explicitly authorized |
+
+All StudioFlow feature development intended for owner acceptance must
+ultimately be verified through port 8787. Temporary isolated environments may
+be used for automated engineering verification when necessary, but:
+
+1. They are not authoritative.
+2. They must not replace port 8787.
+3. They must not be presented as the owner's primary development application.
+4. They must not become permanent competing development servers.
+5. Owner acceptance occurs through port 8787 unless the owner explicitly
+   authorizes an exception.
+6. Existing Studio data and recordings must be preserved.
+7. Changes to the official localhost require explicit owner authorization.
+
+Changing localhost ports creates separate browser-storage origins. An isolated
+preview therefore does not automatically contain the owner's existing Studios,
+recordings, scripts or preferences. Port 5192 is retired Directive 113 test
+infrastructure and must not be recreated.
+
 ## TEMPORARY TEST AND PREVIEW ENVIRONMENTS
 
-Directive 113 used `http://127.0.0.1:5192/studio/` as a temporary, local-only
+Directive 113 historically used `http://127.0.0.1:5192/studio/` as a temporary, local-only
 Vite production preview of Teleprompter 092 from detached commit
 `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`. It had no Cloudflare Worker, D1,
 R2, or authenticated backend and used a separate browser storage origin. It

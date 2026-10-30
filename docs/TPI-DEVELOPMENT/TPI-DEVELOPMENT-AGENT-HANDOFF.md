@@ -1,5 +1,30 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-115 — AUTHORITATIVE LOCAL DEVELOPMENT POLICY (2026-10-29)
+
+[Directive 115 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-115-STANDARDIZE-AUTHORITATIVE-LOCAL-DEVELOPMENT-DOCUMENTATION.md).
+
+Use only `http://127.0.0.1:8787/studio/` for owner-facing StudioFlow
+development and acceptance. It is the local `workerd` Cloudflare Worker,
+started with `npm run dev:local`, with local D1/R2 persistence at
+`/Users/toddknipple/Documents/GitHub/paranormal-initiative-website/.local-dev/state/v3`.
+
+StudioFlow source lives in `/Users/toddknipple/Documents/StudioFlow/web`; the
+website repository contains the Worker integration and runtime. These are
+separate from local persistent data. A different localhost port creates a
+different browser-storage origin and does not automatically contain the
+owner's Studios, recordings, scripts or preferences.
+
+Temporary isolated environments are permitted only for automated engineering
+verification. They are not authoritative, must not replace or become a
+competing port-8787 server, and must not be presented as the owner's primary
+application. Port 5192 is retired historical Directive 113 infrastructure.
+
+Teleprompter 092 remains implemented and engineering-verified at commit
+`05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`, with the verified audio repair
+integrated, but it is not integrated into the current 8787 Video Setup 091
+frontend. Owner acceptance is pending; production release is not authorized.
+
 ## TPI-STUDIOFLOW-114 — AUTHORITATIVE LOCALHOST VERIFIED (2026-10-29)
 
 Use `http://127.0.0.1:8787/studio/` for the owner's existing StudioFlow
@@ -32,18 +57,22 @@ See [Directive 114 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-114-RESTORE-A
 
 ## TPI-STUDIOFLOW-113 — DEVELOPMENT PREVIEW STAGED / OWNER ACCEPTANCE PENDING (2026-10-29)
 
-The exact approved feature commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`
-is staged in `/Users/toddknipple/Documents/StudioFlow/web-113-staging` and
-served at `http://127.0.0.1:5192/studio/` from the reproducible generated
-`dist/` output. The staging worktree and source worktree are clean. Preview
-Firefox acceptance passed Teleprompter/two-Studio 39/39, focused checks 23/23,
-recording decode/privacy, loopback RTMP privacy, screen-share 9/9 and Video
-Setup 091 9/9. Reused isolated backend regressions passed lifecycle 29/29,
-ownership 40/40, recording/storage 33/33, deletion 31/31, deletion safety
-32/32 and direct Worker 23/23. The URL is local-only and accessible on the
-shared development machine; this is an owner testing path, not owner approval.
-Do not deploy or promote. No Worker or production state changed. See [Directive
-113 staging record](100-DIRECTIVES/TPI-STUDIOFLOW-113-DEVELOPMENT-STAGING.md).
+Historical execution record only. The 5192 preview and its staging worktree
+were retired under Directive 114; do not use this URL as a current development
+or owner-acceptance path.
+
+Directive 113 historically staged the approved feature commit
+`05a9aa5cd7b4ccb94d11162f244d2281fcd572bb` in
+`/Users/toddknipple/Documents/StudioFlow/web-113-staging` and served it at
+`http://127.0.0.1:5192/studio/` from reproducible generated `dist/` output.
+Preview Firefox acceptance passed Teleprompter/two-Studio 39/39, focused checks
+23/23, recording decode/privacy, loopback RTMP privacy, screen-share 9/9 and
+Video Setup 091 9/9. Reused isolated backend regressions passed lifecycle
+29/29, ownership 40/40, recording/storage 33/33, deletion 31/31, deletion
+safety 32/32 and direct Worker 23/23. Directive 114 retired the preview and
+removed the staging worktree after preserving its evidence. The URL was
+local-only and owner approval remained pending. No Worker or production state
+changed. See [Directive 113 staging record](100-DIRECTIVES/TPI-STUDIOFLOW-113-DEVELOPMENT-STAGING.md).
 
 ## TPI-STUDIOFLOW-112 — COMPLETE / INTEGRATED FEATURE COMMITTED / NOT DEPLOYED (2026-10-29)
 

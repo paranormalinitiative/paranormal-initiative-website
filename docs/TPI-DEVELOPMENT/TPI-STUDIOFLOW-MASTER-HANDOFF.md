@@ -37,7 +37,20 @@ relevant files reached the live Worker. It is marked `VERIFIED` only when the
 behavior was observed or tested. A local test or a historical report is not
 treated as proof of current live behavior.
 
-Last updated: 2026-10-24
+Last updated: 2026-10-29
+
+## TPI-STUDIOFLOW-115 — authoritative local environment policy
+
+[Directive 115 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-115-STANDARDIZE-AUTHORITATIVE-LOCAL-DEVELOPMENT-DOCUMENTATION.md).
+
+The sole owner-facing StudioFlow development environment is the local Worker
+at `http://127.0.0.1:8787/studio/`, started with `npm run dev:local` and using
+local D1/R2 persistence under `.local-dev/state/v3`. Temporary isolated
+previews are engineering test surfaces only and do not contain the owner's
+existing Studio data automatically. Port 5192 was retired under Directive 114
+and must not be recreated. Teleprompter 092 remains engineering-verified at
+commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`, but is not integrated into
+the current 8787 Video Setup 091 frontend; owner acceptance remains pending.
 
 ## TPI-STUDIOFLOW-034 resolution
 

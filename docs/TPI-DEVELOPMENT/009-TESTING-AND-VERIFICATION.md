@@ -1,5 +1,25 @@
 # Testing and Verification
 
+## StudioFlow owner-development verification environment
+
+The only authorized owner-facing StudioFlow local environment is:
+
+`http://127.0.0.1:8787/studio/`
+
+It is the local `workerd` Cloudflare Worker started with `npm run dev:local`,
+using local D1/R2 persistence under
+`/Users/toddknipple/Documents/GitHub/paranormal-initiative-website/.local-dev/state/v3`.
+Use this environment for owner acceptance and for final verification of
+feature work intended for the owner. Use disposable browser profiles and
+fixtures for automated tests; do not clear or repurpose the owner's browser
+storage or Studios.
+
+Temporary isolated previews may be used only when an automated engineering test
+requires them. They are not authoritative, do not contain the owner's
+port-8787 data automatically, and must not be reported as the owner's primary
+StudioFlow application. Port 5192 is retired historical Directive 113
+infrastructure, not an available development URL.
+
 ## Production recovery lesson — visible UI assertions are mandatory
 
 For StudioFlow context menus and other overlays, a DOM node count or text
