@@ -1,9 +1,9 @@
 # TPI-STUDIOFLOW-119 — Controlled Production Deployment and Release Baseline
 
-Date: 2026-10-30  
-Status: **COMPLETE / DEPLOYED_AND_VERIFIED**  
-Owner approval: **CONFIRMED**  
-Environment: Production only after guarded release gates  
+Date: 2026-10-30
+Status: **COMPLETE / DEPLOYED_AND_VERIFIED**
+Owner approval: **CONFIRMED**
+Environment: Production only after guarded release gates
 Production data migration: **NONE**
 
 ## Release identity
