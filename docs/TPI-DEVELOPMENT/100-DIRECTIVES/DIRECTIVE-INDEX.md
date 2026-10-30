@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-117 — Private stage Teleprompter overlay and saved script selection
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / OWNER ACCEPTANCE PENDING**.
+[Directive 117 execution record](TPI-STUDIOFLOW-117-PRIVATE-STAGE-TELEPROMPTER-OVERLAY.md).
+The right-sidebar Teleprompter panel now lists scripts for the active Studio and
+opens the existing private, transparent, draggable reader over the stage. The
+source commit is `3530140afefee9659947626db3f23524a25c3a80`; the real 8787
+Firefox acceptance run passed 24/24, including decoded non-silent audio,
+playable video and frame-level presenter-canary privacy. The feature is pushed
+to the development branch and ready for owner acceptance and production release
+review. Production is unchanged and no deployment occurred.
+
 ## TPI-STUDIOFLOW-116 — Consolidate Teleprompter into one unified workstation
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / OWNER ACCEPTANCE PENDING**.

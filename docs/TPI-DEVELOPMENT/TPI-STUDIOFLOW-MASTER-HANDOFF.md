@@ -39,6 +39,19 @@ treated as proof of current live behavior.
 
 Last updated: 2026-10-30
 
+## TPI-STUDIOFLOW-117 — private stage reader and saved script selection
+
+[Directive 117 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-117-PRIVATE-STAGE-TELEPROMPTER-OVERLAY.md).
+
+The authoritative 8787 Worker serves source commit
+`3530140afefee9659947626db3f23524a25c3a80`. The active Studio's right-sidebar
+Teleprompter panel lists its saved scripts and opens the existing transparent,
+draggable private reader over the stage. The Home workstation, shared script
+library, Studio-specific state and recording compositor remain preserved. Real
+Firefox acceptance passed 24/24 with decoded non-silent audio, playable video
+and no presenter canary in recorded frames. Owner acceptance is pending;
+production is unchanged and no deployment occurred.
+
 ## TPI-STUDIOFLOW-116 — Teleprompter workstation consolidation
 
 [Directive 116 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-116-TELEPROMPTER-WORKSTATION-CONSOLIDATION.md).

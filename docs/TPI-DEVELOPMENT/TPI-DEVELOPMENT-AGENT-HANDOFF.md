@@ -1,5 +1,34 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-117 — PRIVATE STAGE READER AND SAVED SCRIPT SELECTION (2026-10-30)
+
+[Directive 117 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-117-PRIVATE-STAGE-TELEPROMPTER-OVERLAY.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` serves the
+D117 source candidate `3530140afefee9659947626db3f23524a25c3a80`. The right
+Teleprompter rail lists scripts filtered to the active Studio and selecting one
+opens the existing private presenter reader over the stage. The reader is
+transparent, bounded, draggable, and uses the existing Studio-specific reader
+state. The Home workstation and right-rail full workstation remain the single
+shared script library/editor; the removed bottom-toolbar entry must not be
+restored.
+
+The real 8787 disposable Firefox acceptance run passed 24/24, including saved
+non-silent VP8/Opus recording, control interaction, Studio A/B isolation,
+reader positioning and decoded-frame privacy. Source focused checks are 38/38;
+build, Voice FX, recording-audio and release-safety checks pass. Candidate
+assets are JS `index-BTdN-mf4.js` (`b7cdf1c214f3d389d1b778a5790d2a0946e965ed14d78fb5a8ad5a435cb54aa9`)
+and CSS `index-28KfU4BI.css`
+(`48b3b88702dde14713240d89a31e3057e58a53a1bea5356c0ba569aee77dea6f`).
+
+The website integration is pushed on `codex/tpi-development` and is ready for
+owner acceptance and production release review, but no production deployment
+is authorized or performed. The source repository has no remote; preserve the
+local source commit and do not modify the original mixed checkout. Rollback is
+the D116 website candidate commit `12b5ec1a74a13e82e9bb85d1e9f1e4b0b8b6bd51`
+and its recorded assets, followed by local Worker rehydration and Firefox
+smoke testing. Do not alter local D1/R2 state.
+
 ## TPI-STUDIOFLOW-116 — TELEPROMPTER WORKSTATION CONSOLIDATED (2026-10-30)
 
 The authoritative local Worker at `http://127.0.0.1:8787/studio/` now serves

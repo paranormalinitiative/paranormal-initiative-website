@@ -1,5 +1,25 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-117 — COMPLETE / PRIVATE STAGE READER VERIFIED (2026-10-30)
+
+[Directive 117 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-117-PRIVATE-STAGE-TELEPROMPTER-OVERLAY.md).
+
+The authoritative Worker at `http://127.0.0.1:8787/studio/` now serves source
+commit `3530140afefee9659947626db3f23524a25c3a80`. The recording Studio's
+Teleprompter rail lists only the active Studio's saved scripts; selecting one
+opens the existing private, transparent, bounded and draggable presenter reader
+over the stage. Play/pause/resume/reset, speed, text size and Studio-specific
+state persistence pass. The existing Home workstation, full-workstation entry,
+recording compositor, audio repair and bottom-toolbar removal remain intact.
+
+The real 8787 Firefox acceptance run passed 24/24. The saved WebM contains
+1920x1080 VP8 video and 48 kHz stereo Opus audio; decoded audio measured mean
+`-23.1 dB` and peak `-19.8 dB`, and five decoded frames contained no private
+canary phrase. Source checks 38/38, build, Voice FX, recording-audio and
+release-safety checks pass. Website integration is pushed on
+`codex/tpi-development`; owner acceptance is pending and production remains
+unchanged.
+
 ## TPI-STUDIOFLOW-116 — COMPLETE / TELEPROMPTER CONSOLIDATED ON AUTHORITATIVE LOCALHOST (2026-10-30)
 
 [Directive 116 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-116-TELEPROMPTER-WORKSTATION-CONSOLIDATION.md).
