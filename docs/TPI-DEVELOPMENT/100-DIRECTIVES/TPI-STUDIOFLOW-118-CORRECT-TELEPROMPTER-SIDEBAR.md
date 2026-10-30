@@ -28,6 +28,7 @@ private reader, full workstation button, and Back to Studio flow were retained.
 | D117 source baseline | `3530140afefee9659947626db3f23524a25c3a80` |
 | D118 source commit | `244993beab7f9fbba7ee89376a3b3dea616fa62a` |
 | Website branch | `codex/tpi-development` |
+| Website integration commit | `79a82b9` (pushed; final parity check pending) |
 | Production | Unchanged; no deployment performed |
 
 The original mixed StudioFlow checkout remains untouched. No D1/R2 data,
@@ -126,10 +127,27 @@ Permanent Studio deletion remains disabled.
 
 ## Release preparation
 
+### Candidate manifest
+
+The D118 application candidate is website commit `79a82b9`. The exact
+application files are:
+
+- `studio/index.html`
+- `studio/assets/index-DG-_pPI_.js`
+- `studio/assets/index-28KfU4BI.css`
+
+The current production Worker baseline is
+`91a8460e-1db1-440c-9643-a85b6e178fba`; the recorded rollback Worker is
+`17b9f9d5-717e-42a9-92d1-14b0dd717ef6`. The production asset rollback remains
+the approved Video Setup 091 JavaScript/CSS pair documented in the D116/D117
+records. A future release must run the canonical auth lifecycle, release
+preflight, guarded deployment, live smoke and Firefox acceptance. This
+directive does not authorize those commands.
+
 The corrected candidate is **READY FOR OWNER ACCEPTANCE AND PRODUCTION RELEASE
 REVIEW**. It is not deployed. The final website integration commit and
-documentation commit will be recorded after the scoped website files are
-committed and pushed. A future production release must use the canonical
+documentation completion commit are recorded in the final report; the
+integration commit is `79a82b9`. A future production release must use the canonical
 auth-lifecycle, preflight, guarded deployment and live Firefox acceptance
 runbook. Production Worker, routes, credentials, assets, D1/R2 and environment
 variables remain unchanged.
