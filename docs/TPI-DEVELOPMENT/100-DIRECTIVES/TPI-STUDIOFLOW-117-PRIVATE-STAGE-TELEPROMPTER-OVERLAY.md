@@ -29,7 +29,7 @@ Teleprompter entry remains removed.
 | Source branch | `codex/studioflow-109-teleprompter` |
 | Source commit | `3530140afefee9659947626db3f23524a25c3a80` |
 | Website branch | `codex/tpi-development` |
-| Website integration commit | `6e4c957` (pushed; GitHub parity verified at `a202447`) |
+| Website integration commit | `6e4c957` (pushed; GitHub parity verified at `a1626b8`) |
 | Production | Unchanged; no deployment performed |
 
 The original mixed StudioFlow checkout was not modified. The source worktree
@@ -122,6 +122,24 @@ destructive lifecycle test was run against owner data. Permanent Studio
 deletion remains disabled.
 
 ## Release preparation
+
+### Candidate manifest
+
+The isolated production candidate is the application portion of website commit
+`6e4c957`; later commits `a202447` and `a1626b8` contain documentation only.
+The exact application files are:
+
+- `studio/index.html`
+- `studio/assets/index-BTdN-mf4.js`
+- `studio/assets/index-28KfU4BI.css`
+
+The candidate source is `3530140afefee9659947626db3f23524a25c3a80`. The current
+production Worker baseline is `91a8460e-1db1-440c-9643-a85b6e178fba`, with the
+recorded rollback Worker `17b9f9d5-717e-42a9-92d1-14b0dd717ef6`. The production
+asset rollback is the approved 091 JavaScript/CSS pair recorded above. Any
+future release must run the canonical auth lifecycle, release preflight,
+guarded deployment, live smoke and Firefox acceptance before changing that
+Worker. This directive does not authorize those commands.
 
 The completed local candidate is **READY FOR OWNER ACCEPTANCE AND PRODUCTION
 RELEASE REVIEW**. It is not a production release. Website integration commit
