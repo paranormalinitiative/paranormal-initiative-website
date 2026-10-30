@@ -28,7 +28,7 @@ private reader, full workstation button, and Back to Studio flow were retained.
 | D117 source baseline | `3530140afefee9659947626db3f23524a25c3a80` |
 | D118 source commit | `244993beab7f9fbba7ee89376a3b3dea616fa62a` |
 | Website branch | `codex/tpi-development` |
-| Website integration commit | `79a82b9` (pushed; final parity check pending) |
+| Website integration commit | `79a82b9` (pushed; GitHub parity verified at `60cde55`) |
 | Production | Unchanged; no deployment performed |
 
 The original mixed StudioFlow checkout remains untouched. No D1/R2 data,
@@ -146,8 +146,8 @@ directive does not authorize those commands.
 
 The corrected candidate is **READY FOR OWNER ACCEPTANCE AND PRODUCTION RELEASE
 REVIEW**. It is not deployed. The final website integration commit and
-documentation completion commit are recorded in the final report; the
-integration commit is `79a82b9`. A future production release must use the canonical
+documentation completion commit is `60cde55`; the integration commit is
+`79a82b9`. A future production release must use the canonical
 auth-lifecycle, preflight, guarded deployment and live Firefox acceptance
 runbook. Production Worker, routes, credentials, assets, D1/R2 and environment
 variables remain unchanged.
