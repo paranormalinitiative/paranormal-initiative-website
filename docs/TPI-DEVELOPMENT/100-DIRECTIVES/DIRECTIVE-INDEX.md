@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-119 — Controlled production deployment — Teleprompter 092
+
+Status: **COMPLETE / DEPLOYED_AND_VERIFIED / OWNER APPROVAL CONFIRMED**.
+[Directive 119 execution record](TPI-STUDIOFLOW-119-CONTROLLED-PRODUCTION-DEPLOYMENT.md).
+The exact approved source `244993beab7f9fbba7ee89376a3b3dea616fa62a` was
+deployed through the guarded workflow from website candidate
+`6d4c062ce0c3b647f39d3b5e3004531d692f62ba`. Worker
+`f5af1836-8cf8-4a3c-9db7-18c53ff9ded2` is active at 100%; rollback is
+`91a8460e-1db1-440c-9643-a85b6e178fba`. Live asset hashes match the approved
+manifest, production smoke passed 10/10, Firefox acceptance passed 64/64, and
+production data and deletion safeguards were preserved.
+
 ## TPI-STUDIOFLOW-118 — Correct Teleprompter sidebar and saved script navigation
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / OWNER ACCEPTANCE PENDING**.

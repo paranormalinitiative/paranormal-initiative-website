@@ -1,5 +1,28 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-119 — PRODUCTION BASELINE ESTABLISHED (2026-10-30)
+
+[Directive 119 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-119-CONTROLLED-PRODUCTION-DEPLOYMENT.md).
+
+The owner-approved Teleprompter 092 release is live and verified. Use
+StudioFlow source commit `244993beab7f9fbba7ee89376a3b3dea616fa62a` and the
+website release candidate `6d4c062ce0c3b647f39d3b5e3004531d692f62ba` as the
+release provenance. Production Worker
+`f5af1836-8cf8-4a3c-9db7-18c53ff9ded2` is active at 100% traffic. The immediate
+rollback Worker is `91a8460e-1db1-440c-9643-a85b6e178fba`; use the guarded
+Wrangler rollback path and rerun authentication, Studio access, smoke and
+Firefox acceptance checks if rollback is required.
+
+The live approved assets are `index-DG-_pPI_.js`
+(`66f9407e808f74c803491917efcb412566301f4feca6df20978cd64dc48d7560`) and
+`index-28KfU4BI.css`
+(`48b3b88702dde14713240d89a31e3057e58a53a1bea5356c0ba569aee77dea6f`). The
+guarded preflight, production smoke 10/10, and isolated Firefox production
+acceptance 64/64 passed. Do not add unrelated unfinished work, enable
+permanent Studio deletion, alter production data, or deploy a different source
+without a new reviewed release candidate. Continue development from this
+known-good baseline and keep the original mixed StudioFlow checkout preserved.
+
 ## TPI-STUDIOFLOW-118 — CORRECT TELEPROMPTER SIDEBAR AND SCRIPT ORDER (2026-10-30)
 
 [Directive 118 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-118-CORRECT-TELEPROMPTER-SIDEBAR.md).

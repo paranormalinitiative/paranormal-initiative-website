@@ -41,13 +41,12 @@ The authoritative owner-used StudioFlow development entry point is:
 | Studio and media persistence | Server Studio workspace/media records in local D1/R2, with the existing StudioFlow browser-local broadcast/library/IndexedDB layers retained by the app |
 | Production relationship | Development only; it does not update production and no production deployment is implied |
 
-The current local Worker serves the approved Video Setup 091 asset baseline,
-with the reviewed Directive 118 Teleprompter sidebar correction and creation-
-order candidate now staged in the development-only website assets. A source revision is not
+The current local Worker serves the reviewed Directive 118 Teleprompter
+sidebar correction and creation-order candidate. A source revision is not
 present on this localhost merely because it exists in an isolated StudioFlow
-worktree or preview. The production release manifest and production asset
-baseline remain pinned to the approved 091 baseline; the D118 candidate is a
-separate local development integration and has not been deployed.
+worktree or preview. The exact candidate was built from a clean source
+worktree, verified reproducible, and then used for the owner-approved D119
+production release.
 
 ## Current local development candidate — TPI-STUDIOFLOW-118
 
@@ -248,7 +247,30 @@ fixture rejection cases plus the real baseline reproduction).
 - A browser refresh, cache-busting query, local server restart, or successful
   local build is not a deployment.
 
-## Current verified live baseline
+## Current verified live baseline — TPI-STUDIOFLOW-119
+
+- Website production release commit: `6d4c062ce0c3b647f39d3b5e3004531d692f62ba`
+- Authoritative StudioFlow source commit: `244993beab7f9fbba7ee89376a3b3dea616fa62a`
+- Active production Worker version:
+  `f5af1836-8cf8-4a3c-9db7-18c53ff9ded2` (100% traffic)
+- Immediate rollback version:
+  `91a8460e-1db1-440c-9643-a85b6e178fba`
+- Live JavaScript: `/studio/assets/index-DG-_pPI_.js` (SHA-256
+  `66f9407e808f74c803491917efcb412566301f4feca6df20978cd64dc48d7560`)
+- Live CSS: `/studio/assets/index-28KfU4BI.css` (SHA-256
+  `48b3b88702dde14713240d89a31e3057e58a53a1bea5356c0ba569aee77dea6f`)
+
+The guarded release passed source-provenance and release-safety checks, local
+authenticated lifecycle verification, live anonymous smoke 10/10, and isolated
+Firefox production acceptance 64/64. No D1/R2 migration, reset, deletion or
+credential change occurred. Permanent Studio deletion remains disabled.
+
+The rollback procedure is the maintained guarded Wrangler rollback to
+`91a8460e-1db1-440c-9643-a85b6e178fba`, followed by the same authentication,
+Studio access, smoke and Firefox acceptance checks. The previous baseline is
+preserved as historical evidence below.
+
+## Previous verified live baseline — TPI-STUDIOFLOW-106 (historical)
 
 - Website production source commit: `9b3f033`
   (TPI-STUDIOFLOW-106 production release; application byte-identical to `81a234a`)

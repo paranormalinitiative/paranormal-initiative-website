@@ -1,5 +1,17 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-119 production verification
+
+The owner-approved Teleprompter release was verified in production only after
+the guarded preflight completed. Production smoke passed 10/10 and the
+isolated Firefox Developer Edition production acceptance passed 64/64 using a
+disposable authenticated QA profile; no owner profile or existing Studio was
+used. The live HTML references `index-DG-_pPI_.js` and
+`index-28KfU4BI.css`, whose SHA-256 values match the approved release
+manifest. The previous Worker remains the rollback target. Do not treat a
+successful local build as production verification, and do not run destructive
+Studio lifecycle tests against production data.
+
 ## StudioFlow owner-development verification environment
 
 The only authorized owner-facing StudioFlow local environment is:

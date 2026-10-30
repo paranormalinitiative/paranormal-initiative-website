@@ -1,5 +1,27 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-119 — COMPLETE / TELEPROMPTER 092 DEPLOYED AND VERIFIED (2026-10-30)
+
+[Directive 119 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-119-CONTROLLED-PRODUCTION-DEPLOYMENT.md).
+
+The owner-approved StudioFlow Teleprompter release was deployed through the
+guarded production workflow. The approved source is
+`244993beab7f9fbba7ee89376a3b3dea616fa62a`; the website deployment candidate
+was `6d4c062ce0c3b647f39d3b5e3004531d692f62ba`. Production Worker
+`f5af1836-8cf8-4a3c-9db7-18c53ff9ded2` is active at 100% traffic. The previous
+Worker `91a8460e-1db1-440c-9643-a85b6e178fba` remains the verified rollback
+target.
+
+Production serves JavaScript `index-DG-_pPI_.js` with SHA-256
+`66f9407e808f74c803491917efcb412566301f4feca6df20978cd64dc48d7560` and CSS
+`index-28KfU4BI.css` with SHA-256
+`48b3b88702dde14713240d89a31e3057e58a53a1bea5356c0ba569aee77dea6f`.
+Guarded preflight passed, live anonymous smoke passed 10/10, and isolated
+Firefox production acceptance passed 64/64. Existing production data,
+authentication, recording paths and permanent-deletion safeguards were
+preserved. No rollback was required. The new production baseline is now the
+approved starting point for subsequent StudioFlow work.
+
 ## TPI-STUDIOFLOW-118 — COMPLETE / TELEPROMPTER SIDEBAR CORRECTED (2026-10-30)
 
 [Directive 118 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-118-CORRECT-TELEPROMPTER-SIDEBAR.md).
