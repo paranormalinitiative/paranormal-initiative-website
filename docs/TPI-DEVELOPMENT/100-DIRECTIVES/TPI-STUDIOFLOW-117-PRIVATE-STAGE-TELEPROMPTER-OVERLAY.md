@@ -29,7 +29,7 @@ Teleprompter entry remains removed.
 | Source branch | `codex/studioflow-109-teleprompter` |
 | Source commit | `3530140afefee9659947626db3f23524a25c3a80` |
 | Website branch | `codex/tpi-development` |
-| Website integration commit | `6e4c957` (pushed; GitHub parity pending final check) |
+| Website integration commit | `6e4c957` (pushed; GitHub parity verified at `a202447`) |
 | Production | Unchanged; no deployment performed |
 
 The original mixed StudioFlow checkout was not modified. The source worktree
