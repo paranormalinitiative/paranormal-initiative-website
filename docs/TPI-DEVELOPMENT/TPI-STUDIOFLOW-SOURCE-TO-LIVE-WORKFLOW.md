@@ -42,23 +42,23 @@ The authoritative owner-used StudioFlow development entry point is:
 | Production relationship | Development only; it does not update production and no production deployment is implied |
 
 The current local Worker serves the approved Video Setup 091 asset baseline,
-with the reviewed Directive 117 private stage reader and saved-script candidate
-now staged in the development-only website assets. A source revision is not
+with the reviewed Directive 118 Teleprompter sidebar correction and creation-
+order candidate now staged in the development-only website assets. A source revision is not
 present on this localhost merely because it exists in an isolated StudioFlow
 worktree or preview. The production release manifest and production asset
-baseline remain pinned to the approved 091 baseline; the D117 candidate is a
+baseline remain pinned to the approved 091 baseline; the D118 candidate is a
 separate local development integration and has not been deployed.
 
-## Current local development candidate — TPI-STUDIOFLOW-117
+## Current local development candidate — TPI-STUDIOFLOW-118
 
 The authoritative `8787` Worker currently serves the exact isolated source
-revision `3530140afefee9659947626db3f23524a25c3a80`, whose parent is the D116
-workstation commit `cf4afb9362fef8e4ec2d9ef82cafb3355805c611` and whose history
-includes the verified Teleprompter 092 commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`.
+revision `244993beab7f9fbba7ee89376a3b3dea616fa62a`, whose parent is the D117
+private stage reader commit and whose history includes the verified Teleprompter
+092 commit `05a9aa5cd7b4ccb94d11162f244d2281fcd572bb`.
 The candidate assets are:
 
-- `/studio/assets/index-BTdN-mf4.js` — SHA-256
-  `b7cdf1c214f3d389d1b778a5790d2a0946e965ed14d78fb5a8ad5a435cb54aa9`
+- `/studio/assets/index-DG-_pPI_.js` — SHA-256
+  `66f9407e808f74c803491917efcb412566301f4feca6df20978cd64dc48d7560`
 - `/studio/assets/index-28KfU4BI.css` — SHA-256
   `48b3b88702dde14713240d89a31e3057e58a53a1bea5356c0ba569aee77dea6f`
 
@@ -66,6 +66,7 @@ The exact source-provenance workflow built the clean source twice, verified
 reproducibility, applied the generated assets, and compared the staged files
 with the Worker watcher output. The candidate was then verified on the actual
 `8787` Worker in disposable Firefox Developer Edition acceptance, including
+toolbar/sidebar behavior, UI-created script ordering, all right-sidebar panels,
 saved-script selection, transparent private stage reader controls, decoded
 non-silent recording audio, playable video and frame-level canary privacy. It is
 a development candidate for owner testing, not a production release.

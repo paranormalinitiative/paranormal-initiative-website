@@ -1,5 +1,23 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-118 — CORRECT TELEPROMPTER SIDEBAR AND SCRIPT ORDER (2026-10-30)
+
+[Directive 118 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-118-CORRECT-TELEPROMPTER-SIDEBAR.md).
+
+Source commit `244993beab7f9fbba7ee89376a3b3dea616fa62a` corrects the D117
+right-rail handler: clicking Teleprompter now activates only the sidebar and
+does not open the full workstation. The sidebar uses the existing script store,
+filters to the active Studio, and sorts by stable creation metadata oldest-first.
+Legacy scripts without timestamps retain stored order. New and duplicated
+scripts receive monotonic `createdAt` values; editing does not change order.
+
+The sidebar's `Open Teleprompter` button still opens the shared workstation,
+and selecting a script still opens the private transparent stage reader. Real
+8787 Firefox acceptance passed 36/36, including all right-sidebar panels,
+three UI-created scripts, creation-order persistence, Studio isolation, saved
+non-silent recording audio, playable video and decoded-frame privacy. Production
+was not changed or deployed. Owner acceptance remains pending.
+
 ## TPI-STUDIOFLOW-117 — PRIVATE STAGE READER AND SAVED SCRIPT SELECTION (2026-10-30)
 
 [Directive 117 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-117-PRIVATE-STAGE-TELEPROMPTER-OVERLAY.md).

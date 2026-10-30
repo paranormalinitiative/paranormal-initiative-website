@@ -16,6 +16,16 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-118 — Correct Teleprompter sidebar and saved script navigation
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / OWNER ACCEPTANCE PENDING**.
+[Directive 118 execution record](TPI-STUDIOFLOW-118-CORRECT-TELEPROMPTER-SIDEBAR.md).
+The Teleprompter toolbar now opens only its right sidebar. Saved scripts use
+stable creation order, selecting a script opens the existing private reader,
+and `Open Teleprompter` opens the shared workstation. Source commit
+`244993beab7f9fbba7ee89376a3b3dea616fa62a`; 8787 Firefox acceptance passed
+36/36. Production is unchanged and no deployment occurred.
+
 ## TPI-STUDIOFLOW-117 — Private stage Teleprompter overlay and saved script selection
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / OWNER ACCEPTANCE PENDING**.

@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-118 — COMPLETE / TELEPROMPTER SIDEBAR CORRECTED (2026-10-30)
+
+[Directive 118 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-118-CORRECT-TELEPROMPTER-SIDEBAR.md).
+
+The Teleprompter right-toolbar icon now opens only the right sidebar, matching
+Notes and the other panels. Saved scripts are filtered to the active Studio and
+sorted oldest-first using stable creation metadata; legacy scripts retain their
+stored order. Selecting a script opens the existing private stage reader, while
+the sidebar's `Open Teleprompter` button opens the complete workstation.
+
+The corrected source commit is
+`244993beab7f9fbba7ee89376a3b3dea616fa62a`. The real 8787 Firefox owner
+workflow passed 36/36, including UI-created script ordering, edit stability,
+all right-sidebar panels, Studio isolation, recording, non-silent audio and
+decoded-frame privacy. Production remains unchanged; owner acceptance is
+pending.
+
 ## TPI-STUDIOFLOW-117 — COMPLETE / PRIVATE STAGE READER VERIFIED (2026-10-30)
 
 [Directive 117 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-117-PRIVATE-STAGE-TELEPROMPTER-OVERLAY.md).

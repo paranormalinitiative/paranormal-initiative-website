@@ -20,6 +20,19 @@ port-8787 data automatically, and must not be reported as the owner's primary
 StudioFlow application. Port 5192 is retired historical Directive 113
 infrastructure, not an available development URL.
 
+## TPI-STUDIOFLOW-118 Teleprompter sidebar verification
+
+The maintained StudioFlow Teleprompter source check is
+`npm run check:teleprompter`; the D118 run passed 46/46. The owner workflow
+must verify that the Teleprompter toolbar activates only the right sidebar,
+that three UI-created scripts remain oldest-first after editing and reload,
+that `Open Teleprompter` opens the shared workstation, and that selecting a
+script opens the private stage reader. The final Firefox Developer Edition run
+on the real 8787 Worker passed 36/36, including all right-sidebar panels,
+Studio isolation, recording audio/video and decoded-frame privacy. Use a
+disposable authenticated profile and do not claim owner acceptance from the
+automated fixture.
+
 ## Production recovery lesson — visible UI assertions are mandatory
 
 For StudioFlow context menus and other overlays, a DOM node count or text
