@@ -21,7 +21,8 @@ assets are JS `index-BTdN-mf4.js` (`b7cdf1c214f3d389d1b778a5790d2a0946e965ed14d7
 and CSS `index-28KfU4BI.css`
 (`48b3b88702dde14713240d89a31e3057e58a53a1bea5356c0ba569aee77dea6f`).
 
-The website integration is pushed on `codex/tpi-development` and is ready for
+The website integration commit is `6e4c957`, pushed on `codex/tpi-development`,
+and is ready for
 owner acceptance and production release review, but no production deployment
 is authorized or performed. The source repository has no remote; preserve the
 local source commit and do not modify the original mixed checkout. Rollback is
