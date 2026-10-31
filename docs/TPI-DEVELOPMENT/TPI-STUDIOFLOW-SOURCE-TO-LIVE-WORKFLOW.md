@@ -48,6 +48,30 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
+## TPI-STUDIOFLOW-127 release baseline — 2026-10-31
+
+The preserved and deployed StudioFlow candidate was built from source commit
+`ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` in the clean isolated
+`codex/studioflow-122-notes` worktree. Website integration and release
+documentation were carried on `codex/tpi-development` at website commit
+`a648f0b6a2744af489e0a9357952ac6dd9de6de5` before the post-deployment
+documentation update. The guarded workflow deployed Worker version
+`4108a0d7-5833-435f-8a0b-f6be8c1c8b27`; rollback is
+`a8709be8-6cec-4e99-a904-0f0e8877f00f`.
+
+The exact deployed StudioFlow assets are:
+
+- `/studio/assets/index-CZ1q5Q9d.js` — SHA-256
+  `89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3`
+- `/studio/assets/index-DtHLNYVn.css` — SHA-256
+  `720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`
+
+Preflight, local authentication lifecycle, reproducible staging, release
+safety, isolated Firefox, ownership, deletion-safety, and read-only production
+smoke gates passed. Production had no D1/R2 migration or destructive data
+operation. The native 122H.2 local-folder filesystem test remains partial and
+is explicitly not represented as a passed native synchronization capability.
+
 ## Current local development candidate — TPI-STUDIOFLOW-122H
 
 The authoritative `8787` Worker serves the development-only podcast project

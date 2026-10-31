@@ -1,5 +1,25 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-127 — COMPLETE / PRESERVED, PUSHED, DEPLOYED, AND CLEAN (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md).
+
+The verified StudioFlow candidate from source commit
+`ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` was integrated on website branch
+`codex/tpi-development`, pushed, and deployed through the guarded release path.
+Production Worker `theparanormalinitiative` is now version
+`4108a0d7-5833-435f-8a0b-f6be8c1c8b27`; rollback remains
+`a8709be8-6cec-4e99-a904-0f0e8877f00f`. The deployed StudioFlow assets are
+`index-CZ1q5Q9d.js` (SHA-256
+`89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3`) and
+`index-DtHLNYVn.css` (SHA-256
+`720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`).
+Anonymous production smoke passes 10/10 and isolated Firefox production
+acceptance passes 64/64. The canonical release worktrees are clean; unrelated
+historical and original mixed-checkout WIP remains preserved and was not
+cleaned or included. Native 122H.2 local-folder synchronization remains
+PARTIAL/UNVERIFIED and is not represented as passed.
+
 ## TPI-STUDIOFLOW-122H — COMPLETE / PODCAST PROJECT EXPORT VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122H-PODCAST-PROJECT-EXPORT.md).

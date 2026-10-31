@@ -1,5 +1,26 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-127 — PRESERVED AND DEPLOYED (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md).
+
+The canonical release is deployed and verified. Continue the website from
+`codex/tpi-development` at the post-release documentation commit, with the
+production Worker at `4108a0d7-5833-435f-8a0b-f6be8c1c8b27` and rollback target
+`a8709be8-6cec-4e99-a904-0f0e8877f00f`. The approved StudioFlow source remains
+`ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` in
+`/Users/toddknipple/Documents/StudioFlow/web-122` on
+`codex/studioflow-122-notes`; that source repository has no configured remote.
+The deployed assets are `index-CZ1q5Q9d.js` SHA-256
+`89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3` and
+`index-DtHLNYVn.css` SHA-256
+`720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`.
+
+The canonical release worktrees are clean. Do not reset, clean, prune, or
+delete the original mixed StudioFlow checkout or the historical dirty WIP
+worktrees listed in the execution record. The 122H.2 native local-folder
+filesystem test remains PARTIAL and must not be called passed.
+
 ## TPI-STUDIOFLOW-122H — PODCAST PROJECT EXPORT VERIFIED (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122H-PODCAST-PROJECT-EXPORT.md).

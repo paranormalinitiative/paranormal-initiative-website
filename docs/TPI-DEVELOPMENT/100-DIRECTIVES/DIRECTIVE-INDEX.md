@@ -5,6 +5,24 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-127 — Preserve, push, deploy, and clean worktrees
+
+Status: **COMPLETE / DEPLOYED AND VERIFIED / HISTORICAL WIP PRESERVED**.
+[Execution record](TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md). The
+verified candidate from StudioFlow source commit
+`ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` was integrated on website commit
+`a648f0b6a2744af489e0a9357952ac6dd9de6de5`, pushed, and deployed as Worker
+`4108a0d7-5833-435f-8a0b-f6be8c1c8b27`. Rollback is
+`a8709be8-6cec-4e99-a904-0f0e8877f00f`. Asset provenance matches JavaScript
+`index-CZ1q5Q9d.js` SHA-256
+`89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3` and CSS
+`index-DtHLNYVn.css` SHA-256
+`720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`.
+Anonymous production smoke is 10/10 and isolated Firefox acceptance is 64/64.
+The canonical release worktrees are clean; unrelated dirty worktrees and the
+original mixed checkout remain preserved and were not included. Native 122H.2
+local-folder synchronization remains partial/unverified.
+
 ## TPI-STUDIOFLOW-122H — Podcast project files, export, and operating system access
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
