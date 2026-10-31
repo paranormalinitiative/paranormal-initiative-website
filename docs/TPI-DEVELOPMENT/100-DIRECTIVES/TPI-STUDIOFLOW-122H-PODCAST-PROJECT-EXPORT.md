@@ -105,6 +105,8 @@ scene change, publishing, or production operation occurs.
 - Source branch: `codex/studioflow-122-notes`
 - Final source commit: `56f8ad7cc403560e22388e907b2000ee9f49c0db`
 - Website branch: `codex/tpi-development`
+- Website integration commit: `1dd69f32f59ab172c173b1f5fea71f57765158c7`
+- Documentation/parity follow-up: this fast-forward commit on `codex/tpi-development`
 - JavaScript: `index-D_rpm-10.js`
   - SHA-256: `c029b5099fa67fff2220e823544b19b4ea816679088817244d1de796525cc349`
 - CSS: `index-kIGdvrxS.css`
