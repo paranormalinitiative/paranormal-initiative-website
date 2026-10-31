@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122H — COMPLETE / PODCAST PROJECT EXPORT VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122H-PODCAST-PROJECT-EXPORT.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now provides
+read-only `View Project Files` and `Download Project` actions for existing
+Notes podcast project collections. The bounded browser export creates a
+standard ZIP with project/episode metadata, offline note HTML, private
+attachments when fetchable, checksums, and explicit omissions for resources
+without verified project associations. Final Firefox export acceptance passes;
+maintained Firefox is 64/64 and release safety is 21/21. Source commit is
+`56f8ad7cc403560e22388e907b2000ee9f49c0db`; production remains unchanged.
+
+Scripts, recordings, media, artwork, guest information, and scenes remain
+documented omissions until the existing model provides verified project or
+episode associations. No production deployment is authorized under D122H.
+
 ## TPI-STUDIOFLOW-122F.2C — COMPLETE / FINAL NOTES FOCUS STYLING VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2C-NOTES-FOCUS-STYLING.md).

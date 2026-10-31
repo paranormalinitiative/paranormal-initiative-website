@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122F.2C",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the final Notes editor focus styling correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.2C.",
+  "recordedDirective": "TPI-STUDIOFLOW-122H",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the podcast project export capability. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122H.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "eb6d09d991d851d8f92853e60a2ecb8c0f934e87"
+    "approvedCommit": "56f8ad7cc403560e22388e907b2000ee9f49c0db"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-BZJV5-la.js",
-      "sha256": "a06403c49de188a6e5d534f00512e05da58271dde48f74bafe4598ae6d1306af"
+      "name": "index-D_rpm-10.js",
+      "sha256": "c029b5099fa67fff2220e823544b19b4ea816679088817244d1de796525cc349"
     },
     "css": {
-      "name": "index-CfXSYfAg.css",
-      "sha256": "ca4a20d0bbf23696f0baad2bdbe2c7f6f1961f1190b654457eccc4adcd33f415"
+      "name": "index-kIGdvrxS.css",
+      "sha256": "9506b740f488255323852f2e43e95c463b81b66b155cd38d5a32105704cfaee8"
     }
   }
 }

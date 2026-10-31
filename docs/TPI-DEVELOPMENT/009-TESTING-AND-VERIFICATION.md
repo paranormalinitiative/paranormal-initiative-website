@@ -1,5 +1,28 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122H Podcast project export
+
+The D122H candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. A disposable authenticated Firefox
+Developer Edition verifier created a podcast project, child episode, and note;
+opened `View Project Files`; downloaded the ZIP; inspected the archive with
+`unzip`; and cleaned up only those disposable records. The final run passes all
+17 checks, including project association, ZIP download, manifest, episode
+metadata, offline note HTML, absence of authenticated application URLs, and
+explicit unassociated-resource omissions.
+
+The export is bounded to 50 MB per resource and 512 MB total. It uses existing
+owner-scoped Notes/D1/R2 access and performs no data mutation. Scripts,
+recordings, media, artwork, guest information, and scenes are documented as
+omitted because the current data model has no verified podcast-project or
+episode association for them. Native Finder, Windows File Explorer, and Linux
+file-manager extraction were not run; standard ZIP compatibility is verified.
+
+The maintained Firefox StudioFlow regression remains **64/64** and release
+safety remains **21/21**. Source/staging provenance passes for source commit
+`56f8ad7cc403560e22388e907b2000ee9f49c0db` and the staged asset hashes.
+Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.2C Final Notes editor focus styling
 
 The D122F.2C candidate is staged only on the authoritative local Worker at

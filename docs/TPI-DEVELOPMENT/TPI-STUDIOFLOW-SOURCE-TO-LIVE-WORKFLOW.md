@@ -48,6 +48,34 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
+## Current local development candidate — TPI-STUDIOFLOW-122H
+
+The authoritative `8787` Worker serves the development-only podcast project
+export candidate from isolated StudioFlow source commit
+`56f8ad7cc403560e22388e907b2000ee9f49c0db`. Existing Notes podcast project
+collections expose read-only `View Project Files` and `Download Project`
+actions. The browser generates a bounded standard ZIP containing only verified
+project-associated collections, notes, episode metadata, and private
+attachments that can be fetched through the authenticated Notes endpoint.
+
+Exact staged assets:
+
+- `/studio/assets/index-D_rpm-10.js` — SHA-256
+  `c029b5099fa67fff2220e823544b19b4ea816679088817244d1de796525cc349`
+- `/studio/assets/index-kIGdvrxS.css` — SHA-256
+  `9506b740f488255323852f2e43e95c463b81b66b155cd38d5a32105704cfaee8`
+
+The export includes a checksum manifest and relative offline HTML references,
+sanitizes names, prevents collisions, and enforces 50 MB/resource and 512 MB
+total bounds. Scripts, recordings/media, artwork, guest information, and
+scenes are explicit manifest omissions because their current Studio/browser-
+local records have no verified podcast-project or episode association. The
+Notes list attachment lookup was chunked at 80 IDs per D1 query to prevent a
+large existing library from producing a false 503. Final Firefox export
+acceptance passes 17/17; maintained Firefox passes 64/64; release safety passes
+21/21; reproducible staging and asset comparison pass. Production remains
+unchanged and no deployment is authorized under D122H.
+
 ## Current local development candidate — TPI-STUDIOFLOW-122F.2C
 
 The authoritative `8787` Worker serves the development-only final Notes editor

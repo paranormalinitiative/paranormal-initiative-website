@@ -5,6 +5,18 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122H — Podcast project files, export, and operating system access
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122H-PODCAST-PROJECT-EXPORT.md). Source
+commit `56f8ad7cc403560e22388e907b2000ee9f49c0db` adds read-only Project Files
+and Download Project actions for existing Notes podcast collections and a
+bounded standard ZIP export with offline note HTML, episode metadata, private
+attachments where fetchable, checksums, and explicit omission reasons. Final
+Firefox export acceptance passes 17/17, maintained Firefox passes 64/64 and
+release safety passes 21/21. Production is unchanged. Native Finder/Explorer/
+Linux GUI extraction remains unverified.
+
 ## TPI-STUDIOFLOW-122F.2C — Final Notes editor focus styling correction
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

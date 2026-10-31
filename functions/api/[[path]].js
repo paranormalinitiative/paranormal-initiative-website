@@ -4682,14 +4682,22 @@ async function getOwnedNote(env, id, ownerId) {
 async function getOwnedNoteAttachments(env, noteIds, ownerId) {
   const map = new Map((noteIds || []).map(id => [id, []]));
   if (!noteIds.length) return map;
-  const placeholders = noteIds.map(() => "?").join(",");
-  const { results } = await env.TPI_DB.prepare(`
-    SELECT id, note_id, original_name, content_type, size_bytes, created_at
-    FROM studio_note_attachments
-    WHERE owner_id = ? AND deleted_at IS NULL AND note_id IN (${placeholders})
-    ORDER BY created_at ASC, id ASC
-  `).bind(ownerId, ...noteIds).all();
-  (results || []).forEach(row => map.get(row.note_id)?.push(noteAttachmentPayload(row)));
+  // D1 limits the number of bound SQL variables. Notes list responses are
+  // bounded to 500 records, so chunk the owner-scoped attachment lookup rather
+  // than allowing a large existing Notes library to turn the whole list into a
+  // 503. This is read-only and does not change attachment ownership or storage.
+  const chunkSize = 80;
+  for (let start = 0; start < noteIds.length; start += chunkSize) {
+    const chunk = noteIds.slice(start, start + chunkSize);
+    const placeholders = chunk.map(() => "?").join(",");
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT id, note_id, original_name, content_type, size_bytes, created_at
+      FROM studio_note_attachments
+      WHERE owner_id = ? AND deleted_at IS NULL AND note_id IN (${placeholders})
+      ORDER BY created_at ASC, id ASC
+    `).bind(ownerId, ...chunk).all();
+    (results || []).forEach(row => map.get(row.note_id)?.push(noteAttachmentPayload(row)));
+  }
   return map;
 }
 

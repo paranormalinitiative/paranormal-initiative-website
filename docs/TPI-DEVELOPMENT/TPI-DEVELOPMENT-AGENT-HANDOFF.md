@@ -1,5 +1,29 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122H — PODCAST PROJECT EXPORT VERIFIED (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122H-PODCAST-PROJECT-EXPORT.md).
+
+Continue from source commit `56f8ad7cc403560e22388e907b2000ee9f49c0db` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-D_rpm-10.js` (`c029b5099fa67fff2220e823544b19b4ea816679088817244d1de796525cc349`)
+and `index-kIGdvrxS.css`
+(`9506b740f488255323852f2e43e95c463b81b66b155cd38d5a32105704cfaee8`).
+
+Podcast project collections now expose read-only Project Files and Download
+Project actions. The browser export creates a bounded standard ZIP with
+offline note HTML, episode metadata, private attachments where fetchable, and
+a manifest containing checksums and explicit omissions. Teleprompter scripts,
+recordings/media, artwork, guest information, and scenes are not guessed into
+projects because their current Studio/browser-local records lack verified
+podcast associations. Firefox export acceptance passes; maintained Firefox is
+64/64 and release safety is 21/21. Production remains unchanged.
+
+The website Notes list now chunks attachment lookups into 80-ID D1 queries to
+avoid a false 503 when an owner has a large existing Notes library. Preserve
+the original mixed StudioFlow checkout and do not deploy D122H to production.
+
 ## TPI-STUDIOFLOW-122F.2C — FINAL NOTES FOCUS STYLING CORRECTION (2026-10-31)
 
 Continue from StudioFlow source commit
