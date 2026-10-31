@@ -48,20 +48,20 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
-## Current local development candidate — TPI-STUDIOFLOW-122F.2 addendum
+## Current local development candidate — TPI-STUDIOFLOW-122F.2A
 
-The authoritative `8787` Worker now serves the D122F.2 Notes editor
-text-cursor and writing-focus correction from isolated StudioFlow source commit
-`4caa882c4d13de283265d5204e2431370f825e70`. Empty Notes focus the existing
-rich editor with a start caret, existing Notes focus at the end after hydration,
-and a CSS-only `Start writing…` placeholder remains outside saved content.
+The authoritative `8787` Worker now serves the D122F.2A Notes editor
+document-style focus correction from isolated StudioFlow source commit
+`95fc46baae987dee0d7035e6032822330a709c32`. The full perimeter focus box is
+removed; the existing rich editor keeps its caret and gains a subtle
+theme-token-based surface tint plus a keyboard-visible bottom cue.
 
 Exact staged assets:
 
-- `/studio/assets/index-c4ihiW_I.js` — SHA-256
+- `/studio/assets/index-DbEHpRbI.js` — SHA-256
   `ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9`
-- `/studio/assets/index-Dm22zsyB.css` — SHA-256
-  `ef516f605e43d7e7437da49f9cedb439944d111e43b67e1e1f834bc215242975`
+- `/studio/assets/index-Diqa40JX.css` — SHA-256
+  `e4abe1d372de5f21dbecdd97c2dc9f0fef053e7c0e37fa2f36431d82bfd8794a`
 
 The focused Notes verifier passes all checks, the D122F.1 rail verifier passes
 13/13, maintained Firefox passes 64/64, release safety passes 21/21, and the

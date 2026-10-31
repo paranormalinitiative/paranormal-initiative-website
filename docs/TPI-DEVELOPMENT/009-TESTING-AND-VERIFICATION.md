@@ -1,5 +1,20 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122F.2A Notes editor document-style appearance
+
+The D122F.2A candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. The focused Firefox Developer Edition Notes
+verifier passes all checks, including the visible start caret, immediate typing,
+Enter paragraph creation, and the scoped document-style focus contract. The
+D122F.1 organization rail verifier passes **13/13**, maintained Firefox passes
+**64/64**, release safety passes **21/21**, and source-provenance verification
+passes exact source identity, reproducible builds, and staged-asset hashes.
+
+The Notes editor now uses the shared StudioFlow theme tokens with a subtle
+keyboard-visible bottom focus cue instead of a full perimeter box. The four
+broadcast graphic themes are program-output themes and do not change the Notes
+application surface. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.2 Addendum — Notes editor text cursor and writing focus
 
 The D122F.2 addendum candidate is staged only on the authoritative local Worker

@@ -1,5 +1,25 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.2A — COMPLETE / NOTES EDITOR DOCUMENT STYLE VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2A-NOTES-EDITOR-DOCUMENT-STYLE.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now presents
+the Notes rich editor as a document-writing surface. The full perimeter focus
+box is removed; the existing automatic caret and immediate writing behavior
+remain, with a subtle shared-token surface tint and keyboard-visible bottom
+focus cue.
+
+Source commit
+`95fc46baae987dee0d7035e6032822330a709c32` stages JavaScript
+`index-DbEHpRbI.js`
+(`ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9`) and CSS
+`index-Diqa40JX.css`
+(`e4abe1d372de5f21dbecdd97c2dc9f0fef053e7c0e37fa2f36431d82bfd8794a`).
+Focused Notes acceptance passes, D122F.1 rail checks pass 13/13, maintained
+Firefox passes 64/64, release safety passes 21/21 and provenance verification
+passes. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.2 Addendum — COMPLETE / NOTES EDITOR WRITING FOCUS VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-ADDENDUM-EDITOR-FOCUS.md).

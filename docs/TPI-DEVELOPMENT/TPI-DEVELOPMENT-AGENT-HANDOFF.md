@@ -1,5 +1,25 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.2A — NOTES EDITOR DOCUMENT-STYLE APPEARANCE COMPLETE (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2A-NOTES-EDITOR-DOCUMENT-STYLE.md).
+
+Continue from StudioFlow source commit
+`95fc46baae987dee0d7035e6032822330a709c32` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-DbEHpRbI.js`
+(`ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9`) and
+`index-Diqa40JX.css`
+(`e4abe1d372de5f21dbecdd97c2dc9f0fef053e7c0e37fa2f36431d82bfd8794a`).
+
+The Notes editor no longer uses the full perimeter `box-shadow` focus box. It
+keeps automatic focus and the blinking caret, applies a subtle shared-token
+document tint, and provides a thin `:focus-visible` bottom cue for keyboard
+users. Focused Notes acceptance passes, D122F.1 rail checks pass 13/13,
+maintained Firefox passes 64/64, release safety passes 21/21, and provenance
+passes. Production remains unchanged; do not deploy under D122F.2A.
+
 ## TPI-STUDIOFLOW-122F.2 Addendum — NOTES EDITOR WRITING FOCUS COMPLETE (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-ADDENDUM-EDITOR-FOCUS.md).

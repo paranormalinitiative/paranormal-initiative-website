@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.2A — Notes editor document-style appearance
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F2A-NOTES-EDITOR-DOCUMENT-STYLE.md). Source
+commit `95fc46baae987dee0d7035e6032822330a709c32` removes the full perimeter
+Notes editor focus box while preserving the rich editor caret, automatic focus,
+keyboard-visible focus cue, toolbar, formatting, autosave and attachments.
+Focused Notes acceptance, rail 13/13, maintained Firefox 64/64, release safety
+21/21 and provenance verification pass. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F.2 Addendum — Notes editor text cursor and writing focus
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

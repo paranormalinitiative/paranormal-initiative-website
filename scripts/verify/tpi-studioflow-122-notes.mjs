@@ -7,11 +7,12 @@ import firefox from "selenium-webdriver/firefox.js";
 
 const repoRoot = resolve(import.meta.dirname, "../..");
 const sourceFile = "/Users/toddknipple/Documents/StudioFlow/web-122/src/NotesView.tsx";
+const styleFile = "/Users/toddknipple/Documents/StudioFlow/web-122/src/styles.css";
 const base = (process.env.TPI_FIREFOX_BASE_URL || "http://127.0.0.1:8787").replace(/\/$/, "");
 const binary = process.env.TPI_FIREFOX_BINARY || "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox";
 const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodriver";
 const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
-if (!existsSync(binary) || !existsSync(geckodriver) || !existsSync(credentialsFile)) {
+if (!existsSync(binary) || !existsSync(geckodriver) || !existsSync(credentialsFile) || !existsSync(styleFile)) {
   console.log(JSON.stringify({ status: "BLOCKED", reason: "Firefox, Geckodriver, or local credentials are unavailable." }));
   process.exit(1);
 }
@@ -111,6 +112,8 @@ try {
   check("automatic note opens from the library", Boolean(automaticCard) && await waitFor(async () => (await js("return document.querySelector('.notes-title-input')?.value === 'New Note';"))));
   const emptyEditorFocus = await js("var e=document.querySelector('.notes-rich-editor'),s=window.getSelection(),r=s&&s.rangeCount?s.getRangeAt(0):null; return {active:e===document.activeElement,editable:e?.contentEditable==='true',collapsed:Boolean(r?.collapsed),atStart:Boolean(r&&r.startContainer===e&&r.startOffset===0)};");
   check("empty note focuses the rich editor with a start caret", Boolean(emptyEditorFocus?.active && emptyEditorFocus?.editable && emptyEditorFocus?.collapsed && emptyEditorFocus?.atStart), JSON.stringify(emptyEditorFocus));
+  const editorFocusStyles = readFileSync(styleFile, "utf8");
+  check("editor focus uses document-style scoped treatment", editorFocusStyles.includes(".notes-rich-editor:focus{background:color-mix") && editorFocusStyles.includes(".notes-rich-editor:focus-visible{box-shadow:inset 0 -2px 0") && !editorFocusStyles.includes(".notes-rich-editor:focus{box-shadow:inset 0 0 0 1px"));
   await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.focus(); document.execCommand('insertText',false,'Immediate draft'); e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
   check("immediate typing enters the rich editor", await waitFor(async () => Boolean(await js("return document.querySelector('.notes-rich-editor')?.textContent?.includes('Immediate draft');"))));
   await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML=''; e.focus(); document.execCommand('insertText',false,'First paragraph'); document.execCommand('insertParagraph'); document.execCommand('insertText',false,'Second paragraph'); e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
