@@ -1,5 +1,33 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F — NOTES COMPLETION CANDIDATE PARTIAL (2026-10-31)
+
+[Directive 122F execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F-NOTES-COMPLETION.md).
+
+Continue from StudioFlow source commit
+`ef2377f8b92b278bdab67c18d51a44c5a63c3dd9` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-B0cx-IId.js`
+(`240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`) and
+`index-DNQBejED.css`
+(`75f2a65407810b92b9baea6fb0694bb3f5f802b67154e1044dbc3b9d8d7a3261`).
+
+D122F leaves one Notes organization panel with the collapse control beside
+`Organize`, an accessible reopen control when collapsed, and project/episode/
+folder actions under Projects and folders. The redundant global/far-right
+controls are gone. A sanitized structured research-reference block action is
+available from the editor toolbar, and attachment IDs are carried into note
+revisions. No migration was required.
+
+Focused D122F Firefox is 11/11, maintained Notes acceptance passes, maintained
+Firefox is 64/64, release safety is 21/21, and source/staging provenance is
+verified. Keep this candidate PARTIAL: native attachment/recovery, fault-
+injected and multi-tab autosave, full revision-restore, all-theme,
+Chrome/Safari and tablet/mobile coverage remain unverified. Do not deploy to
+production under D122F. Preserve owner data, the D121 production baseline and
+the original mixed StudioFlow checkout.
+
 ## TPI-STUDIOFLOW-122E.1 — HOME CREATE LAYOUT COMPLETE (2026-10-31)
 
 [Directive 122E.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E1-HOME-CREATE-LAYOUT.md).

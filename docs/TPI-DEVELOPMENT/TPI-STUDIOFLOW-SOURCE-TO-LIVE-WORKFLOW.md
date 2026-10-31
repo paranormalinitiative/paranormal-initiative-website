@@ -80,7 +80,26 @@ real Firefox acceptance 57/57. No database migration was required because the
 existing migration 0055 `parent_id` relationship already supports nested
 collections. This is a development-only candidate; production is unchanged.
 
-## Current local development candidate — TPI-STUDIOFLOW-122E.1
+## Current local development candidate — TPI-STUDIOFLOW-122F
+
+The authoritative `8787` Worker now serves the D122F Notes completion candidate
+from isolated StudioFlow source commit
+`ef2377f8b92b278bdab67c18d51a44c5a63c3dd9`. Its exact staged assets are:
+
+- `/studio/assets/index-B0cx-IId.js` — SHA-256
+  `240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`
+- `/studio/assets/index-DNQBejED.css` — SHA-256
+  `75f2a65407810b92b9baea6fb0694bb3f5f802b67154e1044dbc3b9d8d7a3261`
+
+The exact source-provenance workflow built the clean source twice and passed
+`--verify-only` after staging. Focused D122F Firefox Notes checks pass 11/11;
+maintained Notes acceptance passes, maintained Firefox passes 64/64 and
+release safety passes 21/21. This candidate is development-only and remains
+PARTIAL pending native attachment/recovery, interruption/concurrency, full
+revision-restore, all-theme, Chrome/Safari and device acceptance. Production
+was not modified or deployed.
+
+## Historical local development candidate — TPI-STUDIOFLOW-122E.1
 
 The authoritative `8787` Worker now serves the D122E.1 Home Create section
 layout correction from isolated StudioFlow source commit

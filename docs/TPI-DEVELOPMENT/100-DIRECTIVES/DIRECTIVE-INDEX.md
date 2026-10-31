@@ -5,6 +5,19 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F — Notes completion and comprehensive acceptance
+
+Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F-NOTES-COMPLETION.md). Source commit
+`ef2377f8b92b278bdab67c18d51a44c5a63c3dd9` stages the corrected single
+organization panel, heading-adjacent collapse/reopen behavior, grouped project/
+episode/folder actions, structured research-reference editor blocks and
+attachment revision identifiers on port 8787. Focused D122F Firefox passes
+11/11, maintained Firefox passes 64/64, release safety passes 21/21 and
+reproducible staging passes. Native attachment/recovery, fault-injected and
+multi-tab autosave, exhaustive revision restore, all-theme and Chrome/Safari/
+device coverage remain unverified. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122E.1 — Home Create section layout correction
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

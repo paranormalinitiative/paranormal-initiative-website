@@ -523,3 +523,14 @@ read the server without triggering the application's hydration bridge. The
 test uses an isolated Firefox profile, synthetic metadata-only assets where
 possible, server-side reads that do not mutate the browser state, and archives
 disposable workspaces during cleanup.
+
+## TPI-STUDIOFLOW-122F Notes completion verification
+
+The D122F candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. Run the focused structural check with
+`node scripts/verify/tpi-studioflow-122f-notes-completion.mjs`, then run the
+maintained Notes verifier and `npm run test:studioflow:firefox`. The focused
+check passed 11/11, maintained Firefox passed 64/64 and release safety passed
+21/21 on 2026-10-31. Native attachment/recovery, fault-injected and multi-tab
+autosave, full revision restoration, all-theme, Chrome/Safari and device
+coverage remain unverified and must not be reported as passed.

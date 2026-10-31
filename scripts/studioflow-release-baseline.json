@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122E.1",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the balanced five-card Home Create layout. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122E.1.",
+  "recordedDirective": "TPI-STUDIOFLOW-122F",
+  "description": "Development-only approved StudioFlow source identity and generated assets for Notes completion and comprehensive acceptance. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "1e08da2b651136ea19a654ad03b97ddd45ca4457"
+    "approvedCommit": "ef2377f8b92b278bdab67c18d51a44c5a63c3dd9"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-DmaCJVhN.js",
-      "sha256": "e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d"
+      "name": "index-B0cx-IId.js",
+      "sha256": "240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48"
     },
     "css": {
-      "name": "index-DLIu5icU.css",
-      "sha256": "e09191f0e7f94bacea4e63876cf3d5e407c9b7076d7f4ab35203e71992e0ea13"
+      "name": "index-DNQBejED.css",
+      "sha256": "75f2a65407810b92b9baea6fb0694bb3f5f802b67154e1044dbc3b9d8d7a3261"
     }
   }
 }

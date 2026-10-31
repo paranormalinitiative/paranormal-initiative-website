@@ -1,5 +1,29 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F — PARTIAL / NOTES COMPLETION CANDIDATE VERIFIED (2026-10-31)
+
+[Directive 122F execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F-NOTES-COMPLETION.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now renders
+one Notes organization panel. Collapse is beside `Organize`, the collapsed
+state has an accessible reopen control, and redundant global/far-right folder
+and collapse controls are removed. Podcast, episode and folder actions are
+grouped beneath Projects and folders. The editor also has a sanitized,
+autosaved structured research-reference block action, and attachment IDs are
+included in subsequent note revisions.
+
+Source commit `ef2377f8b92b278bdab67c18d51a44c5a63c3dd9` stages JavaScript
+`index-B0cx-IId.js`
+(`240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`) and CSS
+`index-DNQBejED.css`
+(`75f2a65407810b92b9baea6fb0694bb3f5f802b67154e1044dbc3b9d8d7a3261`). The
+focused D122F Firefox check passes 11/11, maintained Notes acceptance passes,
+maintained Firefox StudioFlow regression passes 64/64, release safety passes
+21/21, and reproducible staging passes. D122F remains PARTIAL because native
+attachment/recovery, interruption and multi-tab autosave, exhaustive revision
+restore, all-theme, Chrome/Safari and tablet/mobile checks remain unverified.
+Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122E.1 — COMPLETE / HOME CREATE LAYOUT VERIFIED (2026-10-31)
 
 [Directive 122E.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E1-HOME-CREATE-LAYOUT.md).
