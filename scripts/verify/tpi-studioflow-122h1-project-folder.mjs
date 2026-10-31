@@ -9,6 +9,7 @@ const repoRoot = resolve(import.meta.dirname, "../..");
 const base = (process.env.TPI_CHROME_BASE_URL || "http://127.0.0.1:8787").replace(/\/$/, "");
 const chromePath = process.env.TPI_CHROME_BINARY || chromium.executablePath();
 const chromeProcess = process.env.TPI_CHROME_PROCESS || "Google Chrome for Testing";
+const chromePid = Number(process.env.TPI_CHROME_PID || 0);
 const credentialsFile = process.env.TPI_CHROME_CREDENTIALS_FILE || join(repoRoot, ".local-dev/local-auth-credentials.json");
 const results = [];
 const check = (name, passed, detail = "") => results.push({ name, passed: Boolean(passed), detail: passed ? "" : String(detail) });
@@ -21,8 +22,22 @@ let episodeId = "";
 let noteId = "";
 
 function chooseNativeFolder(path) {
+  const processSelection = chromePid > 0
+    ? `set targetProcess to first process whose unix id is ${chromePid}`
+    : `set targetProcess to missing value
+  repeat with candidateReference in (every process whose name is ${JSON.stringify(chromeProcess)})
+    try
+      set candidate to contents of candidateReference
+      if (count of windows of candidate) > 0 and (name of window 1 of candidate contains "StudioFlow") then
+        set targetProcess to candidate
+        exit repeat
+      end if
+    end try
+  end repeat
+  if targetProcess is missing value then set targetProcess to first process whose name is ${JSON.stringify(chromeProcess)}`;
   const script = `tell application "System Events"
-  tell process ${JSON.stringify(chromeProcess)}
+  ${processSelection}
+  tell targetProcess
     set frontmost to true
     delay 0.4
     keystroke "g" using {command down, shift down}
@@ -36,6 +51,22 @@ function chooseNativeFolder(path) {
       key code 36
     end if
   end tell
+end tell`;
+  execFileSync("osascript", ["-e", script], { stdio: "ignore" });
+}
+
+function focusStudioFlowBrowser() {
+  const script = `tell application "System Events"
+  repeat with candidateReference in (every process whose name is ${JSON.stringify(chromeProcess)})
+    try
+      set candidate to contents of candidateReference
+      if (count of (every window of candidate whose name contains "StudioFlow")) > 0 then
+        set frontmost of candidate to true
+        key code 53
+        exit repeat
+      end if
+    end try
+  end repeat
 end tell`;
   execFileSync("osascript", ["-e", script], { stdio: "ignore" });
 }
@@ -55,7 +86,7 @@ try {
   if (!existsSync(chromePath) || !existsSync(credentialsFile)) throw new Error("Chrome or the protected local credentials file is unavailable.");
   const credentials = JSON.parse(readFileSync(credentialsFile, "utf8"));
   const account = credentials.accounts?.test_admin ?? credentials;
-  browser = await chromium.launchPersistentContext(profilePath, { headless: false, executablePath: chromePath, args: ["--no-first-run", "--no-default-browser-check"], viewport: { width: 1440, height: 1050 } });
+  browser = await chromium.launchPersistentContext(profilePath, { headless: false, executablePath: chromePath, args: ["--no-first-run", "--no-default-browser-check", "--disable-save-password-bubble"], viewport: { width: 1440, height: 1050 } });
   page = await browser.newPage();
   await page.goto(`${base}/member-login.html`, { waitUntil: "domcontentloaded" });
   const loginForm = page.locator('form[data-member-login]');
@@ -96,6 +127,8 @@ try {
   check("Project Files dialog opens", true);
   check("real folder support is advertised", await page.getByRole("button", { name: "Set Local Project Folder" }).count() === 1);
 
+  await page.bringToFront();
+  focusStudioFlowBrowser();
   await page.getByRole("button", { name: "Set Local Project Folder" }).click();
   chooseNativeFolder(folderPath);
   await page.getByText(new RegExp(`Connected to`)).waitFor({ state: "visible", timeout: 20_000 });

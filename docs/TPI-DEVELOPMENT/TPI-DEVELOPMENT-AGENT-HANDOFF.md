@@ -1221,6 +1221,18 @@ release safety 21/21 pass. Native Chrome folder selection and independent
 real-filesystem inspection remain unverified; do not report this directive
 complete until a visible supported browser completes that gate.
 
+## TPI-STUDIOFLOW-122H.2 verification handoff
+
+Execution record: `100-DIRECTIVES/TPI-STUDIOFLOW-122H2-LOCAL-FOLDER-VERIFICATION.md`.
+
+The real 8787 Project Files dialog and disposable-project setup were verified
+in isolated Chrome, but the native macOS directory picker did not complete in
+the available automation session. No local files were written or claimed.
+The ZIP fallback passed 17/17, maintained Firefox passed 64/64, and release
+safety passed 21/21. Treat 122H.2 as **PARTIAL** until a supported browser
+completes native folder selection, real filesystem inspection, repeated sync,
+and external-file conflict protection.
+
 ## Documentation synchronization
 
 Every completed TPI directive must update the affected Markdown records before

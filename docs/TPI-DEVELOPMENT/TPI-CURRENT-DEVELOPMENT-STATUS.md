@@ -3817,3 +3817,18 @@ and `index-DtHLNYVn.css`
 fallback acceptance passed 17/17, maintained Firefox passed 64/64, and release
 safety passed 21/21. Native Chrome folder selection and independent real-folder
 inspection remain **UNVERIFIED**, so 122H.1 is **PARTIAL**, not complete.
+
+## TPI-STUDIOFLOW-122H.2 — local folder verification — 2026-10-31
+
+122H.2 verified the 8787 Worker baseline, the staged assets, the real
+authenticated Project Files dialog, the disposable-project setup path, the
+ZIP fallback, and the maintained safety suites. An isolated Chrome/macOS run
+could not complete the native directory picker, so no local files were
+written and no Finder inspection was claimed. Repeated synchronization,
+external-file conflict, permission recovery, and native handle persistence
+remain **UNVERIFIED**. The directive is **PARTIAL**, not complete.
+
+The focused harness now foregrounds the isolated browser and avoids targeting
+the owner's personal Chrome window. Continue with an interactive supported
+Chrome session for the native picker gate. Source remains
+`ded5a3d73c5838d56f3c5e1cb0a32534acdab44f`; production remains unchanged.

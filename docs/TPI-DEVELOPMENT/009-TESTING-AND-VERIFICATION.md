@@ -658,3 +658,14 @@ The existing ZIP fallback passed 17/17, maintained Firefox passed 64/64, and
 release safety passed 21/21. Do not claim Finder, File Explorer, Linux file
 manager, or actual local-folder writes until native selection and independent
 inspection have completed.
+
+## TPI-STUDIOFLOW-122H.2 local folder verification
+
+The 2026-10-31 verification confirmed the 8787 Worker baseline, authenticated
+Project Files access, disposable project setup, asset hashes, ZIP fallback
+17/17, maintained Firefox 64/64, and release safety 21/21. The isolated
+Chrome/macOS run could not complete the native directory picker; it wrote no
+local files. Therefore real-folder creation, independent Finder inspection,
+second synchronization, conflict preservation, and permission recovery are
+**UNVERIFIED**. The execution record is
+`100-DIRECTIVES/TPI-STUDIOFLOW-122H2-LOCAL-FOLDER-VERIFICATION.md`.
