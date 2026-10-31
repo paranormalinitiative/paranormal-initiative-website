@@ -64,6 +64,22 @@ maintained release baseline, and passed real Firefox D122B acceptance 40/40,
 maintained Firefox regression 64/64 and release-safety 21/21. It is not a
 production release. No production deployment is authorized by D122B.
 
+## Current local development candidate — TPI-STUDIOFLOW-122D
+
+The authoritative `8787` Worker now serves the D122D user-created folder
+refinement from isolated StudioFlow source commit
+`bf93bb58a72eb0f5b0e47f401af0ebd97daa77ef`. Its exact staged assets are:
+
+- `/studio/assets/index-BjXZX1EX.js` — SHA-256
+  `3568f459649e1b5f9ec01faa1440bb273121cedfaded88f6d32ff600750d7e47`
+- `/studio/assets/index-CbVCorKW.css` — SHA-256
+  `fafd2c34bac71f309a2656d959892cbff992535be9d5327387d070b43e89cbf9`
+
+The candidate was built twice from the exact clean source commit and passed
+real Firefox acceptance 57/57. No database migration was required because the
+existing migration 0055 `parent_id` relationship already supports nested
+collections. This is a development-only candidate; production is unchanged.
+
 ## Historical local development candidate record — TPI-STUDIOFLOW-118
 
 The authoritative `8787` Worker currently serves the exact isolated source

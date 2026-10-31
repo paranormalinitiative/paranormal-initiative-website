@@ -29,11 +29,15 @@ async function count(selector) { return Number(await js("return document.querySe
 async function bodyText() { return String(await js("return document.body ? document.body.innerText : '';")); }
 async function waitFor(predicate, timeout = 20_000) { const start = Date.now(); while (Date.now() - start < timeout) { if (await predicate()) return true; await sleep(250); } return false; }
 async function clickButton(label) { return Boolean(await js("var label=arguments[0].toLowerCase(); var n=Array.from(document.querySelectorAll('button')).find(function(b){return (b.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase().indexOf(label)!==-1;}); if(!n)return false; n.click(); return true;", label)); }
-async function clickAria(label) { return Boolean(await js("var label=arguments[0].toLowerCase(); var n=Array.from(document.querySelectorAll('button')).find(function(b){return (b.getAttribute('aria-label')||'').toLowerCase().indexOf(label)===0;}); if(!n)return false; n.click(); return true;", label)); }
+async function clickAria(label) { return Boolean(await js("var label=arguments[0].toLowerCase(); var n=Array.from(document.querySelectorAll('button,[role=button]')).find(function(b){return (b.getAttribute('aria-label')||'').toLowerCase().indexOf(label)===0;}); if(!n)return false; n.click(); return true;", label)); }
 
 let noteId = "";
 let collectionId = "";
 let autoNoteId = "";
+let rootFolderId = "";
+let childFolderId = "";
+let folderNoteId = "";
+let safeNoteId = "";
 try {
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 60_000 });
   await driver.manage().window().setRect({ width: 1440, height: 1050, x: 20, y: 20 });
@@ -118,6 +122,47 @@ try {
   check("checklist control is exposed", Boolean(await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).some(function(b){return (b.getAttribute('aria-label')||'').startsWith('Checklist');});")));
   const activeFormat = await js("var e=document.querySelector('.notes-rich-editor'); var p=e&&e.querySelector('p'); if(!e||!p)return false; var range=document.createRange(); range.selectNodeContents(p); var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range); e.focus(); document.execCommand('bold',false,null); e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'formatBold'})); document.dispatchEvent(new Event('selectionchange')); return true;");
   check("active formatting state is reflected", Boolean(activeFormat) && await waitFor(async () => Boolean(await js("return document.querySelector('.notes-toolbar-button[aria-label^=\"Bold\"]')?.getAttribute('aria-pressed')==='true';"))));
+  const rootFolderName = `D122D folder ${Date.now()}`;
+  const childFolderName = `D122D child ${Date.now()}`;
+  const renamedFolderName = `${rootFolderName} renamed`;
+  check("New Folder control is visible", (await count('button[aria-label="New Folder"]')) >= 1);
+  check("New Folder remains accessible with Organization collapsed", Boolean(await clickAria("Collapse organization panel")) && (await count('button[aria-label="New Folder"]')) >= 1 && Boolean(await clickAria("Show organization panel")));
+  await js("window.__tpiPromptValue=arguments[0]; window.prompt=function(){return window.__tpiPromptValue;};", rootFolderName);
+  const createdRoot = await clickAria("New Folder");
+  check("custom folder can be created without a page refresh", createdRoot && await waitFor(async () => (await bodyText()).includes(rootFolderName)));
+  const rootFolder = await js("var wanted=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){return (b.collections||[]).find(function(item){return item.name===wanted;});});", rootFolderName);
+  rootFolderId = rootFolder?.id || "";
+  check("new folder is persisted and selected", Boolean(rootFolderId && rootFolder.parentId === null && await js("return arguments[0] === localStorage.getItem('studioflow.notes.collection-selection.v1');", rootFolderId)), JSON.stringify(rootFolder));
+  check("folder action menu exposes Create subfolder", Boolean(await clickAria(`Folder actions ${rootFolderName}`)) && await waitFor(async () => /Create subfolder/.test(await bodyText())));
+  await js("window.__tpiPromptValue=arguments[0];", childFolderName);
+  check("nested folder can be created", Boolean(await clickButton("Create subfolder")) && await waitFor(async () => (await bodyText()).includes(childFolderName)));
+  const childFolder = await js("var wanted=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){return (b.collections||[]).find(function(item){return item.name===wanted;});});", childFolderName);
+  childFolderId = childFolder?.id || "";
+  check("nested folder retains its parent", Boolean(childFolderId && childFolder.parentId === rootFolderId), JSON.stringify(childFolder));
+  const invalidParent = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'collection',name:'D122D invalid parent',collectionType:'folder',parentId:'not-an-owned-folder'})}).then(async function(r){return {status:r.status,body:await r.json()};});");
+  check("folder creation rejects an unowned parent", invalidParent.status === 400 && invalidParent.body?.code === "invalid_folder_parent", JSON.stringify(invalidParent));
+  const cycleAttempt = await js("return fetch('/api/notes/'+encodeURIComponent(arguments[0]),{method:'PATCH',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'collection',name:arguments[2],parentId:arguments[1]})}).then(async function(r){return {status:r.status,body:await r.json()};});", rootFolderId, childFolderId, rootFolderName);
+  check("folder moves reject hierarchy cycles", cycleAttempt.status === 400 && cycleAttempt.body?.code === "invalid_folder_parent", JSON.stringify(cycleAttempt));
+  check("folder tree collapses and expands", Boolean(await clickAria(`Collapse folder ${rootFolderName}`)) && await waitFor(async () => !(await js("return Boolean(document.querySelector('[data-collection-id=\\\"'+arguments[0]+'\\\"]'));", childFolderId))) && Boolean(await clickAria(`Expand folder ${rootFolderName}`)) && await waitFor(async () => Boolean(await js("return Boolean(document.querySelector('[data-collection-id=\\\"'+arguments[0]+'\\\"]'));", childFolderId))));
+  check("folder can be renamed", Boolean(await clickAria(`Folder actions ${rootFolderName}`)) && Boolean(await js("window.__tpiPromptValue=arguments[0]; return true;", renamedFolderName)) && Boolean(await clickButton("Rename folder")) && await waitFor(async () => (await bodyText()).includes(renamedFolderName)));
+  const folderNoteTitle = `D122D folder note ${Date.now()}`;
+  const folderNote = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:arguments[0],titleMode:'manual',bodyHtml:'<p>Folder placement test</p>',collectionId:arguments[1]})}).then(function(r){return r.json();});", folderNoteTitle, rootFolderId);
+  folderNoteId = folderNote.note?.id || "";
+  check("note can be created inside a folder", Boolean(folderNoteId && folderNote.note?.collectionId === rootFolderId), JSON.stringify(folderNote));
+  await driver.navigate().refresh();
+  await waitFor(async () => /Research and production workspace/i.test(await bodyText()) && (await bodyText()).includes(folderNoteTitle));
+  await js("var id=arguments[0]; var n=document.querySelector('[data-collection-id=\\\"'+id+'\\\"] > .notes-nav-row .notes-nav-item'); if(n)n.click();", rootFolderId);
+  await waitFor(async () => (await bodyText()).includes(folderNoteTitle));
+  await js("var wanted=arguments[0]; var n=Array.from(document.querySelectorAll('.notes-library-card')).find(function(b){return (b.textContent||'').includes(wanted);}); if(n)n.click();", folderNoteTitle);
+  check("selected folder filters its notes", await waitFor(async () => (await bodyText()).includes(folderNoteTitle)));
+  await js("var s=document.querySelector('.notes-editor-collection select'); if(s){var setter=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value').set; setter.call(s,arguments[0]); s.dispatchEvent(new Event('change',{bubbles:true}));}", childFolderId);
+  check("existing note can move to another folder", await waitFor(async () => Boolean(await js("var id=arguments[0], wanted=arguments[1]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){var n=(b.notes||[]).find(function(item){return item.id===id;}); return n&&n.collectionId===wanted;}).catch(function(){return false;});", folderNoteId, childFolderId)), 10_000));
+  const safeNote = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:arguments[0],titleMode:'manual',bodyHtml:'<p>Deletion safety test</p>',collectionId:arguments[1]})}).then(function(r){return r.json();});", `D122D safe note ${Date.now()}`, rootFolderId);
+  safeNoteId = safeNote.note?.id || "";
+  await js("window.confirm=function(){return true;};");
+  check("folder deletion preserves notes and promotes children", Boolean(await clickAria(`Folder actions ${renamedFolderName}`)) && Boolean(await clickButton("Delete folder")) && await waitFor(async () => !(await js("return Boolean(document.querySelector('[data-collection-id=\\\"'+arguments[0]+'\\\"]'));", rootFolderId))) && await waitFor(async () => Boolean(await js("var id=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){var n=(b.notes||[]).find(function(item){return item.id===id;}); return n&&n.collectionId===null;}).catch(function(){return false;});", safeNoteId))), JSON.stringify({ rootFolderId, childFolderId, safeNoteId }));
+  check("promoted child folder remains available", await waitFor(async () => Boolean(await js("return Boolean(document.querySelector('[data-collection-id=\\\"'+arguments[0]+'\\\"]'));", childFolderId))));
+  check("Focus Mode and organization controls remain available", Boolean(await clickAria("Enter focus mode")) && await waitFor(async () => Boolean(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode');"))) && Boolean(await clickAria("Exit focus")) && await waitFor(async () => !(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode');"))));
   await driver.manage().window().setRect({ width: 760, height: 1050, x: 20, y: 20 });
   await sleep(300);
   check("responsive toolbar avoids horizontal overflow", Boolean(await js("var t=document.querySelector('.notes-editor-toolbar'); return t&&t.scrollWidth<=t.clientWidth+2;")));
@@ -131,6 +176,8 @@ try {
   process.exitCode = 1;
 } finally {
   if (noteId) await js("return fetch('/api/notes/'+encodeURIComponent(arguments[0])+'/trash',{method:'POST',credentials:'same-origin'}).catch(function(){});", noteId).catch(() => {});
+  for (const id of [folderNoteId, safeNoteId, autoNoteId]) if (id) await js("return fetch('/api/notes/'+encodeURIComponent(arguments[0])+'/trash',{method:'POST',credentials:'same-origin'}).catch(function(){});", id).catch(() => {});
+  for (const id of [childFolderId, rootFolderId]) if (id) await js("return fetch('/api/notes/collections/'+encodeURIComponent(arguments[0])+'/delete',{method:'POST',credentials:'same-origin'}).catch(function(){});", id).catch(() => {});
   if (collectionId) await js("return fetch('/api/notes/collections/'+encodeURIComponent(arguments[0])+'/delete',{method:'POST',credentials:'same-origin'}).catch(function(){});", collectionId).catch(() => {});
   await driver.quit().catch(() => {});
 }

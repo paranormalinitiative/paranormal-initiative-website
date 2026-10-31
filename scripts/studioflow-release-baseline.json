@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122B",
-  "description": "Development-only approved StudioFlow source identity and generated assets for automatic Notes titles. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122B.",
+  "recordedDirective": "TPI-STUDIOFLOW-122D",
+  "description": "Development-only approved StudioFlow source identity and generated assets for user-created nested Notes folders. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122D.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "8a68c677fa8c29cd2dffe3fc7edb29ef1a9919a5"
+    "approvedCommit": "bf93bb58a72eb0f5b0e47f401af0ebd97daa77ef"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-BkV9BhfI.js",
-      "sha256": "140141d76481fa3288fea1560ba564e59887e7e0c9a0c93952b7b0624adc6040"
+      "name": "index-BjXZX1EX.js",
+      "sha256": "3568f459649e1b5f9ec01faa1440bb273121cedfaded88f6d32ff600750d7e47"
     },
     "css": {
-      "name": "index-DCzHEnai.css",
-      "sha256": "c0a544549f0d440a3c017a3c4098158e62610b8cc36d7222b71cbeaaba9ece2c"
+      "name": "index-CbVCorKW.css",
+      "sha256": "fafd2c34bac71f309a2656d959892cbff992535be9d5327387d070b43e89cbf9"
     }
   }
 }

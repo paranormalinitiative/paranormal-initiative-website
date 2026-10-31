@@ -16,6 +16,16 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-122D — User-created folders and nested organization
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122D-USER-CREATED-FOLDERS.md). Source commit
+`bf93bb58a72eb0f5b0e47f401af0ebd97daa77ef` stages visible New Folder actions,
+owner-scoped nested collection trees, rename, safe deletion, folder filtering
+and note movement on port 8787. Existing migration 0055 was reused; no schema
+migration was required. Real Firefox acceptance passes 57/57. Production is
+unchanged.
+
 ## TPI-STUDIOFLOW-122B — Automatic note titles
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

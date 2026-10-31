@@ -1,5 +1,18 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122D — COMPLETE / USER FOLDERS VERIFIED (2026-10-31)
+
+[Directive 122D execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122D-USER-CREATED-FOLDERS.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now exposes
+discoverable New Folder actions, a persisted nested collection tree, subfolder
+creation, rename, safe deletion, folder filtering and note movement. The
+existing `parent_id` schema from migration 0055 was reused; no migration was
+required. The API now rejects unowned parents and hierarchy cycles. Source
+commit `bf93bb58a72eb0f5b0e47f401af0ebd97daa77ef` stages the final candidate.
+Real Firefox folder acceptance passes 57/57. Production was not modified or
+deployed.
+
 ## TPI-STUDIOFLOW-122B — COMPLETE / AUTOMATIC NOTE TITLES VERIFIED (2026-10-31)
 
 [Directive 122B execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122B-AUTOMATIC-NOTE-TITLES.md).

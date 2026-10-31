@@ -1,5 +1,16 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122D User-created folder verification
+
+The D122D candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. The disposable authenticated Firefox
+Developer Edition verifier `scripts/verify/tpi-studioflow-122-notes.mjs` passes
+**57/57**, including visible New Folder access while Organization is collapsed,
+custom folder creation, refresh persistence, nested creation, expand/collapse,
+rename, unowned-parent rejection, cycle rejection, note creation and movement,
+safe deletion with child promotion, Focus Mode and the existing Notes checks.
+Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122B Automatic note-title verification
 
 The D122B candidate is staged only on the authoritative local Worker at

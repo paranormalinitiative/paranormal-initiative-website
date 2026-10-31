@@ -4738,13 +4738,30 @@ async function createNoteRevision(env, note, title, bodyHtml, bodyText, attachme
   }
 }
 
+async function validateNoteCollectionParent(env, parentId, ownerId, collectionId = "") {
+  let currentId = parentId || null;
+  const visited = new Set();
+  while (currentId) {
+    if (currentId === collectionId) return "A folder cannot be nested inside itself or one of its descendants.";
+    if (visited.has(currentId) || visited.size >= 1000) return "The folder hierarchy contains a cycle.";
+    visited.add(currentId);
+    const parent = await env.TPI_DB.prepare("SELECT id, parent_id FROM studio_note_collections WHERE id = ? AND owner_id = ? LIMIT 1").bind(currentId, ownerId).first();
+    if (!parent) return "Parent folder not found.";
+    currentId = parent.parent_id || null;
+  }
+  return "";
+}
+
 async function handleCreateNoteResource(request, env, user) {
   if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes mutations are not allowed." }, 403);
   try {
     const data = await readJson(request);
     if (data.kind === "collection") {
       const name = clean(data.name).slice(0, 160) || "Untitled folder";
-      const collection = { id: crypto.randomUUID(), parent_id: clean(data.parentId) || null, name, collection_type: ["folder", "podcast", "episode", "research"].includes(clean(data.collectionType)) ? clean(data.collectionType) : "folder" };
+      const parentId = clean(data.parentId) || null;
+      const parentError = await validateNoteCollectionParent(env, parentId, user.id);
+      if (parentError) return json({ error: parentError, code: "invalid_folder_parent" }, 400);
+      const collection = { id: crypto.randomUUID(), parent_id: parentId, name, collection_type: ["folder", "podcast", "episode", "research"].includes(clean(data.collectionType)) ? clean(data.collectionType) : "folder" };
       const now = new Date().toISOString();
       await env.TPI_DB.prepare(`INSERT INTO studio_note_collections (id, owner_id, parent_id, name, collection_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`)
         .bind(collection.id, user.id, collection.parent_id, collection.name, collection.collection_type, now, now).run();
@@ -4775,7 +4792,10 @@ async function handleUpdateNoteResource(path, request, env, user) {
     if (data.kind === "collection") {
       const name = clean(data.name).slice(0, 160);
       if (!name) return json({ error: "Folder name is required." }, 400);
-      const result = await env.TPI_DB.prepare(`UPDATE studio_note_collections SET name = ?, parent_id = ?, updated_at = ? WHERE id = ? AND owner_id = ?`).bind(name, clean(data.parentId) || null, new Date().toISOString(), id, user.id).run();
+      const parentId = clean(data.parentId) || null;
+      const parentError = await validateNoteCollectionParent(env, parentId, user.id, id);
+      if (parentError) return json({ error: parentError, code: "invalid_folder_parent" }, 400);
+      const result = await env.TPI_DB.prepare(`UPDATE studio_note_collections SET name = ?, parent_id = ?, updated_at = ? WHERE id = ? AND owner_id = ?`).bind(name, parentId, new Date().toISOString(), id, user.id).run();
       if (!result.meta?.changes) return json({ error: "Folder not found." }, 404);
       const row = await env.TPI_DB.prepare("SELECT id, parent_id, name, collection_type, created_at, updated_at FROM studio_note_collections WHERE id = ? AND owner_id = ?").bind(id, user.id).first();
       return json({ collection: noteCollectionPayload(row) }, 200, { "Cache-Control": "private, no-store" });

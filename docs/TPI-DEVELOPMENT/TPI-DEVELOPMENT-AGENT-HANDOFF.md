@@ -1,5 +1,25 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122D — USER FOLDERS COMPLETE (2026-10-31)
+
+[Directive 122D execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122D-USER-CREATED-FOLDERS.md).
+
+Continue from StudioFlow source commit
+`bf93bb58a72eb0f5b0e47f401af0ebd97daa77ef` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-BjXZX1EX.js`
+(`3568f459649e1b5f9ec01faa1440bb273121cedfaded88f6d32ff600750d7e47`) and
+`index-CbVCorKW.css`
+(`fafd2c34bac71f309a2656d959892cbff992535be9d5327387d070b43e89cbf9`).
+
+The existing collection model supports nested folders through `parent_id`; no
+migration was needed. The UI now has visible New Folder controls, persisted
+tree expansion/selection, subfolder/rename/delete actions, folder filtering and
+note movement. Backend parent ownership and cycle checks are enforced. Real
+Firefox acceptance passes 57/57. Production remains unchanged and no
+production deployment is authorized under D122D.
+
 ## TPI-STUDIOFLOW-122B — AUTOMATIC NOTE TITLES COMPLETE (2026-10-31)
 
 [Directive 122B execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122B-AUTOMATIC-NOTE-TITLES.md).
