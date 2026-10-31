@@ -48,6 +48,27 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
+## Current local development candidate — TPI-STUDIOFLOW-122F.2D
+
+The authoritative `8787` Worker serves the Notes document-padding correction
+from clean StudioFlow source commit
+`6af7b1089fbe38fb85a72590c0017086ff65f6b1` in the isolated
+`codex/studioflow-122-notes` worktree. The editable surface uses 22px desktop
+horizontal padding, 18px at medium widths, and 14px on narrow layouts; existing
+focus, caret, formatting, attachment and autosave behavior is unchanged.
+
+Exact staged assets:
+
+- `/studio/assets/index-DMqbydAn.js` — SHA-256
+  `89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3`
+- `/studio/assets/index-CeIVL89B.css` — SHA-256
+  `35f10a284e564ea006e9bf44831618cc3b6bf38754a6868239cadd253b104f2c`
+
+The source was built twice from the exact clean commit and passed staging
+verification. Firefox computed-padding and Notes acceptance pass, maintained
+Firefox passes 64/64, and release safety passes 21/21. This is development
+only; production remains unchanged.
+
 ## TPI-STUDIOFLOW-127 release baseline — 2026-10-31
 
 The preserved and deployed StudioFlow candidate was built from source commit

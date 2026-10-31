@@ -5,6 +5,17 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.2D — Notes editor padding and document alignment
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F2D-NOTES-EDITOR-PADDING.md). Source
+commit `6af7b1089fbe38fb85a72590c0017086ff65f6b1` changes only the Notes
+editable-surface padding from 4px horizontal to responsive 22px desktop, 18px
+medium, and 14px narrow spacing. Firefox computed-padding and Notes acceptance
+pass; maintained Firefox is 64/64, release safety is 21/21, and reproducible
+staging matches JavaScript `index-DMqbydAn.js` and CSS `index-CeIVL89B.css`.
+Production is unchanged.
+
 ## TPI-STUDIOFLOW-127 — Preserve, push, deploy, and clean worktrees
 
 Status: **PARTIAL / DEPLOYED AND VERIFIED / HISTORICAL WIP PRESERVED**.

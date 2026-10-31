@@ -1,5 +1,24 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.2D — NOTES PADDING COMPLETE (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2D-NOTES-EDITOR-PADDING.md).
+
+Continue from StudioFlow source commit
+`6af7b1089fbe38fb85a72590c0017086ff65f6b1` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-DMqbydAn.js` (SHA-256
+`89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3`) and
+`index-CeIVL89B.css` (SHA-256
+`35f10a284e564ea006e9bf44831618cc3b6bf38754a6868239cadd253b104f2c`).
+
+The Notes document surface now has responsive internal padding of 22px desktop,
+18px medium, and 14px narrow. Firefox computed-padding and full Notes checks
+pass; maintained Firefox is 64/64 and release safety is 21/21. Production is
+unchanged. Do not reset the original mixed checkout or unrelated historical
+worktrees.
+
 ## TPI-STUDIOFLOW-127 — PARTIAL / PRESERVED, PUSHED, AND DEPLOYED (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md).

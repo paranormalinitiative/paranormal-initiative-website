@@ -1,5 +1,17 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.2D — COMPLETE / NOTES DOCUMENT PADDING VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2D-NOTES-EDITOR-PADDING.md).
+
+The Notes rich-text surface now uses 22px desktop horizontal padding, 18px at
+medium widths, and 14px on narrow layouts instead of the previous 4px
+horizontal inset. The correction is source commit
+`6af7b1089fbe38fb85a72590c0017086ff65f6b1`; website integration commit is
+`142c8a8bafc6cad56c16b5e80ec2ade9017aeb5d`. Firefox computed-padding checks,
+the Notes acceptance suite, maintained Firefox 64/64, release safety 21/21,
+and reproducible staging all pass. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-127 — PARTIAL / RELEASE PRESERVED, PUSHED, AND DEPLOYED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md).
