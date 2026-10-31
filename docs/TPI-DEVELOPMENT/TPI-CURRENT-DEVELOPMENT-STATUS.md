@@ -1,5 +1,23 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-120 — BLOCKED / SCREEN-SHARING IMPLEMENTATION STAGED (2026-10-31)
+
+[Directive 120 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-120-ENHANCED-SCREEN-SHARING.md).
+
+The isolated D120 source candidate is committed at
+`a8a7d11759905ae4bf8043005e0c2259b1fd6a81` and is staged on the authoritative
+local Worker at `http://127.0.0.1:8787/studio/`. It adds an original,
+theme-aware Share content panel with Browser tab, Application window and Entire
+display choices, browser-owned permission selection, preview, shared-audio
+status, Add to Stage gating, and capture lifecycle cleanup. Source, build,
+staging, focused Firefox panel 13/13 and maintained Firefox 64/64 checks pass.
+
+Native browser-picker selection and an actual recording containing a captured
+tab/window/display remain pending manual acceptance. Chrome and Safari capture
+compatibility are not yet tested, so D120 is not claimed complete and no
+production release candidate or deployment exists. The D119 production
+baseline, owner data, authentication and port 5192 state are unchanged.
+
 ## TPI-STUDIOFLOW-119 — COMPLETE / TELEPROMPTER 092 DEPLOYED AND VERIFIED (2026-10-30)
 
 [Directive 119 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-119-CONTROLLED-PRODUCTION-DEPLOYMENT.md).

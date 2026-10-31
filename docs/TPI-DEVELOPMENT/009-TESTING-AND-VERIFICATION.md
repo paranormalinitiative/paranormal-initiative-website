@@ -1,5 +1,23 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-120 screen-sharing verification
+
+The D120 implementation is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. Source checks pass 10/10, the TypeScript/Vite
+build passes, and `scripts/verify/tpi-studioflow-120-screen-share.mjs` passes
+13/13 in Firefox Developer Edition with a disposable authenticated profile.
+That focused check covers the original StudioFlow Share content panel, all
+three surface choices, theme-variable inheritance, selection state, Choose
+content and cancellation. The maintained Firefox regression additionally
+passes 64/64.
+
+The focused check does not automate or bypass the browser-native permission
+picker. Therefore native tab/window/display selection, browser-provided shared
+audio, and a saved recording containing an actual captured source remain
+manual acceptance gates. Chrome and Safari are not tested in this record. Do
+not report D120 as complete until those browser-specific gates are exercised
+with disposable sources and decoded media evidence.
+
 ## TPI-STUDIOFLOW-119 production verification
 
 The owner-approved Teleprompter release was verified in production only after

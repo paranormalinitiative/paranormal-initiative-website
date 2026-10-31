@@ -1,5 +1,28 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-120 — SCREEN-SHARING CANDIDATE BLOCKED PENDING NATIVE CAPTURE (2026-10-31)
+
+[Directive 120 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-120-ENHANCED-SCREEN-SHARING.md).
+
+Continue from StudioFlow source commit
+`a8a7d11759905ae4bf8043005e0c2259b1fd6a81` in isolated worktree
+`/Users/toddknipple/Documents/StudioFlow/web-120`, branch
+`codex/studioflow-120-screen-share`. The authoritative local Worker at
+`http://127.0.0.1:8787/studio/` serves the staged D120 candidate. Candidate
+assets are `index-CgmAxo34.js`
+(`f4bd273c8fe8f60ef6025389b0738b03f392a9d3d618fe3433b819083e1a3595`) and
+`index-DpwwYG6_.css`
+(`869e46025ce505491069a596af277bdacdd9df6a3493ac1e8db0c03a58a6b619`).
+
+Source checks pass 10/10 for screen sharing and the real 8787 disposable
+Firefox regression passes 64/64. The focused Firefox panel check passes 13/13
+but deliberately does not automate the native permission picker. Do not claim
+tab/window/display capture, shared audio, or saved captured-media recording
+until a visible Chrome or Firefox session selects real disposable sources and
+the output is decoded. Safari is not tested. Do not deploy production under
+D120. Preserve the D119 production baseline, port 8787, owner data, and the
+retired 5192 rule.
+
 ## TPI-STUDIOFLOW-119 — PRODUCTION BASELINE ESTABLISHED (2026-10-30)
 
 [Directive 119 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-119-CONTROLLED-PRODUCTION-DEPLOYMENT.md).

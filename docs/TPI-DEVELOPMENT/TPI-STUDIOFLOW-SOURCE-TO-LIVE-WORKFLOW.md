@@ -70,6 +70,27 @@ saved-script selection, transparent private stage reader controls, decoded
 non-silent recording audio, playable video and frame-level canary privacy. It is
 a development candidate for owner testing, not a production release.
 
+## Current local development candidate — TPI-STUDIOFLOW-120
+
+The D120 candidate is built from isolated StudioFlow source commit
+`a8a7d11759905ae4bf8043005e0c2259b1fd6a81` in
+`/Users/toddknipple/Documents/StudioFlow/web-120`, branch
+`codex/studioflow-120-screen-share`, and staged into the existing local Worker
+through the disposable `.local-dev/tpi-studioflow-120-baseline.json` manifest.
+The production release manifest was not changed. The staged assets are:
+
+- `/studio/assets/index-CgmAxo34.js` — SHA-256
+  `f4bd273c8fe8f60ef6025389b0738b03f392a9d3d618fe3433b819083e1a3595`
+- `/studio/assets/index-DpwwYG6_.css` — SHA-256
+  `869e46025ce505491069a596af277bdacdd9df6a3493ac1e8db0c03a58a6b619`
+
+The staging tool built the candidate twice, verified matching hashes, and
+confirmed the integrated entry point. The D120 panel and its Firefox UI
+acceptance are staged on port 8787. Native browser picker selection and actual
+captured-media recording are still pending manual acceptance; this candidate
+must not be called a production release or used as evidence that Chrome,
+Firefox native capture, or Safari capture has passed.
+
 ## STUDIOFLOW LOCAL DEVELOPMENT ENVIRONMENT POLICY
 
 The Paranormal Initiative maintains one authoritative owner-facing StudioFlow

@@ -13,6 +13,7 @@
     "dev:local:service:uninstall": "node scripts/local-dev-service.mjs uninstall",
     "local:credentials": "zsh scripts/show-local-admin-credentials.sh",
     "test:studioflow:firefox": "node scripts/verify/tpi-studioflow-firefox-acceptance.mjs",
+    "test:studioflow:screen-share": "node scripts/verify/tpi-studioflow-120-screen-share.mjs",
     "verify:studioflow-027": "node scripts/verify/tpi-studioflow-027-scenes.mjs",
     "verify:studioflow-028-browser": "node scripts/verify/tpi-studioflow-028-browser.mjs",
     "verify:studioflow-030-browser": "node scripts/verify/tpi-studioflow-030-browser.mjs",

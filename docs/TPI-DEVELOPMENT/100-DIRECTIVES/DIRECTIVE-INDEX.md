@@ -16,6 +16,18 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-120 — Enhanced screen sharing and theme-aware presentation
+
+Status: **BLOCKED / DEVELOPMENT IMPLEMENTATION STAGED / NATIVE CAPTURE PENDING**.
+[Directive 120 execution record](TPI-STUDIOFLOW-120-ENHANCED-SCREEN-SHARING.md).
+Source commit `a8a7d11759905ae4bf8043005e0c2259b1fd6a81` is staged on the
+authoritative 8787 Worker. The original theme-aware panel, three sharing
+choices, browser-owned picker handoff, preview, Add to Stage gating and
+capture cleanup are implemented. Source/build/staging checks and Firefox
+panel/regression checks pass, but native picker selection, actual captured
+recording evidence, Chrome and Safari compatibility remain pending. Production
+is unchanged and no deployment is authorized under D120.
+
 ## TPI-STUDIOFLOW-119 — Controlled production deployment — Teleprompter 092
 
 Status: **COMPLETE / DEPLOYED_AND_VERIFIED / OWNER APPROVAL CONFIRMED**.
