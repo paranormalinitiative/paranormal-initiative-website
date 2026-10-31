@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122H.1",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the permission-based local podcast project folder capability. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122H.1.",
+  "recordedDirective": "TPI-STUDIOFLOW-122F.2D",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes editor document-padding correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.2D.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "ded5a3d73c5838d56f3c5e1cb0a32534acdab44f"
+    "approvedCommit": "6af7b1089fbe38fb85a72590c0017086ff65f6b1"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-CZ1q5Q9d.js",
+      "name": "index-DMqbydAn.js",
       "sha256": "89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3"
     },
     "css": {
-      "name": "index-DtHLNYVn.css",
-      "sha256": "720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668"
+      "name": "index-CeIVL89B.css",
+      "sha256": "35f10a284e564ea006e9bf44831618cc3b6bf38754a6868239cadd253b104f2c"
     }
   }
 }

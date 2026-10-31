@@ -112,6 +112,8 @@ try {
   check("automatic note opens from the library", Boolean(automaticCard) && await waitFor(async () => (await js("return document.querySelector('.notes-title-input')?.value === 'New Note';"))));
   const emptyEditorFocus = await js("var e=document.querySelector('.notes-rich-editor'),s=window.getSelection(),r=s&&s.rangeCount?s.getRangeAt(0):null; return {active:e===document.activeElement,editable:e?.contentEditable==='true',collapsed:Boolean(r?.collapsed),atStart:Boolean(r&&r.startContainer===e&&r.startOffset===0)};");
   check("empty note focuses the rich editor with a start caret", Boolean(emptyEditorFocus?.active && emptyEditorFocus?.editable && emptyEditorFocus?.collapsed && emptyEditorFocus?.atStart), JSON.stringify(emptyEditorFocus));
+  const desktopEditorSpacing = await js("var e=document.querySelector('.notes-rich-editor'),s=e&&getComputedStyle(e),r=e&&e.getBoundingClientRect(); return s&&r?{paddingLeft:parseFloat(s.paddingLeft),paddingRight:parseFloat(s.paddingRight),contentLeft:r.left+e.clientLeft+parseFloat(s.paddingLeft),surfaceLeft:r.left}:null;");
+  check("desktop document surface has comfortable horizontal padding", Boolean(desktopEditorSpacing && desktopEditorSpacing.paddingLeft >= 20 && desktopEditorSpacing.paddingRight >= 20 && desktopEditorSpacing.contentLeft - desktopEditorSpacing.surfaceLeft >= 20), JSON.stringify(desktopEditorSpacing));
   const editorFocusStyles = readFileSync(styleFile, "utf8");
   check("editor focus uses document-style scoped treatment", editorFocusStyles.includes(".notes-rich-editor:focus{background:color-mix") && editorFocusStyles.includes(".notes-rich-editor:focus-visible{background:color-mix") && !editorFocusStyles.includes(".notes-rich-editor:focus-visible{box-shadow:") && !editorFocusStyles.includes(".notes-rich-editor:focus{box-shadow:inset 0 0 0 1px"));
   const editorFocusAppearance = await js("var e=document.querySelector('.notes-rich-editor'),s=e&&getComputedStyle(e); return s?{boxShadow:s.boxShadow,borderBottomStyle:s.borderBottomStyle,borderBottomWidth:s.borderBottomWidth,outlineStyle:s.outlineStyle,background:s.backgroundColor,caretColor:s.caretColor}:null;");
@@ -199,6 +201,8 @@ try {
   check("Focus Mode and organization controls remain available", Boolean(await clickAria("Enter focus mode")) && await waitFor(async () => Boolean(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode');"))) && Boolean(await clickAria("Exit focus")) && await waitFor(async () => !(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode');"))));
   await driver.manage().window().setRect({ width: 760, height: 1050, x: 20, y: 20 });
   await sleep(300);
+  const narrowEditorSpacing = await js("var e=document.querySelector('.notes-rich-editor'),s=e&&getComputedStyle(e); return s?{paddingLeft:parseFloat(s.paddingLeft),paddingRight:parseFloat(s.paddingRight)}:null;");
+  check("narrow document surface keeps responsive horizontal padding", Boolean(narrowEditorSpacing && narrowEditorSpacing.paddingLeft >= 12 && narrowEditorSpacing.paddingRight >= 12), JSON.stringify(narrowEditorSpacing));
   check("responsive toolbar avoids horizontal overflow", Boolean(await js("var t=document.querySelector('.notes-editor-toolbar'); return t&&t.scrollWidth<=t.clientWidth+2;")));
   await driver.manage().window().setRect({ width: 1440, height: 1050, x: 20, y: 20 });
   check("private Studio Notes sidebar is implemented", sidebarOpened);
