@@ -1,5 +1,30 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122 — NOTES CANDIDATE PARTIAL (2026-10-31)
+
+[Directive 122 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122-FEATURE-RICH-NOTES.md).
+
+Continue from StudioFlow source commit
+`96e28a3de4129fb248a32fe0a7f0e0527409ebc9` in isolated worktree
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves the D122
+candidate assets `index-C48-jDnZ.js`
+(`2b24c5295c7457f948fdf0109a5453c760cd103b7d6a642c4d69676d19a96314`) and
+`index-D6SZajag.css`
+(`340a54faf4f643d668dbecffe2d26883d94b9983616f7d195d9551a6feb2765c`).
+
+The focused D122 Firefox check is 18/18, maintained Firefox is 64/64,
+release-safety is 21/21, and reproducible source/staging provenance passes.
+The website branch contains the additive Notes API/schema, manifest, staged
+assets and focused verifier. No production command is authorized for D122.
+
+The implementation is deliberately handed off as PARTIAL. Remaining work is
+full attachment upload/recovery UX, structured research-reference blocks,
+revision restore and network/concurrency acceptance, all-theme/device/browser
+coverage, and broader authenticated lifecycle testing. Do not report those
+areas as passed merely because the core Notes path works. Preserve the D121
+production baseline and do not reset owner data or the original mixed checkout.
+
 ## TPI-STUDIOFLOW-121 — PRODUCTION BASELINE ESTABLISHED (2026-10-31)
 
 [Directive 121 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-121-CONTROLLED-PRODUCTION-DEPLOYMENT.md).

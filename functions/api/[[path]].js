@@ -169,6 +169,16 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/archive$/)) return requireStudioAccess(request, env, user => handleArchiveStudioWorkspace(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/studio\/workspaces\/[^/]+\/purge$/)) return requireStudioAccess(request, env, user => unavailablePermanentStudioDeletion(request));
     if (request.method === "GET" && path.match(/^\/studio\/workspaces\/[^/]+\/deletion-inventory$/)) return requireStudioAccess(request, env, user => handleStudioDeletionInventory(path, env, user));
+    if (request.method === "GET" && path === "/notes") return requireStudioAccess(request, env, user => handleListNotes(request, env, user));
+    if (request.method === "POST" && path === "/notes") return requireStudioAccess(request, env, user => handleCreateNoteResource(request, env, user));
+    if (request.method === "POST" && path.match(/^\/notes\/collections\/[^/]+\/delete$/)) return requireStudioAccess(request, env, user => handleDeleteNoteCollection(path, request, env, user));
+    if (request.method === "PATCH" && path.match(/^\/notes\/[^/]+$/)) return requireStudioAccess(request, env, user => handleUpdateNoteResource(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/notes\/[^/]+\/revisions$/)) return requireStudioAccess(request, env, user => handleListNoteRevisions(path, env, user));
+    if (request.method === "POST" && path.match(/^\/notes\/[^/]+\/revisions\/[^/]+\/restore$/)) return requireStudioAccess(request, env, user => handleRestoreNoteRevision(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/notes\/[^/]+\/(duplicate|archive|trash|restore)$/)) return requireStudioAccess(request, env, user => handleNoteAction(path, request, env, user));
+    if (request.method === "POST" && path === "/notes/attachments") return requireStudioAccess(request, env, user => handleUploadNoteAttachment(request, env, user));
+    if (request.method === "GET" && path.match(/^\/notes\/attachments\/[^/]+$/)) return requireStudioAccess(request, env, user => handleGetNoteAttachment(path, env, user));
+    if (request.method === "DELETE" && path.match(/^\/notes\/attachments\/[^/]+$/)) return requireStudioAccess(request, env, user => handleDeleteNoteAttachment(path, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
@@ -4561,6 +4571,370 @@ function sameOriginMutationAllowed(request) {
   } catch {
     return false;
   }
+}
+
+// TPI-STUDIOFLOW-122: private, owner-scoped Notes API. Notes deliberately do
+// not use studio_workspaces so the same research library is available from
+// Home and from any recording Studio without duplicating documents.
+const NOTE_MAX_BODY_BYTES = 512 * 1024;
+const NOTE_ATTACHMENT_LIMITS = Object.freeze({ image: 32 * 1024 * 1024, document: 50 * 1024 * 1024, audio: 50 * 1024 * 1024, text: 10 * 1024 * 1024 });
+const NOTE_ALLOWED_TYPES = new Set([
+  "image/jpeg", "image/png", "image/webp", "image/gif",
+  "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain", "text/markdown", "text/csv", "application/rtf",
+  "audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp4", "audio/ogg", "audio/webm", "audio/aac", "audio/flac"
+]);
+
+function notePathId(path, suffix = "") {
+  const match = path.match(new RegExp(`^/notes/([^/]+)${suffix.replaceAll("/", "\\/")}$`));
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+function noteCollectionPayload(row) {
+  return {
+    id: row.id,
+    parentId: row.parent_id || null,
+    name: row.name,
+    collectionType: row.collection_type || "folder",
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+function noteAttachmentPayload(row) {
+  return {
+    id: row.id,
+    noteId: row.note_id,
+    fileName: row.original_name,
+    contentType: row.content_type,
+    size: Number(row.size_bytes || 0),
+    uploadedAt: row.created_at,
+    url: `/api/notes/attachments/${encodeURIComponent(row.id)}`
+  };
+}
+
+function notePayload(row, attachments = []) {
+  return {
+    id: row.id,
+    collectionId: row.collection_id || null,
+    title: row.title,
+    bodyHtml: row.body_html || "",
+    bodyText: row.body_text || "",
+    status: row.status || "active",
+    favorite: Boolean(row.is_favorite),
+    pinned: Boolean(row.is_pinned),
+    version: Number(row.version || 1),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    attachments
+  };
+}
+
+function stripNoteMarkup(value) {
+  return String(value || "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>|<\/div>|<\/li>|<\/h[1-6]>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function sanitizeNoteHtml(value) {
+  let html = String(value || "").slice(0, NOTE_MAX_BODY_BYTES);
+  html = html
+    .replace(/<\/?(script|style|iframe|object|embed|form|textarea|select|button|meta|link)[^>]*>/gi, "")
+    .replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/\s+(href|src)\s*=\s*("|')\s*javascript:[^"']*("|')/gi, " $1=\"#\"")
+    .replace(/\s+(href|src)\s*=\s*javascript:[^\s>]+/gi, " $1=\"#\"")
+    .replace(/\s+(href|src)\s*=\s*("|')\s*(?!(?:https?:\/\/|\/api\/notes\/attachments\/))[^"']*\2/gi, " $1=\"#\"");
+  return html;
+}
+
+function noteSchemaFailure(error) {
+  const detail = String(error?.message || error || "").toLowerCase();
+  const schemaUnavailable = /no such table|no such column|unknown table|does not exist/.test(detail);
+  return json({
+    error: schemaUnavailable ? "Notes storage is not available in this environment yet. Apply the additive Notes schema." : "Notes storage is temporarily unavailable.",
+    code: schemaUnavailable ? "notes_schema_unsupported" : "notes_backend_unavailable"
+  }, 503, { "Cache-Control": "no-store" });
+}
+
+async function getOwnedNote(env, id, ownerId) {
+  return env.TPI_DB.prepare(`
+    SELECT id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at
+    FROM studio_notes WHERE id = ? AND owner_id = ? LIMIT 1
+  `).bind(id, ownerId).first();
+}
+
+async function getOwnedNoteAttachments(env, noteIds, ownerId) {
+  const map = new Map((noteIds || []).map(id => [id, []]));
+  if (!noteIds.length) return map;
+  const placeholders = noteIds.map(() => "?").join(",");
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT id, note_id, original_name, content_type, size_bytes, created_at
+    FROM studio_note_attachments
+    WHERE owner_id = ? AND deleted_at IS NULL AND note_id IN (${placeholders})
+    ORDER BY created_at ASC, id ASC
+  `).bind(ownerId, ...noteIds).all();
+  (results || []).forEach(row => map.get(row.note_id)?.push(noteAttachmentPayload(row)));
+  return map;
+}
+
+async function handleListNotes(request, env, user) {
+  try {
+    const url = new URL(request.url);
+    const search = clean(url.searchParams.get("search") || "").slice(0, 120);
+    const status = ["active", "archived", "trash", "all"].includes(url.searchParams.get("status")) ? url.searchParams.get("status") : "active";
+    const filters = ["owner_id = ?"];
+    const binds = [user.id];
+    if (status !== "all") { filters.push("status = ?"); binds.push(status); }
+    if (search) {
+      filters.push("(title LIKE ? OR body_text LIKE ? OR EXISTS (SELECT 1 FROM studio_note_collections c WHERE c.id = studio_notes.collection_id AND c.owner_id = studio_notes.owner_id AND c.name LIKE ?))");
+      binds.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+    const { results: noteRows } = await env.TPI_DB.prepare(`
+      SELECT id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at
+      FROM studio_notes WHERE ${filters.join(" AND ")}
+      ORDER BY is_pinned DESC, updated_at DESC, created_at DESC, id ASC LIMIT 500
+    `).bind(...binds).all();
+    const { results: collectionRows } = await env.TPI_DB.prepare(`
+      SELECT id, parent_id, name, collection_type, created_at, updated_at
+      FROM studio_note_collections WHERE owner_id = ? ORDER BY name COLLATE NOCASE, created_at ASC
+    `).bind(user.id).all();
+    const attachments = await getOwnedNoteAttachments(env, (noteRows || []).map(row => row.id), user.id);
+    return json({
+      notes: (noteRows || []).map(row => notePayload(row, attachments.get(row.id) || [])),
+      collections: (collectionRows || []).map(noteCollectionPayload),
+      limits: { maxBodyBytes: NOTE_MAX_BODY_BYTES, attachmentBytes: NOTE_ATTACHMENT_LIMITS }
+    }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return noteSchemaFailure(error);
+  }
+}
+
+async function createNoteRevision(env, note, title, bodyHtml, bodyText, attachmentIds = []) {
+  const revisionNumber = Number(note.version || 1);
+  await env.TPI_DB.prepare(`
+    INSERT INTO studio_note_revisions (id, note_id, owner_id, revision_number, title, body_html, body_text, attachment_ids_json, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(crypto.randomUUID(), note.id, note.owner_id, revisionNumber, title, bodyHtml, bodyText, JSON.stringify(attachmentIds), new Date().toISOString()).run();
+  // Bound autosave history while retaining the latest 100 recoverable
+  // revisions. Original attachment objects remain independently recoverable.
+  if (revisionNumber > 100) {
+    await env.TPI_DB.prepare("DELETE FROM studio_note_revisions WHERE note_id = ? AND owner_id = ? AND revision_number <= ?").bind(note.id, note.owner_id, revisionNumber - 100).run();
+  }
+}
+
+async function handleCreateNoteResource(request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes mutations are not allowed." }, 403);
+  try {
+    const data = await readJson(request);
+    if (data.kind === "collection") {
+      const name = clean(data.name).slice(0, 160) || "Untitled folder";
+      const collection = { id: crypto.randomUUID(), parent_id: clean(data.parentId) || null, name, collection_type: ["folder", "podcast", "episode", "research"].includes(clean(data.collectionType)) ? clean(data.collectionType) : "folder" };
+      const now = new Date().toISOString();
+      await env.TPI_DB.prepare(`INSERT INTO studio_note_collections (id, owner_id, parent_id, name, collection_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+        .bind(collection.id, user.id, collection.parent_id, collection.name, collection.collection_type, now, now).run();
+      const row = await env.TPI_DB.prepare("SELECT id, parent_id, name, collection_type, created_at, updated_at FROM studio_note_collections WHERE id = ? AND owner_id = ?").bind(collection.id, user.id).first();
+      return json({ collection: noteCollectionPayload(row) }, 201, { "Cache-Control": "private, no-store" });
+    }
+    const title = clean(data.title).slice(0, 240) || "Untitled note";
+    const bodyHtml = sanitizeNoteHtml(data.bodyHtml || "");
+    const bodyText = stripNoteMarkup(bodyHtml).slice(0, NOTE_MAX_BODY_BYTES);
+    const now = new Date().toISOString();
+    const note = { id: crypto.randomUUID(), owner_id: user.id, collection_id: clean(data.collectionId) || null, title, body_html: bodyHtml, body_text: bodyText, status: "active", is_favorite: 0, is_pinned: 0, version: 1, created_at: now, updated_at: now };
+    await env.TPI_DB.prepare(`INSERT INTO studio_notes (id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .bind(note.id, user.id, note.collection_id, title, bodyHtml, bodyText, "active", 0, 0, 1, now, now).run();
+    await createNoteRevision(env, note, title, bodyHtml, bodyText);
+    return json({ note: notePayload(note) }, 201, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return noteSchemaFailure(error);
+  }
+}
+
+async function handleUpdateNoteResource(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes mutations are not allowed." }, 403);
+  const id = notePathId(path);
+  if (!id) return json({ error: "Invalid note path." }, 400);
+  try {
+    const data = await readJson(request);
+    if (data.kind === "collection") {
+      const name = clean(data.name).slice(0, 160);
+      if (!name) return json({ error: "Folder name is required." }, 400);
+      const result = await env.TPI_DB.prepare(`UPDATE studio_note_collections SET name = ?, parent_id = ?, updated_at = ? WHERE id = ? AND owner_id = ?`).bind(name, clean(data.parentId) || null, new Date().toISOString(), id, user.id).run();
+      if (!result.meta?.changes) return json({ error: "Folder not found." }, 404);
+      const row = await env.TPI_DB.prepare("SELECT id, parent_id, name, collection_type, created_at, updated_at FROM studio_note_collections WHERE id = ? AND owner_id = ?").bind(id, user.id).first();
+      return json({ collection: noteCollectionPayload(row) }, 200, { "Cache-Control": "private, no-store" });
+    }
+    const existing = await getOwnedNote(env, id, user.id);
+    if (!existing) return json({ error: "Note not found." }, 404);
+    const expected = data.expectedVersion == null ? Number(existing.version) : Number(data.expectedVersion);
+    if (!Number.isInteger(expected) || expected !== Number(existing.version)) return json({ error: "This note changed elsewhere. Refresh before saving again.", code: "note_conflict", note: notePayload(existing) }, 409, { "Cache-Control": "no-store" });
+    const title = clean(data.title ?? existing.title).slice(0, 240) || "Untitled note";
+    const bodyHtml = sanitizeNoteHtml(data.bodyHtml ?? existing.body_html);
+    const bodyText = stripNoteMarkup(bodyHtml).slice(0, NOTE_MAX_BODY_BYTES);
+    const nextVersion = Number(existing.version) + 1;
+    const now = new Date().toISOString();
+    await createNoteRevision(env, { ...existing, version: nextVersion }, title, bodyHtml, bodyText, Array.isArray(data.attachmentIds) ? data.attachmentIds.slice(0, 100) : []);
+    const result = await env.TPI_DB.prepare(`UPDATE studio_notes SET collection_id = ?, title = ?, body_html = ?, body_text = ?, is_favorite = ?, is_pinned = ?, version = ?, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?`)
+      .bind(clean(data.collectionId ?? existing.collection_id) || null, title, bodyHtml, bodyText, data.favorite === undefined ? existing.is_favorite : (data.favorite ? 1 : 0), data.pinned === undefined ? existing.is_pinned : (data.pinned ? 1 : 0), nextVersion, now, id, user.id, expected).run();
+    if (!result.meta?.changes) return json({ error: "This note changed elsewhere. Refresh before saving again.", code: "note_conflict" }, 409, { "Cache-Control": "no-store" });
+    const updated = await getOwnedNote(env, id, user.id);
+    const attachments = await getOwnedNoteAttachments(env, [id], user.id);
+    return json({ note: notePayload(updated, attachments.get(id) || []) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return noteSchemaFailure(error);
+  }
+}
+
+async function handleDeleteNoteCollection(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes mutations are not allowed." }, 403);
+  const id = path.replace(/^\/notes\/collections\//, "").replace(/\/delete$/, "");
+  if (!id) return json({ error: "Folder not found." }, 404);
+  try {
+    const existing = await env.TPI_DB.prepare("SELECT id FROM studio_note_collections WHERE id = ? AND owner_id = ? LIMIT 1").bind(id, user.id).first();
+    if (!existing) return json({ error: "Folder not found." }, 404);
+    // Deleting organization must never delete notes or their private media.
+    await env.TPI_DB.prepare("UPDATE studio_notes SET collection_id = NULL WHERE collection_id = ? AND owner_id = ?").bind(id, user.id).run();
+    await env.TPI_DB.prepare("UPDATE studio_note_collections SET parent_id = NULL, updated_at = ? WHERE parent_id = ? AND owner_id = ?").bind(new Date().toISOString(), id, user.id).run();
+    await env.TPI_DB.prepare("DELETE FROM studio_note_collections WHERE id = ? AND owner_id = ?").bind(id, user.id).run();
+    return json({ ok: true, notesPreserved: true }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) { return noteSchemaFailure(error); }
+}
+
+async function handleNoteAction(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes mutations are not allowed." }, 403);
+  const match = path.match(/^\/notes\/([^/]+)\/(duplicate|archive|trash|restore)$/);
+  const id = match ? decodeURIComponent(match[1]) : "";
+  const action = match?.[2] || "";
+  const existing = await getOwnedNote(env, id, user.id);
+  if (!existing) return json({ error: "Note not found." }, 404);
+  try {
+    if (action === "duplicate") {
+      const now = new Date().toISOString();
+      const newId = crypto.randomUUID();
+      const copy = { ...existing, id: newId, title: `${existing.title} copy`, version: 1, created_at: now, updated_at: now };
+      await env.TPI_DB.prepare(`INSERT INTO studio_notes (id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 'active', 0, 0, 1, ?, ?)`)
+        .bind(newId, user.id, existing.collection_id, copy.title, existing.body_html, existing.body_text, now, now).run();
+      await createNoteRevision(env, copy, copy.title, existing.body_html, existing.body_text);
+      const note = await getOwnedNote(env, newId, user.id);
+      return json({ note: notePayload(note) }, 201, { "Cache-Control": "private, no-store" });
+    }
+    const status = action === "archive" ? "archived" : action === "trash" ? "trash" : "active";
+    await env.TPI_DB.prepare("UPDATE studio_notes SET status = ?, updated_at = ? WHERE id = ? AND owner_id = ?").bind(status, new Date().toISOString(), id, user.id).run();
+    const note = await getOwnedNote(env, id, user.id);
+    const attachments = await getOwnedNoteAttachments(env, [id], user.id);
+    return json({ note: notePayload(note, attachments.get(id) || []) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    return noteSchemaFailure(error);
+  }
+}
+
+async function handleListNoteRevisions(path, env, user) {
+  const id = notePathId(path, "/revisions");
+  if (!id || !(await getOwnedNote(env, id, user.id))) return json({ error: "Note not found." }, 404);
+  try {
+    const { results } = await env.TPI_DB.prepare(`SELECT id, revision_number, title, body_html, body_text, created_at FROM studio_note_revisions WHERE note_id = ? AND owner_id = ? ORDER BY revision_number DESC LIMIT 100`).bind(id, user.id).all();
+    return json({ revisions: (results || []).map(row => ({ id: row.id, version: Number(row.revision_number), title: row.title, bodyHtml: row.body_html, bodyText: row.body_text, createdAt: row.created_at })) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) { return noteSchemaFailure(error); }
+}
+
+async function handleRestoreNoteRevision(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes mutations are not allowed." }, 403);
+  const match = path.match(/^\/notes\/([^/]+)\/revisions\/([^/]+)\/restore$/);
+  const noteId = match ? decodeURIComponent(match[1]) : "";
+  const revisionId = match ? decodeURIComponent(match[2]) : "";
+  const current = await getOwnedNote(env, noteId, user.id);
+  if (!current) return json({ error: "Note not found." }, 404);
+  try {
+    const revision = await env.TPI_DB.prepare("SELECT * FROM studio_note_revisions WHERE id = ? AND note_id = ? AND owner_id = ? LIMIT 1").bind(revisionId, noteId, user.id).first();
+    if (!revision) return json({ error: "Revision not found." }, 404);
+    const nextVersion = Number(current.version) + 1;
+    const bodyHtml = sanitizeNoteHtml(revision.body_html);
+    const bodyText = stripNoteMarkup(bodyHtml).slice(0, NOTE_MAX_BODY_BYTES);
+    const now = new Date().toISOString();
+    await createNoteRevision(env, { ...current, version: nextVersion }, revision.title, bodyHtml, bodyText);
+    await env.TPI_DB.prepare("UPDATE studio_notes SET title = ?, body_html = ?, body_text = ?, version = ?, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
+      .bind(revision.title, bodyHtml, bodyText, nextVersion, now, noteId, user.id, current.version).run();
+    const note = await getOwnedNote(env, noteId, user.id);
+    const attachments = await getOwnedNoteAttachments(env, [noteId], user.id);
+    return json({ note: notePayload(note, attachments.get(noteId) || []) }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) { return noteSchemaFailure(error); }
+}
+
+function noteAttachmentKind(contentType) {
+  if (contentType.startsWith("image/")) return "image";
+  if (contentType.startsWith("audio/")) return "audio";
+  if (contentType.startsWith("text/")) return "text";
+  return "document";
+}
+
+async function handleUploadNoteAttachment(request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes uploads are not allowed." }, 403);
+  if (!env.TPI_MEDIA || typeof env.TPI_MEDIA.put !== "function") return json({ error: "Private Notes storage is not configured in this environment." }, 503);
+  let objectKey = "";
+  try {
+    const formData = await request.formData();
+    const noteId = clean(formData.get("noteId"));
+    const file = formData.get("file");
+    if (!noteId || !file || typeof file === "string") return json({ error: "Choose a file for an existing note." }, 400);
+    if (!(await getOwnedNote(env, noteId, user.id))) return json({ error: "Note not found." }, 404);
+    const contentType = clean(file.type || "application/octet-stream").toLowerCase();
+    if (!NOTE_ALLOWED_TYPES.has(contentType)) return json({ error: "This file type is not supported in Notes." }, 415);
+    const kind = noteAttachmentKind(contentType);
+    const maxBytes = NOTE_ATTACHMENT_LIMITS[kind];
+    if (!Number.isFinite(file.size) || file.size < 1 || file.size > maxBytes) return json({ error: `This ${kind} file exceeds the Notes limit.` }, 413);
+    const id = crypto.randomUUID();
+    objectKey = `studio-notes/${user.id}/${noteId}/${id}`;
+    const originalName = clean(file.name || "attachment").split(/[\\/]/).pop().slice(0, 180) || "attachment";
+    await env.TPI_MEDIA.put(objectKey, await file.arrayBuffer(), { httpMetadata: { contentType, cacheControl: "private, no-store" }, customMetadata: { ownerId: user.id, noteId, attachmentId: id, purpose: "studio-notes" } });
+    const now = new Date().toISOString();
+    await env.TPI_DB.prepare(`INSERT INTO studio_note_attachments (id, note_id, owner_id, object_key, original_name, content_type, size_bytes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+      .bind(id, noteId, user.id, objectKey, originalName, contentType, file.size, now).run();
+    const row = await env.TPI_DB.prepare("SELECT id, note_id, original_name, content_type, size_bytes, created_at FROM studio_note_attachments WHERE id = ? AND owner_id = ?").bind(id, user.id).first();
+    return json({ attachment: noteAttachmentPayload(row) }, 201, { "Cache-Control": "private, no-store" });
+  } catch (error) {
+    if (objectKey) { try { await env.TPI_MEDIA.delete(objectKey); } catch { /* best effort */ } }
+    return noteSchemaFailure(error);
+  }
+}
+
+async function handleGetNoteAttachment(path, env, user) {
+  const id = path.replace(/^\/notes\/attachments\//, "");
+  if (!id || !env.TPI_MEDIA || typeof env.TPI_MEDIA.get !== "function") return json({ error: "Attachment not found." }, 404, { "Cache-Control": "private, no-store" });
+  try {
+    const row = await env.TPI_DB.prepare("SELECT id, object_key, original_name, content_type FROM studio_note_attachments WHERE id = ? AND owner_id = ? AND deleted_at IS NULL LIMIT 1").bind(id, user.id).first();
+    if (!row) return json({ error: "Attachment not found." }, 404, { "Cache-Control": "private, no-store" });
+    const object = await env.TPI_MEDIA.get(row.object_key);
+    if (!object) return json({ error: "Attachment not found." }, 404, { "Cache-Control": "private, no-store" });
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    headers.set("Content-Type", row.content_type);
+    headers.set("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(row.original_name)}`);
+    headers.set("Cache-Control", "private, no-store");
+    headers.set("X-Content-Type-Options", "nosniff");
+    headers.set("Content-Security-Policy", "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'none'; frame-src 'none'");
+    return new Response(object.body, { headers });
+  } catch (error) { return noteSchemaFailure(error); }
+}
+
+async function handleDeleteNoteAttachment(path, request, env, user) {
+  if (!sameOriginMutationAllowed(request)) return json({ error: "Cross-origin Notes mutations are not allowed." }, 403);
+  const id = path.replace(/^\/notes\/attachments\//, "");
+  try {
+    const row = await env.TPI_DB.prepare("SELECT object_key FROM studio_note_attachments WHERE id = ? AND owner_id = ? AND deleted_at IS NULL LIMIT 1").bind(id, user.id).first();
+    if (!row) return json({ error: "Attachment not found." }, 404);
+    await env.TPI_DB.prepare("UPDATE studio_note_attachments SET deleted_at = ? WHERE id = ? AND owner_id = ?").bind(new Date().toISOString(), id, user.id).run();
+    // Keep the original available to historical recovery until retention
+    // cleanup is introduced; hiding its metadata is the safe current action.
+    return json({ ok: true }, 200, { "Cache-Control": "private, no-store" });
+  } catch (error) { return noteSchemaFailure(error); }
 }
 
 function broadcastConflictResponse(record) {

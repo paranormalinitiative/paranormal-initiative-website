@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-121",
-  "description": "Approved StudioFlow release source identity and known-good production assets for the owner-approved Enhanced Screen Sharing release. The staging workflow builds exactly this source commit and compares its output against these hashes. Update this file only through the authorized release procedure; each update is the auditable record of which source commit is approved for staging.",
+  "recordedDirective": "TPI-STUDIOFLOW-122",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the feature-rich private Notes workspace. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "a8a7d11759905ae4bf8043005e0c2259b1fd6a81"
+    "approvedCommit": "96e28a3de4129fb248a32fe0a7f0e0527409ebc9"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-CgmAxo34.js",
-      "sha256": "f4bd273c8fe8f60ef6025389b0738b03f392a9d3d618fe3433b819083e1a3595"
+      "name": "index-C48-jDnZ.js",
+      "sha256": "2b24c5295c7457f948fdf0109a5453c760cd103b7d6a642c4d69676d19a96314"
     },
     "css": {
-      "name": "index-DpwwYG6_.css",
-      "sha256": "869e46025ce505491069a596af277bdacdd9df6a3493ac1e8db0c03a58a6b619"
+      "name": "index-D6SZajag.css",
+      "sha256": "340a54faf4f643d668dbecffe2d26883d94b9983616f7d195d9551a6feb2765c"
     }
   }
 }

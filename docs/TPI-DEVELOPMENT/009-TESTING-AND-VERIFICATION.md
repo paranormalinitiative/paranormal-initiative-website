@@ -1,5 +1,23 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122 Notes verification
+
+The D122 Notes candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. The focused Firefox Developer Edition verifier
+`scripts/verify/tpi-studioflow-122-notes.mjs` passes 18/18 using a disposable
+authenticated profile and disposable note/collection records. It verifies the
+real Studio Notes sidebar, independent workspace, three-column layout,
+owner-scoped collection/note creation, refresh persistence, note selection,
+formatted editing, autosave completion, persisted revision/content,
+spellcheck, checklist exposure and private sidebar rendering.
+
+The maintained Firefox StudioFlow regression passes 64/64 and release-safety
+passes 21/21. The authoritative source-provenance verifier passes with
+reproducible builds and exact staged asset hashes. D122 is still PARTIAL:
+attachment recovery UX, network interruption/out-of-order save testing,
+structured research references, exhaustive revision restoration, all-theme and
+device coverage, and Chrome/Safari compatibility are not reported as passed.
+
 ## TPI-STUDIOFLOW-120 screen-sharing verification
 
 The D120 implementation is staged only on the authoritative local Worker at

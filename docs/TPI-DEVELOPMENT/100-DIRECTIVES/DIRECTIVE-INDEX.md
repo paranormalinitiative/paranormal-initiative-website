@@ -16,6 +16,17 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-122 — Feature-rich Notes & podcast research workspace
+
+Status: **PARTIAL / DEVELOPMENT CANDIDATE VERIFIED / NOT DEPLOYED**.
+[Directive 122 execution record](TPI-STUDIOFLOW-122-FEATURE-RICH-NOTES.md).
+The additive Notes candidate is staged on port 8787 from source commit
+`96e28a3de4129fb248a32fe0a7f0e0527409ebc9`. Focused Firefox acceptance passes
+18/18, maintained Firefox regression passes 64/64, release-safety passes 21/21,
+and reproducible source/staging provenance passes. Attachment UX/recovery,
+structured research references, exhaustive revision/concurrency tests and
+Chrome/Safari/device coverage remain incomplete. Production is unchanged.
+
 ## TPI-STUDIOFLOW-121 — Controlled production deployment — Enhanced Screen Sharing
 
 Status: **COMPLETE / DEPLOYED_AND_VERIFIED / OWNER AUTHORIZATION CONFIRMED**.

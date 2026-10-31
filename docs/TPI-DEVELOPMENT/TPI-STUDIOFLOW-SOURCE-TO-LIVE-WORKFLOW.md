@@ -70,7 +70,26 @@ saved-script selection, transparent private stage reader controls, decoded
 non-silent recording audio, playable video and frame-level canary privacy. It is
 a development candidate for owner testing, not a production release.
 
-## Current local development candidate — TPI-STUDIOFLOW-120
+## Current local development candidate — TPI-STUDIOFLOW-122
+
+The authoritative `8787` Worker currently serves the additive D122 Notes
+candidate from isolated StudioFlow source commit
+`96e28a3de4129fb248a32fe0a7f0e0527409ebc9`. The candidate is development-only;
+it does not change the D121 production Worker or release baseline. Its assets
+are:
+
+- `/studio/assets/index-C48-jDnZ.js` — SHA-256
+  `2b24c5295c7457f948fdf0109a5453c760cd103b7d6a642c4d69676d19a96314`
+- `/studio/assets/index-D6SZajag.css` — SHA-256
+  `340a54faf4f643d668dbecffe2d26883d94b9983616f7d195d9551a6feb2765c`
+
+The candidate includes the independent Notes workspace, local D1 Notes schema,
+private attachment routes and Studio sidebar. Source provenance built the clean
+approved source twice and matched the staged files. The D122 execution record
+lists the focused acceptance and the remaining unverified scope. Do not deploy
+this candidate under D122.
+
+## Prior local development candidate — TPI-STUDIOFLOW-120
 
 The D120 candidate is built from isolated StudioFlow source commit
 `a8a7d11759905ae4bf8043005e0c2259b1fd6a81` in

@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122 — PARTIAL / NOTES DEVELOPMENT CANDIDATE VERIFIED (2026-10-31)
+
+[Directive 122 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122-FEATURE-RICH-NOTES.md).
+
+An additive, development-only Notes workspace is staged on the authoritative
+local Worker at `http://127.0.0.1:8787/studio/`. Source commit
+`96e28a3de4129fb248a32fe0a7f0e0527409ebc9` is built reproducibly and the staged
+assets are `index-C48-jDnZ.js`
+(`2b24c5295c7457f948fdf0109a5453c760cd103b7d6a642c4d69676d19a96314`) and
+`index-D6SZajag.css`
+(`340a54faf4f643d668dbecffe2d26883d94b9983616f7d195d9551a6feb2765c`).
+
+The D122 focused Firefox run passes 18/18, the maintained Firefox regression
+passes 64/64, release-safety passes 21/21, and the authoritative staging
+verifier passes. The candidate includes the independent three-column workspace,
+owner-scoped notes/collections/revisions/private attachment routes, rich editing,
+spellcheck, autosave, recovery and private Studio sidebar access. D122 remains
+PARTIAL because exhaustive attachment UX/recovery, structured research
+references, revision/concurrency interruption tests, and Chrome/Safari/device
+coverage are not complete. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-121 — COMPLETE / ENHANCED SCREEN SHARING DEPLOYED AND VERIFIED (2026-10-31)
 
 [Directive 121 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-121-CONTROLLED-PRODUCTION-DEPLOYMENT.md).
