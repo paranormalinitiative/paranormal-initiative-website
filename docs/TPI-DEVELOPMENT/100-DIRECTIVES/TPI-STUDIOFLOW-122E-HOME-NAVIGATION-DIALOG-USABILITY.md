@@ -103,5 +103,6 @@ configuration was deleted or migrated.
 The candidate is ready for owner review on the authoritative local URL. It is
 not a production release. Production remains unchanged.
 
-Website implementation/documentation commit: recorded in the final Git handoff
-after commit and push.
+Website implementation/documentation commit: `d5a4d372989e9622700736cffc8fb5890848ecda`.
+The branch was pushed successfully to `origin/codex/tpi-development`; the final
+documentation parity commit is the subsequent commit containing this line.
