@@ -48,25 +48,28 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
-## Current local development candidate — TPI-STUDIOFLOW-122F.2A
+## Current local development candidate — TPI-STUDIOFLOW-122F.2B
 
-The authoritative `8787` Worker now serves the D122F.2A Notes editor
-document-style focus correction from isolated StudioFlow source commit
-`95fc46baae987dee0d7035e6032822330a709c32`. The full perimeter focus box is
-removed; the existing rich editor keeps its caret and gains a subtle
-theme-token-based surface tint plus a keyboard-visible bottom cue.
+The authoritative `8787` Worker now serves the D122F.2B individual embedded
+image-removal correction from isolated StudioFlow source commit
+`a9f0207876944b37c234e16b73d9e6a6863a9c8a`. Selecting an embedded figure shows
+a contextual Delete Image control; deletion targets only the selected figure
+and uses the browser editing undo stack. Stored attachment IDs and objects are
+preserved.
 
 Exact staged assets:
 
-- `/studio/assets/index-DbEHpRbI.js` — SHA-256
-  `ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9`
-- `/studio/assets/index-Diqa40JX.css` — SHA-256
-  `e4abe1d372de5f21dbecdd97c2dc9f0fef053e7c0e37fa2f36431d82bfd8794a`
+- `/studio/assets/index-iWHM28jf.js` — SHA-256
+  `a06403c49de188a6e5d534f00512e05da58271dde48f74bafe4598ae6d1306af`
+- `/studio/assets/index-Py1pkkT-.css` — SHA-256
+  `11e1a67b3cd18447de5691edaca14b5a103df2c3e7151260ec542c78de98c4a2`
 
-The focused Notes verifier passes all checks, the D122F.1 rail verifier passes
-13/13, maintained Firefox passes 64/64, release safety passes 21/21, and the
-provenance workflow verifies reproducible builds and exact staged assets. This
-is a development-only candidate; production was not modified or deployed.
+Image-specific Firefox checks pass; maintained Firefox passes 64/64, release
+safety passes 21/21, and the provenance workflow verifies reproducible builds
+and exact staged assets. The broader Notes harness has a repeated disposable
+fixture hydration failure, so image autosave/refresh and trusted keyboard
+actions remain unverified. This is a development-only candidate; production
+was not modified or deployed.
 
 ## Historical local development candidate — TPI-STUDIOFLOW-122B
 

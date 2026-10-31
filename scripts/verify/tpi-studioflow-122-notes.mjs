@@ -2,7 +2,7 @@
 import { existsSync, readFileSync, mkdirSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { Builder } from "selenium-webdriver";
+import { Builder, By } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 
 const repoRoot = resolve(import.meta.dirname, "../..");
@@ -119,6 +119,17 @@ try {
   await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML=''; e.focus(); document.execCommand('insertText',false,'First paragraph'); document.execCommand('insertParagraph'); document.execCommand('insertText',false,'Second paragraph'); e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
   check("Enter creates a second paragraph", Boolean(await js("var e=document.querySelector('.notes-rich-editor'); return Boolean(e&&e.querySelectorAll('div,p').length>=2&&e.textContent.includes('First paragraph')&&e.textContent.includes('Second paragraph'));")));
   check("empty-state placeholder is not saved content", Boolean(await js("var e=document.querySelector('.notes-rich-editor'); return e&&e.getAttribute('data-placeholder')&&e.innerHTML.indexOf('Start writing')===-1;")));
+  await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML='<p>Before image</p><figure data-note-attachment-id=\"disposable-image-1\"><img src=\"data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=\" alt=\"First\" /><figcaption contenteditable=\"true\">First caption</figcaption></figure><p>Between images</p><figure data-note-attachment-id=\"disposable-image-2\"><img src=\"data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=\" alt=\"Second\" /><figcaption contenteditable=\"true\">Second caption</figcaption></figure><p>After image</p>'; e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
+  await driver.findElement(By.css("figure[data-note-attachment-id='disposable-image-2'] img")).click();
+  check("selected image exposes an accessible Delete Image control", await waitFor(async () => Boolean(await js("return document.querySelector('button[aria-label=\"Delete Image\"]');"))));
+  await driver.findElement(By.css("button[aria-label='Delete Image']")).click();
+  check("Delete Image removes only the selected image", await waitFor(async () => Boolean(await js("var e=document.querySelector('.notes-rich-editor'); return e&&!e.querySelector('figure[data-note-attachment-id=\"disposable-image-2\"]')&&e.querySelector('figure[data-note-attachment-id=\"disposable-image-1\"]')&&e.textContent.includes('Before image')&&e.textContent.includes('Between images')&&e.textContent.includes('After image');"))));
+  await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.focus(); document.execCommand('undo');}");
+  check("browser undo restores the removed image and caption", await waitFor(async () => Boolean(await js("var f=document.querySelector('figure[data-note-attachment-id=\"disposable-image-2\"]'); return Boolean(f&&f.querySelector('figcaption')?.textContent==='Second caption');"))));
+  await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.focus(); document.execCommand('redo');}");
+  check("browser redo removes the image again", await waitFor(async () => Boolean(await js("return !document.querySelector('figure[data-note-attachment-id=\"disposable-image-2\"]');"))));
+  await js("var b=Array.from(document.querySelectorAll('button')).find(function(button){return (button.textContent||'').replace(/\\s+/g,' ').trim()==='Save now';}); if(b)b.click();");
+  check("image removal persists through autosave", await waitFor(async () => Boolean(await js("var id=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){var n=(b.notes||[]).find(function(item){return item.id===id;}); return Boolean(n&&!n.bodyHtml.includes('disposable-image-2'));}).catch(function(){return false;});", autoNoteId)), 10_000));
   await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML='<p>The History of Electronic Voice Phenomena</p><p>Second line remains in the editor.</p>'; e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
   check("first meaningful line generates the title", await waitFor(async () => (await js("return document.querySelector('.notes-title-input')?.value === 'The History of Electronic Voice Phenomena';"))));
   check("generated title persists through autosave", await waitFor(async () => Boolean(await js("var id=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){var n=(b.notes||[]).find(function(item){return item.id===id;}); return n&&n.title==='The History of Electronic Voice Phenomena'&&n.titleMode==='automatic';}).catch(function(){return false;});", autoNoteId)), 10_000));

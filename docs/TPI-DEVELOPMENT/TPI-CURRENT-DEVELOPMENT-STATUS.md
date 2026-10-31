@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.2B — PARTIAL / INDIVIDUAL IMAGE REMOVAL VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2B-NOTES-IMAGE-REMOVAL.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now provides
+a contextual Delete Image action for the exact selected embedded photograph.
+Real Firefox interaction removes only the selected image, preserves the other
+image and surrounding text, and browser undo/redo restores/removes the image
+and caption. Stored attachment IDs and R2 objects are not deleted.
+
+Source commit
+`a9f0207876944b37c234e16b73d9e6a6863a9c8a` stages JavaScript
+`index-iWHM28jf.js`
+(`a06403c49de188a6e5d534f00512e05da58271dde48f74bafe4598ae6d1306af`) and CSS
+`index-Py1pkkT-.css`
+(`11e1a67b3cd18447de5691edaca14b5a103df2c3e7151260ec542c78de98c4a2`).
+Maintained Firefox passes 64/64, release safety passes 21/21 and provenance
+passes. Image autosave/refresh, trusted keyboard input and native uploaded-image
+bytes remain unverified because the repeated full Notes harness encountered a
+disposable fixture hydration failure. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.2A — COMPLETE / NOTES EDITOR DOCUMENT STYLE VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2A-NOTES-EDITOR-DOCUMENT-STYLE.md).

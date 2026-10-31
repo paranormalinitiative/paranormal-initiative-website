@@ -1,5 +1,20 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122F.2B Individual image removal
+
+The D122F.2B candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. Real Firefox pointer interaction passes the
+selected-image toolbar, exact-image removal, preservation of a second image
+and surrounding text, and browser undo/redo restoration of the image and its
+caption. Maintained Firefox passes **64/64**, release safety passes **21/21**,
+and source-provenance verification passes.
+
+The extended full Notes harness has an intermittent repeated-disposable-fixture
+hydration failure in note creation, refresh, and folder assertions. Therefore
+image-specific autosave/refresh persistence, trusted Delete/Backspace input,
+and native uploaded-image bytes remain **UNVERIFIED** in this record. No
+production deployment occurred.
+
 ## TPI-STUDIOFLOW-122F.2A Notes editor document-style appearance
 
 The D122F.2A candidate is staged only on the authoritative local Worker at

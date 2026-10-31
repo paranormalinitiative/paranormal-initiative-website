@@ -5,6 +5,18 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.2B — Individual image removal in Notes
+
+Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F2B-NOTES-IMAGE-REMOVAL.md). Source commit
+`a9f0207876944b37c234e16b73d9e6a6863a9c8a` adds a contextual Delete Image
+control for the selected embedded figure and preserves browser undo/redo,
+surrounding content, other images and stored attachment references. Real
+Firefox image interaction passes; maintained Firefox is 64/64, release safety
+21/21 and provenance pass. Image autosave/refresh, trusted keyboard actions and
+native uploaded-image bytes remain unverified due a repeated disposable-fixture
+hydration failure. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F.2A — Notes editor document-style appearance
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

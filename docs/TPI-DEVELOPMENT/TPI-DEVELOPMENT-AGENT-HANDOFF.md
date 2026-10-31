@@ -1,5 +1,27 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.2B — INDIVIDUAL IMAGE REMOVAL PARTIAL (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2B-NOTES-IMAGE-REMOVAL.md).
+
+Continue from StudioFlow source commit
+`a9f0207876944b37c234e16b73d9e6a6863a9c8a` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-iWHM28jf.js`
+(`a06403c49de188a6e5d534f00512e05da58271dde48f74bafe4598ae6d1306af`) and
+`index-Py1pkkT-.css`
+(`11e1a67b3cd18447de5691edaca14b5a103df2c3e7151260ec542c78de98c4a2`).
+
+The Notes editor now shows a contextual Delete Image control for the selected
+embedded figure, removes only that figure, and preserves browser undo/redo,
+other images, text, captions and stored attachment references. Real Firefox
+image interaction passes. Maintained Firefox passes 64/64, release safety
+passes 21/21 and provenance passes. The repeated full Notes harness has a
+disposable fixture hydration failure; image autosave/refresh, trusted keyboard
+input and native uploaded-image bytes remain unverified. Production remains
+unchanged; do not deploy under D122F.2B.
+
 ## TPI-STUDIOFLOW-122F.2A — NOTES EDITOR DOCUMENT-STYLE APPEARANCE COMPLETE (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2A-NOTES-EDITOR-DOCUMENT-STYLE.md).
