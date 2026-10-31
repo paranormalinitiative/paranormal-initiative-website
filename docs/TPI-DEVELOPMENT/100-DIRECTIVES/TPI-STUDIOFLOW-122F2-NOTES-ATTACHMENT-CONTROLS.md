@@ -56,7 +56,7 @@ empty. It is not part of saved note content and does not intercept editor input.
 - JavaScript SHA-256: `6c7d5871f41bc1d3e30d56648e73d39a372e3acf1f90df507c266e4a34a641e5`
 - CSS: `index-ChghdUBo.css`
 - CSS SHA-256: `b7d6b2e0c427c3a79857268926ceeb2613fa4edd0eb140934e460aace57e8e2d`
-- Website integration commit: recorded after this execution record is committed
+- Website integration commit: `b59bb8f58fac6cd7bf5bfcdab463a56acec7d93c`
 
 No database migration, storage-path change, or production asset change was
 required.
