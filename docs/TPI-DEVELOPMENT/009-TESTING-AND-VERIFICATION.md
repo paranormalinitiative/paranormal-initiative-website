@@ -391,6 +391,21 @@ Owner acceptance remains for broader browser coverage: public/member workflows, 
 | Owner-authenticated StudioFlow/Admin Center acceptance | NOT TESTED | No owner credentials or session used; anonymous protection is verified only |
 | Full local API E2E | BLOCKED | Existing Wrangler `spawn EBADF` runner issue |
 
+## TPI-STUDIOFLOW-122E.1 — Home Create layout verification
+
+The focused verifier is
+`scripts/verify/tpi-studioflow-122e1-home-create-layout.mjs`. It runs in an
+isolated Firefox Developer Edition profile against the authenticated
+authoritative Worker at `http://127.0.0.1:8787/` and checks the rendered Home
+Create section, required five-card order, equal card widths, responsive row
+shapes, and document-wide horizontal overflow.
+
+The final D122E.1 candidate passed 19/19: five cards in one row at wide
+desktop, balanced 3+2 rows at medium desktop, 2+2+1 rows at tablet, and one
+column at mobile. Maintained Firefox StudioFlow regression passed 64/64 and
+release-safety passed 21/21. The run used isolated browser state and did not
+access owner browser storage or owner Studios.
+
 ## TPI-STUDIOFLOW-122E — Home navigation and dialog verification
 
 The maintained Notes browser verifier now explicitly enters a disposable

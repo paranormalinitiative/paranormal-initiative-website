@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122E.1 — Home Create section layout correction
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122E1-HOME-CREATE-LAYOUT.md). Source commit
+`1e08da2b651136ea19a654ad03b97ddd45ca4457` stages the five equal wide-desktop
+Create cards in the required order, with responsive 3/2/1 layouts and no
+document-wide horizontal overflow on port 8787. Focused Firefox acceptance
+passes 19/19, maintained Firefox passes 64/64, and release safety passes 21/21.
+Production is unchanged.
+
 ## TPI-STUDIOFLOW-122E — Home navigation and dialog usability corrections
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

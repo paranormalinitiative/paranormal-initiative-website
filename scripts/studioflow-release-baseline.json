@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122E",
-  "description": "Development-only approved StudioFlow source identity and generated assets for Home Notes navigation, explicit Home route persistence, and the safely disabled archived-Studio deletion dialog scrolling correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122E.",
+  "recordedDirective": "TPI-STUDIOFLOW-122E.1",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the balanced five-card Home Create layout. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122E.1.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "046ae3aaeebf9945597ce7373f5a9ada8a00cd37"
+    "approvedCommit": "1e08da2b651136ea19a654ad03b97ddd45ca4457"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-CAngUv37.js",
+      "name": "index-DmaCJVhN.js",
       "sha256": "e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d"
     },
     "css": {
-      "name": "index-CxtEcOJP.css",
-      "sha256": "c4a34d03e42c981b2168e6287e232552ba1cdcb0676b2067ff33cbe573487254"
+      "name": "index-DLIu5icU.css",
+      "sha256": "e09191f0e7f94bacea4e63876cf3d5e407c9b7076d7f4ab35203e71992e0ea13"
     }
   }
 }

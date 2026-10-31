@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122E.1 — COMPLETE / HOME CREATE LAYOUT VERIFIED (2026-10-31)
+
+[Directive 122E.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E1-HOME-CREATE-LAYOUT.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now displays
+Live stream, Recording, On-Air webinar, Notes, and Teleprompter in one equal
+five-card row on wide desktop screens. Responsive layouts use balanced 3+2,
+2+2+1, and one-column arrangements without document-wide horizontal overflow.
+The card order, styling, icons, descriptions, and navigation actions remain
+unchanged.
+
+Final isolated StudioFlow source commit
+`1e08da2b651136ea19a654ad03b97ddd45ca4457` stages JavaScript
+`index-DmaCJVhN.js`
+(`e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d`) and CSS
+`index-DLIu5icU.css`
+(`e09191f0e7f94bacea4e63876cf3d5e407c9b7076d7f4ab35203e71992e0ea13`).
+Focused Firefox acceptance passes 19/19, maintained Firefox regression passes
+64/64, and release-safety passes 21/21. Production was not modified or
+deployed.
+
 ## TPI-STUDIOFLOW-122E — COMPLETE / HOME NAVIGATION AND DIALOG VERIFIED (2026-10-31)
 
 [Directive 122E execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E-HOME-NAVIGATION-DIALOG-USABILITY.md).

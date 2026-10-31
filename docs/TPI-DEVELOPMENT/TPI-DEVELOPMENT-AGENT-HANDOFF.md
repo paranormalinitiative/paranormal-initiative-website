@@ -1,5 +1,26 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122E.1 — HOME CREATE LAYOUT COMPLETE (2026-10-31)
+
+[Directive 122E.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E1-HOME-CREATE-LAYOUT.md).
+
+Continue from StudioFlow source commit
+`1e08da2b651136ea19a654ad03b97ddd45ca4457` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-DmaCJVhN.js`
+(`e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d`) and
+`index-DLIu5icU.css`
+(`e09191f0e7f94bacea4e63876cf3d5e407c9b7076d7f4ab35203e71992e0ea13`).
+
+D122E.1 replaces the Home `.create-grid` auto-fit minimum that wrapped
+Teleprompter with a wide five-column layout and responsive 3/2/1 breakpoints.
+It also adds only the responsive containment needed to prevent existing Home
+menus, detail rows, and the dashboard grid from creating document-wide
+horizontal overflow. The five card actions and required order are unchanged.
+Focused Firefox acceptance is 19/19, maintained Firefox is 64/64, and release
+safety is 21/21. Production remains unchanged; do not deploy under D122E.1.
+
 ## TPI-STUDIOFLOW-122E — HOME NAVIGATION AND DIALOG COMPLETE (2026-10-31)
 
 [Directive 122E execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E-HOME-NAVIGATION-DIALOG-USABILITY.md).

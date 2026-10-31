@@ -80,7 +80,24 @@ real Firefox acceptance 57/57. No database migration was required because the
 existing migration 0055 `parent_id` relationship already supports nested
 collections. This is a development-only candidate; production is unchanged.
 
-## Current local development candidate — TPI-STUDIOFLOW-122E
+## Current local development candidate — TPI-STUDIOFLOW-122E.1
+
+The authoritative `8787` Worker now serves the D122E.1 Home Create section
+layout correction from isolated StudioFlow source commit
+`1e08da2b651136ea19a654ad03b97ddd45ca4457`. Its exact staged assets are:
+
+- `/studio/assets/index-DmaCJVhN.js` — SHA-256
+  `e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d`
+- `/studio/assets/index-DLIu5icU.css` — SHA-256
+  `e09191f0e7f94bacea4e63876cf3d5e407c9b7076d7f4ab35203e71992e0ea13`
+
+The candidate was built twice from the exact clean source commit and staged
+through the provenance-checked workflow. Focused D122E.1 Firefox acceptance
+passes 19/19 across wide desktop, medium desktop, tablet and mobile layouts;
+maintained Firefox passes 64/64 and release-safety passes 21/21. This is a
+development-only candidate. Production was not modified or deployed.
+
+## Historical local development candidate — TPI-STUDIOFLOW-122E
 
 The authoritative `8787` Worker now serves the D122E Home navigation and
 deletion-dialog usability correction from isolated StudioFlow source commit
