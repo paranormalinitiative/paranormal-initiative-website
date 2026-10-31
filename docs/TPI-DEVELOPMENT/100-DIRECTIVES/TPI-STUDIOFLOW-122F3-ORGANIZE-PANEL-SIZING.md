@@ -103,7 +103,7 @@ instrumented in this run.
 - CSS: `index-CIEmHEyE.css`
 - CSS SHA-256:
   `a0e6c7c29f3f72eb3d5ad58110f5d8cc352216ea5efd12766b2c7c7d1761aca8`
-- Website integration commit: recorded after this execution record is staged
+- Website integration commit: `c6f650c8bd6c271735c1af2d5c0c96cda2eb45f6`
 - Production: unchanged; no production deployment was authorized or performed
 
 The StudioFlow source repository has no configured remote, so source-branch
