@@ -23,7 +23,7 @@ toggle row rather than overlapping the stacked panels.
 | Source worktree | `/Users/toddknipple/Documents/StudioFlow/web-122` |
 | Source branch | `codex/studioflow-122-notes` |
 | Source commit | `b9a7772fec70ceb4143deaa03963b89072a56564` |
-| Website commit | pending final documentation commit |
+| Website commit | `3ec0888a3e7b144473ede7284122c2aef8e5b416` |
 | Development URL | `http://127.0.0.1:8787/studio/` |
 | JavaScript | `index-lCAgDCwK.js` |
 | JavaScript SHA-256 | `240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48` |

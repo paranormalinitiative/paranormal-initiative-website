@@ -12,6 +12,8 @@ Continue from source commit
 (`240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`) and
 `index-D9akxKCz.css`
 (`bc541f62a96352584b811fdc308bf4f4b71888fd7d586b4285887fbc2839f980`).
+Website integration/documentation commit is
+`3ec0888a3e7b144473ede7284122c2aef8e5b416`.
 
 The collapsed organization state uses a dedicated narrow rail grid column; the
 expand control is inside the rail and does not overlap the Note Library. The
