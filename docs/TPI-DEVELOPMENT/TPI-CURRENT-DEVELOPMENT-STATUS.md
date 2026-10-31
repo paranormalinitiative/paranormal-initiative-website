@@ -3798,3 +3798,22 @@ workspace identity and genuine backup artifact are required before any mapping
 repair can be safely implemented.
 
 See `300-COMPLETED-WORK/TPI-MASTER-002-RESULT.md`.
+
+## TPI-STUDIOFLOW-122H.1 — local podcast project folders — 2026-10-31
+
+The local-folder enhancement is staged on the authoritative Worker at
+`http://127.0.0.1:8787/studio/`. It reuses the verified 122H project packager,
+uses the permission-based File System Access API where available, stores only
+an authorized directory handle and sync metadata in browser IndexedDB, and
+requires an explicit `Sync Project to Local Folder` action. Existing local
+files are preserved; externally changed files receive a StudioFlow conflict
+copy instead of being silently overwritten. `Download Project` remains the
+fallback.
+
+Source commit `ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` builds reproducibly as
+`index-CZ1q5Q9d.js` (`89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3`)
+and `index-DtHLNYVn.css`
+(`720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`). ZIP
+fallback acceptance passed 17/17, maintained Firefox passed 64/64, and release
+safety passed 21/21. Native Chrome folder selection and independent real-folder
+inspection remain **UNVERIFIED**, so 122H.1 is **PARTIAL**, not complete.

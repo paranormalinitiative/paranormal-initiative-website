@@ -1201,6 +1201,26 @@ owner Studios for destructive testing.
 No credentials, tokens, private payloads, or secrets are included in this
 handoff.
 
+## TPI-STUDIOFLOW-122H.1 local-folder handoff
+
+The 122H.1 candidate is staged only on port 8787. Use the existing Project
+Files dialog to choose a browser-authorized local directory and then explicitly
+run `Sync Project to Local Folder`; there is no background or bidirectional
+synchronization. `Download Project` remains the fallback for Firefox and other
+browsers without File System Access API support. The implementation preserves
+unrelated local files and writes conflict copies when an exported file was
+changed outside StudioFlow.
+
+Source `ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` is clean and staged with JS
+`index-CZ1q5Q9d.js` SHA-256
+`89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3` and CSS
+`index-DtHLNYVn.css` SHA-256
+`720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`.
+Automated build/staging, ZIP fallback 17/17, Firefox regression 64/64, and
+release safety 21/21 pass. Native Chrome folder selection and independent
+real-filesystem inspection remain unverified; do not report this directive
+complete until a visible supported browser completes that gate.
+
 ## Documentation synchronization
 
 Every completed TPI directive must update the affected Markdown records before

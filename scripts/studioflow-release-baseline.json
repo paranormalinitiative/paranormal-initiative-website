@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122H",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the podcast project export capability. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122H.",
+  "recordedDirective": "TPI-STUDIOFLOW-122H.1",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the permission-based local podcast project folder capability. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122H.1.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "56f8ad7cc403560e22388e907b2000ee9f49c0db"
+    "approvedCommit": "ded5a3d73c5838d56f3c5e1cb0a32534acdab44f"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-D_rpm-10.js",
-      "sha256": "c029b5099fa67fff2220e823544b19b4ea816679088817244d1de796525cc349"
+      "name": "index-CZ1q5Q9d.js",
+      "sha256": "89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3"
     },
     "css": {
-      "name": "index-kIGdvrxS.css",
-      "sha256": "9506b740f488255323852f2e43e95c463b81b66b155cd38d5a32105704cfaee8"
+      "name": "index-DtHLNYVn.css",
+      "sha256": "720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668"
     }
   }
 }

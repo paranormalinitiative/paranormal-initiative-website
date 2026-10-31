@@ -641,3 +641,20 @@ The D122F.1 candidate is staged only on the authoritative local Worker at
 rail geometry and non-overlap checks. The 2026-10-31 run passed 13/13, including
 the dedicated rail width, Note Library boundary and heading visibility checks.
 The maintained Firefox regression passed 64/64 and release safety passed 21/21.
+
+## TPI-STUDIOFLOW-122H.1 local project-folder verification
+
+The local-folder candidate reuses the 122H ZIP packager and adds explicit
+permission-based folder connection/synchronization. Run
+`npm run test:studioflow:122h1-project-folder` only with a visible supported
+Chrome session and a disposable local folder; it is designed to verify actual
+native folder selection, independent file inspection, refresh persistence, and
+external-file conflict preservation. The 2026-10-31 run reached the
+authenticated Project Files dialog but could not complete the macOS native
+chooser without targeting the owner’s existing Chrome window. The real
+filesystem gate is therefore **UNVERIFIED**, not PASS.
+
+The existing ZIP fallback passed 17/17, maintained Firefox passed 64/64, and
+release safety passed 21/21. Do not claim Finder, File Explorer, Linux file
+manager, or actual local-folder writes until native selection and independent
+inspection have completed.

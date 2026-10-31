@@ -671,3 +671,19 @@ execution. Their old commit IDs, Worker versions, browser choices, deployment
 restrictions, or pending statuses are not current commands. When a historical
 record conflicts with this workflow, the standing authority, the mandatory
 runbook, and this document control current operations.
+
+## Local podcast project folders (TPI-STUDIOFLOW-122H.1)
+
+Local-folder synchronization is an opt-in browser capability layered on the
+read-only 122H project export. It must be verified and staged through the same
+authoritative port 8787 workflow. The application may persist an explicitly
+authorized `FileSystemDirectoryHandle` and sync metadata in browser IndexedDB,
+but it must never write in the background, require a connected folder to run,
+or use local files as the authoritative project store. `Download Project` is
+the required fallback when the browser lacks File System Access API support.
+
+Before reporting completion, a supported browser must select a real temporary
+folder through its native permission UI, synchronize a disposable project,
+inspect the resulting files outside StudioFlow, and verify that an externally
+modified file is preserved rather than silently overwritten. Native picker or
+Finder/File Explorer inspection that cannot be completed is UNVERIFIED.
