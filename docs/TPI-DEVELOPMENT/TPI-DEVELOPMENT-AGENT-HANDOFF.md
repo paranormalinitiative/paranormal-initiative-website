@@ -1,6 +1,6 @@
 # TPI Development Agent Handoff
 
-## TPI-STUDIOFLOW-127 — PRESERVED AND DEPLOYED (2026-10-31)
+## TPI-STUDIOFLOW-127 — PARTIAL / PRESERVED, PUSHED, AND DEPLOYED (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md).
 
@@ -16,10 +16,12 @@ The deployed assets are `index-CZ1q5Q9d.js` SHA-256
 `index-DtHLNYVn.css` SHA-256
 `720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`.
 
-The canonical release worktrees are clean. Do not reset, clean, prune, or
-delete the original mixed StudioFlow checkout or the historical dirty WIP
-worktrees listed in the execution record. The 122H.2 native local-folder
-filesystem test remains PARTIAL and must not be called passed.
+The canonical release worktrees are clean, but the directive remains PARTIAL:
+do not reset, clean, prune, or delete the original mixed StudioFlow checkout or
+the historical dirty WIP worktrees listed in the execution record. The source
+repository has no configured remote, so independent source-branch GitHub parity
+is not asserted. The 122H.2 native local-folder filesystem test remains
+PARTIAL and must not be called passed.
 
 ## TPI-STUDIOFLOW-122H — PODCAST PROJECT EXPORT VERIFIED (2026-10-31)
 

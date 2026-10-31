@@ -1,16 +1,18 @@
 # TPI-STUDIOFLOW-127 — Preserve, Push, Deploy, and Clean Worktrees
 
 Date: 2026-10-31  
-Status: **COMPLETE — PRESERVED, PUSHED, DEPLOYED, AND CLEAN**
+Status: **PARTIAL — RELEASE PRESERVED, PUSHED, DEPLOYED; REPOSITORY CONSOLIDATION INCOMPLETE**
 
 ## Result
 
 The verified StudioFlow candidate was preserved, staged from the approved
 source worktree, pushed through the canonical website branch, deployed with the
 guarded production workflow, and accepted in isolated Firefox. The canonical
-release worktrees are clean. Unrelated historical and mixed-checkout worktrees
-were not reset, cleaned, deleted, or overwritten; they remain preserved and are
-listed below as intentional exceptions.
+release worktrees are clean. The directive remains PARTIAL because the original
+mixed checkout and unrelated historical WIP worktrees were not reset, cleaned,
+deleted, or overwritten; they remain preserved and are listed below as
+intentional exceptions. The source repository also has no configured remote,
+so independent source-branch GitHub parity cannot be asserted.
 
 ## Preservation inventory
 
@@ -131,3 +133,7 @@ The live release is ready for owner review at:
 `https://paranormalinitiative.com/studio/`
 
 The next directive should begin from website commit `a648f0b6a2744af489e0a9357952ac6dd9de6de5` plus this documentation commit, and source commit `ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` in the preserved `web-122` worktree.
+
+The production deployment itself succeeded; the remaining PARTIAL status is
+limited to the requested all-worktree cleanup and independent source-repository
+push requirements, which were not performed destructively or guessed.

@@ -7,7 +7,7 @@ Statuses are evidence-based and refer to the available repository records, not t
 
 ## TPI-STUDIOFLOW-127 — Preserve, push, deploy, and clean worktrees
 
-Status: **COMPLETE / DEPLOYED AND VERIFIED / HISTORICAL WIP PRESERVED**.
+Status: **PARTIAL / DEPLOYED AND VERIFIED / HISTORICAL WIP PRESERVED**.
 [Execution record](TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md). The
 verified candidate from StudioFlow source commit
 `ded5a3d73c5838d56f3c5e1cb0a32534acdab44f` was integrated on website commit
@@ -20,8 +20,11 @@ verified candidate from StudioFlow source commit
 `720b9f58e86b2006281120234b4cb9a4bf7e2f2b7388b04badd4e2d3808eb668`.
 Anonymous production smoke is 10/10 and isolated Firefox acceptance is 64/64.
 The canonical release worktrees are clean; unrelated dirty worktrees and the
-original mixed checkout remain preserved and were not included. Native 122H.2
-local-folder synchronization remains partial/unverified.
+original mixed checkout remain preserved and were not included, so the
+all-worktree consolidation requirement remains partial. The StudioFlow source
+repository has no configured remote, so independent source-branch GitHub parity
+is not asserted. Native 122H.2 local-folder synchronization remains
+partial/unverified.
 
 ## TPI-STUDIOFLOW-122H — Podcast project files, export, and operating system access
 

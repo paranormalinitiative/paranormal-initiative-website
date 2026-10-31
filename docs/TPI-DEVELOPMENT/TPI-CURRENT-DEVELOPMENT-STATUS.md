@@ -1,6 +1,6 @@
 # TPI Current Development Status
 
-## TPI-STUDIOFLOW-127 — COMPLETE / PRESERVED, PUSHED, DEPLOYED, AND CLEAN (2026-10-31)
+## TPI-STUDIOFLOW-127 — PARTIAL / RELEASE PRESERVED, PUSHED, AND DEPLOYED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-127-PRESERVE-PUSH-DEPLOY-CLEAN.md).
 
@@ -17,8 +17,10 @@ Production Worker `theparanormalinitiative` is now version
 Anonymous production smoke passes 10/10 and isolated Firefox production
 acceptance passes 64/64. The canonical release worktrees are clean; unrelated
 historical and original mixed-checkout WIP remains preserved and was not
-cleaned or included. Native 122H.2 local-folder synchronization remains
-PARTIAL/UNVERIFIED and is not represented as passed.
+cleaned or included, so the all-worktree consolidation objective remains
+PARTIAL. The source repository has no configured remote, so independent source
+branch GitHub parity is not asserted. Native 122H.2 local-folder
+synchronization remains PARTIAL/UNVERIFIED and is not represented as passed.
 
 ## TPI-STUDIOFLOW-122H — COMPLETE / PODCAST PROJECT EXPORT VERIFIED (2026-10-31)
 
