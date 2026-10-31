@@ -1,5 +1,30 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-121 — PRODUCTION BASELINE ESTABLISHED (2026-10-31)
+
+[Directive 121 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-121-CONTROLLED-PRODUCTION-DEPLOYMENT.md).
+
+The owner-approved Enhanced Screen Sharing release is live and verified through
+the guarded production workflow. Use StudioFlow source commit
+`a8a7d11759905ae4bf8043005e0c2259b1fd6a81` and website release/baseline commit
+`cbf652d5c5546f1c1b7e1c2e0fc9b8d25b3fe023`. Production Worker
+`a8709be8-6cec-4e99-a904-0f0e8877f00f` is active at 100%; rollback is the
+verified previous Worker `f5af1836-8cf8-4a3c-9db7-18c53ff9ded2`.
+
+The live D120 assets are `index-CgmAxo34.js`
+(`f4bd273c8fe8f60ef6025389b0738b03f392a9d3d618fe3433b819083e1a3595`) and
+`index-DpwwYG6_.css`
+(`869e46025ce505491069a596af277bdacdd9df6a3493ac1e8db0c03a58a6b619`).
+Preflight passed, anonymous production smoke passed 10/10, and isolated Firefox
+production acceptance passed 64/64. Production data and authentication were
+preserved; no rollback was required.
+
+The owner confirmed Chrome screen sharing. Do not represent shared video/audio
+in saved recordings, complete browser compatibility, or full end-to-end
+screen-sharing recording as verified until the final StudioFlow acceptance
+phase completes those deferred tests. Continue from this production baseline;
+do not deploy unrelated unfinished work or enable permanent Studio deletion.
+
 ## TPI-STUDIOFLOW-120 — SCREEN-SHARING CANDIDATE BLOCKED PENDING NATIVE CAPTURE (2026-10-31)
 
 [Directive 120 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-120-ENHANCED-SCREEN-SHARING.md).

@@ -1,5 +1,31 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-121 — COMPLETE / ENHANCED SCREEN SHARING DEPLOYED AND VERIFIED (2026-10-31)
+
+[Directive 121 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-121-CONTROLLED-PRODUCTION-DEPLOYMENT.md).
+
+The owner-approved Directive 120 Enhanced Screen Sharing candidate was deployed
+through the guarded production workflow. The approved StudioFlow source is
+`a8a7d11759905ae4bf8043005e0c2259b1fd6a81`; the website release and updated
+baseline commit is `cbf652d5c5546f1c1b7e1c2e0fc9b8d25b3fe023`. Worker
+`a8709be8-6cec-4e99-a904-0f0e8877f00f` is active at 100% traffic. The previous
+production Worker `f5af1836-8cf8-4a3c-9db7-18c53ff9ded2` is the verified
+rollback target.
+
+The approved production assets are JavaScript `index-CgmAxo34.js`
+(`f4bd273c8fe8f60ef6025389b0738b03f392a9d3d618fe3433b819083e1a3595`) and
+CSS `index-DpwwYG6_.css`
+(`869e46025ce505491069a596af277bdacdd9df6a3493ac1e8db0c03a58a6b619`).
+Guarded preflight passed, live anonymous production smoke passed 10/10, and
+isolated Firefox production acceptance passed 64/64. No rollback was required;
+production data, authentication, existing StudioFlow tools and permanent
+deletion safeguards were preserved.
+
+Owner-confirmed Chrome screen sharing is recorded as accepted. Shared video or
+shared audio in saved recordings, complete browser compatibility, and full
+end-to-end screen-sharing recording acceptance remain explicitly deferred to
+the final StudioFlow acceptance phase and are not reported as passed here.
+
 ## TPI-STUDIOFLOW-120 — BLOCKED / SCREEN-SHARING IMPLEMENTATION STAGED (2026-10-31)
 
 [Directive 120 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-120-ENHANCED-SCREEN-SHARING.md).

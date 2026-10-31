@@ -16,6 +16,20 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-121 — Controlled production deployment — Enhanced Screen Sharing
+
+Status: **COMPLETE / DEPLOYED_AND_VERIFIED / OWNER AUTHORIZATION CONFIRMED**.
+[Directive 121 execution record](TPI-STUDIOFLOW-121-CONTROLLED-PRODUCTION-DEPLOYMENT.md).
+The approved D120 source `a8a7d11759905ae4bf8043005e0c2259b1fd6a81` was
+deployed from website baseline commit
+`cbf652d5c5546f1c1b7e1c2e0fc9b8d25b3fe023`. Worker
+`a8709be8-6cec-4e99-a904-0f0e8877f00f` is active at 100%; rollback is
+`f5af1836-8cf8-4a3c-9db7-18c53ff9ded2`. Preflight passed, live anonymous smoke
+passed 10/10 and isolated Firefox production acceptance passed 64/64. Owner
+Chrome screen-sharing acceptance is confirmed. Shared captured media in saved
+recordings, full browser compatibility and complete end-to-end screen-sharing
+acceptance remain deferred and are not claimed as passed.
+
 ## TPI-STUDIOFLOW-120 — Enhanced screen sharing and theme-aware presentation
 
 Status: **BLOCKED / DEVELOPMENT IMPLEMENTATION STAGED / NATIVE CAPTURE PENDING**.
