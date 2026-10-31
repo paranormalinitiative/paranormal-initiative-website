@@ -70,7 +70,27 @@ saved-script selection, transparent private stage reader controls, decoded
 non-silent recording audio, playable video and frame-level canary privacy. It is
 a development candidate for owner testing, not a production release.
 
-## Current local development candidate — TPI-STUDIOFLOW-122
+## Current local development candidate — TPI-STUDIOFLOW-122A
+
+The authoritative `8787` Worker currently serves the D122A Notes refinement
+from isolated StudioFlow source commit
+`fd4d2758f689f4731516055887cbac4df5c1f3dd`. The candidate is development-only;
+it does not change the D121 production Worker or release baseline. Its assets
+are:
+
+- `/studio/assets/index-6-25XtSS.js` — SHA-256
+  `70d7b5124a134765e606b493710f06316410157ef790702a38d8bd85004e4b2e`
+- `/studio/assets/index-DCzHEnai.css` — SHA-256
+  `c0a544549f0d440a3c017a3c4098158e62610b8cc36d7222b71cbeaaba9ece2c`
+
+The candidate preserves the D122 Notes data model and adds connected panels,
+persistent collapse/resize state, Focus Mode and the accessible icon toolbar.
+The source-provenance workflow built the clean source twice and matched all
+staged files. Real Firefox acceptance passes 33/33. Native file chooser,
+pointer-drag, full theme and Chrome/Safari/device checks remain open. Do not
+deploy this candidate under D122A.
+
+## Prior local development candidate — TPI-STUDIOFLOW-122
 
 The authoritative `8787` Worker currently serves the additive D122 Notes
 candidate from isolated StudioFlow source commit

@@ -1,5 +1,20 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122A Notes refinement verification
+
+The D122A candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. The maintained disposable Firefox verifier
+`scripts/verify/tpi-studioflow-122-notes.mjs` passes **33/33** for the connected
+workspace, Organization collapse/restore, keyboard panel resizing and
+persistence, Focus Mode, required icon/ARIA labels, tooltips, heading menu,
+find/replace, photograph/attachment controls, active formatting and responsive
+toolbar overflow. It also retains the D122 note creation, refresh, formatted
+edit, autosave, spellcheck and private Studio sidebar checks.
+
+Native file chooser uploads, pointer/trackpad drag execution, all supported
+theme checks, and Chrome/Safari/tablet/mobile coverage are not reported as
+passed. Production was not touched.
+
 ## TPI-STUDIOFLOW-122 Notes verification
 
 The D122 Notes candidate is staged only on the authoritative local Worker at

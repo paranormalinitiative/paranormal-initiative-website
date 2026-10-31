@@ -16,6 +16,16 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-122A — Connected Notes workspace, resizable panels and professional toolbar
+
+Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Directive 122A execution record](TPI-STUDIOFLOW-122A-CONNECTED-NOTES-WORKSPACE.md).
+Source commit `fd4d2758f689f4731516055887cbac4df5c1f3dd` stages the connected
+Notes layout, persisted panel preferences, Focus Mode and accessible Lucide
+toolbar on port 8787. Real Firefox acceptance passes 33/33. Native file chooser
+uploads, pointer-drag execution, full theme coverage and Chrome/Safari/device
+coverage remain unverified. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122 — Feature-rich Notes & podcast research workspace
 
 Status: **PARTIAL / DEVELOPMENT CANDIDATE VERIFIED / NOT DEPLOYED**.

@@ -1,5 +1,27 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122A — CONNECTED NOTES REFINEMENT PARTIAL (2026-10-31)
+
+[Directive 122A execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122A-CONNECTED-NOTES-WORKSPACE.md).
+
+Continue from StudioFlow source commit
+`fd4d2758f689f4731516055887cbac4df5c1f3dd` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. Website implementation commit `3207013` stages
+`index-6-25XtSS.js`
+(`70d7b5124a134765e606b493710f06316410157ef790702a38d8bd85004e4b2e`) and
+`index-DCzHEnai.css`
+(`c0a544549f0d440a3c017a3c4098158e62610b8cc36d7222b71cbeaaba9ece2c`) on
+the authoritative 8787 Worker.
+
+The real disposable Firefox acceptance passes 33/33, including connected
+layout, collapse/restore, keyboard resize persistence, Focus Mode,
+icon/ARIA/tooltip coverage, heading menu, find/replace, active formatting and
+responsive overflow. Native file-selection uploads, pointer-drag execution,
+all-theme checks and Chrome/Safari/device coverage remain open. Do not report
+those as passed. Production remains on the D121 baseline and must not be
+deployed under D122A.
+
 ## TPI-STUDIOFLOW-122 — NOTES CANDIDATE PARTIAL (2026-10-31)
 
 [Directive 122 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122-FEATURE-RICH-NOTES.md).

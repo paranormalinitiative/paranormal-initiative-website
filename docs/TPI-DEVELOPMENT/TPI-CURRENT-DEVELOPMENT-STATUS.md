@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122A — PARTIAL / CONNECTED NOTES REFINEMENT VERIFIED (2026-10-31)
+
+[Directive 122A execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122A-CONNECTED-NOTES-WORKSPACE.md).
+
+The D122 Notes workspace is refined on the authoritative 8787 Worker from
+StudioFlow source commit `fd4d2758f689f4731516055887cbac4df5c1f3dd`. It now has
+a connected three-column layout, persistent Organization collapse, keyboard and
+pointer-resizable Note Library, Focus Mode, and grouped Lucide icon controls
+with accessible names, tooltips, menus, active formatting state, photo/file
+actions and responsive behavior. Real Firefox acceptance passes 33/33.
+
+The candidate remains PARTIAL because native file chooser uploads, full theme
+coverage, pointer-drag execution and Chrome/Safari/tablet/mobile coverage were
+not completed. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122 — PARTIAL / NOTES DEVELOPMENT CANDIDATE VERIFIED (2026-10-31)
 
 [Directive 122 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122-FEATURE-RICH-NOTES.md).
