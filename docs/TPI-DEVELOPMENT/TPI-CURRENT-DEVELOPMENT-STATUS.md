@@ -18,6 +18,15 @@ compatibility are not yet tested, so D120 is not claimed complete and no
 production release candidate or deployment exists. The D119 production
 baseline, owner data, authentication and port 5192 state are unchanged.
 
+### Directive 120A — native picker verification remains blocked
+
+Chrome `156.0.8078.79` on macOS 27.0 reached the native capture boundary in a
+disposable profile, but macOS denied assistive access needed to operate the
+picker (`-25211`). No source was selected and no captured-media recording was
+created. Firefox native capture and Safari remain untested for the same safe
+interaction boundary. Do not claim shared-video or shared-audio recording
+until the owner completes the visible browser-picker test.
+
 ## TPI-STUDIOFLOW-119 — COMPLETE / TELEPROMPTER 092 DEPLOYED AND VERIFIED (2026-10-30)
 
 [Directive 119 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-119-CONTROLLED-PRODUCTION-DEPLOYMENT.md).

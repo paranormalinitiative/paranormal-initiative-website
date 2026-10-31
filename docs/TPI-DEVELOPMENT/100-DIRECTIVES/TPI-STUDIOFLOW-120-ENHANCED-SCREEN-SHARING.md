@@ -52,6 +52,43 @@ The focused automated test intentionally does not automate the browser's native 
 
 This is why the directive remains BLOCKED rather than claiming full browser-capture completion. The browser API implementation is source-verified and the local UI is staged, but native-picker and real captured-media evidence are still required.
 
+## Directive 120A — Final Browser and Recording Verification
+
+Verification date: 2026-10-31. Operating system: macOS 27.0, build
+`26A428`. Installed browsers: Google Chrome `156.0.8078.79`, Firefox
+Developer Edition `160.0b3`, and Safari `27.0`.
+
+The authoritative Worker remained running at 8787 with local D1/R2 state under
+`.local-dev/state/v3`. The served HTML references the recorded D120 assets and
+their SHA-256 values match the candidate above. No operating-system privacy
+permission was changed. The permission state itself was not programmatically
+read because macOS denied assistive access to System Events.
+
+A disposable visible Chrome profile requested
+`getDisplayMedia({ video: { displaySurface: "browser" }, audio: true })` for a
+controlled local tab. The request reached the browser-native capture boundary,
+but the test environment could not inspect or operate the native picker:
+`System Events ... not allowed assistive access (-25211)`. The probe was
+stopped without selecting a source. The owner Chrome profile, existing tabs,
+Studio data and production state were not touched.
+
+| Verification | Result | Evidence |
+| --- | --- | --- |
+| Chrome browser-tab capture | BLOCKED | Native picker could not be safely operated in the disposable profile |
+| Chrome application-window capture | BLOCKED | Native picker interaction unavailable |
+| Chrome entire-display capture | BLOCKED | Native picker interaction unavailable; no desktop capture attempted |
+| Firefox capture | BLOCKED | Panel/regression pass, native picker selection still unavailable |
+| Safari capture | NOT TESTED | No safe automation surface was available |
+| Shared video on stage | BLOCKED | No native source was selected |
+| Shared audio track | BLOCKED | No authorized capture stream was returned |
+| Shared audio in recording | BLOCKED | No captured-media recording was produced |
+| Microphone audio | PASS | Existing 64/64 Firefox regression and D111 audio checks |
+| Theme integration | PASS / SOURCE VERIFIED | All four themes have panel styles; Firefox panel inherits theme variables |
+| Capture cancellation boundary | PARTIAL | Existing source cleanup and panel cancellation are verified; native cancel was not exercised |
+
+No correction was made under 120A. The inability to operate the native picker
+is an environment limitation, not evidence of a StudioFlow capture defect.
+
 ## Safety and release state
 
 No production Worker, production route, production D1/R2 data, authentication, credentials, owner Studio, owner recording, or browser storage was modified. Port 5192 was not started. The D119 production baseline remains unchanged. No production release candidate is declared until native capture, shared-audio routing, actual saved recording, and browser compatibility acceptance pass.

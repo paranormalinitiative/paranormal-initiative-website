@@ -18,6 +18,17 @@ manual acceptance gates. Chrome and Safari are not tested in this record. Do
 not report D120 as complete until those browser-specific gates are exercised
 with disposable sources and decoded media evidence.
 
+## TPI-STUDIOFLOW-120A native-picker result
+
+On 2026-10-31 the installed environment was macOS 27.0 (build `26A428`),
+Chrome `156.0.8078.79`, Firefox Developer Edition `160.0b3`, and Safari
+`27.0`. A disposable Chrome profile reached the native `getDisplayMedia`
+capture boundary for a controlled local tab, but macOS returned assistive
+access error `-25211` when the picker was inspected. No source was selected,
+no permission was changed, and no captured-media recording was created. The
+result is BLOCKED, not a StudioFlow capture pass. Do not bypass the native
+picker or use the owner's existing browser profile.
+
 ## TPI-STUDIOFLOW-119 production verification
 
 The owner-approved Teleprompter release was verified in production only after

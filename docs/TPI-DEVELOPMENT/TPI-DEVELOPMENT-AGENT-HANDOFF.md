@@ -23,6 +23,15 @@ the output is decoded. Safari is not tested. Do not deploy production under
 D120. Preserve the D119 production baseline, port 8787, owner data, and the
 retired 5192 rule.
 
+Directive 120A attempted the real Chrome native boundary on macOS 27.0 using a
+disposable profile and controlled local tab. The request reached
+`getDisplayMedia`, but System Events returned assistive-access error `-25211`,
+so no native picker source was selected. Chrome tab/window/display capture,
+shared audio, actual saved captured-media recording, Firefox native capture
+and Safari capture remain unverified. Do not bypass the picker or use the
+owner's existing Chrome profile. The next safe step is visible owner/manual
+acceptance on port 8787 with disposable sources.
+
 ## TPI-STUDIOFLOW-119 — PRODUCTION BASELINE ESTABLISHED (2026-10-30)
 
 [Directive 119 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-119-CONTROLLED-PRODUCTION-DEPLOYMENT.md).

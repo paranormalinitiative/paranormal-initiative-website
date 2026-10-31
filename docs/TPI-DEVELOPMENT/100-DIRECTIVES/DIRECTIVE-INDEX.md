@@ -28,6 +28,11 @@ panel/regression checks pass, but native picker selection, actual captured
 recording evidence, Chrome and Safari compatibility remain pending. Production
 is unchanged and no deployment is authorized under D120.
 
+Directive 120A reached the Chrome native capture boundary in a disposable
+profile on macOS 27.0, but native picker operation was blocked by macOS
+assistive-access error `-25211`. No captured source or recording was produced;
+the feature remains blocked pending visible owner/manual browser verification.
+
 ## TPI-STUDIOFLOW-119 — Controlled production deployment — Teleprompter 092
 
 Status: **COMPLETE / DEPLOYED_AND_VERIFIED / OWNER APPROVAL CONFIRMED**.
