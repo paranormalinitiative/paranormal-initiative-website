@@ -89,7 +89,7 @@ try {
   await clickAria("Find and replace");
   check("photograph and attachment toolbar controls are present", toolbarLabels.some((label) => label === "Insert photograph") && toolbarLabels.some((label) => label === "Attach file"));
   const title = `D122 disposable note ${Date.now()}`;
-  const collection = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'collection',name:arguments[0],collectionType:'podcast'})}).then(function(r){return r.json();});", `D122 podcast ${Date.now()}`);
+  const collection = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'collection',name:arguments[0],collectionType:'podcast'})}).then(function(r){return r.json();});", `D122 podcast — Paranormal Research and Investigation Resources ${Date.now()}`);
   collectionId = collection.collection?.id || "";
   check("owner-scoped podcast collection can be created", Boolean(collectionId), JSON.stringify(collection));
   const note = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:arguments[0],titleMode:'manual',bodyHtml:'<p>Initial research note</p>',collectionId:arguments[1]})}).then(function(r){return r.json();});", title, collectionId);
@@ -108,6 +108,9 @@ try {
     await waitFor(async () => /Research and production workspace/i.test(await bodyText()));
   }
   check("created note appears after refresh", await waitFor(async () => (await bodyText()).includes(title)));
+  const projectLayout = await js("var id=arguments[0]; var node=document.querySelector('[data-collection-id=\\\"'+id+'\\\"]'); var name=node?.querySelector('.notes-folder-name'); var row=node?.querySelector(':scope > .notes-nav-row'); var action=node?.querySelector(':scope > .notes-nav-row .notes-nav-action'); var nr=name?.getBoundingClientRect(), rr=row?.getBoundingClientRect(), ar=action?.getBoundingClientRect(), s=name&&getComputedStyle(name); return {nameRect:nr?{width:nr.width,height:nr.height}:null,rowRect:rr?{right:rr.right}:null,actionRect:ar?{left:ar.left,right:ar.right}:null,whiteSpace:s?.whiteSpace,overflowWrap:s?.overflowWrap,scrollFits:Boolean(name&&name.scrollWidth<=name.clientWidth+1),actionVisible:Boolean(action&&ar&&ar.width>0&&rr&&ar.right<=rr.right+1)};", collectionId);
+  check("long project names wrap without clipping", Boolean(projectLayout.nameRect && projectLayout.nameRect.height > 18 && projectLayout.scrollFits && projectLayout.whiteSpace === "normal"), JSON.stringify(projectLayout));
+  check("project action menu remains visible beside wrapped names", Boolean(projectLayout.actionVisible), JSON.stringify(projectLayout));
   const automaticCard = await js("var n=Array.from(document.querySelectorAll('.notes-library-card')).find(function(b){return (b.textContent||'').includes('New Note');}); if(n)n.click(); return Boolean(n);", title);
   check("automatic note opens from the library", Boolean(automaticCard) && await waitFor(async () => (await js("return document.querySelector('.notes-title-input')?.value === 'New Note';"))));
   const emptyEditorFocus = await js("var e=document.querySelector('.notes-rich-editor'),s=window.getSelection(),r=s&&s.rangeCount?s.getRangeAt(0):null; return {active:e===document.activeElement,editable:e?.contentEditable==='true',collapsed:Boolean(r?.collapsed),atStart:Boolean(r&&r.startContainer===e&&r.startOffset===0)};");
@@ -158,14 +161,17 @@ try {
   check("checklist control is exposed", Boolean(await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).some(function(b){return (b.getAttribute('aria-label')||'').startsWith('Checklist');});")));
   const activeFormat = await js("var e=document.querySelector('.notes-rich-editor'); var p=e&&e.querySelector('p'); if(!e||!p)return false; var range=document.createRange(); range.selectNodeContents(p); var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range); e.focus(); document.execCommand('bold',false,null); e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'formatBold'})); document.dispatchEvent(new Event('selectionchange')); return true;");
   check("active formatting state is reflected", Boolean(activeFormat) && await waitFor(async () => Boolean(await js("return document.querySelector('.notes-toolbar-button[aria-label^=\"Bold\"]')?.getAttribute('aria-pressed')==='true';"))));
-  const rootFolderName = `D122D folder ${Date.now()}`;
-  const childFolderName = `D122D child ${Date.now()}`;
+  const rootFolderName = `D122D folder — Historical Documents and Long-Term Research Resources ${Date.now()}`;
+  const childFolderName = `D122D child — Interview Questions and Supporting References ${Date.now()}`;
   const renamedFolderName = `${rootFolderName} renamed`;
   check("New Folder control is visible", (await count('button[aria-label="New Folder"]')) >= 1);
   check("New Folder remains accessible with Organization collapsed", Boolean(await clickAria("Collapse organization panel")) && (await count('button[aria-label="New Folder"]')) >= 1 && Boolean(await clickAria("Show organization panel")));
   await js("window.__tpiPromptValue=arguments[0]; window.prompt=function(){return window.__tpiPromptValue;};", rootFolderName);
   const createdRoot = await clickAria("New Folder");
   check("custom folder can be created without a page refresh", createdRoot && await waitFor(async () => (await bodyText()).includes(rootFolderName)));
+  const folderLayout = await js("var wanted=arguments[0]; var node=Array.from(document.querySelectorAll('.notes-folder-tree-node')).find(function(item){return item.querySelector('.notes-folder-name')?.textContent===wanted;}); var name=node?.querySelector('.notes-folder-name'); var row=node?.querySelector(':scope > .notes-nav-row'); var action=node?.querySelector(':scope > .notes-nav-row .notes-nav-action'); var nr=name?.getBoundingClientRect(), rr=row?.getBoundingClientRect(), ar=action?.getBoundingClientRect(), s=name&&getComputedStyle(name); return {nameRect:nr?{width:nr.width,height:nr.height}:null,rowRect:rr?{right:rr.right}:null,actionRect:ar?{left:ar.left,right:ar.right}:null,whiteSpace:s?.whiteSpace,scrollFits:Boolean(name&&name.scrollWidth<=name.clientWidth+1),actionVisible:Boolean(action&&ar&&ar.width>0&&rr&&ar.right<=rr.right+1)};", rootFolderName);
+  check("long folder names wrap without clipping", Boolean(folderLayout.nameRect && folderLayout.nameRect.height > 18 && folderLayout.scrollFits && folderLayout.whiteSpace === "normal"), JSON.stringify(folderLayout));
+  check("folder action menu remains visible beside wrapped names", Boolean(folderLayout.actionVisible), JSON.stringify(folderLayout));
   const rootFolder = await js("var wanted=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){return (b.collections||[]).find(function(item){return item.name===wanted;});});", rootFolderName);
   rootFolderId = rootFolder?.id || "";
   check("new folder is persisted and selected", Boolean(rootFolderId && rootFolder.parentId === null && await js("return arguments[0] === localStorage.getItem('studioflow.notes.collection-selection.v1');", rootFolderId)), JSON.stringify(rootFolder));
@@ -200,10 +206,11 @@ try {
   check("promoted child folder remains available", await waitFor(async () => Boolean(await js("return Boolean(document.querySelector('[data-collection-id=\\\"'+arguments[0]+'\\\"]'));", childFolderId))));
   check("Focus Mode and organization controls remain available", Boolean(await clickAria("Enter focus mode")) && await waitFor(async () => Boolean(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode');"))) && Boolean(await clickAria("Exit focus")) && await waitFor(async () => !(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode');"))));
   await driver.manage().window().setRect({ width: 760, height: 1050, x: 20, y: 20 });
-  await sleep(300);
+  await waitFor(async () => Number(await js("return document.querySelector('.notes-editor-toolbar')?.clientWidth || 0;")) > 0, 2_000);
   const narrowEditorSpacing = await js("var e=document.querySelector('.notes-rich-editor'),s=e&&getComputedStyle(e); return s?{paddingLeft:parseFloat(s.paddingLeft),paddingRight:parseFloat(s.paddingRight)}:null;");
   check("narrow document surface keeps responsive horizontal padding", Boolean(narrowEditorSpacing && narrowEditorSpacing.paddingLeft >= 12 && narrowEditorSpacing.paddingRight >= 12), JSON.stringify(narrowEditorSpacing));
-  check("responsive toolbar avoids horizontal overflow", Boolean(await js("var t=document.querySelector('.notes-editor-toolbar'); return t&&t.scrollWidth<=t.clientWidth+2;")));
+  const narrowToolbar = await js("var t=document.querySelector('.notes-editor-toolbar'), main=document.querySelector('.notes-editor-panel'), grid=document.querySelector('.notes-workspace-grid'); var r=t?.getBoundingClientRect(), mr=main?.getBoundingClientRect(), gr=grid?.getBoundingClientRect(); return {scrollWidth:t?.scrollWidth||0,clientWidth:t?.clientWidth||0,width:r?.width||0,overflowX:t?getComputedStyle(t).overflowX:'missing',main:{width:mr?.width||0,display:main?getComputedStyle(main).display:'missing'},grid:{width:gr?.width||0,display:grid?getComputedStyle(grid).display:'missing',columns:grid?getComputedStyle(grid).gridTemplateColumns:'missing'},groups:Array.from(document.querySelectorAll('.notes-toolbar-group')).map(function(g){return {scrollWidth:g.scrollWidth,clientWidth:g.clientWidth,width:g.getBoundingClientRect().width};})};");
+  check("responsive toolbar avoids horizontal overflow", Boolean(narrowToolbar.scrollWidth <= narrowToolbar.clientWidth + 2), JSON.stringify(narrowToolbar));
   await driver.manage().window().setRect({ width: 1440, height: 1050, x: 20, y: 20 });
   check("private Studio Notes sidebar is implemented", sidebarOpened);
   console.log(JSON.stringify({ status: results.every(result => result.passed) ? "PASS" : "FAIL", suite: "TPI-STUDIOFLOW-122", browser: "Firefox Developer Edition", environment: base, checks: results }, null, 2));

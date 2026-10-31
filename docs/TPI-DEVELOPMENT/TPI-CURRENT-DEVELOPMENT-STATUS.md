@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.3 — COMPLETE / ORGANIZE PANEL VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F3-ORGANIZE-PANEL-SIZING.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now serves
+the bounded responsive Organize-panel correction from source commit
+`7f3a3e37850163d78a97e97fce05693fdf48ea84`. Long project and folder names wrap
+without clipping, three-dot action menus remain visible, the saved Note Library
+resize and organization rail remain functional, and a container-based narrow
+layout prevents horizontal overflow in the space available beside navigation.
+The real Firefox Notes acceptance passes, maintained Firefox passes 64/64,
+release safety passes 21/21, and reproducible staging passes. Production was
+not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.2D — COMPLETE / NOTES DOCUMENT PADDING VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2D-NOTES-EDITOR-PADDING.md).

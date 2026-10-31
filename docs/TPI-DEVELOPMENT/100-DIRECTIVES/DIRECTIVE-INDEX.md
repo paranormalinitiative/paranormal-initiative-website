@@ -5,6 +5,17 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.3 — Automatic Organize panel sizing and name wrapping
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F3-ORGANIZE-PANEL-SIZING.md). Source commit
+`7f3a3e37850163d78a97e97fce05693fdf48ea84` adds bounded organization-panel
+sizing, natural long-name wrapping, fixed action-menu space, and an available-
+width container breakpoint for the existing narrow layout. Real Firefox Notes
+acceptance passes, maintained Firefox is 64/64, release safety is 21/21, and
+reproducible staging matches `index-HFCjseSC.js` and `index-CIEmHEyE.css`.
+Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F.2D — Notes editor padding and document alignment
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

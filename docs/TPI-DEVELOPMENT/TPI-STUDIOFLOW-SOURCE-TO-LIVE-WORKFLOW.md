@@ -48,7 +48,31 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
-## Current local development candidate — TPI-STUDIOFLOW-122F.2D
+## Current local development candidate — TPI-STUDIOFLOW-122F.3
+
+The authoritative `8787` Worker serves the Notes organization-panel sizing
+correction from clean StudioFlow source commit
+`7f3a3e37850163d78a97e97fce05693fdf48ea84` in the isolated
+`codex/studioflow-122-notes` worktree. Project and folder names wrap within a
+bounded organization track, action menus remain visible, and a container query
+activates the existing stacked layout when the available Notes content width is
+narrow. The browser acceptance also verifies the existing collapse/expand rail,
+Note Library resize preference, Focus Mode, editor continuity, and no narrow
+toolbar overflow.
+
+Exact staged assets:
+
+- `/studio/assets/index-HFCjseSC.js` — SHA-256
+  `89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3`
+- `/studio/assets/index-CIEmHEyE.css` — SHA-256
+  `a0e6c7c29f3f72eb3d5ad58110f5d8cc352216ea5efd12766b2c7c7d1761aca8`
+
+The source was built twice from the exact clean commit and passed staging
+verification. Real Firefox Notes acceptance passes, maintained Firefox passes
+64/64, and release safety passes 21/21. This is development only; production
+remains unchanged.
+
+## Historical local development candidate — TPI-STUDIOFLOW-122F.2D
 
 The authoritative `8787` Worker serves the Notes document-padding correction
 from clean StudioFlow source commit

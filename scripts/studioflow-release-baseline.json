@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122F.2D",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes editor document-padding correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.2D.",
+  "recordedDirective": "TPI-STUDIOFLOW-122F.3",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes organization-panel sizing and name-wrapping correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.3.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "6af7b1089fbe38fb85a72590c0017086ff65f6b1"
+    "approvedCommit": "7f3a3e37850163d78a97e97fce05693fdf48ea84"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-DMqbydAn.js",
+      "name": "index-HFCjseSC.js",
       "sha256": "89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3"
     },
     "css": {
-      "name": "index-CeIVL89B.css",
-      "sha256": "35f10a284e564ea006e9bf44831618cc3b6bf38754a6868239cadd253b104f2c"
+      "name": "index-CIEmHEyE.css",
+      "sha256": "a0e6c7c29f3f72eb3d5ad58110f5d8cc352216ea5efd12766b2c7c7d1761aca8"
     }
   }
 }

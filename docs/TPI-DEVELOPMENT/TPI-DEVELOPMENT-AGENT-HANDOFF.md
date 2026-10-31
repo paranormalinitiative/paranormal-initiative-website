@@ -1,5 +1,25 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.3 — ORGANIZE PANEL SIZING COMPLETE (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F3-ORGANIZE-PANEL-SIZING.md).
+
+Continue from StudioFlow source commit
+`7f3a3e37850163d78a97e97fce05693fdf48ea84` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-HFCjseSC.js` (SHA-256
+`89f744d4ca0a889001acb94f2afd6826609a8c64cee02ad23508f0f4da8a14b3`) and
+`index-CIEmHEyE.css` (SHA-256
+`a0e6c7c29f3f72eb3d5ad58110f5d8cc352216ea5efd12766b2c7c7d1761aca8`).
+
+The Notes organization panel now uses bounded automatic sizing, wraps long
+project/folder names, reserves an action-menu slot, and switches to the
+existing stacked layout when the Notes container is narrow. Real Firefox Notes
+acceptance passes, maintained Firefox is 64/64, release safety is 21/21, and
+provenance/staging is reproducible. Production remains unchanged. Do not reset
+the original mixed checkout or unrelated historical worktrees.
+
 ## TPI-STUDIOFLOW-122F.2D — NOTES PADDING COMPLETE (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2D-NOTES-EDITOR-PADDING.md).
