@@ -28,6 +28,7 @@ compatibility work that has not been fully implemented or verified.
 | Source branch | `codex/studioflow-122-notes` |
 | StudioFlow source commit | `96e28a3de4129fb248a32fe0a7f0e0527409ebc9` |
 | Website branch | `codex/tpi-development` |
+| Website integration commit | `d8abc8a` |
 | Local Worker | `http://127.0.0.1:8787/studio/` |
 | Runtime | local Cloudflare Worker (`workerd`) |
 | Local persistence | `.local-dev/state/v3` |

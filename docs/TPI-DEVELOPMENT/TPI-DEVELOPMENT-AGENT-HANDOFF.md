@@ -16,7 +16,8 @@ candidate assets `index-C48-jDnZ.js`
 The focused D122 Firefox check is 18/18, maintained Firefox is 64/64,
 release-safety is 21/21, and reproducible source/staging provenance passes.
 The website branch contains the additive Notes API/schema, manifest, staged
-assets and focused verifier. No production command is authorized for D122.
+assets and focused verifier in website commit `d8abc8a`. No production command
+is authorized for D122.
 
 The implementation is deliberately handed off as PARTIAL. Remaining work is
 full attachment upload/recovery UX, structured research-reference blocks,
