@@ -34,6 +34,7 @@ resizable figure surface. Existing private R2 authorization and the documented
 | Source branch | `codex/studioflow-122-notes` |
 | Source commit | `ef2377f8b92b278bdab67c18d51a44c5a63c3dd9` |
 | Website branch | `codex/tpi-development` |
+| Website commit | `54771c4c3834304636f95e4c38eb38897226c19e` |
 | Authoritative Worker | `http://127.0.0.1:8787/studio/` |
 | Runtime | local Cloudflare Worker (`workerd`) |
 | Local D1/R2 | `.local-dev/state/v3` |

@@ -12,6 +12,9 @@ Continue from StudioFlow source commit
 (`240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`) and
 `index-DNQBejED.css`
 (`75f2a65407810b92b9baea6fb0694bb3f5f802b67154e1044dbc3b9d8d7a3261`).
+Website parity/documentation commit is
+`54771c4c3834304636f95e4c38eb38897226c19e` and matches
+`origin/codex/tpi-development`.
 
 D122F leaves one Notes organization panel with the collapse control beside
 `Organize`, an accessible reopen control when collapsed, and project/episode/

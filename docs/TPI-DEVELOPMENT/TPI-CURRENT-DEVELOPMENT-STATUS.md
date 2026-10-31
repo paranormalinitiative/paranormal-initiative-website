@@ -17,7 +17,8 @@ Source commit `ef2377f8b92b278bdab67c18d51a44c5a63c3dd9` stages JavaScript
 (`240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`) and CSS
 `index-DNQBejED.css`
 (`75f2a65407810b92b9baea6fb0694bb3f5f802b67154e1044dbc3b9d8d7a3261`). The
-focused D122F Firefox check passes 11/11, maintained Notes acceptance passes,
+website parity/documentation commit is `54771c4c3834304636f95e4c38eb38897226c19e`.
+The focused D122F Firefox check passes 11/11, maintained Notes acceptance passes,
 maintained Firefox StudioFlow regression passes 64/64, release safety passes
 21/21, and reproducible staging passes. D122F remains PARTIAL because native
 attachment/recovery, interruption and multi-tab autosave, exhaustive revision
