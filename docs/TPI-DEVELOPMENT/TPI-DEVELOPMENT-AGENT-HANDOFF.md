@@ -1,5 +1,28 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.2 — NOTES ATTACHMENT CONTROLS COMPLETE (2026-10-31)
+
+[Directive 122F.2 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-NOTES-ATTACHMENT-CONTROLS.md).
+
+Continue from StudioFlow source commit
+`009211f13a1dd8ef6c7caed7fa94840eba7337b1` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-52sL-vjB.js`
+(`6c7d5871f41bc1d3e30d56648e73d39a372e3acf1f90df507c266e4a34a641e5`) and
+`index-ChghdUBo.css`
+(`b7d6b2e0c427c3a79857268926ceeb2613fa4edd0eb140934e460aace57e8e2d`).
+
+The Notes editor retains the toolbar Insert photograph and Attach file
+controls. The duplicate above-toolbar Attach files chooser and permanent
+footer chooser are removed. Editor drag/drop and clipboard handling remain
+available; the empty-editor footer uses a contextual hint, and existing
+attachments display as private filename/size links. Focused Notes acceptance,
+rail checks, maintained Firefox, release safety, and provenance all pass.
+Native file chooser and real clipboard/drag media bytes remain part of the
+broader D122 attachment/recovery gap and are not newly claimed as executed.
+Production remains unchanged.
+
 ## TPI-STUDIOFLOW-122F.1 — NOTES ORGANIZATION RAIL COMPLETE (2026-10-31)
 
 [Directive 122F.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F1-NOTES-ORGANIZATION-RAIL.md).

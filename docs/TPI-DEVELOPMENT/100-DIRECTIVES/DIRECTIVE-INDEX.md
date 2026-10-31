@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.2 — Notes attachment controls and interface cleanup
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F2-NOTES-ATTACHMENT-CONTROLS.md). Source
+commit `009211f13a1dd8ef6c7caed7fa94840eba7337b1` stages the retained toolbar
+photograph and paperclip actions, removes the duplicate above-toolbar Attach
+Files control, and preserves editor drag/drop and clipboard behavior. Focused
+Notes acceptance, maintained Firefox 64/64, release safety 21/21 and
+provenance verification pass. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F.1 — Organization collapse button correction
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

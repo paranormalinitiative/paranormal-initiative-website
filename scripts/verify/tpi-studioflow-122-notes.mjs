@@ -6,6 +6,7 @@ import { Builder } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 
 const repoRoot = resolve(import.meta.dirname, "../..");
+const sourceFile = "/Users/toddknipple/Documents/StudioFlow/web-122/src/NotesView.tsx";
 const base = (process.env.TPI_FIREFOX_BASE_URL || "http://127.0.0.1:8787").replace(/\/$/, "");
 const binary = process.env.TPI_FIREFOX_BINARY || "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox";
 const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodriver";
@@ -76,6 +77,10 @@ try {
   const toolbarLabels = await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).map(function(b){return b.getAttribute('aria-label')||'';});");
   const requiredToolbarLabels = ["Bold", "Italic", "Underline", "Strikethrough", "Heading style", "Bulleted list", "Numbered list", "Checklist", "Alignment", "Block quote", "Horizontal divider", "Insert link", "Table", "Insert photograph", "Attach file", "Highlight color", "Text color", "Clear formatting", "Undo", "Redo", "Find and replace"];
   check("required editing tools use accessible icon controls", requiredToolbarLabels.every((label) => toolbarLabels.some((value) => value.startsWith(label))), JSON.stringify(toolbarLabels));
+  check("photograph and attachment toolbar controls are present", toolbarLabels.includes("Insert photograph") && toolbarLabels.includes("Attach file"), JSON.stringify(toolbarLabels));
+  check("redundant editor Attach Files control is absent", Number(await js("return document.querySelectorAll('.notes-attach-button').length;")) === 0);
+  check("editor footer has no duplicate file chooser", Number(await js("return document.querySelectorAll('.notes-editor-footer input[type=file], .notes-editor-footer label').length;")) === 0);
+  check("drag and paste guidance is contextual", readFileSync(sourceFile, "utf8").includes("notes-attachment-hint") && !readFileSync(sourceFile, "utf8").includes("Drop or paste photographs into the note"));
   check("toolbar tooltips identify commands", Boolean(await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).filter(function(b){return b.getAttribute('aria-label');}).every(function(b){return Boolean(b.getAttribute('title'));});")));
   check("heading dropdown opens", Boolean(await clickAria("Heading style")) && await waitFor(async () => (await count('.notes-toolbar-menu[role=menu]')) > 0 && /Heading 1/.test(await bodyText())));
   await js("var n=Array.from(document.querySelectorAll('.notes-toolbar-menu button')).find(function(b){return b.textContent.trim()==='Normal text';}); if(n)n.click();");

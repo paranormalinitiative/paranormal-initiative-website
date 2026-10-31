@@ -1,5 +1,23 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122F.2 Notes attachment-control verification
+
+The D122F.2 candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. The maintained disposable Firefox Notes
+verifier passes **64/64**, including the retained `Insert photograph` and
+`Attach file` toolbar controls, absence of the duplicate above-toolbar chooser,
+absence of a duplicate footer file input, contextual drag/paste guidance,
+autosave, folder, title, editor, and sidebar checks. The focused D122F.1 rail
+verifier passes **13/13**, maintained Firefox passes **64/64**, release safety
+passes **21/21**, and the source-provenance workflow passes reproducible-build
+and staged-asset verification.
+
+The correction did not change attachment storage, authorization, file limits,
+note content, autosave, or revisions. Native OS file chooser selection,
+real clipboard image bytes, and real drag/drop media transfer remain unverified
+within this targeted UI directive and remain part of the broader D122
+attachment/recovery acceptance gap. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122D User-created folder verification
 
 The D122D candidate is staged only on the authoritative local Worker at

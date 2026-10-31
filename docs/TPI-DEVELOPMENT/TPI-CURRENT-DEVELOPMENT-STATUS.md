@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.2 — COMPLETE / NOTES ATTACHMENT CONTROLS VERIFIED (2026-10-31)
+
+[Directive 122F.2 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-NOTES-ATTACHMENT-CONTROLS.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now keeps
+the toolbar photograph and paperclip actions as the two attachment entry
+points, removes the duplicate Attach Files control above the toolbar, and
+replaces the permanent footer chooser with a contextual drag/paste hint.
+Existing private attachment links, metadata, captions, drag/drop, clipboard
+handling, autosave and revisions remain intact.
+
+Source commit
+`009211f13a1dd8ef6c7caed7fa94840eba7337b1` stages JavaScript
+`index-52sL-vjB.js`
+(`6c7d5871f41bc1d3e30d56648e73d39a372e3acf1f90df507c266e4a34a641e5`) and CSS
+`index-ChghdUBo.css`
+(`b7d6b2e0c427c3a79857268926ceeb2613fa4edd0eb140934e460aace57e8e2d`).
+Focused Notes acceptance passes, D122F.1 rail checks pass 13/13, maintained
+Firefox passes 64/64, release safety passes 21/21 and provenance verification
+passes. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.1 — COMPLETE / NOTES ORGANIZATION RAIL VERIFIED (2026-10-31)
 
 [Directive 122F.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F1-NOTES-ORGANIZATION-RAIL.md).

@@ -80,7 +80,29 @@ real Firefox acceptance 57/57. No database migration was required because the
 existing migration 0055 `parent_id` relationship already supports nested
 collections. This is a development-only candidate; production is unchanged.
 
-## Current local development candidate — TPI-STUDIOFLOW-122F.1
+## Current local development candidate — TPI-STUDIOFLOW-122F.2
+
+The authoritative `8787` Worker now serves the D122F.2 Notes attachment
+control cleanup from isolated StudioFlow source commit
+`009211f13a1dd8ef6c7caed7fa94840eba7337b1`. The toolbar photograph and
+paperclip controls are the retained chooser actions; the duplicate
+above-toolbar Attach Files control and permanent footer chooser are removed.
+Editor drag/drop and clipboard insertion remain available.
+
+Exact staged assets:
+
+- `/studio/assets/index-52sL-vjB.js` — SHA-256
+  `6c7d5871f41bc1d3e30d56648e73d39a372e3acf1f90df507c266e4a34a641e5`
+- `/studio/assets/index-ChghdUBo.css` — SHA-256
+  `b7d6b2e0c427c3a79857268926ceeb2613fa4edd0eb140934e460aace57e8e2d`
+
+The exact source-provenance workflow built the clean source twice and passed
+`--verify-only` after staging. Focused Notes acceptance passes, the
+D122F.1 rail verifier passes 13/13, maintained Firefox passes 64/64 and
+release safety passes 21/21. This is a development-only candidate; production
+was not modified or deployed.
+
+## Historical local development candidate — TPI-STUDIOFLOW-122F.1
 
 The authoritative `8787` Worker now serves the D122F.1 Notes organization rail
 correction from isolated StudioFlow source commit
