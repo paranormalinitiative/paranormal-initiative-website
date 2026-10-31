@@ -1,5 +1,28 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.2C — FINAL NOTES FOCUS STYLING CORRECTION (2026-10-31)
+
+Continue from StudioFlow source commit
+`eb6d09d991d851d8f92853e60a2ecb8c0f934e87` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-BZJV5-la.js`
+(`a06403c49de188a6e5d534f00512e05da58271dde48f74bafe4598ae6d1306af`) and
+`index-CfXSYfAg.css`
+(`ca4a20d0bbf23696f0baad2bdbe2c7f6f1961f1190b654457eccc4adcd33f415`).
+
+The remaining green editor bottom line was the scoped
+`.notes-rich-editor:focus-visible` inset shadow. It is removed; focus now uses
+only a subtle shared-token surface tint and keeps the caret and keyboard
+accessibility. Live Firefox computed-style verification passes with no shadow,
+bottom border, or outline and a non-transparent caret color. Maintained Firefox
+passes 64/64, release safety passes 21/21, and provenance/staging passes.
+
+The full disposable Notes harness stalled before producing a result; do not
+claim the broader Notes acceptance as passed. The inherited D122F.2B
+attachment/image persistence gaps remain separate and unresolved. Production
+remains unchanged; do not deploy under D122F.2C.
+
 ## TPI-STUDIOFLOW-122F.2B — INDIVIDUAL IMAGE REMOVAL PARTIAL (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2B-NOTES-IMAGE-REMOVAL.md).

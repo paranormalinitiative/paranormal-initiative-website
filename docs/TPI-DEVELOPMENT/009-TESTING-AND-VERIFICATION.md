@@ -1,5 +1,18 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122F.2C Final Notes editor focus styling
+
+The D122F.2C candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. The remaining green bottom cue was traced to
+the `.notes-rich-editor:focus-visible` inset `box-shadow`; it was removed and
+replaced with a scoped theme-token background tint. A live Firefox
+Developer Edition check reported no editor shadow, bottom border, or outline,
+with a non-transparent caret color. The full disposable Notes harness stalled
+before producing a result, so the broader Notes suite is **UNVERIFIED** here;
+the maintained Firefox regression passes **64/64**, release safety passes
+**21/21**, and source/staging provenance passes. Production was not modified or
+deployed.
+
 ## TPI-STUDIOFLOW-122F.2B Individual image removal
 
 The D122F.2B candidate is staged only on the authoritative local Worker at

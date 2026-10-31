@@ -1,5 +1,23 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.2C — COMPLETE / FINAL NOTES FOCUS STYLING VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2C-NOTES-FOCUS-STYLING.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now serves
+the final Notes editor focus correction from source commit
+`eb6d09d991d851d8f92853e60a2ecb8c0f934e87`. The remaining green horizontal
+line was the scoped `.notes-rich-editor:focus-visible` inset shadow; it has
+been removed. The editor retains a visible caret and uses a subtle theme-token
+surface tint for accessible focus without a rectangle, border, outline, or
+replacement line.
+
+Live Firefox computed-style verification passes. Maintained Firefox passes
+64/64, release safety passes 21/21, and exact reproducible source/staging
+provenance passes. The broader disposable Notes harness stalled before a
+result and remains unverified; inherited D122F.2B image persistence gaps are
+unchanged. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.2B — PARTIAL / INDIVIDUAL IMAGE REMOVAL VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2B-NOTES-IMAGE-REMOVAL.md).

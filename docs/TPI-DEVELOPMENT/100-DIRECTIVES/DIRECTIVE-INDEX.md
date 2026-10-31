@@ -5,6 +5,17 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.2C — Final Notes editor focus styling correction
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F2C-NOTES-FOCUS-STYLING.md). Source commit
+`eb6d09d991d851d8f92853e60a2ecb8c0f934e87` removes the remaining green
+`:focus-visible` bottom inset shadow from the Notes editor and retains a
+scoped, theme-token focus tint and visible caret. Live Firefox computed-style
+verification passes; maintained Firefox is 64/64, release safety is 21/21, and
+source/staging provenance passes. The broader disposable Notes harness stalled
+and remains unverified. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F.2B — Individual image removal in Notes
 
 Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

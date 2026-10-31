@@ -48,7 +48,28 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
-## Current local development candidate — TPI-STUDIOFLOW-122F.2B
+## Current local development candidate — TPI-STUDIOFLOW-122F.2C
+
+The authoritative `8787` Worker serves the development-only final Notes editor
+focus-styling correction from isolated StudioFlow source commit
+`eb6d09d991d851d8f92853e60a2ecb8c0f934e87`. The bottom-only
+`.notes-rich-editor:focus-visible` inset shadow is removed; the editor keeps a
+subtle shared-token surface tint, caret, and scoped keyboard focus indication.
+
+Exact staged assets:
+
+- `/studio/assets/index-BZJV5-la.js` — SHA-256
+  `a06403c49de188a6e5d534f00512e05da58271dde48f74bafe4598ae6d1306af`
+- `/studio/assets/index-CfXSYfAg.css` — SHA-256
+  `ca4a20d0bbf23696f0baad2bdbe2c7f6f1961f1190b654457eccc4adcd33f415`
+
+Live Firefox computed-style verification passes for no box shadow, no bottom
+border, no outline, and a visible caret color. Maintained Firefox passes
+64/64, release safety passes 21/21, and exact reproducible staging passes.
+The broader disposable Notes harness stalled and remains unverified. This is
+a development-only candidate; production was not modified or deployed.
+
+## Historical local development candidate — TPI-STUDIOFLOW-122F.2B
 
 The authoritative `8787` Worker now serves the D122F.2B individual embedded
 image-removal correction from isolated StudioFlow source commit
