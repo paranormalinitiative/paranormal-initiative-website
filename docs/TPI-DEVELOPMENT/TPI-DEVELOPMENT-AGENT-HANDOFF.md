@@ -1,5 +1,26 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122B — AUTOMATIC NOTE TITLES COMPLETE (2026-10-31)
+
+[Directive 122B execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122B-AUTOMATIC-NOTE-TITLES.md).
+
+Continue from StudioFlow source commit
+`8a68c677fa8c29cd2dffe3fc7edb29ef1a9919a5` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-BkV9BhfI.js`
+(`140141d76481fa3288fea1560ba564e59887e7e0c9a0c93952b7b0624adc6040`) and
+`index-DCzHEnai.css`
+(`c0a544549f0d440a3c017a3c4098158e62610b8cc36d7222b71cbeaaba9ece2c`).
+
+Automatic naming is complete for this refinement: `New Note` is the empty
+automatic title, the first meaningful rendered line updates the title through
+autosave, direct title editing establishes manual mode, and More editing tools
+can restore automatic mode. Existing note rows are preserved as manual by
+additive migration 0056. Real Firefox acceptance passes 40/40, maintained
+Firefox passes 64/64, and release-safety passes 21/21. Production remains on
+the D121 baseline and must not be deployed under D122B.
+
 ## TPI-STUDIOFLOW-122A — CONNECTED NOTES REFINEMENT PARTIAL (2026-10-31)
 
 [Directive 122A execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122A-CONNECTED-NOTES-WORKSPACE.md).

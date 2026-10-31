@@ -16,6 +16,16 @@ and
 [`../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md`](../TPI-STUDIOFLOW-SOURCE-TO-LIVE-WORKFLOW.md)
 for current commit, push, deployment, and live-verification procedure.
 
+## TPI-STUDIOFLOW-122B — Automatic note titles
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122B-AUTOMATIC-NOTE-TITLES.md). Source
+commit `8a68c677fa8c29cd2dffe3fc7edb29ef1a9919a5` stages automatic `New Note`
+title generation, live first-line updates, manual override and restoration,
+and autosave persistence on port 8787. Real Firefox acceptance passes 40/40;
+maintained Firefox passes 64/64 and release-safety passes 21/21. Existing
+titles were preserved by additive migration 0056. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122A — Connected Notes workspace, resizable panels and professional toolbar
 
 Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

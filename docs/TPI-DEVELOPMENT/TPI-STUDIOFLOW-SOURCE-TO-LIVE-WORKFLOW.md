@@ -41,14 +41,30 @@ The authoritative owner-used StudioFlow development entry point is:
 | Studio and media persistence | Server Studio workspace/media records in local D1/R2, with the existing StudioFlow browser-local broadcast/library/IndexedDB layers retained by the app |
 | Production relationship | Development only; it does not update production and no production deployment is implied |
 
-The current local Worker serves the reviewed Directive 118 Teleprompter
-sidebar correction and creation-order candidate. A source revision is not
-present on this localhost merely because it exists in an isolated StudioFlow
-worktree or preview. The exact candidate was built from a clean source
-worktree, verified reproducible, and then used for the owner-approved D119
-production release.
+The current local Worker serves the latest explicitly staged development
+candidate recorded below. A source revision is not present on this localhost
+merely because it exists in an isolated StudioFlow worktree or preview. Every
+candidate must be built from a clean source worktree, verified reproducible,
+and staged through the provenance-checked workflow. Historical candidate
+records remain below for release traceability.
 
-## Current local development candidate — TPI-STUDIOFLOW-118
+## Current local development candidate — TPI-STUDIOFLOW-122B
+
+The authoritative `8787` Worker currently serves the development-only D122B
+automatic Notes title refinement from isolated StudioFlow source commit
+`8a68c677fa8c29cd2dffe3fc7edb29ef1a9919a5`. Its exact staged assets are:
+
+- `/studio/assets/index-BkV9BhfI.js` — SHA-256
+  `140141d76481fa3288fea1560ba564e59887e7e0c9a0c93952b7b0624adc6040`
+- `/studio/assets/index-DCzHEnai.css` — SHA-256
+  `c0a544549f0d440a3c017a3c4098158e62610b8cc36d7222b71cbeaaba9ece2c`
+
+The candidate was built twice from the exact clean source commit, matched the
+maintained release baseline, and passed real Firefox D122B acceptance 40/40,
+maintained Firefox regression 64/64 and release-safety 21/21. It is not a
+production release. No production deployment is authorized by D122B.
+
+## Historical local development candidate record — TPI-STUDIOFLOW-118
 
 The authoritative `8787` Worker currently serves the exact isolated source
 revision `244993beab7f9fbba7ee89376a3b3dea616fa62a`, whose parent is the D117
@@ -70,7 +86,7 @@ saved-script selection, transparent private stage reader controls, decoded
 non-silent recording audio, playable video and frame-level canary privacy. It is
 a development candidate for owner testing, not a production release.
 
-## Current local development candidate — TPI-STUDIOFLOW-122A
+## Historical local development candidate record — TPI-STUDIOFLOW-122A
 
 The authoritative `8787` Worker currently serves the D122A Notes refinement
 from isolated StudioFlow source commit

@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122A",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the connected Notes workspace and professional editor toolbar. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122A.",
+  "recordedDirective": "TPI-STUDIOFLOW-122B",
+  "description": "Development-only approved StudioFlow source identity and generated assets for automatic Notes titles. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122B.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "fd4d2758f689f4731516055887cbac4df5c1f3dd"
+    "approvedCommit": "8a68c677fa8c29cd2dffe3fc7edb29ef1a9919a5"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-6-25XtSS.js",
-      "sha256": "70d7b5124a134765e606b493710f06316410157ef790702a38d8bd85004e4b2e"
+      "name": "index-BkV9BhfI.js",
+      "sha256": "140141d76481fa3288fea1560ba564e59887e7e0c9a0c93952b7b0624adc6040"
     },
     "css": {
       "name": "index-DCzHEnai.css",

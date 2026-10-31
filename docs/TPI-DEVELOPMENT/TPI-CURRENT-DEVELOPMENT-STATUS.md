@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122B — COMPLETE / AUTOMATIC NOTE TITLES VERIFIED (2026-10-31)
+
+[Directive 122B execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122B-AUTOMATIC-NOTE-TITLES.md).
+
+Automatic note titles are implemented on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/` from isolated StudioFlow source commit
+`8a68c677fa8c29cd2dffe3fc7edb29ef1a9919a5`. New Notes begin as `New Note`,
+derive titles from the first meaningful rendered text line, update live while
+automatic mode is active, and persist through the existing autosave/version
+boundary. Direct title editing switches to manual mode; **Use automatic title**
+restores generation. Existing notes default to manual through additive migration
+0056, so historical titles are not rewritten.
+
+The staged assets are `index-BkV9BhfI.js`
+(`140141d76481fa3288fea1560ba564e59887e7e0c9a0c93952b7b0624adc6040`) and
+`index-DCzHEnai.css`
+(`c0a544549f0d440a3c017a3c4098158e62610b8cc36d7222b71cbeaaba9ece2c`). Real
+Firefox D122B acceptance passes 40/40, maintained Firefox regression passes
+64/64, release-safety passes 21/21, and reproducible source/staging checks
+pass. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122A — PARTIAL / CONNECTED NOTES REFINEMENT VERIFIED (2026-10-31)
 
 [Directive 122A execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122A-CONNECTED-NOTES-WORKSPACE.md).

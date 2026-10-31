@@ -1,5 +1,22 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122B Automatic note-title verification
+
+The D122B candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. The real disposable Firefox Developer Edition
+verifier `scripts/verify/tpi-studioflow-122-notes.mjs` passes **40/40**,
+including `New Note` initialization, first meaningful line generation,
+formatted/block-line handling, live updates, autosave persistence, manual title
+override, stable manual mode and restoration of automatic naming. The maintained
+Firefox StudioFlow regression passes **64/64** and release-safety passes
+**21/21**. The source-provenance staging workflow passes exact source identity,
+reproducible-build and staged-asset hash checks.
+
+The additive migration 0056 defaults existing notes to manual mode and does not
+rewrite historical titles. Production was not modified or deployed. The broader
+D122 attachment, structured research-reference, exhaustive concurrency and
+unexecuted browser/device matrices remain governed by the parent D122 records.
+
 ## TPI-STUDIOFLOW-122A Notes refinement verification
 
 The D122A candidate is staged only on the authoritative local Worker at

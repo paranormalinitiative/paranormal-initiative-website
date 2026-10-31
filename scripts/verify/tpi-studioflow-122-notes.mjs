@@ -33,6 +33,7 @@ async function clickAria(label) { return Boolean(await js("var label=arguments[0
 
 let noteId = "";
 let collectionId = "";
+let autoNoteId = "";
 try {
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 60_000 });
   await driver.manage().window().setRect({ width: 1440, height: 1050, x: 20, y: 20 });
@@ -75,9 +76,12 @@ try {
   const collection = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'collection',name:arguments[0],collectionType:'podcast'})}).then(function(r){return r.json();});", `D122 podcast ${Date.now()}`);
   collectionId = collection.collection?.id || "";
   check("owner-scoped podcast collection can be created", Boolean(collectionId), JSON.stringify(collection));
-  const note = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:arguments[0],bodyHtml:'<p>Initial research note</p>',collectionId:arguments[1]})}).then(function(r){return r.json();});", title, collectionId);
+  const note = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:arguments[0],titleMode:'manual',bodyHtml:'<p>Initial research note</p>',collectionId:arguments[1]})}).then(function(r){return r.json();});", title, collectionId);
   noteId = note.note?.id || "";
   check("owner-scoped note can be created", Boolean(noteId), JSON.stringify(note));
+  const automaticNote = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:'New Note',titleMode:'automatic',bodyHtml:'',collectionId:arguments[0]})}).then(function(r){return r.json();});", collectionId);
+  autoNoteId = automaticNote.note?.id || "";
+  check("new notes begin with New Note", Boolean(autoNoteId && automaticNote.note?.title === "New Note" && automaticNote.note?.titleMode === "automatic"), JSON.stringify(automaticNote));
   check("Notes route persists before refresh", await js("return localStorage.getItem('studioflow.route') === '\"notes\"' && sessionStorage.getItem('studioflow.notesWorkspaceIntent.v1') === '1';"), JSON.stringify(await js("return {route:localStorage.getItem('studioflow.route'),intent:sessionStorage.getItem('studioflow.notesWorkspaceIntent.v1')};")));
   await driver.navigate().refresh();
   await waitFor(async () => /\bNotes\b/.test(await bodyText()));
@@ -88,6 +92,20 @@ try {
     await waitFor(async () => /Research and production workspace/i.test(await bodyText()));
   }
   check("created note appears after refresh", await waitFor(async () => (await bodyText()).includes(title)));
+  const automaticCard = await js("var n=Array.from(document.querySelectorAll('.notes-library-card')).find(function(b){return (b.textContent||'').includes('New Note');}); if(n)n.click(); return Boolean(n);", title);
+  check("automatic note opens from the library", Boolean(automaticCard) && await waitFor(async () => (await js("return document.querySelector('.notes-title-input')?.value === 'New Note';"))));
+  await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML='<p>The History of Electronic Voice Phenomena</p><p>Second line remains in the editor.</p>'; e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
+  check("first meaningful line generates the title", await waitFor(async () => (await js("return document.querySelector('.notes-title-input')?.value === 'The History of Electronic Voice Phenomena';"))));
+  check("generated title persists through autosave", await waitFor(async () => Boolean(await js("var id=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){var n=(b.notes||[]).find(function(item){return item.id===id;}); return n&&n.title==='The History of Electronic Voice Phenomena'&&n.titleMode==='automatic';}).catch(function(){return false;});", autoNoteId)), 10_000));
+  await js("var i=document.querySelector('.notes-title-input'); if(i){var setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; setter.call(i,'Custom Research Title'); i.dispatchEvent(new Event('input',{bubbles:true}));}");
+  await sleep(500);
+  await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML='<p>A different first line</p>'; e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
+  check("manual title override remains stable", await waitFor(async () => Boolean(await js("return document.querySelector('.notes-title-input')?.value === 'Custom Research Title';"))));
+  check("manual title mode persists", await waitFor(async () => Boolean(await js("var id=arguments[0]; return fetch('/api/notes?status=all',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){var n=(b.notes||[]).find(function(item){return item.id===id;}); return n&&n.title==='Custom Research Title'&&n.titleMode==='manual';}).catch(function(){return false;});", autoNoteId)), 10_000));
+  await clickAria("More editing tools");
+  await js("var n=Array.from(document.querySelectorAll('.notes-toolbar-menu button')).find(function(b){return b.textContent.trim()==='Use automatic title';}); if(n)n.click();");
+  await js("var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML='<p>Restored Automatic Naming</p>'; e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}");
+  check("automatic naming can be restored", await waitFor(async () => Boolean(await js("return document.querySelector('.notes-title-input')?.value === 'Restored Automatic Naming';"))));
   const card = await js("var label=arguments[0]; var cards=Array.from(document.querySelectorAll('button')); var n=cards.find(function(b){return b.className && String(b.className).indexOf('notes-library-card')!==-1 && (b.textContent||'').includes(label);}); if(n)n.click(); var panel=document.querySelector('.notes-library-panel'); return {found:Boolean(n), count:cards.filter(function(b){return String(b.className).indexOf('notes-library-card')!==-1;}).length, bodyHas:document.body.innerText.includes(label), html:panel?.outerHTML?.slice(0,1400)||'', editorCount:document.querySelectorAll('.notes-rich-editor').length, route:localStorage.getItem('studioflow.route'), body:document.body.innerText.slice(0,260)};", title);
   check("note opens from the library", Boolean(card?.found) && await waitFor(async () => (await count('.notes-rich-editor')) === 1), JSON.stringify(card));
   await js("var n=document.querySelector('.notes-title-input'); if(n){n.value=arguments[0]; n.dispatchEvent(new Event('input',{bubbles:true})); n.dispatchEvent(new Event('change',{bubbles:true}));} var e=document.querySelector('.notes-rich-editor'); if(e){e.innerHTML='<p><strong>Crossroads research</strong> with a controlled D122 edit.</p>'; e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText'}));}", `${title} edited`);

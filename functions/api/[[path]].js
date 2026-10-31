@@ -4578,6 +4578,7 @@ function sameOriginMutationAllowed(request) {
 // Home and from any recording Studio without duplicating documents.
 const NOTE_MAX_BODY_BYTES = 512 * 1024;
 const NOTE_ATTACHMENT_LIMITS = Object.freeze({ image: 32 * 1024 * 1024, document: 50 * 1024 * 1024, audio: 50 * 1024 * 1024, text: 10 * 1024 * 1024 });
+const NOTE_TITLE_LIMIT = 80;
 const NOTE_ALLOWED_TYPES = new Set([
   "image/jpeg", "image/png", "image/webp", "image/gif",
   "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -4618,6 +4619,7 @@ function notePayload(row, attachments = []) {
     id: row.id,
     collectionId: row.collection_id || null,
     title: row.title,
+    titleMode: row.title_mode === "automatic" ? "automatic" : "manual",
     bodyHtml: row.body_html || "",
     bodyText: row.body_text || "",
     status: row.status || "active",
@@ -4645,6 +4647,11 @@ function stripNoteMarkup(value) {
     .trim();
 }
 
+function automaticNoteTitle(value) {
+  const firstMeaningfulLine = stripNoteMarkup(value).split(/\r?\n/).map(line => line.trim()).find(Boolean) || "";
+  return firstMeaningfulLine.replace(/\s+/g, " ").slice(0, NOTE_TITLE_LIMIT).trim() || "New Note";
+}
+
 function sanitizeNoteHtml(value) {
   let html = String(value || "").slice(0, NOTE_MAX_BODY_BYTES);
   html = html
@@ -4667,7 +4674,7 @@ function noteSchemaFailure(error) {
 
 async function getOwnedNote(env, id, ownerId) {
   return env.TPI_DB.prepare(`
-    SELECT id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at
+    SELECT id, owner_id, collection_id, title, title_mode, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at
     FROM studio_notes WHERE id = ? AND owner_id = ? LIMIT 1
   `).bind(id, ownerId).first();
 }
@@ -4699,7 +4706,7 @@ async function handleListNotes(request, env, user) {
       binds.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
     const { results: noteRows } = await env.TPI_DB.prepare(`
-      SELECT id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at
+      SELECT id, owner_id, collection_id, title, title_mode, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at
       FROM studio_notes WHERE ${filters.join(" AND ")}
       ORDER BY is_pinned DESC, updated_at DESC, created_at DESC, id ASC LIMIT 500
     `).bind(...binds).all();
@@ -4744,13 +4751,14 @@ async function handleCreateNoteResource(request, env, user) {
       const row = await env.TPI_DB.prepare("SELECT id, parent_id, name, collection_type, created_at, updated_at FROM studio_note_collections WHERE id = ? AND owner_id = ?").bind(collection.id, user.id).first();
       return json({ collection: noteCollectionPayload(row) }, 201, { "Cache-Control": "private, no-store" });
     }
-    const title = clean(data.title).slice(0, 240) || "Untitled note";
+    const titleMode = data.titleMode === "manual" ? "manual" : "automatic";
     const bodyHtml = sanitizeNoteHtml(data.bodyHtml || "");
     const bodyText = stripNoteMarkup(bodyHtml).slice(0, NOTE_MAX_BODY_BYTES);
+    const title = titleMode === "automatic" ? automaticNoteTitle(bodyHtml) : clean(data.title).slice(0, 240) || "New Note";
     const now = new Date().toISOString();
-    const note = { id: crypto.randomUUID(), owner_id: user.id, collection_id: clean(data.collectionId) || null, title, body_html: bodyHtml, body_text: bodyText, status: "active", is_favorite: 0, is_pinned: 0, version: 1, created_at: now, updated_at: now };
-    await env.TPI_DB.prepare(`INSERT INTO studio_notes (id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .bind(note.id, user.id, note.collection_id, title, bodyHtml, bodyText, "active", 0, 0, 1, now, now).run();
+    const note = { id: crypto.randomUUID(), owner_id: user.id, collection_id: clean(data.collectionId) || null, title, title_mode: titleMode, body_html: bodyHtml, body_text: bodyText, status: "active", is_favorite: 0, is_pinned: 0, version: 1, created_at: now, updated_at: now };
+    await env.TPI_DB.prepare(`INSERT INTO studio_notes (id, owner_id, collection_id, title, title_mode, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .bind(note.id, user.id, note.collection_id, title, titleMode, bodyHtml, bodyText, "active", 0, 0, 1, now, now).run();
     await createNoteRevision(env, note, title, bodyHtml, bodyText);
     return json({ note: notePayload(note) }, 201, { "Cache-Control": "private, no-store" });
   } catch (error) {
@@ -4776,14 +4784,15 @@ async function handleUpdateNoteResource(path, request, env, user) {
     if (!existing) return json({ error: "Note not found." }, 404);
     const expected = data.expectedVersion == null ? Number(existing.version) : Number(data.expectedVersion);
     if (!Number.isInteger(expected) || expected !== Number(existing.version)) return json({ error: "This note changed elsewhere. Refresh before saving again.", code: "note_conflict", note: notePayload(existing) }, 409, { "Cache-Control": "no-store" });
-    const title = clean(data.title ?? existing.title).slice(0, 240) || "Untitled note";
     const bodyHtml = sanitizeNoteHtml(data.bodyHtml ?? existing.body_html);
     const bodyText = stripNoteMarkup(bodyHtml).slice(0, NOTE_MAX_BODY_BYTES);
+    const titleMode = data.titleMode === "automatic" ? "automatic" : data.titleMode === "manual" ? "manual" : (existing.title_mode === "automatic" ? "automatic" : "manual");
+    const title = titleMode === "automatic" ? automaticNoteTitle(bodyHtml) : clean(data.title ?? existing.title).slice(0, 240) || "New Note";
     const nextVersion = Number(existing.version) + 1;
     const now = new Date().toISOString();
     await createNoteRevision(env, { ...existing, version: nextVersion }, title, bodyHtml, bodyText, Array.isArray(data.attachmentIds) ? data.attachmentIds.slice(0, 100) : []);
-    const result = await env.TPI_DB.prepare(`UPDATE studio_notes SET collection_id = ?, title = ?, body_html = ?, body_text = ?, is_favorite = ?, is_pinned = ?, version = ?, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?`)
-      .bind(clean(data.collectionId ?? existing.collection_id) || null, title, bodyHtml, bodyText, data.favorite === undefined ? existing.is_favorite : (data.favorite ? 1 : 0), data.pinned === undefined ? existing.is_pinned : (data.pinned ? 1 : 0), nextVersion, now, id, user.id, expected).run();
+    const result = await env.TPI_DB.prepare(`UPDATE studio_notes SET collection_id = ?, title = ?, title_mode = ?, body_html = ?, body_text = ?, is_favorite = ?, is_pinned = ?, version = ?, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?`)
+      .bind(clean(data.collectionId ?? existing.collection_id) || null, title, titleMode, bodyHtml, bodyText, data.favorite === undefined ? existing.is_favorite : (data.favorite ? 1 : 0), data.pinned === undefined ? existing.is_pinned : (data.pinned ? 1 : 0), nextVersion, now, id, user.id, expected).run();
     if (!result.meta?.changes) return json({ error: "This note changed elsewhere. Refresh before saving again.", code: "note_conflict" }, 409, { "Cache-Control": "no-store" });
     const updated = await getOwnedNote(env, id, user.id);
     const attachments = await getOwnedNoteAttachments(env, [id], user.id);
@@ -4819,9 +4828,9 @@ async function handleNoteAction(path, request, env, user) {
     if (action === "duplicate") {
       const now = new Date().toISOString();
       const newId = crypto.randomUUID();
-      const copy = { ...existing, id: newId, title: `${existing.title} copy`, version: 1, created_at: now, updated_at: now };
-      await env.TPI_DB.prepare(`INSERT INTO studio_notes (id, owner_id, collection_id, title, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 'active', 0, 0, 1, ?, ?)`)
-        .bind(newId, user.id, existing.collection_id, copy.title, existing.body_html, existing.body_text, now, now).run();
+      const copy = { ...existing, id: newId, title: `${existing.title} copy`, title_mode: "manual", version: 1, created_at: now, updated_at: now };
+      await env.TPI_DB.prepare(`INSERT INTO studio_notes (id, owner_id, collection_id, title, title_mode, body_html, body_text, status, is_favorite, is_pinned, version, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'active', 0, 0, 1, ?, ?)`)
+        .bind(newId, user.id, existing.collection_id, copy.title, "manual", existing.body_html, existing.body_text, now, now).run();
       await createNoteRevision(env, copy, copy.title, existing.body_html, existing.body_text);
       const note = await getOwnedNote(env, newId, user.id);
       return json({ note: notePayload(note) }, 201, { "Cache-Control": "private, no-store" });
@@ -4858,10 +4867,11 @@ async function handleRestoreNoteRevision(path, request, env, user) {
     const nextVersion = Number(current.version) + 1;
     const bodyHtml = sanitizeNoteHtml(revision.body_html);
     const bodyText = stripNoteMarkup(bodyHtml).slice(0, NOTE_MAX_BODY_BYTES);
+    const title = current.title_mode === "automatic" ? automaticNoteTitle(bodyHtml) : revision.title;
     const now = new Date().toISOString();
-    await createNoteRevision(env, { ...current, version: nextVersion }, revision.title, bodyHtml, bodyText);
+    await createNoteRevision(env, { ...current, version: nextVersion }, title, bodyHtml, bodyText);
     await env.TPI_DB.prepare("UPDATE studio_notes SET title = ?, body_html = ?, body_text = ?, version = ?, updated_at = ? WHERE id = ? AND owner_id = ? AND version = ?")
-      .bind(revision.title, bodyHtml, bodyText, nextVersion, now, noteId, user.id, current.version).run();
+      .bind(title, bodyHtml, bodyText, nextVersion, now, noteId, user.id, current.version).run();
     const note = await getOwnedNote(env, noteId, user.id);
     const attachments = await getOwnedNoteAttachments(env, [noteId], user.id);
     return json({ note: notePayload(note, attachments.get(noteId) || []) }, 200, { "Cache-Control": "private, no-store" });
