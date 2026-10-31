@@ -29,6 +29,7 @@ async function count(selector) { return Number(await js("return document.querySe
 async function bodyText() { return String(await js("return document.body ? document.body.innerText : '';")); }
 async function waitFor(predicate, timeout = 20_000) { const start = Date.now(); while (Date.now() - start < timeout) { if (await predicate()) return true; await sleep(250); } return false; }
 async function clickButton(label) { return Boolean(await js("var label=arguments[0].toLowerCase(); var n=Array.from(document.querySelectorAll('button')).find(function(b){return (b.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase().indexOf(label)!==-1;}); if(!n)return false; n.click(); return true;", label)); }
+async function clickAria(label) { return Boolean(await js("var label=arguments[0].toLowerCase(); var n=Array.from(document.querySelectorAll('button')).find(function(b){return (b.getAttribute('aria-label')||'').toLowerCase().indexOf(label)===0;}); if(!n)return false; n.click(); return true;", label)); }
 
 let noteId = "";
 let collectionId = "";
@@ -50,6 +51,26 @@ try {
   check("authoritative 8787 Notes route loads", await waitFor(async () => /Research and production workspace/i.test(await bodyText())), `url=${await driver.getCurrentUrl()} body=${(await bodyText()).slice(0, 300)}`);
   check("Home Notes navigation is present", /\bNotes\b/.test(await bodyText()));
   check("three-column Notes workspace renders", (await count(".notes-organization-panel")) === 1 && (await count(".notes-library-panel")) === 1 && (await count(".notes-editor-panel")) === 1);
+  check("three columns share one connected workspace", await js("var g=document.querySelector('.notes-workspace-grid'); var s=g&&getComputedStyle(g); return Boolean(g&&s&&s.gap==='0px'&&g.querySelector('.notes-library-resizer'));"));
+  const initialLibraryWidth = Number(await js("return Number(document.querySelector('.notes-library-resizer')?.getAttribute('aria-valuenow')||0);"));
+  check("organization panel collapse control is visible", Boolean(await clickAria("Collapse organization panel")));
+  check("organization panel collapses and library shifts left", await waitFor(async () => Boolean(await js("var grid=document.querySelector('.notes-workspace-grid'); var panel=document.querySelector('.notes-organization-panel'); return grid?.classList.contains('organization-collapsed') && panel && getComputedStyle(panel).display==='none';"))));
+  check("organization panel restores", Boolean(await clickAria("Show organization panel")) && await waitFor(async () => !(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('organization-collapsed');"))));
+  await js("var r=document.querySelector('.notes-library-resizer'); if(r){r.focus(); r.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));}");
+  const resizedLibraryWidth = Number(await js("return Number(document.querySelector('.notes-library-resizer')?.getAttribute('aria-valuenow')||0);"));
+  check("note library supports keyboard resizing", resizedLibraryWidth === initialLibraryWidth + 20);
+  check("panel preference is persisted", Boolean(await js("var v=JSON.parse(localStorage.getItem('studioflow.notes.layout.v1')||'null'); return v&&v.libraryWidth===arguments[0];", resizedLibraryWidth)));
+  check("focus mode expands the editor", Boolean(await clickAria("Enter focus mode")) && await waitFor(async () => Boolean(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode') && document.querySelector('.notes-editor-panel');"))));
+  check("focus mode exits without remounting the editor", Boolean(await clickAria("Exit focus")) && await waitFor(async () => !(await js("return document.querySelector('.notes-workspace-grid')?.classList.contains('focus-mode');"))));
+  const toolbarLabels = await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).map(function(b){return b.getAttribute('aria-label')||'';});");
+  const requiredToolbarLabels = ["Bold", "Italic", "Underline", "Strikethrough", "Heading style", "Bulleted list", "Numbered list", "Checklist", "Alignment", "Block quote", "Horizontal divider", "Insert link", "Table", "Insert photograph", "Attach file", "Highlight color", "Text color", "Clear formatting", "Undo", "Redo", "Find and replace"];
+  check("required editing tools use accessible icon controls", requiredToolbarLabels.every((label) => toolbarLabels.some((value) => value.startsWith(label))), JSON.stringify(toolbarLabels));
+  check("toolbar tooltips identify commands", Boolean(await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).filter(function(b){return b.getAttribute('aria-label');}).every(function(b){return Boolean(b.getAttribute('title'));});")));
+  check("heading dropdown opens", Boolean(await clickAria("Heading style")) && await waitFor(async () => (await count('.notes-toolbar-menu[role=menu]')) > 0 && /Heading 1/.test(await bodyText())));
+  await js("var n=Array.from(document.querySelectorAll('.notes-toolbar-menu button')).find(function(b){return b.textContent.trim()==='Normal text';}); if(n)n.click();");
+  check("find and replace opens from the toolbar", Boolean(await clickAria("Find and replace")) && await waitFor(async () => (await count('.notes-find-bar')) === 1));
+  await clickAria("Find and replace");
+  check("photograph and attachment toolbar controls are present", toolbarLabels.some((label) => label === "Insert photograph") && toolbarLabels.some((label) => label === "Attach file"));
   const title = `D122 disposable note ${Date.now()}`;
   const collection = await js("return fetch('/api/notes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'collection',name:arguments[0],collectionType:'podcast'})}).then(function(r){return r.json();});", `D122 podcast ${Date.now()}`);
   collectionId = collection.collection?.id || "";
@@ -76,7 +97,13 @@ try {
   const savedNote = (saved.notes || []).find(item => item.id === noteId);
   check("formatted edit persists through Notes API", Boolean(savedNote && savedNote.bodyHtml.includes("Crossroads research") && savedNote.version >= 2), JSON.stringify(savedNote));
   check("spell check is enabled on the editor", Boolean(await js("var e=document.querySelector('.notes-rich-editor'); return e && e.spellcheck === true;")));
-  check("checklist control is exposed", Boolean(await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).some(function(b){return b.textContent.trim()==='Checklist';});")));
+  check("checklist control is exposed", Boolean(await js("return Array.from(document.querySelectorAll('.notes-editor-toolbar button')).some(function(b){return (b.getAttribute('aria-label')||'').startsWith('Checklist');});")));
+  const activeFormat = await js("var e=document.querySelector('.notes-rich-editor'); var p=e&&e.querySelector('p'); if(!e||!p)return false; var range=document.createRange(); range.selectNodeContents(p); var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range); e.focus(); document.execCommand('bold',false,null); e.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'formatBold'})); document.dispatchEvent(new Event('selectionchange')); return true;");
+  check("active formatting state is reflected", Boolean(activeFormat) && await waitFor(async () => Boolean(await js("return document.querySelector('.notes-toolbar-button[aria-label^=\"Bold\"]')?.getAttribute('aria-pressed')==='true';"))));
+  await driver.manage().window().setRect({ width: 760, height: 1050, x: 20, y: 20 });
+  await sleep(300);
+  check("responsive toolbar avoids horizontal overflow", Boolean(await js("var t=document.querySelector('.notes-editor-toolbar'); return t&&t.scrollWidth<=t.clientWidth+2;")));
+  await driver.manage().window().setRect({ width: 1440, height: 1050, x: 20, y: 20 });
   check("private Studio Notes sidebar is implemented", sidebarOpened);
   console.log(JSON.stringify({ status: results.every(result => result.passed) ? "PASS" : "FAIL", suite: "TPI-STUDIOFLOW-122", browser: "Firefox Developer Edition", environment: base, checks: results }, null, 2));
   process.exitCode = results.every(result => result.passed) ? 0 : 1;
