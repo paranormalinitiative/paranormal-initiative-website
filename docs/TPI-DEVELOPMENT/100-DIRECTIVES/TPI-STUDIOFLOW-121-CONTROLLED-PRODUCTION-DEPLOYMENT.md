@@ -16,7 +16,9 @@ guarded release workflow. The deployment completed without rollback.
 | Item | Verified value |
 | --- | --- |
 | StudioFlow source commit | `a8a7d11759905ae4bf8043005e0c2259b1fd6a81` |
+| D120 website integration/documentation commit | `29011735eed5d39e879f70b2400748094a6fc865` |
 | Website/release baseline commit | `cbf652d5c5546f1c1b7e1c2e0fc9b8d25b3fe023` |
+| D121 documentation commit | `21ff792b0012e10484e5adf3d9d62448f43d8b46` |
 | JavaScript | `index-CgmAxo34.js` |
 | JavaScript SHA-256 | `f4bd273c8fe8f60ef6025389b0738b03f392a9d3d618fe3433b819083e1a3595` |
 | CSS | `index-DpwwYG6_.css` |
@@ -50,6 +52,11 @@ or permanent-deletion change was included.
 The isolated Firefox acceptance used a disposable profile and synthetic QA
 account; it did not access the owner profile or modify owner Studios. No public
 livestream was initiated.
+
+Unauthenticated direct requests to the protected `/studio/assets/` paths return
+the expected `403` access boundary. The release workflow independently verified
+the exact generated hashes, staged assets and deployment upload; the protected
+asset response was not treated as a different build.
 
 ## Deferred verification
 
