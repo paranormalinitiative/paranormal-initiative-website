@@ -1,5 +1,25 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.1 — NOTES ORGANIZATION RAIL COMPLETE (2026-10-31)
+
+[Directive 122F.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F1-NOTES-ORGANIZATION-RAIL.md).
+
+Continue from source commit
+`b9a7772fec70ceb4143deaa03963b89072a56564` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-lCAgDCwK.js`
+(`240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`) and
+`index-D9akxKCz.css`
+(`bc541f62a96352584b811fdc308bf4f4b71888fd7d586b4285887fbc2839f980`).
+
+The collapsed organization state uses a dedicated narrow rail grid column; the
+expand control is inside the rail and does not overlap the Note Library. The
+expanded collapse control remains beside `Organize`. Focused geometry checks
+pass 13/13, maintained Firefox passes 64/64, release safety passes 21/21 and
+provenance verification passes. Production remains unchanged; do not deploy
+under D122F.1.
+
 ## TPI-STUDIOFLOW-122F — NOTES COMPLETION CANDIDATE PARTIAL (2026-10-31)
 
 [Directive 122F execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F-NOTES-COMPLETION.md).

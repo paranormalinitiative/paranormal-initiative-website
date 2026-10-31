@@ -534,3 +534,11 @@ check passed 11/11, maintained Firefox passed 64/64 and release safety passed
 21/21 on 2026-10-31. Native attachment/recovery, fault-injected and multi-tab
 autosave, full revision restoration, all-theme, Chrome/Safari and device
 coverage remain unverified and must not be reported as passed.
+## TPI-STUDIOFLOW-122F.1 organization rail verification
+
+The D122F.1 candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. Run
+`node scripts/verify/tpi-studioflow-122f-notes-completion.mjs` for the focused
+rail geometry and non-overlap checks. The 2026-10-31 run passed 13/13, including
+the dedicated rail width, Note Library boundary and heading visibility checks.
+The maintained Firefox regression passed 64/64 and release safety passed 21/21.

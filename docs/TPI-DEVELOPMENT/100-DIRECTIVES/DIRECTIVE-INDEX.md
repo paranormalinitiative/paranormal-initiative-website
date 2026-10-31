@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.1 — Organization collapse button correction
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F1-NOTES-ORGANIZATION-RAIL.md). Source
+commit `b9a7772fec70ceb4143deaa03963b89072a56564` stages a dedicated narrow
+organization rail on port 8787, keeping the expand button out of the Note
+Library and preserving the expanded heading control. Focused geometry checks
+pass 13/13, maintained Firefox passes 64/64, release safety passes 21/21 and
+provenance verification passes. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F — Notes completion and comprehensive acceptance
 
 Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

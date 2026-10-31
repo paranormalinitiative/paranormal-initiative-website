@@ -45,6 +45,9 @@ try {
   check("research reference removal command is present in source", readFileSync(sourceFile, "utf8").includes("removeResearchReference"));
   await js("var b=document.querySelector('button[aria-label=\\\"Collapse organization panel\\\"]'); if(b)b.click();");
   check("collapsed organization has an accessible reopen control", await waitFor(async () => Boolean(await js("return document.querySelector('button[aria-label=\\\"Show organization panel\\\"]');"))));
+  const collapsedGeometry = await js("var rail=document.querySelector('button[aria-label=\\\"Show organization panel\\\"]'), library=document.querySelector('.notes-library-panel'), heading=library?.querySelector('.notes-panel-heading'); if(!rail||!library||!heading)return null; var rr=rail.getBoundingClientRect(), lr=library.getBoundingClientRect(), hr=heading.getBoundingClientRect(); return {railWidth:rr.width, railRight:rr.right, libraryLeft:lr.left, headingLeft:hr.left, headingRight:hr.right, libraryRight:lr.right};");
+  check("collapsed organization uses a dedicated narrow rail", Boolean(collapsedGeometry && collapsedGeometry.railWidth >= 24 && collapsedGeometry.railWidth <= 40), JSON.stringify(collapsedGeometry));
+  check("expand rail does not overlap the Note Library", Boolean(collapsedGeometry && collapsedGeometry.railRight <= collapsedGeometry.libraryLeft + 1 && collapsedGeometry.headingLeft >= collapsedGeometry.libraryLeft && collapsedGeometry.headingRight <= collapsedGeometry.libraryRight + 1), JSON.stringify(collapsedGeometry));
   console.log(JSON.stringify({ status: checks.every(item => item.passed) ? "PASS" : "FAIL", suite: "TPI-STUDIOFLOW-122F", browser: "Firefox Developer Edition", environment: base, checks }, null, 2));
   process.exitCode = checks.every(item => item.passed) ? 0 : 1;
 } catch (error) {

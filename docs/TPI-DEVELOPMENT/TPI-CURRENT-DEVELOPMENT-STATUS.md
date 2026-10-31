@@ -1,5 +1,24 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.1 — COMPLETE / NOTES ORGANIZATION RAIL VERIFIED (2026-10-31)
+
+[Directive 122F.1 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F1-NOTES-ORGANIZATION-RAIL.md).
+
+The Notes Organization panel now collapses into a dedicated narrow rail on the
+authoritative local Worker at `http://127.0.0.1:8787/studio/`. The expand
+control is inside the rail, never over the Note Library, and the library
+heading remains unobstructed. Expanded-state alignment beside `Organize`,
+selection/editor preservation and responsive behavior remain intact.
+
+Source commit `b9a7772fec70ceb4143deaa03963b89072a56564` stages JavaScript
+`index-lCAgDCwK.js`
+(`240717548162c54cdbad49289b375e6c17e9c85e058f012ab46cf01cbed5ed48`) and CSS
+`index-D9akxKCz.css`
+(`bc541f62a96352584b811fdc308bf4f4b71888fd7d586b4285887fbc2839f980`). The
+focused geometry verifier passes 13/13, maintained Firefox passes 64/64,
+release safety passes 21/21, and source/staging provenance passes. Production
+was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F — PARTIAL / NOTES COMPLETION CANDIDATE VERIFIED (2026-10-31)
 
 [Directive 122F execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F-NOTES-COMPLETION.md).
