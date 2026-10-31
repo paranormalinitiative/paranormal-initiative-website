@@ -28,6 +28,7 @@ are verified; unexecuted behavior is not reported as passed.
 | StudioFlow source commit | `fd4d2758f689f4731516055887cbac4df5c1f3dd` |
 | Website branch | `codex/tpi-development` |
 | Website implementation commit | `3207013` |
+| Documentation commit | `b187a79` |
 | Local Worker | `http://127.0.0.1:8787/studio/` |
 | Runtime | local Cloudflare Worker (`workerd`) |
 | JS asset | `index-6-25XtSS.js` |
