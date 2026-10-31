@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122E — Home navigation and dialog usability corrections
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122E-HOME-NAVIGATION-DIALOG-USABILITY.md).
+Source commit `046ae3aaeebf9945597ce7373f5a9ada8a00cd37` stages the Notes Home
+card, explicit Home route persistence and viewport-safe archived-Studio dialog
+scrolling on port 8787. Focused Firefox acceptance passes 22/22, maintained
+Notes passes 57/57, maintained Firefox passes 64/64 and release safety passes
+21/21. Permanent Studio deletion remains disabled; production is unchanged.
+
 Current operational authority is
 [`TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md`](TPI-MASTER-AUTONOMOUS-AGENT-AUTHORITY.md).
 It grants standing full-lifecycle authority and defines how historical scope

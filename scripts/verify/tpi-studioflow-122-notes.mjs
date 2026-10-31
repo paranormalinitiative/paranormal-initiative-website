@@ -47,8 +47,14 @@ try {
   check("authenticated local session succeeds", await waitFor(async () => Boolean(await js("return fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():{user:null};}).then(function(b){return Boolean(b&&b.user);}).catch(function(){return false;});"))));
   await js("localStorage.clear(); sessionStorage.clear();");
   await driver.get(`${base}/studio/`);
-  await waitFor(async () => /\bNotes\b/.test(await bodyText()));
-  const clicked = await clickButton("Notes");
+  // D122E intentionally keeps a cold authenticated launch on Home. Enter a
+  // disposable browser-local Studio before exercising the Studio sidebar;
+  // this keeps the test aligned with the explicit Home/Studio route contract.
+  const sidebarFixtureId = `tpi-122-notes-sidebar-${Date.now()}`;
+  await js("var id=arguments[0], broadcast={id:id,title:'TPI-122 Notes sidebar fixture',description:'',status:'draft',kind:'recording'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio'));", sidebarFixtureId);
+  await driver.navigate().refresh();
+  await waitFor(async () => Boolean(await js("return document.querySelector('.exit-button');")));
+  const clicked = await clickAria("Notes") || await clickButton("Notes");
   const sidebarOpened = clicked && await waitFor(async () => /Open Notes/.test(await bodyText()));
   check("Studio Notes sidebar opens", sidebarOpened, `url=${await driver.getCurrentUrl()}`);
   const opened = await clickButton("Open Notes");

@@ -391,6 +391,27 @@ Owner acceptance remains for broader browser coverage: public/member workflows, 
 | Owner-authenticated StudioFlow/Admin Center acceptance | NOT TESTED | No owner credentials or session used; anonymous protection is verified only |
 | Full local API E2E | BLOCKED | Existing Wrangler `spawn EBADF` runner issue |
 
+## TPI-STUDIOFLOW-122E — Home navigation and dialog verification
+
+The maintained Notes browser verifier now explicitly enters a disposable
+browser-local Studio before testing the Studio Notes rail, and uses the
+accessible ARIA-labeled rail control. This reflects the D122E contract that a
+cold authenticated launch remains on Home rather than silently reopening the
+last Studio.
+
+The focused D122E verifier is
+`scripts/verify/tpi-studioflow-122e-home-navigation.mjs`. It runs in an
+isolated Firefox Developer Edition profile against 8787 and checks the exact
+five-card Home order, Notes card navigation, explicit Studio exit and refresh,
+Notes refresh persistence, reduced-height deletion-dialog scrolling,
+confirmation-field reachability, Cancel, and the permanently disabled delete
+control.
+
+Evidence for the staged D122E candidate: focused D122E 22/22, maintained Notes
+57/57, maintained Firefox 64/64, release safety 21/21. The temporary archived
+Studio used for the dialog check is restored after the run; owner Studios and
+recordings are not used as fixtures.
+
 ## Approval evidence
 
 Separate these claims in every report:

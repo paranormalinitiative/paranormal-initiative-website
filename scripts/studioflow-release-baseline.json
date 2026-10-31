@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122D",
-  "description": "Development-only approved StudioFlow source identity and generated assets for user-created nested Notes folders. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122D.",
+  "recordedDirective": "TPI-STUDIOFLOW-122E",
+  "description": "Development-only approved StudioFlow source identity and generated assets for Home Notes navigation, explicit Home route persistence, and the safely disabled archived-Studio deletion dialog scrolling correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122E.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "bf93bb58a72eb0f5b0e47f401af0ebd97daa77ef"
+    "approvedCommit": "046ae3aaeebf9945597ce7373f5a9ada8a00cd37"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-BjXZX1EX.js",
-      "sha256": "3568f459649e1b5f9ec01faa1440bb273121cedfaded88f6d32ff600750d7e47"
+      "name": "index-CAngUv37.js",
+      "sha256": "e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d"
     },
     "css": {
-      "name": "index-CbVCorKW.css",
-      "sha256": "fafd2c34bac71f309a2656d959892cbff992535be9d5327387d070b43e89cbf9"
+      "name": "index-CxtEcOJP.css",
+      "sha256": "c4a34d03e42c981b2168e6287e232552ba1cdcb0676b2067ff33cbe573487254"
     }
   }
 }

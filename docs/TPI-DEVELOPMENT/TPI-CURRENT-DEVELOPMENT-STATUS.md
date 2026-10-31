@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122E — COMPLETE / HOME NAVIGATION AND DIALOG VERIFIED (2026-10-31)
+
+[Directive 122E execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E-HOME-NAVIGATION-DIALOG-USABILITY.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now exposes
+the existing Notes workspace directly from a fifth Home Create card immediately
+before Teleprompter. Explicit Studio exit persists Home while retaining the
+selected Studio identity and saved configuration; startup hydration no longer
+rewrites Home or Notes into the Studio route. The archived-Studio permanent
+deletion dialog is viewport-bounded and scrollable, while permanent deletion
+remains disabled.
+
+Source commit `046ae3aaeebf9945597ce7373f5a9ada8a00cd37` stages JavaScript
+`index-CAngUv37.js`
+(`e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d`) and CSS
+`index-CxtEcOJP.css`
+(`c4a34d03e42c981b2168e6287e232552ba1cdcb0676b2067ff33cbe573487254`). Focused
+Firefox acceptance passes 22/22, maintained Notes acceptance passes 57/57,
+maintained Firefox regression passes 64/64, and release-safety passes 21/21.
+Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122D — COMPLETE / USER FOLDERS VERIFIED (2026-10-31)
 
 [Directive 122D execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122D-USER-CREATED-FOLDERS.md).

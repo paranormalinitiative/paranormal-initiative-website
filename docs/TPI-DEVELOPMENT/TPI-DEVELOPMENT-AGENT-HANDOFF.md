@@ -1,5 +1,25 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122E — HOME NAVIGATION AND DIALOG COMPLETE (2026-10-31)
+
+[Directive 122E execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122E-HOME-NAVIGATION-DIALOG-USABILITY.md).
+
+Continue from StudioFlow source commit
+`046ae3aaeebf9945597ce7373f5a9ada8a00cd37` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-CAngUv37.js`
+(`e0a7d71aa44da90ab2db5c15b1e4deba89562e4059d1e83475a8a4efcb2dde2d`) and
+`index-CxtEcOJP.css`
+(`c4a34d03e42c981b2168e6287e232552ba1cdcb0676b2067ff33cbe573487254`).
+
+D122E adds the Home Notes card, preserves Home/Notes route intent across Worker
+startup hydration, and makes the disabled permanent-deletion dialog scrollable
+at reduced viewport heights. It does not clear the selected Studio or its
+configuration and does not enable deletion. Focused D122E Firefox is 22/22,
+maintained Notes is 57/57, maintained Firefox is 64/64 and release safety is
+21/21. Production remains on the D121 baseline and was not modified.
+
 ## TPI-STUDIOFLOW-122D — USER FOLDERS COMPLETE (2026-10-31)
 
 [Directive 122D execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122D-USER-CREATED-FOLDERS.md).
