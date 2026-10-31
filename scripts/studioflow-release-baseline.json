@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122F.2",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes attachment controls and interface cleanup. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.2.",
+  "recordedDirective": "TPI-STUDIOFLOW-122F.2 addendum",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes editor text-cursor and writing-focus correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.2.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "009211f13a1dd8ef6c7caed7fa94840eba7337b1"
+    "approvedCommit": "4caa882c4d13de283265d5204e2431370f825e70"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-52sL-vjB.js",
-      "sha256": "6c7d5871f41bc1d3e30d56648e73d39a372e3acf1f90df507c266e4a34a641e5"
+      "name": "index-c4ihiW_I.js",
+      "sha256": "ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9"
     },
     "css": {
-      "name": "index-ChghdUBo.css",
-      "sha256": "b7d6b2e0c427c3a79857268926ceeb2613fa4edd0eb140934e460aace57e8e2d"
+      "name": "index-Dm22zsyB.css",
+      "sha256": "ef516f605e43d7e7437da49f9cedb439944d111e43b67e1e1f834bc215242975"
     }
   }
 }

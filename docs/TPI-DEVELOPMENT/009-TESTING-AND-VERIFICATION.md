@@ -1,5 +1,20 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122F.2 Addendum — Notes editor text cursor and writing focus
+
+The D122F.2 addendum candidate is staged only on the authoritative local Worker
+at `http://127.0.0.1:8787/studio/`. The focused Firefox Developer Edition
+Notes verifier passes all checks, including initial rich-editor focus with a
+start caret, immediate typing, Enter paragraph creation, and a non-persisted
+empty-state placeholder. The maintained Firefox StudioFlow regression passes
+**64/64**, the D122F.1 organization rail verifier passes **13/13**, release
+safety passes **21/21**, and source-provenance verification passes exact source,
+reproducible-build, and staged-asset checks.
+
+Production was not modified or deployed. Native OS file chooser, clipboard
+image, and drag/drop media-byte coverage remains the broader D122 attachment
+acceptance gap and is not newly claimed by this cursor-focus addendum.
+
 ## TPI-STUDIOFLOW-122F.2 Notes attachment-control verification
 
 The D122F.2 candidate is staged only on the authoritative local Worker at

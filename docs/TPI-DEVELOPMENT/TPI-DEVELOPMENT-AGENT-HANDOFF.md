@@ -1,5 +1,26 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.2 Addendum — NOTES EDITOR WRITING FOCUS COMPLETE (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-ADDENDUM-EDITOR-FOCUS.md).
+
+Continue from StudioFlow source commit
+`4caa882c4d13de283265d5204e2431370f825e70` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-c4ihiW_I.js`
+(`ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9`) and
+`index-Dm22zsyB.css`
+(`ef516f605e43d7e7437da49f9cedb439944d111e43b67e1e1f834bc215242975`).
+
+The existing rich editor now focuses after note hydration, places an initial
+caret in an empty note, places the caret at the end of existing content, and
+uses a CSS-only `Start writing…` placeholder that is not saved. Focused Notes
+acceptance passes, D122F.1 rail checks pass 13/13, maintained Firefox passes
+64/64, release safety passes 21/21, and source/staging provenance passes.
+Production remains unchanged; do not deploy under this development-only
+addendum.
+
 ## TPI-STUDIOFLOW-122F.2 — NOTES ATTACHMENT CONTROLS COMPLETE (2026-10-31)
 
 [Directive 122F.2 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-NOTES-ATTACHMENT-CONTROLS.md).

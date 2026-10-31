@@ -48,7 +48,27 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
-## Current local development candidate — TPI-STUDIOFLOW-122B
+## Current local development candidate — TPI-STUDIOFLOW-122F.2 addendum
+
+The authoritative `8787` Worker now serves the D122F.2 Notes editor
+text-cursor and writing-focus correction from isolated StudioFlow source commit
+`4caa882c4d13de283265d5204e2431370f825e70`. Empty Notes focus the existing
+rich editor with a start caret, existing Notes focus at the end after hydration,
+and a CSS-only `Start writing…` placeholder remains outside saved content.
+
+Exact staged assets:
+
+- `/studio/assets/index-c4ihiW_I.js` — SHA-256
+  `ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9`
+- `/studio/assets/index-Dm22zsyB.css` — SHA-256
+  `ef516f605e43d7e7437da49f9cedb439944d111e43b67e1e1f834bc215242975`
+
+The focused Notes verifier passes all checks, the D122F.1 rail verifier passes
+13/13, maintained Firefox passes 64/64, release safety passes 21/21, and the
+provenance workflow verifies reproducible builds and exact staged assets. This
+is a development-only candidate; production was not modified or deployed.
+
+## Historical local development candidate — TPI-STUDIOFLOW-122B
 
 The authoritative `8787` Worker currently serves the development-only D122B
 automatic Notes title refinement from isolated StudioFlow source commit

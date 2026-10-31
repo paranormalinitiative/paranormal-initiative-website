@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.2 Addendum — COMPLETE / NOTES EDITOR WRITING FOCUS VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-ADDENDUM-EDITOR-FOCUS.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now focuses
+the existing rich-text editor after Note hydration. Empty Notes receive a
+visible start caret and CSS-only `Start writing…` guidance; existing content
+opens with the insertion point at the end. The addendum preserves paragraph
+entry, formatting, automatic titles, autosave, revisions, attachments and
+toolbar behavior.
+
+Source commit
+`4caa882c4d13de283265d5204e2431370f825e70` stages JavaScript
+`index-c4ihiW_I.js`
+(`ff618245fa0a77811673fab77632914fd6239f1a57a596ae3114da2a477e39e9`) and CSS
+`index-Dm22zsyB.css`
+(`ef516f605e43d7e7437da49f9cedb439944d111e43b67e1e1f834bc215242975`).
+Focused Notes acceptance passes, D122F.1 rail checks pass 13/13, maintained
+Firefox passes 64/64, release safety passes 21/21 and provenance verification
+passes. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122F.2 — COMPLETE / NOTES ATTACHMENT CONTROLS VERIFIED (2026-10-31)
 
 [Directive 122F.2 execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F2-NOTES-ATTACHMENT-CONTROLS.md).

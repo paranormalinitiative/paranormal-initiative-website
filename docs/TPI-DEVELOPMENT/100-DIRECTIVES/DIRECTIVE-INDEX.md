@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.2 Addendum — Notes editor text cursor and writing focus
+
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F2-ADDENDUM-EDITOR-FOCUS.md). Source
+commit `4caa882c4d13de283265d5204e2431370f825e70` restores initial rich-editor
+focus and a visible start caret for empty Notes, preserves existing-note focus,
+and adds a non-persisted empty-editor placeholder. Focused Notes acceptance,
+D122F.1 rail 13/13, maintained Firefox 64/64, release safety 21/21 and
+provenance verification pass. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F.2 — Notes attachment controls and interface cleanup
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
