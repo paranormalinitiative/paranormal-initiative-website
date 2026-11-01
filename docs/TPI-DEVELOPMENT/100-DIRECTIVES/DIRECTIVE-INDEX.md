@@ -13,7 +13,7 @@ Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**.
 unchanged bridge stylesheet cache key. The corrected candidate makes the
 StudioFlow entry document `no-store`, versions the bridge stylesheet URL, and
 asserts the served hashed assets in Firefox. The corrected artifact passes
-focused Firefox 7/7, maintained regressions, and release safety. Production
+focused Firefox 8/8, maintained regressions, and release safety. Production
 remains on rollback Worker `584f29db-1568-4ff4-a99e-b32b3b63a23e`.
 
 ## TPI-STUDIOFLOW-126B — My Scenes final production deployment

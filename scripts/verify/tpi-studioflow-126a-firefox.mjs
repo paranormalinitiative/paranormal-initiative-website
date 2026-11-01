@@ -115,6 +115,8 @@ try {
   const initial = await cardData();
   check("Every production card border matches its type color", initial.every((card) => expected.get(card.kind)?.[card.selected ? "selected" : "normal"] === card.border), JSON.stringify({ cards: initial, styles: await debugStyles() }));
   check("Icon and border tokens agree for every production type", initial.every((card) => expected.get(card.kind)?.icon === card.icon), JSON.stringify(initial));
+  const draggingScript = await driver.executeScript("var n=document.querySelector('[data-production-kind=teleprompter-script]'); if(!n)return null; n.classList.add('dragging'); var s=getComputedStyle(n); var result={border:s.borderTopColor,selectedBorderVar:s.getPropertyValue('--production-item-selected-border').trim()}; n.classList.remove('dragging'); return result;");
+  check("Dragging Teleprompter Script retains a purple border", [expected.get("teleprompter-script")?.normal, expected.get("teleprompter-script")?.selected].includes(draggingScript?.border), JSON.stringify(draggingScript));
   await driver.takeScreenshot().then((data) => writeFileSync(join(evidenceRoot, "all-production-card-borders.png"), data, "base64"));
 
   const scriptButton = await driver.findElement(By.css('[data-production-kind="teleprompter-script"] .scene-panel-item-button'));

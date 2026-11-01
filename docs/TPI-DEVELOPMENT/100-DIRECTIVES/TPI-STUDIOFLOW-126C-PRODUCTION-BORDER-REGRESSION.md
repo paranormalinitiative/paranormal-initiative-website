@@ -77,11 +77,12 @@ assets and passed all seven focused checks.
 | Verification | Result |
 | --- | --- |
 | Defective production baseline asset/border detection | PASS — failure reproduced; 3/6 legacy checks failed |
-| Corrected Firefox artifact acceptance | PASS — 7/7 |
+| Corrected Firefox artifact acceptance | PASS — 8/8 |
 | Exact JS/CSS asset references | PASS |
 | Normal type borders | PASS |
 | Selected type borders | PASS |
 | Selected Teleprompter remains purple | PASS |
+| Dragging Teleprompter remains purple | PASS — normal approved purple token |
 | Refresh persistence | PASS |
 | Scenes regression | PASS — 20/20 |
 | TPI-125 Firefox integration | PASS — 21/21 |
