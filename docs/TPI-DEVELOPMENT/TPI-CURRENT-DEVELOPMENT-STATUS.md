@@ -31,7 +31,13 @@ safety 26/26, Studio lifecycle 29/29, ownership 40/40, release acceptance 64/64,
 floating menu regression 44/44, staging verification, guarded dry-run),
 production smoke, live isolated Firefox acceptance 64/64, and a focused
 non-destructive production acceptance 16/16 that confirmed the menu opens beside
-its own More Actions button on the live site. Production D1 still holds the same
+its own More Actions button on the live site.
+
+A post-release test commit `9d0d827` raised the 133 regression to 44/44 with a
+genuine 390 px phone viewport (Firefox clamps driven windows to about 500 px, so
+the suite runs the real bundle in a same-origin 390 px iframe);
+`release:preflight` re-reported READY against it and the deployed bundle is
+byte-identical, so no further deployment was made. Production D1 still holds the same
 18 live Studio rows; the owner's browser-local Studio was never opened or
 altered. See
 [`TPI-STUDIOFLOW-133-FLOATING-STUDIO-MENU-POSITIONING.md`](100-DIRECTIVES/TPI-STUDIOFLOW-133-FLOATING-STUDIO-MENU-POSITIONING.md).

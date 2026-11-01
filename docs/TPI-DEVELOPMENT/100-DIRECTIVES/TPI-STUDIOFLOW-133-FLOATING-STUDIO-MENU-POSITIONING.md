@@ -166,6 +166,14 @@ The regression was then strengthened to 44/44 with the genuine 390 px phone
 viewport coverage described above; that change touches only the test suite and
 documentation, leaving the deployed bundle byte-identical.
 
+Post-release strengthening commit: `9d0d827` (test + documentation).
+`release:preflight` was re-run against it and reported **READY** with the 133
+regression at **44/44**, `rollbackVersion` `71a5293d-fef4-4643-bf50-e9dfc7327eb5`
+(the live Worker). Because `studio/assets/index-mYnRoDcA.js`
+(`03802154…`) and `studio/assets/index-B-jk8V4i.css` (`c64c8f9d…`) are
+unchanged, no further deployment was made and the live site still serves the
+`b2868f6` release; a no-op Worker release is not part of the maintained path.
+
 ## 7. Remaining limitations
 
 - The menu is anchored with JavaScript geometry rather than CSS anchor
