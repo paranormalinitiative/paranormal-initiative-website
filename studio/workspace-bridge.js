@@ -526,6 +526,17 @@
   // recordings, snapshot presence, storage location) and pins the version the
   // owner confirms against, so a stale dialog can never delete data it never
   // showed. Read-only.
+  // TPI-STUDIOFLOW-132: the server reports each deletion guard as a
+  // { code, error } object, but the confirmation dialog renders the guard as
+  // its status text. Passing the object through made React throw (error #31:
+  // objects are not valid as a child), so the dialog froze on "Preparing the
+  // deletion inventory…" and the real reason was never shown. Normalize the
+  // guard to its message here; a present guard still disables deletion.
+  function studioDeletionGuardMessage(guard) {
+    if (!guard) return null;
+    if (typeof guard === "string") return text(guard) || null;
+    return text(guard.error) || text(guard.code) || "This Studio cannot be deleted yet.";
+  }
   function studioDeletionInventory(key) {
     var id = text(key).trim();
     if (!id) return Promise.reject(new Error("Select a Studio."));
@@ -555,7 +566,13 @@
         key: id,
         workspaceId: entry && entry.workspaceId ? entry.workspaceId : (target ? text(target.id).trim() : null),
         title: entry ? entry.title : (target ? text(target.title).trim() : "Untitled Studio"),
-        storage: !target ? (snapshotPresent ? "both" : "browser-local") : (snapshotPresent ? "both" : "server"),
+        // TPI-STUDIOFLOW-132: a Studio with no server workspace is browser-local
+        // whether or not it has a browser-local recovery snapshot. Reporting
+        // "both" here made the deletion dialog wait for a server inventory that
+        // can never exist, so an existing browser-only Studio stayed permanently
+        // undeletable even with its exact name typed. The snapshot is still
+        // disclosed through localRecoverySnapshot below.
+        storage: target ? (snapshotPresent ? "both" : "server") : "browser-local",
         version: entry && Number.isSafeInteger(entry.version) ? entry.version : (target ? Number(target.version) || null : null),
         productions: {
           total: productions.length,
@@ -572,7 +589,10 @@
       };
       if (!target) return inventory;
       return api("/api/studio/workspaces/" + encodeURIComponent(target.id) + "/deletion-inventory").then(function (body) {
-        inventory.server = body || null;
+        inventory.server = body ? Object.assign({}, body, {
+          guardStudioOnly: studioDeletionGuardMessage(body.guardStudioOnly),
+          guardWithContents: studioDeletionGuardMessage(body.guardWithContents)
+        }) : null;
         if (body && body.workspace && Number.isSafeInteger(Number(body.workspace.version))) inventory.version = Number(body.workspace.version);
         // The server record is authoritative for identity facts: a rename in
         // another tab must show and must change the confirmation digest.

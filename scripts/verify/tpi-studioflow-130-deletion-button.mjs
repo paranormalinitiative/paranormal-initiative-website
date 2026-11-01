@@ -29,6 +29,10 @@ const safe = error => error instanceof Error ? error.message : String(error);
 const sleep = ms => new Promise(resolvePromise => setTimeout(resolvePromise, ms));
 let driver;
 let workspaceIds = [];
+// Each browser leg must use its own disposable Studio identities: the Firefox
+// leg purges its fixtures, and a purged Studio cannot be recreated, so a shared
+// local broadcast id made the Chrome leg fail with workspace_purged.
+let fixtureKind = "firefox";
 
 async function js(script, ...args) { return driver.executeScript(script, ...args); }
 async function waitFor(description, predicate, timeout = 30_000) {
@@ -108,7 +112,7 @@ async function login() {
   await waitFor("authenticated session", async () => Boolean((await authenticatedFetch("/api/auth/me")).body?.user));
 }
 async function createWorkspace(title, status = "draft") {
-  const localId = `tpi-130-${runId}-${workspaceIds.length}`;
+  const localId = `tpi-130-${fixtureKind}-${runId}-${workspaceIds.length}`;
   const response = await serverFetch("/api/studio/workspaces", {
     method: "POST",
     body: { title, localBroadcastId: localId, state: { broadcast: { id: localId, title, status }, configuration: {} } }
@@ -139,6 +143,12 @@ async function openDeleteDialog(title) {
     assert(exited, "StudioFlow did not expose a Home navigation control");
   }
   await waitFor("Studio home", async () => Boolean(await js("return document.querySelector('.home-page') && document.querySelector('.home-page').textContent.includes('Create new Studio');")));
+  // The catalogue renders after the home shell; wait for the disposable card
+  // before reading it, otherwise this leg fails intermittently on card timing.
+  await waitFor("disposable Studio card", async () => Boolean(await js(`return Array.from(document.querySelectorAll('.studio-card')).some(node => {
+      const strong = node.querySelector('.studio-card-title strong');
+      return strong && strong.textContent.trim() === arguments[0];
+    });`, title)));
   assert(await clickCardAction(title, "More Actions"), "More Actions is unavailable");
   await sleep(200);
   assert(await clickCardAction(title, "Delete Studio"), "Delete Studio is unavailable");
@@ -179,6 +189,7 @@ async function build(kind, profilePath) {
   return new Builder().forBrowser("chrome").setChromeOptions(options).build();
 }
 async function runBrowser(kind) {
+  fixtureKind = kind;
   const profile = join(evidenceRoot, `${kind}-profile`); mkdirSync(profile, { recursive: true });
   driver = await build(kind, profile);
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 60_000 });
@@ -209,7 +220,10 @@ async function runBrowser(kind) {
   const guarded = await createWorkspace(guardedTitle, "recording");
   await openDeleteDialog(guardedTitle);
   await typeName(guardedTitle);
-  const guardText = await js("return document.querySelector('.studio-delete-inventory')?.textContent || '';");
+  // TPI-STUDIOFLOW-132: the guard explanation is a sibling of the inventory
+  // container, so scoping this assertion to `.studio-delete-inventory` could
+  // never observe it. Read the whole dialog instead.
+  const guardText = await js("return document.querySelector('.modal')?.textContent || '';");
   const guardedState = await buttonState();
   check(`${kind}: active-production safety reason is visible`, /recording or livestream is active/i.test(guardText), guardText);
   check(`${kind}: active-production deletion remains disabled`, guardedState?.disabled === true, JSON.stringify(guardedState));
