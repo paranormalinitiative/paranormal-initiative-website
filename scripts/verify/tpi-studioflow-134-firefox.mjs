@@ -26,8 +26,14 @@ const credentialsFile = productionMode
   : (process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json"));
 // Screenshots may be retained; the browser profile never is. A reused profile
 // would carry previous-run localStorage and make the run non-disposable.
+// Evidence defaults to a disposable directory: this suite runs inside
+// `release:preflight`, which asserts the working tree is unchanged at the end,
+// so rewriting the tracked evidence PNGs mid-run would fail a clean release.
+// Pass TPI_FIREFOX_134_EVIDENCE=docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/
+// TPI-STUDIOFLOW-134 to deliberately refresh the recorded screenshots.
 const evidenceRoot = process.env.TPI_FIREFOX_134_EVIDENCE
-  || (productionMode ? mkdtempSync(join(tmpdir(), "tpi-134-firefox-")) : join(repoRoot, "docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-134"));
+  ? resolve(repoRoot, process.env.TPI_FIREFOX_134_EVIDENCE)
+  : mkdtempSync(join(tmpdir(), "tpi-134-firefox-"));
 const profile = mkdtempSync(join(tmpdir(), "tpi-134-profile-"));
 mkdirSync(evidenceRoot, { recursive: true });
 const expectedJavaScriptAsset = process.env.TPI_FIREFOX_EXPECTED_JS || "index-CmUjeYcC.js";
