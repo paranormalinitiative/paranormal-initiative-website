@@ -5,6 +5,17 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-126C — Production card border regression correction
+
+Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**.
+[Execution record](TPI-STUDIOFLOW-126C-PRODUCTION-BORDER-REGRESSION.md). The
+126B failure was traced to a stale cacheable StudioFlow entry document and an
+unchanged bridge stylesheet cache key. The corrected candidate makes the
+StudioFlow entry document `no-store`, versions the bridge stylesheet URL, and
+asserts the served hashed assets in Firefox. The corrected artifact passes
+focused Firefox 7/7, maintained regressions, and release safety. Production
+remains on rollback Worker `584f29db-1568-4ff4-a99e-b32b3b63a23e`.
+
 ## TPI-STUDIOFLOW-126B — My Scenes final production deployment
 
 Status: **ROLLED BACK / PRODUCTION ACCEPTANCE FAILED**.

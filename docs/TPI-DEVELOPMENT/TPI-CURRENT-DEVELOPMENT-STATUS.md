@@ -1,5 +1,17 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-126C — Production card border regression correction (2026-11-01)
+
+Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**. The 126B
+failure was traced to stale production entrypoint/bridge asset caching. The
+candidate now makes the StudioFlow entry document `no-store`, versions the
+bridge stylesheet URL, and verifies exact hashed asset references in Firefox.
+Focused acceptance passes 7/7; Scenes 20/20, TPI-125 Firefox 21/21,
+recording/storage 33/33, screen sharing 13/13, local auth lifecycle 38/38,
+and release safety 21/21 pass. Production remains on Worker
+`584f29db-1568-4ff4-a99e-b32b3b63a23e`; no deployment occurred. See
+[`TPI-STUDIOFLOW-126C-PRODUCTION-BORDER-REGRESSION.md`](100-DIRECTIVES/TPI-STUDIOFLOW-126C-PRODUCTION-BORDER-REGRESSION.md).
+
 ## TPI-STUDIOFLOW-126B — My Scenes production promotion (2026-11-01)
 
 Status: **ROLLED BACK — LIVE FIREFOX ACCEPTANCE FAILED**. The TPI-126A
