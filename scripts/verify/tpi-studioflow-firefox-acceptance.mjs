@@ -269,7 +269,7 @@ try {
     ["Voice FX", "Voice FX"],
     ["Style", "Brand Presets"],
     ["Notes", "Notes"],
-    ["Teleprompter", "Open Teleprompter"],
+    ["Teleprompter", "Open teleprompter"],
     ["People", "People"],
     ["Private chat", "Private chat"],
     ["Recording", "Recording"],
