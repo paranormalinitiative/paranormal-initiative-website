@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-126A",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-126A My Scenes production-card border color correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for development and pending release inclusion only; production deployment is not authorized under Directive 126A.",
+  "recordedDirective": "TPI-STUDIOFLOW-130R",
+  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-130 permanent Studio deletion release. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release preserves the previously verified My Scenes border and cache-control behavior while adding the guarded typed-name deletion flow.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "a6784cfe490f57d413dce99135f148936f854c9f"
+    "approvedCommit": "859febca7d89b413ee75cc95ab1a7042228427be"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-CSTJXjG2.js",
-      "sha256": "94d5ba564a6e358ac013f94dcc30bf78e49e1acd93db4e3a46e32dbab06505bc"
+      "name": "index-D5zopy5z.js",
+      "sha256": "26a58c1716ccf01c1de50f48640907dd2f9651626ad9d1d16f4907a23640ae81"
     },
     "css": {
-      "name": "index-CphVaGhF.css",
-      "sha256": "328a8c77587c1976c7a8e1ee3dd72c7e0e4a979216975b1be4e53f23997f3385"
+      "name": "index-C_oD8YSH.css",
+      "sha256": "5bdc30cfd0945a8978cfff024af30af71886de0be8b13875b1abed3147f62040"
     }
   }
 }
