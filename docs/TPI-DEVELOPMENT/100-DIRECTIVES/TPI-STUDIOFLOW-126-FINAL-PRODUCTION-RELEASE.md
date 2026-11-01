@@ -74,6 +74,9 @@ release workflow:
 - Screen-sharing regression (`tpi-studioflow-120-screen-share.mjs`): PASS,
   13/13. Native operating-system picker interaction remains
   `NOT_AUTOMATED`.
+- TPI-125 Firefox integration (`tpi-studioflow-125-firefox.mjs`): PASS, 21/21;
+  Teleprompter source/privacy checks: PASS, 57/57; screen-sharing source
+  checks: PASS, 10/10.
 - Release safety (`tpi-release-safety.mjs`): PASS, 21/21.
 
 ## Production deployment
