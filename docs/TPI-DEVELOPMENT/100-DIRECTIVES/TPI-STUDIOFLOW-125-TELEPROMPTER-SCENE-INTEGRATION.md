@@ -26,7 +26,7 @@ Teleprompter/My Scenes behavior.
 - Initial implementation commit: `77f32d95328f32169012f070c1abf71ec8627a2c`
 - Final source commit: `e2363fb877d3984c938f0703fe62446ad9f17c4f`
 - Website branch: `codex/tpi-development`
-- Website integration commit: recorded with the final corrected candidate commit below
+- Website integration commit: `c34d891d794a0cfcd217162306cd1371aaf35d41`
 - Original mixed StudioFlow checkout: preserved and not modified
 
 Generated development assets staged into the authoritative Worker:
