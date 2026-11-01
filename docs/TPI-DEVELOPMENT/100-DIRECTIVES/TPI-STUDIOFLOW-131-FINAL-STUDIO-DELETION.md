@@ -3,7 +3,7 @@
 Date: 2026-11-01  
 Environment: authoritative local Worker, `http://127.0.0.1:8787/studio/`  
 Browser: Mozilla Firefox Developer Edition 160.0b3  
-Production: **UNCHANGED; no deployment authorized**
+Production: **DEPLOYED AND VERIFIED — TPI-STUDIOFLOW-131R**
 
 ## Result
 
@@ -98,3 +98,33 @@ No database migration, API authorization change, storage cleanup, or production 
 ## Known test-harness limitation
 
 Two auxiliary legacy Selenium invocations emitted no completion JSON and remain separately unverified. They do not replace the successful real-Firefox acceptance or the maintained 088/089, auth-lifecycle, and release-safety results recorded above.
+
+## TPI-STUDIOFLOW-131R — production release
+
+Status: **DEPLOYED AND VERIFIED** on 2026-11-01.
+
+The exact candidate recorded above was deployed through the guarded production
+workflow. The previous production Worker was
+`99ca2347-3181-4525-b9eb-d28cb61cf42a`; the active production Worker is
+`f4be38fb-9d26-45cb-9c48-5223a1d4c12c` at 100% traffic. The website release
+commit was `b48fd7e13b91f5e082dab26ada893bc265fc7fcf`; the source correction
+commit remains `fb95c43ce79dd0dfcf3f880eb34555d746c5c8ce`. Rollback target is
+`99ca2347-3181-4525-b9eb-d28cb61cf42a`.
+
+Production assets:
+
+- JavaScript: `studio/assets/index-B_8Inyh0.js` — SHA-256
+  `e250a5e41376be2861c1fe0747165a189da193ca2f180c596d49b19750fd1abe`
+- CSS: `studio/assets/index-C_oD8YSH.css` — SHA-256
+  `5bdc30cfd0945a8978cfff024af30af71886de0be8b13875b1abed3147f62040`
+- Entrypoint: SHA-256
+  `ba80f8b040b6411b8d46cf1908a04a7a4a657834e479197d81c6d07508d79c64`
+
+Release verification passed: deletion/archive 32/32, deletion safety 26/26,
+local authentication lifecycle 38 checks per phase with final PASS, release
+safety 21/21, reproducible authoritative build PASS, production smoke 10/10,
+and isolated production Firefox acceptance 64/64. The guarded release ended
+`DEPLOYED_AND_VERIFIED`. The live entrypoint returned `Cache-Control:
+no-store`. No destructive deletion was executed in production; production
+deletion test status is **NOT EXECUTED — DATA PRESERVATION**. No existing
+creator data was changed.

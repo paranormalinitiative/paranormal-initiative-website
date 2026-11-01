@@ -12,6 +12,25 @@ Studio. The maintained deletion/archive regression passed 32/32, deletion
 safety 26/26, local auth lifecycle 64/64, and release safety 21/21. See
 [`TPI-STUDIOFLOW-131-FINAL-STUDIO-DELETION.md`](100-DIRECTIVES/TPI-STUDIOFLOW-131-FINAL-STUDIO-DELETION.md).
 
+### TPI-STUDIOFLOW-131R — production release (2026-11-01)
+
+Status: **DEPLOYED AND VERIFIED IN PRODUCTION**. The final-Studio correction
+was deployed through the guarded release workflow at 100% traffic. Previous
+Worker: `99ca2347-3181-4525-b9eb-d28cb61cf42a`. Active Worker:
+`f4be38fb-9d26-45cb-9c48-5223a1d4c12c`. Source correction:
+`fb95c43ce79dd0dfcf3f880eb34555d746c5c8ce`. Website release:
+`b48fd7e13b91f5e082dab26ada893bc265fc7fcf`. JavaScript
+`index-B_8Inyh0.js` (`e250a5e41376be2861c1fe0747165a189da193ca2f180c596d49b19750fd1abe`),
+CSS `index-C_oD8YSH.css`
+(`5bdc30cfd0945a8978cfff024af30af71886de0be8b13875b1abed3147f62040`), and
+entrypoint SHA-256 `ba80f8b040b6411b8d46cf1908a04a7a4a657834e479197d81c6d07508d79c64`
+match the verified candidate. Deletion/archive passed 32/32, deletion safety
+26/26, release safety 21/21, production smoke 10/10, and isolated production
+Firefox acceptance 64/64. The live entrypoint returned `Cache-Control:
+no-store`; no production destructive deletion was executed, and existing
+creator data was preserved. Rollback: `99ca2347-3181-4525-b9eb-d28cb61cf42a`.
+See the execution record above.
+
 ## TPI-STUDIOFLOW-126F — Final production deployment (2026-11-01)
 
 Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**. The verified 126C
