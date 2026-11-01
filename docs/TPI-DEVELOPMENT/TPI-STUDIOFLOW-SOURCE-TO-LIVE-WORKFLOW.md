@@ -69,7 +69,7 @@ is actually reachable from that commit. `git merge-base --is-ancestor <feature>
 <approved>` returning non-zero means the feature is **not** in the release and
 will silently disappear.
 
-A full merge of the two lineages is not a safe default: it conflict in 22 places
+A full merge of the two lineages is not a safe default: it conflicts in 22 places
 across `src/App.tsx`, concentrated in the hardened deletion subsystem.
 
 ## Current local development candidate — TPI-STUDIOFLOW-134

@@ -26,7 +26,7 @@ serves the correction; **production is unchanged** at Worker
 `71a5293d-fef4-4643-bf50-e9dfc7327eb5` and is not authorized for deployment
 under TPI-134.
 
-Do not run a full lineage merge casually: it conflict in 22 places inside the
+Do not run a full lineage merge casually: it conflicts in 22 places inside the
 hardened deletion subsystem. Restoring Notes, podcast export, folder sync and
 the private Teleprompter reader needs its own directive and acceptance cycle.
 `verify:studioflow-035` currently cannot pass on the released lineage.

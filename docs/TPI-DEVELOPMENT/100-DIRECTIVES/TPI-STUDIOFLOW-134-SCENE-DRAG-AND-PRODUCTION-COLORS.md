@@ -439,9 +439,13 @@ TPI_PRODUCTION_DEPLOY=approved npm run release:production
   the StudioFlow repository has no configured remote)
 - Website implementation: `6dc1525`
 - Website regression gate: `8e75a0e`
+- Website preflight integrity fix: `fed57d5`
+- Website documentation: `8cd8317` and the follow-up documentation commit on the
+  same branch (`git log -- docs/TPI-DEVELOPMENT` is authoritative for the full set)
 - Website branch: `codex/tpi-development`
 - GitHub parity: **VERIFIED** — `origin/codex/tpi-development` equals the local
-  HEAD after push
+  HEAD before every preflight run, which `release:preflight` enforces as a
+  hard precondition
 
 ## 19. Safety statement
 
