@@ -13,7 +13,8 @@ scroll and resize. Only one card menu can be open, and the existing
 outside-click, Escape, action-selection, keyboard and focus behaviors are
 preserved alongside the unchanged Rename, Archive and Delete actions (including
 every TPI-STUDIOFLOW-088/089/132R deletion safeguard). New Firefox suite passes
-39/39 and is now part of `release:preflight`; the StudioFlow source is committed
+44/44 (including eight genuine 390 px phone-viewport checks) and is now part of
+`release:preflight`; the StudioFlow source is committed
 at `e608ca9414d27f96058503c53865a8b03993ab7a` and the website release baseline
 records assets `index-mYnRoDcA.js` (`03802154…`) and `index-B-jk8V4i.css`
 (`c64c8f9d…`).
@@ -27,7 +28,7 @@ references only `index-mYnRoDcA.js` (`03802154…`) and `index-B-jk8V4i.css`
 (`9e69ee70…`), and no migration, SQL or server-code file changed. Gates: local
 authentication lifecycle PASS, preflight READY (deletion/archive 32/32, deletion
 safety 26/26, Studio lifecycle 29/29, ownership 40/40, release acceptance 64/64,
-floating menu regression 39/39, staging verification, guarded dry-run),
+floating menu regression 44/44, staging verification, guarded dry-run),
 production smoke, live isolated Firefox acceptance 64/64, and a focused
 non-destructive production acceptance 16/16 that confirmed the menu opens beside
 its own More Actions button on the live site. Production D1 still holds the same

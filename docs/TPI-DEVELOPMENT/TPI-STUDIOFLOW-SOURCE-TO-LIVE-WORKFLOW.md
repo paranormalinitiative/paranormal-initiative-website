@@ -633,7 +633,8 @@ opened it instead of the top-right corner of the viewport. Studio creation,
 switching, persistence, renaming, archiving, permanent deletion and every
 server authorization and safety guard are unchanged. The website-side
 regression is `scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs`
-(39/39), now part of `release:preflight`. Verified live: anonymous smoke, live
+(44/44, including eight checks in a genuine 390 px phone viewport), now part of
+`release:preflight`. Verified live: anonymous smoke, live
 isolated Firefox acceptance 64/64, and a focused non-destructive production
 acceptance 16/16 confirming the menu opens beneath its own More Actions button
 and stays inside the viewport on the live site.

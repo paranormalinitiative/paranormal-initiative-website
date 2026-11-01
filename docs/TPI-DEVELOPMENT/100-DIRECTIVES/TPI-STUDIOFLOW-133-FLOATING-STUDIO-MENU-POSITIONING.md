@@ -93,7 +93,7 @@ performs no permanent deletion. 39 checks:
 | Anchored to the correct card (below, right-aligned, inside the card column, above surrounding content, card unmoved, three actions intact) | S1a–S1e |
 | No longer at the viewport's top-right corner; not page-positioned | S2, S2b |
 | Flips above the button when the viewport bottom is reached | S3 |
-| Fits a 420 px viewport, adds no horizontal overflow, never past the right edge | S4a–S4c |
+| Fits a real 390 px phone viewport, stays anchored, keeps all three actions, paints above the card, adds no horizontal overflow, never past the right edge, one menu only | S4a–S4h |
 | Follows the button after scrolling and after resizing | S5, S5b, S6 |
 | Multiple cards: one menu, bound to the clicked card | S7a, S7b |
 | Outside click, Escape, and repeat click close the menu | S8, S9, S10 |
@@ -104,7 +104,15 @@ performs no permanent deletion. 39 checks:
 | Tablet (820×1180) and phone (390×780) placement, touch-sized controls | S15 (4 checks) |
 | Positioning interactions never write Studio records or change server identity/storage classification; fixtures and the owner's Studio untouched | S16a, S16a2, S16b, S16c |
 
-Result: **39/39 PASS** against the authoritative local Worker.
+Result: **44/44 PASS** against the authoritative local Worker.
+
+The phone-width checks in S4 run the real bundle in a same-origin 390 px
+iframe, because Firefox clamps a driven window to roughly 500 CSS pixels on
+macOS and no narrower window viewport can be produced (a
+`layout.css.devPixelsPerPx` override does not change `window.innerWidth`).
+Inside the iframe `window.innerWidth` is genuinely 390, which is exactly what
+the placement code reads, so the clamp and edge behavior are exercised at phone
+width rather than at a 500 px desktop minimum.
 
 ## 6. Release
 
@@ -146,15 +154,17 @@ staged them into `studio/` while preserving every maintained bridge file.
 Production gates: local authentication lifecycle PASS (64 checks), preflight
 READY (release safety, staging baseline match, reproducible builds,
 deletion/archive 32/32, deletion safety 26/26, Studio lifecycle 29/29, ownership
-40/40, release acceptance 64/64, the new floating menu regression 39/39, staging
+40/40, release acceptance 64/64, the new floating menu regression, staging
 verification and guarded Wrangler dry-run), live anonymous smoke 10/10, and live
 isolated Firefox acceptance 64/64. A focused non-destructive production
 acceptance then passed 16/16 in Firefox Developer Edition against
 `https://paranormalinitiative.com`: the menu opens beneath and right-aligned to
 its own More Actions button, is not at the viewport corner, stays inside the
 viewport, only one card menu is open at a time, Escape and outside click close
-it, it flips above near the bottom edge, and it adds no horizontal overflow at
-420 px.
+it, it flips above near the bottom edge, and it adds no horizontal overflow.
+The regression was then strengthened to 44/44 with the genuine 390 px phone
+viewport coverage described above; that change touches only the test suite and
+documentation, leaving the deployed bundle byte-identical.
 
 ## 7. Remaining limitations
 

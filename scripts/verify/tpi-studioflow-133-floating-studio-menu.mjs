@@ -265,6 +265,88 @@ const menuGeometry = title => js(`
   };
 `, title);
 
+// Firefox clamps a driven window to roughly 500 CSS pixels on macOS, so a
+// phone-width viewport cannot be produced with setRect. Loading the same app in
+// a same-origin 390px iframe gives the bundle a real 390px window.innerWidth,
+// which is what the placement code reads.
+const PHONE_VIEWPORT = { width: 390, height: 760 };
+const PHONE_FRAME_ID = 'tpi-133-phone-frame';
+
+const cardXpath = title =>
+  `//strong[normalize-space(.)=${JSON.stringify(title)}]/ancestor::*[contains(concat(' ', normalize-space(@class), ' '), ' studio-card ')][1]//details[contains(@class,'studio-card-more')]/summary`;
+
+const openPhoneFrame = async () => {
+  await js(`
+    const old = document.getElementById('${PHONE_FRAME_ID}');
+    if (old) old.remove();
+    const frame = document.createElement('iframe');
+    frame.id = '${PHONE_FRAME_ID}';
+    frame.title = 'TPI-133 phone viewport';
+    frame.style.cssText = 'position:fixed;left:0;top:0;width:${PHONE_VIEWPORT.width}px;height:${PHONE_VIEWPORT.height}px;border:0;z-index:2147483000;background:#0b0b0d;';
+    frame.src = '/studio/';
+    document.body.appendChild(frame);
+    return true;`);
+  await waitFor('phone frame loads StudioFlow', async () =>
+    js(`const frame = document.getElementById('${PHONE_FRAME_ID}');
+      const doc = frame && frame.contentDocument;
+      return Boolean(doc && (doc.querySelector('.home-page') || doc.querySelector('.production-bar, .exit-button')));`), 60_000);
+  // The framed app restores the last opened Studio, so leave it for Home with
+  // the app's own navigation control before measuring cards.
+  await js(`const doc = document.getElementById('${PHONE_FRAME_ID}').contentDocument;
+    if (!doc.querySelector('.home-page')) {
+      const exit = doc.querySelector('.production-bar .exit-button, .exit-button');
+      if (exit) exit.click();
+    }
+    return true;`);
+  await waitFor('phone frame renders Studio cards', async () =>
+    js(`const frame = document.getElementById('${PHONE_FRAME_ID}');
+      const doc = frame && frame.contentDocument;
+      return Boolean(doc && doc.querySelector('.studio-card .studio-card-more summary'));`), 30_000);
+};
+
+const removePhoneFrame = () => js(`
+  const frame = document.getElementById('${PHONE_FRAME_ID}');
+  if (frame) frame.remove();
+  return true;`);
+
+const phoneGeometry = title => js(`
+  const frame = document.getElementById('${PHONE_FRAME_ID}');
+  const doc = frame && frame.contentDocument;
+  if (!doc) return { error: 'phone frame missing' };
+  const wanted = arguments[0];
+  const card = Array.from(doc.querySelectorAll('.studio-card')).find(node => {
+    const strong = node.querySelector('.studio-card-title strong');
+    return strong && strong.textContent.trim() === wanted;
+  });
+  if (!card) return { error: 'card missing in phone frame' };
+  const details = card.querySelector('details.studio-card-more');
+  const summary = card.querySelector('.studio-card-more summary');
+  const menu = card.querySelector('.studio-card-more .context-menu');
+  if (!details || !summary || !menu) return { error: 'menu or anchor missing in phone frame' };
+  const rectOf = element => {
+    const box = element.getBoundingClientRect();
+    return { top: Math.round(box.top), left: Math.round(box.left), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) };
+  };
+  const root = doc.scrollingElement || doc.documentElement;
+  const menuRect = rectOf(menu);
+  const width = frame.contentWindow.innerWidth;
+  const height = frame.contentWindow.innerHeight;
+  const centreX = Math.round((menuRect.left + menuRect.right) / 2);
+  const centreY = Math.round((menuRect.top + menuRect.bottom) / 2);
+  const topElement = doc.elementFromPoint(centreX, centreY);
+  return {
+    open: details.open,
+    summaryRect: rectOf(summary),
+    menuRect,
+    viewport: { width, height },
+    items: Array.from(menu.querySelectorAll('button')).map(node => node.textContent.trim()),
+    menuOnTop: Boolean(topElement && (menu === topElement || menu.contains(topElement))),
+    scrollWidth: root.scrollWidth,
+    clientWidth: root.clientWidth,
+    openMenus: doc.querySelectorAll('details.studio-card-more[open]').length
+  };
+`, title);
+
 const withinViewport = (menuRect, viewport) =>
   menuRect.left >= 0 && menuRect.top >= 0 &&
   menuRect.right <= viewport.width && menuRect.bottom <= viewport.height;
@@ -360,24 +442,49 @@ async function run() {
     JSON.stringify({ menu: flipped.menuRect, button: flipped.summaryRect, viewport: flipped.viewport, flipAdjacency }));
   await closeAnyMenu();
 
-  // ── S4 — it stays inside the viewport and adds no horizontal overflow ──
-  await driver.manage().window().setRect({ width: 420, height: 740, x: 20, y: 20 });
-  await sleep(400);
+  // ── S4 — it stays inside a phone-width viewport and adds no overflow ──
   await closeAnyMenu();
-  // Baseline before the menu exists: the Home page itself may already scroll
-  // horizontally on a phone-width window, which is not this directive's scope.
-  const closedOverflow = await js("const root = document.scrollingElement || document.documentElement; return { scrollWidth: root.scrollWidth, clientWidth: root.clientWidth };");
-  await openMenu(secondTitle);
-  const narrow = await menuGeometry(secondTitle);
-  check("S4a the menu fits inside a narrow viewport", withinViewport(narrow.menuRect, narrow.viewport),
+  await openPhoneFrame();
+  const closedOverflow = await js(`const frame = document.getElementById('${PHONE_FRAME_ID}');
+    const doc = frame.contentDocument;
+    const root = doc.scrollingElement || doc.documentElement;
+    return { scrollWidth: root.scrollWidth, clientWidth: root.clientWidth, viewport: frame.contentWindow.innerWidth };`);
+  check("S4a the phone viewport really is phone width",
+    Math.abs(closedOverflow.viewport - PHONE_VIEWPORT.width) <= 20,
+    JSON.stringify(closedOverflow));
+
+  const frameElement = await driver.findElement(By.css(`#${PHONE_FRAME_ID}`));
+  await driver.switchTo().frame(frameElement);
+  const phoneSummary = await driver.findElement(By.xpath(cardXpath(secondTitle)));
+  await driver.executeScript("arguments[0].scrollIntoView({ block: 'center' });", phoneSummary);
+  await sleep(250);
+  await phoneSummary.click();
+  await driver.switchTo().defaultContent();
+  await waitFor('phone-width menu open', async () => {
+    const geometry = await phoneGeometry(secondTitle);
+    return !geometry.error && geometry.open && geometry.menuRect.width > 0;
+  }, 10_000);
+
+  const narrow = await phoneGeometry(secondTitle);
+  check("S4b the menu fits inside a phone-width viewport", withinViewport(narrow.menuRect, narrow.viewport),
     JSON.stringify({ menu: narrow.menuRect, viewport: narrow.viewport }));
-  check("S4b the menu adds no horizontal page overflow of its own",
+  check("S4c the menu stays anchored to its button at phone width",
+    adjacentToAnchor(narrow.menuRect, narrow.summaryRect).anchoredBelow ||
+      adjacentToAnchor(narrow.menuRect, narrow.summaryRect).anchoredAbove,
+    JSON.stringify({ menu: narrow.menuRect, button: narrow.summaryRect, adjacency: adjacentToAnchor(narrow.menuRect, narrow.summaryRect) }));
+  check("S4d the menu keeps all three actions at phone width", narrow.items.length === 3, JSON.stringify(narrow.items));
+  check("S4e the menu paints above the card at phone width", narrow.menuOnTop, JSON.stringify({ menu: narrow.menuRect }));
+  check("S4f the menu adds no horizontal page overflow of its own",
     narrow.scrollWidth <= Math.max(closedOverflow.scrollWidth, narrow.clientWidth + 1),
     JSON.stringify({ closed: closedOverflow, openScrollWidth: narrow.scrollWidth, clientWidth: narrow.clientWidth, menu: narrow.menuRect }));
-  check("S4c the menu never extends past the right edge of the viewport",
-    narrow.menuRect.right <= narrow.clientWidth + 1, JSON.stringify({ menu: narrow.menuRect, clientWidth: narrow.clientWidth }));
+  check("S4g the menu never extends past the right edge of the viewport",
+    narrow.menuRect.right <= narrow.viewport.width + 1, JSON.stringify({ menu: narrow.menuRect, viewport: narrow.viewport }));
+  check("S4h only one menu is open at phone width", narrow.openMenus === 1, String(narrow.openMenus));
+  await removePhoneFrame();
+  await sleep(300);
 
   // ── S5 — the menu follows its card while the page scrolls ──────────────
+  await openMenu(secondTitle);
   const beforeScroll = await menuGeometry(secondTitle);
   await js("window.scrollBy(0, 140);");
   await sleep(250);
