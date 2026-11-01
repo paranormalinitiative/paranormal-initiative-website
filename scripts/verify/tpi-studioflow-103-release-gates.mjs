@@ -1,22 +1,31 @@
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-import vm from 'node:vm';
-const source=readFileSync('functions/api/[[path]].js','utf8');
-assert.match(source,/path\.match\(\/\^\\\/studio\\\/workspaces.*unavailablePermanentStudioDeletion\(request\)/);
-const start=source.indexOf('function unavailablePermanentStudioDeletion(');
-const end=source.indexOf('async function handlePurgeStudioWorkspace(',start);
-let allow=true;
-const context=vm.createContext({sameOriginMutationAllowed:()=>allow,json:(body,status,headers)=>({body,status,headers})});
-vm.runInContext(source.slice(start,end)+';globalThis.gate=unavailablePermanentStudioDeletion;',context);
-for(const mode of ['studio-only','with-contents']){
- const result=context.gate({body:{mode}});assert.equal(result.status,503);assert.equal(result.body.ok,false);assert.equal(result.body.code,'studio_permanent_deletion_unavailable');
-}
-allow=false;assert.equal(context.gate({}).status,403);
-const bridge=readFileSync('studio/workspace-bridge.js','utf8');
-const a=bridge.indexOf('function deleteStudioPermanently('),b=bridge.indexOf('function deleteWorkspace(',a);
-const bc=vm.createContext({setMessage(){},describe:e=>e.message});
-vm.runInContext(bridge.slice(a,b)+';globalThis.gate=deleteStudioPermanently;',bc);
-for(const mode of ['studio-only','with-contents'])await assert.rejects(bc.gate('disposable',{mode}),/temporarily unavailable/);
-const index=readFileSync('studio/index.html','utf8');
-for(const match of index.matchAll(/(?:src|href)="(\/studio\/[^"?]+)(?:\?[^\"]*)?"/g)) readFileSync('.'+match[1]);
-console.log('PASS: both authenticated purge modes fail closed, foreign origin rejected, browser/server bridge gate rejects both modes, integrated asset references exist. No DB, R2 or IndexedDB mutations invoked.');
+import { readFileSync } from 'node:fs';
+
+// TPI-STUDIOFLOW-103 historical release-gate contract, updated by TPI-130:
+// permanent deletion is no longer globally disabled. The route and browser
+// bridge must use the guarded implementation, while the dialog requires a
+// complete inventory before the exact-name button can activate.
+const api = readFileSync('functions/api/[[path]].js', 'utf8');
+const bridge = readFileSync('studio/workspace-bridge.js', 'utf8');
+const app = readFileSync('/Users/toddknipple/Documents/StudioFlow/web/src/App.tsx', 'utf8');
+const index = readFileSync('studio/index.html', 'utf8');
+
+assert.match(api, /path\.match\(\/\^\\\/studio\\\/workspaces.*\/purge\$\/\)\) return requireStudioAccess\(request, env, user => handlePurgeStudioWorkspace\(path, request, env, user\)/);
+assert.doesNotMatch(api, /path\.match\(\/\^\\\/studio\\\/workspaces.*unavailablePermanentStudioDeletion\(request\)/);
+assert.match(api, /function handlePurgeStudioWorkspace\(/);
+assert.match(api, /studioProductionGuard\(existing, mode === "with-contents" \? false : true\)/);
+assert.match(api, /code: "workspace_conflict"/);
+assert.match(api, /code: "purge_reconciliation_required"/);
+assert.match(bridge, /return deleteStudioAttempt\(key, options\)\.catch/);
+assert.doesNotMatch(bridge, /Permanent Studio deletion is temporarily unavailable pending recording safety verification/);
+assert.match(app, /const inventoryReady = Boolean\(/);
+assert.match(app, /onChange=\{\(event\) => setTyped\(event\.currentTarget\.value\)\}/);
+assert.match(app, /Delete Studio Permanently/);
+assert.match(app, /data-testid="studio-delete-submit"/);
+for (const match of index.matchAll(/(?:src|href)="(\/studio\/[^"?]+)(?:\?[^\"]*)?"/g)) readFileSync(`.${match[1]}`);
+
+console.log(JSON.stringify({
+  status: 'PASSED',
+  checks: 13,
+  contract: 'TPI-STUDIOFLOW-130 guarded permanent deletion is routed, inventory-gated, and reactively name-confirmed'
+}, null, 2));
