@@ -143,6 +143,8 @@ async function serveAssets(request, env) {
   const response = await env.ASSETS.fetch(request);
   if (!response.ok) return response;
   const isDevelopmentAsset = env.TPI_ENV === "development" || env.TPI_ENV === "local";
+  const assetPath = new URL(request.url).pathname;
+  const isStudioEntryDocument = assetPath === "/studio" || assetPath === "/studio/" || assetPath === "/studio/index.html";
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) {
     if (!isDevelopmentAsset) return response;
@@ -168,7 +170,7 @@ async function serveAssets(request, env) {
   // to the runtime. This matters for extensionless local HTML asset routes.
   if (body === html) {
     const headers = new Headers(response.headers);
-    if (isDevelopmentAsset) {
+    if (isDevelopmentAsset || isStudioEntryDocument) {
       headers.set("Cache-Control", "no-store");
       headers.delete("etag");
       headers.delete("last-modified");
@@ -179,7 +181,11 @@ async function serveAssets(request, env) {
   headers.delete("content-length");
   headers.delete("etag");
   headers.delete("last-modified");
-  if (isDevelopmentAsset) headers.set("Cache-Control", "no-store");
+  if (isDevelopmentAsset || isStudioEntryDocument) {
+    headers.set("Cache-Control", "no-store");
+    headers.delete("etag");
+    headers.delete("last-modified");
+  }
   return new Response(body, { status: response.status, statusText: response.statusText, headers });
 }
 

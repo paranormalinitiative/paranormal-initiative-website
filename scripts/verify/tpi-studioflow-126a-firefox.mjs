@@ -14,6 +14,8 @@ const credentialsFile = productionMode
   ? (process.env.TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/qa-studioflow-prod.json"))
   : (process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json"));
 const evidenceRoot = process.env.TPI_FIREFOX_126A_EVIDENCE || join(repoRoot, "docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-126A");
+const expectedJavaScriptAsset = process.env.TPI_FIREFOX_EXPECTED_JS || "index-CSTJXjG2.js";
+const expectedCssAsset = process.env.TPI_FIREFOX_EXPECTED_CSS || "index-CphVaGhF.css";
 const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });
 
@@ -98,7 +100,10 @@ try {
   await driver.navigate().refresh();
   await waitFor("My Scenes production cards", async () => (await driver.findElements(By.css('[data-tpi-scene-panel-item]'))).length === panelItems.length);
 
-  const cardData = async () => driver.executeScript("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(n){var s=getComputedStyle(n); return {id:n.getAttribute('data-tpi-scene-panel-item'),kind:n.getAttribute('data-production-kind'),text:(n.textContent||'').replace(/\\s+/g,' ').trim(),icon:s.getPropertyValue('--production-item-color').trim(),border:s.borderTopColor,selected:n.classList.contains('selected')};});");
+  const cardData = async () => driver.executeScript("return Array.from(document.querySelectorAll('[data-tpi-scene-panel-item]')).map(function(n){var s=getComputedStyle(n); return {id:n.getAttribute('data-tpi-scene-panel-item'),kind:n.getAttribute('data-production-kind'),text:(n.textContent||'').replace(/\\s+/g,' ').trim(),icon:s.getPropertyValue('--production-item-color').trim(),borderVar:s.getPropertyValue('--production-item-border').trim(),selectedBorderVar:s.getPropertyValue('--production-item-selected-border').trim(),border:s.borderTopColor,selected:n.classList.contains('selected')};});");
+  const debugStyles = async () => driver.executeScript("return {stylesheets:Array.from(document.styleSheets).map(function(s){return s.href||'inline';}),links:Array.from(document.querySelectorAll('link[rel=stylesheet]')).map(function(s){return {href:s.href,media:s.media||''};})};");
+  const assetRefs = await driver.executeScript("return {scripts:Array.from(document.querySelectorAll('script[src]')).map(function(s){return new URL(s.src,location.href).pathname;}),styles:Array.from(document.querySelectorAll('link[rel=stylesheet]')).map(function(s){return new URL(s.href,location.href).pathname;})};");
+  check("Firefox serves the intended hashed production assets", assetRefs.scripts.includes(`/studio/assets/${expectedJavaScriptAsset}`) && assetRefs.styles.includes(`/studio/assets/${expectedCssAsset}`), JSON.stringify({ expectedJavaScriptAsset, expectedCssAsset, assetRefs }));
   const expected = new Map([
     ["intro", { icon: "#f97316", normal: "rgba(249, 115, 22, 0.72)", selected: "rgb(251, 146, 60)" }],
     ["teleprompter-script", { icon: "#a855f7", normal: "rgba(168, 85, 247, 0.74)", selected: "rgb(192, 132, 252)" }],
@@ -108,7 +113,7 @@ try {
     ["outro", { icon: "#f97316", normal: "rgba(249, 115, 22, 0.72)", selected: "rgb(251, 146, 60)" }]
   ]);
   const initial = await cardData();
-  check("Every production card border matches its type color", initial.every((card) => expected.get(card.kind)?.[card.selected ? "selected" : "normal"] === card.border), JSON.stringify(initial));
+  check("Every production card border matches its type color", initial.every((card) => expected.get(card.kind)?.[card.selected ? "selected" : "normal"] === card.border), JSON.stringify({ cards: initial, styles: await debugStyles() }));
   check("Icon and border tokens agree for every production type", initial.every((card) => expected.get(card.kind)?.icon === card.icon), JSON.stringify(initial));
   await driver.takeScreenshot().then((data) => writeFileSync(join(evidenceRoot, "all-production-card-borders.png"), data, "base64"));
 
@@ -118,7 +123,7 @@ try {
   await sleep(350);
   const selected = await cardData();
   const selectedScript = selected.find((card) => card.kind === "teleprompter-script");
-  check("Selected Teleprompter Script retains a purple border", selectedScript?.border === expected.get("teleprompter-script")?.selected, JSON.stringify(selectedScript));
+  check("Selected Teleprompter Script retains a purple border", selectedScript?.border === expected.get("teleprompter-script")?.selected, JSON.stringify({ card: selectedScript, styles: await debugStyles() }));
   await driver.takeScreenshot().then((data) => writeFileSync(join(evidenceRoot, "selected-teleprompter-purple-border.png"), data, "base64"));
 
   await driver.navigate().refresh();

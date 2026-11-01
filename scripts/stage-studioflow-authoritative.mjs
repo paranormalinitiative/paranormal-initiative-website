@@ -431,7 +431,7 @@ function mergeEntryPoint(generatedIndexHtml, maintainedIndexHtml) {
   let merged = generatedIndexHtml.replace(generatedModule[0], integrations);
   merged = merged.replace(
     generatedCss[0],
-    `${generatedCss[0]}\n    <link rel="stylesheet" href="/studio/studioflow-012-overrides.css?tpi022=video-organization-v12&tpi-panels=exclusive-v3&tpi037=scenes-panel-uniformity-v2">`
+    `${generatedCss[0]}\n    <link rel="stylesheet" href="/studio/studioflow-012-overrides.css?tpi022=video-organization-v12&tpi-panels=exclusive-v3&tpi037=scenes-panel-uniformity-v2&tpi126c=production-item-border-v2">`
   );
   return merged;
 }
