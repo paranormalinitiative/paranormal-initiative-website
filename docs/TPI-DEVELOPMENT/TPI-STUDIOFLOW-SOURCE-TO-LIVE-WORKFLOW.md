@@ -2,7 +2,7 @@
 
 Status: ACTIVE / CANONICAL
 
-Last verified: 2026-10-29
+Last verified: 2026-11-01
 
 This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
@@ -48,7 +48,55 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
-## Current local development candidate — TPI-STUDIOFLOW-122F.4A
+## MANDATORY SOURCE-LINEAGE CHECK — TPI-STUDIOFLOW-134 (2026-11-01)
+
+The StudioFlow repository contains **two live lineages** that both branch from
+`main` (`9f85f9d`). Selecting a source revision from the wrong one silently
+removes approved features from the shipped bundle:
+
+| Lineage | Head | Contains |
+| --- | --- | --- |
+| Development | `codex/studioflow-122-notes` (`a6784cf`) | Notes workspace, podcast project export, local project folder sync, private stage Teleprompter reader, TPI-125 Teleprompter scene items, TPI-126A production-item colors |
+| **Release** | `codex/tpi-133` (`e608ca9`) | `main` + TPI-130/131/132R deletion work + TPI-133 menu anchoring. **None of the development line.** |
+
+Every build from TPI-130 through TPI-133 came from the release lineage, which is
+why production-item colors, icons, highlighting and Teleprompter-to-Scenes drag
+were reported missing: they were absent from the artifact, not mis-rendered.
+
+Before recording a new `approvedCommit` in
+`scripts/studioflow-release-baseline.json`, verify the feature you are releasing
+is actually reachable from that commit. `git merge-base --is-ancestor <feature>
+<approved>` returning non-zero means the feature is **not** in the release and
+will silently disappear.
+
+A full merge of the two lineages is not a safe default: it conflict in 22 places
+across `src/App.tsx`, concentrated in the hardened deletion subsystem.
+
+## Current local development candidate — TPI-STUDIOFLOW-134
+
+The authoritative `8787` Worker serves the TPI-STUDIOFLOW-134 restoration of
+production-item colors and Teleprompter-to-Scenes drag-and-drop from clean
+StudioFlow source commit `820d680da23d2a262f02a8da55ac4cc3faa5dd52` on branch
+`codex/tpi-134` (worktree `.local-dev/worktrees/source-134`, built from the
+released lineage `e608ca9`). Exact staged assets are:
+
+- `/studio/assets/index-CmUjeYcC.js` — SHA-256
+  `bedfa883f7919e00f97a0683aa6efbd5f87d8e4e39d532774eecfd87afd53a8b`
+- `/studio/assets/index-D6ZhUVW1.css` — SHA-256
+  `1baa338c09f29395f292cf1fed415baa700c1544e79b0d723c4c60988e6b3cb6`
+
+The source was built twice by the provenance workflow, verified reproducible,
+matched against the recorded hashes, and staged with all eleven bridge files
+preserved. Firefox Developer Edition acceptance passes 64/64 maintained and
+27/27 focused (all five approved colors, full-perimeter borders, selected and
+dragging states, drop-target highlighting, assignment, persistence); Scenes
+panel passes 20/20 and release safety passes. Deletion, Studio management,
+storage, Notes and bridge files are unchanged. **Production remains on the
+TPI-133 Worker `71a5293d-fef4-4643-bf50-e9dfc7327eb5`; no deployment is
+authorized under TPI-134.** `verify:studioflow-035` cannot pass on this lineage
+because it asserts the unreleased private Teleprompter reader.
+
+## Historical local development candidate — TPI-STUDIOFLOW-122F.4A
 
 The authoritative `8787` Worker serves the Notes Trash restoration and
 attachment-safe permanent-deletion correction from clean StudioFlow source

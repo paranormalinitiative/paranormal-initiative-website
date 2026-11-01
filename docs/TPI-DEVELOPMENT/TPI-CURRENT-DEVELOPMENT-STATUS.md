@@ -1,5 +1,52 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-134 — Scene drag-and-drop and production colors (2026-11-01)
+
+Status: **CORRECTED AND VERIFIED IN LOCAL DEVELOPMENT — PRODUCTION NOT DEPLOYED
+(not authorized)**. The missing production-item colors, highlighting, icon
+colors and Teleprompter-to-Scenes drag were caused by **divergent StudioFlow
+source lineages**, not by a browser change and not by a rendering defect.
+TPI-STUDIOFLOW-125 (`77f32d9`) and TPI-STUDIOFLOW-126A (`a6784cf`) live only on
+`codex/studioflow-122-notes`; the revisions that built TPI-130 through TPI-133
+descend from `main` (`9f85f9d`) and never contained either. The shipped bundle
+had **zero** `data-production-kind` attributes and **zero**
+`--production-item-*` custom properties, so the maintained bridge stylesheet
+correctly fell through to its generic blue fallback and every row lost its type
+color. Chrome is excluded: the maintained release gate still launches real
+Firefox Developer Edition through `geckodriver`, and a feature absent from the
+compiled bundle cannot render in any browser.
+
+Correction: source `820d680d…` on `codex/tpi-134` ports both approved features
+onto the released lineage — the `teleprompter-script` production kind, its
+normalization and persistence, the external drop path and purple drop
+placeholder, the draggable rail scripts with the approved
+`application/x-studioflow-teleprompter-script` payload, and the complete
+approved color system (video orange, Teleprompter purple, Scene blue, Timer
+yellow, Music green) driving border, tint, icon, selected and dragging states.
+The hardened TPI-130/131/132R/133 deletion subsystem and every bridge file are
+unchanged; a full lineage merge was evaluated and rejected because it conflict
+ted in 22 places inside the owner's data-deletion code. Website commits
+`6dc1525` (staged assets and baseline) and `8e75a0e` (new Firefox gate), pushed
+with parity; baseline assets are `index-CmUjeYcC.js` and
+`index-D6ZhUVW1.css`.
+
+Verified: Firefox Developer Edition release acceptance 64/64, new TPI-134
+colors and script-drag acceptance 27/27 (now part of `release:preflight`),
+Scenes panel 20/20, release safety PASS, local auth lifecycle 38/38, and exact
+reproducible staging. **Pre-existing failure:** `verify:studioflow-035` asserts
+`[data-private-teleprompter="true"]`, which exists only on the unreleased
+122-notes lineage; it failed before this change and cannot pass until that work
+is restored or the suite is reconciled.
+
+**Larger finding requiring an owner decision:** the same divergence also
+removed the Notes workspace, podcast project export, local project folder sync,
+recording-audio work and the private stage Teleprompter reader from the released
+lineage. Production still runs Worker `71a5293d-fef4-4643-bf50-e9dfc7327eb5`
+on the 133 bundle, so the reported symptoms persist live until a separately
+authorized release.
+
+[Full record](100-DIRECTIVES/TPI-STUDIOFLOW-134-SCENE-DRAG-AND-PRODUCTION-COLORS.md).
+
 ## TPI-STUDIOFLOW-133 — Floating Studio actions menu positioning (2026-11-01)
 
 Status: **DEPLOYED AND VERIFIED — owner acceptance pending**. The Studio card

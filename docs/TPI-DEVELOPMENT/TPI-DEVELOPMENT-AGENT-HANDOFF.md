@@ -1,5 +1,36 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-134 — SOURCE LINEAGE LOSS (2026-11-01)
+
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-134-SCENE-DRAG-AND-PRODUCTION-COLORS.md).
+
+**Read this before touching StudioFlow source.** The StudioFlow repository has
+two live lineages branching from `main` (`9f85f9d`):
+`codex/studioflow-122-notes` (Notes, podcast export, local folder sync, the
+private Teleprompter reader, TPI-125 and TPI-126A) and the **release lineage**
+`codex/tpi-133` (`e608ca9`, main + deletion work + menu anchoring) that actually
+produced every build from TPI-130 onward. Choosing a source revision from the
+wrong lineage silently deletes approved features from the shipped bundle.
+
+That is what happened here: production-item colors, icons, highlighting and
+Teleprompter-to-Scenes drag were reported missing and were genuinely absent from
+the bundle (`data-production-kind` count 0, `--production-item-*` count 0), not
+mis-rendered. Chrome was not involved.
+
+Current state: source `820d680d…` (`codex/tpi-134`) restores TPI-125 and
+TPI-126A **on the released lineage** without touching deletion, Studio
+management, storage, Notes or any bridge file. Website commits `6dc1525` and
+`8e75a0e` are pushed to `origin/codex/tpi-development` with parity; the
+baseline records `index-CmUjeYcC.js` / `index-D6ZhUVW1.css`. Local `8787`
+serves the correction; **production is unchanged** at Worker
+`71a5293d-fef4-4643-bf50-e9dfc7327eb5` and is not authorized for deployment
+under TPI-134.
+
+Do not run a full lineage merge casually: it conflict in 22 places inside the
+hardened deletion subsystem. Restoring Notes, podcast export, folder sync and
+the private Teleprompter reader needs its own directive and acceptance cycle.
+`verify:studioflow-035` currently cannot pass on the released lineage.
+
 ## TPI-STUDIOFLOW-126 — FINAL PRODUCTION BASELINE (2026-11-01)
 
 [Production release record](100-DIRECTIVES/TPI-STUDIOFLOW-126-FINAL-PRODUCTION-RELEASE.md).
