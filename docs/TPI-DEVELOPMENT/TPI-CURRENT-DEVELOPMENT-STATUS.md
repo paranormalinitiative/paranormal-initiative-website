@@ -1,5 +1,24 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-132 — Production Studio deletion failure (2026-11-01)
+
+Status: **ROOT CAUSE CONFIRMED AND CORRECTED / NOT DEPLOYED**. Production was
+serving the expected Worker `f4be38fb-9d26-45cb-9c48-5223a1d4c12c` and
+`index-B_8Inyh0.js`; the deletion gating is byte-identical to the bundle that
+deleted the owner's three Studios earlier the same day. The confirmed causes are
+in the maintained bridge: a browser-only Studio carrying a recovery snapshot was
+classified as server-backed (`storage: "both"` with `server: null`), which made
+`Delete Studio Permanently` wait forever for a server inventory that cannot
+exist; and a server deletion guard (`{ code, error }`) was passed to React as a
+render child, throwing error #31 and freezing the dialog on "Preparing the
+deletion inventory…" instead of showing the safety reason. Both are corrected in
+`studio/workspace-bridge.js` with no server, schema, bundle or authorization
+change. New Firefox regression suite passes 28/28; deletion safety 26/26,
+deletion/archive 32/32, release safety PASSED, and the 130 button suite passes
+20/20 in both browser legs. Production deployment remains unauthorized and
+unchanged. See
+[`TPI-STUDIOFLOW-132-PRODUCTION-DELETION-FAILURE.md`](100-DIRECTIVES/TPI-STUDIOFLOW-132-PRODUCTION-DELETION-FAILURE.md).
+
 ## TPI-STUDIOFLOW-131 — Final Studio deletion (2026-11-01)
 
 Status: **COMPLETE / LOCAL DEVELOPMENT VERIFIED FOR FINAL ACTIVE AND FINAL ARCHIVED STUDIO**. The
