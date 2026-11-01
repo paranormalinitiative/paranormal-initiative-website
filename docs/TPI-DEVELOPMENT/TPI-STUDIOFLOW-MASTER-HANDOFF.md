@@ -13,6 +13,18 @@
 > push, deployment, and Firefox verification. Older revisions and status rows
 > below are historical unless the current-status record confirms them.
 
+## Current production baseline — TPI-STUDIOFLOW-126 (2026-11-01)
+
+The approved StudioFlow release is deployed and verified in production. Website
+commit `a025889a7e0361ddbd1867c2f66c83c0ebbe1e43` integrates StudioFlow source
+commit `e2363fb877d3984c938f0703fe62446ad9f17c4f`. Worker
+`theparanormalinitiative` is
+`584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100%; rollback is
+`4108a0d7-5833-435f-8a0b-f6be8c1c8b27`. Production smoke is 10/10 and live
+isolated Firefox acceptance is 64/64. Partial 122H.1–122H.2 local-folder
+synchronization was excluded; native screen-picker automation and external
+livestream delivery remain explicitly limited.
+
 ## Purpose
 
 This document is the current operational handoff for reconciling the

@@ -5,9 +5,20 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-126 — Final production release
+
+Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**.
+[Execution record](TPI-STUDIOFLOW-126-FINAL-PRODUCTION-RELEASE.md). The
+approved candidate from website commit `a025889a7e0361ddbd1867c2f66c83c0ebbe1e43`
+and StudioFlow source commit `e2363fb877d3984c938f0703fe62446ad9f17c4f` was
+deployed through the guarded workflow as Worker
+`584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100% traffic. Anonymous production
+smoke passed 10/10 and isolated Firefox production acceptance passed 64/64.
+The incomplete 122H.1–122H.2 local-folder work and unrelated WIP were excluded.
+
 ## TPI-STUDIOFLOW-125 — Teleprompter integration and unified scene workflow
 
-Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**.
 [Execution record](TPI-STUDIOFLOW-125-TELEPROMPTER-SCENE-INTEGRATION.md). The
 existing My Scenes model now supports stable Teleprompter Script references,
 library selection and drag/drop, centralized blue/orange/purple/yellow/green
@@ -16,20 +27,21 @@ ordering. Focused Firefox acceptance passes 21/21, including recording
 continuity with the private reader; maintained Scenes passes 20/20,
 recording/storage passes 33/33, screen-sharing panel passes 13/13, and release
 safety passes 21/21. Native screen-capture selection remains explicitly not
-automated by the maintained screen-share harness. Production is unchanged.
+automated by the maintained screen-share harness. The candidate was included
+in and verified by TPI-STUDIOFLOW-126.
 
 ## TPI-STUDIOFLOW-122F.4 — Notes Trash, restore, and permanent deletion
 
 ## TPI-STUDIOFLOW-122F.5 — Notes Trash acceptance closure and baseline
 
-Status: **COMPLETE / DEVELOPMENT BASELINE ESTABLISHED / NOT DEPLOYED**.
+Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**.
 [Closure record](TPI-STUDIOFLOW-122F5-NOTES-TRASH-CLOSURE.md). The final
 Firefox verification in 122F.4C confirms Trash rendering, note selection,
 browser Restore, the exact missing-folder fallback notice, notification
 persistence and dismissal, restoration to All Notes, and content preservation.
 The accepted source baseline is `9703b087e91e85e0f791f618a90f9b2c4eeb5160`;
-the website closure baseline is recorded by the documentation commit for this
-record. Production remains unchanged.
+the website closure baseline is recorded by the TPI-STUDIOFLOW-126 production
+release record.
 
 ## TPI-STUDIOFLOW-122F.4C — Final Firefox notification verification
 

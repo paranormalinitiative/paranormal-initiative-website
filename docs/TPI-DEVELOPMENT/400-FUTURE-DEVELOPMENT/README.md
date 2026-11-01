@@ -22,3 +22,25 @@ missing.
 ## Deferred policy work
 
 Detailed Owner, Assistant Administrator, and Moderator permissions remain for a future owner-approved directive. This documentation set does not implement roles or grant access.
+
+## TPI-STUDIOFLOW-126 future roadmap preservation
+
+The following are recorded as future projects and were not implemented or
+deployed under TPI-STUDIOFLOW-126:
+
+- Professional Content Editor: extend the existing TPI Content Editor for
+  authors, editors, researchers, article and research-paper development,
+  citations, drafts, revision history, editorial review, and publishing
+  workflows. Inspect the existing editor before any implementation.
+- Founding 50 Creators: preserve the planned 50 complimentary lifetime Creator
+  memberships, lifetime StudioFlow access, recognition badges, and approved
+  creator privileges.
+- Founding 50 Contributors: preserve the planned 50 complimentary lifetime
+  Contributor memberships, professional Content Editor access, research/article
+  tools, and recognition badges. Contributor membership alone does not grant
+  StudioFlow access.
+- Administration and account roles: future planning must distinguish Owner /
+  Super Administrator, Full Administrator, Moderator, Developer, Marketing /
+  Advertising, Content Editor, Contributor, Creator, Support, and any later
+  specialized roles. Membership entitlements and administrative permissions
+  remain separate, and no final permission matrix is assumed.

@@ -1,5 +1,27 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-126 — FINAL PRODUCTION BASELINE (2026-11-01)
+
+[Production release record](100-DIRECTIVES/TPI-STUDIOFLOW-126-FINAL-PRODUCTION-RELEASE.md).
+
+StudioFlow's approved release is **DEPLOYED AND VERIFIED IN PRODUCTION**. The
+website branch is `codex/tpi-development` at
+`a025889a7e0361ddbd1867c2f66c83c0ebbe1e43`; the authoritative StudioFlow
+source is `e2363fb877d3984c938f0703fe62446ad9f17c4f`. Production Worker
+`theparanormalinitiative` is
+`584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100%; rollback is
+`4108a0d7-5833-435f-8a0b-f6be8c1c8b27`. Canonical assets are
+`index-C7n2E6kz.js` SHA-256
+`94d5ba564a6e358ac013f94dcc30bf78e49e1acd93db4e3a46e32dbab06505bc` and
+`index-SDxcWQji.css` SHA-256
+`0b2b18de7f6308a19116e539d2ac10de54bd9241f300b8d7229577c5eca302b7`.
+
+The guarded deployment passed production smoke 10/10 and isolated Firefox
+acceptance 64/64. Continue to preserve the accepted Notes Trash behavior and
+TPI-125 Teleprompter/My Scenes integration. Do not represent the excluded
+122H.1–122H.2 native local-folder work as released. Native screen-picker
+automation and external livestream delivery remain documented limitations.
+
 ## TPI-STUDIOFLOW-125 — TELEPROMPTER SCENE INTEGRATION (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-125-TELEPROMPTER-SCENE-INTEGRATION.md).

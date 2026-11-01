@@ -1,5 +1,27 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-126 — FINAL PRODUCTION RELEASE (2026-11-01)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-126-FINAL-PRODUCTION-RELEASE.md).
+
+The approved StudioFlow baseline is **DEPLOYED AND VERIFIED IN PRODUCTION**.
+The release used website commit `a025889a7e0361ddbd1867c2f66c83c0ebbe1e43`
+and StudioFlow source commit `e2363fb877d3984c938f0703fe62446ad9f17c4f`.
+Production Worker `theparanormalinitiative` is
+`584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100% traffic; rollback is
+`4108a0d7-5833-435f-8a0b-f6be8c1c8b27`. The canonical StudioFlow assets are
+`index-C7n2E6kz.js` (`94d5ba564a6e358ac013f94dcc30bf78e49e1acd93db4e3a46e32dbab06505bc`)
+and `index-SDxcWQji.css`
+(`0b2b18de7f6308a19116e539d2ac10de54bd9241f300b8d7229577c5eca302b7`).
+
+All release gates passed: local authentication 38/38, Firefox local and live
+acceptance 64/64, Studio lifecycle 29/29, ownership 40/40, deletion/archive
+31/31, deletion safety 32/32, production smoke 10/10, and release safety
+21/21. The 122F.4A–122F.5 Notes Trash sequence and TPI-STUDIOFLOW-125 are
+included. Native 122H.1–122H.2 local-folder synchronization remains partial
+and was excluded. Native OS screen-picker automation and external livestream
+delivery remain documented limitations.
+
 ## TPI-STUDIOFLOW-125 — TELEPROMPTER SCENE INTEGRATION (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-125-TELEPROMPTER-SCENE-INTEGRATION.md).
