@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-133",
-  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-133 floating Studio actions menu positioning correction. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release preserves the guarded typed-name deletion flow and anchors the More Actions menu to the Studio card that opened it instead of the top-right corner of the viewport.",
+  "recordedDirective": "TPI-STUDIOFLOW-134",
+  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-134 scene drag-and-drop and production-item color restoration. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release keeps the TPI-STUDIOFLOW-133 floating Studio actions menu correction and the guarded typed-name deletion flow, and restores the TPI-STUDIOFLOW-125 teleprompter-script production items with the TPI-STUDIOFLOW-126A orange/purple/blue/yellow/green production-item color system on the released lineage.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "e608ca9414d27f96058503c53865a8b03993ab7a"
+    "approvedCommit": "820d680da23d2a262f02a8da55ac4cc3faa5dd52"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-mYnRoDcA.js",
-      "sha256": "03802154c34011f58bd5313af24d6bcebda1cf0c413f7c91ff699ad36fe2522f"
+      "name": "index-CmUjeYcC.js",
+      "sha256": "bedfa883f7919e00f97a0683aa6efbd5f87d8e4e39d532774eecfd87afd53a8b"
     },
     "css": {
-      "name": "index-B-jk8V4i.css",
-      "sha256": "c64c8f9d996c6632af4e067b088abe3d9db6ba9f4d31128165f1a24139a17d65"
+      "name": "index-D6ZhUVW1.css",
+      "sha256": "1baa338c09f29395f292cf1fed415baa700c1544e79b0d723c4c60988e6b3cb6"
     }
   }
 }
