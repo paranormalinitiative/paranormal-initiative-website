@@ -48,6 +48,23 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
+## Current local development candidate — TPI-STUDIOFLOW-122F.4
+
+The authoritative `8787` Worker serves Notes Trash, restore, deletion metadata,
+and explicitly confirmed permanent deletion from clean StudioFlow source commit
+`ddc8eed4321510a86da35d7a1bb35f0cf8b8a50e`. Exact staged assets are:
+
+- `/studio/assets/index-C7r7gqow.js` — SHA-256
+  `5c5ba8b78bc638b0258b2f1fa1d5c85fcdcd934d4e51c424d8e318074b38982a`
+- `/studio/assets/index-Y3KKfVMj.css` — SHA-256
+  `b60d93eb648c49585d5c57200a99313334a2ff390422e71cc0396365d02aae18`
+
+The source was built twice from the exact clean commit and staged with matching
+hashes. Focused Firefox core Trash acceptance, maintained Notes regression, and
+release safety pass. The server safely falls back to All Notes when a deleted
+folder is unavailable; the browser-only visible notice observation remains
+unverified. This candidate is development-only; production remains unchanged.
+
 ## Current local development candidate — TPI-STUDIOFLOW-122F.3
 
 The authoritative `8787` Worker serves the Notes organization-panel sizing

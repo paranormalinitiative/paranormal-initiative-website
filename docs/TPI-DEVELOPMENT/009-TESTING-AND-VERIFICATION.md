@@ -1,5 +1,17 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122F.4 Notes Trash
+
+The D122F.4 candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. Focused isolated Firefox acceptance verifies
+soft delete, Trash display, read-only state, deletion timestamps, restore,
+content/folder/revision preservation, explicit permanent deletion,
+authentication/ownership guards, and attachment fail-safe behavior. The core
+workflow passed 21/22 checks; the server missing-folder fallback passed, while
+the browser-only visible notice was not observed consistently and remains
+UNVERIFIED. The maintained Notes regression passes and release safety passes
+21/21. Production was not modified or deployed.
+
 ## TPI-STUDIOFLOW-122H Podcast project export
 
 The D122H candidate is staged only on the authoritative local Worker at

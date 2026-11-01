@@ -5,6 +5,17 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-122F.4 — Notes Trash, restore, and permanent deletion
+
+Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F4-NOTES-TRASH.md). Source commit
+`ddc8eed4321510a86da35d7a1bb35f0cf8b8a50e` adds deletion metadata, safe restore,
+read-only Trash presentation, and explicitly confirmed owner-scoped permanent
+deletion for attachment-free trashed notes. Attachment-bearing permanent
+deletion fails closed. Focused Firefox core checks, maintained Notes regression,
+release safety, and reproducible staging pass; the browser-only missing-folder
+notice observation remains unverified. Production is unchanged.
+
 ## TPI-STUDIOFLOW-122F.3 — Automatic Organize panel sizing and name wrapping
 
 Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.

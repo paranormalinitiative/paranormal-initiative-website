@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.4 — PARTIAL / NOTES TRASH CORE VERIFIED (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4-NOTES-TRASH.md).
+
+The authoritative local Worker at `http://127.0.0.1:8787/studio/` now provides
+owner-scoped Notes Trash, restore, deletion timestamps, read-only trashed-note
+views, and explicitly confirmed permanent deletion for attachment-free trashed
+notes. Restore preserves content, folders and revisions where possible; the
+server safely falls back to All Notes when the original folder is gone. Notes
+with attachments fail closed rather than risking shared or historical storage
+deletion. Focused Firefox acceptance passed the core 21/22 checks, with only
+the browser-only fallback-notice observation remaining unverified; maintained
+Notes regression and release safety pass. Source is
+`ddc8eed4321510a86da35d7a1bb35f0cf8b8a50e`; production remains unchanged.
+
 ## TPI-STUDIOFLOW-122F.3 — COMPLETE / ORGANIZE PANEL VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F3-ORGANIZE-PANEL-SIZING.md).

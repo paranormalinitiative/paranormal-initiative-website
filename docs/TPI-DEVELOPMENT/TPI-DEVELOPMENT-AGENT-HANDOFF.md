@@ -1,5 +1,24 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.4 — NOTES TRASH COMPLETE (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4-NOTES-TRASH.md).
+
+Continue from source commit `ddc8eed4321510a86da35d7a1bb35f0cf8b8a50e` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The authoritative 8787 Worker serves
+`index-C7r7gqow.js` SHA-256
+`5c5ba8b78bc638b0258b2f1fa1d5c85fcdcd934d4e51c424d8e318074b38982a` and
+`index-Y3KKfVMj.css` SHA-256
+`b60d93eb648c49585d5c57200a99313334a2ff390422e71cc0396365d02aae18`.
+
+Trash soft-delete metadata, restore, read-only state, explicit permanent
+deletion, ownership guards, and attachment fail-safe behavior are integrated.
+The maintained Notes and release-safety suites pass. The focused browser
+harness verifies the core workflow; its visible missing-folder notice check is
+unverified even though the server fallback to All Notes passes. Do not deploy
+under 122F.4. Preserve the original mixed checkout and unrelated worktrees.
+
 ## TPI-STUDIOFLOW-122F.3 — ORGANIZE PANEL SIZING COMPLETE (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F3-ORGANIZE-PANEL-SIZING.md).

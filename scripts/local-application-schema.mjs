@@ -98,6 +98,7 @@ const migrations = [
   { file: "migrations/0052_my_studios.sql", columns: ["studio_number", "deleted_at"], table: "studio_workspaces", tables: ["studio_number_allocations"] },
   { file: "migrations/0055_studioflow_notes.sql", tables: ["studio_note_collections", "studio_notes", "studio_note_revisions", "studio_note_attachments"] },
   { file: "migrations/0056_studioflow_note_automatic_titles.sql", columns: ["title_mode"], table: "studio_notes" },
+  { file: "migrations/0057_studioflow_note_trash_metadata.sql", columns: ["deleted_at", "trash_collection_id"], table: "studio_notes" },
 ];
 
 function missingParts(migration) {
