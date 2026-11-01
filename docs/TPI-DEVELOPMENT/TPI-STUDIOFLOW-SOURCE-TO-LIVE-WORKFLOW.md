@@ -608,7 +608,39 @@ fixture rejection cases plus the real baseline reproduction).
 - A browser refresh, cache-busting query, local server restart, or successful
   local build is not a deployment.
 
-## Current verified live baseline — TPI-STUDIOFLOW-119
+## Current verified live baseline — TPI-STUDIOFLOW-132R (2026-11-01)
+
+- Website release commit: `d9af9024506e792221a111c7ec8c4016f7f69112`
+- Authoritative StudioFlow source commit (unchanged by this release):
+  `fb95c43ce79dd0dfcf3f880eb34555d746c5c8ce`
+- Active production Worker version:
+  `cd37afb8-cc82-406a-9e15-e84b3dffa234` (100% traffic)
+- Immediate rollback version: `f4be38fb-9d26-45cb-9c48-5223a1d4c12c`
+- Live JavaScript: `/studio/assets/index-B_8Inyh0.js` — SHA-256
+  `e250a5e41376be2861c1fe0747165a189da193ca2f180c596d49b19750fd1abe`
+- Live CSS: `/studio/assets/index-C_oD8YSH.css` — SHA-256
+  `5bdc30cfd0945a8978cfff024af30af71886de0be8b13875b1abed3147f62040`
+- Staged entrypoint file `studio/index.html` — SHA-256
+  `ba80f8b040b6411b8d46cf1908a04a7a4a657834e479197d81c6d07508d79c64`
+  (the served document hashes differently because the Worker injects its theme
+  bootstrap at serve time)
+- Maintained Studio workspace bridge `studio/workspace-bridge.js` — SHA-256
+  `9e69ee7064a9314be1026646f3d6d34ff1e123695ff996e3edd208d2911ac573`
+  (identical on the live site, verified authenticated after deployment)
+
+This release changed only the maintained TPI bridge layer, not StudioFlow
+source or generated bundle assets. It corrects permanent Studio deletion for
+browser-local Studios carrying recovery snapshots, and normalizes server
+deletion guards so blocked Studios explain themselves. Preflight, the local
+authentication lifecycle (38 checks per phase), StudioFlow staging
+verification, deletion/archive 32/32, deletion safety 26/26, Studio lifecycle
+29/29, ownership 40/40, isolated Firefox release acceptance 64/64, production
+smoke 10/10, live isolated Firefox acceptance 64/64, and a focused production
+deletion acceptance 18/18 passed. No production D1 migration, reset, R2
+cleanup or owner-data change occurred. Owner confirmation that the deletion
+button activates in the owner's own production session remains pending.
+
+## Prior verified live baseline — TPI-STUDIOFLOW-119 (historical)
 
 - Website production release commit: `6d4c062ce0c3b647f39d3b5e3004531d692f62ba`
 - Authoritative StudioFlow source commit: `244993beab7f9fbba7ee89376a3b3dea616fa62a`

@@ -4,7 +4,9 @@ Date: 2026-11-01
 Environment: production inspection (read-only) plus the authoritative local
 Worker `http://127.0.0.1:8787/studio/`
 Browser: Mozilla Firefox Developer Edition 160.0b3, isolated disposable profile
-Production deployment: **NOT AUTHORIZED / NOT PERFORMED**
+Production deployment: none under 132 (read-only inspection); the correction
+was released separately under **TPI-STUDIOFLOW-132R** — DEPLOYED AND VERIFIED,
+owner acceptance pending (§14)
 
 ## 1. Status
 
@@ -259,10 +261,9 @@ never touched. No service worker or owner production session was modified.
 
 ## 12. Production deployment status
 
-**NOT DEPLOYED.** Production still runs
-`f4be38fb-9d26-45cb-9c48-5223a1d4c12c` with the uncorrected bridge, so the
-owner's production symptom is unchanged until a separately authorized release.
-`TPI_PRODUCTION_DEPLOY` was not used and `release:production` was not run.
+**DEPLOYED AND VERIFIED under TPI-STUDIOFLOW-132R** — see §14. At the time of
+the investigation the correction was not deployed; the separately authorized
+132R directive released it through the guarded workflow.
 
 ## 13. Remaining blockers
 
@@ -280,3 +281,62 @@ owner's production symptom is unchanged until a separately authorized release.
 4. The StudioFlow source still renders the guard object directly; the bridge now
    supplies a message, so the next StudioFlow build should render the guard
    message explicitly to keep the contract durable.
+5. Owner acceptance is still required: the button activating in the owner's own
+   production session has not yet been confirmed by the owner.
+
+## 14. TPI-STUDIOFLOW-132R — production release
+
+Status: **DEPLOYED AND VERIFIED** on 2026-11-01.
+
+| Item | Value |
+| --- | --- |
+| Implementation commit | `98e0ac8` (`fix(studioflow): unblock permanent deletion of browser-local Studios`) |
+| Documentation commit | `d9af902` (`docs(studioflow): record TPI-132 production deletion failure`) |
+| Release source commit | `d9af9024506e792221a111c7ec8c4016f7f69112` (clean, GitHub parity) |
+| Previous Worker | `f4be38fb-9d26-45cb-9c48-5223a1d4c12c` |
+| New Worker | `cd37afb8-cc82-406a-9e15-e84b3dffa234` (100% traffic) |
+| Rollback target | `f4be38fb-9d26-45cb-9c48-5223a1d4c12c` |
+| JavaScript | `index-B_8Inyh0.js` — `e250a5e41376be2861c1fe0747165a189da193ca2f180c596d49b19750fd1abe` |
+| CSS | `index-C_oD8YSH.css` — `5bdc30cfd0945a8978cfff024af30af71886de0be8b13875b1abed3147f62040` |
+| Entrypoint (staged file) | `ba80f8b040b6411b8d46cf1908a04a7a4a657834e479197d81c6d07508d79c64` |
+| Live workspace bridge | `9e69ee7064a9314be1026646f3d6d34ff1e123695ff996e3edd208d2911ac573` (identical to the release commit) |
+
+Gate results for the exact deployed commit:
+
+| Gate | Result |
+| --- | --- |
+| `verify:local-auth-lifecycle` | PASS — 64/64 plus lifecycle PASS |
+| `release:preflight` | **READY** — release safety, 3 × 38 authentication phases, StudioFlow staging verification, isolated QA/API E2E, Firefox release acceptance 64/64, Studio lifecycle 29/29, ownership 40/40, deletion/archive 32/32, deletion safety 26/26, Cloudflare checks, guarded dry-run |
+| `release:production` | **DEPLOYED_AND_VERIFIED** — production smoke 10/10, live isolated Firefox acceptance 64/64 |
+
+Focused post-deployment production acceptance (isolated disposable Firefox
+profile, approved synthetic QA account, non-destructive): **18/18 PASS**.
+
+- Production serves the corrected bridge: storage classification and guard
+  normalization both present in the live `workspace-bridge.js`, hash-identical
+  to the release commit.
+- Production entrypoint references `index-B_8Inyh0.js` and
+  `index-C_oD8YSH.css`; both served with the recorded hashes; entry document
+  `no-store`.
+- A browser-local Studio holding a recovery snapshot is now classified
+  `browser-local`, still discloses its snapshot, no longer demands a server
+  inventory, keeps deletion disabled for an incorrect name, and **activates
+  `Delete Studio Permanently`** for the exact name.
+- A disposable server-backed Studio activates deletion with the exact name.
+- A guarded Studio shows a readable safety explanation and stays undeletable.
+- Both disposable QA fixtures were purged; no owner Studio was touched and no
+  permanent deletion of a real creator Studio was performed.
+
+Owner data after the release is unchanged: the owner account still has its
+three previously purged rows with identical ids, timestamps and versions, and
+no live server-backed Studio row. No D1 migration, reset, R2 cleanup or
+browser-storage change occurred.
+
+Rollback procedure: the maintained guarded rollback to
+`f4be38fb-9d26-45cb-9c48-5223a1d4c12c`, followed by the same authentication,
+Studio access, smoke and Firefox acceptance checks.
+
+**Owner acceptance remains pending**: the directive's completion criterion is
+the owner confirming that `Delete Studio Permanently` activates in the owner's
+own production Firefox session. The owner does not need to complete a deletion
+to confirm this.

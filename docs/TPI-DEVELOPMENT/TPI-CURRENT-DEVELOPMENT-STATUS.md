@@ -2,8 +2,10 @@
 
 ## TPI-STUDIOFLOW-132 — Production Studio deletion failure (2026-11-01)
 
-Status: **ROOT CAUSE CONFIRMED AND CORRECTED / NOT DEPLOYED**. Production was
-serving the expected Worker `f4be38fb-9d26-45cb-9c48-5223a1d4c12c` and
+Status: **ROOT CAUSE CONFIRMED AND CORRECTED — DEPLOYED AND VERIFIED UNDER
+TPI-STUDIOFLOW-132R (owner acceptance pending)**. At the time of the
+investigation, production was serving the expected Worker
+`f4be38fb-9d26-45cb-9c48-5223a1d4c12c` and
 `index-B_8Inyh0.js`; the deletion gating is byte-identical to the bundle that
 deleted the owner's three Studios earlier the same day. The confirmed causes are
 in the maintained bridge: a browser-only Studio carrying a recovery snapshot was
@@ -15,9 +17,30 @@ deletion inventory…" instead of showing the safety reason. Both are corrected 
 `studio/workspace-bridge.js` with no server, schema, bundle or authorization
 change. New Firefox regression suite passes 28/28; deletion safety 26/26,
 deletion/archive 32/32, release safety PASSED, and the 130 button suite passes
-20/20 in both browser legs. Production deployment remains unauthorized and
-unchanged. See
+20/20 in both browser legs. See
 [`TPI-STUDIOFLOW-132-PRODUCTION-DELETION-FAILURE.md`](100-DIRECTIVES/TPI-STUDIOFLOW-132-PRODUCTION-DELETION-FAILURE.md).
+
+### TPI-STUDIOFLOW-132R — production release (2026-11-01)
+
+Status: **DEPLOYED AND VERIFIED — owner acceptance pending**. Release commit
+`d9af9024506e792221a111c7ec8c4016f7f69112` (implementation `98e0ac8`) was
+deployed through the guarded workflow. Previous Worker
+`f4be38fb-9d26-45cb-9c48-5223a1d4c12c`; active Worker
+`cd37afb8-cc82-406a-9e15-e84b3dffa234` at 100% traffic. JavaScript
+`index-B_8Inyh0.js` (`e250a5e4…`) and CSS `index-C_oD8YSH.css` (`5bdc30cf…`)
+are unchanged; the live workspace bridge is
+`9e69ee7064a9314be1026646f3d6d34ff1e123695ff996e3edd208d2911ac573`, identical
+to the release commit. Gates: local authentication lifecycle PASS, preflight
+READY (deletion/archive 32/32, deletion safety 26/26, Studio lifecycle 29/29,
+ownership 40/40, Firefox release acceptance 64/64, staging verification,
+guarded dry-run), production smoke 10/10, live isolated Firefox acceptance
+64/64, and a focused non-destructive production deletion acceptance 18/18. A
+browser-local Studio with a recovery snapshot now activates `Delete Studio
+Permanently` on the exact name, and guarded Studios explain themselves. No
+production data was migrated, reset or deleted outside the two disposable QA
+fixtures the acceptance created and purged. Rollback:
+`f4be38fb-9d26-45cb-9c48-5223a1d4c12c`. Completion still requires the owner to
+confirm the button activates in their own production Firefox session.
 
 ## TPI-STUDIOFLOW-131 — Final Studio deletion (2026-11-01)
 
