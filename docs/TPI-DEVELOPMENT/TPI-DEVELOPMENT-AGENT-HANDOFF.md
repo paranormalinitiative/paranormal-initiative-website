@@ -17,14 +17,20 @@ Teleprompter-to-Scenes drag were reported missing and were genuinely absent from
 the bundle (`data-production-kind` count 0, `--production-item-*` count 0), not
 mis-rendered. Chrome was not involved.
 
-Current state: source `820d680d…` (`codex/tpi-134`) restores TPI-125 and
+Current state: source `f44f3a0…` (`codex/tpi-134`) restores TPI-125 and
 TPI-126A **on the released lineage** without touching deletion, Studio
 management, storage, Notes or any bridge file. Website commits `6dc1525` and
 `8e75a0e` are pushed to `origin/codex/tpi-development` with parity; the
-baseline records `index-CmUjeYcC.js` / `index-D6ZhUVW1.css`. Local `8787`
+baseline records `index-D9yljEwa.js` / `index-D6ZhUVW1.css`. Local `8787`
 serves the correction; **production is unchanged** at Worker
 `71a5293d-fef4-4643-bf50-e9dfc7327eb5` and is not authorized for deployment
 under TPI-134.
+
+The TPI-134 addendum also wires a Scene script item to the live presenter
+teleprompter (`prompterOverlayOpen`), rewound and paused. The blocking reader
+dialog (`teleprompterOpen`) is only for the explicit Teleprompter controls, so
+do not route Scene scripts back to it. Cueing is deliberately idempotent: the
+same script restarts from the beginning rather than resuming.
 
 Do not run a full lineage merge casually: it conflicts in 22 places inside the
 hardened deletion subsystem. Restoring Notes, podcast export, folder sync and

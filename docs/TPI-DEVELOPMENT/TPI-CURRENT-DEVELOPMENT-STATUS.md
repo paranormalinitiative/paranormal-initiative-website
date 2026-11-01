@@ -16,7 +16,8 @@ color. Chrome is excluded: the maintained release gate still launches real
 Firefox Developer Edition through `geckodriver`, and a feature absent from the
 compiled bundle cannot render in any browser.
 
-Correction: source `820d680d…` on `codex/tpi-134` ports both approved features
+Correction: source `f44f3a0…` on `codex/tpi-134` (from `820d680d…`) ports both
+approved features
 onto the released lineage — the `teleprompter-script` production kind, its
 normalization and persistence, the external drop path and purple drop
 placeholder, the draggable rail scripts with the approved
@@ -27,8 +28,18 @@ The hardened TPI-130/131/132R/133 deletion subsystem and every bridge file are
 unchanged; a full lineage merge was evaluated and rejected because it conflict
 ted in 22 places inside the owner's data-deletion code. Website commits
 `6dc1525` (staged assets and baseline) and `8e75a0e` (new Firefox gate), pushed
-with parity; baseline assets are `index-CmUjeYcC.js` and
+with parity; baseline assets are `index-D9yljEwa.js` and
 `index-D6ZhUVW1.css`.
+
+Addendum (same directive): selecting a Scene's Teleprompter item now loads its
+script into the **existing live presenter teleprompter** on the stage, rewound to
+the beginning and paused, instead of opening the blocking reader dialog. The
+pre-change behavior resolved the script correctly but never touched the live
+surface (`prompterOverlayOpen`), so nothing was ever cued for playback. The
+maintained Firefox gate grew to **43/43** with Play/Pause/Reset scrolling,
+script switching, refresh persistence, no-duplicate/immutability and deleted
+script coverage. See the
+[addendum record](100-DIRECTIVES/TPI-STUDIOFLOW-134-ADDENDUM-SCENE-TELEPROMPTER-PLAYBACK.md).
 
 Verified: Firefox Developer Edition release acceptance 64/64, new TPI-134
 colors and script-drag acceptance 27/27 (now part of `release:preflight`),

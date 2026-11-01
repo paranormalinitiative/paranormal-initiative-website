@@ -76,21 +76,29 @@ across `src/App.tsx`, concentrated in the hardened deletion subsystem.
 
 The authoritative `8787` Worker serves the TPI-STUDIOFLOW-134 restoration of
 production-item colors and Teleprompter-to-Scenes drag-and-drop from clean
-StudioFlow source commit `820d680da23d2a262f02a8da55ac4cc3faa5dd52` on branch
+StudioFlow source commit `f44f3a08cfc0efa271385125c6780557aaa85fb9` on branch
 `codex/tpi-134` (worktree `.local-dev/worktrees/source-134`, built from the
 released lineage `e608ca9`). Exact staged assets are:
 
-- `/studio/assets/index-CmUjeYcC.js` — SHA-256
-  `bedfa883f7919e00f97a0683aa6efbd5f87d8e4e39d532774eecfd87afd53a8b`
+- `/studio/assets/index-D9yljEwa.js` — SHA-256
+  `e317fc071f4968e375f8b11970d862692a3fe28fa1cc55140d3471d884f55246`
 - `/studio/assets/index-D6ZhUVW1.css` — SHA-256
   `1baa338c09f29395f292cf1fed415baa700c1544e79b0d723c4c60988e6b3cb6`
+
+The Scene Teleprompter item is a production action, not a preview: selecting it
+cues the existing live presenter teleprompter (`prompterOverlayOpen`) by the
+script's persisted id, rewinds it to the start and leaves it paused. The reader
+dialog (`teleprompterOpen`) remains the explicit Teleprompter control surface and
+is never opened by a Scene item.
 
 The source was built twice by the provenance workflow, verified reproducible,
 matched against the recorded hashes, and staged with all eleven bridge files
 preserved. Firefox Developer Edition acceptance passes 64/64 maintained and
-27/27 focused (all five approved colors, full-perimeter borders, selected and
-dragging states, drop-target highlighting, assignment, persistence); Scenes
-panel passes 20/20 and release safety passes. Deletion, Studio management,
+43/43 focused (all five approved colors, full-perimeter borders, selected and
+dragging states, drop-target highlighting, assignment, persistence, plus
+Scene-to-live-teleprompter cueing, Play/Pause/Reset scrolling, script switching,
+refresh recollection and deleted-script handling); Scenes panel passes 20/20,
+provenance passes 20/20 and release safety passes. Deletion, Studio management,
 storage, Notes and bridge files are unchanged. **Production remains on the
 TPI-133 Worker `71a5293d-fef4-4643-bf50-e9dfc7327eb5`; no deployment is
 authorized under TPI-134.** `verify:studioflow-035` cannot pass on this lineage

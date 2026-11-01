@@ -5,6 +5,16 @@ Priority: High
 Status: **CORRECTED AND VERIFIED IN LOCAL DEVELOPMENT — PRODUCTION NOT DEPLOYED (not authorized)**
 Production deployment: **NOT AUTHORIZED / NOT PERFORMED**
 
+> **Addendum (same day):** the directive was reopened to complete the workflow.
+> Selecting a Teleprompter item inside a Scene now cues the script into the
+> existing live presenter teleprompter, rewound to the beginning and paused. That
+> work, its root cause, its 43/43 Firefox acceptance and the superseding source
+> commit `f44f3a0…` are recorded in
+> [TPI-STUDIOFLOW-134-ADDENDUM-SCENE-TELEPROMPTER-PLAYBACK](TPI-STUDIOFLOW-134-ADDENDUM-SCENE-TELEPROMPTER-PLAYBACK.md).
+> Sections below describe the earlier stage of this directive and are kept as
+> history: the source commit `820d680d…` and the `27/27` gate count were
+> superseded by that addendum.
+
 ## 1. Result
 
 **The reported behavior was never a rendering or browser problem. It was a
@@ -337,7 +347,7 @@ Native OS pointer drag initiation is not automated; the drag source's
 | Suite | Result |
 | --- | --- |
 | Firefox Developer Edition release acceptance | **PASS — 64/64** |
-| TPI-134 colors and script drag (new) | **PASS — 27/27** |
+| TPI-134 colors and script drag (new) | **PASS — 27/27** at this stage; **43/43** after the Scene teleprompter addendum |
 | Scenes panel regression (`verify:studioflow-037-scenes-panel`) | **PASS — 20/20** |
 | Release safety contract (`verify:release-safety`) | **PASS** |
 | Local auth lifecycle (`verify:local-auth-lifecycle`) | **PASS — 38/38** (before restart, after restart, after rebuild) |
@@ -435,7 +445,8 @@ TPI_PRODUCTION_DEPLOY=approved npm run release:production
 
 ## 18. Commits and parity
 
-- StudioFlow source: `820d680da23d2a262f02a8da55ac4cc3faa5dd52` (`codex/tpi-134`;
+- StudioFlow source: `820d680da23d2a262f02a8da55ac4cc3faa5dd52`, superseded by
+  `f44f3a08cfc0efa271385125c6780557aaa85fb9` in the addendum (`codex/tpi-134`;
   the StudioFlow repository has no configured remote)
 - Website implementation: `6dc1525`
 - Website regression gate: `8e75a0e`
