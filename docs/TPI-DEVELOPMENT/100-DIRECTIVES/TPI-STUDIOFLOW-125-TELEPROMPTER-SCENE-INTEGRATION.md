@@ -24,7 +24,7 @@ directive; the existing screen-sharing panel and recording regressions passed.
 - Initial implementation commit: `77f32d95328f32169012f070c1abf71ec8627a2c`
 - Final source commit: `52a3c0e9685ab769e0f09ab1a60e0b0fd803feed`
 - Website branch: `codex/tpi-development`
-- Website integration commit: recorded after this execution record is committed
+- Website integration commit: `30115f593f505c4c6300eb8864ffdb3356f92979`
 - Original mixed StudioFlow checkout: preserved and not modified
 
 Generated development assets staged into the authoritative Worker:
