@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-131",
-  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-131 final-Studio deletion correction. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release preserves the guarded typed-name deletion flow while ensuring the authoritative workspace catalog converges to the zero-Studio state after the final purge.",
+  "recordedDirective": "TPI-STUDIOFLOW-133",
+  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-133 floating Studio actions menu positioning correction. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release preserves the guarded typed-name deletion flow and anchors the More Actions menu to the Studio card that opened it instead of the top-right corner of the viewport.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "fb95c43ce79dd0dfcf3f880eb34555d746c5c8ce"
+    "approvedCommit": "e608ca9414d27f96058503c53865a8b03993ab7a"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-B_8Inyh0.js",
-      "sha256": "e250a5e41376be2861c1fe0747165a189da193ca2f180c596d49b19750fd1abe"
+      "name": "index-mYnRoDcA.js",
+      "sha256": "03802154c34011f58bd5313af24d6bcebda1cf0c413f7c91ff699ad36fe2522f"
     },
     "css": {
-      "name": "index-C_oD8YSH.css",
-      "sha256": "5bdc30cfd0945a8978cfff024af30af71886de0be8b13875b1abed3147f62040"
+      "name": "index-B-jk8V4i.css",
+      "sha256": "c64c8f9d996c6632af4e067b088abe3d9db6ba9f4d31128165f1a24139a17d65"
     }
   }
 }

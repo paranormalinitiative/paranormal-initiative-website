@@ -29,6 +29,7 @@
     "verify:studioflow-089-deletion-safety": "node scripts/verify/tpi-studioflow-089-deletion-safety.mjs",
     "verify:studioflow-130-deletion-button": "node scripts/verify/tpi-studioflow-130-deletion-button.mjs",
     "verify:studioflow-132-legacy-local-deletion": "node scripts/verify/tpi-studioflow-132-legacy-local-deletion.mjs",
+    "verify:studioflow-133-floating-studio-menu": "node scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs",
     "verify:studioflow-107-provenance": "node scripts/verify/tpi-studioflow-107-source-provenance.mjs",
     "verify:studioflow-037-addendum-d": "node scripts/verify/tpi-studioflow-037-addendum-d.mjs",
     "verify:studioflow-037-addendum-e": "node scripts/verify/tpi-studioflow-037-addendum-e.mjs",

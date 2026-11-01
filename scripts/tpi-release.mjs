@@ -203,6 +203,15 @@ async function preflight() {
   run("Studio deletion safety and data integrity regression", process.execPath, ["scripts/verify/tpi-studioflow-089-deletion-safety.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Floating Studio actions menu positioning regression (TPI-STUDIOFLOW-133):
+  // the More Actions menu must anchor to the card that opened it, flip above
+  // when the viewport bottom is reached, stay inside the viewport on tablet and
+  // phone widths, close on outside click/Escape/repeat click, stay keyboard
+  // reachable, and never modify Studio records. A regression here blocks the
+  // release (TPI-STUDIOFLOW-133 §8).
+  run("Floating Studio actions menu positioning regression", process.execPath, ["scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
