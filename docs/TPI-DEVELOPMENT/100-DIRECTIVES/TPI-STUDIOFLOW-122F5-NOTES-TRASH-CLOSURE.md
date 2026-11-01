@@ -13,7 +13,7 @@ Production deployment: **NOT AUTHORIZED / UNCHANGED**
   - clean.
 - Website repository before this closure: `378b43acdb0a08bd745148c432e1e0ccd61cac0b`.
 - Previous website integration: `dfe2acd5abd060fe220e34a91ddc6d708b40107d`.
-- Website closure commit: recorded after this document and register update are committed.
+- Website closure commit: `dce748e8c47404c117cbf107939e2629cdcf7741`.
 - GitHub parity: verified for `codex/tpi-development`.
 - Original mixed source checkout remains preserved with its pre-existing changes.
 
