@@ -9,7 +9,10 @@ const repoRoot = resolve(import.meta.dirname, "../..");
 const base = (process.env.TPI_FIREFOX_BASE_URL || "http://127.0.0.1:8787").replace(/\/$/, "");
 const binary = process.env.TPI_FIREFOX_BINARY || "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox";
 const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodriver";
-const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
+const productionMode = process.env.TPI_FIREFOX_126A_PRODUCTION === "approved";
+const credentialsFile = productionMode
+  ? (process.env.TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/qa-studioflow-prod.json"))
+  : (process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json"));
 const evidenceRoot = process.env.TPI_FIREFOX_126A_EVIDENCE || join(repoRoot, "docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-126A");
 const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });
@@ -34,6 +37,10 @@ const waitFor = async (description, predicate, timeout = 30_000, interval = 200)
   throw new Error(`${description} timed out${last ? `: ${last}` : ""}`);
 };
 
+if (productionMode && (!/^https:\/\/paranormalinitiative\.com$/.test(base) || process.env.TPI_FIREFOX_126A_PRODUCTION !== "approved")) {
+  console.log(JSON.stringify({ status: "BLOCKED", suite: "TPI-STUDIOFLOW-126A", reason: "Production mode requires the approved paranormalinitiative.com base URL and explicit production approval.", evidenceRoot }, null, 2));
+  process.exit(1);
+}
 if (!existsSync(binary) || !existsSync(geckodriver) || !existsSync(credentialsFile)) {
   console.log(JSON.stringify({ status: "BLOCKED", suite: "TPI-STUDIOFLOW-126A", reason: "Firefox binary, geckodriver, or disposable local credentials are unavailable.", evidenceRoot }, null, 2));
   process.exit(1);
@@ -43,6 +50,10 @@ const raw = JSON.parse(readFileSync(credentialsFile, "utf8"));
 const account = raw.accounts?.test_admin ?? raw;
 if (!account?.username || !account?.password) {
   console.log(JSON.stringify({ status: "BLOCKED", suite: "TPI-STUDIOFLOW-126A", reason: "The disposable test_admin account is unavailable.", evidenceRoot }, null, 2));
+  process.exit(1);
+}
+if (productionMode && !String(account.username).startsWith("qa-studioflow-")) {
+  console.log(JSON.stringify({ status: "BLOCKED", suite: "TPI-STUDIOFLOW-126A", reason: "Production mode accepts only the synthetic qa-studioflow account.", evidenceRoot }, null, 2));
   process.exit(1);
 }
 
