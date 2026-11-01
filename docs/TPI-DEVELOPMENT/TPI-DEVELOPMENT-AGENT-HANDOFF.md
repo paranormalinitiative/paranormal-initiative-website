@@ -22,9 +22,19 @@ TPI-126A **on the released lineage** without touching deletion, Studio
 management, storage, Notes or any bridge file. Website commits `6dc1525` and
 `8e75a0e` are pushed to `origin/codex/tpi-development` with parity; the
 baseline records `index-D9yljEwa.js` / `index-D6ZhUVW1.css`. Local `8787`
-serves the correction; **production is unchanged** at Worker
-`71a5293d-fef4-4643-bf50-e9dfc7327eb5` and is not authorized for deployment
-under TPI-134.
+serves the correction. [TPI-STUDIOFLOW-134R](100-DIRECTIVES/TPI-STUDIOFLOW-134R-PRODUCTION-RELEASE.md)
+released it on 2026-11-01T22:37:19Z as Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc`
+from `ea2ca6a`, with `71a5293d` retained as the rollback target.
+
+**Live limitation to know before touching Scenes:** a dropped Teleprompter
+Script row cues correctly but does not survive a page reload in an
+account-backed Studio. The workspace snapshot only carries `broadcast`,
+`settings`, `recording` and `configuration` — never `scenePanelItems` — so the
+restore path replaces the browser-local rows with server-derived defaults. The
+local gate cannot see this because it seeds browser-local state only; a fix
+must persist or merge `scenePanelItems` and should seed through an
+account-backed Studio. This is not a regression of prior behavior and has no
+owner authorization yet.
 
 The TPI-134 addendum also wires a Scene script item to the live presenter
 teleprompter (`prompterOverlayOpen`), rewound and paused. The blocking reader

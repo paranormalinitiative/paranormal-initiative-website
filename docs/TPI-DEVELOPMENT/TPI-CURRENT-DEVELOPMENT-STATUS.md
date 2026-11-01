@@ -2,8 +2,22 @@
 
 ## TPI-STUDIOFLOW-134 — Scene drag-and-drop and production colors (2026-11-01)
 
-Status: **CORRECTED AND VERIFIED IN LOCAL DEVELOPMENT — PRODUCTION NOT DEPLOYED
-(not authorized)**. The missing production-item colors, highlighting, icon
+Status: **DEPLOYED AND VERIFIED IN PRODUCTION (TPI-134R) — owner acceptance
+pending, one live limitation recorded**. Released at 2026-11-01T22:37:19Z as
+Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc` from website commit `ea2ca6a`
+(rollback `71a5293d`). Live verification confirmed the served bundle is
+byte-identical to the approved build, all five production colors with
+full-perimeter borders, the purple script drop path, and the Scene script
+cuing the live presenter teleprompter paused at the beginning with Play, Pause
+and Reset working. **Live limitation:** a dropped Scene script row does not
+survive a page reload in an account-backed Studio, because the workspace
+snapshot carries only `broadcast`, `settings`, `recording` and `configuration`
+and never `scenePanelItems`; the restore path therefore replaces the
+browser-local rows with server defaults. No previously working behavior
+regressed, and rollback was not triggered; the fix needs its own directive.
+See the [release record](100-DIRECTIVES/TPI-STUDIOFLOW-134R-PRODUCTION-RELEASE.md).
+
+Original diagnosis: the missing production-item colors, highlighting, icon
 colors and Teleprompter-to-Scenes drag were caused by **divergent StudioFlow
 source lineages**, not by a browser change and not by a rendering defect.
 TPI-STUDIOFLOW-125 (`77f32d9`) and TPI-STUDIOFLOW-126A (`a6784cf`) live only on
@@ -52,9 +66,8 @@ is restored or the suite is reconciled.
 **Larger finding requiring an owner decision:** the same divergence also
 removed the Notes workspace, podcast project export, local project folder sync,
 recording-audio work and the private stage Teleprompter reader from the released
-lineage. Production still runs Worker `71a5293d-fef4-4643-bf50-e9dfc7327eb5`
-on the 133 bundle, so the reported symptoms persist live until a separately
-authorized release.
+lineage. That restoration still needs its own directive; it is not part of
+TPI-134R, which shipped only the 134 colors, drag and live-cue work.
 
 [Full record](100-DIRECTIVES/TPI-STUDIOFLOW-134-SCENE-DRAG-AND-PRODUCTION-COLORS.md).
 

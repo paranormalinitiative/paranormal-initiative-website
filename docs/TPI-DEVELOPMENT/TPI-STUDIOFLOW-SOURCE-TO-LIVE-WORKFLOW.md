@@ -72,7 +72,18 @@ will silently disappear.
 A full merge of the two lineages is not a safe default: it conflicts in 22 places
 across `src/App.tsx`, concentrated in the hardened deletion subsystem.
 
-## Current local development candidate — TPI-STUDIOFLOW-134
+## Current released StudioFlow build — TPI-STUDIOFLOW-134R
+
+This candidate was released on 2026-11-01T22:37:19Z as Worker
+`4de115db-6537-41b5-9bf7-ae99cb0e20fc` from website commit `ea2ca6a`, with
+`71a5293d` retained as the rollback target. Live verification confirmed the
+served bundle is byte-identical to the hashes below, the five production colors
+render with full-perimeter borders, and a Scene Teleprompter item cues the live
+presenter teleprompter paused at the beginning with Play, Pause and Reset
+working. Live limitation carried into the next directive: a dropped Scene script
+row does not survive a page reload in an account-backed Studio because the
+workspace snapshot never stores `scenePanelItems`. See the
+[TPI-STUDIOFLOW-134R release record](100-DIRECTIVES/TPI-STUDIOFLOW-134R-PRODUCTION-RELEASE.md).
 
 The authoritative `8787` Worker serves the TPI-STUDIOFLOW-134 restoration of
 production-item colors and Teleprompter-to-Scenes drag-and-drop from clean
@@ -99,10 +110,11 @@ dragging states, drop-target highlighting, assignment, persistence, plus
 Scene-to-live-teleprompter cueing, Play/Pause/Reset scrolling, script switching,
 refresh recollection and deleted-script handling); Scenes panel passes 20/20,
 provenance passes 20/20 and release safety passes. Deletion, Studio management,
-storage, Notes and bridge files are unchanged. **Production remains on the
-TPI-133 Worker `71a5293d-fef4-4643-bf50-e9dfc7327eb5`; no deployment is
-authorized under TPI-134.** `verify:studioflow-035` cannot pass on this lineage
-because it asserts the unreleased private Teleprompter reader.
+storage, Notes and bridge files are unchanged. **Production runs this build**
+(Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc`); the superseded TPI-133 Worker
+`71a5293d-fef4-4643-bf50-e9dfc7327eb5` is the verified rollback target.
+`verify:studioflow-035` cannot pass on this lineage because it asserts the
+unreleased private Teleprompter reader.
 
 ## Historical local development candidate — TPI-STUDIOFLOW-122F.4A
 

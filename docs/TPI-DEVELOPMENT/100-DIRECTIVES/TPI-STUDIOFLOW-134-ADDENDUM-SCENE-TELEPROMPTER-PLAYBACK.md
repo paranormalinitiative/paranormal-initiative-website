@@ -3,7 +3,7 @@
 Date: 2026-11-01
 Parent directive: [TPI-STUDIOFLOW-134](TPI-STUDIOFLOW-134-SCENE-DRAG-AND-PRODUCTION-COLORS.md)
 Environment: local Cloudflare Worker, `http://127.0.0.1:8787/studio/`
-Production deployment: **NOT AUTHORIZED — production is unchanged.**
+Production deployment: **RELEASED UNDER TPI-STUDIOFLOW-134R at 2026-11-01T22:37:19Z** as Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc` from `ea2ca6a` (rollback `71a5293d`). Live verification reproduced the cued, paused, at-the-beginning state in production; see the [TPI-STUDIOFLOW-134R release record](TPI-STUDIOFLOW-134R-PRODUCTION-RELEASE.md), including one recorded live limitation about the Scene row surviving a reload.
 
 ## 1. Result
 

@@ -2,8 +2,8 @@
 
 Date: 2026-11-01
 Priority: High
-Status: **CORRECTED AND VERIFIED IN LOCAL DEVELOPMENT — PRODUCTION NOT DEPLOYED (not authorized)**
-Production deployment: **NOT AUTHORIZED / NOT PERFORMED**
+Status: **DEPLOYED AND VERIFIED IN PRODUCTION under TPI-STUDIOFLOW-134R (2026-11-01T22:37:19Z) — owner acceptance pending**
+Production deployment: **PERFORMED AND AUTHORIZED** — Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc` from `ea2ca6a`, rollback `71a5293d`. See the [TPI-STUDIOFLOW-134R release record](TPI-STUDIOFLOW-134R-PRODUCTION-RELEASE.md).
 
 > **Addendum (same day):** the directive was reopened to complete the workflow.
 > Selecting a Teleprompter item inside a Scene now cues the script into the
