@@ -1,5 +1,27 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-125 — TELEPROMPTER SCENE INTEGRATION (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-125-TELEPROMPTER-SCENE-INTEGRATION.md).
+
+The authoritative local Worker now serves the development-only Teleprompter
+Script production-item integration from source commit
+`52a3c0e9685ab769e0f09ab1a60e0b0fd803feed`. My Scenes accepts stable existing
+script-library references, the Add production item menu includes Teleprompter
+Script, existing Teleprompter rail scripts are drag sources, and production
+cards use centralized type colors: scenes blue, videos orange, scripts purple,
+timers yellow, and music green. Script selection opens the existing private
+reader without auto-play or scene transitions; playback state and the
+full-display privacy warning are preserved.
+
+Focused isolated Firefox acceptance passes 12/12. Maintained Scenes passes
+20/20, recording/storage passes 33/33, the existing screen-sharing panel
+passes 13/13, source checks pass 56/56 plus screen-sharing 10/10 and request
+budget checks, and release safety passes 21/21. Native screen capture and a
+saved recording with a concurrently displayed script were not exercised here;
+those limitations are recorded rather than called passed. Production remains
+unchanged and no deployment was performed.
+
 ## TPI-STUDIOFLOW-122F.5 — NOTES TRASH BASELINE CLOSED (2026-10-31)
 
 [Closure record](100-DIRECTIVES/TPI-STUDIOFLOW-122F5-NOTES-TRASH-CLOSURE.md).

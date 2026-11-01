@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122F.4A",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes Trash restoration notification and attachment-safe permanent-deletion correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.4A.",
+  "recordedDirective": "TPI-STUDIOFLOW-125",
+  "description": "Development-only approved StudioFlow source identity and generated assets for Teleprompter Script production items, unified My Scenes type colors, and presenter-private manual script playback. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 125.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "9703b087e91e85e0f791f618a90f9b2c4eeb5160"
+    "approvedCommit": "52a3c0e9685ab769e0f09ab1a60e0b0fd803feed"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-2zeoh76e.js",
-      "sha256": "bbe0e82636bf2c80d9fd5a720590343f32895d2d79ddede86c432d684ead2912"
+      "name": "index-CVr7Hxgx.js",
+      "sha256": "cdbd2e2246d40b993179a8a834964da9ac157c1203e7b0a4b92e2a5eee5bbb18"
     },
     "css": {
-      "name": "index-Y3KKfVMj.css",
-      "sha256": "b60d93eb648c49585d5c57200a99313334a2ff390422e71cc0396365d02aae18"
+      "name": "index-SDxcWQji.css",
+      "sha256": "0b2b18de7f6308a19116e539d2ac10de54bd9241f300b8d7229577c5eca302b7"
     }
   }
 }

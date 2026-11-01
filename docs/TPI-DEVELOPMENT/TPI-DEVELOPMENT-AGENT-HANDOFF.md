@@ -1,5 +1,26 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-125 — TELEPROMPTER SCENE INTEGRATION (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-125-TELEPROMPTER-SCENE-INTEGRATION.md).
+
+The development candidate is staged on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/` from StudioFlow source commit
+`52a3c0e9685ab769e0f09ab1a60e0b0fd803feed`, isolated source branch
+`codex/studioflow-122-notes`. The My Scenes production-item list now includes
+stable references to the existing Teleprompter script library, a Teleprompter
+Script Add-item path, script-library drag/drop, centralized item colors, and
+private manual script playback. The focused Firefox suite is 12/12; maintained
+Scenes is 20/20, recording/storage 33/33, screen-sharing panel 13/13, and
+release safety 21/21.
+
+The release remains development-only and is **PARTIAL** for acceptance because
+native screen-picker capture and a saved recording containing a live private
+reader were not exercised in this directive. Do not deploy this candidate.
+Use the archived Firefox evidence under
+`100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125/`. Preserve the original mixed
+StudioFlow checkout and unrelated untracked website bundles.
+
 ## TPI-STUDIOFLOW-122F.5 — NOTES TRASH BASELINE CLOSED (2026-10-31)
 
 [Closure record](100-DIRECTIVES/TPI-STUDIOFLOW-122F5-NOTES-TRASH-CLOSURE.md).

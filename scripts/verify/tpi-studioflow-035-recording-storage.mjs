@@ -210,7 +210,7 @@ try {
   await waitFor("authenticated session", async () => Boolean(await asyncJs("var done=arguments[arguments.length-1]; fetch('/api/auth/me',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(b){done(Boolean(b&&b.user));}).catch(function(){done(false);});")));
   await cleanupPriorFixtures();
 
-  await js("var id=arguments[0], broadcast={id:id,title:arguments[1],description:'Disposable recording/storage consolidation test',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Main scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1')); localStorage.setItem('studioflow.teleprompterScripts',JSON.stringify([{id:'s1',title:'TPI-035 sample script',body:'Read this sample script aloud during the teleprompter check.',updatedAt:Date.now()}]));", `tpi-035-${Date.now()}`, studioATitle);
+  await js("var id=arguments[0], broadcast={id:id,title:arguments[1],description:'Disposable recording/storage consolidation test',status:'draft',kind:'live'}; localStorage.setItem('studioflow.broadcasts',JSON.stringify([broadcast])); localStorage.setItem('studioflow.activeBroadcastId',JSON.stringify(id)); localStorage.setItem('studioflow.route',JSON.stringify('studio')); localStorage.removeItem('studioflow.tpiActiveStudioId.v1'); localStorage.setItem('studioflow.studioScenes',JSON.stringify([{id:'intro',kind:'intro',title:'Intro video',layout:'Speaker view'},{id:'scene-1',kind:'demo',title:'Main scene',layout:'Speaker view'},{id:'outro',kind:'outro',title:'Outro video',layout:'Speaker view'}])); localStorage.setItem('studioflow.activeSceneId',JSON.stringify('scene-1')); localStorage.setItem('studioflow.teleprompterScripts',JSON.stringify([{id:'s1',studioId:id,title:'TPI-035 sample script',body:'Read this sample script aloud during the teleprompter check.',updatedAt:Date.now()}]));", `tpi-035-${Date.now()}`, studioATitle);
   await enterStudio();
 
   // ---- Navigation (TPI-STUDIOFLOW-035 §15) ----
@@ -230,10 +230,10 @@ try {
   await openRail("Teleprompter");
   const teleprompterPanel = await panelText();
   check("Teleprompter panel lists saved scripts", teleprompterPanel.includes("TPI-035 sample script"), teleprompterPanel.slice(0, 200));
-  await clickByText(".teleprompter-rail-panel button", "Open teleprompter");
-  await waitFor("existing studio teleprompter dialog", async () => (await count(".studio-prompter-dialog")) === 1);
-  check("Teleprompter navigation opens the existing teleprompter reader", (await count(".studio-prompter-dialog")) === 1);
-  await click(".studio-prompter-dialog .icon-button");
+  await click('.teleprompter-rail-panel [data-teleprompter-script-id="s1"]');
+  await waitFor("existing private teleprompter reader", async () => (await count("[data-private-teleprompter=\"true\"]")) === 1);
+  check("Teleprompter navigation opens the existing teleprompter reader", (await count("[data-private-teleprompter=\"true\"]")) === 1);
+  await click(".stage-teleprompter-close");
   await sleep(300);
 
   // ---- Recording & Storage panel organization ----
