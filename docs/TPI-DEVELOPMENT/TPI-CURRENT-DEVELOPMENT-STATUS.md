@@ -1,5 +1,24 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-133 — Floating Studio actions menu positioning (2026-11-01)
+
+Status: **IMPLEMENTED — awaiting guarded production release and owner
+acceptance**. The Studio card **More Actions** menu used fixed page offsets
+(`right: -74px; top: 44px`) with no positioned ancestor, so it resolved against
+the page and appeared at the top-right corner of the viewport instead of beside
+the card that opened it. It is now anchored to that button: directly beneath it
+with right edges aligned, flipped above when there is no room below, clamped
+inside the viewport on desktop, tablet and phone widths, and recomputed on
+scroll and resize. Only one card menu can be open, and the existing
+outside-click, Escape, action-selection, keyboard and focus behaviors are
+preserved alongside the unchanged Rename, Archive and Delete actions (including
+every TPI-STUDIOFLOW-088/089/132R deletion safeguard). New Firefox suite passes
+39/39 and is now part of `release:preflight`; the StudioFlow source is committed
+at `e608ca9414d27f96058503c53865a8b03993ab7a` and the website release baseline
+records assets `index-mYnRoDcA.js` (`03802154…`) and `index-B-jk8V4i.css`
+(`c64c8f9d…`). See
+[`TPI-STUDIOFLOW-133-FLOATING-STUDIO-MENU-POSITIONING.md`](100-DIRECTIVES/TPI-STUDIOFLOW-133-FLOATING-STUDIO-MENU-POSITIONING.md).
+
 ## TPI-STUDIOFLOW-132 — Production Studio deletion failure (2026-11-01)
 
 Status: **ROOT CAUSE CONFIRMED AND CORRECTED — DEPLOYED AND VERIFIED UNDER

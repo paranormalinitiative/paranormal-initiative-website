@@ -608,7 +608,31 @@ fixture rejection cases plus the real baseline reproduction).
 - A browser refresh, cache-busting query, local server restart, or successful
   local build is not a deployment.
 
-## Current verified live baseline — TPI-STUDIOFLOW-132R (2026-11-01)
+## Current release candidate — TPI-STUDIOFLOW-133 (2026-11-01)
+
+- Website release commit: this directive's website commit (recorded in
+  `TPI-CURRENT-DEVELOPMENT-STATUS.md`)
+- Authoritative StudioFlow source commit:
+  `e608ca9414d27f96058503c53865a8b03993ab7a` (StudioFlow branch
+  `codex/tpi-133`, descending from the 131/132R baseline
+  `fb95c43ce79dd0dfcf3f880eb34555d746c5c8ce`)
+- Live JavaScript: `/studio/assets/index-mYnRoDcA.js` — SHA-256
+  `03802154c34011f58bd5313af24d6bcebda1cf0c413f7c91ff699ad36fe2522f`
+- Live CSS: `/studio/assets/index-B-jk8V4i.css` — SHA-256
+  `c64c8f9d996c6632af4e067b088abe3d9db6ba9f4d31128165f1a24139a17d65`
+- Maintained Studio workspace bridge `studio/workspace-bridge.js` remains
+  `9e69ee7064a9314be1026646f3d6d34ff1e123695ff996e3edd208d2911ac573`
+  (this release stages no bridge change)
+
+This release changes only the StudioFlow application bundle and the release
+baseline: the Studio card **More Actions** menu is anchored to the card that
+opened it instead of the top-right corner of the viewport. Studio creation,
+switching, persistence, renaming, archiving, permanent deletion and every
+server authorization and safety guard are unchanged. The website-side
+regression is `scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs`
+(39/39), now part of `release:preflight`.
+
+## Prior verified live baseline — TPI-STUDIOFLOW-132R (2026-11-01)
 
 - Website release commit: `d9af9024506e792221a111c7ec8c4016f7f69112`
 - Authoritative StudioFlow source commit (unchanged by this release):
