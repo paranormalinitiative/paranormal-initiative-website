@@ -96,7 +96,7 @@ The canonical source checkout contained unrelated uncommitted work and was not m
 ## Commits and parity
 
 - Source commit: `a6784cfe490f57d413dce99135f148936f854c9f`.
-- Website integration commit: `7c7d5e48cddcd17e94cd562edad53134084ce2bd`.
+- Website integration commit: `9e47096b8762052807ab4e6dc3a4bb3b73bb0d70`.
 - Website branch: `codex/tpi-development`.
 - GitHub parity: pending the non-production branch push.
 
