@@ -36,8 +36,11 @@ const evidenceRoot = process.env.TPI_FIREFOX_134_EVIDENCE
   : mkdtempSync(join(tmpdir(), "tpi-134-firefox-"));
 const profile = mkdtempSync(join(tmpdir(), "tpi-134-profile-"));
 mkdirSync(evidenceRoot, { recursive: true });
-const expectedJavaScriptAsset = process.env.TPI_FIREFOX_EXPECTED_JS || "index-CmUjeYcC.js";
-const expectedCssAsset = process.env.TPI_FIREFOX_EXPECTED_CSS || "index-D6ZhUVW1.css";
+// Expected bundle names come from the recorded release baseline so a new
+// approved build cannot silently invalidate this gate.
+const releaseBaseline = JSON.parse(readFileSync(resolve(repoRoot, "scripts/studioflow-release-baseline.json"), "utf8"));
+const expectedJavaScriptAsset = process.env.TPI_FIREFOX_EXPECTED_JS || releaseBaseline.expectedAssets.javaScript.name;
+const expectedCssAsset = process.env.TPI_FIREFOX_EXPECTED_CSS || releaseBaseline.expectedAssets.css.name;
 
 const results = [];
 const check = (name, passed, detail = "") => results.push({ name, passed: Boolean(passed), detail: passed ? "" : String(detail || "") });
@@ -122,13 +125,22 @@ if (productionMode && !String(account.username).startsWith("qa-studioflow-")) {
 const stamp = Date.now();
 const studioId = `tpi-134-firefox-${stamp}`;
 const studioTitle = `TPI 134 Firefox ${stamp}`;
+// Long bodies on purpose: the live teleprompter only scrolls content that
+// overflows its reader, so a short script could never prove playback started.
 const scripts = [{
   id: `${studioId}-script`,
   studioId,
   title: "Scene Drag Verification Script",
-  body: "Disposable script used to verify Teleprompter-to-Scenes drag and drop.",
+  body: `Disposable script used to verify Teleprompter-to-Scenes drag and drop.\n${"The teleprompter scrolls through this disposable script during the TPI-134 addendum acceptance run. ".repeat(40)}`,
   updatedAt: "TPI 134",
   createdAt: 1
+}, {
+  id: `${studioId}-script-2`,
+  studioId,
+  title: "Second Scene Script",
+  body: `Second disposable script used to verify Scene script switching.\n${"Switching between Scene scripts must load the correct one, from the beginning and paused. ".repeat(40)}`,
+  updatedAt: "TPI 134",
+  createdAt: 2
 }];
 const scenes = [{ id: "scene-1", kind: "demo", title: "Disposable Scene", layout: "Speaker view" }];
 // Deliberately seeded WITHOUT a teleprompter-script row: the drag under test is
@@ -322,7 +334,14 @@ try {
   );
 
   // ---- 10. Persistence --------------------------------------------------
-  await driver.navigate().refresh();
+  // A refresh must prove it produced a new document, otherwise the assertions
+  // below would read the pre-reload DOM and pass without testing anything.
+  const reloadStudio = async (label) => {
+    await driver.executeScript("window.__tpi134PreReload = true; return true;");
+    await driver.navigate().refresh();
+    await waitFor(`${label} document reload`, async () => Boolean(await driver.executeScript("return window.__tpi134PreReload === undefined;")));
+  };
+  await reloadStudio("persistence");
   await waitFor("production cards after refresh", async () => (await driver.findElements(By.css("[data-tpi-scene-panel-item]"))).length === seedPanelItems.length + 1);
   await settleStyles();
   const restored = await cardData();
@@ -348,6 +367,180 @@ try {
     "no duplicate or unexpected production rows were created",
     restored.length === seedPanelItems.length + 1 && new Set(survivingIds).size === survivingIds.length,
     JSON.stringify(survivingIds)
+  );
+
+  // ---- 12. TPI-134 addendum: a Scene script cues the live teleprompter ---
+  // The released live surface is the presenter teleprompter on the stage. The
+  // click must load the script there, at its beginning, and leave it paused.
+  const promptText = (body) => body.replace(/\s+/g, " ").trim();
+  const prompterState = async () => driver.executeScript(
+    "var reader=document.querySelector('.stage-teleprompter-reader');"
+    + "var play=document.querySelector('.stage-teleprompter-controls button');"
+    + "var countdown=document.querySelector('.stage-teleprompter-countdown');"
+    + "return {overlayOpen:Boolean(document.querySelector('.stage-teleprompter')),"
+    + "dialogOpen:Boolean(document.querySelector('.studio-prompter-dialog')),"
+    + "scrollTop:reader?reader.scrollTop:null, overflow:reader?reader.scrollHeight-reader.clientHeight:null,"
+    + "text:reader?reader.textContent.replace(/\\s+/g,' ').trim():null,"
+    + "playLabel:play?play.textContent.trim():null,"
+    + "countdown:countdown?countdown.textContent.trim():null};"
+  );
+  // Identify the row by the script it references: a dropped script can insert
+  // above the existing row, so DOM index is not a stable identity.
+  const clickPrompterCardFor = async (scriptId) => driver.executeScript(
+    "var wanted='teleprompter-script:'+arguments[0]+':';"
+    + "var rows=Array.from(document.querySelectorAll('[data-production-kind=\"teleprompter-script\"]'));"
+    + "var row=rows.filter(function(n){return String(n.getAttribute('data-tpi-scene-panel-item')||'').indexOf(wanted)===0;})[0];"
+    + "if(!row) return {clicked:false,ids:rows.map(function(n){return n.getAttribute('data-tpi-scene-panel-item');})};"
+    + "var btn=row.querySelector('.scene-panel-item-button'); btn.click();"
+    + "return {clicked:true,disabled:btn.disabled,count:rows.length};", scriptId
+  );
+  const prompterControl = async (label) => driver.executeScript(
+    "var wanted=arguments[0];"
+    + "var buttons=Array.from(document.querySelectorAll('.stage-teleprompter-controls button'));"
+    + "var b=buttons.filter(function(n){return new RegExp(wanted,'i').test(n.textContent);})[0];"
+    + "if(!b) return {clicked:false,labels:buttons.map(function(n){return n.textContent.trim();})};"
+    + "b.click(); return {clicked:true,labels:buttons.map(function(n){return n.textContent.trim();})};", label
+  );
+
+  const cueClick = await clickPrompterCardFor(scripts[0].id);
+  await waitFor("live presenter teleprompter", async () => (await driver.findElements(By.css(".stage-teleprompter"))).length === 1);
+  await settleStyles();
+  const cued = await prompterState();
+  check("clicking a Scene script opens the live presenter teleprompter", cueClick.clicked && cued.overlayOpen, JSON.stringify({ cueClick, cued: { ...cued, text: undefined } }));
+  check(
+    "the live teleprompter displays the complete cued script",
+    cued.text === promptText(scripts[0].body) && cued.overflow > 0,
+    JSON.stringify({ got: cued.text?.length, expected: promptText(scripts[0].body).length, overflow: cued.overflow, head: cued.text?.slice(0, 60) })
+  );
+  check("the script is cued at the beginning of the script", cued.scrollTop === 0, JSON.stringify({ scrollTop: cued.scrollTop }));
+  check("playing has not started automatically", cued.countdown === null && /Play/i.test(String(cued.playLabel)), JSON.stringify({ playLabel: cued.playLabel, countdown: cued.countdown }));
+  check("the Scene script no longer opens the blocking reader dialog", cued.dialogOpen === false, JSON.stringify({ dialogOpen: cued.dialogOpen }));
+  await driver.takeScreenshot().then((data) => writeFileSync(join(evidenceRoot, "scene-script-cued-in-live-teleprompter.png"), data, "base64"));
+
+  // ---- 13. Play, pause, and stop the cued script -------------------------
+  const playClick = await prompterControl("Play");
+  const beforeCountdown = await prompterState();
+  await sleep(4800);
+  const playing = await prompterState();
+  check(
+    "the existing playback controls scroll the cued script",
+    playClick.clicked && playing.scrollTop > 0,
+    JSON.stringify({ playClick, before: beforeCountdown.scrollTop, after: playing.scrollTop })
+  );
+  check("the Play control becomes Pause while the script runs", /Pause/i.test(String(playing.playLabel)), JSON.stringify({ playLabel: playing.playLabel }));
+
+  const pauseClick = await prompterControl("Pause");
+  await sleep(150);
+  const pausedAt = await prompterState();
+  await sleep(700);
+  const pausedLater = await prompterState();
+  check(
+    "Pause halts scrolling and keeps the position",
+    pauseClick.clicked && pausedAt.scrollTop > 0 && pausedAt.scrollTop === pausedLater.scrollTop && /Play/i.test(String(pausedLater.playLabel)),
+    JSON.stringify({ pauseClick, pausedAt: pausedAt.scrollTop, pausedLater: pausedLater.scrollTop, playLabel: pausedLater.playLabel })
+  );
+
+  const resetClick = await prompterControl("Reset");
+  await sleep(300);
+  await settleStyles();
+  const stopped = await prompterState();
+  check(
+    "Reset stops the script and returns it to the beginning",
+    resetClick.clicked && stopped.scrollTop === 0 && stopped.overlayOpen && /Play/i.test(String(stopped.playLabel)) && stopped.countdown === null,
+    JSON.stringify({ resetClick, scrollTop: stopped.scrollTop, playLabel: stopped.playLabel })
+  );
+
+  // ---- 14. Switching to another Scene script -----------------------------
+  // The right-rail tab is view state and resets on the refresh above.
+  await driver.executeScript("var tab=document.querySelector('[data-studio-panel-tab=\"Teleprompter\"]'); if(tab) tab.click(); return true;");
+  await waitFor("Teleprompter script rail after refresh", async () => (await driver.findElements(By.css(`[data-teleprompter-script-id="${scripts[1].id}"]`))).length === 1);
+
+  const secondDrag = await driver.executeScript(
+    "window.__tpi134b = {}; var dt = new DataTransfer(); window.__tpi134b.dt = dt;"
+    + " var src = document.querySelector('[data-teleprompter-script-id=\"' + arguments[0] + '\"]'); if (!src) return {error:'no source'};"
+    + " src.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,dataTransfer:dt}));"
+    + " var panel = document.querySelector('[data-tpi-scenes-panel]'); if (!panel) return {error:'no panel'};"
+    + " var rows = panel.querySelectorAll('[data-tpi-scene-panel-item]');"
+    + " var y = rows.length > 1 ? rows[1].getBoundingClientRect().top + 4 : panel.getBoundingClientRect().top + 10;"
+    + " panel.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer:dt,clientY:y}));"
+    + " return {payload: dt.getData('application/x-studioflow-teleprompter-script'), railItems: document.querySelectorAll('[data-teleprompter-script-id]').length};", scripts[1].id
+  );
+  check(
+    "the second scene script drag publishes its own script payload",
+    secondDrag?.payload === scripts[1].id,
+    JSON.stringify(secondDrag)
+  );
+  // Let React commit the drop position before the drop is handled.
+  await sleep(300);
+  await driver.executeScript(
+    "var panel = document.querySelector('[data-tpi-scenes-panel]'); if (!panel) return false;"
+    + " var dt = window.__tpi134b.dt;"
+    + " var rows = panel.querySelectorAll('[data-tpi-scene-panel-item]');"
+    + " var y = rows.length > 1 ? rows[1].getBoundingClientRect().top + 4 : panel.getBoundingClientRect().top + 10;"
+    + " panel.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:dt,clientY:y})); return true;"
+  );
+  await waitFor("second teleprompter-script production card", async () => (await driver.findElements(By.css('[data-production-kind="teleprompter-script"]'))).length === 2);
+  const secondClick = await clickPrompterCardFor(scripts[1].id);
+  await waitFor("live teleprompter shows the second script", async () => {
+    const state = await prompterState();
+    return state.overlayOpen && state.text === promptText(scripts[1].body);
+  });
+  await settleStyles();
+  const switched = await prompterState();
+  check(
+    "selecting another Scene script loads that script",
+    secondClick.clicked && switched.text === promptText(scripts[1].body) && switched.text !== promptText(scripts[0].body),
+    JSON.stringify({ clicked: secondClick.clicked, head: switched.text?.slice(0, 60) })
+  );
+  check(
+    "the switched script is cued at the beginning and paused",
+    switched.scrollTop === 0 && switched.countdown === null && /Play/i.test(String(switched.playLabel)),
+    JSON.stringify({ scrollTop: switched.scrollTop, playLabel: switched.playLabel, countdown: switched.countdown })
+  );
+
+  // ---- 15. No duplicate or mutated scripts -------------------------------
+  const storedScripts = await driver.executeScript("return localStorage.getItem('studioflow.teleprompterScripts');");
+  let parsedScripts = [];
+  try { parsedScripts = JSON.parse(storedScripts) ?? []; } catch { parsedScripts = []; }
+  check(
+    "cueing creates no duplicate scripts and leaves the originals unchanged",
+    parsedScripts.length === scripts.length
+      && parsedScripts.every((entry) => scripts.some((original) => original.id === entry.id && original.body === entry.body)),
+    JSON.stringify({ count: parsedScripts.length, ids: parsedScripts.map((entry) => entry.id) })
+  );
+
+  // ---- 16. The workflow survives refresh and a missing script ------------
+  await reloadStudio("scene script");
+  await waitFor("scene script rows after refresh", async () => (await driver.findElements(By.css('[data-production-kind="teleprompter-script"]'))).length === 2);
+  await settleStyles();
+  const afterRefresh = await clickPrompterCardFor(scripts[0].id);
+  await waitFor("live teleprompter after refresh", async () => (await driver.findElements(By.css(".stage-teleprompter"))).length === 1);
+  await settleStyles();
+  const recalled = await prompterState();
+  check(
+    "a Scene script reference survives refresh and still cues the live teleprompter",
+    afterRefresh.clicked && recalled.text === promptText(scripts[0].body) && recalled.scrollTop === 0 && /Play/i.test(String(recalled.playLabel)),
+    JSON.stringify({ clicked: afterRefresh.clicked, scrollTop: recalled.scrollTop, playLabel: recalled.playLabel, head: recalled.text?.slice(0, 60) })
+  );
+
+  const remainingScripts = await driver.executeScript(
+    "var wanted=arguments[0];"
+    + "var s=JSON.parse(localStorage.getItem('studioflow.teleprompterScripts')||'[]');"
+    + "s=s.filter(function(x){return x.id!==wanted;});"
+    + "localStorage.setItem('studioflow.teleprompterScripts', JSON.stringify(s)); return s.length;", scripts[0].id
+  );
+  check("the disposable script removal applied", remainingScripts === scripts.length - 1, JSON.stringify({ remainingScripts }));
+  await reloadStudio("script removal");
+  await waitFor("scene script rows after script removal", async () => (await driver.findElements(By.css('[data-production-kind="teleprompter-script"]'))).length === 2);
+  await settleStyles();
+  const missingCard = (await cardData()).find((card) => String(card.id).startsWith(`teleprompter-script:${scripts[0].id}:`));
+  const missingClick = await clickPrompterCardFor(scripts[0].id);
+  await sleep(400);
+  const missingLive = await prompterState();
+  check(
+    "a deleted script is reported as unavailable and never cues the teleprompter",
+    /Script unavailable/i.test(String(missingCard?.text)) && missingClick.disabled === true && !missingLive.overlayOpen,
+    JSON.stringify({ text: missingCard?.text, disabled: missingClick.disabled, overlayOpen: missingLive.overlayOpen })
   );
 } catch (error) {
   check("Firefox TPI-134 acceptance completed", false, safe(error));

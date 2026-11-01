@@ -34,9 +34,13 @@ const maintainedBaseline = path.join(repoRoot, "scripts", "studioflow-release-ba
 const fixtureRoot = path.join(repoRoot, ".local-dev", "tmp", "directive-107");
 const mixedDevelopmentTree = "/Users/toddknipple/Documents/StudioFlow/web";
 
-const knownGoodJavaScript = "4eed57a4f243c9474fb73957d9e567defb2bb43ef3bcc82c1749ba02fcf92557";
-const knownGoodCss = "8501862945034d73a08df30e81291891491536edd82f16e0074b98a933e4cf69";
-const approvedSourceCommit = "6b9c3c4b6b40f0496012e5d718d32d75e149dcf6";
+// All three identity values come from the maintained release baseline. Copies
+// hardcoded here go stale on every new approved build and then fail a correct
+// release, which is exactly what this suite must never do.
+const releaseBaseline = JSON.parse(fs.readFileSync(maintainedBaseline, "utf8"));
+const knownGoodJavaScript = releaseBaseline.expectedAssets.javaScript.sha256;
+const knownGoodCss = releaseBaseline.expectedAssets.css.sha256;
+const approvedSourceCommit = releaseBaseline.source.approvedCommit;
 
 const FIXTURE_JS = "console.log(\"tpi-107 fixture application\");\n";
 const FIXTURE_CSS = "body { font-family: sans-serif; }\n";
