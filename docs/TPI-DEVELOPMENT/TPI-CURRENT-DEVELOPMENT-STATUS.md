@@ -1,5 +1,18 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-126E — Deletion safety release blocker (2026-11-01)
+
+Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**. The prior
+`TPI-STUDIOFLOW-089-DELETION-SAFETY` 31/32 result was traced to a test-harness
+autosave race: the rejected-deletion comparison ran while the disposable target
+was still the active browser workspace, allowing legitimate `version` and
+`updatedAt` changes. The harness now switches to a disposable keep Studio and
+waits for that save to settle before comparing state. The corrected run passes
+32/32 with identical workspace contents and metadata before and after rejected
+deletion. The 126C candidate remains unchanged and production remains on Worker
+`584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100%. See
+[`TPI-STUDIOFLOW-126E-DELETION-SAFETY-RELEASE-BLOCKER.md`](100-DIRECTIVES/TPI-STUDIOFLOW-126E-DELETION-SAFETY-RELEASE-BLOCKER.md).
+
 ## TPI-STUDIOFLOW-126D — Approved production deployment (2026-11-01)
 
 Status: **BLOCKED — NOT DEPLOYED**. The exact TPI-STUDIOFLOW-126C candidate

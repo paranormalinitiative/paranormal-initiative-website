@@ -5,6 +5,16 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-126E — Resolve deletion safety release blocker
+
+Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**. The prior
+31/32 failure was a verification-harness autosave race, not a purge mutation.
+The corrected harness moves the disposable target out of the active autosave
+context before comparing rejected-deletion state and records explicit metadata
+evidence. The deletion-safety suite now passes **32/32**. The 126C release
+candidate and production Worker `584f29db-1568-4ff4-a99e-b32b3b63a23e` remain
+unchanged; no deployment occurred. [Execution record](TPI-STUDIOFLOW-126E-DELETION-SAFETY-RELEASE-BLOCKER.md).
+
 ## TPI-STUDIOFLOW-126D — Approved production deployment
 
 Status: **BLOCKED / NOT DEPLOYED**. The exact 126C candidate and release assets

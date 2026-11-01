@@ -42,6 +42,7 @@ const profile = join(evidenceRoot, "profile");
 mkdirSync(profile, { recursive: true });
 const runId = Date.now().toString(36);
 const results = [];
+const mutationEvidence = [];
 let driver;
 
 const check = (name, passed, detail = "") => results.push({ name, passed: Boolean(passed), detail: passed ? "" : String(detail || "") });
@@ -304,6 +305,37 @@ async function goHome() {
   }
   throw new Error(`StudioFlow home timed out: ${lastDetail}`);
 }
+async function selectStudioByKey(key) {
+  const opened = await js("return Boolean(window.__tpiStudioWorkspace && window.__tpiStudioWorkspace.openStudioByKey && window.__tpiStudioWorkspace.openStudioByKey(arguments[0]));", key);
+  if (!opened) throw new Error(`Could not select disposable keep Studio ${key}`);
+  await waitFor("disposable keep Studio selection", async () => {
+    const state = await uiState();
+    const entry = await js("var key=arguments[0]; return (window.__tpiStudioWorkspace && window.__tpiStudioWorkspace.listStudios ? window.__tpiStudioWorkspace.listStudios() : []).find(function(item){ return item && item.key === key; }) || null;", key);
+    const identities = [entry?.key, entry?.workspaceId].filter(Boolean);
+    return identities.includes(state.activeBroadcastId) || identities.includes(state.activeStudioId);
+  }, 30_000);
+  await waitFor("disposable keep Studio workspace", async () => (await count("[data-tpi-scenes-panel]")) > 0, 30_000);
+  // Allow the intentional save performed while switching away from the target
+  // to settle before the rejected-delete comparison begins. The target is no
+  // longer selected, so its autosave cannot race the safety assertion.
+  await sleep(1_000);
+}
+function workspaceEvidence(workspace) {
+  return workspace ? {
+    id: workspace.id,
+    localBroadcastId: workspace.localBroadcastId || null,
+    title: workspace.title,
+    description: workspace.description,
+    status: workspace.status,
+    deletedAt: workspace.deletedAt || null,
+    studioNumber: workspace.studioNumber ?? null,
+    version: workspace.version,
+    updatedAt: workspace.updatedAt,
+    createdAt: workspace.createdAt,
+    lastOpenedAt: workspace.lastOpenedAt,
+    state: workspace.state
+  } : null;
+}
 async function waitForCreationSettle() {
   await waitFor("creation chain to settle", async () => {
     const status = await js("var node = document.querySelector('.tpi-studio-status'); return node ? node.textContent : '';");
@@ -526,13 +558,18 @@ try {
     await clickButtonByText("Cancel", ".modal");
     const bridgeError = await asyncJs("var mode=arguments[0],done=arguments[arguments.length-1];window.__tpiStudioWorkspace.deleteStudioByKey(arguments[1],{mode:mode}).then(()=>done('UNSAFE SUCCESS'),e=>done(e.message));", mode, cancelKey);
     check(`TPI-104: ${mode} browser bridge rejects`, /temporarily unavailable/.test(bridgeError), bridgeError);
+    // The permanent-delete bridge is intentionally fail-closed. Move the
+    // target out of the active Studio before comparing server state so a
+    // legitimate background autosave cannot be mistaken for a purge mutation.
+    await selectStudioByKey(keepKey);
     const before = (await workspaceList()).find(item => item.id === target.id);
     const response = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(target.id)}/purge`, { method: "POST", body: { expectedVersion: before.version, mode } });
     check(`TPI-104: legacy ${mode} server request rejected`, response.status === 503 && response.body?.code === "studio_permanent_deletion_unavailable", JSON.stringify(response));
     const retry = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(target.id)}/purge`, { method: "POST", body: { mode } });
     check(`TPI-104: unversioned ${mode} retry also rejected`, retry.status === 503 && retry.body?.ok === false);
     const after = (await workspaceList()).find(item => item.id === target.id);
-    check(`TPI-104: ${mode} leaves workspace unchanged`, JSON.stringify(after) === JSON.stringify(before), JSON.stringify({ before, after }));
+    mutationEvidence.push({ mode, before: workspaceEvidence(before), after: workspaceEvidence(after) });
+    check(`TPI-104: ${mode} leaves workspace unchanged`, JSON.stringify(after) === JSON.stringify(before), JSON.stringify({ before: workspaceEvidence(before), after: workspaceEvidence(after) }));
     check(`TPI-104: ${mode} preserves uploaded media`, await mediaAssetStatus(target.id,uploaded.assetId) === 200);
     check(`TPI-104: ${mode} preserves library metadata`, JSON.stringify(await libraryRecords()) === JSON.stringify(libraryBefore));
     check(`TPI-104: ${mode} preserves unrelated recording blob`, await recordingBlobPresent(`tpi-089-keep-blob-${runId}`));
@@ -550,6 +587,7 @@ try {
     base,
     runId,
     exclusions: ["Successful permanent deletion, scope-convergence and destructive failure scenarios 2-8/11 replaced by disabled-mode UI/bridge/server/storage assertions under TPI-104; underlying purge handler covered separately by 093"],
+    mutationEvidence,
     checks: results,
     passed: results.filter((r) => r.passed).length,
     failed: results.filter((r) => !r.passed).length
