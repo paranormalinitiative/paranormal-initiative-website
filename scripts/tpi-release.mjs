@@ -221,6 +221,15 @@ async function preflight() {
   run("Production item colors and Teleprompter scene drag regression", process.execPath, ["scripts/verify/tpi-studioflow-134-firefox.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Scene production item persistence regression (TPI-STUDIOFLOW-135): a Scene
+  // script must survive an account-backed save and a real browser reload. The
+  // TPI-134 gate seeds browser-local state only, so it cannot see a server-side
+  // discard; this suite creates its own disposable account-backed Studios,
+  // inspects the stored snapshot, and purges them afterwards. A regression here
+  // blocks the release (TPI-STUDIOFLOW-135 §10).
+  run("Scene production item persistence regression", process.execPath, ["scripts/verify/tpi-studioflow-135-scene-persistence.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");

@@ -5100,11 +5100,20 @@ function normalizeStudioConfiguration(value) {
     title: cleanVideoText(scene && scene.title || `Scene ${index + 1}`, 120),
     layout: cleanVideoText(scene && scene.layout || "Speaker view", 80)
   })) : [];
+  // TPI-STUDIOFLOW-135: the Scenes panel allow-list must match the kinds the
+  // released application writes. `teleprompter-script` was missing here, so an
+  // account-backed save silently discarded a script row even though the client
+  // sent it, and a reload restored the panel without it. The reference field
+  // (`teleprompterScriptId`) is the item's playback association and must
+  // round-trip with the item; it is required for that kind, exactly as the
+  // client normalizer requires it.
   const scenePanelItems = Array.isArray(source.scenePanelItems) ? source.scenePanelItems.slice(0, 100).reduce((items, item) => {
     if (!item || typeof item !== "object" || Array.isArray(item)) return items;
     const id = clean(item.id).slice(0, 120);
     const kind = clean(item.kind).slice(0, 20);
-    if (!id || items.some((candidate) => candidate.id === id) || !["intro", "timer", "scene", "music", "video-clip", "outro"].includes(kind)) return items;
+    if (!id || items.some((candidate) => candidate.id === id) || !["intro", "timer", "scene", "music", "video-clip", "outro", "teleprompter-script"].includes(kind)) return items;
+    const teleprompterScriptId = clean(item.teleprompterScriptId).slice(0, 160);
+    if (kind === "teleprompter-script" && !teleprompterScriptId) return items;
     const normalized = {
       id,
       kind,
@@ -5117,6 +5126,7 @@ function normalizeStudioConfiguration(value) {
     const slot = Number(item.slot);
     if (sceneId) normalized.sceneId = sceneId;
     if (Number.isInteger(slot) && slot >= 4 && slot < 50) normalized.slot = slot;
+    if (kind === "teleprompter-script") normalized.teleprompterScriptId = teleprompterScriptId;
     items.push(normalized);
     return items;
   }, []) : [];

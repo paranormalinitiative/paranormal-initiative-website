@@ -31,6 +31,7 @@
     "verify:studioflow-132-legacy-local-deletion": "node scripts/verify/tpi-studioflow-132-legacy-local-deletion.mjs",
     "verify:studioflow-133-floating-studio-menu": "node scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs",
     "verify:studioflow-134-firefox": "node scripts/verify/tpi-studioflow-134-firefox.mjs",
+    "verify:studioflow-135-scene-persistence": "node scripts/verify/tpi-studioflow-135-scene-persistence.mjs",
     "verify:studioflow-107-provenance": "node scripts/verify/tpi-studioflow-107-source-provenance.mjs",
     "verify:studioflow-037-addendum-d": "node scripts/verify/tpi-studioflow-037-addendum-d.mjs",
     "verify:studioflow-037-addendum-e": "node scripts/verify/tpi-studioflow-037-addendum-e.mjs",
