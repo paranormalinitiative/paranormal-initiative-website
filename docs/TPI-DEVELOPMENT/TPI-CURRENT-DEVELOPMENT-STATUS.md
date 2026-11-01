@@ -1,5 +1,16 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-126D — Approved production deployment (2026-11-01)
+
+Status: **BLOCKED — NOT DEPLOYED**. The exact TPI-STUDIOFLOW-126C candidate
+(`b17e8cb692d458d864cc801bc1bd10bb1509b39b`) passed artifact, reproducibility,
+release-safety, authentication, build, and isolated Firefox checks, but the
+guarded deployment stopped before upload when the current
+`TPI-STUDIOFLOW-089-DELETION-SAFETY` regression failed 31/32. Production was
+rechecked and remains on Worker `584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100%.
+No rollback or production data change occurred. See
+[`TPI-STUDIOFLOW-126D-PRODUCTION-DEPLOYMENT.md`](100-DIRECTIVES/TPI-STUDIOFLOW-126D-PRODUCTION-DEPLOYMENT.md).
+
 ## TPI-STUDIOFLOW-126C — Production card border regression correction (2026-11-01)
 
 Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**. The 126B

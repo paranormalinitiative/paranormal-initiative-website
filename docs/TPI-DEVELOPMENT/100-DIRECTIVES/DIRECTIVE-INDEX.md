@@ -5,6 +5,14 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-126D — Approved production deployment
+
+Status: **BLOCKED / NOT DEPLOYED**. The exact 126C candidate and release assets
+were verified, but the guarded deployment stopped before Cloudflare upload on
+the current Studio deletion safety regression (`31/32`). Production remains on
+Worker `584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100%; no rollback or production
+data change occurred. [Execution record](TPI-STUDIOFLOW-126D-PRODUCTION-DEPLOYMENT.md).
+
 ## TPI-STUDIOFLOW-126C — Production card border regression correction
 
 Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**.
