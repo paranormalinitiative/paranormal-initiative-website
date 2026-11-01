@@ -59,6 +59,23 @@ unfinished work were not promoted.
 | Rollback readiness | PASS |
 | Documentation readiness | PASS |
 
+## Standalone regression verification after deployment
+
+These maintained local checks were executed against the authoritative Worker
+after the production release and are reported separately from the guarded
+release workflow:
+
+- Notes regression (`tpi-studioflow-122-notes.mjs`): PASS; every emitted check
+  passed, including Notes navigation, editor focus, autosave, title generation,
+  folders, image removal, and responsive behavior.
+- Scenes panel regression (`tpi-studioflow-037-scenes-panel.mjs`): PASS, 20/20.
+- Recording/storage regression (`tpi-studioflow-035-recording-storage.mjs`):
+  PASS, 33/33.
+- Screen-sharing regression (`tpi-studioflow-120-screen-share.mjs`): PASS,
+  13/13. Native operating-system picker interaction remains
+  `NOT_AUTOMATED`.
+- Release safety (`tpi-release-safety.mjs`): PASS, 21/21.
+
 ## Production deployment
 
 - Production URL: https://paranormalinitiative.com/studio/
