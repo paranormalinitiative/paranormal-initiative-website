@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "recordedDirective": "TPI-STUDIOFLOW-134",
-  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-134 scene drag-and-drop and production-item color restoration. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release keeps the TPI-STUDIOFLOW-133 floating Studio actions menu correction and the guarded typed-name deletion flow, and restores the TPI-STUDIOFLOW-125 teleprompter-script production items with the TPI-STUDIOFLOW-126A orange/purple/blue/yellow/green production-item color system on the released lineage.",
+  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-134 scene drag-and-drop, production-item color, and Scene-to-live-Teleprompter restoration. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release keeps the TPI-STUDIOFLOW-133 floating Studio actions menu correction and the guarded typed-name deletion flow, restores the TPI-STUDIOFLOW-125 teleprompter-script production items with the TPI-STUDIOFLOW-126A orange/purple/blue/yellow/green production-item color system on the released lineage, and cues a Scene script into the existing live presenter teleprompter at the beginning of the script, paused.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "820d680da23d2a262f02a8da55ac4cc3faa5dd52"
+    "approvedCommit": "f44f3a08cfc0efa271385125c6780557aaa85fb9"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-CmUjeYcC.js",
-      "sha256": "bedfa883f7919e00f97a0683aa6efbd5f87d8e4e39d532774eecfd87afd53a8b"
+      "name": "index-D9yljEwa.js",
+      "sha256": "e317fc071f4968e375f8b11970d862692a3fe28fa1cc55140d3471d884f55246"
     },
     "css": {
       "name": "index-D6ZhUVW1.css",
