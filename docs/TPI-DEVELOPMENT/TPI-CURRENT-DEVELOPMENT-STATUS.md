@@ -1,5 +1,19 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-131 — Final Studio deletion (2026-11-01)
+
+Status: **PARTIAL / LOCAL DEVELOPMENT VERIFIED FOR FINAL ACTIVE STUDIO**. The
+isolated source correction changes post-purge catalog reconciliation to read
+from the authoritative workspace bridge rather than the stale React
+`broadcasts` closure. Real Firefox acceptance passed final active-Studio
+deletion, the `No Studios yet` empty state, refresh persistence, no automatic
+recreation, and creation/opening of a replacement Studio. The maintained
+deletion/archive regression passed 32/32, deletion safety 26/26, local auth
+lifecycle 64/64, and release safety 21/21. The exact combined final-archived
+browser flow remains unverified because the destructive authorization was
+limited to the named disposable final-active test Studio. See
+[`TPI-STUDIOFLOW-131-FINAL-STUDIO-DELETION.md`](100-DIRECTIVES/TPI-STUDIOFLOW-131-FINAL-STUDIO-DELETION.md).
+
 ## TPI-STUDIOFLOW-126F — Final production deployment (2026-11-01)
 
 Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**. The verified 126C

@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-130R",
-  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-130 permanent Studio deletion release. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release preserves the previously verified My Scenes border and cache-control behavior while adding the guarded typed-name deletion flow.",
+  "recordedDirective": "TPI-STUDIOFLOW-131",
+  "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-131 final-Studio deletion correction. The staging workflow builds exactly this clean source commit and compares its output against these hashes. The release preserves the guarded typed-name deletion flow while ensuring the authoritative workspace catalog converges to the zero-Studio state after the final purge.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "859febca7d89b413ee75cc95ab1a7042228427be"
+    "approvedCommit": "fb95c43ce79dd0dfcf3f880eb34555d746c5c8ce"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-D5zopy5z.js",
-      "sha256": "26a58c1716ccf01c1de50f48640907dd2f9651626ad9d1d16f4907a23640ae81"
+      "name": "index-B_8Inyh0.js",
+      "sha256": "e250a5e41376be2861c1fe0747165a189da193ca2f180c596d49b19750fd1abe"
     },
     "css": {
       "name": "index-C_oD8YSH.css",
