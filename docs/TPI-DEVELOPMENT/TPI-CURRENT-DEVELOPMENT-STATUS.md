@@ -1,5 +1,17 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-126F — Final production deployment (2026-11-01)
+
+Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**. The verified 126C
+candidate, with the 126E deletion-safety harness correction preserved, was
+deployed as Worker `1a6a2ab5-db20-4e43-9d10-18a0a1edc784` at 100% traffic.
+Production smoke passed 10/10, broad isolated Firefox acceptance passed
+64/64, and focused live Firefox asset/border acceptance passed 8/8. The live
+entrypoint returned `Cache-Control: no-store`; all five production-item border
+colors, selected/dragging Teleprompter states, and refresh persistence passed.
+Rollback remains `584f29db-1568-4ff4-a99e-b32b3b63a23e`. See
+[`TPI-STUDIOFLOW-126F-FINAL-PRODUCTION-DEPLOYMENT.md`](100-DIRECTIVES/TPI-STUDIOFLOW-126F-FINAL-PRODUCTION-DEPLOYMENT.md).
+
 ## TPI-STUDIOFLOW-126E — Deletion safety release blocker (2026-11-01)
 
 Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**. The prior

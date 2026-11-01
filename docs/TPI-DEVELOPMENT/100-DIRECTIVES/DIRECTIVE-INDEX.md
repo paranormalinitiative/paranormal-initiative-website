@@ -5,6 +5,14 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-126F — Final production deployment and Firefox acceptance
+
+Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**. The approved
+candidate was deployed as Worker `1a6a2ab5-db20-4e43-9d10-18a0a1edc784` at 100%
+traffic, with rollback `584f29db-1568-4ff4-a99e-b32b3b63a23e`. Production
+smoke passed 10/10, broad Firefox acceptance passed 64/64, and focused live
+border/asset acceptance passed 8/8. [Execution record](TPI-STUDIOFLOW-126F-FINAL-PRODUCTION-DEPLOYMENT.md).
+
 ## TPI-STUDIOFLOW-126E — Resolve deletion safety release blocker
 
 Status: **COMPLETE / DEVELOPMENT VERIFIED / PRODUCTION UNCHANGED**. The prior
