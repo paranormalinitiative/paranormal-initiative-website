@@ -99,9 +99,10 @@ matched both builds. The local candidate serves:
 - CSS: `studio/assets/index-Y3KKfVMj.css`
   - SHA-256: `b60d93eb648c49585d5c57200a99313334a2ff390422e71cc0396365d02aae18`
 
-The website integration changes are not yet committed in this execution
-record. Existing unrelated generated bundles in `studio/assets/` remain
-untracked and were not deleted or staged.
+The website integration changes are committed and pushed as website commit
+`dfe2acd5abd060fe220e34a91ddc6d708b40107d` on `codex/tpi-development`.
+Existing unrelated generated bundles in `studio/assets/` remain untracked and
+were not deleted or staged.
 
 ## Remaining blocker
 
