@@ -23,7 +23,7 @@ validated metadata and stable media references.
 | `generalSettings` | General output settings | Yes, validated | Yes | Yes | Studio | Pass |
 | `guestPermissionSettings` | Guest controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `studioScenes` | Scene editor | Yes, normalized | Yes | Yes | Studio | Pass |
-| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder, independent context-menu removal, and sequential new-scene naming | Yes, validated | Yes | Yes | Studio | Pass — TPI-037 20/20; Addenda C/D/E 26/26, 10/10, 20/20 |
+| `scenePanelItems` | Scenes panel shortcut order, labels, refs, skip/opening/closing flags; reactive drag reorder, independent context-menu removal, and sequential new-scene naming. Kinds: `intro`, `timer`, `scene`, `music`, `video-clip`, `outro`, `teleprompter-script`; a script row must carry `teleprompterScriptId` | Yes, validated | Yes | Yes | Studio | Pass — TPI-037 20/20; Addenda C/D/E 26/26, 10/10, 20/20; TPI-135 30/30 (account-backed) |
 | `sceneMusicAssignments` | Background Music / After Intro | Yes, stable `blobKey`; manual Intro preview stop does not mutate or trigger the assignment | Yes | Yes | Studio | Pass |
 | `bannerScrollTicker` | Ticker controls | Yes, validated | Yes | Yes | Studio | Pass |
 | `programOrientation` (configuration) | Program output / bridge | Yes, supported scalar | Yes | Yes | Studio | Pass |
@@ -137,6 +137,20 @@ Background Music, timer settings, orientation, and recording settings remain
 per-Studio configuration fields. The integrated recovery suite verifies
 server-backed A/B isolation, refresh restoration, menu geometry, removal
 persistence, and scene rename persistence.
+
+**TPI-STUDIOFLOW-135 — the panel kind list is enforced twice.** A Scene panel row
+only survives an account-backed round trip if its `kind` is accepted by *both*
+`normalizeScenePanelItems()` in `studio/workspace-bridge.js` and
+`normalizeStudioConfiguration()` in `functions/api/[[path]].js`, and if every
+per-kind field it needs is written back by both. `teleprompter-script` was
+missing from both lists, so a saved script row was discarded on the server and
+stripped again on restore; the earlier server-backed recovery checks passed
+anyway because they exercised kinds that were already allowed. Add a kind (and
+its reference field) to both normalizers together, and prove it with the
+account-backed `verify:studioflow-135-scene-persistence` suite, which inspects
+the stored snapshot rather than the save badge. A snapshot with no stored panel
+opens with an empty panel on purpose: empty is also a legitimate "every row
+removed" state, so rows are never invented or merged back.
 
 `npm run verify:studioflow-033-roundtrip` exercises the real local API and an
 isolated Firefox Developer Edition session. The current run passed 26/26

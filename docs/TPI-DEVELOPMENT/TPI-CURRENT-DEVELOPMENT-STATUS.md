@@ -1,5 +1,36 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-135 — Scene production item persistence (2026-11-01)
+
+Status: **CORRECTED AND VERIFIED LOCALLY — PRODUCTION NOT AUTHORIZED AND STILL
+RUNS THE PRE-FIX BUILD**. The TPI-134R reload loss was reproduced and
+root-caused: two independent allow-lists discarded the Scene
+`teleprompter-script` kind. `normalizeStudioConfiguration()` in
+`functions/api/[[path]].js` rebuilt every saved workspace state from a six-kind
+list that excluded it (and had no field for `teleprompterScriptId`), so the row
+the browser sent was dropped on save — measured directly: a PATCH carrying five
+rows produced a stored workspace with four, and the reload then honestly
+restored four. `normalizeScenePanelItems()` in `studio/workspace-bridge.js`
+carried the same list and stripped the row a second time during restore
+hydration. Both now accept the kind and preserve the script reference, and
+`applyState` gives a snapshot with no stored panel that Studio's own default
+panel instead of leaving the previously open Studio's rows in place.
+
+Verification is account-backed: the new maintained suite
+`verify:studioflow-135-scene-persistence` (wired into `release:preflight`)
+creates disposable Studios through the real dashboard, inspects the stored
+snapshot, reloads the page for real, exercises the live Teleprompter, switches
+Studios, removes a row, replays a legacy snapshot and purges its own records.
+It passed **30/30** on the isolated disposable Worker and **30/30** on the
+authoritative `8787` Worker. Adjacent suites still pass: TPI-134 Firefox
+(43/43), TPI-133 (44/44), TPI-037 Scenes panel (20/20), release safety (21
+checks) and TPI-107 provenance. No bundle hash changed (the React bundle was not
+modified); only the unbundled bridge was restaged. Production remains on Worker
+`4de115db-6537-41b5-9bf7-ae99cb0e20fc`, so the live defect stays visible until a
+separately authorized release.
+
+[Full record](100-DIRECTIVES/TPI-STUDIOFLOW-135-SCENE-PRODUCTION-ITEM-PERSISTENCE.md).
+
 ## TPI-STUDIOFLOW-134 — Scene drag-and-drop and production colors (2026-11-01)
 
 Status: **DEPLOYED AND VERIFIED IN PRODUCTION (TPI-134R) — owner acceptance

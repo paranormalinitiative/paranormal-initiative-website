@@ -72,6 +72,23 @@ will silently disappear.
 A full merge of the two lineages is not a safe default: it conflicts in 22 places
 across `src/App.tsx`, concentrated in the hardened deletion subsystem.
 
+## Current local echo of the released build — TPI-STUDIOFLOW-135
+
+The authoritative `8787` Worker serves the TPI-134R build **plus** the
+TPI-STUDIOFLOW-135 persistence correction. Only the unbundled
+`studio/workspace-bridge.js` changed, so the hashed bundle identity is
+unchanged (`index-D9yljEwa.js` `e317fc07…`, `index-D6ZhUVW1.css` `1baa338c…`)
+and `scripts/studioflow-release-baseline.json` needs no update. Restage with
+`stageStudioAssets()` and restart the managed local Worker after editing a
+bridge, then confirm the served file contains the change before testing.
+
+The correction adds `teleprompter-script` and `teleprompterScriptId` to the
+bridge's Scene panel normalizer and to the server's
+`normalizeStudioConfiguration()`; a new kind added to only one of them is
+silently discarded. Production is not authorized for this change and still runs
+Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc`, so the live Scene-script reload
+defect remains until a separate release directive.
+
 ## Current released StudioFlow build — TPI-STUDIOFLOW-134R
 
 This candidate was released on 2026-11-01T22:37:19Z as Worker

@@ -137,6 +137,16 @@ snapshot, or merge server state with existing browser-local rows on restore
 instead of replacing them, and extend the Firefox gate so it seeds through an
 account-backed Studio. That work needs its own directive.
 
+> **Correction (2026-11-01, TPI-STUDIOFLOW-135).** The root cause stated above is
+> incomplete: the workspace *does* carry the panel inside
+> `configuration.scenePanelItems`, but the server's
+> `normalizeStudioConfiguration()` allow-list and the bridge's
+> `normalizeScenePanelItems()` both omitted the `teleprompter-script` kind, so the
+> row was discarded on save and stripped again on restore. That defect is fixed
+> and covered by an account-backed gate under
+> [TPI-STUDIOFLOW-135](TPI-STUDIOFLOW-135-SCENE-PRODUCTION-ITEM-PERSISTENCE.md);
+> this record is kept as the historical release evidence.
+
 ## 6. State after release
 
 - Production: `4de115db-6537-41b5-9bf7-ae99cb0e20fc` at 100%.

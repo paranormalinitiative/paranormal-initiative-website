@@ -1,5 +1,34 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-135 — SCENE ITEM PERSISTENCE (2026-11-01)
+
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-135-SCENE-PRODUCTION-ITEM-PERSISTENCE.md).
+
+**Two allow-lists decide whether a Scene row survives.** The client normalizer
+`normalizeScenePanelItems()` in `studio/workspace-bridge.js` and the server
+normalizer `normalizeStudioConfiguration()` in `functions/api/[[path]].js` each
+rebuild every Scene panel row from an explicit kind list. Both omitted
+`teleprompter-script` and the `teleprompterScriptId` link, so an account-backed
+save silently discarded a script row and restore stripped it again. Add any new
+production kind to **both** lists, with its reference field, or it will
+round-trip as a deletion.
+
+Adding a kind is not enough on its own: the normalizers emit an explicit field
+set, so a per-kind field that is not written back is lost even for an allowed
+kind. Keep the two normalizers in step (100-row cap, 120-character ids, the
+client's rule that a script row requires its script id).
+
+Verification must be account-backed. The TPI-134 gate seeds browser-local state
+only and can never observe a server-side discard; the new
+`verify:studioflow-135-scene-persistence` suite creates disposable Studios
+through the dashboard, inspects the stored snapshot, reloads for real and purges
+its own records. It runs inside `release:preflight`.
+
+Legacy snapshots with no stored panel open with an empty Scenes panel by design:
+an empty panel is also a legitimate "every row removed" state, so rows are never
+invented or merged back. Production still runs the pre-fix Worker
+`4de115db-6537-41b5-9bf7-ae99cb0e20fc`.
+
 ## TPI-STUDIOFLOW-134 — SOURCE LINEAGE LOSS (2026-11-01)
 
 [Record](100-DIRECTIVES/TPI-STUDIOFLOW-134-SCENE-DRAG-AND-PRODUCTION-COLORS.md).
