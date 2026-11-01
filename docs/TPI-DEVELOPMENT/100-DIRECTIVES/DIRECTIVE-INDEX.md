@@ -5,6 +5,17 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-126B — My Scenes final production deployment
+
+Status: **ROLLED BACK / PRODUCTION ACCEPTANCE FAILED**.
+[Execution record](TPI-STUDIOFLOW-126B-MY-SCENES-PRODUCTION-DEPLOYMENT.md). The
+126A candidate was deployed as Worker `fb780aae-8a1c-4dbf-b41a-c82cce96e8be`,
+but isolated Firefox production acceptance found generic blue outer borders
+instead of the required type-specific colors, including a selected purple
+Teleprompter card. The Worker was rolled back to the verified baseline
+`584f29db-1568-4ff4-a99e-b32b3b63a23e` at 100% traffic. The 126A correction
+remains development-verified and production-unverified.
+
 ## TPI-STUDIOFLOW-126 — Final production release
 
 Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**.

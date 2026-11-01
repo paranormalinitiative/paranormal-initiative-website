@@ -1,5 +1,16 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-126B — My Scenes production promotion (2026-11-01)
+
+Status: **ROLLED BACK — LIVE FIREFOX ACCEPTANCE FAILED**. The TPI-126A
+candidate was deployed as Worker `fb780aae-8a1c-4dbf-b41a-c82cce96e8be`, but
+production Firefox rendered generic blue My Scenes borders instead of the
+required type-specific borders, including the selected Teleprompter Script.
+The release was rolled back to Worker `584f29db-1568-4ff4-a99e-b32b3b63a23e`
+at 100% traffic. See
+[`TPI-STUDIOFLOW-126B-MY-SCENES-PRODUCTION-DEPLOYMENT.md`](100-DIRECTIVES/TPI-STUDIOFLOW-126B-MY-SCENES-PRODUCTION-DEPLOYMENT.md).
+The correction remains verified in development only.
+
 ## TPI-STUDIOFLOW-126 — FINAL PRODUCTION RELEASE (2026-11-01)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-126-FINAL-PRODUCTION-RELEASE.md).
