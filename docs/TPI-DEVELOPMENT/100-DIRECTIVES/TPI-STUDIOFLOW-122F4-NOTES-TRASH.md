@@ -75,7 +75,7 @@ and collections were cleaned from local D1; no owner records were changed.
 
 - Source commit: `ddc8eed4321510a86da35d7a1bb35f0cf8b8a50e`
 - Website integration commit: `619dee31a4a64101e29a8ac38db41676cd72d51c`
-- Documentation synchronization commit: recorded below after this update
+- Documentation synchronization commit: `33b4cad8afe9477210e3c363763930b959239f96`
 - JavaScript: `index-C7r7gqow.js`, SHA-256
   `5c5ba8b78bc638b0258b2f1fa1d5c85fcdcd934d4e51c424d8e318074b38982a`
 - CSS: `index-Y3KKfVMj.css`, SHA-256
