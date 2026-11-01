@@ -1,5 +1,19 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.5 — NOTES TRASH BASELINE CLOSED (2026-10-31)
+
+[Closure record](100-DIRECTIVES/TPI-STUDIOFLOW-122F5-NOTES-TRASH-CLOSURE.md).
+
+The Notes Trash sequence 122F.4A–122F.4C is **VERIFIED COMPLETE** in local
+development. Continue from source commit
+`9703b087e91e85e0f791f618a90f9b2c4eeb5160` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The final Firefox evidence is preserved in
+`100-DIRECTIVES/evidence/TPI-STUDIOFLOW-122F4C/`. Do not reopen the accepted
+Trash implementation or introduce R2 cleanup; retained R2 bytes remain a known
+documented limitation. Production is unchanged and no deployment is authorized
+under this closure directive.
+
 ## TPI-STUDIOFLOW-122F.4A — NOTES TRASH CORRECTION (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4A-NOTES-TRASH-COMPLETION.md).

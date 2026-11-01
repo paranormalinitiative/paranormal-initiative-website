@@ -1,5 +1,18 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.5 — NOTES TRASH BASELINE CLOSED (2026-10-31)
+
+[Closure record](100-DIRECTIVES/TPI-STUDIOFLOW-122F5-NOTES-TRASH-CLOSURE.md).
+
+The 122F.4A–122F.4C Notes Trash sequence is now **VERIFIED COMPLETE** in the
+authoritative local development environment. Firefox Developer Edition 160.0b3
+successfully selected the disposable Trash note, executed browser Restore,
+rendered the exact missing-folder fallback notification, kept it visible, and
+cleared it after the next note action. Attachment-safe deletion, shared-reference
+protection, revision preservation, storage-failure safety, Notes regression, and
+release safety remain accepted. The verified source baseline is
+`9703b087e91e85e0f791f618a90f9b2c4eeb5160`; production remains unchanged.
+
 ## TPI-STUDIOFLOW-122F.4A — PARTIAL / ATTACHMENT-SAFE TRASH CORRECTION (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4A-NOTES-TRASH-COMPLETION.md).

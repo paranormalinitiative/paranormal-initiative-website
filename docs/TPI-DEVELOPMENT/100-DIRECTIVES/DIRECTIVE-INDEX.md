@@ -7,9 +7,37 @@ Statuses are evidence-based and refer to the available repository records, not t
 
 ## TPI-STUDIOFLOW-122F.4 — Notes Trash, restore, and permanent deletion
 
+## TPI-STUDIOFLOW-122F.5 — Notes Trash acceptance closure and baseline
+
+Status: **COMPLETE / DEVELOPMENT BASELINE ESTABLISHED / NOT DEPLOYED**.
+[Closure record](TPI-STUDIOFLOW-122F5-NOTES-TRASH-CLOSURE.md). The final
+Firefox verification in 122F.4C confirms Trash rendering, note selection,
+browser Restore, the exact missing-folder fallback notice, notification
+persistence and dismissal, restoration to All Notes, and content preservation.
+The accepted source baseline is `9703b087e91e85e0f791f618a90f9b2c4eeb5160`;
+the website closure baseline is recorded by the documentation commit for this
+record. Production remains unchanged.
+
+## TPI-STUDIOFLOW-122F.4C — Final Firefox notification verification
+
+Status: **COMPLETE / FINAL ACCEPTANCE VERIFIED / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F4C-FIREFOX-NOTIFICATION.md). Firefox
+Developer Edition 160.0b3 visibly rendered the exact fallback notice, kept it
+visible through the observation period, and cleared it after the next note
+selection. Evidence screenshots are preserved under `evidence/TPI-STUDIOFLOW-122F4C/`.
+
+## TPI-STUDIOFLOW-122F.4B — Final Trash verification
+
+Status: **VERIFICATION COMPLETE / CLOSED BY 122F.4C**.
+[Execution record](TPI-STUDIOFLOW-122F4B-FINAL-VERIFICATION.md). The earlier
+PARTIAL result is preserved historically; its remaining browser requirement was
+resolved by 122F.4C. Storage-failure safety and attachment-safe deletion remain
+accepted as recorded.
+
 ## TPI-STUDIOFLOW-122F.4A — Notes Trash restoration and attachment-safe deletion
 
-Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+Final status: **VERIFIED COMPLETE**. Historical initial execution status:
+**PARTIAL**; the browser-visible requirement was resolved by 122F.4C.
 [Execution record](TPI-STUDIOFLOW-122F4A-NOTES-TRASH-COMPLETION.md). Source
 commit `9703b087e91e85e0f791f618a90f9b2c4eeb5160` uses the server's explicit
 missing-folder restore result and keeps the exact All Notes notice visible
