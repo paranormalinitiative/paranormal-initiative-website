@@ -212,6 +212,15 @@ async function preflight() {
   run("Floating Studio actions menu positioning regression", process.execPath, ["scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Production-item colors and Teleprompter-to-Scenes drag-and-drop regression
+  // (TPI-STUDIOFLOW-134): the approved orange video, purple Teleprompter, blue
+  // Scene, yellow Timer, and green Music colors must drive each card border,
+  // tint, icon, selected state, and dragging state; a Teleprompter script must
+  // drag into My Scenes, highlight a valid drop target, assign, and persist. A
+  // regression here blocks the release (TPI-STUDIOFLOW-125/126A/134).
+  run("Production item colors and Teleprompter scene drag regression", process.execPath, ["scripts/verify/tpi-studioflow-134-firefox.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
