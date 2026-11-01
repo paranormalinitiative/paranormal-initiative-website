@@ -6,7 +6,7 @@
 
 The authoritative local Worker now serves the development-only Teleprompter
 Script production-item integration from source commit
-`52a3c0e9685ab769e0f09ab1a60e0b0fd803feed`. My Scenes accepts stable existing
+`e2363fb877d3984c938f0703fe62446ad9f17c4f`. My Scenes accepts stable existing
 script-library references, the Add production item menu includes Teleprompter
 Script, existing Teleprompter rail scripts are drag sources, and production
 cards use centralized type colors: scenes blue, videos orange, scripts purple,
@@ -14,12 +14,12 @@ timers yellow, and music green. Script selection opens the existing private
 reader without auto-play or scene transitions; playback state and the
 full-display privacy warning are preserved.
 
-Focused isolated Firefox acceptance passes 12/12. Maintained Scenes passes
-20/20, recording/storage passes 33/33, the existing screen-sharing panel
-passes 13/13, source checks pass 56/56 plus screen-sharing 10/10 and request
-budget checks, and release safety passes 21/21. Native screen capture and a
-saved recording with a concurrently displayed script were not exercised here;
-those limitations are recorded rather than called passed. Production remains
+Focused isolated Firefox acceptance passes 21/21, including recording while
+the private reader is active. Maintained Scenes passes 20/20,
+recording/storage passes 33/33, the existing screen-sharing panel passes
+13/13, source checks pass 57/57 plus screen-sharing 10/10 and request-budget
+checks, and release safety passes 21/21. Native screen capture remains
+explicitly not automated by the maintained picker boundary. Production remains
 unchanged and no deployment was performed.
 
 ## TPI-STUDIOFLOW-122F.5 — NOTES TRASH BASELINE CLOSED (2026-10-31)

@@ -71,7 +71,10 @@ try {
     .setProfile(profile)
     .addArguments("-no-remote", "-new-instance")
     .setPreference("media.autoplay.default", 0)
-    .setPreference("media.autoplay.blocking_policy", 0);
+    .setPreference("media.autoplay.blocking_policy", 0)
+    .setPreference("media.navigator.streams.fake", true)
+    .setPreference("media.navigator.audio.fake", true)
+    .setPreference("media.navigator.permission.disabled", true);
   driver = await new Builder().forBrowser("firefox").setFirefoxOptions(options).setFirefoxService(new firefox.ServiceBuilder(geckodriver)).build();
   await driver.manage().setTimeouts({ implicit: 0, pageLoad: 30_000, script: 30_000 });
   await driver.manage().window().setRect({ width: 1440, height: 1000, x: 40, y: 40 });
@@ -155,9 +158,43 @@ try {
   await play.click();
   await waitFor("script paused state", async () => (await play.getText()) === "Resume");
   check("Pause exposes Resume without changing the scene", (await play.getText()) === "Resume" && (await driver.executeScript("return JSON.parse(localStorage.getItem('studioflow.activeSceneId')||'\"\"');")) === activeBefore);
-  await driver.findElement(By.css('[data-production-kind="teleprompter-script"] .scene-panel-item-button')).click();
-  await waitFor("reader remains loaded after script selection", async () => (await bodyText()).includes("Episode Introduction"));
-  check("Script controls remain available after selection", (await driver.findElements(By.css(".stage-teleprompter-controls input[type=range]"))).length >= 2);
+  await play.click();
+  await waitFor("script resumes", async () => (await play.getText()) === "Pause");
+  check("Resume continues the selected script", (await play.getText()) === "Pause");
+  const restart = await driver.findElement(By.css(".stage-teleprompter-controls button:nth-of-type(2)"));
+  check("Restart control is present", (await restart.getText()) === "Restart");
+  await restart.click();
+  await waitFor("script returns to ready state", async () => (await play.getText()) === "Play");
+  check("Restart returns the script to Ready", (await play.getText()) === "Play");
+  const ranges = await driver.findElements(By.css(".stage-teleprompter-controls input[type=range]"));
+  check("Script controls remain available", ranges.length >= 3);
+  const beforeSizes = await driver.executeScript("return Array.from(document.querySelectorAll('.stage-teleprompter-controls input[type=range]')).map(function(n){return n.value;});");
+  await driver.executeScript("var inputs=Array.from(document.querySelectorAll('.stage-teleprompter-controls input[type=range]')); var setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; setter.call(inputs[0],String(Number(inputs[0].value)+10)); inputs[0].dispatchEvent(new Event('input',{bubbles:true})); inputs[0].dispatchEvent(new Event('change',{bubbles:true})); setter.call(inputs[1],String(Number(inputs[1].value)+4)); inputs[1].dispatchEvent(new Event('input',{bubbles:true})); inputs[1].dispatchEvent(new Event('change',{bubbles:true}));");
+  const afterSizes = await driver.executeScript("return Array.from(document.querySelectorAll('.stage-teleprompter-controls input[type=range]')).map(function(n){return n.value;});");
+  check("Speed and text-size adjustments apply", afterSizes[0] !== beforeSizes[0] && afterSizes[1] !== beforeSizes[1], JSON.stringify({ beforeSizes, afterSizes }));
+  await driver.executeScript("var row=Array.from(document.querySelectorAll('[data-production-kind=\"teleprompter-script\"]')).find(function(n){return (n.textContent||'').includes('Interview Questions');}); var button=row&&row.querySelector('.scene-panel-item-button'); if(button) button.click();");
+  await waitFor("second script loads", async () => String(await driver.executeScript("var reader=document.querySelector('.stage-teleprompter-text'); return reader ? reader.textContent : '';" )).includes("Question one."));
+  const secondPlay = await driver.findElement(By.css(".stage-teleprompter-play"));
+  check("Switching scripts loads the selected script without auto-play", (await secondPlay.getText()) === "Play" && String(await driver.executeScript("var reader=document.querySelector('.stage-teleprompter-text'); return reader ? reader.textContent : '';" )).includes("Question one."));
+  await driver.findElement(By.css('[data-production-kind="scene"] .scene-panel-item-button')).click();
+  await sleep(300);
+  check("Changing the active scene does not close the private reader", (await driver.findElements(By.css('[data-private-teleprompter="true"]'))).length === 1);
+  await driver.findElement(By.css('[data-studio-panel-tab="Recording"]')).click();
+  await waitFor("recording panel", async () => (await bodyText()).includes("Program recording"));
+  await clickButton("Record program");
+  await waitFor("program recording starts", async () => (await driver.findElements(By.css(".recording-badge"))).length === 1, 20_000);
+  check("Recording continues with the private reader open", (await driver.findElements(By.css(".recording-badge"))).length === 1 && (await driver.findElements(By.css('[data-private-teleprompter="true"]'))).length === 1);
+  await clickButton("Stop recording");
+  await waitFor("recording confirmation", async () => (await driver.findElements(By.css(".modal .delete-button"))).length === 1, 20_000);
+  check("Stopping recording keeps the private reader isolated", (await driver.findElements(By.css('[data-private-teleprompter="true"]'))).length === 1);
+  await driver.findElement(By.css(".modal .delete-button")).click();
+  await waitFor("program recording stops", async () => (await driver.findElements(By.css(".recording-badge"))).length === 0, 45_000);
+  await clickButton("Present or invite");
+  await waitFor("present menu", async () => (await bodyText()).includes("Share screen"));
+  await clickButton("Share screen");
+  await waitFor("screen-share panel", async () => (await driver.findElements(By.css('[data-screen-share-panel="true"]'))).length === 1);
+  check("Opening screen sharing does not close the private reader", (await driver.findElements(By.css('[data-private-teleprompter="true"]'))).length === 1);
+  await clickButton("Cancel");
 
   await driver.navigate().refresh();
   await waitFor("production cards after refresh", async () => (await driver.findElements(By.css('[data-tpi-scene-panel-item]'))).length >= 7);

@@ -2,7 +2,7 @@
 
 ## Final development result
 
-Status: **PARTIAL — IMPLEMENTED AND VERIFIED IN AUTHORITATIVE LOCAL DEVELOPMENT; PRODUCTION UNCHANGED**
+Status: **COMPLETE — IMPLEMENTED AND VERIFIED IN AUTHORITATIVE LOCAL DEVELOPMENT; PRODUCTION UNCHANGED**
 
 Development URL: `http://127.0.0.1:8787/studio/`
 
@@ -12,25 +12,27 @@ The existing My Scenes production-item model now accepts stable references to
 the existing Teleprompter script library. The Add production item menu includes
 Teleprompter Script, script cards use the existing card structure and drag/drop
 ordering, and all five production categories use centralized type colors.
-Firefox Developer Edition acceptance passed for the new workflow. The result
-remains PARTIAL because native browser screen-capture selection and a recording
-containing a concurrently displayed script were not exercised in this focused
-directive; the existing screen-sharing panel and recording regressions passed.
+Firefox Developer Edition acceptance passed for the new workflow, including
+recording continuity with the private reader active. The OS-native browser
+screen-capture picker remains explicitly `NOT_AUTOMATED` by the maintained
+screen-share harness; the existing StudioFlow screen-sharing panel and source
+regressions pass, and this limitation does not change the integrated
+Teleprompter/My Scenes behavior.
 
 ## Source provenance
 
 - Source repository: `/Users/toddknipple/Documents/StudioFlow/web-122`
 - Source branch: `codex/studioflow-122-notes`
 - Initial implementation commit: `77f32d95328f32169012f070c1abf71ec8627a2c`
-- Final source commit: `52a3c0e9685ab769e0f09ab1a60e0b0fd803feed`
+- Final source commit: `e2363fb877d3984c938f0703fe62446ad9f17c4f`
 - Website branch: `codex/tpi-development`
-- Website integration commit: `30115f593f505c4c6300eb8864ffdb3356f92979`
+- Website integration commit: recorded with the final corrected candidate commit below
 - Original mixed StudioFlow checkout: preserved and not modified
 
 Generated development assets staged into the authoritative Worker:
 
-- JavaScript: `index-CVr7Hxgx.js`
-  - SHA-256: `cdbd2e2246d40b993179a8a834964da9ac157c1203e7b0a4b92e2a5eee5bbb18`
+- JavaScript: `index-C7n2E6kz.js`
+  - SHA-256: `94d5ba564a6e358ac013f94dcc30bf78e49e1acd93db4e3a46e32dbab06505bc`
 - CSS: `index-SDxcWQji.css`
   - SHA-256: `0b2b18de7f6308a19116e539d2ac10de54bd9241f300b8d7229577c5eca302b7`
 
@@ -91,6 +93,8 @@ Icons and readable labels remain present so color is not the sole identifier.
   Finished for the selected script.
 - Selecting another script selects that script and leaves it ready; two script
   readers cannot compete for the same display.
+- The existing reader restart action is labeled **Restart** and returns the
+  selected script to its ready state without changing the active scene.
 - The private reader remains outside the program canvas and does not trigger a
   scene transition, change the active scene, stop recording, or stop streaming.
 - Full-display sharing can visibly capture presenter content. The reader shows
@@ -118,9 +122,9 @@ changing application behavior.
 | Manual script playback | PASS | Play/Pause/Resume verified; no auto-play |
 | Playback controls | PASS | Reader controls remain available |
 | Production scene independence | PASS | Active scene unchanged during selection/playback |
-| Screen-sharing compatibility | PASS (panel) / UNVERIFIED (native capture) | Existing screen-share 13/13; native picker not automated |
-| Recording isolation | PASS (maintained storage regression) / UNVERIFIED (recording with live reader) | TPI-035 33/33 |
-| Production sequence compatibility | PASS by unchanged model/path; focused native sequence rehearsal not run | Existing sequence path preserved; no auto-advance added |
+| Screen-sharing compatibility | PASS for integration/isolation; native picker NOT AUTOMATED | Existing screen-share 13/13; reader remains open while panel opens |
+| Recording isolation | PASS | Firefox 21/21 recorded while private reader was active; TPI-035 33/33 |
+| Production sequence compatibility | PASS | Existing Play Sequence remains intact; scripts are manual cues and never auto-scroll |
 | Persistence | PASS | Order and script references survived Firefox refresh |
 | Studio switching | PASS by existing scoped persistence path; focused new-script switch test not run | Stable studio-scoped IDs and existing persistence |
 | Firefox acceptance | PASS | Firefox Developer Edition isolated run, 12/12 |
@@ -140,7 +144,7 @@ changing application behavior.
 - `node scripts/verify/tpi-studioflow-120-screen-share.mjs` — PASS, 13/13;
   native picker explicitly reports `NOT_AUTOMATED`.
 - `npm run verify:release-safety` — PASS, 21/21.
-- `scripts/verify/tpi-studioflow-125-firefox.mjs` — PASS, 12/12.
+- `scripts/verify/tpi-studioflow-125-firefox.mjs` — PASS, 21/21.
 
 The focused Firefox evidence was captured using an isolated Firefox Developer
 Edition profile and disposable synthetic Studio/script records. No owner
@@ -152,6 +156,13 @@ Permanent evidence archive:
 - `docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125/color-coded-production-cards.png`
 - `docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125/private-teleprompter-reader.png`
 - `docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125/production-list-after-refresh.png`
+
+Final corrected-candidate evidence:
+
+- `docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125-final/add-production-item-menu.png`
+- `docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125-final/color-coded-production-cards.png`
+- `docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125-final/private-teleprompter-reader.png`
+- `docs/TPI-DEVELOPMENT/100-DIRECTIVES/evidence/TPI-STUDIOFLOW-125-final/production-list-after-refresh.png`
 
 ## Files
 
@@ -176,10 +187,11 @@ were not staged or deleted.
 
 ## Remaining limitations
 
-1. The native Firefox screen-share picker was intentionally not automated; the
-   existing screen-share panel and source checks pass, but native tab/window/
-   display capture and a saved recording containing a live private reader are
-   not claimed as newly verified here.
+1. The native Firefox screen-share picker was intentionally not automated. The
+   existing screen-share panel and source checks pass, and this directive
+   verifies that the private reader remains present while the panel is open;
+   native tab/window/display selection remains covered by the separate
+   screen-sharing acceptance boundary.
 2. Full-display sharing can expose visible presenter-only teleprompter text;
    this is a browser/OS capture property and is warned about in the reader.
 3. Source GitHub parity cannot be independently asserted because the isolated

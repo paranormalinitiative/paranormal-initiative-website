@@ -7,16 +7,16 @@ Statuses are evidence-based and refer to the available repository records, not t
 
 ## TPI-STUDIOFLOW-125 — Teleprompter integration and unified scene workflow
 
-Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+Status: **COMPLETE / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
 [Execution record](TPI-STUDIOFLOW-125-TELEPROMPTER-SCENE-INTEGRATION.md). The
 existing My Scenes model now supports stable Teleprompter Script references,
 library selection and drag/drop, centralized blue/orange/purple/yellow/green
 production-item colors, private manual script playback, and refresh-persistent
-ordering. Focused Firefox acceptance passes 12/12; maintained Scenes passes
-20/20, recording/storage passes 33/33, screen-sharing panel passes 13/13, and
-release safety passes 21/21. Native screen-capture selection and a recording
-containing a concurrently displayed script remain unverified in this focused
-directive. Production is unchanged.
+ordering. Focused Firefox acceptance passes 21/21, including recording
+continuity with the private reader; maintained Scenes passes 20/20,
+recording/storage passes 33/33, screen-sharing panel passes 13/13, and release
+safety passes 21/21. Native screen-capture selection remains explicitly not
+automated by the maintained screen-share harness. Production is unchanged.
 
 ## TPI-STUDIOFLOW-122F.4 — Notes Trash, restore, and permanent deletion
 

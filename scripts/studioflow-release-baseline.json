@@ -4,12 +4,12 @@
   "description": "Development-only approved StudioFlow source identity and generated assets for Teleprompter Script production items, unified My Scenes type colors, and presenter-private manual script playback. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 125.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "52a3c0e9685ab769e0f09ab1a60e0b0fd803feed"
+    "approvedCommit": "e2363fb877d3984c938f0703fe62446ad9f17c4f"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-CVr7Hxgx.js",
-      "sha256": "cdbd2e2246d40b993179a8a834964da9ac157c1203e7b0a4b92e2a5eee5bbb18"
+      "name": "index-C7n2E6kz.js",
+      "sha256": "94d5ba564a6e358ac013f94dcc30bf78e49e1acd93db4e3a46e32dbab06505bc"
     },
     "css": {
       "name": "index-SDxcWQji.css",
