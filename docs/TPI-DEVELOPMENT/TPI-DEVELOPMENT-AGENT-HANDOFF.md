@@ -1,5 +1,28 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-122F.4A — NOTES TRASH CORRECTION (2026-10-31)
+
+[Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4A-NOTES-TRASH-COMPLETION.md).
+
+Continue from source commit `9703b087e91e85e0f791f618a90f9b2c4eeb5160` in
+`/Users/toddknipple/Documents/StudioFlow/web-122`, branch
+`codex/studioflow-122-notes`. The local Worker is staged with
+`index-2zeoh76e.js` SHA-256
+`bbe0e82636bf2c80d9fd5a720590343f32895d2d79ddede86c432d684ead2912` and
+`index-Y3KKfVMj.css` SHA-256
+`b60d93eb648c49585d5c57200a99313334a2ff390422e71cc0396365d02aae18`.
+
+Attachment-bearing permanent deletion now uses owner/version/Trash guards,
+reference auditing, a D1 batch for the selected note's records, and
+fail-closed shared-reference handling. R2 bytes are retained deliberately
+until an atomic/reference-counted cleanup system is separately approved.
+Maintained Notes regression and release safety pass. The browser-visible
+missing-folder notice remains unverified because the isolated Firefox
+interaction harness has not reliably selected the disposable Trash card;
+do not call this directive complete until that rendered Firefox check passes.
+Production is unchanged. Preserve the original mixed checkout and all
+unrelated worktrees.
+
 ## TPI-STUDIOFLOW-122F.4 — NOTES TRASH COMPLETE (2026-10-31)
 
 [Execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4-NOTES-TRASH.md).

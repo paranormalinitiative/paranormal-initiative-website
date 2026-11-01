@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-122F.4",
-  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes Trash, restore, and explicitly confirmed permanent-deletion correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.4.",
+  "recordedDirective": "TPI-STUDIOFLOW-122F.4A",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the Notes Trash restoration notification and attachment-safe permanent-deletion correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 122F.4A.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "ddc8eed4321510a86da35d7a1bb35f0cf8b8a50e"
+    "approvedCommit": "9703b087e91e85e0f791f618a90f9b2c4eeb5160"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-C7r7gqow.js",
-      "sha256": "5c5ba8b78bc638b0258b2f1fa1d5c85fcdcd934d4e51c424d8e318074b38982a"
+      "name": "index-2zeoh76e.js",
+      "sha256": "bbe0e82636bf2c80d9fd5a720590343f32895d2d79ddede86c432d684ead2912"
     },
     "css": {
       "name": "index-Y3KKfVMj.css",

@@ -1,5 +1,26 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-122F.4A — PARTIAL / ATTACHMENT-SAFE TRASH CORRECTION (2026-10-31)
+
+[Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4A-NOTES-TRASH-COMPLETION.md).
+
+The authoritative local candidate now uses the exact server-reported missing-
+folder restore result and keeps the notice visible until another Notes action
+clears it. Permanent deletion audits attachment object keys and revision HTML/
+ID references, fails closed for cross-note references, removes only the
+selected trashed note's D1 attachment/revision/note rows when safe, and retains
+private R2 bytes because the current architecture has no atomic D1/R2 cleanup
+ledger. Real disposable attachment uploads, multi-attachment deletion,
+shared-reference protection, maintained Notes regression, and release safety
+pass. The rendered Firefox missing-folder notice remains UNVERIFIED because
+the isolated harness intermittently fails to select that disposable Trash
+card; production remains unchanged.
+
+Source commit: `9703b087e91e85e0f791f618a90f9b2c4eeb5160`. Local assets are
+`index-2zeoh76e.js` (`bbe0e82636bf2c80d9fd5a720590343f32895d2d79ddede86c432d684ead2912`)
+and `index-Y3KKfVMj.css`
+(`b60d93eb648c49585d5c57200a99313334a2ff390422e71cc0396365d02aae18`).
+
 ## TPI-STUDIOFLOW-122F.4 — PARTIAL / NOTES TRASH CORE VERIFIED (2026-10-31)
 
 [Directive execution record](100-DIRECTIVES/TPI-STUDIOFLOW-122F4-NOTES-TRASH.md).

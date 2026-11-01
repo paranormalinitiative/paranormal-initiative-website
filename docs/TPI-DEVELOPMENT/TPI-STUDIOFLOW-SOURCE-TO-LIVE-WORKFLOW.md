@@ -48,6 +48,26 @@ candidate must be built from a clean source worktree, verified reproducible,
 and staged through the provenance-checked workflow. Historical candidate
 records remain below for release traceability.
 
+## Current local development candidate — TPI-STUDIOFLOW-122F.4A
+
+The authoritative `8787` Worker serves the Notes Trash restoration and
+attachment-safe permanent-deletion correction from clean StudioFlow source
+commit `9703b087e91e85e0f791f618a90f9b2c4eeb5160`. Exact staged assets are:
+
+- `/studio/assets/index-2zeoh76e.js` — SHA-256
+  `bbe0e82636bf2c80d9fd5a720590343f32895d2d79ddede86c432d684ead2912`
+- `/studio/assets/index-Y3KKfVMj.css` — SHA-256
+  `b60d93eb648c49585d5c57200a99313334a2ff390422e71cc0396365d02aae18`
+
+The source was built twice from the exact clean commit and staged with matching
+hashes. Attachment-bearing permanent deletion audits cross-note and revision
+references, fails closed when shared, and retains private R2 bytes because the
+current architecture has no atomic D1/R2 cleanup ledger. Maintained Notes
+regression and release safety pass. The rendered Firefox missing-folder notice
+remains unverified because the isolated browser harness intermittently fails
+to select the disposable Trash card. This candidate is development-only;
+production remains unchanged.
+
 ## Current local development candidate — TPI-STUDIOFLOW-122F.4
 
 The authoritative `8787` Worker serves Notes Trash, restore, deletion metadata,

@@ -4878,7 +4878,7 @@ async function handleNoteAction(path, request, env, user) {
       const candidate = existing.trash_collection_id || existing.collection_id || null;
       let restoredCollection = null;
       if (candidate) restoredCollection = await env.TPI_DB.prepare("SELECT id FROM studio_note_collections WHERE id = ? AND owner_id = ? LIMIT 1").bind(candidate, user.id).first();
-      if (candidate && !restoredCollection) { restoreNotice = "The original folder is no longer available; the note was restored to All Notes."; restoredToAllNotes = true; }
+      if (candidate && !restoredCollection) { restoreNotice = "Note restored to All Notes because its original folder no longer exists."; restoredToAllNotes = true; }
       await env.TPI_DB.prepare("UPDATE studio_notes SET status = 'active', collection_id = ?, deleted_at = NULL, trash_collection_id = NULL, updated_at = ? WHERE id = ? AND owner_id = ?")
         .bind(restoredCollection?.id || null, now, id, user.id).run();
     } else {
@@ -4905,15 +4905,53 @@ async function handlePermanentlyDeleteNote(path, request, env, user) {
     if (existing.status !== "trash") return json({ error: "Only notes already in Trash can be permanently deleted.", code: "note_not_in_trash" }, 409);
     const expected = data.expectedVersion == null ? Number(existing.version) : Number(data.expectedVersion);
     if (!Number.isInteger(expected) || expected !== Number(existing.version)) return json({ error: "This note changed elsewhere. Refresh Trash before deleting it.", code: "note_conflict" }, 409, { "Cache-Control": "no-store" });
-    const attachment = await env.TPI_DB.prepare("SELECT id FROM studio_note_attachments WHERE note_id = ? AND owner_id = ? LIMIT 1").bind(id, user.id).first();
-    if (attachment) return json({ error: "This note still has stored attachments. Remove them from the note first; the underlying private files are being preserved.", code: "note_attachment_cleanup_blocked" }, 409);
+    const { results: attachments } = await env.TPI_DB.prepare(`
+      SELECT id, object_key, deleted_at
+      FROM studio_note_attachments
+      WHERE note_id = ? AND owner_id = ?
+      ORDER BY created_at ASC, id ASC
+    `).bind(id, user.id).all();
+    const attachmentRows = attachments || [];
+    // A note attachment is normally owned by exactly one note because
+    // object_key is unique. Still, inspect both the object key and every
+    // revision reference before removing the database row. If an older or
+    // manually imported record is shared, fail closed and preserve the note.
+    for (const attachment of attachmentRows) {
+      const sharedObject = await env.TPI_DB.prepare(`
+        SELECT id, note_id
+        FROM studio_note_attachments
+        WHERE owner_id = ? AND object_key = ? AND note_id <> ?
+        LIMIT 1
+      `).bind(user.id, attachment.object_key, id).first();
+      if (sharedObject) {
+        return json({ error: "This note cannot be permanently deleted because one of its private attachments is referenced by another note.", code: "note_shared_attachment_reference" }, 409, { "Cache-Control": "no-store" });
+      }
+      const referencePattern = `%${attachment.id}%`;
+      const sharedRevision = await env.TPI_DB.prepare(`
+        SELECT note_id, revision_number
+        FROM studio_note_revisions
+        WHERE owner_id = ? AND note_id <> ?
+          AND (attachment_ids_json LIKE ? OR body_html LIKE ?)
+        LIMIT 1
+      `).bind(user.id, id, referencePattern, referencePattern).first();
+      if (sharedRevision) {
+        return json({ error: "This note cannot be permanently deleted because one of its private attachments is referenced by another note revision.", code: "note_shared_attachment_reference" }, 409, { "Cache-Control": "no-store" });
+      }
+    }
     const results = await env.TPI_DB.batch([
+      env.TPI_DB.prepare("DELETE FROM studio_note_attachments WHERE note_id = ? AND owner_id = ?").bind(id, user.id),
       env.TPI_DB.prepare("DELETE FROM studio_note_revisions WHERE note_id = ? AND owner_id = ?").bind(id, user.id),
       env.TPI_DB.prepare("DELETE FROM studio_notes WHERE id = ? AND owner_id = ? AND status = 'trash' AND version = ?").bind(id, user.id, expected),
     ]);
-    const deleted = results?.[1]?.meta?.changes || 0;
+    const deleted = results?.[2]?.meta?.changes || 0;
     if (!deleted) return json({ error: "This note changed elsewhere. Refresh Trash and try again.", code: "note_conflict" }, 409, { "Cache-Control": "no-store" });
-    return json({ ok: true, deletedId: id }, 200, { "Cache-Control": "private, no-store" });
+    // R2 objects are deliberately retained. The current Notes schema has no
+    // reference-counted cleanup ledger or atomic D1/R2 transaction, so
+    // deleting bytes here could destroy recoverable revision material if a
+    // concurrent or historical reference is discovered later. The database
+    // records are gone, but the private object remains inaccessible through
+    // the Notes API until a separately approved retention/GC system exists.
+    return json({ ok: true, deletedId: id, attachmentsPreserved: attachmentRows.length, storageCleanup: "retained_for_safe_recovery" }, 200, { "Cache-Control": "private, no-store" });
   } catch (error) {
     return noteSchemaFailure(error);
   }

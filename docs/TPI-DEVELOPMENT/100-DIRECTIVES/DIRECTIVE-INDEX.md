@@ -7,6 +7,23 @@ Statuses are evidence-based and refer to the available repository records, not t
 
 ## TPI-STUDIOFLOW-122F.4 — Notes Trash, restore, and permanent deletion
 
+## TPI-STUDIOFLOW-122F.4A — Notes Trash restoration and attachment-safe deletion
+
+Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
+[Execution record](TPI-STUDIOFLOW-122F4A-NOTES-TRASH-COMPLETION.md). Source
+commit `9703b087e91e85e0f791f618a90f9b2c4eeb5160` uses the server's explicit
+missing-folder restore result and keeps the exact All Notes notice visible
+until another note/action clears it. Permanent deletion now audits attachment
+object keys and revision references, removes only the selected note's D1
+records when safe, fails closed for cross-note references, and retains private
+R2 bytes because no atomic reference-counted D1/R2 cleanup ledger exists.
+Actual local attachment-bearing deletion, shared-reference protection,
+maintained Notes regression, and release safety pass. The rendered Firefox
+missing-folder notice remains unverified due isolated harness selection/OS
+Firefox launch limitations. Production is unchanged.
+
+## TPI-STUDIOFLOW-122F.4 — Notes Trash, restore, and permanent deletion
+
 Status: **PARTIAL / AUTHORITATIVE LOCAL DEVELOPMENT / NOT DEPLOYED**.
 [Execution record](TPI-STUDIOFLOW-122F4-NOTES-TRASH.md). Source commit
 `ddc8eed4321510a86da35d7a1bb35f0cf8b8a50e` adds deletion metadata, safe restore,

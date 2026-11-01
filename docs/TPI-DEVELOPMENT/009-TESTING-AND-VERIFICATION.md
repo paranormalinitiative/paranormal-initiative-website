@@ -1,5 +1,22 @@
 # Testing and Verification
 
+## TPI-STUDIOFLOW-122F.4A Notes Trash completion
+
+The D122F.4A candidate is staged only on the authoritative local Worker at
+`http://127.0.0.1:8787/studio/`. Actual disposable Firefox/API checks pass for
+owner-scoped Trash actions, existing-folder restore, All Notes fallback,
+multiple private attachment uploads, attachment-bearing permanent deletion,
+endpoint inaccessibility after deletion, explicit confirmation, and
+cross-note revision-reference protection. The maintained Notes regression
+passes all checks and release safety passes **21/21**.
+
+The missing-folder response is exact and the client keeps the notice mounted,
+but the rendered Firefox notice is **UNVERIFIED**: the legacy Selenium fixture
+intermittently failed to select the disposable Trash card after refresh, and a
+focused Playwright Firefox run was blocked by the macOS `plugin-container`
+sandbox permission. No production data or owner Notes were used. Production
+was not modified.
+
 ## TPI-STUDIOFLOW-122F.4 Notes Trash
 
 The D122F.4 candidate is staged only on the authoritative local Worker at
