@@ -128,7 +128,9 @@ identical output:
 - Website 126C implementation commit: `c6b6d8e6fc0e572be9a5cb4541fa8f7a26a7b48e`
   (`fix StudioFlow production asset cache parity`).
 - Website branch: `codex/tpi-development`.
-- GitHub parity: to be recorded after the focused documentation commit.
+- Documentation commit: `0cbc0705dde7917c94635712c4b52054ffff873d`.
+- GitHub parity: VERIFIED after push; `origin/codex/tpi-development` matches
+  the final documentation commit.
 
 ## Final status
 
