@@ -608,10 +608,13 @@ fixture rejection cases plus the real baseline reproduction).
 - A browser refresh, cache-busting query, local server restart, or successful
   local build is not a deployment.
 
-## Current release candidate — TPI-STUDIOFLOW-133 (2026-11-01)
+## Current verified live baseline — TPI-STUDIOFLOW-133 (2026-11-01)
 
-- Website release commit: this directive's website commit (recorded in
-  `TPI-CURRENT-DEVELOPMENT-STATUS.md`)
+- Website release commit: `b2868f6d1f1203d03143d6f9edd008dea3b7cf36`
+  (implementation `f182bc5`)
+- Active production Worker version:
+  `71a5293d-fef4-4643-bf50-e9dfc7327eb5` (100% traffic)
+- Immediate rollback version: `cd37afb8-cc82-406a-9e15-e84b3dffa234`
 - Authoritative StudioFlow source commit:
   `e608ca9414d27f96058503c53865a8b03993ab7a` (StudioFlow branch
   `codex/tpi-133`, descending from the 131/132R baseline
@@ -630,7 +633,10 @@ opened it instead of the top-right corner of the viewport. Studio creation,
 switching, persistence, renaming, archiving, permanent deletion and every
 server authorization and safety guard are unchanged. The website-side
 regression is `scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs`
-(39/39), now part of `release:preflight`.
+(39/39), now part of `release:preflight`. Verified live: anonymous smoke, live
+isolated Firefox acceptance 64/64, and a focused non-destructive production
+acceptance 16/16 confirming the menu opens beneath its own More Actions button
+and stays inside the viewport on the live site.
 
 ## Prior verified live baseline — TPI-STUDIOFLOW-132R (2026-11-01)
 

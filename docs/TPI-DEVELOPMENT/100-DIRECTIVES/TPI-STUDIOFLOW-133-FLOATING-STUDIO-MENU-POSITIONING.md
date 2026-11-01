@@ -3,7 +3,7 @@
 Date: 2026-11-01
 Priority: Medium
 Classification: UI correction
-Status: **IMPLEMENTED — pending guarded production release and owner acceptance**
+Status: **DEPLOYED AND VERIFIED — owner acceptance pending**
 
 ## 1. Reported behavior
 
@@ -123,6 +123,38 @@ rebuilt assets:
 The authoritative staging workflow rebuilt the approved commit twice in clean
 conditions, produced identical artifacts, matched the recorded baseline, and
 staged them into `studio/` while preserving every maintained bridge file.
+
+### Release result
+
+- Implementation commit: `f182bc5` (website repository, `codex/tpi-development`)
+- Documentation commit: `b2868f6` (directive record, status and source-to-live
+  baseline; implemented and documented together, pushed, then deployed)
+- Release-record commit: the follow-up `docs(studioflow): record TPI-133
+  production release`, which only adds these verified production results and
+  changes no deployed file
+- Previous production Worker: `cd37afb8-cc82-406a-9e15-e84b3dffa234` (rollback)
+- Active production Worker: `71a5293d-fef4-4643-bf50-e9dfc7327eb5` at 100% traffic
+- Live JavaScript `/studio/assets/index-mYnRoDcA.js` —
+  `03802154c34011f58bd5313af24d6bcebda1cf0c413f7c91ff699ad36fe2522f`
+- Live CSS `/studio/assets/index-B-jk8V4i.css` —
+  `c64c8f9d996c6632af4e067b088abe3d9db6ba9f4d31128165f1a24139a17d65`
+- Live `studio/workspace-bridge.js` unchanged —
+  `9e69ee7064a9314be1026646f3d6d34ff1e123695ff996e3edd208d2911ac573`
+- No stale bundle reference remains in the served document; no migration, SQL,
+  bridge or server-code file changed, and no owner Studio was touched.
+
+Production gates: local authentication lifecycle PASS (64 checks), preflight
+READY (release safety, staging baseline match, reproducible builds,
+deletion/archive 32/32, deletion safety 26/26, Studio lifecycle 29/29, ownership
+40/40, release acceptance 64/64, the new floating menu regression 39/39, staging
+verification and guarded Wrangler dry-run), live anonymous smoke 10/10, and live
+isolated Firefox acceptance 64/64. A focused non-destructive production
+acceptance then passed 16/16 in Firefox Developer Edition against
+`https://paranormalinitiative.com`: the menu opens beneath and right-aligned to
+its own More Actions button, is not at the viewport corner, stays inside the
+viewport, only one card menu is open at a time, Escape and outside click close
+it, it flips above near the bottom edge, and it adds no horizontal overflow at
+420 px.
 
 ## 7. Remaining limitations
 

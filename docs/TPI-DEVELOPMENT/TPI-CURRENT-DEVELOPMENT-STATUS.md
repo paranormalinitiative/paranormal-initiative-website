@@ -2,8 +2,8 @@
 
 ## TPI-STUDIOFLOW-133 — Floating Studio actions menu positioning (2026-11-01)
 
-Status: **IMPLEMENTED — awaiting guarded production release and owner
-acceptance**. The Studio card **More Actions** menu used fixed page offsets
+Status: **DEPLOYED AND VERIFIED — owner acceptance pending**. The Studio card
+**More Actions** menu used fixed page offsets
 (`right: -74px; top: 44px`) with no positioned ancestor, so it resolved against
 the page and appeared at the top-right corner of the viewport instead of beside
 the card that opened it. It is now anchored to that button: directly beneath it
@@ -16,7 +16,23 @@ every TPI-STUDIOFLOW-088/089/132R deletion safeguard). New Firefox suite passes
 39/39 and is now part of `release:preflight`; the StudioFlow source is committed
 at `e608ca9414d27f96058503c53865a8b03993ab7a` and the website release baseline
 records assets `index-mYnRoDcA.js` (`03802154…`) and `index-B-jk8V4i.css`
-(`c64c8f9d…`). See
+(`c64c8f9d…`).
+
+Release commit `b2868f6d1f1203d03143d6f9edd008dea3b7cf36` (implementation
+`f182bc5`) was deployed through the guarded workflow. Previous Worker
+`cd37afb8-cc82-406a-9e15-e84b3dffa234`; active Worker
+`71a5293d-fef4-4643-bf50-e9dfc7327eb5` at 100% traffic. The live document
+references only `index-mYnRoDcA.js` (`03802154…`) and `index-B-jk8V4i.css`
+(`c64c8f9d…`), the live bridge is unchanged
+(`9e69ee70…`), and no migration, SQL or server-code file changed. Gates: local
+authentication lifecycle PASS, preflight READY (deletion/archive 32/32, deletion
+safety 26/26, Studio lifecycle 29/29, ownership 40/40, release acceptance 64/64,
+floating menu regression 39/39, staging verification, guarded dry-run),
+production smoke, live isolated Firefox acceptance 64/64, and a focused
+non-destructive production acceptance 16/16 that confirmed the menu opens beside
+its own More Actions button on the live site. Production D1 still holds the same
+18 live Studio rows; the owner's browser-local Studio was never opened or
+altered. See
 [`TPI-STUDIOFLOW-133-FLOATING-STUDIO-MENU-POSITIONING.md`](100-DIRECTIVES/TPI-STUDIOFLOW-133-FLOATING-STUDIO-MENU-POSITIONING.md).
 
 ## TPI-STUDIOFLOW-132 — Production Studio deletion failure (2026-11-01)
