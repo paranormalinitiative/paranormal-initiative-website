@@ -633,7 +633,7 @@ section.asset-section[data-tpi-legacy-audio="true"] {
   min-width: 0;
   min-height: 56px;
   height: 56px;
-  border: 1px solid rgba(105, 189, 255, 0.5);
+  border: 1px solid var(--production-item-border, rgba(105, 189, 255, 0.5));
   border-radius: 10px;
   background: linear-gradient(135deg, rgba(22, 42, 72, 0.96), rgba(17, 27, 50, 0.96));
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);

@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "recordedDirective": "TPI-STUDIOFLOW-125",
-  "description": "Development-only approved StudioFlow source identity and generated assets for Teleprompter Script production items, unified My Scenes type colors, and presenter-private manual script playback. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for the authoritative local Worker only; production deployment is not authorized under Directive 125.",
+  "recordedDirective": "TPI-STUDIOFLOW-126A",
+  "description": "Development-only approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-126A My Scenes production-card border color correction. The staging workflow builds exactly this source commit and compares its output against these hashes. This candidate is for development and pending release inclusion only; production deployment is not authorized under Directive 126A.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "e2363fb877d3984c938f0703fe62446ad9f17c4f"
+    "approvedCommit": "a6784cfe490f57d413dce99135f148936f854c9f"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-C7n2E6kz.js",
+      "name": "index-CSTJXjG2.js",
       "sha256": "94d5ba564a6e358ac013f94dcc30bf78e49e1acd93db4e3a46e32dbab06505bc"
     },
     "css": {
-      "name": "index-SDxcWQji.css",
-      "sha256": "0b2b18de7f6308a19116e539d2ac10de54bd9241f300b8d7229577c5eca302b7"
+      "name": "index-CphVaGhF.css",
+      "sha256": "328a8c77587c1976c7a8e1ee3dd72c7e0e4a979216975b1be4e53f23997f3385"
     }
   }
 }
