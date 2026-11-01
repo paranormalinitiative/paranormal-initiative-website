@@ -321,6 +321,8 @@ async function selectStudioByKey(key) {
   await sleep(1_000);
 }
 function workspaceEvidence(workspace) {
+  // GET /api/studio/workspaces/:id may refresh lastOpenedAt as an observation
+  // side effect; compare deletion-owned metadata and state instead.
   return workspace ? {
     id: workspace.id,
     localBroadcastId: workspace.localBroadcastId || null,
@@ -332,7 +334,6 @@ function workspaceEvidence(workspace) {
     version: workspace.version,
     updatedAt: workspace.updatedAt,
     createdAt: workspace.createdAt,
-    lastOpenedAt: workspace.lastOpenedAt,
     state: workspace.state
   } : null;
 }
@@ -454,7 +455,7 @@ async function confirmDeleteDialogWithLabel(title, label) {
   }
 }
 async function confirmDeleteDialog(title) {
-  await confirmDeleteDialogWithLabel(title, "Delete Studio permanently");
+  await confirmDeleteDialogWithLabel(title, "Delete Studio Permanently");
 }
 // Full with-contents flow: mode → additional acknowledgement → typed name.
 async function deleteWithContents(title) {
@@ -464,7 +465,7 @@ async function deleteWithContents(title) {
   await typeConfirmationName(title);
   const ackLabel = "I understand that this Studio's exclusively owned productions, recordings and media will be permanently deleted";
   if (!(await clickButtonByText(ackLabel, ".modal"))) throw new Error("the additional contents acknowledgement is unavailable");
-  await confirmDeleteDialogWithLabel(title, "Delete Studio and its contents permanently");
+  await confirmDeleteDialogWithLabel(title, "Delete Studio and Its Contents Permanently");
   return inventoryText;
 }
 
@@ -496,8 +497,6 @@ try {
   }
   if (!authenticated) throw new Error(`authenticated session timed out: ${loginDetail}`);
   await releaseStaleProductionSessions();
-  // TPI-104: no purge cleanup; isolated disposable state retained.
-
   // ---- Fixtures ----------------------------------------------------------
   const keepTitle = `TPI-089 Keep ${runId}`;
   const cancelTitle = `TPI-089 Cancel ${runId}`;
@@ -539,54 +538,65 @@ try {
   const cancelKeyAfter = cancelAfter?.localBroadcastId || cancelAfter?.id;
   check("Scenario 1j: cancelling leaves the Studio completely untouched", Boolean(cancelAfter) && cancelKeyAfter === cancelKey && (await cardIndexFor(cancelTitle)) >= 0, JSON.stringify({ workspace: Boolean(cancelAfter), key: cancelKeyAfter, card: await cardIndexFor(cancelTitle) }));
 
-  // TPI-104: successful deletion scenarios 2-8/11 are unavailable by design.
-  // Replace them with actual UI, bridge, legacy-request and storage preservation.
-  const target = await workspaceById(studioCancel.id);
-  const uploaded = await uploadStudioMedia(target.id, "tpi-104-protected.png", "image/png", "disposable-media");
-  check("TPI-104 fixture: server media uploaded", uploaded.status === 201 && Boolean(uploaded.assetId), JSON.stringify(uploaded));
+  // ---- Scenarios 2–6: guarded eligible deletion --------------------------
+  await openDeleteDialog(cancelTitle);
+  await waitForInventory();
+  await typeConfirmationName(cancelTitle);
+  check("Scenario 2: exact name enables Delete Studio Permanently", (await confirmButtonState())?.disabled === false);
+  await clickButtonByText("Cancel", ".modal");
+
+  const contentsTitle = `TPI-089 Contents ${runId}`;
+  const contentsStudio = await createStudioViaHome(contentsTitle);
+  const contentsMedia = await uploadStudioMedia(contentsStudio.id, "tpi-130-protected.png", "image/png", "disposable-media");
+  check("Scenario 3: disposable media fixture is created", contentsMedia.status === 201 && Boolean(contentsMedia.assetId), JSON.stringify(contentsMedia));
   const libraryBefore = await libraryRecords();
-  for (const mode of ["studio-only", "with-contents"]) {
-    await openDeleteDialog(cancelTitle);
-    await waitForInventory();
-    await typeConfirmationName(cancelTitle);
-    if (mode === "with-contents") {
-      await clickButtonByText("Delete Studio and its contents", ".modal");
-      await clickButtonByText("I understand that this Studio's exclusively owned productions, recordings and media will be permanently deleted", ".modal");
-    }
-    check(`TPI-104: ${mode} UI remains disabled`, (await confirmButtonState())?.disabled === true);
-    check(`TPI-104: ${mode} unavailability explained`, (await dialogText()).includes("Both permanent deletion options are temporarily unavailable"));
-    await clickButtonByText("Cancel", ".modal");
-    const bridgeError = await asyncJs("var mode=arguments[0],done=arguments[arguments.length-1];window.__tpiStudioWorkspace.deleteStudioByKey(arguments[1],{mode:mode}).then(()=>done('UNSAFE SUCCESS'),e=>done(e.message));", mode, cancelKey);
-    check(`TPI-104: ${mode} browser bridge rejects`, /temporarily unavailable/.test(bridgeError), bridgeError);
-    // The permanent-delete bridge is intentionally fail-closed. Move the
-    // target out of the active Studio before comparing server state so a
-    // legitimate background autosave cannot be mistaken for a purge mutation.
-    await selectStudioByKey(keepKey);
-    const before = (await workspaceList()).find(item => item.id === target.id);
-    const response = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(target.id)}/purge`, { method: "POST", body: { expectedVersion: before.version, mode } });
-    check(`TPI-104: legacy ${mode} server request rejected`, response.status === 503 && response.body?.code === "studio_permanent_deletion_unavailable", JSON.stringify(response));
-    const retry = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(target.id)}/purge`, { method: "POST", body: { mode } });
-    check(`TPI-104: unversioned ${mode} retry also rejected`, retry.status === 503 && retry.body?.ok === false);
-    const after = (await workspaceList()).find(item => item.id === target.id);
-    mutationEvidence.push({ mode, before: workspaceEvidence(before), after: workspaceEvidence(after) });
-    check(`TPI-104: ${mode} leaves workspace unchanged`, JSON.stringify(after) === JSON.stringify(before), JSON.stringify({ before: workspaceEvidence(before), after: workspaceEvidence(after) }));
-    check(`TPI-104: ${mode} preserves uploaded media`, await mediaAssetStatus(target.id,uploaded.assetId) === 200);
-    check(`TPI-104: ${mode} preserves library metadata`, JSON.stringify(await libraryRecords()) === JSON.stringify(libraryBefore));
-    check(`TPI-104: ${mode} preserves unrelated recording blob`, await recordingBlobPresent(`tpi-089-keep-blob-${runId}`));
-  }
+  const contentsInventory = await deleteWithContents(contentsTitle);
+  const contentsGone = await workspaceGone(contentsTitle);
+  check("Scenario 4: Delete Studio and Its Contents removes eligible Studio", contentsGone, contentsInventory.slice(0, 300));
+  check("Scenario 5: unrelated Studio remains unchanged", Boolean(await workspaceById(studioKeep.id)) && (await workspaceById(studioKeep.id))?.state?.configuration?.studioScenes?.some(scene => scene.title === "TPI-089 Keep Scene"));
+  check("Scenario 6: unrelated library metadata remains unchanged", JSON.stringify(await libraryRecords()) === JSON.stringify(libraryBefore));
+  mutationEvidence.push({ mode: "with-contents", title: contentsTitle, mediaAssetId: contentsMedia.assetId, remainingMediaStatus: await mediaAssetStatus(contentsStudio.id, contentsMedia.assetId) });
+
+  // ---- Scenario 7: active production is blocked -------------------------
+  const activeTitle = `TPI-089 Active ${runId}`;
+  const activeStudio = await createStudioViaHome(activeTitle);
+  const activeBefore = await workspaceById(activeStudio.id);
+  const activePatch = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}`, { method: "PATCH", body: { state: { ...activeBefore.state, broadcast: { ...activeBefore.state.broadcast, status: "recording" } }, expectedVersion: activeBefore.version } });
+  check("Scenario 7a: active-production fixture is established", activePatch.status === 200, JSON.stringify(activePatch));
+  const activeReject = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}/purge`, { method: "POST", body: { mode: "with-contents", expectedVersion: activePatch.body?.workspace?.version } });
+  check("Scenario 7b: active production gives a clear explanation", activeReject.status === 409 && activeReject.body?.code === "studio_production_active" && /recording or livestream is active/i.test(activeReject.body?.error || ""), JSON.stringify(activeReject));
+  check("Scenario 7c: active production remains intact", Boolean(await workspaceById(activeStudio.id)));
+  const activeReset = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}`, { method: "PATCH", body: { state: { ...activeBefore.state, broadcast: { ...activeBefore.state.broadcast, status: "draft" } }, expectedVersion: (await workspaceById(activeStudio.id)).version } });
+  check("Scenario 7d: active fixture is safely released", activeReset.status === 200, JSON.stringify(activeReset));
+  const activeCleanup = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}/purge`, { method: "POST", body: { mode: "with-contents", expectedVersion: (await workspaceById(activeStudio.id)).version } });
+  check("Scenario 7e: active fixture cleanup succeeds after release", activeCleanup.status === 200 && !(await workspaceById(activeStudio.id)), JSON.stringify(activeCleanup));
+
+  // ---- Scenario 8: stale version is rejected without mutation -----------
+  const conflictTitle = `TPI-089 Conflict ${runId}`;
+  const conflictStudio = await createStudioViaHome(conflictTitle);
+  const conflictInitial = await workspaceById(conflictStudio.id);
+  const conflictBump = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(conflictStudio.id)}`, { method: "PATCH", body: { title: `${conflictTitle} bumped`, expectedVersion: conflictInitial.version } });
+  if (conflictBump.status !== 200) throw new Error(`Could not establish stale-version fixture: ${JSON.stringify(conflictBump)}`);
+  const conflictBefore = await workspaceById(conflictStudio.id);
+  const conflictResponse = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(conflictStudio.id)}/purge`, { method: "POST", body: { mode: "with-contents", expectedVersion: conflictInitial.version } });
+  const conflictAfter = await workspaceById(conflictStudio.id);
+  check("Scenario 8a: stale deletion request is rejected", conflictResponse.status === 409 && conflictResponse.body?.code === "workspace_conflict", JSON.stringify(conflictResponse));
+  check("Scenario 8b: stale rejection leaves workspace unchanged", JSON.stringify(workspaceEvidence(conflictAfter)) === JSON.stringify(workspaceEvidence(conflictBefore)), JSON.stringify({ before: workspaceEvidence(conflictBefore), after: workspaceEvidence(conflictAfter) }));
+  const conflictCleanup = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(conflictStudio.id)}/purge`, { method: "POST", body: { mode: "with-contents", expectedVersion: conflictAfter.version } });
+  check("Scenario 8c: valid retry deletes only the disposable conflict fixture", conflictCleanup.status === 200 && await workspaceGone(conflictTitle), JSON.stringify(conflictCleanup));
   await driver.navigate().refresh();
   await waitFor("StudioFlow refresh", async () => (await count("[data-tpi-scenes-panel]")) > 0 || await buttonExists("Create new Studio", ".home-page"));
   await goHome();
-  check("TPI-104: Studios remain after refresh", await cardIndexFor(keepTitle) >= 0 && await cardIndexFor(cancelTitle) >= 0);
-  check("TPI-104: recording ownership survives refresh", (await libraryRecords()).some(item => item.id === `tpi-089-keep-rec-${runId}` && item.studioId === keepKey));
-  check("TPI-104: unrelated configuration survives", (await workspaceById(studioKeep.id))?.state?.configuration?.studioScenes?.some(scene => scene.title === "TPI-089 Keep Scene"));
+  check("Scenario 9: retained Studio remains after refresh", await cardIndexFor(keepTitle) >= 0);
+  check("Scenario 10: recording ownership survives refresh", (await libraryRecords()).some(item => item.id === `tpi-089-keep-rec-${runId}` && item.studioId === keepKey));
+  check("Scenario 11: unrelated configuration survives", (await workspaceById(studioKeep.id))?.state?.configuration?.studioScenes?.some(scene => scene.title === "TPI-089 Keep Scene"));
 
   // ---- Evidence + summary -----------------------------------------------
   const summary = {
     suite: "TPI-STUDIOFLOW-089-DELETION-SAFETY",
     base,
     runId,
-    exclusions: ["Successful permanent deletion, scope-convergence and destructive failure scenarios 2-8/11 replaced by disabled-mode UI/bridge/server/storage assertions under TPI-104; underlying purge handler covered separately by 093"],
+    exclusions: ["Legacy global 503 lockout assertions removed; TPI-STUDIOFLOW-130 now exercises guarded eligible deletion, active-production blocking, stale-version conflict handling, and safe retry."],
     mutationEvidence,
     checks: results,
     passed: results.filter((r) => r.passed).length,
@@ -606,7 +616,8 @@ try {
   try {
     if (driver) {
       await releaseStaleProductionSessions();
-      // TPI-104: no purge cleanup; isolated disposable state retained.
+      // Purge cleanup runs after the browser closes so autosave cannot race
+      // the final disposable-fixture deletion.
       await driver.quit();
     }
   } catch { /* best-effort cleanup */ }

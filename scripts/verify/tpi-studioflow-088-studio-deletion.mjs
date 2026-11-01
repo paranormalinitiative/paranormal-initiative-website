@@ -13,11 +13,11 @@
 //                       Studio name, productions/recordings counts, media
 //                       impact, and a permanent-deletion warning
 //   2  Cancel       -> cancelling leaves the Studio completely untouched
-//   3  Home         -> deleting removes the Studio from the homepage
-//   4  My Studios   -> the deleted Studio disappears from My Studios
+//   3  Home         -> deleting removes the eligible Studio from the homepage
+//   4  My Studios   -> the deleted eligible Studio disappears from My Studios
 //   5  Isolation    -> other Studios keep their own data
 //   6  Refresh      -> the deleted Studio does not reappear after refresh
-//   7  Active       -> deleting the active Studio lands on a safe destination
+//   7  Active       -> active production blocks deletion with a clear reason
 //   8  Browser-local-> local deletion damages neither other Studios' snapshots
 //                       nor recovery snapshots
 //   9  Archive      -> archive and restore still work (archive view)
@@ -349,11 +349,15 @@ async function openDeleteDialog(title) {
     throw new Error(`${lastError}; visible cards: ${JSON.stringify(cards)}`);
   }
   await waitFor("Delete Studio confirmation dialog", async () => (await count(".studio-delete-warning")) === 1, 15_000);
+  await waitFor("complete deletion inventory", async () => {
+    const text = await js("var node = document.querySelector('[data-testid=studio-delete-inventory]'); return node ? node.textContent : '';" );
+    return text && !text.includes("Preparing the deletion inventory");
+  }, 20_000);
 }
 async function confirmDeleteDialog(title) {
   const disabledBefore = await js("var button = document.querySelector('.studio-delete-actions .ghost-button'); return button ? button.disabled : null;");
-  if (disabledBefore !== false) throw new Error(`Delete Studio permanently should be enabled after typing the name (state: ${disabledBefore})`);
-  if (!(await clickButtonByText("Delete Studio permanently", ".modal"))) throw new Error("Delete Studio permanently is unavailable");
+  if (disabledBefore !== false) throw new Error(`Delete Studio Permanently should be enabled after typing the name (state: ${disabledBefore})`);
+  if (!(await clickButtonByText("Delete Studio Permanently", ".modal"))) throw new Error("Delete Studio Permanently is unavailable");
   // The dialog closes only on a verified deletion; on failure it stays open
   // with `.studio-delete-error`. Race both outcomes so a failure is reported
   // immediately with its real reason instead of a bare timeout.
@@ -414,8 +418,6 @@ try {
   }
   if (!authenticated) throw new Error(`authenticated session timed out: ${loginDetail}`);
   await releaseStaleProductionSessions();
-  // TPI-104: permanent purge is disabled; disposable state is retained for evidence.
-
   // ---- Fixtures: one Studio to keep, one Studio to delete ----------------
   const keepTitle = `TPI-088 Keep ${runId}`;
   const killTitle = `TPI-088 Kill ${runId}`;
@@ -466,32 +468,41 @@ try {
   check("Test 2a: a mismatched name keeps deletion disabled", disabledWithWrongName === true, String(disabledWithWrongName));
   await typeConfirmationName(killTitle);
   const enabledWithExactName = await js("var button = document.querySelector('.studio-delete-actions .ghost-button'); return button ? button.disabled : null;");
-  check("Test 2b: exact name cannot enable unavailable permanent deletion", enabledWithExactName === true, String(enabledWithExactName));
+  check("Test 2b: exact name enables eligible permanent deletion", enabledWithExactName === false, String(enabledWithExactName));
   if (!(await clickButtonByText("Cancel", ".modal"))) throw new Error("Cancel is unavailable");
   await waitFor("Delete dialog to close", async () => (await count(".studio-delete-warning")) === 0, 15_000);
   const killAfterCancel = await workspaceByTitle(killTitle);
   const killProductionAfterCancel = (await broadcastRecords()).find((record) => record && record.title === killProductionTitle);
   check("Test 2c: cancelling leaves the Studio completely untouched", Boolean(killAfterCancel) && Boolean(killProductionAfterCancel) && killProductionAfterCancel.studioId === killKey, JSON.stringify({ workspace: Boolean(killAfterCancel), production: killProductionAfterCancel }));
 
-  // TPI-104: successful permanent deletion scenarios 3-8 are intentionally
-  // inapplicable to this release. Verify both modes reject and preserve state.
-  for (const mode of ["studio-only", "with-contents"]) {
-    const before = (await workspaceList()).find(item => item.id === studioKill.id);
-    const response = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(studioKill.id)}/purge`, { method: "POST", body: { mode, expectedVersion: before.version } });
-    check(`TPI-104: legacy client ${mode} purge is unavailable`, response.status === 503 && response.body?.code === "studio_permanent_deletion_unavailable", JSON.stringify(response));
-    check(`TPI-104: ${mode} rejection preserves workspace`, JSON.stringify((await workspaceList()).find(item => item.id === studioKill.id)) === JSON.stringify(before));
-  }
+  // ---- Test 3–6: eligible permanent deletion -----------------------------
   await openDeleteDialog(killTitle);
   await typeConfirmationName(killTitle);
-  check("TPI-104: Studio-only confirmation remains disabled", await js("return document.querySelector('.studio-delete-actions .ghost-button').disabled"));
-  await clickButtonByText("Delete Studio and its contents", ".modal");
-  await clickButtonByText("I understand that this Studio's exclusively owned productions, recordings and media will be permanently deleted", ".modal");
-  check("TPI-104: contents confirmation remains disabled after acknowledgement", await js("return document.querySelector('.studio-delete-actions .ghost-button').disabled"));
-  check("TPI-104: unavailability is disclosed", (await js("return document.querySelector('.modal').textContent")).includes("Both permanent deletion options are temporarily unavailable"));
-  await clickButtonByText("Cancel", ".modal");
+  await confirmDeleteDialog(killTitle);
+  check("Test 3a: eligible deletion removes the Studio from the homepage", await workspaceGone(killTitle));
+  check("Test 4: deleted Studio disappears from My Studios", (await cardIndexFor(killTitle)) < 0);
   const keptProduction = (await broadcastRecords()).find(item => item.title === killProductionTitle);
-  check("TPI-104: blocked deletion preserves production ownership", keptProduction?.studioId === killKey);
-  check("TPI-104: unrelated configuration survives", (await workspaceById(studioKeep.id))?.state?.configuration?.studioScenes?.some(scene => scene.title === "TPI-088 Keep Scene"));
+  check("Test 5: Delete Studio Only preserves production output", Boolean(keptProduction) && keptProduction.studioId === undefined, JSON.stringify(keptProduction));
+  await driver.navigate().refresh();
+  await waitFor("Home after deletion refresh", async () => await buttonExists("Create new Studio", ".home-page"));
+  check("Test 6: deleted Studio remains absent after refresh", (await cardIndexFor(killTitle)) < 0 && await workspaceGone(killTitle));
+
+  // ---- Test 7: active production is blocked ------------------------------
+  const activeStudio = await createStudioViaHome(activeTitle);
+  const activeBefore = await workspaceById(activeStudio.id);
+  const activeState = { ...activeBefore.state, broadcast: { ...activeBefore.state.broadcast, status: "recording" } };
+  const activePatch = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}`, { method: "PATCH", body: { state: activeState, expectedVersion: activeBefore.version } });
+  check("Test 7a: active-production fixture is established", activePatch.status === 200, JSON.stringify(activePatch));
+  const activeReject = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}/purge`, { method: "POST", body: { mode: "with-contents", expectedVersion: activePatch.body?.workspace?.version } });
+  check("Scenario 7b: active production explains why deletion is unavailable", activeReject.status === 409 && activeReject.body?.code === "studio_production_active" && /recording or livestream is active/i.test(activeReject.body?.error || ""), JSON.stringify(activeReject));
+  check("Scenario 7c: active production keeps the workspace intact", Boolean(await workspaceById(activeStudio.id)));
+  const activeReset = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}`, { method: "PATCH", body: { state: { ...activeState, broadcast: { ...activeState.broadcast, status: "draft" } }, expectedVersion: (await workspaceById(activeStudio.id)).version } });
+  check("Test 7d: active fixture can be safely released for cleanup", activeReset.status === 200, JSON.stringify(activeReset));
+  const activeCurrent = await workspaceById(activeStudio.id);
+  const activeCleanup = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(activeStudio.id)}/purge`, { method: "POST", body: { mode: "with-contents", expectedVersion: activeCurrent.version } });
+  const activeAfterCleanup = await workspaceById(activeStudio.id);
+  check("Test 7e: active fixture cleanup succeeds after release", !activeAfterCleanup, JSON.stringify({ activeCleanup, activeAfterCleanup }));
+  check("Test 8: unrelated configuration survives", (await workspaceById(studioKeep.id))?.state?.configuration?.studioScenes?.some(scene => scene.title === "TPI-088 Keep Scene"));
 
   // ---- Test 9: archive and restore still work ---------------------------
   await openDeleteDialog(keepTitle);
@@ -555,7 +566,9 @@ try {
   }
   const keepConfigFinal = (await workspaceById(studioKeep.id))?.state?.configuration || {};
   check("Test 9c: restore returns the Studio with its configuration intact", Boolean(restoredEntry) && (keepConfigFinal.studioScenes || []).some((scene) => scene.title === "TPI-088 Keep Scene"), JSON.stringify((keepConfigFinal.studioScenes || []).map((scene) => scene.title)));
-  // Archived Studios also support permanent deletion with confirmation.
+  // Archived Studios also remain eligible for the guarded permanent-delete
+  // endpoint after their archive/restore lifecycle has been verified. The
+  // owner-facing Firefox workflow was separately accepted under TPI-130.
   const studioArch = await createStudioViaHome(archTitle);
   await goHome();
   if (!(await clickCardButton(archTitle, "More Actions"))) throw new Error("More Actions is unavailable");
@@ -565,12 +578,10 @@ try {
     const section = await js("var node = document.querySelector('.studio-archive-section'); return node ? node.textContent : '';");
     return section.indexOf(archTitle) >= 0;
   }, 30_000);
-  if (!(await clickCardButton(archTitle, "Delete Studio"))) throw new Error("Delete Studio is unavailable in the Archived Studios view");
-  await waitFor("Delete Studio confirmation dialog", async () => (await count(".studio-delete-warning")) === 1, 15_000);
-  await typeConfirmationName(archTitle);
-  check("TPI-104: archived Studio permanent confirmation remains disabled", await js("return document.querySelector('.studio-delete-actions .ghost-button').disabled"));
-  await clickButtonByText("Cancel", ".modal");
-  check("TPI-104: archived record is preserved", Boolean(await workspaceById(studioArch.id)));
+  const archivedBeforeDelete = await workspaceById(studioArch.id);
+  const archivedDelete = await serverFetch(`/api/studio/workspaces/${encodeURIComponent(studioArch.id)}/purge`, { method: "POST", body: { mode: "studio-only", expectedVersion: archivedBeforeDelete.version } });
+  check("Test 9d: archived eligible Studio permanent deletion succeeds", archivedDelete.status === 200, JSON.stringify(archivedDelete));
+  check("Test 9e: archived Studio is permanently deleted", !(await workspaceById(studioArch.id)));
 
   // ---- Test 11: a background Studio activation never hijacks the view -----
   // Regression guard for the production-only failure this suite used to hit:
@@ -620,5 +631,5 @@ try {
 }
 
 const failed = results.filter((result) => !result.passed);
-console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-088-DELETION", status: failed.length ? "FAIL" : "PASS", base, account: accountKey, evidenceRoot, exclusions: ["Successful permanent deletion scenarios 3-8 and 9d replaced by disabled-mode preservation checks under TPI-104"], diagnostics, checks: results, passed: results.length - failed.length, failed: failed.length }, null, 2));
+console.log(JSON.stringify({ suite: "TPI-STUDIOFLOW-088-DELETION", status: failed.length ? "FAIL" : "PASS", base, account: accountKey, evidenceRoot, exclusions: ["Legacy global 503 lockout assertions removed; TPI-STUDIOFLOW-130 now verifies guarded eligible deletion and active-production blocking."], diagnostics, checks: results, passed: results.length - failed.length, failed: failed.length }, null, 2));
 process.exit(failed.length ? 1 : 0);
