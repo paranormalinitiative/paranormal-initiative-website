@@ -7,7 +7,7 @@ Production: **UNCHANGED; no deployment authorized**
 
 ## Result
 
-**PARTIAL — final active-Studio deletion, zero-Studio persistence, and Studio recreation passed in real Firefox.** The exact combined final-archived-Studio browser workflow was not repeated because the owner authorization was limited to the disposable `TPI-131 Final Manual Studio`; the maintained archived-deletion regression passed independently.
+**COMPLETE — final active and final archived disposable-Studio deletion, zero-Studio persistence, and Studio recreation passed in real Firefox.**
 
 ## Root cause
 
@@ -31,24 +31,23 @@ The bridge is authoritative after a purge, so the zero-Studio state is read from
 
 ## Firefox acceptance
 
-The workflow was exercised manually in an isolated Firefox Private Browsing window using two fresh local-only QA accounts. The owner Firefox profile and owner Studios were not used.
+The workflow was exercised manually in an isolated Firefox Private Browsing window using a fresh local-only QA account. The owner Firefox profile and owner Studios were not used. The prior private-session browser-local QA state was cleared through Firefox's private-session control before this run; no regular-profile data was cleared.
 
 | Scenario | Result |
 |---|---|
 | Fresh disposable account starts with no Studios | PASS — `No Studios yet` rendered |
-| Create two disposable Studios | PASS |
-| Delete one while another remains | PASS — the remaining Studio stayed visible |
+| Create one disposable final-archived test Studio | PASS — `TPI-131 Final Archived Firefox` |
 | Exact-name confirmation and button label | PASS — `Delete Studio Permanently`; button enabled only after exact name |
-| Final active Studio inventory | PASS — zero livestreams, recording sessions, webinars, scheduled productions, saved recordings, and stored media |
-| Delete final active Studio through Firefox UI | PASS |
+| Final archived Studio inventory | PASS — zero livestreams, recording sessions, webinars, scheduled productions, saved recordings, stored media, productions, and associated recordings |
+| Archive the final remaining Studio | PASS — My Studios showed no active Studios and one archived Studio |
+| Delete final archived Studio through Firefox UI | PASS |
 | Empty My Studios state after deletion | PASS — `No Studios yet` and create explanation rendered |
 | Refresh after final deletion | PASS — deleted Studio did not reappear |
 | Automatic Studio recreation | PASS — no replacement appeared |
-| Create and open a new Studio after zero state | PASS — `TPI-131 Recreated` opened in StudioFlow |
-| Final archived Studio through this exact manual flow | UNVERIFIED — separate destructive browser action not authorized |
+| Create and open a new Studio after zero state | PASS — `TPI-131 Recreated Final Firefox` opened in StudioFlow |
 | Archived eligible deletion regression | PASS — maintained 088 suite covered archived restore/delete |
 
-The visible Firefox evidence was captured in the CUA browser session. The final post-recreation screenshot showed `TPI-131 Recreated` open in StudioFlow; the zero-state and deletion states were observed directly in the preceding Firefox accessibility-rendered UI. No permanent screenshot file was available from the native CUA session, so no screenshot path is claimed.
+The visible Firefox evidence was captured in the CUA browser session. The zero-state, archived-final inventory, deletion result, refreshed zero state, and replacement Studio were observed directly in the Firefox accessibility-rendered UI. No permanent screenshot file was available from the native CUA session, so no screenshot path is claimed.
 
 ## Regression and build results
 
@@ -96,6 +95,6 @@ No database migration, API authorization change, storage cleanup, or production 
 - Production deployment was not attempted; production remains unchanged.
 - The previously authorized `flame.html` cleanup remains the only unrelated file cleanup; no other untracked files were deleted.
 
-## Remaining limitation
+## Known test-harness limitation
 
-The combined “last Studio is archived, then delete it through the Firefox UI” case remains unverified in this run because the owner’s deletion authorization was exclusive to the named disposable `TPI-131 Final Manual Studio`. The server/maintained regression covers archived eligible deletion, and the real Firefox run covers the last active Studio plus zero-state refresh/recreation. A separate disposable archived-final browser action can close this remaining verification gap.
+Two auxiliary legacy Selenium invocations emitted no completion JSON and remain separately unverified. They do not replace the successful real-Firefox acceptance or the maintained 088/089, auth-lifecycle, and release-safety results recorded above.
