@@ -1713,3 +1713,37 @@ Measured facts an agent should not have to rediscover:
   iteration assets kept polluting the tree.
 - Do not remove the preflight that `release:production` runs. It is drift
   protection.
+
+## TPI-OPS-005 — CERTIFIED IMMUTABLE RELEASE CANDIDATE (2026-11-02)
+
+[Record](300-COMPLETED-WORK/TPI-OPS-005-CERTIFIED-IMMUTABLE-RELEASE-CANDIDATE.md).
+Status: **COMPLETE.** Tooling only. No production application, Worker, D1, R2 or
+traffic change; production remained Worker
+`daa5aee1-304f-4e96-89a8-86aac2df98e9`.
+
+The release is proven once:
+
+```sh
+npm run release:certify                                  # or release:preflight
+TPI_PRODUCTION_DEPLOY=approved npm run release:production
+```
+
+- `release:preflight` is now an alias for `release:certify`. It stages one
+  immutable candidate in `.local-dev/release-candidate/`, proves it bundles,
+  and seals `release-certification.json`.
+- `release:production` **verifies** that certification and deploys those exact
+  bytes. It does not run the certification suite again. That removed the second
+  ~6.5 minute pass that OPS-004 measured.
+- If anything drifted - source commit, branch, GitHub parity, StudioFlow source,
+  dependency locks, release tooling, release configuration, or any deployable
+  byte - it **refuses** and tells you to rerun `npm run release:certify`. Never
+  "fix" a refusal by editing the certification or by reverting a gate.
+- Production-time checks are unchanged and still mandatory: authorization,
+  production target, live read-only schema contract, Worker identity, rollback
+  capture, final parity recheck, live smoke and isolated Firefox acceptance.
+- Release tiers are computed from the real diff, escalate on ambiguity, and
+  refuse a requested downgrade. All three tiers still require the full gate set,
+  so a tier can never be used to skip a gate.
+- `npm run verify:release-certification` runs the 42-assertion fail-closed
+  matrix in a throwaway repository with a real remote. It is also a preflight
+  gate.

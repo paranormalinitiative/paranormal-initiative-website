@@ -176,3 +176,31 @@ release-drift protection, not waste. Do not remove it: replacing it requires the
 certified-immutable-candidate design in
 `300-COMPLETED-WORK/TPI-OPS-004-PRODUCTION-DEPLOYMENT-PERFORMANCE-INVESTIGATION.md`,
 which is not yet authorized.
+
+## Certified immutable release candidates (TPI-OPS-005, 2026-11-02)
+
+Production no longer repeats the certification suite. `release:preflight`
+(alias `release:certify`) proves one immutable candidate and seals
+`.local-dev/release-candidate/release-certification.json`;
+`release:production` verifies that certification and deploys exactly those
+bytes.
+
+The production command therefore requires a valid certification. It refuses -
+rather than silently recertifying - when the source commit, branch, GitHub
+parity, StudioFlow source, dependency locks, release tooling, release
+configuration or any deployable byte has changed since certification. When that
+happens, run `npm run release:certify` and try again. That refusal is a safety
+property, not a bug: it is what makes "the bytes deployed are the bytes that
+passed" a proof instead of a hope.
+
+Production-time checks were not reused and still run every time: explicit
+deployment authorization, production target verification, the live read-only
+schema contract, Worker identity, rollback target capture, a final GitHub parity
+recheck, and full production acceptance after deployment.
+
+Release tiers are classified from the real diff and can only escalate. Every
+tier currently requires the complete gate set. The tier is recorded in the
+certification; it is not a permission to skip a gate.
+
+Design, measurements and the fail-closed safety matrix:
+`300-COMPLETED-WORK/TPI-OPS-005-CERTIFIED-IMMUTABLE-RELEASE-CANDIDATE.md`.

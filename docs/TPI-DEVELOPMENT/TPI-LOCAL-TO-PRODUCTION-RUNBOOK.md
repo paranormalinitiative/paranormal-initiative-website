@@ -390,6 +390,72 @@ Full measurements, duplicate-work analysis and the proposed certified-artifact
 and release-tier designs are in
 `300-COMPLETED-WORK/TPI-OPS-004-PRODUCTION-DEPLOYMENT-PERFORMANCE-INVESTIGATION.md`.
 
+## 10. Certified immutable release candidates (TPI-OPS-005)
+
+A release is proven **once**. `release:preflight` no longer leaves production to
+repeat the whole certification suite: it stages one immutable candidate, runs
+every gate against it, and seals a certification that binds those exact bytes.
+`release:production` verifies that certification and deploys those exact bytes.
+
+**Do not run the full certification twice.** If a certification is valid, the
+production command reuses it. If it is not, the production command refuses and
+tells you why; run `npm run release:certify` again instead of hand-editing
+anything.
+
+### The lifecycle
+
+```
+BUILD  ->  CERTIFY  ->  FREEZE  ->  VERIFY  ->  DEPLOY  ->  ACCEPT
+```
+
+- **BUILD/CERTIFY** `npm run release:certify` (alias: `npm run release:preflight`).
+  Stages `.local-dev/release-candidate/`, proves it bundles with a Wrangler
+  dry-run, hashes every deployable file, and writes
+  `.local-dev/release-candidate/release-certification.json`.
+- **FREEZE** the candidate is immutable. Nothing rebuilds it afterwards.
+- **VERIFY/DEPLOY** `TPI_PRODUCTION_DEPLOY=approved npm run release:production`.
+  Re-proves the certification, runs the live production-time checks, uploads the
+  certified candidate, and runs production acceptance.
+- **ACCEPT** live smoke and isolated Firefox acceptance still prove the
+  *deployment*, which certification cannot prove.
+
+### What a certification binds
+
+- website commit, branch and exact GitHub parity;
+- StudioFlow source commit and both dependency lockfiles;
+- the release tooling and release configuration bytes;
+- SHA-256 of every published asset, every Worker source file (`worker.js`,
+  `lib/`, `functions/`) and `wrangler.toml`;
+- the name and result of every gate that passed, and the expected production
+  schema contract.
+
+### When a certification is invalid
+
+Any of these refuses the deployment and requires a fresh certification: source
+commit drift, wrong branch, dirty tracked tree, GitHub parity loss, StudioFlow
+source drift, a dependency lock change, a release tooling or configuration
+change, a mutated/missing/extra deployable file, a manifest digest mismatch, or
+a changed production schema contract. Local `.local-dev` state is ignored and
+does not invalidate a release.
+
+### Release tiers
+
+The tier is computed from the real diff and cannot be lowered: requesting a
+weaker tier than the change allows refuses outright. Release-tooling changes are
+always Tier 1, and ambiguity always escalates. Every tier currently requires the
+full gate set, so the tier is recorded evidence, not a way to skip a gate.
+
+### Candidate directory and history
+
+`.local-dev/release-candidate/` is ignored local state. It holds `assets/`, the
+`worker/` source tree and `source/wrangler.toml`. Experimental builds must never
+be promoted by writing into the published `studio/assets/` directory; promotion
+is explicit and happens only through a certification. Historical hashed bundles
+stay until they are proven free of production and rollback references.
+
+Full design, measurements and the safety matrix are in
+`300-COMPLETED-WORK/TPI-OPS-005-CERTIFIED-IMMUTABLE-RELEASE-CANDIDATE.md`.
+
 ## Never substitute these shortcuts
 
 - Never deploy directly with an improvised `wrangler deploy` command.

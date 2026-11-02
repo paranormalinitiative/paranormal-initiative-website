@@ -742,12 +742,20 @@ website repository's `codex/tpi-development` branch.
 
    Both commands print a per-phase `mm:ss.mmm` timestamp and end with a
    `Release timing summary`; the machine-readable timeline is
-   `.local-dev/release-timings-<mode>.json`. The preflight's duplicate run
-   inside `release:production` is drift protection and must not be removed. The
-   staging copy excludes `.local-dev` (enforced by
-   `npm run verify:release-staging`), and superseded hashed bundles must never
-   accumulate in the published `studio/assets/` directory. Measurements:
+   `.local-dev/release-timings-<mode>.json`. The staging copy excludes
+   `.local-dev` (enforced by `npm run verify:release-staging`), and superseded
+   hashed bundles must never accumulate in the published `studio/assets/`
+   directory. Measurements:
    `300-COMPLETED-WORK/TPI-OPS-004-PRODUCTION-DEPLOYMENT-PERFORMANCE-INVESTIGATION.md`.
+
+   TPI-OPS-005: `release:preflight` now certifies one immutable candidate in
+   `.local-dev/release-candidate/` and `release:production` verifies and deploys
+   those exact bytes, so the certification suite runs once rather than twice.
+   A production run requires a valid certification and refuses on any source,
+   dependency, tooling, configuration or deployable-byte drift; rerun
+   `npm run release:certify` in that case instead of recertifying by hand.
+   Design and safety evidence:
+   `300-COMPLETED-WORK/TPI-OPS-005-CERTIFIED-IMMUTABLE-RELEASE-CANDIDATE.md`.
 
 8. Accept completion only after `release:production` prints
    `DEPLOYED_AND_VERIFIED` and the exact behavior is confirmed at
