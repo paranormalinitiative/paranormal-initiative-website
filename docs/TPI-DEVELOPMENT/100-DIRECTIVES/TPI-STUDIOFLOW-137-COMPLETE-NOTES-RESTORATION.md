@@ -239,6 +239,19 @@ Existing regression suites, run against the restored candidate:
 No regression was found in deletion, Studio management, ownership, teleprompter
 playback, production colors or Scene persistence.
 
+### Guarded release preflight
+
+`npm run release:preflight` completed all 25 gates and reported
+**`status: READY` with exit 0** at website commit `bb21b70`, with
+`rollbackVersion` `3082475b-80ad-4557-82d6-32618e3f7079` — the Worker currently
+serving production. The run included the new Notes acceptance gate, the
+authoritative staging verification and the continuity/lineage guard (14/14), and
+finished with the guarded Wrangler dry-run. Nothing was deployed.
+
+`scripts/verify/tpi-studioflow-137-production-schema.mjs` continues to report
+`BLOCKED` (all four tables missing), which is the enforced reason the Notes
+feature cannot be released to production yet.
+
 ## 9. Owner development work preserved
 
 `/Users/toddknipple/Documents/StudioFlow/web` was never modified. Before and
