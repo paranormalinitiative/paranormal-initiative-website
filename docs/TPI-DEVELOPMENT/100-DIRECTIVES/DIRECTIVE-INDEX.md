@@ -7,12 +7,12 @@ Statuses are evidence-based and refer to the available repository records, not t
 
 ## TPI-STUDIOFLOW-137R — Production Notes release and final Home layout corrections
 
-Status: **COMPLETE — PRODUCTION VERIFIED** for the Notes release. **Home layout
-addendum 01 verified locally and awaiting owner inspection; not deployed.**
+Status: **COMPLETE — PRODUCTION VERIFIED. STUDIOFLOW CORE — STABLE / MAINTENANCE
+MODE.**
 
-Production Worker `da8c4757-f9d9-42ce-af79-da7a0362c786` (rollback
-`3082475b-80ad-4557-82d6-32618e3f7079`) runs source `9113baf` and serves the
-complete Notes workspace. Migrations `0055`, `0056`, `0057` were applied
+Production Worker `daa5aee1-304f-4e96-89a8-86aac2df98e9` (rollback
+`da8c4757-f9d9-42ce-af79-da7a0362c786`) runs source `eefb7de` and serves the
+complete Notes workspace plus the owner-accepted Home layout. Migrations `0055`, `0056`, `0057` were applied
 individually by file, in order, and verified against the live schema — 68 → 72
 tables and 205 → 218 indexes, exactly the Notes objects, with zero rows and no
 data to migrate. `wrangler d1 migrations apply` was never used, because this
@@ -29,7 +29,15 @@ fifth card pushed Teleprompter onto a second row; five-across is restored and
 adapted to the real content width (starts at 1280px, compact icon band to
 1360px), and the Home My Studios header gains an 18px separation from its list.
 Both are covered by geometry assertions (41/41) plus true mobile acceptance
-(19/19). Preflight: READY, exit 0 at `e1ac570`.
+(19/19). Preflight: READY, exit 0; guarded release `DEPLOYED_AND_VERIFIED`.
+
+Owner final acceptance: “looks good” on the corrected local Home screen. Post-
+deployment production acceptance: Home 41/41, mobile 19/19, Notes 37/37, Notes
+visual 67/67, live Firefox acceptance 64/64, no schema or data change.
+
+Deferred to separate future phases: Guest / Invite Connected Studio and
+Livestream Destinations. Primary development attention now moves to Creator
+Incentive Directives, including dual-member access requirements.
 
 [Record](TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md).
 

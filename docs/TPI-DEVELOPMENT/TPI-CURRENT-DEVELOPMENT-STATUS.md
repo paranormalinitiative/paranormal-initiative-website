@@ -2,16 +2,16 @@
 
 ## TPI-STUDIOFLOW-137R — Production Notes release (2026-11-02)
 
-Status: **COMPLETE — PRODUCTION VERIFIED** for the Notes release.
-**Home layout addendum: verified locally, not deployed — awaiting owner
-inspection.**
+Status: **COMPLETE — PRODUCTION VERIFIED.**
+**STUDIOFLOW CORE — STABLE / MAINTENANCE MODE.**
 
-The complete Notes workspace is live at https://paranormalinitiative.com.
+The complete Notes workspace and the approved Home layout are live at
+https://paranormalinitiative.com.
 
-- Production Worker: `da8c4757-f9d9-42ce-af79-da7a0362c786` (previous and rollback
-target `3082475b-80ad-4557-82d6-32618e3f7079`).
-- Source `9113baf`, website `91b90c7`; assets `index-PJlxxK5f.js`
-`7e740646…` and `index-7UmKFnSB.css` `9a815d2b…`.
+- Production Worker: `daa5aee1-304f-4e96-89a8-86aac2df98e9` (immediate rollback
+target `da8c4757-f9d9-42ce-af79-da7a0362c786`).
+- Source `eefb7de`, website `fff7609`; assets `index-ChuELpxr.js`
+`7e740646…` and `index-CxnemqTQ.css` `cc1c0142…`.
 - Migrations `0055`, `0056`, `0057` applied **individually, in order, by file** —
 never `wrangler d1 migrations apply`. Production went from 68 tables / 205
 indexes and zero note objects to 72 / 218 with 4 Notes tables and 7 indexes.
@@ -32,11 +32,14 @@ real content width (starts at 1280px with a compact icon band up to 1360px), and
 the Home My Studios header gained an 18px separation from the list below.
 Home layout acceptance passes 41/41; preflight is READY at `e1ac570`.
 
-Because the addendum patch changes the Worker, production still serves the
-Notes release until the owner inspects the corrected build. Deploying it is the
-only remaining step; the Home wrapping defect is still visible on the live site
-until then.
+The owner accepted both corrections and the addendum deployed as Worker
+`daa5aee1…`, verified live: Home 41/41, mobile 19/19, Notes 37/37, Notes visual
+67/67, live Firefox acceptance 64/64. No database change accompanied it.
 [Record](100-DIRECTIVES/TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md).
+
+StudioFlow feature work is now frozen. Guest / Invite Connected Studio and
+Livestream Destinations remain separate future phases; primary development
+attention moves to Creator Incentive Directives, including dual-member access.
 
 ## TPI-STUDIOFLOW-137A — Notes workspace visual restoration (2026-11-02)
 

@@ -1,8 +1,9 @@
 # TPI-STUDIOFLOW-137R — Production Notes Release
 
-Status of the deployed release: **COMPLETE — PRODUCTION VERIFIED**
-Addendum 01 (Home layout patch): **verified locally, awaiting owner inspection
-before it replaces the production Worker. Not deployed.**
+Status: **COMPLETE — PRODUCTION VERIFIED**
+Addendum 01 (Home layout patch): owner-accepted and **deployed and verified** —
+Worker `daa5aee1-304f-4e96-89a8-86aac2df98e9`. StudioFlow Core is in
+maintenance mode; see section N.
 
 Date: 2026-11-02
 Worker: `theparanormalinitiative`
@@ -271,7 +272,105 @@ TPI-133 44/44, TPI-134 43/43, TPI-135 30/30, ownership 40, deletion 32,
 deletion safety 26/0 failed, lifecycle 29, maintained acceptance 64, continuity
 14/14, staging verification PASS, guarded dry-run READY.
 
-**The addendum patch has not been deployed.** Per addendum §4 (STATE D), the
-owner inspects the corrected build before it replaces the production Worker.
-Production therefore still serves `da8c4757…` with the Notes release, and the
-Home card wrapping is still visible there until the patch is approved.
+At the addendum stage the patch had not been deployed: per addendum §4 (STATE D)
+the owner inspected the corrected build before it replaced the production Worker.
+Section N records that deployment.
+
+## N. Owner final acceptance and addendum deployment
+
+### N1. Owner visual acceptance
+
+The owner inspected the corrected local StudioFlow Home screen at
+`http://127.0.0.1:8787/studio/` and approved both corrections: five Create cards
+on the shared desktop row, and the My Studios heading/action separation from the
+Studio panel. Owner response: **“looks good”**. This is the final visual
+acceptance for the TPI-137R Home patch.
+
+### N2. Final patch scope
+
+- Five-across Create grid restored from the approved `c2a6f6e` rule and adapted
+to this app's real content width (five columns from 1280px with a compact icon
+band to 1360px, three columns 768–1279, then 2/1).
+- `.home-page > .broadcast-table-header` gains an 18px separation above the My
+Studios panel; the shared dashboard header is untouched.
+- **CSS-only.** `index-ChuELpxr.js` is byte-identical to the shipped
+  `index-PJlxxK5f.js` (`7e7406463a7ba7ff…`); the deploy uploaded only
+  `/studio/index.html` and `/studio/assets/index-CxnemqTQ.css`, because static
+  asset upload deduplicates identical content.
+- Historical root cause: `c2a6f6e` is not an ancestor of `f44f3a0`, so the
+  approved rule never reached this lineage and `auto-fit minmax(240px,1fr)`
+  packed four cards per row.
+- Guarded by the geometry suite `verify:studioflow-137r-home` (41 checks) and the
+  true-viewport suite `verify:studioflow-137r-mobile` (19 checks), both inside
+  `release:preflight`.
+
+### N3. Final production deployment
+
+- New Worker version: `daa5aee1-304f-4e96-89a8-86aac2df98e9`
+- Prior Worker (immediate rollback target): `da8c4757-f9d9-42ce-af79-da7a0362c786`
+- Deployed 2026-11-02 via the maintained guarded command
+  `TPI_PRODUCTION_DEPLOY=approved npm run release:production`
+- Website/source commit: `fff76097fb40701b488cbfac97974ed49e421b82`
+- StudioFlow source: `eefb7de9518809d98726062aee478a4111c921a5`
+- Served assets: `/studio/assets/index-ChuELpxr.js`
+  `7e7406463a7ba7ff52966e3aa0a001e0990f63d69d3febdbfe3fdedfe67a3e82` and
+  `/studio/assets/index-CxnemqTQ.css`
+  `cc1c01425b52bbca24c315c513016e0eeffaacb734f405904217597a88c32bcf`
+- Release preflight before deploy: **READY, exit 0**; guarded release:
+  `DEPLOYED_AND_VERIFIED`, exit 0.
+
+Gate results from the deploying run: lifecycle 29, ownership 40, deletion 32,
+deletion safety 26/0 failed, TPI-133 44/44, TPI-134 43/43, TPI-135 30/30,
+Notes 37/37, Notes visual 67/67, Home layout 41/41, mobile 19/19, continuity
+14/14, staging verification PASS, dry-run READY, live anonymous smoke PASS, live
+Firefox acceptance 64/64.
+
+### N4. Final production acceptance
+
+Against `https://paranormalinitiative.com`, all re-run on the deployed Worker:
+
+| Check | Result |
+| --- | --- |
+| Home layout geometry and My Studios separation | **41/41 PASS** |
+| True 390×844 and 375×812 viewports | **19/19 PASS** |
+| Notes workspace functional acceptance | **37/37 PASS** |
+| Notes workspace visual acceptance | **67/67 PASS** |
+| Live isolated Firefox acceptance (Studio smoke) | **64/64 PASS** |
+
+The Notes functional suite asserts the served entry point is the restored build
+`index-ChuELpxr.js`, which confirms the new asset is live rather than cached.
+Home acceptance covers 1920×1080, 1440×900 and 1280×800 five-across on one row
+with no clipping, overlap or unwanted wrap, plus 1024 and 834 readability.
+Mobile acceptance confirms a real 390/375 CSS viewport, no horizontal overflow,
+usable Create cards and My Studios controls, and nothing clipped.
+
+Studio smoke on the live Worker: Studio creation and switching, Teleprompter
+panel ordering beneath Notes, scene persistence, timer and soundboard controls,
+production-card colors, floating audio menu positioning, and the My Studios
+dropdown all pass with no patch-attributable console or runtime errors.
+
+### N5. Data safety
+
+No migration ran during this deployment. Read-only verification after deploy:
+72 tables and 218 indexes — identical to the post-Notes-release schema — with no
+schema, data or content change attributable to the patch. The only Notes rows
+present belong to the `qa-studioflow-prod` QA account (1 note, 4 collections,
+1 revision, 0 attachments) created by acceptance runs; no owner Notes data was
+created, modified or removed.
+
+The Notes migrations remain in production permanently. Worker rollback to
+`da8c4757…` would restore the previous presentation without reversing them.
+
+### N6. Final status
+
+**TPI-STUDIOFLOW-137R — COMPLETE — PRODUCTION VERIFIED**
+
+**STUDIOFLOW CORE — STABLE / MAINTENANCE MODE.**
+
+Deferred to separate future phases, not part of this release: Guest / Invite
+Connected Studio (invitation, guest session experience, permissions, isolation,
+reconnect/disconnect, session completion) and Livestream Destinations (external
+destination authentication, connection management, streaming targets, status and
+error handling, security, production routing). Primary TPI development attention
+now moves to Creator Incentive Directives, including dual-member access
+requirements.
