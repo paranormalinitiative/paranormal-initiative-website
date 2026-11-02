@@ -1,5 +1,64 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-137 — COMPLETE NOTES RESTORATION (2026-11-02)
+
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md).
+Status: **IMPLEMENTATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION DEPLOYMENT
+BLOCKED PENDING AUTHORIZED NOTES SCHEMA MIGRATION.**
+
+**The Notes workspace is back on the release lineage.** Source commits
+`19c69d4` (port) and `cd5e88b` (refresh survival) on branch
+`codex/tpi-137-notes-restoration`, worktree
+`/Users/toddknipple/Documents/StudioFlow/web-137`. Website commit `44147cd`
+carries the updated baseline, staged assets, suites and guards. The release
+baseline now records `approvedCommit` `cd5e88b…` **and**
+`previousApprovedCommit` `f44f3a0…`.
+
+The three Notes modules (`src/NotesView.tsx`, `src/projectExport.ts`,
+`src/projectFolderSync.ts`) are byte-identical to `a6784cf`. `App.tsx` was
+hand-applied: route, storage keys, intent guard, navigation entry, Home card and
+the notes render branch. Notes CSS was extracted by selector from the historical
+stylesheet, not by whole-file diff, because that file also carries teleprompter,
+screen-share and recording work that is not Notes.
+
+**Do not "fix" the right-side rail.** The historical branch replaced the Studio
+rail's Notes panel with `NotesSidebar`; that was deliberately **not** ported. The
+directive requires the older right-side Notes utility to stay unchanged and
+independent, so `rightTab === "Notes"` still renders the original `studioNotes`
+textarea on `studioflow.studioNotes`. Anyone re-porting the sidebar later needs
+explicit owner authorization.
+
+**The refresh trap.** `studio/workspace-bridge.js` line 485 writes
+`studioflow.route = "studio"` during startup hydration. Without a guard, a
+refreshed Notes page becomes the recording surface. `readStoredRoute()` now
+returns `notes` while the session Notes intent is set, and an effect clears that
+intent for every other route. If Notes ever "disappears on reload" again, look
+here first.
+
+**Production is blocked on purpose, and enforced.** Production D1
+`tpi_contributor_portal` has no `studio_note_*` table (verified read-only through
+`sqlite_master`). `release:production` now runs
+`scripts/verify/tpi-studioflow-137-production-schema.mjs` before any upload and
+refuses to deploy while a required table is missing. Migrations `0055`, `0056`
+and `0057` must be authorized and applied once each, in order — `0055` is
+idempotent, `0056`/`0057` are **not** (SQLite has no
+`ALTER TABLE ... ADD COLUMN IF NOT EXISTS`). The production `d1_migrations`
+ledger is incomplete (2 rows against 60 migration files), so a blanket
+`wrangler d1 migrations apply` must not be run against production.
+
+**The loss-prevention guard.** `release:preflight` now also runs
+`scripts/verify/tpi-studioflow-137-notes-continuity.mjs`, which fails when the
+approved commit does not descend from `previousApprovedCommit` (the exact TPI-130
+failure) unless `TPI_RELEASE_LINEAGE_OVERRIDE` carries a written justification,
+and when the approved source or staged bundle no longer contains the Notes entry
+points or markers.
+
+Verified: reproducible double build, 36/36 Firefox acceptance, maintained
+Firefox 64/64, TPI-133 44/44, TPI-134 43/43, TPI-135 30/30, TPI-087 40,
+TPI-088 32, TPI-089 26, continuity 14/14, release safety. Owner work in
+`/Users/toddknipple/Documents/StudioFlow/web` untouched (`src/App.tsx`
+`543f4671…`, `src/styles.css` `190be155…`).
+
 ## TPI-STUDIOFLOW-136 — COMPLETE NOTES RECOVERY (2026-11-02)
 
 [Record](100-DIRECTIVES/TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md).

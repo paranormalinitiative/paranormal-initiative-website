@@ -72,6 +72,56 @@ will silently disappear.
 A full merge of the two lineages is not a safe default: it conflicts in 22 places
 across `src/App.tsx`, concentrated in the hardened deletion subsystem.
 
+## Current approved source and release baseline — TPI-STUDIOFLOW-137 (2026-11-02)
+
+The approved StudioFlow source is now
+`cd5e88b03bd364a3a3d4ffe376f2915f19bd0f19` on branch
+`codex/tpi-137-notes-restoration`, worktree
+`/Users/toddknipple/Documents/StudioFlow/web-137`, descending from the released
+lineage head `f44f3a0`. It restores the complete Notes workspace that the
+TPI-STUDIOFLOW-130 baseline silently dropped by pinning a sibling lineage.
+
+Exact staged assets, served by the authoritative `8787` Worker:
+
+- `/studio/assets/index-LICdWePz.js` — SHA-256
+  `7e7406463a7ba7ff52966e3aa0a001e0990f63d69d3febdbfe3fdedfe67a3e82`
+- `/studio/assets/index-8ILYgVKI.css` — SHA-256
+  `bd696c76980940ad5c121b801055ced1d015d1c005e9b8a3adb283e0f3f70184`
+
+Both builds of the approved commit were byte-identical, matched the recorded
+baseline, and staged with all eleven maintained bridge files preserved.
+Firefox Developer Edition acceptance passes 36/36; maintained Firefox 64/64,
+TPI-133 44/44, TPI-134 43/43, TPI-135 30/30, TPI-087 40, TPI-088 32,
+TPI-089 26, Notes continuity 14/14 and release safety all pass.
+
+### This baseline does not deploy
+
+`scripts/studioflow-release-baseline.json` records
+`productionSchemaRequirements`. `release:production` runs
+`scripts/verify/tpi-studioflow-137-production-schema.mjs` before any upload and
+**refuses to deploy** while a required table is missing. Production D1
+`tpi_contributor_portal` currently has no `studio_note_*` table, so the restored
+Notes interface could not persist there. Migrations `0055`, `0056` and `0057`
+must first be authorized and applied once each, in order, under a migration
+release. `0055` is idempotent; `0056` and `0057` are not, because SQLite has no
+`ALTER TABLE ... ADD COLUMN IF NOT EXISTS`.
+
+The production `d1_migrations` ledger is not authoritative (two rows against 60
+migration files, and `studio_media_assets` from 0054 exists without
+`studioflow_workspaces` from 0051). Do not run a blanket
+`wrangler d1 migrations apply` against production.
+
+### New release guards
+
+- `scripts/verify/tpi-studioflow-137-notes-continuity.mjs` (runs in
+  `release:preflight`): the approved commit must descend from
+  `source.previousApprovedCommit`, and the approved source and staged bundle must
+  still contain the Notes entry points and markers. A deliberate sibling-lineage
+  port requires `TPI_RELEASE_LINEAGE_OVERRIDE` with a written justification.
+- `scripts/verify/tpi-studioflow-137-notes-restoration.mjs`: the Firefox
+  acceptance suite for the workspace, its two entry points and its
+  account-backed persistence across a refresh.
+
 ## Current local echo of the released build — TPI-STUDIOFLOW-135
 
 The authoritative `8787` Worker serves the TPI-134R build **plus** the

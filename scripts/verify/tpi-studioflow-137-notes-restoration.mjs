@@ -100,9 +100,25 @@ const readNavItems = () => js(`
   return Array.from(document.querySelectorAll('.side-nav .nav-item')).map(function (item) { return (item.textContent || '').trim(); });
 `);
 
+// The first paint after a managed Worker restart can be slow, and a reload is
+// cheaper and more honest than waiting indefinitely for one document.
+async function ensureShell() {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await waitFor("StudioFlow shell", async () => (await driver.findElements(By.css(".app-shell"))).length > 0, 45_000);
+      return true;
+    } catch (error) {
+      if (attempt === 1) throw error;
+      await driver.navigate().refresh();
+      await sleep(1500);
+    }
+  }
+  return false;
+}
+
 async function openNotesWorkspace() {
   await driver.get(`${base}/studio/`);
-  await waitFor("application shell", async () => (await driver.findElements(By.css(".app-shell"))).length > 0, 60_000);
+  await ensureShell();
   const clicked = await js(`
     var target = Array.from(document.querySelectorAll('.side-nav .nav-item')).find(function (item) { return (item.textContent || '').trim() === 'Notes'; });
     if (target) { target.click(); return true; }
@@ -111,7 +127,7 @@ async function openNotesWorkspace() {
   if (!clicked) {
     // Still hydrating: one reload is enough to settle the shell.
     await driver.navigate().refresh();
-    await waitFor("application shell after reload", async () => (await driver.findElements(By.css(".app-shell"))).length > 0, 60_000);
+    await ensureShell();
     await js(`
       var target = Array.from(document.querySelectorAll('.side-nav .nav-item')).find(function (item) { return (item.textContent || '').trim() === 'Notes'; });
       if (target) target.click();
@@ -177,7 +193,7 @@ try {
 
   // ---- restored build identity -------------------------------------------
   await driver.get(`${base}/studio/`);
-  await waitFor("StudioFlow shell", async () => (await driver.findElements(By.css(".side-nav"))).length > 0, 40_000);
+  await ensureShell();
   const servedScript = await js(`var tag = document.querySelector('script[src*="/studio/assets/"]'); return tag ? tag.getAttribute('src') : '';`);
   check("served StudioFlow entry point is the restored build", expectedJavaScriptAsset ? String(servedScript).includes(expectedJavaScriptAsset) : Boolean(servedScript), `served=${servedScript} expected=${expectedJavaScriptAsset}`);
 

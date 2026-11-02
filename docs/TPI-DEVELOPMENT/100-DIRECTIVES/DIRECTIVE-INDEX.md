@@ -5,6 +5,20 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-137 — Complete Notes workspace restoration and release preparation
+
+Status: **IMPLEMENTATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION DEPLOYMENT
+BLOCKED PENDING AUTHORIZED NOTES SCHEMA MIGRATION**. The approved TPI-122 Notes
+workspace is ported onto the released lineage at source `cd5e88b` from the
+isolated worktree `web-137`; website commit `44147cd`. Firefox Developer Edition
+acceptance passes 36/36 with no regression in TPI-131/132R/133/134/135. The
+older right-side Notes scratchpad is unchanged, and the historical rail takeover
+was deliberately not ported. Production D1 has no `studio_note_*` table, so the
+guarded release now refuses to deploy until migrations 0055–0057 are authorized,
+and `release:preflight` fails when a new approved commit is not a descendant of
+the previous one.
+[Record](TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md).
+
 ## TPI-STUDIOFLOW-136 — Complete Notes workspace recovery investigation
 
 Status: **INVESTIGATION COMPLETE — RESTORATION PLAN PENDING OWNER
@@ -1063,3 +1077,4 @@ kept in both places so no issued text is lost.
 | TPI-STUDIOFLOW-122H.2 | Local Project Folder Verification and Completion | 2026-10-31 | [TPI-STUDIOFLOW-122H2-LOCAL-FOLDER-VERIFICATION.md](TPI-STUDIOFLOW-122H2-LOCAL-FOLDER-VERIFICATION.md) |
 | TPI-STUDIOFLOW-087 | INDEPENDENT STUDIOS, STUDIO DASHBOARDS, AND PRODUCTION OWNERSHIP | 2026-10-25 | [TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md](TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md) |
 | TPI-STUDIOFLOW-136 | Complete Notes Workspace Recovery and Development History Investigation | 2026-11-02 | [TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md](TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md) |
+| TPI-STUDIOFLOW-137 | Complete Notes Workspace Restoration and Release Preparation | 2026-11-02 | [TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md](TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md) |

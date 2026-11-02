@@ -1,5 +1,54 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-137 — Complete Notes workspace restoration (2026-11-02)
+
+Status: **IMPLEMENTATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION DEPLOYMENT
+BLOCKED PENDING AUTHORIZED NOTES SCHEMA MIGRATION.**
+
+The complete Notes workspace approved under the TPI-STUDIOFLOW-122 family is
+restored on the released lineage. The historical branch was not merged; the
+Notes modules were ported onto `f44f3a0` in the isolated worktree
+`/Users/toddknipple/Documents/StudioFlow/web-137` on branch
+`codex/tpi-137-notes-restoration`.
+
+- StudioFlow source: `19c69d4` (port) and `cd5e88b` (refresh survival).
+- Website repository: `44147cd` (baseline, staged assets, suites and guards),
+documentation `8d5d98f`.
+- Staged assets: `index-LICdWePz.js` SHA-256 `7e740646…`, `index-8ILYgVKI.css`
+SHA-256 `bd696c76…`; both builds of the approved commit were identical.
+
+The workspace now appears in its original two locations — a Notes card on the
+Home create grid between On-Air webinar and Teleprompter, and a Notes entry in
+the main navigation between Destinations and Teleprompter. The older right-side
+Notes scratchpad is unchanged and stays a separate feature; the historical
+implementation's rail takeover was deliberately not ported because the
+directive forbids replacing the existing utility.
+
+One genuine compatibility defect was found and fixed: the maintained
+`studio/workspace-bridge.js` rewrites the stored route to `studio` during
+startup hydration, which replaced a refreshed Notes page with the recording
+surface. `cd5e88b` honours the session Notes intent when resolving the initial
+route and clears it for every other route.
+
+Firefox Developer Edition acceptance passes 36/36 on the authoritative
+`http://127.0.0.1:8787` Worker. Existing regressions pass unchanged: maintained
+Firefox 64/64, TPI-133 44/44, TPI-134 43/43, TPI-135 30/30, TPI-087 40,
+TPI-088 32, TPI-089 26, Notes continuity and lineage 14/14, release safety.
+
+Production is **blocked**. Read-only inspection of D1 `tpi_contributor_portal`
+returned no `studio_note_*` table or index, so the restored interface could not
+persist there. Migrations `0055`–`0057` are not authorized by this directive.
+The guarded release now enforces the gap: `release:production` runs
+`scripts/verify/tpi-studioflow-137-production-schema.mjs` and refuses to deploy
+while a required table is missing, and `release:preflight` runs a continuity
+guard that fails if a new approved commit does not descend from the previous
+one or if the Notes entry points and bundle markers disappear.
+
+The protected uncommitted owner work in
+`/Users/toddknipple/Documents/StudioFlow/web` (`src/App.tsx`,
+`src/styles.css`) is byte-identical to its state before the directive.
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md).
+
 ## TPI-STUDIOFLOW-136 — Complete Notes workspace recovery investigation (2026-11-02)
 
 Status: **INVESTIGATION COMPLETE — RESTORATION PLAN PENDING OWNER AUTHORIZATION.**
