@@ -1,5 +1,43 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-137R — Production Notes release (2026-11-02)
+
+Status: **COMPLETE — PRODUCTION VERIFIED** for the Notes release.
+**Home layout addendum: verified locally, not deployed — awaiting owner
+inspection.**
+
+The complete Notes workspace is live at https://paranormalinitiative.com.
+
+- Production Worker: `da8c4757-f9d9-42ce-af79-da7a0362c786` (previous and rollback
+target `3082475b-80ad-4557-82d6-32618e3f7079`).
+- Source `9113baf`, website `91b90c7`; assets `index-PJlxxK5f.js`
+`7e740646…` and `index-7UmKFnSB.css` `9a815d2b…`.
+- Migrations `0055`, `0056`, `0057` applied **individually, in order, by file** —
+never `wrangler d1 migrations apply`. Production went from 68 tables / 205
+indexes and zero note objects to 72 / 218 with 4 Notes tables and 7 indexes.
+- D1 Time Travel verified beforehand; Worker rollback does **not** reverse a
+schema migration.
+- Production acceptance: Notes 37/37, Notes visual 67/67, true 390/375 viewport
+19/19, anonymous smoke PASS, live Firefox acceptance PASS.
+
+The TPI-137A limitation is closed: Firefox cannot render below 500 CSS px on this
+host, so a same-origin 390/375 px frame provides a genuine CSS viewport and was
+run against production.
+
+Addendum 01 corrects two Home defects found after the release started. The
+five-across Create row had never reached this lineage — its approved fix
+`c2a6f6e` is not an ancestor of `f44f3a0` — so the fifth card pushed
+Teleprompter onto a second row. Five-across is now restored and adapted to the
+real content width (starts at 1280px with a compact icon band up to 1360px), and
+the Home My Studios header gained an 18px separation from the list below.
+Home layout acceptance passes 41/41; preflight is READY at `e1ac570`.
+
+Because the addendum patch changes the Worker, production still serves the
+Notes release until the owner inspects the corrected build. Deploying it is the
+only remaining step; the Home wrapping defect is still visible on the live site
+until then.
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md).
+
 ## TPI-STUDIOFLOW-137A — Notes workspace visual restoration (2026-11-02)
 
 Status: **VISUAL RESTORATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION

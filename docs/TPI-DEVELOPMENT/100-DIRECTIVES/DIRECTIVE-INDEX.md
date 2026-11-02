@@ -5,6 +5,34 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-137R — Production Notes release and final Home layout corrections
+
+Status: **COMPLETE — PRODUCTION VERIFIED** for the Notes release. **Home layout
+addendum 01 verified locally and awaiting owner inspection; not deployed.**
+
+Production Worker `da8c4757-f9d9-42ce-af79-da7a0362c786` (rollback
+`3082475b-80ad-4557-82d6-32618e3f7079`) runs source `9113baf` and serves the
+complete Notes workspace. Migrations `0055`, `0056`, `0057` were applied
+individually by file, in order, and verified against the live schema — 68 → 72
+tables and 205 → 218 indexes, exactly the Notes objects, with zero rows and no
+data to migrate. `wrangler d1 migrations apply` was never used, because this
+database's ledger is incomplete and would replay applied history.
+
+Production acceptance: Notes 37/37, Notes visual 67/67, true 390/375 viewport
+19/19, anonymous smoke PASS, live Firefox acceptance PASS. The TPI-137A mobile
+limitation is closed with a same-origin 390/375 px frame; this host's Firefox
+will not render below 500 CSS px.
+
+Addendum 01 corrects two Home defects. The approved five-across Create rule had
+never reached this lineage (`c2a6f6e` is not an ancestor of `f44f3a0`), so the
+fifth card pushed Teleprompter onto a second row; five-across is restored and
+adapted to the real content width (starts at 1280px, compact icon band to
+1360px), and the Home My Studios header gains an 18px separation from its list.
+Both are covered by geometry assertions (41/41) plus true mobile acceptance
+(19/19). Preflight: READY, exit 0 at `e1ac570`.
+
+[Record](TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md).
+
 ## TPI-STUDIOFLOW-137A — Notes workspace visual restoration and final local acceptance
 
 Status: **VISUAL RESTORATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION
@@ -1093,3 +1121,4 @@ kept in both places so no issued text is lost.
 | TPI-STUDIOFLOW-136 | Complete Notes Workspace Recovery and Development History Investigation | 2026-11-02 | [TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md](TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md) |
 | TPI-STUDIOFLOW-137 | Complete Notes Workspace Restoration and Release Preparation | 2026-11-02 | [TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md](TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md) |
 | TPI-STUDIOFLOW-137A | Notes Workspace Visual Restoration and Final Local Acceptance | 2026-11-02 | [TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md](TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md) |
+| TPI-STUDIOFLOW-137R | Production Notes Release and Final Home Layout Corrections | 2026-11-02 | [TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md](TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md) |

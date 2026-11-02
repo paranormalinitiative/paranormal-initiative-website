@@ -2,7 +2,7 @@
 
 Status: ACTIVE / CANONICAL
 
-Last verified: 2026-11-01
+Last verified: 2026-11-02
 
 This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
@@ -72,7 +72,29 @@ will silently disappear.
 A full merge of the two lineages is not a safe default: it conflicts in 22 places
 across `src/App.tsx`, concentrated in the hardened deletion subsystem.
 
-## Current approved source and release baseline — TPI-STUDIOFLOW-137A (2026-11-02)
+## Live production and pending Home patch — TPI-STUDIOFLOW-137R (2026-11-02)
+
+**Live production** is Worker `da8c4757-f9d9-42ce-af79-da7a0362c786`, deployed
+2026-11-02T03:46:02Z from website commit `91b90c7` and StudioFlow `9113baf`.
+It serves `/studio/assets/index-PJlxxK5f.js`
+(`7e7406463a7ba7ff…`) and `/studio/assets/index-7UmKFnSB.css` (`9a815d2b7cc8c638…`).
+Rollback target: `3082475b-80ad-4557-82d6-32618e3f7079`.
+
+Production D1 (`tpi_contributor_portal`) carries the Notes schema from migrations
+`0055`, `0056` and `0057`, applied individually by file. That migration is
+permanent and is **not** reversed by a Worker rollback.
+
+**Approved but not yet live** — the addendum 01 Home patch from source `eefb7de`:
+
+- `/studio/assets/index-ChuELpxr.js` — SHA-256 `7e7406463a7ba7ff…`
+  (**byte-identical to the live JavaScript**; only the file name moved)
+- `/studio/assets/index-CxnemqTQ.css` — SHA-256 `cc1c01425b52bbca…`
+
+This candidate is staged on `8787`, passes preflight (READY at `e1ac570`) and is
+awaiting owner inspection before it replaces the production Worker. Until then
+the live Home page still wraps the Teleprompter card onto a second row.
+
+## Previous approved source and release baseline — TPI-STUDIOFLOW-137A (2026-11-02)
 
 The approved StudioFlow source is now
 `9113bafd555517b18d890feb3934d5416361b6d8` on branch

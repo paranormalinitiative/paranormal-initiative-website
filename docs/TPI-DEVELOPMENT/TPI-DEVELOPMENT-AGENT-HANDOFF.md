@@ -1,5 +1,48 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-137R — PRODUCTION NOTES RELEASE (2026-11-02)
+
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md).
+Status: **COMPLETE — PRODUCTION VERIFIED** for the Notes release. **Home layout
+addendum: verified locally, NOT deployed — awaiting owner inspection.**
+
+Live production: Worker `da8c4757-f9d9-42ce-af79-da7a0362c786` from source
+`9113baf` / website `91b90c7`, serving `index-PJlxxK5f.js` (`7e740646…`) and
+`index-7UmKFnSB.css` (`9a815d2b…`). Rollback target
+`3082475b-80ad-4557-82d6-32618e3f7079`.
+
+Migrations `0055`, `0056`, `0057` were applied individually by file, in order,
+and verified. Never run `wrangler d1 migrations apply` for this database: its
+`d1_migrations` ledger has only 2 rows for 60 files while objects exist whose
+migrations do not, so it would replay applied history. `0056` and `0057` use
+plain `ALTER TABLE … ADD COLUMN` and are **not** idempotent — never re-run them.
+
+Production acceptance: Notes 37/37, Notes visual 67/67, true 390/375 viewport
+19/19, anonymous smoke PASS, live Firefox acceptance PASS. The TPI-137A mobile
+limitation is closed by a same-origin 390/375 px frame, because this host's
+Firefox will not render below 500 CSS px.
+
+Pending: the addendum Home patch (`eefb7de`, assets `index-ChuELpxr.js`
+`7e740646…` — JavaScript unchanged — and `index-CxnemqTQ.css` `cc1c0142…`).
+Preflight is READY at `e1ac570` with `da8c4757…` as rollback. Deploy it only
+after the owner inspects the corrected build:
+
+```sh
+npm run release:preflight
+TPI_PRODUCTION_DEPLOY=approved npm run release:production
+```
+
+That patch is CSS-only: the five-across Create row (which had never reached this
+lineage — `c2a6f6e` is not an ancestor of `f44f3a0`) and an 18px Home My Studios
+separation. Home geometry acceptance is `npm run verify:studioflow-137r-home`
+(41 checks); small-viewport acceptance is
+`npm run verify:studioflow-137r-mobile` (19 checks). Both run inside preflight.
+
+Do not "fix" the ~37px Home horizontal scroll at 1024/834 as part of this work:
+it is pre-existing and unrelated (identical with the previous grid rule); the
+cause is the dashboard grid's `1fr` column and the minimal remedy is
+`minmax(0, 1fr)`, which would touch every dashboard page.
+
 ## TPI-STUDIOFLOW-137A — NOTES VISUAL RESTORATION (2026-11-02)
 
 [Record](100-DIRECTIVES/TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md).
