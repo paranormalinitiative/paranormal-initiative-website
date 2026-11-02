@@ -236,7 +236,7 @@ Expected long-term capability:
 
 **Recorded decision:** Nova does **not** require a standalone PDF editor.
 
-PDF is an **export/output capability only**:
+PDF support is **export-only** — an output capability, never an editor:
 
 - `Nova Docs → Export as PDF`
 - `Nova Slides → Export as PDF`
