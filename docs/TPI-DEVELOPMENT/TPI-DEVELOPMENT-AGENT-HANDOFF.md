@@ -24,10 +24,17 @@ only and can never observe a server-side discard; the new
 through the dashboard, inspects the stored snapshot, reloads for real and purges
 its own records. It runs inside `release:preflight`.
 
-Legacy snapshots with no stored panel open with an empty Scenes panel by design:
-an empty panel is also a legitimate "every row removed" state, so rows are never
-invented or merged back. Production still runs the pre-fix Worker
-`4de115db-6537-41b5-9bf7-ae99cb0e20fc`.
+Legacy snapshots with no stored panel are reset to that Studio's own default
+panel (`intro`, its own Scenes, `outro`) rather than left holding the previously
+open Studio's rows; rows are never merged back from an older copy. The suite's
+legacy check waits for the panel to settle before asserting, because reading it at
+mount races the application's restore.
+
+**Released.** TPI-STUDIOFLOW-135R deployed 2026-11-02T01:14:50Z as Worker
+`3082475b-80ad-4557-82d6-32618e3f7079` from `44c707f`, with `4de115db` as the
+rollback target; live account-backed persistence passed 30/30. Owner acceptance
+on the production site is still pending. See
+[the release record](100-DIRECTIVES/TPI-STUDIOFLOW-135R-PRODUCTION-RELEASE.md).
 
 ## TPI-STUDIOFLOW-134 — SOURCE LINEAGE LOSS (2026-11-01)
 

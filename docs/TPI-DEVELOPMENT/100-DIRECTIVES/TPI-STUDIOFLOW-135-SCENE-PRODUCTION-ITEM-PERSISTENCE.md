@@ -5,8 +5,12 @@ Priority: High — production defect correction
 Parent release: TPI-STUDIOFLOW-134R (Worker `4de115db`, 2026-11-01T22:37:19Z)
 Environment: local Cloudflare Worker, `http://127.0.0.1:8787/studio/`, plus the
 isolated disposable Worker for account-backed engineering verification
-Production deployment: **NOT AUTHORIZED — production is unchanged at
-`4de115db-6537-41b5-9bf7-ae99cb0e20fc`.**
+Production deployment: this directive authorized investigation, implementation
+and local verification only. Production stayed on `4de115db` for its whole
+duration; the separately authorized release is
+[TPI-STUDIOFLOW-135R](TPI-STUDIOFLOW-135R-PRODUCTION-RELEASE.md), which deployed
+Worker `3082475b-80ad-4557-82d6-32618e3f7079` on 2026-11-02T01:14:50Z from
+website commit `44c707f`.
 
 ## A. Root cause
 
@@ -144,11 +148,15 @@ Pre-existing, not caused by this change and deliberately not "fixed" here:
 ## E. Compatibility
 
 - **Older account snapshots.** A workspace saved before this change still loads.
-  If it predates the stored panel entirely, the server stores an empty panel and
-  the Studio opens with an empty Scenes panel. That is deliberate and explicit:
-  an empty panel is also a legitimate "every row removed" state, so inventing
-  rows there could resurrect a creator's deletion. Nothing is discarded, the
-  Studio remains editable, and no other Studio's rows appear.
+  If it predates the stored panel entirely, the release build derives a panel for
+  it from that Studio's own Scenes (`intro`, its own Scenes, `outro`) rather than
+  leaving the previously open Studio's rows in place; the bridge resets the
+  browser copy to that same derived panel so display and storage agree, and no
+  other Studio's rows appear. Nothing is discarded, the Studio remains editable,
+  and a row is never merged back from an older copy. Verified by the maintained
+  suite's legacy check, which asserts that every restored row belongs to that
+  Studio (see the correction in
+  [TPI-STUDIOFLOW-135R §5](TPI-STUDIOFLOW-135R-PRODUCTION-RELEASE.md)).
 - **Browser-local Studios.** Unchanged: the panel is written and read through the
   same keys and the same normalizer, which now simply also accepts the script
   kind. Browser-local snapshots and restored backups that omit the panel receive
@@ -169,6 +177,10 @@ new `scripts/verify/tpi-studioflow-135-scene-persistence.mjs`, plus this record
 and the maintained documentation. Commits and parity are recorded in
 `TPI-CURRENT-DEVELOPMENT-STATUS.md`.
 
+Commits: `da0fb98` (fix), `05ac821` (record), `c37d843` (preflight result), and
+`44c707f` (legacy-snapshot guard plus the settled legacy check found by the
+release preflight). `44c707f` is the released commit.
+
 Release baseline is unchanged: the React bundle was not modified, so
 `studio/assets/index-D9yljEwa.js` (`e317fc07…`) and
 `studio/assets/index-D6ZhUVW1.css` (`1baa338c…`) still match
@@ -178,15 +190,21 @@ Release baseline is unchanged: the React bundle was not modified, so
 
 ## G. Production status
 
-Production is unchanged: Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc` at 100%
-still runs the pre-fix code. This directive authorized investigation,
-implementation and local verification only; no deployment, database change,
-authentication change or production record was performed.
+During this directive production was unchanged at Worker
+`4de115db-6537-41b5-9bf7-ae99cb0e20fc`, and this directive performed no
+deployment, database change, authentication change or production record write.
+
+It was released afterwards under the owner's separate authorization: Worker
+`3082475b-80ad-4557-82d6-32618e3f7079` has served 100% of production since
+2026-11-02T01:14:50Z, with `4de115db` retained as the rollback target. Live
+account-backed acceptance passed 30/30 on `https://paranormalinitiative.com`.
+See [TPI-STUDIOFLOW-135R](TPI-STUDIOFLOW-135R-PRODUCTION-RELEASE.md).
 
 ## H. Outstanding issues and risks
 
-- The fix is local only until a separate owner-approved release directive. The
-  live defect found in TPI-134R therefore remains visible on production.
+- The fix is live, but **owner acceptance on the production site is still
+  pending**; automated account-backed production verification is not owner
+  confirmation.
 - The maintained gate creates and purges disposable Studios in whatever account
   `TPI_FIREFOX_ACCOUNT` names. In preflight that is the synthetic `test_admin`
   account on the local Worker; it never runs against production.

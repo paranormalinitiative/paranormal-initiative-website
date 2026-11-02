@@ -27,11 +27,22 @@ which finished **READY with exit 0** at `sourceCommit 05ac821` with
 `rollbackVersion 4de115db`. Adjacent suites also pass: TPI-134 Firefox (43/43),
 TPI-133 (44/44), TPI-037 Scenes panel (20/20), Studio ownership, Studio deletion
 and deletion safety, release safety (21 checks) and TPI-107 provenance. No bundle hash changed (the React bundle was not
-modified); only the unbundled bridge was restaged. Production remains on Worker
-`4de115db-6537-41b5-9bf7-ae99cb0e20fc`, so the live defect stays visible until a
-separately authorized release.
+modified); only the unbundled bridge was restaged.
 
-[Full record](100-DIRECTIVES/TPI-STUDIOFLOW-135-SCENE-PRODUCTION-ITEM-PERSISTENCE.md).
+**Status: DEPLOYED AND VERIFIED IN PRODUCTION (TPI-135R) — owner acceptance
+pending.** Before release, preflight caught a real flaw in the new legacy-snapshot
+handling: the gate read the Scenes panel once at mount, racing the application's
+restore, and the bridge left the previously open Studio's rows reachable. Fixed
+in `44c707f`: the browser copy is reset to that Studio's own default panel, and
+the check now waits for the panel to settle and asserts that every restored row
+belongs to this Studio. Released 2026-11-02T01:14:50Z as Worker
+`3082475b-80ad-4557-82d6-32618e3f7079` from website commit `44c707f` (rollback
+`4de115db`); live account-backed persistence passed 30/30 on
+`https://paranormalinitiative.com` and the served bundle is byte-identical to the
+owner-accepted build.
+
+[Full record](100-DIRECTIVES/TPI-STUDIOFLOW-135-SCENE-PRODUCTION-ITEM-PERSISTENCE.md)
+· [release record](100-DIRECTIVES/TPI-STUDIOFLOW-135R-PRODUCTION-RELEASE.md).
 
 ## TPI-STUDIOFLOW-134 — Scene drag-and-drop and production colors (2026-11-01)
 
@@ -47,7 +58,8 @@ survive a page reload in an account-backed Studio, because the workspace
 snapshot carries only `broadcast`, `settings`, `recording` and `configuration`
 and never `scenePanelItems`; the restore path therefore replaces the
 browser-local rows with server defaults. No previously working behavior
-regressed, and rollback was not triggered; the fix needs its own directive.
+regressed, and rollback was not triggered; the fix shipped in TPI-STUDIOFLOW-135
+together with its TPI-STUDIOFLOW-135R release.
 See the [release record](100-DIRECTIVES/TPI-STUDIOFLOW-134R-PRODUCTION-RELEASE.md).
 
 Original diagnosis: the missing production-item colors, highlighting, icon

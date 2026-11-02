@@ -85,9 +85,11 @@ bridge, then confirm the served file contains the change before testing.
 The correction adds `teleprompter-script` and `teleprompterScriptId` to the
 bridge's Scene panel normalizer and to the server's
 `normalizeStudioConfiguration()`; a new kind added to only one of them is
-silently discarded. Production is not authorized for this change and still runs
-Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc`, so the live Scene-script reload
-defect remains until a separate release directive.
+silently discarded. That correction is live: TPI-STUDIOFLOW-135R deployed
+2026-11-02T01:14:50Z as Worker `3082475b-80ad-4557-82d6-32618e3f7079` from
+website commit `44c707f`, with `4de115db` retained as the rollback target. The
+bundle identity is unchanged, so this is the TPI-134R application plus the fixed
+server normalizer and bridge.
 
 ## Current released StudioFlow build — TPI-STUDIOFLOW-134R
 
@@ -99,7 +101,10 @@ render with full-perimeter borders, and a Scene Teleprompter item cues the live
 presenter teleprompter paused at the beginning with Play, Pause and Reset
 working. Live limitation carried into the next directive: a dropped Scene script
 row does not survive a page reload in an account-backed Studio because the
-workspace snapshot never stores `scenePanelItems`. See the
+workspace snapshot never stores `scenePanelItems`. That limitation was corrected
+and released in
+[TPI-STUDIOFLOW-135R](100-DIRECTIVES/TPI-STUDIOFLOW-135R-PRODUCTION-RELEASE.md).
+See also the
 [TPI-STUDIOFLOW-134R release record](100-DIRECTIVES/TPI-STUDIOFLOW-134R-PRODUCTION-RELEASE.md).
 
 The authoritative `8787` Worker serves the TPI-STUDIOFLOW-134 restoration of
@@ -127,9 +132,10 @@ dragging states, drop-target highlighting, assignment, persistence, plus
 Scene-to-live-teleprompter cueing, Play/Pause/Reset scrolling, script switching,
 refresh recollection and deleted-script handling); Scenes panel passes 20/20,
 provenance passes 20/20 and release safety passes. Deletion, Studio management,
-storage, Notes and bridge files are unchanged. **Production runs this build**
-(Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc`); the superseded TPI-133 Worker
-`71a5293d-fef4-4643-bf50-e9dfc7327eb5` is the verified rollback target.
+storage, Notes and bridge files are unchanged. Production runs this bundle
+identity with the TPI-135 scene-item persistence correction (Worker
+`3082475b-80ad-4557-82d6-32618e3f7079`, website commit `44c707f`); the previous
+Worker `4de115db-6537-41b5-9bf7-ae99cb0e20fc` is the verified rollback target.
 `verify:studioflow-035` cannot pass on this lineage because it asserts the
 unreleased private Teleprompter reader.
 
