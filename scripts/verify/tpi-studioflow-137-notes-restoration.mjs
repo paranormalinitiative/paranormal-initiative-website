@@ -116,9 +116,20 @@ async function ensureShell() {
   return false;
 }
 
+// The shared QA account can be left inside a Studio by an earlier suite. The
+// Studio surface has no dashboard navigation, so leave it the way an owner does
+// before asserting anything about Home or Notes.
+async function ensureDashboard() {
+  if ((await driver.findElements(By.css(".side-nav"))).length > 0) return true;
+  for (const button of await driver.findElements(By.css(".exit-button"))) await button.click().catch(() => {});
+  await waitFor("dashboard navigation", async () => (await driver.findElements(By.css(".side-nav"))).length > 0, 25_000).catch(() => null);
+  return (await driver.findElements(By.css(".side-nav"))).length > 0;
+}
+
 async function openNotesWorkspace() {
   await driver.get(`${base}/studio/`);
   await ensureShell();
+  await ensureDashboard();
   // The bridge replays the last active Studio on load, so the navigation click
   // can be swallowed while the shell is still hydrating. Retry it rather than
   // assuming a single click wins.
@@ -208,6 +219,7 @@ try {
   const cards = await waitFor("Home create cards", async () => {
     const value = await readCreateCards();
     if (value.length > 0) return value;
+    await ensureDashboard();
     await js(`
       var home = Array.from(document.querySelectorAll('.side-nav .nav-item')).find(function (item) { return (item.textContent || '').trim() === 'Home'; });
       if (home) home.click();
@@ -539,7 +551,21 @@ try {
   const shot = await driver.takeScreenshot().catch(() => null);
   if (shot) writeFileSync(join(evidenceRoot, "tpi-137-notes-workspace.png"), shot, "base64");
 } catch (error) {
-  check("acceptance run completed without an unexpected error", false, safe(error));
+  const state = await js(`
+    return {
+      route: window.localStorage.getItem('studioflow.route'),
+      intent: window.sessionStorage.getItem('studioflow.notesWorkspaceIntent.v1'),
+      nav: Array.from(document.querySelectorAll('.side-nav .nav-item')).map(function (item) { return (item.textContent || '').trim(); }),
+      home: document.querySelectorAll('.home-page').length,
+      cards: document.querySelectorAll('.create-grid .create-card').length,
+      shell: document.querySelectorAll('.app-shell').length,
+      workspace: document.querySelectorAll('.notes-workspace-page').length,
+      text: (document.body ? document.body.innerText : '').slice(0, 220)
+    };
+  `).catch(() => null);
+  const shot = await driver.takeScreenshot().catch(() => null);
+  if (shot) writeFileSync(join(evidenceRoot, `tpi-137-failure-${Date.now()}.png`), shot, "base64");
+  check("acceptance run completed without an unexpected error", false, `${safe(error)} | state=${JSON.stringify(state)}`);
 } finally {
   await driver.quit().catch(() => {});
 }
