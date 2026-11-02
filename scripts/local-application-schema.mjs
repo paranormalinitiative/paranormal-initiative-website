@@ -99,6 +99,7 @@ const migrations = [
   { file: "migrations/0055_studioflow_notes.sql", tables: ["studio_note_collections", "studio_notes", "studio_note_revisions", "studio_note_attachments"] },
   { file: "migrations/0056_studioflow_note_automatic_titles.sql", columns: ["title_mode"], table: "studio_notes" },
   { file: "migrations/0057_studioflow_note_trash_metadata.sql", columns: ["deleted_at", "trash_collection_id"], table: "studio_notes" },
+  { file: "migrations/0058_founding_membership_entitlements.sql", tables: ["founding_membership_classes", "founding_memberships", "founding_membership_history", "member_entitlements", "creator_incentive_participation"] },
 ];
 
 function missingParts(migration) {

@@ -32,6 +32,15 @@ DELETE FROM comments WHERE contributor_id LIKE 'e2e-%' OR page_id LIKE 'e2e-%';
 DELETE FROM article_reactions WHERE contributor_id LIKE 'e2e-%' OR page_id LIKE 'e2e-%';
 DELETE FROM articles WHERE id LIKE 'e2e-%' OR created_by LIKE 'e2e-%';
 DELETE FROM sessions WHERE token LIKE 'tok-%' OR contributor_id LIKE 'e2e-%';
+-- TPI-CREATOR-INCENTIVE-001: reset the disposable membership ledger for the
+-- synthetic accounts so numbering and eligibility assertions are repeatable.
+-- History rows are removed before their membership rows because the foreign
+-- key is RESTRICT (production never deletes issuance history).
+DELETE FROM founding_membership_history WHERE contributor_id LIKE 'e2e-%';
+DELETE FROM member_entitlements WHERE contributor_id LIKE 'e2e-%';
+DELETE FROM founding_memberships WHERE contributor_id LIKE 'e2e-%';
+DELETE FROM creator_incentive_participation WHERE contributor_id LIKE 'e2e-%';
+DELETE FROM admin_audit_logs WHERE actor_username IN ('e2e_owner', 'e2e_admin') AND action LIKE 'founding_membership.%';
 
 INSERT INTO contributors (id, username, password_hash, display_name, title, role, correspondence, active)
 VALUES
@@ -40,7 +49,14 @@ VALUES
   ('e2e-user-c', 'e2e_user_c', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E User C', 'Test Member', 'member', 'e2e-c@example.invalid', 1),
   ('e2e-contrib', 'e2e_contrib', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Contributor', 'Field Researcher', 'contributor', 'e2e-contrib@example.invalid', 1),
   ('e2e-admin', 'e2e_admin', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Admin', 'Administrator', 'admin', 'e2e-admin@example.invalid', 1),
-  ('e2e-owner', 'e2e_owner', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Owner', 'Director', 'owner', 'e2e-owner@example.invalid', 1)
+  ('e2e-owner', 'e2e_owner', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Owner', 'Director', 'owner', 'e2e-owner@example.invalid', 1),
+  ('e2e-mbr-plain', 'e2e_mbr_plain', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Ordinary Member', 'Test Member', 'member', 'e2e-mbr-plain@example.invalid', 1),
+  ('e2e-mbr-creator', 'e2e_mbr_creator', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Founding Creator', 'Creator', 'member', 'e2e-mbr-creator@example.invalid', 1),
+  ('e2e-mbr-contributor', 'e2e_mbr_contributor', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Founding Contributor', 'Editorial', 'member', 'e2e-mbr-contributor@example.invalid', 1),
+  ('e2e-mbr-allaccess', 'e2e_mbr_allaccess', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Founding All-Access', 'Creator and Editorial', 'member', 'e2e-mbr-allaccess@example.invalid', 1),
+  ('e2e-mbr-dual', 'e2e_mbr_dual', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Dual Access', 'Test Member', 'member', 'e2e-mbr-dual@example.invalid', 1),
+  ('e2e-mbr-forged', 'e2e_mbr_forged', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Forged Request', 'Test Member', 'member', 'e2e-mbr-forged@example.invalid', 1),
+  ('e2e-mbr-admin', 'e2e_mbr_admin', 'a71bc7b59280c43b37f64e49feeaf2481cda80f8a799d79031ffa12a76d288fd', 'E2E Admin Assigned', 'Test Member', 'member', 'e2e-mbr-admin@example.invalid', 1)
 ON CONFLICT(id) DO UPDATE SET
   username = excluded.username,
   password_hash = excluded.password_hash,
@@ -73,4 +89,11 @@ INSERT INTO sessions (token, contributor_id, expires_at) VALUES
   ('tok-contrib','e2e-contrib', '2030-01-01T00:00:00Z'),
   ('tok-admin',  'e2e-admin',   '2030-01-01T00:00:00Z'),
   ('tok-owner',  'e2e-owner',   '2030-01-01T00:00:00Z'),
-  ('tok-muted',  'e2e-muted',   '2030-01-01T00:00:00Z');
+  ('tok-muted',  'e2e-muted',   '2030-01-01T00:00:00Z'),
+  ('tok-plain',           'e2e-mbr-plain',       '2030-01-01T00:00:00Z'),
+  ('tok-mbr-creator',     'e2e-mbr-creator',     '2030-01-01T00:00:00Z'),
+  ('tok-mbr-contributor', 'e2e-mbr-contributor', '2030-01-01T00:00:00Z'),
+  ('tok-mbr-allaccess',   'e2e-mbr-allaccess',   '2030-01-01T00:00:00Z'),
+  ('tok-mbr-dual',        'e2e-mbr-dual',        '2030-01-01T00:00:00Z'),
+  ('tok-mbr-forged',      'e2e-mbr-forged',      '2030-01-01T00:00:00Z'),
+  ('tok-mbr-admin',       'e2e-mbr-admin',       '2030-01-01T00:00:00Z');

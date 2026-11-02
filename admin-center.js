@@ -108,6 +108,48 @@
     if (host) host.innerHTML = (data.memberships || []).length ? data.memberships.map((row) => `<tr><td>${esc(row.displayName || row.username)}<small>${esc(row.username || "")}</small></td><td>${esc(row.membershipType || "—")}</td><td>${esc(row.creatorStudioEntitlementState || "not recorded")}</td><td>${esc(row.membershipState || "—")}</td><td>${esc(row.awardedAt || "—")}</td></tr>`).join("") : '<tr><td colspan="5">No Creator Partnership memberships have been allocated.</td></tr>';
   }
 
+  function renderMembershipClasses(classes) {
+    const host = get("[data-admin-membership-classes]");
+    if (!host) return;
+    host.innerHTML = (classes || []).map((entry) => `<div><strong>${esc(entry.displayName)} · ${esc(entry.numberPrefix)}-001 to ${esc(entry.numberPrefix)}-${String(entry.lifetimeCapacity).padStart(3, "0")}</strong><span class="admin-pill admin-pill-${entry.exhausted ? "warning" : "success"}">${entry.exhausted ? "Exhausted" : `${esc(entry.remaining)} remaining`}</span><span>${esc(entry.issued)} issued · ${esc(entry.active)} active · ${entry.exhausted ? "permanently closed, no further issuance" : `next number ${esc(entry.nextNumber || "unavailable")}`}</span></div>`).join("") || '<div><strong>Class capacity unavailable</strong><span>The additive membership migration is not applied in this environment.</span></div>';
+  }
+
+  async function loadFoundingMemberships() {
+    const data = await fetchJson("/api/admin/founding-memberships?pageSize=150");
+    renderMembershipClasses(data.classes || []);
+    const host = get("[data-admin-membership-table]");
+    if (host) {
+      host.innerHTML = (data.memberships || []).length
+        ? data.memberships.map((row) => `<tr><td><strong>${esc(row.membershipNumber)}</strong></td><td>${esc(row.displayName || row.username || "Unknown")}<small>${esc(row.username || "")}${row.role ? ` · ${esc(row.role)}` : ""}</small></td><td>${esc(row.className || row.classCode)}</td><td><span class="admin-pill admin-pill-${row.state === "active" ? "success" : "warning"}">${esc(row.state)}</span></td><td>${esc(row.issuedAt || "—")}</td><td>${esc(row.issuedBy || "—")}</td></tr>`).join("")
+        : '<tr><td colspan="6">No Founding Memberships have been issued.</td></tr>';
+    }
+    return data;
+  }
+
+  async function inspectMembershipCapabilities() {
+    const username = get("[data-admin-membership-inspect-input]")?.value?.trim() || "";
+    const host = get("[data-admin-membership-inspect-result]");
+    if (!host) return;
+    if (!username) {
+      host.innerHTML = '<div><strong>Enter a username</strong><span>Capabilities are resolved from server-side records only.</span></div>';
+      return;
+    }
+    try {
+      const data = await fetchJson(`/api/admin/members/${encodeURIComponent(username)}/entitlements`);
+      const memberships = (data.memberships || []).map((row) => `${row.membershipNumber} ${row.state}`).join(" · ");
+      host.innerHTML = [
+        `<div><strong>${esc(data.account.displayName || data.account.username)}</strong><span>role ${esc(data.account.role)} · ${data.account.active ? "active account" : "inactive account"}</span></div>`,
+        `<div><strong>Creator capability</strong><span class="admin-pill admin-pill-${data.creator ? "success" : "muted"}">${data.creator ? "Yes" : "No"}</span></div>`,
+        `<div><strong>Contributor capability</strong><span class="admin-pill admin-pill-${data.contributor ? "success" : "muted"}">${data.contributor ? "Yes" : "No"}</span></div>`,
+        `<div><strong>Badge</strong><span>${data.badge ? esc(`${data.badge.label} (${data.badge.color})`) : "None"}</span></div>`,
+        `<div><strong>Creator Incentive</strong><span>${data.creatorIncentive?.eligible ? "Eligible" : "Not eligible"} · ${esc(data.creatorIncentive?.participationState || "not_enrolled")}</span></div>`,
+        `<div><strong>Founding Memberships</strong><span>${memberships ? esc(memberships) : "None"}</span></div>`
+      ].join("");
+    } catch (error) {
+      host.innerHTML = `<div><strong>Unable to resolve capabilities</strong><span>${esc(error.message)}</span></div>`;
+    }
+  }
+
   async function loadAudit() {
     const search = get("[data-admin-audit-search]")?.value || "";
     const query = search ? `&q=${encodeURIComponent(search)}` : "";
@@ -117,7 +159,7 @@
   }
 
   async function load() {
-    await Promise.allSettled([loadOverview(), loadFounding(), loadCommunity(), loadCreators(), loadModeration(), loadAudit()]);
+    await Promise.allSettled([loadOverview(), loadFounding(), loadFoundingMemberships(), loadCommunity(), loadCreators(), loadModeration(), loadAudit()]);
   }
 
   root.addEventListener("click", (event) => {
@@ -146,6 +188,36 @@
   get("[data-admin-audit-refresh]")?.addEventListener("click", () => loadAudit().catch(() => {}));
   get("[data-admin-audit-apply]")?.addEventListener("click", () => loadAudit().catch(() => {}));
   get("[data-admin-founding-award-form]")?.addEventListener("submit", (event) => event.preventDefault());
+  get("[data-admin-membership-refresh]")?.addEventListener("click", () => loadFoundingMemberships().catch(() => {}));
+  get("[data-admin-membership-inspect]")?.addEventListener("click", () => inspectMembershipCapabilities());
+  get("[data-admin-membership-inspect-input]")?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") { event.preventDefault(); inspectMembershipCapabilities(); }
+  });
+  get("[data-admin-membership-assign-form]")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const message = get("[data-admin-membership-message]");
+    if (message) message.textContent = "Issuing membership…";
+    try {
+      const response = await fetch("/api/admin/founding-memberships/assign", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          classCode: form.elements.classCode?.value,
+          username: form.elements.username?.value,
+          notes: form.elements.notes?.value
+        })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || `Request failed (${response.status})`);
+      if (message) message.textContent = `${result.membership.displayName} ${result.membership.membershipNumber} issued to ${result.account.username}. Capabilities: ${(result.capabilities || []).join(" + ") || "none"}.`;
+      form.reset();
+      await loadFoundingMemberships();
+    } catch (error) {
+      if (message) message.textContent = error.message;
+    }
+  });
   const initial = location.hash.replace(/^#/, "");
   const initialView = initial && !initial.includes("=") && get(`[data-admin-nav='${CSS.escape(initial)}']`) ? initial : "overview";
   window.TPIAdminCenter = { refreshView: () => showView(root.dataset.adminActiveView || initialView) };

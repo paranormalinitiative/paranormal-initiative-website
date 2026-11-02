@@ -5,6 +5,29 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-CREATOR-INCENTIVE-001 — Founding Membership entitlements and dual access
+
+Status: **IMPLEMENTED, TESTED, CERTIFIED CANDIDATE PREPARED — LOCAL/DEVELOPMENT
+ONLY.** Production was not deployed; this directive explicitly withheld
+authorization.
+
+The three permanent Founding Membership classes (`FC-001`–`050`,
+`FCT-001`–`050`, `FAA-001`–`050`), the permanent non-recycled numbering
+registry, the cumulative Creator/Contributor capability ledger, admin-side
+assignment, account isolation, and Creator Incentive eligibility now exist in
+source. Founding All-Access is the union of the Creator and Contributor
+capability sets; dual access accumulates in either ordering and cannot lose a
+capability.
+
+Evidence: membership suite 99/99, isolated API E2E 282/282, Firefox Developer
+Edition + Chromium acceptance 22/22. No production migration. Nova remains
+unbuilt and inactive; all Creator Incentive financial rules remain
+**UNRESOLVED — OWNER DECISION REQUIRED**.
+
+Records: [directive completion record](TPI-CREATOR-INCENTIVE-001.md) ·
+[registry specification](../TPI-FOUNDING-MEMBERSHIP-REGISTRY.md) ·
+[browser evidence](../../audits/TPI-CREATOR-INCENTIVE-001/).
+
 ## TPI-STUDIOFLOW-137R — Production Notes release and final Home layout corrections
 
 Status: **COMPLETE — PRODUCTION VERIFIED. STUDIOFLOW CORE — STABLE / MAINTENANCE

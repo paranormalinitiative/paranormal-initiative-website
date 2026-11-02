@@ -7,6 +7,28 @@ import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlocke
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { localFetch } from "../../lib/outbound-fetch.js";
+import {
+  CAPABILITY,
+  MEMBERSHIP_CLASSES,
+  describeCapabilities,
+  incentiveEligibility,
+  memberHasCapability,
+  primaryBadge,
+  publicMembershipIdentity,
+  resolveMemberEntitlements,
+} from "../../lib/membership-entitlements.js";
+import {
+  MembershipError,
+  assignFoundingMembership,
+  foundingClassSummary,
+  grantCapability,
+  listFoundingRegistry,
+  listIncentiveParticipation,
+  listMembershipHistory,
+  revokeCapability,
+  setFoundingMembershipState,
+  setIncentiveParticipation,
+} from "../../lib/founding-memberships.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -41,6 +63,21 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/admin\/founding-50\/applications\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminFounding50ApplicationStatus(path, request, env, user));
     if (request.method === "POST" && path === "/admin/founding-50/allocate") return requireOwner(request, env, user => handleAdminAllocateFounding50(request, env, user));
     if (request.method === "POST" && path.match(/^\/admin\/founding-50\/memberships\/[^/]+\/status$/)) return requireOwner(request, env, user => handleAdminFounding50MembershipStatus(path, request, env, user));
+    // TPI-CREATOR-INCENTIVE-001: permanent Founding Membership registry and the
+    // cumulative capability ledger. Every route requires an authenticated owner
+    // or administrator session (server-side). Ordinary members, including a
+    // forged request from a member session, cannot reach any of them.
+    if (request.method === "GET" && path === "/admin/founding-memberships") return requireAdmin(request, env, user => handleAdminFoundingMemberships(request, env, user));
+    if (request.method === "POST" && path === "/admin/founding-memberships/assign") return requireAdmin(request, env, user => handleAdminAssignFoundingMembership(request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/founding-memberships\/[^/]+\/history$/)) return requireAdmin(request, env, user => handleAdminFoundingMembershipHistory(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/founding-memberships\/[^/]+\/status$/)) return requireAdmin(request, env, user => handleAdminFoundingMembershipStatus(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/admin\/members\/[^/]+\/entitlements$/)) return requireAdmin(request, env, user => handleAdminMemberEntitlements(path, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/members\/[^/]+\/entitlements$/)) return requireAdmin(request, env, user => handleAdminGrantMemberCapability(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/admin\/members\/entitlements\/[^/]+\/revoke$/)) return requireAdmin(request, env, user => handleAdminRevokeMemberCapability(path, request, env, user));
+    if (request.method === "GET" && path === "/admin/creator-incentive") return requireAdmin(request, env, user => handleAdminCreatorIncentive(request, env, user));
+    if (request.method === "POST" && path === "/admin/creator-incentive/participation") return requireAdmin(request, env, user => handleAdminSetIncentiveParticipation(request, env, user));
+    if (request.method === "GET" && path === "/me/entitlements") return requireMember(request, env, user => handleMyEntitlements(env, user));
+    if (request.method === "GET" && path === "/me/creator-incentive") return requireMember(request, env, user => handleMyCreatorIncentive(env, user));
     if (request.method === "GET" && path === "/admin/creator-partnership") return requireAdmin(request, env, user => handleAdminCreatorPartnership(request, env, user));
     if (request.method === "GET" && path.match(/^\/admin\/creators\/[^/]+$/)) return requireAdmin(request, env, user => handleAdminCreatorDetail(path, env, user));
     if (request.method === "GET" && path === "/admin/creator-studio/entitlements") return requireAdmin(request, env, user => handleAdminCreatorStudioEntitlements(request, env, user));
@@ -404,7 +441,15 @@ async function handleLogout(request, env) {
 
 async function handleMe(request, env) {
   const user = await getSessionUser(request, env);
-  return json({ user: user ? privateMemberUser(user, await hasCreatorStudioAccess(env, user)) : null }, 200, { "Cache-Control": "no-store" });
+  if (!user) return json({ user: null }, 200, { "Cache-Control": "no-store" });
+  // TPI-CREATOR-INCENTIVE-001: the member's own Founding identity is public-safe
+  // (class, permanent number, badge) and is what profile surfaces render.
+  return json({
+    user: {
+      ...privateMemberUser(user, await hasCreatorStudioAccess(env, user)),
+      foundingMembership: await publicMembershipIdentity(env, user.id),
+    },
+  }, 200, { "Cache-Control": "no-store" });
 }
 
 // My Pulse stats: every number is a truthful count from real tables —
@@ -1265,6 +1310,317 @@ async function handleAdminFounding50MembershipStatus(path, request, env, actingU
     return json({ error: "Founding 50 membership status could not be updated." }, 500);
   }
 }
+
+// ---------------------------------------------------------------------------
+// TPI-CREATOR-INCENTIVE-001 — Founding Membership registry, cumulative
+// capability ledger, and Creator Incentive eligibility.
+//
+// Every capability decision below is derived from server-side records. No
+// request field can name a membership number, a capability outcome, or another
+// account's identity; identity always comes from the session or from an
+// owner-authorized lookup of an existing registered account.
+// ---------------------------------------------------------------------------
+
+function membershipErrorResponse(error) {
+  if (error instanceof MembershipError) {
+    const detail = error.detail && Object.keys(error.detail).length ? { detail: error.detail } : {};
+    return json({ error: error.message, code: error.code, ...detail }, error.status, { "Cache-Control": "no-store" });
+  }
+  return json({ error: "The membership operation failed. Nothing was changed." }, 500, { "Cache-Control": "no-store" });
+}
+
+async function findExistingMember(env, username) {
+  const member = await getUserByUsername(env, clean(username));
+  if (!member || !member.active) return null;
+  return member;
+}
+
+async function participationStateFor(env, contributorId) {
+  try {
+    const row = await env.TPI_DB.prepare(`
+      SELECT state, enrolled_at AS enrolledAt, updated_at AS updatedAt
+      FROM creator_incentive_participation WHERE contributor_id = ?
+    `).bind(contributorId).first();
+    return row || null;
+  } catch {
+    return null;
+  }
+}
+
+function activeBadge(resolved) {
+  return primaryBadge((resolved.memberships || []).filter((row) => row.state === "active").map((row) => row.classCode));
+}
+
+async function handleAdminFoundingMemberships(request, env) {
+  const url = new URL(request.url);
+  const requestedClass = clean(url.searchParams.get("class")).toUpperCase();
+  const classCode = MEMBERSHIP_CLASSES.some((entry) => entry.classCode === requestedClass) ? requestedClass : null;
+  const summary = await foundingClassSummary(env);
+  const registry = await listFoundingRegistry(env, {
+    classCode,
+    page: url.searchParams.get("page"),
+    pageSize: url.searchParams.get("pageSize"),
+  });
+  return json({
+    program: "Founding Memberships",
+    classes: summary.classes,
+    lifetimeIssuanceTotal: summary.lifetimeIssuanceTotal,
+    lifetimeCapacityTotal: summary.lifetimeCapacityTotal,
+    numbering: summary.numbering,
+    schemaPending: summary.schemaPending,
+    ...registry,
+    assignmentPolicy: {
+      authority: "owner-only server-side authorization",
+      accountSource: "existing active registered account",
+      duplicateBehavior: "refused with 409; the existing permanent number is reported and no new number is issued",
+      numbering: "permanent, non-recycled, 50 per class lifetime",
+      transitions: "additional memberships accumulate; historical issuance is never erased",
+    },
+    creatorIncentive: {
+      policyStatus: "UNRESOLVED — OWNER DECISION REQUIRED",
+      note: "Eligibility follows the Creator capability. Amounts, thresholds, percentages, schedules and payouts are not defined by any authoritative directive and are not implemented here.",
+      participation: await listIncentiveParticipation(env, 200),
+    },
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminAssignFoundingMembership(request, env, actingUser) {
+  const data = await readJson(request);
+  const classCode = clean(data.classCode || data.class).toUpperCase();
+  const member = await findExistingMember(env, data.username || data.accountUsername);
+  if (!member) {
+    return json({ error: "An active existing TPI account is required. Founding Memberships are never issued to placeholder or self-declared accounts." }, 400, { "Cache-Control": "no-store" });
+  }
+  try {
+    const result = await assignFoundingMembership(env, {
+      member,
+      classCode,
+      actor: actingUser,
+      notes: clean(data.notes).slice(0, 2000),
+    });
+    const resolved = await resolveMemberEntitlements(env, member);
+    const description = describeCapabilities(resolved.capabilities);
+    return json({
+      ...result,
+      account: { username: member.username, displayName: member.display_name, role: member.role },
+      capabilities: description.capabilities,
+      creator: description.creator,
+      contributor: description.contributor,
+      badge: activeBadge(resolved),
+    }, 201, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return membershipErrorResponse(error);
+  }
+}
+
+async function handleAdminFoundingMembershipStatus(path, request, env, actingUser) {
+  const membershipId = clean(decodeURIComponent(path.match(/^\/admin\/founding-memberships\/([^/]+)\/status$/)?.[1] || ""));
+  const data = await readJson(request);
+  try {
+    const result = await setFoundingMembershipState(env, {
+      membershipId,
+      state: clean(data.state || data.status).toLowerCase(),
+      actor: actingUser,
+      notes: clean(data.notes).slice(0, 2000),
+    });
+    return json(result, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return membershipErrorResponse(error);
+  }
+}
+
+async function handleAdminFoundingMembershipHistory(path, env) {
+  const membershipId = clean(decodeURIComponent(path.match(/^\/admin\/founding-memberships\/([^/]+)\/history$/)?.[1] || ""));
+  if (!membershipId) return json({ error: "A Founding Membership id is required." }, 400);
+  return json({ membershipId, history: await listMembershipHistory(env, membershipId, 100) }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminMemberEntitlements(path, env) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/entitlements$/)?.[1] || ""));
+  const member = await getUserByUsername(env, username);
+  if (!member) return json({ error: "Account was not found." }, 404);
+  const resolved = await resolveMemberEntitlements(env, member);
+  const description = describeCapabilities(resolved.capabilities);
+  const participation = await participationStateFor(env, member.id);
+  return json({
+    account: {
+      id: member.id,
+      username: member.username,
+      displayName: member.display_name,
+      role: member.role,
+      active: Boolean(member.active),
+    },
+    capabilities: description.capabilities,
+    creator: description.creator,
+    contributor: description.contributor,
+    memberships: resolved.memberships,
+    sources: resolved.sources,
+    badge: activeBadge(resolved),
+    entitled: description.entitled,
+    available: description.available,
+    creatorIncentive: incentiveEligibility({
+      capabilities: resolved.capabilities,
+      accountActive: Boolean(member.active),
+      participationState: participation?.state || "not_enrolled",
+    }),
+    schemaPending: resolved.schemaPending,
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminGrantMemberCapability(path, request, env, actingUser) {
+  const username = clean(decodeURIComponent(path.match(/^\/admin\/members\/([^/]+)\/entitlements$/)?.[1] || ""));
+  const data = await readJson(request);
+  const member = await findExistingMember(env, username);
+  if (!member) return json({ error: "An active existing TPI account is required." }, 400, { "Cache-Control": "no-store" });
+  try {
+    const result = await grantCapability(env, {
+      member,
+      capability: clean(data.capability).toLowerCase(),
+      actor: actingUser,
+      notes: clean(data.notes).slice(0, 2000),
+    });
+    const resolved = await resolveMemberEntitlements(env, member);
+    const description = describeCapabilities(resolved.capabilities);
+    return json({
+      ...result,
+      capabilities: description.capabilities,
+      creator: description.creator,
+      contributor: description.contributor,
+      memberships: resolved.memberships,
+    }, 201, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return membershipErrorResponse(error);
+  }
+}
+
+async function handleAdminRevokeMemberCapability(path, request, env, actingUser) {
+  const entitlementId = clean(decodeURIComponent(path.match(/^\/admin\/members\/entitlements\/([^/]+)\/revoke$/)?.[1] || ""));
+  const data = await readJson(request);
+  try {
+    const result = await revokeCapability(env, {
+      entitlementId,
+      actor: actingUser,
+      notes: clean(data.notes).slice(0, 2000),
+    });
+    return json(result, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return membershipErrorResponse(error);
+  }
+}
+
+// Accounts that hold the Creator capability through any legitimate source. One
+// query keeps the admin view truthful without resolving every account in turn.
+async function listCreatorCapableAccounts(env) {
+  try {
+    const { results } = await env.TPI_DB.prepare(`
+      SELECT c.id, c.username, c.display_name AS displayName, c.role, c.active,
+             COALESCE(p.state, 'not_enrolled') AS participationState,
+             p.enrolled_at AS enrolledAt,
+             EXISTS(SELECT 1 FROM founding_memberships fm
+                    WHERE fm.contributor_id = c.id AND fm.state = 'active'
+                      AND fm.class_code IN ('FC', 'FAA')) AS foundingCreator,
+             EXISTS(SELECT 1 FROM member_entitlements me
+                    WHERE me.contributor_id = c.id AND me.capability = 'creator' AND me.state = 'active') AS grantedCreator,
+             EXISTS(SELECT 1 FROM creator_studio_entitlements cse
+                    WHERE cse.contributor_id = c.id AND cse.entitlement_state = 'active'
+                      AND cse.entitlement_code = 'creator_studio_lifetime') AS legacyStudioCreator
+      FROM contributors c
+      LEFT JOIN creator_incentive_participation p ON p.contributor_id = c.id
+      WHERE c.role IN ('owner', 'admin', 'creator')
+         OR EXISTS(SELECT 1 FROM founding_memberships fm
+                   WHERE fm.contributor_id = c.id AND fm.state = 'active'
+                     AND fm.class_code IN ('FC', 'FAA'))
+         OR EXISTS(SELECT 1 FROM member_entitlements me
+                   WHERE me.contributor_id = c.id AND me.capability = 'creator' AND me.state = 'active')
+         OR EXISTS(SELECT 1 FROM creator_studio_entitlements cse
+                   WHERE cse.contributor_id = c.id AND cse.entitlement_state = 'active'
+                     AND cse.entitlement_code = 'creator_studio_lifetime')
+      ORDER BY c.active DESC, c.display_name COLLATE NOCASE
+      LIMIT 500
+    `).all();
+    return (results || []).map((row) => ({
+      ...row,
+      active: Boolean(row.active),
+      creatorCapable: true,
+      eligible: Boolean(row.active) && !["suspended", "withdrawn"].includes(row.participationState),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function handleAdminCreatorIncentive(request, env) {
+  const accounts = await listCreatorCapableAccounts(env);
+  return json({
+    program: "Creator Incentive",
+    policyStatus: "UNRESOLVED — OWNER DECISION REQUIRED",
+    policyNote: "No authoritative directive defines incentive amounts, payout values, qualification thresholds, point systems, revenue percentages, reward schedules, approval requirements, payout frequency, creator eligibility earnings rules, or accounting rules. Only eligibility and participation tracking are implemented.",
+    eligibilityBasis: "creator capability (Founding Creator, Founding All-Access, or a legitimate independent creator source)",
+    accounts,
+    totals: {
+      creatorCapable: accounts.length,
+      eligible: accounts.filter((row) => row.eligible).length,
+      enrolled: accounts.filter((row) => row.participationState === "enrolled").length,
+    },
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleAdminSetIncentiveParticipation(request, env, actingUser) {
+  const data = await readJson(request);
+  const member = await findExistingMember(env, data.username);
+  if (!member) return json({ error: "An active existing TPI account is required." }, 400, { "Cache-Control": "no-store" });
+  // Server-side capability gate: an administrator cannot enrol a Contributor-only
+  // account in Creator Incentives through the API.
+  if (!(await memberHasCapability(env, member, CAPABILITY.CREATOR))) {
+    return json({ error: "Creator Incentive participation requires the Creator capability. This account does not hold it.", code: "capability_required" }, 403, { "Cache-Control": "no-store" });
+  }
+  try {
+    const result = await setIncentiveParticipation(env, {
+      member,
+      state: clean(data.state).toLowerCase(),
+      actor: actingUser,
+      notes: clean(data.notes).slice(0, 2000),
+    });
+    return json(result, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    return membershipErrorResponse(error);
+  }
+}
+
+async function handleMyEntitlements(env, user) {
+  const resolved = await resolveMemberEntitlements(env, user);
+  const description = describeCapabilities(resolved.capabilities);
+  const participation = await participationStateFor(env, user.id);
+  return json({
+    capabilities: description.capabilities,
+    creator: description.creator,
+    contributor: description.contributor,
+    memberships: resolved.memberships,
+    badge: activeBadge(resolved),
+    badges: (resolved.memberships || []).filter((row) => row.state === "active").map((row) => row.badge).filter(Boolean),
+    entitled: description.entitled,
+    available: description.available,
+    creatorIncentive: incentiveEligibility({
+      capabilities: resolved.capabilities,
+      accountActive: Boolean(user.active),
+      participationState: participation?.state || "not_enrolled",
+    }),
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleMyCreatorIncentive(env, user) {
+  const resolved = await resolveMemberEntitlements(env, user);
+  const participation = await participationStateFor(env, user.id);
+  return json({
+    eligibility: incentiveEligibility({
+      capabilities: resolved.capabilities,
+      accountActive: Boolean(user.active),
+      participationState: participation?.state || "not_enrolled",
+    }),
+    participation,
+  }, 200, { "Cache-Control": "no-store" });
+}
+
 async function handleAdminAuditLogs(request, env) {
   const url = new URL(request.url);
   const page = Math.max(1, Math.min(parseInt(url.searchParams.get("page") || "1", 10) || 1, 10000));
@@ -3842,7 +4198,14 @@ async function handlePublicContributorProfile(request, env) {
     WHERE created_by = ? AND status = 'published'
     ORDER BY created_at DESC
   `).bind(user.id).all();
-  return json({ profile: publicUser(user), articles: results });
+  return json({
+    profile: publicUser(user),
+    // Public-safe Founding identity only: no email, session, or administrative
+    // notes. A suspended or revoked membership reports its state rather than
+    // presenting an active badge.
+    foundingMembership: await publicMembershipIdentity(env, user.id),
+    articles: results,
+  });
 }
 
 async function handleListPublicContributors(env) {
@@ -8546,7 +8909,11 @@ function safeJsonParse(value) {
 async function requireContributor(request, env, handler) {
   const user = await getSessionUser(request, env);
   if (!user) return json({ error: "Contributor login required." }, 401);
-  if (!["owner", "admin", "contributor"].includes(user.role)) {
+  // TPI-CREATOR-INCENTIVE-001: editorial authorization follows the Contributor
+  // capability, which unions the existing contributor role with Founding
+  // Contributor / Founding All-Access membership and any explicit grant. A
+  // Creator-only account does not gain editorial rights.
+  if (!(await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR))) {
     return json({ error: "Contributor access is required." }, 403);
   }
   return handler(user);
@@ -8555,7 +8922,7 @@ async function requireContributor(request, env, handler) {
 async function requireContributorOrStudio(request, env, handler) {
   const user = await getSessionUser(request, env);
   if (!user) return json({ error: "Contributor or Creator Studio access required." }, 401);
-  if (["owner", "admin", "contributor"].includes(user.role) || await hasCreatorStudioAccess(env, user)) return handler(user);
+  if (await memberHasCapability(env, user, CAPABILITY.CONTRIBUTOR) || await hasCreatorStudioAccess(env, user)) return handler(user);
   return json({ error: "Contributor or Creator Studio access required." }, 403);
 }
 

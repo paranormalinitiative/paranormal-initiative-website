@@ -109,6 +109,99 @@ check "unauthenticated conversation list is 401" 401 "$(req GET /conversations '
 check "unauthenticated notifications is 401" 401 "$(req GET /notifications '')"
 check "session token A identifies user A" 200 "$(req GET /auth/me tok-a)" "d['user']['username']=='e2e_user_a'"
 
+######################## 1b. FOUNDING MEMBERSHIPS / ENTITLEMENTS ########################
+# TPI-CREATOR-INCENTIVE-001 permanent regression: server-side authorization,
+# cumulative Creator/Contributor capability, All-Access union, dual access,
+# numbering, lifecycle, account isolation, and Creator Incentive eligibility.
+echo "== FOUNDING MEMBERSHIPS / ENTITLEMENTS =="
+check "anonymous cannot read the founding registry" 403 "$(req GET /admin/founding-memberships '')"
+check "ordinary member cannot read the founding registry" 403 "$(req GET /admin/founding-memberships tok-plain)"
+check "ordinary member cannot assign a founding membership" 403 "$(req POST /admin/founding-memberships/assign tok-plain '{"username":"e2e_mbr_plain","classCode":"FC"}')"
+check "an administrator who is not the owner cannot read member entitlements" 403 "$(req GET /admin/members/e2e_mbr_plain/entitlements '')"
+check "an authorized administrator can assign a founding membership" 201 "$(req POST /admin/founding-memberships/assign tok-admin '{"username":"e2e_mbr_admin","classCode":"FCT"}')" "d['membership']['membershipNumber']=='FCT-001' and d['capabilities']==['contributor']"
+check "owner reads all three class capacities" 200 "$(req GET /admin/founding-memberships tok-owner)" "len(d['classes'])==3 and all(c['lifetimeCapacity']==50 for c in d['classes'])"
+
+R=$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_creator","classCode":"FC","notes":"e2e creator"}')
+check "owner issues FC-001 to an existing account" 201 "$R" "d['membership']['membershipNumber']=='FC-001' and d['membership']['classCode']=='FC'"
+check "Founding Creator receives the Creator capability only" 201 "$R" "d['capabilities']==['creator'] and d['creator'] is True and d['contributor'] is False"
+FC_ID=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['membership']['id'])")
+
+R=$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_contributor","classCode":"FCT"}')
+check "owner issues the next Contributor number with its own prefix" 201 "$R" "d['membership']['membershipNumber']=='FCT-002'"
+check "Founding Contributor receives the Contributor capability only" 201 "$R" "d['capabilities']==['contributor'] and d['contributor'] is True and d['creator'] is False"
+
+R=$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_allaccess","classCode":"FAA"}')
+check "owner issues FAA-001" 201 "$R" "d['membership']['membershipNumber']=='FAA-001'"
+check "Founding All-Access receives the union of both capability sets" 201 "$R" "d['capabilities']==['contributor','creator'] and d['creator'] and d['contributor'] and d['badge']['classCode']=='FAA'"
+
+# Forged client fields must not influence the permanent number or the capability set.
+R=$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_forged","classCode":"FC","membershipNumber":"FC-099","sequenceNumber":99,"capabilities":["creator","contributor"],"badge":{"classCode":"FAA"}}')
+check "client-supplied number, sequence, and capabilities are ignored" 201 "$R" "d['membership']['membershipNumber']=='FC-002' and d['membership']['sequenceNumber']==2 and d['capabilities']==['creator']"
+
+check "duplicate class assignment is refused" 409 "$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_creator","classCode":"FC"}')" "d['code']=='duplicate_assignment' and d['detail']['membershipNumber']=='FC-001'"
+check "assignment to an unknown account is refused" 400 "$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_does_not_exist","classCode":"FCT"}')"
+check "an unknown class code is refused" 400 "$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_dual","classCode":"FCX"}')"
+
+check "creator sees Creator-only entitlements and badge" 200 "$(req GET /me/entitlements tok-mbr-creator)" "d['capabilities']==['creator'] and d['creator'] and not d['contributor'] and d['badge']['classCode']=='FC'"
+check "contributor sees Contributor-only entitlements and badge" 200 "$(req GET /me/entitlements tok-mbr-contributor)" "d['capabilities']==['contributor'] and d['contributor'] and not d['creator'] and d['badge']['classCode']=='FCT'"
+check "all-access sees both capabilities with one All-Access badge" 200 "$(req GET /me/entitlements tok-mbr-allaccess)" "d['capabilities']==['contributor','creator'] and len(d['badges'])==1 and d['badge']['classCode']=='FAA'"
+check "ordinary member holds no capability and no badge" 200 "$(req GET /me/entitlements tok-plain)" "d['capabilities']==[] and not d['creator'] and not d['contributor'] and d['badge'] is None"
+
+check "creator-only account can use Creator Studio" 200 "$(req GET /studio/production/active tok-mbr-creator)"
+check "contributor-only account cannot use Creator Studio" 403 "$(req GET /studio/production/active tok-mbr-contributor)"
+check "all-access account can use Creator Studio" 200 "$(req GET /studio/production/active tok-mbr-allaccess)"
+check "ordinary member cannot use Creator Studio" 403 "$(req GET /studio/production/active tok-plain)"
+check "contributor-only account can use editorial access" 200 "$(req GET /contributors/me/articles tok-mbr-contributor)"
+check "creator-only account cannot use editorial access" 403 "$(req GET /contributors/me/articles tok-mbr-creator)"
+check "all-access account can use editorial access" 200 "$(req GET /contributors/me/articles tok-mbr-allaccess)"
+check "ordinary member cannot use editorial access" 403 "$(req GET /contributors/me/articles tok-plain)"
+
+# True dual access through the supported administrative grant mechanism.
+R=$(req POST /admin/members/e2e_mbr_dual/entitlements tok-owner '{"capability":"creator","notes":"e2e dual creator"}')
+check "owner grants the Creator capability to a dual account" 201 "$R" "d['capabilities']==['creator']"
+R=$(req POST /admin/members/e2e_mbr_dual/entitlements tok-owner '{"capability":"contributor","notes":"e2e dual contributor"}')
+check "adding Contributor keeps Creator (no last-role-wins)" 201 "$R" "d['capabilities']==['contributor','creator']"
+DUAL_CONTRIB_ID=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['entitlement']['id'])")
+check "dual account can use Creator Studio" 200 "$(req GET /studio/production/active tok-mbr-dual)"
+check "dual account can use editorial access" 200 "$(req GET /contributors/me/articles tok-mbr-dual)"
+check "revoking the Contributor grant is accepted" 200 "$(req POST "/admin/members/entitlements/$DUAL_CONTRIB_ID/revoke" tok-owner '{"notes":"e2e revoke"}')"
+check "Creator capability survives revoking Contributor" 200 "$(req GET /me/entitlements tok-mbr-dual)" "d['capabilities']==['creator'] and d['creator'] and not d['contributor']"
+check "editorial access is withdrawn with the revoke" 403 "$(req GET /contributors/me/articles tok-mbr-dual)"
+check "Creator Studio access survives revoking Contributor" 200 "$(req GET /studio/production/active tok-mbr-dual)"
+
+# Inverse ordering: Contributor first, then Creator.
+R=$(req POST /admin/members/e2e_mbr_contributor/entitlements tok-owner '{"capability":"creator","notes":"e2e inverse"}')
+check "contributor receives Creator capability through a grant" 201 "$R" "d['capabilities']==['contributor','creator']"
+INVERSE_GRANT_ID=$(split "$R"; echo "$SPLIT_BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['entitlement']['id'])")
+check "inverse ordering keeps both capability sets" 200 "$(req GET /me/entitlements tok-mbr-contributor)" "d['capabilities']==['contributor','creator']"
+check "revoking the inverse Creator grant is accepted" 200 "$(req POST "/admin/members/entitlements/$INVERSE_GRANT_ID/revoke" tok-owner '{"notes":"e2e inverse revoke"}')"
+check "Contributor capability survives revoking Creator" 200 "$(req GET /me/entitlements tok-mbr-contributor)" "d['capabilities']==['contributor'] and d['contributor'] and not d['creator']"
+
+# Cross-account and privilege-escalation attempts.
+check "a member cannot grant capability to another account" 403 "$(req POST /admin/members/e2e_mbr_plain/entitlements tok-mbr-creator '{"capability":"creator"}')"
+check "an authorized administrator can grant an additional capability" 201 "$(req POST /admin/members/e2e_mbr_admin/entitlements tok-admin '{"capability":"creator"}')" "d['capabilities']==['contributor','creator']"
+check "that grant does not leak to an unrelated account" 200 "$(req GET /me/entitlements tok-plain)" "d['capabilities']==[]"
+check "a member cannot change their own membership state" 403 "$(req POST "/admin/founding-memberships/$FC_ID/status" tok-mbr-creator '{"state":"revoked"}')"
+check "a member cannot read another account's entitlements" 403 "$(req GET /admin/members/e2e_mbr_allaccess/entitlements tok-mbr-creator)"
+check "a member cannot read the incentive administration view" 403 "$(req GET /admin/creator-incentive tok-mbr-contributor)"
+
+# Creator Incentive eligibility follows capability, not a membership label.
+check "a Contributor-only account cannot be enrolled in Creator Incentives" 403 "$(req POST /admin/creator-incentive/participation tok-owner '{"username":"e2e_mbr_contributor","state":"enrolled"}')" "d['code']=='capability_required'"
+check "a Creator-capable account can be enrolled" 200 "$(req POST /admin/creator-incentive/participation tok-owner '{"username":"e2e_mbr_allaccess","state":"enrolled"}')"
+check "enrolled creator is incentive eligible" 200 "$(req GET /me/creator-incentive tok-mbr-allaccess)" "d['eligibility']['eligible'] is True and d['eligibility']['creatorCapable'] is True and d['participation']['state']=='enrolled'"
+check "Contributor alone is not incentive eligible" 200 "$(req GET /me/creator-incentive tok-mbr-contributor)" "d['eligibility']['eligible'] is False and d['eligibility']['creatorCapable'] is False"
+check "incentive admin view keeps financial policy unresolved" 200 "$(req GET /admin/creator-incentive tok-admin)" "d['policyStatus'].startswith('UNRESOLVED') and d['totals']['creatorCapable']>=3"
+
+# Lifecycle: a suspended number never returns to the pool.
+R=$(req POST "/admin/founding-memberships/$FC_ID/status" tok-owner '{"state":"suspended","notes":"e2e suspension"}')
+check "owner suspends a founding membership" 200 "$R" "d['membership']['state']=='suspended'"
+check "suspension removes Creator Studio access" 403 "$(req GET /studio/production/active tok-mbr-creator)"
+check "the suspended number stays in the registry" 200 "$(req GET '/admin/founding-memberships?class=FC' tok-owner)" "any(m['membershipNumber']=='FC-001' and m['state']=='suspended' for m in d['memberships'])"
+check "the suspended number still counts toward the limit" 200 "$(req GET /admin/founding-memberships tok-owner)" "[c for c in d['classes'] if c['classCode']=='FC'][0]['issued']==2 and [c for c in d['classes'] if c['classCode']=='FC'][0]['remaining']==48"
+R=$(req POST "/admin/founding-memberships/$FC_ID/status" tok-owner '{"state":"active","notes":"e2e reactivation"}')
+check "reactivation restores Creator Studio access" 200 "$(req GET /studio/production/active tok-mbr-creator)"
+check "further issuance continues the sequence without recycling" 201 "$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_dual","classCode":"FC"}')" "d['membership']['membershipNumber']=='FC-003'"
+
 ######################## 2. COMMUNITY MULTI-USER ########################
 echo "== COMMUNITY FEED MULTI-USER =="
 R=$(req POST /community/posts tok-a '{"title":"Post A1","body":"Post A1 from User A","categoryId":"general"}')

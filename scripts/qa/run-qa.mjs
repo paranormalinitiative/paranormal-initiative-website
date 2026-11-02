@@ -59,6 +59,10 @@ for (const path of nodeChecks) run(`Node syntax: ${path}`, process.execPath, ["-
 run("Bash syntax: existing E2E and migration checks", "bash", ["-n", "scripts/e2e/api-e2e.sh", "scripts/e2e/verify-0010-equivalence.sh"]);
 run("TPI-OPS-002 traffic protection regression", process.execPath, ["scripts/qa/tpi-ops-002-traffic-protection.mjs"]);
 run("TPI-OPS-007 local foundation guard regression", process.execPath, ["scripts/qa/tpi-ops-007-local-foundation.mjs"]);
+// TPI-CREATOR-INCENTIVE-001: Founding Membership numbering, the cumulative
+// entitlement model, All-Access union, and dual-access accumulation. This suite
+// builds its own disposable database and touches no other state.
+run("TPI-CREATOR-INCENTIVE-001 membership and entitlement regression", process.execPath, ["scripts/verify/tpi-creator-incentive-001.mjs"]);
 
 if (e2e) {
   run(

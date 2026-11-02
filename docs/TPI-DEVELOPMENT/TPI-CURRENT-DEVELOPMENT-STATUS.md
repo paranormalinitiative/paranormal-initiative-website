@@ -1,5 +1,32 @@
 # TPI Current Development Status
 
+## TPI-CREATOR-INCENTIVE-001 — Founding Membership foundation (2026-11-02)
+
+Status: **IMPLEMENTED AND TESTED LOCAL/DEVELOPMENT ONLY. PRODUCTION NOT
+DEPLOYED.**
+
+| Item | State |
+|---|---|
+| Founding Creator / Contributor / All-Access registry | **IMPLEMENTED LOCALLY** — permanent numbers, 50/class lifetime limit, non-recycled |
+| Cumulative Creator + Contributor capabilities | **IMPLEMENTED LOCALLY** — All-Access is the union; dual access cannot lose a capability |
+| Admin assignment workflow | **IMPLEMENTED LOCALLY** — canonical Administration Center, owner/admin server-side |
+| Creator Incentive eligibility | **IMPLEMENTED LOCALLY**; all financial rules **UNRESOLVED — OWNER DECISION REQUIRED** |
+| Nova entitlements | **CONTRACT ONLY** — Nova is not built and not active |
+| Production D1 / Worker | **UNTOUCHED** — Worker `daa5aee1-304f-4e96-89a8-86aac2df98e9` |
+
+Evidence: membership suite 99/99, isolated API E2E 282/282, Firefox Developer
+Edition + Chromium acceptance 22/22. Records:
+[directive](100-DIRECTIVES/TPI-CREATOR-INCENTIVE-001.md),
+[registry specification](TPI-FOUNDING-MEMBERSHIP-REGISTRY.md),
+[security model](007-SECURITY-AND-PERMISSIONS.md),
+[browser evidence](../audits/TPI-CREATOR-INCENTIVE-001/).
+
+Owner review environment: `http://127.0.0.1:8787/` (local Worker). Sign in as
+`local_admin`, open **Creators → Founding Memberships**. Representative review
+accounts are prepared with `npm run local:creator-incentive-review`; credentials
+are written only to the gitignored `.local-dev/creator-incentive-review.json`.
+
+
 ## TPI-DOCS-ROADMAP-001 — Roadmap synchronization (2026-11-02)
 
 Status: **COMPLETE — DOCUMENTATION ONLY.** No application code, permission,

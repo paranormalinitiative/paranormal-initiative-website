@@ -25,8 +25,44 @@ Future Owner, Assistant Administrator, and Moderator roles remain planning items
 
 ## Membership entitlements and administrative permissions (recorded 2026-11-02)
 
-Recorded by TPI-DOCS-ROADMAP-001. Planning only — no role, permission, or
-membership behaviour changed.
+Recorded by TPI-DOCS-ROADMAP-001 as planning, then **implemented locally by
+TPI-CREATOR-INCENTIVE-001**. The implemented model and its exact authorization
+behaviour are specified in
+[`TPI-FOUNDING-MEMBERSHIP-REGISTRY.md`](TPI-FOUNDING-MEMBERSHIP-REGISTRY.md).
+No production migration or deployment has been performed.
+
+### Implemented authorization (TPI-CREATOR-INCENTIVE-001)
+
+- **Capabilities are resolved server-side**, never accepted from a request.
+  `lib/membership-entitlements.js` unions active Founding Membership
+  capabilities, explicit administrative grants, legacy Creator Studio
+  entitlements, and the existing account role. Resolution fails closed when the
+  additive schema is absent.
+- **Founding Membership administration is owner/admin only.** Ordinary members
+  receive `403` on every registry, assignment, state-change, capability, and
+  incentive route, including forged direct API calls. Covered by permanent
+  regression assertions.
+- **Creator Studio access** continues to be a separate gate; it now asks for the
+  resolved Creator capability instead of one entitlement table. StudioFlow
+  behavior is unchanged and an account without the capability still receives
+  `403`.
+- **Editorial access** (`requireContributor`) asks for the resolved Contributor
+  capability. A Creator-only account does not gain editorial rights; a
+  Contributor-only account does not gain Creator Studio or Creator Incentive
+  eligibility.
+- **Education Center publishing authority is not implied** by Contributor or
+  All-Access capability. Author/Submitter/Editor/Publisher/Administrator remain
+  separately enforced decisions.
+- **Creator Incentive participation** requires the Creator capability. The API
+  refuses to enrol a Contributor-only account (`403 capability_required`), so
+  the rule cannot be bypassed by calling the endpoint directly.
+- **Audit:** issuance, state changes, capability grants/revokes, and incentive
+  participation changes write `founding_membership_history` and
+  `admin_audit_logs` records with the acting account.
+- **Account isolation** is covered by tests across a Creator account, a
+  Contributor account, an All-Access account, an ordinary account, and a dual
+  Creator+Contributor account; granting or reading capability for one account
+  never changes another.
 
 **Membership entitlements and administrative permissions are separate.** Holding
 a membership grants product capability; it does not grant administrative

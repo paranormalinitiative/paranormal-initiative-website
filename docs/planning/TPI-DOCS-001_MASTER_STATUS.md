@@ -1,5 +1,49 @@
 # TPI-DOCS-001 — Master Documentation Status
 
+## TPI-CREATOR-INCENTIVE-001 — Founding Membership foundation — November 2, 2026
+
+Status: **IMPLEMENTED AND TESTED LOCALLY / DEVELOPMENT ONLY. PRODUCTION NOT
+DEPLOYED (NOT AUTHORIZED BY THIS DIRECTIVE).**
+
+The membership, entitlement, registry, numbering, administrative, and Creator
+Incentive eligibility foundation is now implemented in source and verified
+locally. [Directive record](../TPI-DEVELOPMENT/100-DIRECTIVES/TPI-CREATOR-INCENTIVE-001.md)
+and [registry specification](../TPI-DEVELOPMENT/TPI-FOUNDING-MEMBERSHIP-REGISTRY.md).
+
+What is now true:
+
+- Founding Creator `FC-001`–`FC-050`, Founding Contributor `FCT-001`–`FCT-050`,
+  and Founding All-Access `FAA-001`–`FAA-050` are permanent,
+  administrator-assigned identities with non-recycled numbers and a 50-per-class
+  lifetime limit.
+- Creator and Contributor are **cumulative capabilities**, not mutually
+  exclusive roles. All-Access is the union of both capability sets.
+- Creator Incentive eligibility is derived from the Creator capability and is
+  implemented; **all financial incentive policy remains unresolved owner
+  decision**.
+- Nova entitlements have a clean contract. **Nothing in the Nova product family
+  is built, active, or released.**
+
+What is deliberately not done: production migration, production deployment,
+Nova UI, Education Center publishing changes, StudioFlow behavior changes, badge
+artwork changes.
+
+Production remains Worker `daa5aee1-304f-4e96-89a8-86aac2df98e9`. The next
+production step requires a dedicated release directive under OPS-005.
+
+### Updated sequence position
+
+1. **TPI-OPS-005 — COMPLETE.**
+2. **Creator Incentive System + Dual-Member Permissions — FOUNDATION COMPLETE
+   LOCALLY.** Remaining: owner policy decisions (incentive financial rules,
+   transition policy) and the separate production release directive.
+3. **StudioFlow Nova Edit architecture** — not started; entitlement hook exists.
+4. **Nova Edit Documents + Slides** — not started.
+5. **Nova Editorial Workspace architecture / GenOffice evaluation** — not
+   started.
+6. **Nova Docs professional editor** — not started.
+7. **Education Center publishing workflow** — unchanged.
+
 ## TPI-DOCS-ROADMAP-001 — Authoritative roadmap update — November 2, 2026
 
 Documentation only. No application code, permission, membership, Education
