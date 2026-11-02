@@ -219,12 +219,25 @@ utility and was not touched.
 
 ## 11. Data safety
 
-- Owner note `Crossroads of the Unknown` was inspected read-only; its content,
-  collection, revision history and identifier were not modified.
-- No note, collection or revision was created, renamed or deleted by this
-  directive. Verification used the synthetic `test_admin` account and the
-  existing test records it already owned.
-- Local state directory `.local-dev/state/v3` was not reset or recreated.
+- Owner note `Crosroads of the Unknown` (`1dc30880-0918-467f-a926-2e7b935b9a49`,
+  owner `local_admin`) still exists, is `active`, and is at revision 30. Its text
+  is the owner's own sentence ending "…Right in Studio Flow. we". Revision 29,
+  which ends "…Right in Studio Flow.", is retained and restorable from Version
+  history. Revision 30 is dated `2026-11-02T02:42:41Z` and contains the same
+  " we" ending visible in the owner's own screenshot, so it reflects the owner's
+  edit rather than any agent action.
+- No agent run in this directive authenticated as `local_admin`, the owner of
+  that note. Every TPI-137A suite uses the synthetic `test_admin` account, whose
+  library does not contain the owner note (confirmed in the captured evidence),
+  and the maintained `local_admin` acceptance suite does not reference Notes at
+  all (`grep -c notes` → 0).
+- No note, collection, revision or attachment was created, renamed or deleted by
+  this directive.
+- Local database read-only counts at completion: 228 notes, 20 collections, 510
+  revisions, 0 attachments. The increase over the TPI-137 counts is the test
+  records the synthetic QA suites own.
+- Local state directory `.local-dev/state/v3` was not reset or recreated. The
+  audit used a copied snapshot, not the live files.
 
 ## 12. Acceptance results
 
@@ -281,6 +294,14 @@ byte-identical to its pre-directive state: `src/App.tsx`
 `9f85f9d`.
 
 ## 14. Release readiness
+
+`npm run release:preflight` completed every gate and reported **`status: READY`
+with exit 0** at website commit `05a8382`, with
+`rollbackVersion` `3082475b-80ad-4557-82d6-32618e3f7079` — the Worker still
+serving production. The run included the new visual gate (**67/67 PASS**), the
+TPI-137 acceptance gate (36/36 PASS), the authoritative staging verification and
+the continuity/lineage guard, and finished with the guarded Wrangler dry-run.
+Nothing was deployed.
 
 The production Notes schema blocker from TPI-137 is unchanged and still enforced
 by `scripts/verify/tpi-studioflow-137-production-schema.mjs`. A successful
