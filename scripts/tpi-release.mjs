@@ -230,7 +230,22 @@ async function preflight() {
   run("Scene production item persistence regression", process.execPath, ["scripts/verify/tpi-studioflow-135-scene-persistence.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Complete Notes workspace restoration acceptance (TPI-STUDIOFLOW-137): the
+  // approved Notes workspace must be reachable from both entry points, must
+  // persist through the account-backed endpoint across a refresh, and must
+  // coexist with the older right-side scratchpad. A regression here blocks the
+  // release, because losing the workspace again is the defect being prevented
+  // (TPI-STUDIOFLOW-136/137).
+  run("Complete Notes workspace restoration acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-restoration.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
+  // Approved-feature continuity and release-lineage guard (TPI-STUDIOFLOW-137):
+  // a new approved commit must descend from the previous one and must still
+  // contain the approved Notes entry points and bundle markers. This is the
+  // check that would have failed at TPI-STUDIOFLOW-130 instead of silently
+  // removing the workspace from production.
+  run("Approved feature continuity and release lineage guard", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-continuity.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
   const rollbackVersion = activeProductionVersion();
@@ -243,6 +258,11 @@ async function preflight() {
 }
 async function deploy() {
   if (process.env.TPI_PRODUCTION_DEPLOY !== "approved") fail("deployment requires TPI_PRODUCTION_DEPLOY=approved");
+  // TPI-STUDIOFLOW-137: a release that depends on database schema must refuse to
+  // deploy while that schema is absent. Deploying the Notes workspace before its
+  // tables exist would serve an interface that cannot save anything, so this gate
+  // fails closed and names the migrations that must be authorized and applied.
+  run("Production schema readiness", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler } });
   const release = await preflight();
   if (assertGitReleaseState() !== release.sourceCommit) fail("release source changed after preflight");
   let deployedVersion = "";
