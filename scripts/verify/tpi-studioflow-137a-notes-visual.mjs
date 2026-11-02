@@ -81,14 +81,43 @@ async function waitFor(description, predicate, timeout = 30_000, interval = 200)
   throw new Error(`timed out waiting for ${description}: ${last}`);
 }
 
+// Production sign-in redirects to the member home before the session settles, so
+// a Studio request issued too early can land back on the login page. Sign in
+// again and retry the navigation rather than refreshing whatever page we landed
+// on.
+async function reauthenticate() {
+  await driver.get(`${base}/member-login.html`);
+  await sleep(700);
+  const submitted = await js(`
+    var form = document.querySelector('form[data-member-login]');
+    if (!form) return false;
+    var user = form.querySelector('input[name="username"]');
+    var pass = form.querySelector('input[name="password"]');
+    if (!user || !pass) return false;
+    user.value = arguments[0]; pass.value = arguments[1];
+    ['input', 'change'].forEach(function (type) { user.dispatchEvent(new Event(type, { bubbles: true })); pass.dispatchEvent(new Event(type, { bubbles: true })); });
+    form.querySelector('button[type=submit]').click();
+    return true;
+  `, account.username, account.password);
+  if (!submitted) return false;
+  await waitFor("authenticated session", async () => Boolean(await jsAsync(`
+    var done = arguments[arguments.length - 1];
+    fetch('/api/auth/me', { credentials: 'same-origin' })
+      .then(function (response) { return response.json().catch(function () { return {}; }).then(function (body) { done(response.ok && Boolean(body.user)); }); })
+      .catch(function () { done(false); });
+  `)), 30_000).catch(() => null);
+  return true;
+}
+
 async function ensureShell() {
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       await waitFor("StudioFlow shell", async () => (await driver.findElements(By.css(".app-shell"))).length > 0, 45_000);
       return true;
     } catch (error) {
-      if (attempt === 1) throw error;
-      await driver.navigate().refresh();
+      if (attempt === 2) throw error;
+      if ((await driver.findElements(By.css("form[data-member-login]"))).length > 0) await reauthenticate();
+      await driver.get(`${base}/studio/`);
       await sleep(1500);
     }
   }

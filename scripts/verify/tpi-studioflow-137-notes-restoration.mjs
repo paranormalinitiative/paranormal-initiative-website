@@ -84,7 +84,13 @@ const folderName = `TPI 137 Folder ${stamp}`;
 
 const options = new firefox.Options().setBinary(binary).addArguments("-headless");
 const service = new firefox.ServiceBuilder(geckodriver);
-const driver = await new Builder().forBrowser("firefox").setFirefoxOptions(options).setFirefoxService(service).build();
+// The workspace asks for confirmation with native dialogs (new folder, permanent
+// delete). Accept them deliberately instead of letting the driver dismiss them.
+const driver = await new Builder()
+  .withCapabilities({ browserName: "firefox", unhandledPromptBehavior: "ignore" })
+  .setFirefoxOptions(options)
+  .setFirefoxService(service)
+  .build();
 
 async function js(script, ...args) {
   return driver.executeScript(script, ...args);
@@ -105,16 +111,45 @@ const readNavItems = () => js(`
   return Array.from(document.querySelectorAll('.side-nav .nav-item')).map(function (item) { return (item.textContent || '').trim(); });
 `);
 
+// Production sign-in redirects to the member home before the session settles, so
+// a Studio request issued too early can land back on the login page. Sign in
+// again and retry the navigation rather than refreshing whatever page we landed
+// on.
+async function reauthenticate() {
+  await driver.get(`${base}/member-login.html`);
+  await sleep(700);
+  const submitted = await js(`
+    var form = document.querySelector('form[data-member-login]');
+    if (!form) return false;
+    var user = form.querySelector('input[name="username"]');
+    var pass = form.querySelector('input[name="password"]');
+    if (!user || !pass) return false;
+    user.value = arguments[0]; pass.value = arguments[1];
+    ['input', 'change'].forEach(function (type) { user.dispatchEvent(new Event(type, { bubbles: true })); pass.dispatchEvent(new Event(type, { bubbles: true })); });
+    form.querySelector('button[type=submit]').click();
+    return true;
+  `, account.username, account.password);
+  if (!submitted) return false;
+  await waitFor("authenticated session", async () => Boolean(await jsAsync(`
+    var done = arguments[arguments.length - 1];
+    fetch('/api/auth/me', { credentials: 'same-origin' })
+      .then(function (response) { return response.json().catch(function () { return {}; }).then(function (body) { done(response.ok && Boolean(body.user)); }); })
+      .catch(function () { done(false); });
+  `)), 30_000).catch(() => null);
+  return true;
+}
+
 // The first paint after a managed Worker restart can be slow, and a reload is
 // cheaper and more honest than waiting indefinitely for one document.
 async function ensureShell() {
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       await waitFor("StudioFlow shell", async () => (await driver.findElements(By.css(".app-shell"))).length > 0, 45_000);
       return true;
     } catch (error) {
-      if (attempt === 1) throw error;
-      await driver.navigate().refresh();
+      if (attempt === 2) throw error;
+      if ((await driver.findElements(By.css("form[data-member-login]"))).length > 0) await reauthenticate();
+      await driver.get(`${base}/studio/`);
       await sleep(1500);
     }
   }
@@ -178,6 +213,21 @@ async function selectLibraryNote(title, attemptLimit = 6) {
       if (selected) return true;
     }
     await sleep(500);
+  }
+  return false;
+}
+
+// Accepts the next native dialog, whichever control raised it.
+async function acceptNativeDialog(timeout = 6_000) {
+  const started = Date.now();
+  while (Date.now() - started < timeout) {
+    try {
+      const dialog = await driver.switchTo().alert();
+      await dialog.accept();
+      return true;
+    } catch {
+      await sleep(150);
+    }
   }
   return false;
 }
@@ -521,7 +571,30 @@ try {
     return Boolean(card);
   `, noteTitle);
   await waitFor("permanent delete control", async () => (await driver.findElements(By.css('.notes-editor-actions button[aria-label="Delete permanently"]'))).length === 1, 15_000).catch(() => null);
+  // The real safety property is that the API refuses an unconfirmed permanent
+  // deletion; a headless browser may resolve the native dialog without leaving
+  // it observable, so that is checked here rather than inferred from a dialog.
+  const guard = await jsAsync(`
+    var done = arguments[arguments.length - 1];
+    var wanted = String(arguments[0] || '');
+    var headers = { 'Content-Type': 'application/json' };
+    fetch('/api/notes?status=all', { credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (body) {
+        return (body.notes || []).find(function (item) { return item.title === wanted; });
+      })
+      .then(function (note) {
+        if (!note) return done({ error: 'note not found' });
+        return fetch('/api/notes/' + note.id + '/permanent-delete', { method: 'POST', credentials: 'same-origin', headers: headers, body: '{}' })
+          .then(function (response) { return response.text().then(function (text) { done({ status: response.status, body: text.slice(0, 160) }); }); });
+      })
+      .catch(function (error) { done({ error: String(error) }); });
+  `, noteTitle);
+  check("permanent deletion refuses a request without the confirmation phrase", (guard?.status ?? 0) >= 400 && (guard?.status ?? 0) < 500,
+    JSON.stringify(guard));
+
   await js(`var button = document.querySelector('.notes-editor-actions button[aria-label="Delete permanently"]'); if (button) button.click(); return Boolean(button);`);
+  await acceptNativeDialog(8_000);
   await sleep(900);
   await js(`
     var button = Array.from(document.querySelectorAll('.modal button, .confirm-dialog button, button')).find(function (item) { return /delete permanently/i.test(item.textContent || ''); });
@@ -535,23 +608,32 @@ try {
 
   // Earlier runs of this suite may have left notes behind when an assertion
   // failed before cleanup. Only notes this suite titles are removed.
+  // Permanent deletion requires the confirmation phrase and the current version,
+  // so the sweep must read each note back before deleting it.
   const swept = await jsAsync(`
     var done = arguments[arguments.length - 1];
     var pattern = /TPI 137|Restored Notes workspace acceptance body/;
     var headers = { 'Content-Type': 'application/json' };
+    var json = function (response) { return response.json().catch(function () { return {}; }); };
     fetch('/api/notes?status=all', { credentials: 'same-origin' })
-      .then(function (r) { return r.json(); })
+      .then(json)
       .then(function (body) {
         var targets = (body.notes || []).filter(function (note) { return pattern.test(note.title || ''); });
         return targets.reduce(function (chain, note) {
           return chain
             .then(function () { return fetch('/api/notes/' + note.id + (note.status === 'trash' ? '' : '/trash'), { method: 'POST', credentials: 'same-origin', headers: headers, body: '{}' }); })
-            .then(function () { return fetch('/api/notes/' + note.id + '/permanent-delete', { method: 'POST', credentials: 'same-origin', headers: headers, body: '{}' }); });
-        }, Promise.resolve()).then(function () { done({ removed: targets.length }); });
+            .then(function () { return fetch('/api/notes/' + note.id, { credentials: 'same-origin' }).then(json); })
+            .then(function (fresh) { return fetch('/api/notes/' + note.id + '/permanent-delete', { method: 'POST', credentials: 'same-origin', headers: headers, body: JSON.stringify({ confirmation: 'DELETE PERMANENTLY', expectedVersion: fresh.note ? fresh.note.version : note.version }) }); });
+        }, Promise.resolve()).then(function () {
+          return fetch('/api/notes?status=all', { credentials: 'same-origin' }).then(json).then(function (after) {
+            var remaining = (after.notes || []).filter(function (note) { return pattern.test(note.title || ''); });
+            done({ removed: targets.length, remaining: remaining.map(function (note) { return note.title; }) });
+          });
+        });
       })
       .catch(function (error) { done({ removed: 0, error: String(error) }); });
   `);
-  check("suite-titled leftover notes are swept", (swept?.removed ?? 0) >= 0, JSON.stringify(swept));
+  check("no suite-titled note is left behind in the account", Array.isArray(swept?.remaining) && swept.remaining.length === 0, JSON.stringify(swept));
 
   const shot = await driver.takeScreenshot().catch(() => null);
   if (shot) writeFileSync(join(evidenceRoot, "tpi-137-notes-workspace.png"), shot, "base64");

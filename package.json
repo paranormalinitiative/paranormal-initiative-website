@@ -34,6 +34,8 @@
     "verify:studioflow-135-scene-persistence": "node scripts/verify/tpi-studioflow-135-scene-persistence.mjs",
     "verify:studioflow-137-notes": "node scripts/verify/tpi-studioflow-137-notes-restoration.mjs",
     "verify:studioflow-137a-notes-visual": "node scripts/verify/tpi-studioflow-137a-notes-visual.mjs",
+    "verify:studioflow-137r-home": "node scripts/verify/tpi-studioflow-137r-home-layout.mjs",
+    "verify:studioflow-137r-mobile": "node scripts/verify/tpi-studioflow-137r-mobile-viewport.mjs",
     "verify:studioflow-137-continuity": "node scripts/verify/tpi-studioflow-137-notes-continuity.mjs",
     "verify:studioflow-137-production-schema": "node scripts/verify/tpi-studioflow-137-production-schema.mjs",
     "verify:studioflow-107-provenance": "node scripts/verify/tpi-studioflow-107-source-provenance.mjs",

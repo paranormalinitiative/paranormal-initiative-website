@@ -247,6 +247,17 @@ async function preflight() {
   run("Complete Notes workspace visual acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137a-notes-visual.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Home layout acceptance (TPI-STUDIOFLOW-137R addendum 01): the complete Create
+  // set must stay on one row at desktop widths and My Studios must keep its
+  // separation from the list below. Both were owner-reported regressions.
+  run("Home layout acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137r-home-layout.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
+  // True small-viewport acceptance: a same-origin 390/375px frame gives a real
+  // CSS viewport that this host's minimum window width cannot produce.
+  run("True mobile viewport acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137r-mobile-viewport.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   // Approved-feature continuity and release-lineage guard (TPI-STUDIOFLOW-137):
   // a new approved commit must descend from the previous one and must still
