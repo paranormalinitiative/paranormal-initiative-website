@@ -22,9 +22,11 @@ creates disposable Studios through the real dashboard, inspects the stored
 snapshot, reloads the page for real, exercises the live Teleprompter, switches
 Studios, removes a row, replays a legacy snapshot and purges its own records.
 It passed **30/30** on the isolated disposable Worker and **30/30** on the
-authoritative `8787` Worker. Adjacent suites still pass: TPI-134 Firefox
-(43/43), TPI-133 (44/44), TPI-037 Scenes panel (20/20), release safety (21
-checks) and TPI-107 provenance. No bundle hash changed (the React bundle was not
+authoritative `8787` Worker, and **30/30** inside the full guarded preflight,
+which finished **READY with exit 0** at `sourceCommit 05ac821` with
+`rollbackVersion 4de115db`. Adjacent suites also pass: TPI-134 Firefox (43/43),
+TPI-133 (44/44), TPI-037 Scenes panel (20/20), Studio ownership, Studio deletion
+and deletion safety, release safety (21 checks) and TPI-107 provenance. No bundle hash changed (the React bundle was not
 modified); only the unbundled bridge was restaged. Production remains on Worker
 `4de115db-6537-41b5-9bf7-ae99cb0e20fc`, so the live defect stays visible until a
 separately authorized release.

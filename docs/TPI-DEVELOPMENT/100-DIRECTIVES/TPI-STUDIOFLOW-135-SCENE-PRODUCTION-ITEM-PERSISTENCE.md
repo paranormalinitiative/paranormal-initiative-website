@@ -127,7 +127,7 @@ Adjacent maintained suites on the authoritative Worker after the change:
 | TPI-STUDIOFLOW-037 Scenes panel | **PASS 20/20** |
 | `verify:release-safety` | **PASSED** (21 checks) |
 | TPI-STUDIOFLOW-107 source provenance | **PASS** |
-| Guarded `release:preflight` | see the status record |
+| Guarded `release:preflight` | **READY, exit 0** — `sourceCommit 05ac821`, `rollbackVersion 4de115db`; nested gates: TPI-135 **30/30**, TPI-134 **43/43**, TPI-133 **44/44**, staging VERIFIED, dry run clean |
 
 Pre-existing, not caused by this change and deliberately not "fixed" here:
 
