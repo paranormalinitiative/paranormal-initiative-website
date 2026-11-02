@@ -160,7 +160,10 @@ export function collectSourceIdentity(repoRoot, { branch, studioFlowRoot, gitRun
     remoteParity: remote && remote === websiteCommit ? "exact" : remote ? "diverged" : "missing",
     studioflowCommit,
     dependencyLock: hashFileList(repoRoot, DEPENDENCY_LOCK_FILES),
-    studioflowLock: studioFlowRoot ? hashFileList(studioflowRoot, ["package-lock.json"]) : null,
+    // Always hash the resolved StudioFlow root. Verification passes no explicit
+    // root, so gating this on the raw parameter made the two runs compare
+    // against different states and refused a valid certification.
+    studioflowLock: hashFileList(studioflowRoot, ["package-lock.json"]),
     releaseTooling: hashFileList(repoRoot, RELEASE_TOOLING_FILES),
     releaseConfiguration: hashFileList(repoRoot, RELEASE_CONFIGURATION_FILES),
   };

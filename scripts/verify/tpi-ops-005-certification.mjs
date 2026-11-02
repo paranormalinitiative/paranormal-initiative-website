@@ -159,6 +159,20 @@ record(
   `status=${manifest.status} digest=${manifest.manifestDigest}`,
 );
 
+// Verification is normally called without an explicit StudioFlow root, so it
+// must resolve the same lockfile certification used. Reading the raw parameter
+// instead refused a valid certification, so this is a permanent assertion.
+{
+  const previous = process.env.STUDIOFLOW_ROOT;
+  process.env.STUDIOFLOW_ROOT = repo;
+  try {
+    expectAccepted("verification resolves the StudioFlow root the way certification did", () => verifyCertification({ repoRoot: repo, candidateRoot }));
+  } finally {
+    if (previous === undefined) delete process.env.STUDIOFLOW_ROOT;
+    else process.env.STUDIOFLOW_ROOT = previous;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // 2. Canonical digest is deterministic across key order.
 // ---------------------------------------------------------------------------
