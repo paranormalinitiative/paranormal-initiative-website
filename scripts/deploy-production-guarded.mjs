@@ -132,9 +132,10 @@ try {
     // are copied into the candidate so the deployed Worker cannot change after
     // certification, and so `main` no longer points into the live worktree.
     const workerRoot = join(candidateRoot, CANDIDATE_WORKER_DIRECTORY);
+    const workerFilter = (source) => !source.endsWith(`${sep}.DS_Store`);
     cpSync(join(repoRoot, "worker.js"), join(workerRoot, "worker.js"));
-    cpSync(join(repoRoot, "lib"), join(workerRoot, "lib"), { recursive: true });
-    cpSync(join(repoRoot, "functions"), join(workerRoot, "functions"), { recursive: true });
+    cpSync(join(repoRoot, "lib"), join(workerRoot, "lib"), { recursive: true, filter: workerFilter });
+    cpSync(join(repoRoot, "functions"), join(workerRoot, "functions"), { recursive: true, filter: workerFilter });
     mkdirSync(join(candidateRoot, CANDIDATE_CONFIGURATION_DIRECTORY), { recursive: true });
     cpSync(join(repoRoot, "wrangler.toml"), join(candidateRoot, CANDIDATE_CONFIGURATION_DIRECTORY, "wrangler.toml"));
 
