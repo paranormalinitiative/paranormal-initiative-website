@@ -1,5 +1,66 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-136 — Complete Notes workspace recovery investigation (2026-11-02)
+
+Status: **INVESTIGATION COMPLETE — RESTORATION PLAN PENDING OWNER AUTHORIZATION.**
+Investigation only: no implementation, merge, migration or deployment was
+performed or authorized.
+
+The missing complete Notes workspace was located intact and unmodified on the
+unmerged StudioFlow branch `codex/studioflow-122-notes` at `a6784cf`
+(worktree `/Users/toddknipple/Documents/StudioFlow/web-122`). It was **not
+deleted**: `git merge-base main codex/studioflow-122-notes` is `main`'s own HEAD
+`9f85f9d`, and the branch is 62 commits ahead, 0 behind.
+
+It reached production under TPI-STUDIOFLOW-126F (source `a6784cf`, Worker
+`1a6a2ab5-db20-4e43-9d10-18a0a1edc784`, deployed `2026-11-01T04:54:30.803Z`,
+artefact `index-CSTJXjG2.js` SHA-256 `94d5ba56…` — hash-verified and containing
+the `notesWorkspaceIntent` marker) and TPI-STUDIOFLOW-127 (source `ded5a3d`,
+Worker `4108a0d7-5833-435f-8a0b-f6be8c1c8b27`).
+
+The loss mechanism is the release baseline, not a deletion. When the TPI-130
+artefact baseline was approved on 2026-11-01 01:54, `scripts/studioflow-release-baseline.json`
+moved `source.approvedCommit` from the Notes tip `a6784cf` to the **sibling**
+lineage `859febc` (main → deletion work → 131 → 133 → 134). That sibling lineage
+has never contained Notes, so TPI-130 through TPI-135R all shipped without it.
+TPI-130 (Worker `99ca2347-3181-4525-b9eb-d28cb61cf42a`) is the release that
+removed Notes from production.
+
+Current live production is provably the `f44f3a0` build: the live JavaScript
+recorded in TPI-135R (`index-D9yljEwa.js`, SHA-256 `e317fc07…`) is byte-identical
+to the repository artefact, whose marker counts are `notesWorkspaceIntent` 0,
+`NotesView` 0, `studioflow.notes.layout` 0, but `studioflow.studioNotes` 1 and
+`"Write private show notes"` 1 — only the old far-right scratchpad remains.
+
+Chrome was not involved. Firefox Developer Edition was the authoritative
+acceptance browser in every Notes directive; Chrome appears only as a
+compatibility target for screen sharing and as the only browser supporting the
+Notes local-folder sync (File System Access API, which fails closed in Firefox
+with a documented ZIP fallback). The TPI-134 handoff independently recorded
+"Chrome was not involved".
+
+Production never had the Notes D1 schema — both Notes-bearing releases record
+"no D1/R2 migration" — so the deployed Notes UI could not persist and **no
+owner Notes data existed in production to lose**. Locally the schema exists with
+204 notes, 3 collections, 429 revisions and 0 attachments, but 203 belong to an
+automated test account and 184 are already in Trash; exactly one genuine
+owner-authored note exists (`Crosroads of the Unknown`, 204 characters).
+
+Recommended restoration is **Option C — Compatibility Adaptation**: an isolated
+worktree at `f44f3a0`, the three new Notes modules (`NotesView.tsx`,
+`projectExport.ts`, `projectFolderSync.ts`) brought across unchanged, the Notes
+styles appended additively, the `App.tsx` integration hand-applied against the
+release lineage, migrations 0055–0057 applied to production only under separate
+authorization, plus an account-backed save/reload gate and the TPI-131/133/134/135
+regression suites. Risk: **HIGH**, driven by `App.tsx` collision with the protected
+uncommitted owner work. Re-pointing the old verified Notes bundle was rejected:
+it predates five shipped releases and would regress TPI-131, 132R, 133, 134 and 135.
+
+The protected uncommitted work in `/Users/toddknipple/Documents/StudioFlow/web`
+(`src/App.tsx`, `src/styles.css`) was preserved untouched. No build, staging,
+migration or deployment command was run, and production inspection was read-only.
+[Investigation record](100-DIRECTIVES/TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md).
+
 ## TPI-STUDIOFLOW-135 — Scene production item persistence (2026-11-01)
 
 Status: **CORRECTED AND VERIFIED LOCALLY — PRODUCTION NOT AUTHORIZED AND STILL

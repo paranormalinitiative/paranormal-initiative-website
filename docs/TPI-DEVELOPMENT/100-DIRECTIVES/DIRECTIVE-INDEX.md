@@ -5,6 +5,18 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-136 — Complete Notes workspace recovery investigation
+
+Status: **INVESTIGATION COMPLETE — RESTORATION PLAN PENDING OWNER
+AUTHORIZATION**. Investigation only; no implementation, merge, migration or
+deployment. The complete Notes workspace was recovered intact on the unmerged
+`codex/studioflow-122-notes` branch (`a6784cf`, 62 commits ahead of `main` with
+`main` as merge-base); it shipped to production under TPI-126F and TPI-127 and
+left production when the TPI-130 baseline pinned the sibling lineage `859febc`.
+No source was deleted and the Chrome/Firefox transition did not contribute.
+Recommendation: Option C controlled port onto `f44f3a0`, risk HIGH.
+[Investigation record](TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md).
+
 ## TPI-STUDIOFLOW-126F — Final production deployment and Firefox acceptance
 
 Status: **COMPLETE / DEPLOYED AND VERIFIED IN PRODUCTION**. The approved
@@ -1050,3 +1062,4 @@ kept in both places so no issued text is lost.
 | TPI-STUDIOFLOW-122H.1 | Local Podcast Project Folders and Operating System Integration | 2026-10-31 | [TPI-STUDIOFLOW-122H1-LOCAL-PROJECT-FOLDER.md](TPI-STUDIOFLOW-122H1-LOCAL-PROJECT-FOLDER.md) |
 | TPI-STUDIOFLOW-122H.2 | Local Project Folder Verification and Completion | 2026-10-31 | [TPI-STUDIOFLOW-122H2-LOCAL-FOLDER-VERIFICATION.md](TPI-STUDIOFLOW-122H2-LOCAL-FOLDER-VERIFICATION.md) |
 | TPI-STUDIOFLOW-087 | INDEPENDENT STUDIOS, STUDIO DASHBOARDS, AND PRODUCTION OWNERSHIP | 2026-10-25 | [TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md](TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md) |
+| TPI-STUDIOFLOW-136 | Complete Notes Workspace Recovery and Development History Investigation | 2026-11-02 | [TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md](TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md) |
