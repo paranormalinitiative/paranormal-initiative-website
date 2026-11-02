@@ -111,7 +111,15 @@ try {
     candidateRoot = stageOutFlag ? resolve(stageOutFlag) : temporary("tpi-production-assets-");
     prepareCandidateDirectory(candidateRoot);
     const assetsRoot = join(candidateRoot, CANDIDATE_ASSETS_DIRECTORY);
-    cpSync(repoRoot, assetsRoot, { recursive: true, filter });
+    // The certified candidate lives inside the repository (`.local-dev`), so the
+    // whole-tree copy would be a copy into its own subdirectory, which cpSync
+    // refuses. Copying the filtered top-level entries produces the identical
+    // asset set and cannot recurse into the candidate itself.
+    for (const entry of readdirSync(repoRoot, { withFileTypes: true })) {
+      const source = join(repoRoot, entry.name);
+      if (!filter(source)) continue;
+      cpSync(source, join(assetsRoot, entry.name), { recursive: true, filter });
+    }
     // Keep one source of truth for shared includes while avoiding the
     // standalone clean-URL rewrite that affects footer.html/member-sidebar.html.
     cpSync(join(assetsRoot, "footer.html"), join(assetsRoot, "footer.txt"));
