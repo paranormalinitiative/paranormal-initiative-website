@@ -17,7 +17,7 @@
 import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const studioFlowRoot = process.env.STUDIOFLOW_ROOT || "/Users/toddknipple/Documents/StudioFlow/web";
@@ -26,6 +26,54 @@ const branch = "codex/tpi-development";
 const worker = "theparanormalinitiative";
 const mode = process.argv[2] || "preflight";
 const releaseStatePath = resolve(repoRoot, ".local-dev/release-preflight.json");
+const releaseTimingsPath = resolve(repoRoot, `.local-dev/release-timings-${mode}.json`);
+
+// TPI-OPS-004 release timing instrumentation.
+//
+// Every phase is measured with a monotonic clock. Each entry's `elapsedMs` is
+// the interval since the previous entry, so the entries sum to the workflow
+// total and no time is silently unattributed. This is measurement only: it
+// changes no gate, no assertion, no order and no pass/fail decision, and it
+// writes nothing outside ignored `.local-dev` state. Timing must never be able
+// to fail a release, so all recording is best-effort.
+const releaseStartedAt = performance.now();
+const timeline = [];
+let lastMarkAt = releaseStartedAt;
+let currentStage = "startup";
+
+function stamp(ms) {
+  const totalSeconds = Math.max(0, ms) / 1000;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds - minutes * 60;
+  return `${minutes}:${seconds.toFixed(3).padStart(6, "0")}`;
+}
+function mark(name, detail = {}) {
+  const now = performance.now();
+  const elapsedMs = Math.round(now - lastMarkAt);
+  lastMarkAt = now;
+  const entry = { stage: currentStage, phase: name, elapsedMs, startedAtMs: Math.round(now - releaseStartedAt - elapsedMs), ...detail };
+  timeline.push(entry);
+  console.log(`   [${stamp(now - releaseStartedAt)}] +${stamp(elapsedMs)}  ${name}`);
+  return entry;
+}
+function writeTimings(status) {
+  const totalMs = Math.round(performance.now() - releaseStartedAt);
+  const cloudflareMs = timeline.filter(entry => entry.bucket === "cloudflare").reduce((sum, entry) => sum + entry.elapsedMs, 0);
+  const browserMs = timeline.filter(entry => entry.browser === true).reduce((sum, entry) => sum + entry.elapsedMs, 0);
+  const gatesMs = timeline.filter(entry => entry.kind === "gate").reduce((sum, entry) => sum + entry.elapsedMs, 0);
+  const summary = { mode, status, totalMs, total: stamp(totalMs), gateMs: gatesMs, browserGateMs: browserMs, cloudflareMs, phases: timeline };
+  try {
+    mkdirSync(resolve(releaseTimingsPath, ".."), { recursive: true });
+    writeFileSync(releaseTimingsPath, `${JSON.stringify(summary, null, 2)}\n`, { mode: 0o600 });
+  } catch { /* timing must never fail a release */ }
+  const width = Math.max(12, ...timeline.map(entry => entry.phase.length));
+  console.log(`\n== Release timing summary (${mode}: ${status}) ==`);
+  console.log(`${"phase".padEnd(width)}  ${"duration".padStart(9)}  ${"at".padStart(9)}`);
+  for (const entry of timeline) console.log(`${entry.phase.padEnd(width)}  ${stamp(entry.elapsedMs).padStart(9)}  ${stamp(entry.startedAtMs).padStart(9)}`);
+  console.log(`${"TOTAL".padEnd(width)}  ${stamp(totalMs).padStart(9)}`);
+  console.log(`machine-readable: ${relative(repoRoot, releaseTimingsPath)}`);
+  return summary;
+}
 
 function fail(message) { throw new Error(message); }
 function output(command, args, options = {}) {
@@ -45,7 +93,11 @@ function run(label, command, args, options = {}) {
     stdio: "inherit",
     maxBuffer: 64 * 1024 * 1024,
   });
-  if (result.error) fail(`${label}: ${result.error.message}`);
+  if (result.error) {
+    mark(label, { kind: "gate", status: "error", ...(options.timing || {}) });
+    fail(`${label}: ${result.error.message}`);
+  }
+  mark(label, { kind: "gate", status: result.status === 0 ? "pass" : "fail", ...(options.timing || {}) });
   if (result.status !== 0) fail(`${label}: exit ${result.status}`);
 }
 function hashFile(path) { return createHash("sha256").update(readFileSync(path)).digest("hex"); }
@@ -84,6 +136,7 @@ async function waitFor(url, timeoutMs = 30_000, acceptedStatuses = null) {
 async function waitForLocalReleaseSurfaces() {
   await waitFor("http://127.0.0.1:8787/", 30_000, [200]);
   await waitFor("http://127.0.0.1:8787/studio/", 30_000, [200, 401, 403]);
+  mark("Local Worker surfaces ready after restart");
 }
 async function runLocalAuthCheck(label) {
   let lastError;
@@ -146,18 +199,28 @@ async function verifyAuthLifecycle() {
   if (JSON.stringify(before) !== JSON.stringify(after)) fail("local_admin credential or database fingerprint changed during restart/build verification");
   run("Firefox Developer Edition local_admin acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "local_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
+    timing: { bucket: "certification", browser: true },
   });
   console.log("Local administrator lifecycle: PASS (credential preserved, restart/build/login/browser verified).");
 }
 async function preflight() {
+  currentStage = "preflight";
+  const preflightStarted = performance.now();
   const sourceCommit = assertGitReleaseState();
-  run("Release workflow safety contract", process.execPath, ["scripts/verify/tpi-release-safety.mjs"]);
+  mark("Git clean-tree, branch and GitHub parity verification", { bucket: "certification" });
+  run("Release workflow safety contract", process.execPath, ["scripts/verify/tpi-release-safety.mjs"], { timing: { bucket: "certification" } });
+  // TPI-OPS-004: the production staging copy must stay within the published
+  // asset set. Copying discarded local runtime state made every dry-run and
+  // deployment walk ~32k files (~2.1 GB) that `.assetsignore` then threw away,
+  // and it made iteration artifacts look like release candidates.
+  run("Release staging guard", process.execPath, ["scripts/verify/tpi-ops-004-release-staging-guard.mjs"], { timing: { bucket: "staging" } });
   // Build the complete local asset tree before restarting Wrangler. Replacing
   // the watched directory after startup can leave Miniflare serving the new
   // HTML with an old asset manifest, which presents as a blank StudioFlow page.
-  run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"]);
+  run("Stage local assets", process.execPath, ["scripts/stage-local-assets.mjs"], { timing: { bucket: "staging" } });
   await verifyAuthLifecycle();
   const adminBefore = localAdminFingerprint();
+  mark("Persistent local_admin fingerprint (before isolated E2E)", { bucket: "certification" });
     await runLocalAuthCheck("Persistent development authentication");
   startIsolatedE2E();
   try {
@@ -171,6 +234,7 @@ async function preflight() {
   if (JSON.stringify(adminBefore) !== JSON.stringify(localAdminFingerprint())) fail("isolated E2E changed the persistent development administrator");
   run("Firefox Developer Edition release acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin", TPI_FIREFOX_BASE_URL: "http://127.0.0.1:8787" },
+    timing: { bucket: "certification", browser: true },
   });
   // Studio Management lifecycle regression (Directive Tests 1-10 plus owner
   // workflow checks H1-H2). Required in the maintained release verification so
@@ -178,6 +242,7 @@ async function preflight() {
   // the release instead of reaching production (TPI-STUDIOFLOW-OWNER-VERIFICATION-001 §11).
   run("Studio Management lifecycle regression", process.execPath, ["scripts/verify/tpi-studioflow-studio-lifecycle.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Studio ownership and dashboard regression (TPI-STUDIOFLOW-087 Directive
   // Tests 1-13): homepage Studio cards, per-Studio dashboards, production
@@ -185,6 +250,7 @@ async function preflight() {
   // regression here blocks the release (TPI-STUDIOFLOW-087 §13).
   run("Studio ownership and dashboard regression", process.execPath, ["scripts/verify/tpi-studioflow-087-studio-ownership.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Studio deletion and archive management regression (TPI-STUDIOFLOW-088
   // Directive Tests 1-10): typed-name delete confirmation, permanent deletion
@@ -193,6 +259,7 @@ async function preflight() {
   // here blocks the release (TPI-STUDIOFLOW-088 §8).
   run("Studio deletion and archive management regression", process.execPath, ["scripts/verify/tpi-studioflow-088-studio-deletion.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Studio deletion safety and data integrity regression (TPI-STUDIOFLOW-089
   // supplemental QA scenarios 1-12): pre-deletion inventory disclosure, the two
@@ -202,6 +269,7 @@ async function preflight() {
   // (TPI-STUDIOFLOW-089 §8).
   run("Studio deletion safety and data integrity regression", process.execPath, ["scripts/verify/tpi-studioflow-089-deletion-safety.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Floating Studio actions menu positioning regression (TPI-STUDIOFLOW-133):
   // the More Actions menu must anchor to the card that opened it, flip above
@@ -211,6 +279,7 @@ async function preflight() {
   // release (TPI-STUDIOFLOW-133 §8).
   run("Floating Studio actions menu positioning regression", process.execPath, ["scripts/verify/tpi-studioflow-133-floating-studio-menu.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Production-item colors and Teleprompter-to-Scenes drag-and-drop regression
   // (TPI-STUDIOFLOW-134): the approved orange video, purple Teleprompter, blue
@@ -220,6 +289,7 @@ async function preflight() {
   // regression here blocks the release (TPI-STUDIOFLOW-125/126A/134).
   run("Production item colors and Teleprompter scene drag regression", process.execPath, ["scripts/verify/tpi-studioflow-134-firefox.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Scene production item persistence regression (TPI-STUDIOFLOW-135): a Scene
   // script must survive an account-backed save and a real browser reload. The
@@ -229,6 +299,7 @@ async function preflight() {
   // blocks the release (TPI-STUDIOFLOW-135 §10).
   run("Scene production item persistence regression", process.execPath, ["scripts/verify/tpi-studioflow-135-scene-persistence.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Complete Notes workspace restoration acceptance (TPI-STUDIOFLOW-137): the
   // approved Notes workspace must be reachable from both entry points, must
@@ -238,6 +309,7 @@ async function preflight() {
   // (TPI-STUDIOFLOW-136/137).
   run("Complete Notes workspace restoration acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-restoration.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Complete Notes workspace visual acceptance (TPI-STUDIOFLOW-137A): the port at
   // TPI-137 shipped the workspace with the approved CSS silently missing, so the
@@ -246,17 +318,20 @@ async function preflight() {
   // styling at every required viewport size.
   run("Complete Notes workspace visual acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137a-notes-visual.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // Home layout acceptance (TPI-STUDIOFLOW-137R addendum 01): the complete Create
   // set must stay on one row at desktop widths and My Studios must keep its
   // separation from the list below. Both were owner-reported regressions.
   run("Home layout acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137r-home-layout.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   // True small-viewport acceptance: a same-origin 390/375px frame gives a real
   // CSS viewport that this host's minimum window width cannot produce.
   run("True mobile viewport acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137r-mobile-viewport.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+    timing: { bucket: "certification", browser: true },
   });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   // Approved-feature continuity and release-lineage guard (TPI-STUDIOFLOW-137):
@@ -267,23 +342,31 @@ async function preflight() {
   run("Approved feature continuity and release lineage guard", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-continuity.mjs"]);
   const finalSourceCommit = assertGitReleaseState();
   if (finalSourceCommit !== sourceCommit) fail("release source commit changed during preflight");
+  mark("Post-staging Git cleanliness and parity recheck", { bucket: "certification" });
   const rollbackVersion = activeProductionVersion();
   ensureCloudflareAccess(rollbackVersion);
-  run("Guarded Wrangler dry-run", process.execPath, ["scripts/deploy-production-guarded.mjs", "--dry-run"], { env: { TPI_WRANGLER_BIN: wrangler } });
+  mark("Cloudflare account, active version and rollback-version prechecks", { bucket: "cloudflare-account" });
+  run("Guarded Wrangler dry-run", process.execPath, ["scripts/deploy-production-guarded.mjs", "--dry-run"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "staging" } });
   mkdirSync(resolve(releaseStatePath, ".."), { recursive: true });
   writeFileSync(releaseStatePath, `${JSON.stringify({ schemaVersion: 1, sourceCommit, branch, worker, rollbackVersion, verifiedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
+  mark("Write preflight release state", { bucket: "staging" });
+  mark("Preflight complete", { bucket: "certification", preflightMs: Math.round(performance.now() - preflightStarted) });
   console.log(JSON.stringify({ status: "READY", sourceCommit, worker, rollbackVersion, releaseStatePath: ".local-dev/release-preflight.json" }, null, 2));
   return { sourceCommit, rollbackVersion };
 }
 async function deploy() {
+  currentStage = "deployment";
   if (process.env.TPI_PRODUCTION_DEPLOY !== "approved") fail("deployment requires TPI_PRODUCTION_DEPLOY=approved");
+  mark("Production deploy authorization guard", { bucket: "production" });
   // TPI-STUDIOFLOW-137: a release that depends on database schema must refuse to
   // deploy while that schema is absent. Deploying the Notes workspace before its
   // tables exist would serve an interface that cannot save anything, so this gate
   // fails closed and names the migrations that must be authorized and applied.
-  run("Production schema readiness", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler } });
+  run("Production schema readiness", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "production" } });
   const release = await preflight();
+  currentStage = "deployment";
   if (assertGitReleaseState() !== release.sourceCommit) fail("release source changed after preflight");
+  mark("Post-preflight Git recheck before upload", { bucket: "production" });
   let deployedVersion = "";
   try {
     const result = spawnSync(process.execPath, ["scripts/deploy-production-guarded.mjs"], {
@@ -294,10 +377,11 @@ async function deploy() {
     });
     process.stdout.write(result.stdout || "");
     process.stderr.write(result.stderr || "");
+    mark("Guarded production deployment (staging copy + Wrangler upload and activation)", { bucket: "cloudflare" });
     if (result.error || result.status !== 0) fail(`guarded deployment failed${result.error ? `: ${result.error.message}` : ""}`);
     deployedVersion = (result.stdout || "").match(/Current Version ID:\s*([0-9a-f-]{36})/)?.[1] || "";
     if (!deployedVersion) fail("deployment completed without a readable Worker version ID");
-    run("Live anonymous production smoke", process.execPath, ["scripts/qa/production-smoke.mjs"]);
+    run("Live anonymous production smoke", process.execPath, ["scripts/qa/production-smoke.mjs"], { timing: { bucket: "production" } });
     run("Live isolated Firefox Developer Edition acceptance", process.execPath, ["scripts/verify/tpi-studioflow-firefox-acceptance.mjs"], {
       env: {
         TPI_FIREFOX_BASE_URL: "https://paranormalinitiative.com",
@@ -306,24 +390,28 @@ async function deploy() {
         TPI_FIREFOX_ACCOUNT: "production_qa",
         TPI_FIREFOX_PRODUCTION_CREDENTIALS_FILE: resolve(repoRoot, ".local-dev/qa-studioflow-prod.json"),
       },
+      timing: { bucket: "production", browser: true },
     });
     if (activeProductionVersion() !== deployedVersion) fail("new Worker version is not receiving 100% traffic");
+    mark("Confirm new Worker version holds 100% traffic", { bucket: "production" });
     console.log(JSON.stringify({ status: "DEPLOYED_AND_VERIFIED", sourceCommit: release.sourceCommit, worker, deployedVersion, rollbackVersion: release.rollbackVersion }, null, 2));
   } catch (error) {
     console.error(`Production acceptance failed: ${error instanceof Error ? error.message : error}`);
     console.error(`Rolling back ${worker} to ${release.rollbackVersion}.`);
-    run("Guarded Worker rollback", wrangler, ["rollback", release.rollbackVersion, "--name", worker, "--yes", "--message", `Automated rollback after failed acceptance of ${deployedVersion || release.sourceCommit}`]);
+    run("Guarded Worker rollback", wrangler, ["rollback", release.rollbackVersion, "--name", worker, "--yes", "--message", `Automated rollback after failed acceptance of ${deployedVersion || release.sourceCommit}`], { timing: { bucket: "production" } });
     if (activeProductionVersion() !== release.rollbackVersion) fail(`rollback did not restore ${release.rollbackVersion}`);
     throw error;
   }
 }
 
 try {
-  if (mode === "auth-lifecycle") await verifyAuthLifecycle();
+  if (mode === "auth-lifecycle") { currentStage = "auth-lifecycle"; await verifyAuthLifecycle(); }
   else if (mode === "preflight") await preflight();
   else if (mode === "deploy") await deploy();
   else fail("usage: node scripts/tpi-release.mjs auth-lifecycle|preflight|deploy");
+  writeTimings("completed");
 } catch (error) {
   console.error(`TPI release workflow failed: ${error instanceof Error ? error.message : error}`);
+  try { writeTimings("failed"); } catch { /* timing must never mask the release failure */ }
   process.exitCode = 1;
 }

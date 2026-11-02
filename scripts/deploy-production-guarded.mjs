@@ -26,9 +26,16 @@ for (const forbidden of ["theparanormalinitiative-dev", "tpi_contributor_portal_
   if (configSource.includes(forbidden)) throw new Error(`Development value found in production configuration: ${forbidden}`);
 }
 
+const stagingStarted = performance.now();
 const stage = mkdtempSync(join(tmpdir(), "tpi-production-assets-"));
 const configDir = mkdtempSync(join(tmpdir(), "tpi-production-config-"));
-const excludedDirectories = new Set([".git", ".wrangler", "node_modules", "backups", "data", "docs", "migrations", "scripts", "lib", "functions", "admin-center-app"]);
+// TPI-OPS-004: `.local-dev` is the owner's disposable local runtime state (local
+// D1/R2 under .local-dev/state, staged assets, worktrees, logs and the protected
+// QA credential files). `.assetsignore` already excludes it from the published
+// asset manifest, so copying it uploaded nothing and published nothing - it only
+// forced every dry-run and deployment to copy and hash ~32k extra files (~2.1 GB)
+// before Wrangler discarded them. Excluding it here changes no published byte.
+const excludedDirectories = new Set([".git", ".wrangler", ".local-dev", "node_modules", "backups", "data", "docs", "migrations", "scripts", "lib", "functions", "admin-center-app"]);
 const excludedFiles = new Set([".dev.vars", ".env", "wrangler.toml", "wrangler.dev.toml", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]);
 const filter = (source) => {
   const rel = relative(repoRoot, source);
@@ -59,10 +66,22 @@ try {
   const config = configSource.replace('main = "worker.js"', `main = "${join(repoRoot, "worker.js")}"`).replace('directory = "."', `directory = "${stage}"`);
   const configPath = join(configDir, "wrangler.toml");
   writeFileSync(configPath, config, { mode: 0o600 });
+  const stagedAt = performance.now();
   console.log(JSON.stringify({ worker: "theparanormalinitiative", sourceCommit, sourceBranch, excludedDirectories: [...excludedDirectories], stagedAssets: adminManifest }, null, 2));
   const wranglerCommand = process.env.TPI_WRANGLER_BIN || "npx";
   const wranglerArgs = process.env.TPI_WRANGLER_BIN ? ["deploy", "--config", configPath, ...process.argv.slice(2)] : ["wrangler@4.149.0", "deploy", "--config", configPath, ...process.argv.slice(2)];
+  const wranglerStarted = performance.now();
   execFileSync(wranglerCommand, wranglerArgs, { stdio: "inherit" });
+  // TPI-OPS-004: separate TPI's own staging cost from Wrangler/Cloudflare's
+  // upload and activation cost. The interval below is the whole Wrangler
+  // deploy invocation; Wrangler reports its own upload/trigger sub-timings.
+  const wranglerFinished = performance.now();
+  console.log(JSON.stringify({
+    timings: {
+      stagingCopyAndManifestMs: Math.round(stagedAt - stagingStarted),
+      wranglerDeployProcessMs: Math.round(wranglerFinished - wranglerStarted),
+    },
+  }, null, 2));
 } finally {
   rmSync(stage, { recursive: true, force: true });
   rmSync(configDir, { recursive: true, force: true });
