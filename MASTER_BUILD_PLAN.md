@@ -1,5 +1,24 @@
 # TPI MASTER BUILD PLAN
 
+## Current roadmap authority (2026-11-02)
+
+The authoritative development sequence is maintained in
+[`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
+Where any section of this file conflicts with that record, the master status
+document controls.
+
+Current position, recorded by TPI-DOCS-ROADMAP-001:
+
+- **TPI-OPS-005 — COMPLETE.** Operations optimization track closed. Releases
+  now certify one immutable candidate once and deploy those exact bytes.
+- **StudioFlow Core — STABLE / MAINTENANCE MODE.**
+- **Next primary track: Creator Incentive System + Dual-Member Permissions.**
+- **Nova product family recorded** as an architectural decision:
+  [Nova architecture record](docs/TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
+
+The sections below are retained as historical build records and are not the
+current work order.
+
 ## TPI-UI-002 — Administration and Settings layout refinement — October 11, 2026
 
 The targeted layout refinement is complete without changing authentication,

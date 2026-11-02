@@ -265,3 +265,34 @@ Admin/owner needs:
 - Do not allow anonymous comments to publish instantly without moderation.
 - Do not allow contributors to overwrite live articles without role checks.
 - Do not make the Content Editor public-writeable.
+
+## Access model update — Creator, Contributor, and Dual (recorded 2026-11-02)
+
+Recorded by TPI-DOCS-ROADMAP-001. Planning only; no account, role, or
+entitlement was modified.
+
+The access model below supersedes the four-tier list in "Current Access Model"
+for planning purposes. The single-role list remains the historical description
+of what shipped first; it does not express combined access.
+
+- **Creator** — Creator capabilities, StudioFlow access, StudioFlow Nova Edit
+  (production documents and slides), production-oriented authoring. Creator
+  access does **not** require Education Center editorial authority.
+- **Contributor / Editorial member** — Nova Editorial Workspace, professional
+  document and presentation capability, and the Education Center workflow
+  permitted by their editorial permissions. Contributor access does **not**
+  automatically grant StudioFlow production access.
+- **Dual / All-Access** — both capability sets through one account: StudioFlow,
+  StudioFlow Nova Edit, Nova Editorial Workspace, Nova Docs, Nova Slides, and the
+  applicable Education Center workflow.
+
+**Cumulative entitlements are mandatory.** A real dual-access member already
+exists and needs correct combined capabilities. Combining memberships must not
+overwrite or drop either set, and that combination is a permanent regression
+requirement for the Creator Incentive System directive.
+
+Membership entitlement and administrative/editorial publishing authority remain
+separate concerns; see
+[`docs/TPI-DEVELOPMENT/007-SECURITY-AND-PERMISSIONS.md`](docs/TPI-DEVELOPMENT/007-SECURITY-AND-PERMISSIONS.md).
+Product context is recorded in
+[`docs/TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md`](docs/TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).

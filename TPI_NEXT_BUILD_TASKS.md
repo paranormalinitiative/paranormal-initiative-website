@@ -2,6 +2,15 @@
 
 Last updated: July 27, 2026
 
+> **Superseded for sequencing on 2026-11-02 by TPI-DOCS-ROADMAP-001.** This file
+> remains a build-task reference (the research-paper rules below still apply),
+> but it is **not** the current development order. The canonical sequence is the
+> top section of
+> [`docs/planning/TPI-DOCS-001_MASTER_STATUS.md`](docs/planning/TPI-DOCS-001_MASTER_STATUS.md).
+> The next primary track is **Creator Incentive System + Dual-Member
+> Permissions**. Nova product context:
+> [`docs/TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md`](docs/TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
+
 ## Read This First
 
 The site is The Paranormal Initiative. Keep it dark, professional, research-driven, and practical. This is not a college-style site, not a course template, and not a place for short paper snippets.

@@ -22,3 +22,41 @@ Runtime checks passed: anonymous Admin Center access returned 403; the developme
 ## Current role policy
 
 Future Owner, Assistant Administrator, and Moderator roles remain planning items. TPI-DEV-001 does not change role assignments or permissions.
+
+## Membership entitlements and administrative permissions (recorded 2026-11-02)
+
+Recorded by TPI-DOCS-ROADMAP-001. Planning only — no role, permission, or
+membership behaviour changed.
+
+**Membership entitlements and administrative permissions are separate.** Holding
+a membership grants product capability; it does not grant administrative
+authority over the site, other accounts, or the Education Center.
+
+### Product access model
+
+| Membership | Receives |
+|---|---|
+| Creator | Creator capabilities, StudioFlow access, StudioFlow Nova Edit, production-oriented document and presentation creation |
+| Contributor / Editorial member | Nova Editorial Workspace, professional document and presentation capability, Education Center workflow appropriate to editorial permissions |
+| Dual / All-Access | both of the above through one account |
+
+**Cumulative entitlements are mandatory.** A dual account must hold Creator and
+Contributor capability sets simultaneously. One membership must never overwrite
+another, and combining access must not silently drop either set. This is a
+permanent regression requirement for the Creator Incentive System work.
+
+### Education Center permission layers
+
+Nova access and publishing authority are not identical. The layers to evaluate
+are: **Author** (create professional content), **Submitter** (submit for
+Education Center consideration), **Editor** (review/edit authorized educational
+content), **Publisher** (publish/unpublish official Education Center material),
+and **Administrator** (manage broader editorial permissions and configuration).
+
+A Dual / All-Access member receives Creator and Contributor capabilities. That
+does not automatically grant unrestricted administrative authority over every
+live Education Center item.
+
+Every administrative and editorial API must continue to enforce authorization
+server-side. No entitlement change may be implemented from client-side state
+alone.

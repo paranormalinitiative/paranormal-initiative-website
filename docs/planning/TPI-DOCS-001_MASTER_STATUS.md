@@ -1,5 +1,86 @@
 # TPI-DOCS-001 — Master Documentation Status
 
+## TPI-DOCS-ROADMAP-001 — Authoritative roadmap update — November 2, 2026
+
+Documentation only. No application code, permission, membership, Education
+Center, StudioFlow, database, or production change was made or deployed.
+
+This section records the current authoritative development sequence and the
+Nova product-family decision. It supersedes the October 11 planning order below,
+which is retained as historical evidence.
+
+- **TPI-OPS-005 — COMPLETE — CERTIFIED IMMUTABLE RELEASE WORKFLOW VERIFIED.**
+  The operations optimization track is **closed**. A release now certifies one
+  immutable candidate once and deploys those exact bytes; `release:production`
+  no longer repeats the full certification suite. Modelled release sequence
+  improved from ~13:46.5 to ~7:12.6 (−47.7% versus the immediately previous
+  workflow, −52.0% versus the original). Production was not deployed under that
+  directive and remained Worker `daa5aee1-304f-4e96-89a8-86aac2df98e9`.
+  [Completion record](../TPI-DEVELOPMENT/300-COMPLETED-WORK/TPI-OPS-005-CERTIFIED-IMMUTABLE-RELEASE-CANDIDATE.md).
+- **StudioFlow Core is stable and in maintenance mode** after the verified
+  TPI-STUDIOFLOW-137R production Notes release. StudioFlow is no longer the
+  primary development track.
+- **Next primary development track: Creator Incentive System + Dual-Member
+  Permissions.**
+- **Nova product family established** as an architectural decision:
+  [TPI Nova architecture record](../TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
+
+### Current development sequence
+
+This is the canonical order. A later phase is not authorized merely because it
+appears here; each still needs its own directive.
+
+1. **TPI-OPS-005 — COMPLETE.** Operations optimization track closed.
+2. **Creator Incentive System + Dual-Member Permissions — NEXT / ACTIVE
+   PRIORITY.** A real dual-access member exists and needs correct combined
+   capabilities. Cumulative entitlements are mandatory: one membership must
+   never overwrite another.
+3. **StudioFlow Nova Edit architecture.** Define Nova Core integration with the
+existing Notes system.
+4. **Nova Edit Documents + Slides.** Build the streamlined Creator workstation
+   (documents plus presentations, no editorial authority required).
+5. **Nova Editorial Workspace architecture / GenOffice evaluation.** Establish
+   the full professional system and the reusable Nova Core.
+6. **Nova Docs professional editor.** Professional document authoring.
+7. **Education Center publishing workflow.** Create → write → format → preview →
+   destination → metadata → submit / review / publish.
+8. **Nova Slides professional editor.** The advanced presentation environment.
+9. **Shared Nova → StudioFlow presentation integration.** Presentation as a
+   production resource for webinar, livestream, and recording.
+10. **Founding Membership System.** Founding Creator, Founding Contributor,
+    Founding All-Access; permanent numbering, entitlement mapping, registry,
+    audit, badges.
+11. **TPI Help & Learning Center + Mystic.** Central documentation and help
+    system.
+12. **Future StudioFlow Guest / Invite Connected Studio. Deferred.**
+13. **Future StudioFlow Livestream Destination Connections. Deferred.**
+
+Deferred StudioFlow phases (12 and 13) cover, respectively: invitation, guest
+connection, guest Studio/session, permissions, isolation, participation,
+disconnect/reconnect, completion; and external destination authentication,
+account linking, destination management, connection status, errors, security,
+and broadcast routing.
+
+Nova, and the Creator/Contributor/Dual access model it depends on, are recorded
+in the Nova architecture record linked above. Do not invent directive numbers
+for Nova phases: they are planned phases, not issued directives.
+
+### Release workflow — current normal path
+
+The maintained sequence is now two steps, not three runs of the same suite:
+
+1. `npm run release:certify` (alias `npm run release:preflight`) — certifies one
+   immutable candidate; expect **CERTIFIED**.
+2. Owner authorizes production.
+3. `TPI_PRODUCTION_DEPLOY=approved npm run release:production` — verifies the
+   existing certification, verifies the exact candidate, verifies
+   production-time requirements, deploys the certified bytes, and performs
+   production-only acceptance.
+
+It must not rerun the entire certification suite while the certification
+remains valid, and it refuses rather than recertifying when source, dependency,
+tooling, configuration, or any deployable byte has drifted.
+
 ## TPI-UI-002 — Administration and Settings layout refinement — October 11, 2026
 
 The TPI-UI-002 runtime refinement is complete and deployed. Commits `8e8c0e9`
@@ -48,9 +129,14 @@ historical audit reports.
 The repository was inspected before editing. Existing unrelated dirty files
 were preserved. This synchronization does not modify production systems.
 
-## Locked development order
+## Superseded development order (October 11, 2026 — historical)
 
-The owner-approved order is not being restarted or reordered:
+> **Superseded on November 2, 2026 by TPI-DOCS-ROADMAP-001.** The sequence below
+> is retained as evidence of the October 11 planning order. It is not the
+> current work order. The current sequence is recorded at the top of this
+> document.
+
+The order as recorded on October 11 was not to be restarted or reordered:
 
 1. **TPI-VIDEOS-009A** — four-column desktop grid and compact cards. This
    work is implemented through **TPI-MEDIA-001** and remains pending only for

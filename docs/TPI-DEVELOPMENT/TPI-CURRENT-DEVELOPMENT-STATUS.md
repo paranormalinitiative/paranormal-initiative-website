@@ -1,5 +1,94 @@
 # TPI Current Development Status
 
+## TPI-DOCS-ROADMAP-001 — Roadmap synchronization (2026-11-02)
+
+Status: **COMPLETE — DOCUMENTATION ONLY.** No application code, permission,
+membership, Education Center, StudioFlow, database, or production change was
+made or deployed.
+
+### Current position
+
+| Item | State |
+|---|---|
+| **TPI-OPS-005** — certified immutable release | **COMPLETE — CERTIFIED IMMUTABLE RELEASE WORKFLOW VERIFIED** |
+| **StudioFlow Core** | **STABLE / MAINTENANCE MODE** — not the active development track |
+| **Next primary track** | **Creator Incentive System + Dual-Member Permissions** |
+| Production Worker | `daa5aee1-304f-4e96-89a8-86aac2df98e9` (untouched by OPS-005) |
+
+### TPI-OPS-005 — operations optimization track closed
+
+A release is now proven **once**. `npm run release:certify` (alias
+`npm run release:preflight`) builds one immutable candidate, runs the complete
+certification suite against it, and seals a cryptographic certification binding
+every deployable file. `TPI_PRODUCTION_DEPLOY=approved npm run release:production`
+verifies that certification and deploys those exact bytes; it no longer repeats
+the certification suite.
+
+Measured: modelled release sequence went from **~13:46.5** to **~7:12.6**
+(−47.7% versus the immediately previous workflow, −52.0% versus the original
+workflow). Production-time protections were preserved and not reused:
+authorization, live read-only schema readiness, Worker identity, rollback
+capture, final parity recheck, and full production acceptance. Mutation, source
+drift, dependency drift, release-tooling drift, parity loss, wrong branch, dirty
+tree, and tier downgrade all fail closed.
+
+Implementation committed and pushed at `dde68d9`.
+[Completion record](300-COMPLETED-WORK/TPI-OPS-005-CERTIFIED-IMMUTABLE-RELEASE-CANDIDATE.md).
+
+### StudioFlow
+
+**STUDIOFLOW CORE — STABLE / MAINTENANCE MODE.** The current completed
+production release remains **TPI-STUDIOFLOW-137R — COMPLETE — PRODUCTION
+VERIFIED** (see below). StudioFlow is not the active primary development track.
+
+Two StudioFlow phases remain deferred and unscheduled:
+
+- **Guest / Invite Connected Studio** — invitation, guest connection, guest
+  Studio/session, permissions, isolation, participation, disconnect/reconnect,
+  completion.
+- **Livestream Destination Connections** — external destination authentication,
+  account linking, destination management, connection status, errors, security,
+  broadcast routing.
+
+The next StudioFlow-related work is **StudioFlow Nova Edit**, which is a Nova
+authoring suite inside StudioFlow, not a playback or production feature.
+
+### Next primary development track
+
+**Creator Incentive System + Dual-Member Permissions.**
+
+A real dual-access member already exists and needs correct combined
+capabilities. The permission model must support **cumulative** legitimate
+entitlements: one role or membership must never overwrite another. Combining
+Creator and Contributor access must preserve both capability sets, and that
+combination is now a permanent regression requirement.
+
+Access model:
+
+- **Creator** — Creator capabilities, StudioFlow access, StudioFlow Nova Edit,
+  production-oriented document and presentation creation.
+- **Contributor / Editorial member** — Nova Editorial Workspace, professional
+  document and presentation capability, Education Center workflow appropriate
+  to their editorial permissions.
+- **Dual / All-Access** — both, through one account.
+
+### Nova product family
+
+Nova is TPI's unified document and presentation technology with one shared core
+and two experiences: **StudioFlow Nova Edit** (streamlined production edition,
+Documents + Slides, no editorial authority required) and **Nova Editorial
+Workspace** (full professional edition, Nova Docs + Nova Slides, Education
+Center integrated).
+
+- PDF is **export-only**; no standalone PDF editor is on the roadmap.
+- **AI is not required** for Nova's initial development.
+- GenOffice is recorded as an **Apache-2.0 architectural/component reference to
+  evaluate later**, not an adoption decision.
+
+[TPI Nova architecture record](400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
+The canonical development sequence is the top section of
+[`../planning/TPI-DOCS-001_MASTER_STATUS.md`](../planning/TPI-DOCS-001_MASTER_STATUS.md).
+
 ## TPI-STUDIOFLOW-137R — Production Notes release (2026-11-02)
 
 Status: **COMPLETE — PRODUCTION VERIFIED.**

@@ -1,5 +1,74 @@
 # TPI Development Agent Handoff
 
+## READ THIS FIRST — current state (TPI-DOCS-ROADMAP-001, 2026-11-02)
+
+Orientation for a new session. Everything below is documentation; no application
+change was authorized by this update.
+
+**Where the project is**
+
+- **TPI-OPS-005 — COMPLETE — CERTIFIED IMMUTABLE RELEASE WORKFLOW VERIFIED.**
+  The operations optimization track is closed. Implementation at `dde68d9`.
+  [Record](300-COMPLETED-WORK/TPI-OPS-005-CERTIFIED-IMMUTABLE-RELEASE-CANDIDATE.md).
+- **StudioFlow Core — STABLE / MAINTENANCE MODE.** Not the active track.
+  Current completed release: **TPI-STUDIOFLOW-137R — COMPLETE — PRODUCTION
+  VERIFIED**.
+- **Next primary track: Creator Incentive System + Dual-Member Permissions.**
+- Production Worker: `daa5aee1-304f-4e96-89a8-86aac2df98e9`.
+
+**Release workflow — do not run certification twice**
+
+1. `npm run release:certify` (alias `npm run release:preflight`) → expect
+   **CERTIFIED**. This runs the full suite once and seals the immutable
+   candidate.
+2. Owner authorizes production.
+3. `TPI_PRODUCTION_DEPLOY=approved npm run release:production` → verifies the
+   certification, verifies the exact candidate, runs production-time checks,
+   deploys those exact bytes, runs production-only acceptance.
+
+If it refuses (`SOURCE_COMMIT_MISMATCH`, `ASSET_MUTATED`, `DIRTY_TREE`,
+`RELEASE_TOOLING_MISMATCH`, …) recertify. Never edit a certification to make a
+release pass. Details: [runbook](TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md) §9–§10.
+
+**Dual membership**
+
+Creator Incentives are next, and a real dual-access member already exists.
+Entitlements must be **cumulative**: one role or membership must never overwrite
+another, and Creator + Contributor must both survive combination. Treat that as
+a permanent regression requirement.
+
+**Nova product family**
+
+- `StudioFlow Nova Edit` — the streamlined **production** edition of Nova, living
+  inside StudioFlow. The shipped Notes workspace becomes **Nova Edit Documents**;
+  **Nova Edit Slides** is new. It must not require Education Center editorial
+  authority.
+- `Nova Editorial Workspace` — the **full professional** edition: **Nova Docs**
+  (professional word processing) and **Nova Slides** (professional
+  presentations).
+- Both editions share one **Nova Core**; do not build two unrelated document or
+  slide engines.
+- Presentations should eventually become a StudioFlow production resource
+  alongside Scene, Teleprompter, Video, Music, and Timer.
+- Education Center permissions remain **separable** from general Nova access
+  (Author / Submitter / Editor / Publisher / Administrator).
+- **PDF is export-only.** No standalone PDF editor.
+- **AI is not required** for Nova's initial development; do not let it delay it.
+- **GenOffice** (`genspark-ai/genoffice`) is an Apache-2.0 architectural /
+  component reference to **evaluate later** for Docs (Tiptap/ProseMirror/DOCX)
+  and Slides (React/Konva/PPTX). Preserve licence and NOTICE requirements, use no
+  GenOffice/Genspark branding, and do not assume the Electron product can be
+  embedded.
+
+[TPI Nova architecture record](400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
+Canonical sequence: top section of
+[`../planning/TPI-DOCS-001_MASTER_STATUS.md`](../planning/TPI-DOCS-001_MASTER_STATUS.md).
+
+**Deferred StudioFlow phases**
+
+- Guest / Invite Connected Studio — deferred.
+- Livestream Destination Connections — deferred.
+
 ## TPI-STUDIOFLOW-137R — PRODUCTION NOTES RELEASE (2026-11-02)
 
 [Record](100-DIRECTIVES/TPI-STUDIOFLOW-137R-PRODUCTION-NOTES-RELEASE.md).

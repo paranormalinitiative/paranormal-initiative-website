@@ -44,3 +44,18 @@ deployed under TPI-STUDIOFLOW-126:
   Advertising, Content Editor, Contributor, Creator, Support, and any later
   specialized roles. Membership entitlements and administrative permissions
   remain separate, and no final permission matrix is assumed.
+
+## Nova product family — current architectural record
+
+The Nova product-family decision (StudioFlow Nova Edit, Nova Edit Documents and
+Slides, Nova Editorial Workspace, Nova Docs, Nova Slides, PDF export-only, AI
+deferred, GenOffice evaluation, shared Nova Core) is recorded in
+[TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md](TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
+
+That record is an architectural decision, not an implementation directive. The
+canonical development sequence, including the Creator Incentive + Dual-Member
+track that comes next, is the top section of
+[`../../planning/TPI-DOCS-001_MASTER_STATUS.md`](../../planning/TPI-DOCS-001_MASTER_STATUS.md).
+
+The founding-membership items recorded below remain planning items and are
+unchanged by that record; the Founding Membership System is roadmap step 10.

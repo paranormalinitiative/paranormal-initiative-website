@@ -8,6 +8,29 @@ This document is the single operational explanation of how StudioFlow moves
 from source code to the live website. It supplements the mandatory
 `TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`; it does not create a second release path.
 
+## Current development status (2026-11-02)
+
+**STUDIOFLOW CORE — STABLE / MAINTENANCE MODE.** The verified production release
+remains **TPI-STUDIOFLOW-137R — COMPLETE — PRODUCTION VERIFIED**. StudioFlow is
+not the active primary development track.
+
+The process described here is unchanged and remains fully valid for any future
+StudioFlow change, including maintenance repairs and the deferred phases below.
+What changed is the *order of work*, not the workflow.
+
+- **Next primary track:** Creator Incentive System + Dual-Member Permissions.
+- **Next StudioFlow-related work:** StudioFlow Nova Edit — a Nova authoring suite
+  (Documents + Slides) inside StudioFlow, not a playback or production feature.
+  See
+  [TPI Nova architecture record](400-FUTURE-DEVELOPMENT/TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
+- **Deferred:** Guest / Invite Connected Studio; Livestream Destination
+  Connections.
+- **Release flow:** `npm run release:certify` then
+  `TPI_PRODUCTION_DEPLOY=approved npm run release:production`. A StudioFlow
+  change that alters the built bundle also changes the certified deployable
+  bytes, so it requires a fresh certification — the production command will
+  refuse an old one.
+
 ## The four locations are not automatically synchronized
 
 | Name | Exact location | Purpose | Does saving here update production? |
