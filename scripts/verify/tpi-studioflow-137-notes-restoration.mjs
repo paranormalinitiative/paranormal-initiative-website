@@ -119,22 +119,27 @@ async function ensureShell() {
 async function openNotesWorkspace() {
   await driver.get(`${base}/studio/`);
   await ensureShell();
-  const clicked = await js(`
-    var target = Array.from(document.querySelectorAll('.side-nav .nav-item')).find(function (item) { return (item.textContent || '').trim() === 'Notes'; });
-    if (target) { target.click(); return true; }
-    return false;
-  `);
-  if (!clicked) {
-    // Still hydrating: one reload is enough to settle the shell.
-    await driver.navigate().refresh();
-    await ensureShell();
+  // The bridge replays the last active Studio on load, so the navigation click
+  // can be swallowed while the shell is still hydrating. Retry it rather than
+  // assuming a single click wins.
+  for (let attempt = 0; attempt < 5; attempt += 1) {
     await js(`
       var target = Array.from(document.querySelectorAll('.side-nav .nav-item')).find(function (item) { return (item.textContent || '').trim() === 'Notes'; });
-      if (target) target.click();
-      return Boolean(target);
+      if (target) { target.click(); return true; }
+      return false;
     `);
+    try {
+      await waitFor("Notes workspace", async () => (await driver.findElements(By.css(".notes-workspace-page"))).length > 0, 12_000);
+      return;
+    } catch {
+      if (attempt === 2) {
+        await driver.navigate().refresh();
+        await ensureShell();
+      }
+      await sleep(600);
+    }
   }
-  await waitFor("Notes workspace", async () => (await driver.findElements(By.css(".notes-workspace-page"))).length > 0, 40_000);
+  throw new Error("the Notes workspace did not open from the navigation entry");
 }
 
 // Selecting a library card can lose a race with a list re-render, so confirm the
@@ -198,10 +203,18 @@ try {
   check("served StudioFlow entry point is the restored build", expectedJavaScriptAsset ? String(servedScript).includes(expectedJavaScriptAsset) : Boolean(servedScript), `served=${servedScript} expected=${expectedJavaScriptAsset}`);
 
   // ---- Home create grid ---------------------------------------------------
+  // Another suite may have left this account pointing at a Studio, so navigate
+  // Home explicitly instead of assuming the startup route.
   const cards = await waitFor("Home create cards", async () => {
     const value = await readCreateCards();
-    return value.length > 0 ? value : null;
-  });
+    if (value.length > 0) return value;
+    await js(`
+      var home = Array.from(document.querySelectorAll('.side-nav .nav-item')).find(function (item) { return (item.textContent || '').trim() === 'Home'; });
+      if (home) home.click();
+      return Boolean(home);
+    `);
+    return null;
+  }, 45_000);
   const titles = cards.map((card) => card.title);
   check("Home create grid includes a Notes card", titles.includes("Notes"), JSON.stringify(titles));
   check("Notes card sits between On-Air webinar and Teleprompter", titles.indexOf("Notes") === titles.indexOf("On-Air webinar") + 1 && titles.indexOf("Teleprompter") === titles.indexOf("Notes") + 1, JSON.stringify(titles));
