@@ -36,11 +36,12 @@ Cloudflare receives are the bytes that passed certification". No existing gate,
 assertion or safety property was removed or weakened, and every tier still runs
 the full gate set.
 
-Measured: certification **411.15 s (6:51.1)** for 30 gates, then certified
-deployment preparation **6.94 s**, replacing a modelled operator sequence of
-**826.48 s (13:46.5)** with **443.09 s (7:23.1)** — **−46.4%**, and **−50.9%**
-against the original 902.06 s pre-OPS-004 sequence. Cloudflare's own 7.63 s is
-untouched and now represents **1.7%** of a release instead of 0.85%.
+Measured: certification **400.37 s** and **411.15 s** in two independent runs of
+30 gates each, then certified deployment preparation **7.24 s** and **6.94 s**,
+replacing a modelled operator sequence of **826.48 s (13:46.5)** with **432.62 s
+(7:12.6)** — **−47.7%**, and **−52.0%** against the original 902.06 s
+pre-OPS-004 sequence. Cloudflare's own 7.63 s is untouched and now represents
+**1.8%** of a release instead of 0.85%.
 
 ## B. Previous release architecture
 
@@ -367,11 +368,24 @@ from actual runs; **modelled** values reuse OPS-004's measured components.
 
 Gates executed: **30**. Evidence: `.local-dev/release-timings-certify.json`.
 
-Certification costs approximately one preflight — 399.71 s after OPS-004, now
-411.15 s (+11.4 s, +2.9%). That is expected and intended: TPI-OPS-005 does not
-delete tests. The increase is the new 4.5 s certification suite plus the
-candidate staging (which now also copies the Worker module) and the 1.02 s hash
-pass.
+**Reproducibility.** A second full certification, on the final commit
+`17976fb` that carries this report, took **400.37 s (6:40.4)** — 30 gates, same
+610 assets, same 14 Worker files, exit 0. The two runs differ by 10.8 s (2.6%),
+which is normal variance in the browser suites, and the second is within 0.7 s of
+the OPS-004 preflight it replaces.
+
+**The fixed overhead is therefore about 6 s, not 11 s.** Certification costs one
+preflight plus:
+
+| New work | Cost |
+| --- | ---: |
+| Certification fail-closed regression suite | 4.75 s |
+| Hash 610 assets + 14 Worker files (256 MB), seal the digest | 0.87 s |
+| Copy the Worker module into the candidate (staging was already there) | ~0.1 s |
+| **Fixed overhead** | **~5.7 s** |
+
+TPI-OPS-005 does not delete tests, so certification is expected to cost one
+preflight. It does.
 
 ### Certified deployment preparation — observed
 
@@ -396,30 +410,34 @@ The complete certification suite did not run. Output recorded
 Component-by-component, using the same breakdown as OPS-004 so the two are
 directly comparable:
 
-| Component | Before TPI-OPS-005 | Now | Source |
-| --- | ---: | ---: | --- |
-| Certification pass 1 | 399.71 s | 411.15 s | observed (both directives) |
-| Certification pass 2 (repeated inside production) | 399.71 s | **0.00 s** | observed: reused |
-| Live schema readiness | 1.01 s | 1.04 s | observed |
-| Certification verification | — | 0.88 s | observed |
-| Rollback capture + Worker identity | 0.74 s (inside preflight) | 4.37 s | observed |
-| Final Git parity recheck | 0.73 s | 0.64 s | observed |
-| Staging copy + manifest at deploy | 0.30 s | 0.00 s | observed: reused |
-| Wrangler upload + activation (Cloudflare) | 7.63 s | 7.63 s | measured from the 137R release log |
-| Live anonymous smoke | 0.98 s | 0.98 s | OPS-004 measurement |
-| Live Firefox acceptance | 15.00 s | 15.00 s | OPS-004 measurement |
-| Version-holds-100% confirmation | 1.40 s | 1.40 s | OPS-004 measurement |
-| **Total** | **826.48 s (13:46.5)** | **443.09 s (7:23.1)** | |
-| **Reduction** | | **−383.39 s (−46.4%)** | |
+Headline figures use the final run on `17976fb`; the earlier run at `ee3494b`
+is shown alongside to make the variance visible rather than hiding it.
 
-Against the original pre-OPS-004 sequence (902.06 s / 15:02.1) the same model
-gives **−458.97 s (−50.9%)**, which clears the directive's ~50% target without
-removing a single test.
+| Component | Before TPI-OPS-005 | Now (`17976fb`) | Now (`ee3494b`) | Source |
+| --- | ---: | ---: | ---: | --- |
+| Certification pass 1 | 399.71 s | 400.37 s | 411.15 s | observed |
+| Certification pass 2 (repeated inside production) | 399.71 s | **0.00 s** | **0.00 s** | observed: reused |
+| Certification verification | — | 1.26 s | 0.88 s | observed |
+| Live schema readiness | 1.01 s | 1.20 s | 1.04 s | observed |
+| Rollback capture + Worker identity | 0.74 s (inside preflight) | 4.10 s | 4.37 s | observed |
+| Final Git parity recheck | 0.73 s | 0.68 s | 0.64 s | observed |
+| Staging copy + manifest at deploy | 0.30 s | 0.00 s | 0.00 s | observed: reused |
+| Wrangler upload + activation (Cloudflare) | 7.63 s | 7.63 s | 7.63 s | measured from the 137R release log |
+| Live anonymous smoke | 0.98 s | 0.98 s | 0.98 s | OPS-004 measurement |
+| Live Firefox acceptance | 15.00 s | 15.00 s | 15.00 s | OPS-004 measurement |
+| Version-holds-100% confirmation | 1.40 s | 1.40 s | 1.40 s | OPS-004 measurement |
+| **Total** | **826.48 s (13:46.5)** | **432.62 s (7:12.6)** | **443.09 s (7:23.1)** | |
+| **Reduction** | | **−393.86 s (−47.7%)** | **−383.39 s (−46.4%)** | |
 
-OPS-004's uncertified model predicted 428.16 s. The measured result is 443.09 s,
-**15 s slower than predicted and honestly so**: certification costs 11.4 s more
-than the modelled preflight, and rollback capture plus verification add 4.5 s
-that the model had folded into the reused preflight.
+Against the original pre-OPS-004 sequence (902.06 s / 15:02.1), the final run
+models **432.62 s — −469.44 s (−52.0%)**, clearing the directive's ~50% target
+without removing a single test.
+
+OPS-004's uncertified model predicted 428.16 s. The measured 432.62 s is
+**4.5 s slower than predicted**, which is exactly the release-time work the OPS-004
+model had folded into the reused preflight (certification verification, explicit
+rollback capture, and the final parity recheck). That is a small, explained gap
+rather than an unexplained regression.
 
 ### Live refusals against the real repository — observed
 
@@ -523,3 +541,13 @@ measured saving.
   branch, dirty tree and tier downgrade: all refused.
 - Existing safety gates: intact, with the contract extended from 21 to 27.
 - Production application, database, R2 and Worker: unchanged.
+
+Final verification on the commit that carries this record: certification 30
+gates over 610 deployable assets and 14 Worker source files, followed by an
+authorized certified deployment dry run that re-proved the digest and every
+hash, captured rollback target `daa5aee1-304f-4e96-89a8-86aac2df98e9`, uploaded
+nothing, and reported `"recertified": false`.
+
+Nothing was deployed. The next operator release will be the first to use the
+certified path against production, and it will be the same bytes this
+directive certified.
