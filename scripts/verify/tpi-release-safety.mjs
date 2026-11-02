@@ -104,6 +104,38 @@ check("complete QA runs the StudioFlow request-budget guard", () => {
   assert.match(qaRunner, /StudioFlow production request-budget guard/);
   assert.match(qaRunner, /check:request-budget/);
 });
+// TPI-OPS-005: certification reuse must never replace a safety property. These
+// assertions fail if the fast path ever stops verifying the exact certified
+// bytes, if deployment ever falls back to repeating certification silently, or
+// if the candidate directory ever becomes a tracked/published path.
+check("production deployment requires explicit authorization before any gate", () => {
+  assert.match(release, /if \(process\.env\.TPI_PRODUCTION_DEPLOY !== "approved"\) fail/);
+  const authorization = release.indexOf('if (process.env.TPI_PRODUCTION_DEPLOY !== "approved")');
+  const verification = release.indexOf("verifyCertification({ repoRoot, candidateRoot })");
+  assert.ok(authorization >= 0 && verification > authorization);
+});
+check("production deployment verifies the certification instead of recertifying", () => {
+  // The only caller of preflight() may be the mode dispatch, so deployment can
+  // never fall back to repeating the full certification suite.
+  assert.equal((release.match(/await preflight\(\)/g) || []).length, 1);
+  assert.match(release, /else if \(mode === "preflight" \|\| mode === "certify"\) await preflight\(\);/);
+  assert.match(release, /verifyCertification\(\{ repoRoot, candidateRoot \}\)/);
+});
+check("production deployment deploys the certified candidate directory", () => {
+  assert.match(release, /"--candidate", candidateRoot/);
+});
+check("candidate staging can never deploy", () => {
+  assert.match(deployGuard, /if \(stageOutFlag && !dryRun\) throw new Error\(["'`]--stage-out requires --dry-run/);
+});
+check("the release candidate directory is untracked local state", () => {
+  assert.match(read(".gitignore"), /^\.local-dev\/$/m);
+  assert.match(release, /CANDIDATE_DIRECTORY|resolveCandidateRoot/);
+});
+check("certification regression suite is wired into the package", () => {
+  const pkg = JSON.parse(packageSource);
+  assert.equal(pkg.scripts["release:certify"], "node scripts/tpi-release.mjs certify");
+  assert.equal(pkg.scripts["verify:release-certification"], "node scripts/verify/tpi-ops-005-certification.mjs");
+});
 check("package exposes credential and safety commands", () => {
   const pkg = JSON.parse(packageSource);
   assert.equal(pkg.scripts["local:credentials"], "zsh scripts/show-local-admin-credentials.sh");

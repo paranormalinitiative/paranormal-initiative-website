@@ -2,10 +2,49 @@ import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, stat
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
-import { join, relative, sep } from "node:path";
+import { join, relative, resolve, sep } from "node:path";
+import {
+  CANDIDATE_ASSETS_DIRECTORY,
+  CANDIDATE_CONFIGURATION_DIRECTORY,
+  CANDIDATE_WORKER_DIRECTORY,
+  describeCertification,
+  prepareCandidateDirectory,
+  verifyCertification,
+} from "./release-certification.mjs";
+
+// TPI-OPS-005 — production promotion of one exact candidate.
+//
+// Three modes:
+//
+//   (no mode flag)          Legacy: copy a disposable staging tree, deploy it,
+//                           delete it. Retained so nothing depends on the new
+//                           path before it has been exercised.
+//   --stage-out <dir>       Build the immutable candidate into <dir> and keep
+//                           it. Requires --dry-run: this mode never deploys.
+//   --candidate <dir>       Deploy exactly the certified bytes already in <dir>.
+//                           Nothing is copied and nothing is rebuilt, so the
+//                           uploaded bytes are byte-identical to the certified
+//                           bytes, and every hash is re-proven before upload.
 
 const repoRoot = process.cwd();
 const git = (args) => execFileSync("git", args, { encoding: "utf8" }).trim();
+
+function takeOption(name) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return null;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${name} requires a directory path`);
+  process.argv.splice(index, 2);
+  return value;
+}
+
+const stageOutFlag = takeOption("--stage-out");
+const candidateFlag = takeOption("--candidate");
+const wranglerPassthroughArgs = process.argv.slice(2);
+const dryRun = wranglerPassthroughArgs.includes("--dry-run");
+if (stageOutFlag && !dryRun) throw new Error("--stage-out requires --dry-run; building a candidate must never deploy");
+if (stageOutFlag && candidateFlag) throw new Error("--stage-out and --candidate are mutually exclusive");
+
 const branch = git(["branch", "--show-current"]);
 const changedFiles = git(["status", "--porcelain=v1", "--untracked-files=all"])
   .split("\n")
@@ -27,8 +66,13 @@ for (const forbidden of ["theparanormalinitiative-dev", "tpi_contributor_portal_
 }
 
 const stagingStarted = performance.now();
-const stage = mkdtempSync(join(tmpdir(), "tpi-production-assets-"));
-const configDir = mkdtempSync(join(tmpdir(), "tpi-production-config-"));
+const createdTemporaryDirectories = [];
+const temporary = (prefix) => {
+  const directory = mkdtempSync(join(tmpdir(), prefix));
+  createdTemporaryDirectories.push(directory);
+  return directory;
+};
+
 // TPI-OPS-004: `.local-dev` is the owner's disposable local runtime state (local
 // D1/R2 under .local-dev/state, staged assets, worktrees, logs and the protected
 // QA credential files). `.assetsignore` already excludes it from the published
@@ -49,27 +93,62 @@ const filter = (source) => {
   return true;
 };
 
+let candidateRoot;
+let certification = null;
+let stagedCopyMs = 0;
+
 try {
-  cpSync(repoRoot, stage, { recursive: true, filter });
-  // Keep one source of truth for shared includes while avoiding the
-  // standalone clean-URL rewrite that affects footer.html/member-sidebar.html.
-  cpSync(join(stage, "footer.html"), join(stage, "footer.txt"));
-  cpSync(join(stage, "member-sidebar.html"), join(stage, "member-sidebar.txt"));
-  const sourceBranch = branch;
-  const adminRoot = join(stage, "admin-center-preview");
-  const adminFiles = readdirSync(adminRoot, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name !== "release.json")
-    .map((entry) => join(adminRoot, entry.name))
-    .concat(readdirSync(join(adminRoot, "assets"), { withFileTypes: true }).filter((entry) => entry.isFile()).map((entry) => join(adminRoot, "assets", entry.name)));
-  const adminManifest = adminFiles.map((file) => ({ path: relative(stage, file), bytes: statSync(file).size, sha256: createHash("sha256").update(readFileSync(file)).digest("hex") }));
-  writeFileSync(join(adminRoot, "release.json"), JSON.stringify({ schemaVersion: 1, application: "tpi-administration-center", environment: "production", worker: "theparanormalinitiative", sourceCommit, sourceBranch, generatedAt: new Date().toISOString(), files: adminManifest }, null, 2) + "\n", { mode: 0o644 });
-  const config = configSource.replace('main = "worker.js"', `main = "${join(repoRoot, "worker.js")}"`).replace('directory = "."', `directory = "${stage}"`);
+  if (candidateFlag) {
+    // Deploy the certified candidate exactly as certified. No copy, no rebuild.
+    candidateRoot = resolve(candidateFlag);
+    certification = verifyCertification({ repoRoot, candidateRoot });
+    console.log(JSON.stringify({
+      mode: "CERTIFIED_CANDIDATE",
+      verified: describeCertification(certification.manifest),
+      verifiedCounts: certification.counts,
+    }, null, 2));
+  } else {
+    candidateRoot = stageOutFlag ? resolve(stageOutFlag) : temporary("tpi-production-assets-");
+    prepareCandidateDirectory(candidateRoot);
+    const assetsRoot = join(candidateRoot, CANDIDATE_ASSETS_DIRECTORY);
+    cpSync(repoRoot, assetsRoot, { recursive: true, filter });
+    // Keep one source of truth for shared includes while avoiding the
+    // standalone clean-URL rewrite that affects footer.html/member-sidebar.html.
+    cpSync(join(assetsRoot, "footer.html"), join(assetsRoot, "footer.txt"));
+    cpSync(join(assetsRoot, "member-sidebar.html"), join(assetsRoot, "member-sidebar.txt"));
+    // The Worker module and its relative imports are deployable bytes too. They
+    // are copied into the candidate so the deployed Worker cannot change after
+    // certification, and so `main` no longer points into the live worktree.
+    const workerRoot = join(candidateRoot, CANDIDATE_WORKER_DIRECTORY);
+    cpSync(join(repoRoot, "worker.js"), join(workerRoot, "worker.js"));
+    cpSync(join(repoRoot, "lib"), join(workerRoot, "lib"), { recursive: true });
+    cpSync(join(repoRoot, "functions"), join(workerRoot, "functions"), { recursive: true });
+    mkdirSync(join(candidateRoot, CANDIDATE_CONFIGURATION_DIRECTORY), { recursive: true });
+    cpSync(join(repoRoot, "wrangler.toml"), join(candidateRoot, CANDIDATE_CONFIGURATION_DIRECTORY, "wrangler.toml"));
+
+    const sourceBranch = branch;
+    const adminRoot = join(assetsRoot, "admin-center-preview");
+    const adminFiles = readdirSync(adminRoot, { withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name !== "release.json")
+      .map((entry) => join(adminRoot, entry.name))
+      .concat(readdirSync(join(adminRoot, "assets"), { withFileTypes: true }).filter((entry) => entry.isFile()).map((entry) => join(adminRoot, "assets", entry.name)));
+    const adminManifest = adminFiles.map((file) => ({ path: relative(assetsRoot, file), bytes: statSync(file).size, sha256: createHash("sha256").update(readFileSync(file)).digest("hex") }));
+    writeFileSync(join(adminRoot, "release.json"), JSON.stringify({ schemaVersion: 1, application: "tpi-administration-center", environment: "production", worker: "theparanormalinitiative", sourceCommit, sourceBranch, generatedAt: new Date().toISOString(), files: adminManifest }, null, 2) + "\n", { mode: 0o644 });
+    stagedCopyMs = Math.round(performance.now() - stagingStarted);
+  }
+
+  const configurationPath = join(candidateRoot, CANDIDATE_CONFIGURATION_DIRECTORY, "wrangler.toml");
+  const configurationBytes = readFileSync(configurationPath, "utf8");
+  const configDir = temporary("tpi-production-config-");
+  const config = configurationBytes
+    .replace('main = "worker.js"', `main = "${join(candidateRoot, CANDIDATE_WORKER_DIRECTORY, "worker.js")}"`)
+    .replace('directory = "."', `directory = "${join(candidateRoot, CANDIDATE_ASSETS_DIRECTORY)}"`);
   const configPath = join(configDir, "wrangler.toml");
   writeFileSync(configPath, config, { mode: 0o600 });
   const stagedAt = performance.now();
-  console.log(JSON.stringify({ worker: "theparanormalinitiative", sourceCommit, sourceBranch, excludedDirectories: [...excludedDirectories], stagedAssets: adminManifest }, null, 2));
+  console.log(JSON.stringify({ worker: "theparanormalinitiative", sourceCommit, sourceBranch: branch, mode: candidateFlag ? "certified-candidate" : stageOutFlag ? "stage-only" : "legacy-staging", candidateRoot, excludedDirectories: [...excludedDirectories] }, null, 2));
   const wranglerCommand = process.env.TPI_WRANGLER_BIN || "npx";
-  const wranglerArgs = process.env.TPI_WRANGLER_BIN ? ["deploy", "--config", configPath, ...process.argv.slice(2)] : ["wrangler@4.149.0", "deploy", "--config", configPath, ...process.argv.slice(2)];
+  const wranglerArgs = process.env.TPI_WRANGLER_BIN ? ["deploy", "--config", configPath, ...wranglerPassthroughArgs] : ["wrangler@4.149.0", "deploy", "--config", configPath, ...wranglerPassthroughArgs];
   const wranglerStarted = performance.now();
   execFileSync(wranglerCommand, wranglerArgs, { stdio: "inherit" });
   // TPI-OPS-004: separate TPI's own staging cost from Wrangler/Cloudflare's
@@ -78,11 +157,15 @@ try {
   const wranglerFinished = performance.now();
   console.log(JSON.stringify({
     timings: {
-      stagingCopyAndManifestMs: Math.round(stagedAt - stagingStarted),
+      stagingCopyAndManifestMs: candidateFlag ? 0 : stagedCopyMs,
       wranglerDeployProcessMs: Math.round(wranglerFinished - wranglerStarted),
     },
   }, null, 2));
 } finally {
-  rmSync(stage, { recursive: true, force: true });
-  rmSync(configDir, { recursive: true, force: true });
+  // A certified or stage-out candidate is the release artifact and must survive.
+  if (!stageOutFlag && !candidateFlag) {
+    for (const directory of [candidateRoot, ...createdTemporaryDirectories].filter(Boolean)) rmSync(directory, { recursive: true, force: true });
+  } else {
+    for (const directory of createdTemporaryDirectories) rmSync(directory, { recursive: true, force: true });
+  }
 }

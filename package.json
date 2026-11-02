@@ -48,7 +48,9 @@
     "verify:release-staging": "node scripts/verify/tpi-ops-004-release-staging-guard.mjs",
     "verify:local-auth-lifecycle": "node scripts/tpi-release.mjs auth-lifecycle",
     "release:preflight": "node scripts/tpi-release.mjs preflight",
-    "release:production": "node scripts/tpi-release.mjs deploy"
+    "release:certify": "node scripts/tpi-release.mjs certify",
+    "release:production": "node scripts/tpi-release.mjs deploy",
+    "verify:release-certification": "node scripts/verify/tpi-ops-005-certification.mjs"
   },
   "devDependencies": {
     "playwright": "1.64.1",

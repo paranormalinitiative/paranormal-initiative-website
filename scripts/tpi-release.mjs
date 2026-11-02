@@ -5,10 +5,20 @@
 // Modes:
 //   auth-lifecycle  Verify local_admin before/after a managed Worker restart
 //                   and StudioFlow rebuild, then run isolated Firefox acceptance.
-//   preflight       Run clean-Git, isolated E2E, Firefox, build, Cloudflare,
-//                   manifest, smoke, dry-run and rollback-readiness gates.
-//   deploy          Repeat preflight, deploy the exact clean commit, run live
-//                   smoke and isolated Firefox acceptance, and roll back on fail.
+//   certify         Run every release gate once, stage one immutable candidate,
+//                   and write a cryptographically bound certification for it.
+//   preflight       Alias for `certify`, kept because the maintained runbook and
+//                   older records name it. It now certifies; it no longer leaves
+//                   production to repeat the same suite.
+//   deploy          Verify the existing certification and deploy those exact
+//                   bytes, run live smoke and isolated Firefox acceptance, and
+//                   roll back on failure. It does not recertify.
+//
+// TPI-OPS-005: the release is proven once. `deploy` reuses a certification only
+// when every immutable property still matches - source commit, branch, GitHub
+// parity, StudioFlow source, dependency locks, release tooling, release
+// configuration, the manifest digest and every deployable file hash. Anything
+// that cannot be re-proven refuses and requires `npm run release:certify`.
 //
 // Deployment requires TPI_PRODUCTION_DEPLOY=approved. No migration command is
 // present in this workflow and the disposable E2E service cannot use port 8787
@@ -18,6 +28,17 @@ import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
+import {
+  buildManifest,
+  collectSourceIdentity,
+  computeManifestDigest,
+  describeCertification,
+  prepareCandidateDirectory,
+  resolveCandidateRoot,
+  verifyCertification,
+  writeCertification,
+} from "./release-certification.mjs";
+import { classifyReleaseTier, previousCertifiedCommit } from "./release-tier.mjs";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const studioFlowRoot = process.env.STUDIOFLOW_ROOT || "/Users/toddknipple/Documents/StudioFlow/web";
@@ -25,8 +46,14 @@ const wrangler = process.env.TPI_WRANGLER_BIN || "/opt/homebrew/bin/wrangler";
 const branch = "codex/tpi-development";
 const worker = "theparanormalinitiative";
 const mode = process.argv[2] || "preflight";
+const releaseDryRun = process.argv.includes("--dry-run");
+const timingsMode = mode === "deploy" && releaseDryRun ? "deploy-dry-run" : mode;
 const releaseStatePath = resolve(repoRoot, ".local-dev/release-preflight.json");
-const releaseTimingsPath = resolve(repoRoot, `.local-dev/release-timings-${mode}.json`);
+const releaseTimingsPath = resolve(repoRoot, `.local-dev/release-timings-${timingsMode}.json`);
+const deploymentRecordPath = resolve(repoRoot, ".local-dev/release-deployment.json");
+// The immutable candidate: one staged, hashed, certified release artifact.
+const candidateRoot = resolveCandidateRoot(repoRoot);
+const gateRecords = [];
 
 // TPI-OPS-004 release timing instrumentation.
 //
@@ -87,12 +114,18 @@ function output(command, args, options = {}) {
 }
 function run(label, command, args, options = {}) {
   console.log(`\n== ${label} ==`);
+  const gateStarted = performance.now();
   const result = spawnSync(command, args, {
     cwd: options.cwd || repoRoot,
     env: { ...process.env, ...(options.env || {}) },
     stdio: "inherit",
     maxBuffer: 64 * 1024 * 1024,
   });
+  // Every `run` call is a release gate. The certification records exactly the
+  // gates that passed against the certified bytes, so the operator can see what
+  // a reused certification actually covers.
+  const record = { name: label, status: result.error ? "error" : result.status === 0 ? "pass" : "fail", durationMs: Math.round(performance.now() - gateStarted) };
+  gateRecords.push(record);
   if (result.error) {
     mark(label, { kind: "gate", status: "error", ...(options.timing || {}) });
     fail(`${label}: ${result.error.message}`);
@@ -208,12 +241,25 @@ async function preflight() {
   const preflightStarted = performance.now();
   const sourceCommit = assertGitReleaseState();
   mark("Git clean-tree, branch and GitHub parity verification", { bucket: "certification" });
+  // TPI-OPS-005 section 21: the tier is computed from the real diff and can be
+  // raised by request but never lowered. Ambiguity escalates to Tier 1.
+  const tier = classifyReleaseTier({
+    repoRoot,
+    head: sourceCommit,
+    certifiedCommit: previousCertifiedCommit(candidateRoot),
+    requestedTier: process.env.TPI_RELEASE_TIER ?? null,
+  });
+  mark(`Release tier classification (Tier ${tier.level} — ${tier.label})`, { bucket: "certification", tier: tier.level });
+  console.log(`   tier base: ${tier.baseCommit || "unresolved"} (${tier.baseSource}) — ${tier.reasons.join("; ")}`);
   run("Release workflow safety contract", process.execPath, ["scripts/verify/tpi-release-safety.mjs"], { timing: { bucket: "certification" } });
   // TPI-OPS-004: the production staging copy must stay within the published
   // asset set. Copying discarded local runtime state made every dry-run and
   // deployment walk ~32k files (~2.1 GB) that `.assetsignore` then threw away,
   // and it made iteration artifacts look like release candidates.
   run("Release staging guard", process.execPath, ["scripts/verify/tpi-ops-004-release-staging-guard.mjs"], { timing: { bucket: "staging" } });
+  // TPI-OPS-005: prove the certification system itself fails closed before any
+  // release is certified by it. Runs in a throwaway repository, touches nothing.
+  run("Certification fail-closed regression", process.execPath, ["scripts/verify/tpi-ops-005-certification.mjs"], { timing: { bucket: "certification" } });
   // Build the complete local asset tree before restarting Wrangler. Replacing
   // the watched directory after startup can leave Miniflare serving the new
   // HTML with an old asset manifest, which presents as a blank StudioFlow page.
@@ -346,30 +392,115 @@ async function preflight() {
   const rollbackVersion = activeProductionVersion();
   ensureCloudflareAccess(rollbackVersion);
   mark("Cloudflare account, active version and rollback-version prechecks", { bucket: "cloudflare-account" });
-  run("Guarded Wrangler dry-run", process.execPath, ["scripts/deploy-production-guarded.mjs", "--dry-run"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "staging" } });
+  // TPI-OPS-005: stage the release candidate exactly once and prove that it
+  // bundles. This directory - never a rebuild - is what production uploads.
+  prepareCandidateDirectory(candidateRoot);
+  run("Stage immutable release candidate and Wrangler dry-run", process.execPath, ["scripts/deploy-production-guarded.mjs", "--stage-out", candidateRoot, "--dry-run"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "staging" } });
+  mark("Release candidate staged", { bucket: "staging" });
+
+  const certificationStarted = performance.now();
+  const certifiedSource = collectSourceIdentity(repoRoot, { branch, studioFlowRoot });
+  // Staging a candidate must never change the release source. If it did, the
+  // certification would describe a state that no longer exists.
+  if (!certifiedSource.cleanTree) fail(`working tree changed during certification: ${certifiedSource.changedFiles.join(", ")}`);
+  const studioflowBaseline = JSON.parse(readFileSync(resolve(repoRoot, "scripts/studioflow-release-baseline.json"), "utf8"));
+  const schemaRequirement = studioflowBaseline.productionSchemaRequirements || { requiredTables: [] };
+  const manifest = buildManifest({
+    candidateRoot,
+    source: certifiedSource,
+    tier: { level: tier.level, label: tier.label, reasons: tier.reasons, baseCommit: tier.baseCommit, baseSource: tier.baseSource, requiredGateSet: tier.requiredGateSet },
+    gates: gateRecords.slice(),
+    schema: {
+      database: "tpi_contributor_portal",
+      requiredTables: schemaRequirement.requiredTables,
+      migrations: schemaRequirement.migrations || [],
+      reason: schemaRequirement.reason || null,
+    },
+    build: {
+      command: mode === "preflight" ? "npm run release:preflight" : "npm run release:certify",
+      nodeVersion: process.version,
+      candidateRoot: relative(repoRoot, candidateRoot),
+      assetsDirectory: "assets",
+      workerDirectory: "worker",
+    },
+    certificationMs: 0,
+  });
+  // Record the real certification cost, then re-seal the digest so the
+  // manifest remains self-consistent.
+  manifest.certificationMs = Math.round(performance.now() - certificationStarted);
+  manifest.manifestDigest = computeManifestDigest(manifest);
+  mark("Hash deployable bytes and seal certification digest", { bucket: "certification" });
+
+  writeCertification(candidateRoot, manifest);
+  mark("Write certification manifest", { bucket: "certification" });
   mkdirSync(resolve(releaseStatePath, ".."), { recursive: true });
-  writeFileSync(releaseStatePath, `${JSON.stringify({ schemaVersion: 1, sourceCommit, branch, worker, rollbackVersion, verifiedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
-  mark("Write preflight release state", { bucket: "staging" });
-  mark("Preflight complete", { bucket: "certification", preflightMs: Math.round(performance.now() - preflightStarted) });
-  console.log(JSON.stringify({ status: "READY", sourceCommit, worker, rollbackVersion, releaseStatePath: ".local-dev/release-preflight.json" }, null, 2));
-  return { sourceCommit, rollbackVersion };
+  writeFileSync(releaseStatePath, `${JSON.stringify({ schemaVersion: 1, sourceCommit, branch, worker, rollbackVersion, releaseId: manifest.releaseId, manifestDigest: manifest.manifestDigest, tier: tier.level, verifiedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
+  mark("Write certification release state", { bucket: "staging" });
+  mark("Certification complete", { bucket: "certification", preflightMs: Math.round(performance.now() - preflightStarted) });
+
+  const summary = describeCertification(manifest);
+  console.log("\n== CERTIFIED RELEASE CANDIDATE ==");
+  for (const [key, value] of Object.entries(summary)) console.log(`   ${key.padEnd(22)} ${value}`);
+  console.log(`\nCERTIFIED RELEASE CANDIDATE: ${manifest.releaseId}`);
+  console.log(`This exact candidate may now be deployed without recertification, provided no protected input changes.`);
+  console.log(`   next: TPI_PRODUCTION_DEPLOY=approved npm run release:production`);
+  console.log(JSON.stringify({ status: "CERTIFIED", readyForProduction: true, releaseId: manifest.releaseId, sourceCommit, tier: tier.level, worker, rollbackVersion, manifestDigest: manifest.manifestDigest, certificationPath: relative(repoRoot, resolve(candidateRoot, "release-certification.json")), releaseStatePath: ".local-dev/release-preflight.json" }, null, 2));
+  return { sourceCommit, rollbackVersion, manifest };
 }
 async function deploy() {
   currentStage = "deployment";
   if (process.env.TPI_PRODUCTION_DEPLOY !== "approved") fail("deployment requires TPI_PRODUCTION_DEPLOY=approved");
   mark("Production deploy authorization guard", { bucket: "production" });
+  // TPI-OPS-005: re-prove the certification instead of repeating the full
+  // suite. Every immutable property is checked here, and any doubt refuses.
+  let verified;
+  try {
+    verified = verifyCertification({ repoRoot, candidateRoot });
+  } catch (error) {
+    fail(`certified release candidate cannot be deployed: ${error instanceof Error ? error.message : error}`);
+  }
+  const manifest = verified.manifest;
+  const release = { sourceCommit: manifest.source.websiteCommit, rollbackVersion: null };
+  mark("Certified candidate verification (manifest digest, every deployable hash, source identity)", { bucket: "production" });
+  console.log(`\nReusing valid certification ${manifest.releaseId}.`);
+  console.log(`   The full certification suite will not run again: ${manifest.gates.length} certified gates already cover these exact bytes.`);
+  console.log(`   Tier ${manifest.tier.level} — ${manifest.tier.label}`);
+  // A certification records the schema contract it expects; the live database
+  // must still satisfy it immediately before deployment (section 36).
+  const studioflowBaseline = JSON.parse(readFileSync(resolve(repoRoot, "scripts/studioflow-release-baseline.json"), "utf8"));
+  const liveRequirement = studioflowBaseline.productionSchemaRequirements?.requiredTables || [];
+  if (JSON.stringify(liveRequirement) !== JSON.stringify(manifest.schema.requiredTables)) {
+    fail("the approved production schema contract changed since certification; run npm run release:certify");
+  }
   // TPI-STUDIOFLOW-137: a release that depends on database schema must refuse to
   // deploy while that schema is absent. Deploying the Notes workspace before its
   // tables exist would serve an interface that cannot save anything, so this gate
   // fails closed and names the migrations that must be authorized and applied.
-  run("Production schema readiness", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "production" } });
-  const release = await preflight();
-  currentStage = "deployment";
-  if (assertGitReleaseState() !== release.sourceCommit) fail("release source changed after preflight");
-  mark("Post-preflight Git recheck before upload", { bucket: "production" });
+  run("Production schema readiness (live, read-only)", process.execPath, ["scripts/verify/tpi-studioflow-137-production-schema.mjs"], { env: { TPI_WRANGLER_BIN: wrangler }, timing: { bucket: "production" } });
+  // Rollback metadata is live production state and is captured now, not reused
+  // from certification (section 37).
+  release.rollbackVersion = activeProductionVersion();
+  ensureCloudflareAccess(release.rollbackVersion);
+  mark("Capture production Worker identity and rollback target", { bucket: "production" });
+  if (assertGitReleaseState() !== release.sourceCommit) fail("release source changed after certification");
+  mark("Final Git and GitHub parity recheck before upload", { bucket: "production" });
+  // Authorized dry run: proves the reusable path end to end without uploading.
+  // It stops before the Cloudflare call, so it can never deploy or report
+  // production acceptance as complete.
+  if (releaseDryRun) {
+    mark("Certified deployment preparation complete (dry run, nothing uploaded)", { bucket: "production" });
+    console.log("\n== CERTIFIED DEPLOYMENT DRY RUN ==");
+    console.log(`   certification reused:        ${manifest.releaseId}`);
+    console.log(`   deployable assets verified:  ${verified.counts.assets}`);
+    console.log(`   worker source files verified:${verified.counts.workerSource}`);
+    console.log(`   rollback target captured:    ${release.rollbackVersion}`);
+    console.log("   no upload performed; production acceptance not run");
+    console.log(JSON.stringify({ status: "DEPLOYMENT_DRY_RUN_READY", recertified: false, uploaded: false, productionAcceptance: "not_run", releaseId: manifest.releaseId, sourceCommit: release.sourceCommit, verifiedAssets: verified.counts.assets, verifiedWorkerSourceFiles: verified.counts.workerSource, rollbackVersion: release.rollbackVersion }, null, 2));
+    return { sourceCommit: release.sourceCommit, rollbackVersion: release.rollbackVersion, manifest, dryRun: true };
+  }
   let deployedVersion = "";
   try {
-    const result = spawnSync(process.execPath, ["scripts/deploy-production-guarded.mjs"], {
+    const result = spawnSync(process.execPath, ["scripts/deploy-production-guarded.mjs", "--candidate", candidateRoot], {
       cwd: repoRoot,
       env: { ...process.env, TPI_WRANGLER_BIN: wrangler },
       encoding: "utf8",
@@ -377,7 +508,7 @@ async function deploy() {
     });
     process.stdout.write(result.stdout || "");
     process.stderr.write(result.stderr || "");
-    mark("Guarded production deployment (staging copy + Wrangler upload and activation)", { bucket: "cloudflare" });
+    mark("Deploy certified candidate (Wrangler upload and activation)", { bucket: "cloudflare" });
     if (result.error || result.status !== 0) fail(`guarded deployment failed${result.error ? `: ${result.error.message}` : ""}`);
     deployedVersion = (result.stdout || "").match(/Current Version ID:\s*([0-9a-f-]{36})/)?.[1] || "";
     if (!deployedVersion) fail("deployment completed without a readable Worker version ID");
@@ -394,7 +525,8 @@ async function deploy() {
     });
     if (activeProductionVersion() !== deployedVersion) fail("new Worker version is not receiving 100% traffic");
     mark("Confirm new Worker version holds 100% traffic", { bucket: "production" });
-    console.log(JSON.stringify({ status: "DEPLOYED_AND_VERIFIED", sourceCommit: release.sourceCommit, worker, deployedVersion, rollbackVersion: release.rollbackVersion }, null, 2));
+    writeFileSync(deploymentRecordPath, `${JSON.stringify({ schemaVersion: 1, releaseId: manifest.releaseId, manifestDigest: manifest.manifestDigest, sourceCommit: release.sourceCommit, worker, deployedVersion, rollbackVersion: release.rollbackVersion, deployedAt: new Date().toISOString() }, null, 2)}\n`, { mode: 0o600 });
+    console.log(JSON.stringify({ status: "DEPLOYED_AND_VERIFIED", releaseId: manifest.releaseId, sourceCommit: release.sourceCommit, worker, deployedVersion, rollbackVersion: release.rollbackVersion, recertified: false }, null, 2));
   } catch (error) {
     console.error(`Production acceptance failed: ${error instanceof Error ? error.message : error}`);
     console.error(`Rolling back ${worker} to ${release.rollbackVersion}.`);
@@ -406,9 +538,9 @@ async function deploy() {
 
 try {
   if (mode === "auth-lifecycle") { currentStage = "auth-lifecycle"; await verifyAuthLifecycle(); }
-  else if (mode === "preflight") await preflight();
+  else if (mode === "preflight" || mode === "certify") await preflight();
   else if (mode === "deploy") await deploy();
-  else fail("usage: node scripts/tpi-release.mjs auth-lifecycle|preflight|deploy");
+  else fail("usage: node scripts/tpi-release.mjs auth-lifecycle|certify|preflight|deploy");
   writeTimings("completed");
 } catch (error) {
   console.error(`TPI release workflow failed: ${error instanceof Error ? error.message : error}`);
