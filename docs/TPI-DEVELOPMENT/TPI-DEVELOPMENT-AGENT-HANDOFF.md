@@ -1685,3 +1685,31 @@ Every completed TPI directive must update the affected Markdown records before
 its status is marked complete. Record changed source files, executed evidence,
 known limitations, development status, and the directive-index entry. Do not
 describe a feature as production-ready from local tests alone.
+
+## TPI-OPS-004 — RELEASE PIPELINE MEASURED AND SAFELY OPTIMIZED (2026-11-02)
+
+[Record](300-COMPLETED-WORK/TPI-OPS-004-PRODUCTION-DEPLOYMENT-PERFORMANCE-INVESTIGATION.md).
+Status: **COMPLETE.** Tooling only; no production application code, Worker, D1
+or R2 change. Production remained Worker `daa5aee1-304f-4e96-89a8-86aac2df98e9`
+for the whole directive.
+
+Measured facts an agent should not have to rediscover:
+
+- A preflight was **7:09.071** and is now **6:39.714** (`399.714s`), `READY`.
+- Firefox regression suites are **~74%** of preflight. Bare Firefox launch/quit
+  is only **1.787s median**; 13 launches are 23s of 429s. The cost is page work,
+  not startup. Do not share one browser session between suites: they mutate the
+  same local Worker, D1, R2 and browser-local state.
+- Cloudflare's own deploy of a certified release is **7.63s** (6.58s upload +
+  1.05s triggers, 1.00s for 3 changed static assets). It is **0.85%** of a
+  release.
+- The old staging copy pulled **32,659 files / 2.36 GB** into the production
+  staging directory, of which `.local-dev` was 31,999 files / 2.12 GB and
+  `.assetsignore` published **606** assets. It is now 613 files / 0.24 GB with
+  an identical `Total Upload: 648.19 KiB`.
+- `studio/assets/` tracks **108** hashed bundles and only **2** are referenced by
+  `studio/index.html`; 106 (62.2 MB) are published but unreachable. `--apply`
+  adds a new hashed pair each time and never prunes, which is the real reason
+  iteration assets kept polluting the tree.
+- Do not remove the preflight that `release:production` runs. It is drift
+  protection.

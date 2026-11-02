@@ -156,3 +156,23 @@ irreversible owner-data operation.
 - Current verified dev deployment: `c8432743-71c7-4b5c-8cd1-9503cb81e038`
 
 The development deployment has no scheduled triggers, no production Resend secrets, and uses only the development D1/R2 resources. The existing production Worker and custom domain remain separate.
+
+## Release timing (TPI-OPS-004, 2026-11-02)
+
+Both release commands now print a per-phase timestamp and end with a
+`Release timing summary` table; the machine-readable timeline is written to
+`.local-dev/release-timings-<mode>.json`. Use it before assuming a release is
+slow because of Cloudflare.
+
+Measured: the preflight is about 6m40s (Firefox regression suites ~74%, isolated
+API E2E ~18%) and Cloudflare's own upload plus activation is about 7.6s. The
+production staging copy no longer includes `.local-dev`, which `.assetsignore`
+already refused to publish; that removed ~32,000 files / ~2.1 GB from every
+dry-run and deployment. `npm run verify:release-staging` enforces it and runs
+inside `release:preflight`.
+
+The duplicate `release:preflight` run inside `release:production` is deliberate
+release-drift protection, not waste. Do not remove it: replacing it requires the
+certified-immutable-candidate design in
+`300-COMPLETED-WORK/TPI-OPS-004-PRODUCTION-DEPLOYMENT-PERFORMANCE-INVESTIGATION.md`,
+which is not yet authorized.

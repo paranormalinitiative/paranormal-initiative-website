@@ -740,6 +740,15 @@ website repository's `codex/tpi-development` branch.
    TPI_PRODUCTION_DEPLOY=approved npm run release:production
    ```
 
+   Both commands print a per-phase `mm:ss.mmm` timestamp and end with a
+   `Release timing summary`; the machine-readable timeline is
+   `.local-dev/release-timings-<mode>.json`. The preflight's duplicate run
+   inside `release:production` is drift protection and must not be removed. The
+   staging copy excludes `.local-dev` (enforced by
+   `npm run verify:release-staging`), and superseded hashed bundles must never
+   accumulate in the published `studio/assets/` directory. Measurements:
+   `300-COMPLETED-WORK/TPI-OPS-004-PRODUCTION-DEPLOYMENT-PERFORMANCE-INVESTIGATION.md`.
+
 8. Accept completion only after `release:production` prints
    `DEPLOYED_AND_VERIFIED` and the exact behavior is confirmed at
    `https://paranormalinitiative.com/studio/` in Firefox Developer Edition.

@@ -350,6 +350,46 @@ The final tree must be empty and local/remote hashes must match. A directive is
 not complete while unexplained files, unpushed commits, failed gates, or an
 unverified production deployment remain.
 
+## 9. Release timing and staging cost (TPI-OPS-004)
+
+Both commands print a live timestamp for every phase and end with a timing
+table, for example:
+
+```
+== Release timing summary (preflight: completed) ==
+phase                                          duration         at
+Guarded Wrangler dry-run                          0:02.974   6:36.739
+TOTAL                                             6:39.714
+machine-readable: .local-dev/release-timings-preflight.json
+```
+
+The machine-readable file (`release-timings-preflight.json` /
+`release-timings-deploy.json`) records `elapsedMs` for every phase plus the
+`browserGateMs` and `cloudflareMs` aggregates. Use it when a release feels slow
+instead of guessing. Timing is best-effort and can never fail a release.
+
+Measured on 2026-11-02: the whole preflight is about 6m40s, of which the Firefox
+regression suites are about 74%, the isolated API E2E about 18%, and Cloudflare's
+own upload and activation about 8 seconds. Cloudflare is not the slow part.
+
+**The production staging copy must stay within the published asset set.**
+`scripts/deploy-production-guarded.mjs` copies the repository into a disposable
+directory and publishes it through `.assetsignore`. It must exclude
+`.local-dev`, because that directory holds the owner's disposable local runtime
+state (local D1/R2, staged assets, worktrees, logs) and `.assetsignore` already
+refuses to publish it. Copying it made every dry-run and deployment walk about
+32,000 extra files (~2.1 GB) that were then discarded. `npm run
+verify:release-staging` enforces the pair and runs inside `release:preflight`.
+
+Do not add intermediate or superseded hashed StudioFlow bundles to
+`studio/assets/`. That directory is published. `--apply` adds a new hashed pair
+every time the bundle changes and does not prune the old one, which is why dirty
+trees and manually removed iteration assets kept appearing before a release.
+
+Full measurements, duplicate-work analysis and the proposed certified-artifact
+and release-tier designs are in
+`300-COMPLETED-WORK/TPI-OPS-004-PRODUCTION-DEPLOYMENT-PERFORMANCE-INVESTIGATION.md`.
+
 ## Never substitute these shortcuts
 
 - Never deploy directly with an improvised `wrangler deploy` command.
