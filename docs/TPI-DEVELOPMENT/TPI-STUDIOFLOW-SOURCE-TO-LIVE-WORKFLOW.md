@@ -72,7 +72,32 @@ will silently disappear.
 A full merge of the two lineages is not a safe default: it conflicts in 22 places
 across `src/App.tsx`, concentrated in the hardened deletion subsystem.
 
-## Current approved source and release baseline — TPI-STUDIOFLOW-137 (2026-11-02)
+## Current approved source and release baseline — TPI-STUDIOFLOW-137A (2026-11-02)
+
+The approved StudioFlow source is now
+`9113bafd555517b18d890feb3934d5416361b6d8` on branch
+`codex/tpi-137-notes-restoration`, worktree
+`/Users/toddknipple/Documents/StudioFlow/web-137`, descending from `57effec`,
+`5d557d2` and the TPI-137 head `cd5e88b`.
+
+Exact staged assets, served by the authoritative `8787` Worker:
+
+- `/studio/assets/index-PJlxxK5f.js` — SHA-256
+  `7e7406463a7ba7ff52966e3aa0a001e0990f63d69d3febdbfe3fdedfe67a3e82`
+- `/studio/assets/index-7UmKFnSB.css` — SHA-256
+  `9a815d2b7cc8c63894a21c5b6e436cb4e3b11c3cdb3293874de1752b4563698e`
+
+The JavaScript bytes are identical to the TPI-137 build; only the stylesheet
+changed. Vite still derives the entry file name from the module graph, which
+includes the stylesheet, so the `.js` name moved from `index-LICdWePz.js` to
+`index-PJlxxK5f.js` with identical content.
+
+`verify:studioflow-137a-notes-visual` is part of `release:preflight` and fails on
+lossy CSS: it parses the delivered stylesheet rather than trusting the source
+text, so an orphaned `*/`, a dropped `.notes-nav-item` rule or a missing
+`container: notes-workspace / inline-size` blocks the release.
+
+## Previous approved source and release baseline — TPI-STUDIOFLOW-137 (2026-11-02)
 
 The approved StudioFlow source is now
 `cd5e88b03bd364a3a3d4ffe376f2915f19bd0f19` on branch

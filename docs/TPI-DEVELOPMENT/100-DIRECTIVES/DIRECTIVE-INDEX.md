@@ -5,6 +5,20 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-STUDIOFLOW-137A — Notes workspace visual restoration and final local acceptance
+
+Status: **VISUAL RESTORATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION
+DEPLOYMENT NOT AUTHORIZED**. The restored Notes workspace now presents as the
+approved TPI-122 design. The TPI-137 CSS port was lossy: it dropped every rule
+sharing a minified line with another match (leaving `.notes-nav-item` unstyled,
+hence the browser-default grey control boxes) and lost two comment openers,
+which made browsers discard the following rules — including
+`container: notes-workspace / inline-size`, which had disabled every
+`@container` rule and caused overflow below 1280px. Source `9113baf`; parity
+against `a6784cf` is 280/284 selectors identical with zero conflicts; Firefox
+visual acceptance 67/67 at seven viewport sizes; no functional regression.
+[Record](TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md).
+
 ## TPI-STUDIOFLOW-137 — Complete Notes workspace restoration and release preparation
 
 Status: **IMPLEMENTATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION DEPLOYMENT
@@ -1078,3 +1092,4 @@ kept in both places so no issued text is lost.
 | TPI-STUDIOFLOW-087 | INDEPENDENT STUDIOS, STUDIO DASHBOARDS, AND PRODUCTION OWNERSHIP | 2026-10-25 | [TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md](TPI-STUDIOFLOW-087-INDEPENDENT-STUDIOS-DASHBOARDS-PRODUCTION-OWNERSHIP.md) |
 | TPI-STUDIOFLOW-136 | Complete Notes Workspace Recovery and Development History Investigation | 2026-11-02 | [TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md](TPI-STUDIOFLOW-136-COMPLETE-NOTES-RECOVERY-INVESTIGATION.md) |
 | TPI-STUDIOFLOW-137 | Complete Notes Workspace Restoration and Release Preparation | 2026-11-02 | [TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md](TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md) |
+| TPI-STUDIOFLOW-137A | Notes Workspace Visual Restoration and Final Local Acceptance | 2026-11-02 | [TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md](TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md) |

@@ -239,6 +239,14 @@ async function preflight() {
   run("Complete Notes workspace restoration acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137-notes-restoration.mjs"], {
     env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
   });
+  // Complete Notes workspace visual acceptance (TPI-STUDIOFLOW-137A): the port at
+  // TPI-137 shipped the workspace with the approved CSS silently missing, so the
+  // interface rendered with browser-default controls, a dead @container query and
+  // a page that overflowed narrow viewports. A release must present the approved
+  // styling at every required viewport size.
+  run("Complete Notes workspace visual acceptance", process.execPath, ["scripts/verify/tpi-studioflow-137a-notes-visual.mjs"], {
+    env: { TPI_FIREFOX_ACCOUNT: "test_admin" },
+  });
   run("Authoritative StudioFlow staging verification", process.execPath, ["scripts/stage-studioflow-authoritative.mjs"]);
   // Approved-feature continuity and release-lineage guard (TPI-STUDIOFLOW-137):
   // a new approved commit must descend from the previous one and must still

@@ -1,5 +1,55 @@
 # TPI Development Agent Handoff
 
+## TPI-STUDIOFLOW-137A — NOTES VISUAL RESTORATION (2026-11-02)
+
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md).
+Status: **VISUAL RESTORATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION
+DEPLOYMENT NOT AUTHORIZED.**
+
+The restored Notes workspace now renders as approved. Approved source is
+`9113baf` on `codex/tpi-137-notes-restoration`, worktree
+`/Users/toddknipple/Documents/StudioFlow/web-137`. Assets:
+`index-PJlxxK5f.js` (`7e740646…`, JavaScript byte-identical to TPI-137) and
+`index-7UmKFnSB.css` (`9a815d2b…`).
+
+**The lesson to carry forward: the TPI-137 CSS port was lossy and nothing
+noticed.** It selected rules line by line from a stylesheet that is minified in
+places, so it dropped every block sharing a line with another match, and it lost
+two comment openers — leaving orphaned `*/` text that makes a browser discard
+the following rule. One casualty was
+`container: notes-workspace / inline-size`, which silently disabled every
+`@container` rule.
+
+If a Notes control ever looks like an unstyled button again, or the workspace
+overflows a narrow window, do not start editing declarations. Re-run
+`npm run verify:studioflow-137a-notes-visual`: it parses the delivered
+stylesheet and fails on orphaned comment text, missing
+`.notes-nav-item`/`.selected`/`:hover` rules, a missing container declaration,
+missing page width, cards outside the panel and titles that overrun the card.
+Then diff the Notes section of `src/styles.css` against `a6784cf:src/styles.css`
+block by block — not line by line.
+
+Parity is measured, not assumed: 280 of 284 approved Notes selectors are present
+and identical, 0 conflict, 0 extra. The four excluded
+`.notes-global-folder-action*` selectors are dead rules that no component in
+either version ever referenced.
+
+Two deliberate adaptations exist beyond the approved rules and both are narrow:
+`grid-template-columns:minmax(0,1fr)` on `.notes-library-list` and `min-width:0`
+on `.notes-library-card-title`. Without them a long title stretches cards to
+617px in a 291px panel. Keep them.
+
+Approved behaviour that must not be "fixed": the toolbar wraps
+(`flex-wrap:wrap` is the approved declaration), and the editor footer is **not**
+sticky — the save control sits at the end of the note by design, with autosave
+and the header's saved state as the always-visible indicator.
+
+Verified 67/67 visual, 36/36 TPI-137, maintained Firefox acceptance in preflight,
+TPI-133 44/44, TPI-134 43/43, TPI-135 30/30, TPI-087 40, TPI-088 32, TPI-089 26,
+continuity guard. Owner work in
+`/Users/toddknipple/Documents/StudioFlow/web` untouched (`src/App.tsx`
+`543f4671…`, `src/styles.css` `190be155…`).
+
 ## TPI-STUDIOFLOW-137 — COMPLETE NOTES RESTORATION (2026-11-02)
 
 [Record](100-DIRECTIVES/TPI-STUDIOFLOW-137-COMPLETE-NOTES-RESTORATION.md).

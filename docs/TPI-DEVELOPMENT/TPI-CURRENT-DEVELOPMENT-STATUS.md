@@ -1,5 +1,51 @@
 # TPI Current Development Status
 
+## TPI-STUDIOFLOW-137A — Notes workspace visual restoration (2026-11-02)
+
+Status: **VISUAL RESTORATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION
+DEPLOYMENT NOT AUTHORIZED.**
+
+The Notes workspace restored by TPI-137 was functioning but not presenting as
+approved. Owner inspection was correct: the interface was rendering with
+browser-default controls. The cause was CSS that never reached the browser.
+
+- Source commits `5d557d2`, `57effec`, `9113baf` on
+`codex/tpi-137-notes-restoration`.
+- Assets: `index-PJlxxK5f.js` SHA-256 `7e740646…` (JavaScript unchanged from
+TPI-137) and `index-7UmKFnSB.css` SHA-256 `9a815d2b…`.
+
+The TPI-137 port selected CSS rules line by line from a partly minified
+stylesheet. Every block that shared a line with another matching block was
+dropped, so `.notes-nav-item` had no rules at all and each organization control
+fell back to an unstyled `<button>` with a 2px grey border. The port also lost
+two comment openers, each of which caused a parser to discard the rule that
+followed: the approved `max-width:1800px` and, far worse,
+`container: notes-workspace / inline-size`. Without that container every
+`@container notes-workspace` rule was dead, so the workspace kept its wide
+three-column grid at all sizes and overflowed viewports below 1280.
+
+Two further rules were genuine compatibility adaptations: the library list's
+implicit max-content grid column stretched cards to 617px inside a 291px panel,
+and the card title row could not shrink, so long titles were clipped by the
+panel edge instead of using the approved ellipsis.
+
+A rule-level parity audit against `a6784cf` now reports 280 of 284 approved
+Notes selectors present and identical, zero conflicting and zero extra. The four
+unported selectors are `.notes-global-folder-action*`, which no component in
+either version ever referenced.
+
+Measured on the authoritative `8787` Worker in Firefox Developer Edition: nav
+items back to 34px flat rows with the approved hover and selected states, the
+container live, no horizontal overflow at 1920, 1440, 1280, 1024, 834, 390 or
+375, and no clipped controls. The new maintained suite
+(`verify:studioflow-137a-notes-visual`) passes **67/67** and is now a
+`release:preflight` gate. TPI-137 36/36, TPI-133 44/44, TPI-134 43/43, TPI-135
+30/30, TPI-087 40, TPI-088 32, TPI-089 26 and the continuity guard all pass.
+
+Production remains blocked on the unauthorized Notes schema migrations
+`0055`–`0057`; the production schema gate is unchanged and was not weakened.
+[Record](100-DIRECTIVES/TPI-STUDIOFLOW-137A-NOTES-VISUAL-RESTORATION.md).
+
 ## TPI-STUDIOFLOW-137 — Complete Notes workspace restoration (2026-11-02)
 
 Status: **IMPLEMENTATION AND LOCAL ACCEPTANCE COMPLETE — PRODUCTION DEPLOYMENT

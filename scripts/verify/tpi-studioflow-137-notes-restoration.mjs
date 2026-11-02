@@ -22,6 +22,9 @@ const base = (process.env.TPI_FIREFOX_BASE_URL || "http://127.0.0.1:8787").repla
 const binary = process.env.TPI_FIREFOX_BINARY || "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox";
 const geckodriver = process.env.TPI_GECKODRIVER || "/opt/homebrew/bin/geckodriver";
 const credentialsFile = process.env.TPI_FIREFOX_CREDENTIALS_FILE || resolve(repoRoot, ".local-dev/local-auth-credentials.json");
+// The maintained release baseline is authoritative; the disposable candidate file
+// is only a fallback for a build that has not been recorded yet.
+const maintainedBaselineFile = resolve(repoRoot, "scripts/studioflow-release-baseline.json");
 const candidateBaselineFile = resolve(repoRoot, ".local-dev/tpi-studioflow-137-baseline.json");
 const evidenceRoot = process.env.TPI_FIREFOX_137_EVIDENCE
   ? resolve(repoRoot, process.env.TPI_FIREFOX_137_EVIDENCE)
@@ -29,9 +32,11 @@ const evidenceRoot = process.env.TPI_FIREFOX_137_EVIDENCE
 const profile = mkdtempSync(join(tmpdir(), "tpi-137-profile-"));
 
 const expectedJavaScriptAsset = process.env.TPI_FIREFOX_EXPECTED_JS
-  || (existsSync(candidateBaselineFile)
-    ? JSON.parse(readFileSync(candidateBaselineFile, "utf8")).expectedAssets?.javaScript?.name
-    : null);
+  || (existsSync(maintainedBaselineFile)
+    ? JSON.parse(readFileSync(maintainedBaselineFile, "utf8")).expectedAssets?.javaScript?.name
+    : existsSync(candidateBaselineFile)
+      ? JSON.parse(readFileSync(candidateBaselineFile, "utf8")).expectedAssets?.javaScript?.name
+      : null);
 
 const results = [];
 const check = (name, passed, detail = "") => results.push({ name, passed: Boolean(passed), detail: passed ? "" : String(detail || "") });
