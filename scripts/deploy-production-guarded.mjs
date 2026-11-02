@@ -80,7 +80,11 @@ const temporary = (prefix) => {
 // forced every dry-run and deployment to copy and hash ~32k extra files (~2.1 GB)
 // before Wrangler discarded them. Excluding it here changes no published byte.
 const excludedDirectories = new Set([".git", ".wrangler", ".local-dev", "node_modules", "backups", "data", "docs", "migrations", "scripts", "lib", "functions", "admin-center-app"]);
-const excludedFiles = new Set([".dev.vars", ".env", "wrangler.toml", "wrangler.dev.toml", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]);
+// `.DS_Store` is excluded here for the same reason as `.local-dev`: `.assetsignore`
+// already refuses to publish it, and it is untracked Finder metadata, so copying
+// it would only certify a byte that is never deployed and let a stray Finder
+// touch invalidate an otherwise valid certification.
+const excludedFiles = new Set([".dev.vars", ".env", ".DS_Store", "wrangler.toml", "wrangler.dev.toml", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]);
 const filter = (source) => {
   const rel = relative(repoRoot, source);
   if (!rel) return true;
