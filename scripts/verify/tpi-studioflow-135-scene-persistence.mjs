@@ -429,17 +429,35 @@ try {
   });
   check("an older snapshot without a stored Scene panel is still accepted", legacyWrite.status === 200, JSON.stringify({ status: legacyWrite.status }));
   await driver.navigate().refresh();
-  // An older snapshot has no stored panel, so the server stores an empty list
-  // and the panel restores empty. That is deliberate: an empty panel is also a
-  // legitimate "every row removed" state, so inventing rows here could
-  // resurrect work the creator deleted. The guarantee is that the older
-  // snapshot stays readable and never shows another Studio's rows.
+  // An older snapshot has no stored panel. The released application derives a
+  // panel for that case from the Studio's own Scenes (intro, its own Scenes,
+  // outro), so the guarantee here is not a fixed row count: the snapshot must
+  // stay readable and the panel may only ever show rows belonging to this
+  // Studio. Another Studio's rows, or a row resurrected from a deleted Studio,
+  // still fails. The row snapshot is taken after it stops changing, because a
+  // single early read races the application's restore and row paint.
+  const settledPanelRows = async (timeout = 20_000) => {
+    const started = Date.now();
+    let previous = null;
+    let stable = 0;
+    let rows = [];
+    while (Date.now() - started < timeout) {
+      rows = await panelRows();
+      stable = previous !== null && JSON.stringify(previous) === JSON.stringify(rows) ? stable + 1 : 0;
+      if (stable >= 2) return rows;
+      previous = rows;
+      await sleep(400);
+    }
+    return rows;
+  };
+  const legacySceneIds = new Set((legacyState.configuration.studioScenes || []).map((scene) => String(scene.id)));
+  const ownRowIds = new Set(["intro", "outro"]);
+  legacySceneIds.forEach((id) => ownRowIds.add(`scene:${id}`));
   const legacyRows = await waitFor("panel restored from an older snapshot", async () => {
-    const rows = await panelRows();
     const ready = await driver.executeScript("return Boolean(document.querySelector('[data-tpi-scenes-panel]'));");
-    return ready ? rows : false;
+    return ready ? await settledPanelRows() : false;
   });
-  check("an older snapshot restores without error and without inventing Scene rows", legacyRows.length === 0, JSON.stringify(legacyRows.map((row) => row.kind)));
+  check("an older snapshot restores readable and shows only its own Scenes", legacyRows.every((row) => ownRowIds.has(String(row.id))), JSON.stringify(legacyRows.map((row) => row.id)));
   check("an older snapshot does not inherit another Studio's Scene rows", !legacyRows.some((row) => row.kind === "teleprompter-script" || row.kind === "timer"), JSON.stringify(legacyRows.map((row) => row.kind)));
   await driver.executeScript("var t=document.querySelector('[data-studio-panel-tab=\"Teleprompter\"]'); if(t) t.click(); return true;");
   await waitFor("Teleprompter script still listed after legacy restore", async () => Boolean(await driver.executeScript("return Boolean(document.querySelector('[data-teleprompter-script-id=\"' + arguments[0] + '\"]'));", scriptId)));

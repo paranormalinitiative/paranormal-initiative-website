@@ -57,8 +57,10 @@
     }).filter(Boolean);
   }
   // The Scenes panel a Studio starts from when its snapshot has no stored
-  // panel: intro, one row per Scene, outro. Used only for snapshots that
-  // predate the stored panel so they cannot inherit another Studio's rows.
+  // panel: intro, one row per Scene of this Studio, outro. This mirrors the
+  // application's own default derivation, so the browser copy always matches
+  // what this Studio displays and a previously open Studio's rows cannot
+  // survive in it.
   function defaultScenePanelItemsFor(scenes) {
     var list = Array.isArray(scenes) ? scenes : [];
     var items = [{ id: "intro", kind: "intro", title: "Intro Video", sceneId: "intro", opening: true }];
@@ -474,9 +476,13 @@
   function applyState(saved) { var state = saved && saved.state ? saved.state : saved || {}, broadcast = state.broadcast || {}, broadcasts = read(KEYS.broadcasts, []); if (!Array.isArray(broadcasts)) broadcasts = []; var broadcastId = text(broadcast.id) || text(saved.localBroadcastId) || text(saved.id) || uuid("studio"), restored = broadcasts.find(function (item) { return item && item.id === broadcastId; }); if (!restored) { if (tombstonedStudioIds()[text(broadcastId).trim()]) return; restored = { id: broadcastId, kind: "live" }; broadcasts.push(restored); } restored.title = broadcast.title || saved.title || restored.title || "Untitled Studio"; restored.description = broadcast.description || saved.description || restored.description || ""; if (broadcast.status) restored.status = broadcast.status; restored.scheduledAt = broadcast.scheduledAt || null; write(KEYS.broadcasts, broadcasts); localStorage.setItem(KEYS.active, JSON.stringify(restored.id)); var settings = state.settings || {}; if (settings.programOrientation) localStorage.setItem(CONFIG_KEYS.programOrientation, settings.programOrientation); var prefPatch = {}, storagePatch = {}; if (settings.recordBackstageAutomatically !== undefined) prefPatch.recordBackstageAutomatically = settings.recordBackstageAutomatically === true; if (settings.resumeBackstageAfterShow !== undefined) prefPatch.resumeBackstageAfterShow = settings.resumeBackstageAfterShow === true; if (settings.recordingDestination !== undefined) storagePatch.recordingDestination = settings.recordingDestination === "folder" ? "folder" : "browser"; if (settings.keepLocalBackup !== undefined) storagePatch.keepLocalBackup = settings.keepLocalBackup !== false; if (settings.saveAutomatically !== undefined) storagePatch.saveAutomatically = settings.saveAutomatically === true; if (Object.keys(prefPatch).length) write(KEYS.preferences, Object.assign(read(KEYS.preferences, {}) || {}, prefPatch)); if (Object.keys(storagePatch).length)        write(KEYS.storage, Object.assign(read(KEYS.storage, {}) || {}, storagePatch));
     Object.keys(CONFIG_KEYS).forEach(function (name) { if (state.configuration && state.configuration[name] !== undefined) write(CONFIG_KEYS[name], state.configuration[name]); });
     // TPI-STUDIOFLOW-135: a snapshot saved before the panel was stored must not
-    // leave the previously open Studio's Scene rows in place; give this Studio
-    // its own default panel instead of silently showing another Studio's items.
-    if (!state.configuration || state.configuration.scenePanelItems === undefined) write(CONFIG_KEYS.scenePanelItems, defaultScenePanelItemsFor(state.configuration && state.configuration.studioScenes)); localStorage.setItem(KEYS.activeStudio, saved.id); localStorage.setItem(KEYS.route, JSON.stringify("studio")); lastSeenActiveBroadcastId = text(broadcastId).trim(); window.dispatchEvent(new Event("storage")); }
+    // leave the previously open Studio's Scene rows in place. The account
+    // snapshot is authoritative, so the browser copy is reset to this Studio's
+    // own default panel: intro, its own Scenes, outro. The application derives
+    // that same panel for a snapshot without one, so display and storage agree,
+    // and no other Studio's rows can survive the switch.
+    if (!state.configuration || state.configuration.scenePanelItems === undefined) write(CONFIG_KEYS.scenePanelItems, defaultScenePanelItemsFor(state.configuration && state.configuration.studioScenes));
+    localStorage.setItem(KEYS.activeStudio, saved.id); localStorage.setItem(KEYS.route, JSON.stringify("studio")); lastSeenActiveBroadcastId = text(broadcastId).trim(); window.dispatchEvent(new Event("storage")); }
   function hydrateWorkspace(workspace) { if (!workspace) return; window.clearTimeout(saveTimer); saveTimer = null; suppressAutosave = true; try { applyState(workspace); lastSavedFingerprint = fingerprint(); } finally { suppressAutosave = false; } }
   // `options.background` marks activations the owner did not ask for — the
   // boot-time Studio replay and active-identity convergence. The application
