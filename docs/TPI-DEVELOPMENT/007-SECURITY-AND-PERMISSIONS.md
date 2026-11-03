@@ -28,6 +28,14 @@ The intended operational-role architecture — Moderator, Senior Moderator, Lead
 (TPI-GOVERNANCE-003B). It is policy only: the implemented gate today remains an
 owner-or-admin session, and none of those tiers exists yet.
 
+That record now also carries the staff-conduct principles added by
+TPI-GOVERNANCE-003B1 — freedom of religion, speech, and the press as voluntary
+organizational values, viewpoint-neutral moderation, the boundary that free
+expression does not authorize abuse, recusal, fair process, equal application, and
+the working staff oath. None of it changes authorization behavior: no oath
+acknowledgment, staff tier, capability table, or role record is implemented, and
+authority is still resolved entirely server-side from the account's role value.
+
 ## Membership entitlements and administrative permissions (recorded 2026-11-02)
 
 The policy model behind these controls — Free versus Paid membership, the Creator

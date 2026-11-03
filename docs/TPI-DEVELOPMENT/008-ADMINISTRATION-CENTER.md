@@ -36,3 +36,11 @@ Moderator tier, staff directory, or role-assignment surface yet. The role model
 that this work must implement is
 [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
 (TPI-GOVERNANCE-003B).
+
+That record, as amended by TPI-GOVERNANCE-003B1, also fixes the conduct standard the
+future staff surface must support: viewpoint-neutral moderation, protection for
+criticism of TPI and its leadership, recusal and escalation, documented fair process,
+equal application regardless of status, the working staff oath, and the rule that
+service recognition never reactivates expired authority. A future staff directory or
+oath-acknowledgment surface is not designed or implemented here, and the audit
+roadmap item recorded above is unchanged.

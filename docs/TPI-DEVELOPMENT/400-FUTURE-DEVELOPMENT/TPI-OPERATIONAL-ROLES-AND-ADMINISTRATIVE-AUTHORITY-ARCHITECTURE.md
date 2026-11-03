@@ -3,7 +3,9 @@
 Effective: 2026-11-03
 Status: **AUTHORITATIVE POLICY — DOCUMENTATION AND ASSET IMPORT ONLY. NO
 APPLICATION, DATABASE, ROLE ASSIGNMENT, OR DEPLOYMENT CHANGE.**
-Authority: owner directive TPI-GOVERNANCE-003B (with the badge-master addendum)
+Authority: owner directive TPI-GOVERNANCE-003B (with the badge-master addendum),
+amended by TPI-GOVERNANCE-003B1 (constitutional values, staff oath, and future help
+architecture) and TPI-GOVERNANCE-003B1-R (recovery completion)
 Section: TPI-GOVERNANCE-003, section B (Operational Roles — Moderators &
 Administrators)
 Depends on: [TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md](TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md) (003A)
@@ -39,7 +41,231 @@ granted. None replaces another.
 | Organizational office | What governance authority do they hold? | governance record (003C) |
 | Honor / distinction | What have they earned or been given? | honors record |
 
-## 3. Operational authority is appointed
+## 3. Constitutional values govern operational authority
+
+Record prominently:
+
+> **The Paranormal Initiative expects its Moderators and Administrators to uphold
+> an organizational oath grounded in respect for the Constitution of the United
+> States and the principles of liberty represented by it.**
+
+TPI identifies the First Amendment freedoms as core organizational values: freedom
+of religion, freedom of speech, and freedom of the press, together with the rest of
+that framework — peaceful assembly and the petition of grievances.
+
+These are voluntary TPI organizational values governing how staff exercise
+authority. They are not a claim that TPI is a government, they do not make TPI a
+court or a rights tribunal, and they create no legal obligation on any member.
+Their purpose is narrower and practical: they tell staff what TPI authority may
+never be used for.
+
+Operational authority is therefore bounded twice — by the community standards that
+define harmful conduct, and by these principles, which forbid using authority to
+police belief or viewpoint.
+
+## 4. Freedom of religion
+
+TPI members must be free to hold religious beliefs, hold spiritual or metaphysical
+beliefs, reject religious and spiritual beliefs, change beliefs, discuss beliefs,
+question beliefs, and respectfully criticize religious ideas.
+
+This matters more here than on a general-interest platform. A community organized
+around paranormal, supernatural, spiritual, metaphysical, UFO/UAP, cryptid, and
+unexplained phenomena will contain members whose frameworks are devotional,
+members whose frameworks are experimental, and members who consider the entire
+subject a category error. All three are legitimate participants.
+
+Moderators and Administrators must not favor or suppress a member because of
+religious, spiritual, or nonreligious viewpoint. Staff may not treat a belief as
+misconduct, and may not treat skepticism as blasphemy. Conversely, no belief
+system — including a sincerely held one — converts otherwise harmful conduct into
+protected expression.
+
+## 5. Freedom of speech
+
+TPI maintains a strong presumption in favor of open expression. Members should be
+able to express opinions, disagree, debate, criticize, challenge claims, challenge
+evidence, question TPI, question leadership, advocate skeptical positions,
+advocate believing positions, and hold unpopular opinions.
+
+Record:
+
+> **TPI does not exist to manufacture agreement.**
+
+A Moderator must not remove content merely because they personally disagree with
+it, find it uncomfortable, consider it wrong, or believe the member is mistaken.
+Personal disapproval is not a moderation ground. The valid grounds are conduct and
+material defined by the community standards, applied as written.
+
+## 6. Freedom of the press
+
+Freedom of the press is a core TPI value because TPI includes researchers,
+investigators, Contributors, writers, journalists, educators, podcasters,
+filmmakers, livestreamers, photographers, and independent content creators.
+
+Legitimate research, reporting, commentary, investigation results, criticism, and
+evidence must not be suppressed merely because staff or leadership dislike the
+conclusion. A Contributor must be able to publish that no evidence of paranormal
+activity was found. A researcher must be able to challenge an accepted claim. A
+Creator must be able to criticize paranormal evidence, including evidence TPI
+itself published.
+
+Operational authority must never be used to protect TPI, its leadership, or its
+favored conclusions from legitimate reporting.
+
+## 7. Evidence-first freedom
+
+Record as a TPI research principle:
+
+> **Members must be free to challenge paranormal claims without being treated as
+> hostile merely because they are skeptical.**
+
+Legitimate speech includes statements that an EVP may be contamination, that an orb
+may be dust or an insect, that an image may have a natural explanation, that the
+available evidence does not support a haunting claim, or that an investigation
+methodology is flawed.
+
+The same protection runs in the other direction. A member who believes evidence is
+paranormal may present and defend that interpretation, and must not be dismissed as
+gullible, fraudulent, or unhinged for doing so.
+
+TPI protects the debate, not a preferred side of it.
+
+## 8. Freedom does not authorize abuse
+
+Record prominently:
+
+> **Freedom of speech does not mean freedom to bully, intimidate, threaten,
+> harass, stalk, dox, or deliberately target another member for abuse.**
+
+Members may challenge ideas, evidence, claims, conclusions, and methodology. They
+may not weaponize the community against a person, and they may not use the language
+of free expression as cover for cruelty.
+
+This boundary is the reason the principles in this section are compatible with
+moderation at all. A community that protects nothing but expression ends up
+protecting the loudest abuser; a community that moderates conduct keeps the floor
+open for everyone else.
+
+## 9. Moderate conduct, not viewpoint
+
+Establish as a primary TPI moderation standard:
+
+> **Moderate harmful conduct, not viewpoints.**
+
+Moderation distinguishes between legitimate disagreement and targeted misconduct.
+Strong disagreement is not harassment. Being offended is not, by itself, a
+violation. Context matters: what is actually shown, why it was posted, whether it is
+relevant, whether a person is being targeted, whether material is graphic, and
+whether it carries legitimate research, educational, historical, or journalistic
+value.
+
+Staff should not make decisions by spotting a keyword. Words such as murder, demon,
+blood, ritual, death, suicide, or occult appear throughout legitimate paranormal
+research, and the presence of a word is not a finding.
+
+The companion principle is equally binding: **paranormal relevance does not excuse
+harmful content.** Calling something occult, ritualistic, demonic, or unexplained
+does not make it appropriate. Both halves of the standard apply — no keyword
+censorship, and no subject-matter exemption.
+
+## 10. Viewpoint neutrality
+
+Moderator and Administrator decisions must not depend on whether a member is a
+believer, a skeptic, religious, nonreligious, politically popular or unpopular, a
+Free Member, a Paid Member, a Creator, a Contributor, a Founding Member, a friend of
+staff, or a critic of leadership.
+
+Rules apply to conduct. Identical conduct receives identical treatment regardless of
+who performed it and regardless of whether staff agrees with what the member
+believes.
+
+## 11. Criticism of TPI is protected
+
+Members must be permitted to legitimately criticize The Paranormal Initiative, TPI
+leadership, TPI research, TPI applications, investigations, Education Center
+material, community rules, and moderation decisions.
+
+Staff authority must not function as protection from accountability. Criticism of a
+moderation decision is not itself a violation, and answering criticism is not a
+moderation function.
+
+## 12. Abuse of staff authority
+
+Operational authority must never be used to settle personal disputes, retaliate
+against critics, silence disagreement, protect friends from legitimate enforcement,
+intimidate members, suppress legitimate research, or suppress legitimate criticism.
+
+Abuse of staff authority is itself reviewable conduct, and it is reviewable at the
+same or higher level of authority than the actor holds.
+
+## 13. Recusal and escalation
+
+If a Moderator or Administrator is personally involved in a dispute — as a
+participant, a target, a friend, an adversary, or an interested party — they should
+not ordinarily adjudicate their own conflict.
+
+Preferred principle:
+
+> **Recuse and escalate.**
+
+Future escalation paths run to Senior Moderator, Lead Moderator, Administrator,
+Senior Administrator, or another designated higher authority. Recusal must be
+available without penalty and must never be treated as an admission of fault.
+
+## 14. Fair process
+
+TPI staff should favor fair and documented process. Where circumstances reasonably
+permit, staff should identify the rule involved, preserve the relevant evidence,
+explain significant moderation action, distinguish warnings from suspensions and
+from permanent action, allow review or escalation, and document the decision.
+
+Emergency protective action may occur first when a member's safety or the integrity
+of the community requires it, but emergency action remains reviewable afterward.
+Urgency justifies sequencing, not secrecy.
+
+## 15. Equal application
+
+No TPI status creates immunity from community conduct rules. This includes Founder,
+leadership, Gold Medallion, Board Member, Founding Member, Creator, Contributor,
+Administrator, and Moderator.
+
+Higher status must never mean lower accountability. The most senior person in a
+dispute is subject to the same conduct standard as the newest member, and a staff
+member enforcing a rule is bound by it while enforcing it.
+
+## 16. Staff oath
+
+The working TPI Moderator / Administrator oath:
+
+> **I will uphold and respect the Constitution of the United States and the
+> principles of liberty represented by it. I will respect freedom of religion,
+> freedom of speech, and freedom of the press within The Paranormal Initiative. I
+> will not use my authority to silence legitimate disagreement, criticism, belief,
+> skepticism, research, reporting, or unpopular opinion. I will exercise my
+> responsibilities fairly and without favoritism. I will protect members from
+> bullying, harassment, intimidation, threats, stalking, and targeted abuse. I will
+> moderate conduct rather than viewpoint, respect member privacy, document my
+> actions honestly, and remain accountable for the authority entrusted to me.**
+
+Status: **WORKING OATH — OWNER APPROVED IN PRINCIPLE — FINAL WORDING MAY BE
+REFINED BEFORE IMPLEMENTATION.**
+
+The principles the oath states are settled. Refinement of wording, if any, must not
+weaken them: the oath may not be shortened into a loyalty pledge, may not be
+reworded to drop freedom of religion, speech, or the press, and may not be reworded
+to make viewpoint neutrality optional.
+
+## 17. Appointment requires oath acknowledgment
+
+Future appointment of a Moderator or Administrator should require acknowledgment of
+the staff oath, the constitutional-value principles, viewpoint-neutral moderation,
+privacy responsibilities, escalation rules, and auditability, together with the
+prohibition on retaliation and abuse of authority.
+
+Implementation is future work. Nothing is recorded, prompted, or enforced now.
+
+## 18. Operational authority is appointed
 
 Moderator and Administrator authority is **appointed**, not purchased, not earned
 automatically from posting volume, not granted by a subscription tier, not
@@ -49,7 +275,7 @@ because the account holds Creator or Contributor access.
 Only authorized TPI leadership appoints operational roles. The exact appointment
 authority is finalized with the governance/leadership architecture (003C).
 
-## 4. Free Members may hold operational roles
+## 19. Free Members may hold operational roles
 
 A person does not need a paid subscription to serve TPI operationally. A
 legitimate Free Member may be appointed Moderator, Senior Moderator, or Lead
@@ -57,12 +283,12 @@ Moderator if TPI authorizes it. Staff responsibility does not automatically
 confer StudioFlow, Nova Edit, the Nova Editorial Workspace, premium subscription
 benefits, or any Creator/Contributor entitlement.
 
-## 5. Paid Members may hold operational roles
+## 20. Paid Members may hold operational roles
 
 A Paid Member may also be Moderator, Administrator, or another authorized
 operational role. Payment does not cause the appointment; the states coexist.
 
-## 6. Founding Members may hold operational roles
+## 21. Founding Members may hold operational roles
 
 Example — **Founding All-Access + Administrator** — is three independent records:
 
@@ -73,7 +299,7 @@ Example — **Founding All-Access + Administrator** — is three independent rec
 None of these may be derived from another, and revoking one must not silently
 revoke the others.
 
-## 7. Moderation family
+## 22. Moderation family
 
 Working architecture names:
 
@@ -84,7 +310,7 @@ Working architecture names:
 These are working names, refinable by the owner before implementation. Their
 functional separation is what this document fixes.
 
-## 8. Moderator
+## 23. Moderator
 
 A Moderator is a trusted operational community role. Expected responsibilities,
 within authorized scope:
@@ -100,7 +326,7 @@ within authorized scope:
 A Moderator does not automatically receive broad account-administration
 authority.
 
-## 9. Moderator limitations
+## 24. Moderator limitations
 
 A standard Moderator should not automatically be able to: assign Founding
 Memberships, assign Creator/Contributor entitlements, appoint Administrators,
@@ -108,9 +334,9 @@ alter Board roles, change executive authority, manage billing, change global
 security configuration, alter production infrastructure, grant themselves
 privileges, or read unrelated private information.
 
-Least privilege applies (section 22).
+Least privilege applies (section 37).
 
-## 10. Senior Moderator
+## 25. Senior Moderator
 
 Represents increased operational trust: everything a Moderator may do, plus
 escalated-case review, more serious conduct handling, mentoring Moderators,
@@ -120,7 +346,7 @@ suspensions or escalations.
 Exact permissions: **OWNER DECISION REQUIRED BEFORE IMPLEMENTATION.** No
 unrestricted powers are implied.
 
-## 11. Lead Moderator
+## 26. Lead Moderator
 
 The highest currently planned moderation-specific role: moderation-team
 coordination, difficult-case escalation, policy-consistency oversight, review of
@@ -130,7 +356,7 @@ moderation workflow oversight.
 Lead Moderator remains below administrative/platform authority unless separately
 appointed to an Administrator role.
 
-## 12. Moderation is not administration
+## 27. Moderation is not administration
 
 Record explicitly:
 
@@ -140,7 +366,7 @@ Record explicitly:
 A Lead Moderator does not automatically become an Administrator. An Administrator
 does not automatically become a community leader or Board Member.
 
-## 13. Administration family
+## 28. Administration family
 
 Working architecture names:
 
@@ -149,10 +375,10 @@ Working architecture names:
 - **Platform Administrator**
 
 Historical documentation also referenced **Assistant Administrator**. That term is
-preserved in section 45 rather than erased; whether it remains an official role is
+preserved in section 62 rather than erased; whether it remains an official role is
 an owner decision.
 
-## 14. Administrator
+## 29. Administrator
 
 Trusted operational authority over defined administrative functions, potentially:
 member management, account administration, Creator/Contributor administration,
@@ -162,7 +388,7 @@ explicitly granted, and system operational tools appropriate to the role.
 
 Administrator does not automatically mean unrestricted platform authority.
 
-## 15. Senior Administrator
+## 30. Senior Administrator
 
 Higher operational trust: broader administrative management, complex account
 issues, role management within delegated scope, oversight of standard
@@ -170,7 +396,7 @@ Administrators, higher-risk operational actions, and escalation handling.
 
 Exact sensitive permissions must be defined explicitly before implementation.
 
-## 16. Platform Administrator
+## 31. Platform Administrator
 
 The highest currently proposed non-owner operational tier: broad Administration
 Center access, platform configuration, system management, security operations,
@@ -181,7 +407,7 @@ Platform Administrator does not automatically mean Founder, CEO, Board Member, o
 Gold Medallion holder. Operational power and organizational office remain
 different concepts.
 
-## 17. Owner / Founder authority is separate
+## 32. Owner / Founder authority is separate
 
 The Founder/Owner must not be modeled as another ordinary Administrator tier.
 **Owner / Founder Authority** represents the highest organizational
@@ -190,7 +416,7 @@ formally documented. The owner may exercise administrative capabilities without
 being visually represented as "Platform Administrator": the owner is Founder/CEO
 first, and administrative access follows from explicit authority.
 
-## 18. Current owner
+## 33. Current owner
 
 Current TPI owner: **Todd Wayne** — Founder, Chief Executive Officer, and Board
 role as legitimately established. Operationally the owner requires full
@@ -200,7 +426,7 @@ Those organizational offices must not be collapsed into an `admin` label. A futu
 UI may display **Founder / CEO** while authorization resolves Full Platform
 Authority once that is formally implemented.
 
-## 19. Role stacking
+## 34. Role stacking
 
 Every combination must be expressible without overwriting another role:
 
@@ -213,21 +439,21 @@ Every combination must be expressible without overwriting another role:
 | E | — (Founding All-Access) | Creator + Contributor | Senior Administrator |
 | F | — | — | Founder/CEO + Full Platform Authority + Gold Medallion |
 
-## 20. A single role column is not the final architecture
+## 35. A single role column is not the final architecture
 
 The historical single-role account model is insufficient for the complete future
 architecture. It must not be modified under 003B. Future implementation should
 support cumulative sources of membership, professional entitlement, staff
 authority, organizational office, leadership authority, and honors.
 
-## 21. Server-side authority
+## 36. Server-side authority
 
 Operational authorization is always evaluated server-side. Never authorize
 Moderator or Administrator functions from a visible badge, profile text, HTML,
 CSS, a JavaScript label, `localStorage`, a query parameter, or a client-supplied
 role value.
 
-## 22. Least privilege
+## 37. Least privilege
 
 Record as permanent:
 
@@ -238,7 +464,7 @@ A Moderator does not receive Administrator access for convenience. An
 Administrator does not receive Founder authority. Senior roles expand authority
 deliberately instead of inheriting everything.
 
-## 23. Capability-based authorization
+## 38. Capability-based authorization
 
 Future implementation should favor explicit capabilities over coarse role checks.
 Illustrative only — not final API names, not implemented:
@@ -249,7 +475,7 @@ Illustrative only — not final API names, not implemented:
 `contributors.manage`, `admin.staff_roles.manage`, `security.view`,
 `security.manage`.
 
-## 24. High-risk capabilities
+## 39. High-risk capabilities
 
 Future elevated actions include: permanent account deletion, Founding Membership
 assignment, staff appointment, privilege escalation, executive/Board changes,
@@ -257,33 +483,33 @@ security configuration, billing configuration, production-level settings, and
 sensitive data export. The exact matrix belongs to future implementation and
 security work.
 
-## 25. Self-escalation prohibited
+## 40. Self-escalation prohibited
 
 No staff member may increase their own privileges by editing their own account. A
 Moderator cannot make themselves Administrator. An Administrator cannot make
 themselves Founder. A Platform Administrator cannot grant themselves a Gold
 Medallion or Board office unless governance policy separately authorizes it.
 
-## 26. Appointment records
+## 41. Appointment records
 
 Operational roles must have recorded appointment authority. Future records should
 support appointee, role, assigning authority, date/time, reason, and current state.
 High-level staff appointments should be auditable.
 
-## 27. Role states
+## 42. Role states
 
 Future operational roles support `active`, `suspended`, `revoked`, and `expired`
 where appropriate. Historical service does not disappear when active authority
 ends.
 
-## 28. Authority versus history
+## 43. Authority versus history
 
 If a person served as Moderator for three years and later steps down: current
 operational authority is **none**, while an Honors Wall/service record may still
 show **former Moderator / service distinction** if TPI chooses to recognize it.
 Past service never grants current permissions.
 
-## 29. Operational service insignia — imported masters
+## 44. Operational service insignia — imported masters
 
 Two official operational-role badge masters now exist in the repository:
 
@@ -302,78 +528,100 @@ The Moderator master carries a **baked checkerboard matte** where transparency w
 intended (JPEG cannot store alpha), so it cannot be placed on the dark interface
 without rework. That is recorded as an owner-resolvable defect, not repaired here.
 
-## 30. Service insignia are not leadership medallions
+## 45. Service insignia are not leadership medallions
 
 Operational insignia remain distinct from the Gold, Silver, and Bronze Medallions,
 future Board medallions, and the Founding Membership badges. A Moderator badge
 represents operational service; a Gold Medallion represents a separate
 leadership/honor concept.
 
-## 31. Honors Wall relationship
+## 46. Insignia do not certify the oath
+
+The imported Administrator and Moderator masters represent operational service. They
+do not independently certify compliance with the staff oath, and holding, displaying,
+or possessing the artwork never creates authority.
+
+Current authority comes from server-side authorization. A future staff appointment
+may require recorded oath acknowledgment before authority becomes active; that is
+recorded here as intended direction, not implemented.
+
+## 47. Honors Wall relationship
 
 Operational service may eventually appear in **TPI Honors & Distinctions** and the
 **Honors Wall** — for example Moderator Service, Senior Moderator, Administration
 Service, or Years of Service. Public display is never authorization.
 
-## 32. Staff privacy
+## 48. Service recognition does not reactivate authority
+
+Historical service may eventually appear in **TPI Honors & Distinctions** and the
+**Honors Wall**, including recognition of a former Moderator or Administrator.
+
+Record permanently:
+
+> **Service recognition never reactivates expired or revoked operational authority.**
+
+A person shown on the Honors Wall for past moderation service holds no current
+powers unless a current staff-role record separately grants them.
+
+## 49. Staff privacy
 
 Future implementation should distinguish public-facing staff distinction, private
 operational permissions, and security-sensitive staff metadata. A member may
 publicly show that they are a Moderator without exposing the capability matrix.
 
-## 33. Moderation audit
+## 50. Moderation audit
 
 Future moderation actions should be auditable where appropriate: actor, action,
 target, reason, timestamp, previous state, resulting state. Avoid unnecessary
 collection of private data.
 
-## 34. Administrative audit
+## 51. Administrative audit
 
 Sensitive administrative operations should be auditable, particularly staff-role
 changes, Founding Membership assignments, entitlement changes, account suspension,
 high-risk data actions, and security changes.
 
-## 35. Moderation appeals
+## 52. Moderation appeals
 
 **Moderation Appeals / Review Process — OWNER DECISION REQUIRED.** The architecture
 must allow escalated review by more senior operational authority; the full appeals
 system is not designed here.
 
-## 36. Account suspension authority
+## 53. Account suspension authority
 
 Exact suspension powers are defined later. Conceptual direction: Moderator —
 limited temporary moderation actions; Senior/Lead Moderator — broader escalation
 tools; Administrator — account-level operational actions; Owner/authorized
 leadership — highest review authority. No exact limits are implemented here.
 
-## 37. Permanent ban and deletion
+## 54. Permanent ban and deletion
 
 Permanent destructive account actions are not casually delegated. Policy:
 **OWNER DECISION REQUIRED.** Future implementation must distinguish content
 moderation, temporary suspension, account restriction, permanent ban, and account
 deletion — they are not equivalent operations.
 
-## 38. Private messages
+## 55. Private messages
 
 Operational roles do not automatically receive unrestricted access to private
 member communications. Existing TPI privacy principles remain intact.
 Administrators may need reported-conversation context, delivery/system health, and
 abuse reports without silently browsing everyone's private messages.
 
-## 39. Education Center authority
+## 56. Education Center authority
 
 Administrator status does not automatically imply Education Center Editor,
 Publisher, or Administrator. Those remain separate capability families; a person
 may hold both, but neither creates the other.
 
-## 40. Creator / Contributor authority
+## 57. Creator / Contributor authority
 
 Administrator status does not automatically mean the Administrator personally
 receives StudioFlow, Nova Edit, or the Nova Editorial Workspace. The ability to
 administer a program and the personal entitlement to use a professional
 application are different things.
 
-## 41. Founding Membership authority
+## 58. Founding Membership authority
 
 **CURRENT IMPLEMENTATION (factual).** Production permits an authenticated owner or
 administrator to issue Founding Memberships: `requireAdmin` in
@@ -385,21 +633,21 @@ Future governance may formalize or narrow which operational roles hold
 `founding_memberships.issue`. Production behavior is **not** changed by this
 directive.
 
-## 42. The owner cannot be locked out
+## 59. The owner cannot be locked out
 
 Future role systems must prevent accidental loss of legitimate Owner/Founder
 access. No ordinary staff-management action may demote the Founder, revoke Owner
 authority, lock the Owner out, or transfer ownership implicitly. Any future
 ownership transfer requires a separate explicit procedure.
 
-## 43. Staff account security
+## 60. Staff account security
 
 Future operational accounts need stronger security consideration because
 compromise has wider consequences: stronger authentication, session review,
 security notifications, sensitive-action confirmation, and audit visibility.
 No security change is implemented under 003B.
 
-## 44. Current implementation versus future architecture
+## 61. Current implementation versus future architecture
 
 **CURRENT (verified 2026-11-03, production release `rel-d5fca8ea960d-5007997d873d`):**
 
@@ -419,7 +667,7 @@ families, capability-based authorization, appointment records, role states, staf
 directory, and operational insignia. None of it exists yet, and no tier should be
 described as available.
 
-## 45. Terminology
+## 62. Terminology
 
 | Term | Meaning |
 |---|---|
@@ -433,51 +681,51 @@ described as available.
 | Operational insignia | visual service distinction for a staff role |
 | Capability | an explicit, server-checked permission |
 
-## 46. Historical Assistant Administrator term
+## 63. Historical Assistant Administrator term
 
 Existing TPI planning referenced **Assistant Administrator**. The term is recorded
 rather than lost. Status: **OWNER DECISION REQUIRED** — whether it remains an
 official role, maps to Administrator, sits below Administrator, or is replaced.
 No prior documentation is silently rewritten.
 
-## 47. Membership does not determine staff rank
+## 64. Membership does not determine staff rank
 
 Operational rank must not be based on whether a person is Free, Paid, Creator,
 Contributor, or Founding. Appointment is its own decision.
 
-## 48. Payment does not purchase staff authority
+## 65. Payment does not purchase staff authority
 
 Record permanently:
 
 > **No payment tier grants Moderator or Administrator authority.**
 
-## 49. Achievement does not grant staff authority
+## 66. Achievement does not grant staff authority
 
 A member does not become a Moderator by posting often, receiving reactions,
 earning achievements, completing courses, or reaching content milestones. Those
 systems may make someone worth considering; they do not create authority.
 
-## 50. Medallions do not grant staff authority
+## 67. Medallions do not grant staff authority
 
 A Gold, Silver, or Bronze image is never interpreted as an operational role.
 Leadership authority and operational roles may interact later, but authorization
 remains explicit.
 
-## 51. Administration Center
+## 68. Administration Center
 
 The Administration Center will eventually become the primary interface for
 operational staff. Preserved roadmap item: **TPI Administration Center — Complete
 Quality & Functional Audit.** Future implementation should adapt visible tools to
 the user's actual capabilities. Nothing is implemented now.
 
-## 52. Future staff management
+## 69. Future staff management
 
 Future Administration Center functionality may support a staff directory, role
 assignment, role suspension, permission inspection, audit history, appointment
 notes, and role-state management. This requires a separate implementation
 directive.
 
-## 53. Badge families in the repository
+## 70. Badge families in the repository
 
 TPI now recognizes three distinct families. They must never be collapsed into one
 generic rank field.
@@ -488,7 +736,100 @@ generic rank field.
 | Operational Service | Moderator, Administrator | `assets/operational-roles/` |
 | Leadership / Society | Gold, Silver, Bronze, future Board/leadership medallions | `assets/society-leadership/` |
 
-## 54. Unresolved owner decisions
+## 71. Future policy records this architecture depends on
+
+The operational-role architecture is deliberately not the whole moderation policy.
+It should cross-reference, and not duplicate or override, future records including
+Community Standards, Moderation Policy, Editorial Policy, Contributor Policy,
+Creator Policy, Staff Onboarding, and Appeals Policy.
+
+No competing policy authority is created here. Where a future record and this one
+touch the same subject, this record governs who may act and under what authority;
+the standards record governs what content is permitted.
+
+A complete **TPI Community Standards** system will be established as its own record;
+its planned scope is listed in the standards roadmap below. Two of its governing halves
+are already fixed here, because they bind staff conduct either way: **paranormal
+relevance does not excuse harmful content**, and moderation evaluates context rather
+than keywords.
+
+This record does not write that system. It fixes only the relationship: this record
+governs who may act and under what authority; the Community Standards will govern what
+content is permitted. Neither overrides the other, and staff may not enforce a rule that
+no record states.
+
+## 72. Community Standards roadmap
+
+A complete **TPI Community Standards** system is planned as a separate authoritative
+record covering violence, graphic death, pornography, sexual content, animal cruelty,
+harassment, threats, bullying, privacy, doxxing, scams, impersonation, spam, illegal
+activity, disturbing content, paranormal relevance, occult and metaphysical content,
+evidence discussion, appeals, and enforcement.
+
+It is not written here and must not be improvised here. Until it exists, staff may not
+invent prohibitions that no authoritative record states, and the principles in sections
+3 to 17 govern how staff exercise whatever authority the current standards define.
+
+## 73. Community Help Center
+
+A future **TPI Community Help Center** is planned as the member- and public-facing,
+searchable explanation of TPI policy: Community Standards, memberships,
+Creator/Contributor access, Founding Memberships, profiles, achievements, Honors &
+Distinctions, reporting, appeals, privacy, the Education Center, StudioFlow, Nova, and
+account help.
+
+It explains TPI policy to members. It does not create policy, and it must derive from
+the authoritative documentation rather than being edited independently.
+
+## 74. Internal Help Desk
+
+A separate future **TPI Internal Help Desk** is planned for staff and leadership:
+organizational structure, Moderator and Administrator duties, escalation paths, the
+constitutional principles, the staff oath, Community Standards enforcement, staff
+permissions, Founding Membership administration, ranks and distinctions, medallions,
+Administration Center procedures, internal troubleshooting, and staff training.
+
+It exists to help staff act correctly under the rules, not to author them, and it must
+never become a second, contradictory source of policy.
+
+## 75. Single source of truth
+
+Record permanently:
+
+> **Authoritative TPI policy and governance Markdown is the source of truth. The
+> Community Help Center and Internal Help Desk are published and explained views of
+> that authority.**
+
+Public Help Center policy, internal Help Desk policy, and governance Markdown must not
+drift into three different rule systems. When a published explanation and the
+authoritative record disagree, the record controls and the explanation is corrected.
+No help surface, staff habit, or verbal instruction becomes binding by repetition.
+
+## 76. Mystic documentation relationship
+
+Future Mystic support functionality may use approved Help Center and Help Desk
+documentation as its authoritative knowledge source. Mystic should explain TPI policy;
+Mystic must not invent policy, soften it, or extend it.
+
+No AI implementation, prompt design, or retrieval configuration is authorized under this
+record.
+
+## 77. Release packaging follow-up — masters excluded from certification
+
+Preserved from the 003B asset import:
+
+`scripts/deploy-production-guarded.mjs` filters unserved asset prefixes through an
+explicit list which does **not** currently include
+`assets/operational-roles/masters/`.
+
+Status: **REQUIRED BEFORE NEXT APPLICATION RELEASE CERTIFICATION.**
+
+`.assetsignore` currently prevents the masters from being publicly served, so nothing
+is exposed today. The correction should ensure the immutable certification candidate
+also excludes those unserved masters, consistent with the Founding Membership and
+Society asset policy. That script is not modified under this documentation directive.
+
+## 78. Unresolved owner decisions
 
 - whether Senior Moderator is required;
 - whether Lead Moderator is required;
@@ -504,13 +845,13 @@ generic rank field.
 - service-recognition rules;
 - whether Senior/Lead/Platform tiers receive separate artwork.
 
-## 55. Non-goals of this record
+## 79. Non-goals of this record
 
 No role assignment, permission change, staff tier implementation, profile change,
 badge display, schema change, deployment, or Founding Membership issuance. The
 policy architecture comes first.
 
-## 56. Cross-references
+## 80. Cross-references
 
 | Record | Relationship |
 |---|---|
@@ -522,7 +863,7 @@ policy architecture comes first.
 | [`../../planning/TPI-DOCS-001_MASTER_STATUS.md`](../../planning/TPI-DOCS-001_MASTER_STATUS.md) | Development sequence |
 | [`../100-DIRECTIVES/DIRECTIVE-INDEX.md`](../100-DIRECTIVES/DIRECTIVE-INDEX.md) | Directive history |
 
-## 57. Next section
+## 81. Next section
 
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**
 will address Founder, CEO, President where applicable, Board structure, Chair, Vice

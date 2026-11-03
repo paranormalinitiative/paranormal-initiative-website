@@ -38,6 +38,13 @@ appointment records, and the prohibition on self-escalation — is recorded in
 (TPI-GOVERNANCE-003B). It is policy and asset provenance only: no role is assigned,
 no permission changes, and no staff tier exists yet.
 
+TPI-GOVERNANCE-003B1 amended that record with the constitutional-value principles that
+bound staff authority, the working Moderator/Administrator oath, the moderation
+philosophy of conduct over viewpoint, recusal and accountability rules, and the future
+help architecture: Community Standards, a member-facing Community Help Center, a
+staff-facing Internal Help Desk, governance Markdown as the single source of truth, and
+Mystic as an explainer that must not invent policy. All of it is documentation.
+
 The operational badge masters (Moderator, Administrator) now live in
 [`../../../assets/operational-roles/`](../../../assets/operational-roles/), a family
 separate from the Founding and Society/Leadership artwork.

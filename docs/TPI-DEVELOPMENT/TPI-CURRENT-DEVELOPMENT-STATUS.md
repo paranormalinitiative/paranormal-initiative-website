@@ -1,5 +1,30 @@
 # TPI Current Development Status
 
+## TPI-GOVERNANCE-003B1 — Constitutional values, staff oath, and help architecture (2026-11-03)
+
+Status: **DOCUMENTATION ONLY. NO ROLE ASSIGNMENT, PERMISSION CHANGE, OR
+DEPLOYMENT.**
+
+- The operational-role architecture now states the organizational principles that
+  bound staff authority: freedom of religion, freedom of speech, and freedom of the
+  press, an evidence-first rule that protects both skepticism and belief, a clear
+  boundary that freedom of expression does not authorize abuse, viewpoint-neutral
+  moderation, protection for criticism of TPI itself, and a prohibition on using
+  staff authority for retaliation or to protect friends.
+- A working **Moderator / Administrator oath** is recorded, approved in principle by
+  the owner, with final wording refinable before implementation. The principles it
+  states may not be weakened.
+- Recusal ("recuse and escalate"), fair and documented process, equal application
+  regardless of Founder, Board, Medallion, Founding, Creator, Contributor, or staff
+  status, and a rule that Honors Wall service recognition never reactivates expired
+  authority are recorded.
+- Future roadmap only, nothing built: a full **TPI Community Standards** system, a
+  member-facing **Community Help Center**, a staff-facing **Internal Help Desk**, the
+  rule that authoritative governance Markdown is the single source of truth, and the
+  rule that Mystic may explain policy but never invent it.
+- Unchanged behavior: the admin gate is still an owner-or-admin session; no staff
+  tier, oath record, standards page, help center, or support knowledge source exists.
+
 ## TPI-GOVERNANCE-003B — Operational roles and administrative authority (2026-11-03)
 
 Status: **DOCUMENTATION AND ASSET IMPORT ONLY. NO ROLE ASSIGNMENT, PERMISSION

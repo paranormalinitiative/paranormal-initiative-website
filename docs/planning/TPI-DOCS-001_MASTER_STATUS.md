@@ -1,5 +1,24 @@
 # TPI-DOCS-001 — Master Documentation Status
 
+## TPI-GOVERNANCE-003B1 — Constitutional Values, Staff Oath & Help Architecture — November 3, 2026
+
+Status: **DOCUMENTATION COMPLETE. NO ROLE ASSIGNMENT, PERMISSION CHANGE, OR
+DEPLOYMENT.**
+
+The same authoritative operational-role record now also carries the staff-conduct
+principles: First Amendment freedoms as voluntary TPI organizational values, freedom
+of religion, freedom of speech, and freedom of the press, evidence-first protection for
+skeptical and believing readings of the same evidence, the boundary that free
+expression does not authorize abuse, "moderate harmful conduct, not viewpoints,"
+viewpoint neutrality, protection for criticism of TPI and its leadership, recusal,
+fair process, equal application, and the prohibition on abusing staff authority.
+
+It also records the working Moderator/Administrator oath (owner approved in
+principle), the requirement that future appointments acknowledge it, and the future
+documentation architecture: Community Standards, a member-facing Community Help
+Center, a staff-facing Internal Help Desk, governance Markdown as the single source of
+truth, and Mystic as an explainer that must not invent policy. Nothing is implemented.
+
 ## TPI-GOVERNANCE-003B — Operational Roles & Administrative Authority — November 3, 2026
 
 Status: **DOCUMENTATION AND ASSET IMPORT COMPLETE. NO ROLE ASSIGNMENT, PERMISSION
