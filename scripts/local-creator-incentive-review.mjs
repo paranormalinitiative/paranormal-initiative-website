@@ -9,12 +9,18 @@
 // badges, capabilities and the dual-access account without touching SQL.
 //
 // Guarded: --local-only is required, the base URL must be loopback, the
-// Wrangler config must be the local-only configuration, and every generated
-// credential stays inside the gitignored .local-dev directory.
+// Wrangler config must be the local-only configuration, and the Worker must
+// itself confirm a local environment before any fixture is created. Every
+// generated credential stays inside the gitignored .local-dev directory.
 
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { resolve } from "node:path";
+import {
+  assertLocalOnlyConfig,
+  assertLocalServerData,
+  assertLoopbackReviewTarget,
+} from "./lib/local-review-guard.mjs";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const localDir = resolve(repoRoot, ".local-dev");
@@ -32,11 +38,11 @@ if (!process.argv.includes("--local-only")) fail("pass --local-only to confirm o
 if (!existsSync(configPath)) fail("wrangler.local.toml is missing");
 if (!existsSync(adminCredentialPath)) fail("local administrator credentials are missing; run the maintained local setup first");
 const config = readFileSync(configPath, "utf8");
-for (const required of ['name = "tpi-local"', 'TPI_ENV = "local"', 'TPI_LOCAL_ONLY = "1"', 'database_name = "tpi-local-foundation"']) {
-  if (!config.includes(required)) fail(`required local setting is missing: ${required}`);
-}
-for (const forbidden of ["theparanormalinitiative", "paranormalinitiative.com", "tpi_contributor_portal"]) {
-  if (config.includes(forbidden)) fail(`remote or production value found in the local config: ${forbidden}`);
+try {
+  assertLoopbackReviewTarget(baseUrl);
+  assertLocalOnlyConfig(config);
+} catch (error) {
+  fail(error.message);
 }
 
 const REVIEW_ACCOUNTS = [
@@ -98,6 +104,18 @@ async function login(username, password) {
 const adminCookie = await login(adminCredential.username, adminCredential.password);
 if (!adminCookie) fail("the local administrator could not log in; the maintained local environment may need to be started first");
 console.log(`Local administrator session established (${adminCredential.username}).`);
+
+// Probe the registry before creating anything. The Worker only reports
+// localReviewData from a local environment, so this refuses to seed fixtures
+// into a remote or production target even if the config were tampered with.
+const probe = await api("/api/admin/founding-memberships?pageSize=1", { cookie: adminCookie });
+if (probe.status !== 200) fail(`the local registry probe failed (${probe.status})`);
+try {
+  assertLocalServerData(probe.payload);
+} catch (error) {
+  fail(error.message);
+}
+console.log("Worker confirmed a local review environment; fixtures are local-only.");
 
 const summary = [];
 for (const account of REVIEW_ACCOUNTS) {
@@ -173,5 +191,5 @@ for (const row of summary) {
   console.log(`${row.membershipNumber || "(capability only)"}  ${row.username.padEnd(22)} capabilities: ${(row.capabilities || []).join(" + ") || "none"} · badge: ${row.badge?.label || "none"} · creator studio: ${row.creatorStudioAccess} · editorial: ${row.editorialAccess} · incentive eligible: ${row.creatorIncentiveEligible}`);
 }
 console.log(`\nPasswords and usernames: ${reviewCredentialPath} (gitignored, mode 600)`);
-console.log(`Admin workflow: ${baseUrl}/admin-panel.html#founding-memberships (sign in as ${adminCredential.username})`);
+console.log(`Admin workflow: ${baseUrl}/admin-panel#founding-memberships (sign in as ${adminCredential.username})`);
 console.log("Ordinary-member control account remains: local_member (no membership, no capability).");

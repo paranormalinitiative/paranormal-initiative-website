@@ -159,3 +159,28 @@ no financial policy.
   Author/Submitter/Editor/Publisher/Administrator authority.
 - No StudioFlow behavior change. The only integration is the existing Creator
   Studio access check, which now reads the resolved Creator capability.
+
+## 11. Local review data (development only)
+
+The local review environment issues real rows into the local database so the
+owner can inspect the workflow: `FC-001`, `FCT-001`, `FAA-001`, `FC-002` (dual
+access), and `FC-003` (browser issuance check). They belong to synthetic
+`tpi_review_*` accounts and are **not** TPI Founding Memberships.
+
+They cannot reach production:
+
+- The schema migration seeds class definitions only; it never inserts a member,
+  a membership, an entitlement, or an incentive row.
+- The fixture driver requires `--local-only`, a loopback origin, the local-only
+  Wrangler configuration, and a Worker that reports `localReviewData`. Any other
+  target aborts before an account is created.
+- `.local-dev` (state, credentials, staged assets) is untracked and excluded from
+  build output and the certified release candidate.
+
+A clean registry — including the future production database on first launch —
+reports `50 left / 0 issued` per class with next numbers `FC-001`, `FCT-001`, and
+`FAA-001`. Local fixtures consume none of those numbers.
+
+In a local environment the Administration Center shows a single **Local review
+data** notice above the class cards. It is server-decided and cannot render in
+production.

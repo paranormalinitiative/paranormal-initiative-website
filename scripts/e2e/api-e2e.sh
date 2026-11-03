@@ -118,8 +118,11 @@ check "anonymous cannot read the founding registry" 403 "$(req GET /admin/foundi
 check "ordinary member cannot read the founding registry" 403 "$(req GET /admin/founding-memberships tok-plain)"
 check "ordinary member cannot assign a founding membership" 403 "$(req POST /admin/founding-memberships/assign tok-plain '{"username":"e2e_mbr_plain","classCode":"FC"}')"
 check "an administrator who is not the owner cannot read member entitlements" 403 "$(req GET /admin/members/e2e_mbr_plain/entitlements '')"
+check "a clean registry starts with 150 unissued numbers" 200 "$(req GET /admin/founding-memberships tok-owner)" "d['lifetimeIssuanceTotal']==0 and d['lifetimeCapacityTotal']==150 and all(c['remaining']==50 and c['nextNumber']==c['numberPrefix']+'-001' for c in d['classes'])"
+check "the local Worker marks the registry as local review data" 200 "$(req GET /admin/founding-memberships tok-owner)" "d['localReviewData'] is True"
 check "an authorized administrator can assign a founding membership" 201 "$(req POST /admin/founding-memberships/assign tok-admin '{"username":"e2e_mbr_admin","classCode":"FCT"}')" "d['membership']['membershipNumber']=='FCT-001' and d['capabilities']==['contributor']"
 check "owner reads all three class capacities" 200 "$(req GET /admin/founding-memberships tok-owner)" "len(d['classes'])==3 and all(c['lifetimeCapacity']==50 for c in d['classes'])"
+check "class counts are derived from the issued registry rows" 200 "$(req GET /admin/founding-memberships tok-owner)" "d['lifetimeIssuanceTotal']==sum(c['issued'] for c in d['classes'])"
 
 R=$(req POST /admin/founding-memberships/assign tok-owner '{"username":"e2e_mbr_creator","classCode":"FC","notes":"e2e creator"}')
 check "owner issues FC-001 to an existing account" 201 "$R" "d['membership']['membershipNumber']=='FC-001' and d['membership']['classCode']=='FC'"

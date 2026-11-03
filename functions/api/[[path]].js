@@ -6,7 +6,7 @@ import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-librar
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
-import { localFetch } from "../../lib/outbound-fetch.js";
+import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
 import {
   CAPABILITY,
   MEMBERSHIP_CLASSES,
@@ -1363,6 +1363,9 @@ async function handleAdminFoundingMemberships(request, env) {
   });
   return json({
     program: "Founding Memberships",
+    // Server-decided development marker. Production never satisfies
+    // isLocalEnvironment(), so the review-data notice cannot render there.
+    localReviewData: isLocalEnvironment(env),
     classes: summary.classes,
     lifetimeIssuanceTotal: summary.lifetimeIssuanceTotal,
     lifetimeCapacityTotal: summary.lifetimeCapacityTotal,

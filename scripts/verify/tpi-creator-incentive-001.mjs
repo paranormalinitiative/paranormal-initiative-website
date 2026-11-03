@@ -30,6 +30,11 @@ import {
   primaryBadge,
 } from "../../lib/membership-entitlements.js";
 import {
+  assertLocalOnlyConfig,
+  assertLocalServerData,
+  assertLoopbackReviewTarget,
+} from "../lib/local-review-guard.mjs";
+import {
   MembershipError,
   assignFoundingMembership,
   foundingClassSummary,
@@ -232,6 +237,63 @@ const allAccessA = addAccount("acct-allaccess", "acct_allaccess");
 const plainA = addAccount("acct-plain", "acct_plain");
 
 check("disposable database built and seeded", sqlJson("SELECT COUNT(*) AS total FROM contributors;")[0].total === 5);
+
+section("Registry: a clean production-shaped schema starts at zero issuance");
+
+const cleanSummary = await foundingClassSummary(fakeEnv);
+const cleanClass = (code) => cleanSummary.classes.find((entry) => entry.classCode === code);
+check("all three Founding classes are seeded by the migration", cleanSummary.classes.length === 3 && ["FC", "FCT", "FAA"].every((code) => Boolean(cleanClass(code))));
+check("Founding Creator shows 50 left and 0 issued", cleanClass("FC").remaining === 50 && cleanClass("FC").issued === 0 && cleanClass("FC").active === 0, JSON.stringify({ remaining: cleanClass("FC").remaining, issued: cleanClass("FC").issued }));
+check("Founding Contributor shows 50 left and 0 issued", cleanClass("FCT").remaining === 50 && cleanClass("FCT").issued === 0 && cleanClass("FCT").active === 0);
+check("Founding All-Access shows 50 left and 0 issued", cleanClass("FAA").remaining === 50 && cleanClass("FAA").issued === 0 && cleanClass("FAA").active === 0);
+check("the first Creator number in a clean schema is FC-001", cleanClass("FC").nextNumber === "FC-001", cleanClass("FC").nextNumber);
+check("the first Contributor number in a clean schema is FCT-001", cleanClass("FCT").nextNumber === "FCT-001", cleanClass("FCT").nextNumber);
+check("the first All-Access number in a clean schema is FAA-001", cleanClass("FAA").nextNumber === "FAA-001", cleanClass("FAA").nextNumber);
+check("a clean schema holds no membership rows at all", sqlJson("SELECT COUNT(*) AS total FROM founding_memberships;")[0].total === 0);
+check("a clean schema holds no capability entitlement rows", sqlJson("SELECT COUNT(*) AS total FROM member_entitlements;")[0].total === 0);
+check("a clean schema holds no incentive participation rows", sqlJson("SELECT COUNT(*) AS total FROM creator_incentive_participation;")[0].total === 0);
+check("every class keeps the 50-member lifetime limit", cleanSummary.classes.every((entry) => entry.lifetimeCapacity === 50) && cleanSummary.lifetimeCapacityTotal === 150);
+
+section("Migration audit: schema and class configuration only, never member fixtures");
+
+const migrationSql = readFileSync(resolve(repoRoot, "migrations/0058_founding_membership_entitlements.sql"), "utf8");
+check("migration 0058 creates the membership tables additively", /CREATE TABLE IF NOT EXISTS founding_memberships/.test(migrationSql) && /CREATE TABLE IF NOT EXISTS member_entitlements/.test(migrationSql));
+check("migration 0058 never inserts a membership assignment", !/INSERT[^;]*INTO\s+founding_memberships/i.test(migrationSql));
+check("migration 0058 never inserts a capability entitlement", !/INSERT[^;]*INTO\s+member_entitlements/i.test(migrationSql));
+check("migration 0058 never inserts incentive participation", !/INSERT[^;]*INTO\s+creator_incentive_participation/i.test(migrationSql));
+check("migration 0058 never creates a contributor account", !/INSERT[^;]*INTO\s+contributors/i.test(migrationSql));
+check("migration 0058 seeds class definitions once", (migrationSql.match(/INSERT[^;]*INTO\s+founding_membership_classes/gi) || []).length === 1);
+check("migration 0058 contains no review fixture account names", !/tpi_review_/i.test(migrationSql));
+check("migration 0058 contains no FC-001/FCT-001/FAA-001 assignment", !/'(FC|FCT|FAA)-0\d\d'/.test(migrationSql));
+
+section("Local review fixtures cannot reach production");
+
+check("the local environment directory is not tracked by Git", execFileSync("git", ["ls-files", ".local-dev"], { cwd: repoRoot, encoding: "utf8" }).trim() === "");
+function throwsWithoutRemote(action) {
+  try {
+    action();
+    return null;
+  } catch (error) {
+    return error;
+  }
+}
+check("a production origin is refused as a review target", throwsWithoutRemote(() => assertLoopbackReviewTarget("https://theparanormalinitiative.com")) !== null);
+check("a non-loopback host is refused as a review target", throwsWithoutRemote(() => assertLoopbackReviewTarget("http://192.168.1.10:8787")) !== null);
+check("the retired Directive 113 port is refused", throwsWithoutRemote(() => assertLoopbackReviewTarget("http://127.0.0.1:5192")) !== null);
+check("the local loopback review target is accepted", assertLoopbackReviewTarget("http://127.0.0.1:8787") instanceof URL);
+check("a production Wrangler configuration is refused", throwsWithoutRemote(() => assertLocalOnlyConfig('name = "theparanormalinitiative"\ndatabase_name = "tpi_contributor_portal"\n')) !== null);
+check("a configuration missing the local-only flags is refused", throwsWithoutRemote(() => assertLocalOnlyConfig('name = "tpi-local"\n')) !== null);
+check("the maintained local-only configuration is accepted", assertLocalOnlyConfig(readFileSync(resolve(repoRoot, "wrangler.local.toml"), "utf8")) === true);
+check("a server that does not confirm a local environment is refused", throwsWithoutRemote(() => assertLocalServerData({})) !== null);
+check("a server reporting localReviewData=false is refused", throwsWithoutRemote(() => assertLocalServerData({ localReviewData: false })) !== null);
+check("a server confirming a local environment is accepted", assertLocalServerData({ localReviewData: true }) === true);
+let unflaggedRun = null;
+try {
+  execFileSync(process.execPath, [resolve(repoRoot, "scripts/local-creator-incentive-review.mjs")], { cwd: repoRoot, encoding: "utf8", stdio: "pipe" });
+} catch (error) {
+  unflaggedRun = error;
+}
+check("the review fixture driver refuses to run without --local-only", unflaggedRun?.status === 1 && /--local-only/.test(String(unflaggedRun?.stderr || "")), String(unflaggedRun?.stderr || "no error").slice(0, 160));
 
 section("Registry: issuance and idempotent duplicates");
 

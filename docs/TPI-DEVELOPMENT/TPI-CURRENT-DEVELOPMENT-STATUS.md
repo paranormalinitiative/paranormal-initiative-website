@@ -21,10 +21,18 @@ Edition + Chromium acceptance 22/22. Records:
 [security model](007-SECURITY-AND-PERMISSIONS.md),
 [browser evidence](../audits/TPI-CREATOR-INCENTIVE-001/).
 
-Owner review environment: `http://127.0.0.1:8787/` (local Worker). Sign in as
-`local_admin`, open **Creators → Founding Memberships**. Representative review
-accounts are prepared with `npm run local:creator-incentive-review`; credentials
-are written only to the gitignored `.local-dev/creator-incentive-review.json`.
+Owner review environment: `http://127.0.0.1:8787/admin-panel#founding-memberships`
+(local Worker). Sign in as `local_admin`, open **Creators → Founding
+Memberships**. Representative review accounts are prepared with
+`npm run local:creator-incentive-review`; credentials are written only to the
+gitignored `.local-dev/creator-incentive-review.json`.
+
+Addendum **TPI-CREATOR-INCENTIVE-001A** (2026-11-03) corrected the assignment
+form spacing and hardened review-data isolation. The view now shows a single
+server-decided **Local review data** notice in development only. Local fixtures
+(`FC-001`, `FCT-001`, `FAA-001`, `FC-002`, `FC-003`) are not in the migration, not
+in build output, and not reachable from production; a clean production registry
+starts at 50 left / 0 issued with next numbers `FC-001`, `FCT-001`, `FAA-001`.
 
 
 ## TPI-DOCS-ROADMAP-001 — Roadmap synchronization (2026-11-02)

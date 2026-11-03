@@ -24,6 +24,14 @@ Edition + Chromium acceptance 22/22. No production migration. Nova remains
 unbuilt and inactive; all Creator Incentive financial rules remain
 **UNRESOLVED — OWNER DECISION REQUIRED**.
 
+**Addendum 001A** (2026-11-03, local-only): corrected the assignment form's
+label/dropdown spacing (measured in both browsers, not a text hack), added a
+server-decided **Local review data** notice for development, and proved the five
+review fixtures cannot reach production — no member inserts in migration `0058`,
+fail-closed fixture guards, and production read-only verification showing the
+new tables absent and `0058` still pending. Totals after 001A: 130/130, 285/285,
+28/28; recertified under OPS-005.
+
 Records: [directive completion record](TPI-CREATOR-INCENTIVE-001.md) ·
 [registry specification](../TPI-FOUNDING-MEMBERSHIP-REGISTRY.md) ·
 [browser evidence](../../audits/TPI-CREATOR-INCENTIVE-001/).

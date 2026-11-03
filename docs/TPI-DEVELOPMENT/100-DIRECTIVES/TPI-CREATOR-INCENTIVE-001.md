@@ -223,3 +223,119 @@ production deployment is a separate directive.
    (label + colour); derivative asset generation is deferred.
 5. **Broad feed/profile badge rollout** — the data and public-profile payload are
    implemented; a full community-surface redesign was intentionally out of scope.
+
+---
+
+# Addendum 001A — Admin UI cleanup and test-registry isolation
+
+Date: 2026-11-03. Status: **COMPLETE LOCALLY — READY FOR OWNER ACCEPTANCE — NOT
+DEPLOYED.** Parent record above is preserved unchanged; this addendum records the
+correction pass.
+
+## 17. Owner finding
+
+In the canonical Administration Center, the assignment form rendered the class
+label and the native `<select>` inline:
+
+`Founding Membership classFounding Creator (FC)`
+
+The label ran directly into the control. The username field looked correct only
+because `<Input>` is a block-level element; a bare `<select>` is inline-level and
+inherited no form spacing.
+
+## 18. Correction
+
+The three assignment fields now use the application's existing `form-field`
+pattern (label above control, 7px gap) and the select is rendered as a
+full-width block control with the same height, border, radius, focus ring and
+text colour as the adjacent text input. This is a layout correction, not a text
+hack: no space characters were inserted into the label.
+
+Browser acceptance measures the rendered geometry instead of trusting the
+markup: the dropdown's top must be at least 4px below the label's bottom, its box
+must fill the field, and the label-to-control gap must match the username and
+administrative-note fields within 2px (Firefox and Chromium).
+
+## 19. Review fixtures are local-only
+
+The local review environment contains five intentional fixtures:
+
+| Number | Account | Purpose |
+|---|---|---|
+| `FC-001` | `tpi_review_creator` | Founding Creator |
+| `FCT-001` | `tpi_review_contributor` | Founding Contributor |
+| `FAA-001` | `tpi_review_allaccess` | Founding All-Access |
+| `FC-002` | `tpi_review_dual` | Dual access (FC + explicit Contributor grant) |
+| `FC-003` | `tpi_review_ui_check` | Browser acceptance issuance check |
+
+They are development/test data. They are not real TPI issuance, they are not
+tracked by Git (`.local-dev` is untracked), and they exist only in the local D1
+database at `.local-dev/state/v3`.
+
+## 20. Isolation proof
+
+- Migration `0058` seeds only the three class definitions. It contains no
+  `INSERT` into `founding_memberships`, `member_entitlements`,
+  `creator_incentive_participation`, or `contributors`, no review account name,
+  and no `FC-001`/`FCT-001`/`FAA-001` assignment literal. The regression suite now
+  asserts each of these against the migration text.
+- The fixture driver (`npm run local:creator-incentive-review`) requires
+  `--local-only`, a loopback review origin, the local-only Wrangler
+  configuration, and a Worker that reports `localReviewData` before it creates
+  any account. Each guard is fail-closed and unit-tested with production inputs.
+- Production read-only verification (2026-11-03): Worker version
+  `daa5aee1-304f-4e96-89a8-86aac2df98e9`; production D1 contains only the
+  pre-existing `founding50_allocations` and `founding50_applications` tables;
+  `member_entitlements`, `founding_memberships`,
+  `founding_membership_classes`, `founding_membership_history` and
+  `creator_incentive_participation` do not exist; `0058` is listed by Wrangler as
+  a migration still to be applied. No production Founding number has been
+  consumed.
+
+## 21. Expected first production numbers
+
+A clean production schema (classes seeded, no assignments) reports 50 left / 0
+issued for each class, with next numbers `FC-001`, `FCT-001`, and `FAA-001`.
+Local fixtures cannot reach it: they are not in a migration, not in the build
+output, not in the release candidate, and not reachable through the guarded
+driver. The Administration Center always computes capacity from the connected
+registry, so counts are `50 left / 0 issued` at first launch and update as real
+assignments occur — never hard-coded to empty.
+
+## 22. Environment indicator
+
+The registry response carries a server-decided `localReviewData` flag derived
+from the Worker's own environment (`TPI_ENV=local` + `TPI_LOCAL_ONLY=1`).
+Production cannot satisfy it, so production never renders the notice. In the
+local review environment one notice appears above the class cards:
+
+> **Local review data** — Development review fixtures — these memberships are
+> not production memberships and do not consume or reserve any production
+> Founding number.
+
+## 23. Updated regression totals
+
+| Suite | Before 001A | After 001A |
+|---|---|---|
+| Membership/registry/numbering/guard suite | 99 | **130** |
+| Isolated API E2E | 282 | **285** |
+| Firefox DE + Chromium acceptance | 22 | **28** |
+
+No existing assertion was weakened or removed. New assertions cover the clean
+production-shaped registry, the migration audit, the fixture-driver guards, the
+review-data flag, the rendered field geometry, and the indicator.
+
+## 24. Certification
+
+The previous certification was invalidated by the application change. The
+current candidate was recertified with `npm run release:certify`. Receipt values
+are reported to the owner in the 001A implementation report and stored in
+`.local-dev/release-preflight.json`. `npm run release:production` was **not**
+run.
+
+## 25. Unchanged
+
+Entitlement architecture (cumulative capabilities, All-Access union, permanent
+numbering, non-recycling, 50-per-class limits, audit history, server-side
+authorization, Nova hooks) is untouched. Creator Incentive financial policy
+remains **UNRESOLVED — OWNER DECISION REQUIRED**.

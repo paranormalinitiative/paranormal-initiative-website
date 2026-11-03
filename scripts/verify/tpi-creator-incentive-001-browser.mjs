@@ -114,6 +114,38 @@ async function runFirefox() {
     check("Firefox: all three classes render with their permanent ranges", bodyText.includes("FC-001 to FC-050") && bodyText.includes("FCT-001 to FCT-050") && bodyText.includes("FAA-001 to FAA-050"));
     check("Firefox: capacity shows lifetime issuance and remaining numbers", /issued/.test(bodyText) && /left/.test(bodyText));
     check("Firefox: the permanent registry lists real issued numbers", /FC-00\d/.test(bodyText) && /FCT-00\d/.test(bodyText) && /FAA-00\d/.test(bodyText));
+    check("Firefox: the local review data indicator is visible", /Local review data/i.test(bodyText) && /not production memberships/i.test(bodyText), bodyText.slice(0, 200));
+
+    // TPI-CREATOR-INCENTIVE-001A: the class label must not run into its select.
+    const fieldGeometry = await driver.executeScript(`
+      const measure = (control) => {
+        const label = control && control.closest('label');
+        const span = label && label.querySelector('span');
+        if (!span) return null;
+        const controlBox = control.getBoundingClientRect();
+        const labelBox = span.getBoundingClientRect();
+        const fieldBox = label.getBoundingClientRect();
+        return {
+          gap: Math.round(controlBox.top - labelBox.bottom),
+          display: getComputedStyle(control).display,
+          controlWidth: Math.round(controlBox.width),
+          fieldWidth: Math.round(fieldBox.width),
+          labelBottom: Math.round(labelBox.bottom),
+        };
+      };
+      return {
+        klass: measure(document.querySelector("select[aria-label='Founding Membership class']")),
+        username: measure(document.querySelector("input[placeholder='existing account username']")),
+        notes: measure(document.querySelector("input[placeholder='optional administrative note']")),
+      };
+    `);
+    check("Firefox: the class label sits above the dropdown instead of running into it", (fieldGeometry?.klass?.gap ?? -1) >= 4 && ["block", "grid", "flex"].includes(fieldGeometry?.klass?.display), JSON.stringify(fieldGeometry?.klass));
+    check("Firefox: the dropdown fills its field like the text input", (fieldGeometry?.klass?.controlWidth ?? 0) >= (fieldGeometry?.klass?.fieldWidth ?? 1) - 2 && (fieldGeometry?.klass?.controlWidth ?? 0) > 200, JSON.stringify(fieldGeometry?.klass));
+    check(
+      "Firefox: class field spacing matches the username and note fields",
+      (fieldGeometry?.klass?.gap ?? -1) >= 4 && (fieldGeometry?.username?.gap ?? -1) >= 4 && (fieldGeometry?.notes?.gap ?? -1) >= 4 && Math.abs((fieldGeometry.klass.gap ?? 0) - (fieldGeometry.username.gap ?? 99)) <= 2 && Math.abs((fieldGeometry.klass.gap ?? 0) - (fieldGeometry.notes.gap ?? 99)) <= 2,
+      JSON.stringify({ klass: fieldGeometry?.klass?.gap, username: fieldGeometry?.username?.gap, notes: fieldGeometry?.notes?.gap }),
+    );
 
     // Issue through the normal administrator form.
     const classSelect = await driver.findElement(By.css("select[aria-label='Founding Membership class']"));
@@ -207,6 +239,17 @@ async function runChromium() {
     const bodyText = await page.locator("body").innerText();
     check("Chromium: class capacity and ranges render identically", bodyText.includes("FC-001 to FC-050") && bodyText.includes("FCT-001 to FCT-050") && bodyText.includes("FAA-001 to FAA-050"));
     check("Chromium: registry renders issued numbers", /FC-00\d/.test(bodyText));
+    const chromiumGeometry = await page.evaluate(() => {
+      const control = document.querySelector("select[aria-label='Founding Membership class']");
+      const label = control && control.closest("label");
+      const span = label && label.querySelector("span");
+      if (!span) return null;
+      const controlBox = control.getBoundingClientRect();
+      const labelBox = span.getBoundingClientRect();
+      return { gap: Math.round(controlBox.top - labelBox.bottom), display: getComputedStyle(control).display, width: Math.round(controlBox.width) };
+    });
+    check("Chromium: the class label and dropdown do not collide", (chromiumGeometry?.gap ?? -1) >= 4 && chromiumGeometry?.display === "block", JSON.stringify(chromiumGeometry));
+    check("Chromium: the local review data indicator renders", /Local review data/i.test(bodyText) && /not production memberships/i.test(bodyText));
     check("Chromium: no console errors on the membership view", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 
     await page.selectOption("select[aria-label='Founding Membership class']", "FC");
