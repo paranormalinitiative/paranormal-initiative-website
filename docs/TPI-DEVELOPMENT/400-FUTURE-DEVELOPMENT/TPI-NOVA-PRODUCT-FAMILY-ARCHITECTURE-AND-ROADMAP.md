@@ -494,3 +494,382 @@ Livestream Destinations) are recorded in the master status document.
 - It does not deploy anything.
 
 It exists so the decisions survive the conversation that produced them.
+
+---
+
+## 17. Shared Nova Core architecture (TPI-NOVA-001C)
+
+**Status:** AUTHORIZED — ARCHITECTURE / DOCUMENTATION ONLY.
+Code changes, database changes, dependency installation, production changes
+and deployment are **not authorized** by this section.
+
+This section is the authoritative implementation architecture. It builds on
+the evidence of TPI-NOVA-001A, 001A1 and 001B:
+
+- StudioFlow Notes (`web-137/src/NotesView.tsx`) is a `contentEditable` editor
+  driven by `document.execCommand`, with an HTML body sanitised by a split
+  DOMParser/regex path (`NotesView.tsx` line 67; `projectExport.ts` line 153).
+- `window.confirm` and `window.prompt` are used throughout `App.tsx`, which is
+  about 16,033 lines long.
+- StudioFlow uses React 18.3.1, Vite 5.4.11 and TypeScript 5.6.3.
+- GenOffice `apps/docs` uses TipTap 3.31.0, React 19.2.4, Vite 7.3.7,
+  TypeScript 5.9.3 and Electron 43.x. `apps/slides` uses Konva ^9.3.20 and
+  react-konva ^19.0.10.
+
+### 17.1 Primary architecture decision
+
+> **Nova is a separate web application surface with a shared Nova Core. It is
+> not built inside the StudioFlow `App.tsx` editor architecture.**
+
+Reasons:
+
+- StudioFlow Core is stable and must not be destabilised by a professional
+  editor.
+- StudioFlow is on React 18 / Vite 5. Nova must not force a framework upgrade
+  onto StudioFlow.
+- `App.tsx` is about 16,000 lines and tightly coupled. A professional editor
+  inside it would compound that coupling.
+- Nova Edit and the Nova Editorial Workspace need the same engines. Those
+  engines belong in a shared core, not in one host application.
+- StudioFlow integrates with Nova through explicit contracts only (§17.12).
+
+No repository evidence showed that a separate surface is impossible, so the
+separate surface is the default.
+
+### 17.2 Product layers
+
+| Layer | Scope |
+|---|---|
+| **Nova Core** | Shared technical foundation for every Nova product. |
+| **Nova Edit** | Creator-facing streamlined editor: Nova Edit Documents and Nova Edit Slides. |
+| **Nova Editorial Workspace** | Contributor-facing professional workspace: Nova Docs and Nova Slides. |
+| **Integration Layer** | StudioFlow, Education Center, entitlements, storage, and profiles/workspaces where applicable. |
+
+### 17.3 Nova Core responsibilities
+
+Nova Core is shared infrastructure. Its eventual responsibilities are:
+
+- document identity and metadata;
+- folder and collection organisation;
+- ownership and permissions (§12, and the entitlement layers in
+  TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md);
+- revision history, autosave, version-guarded writes and draft recovery;
+- attachments and asset references;
+- undo/redo routing;
+- export and import service boundaries;
+- templates, typography and media handling;
+- document lifecycle, including trash and restore;
+- search and entitlement hooks.
+
+Nova Core contains **no** Creator-only or Contributor-only business logic. Those
+rules live in the product layers and the entitlement checks.
+
+### 17.4 Notes reuse boundary
+
+**Reuse as infrastructure precedent:**
+
+- owner-scoped APIs;
+- version-guarded writes (`expectedVersion`);
+- autosave and local draft recovery;
+- bounded revision history;
+- collection/folder tree;
+- attachment handling;
+- archive, trash and restore lifecycle;
+- the same-origin, private access model.
+
+The persistence history is real: migrations `0055_studioflow_notes.sql`,
+`0056_studioflow_note_automatic_titles.sql` and
+`0057_studioflow_note_trash_metadata.sql`.
+
+**Do not reuse as the Nova editor foundation:**
+
+- `document.execCommand`;
+- raw `contentEditable` as the source of truth;
+- an HTML-only document source model;
+- `window.prompt` and `window.confirm`;
+- the split DOMParser/regex sanitiser.
+
+Notes is the UI-shell and infrastructure precedent. It is not the professional
+editor engine.
+
+### 17.5 Nova Documents model
+
+Nova Documents use a **structured document model**. The canonical document is
+not unsanitised browser HTML.
+
+Preferred direction: **TipTap / ProseMirror**. Its schema-driven, transactional
+model gives validated structure, controlled marks and node types, and reliable
+undo/redo. The Notes HTML model lacks those properties: an HTML body is only as
+safe as its sanitiser, and only as consistent as the browser's `contentEditable`
+behaviour.
+
+The schema should support paragraphs, headings, text marks, lists, links,
+images, tables, blockquotes, horizontal rules and page breaks where required,
+with room for future comments, revisions, headers, footers and document styles.
+
+### 17.6 TipTap decision status
+
+**TipTap / ProseMirror — PREFERRED CANDIDATE, IMPLEMENTATION GATE REQUIRED.**
+
+Before any implementation, the Nova-002 spike must confirm:
+
+- browser build and runtime in Firefox Developer Edition and Chromium;
+- the selected React and Vite versions;
+- TypeScript compatibility;
+- a basic schema;
+- table and image support;
+- undo/redo;
+- serialization round-trip;
+- acceptable bundle size.
+
+Nothing is installed under 001C.
+
+### 17.7 Nova Slides model
+
+Nova Slides use a **structured presentation model**, separate from the canvas
+renderer:
+
+```
+Presentation → Slides → Elements
+```
+
+Elements may include text, images, shapes, lines and connectors, groups and
+backgrounds, and later tables and charts. The stored data is the model. Konva
+nodes are not the stored data model.
+
+### 17.8 Slide rendering and React-Konva
+
+Preferred canvas technology: **Konva**. The rendering pipeline keeps three layers
+separate, following the useful GenOffice separation:
+
+**presentation model → render representation → canvas adapter**
+
+**React-Konva** is an **implementation compatibility gate**. Current React-Konva
+releases track React 19, and GenOffice uses them. Do not force StudioFlow to
+React 19. Nova may select framework versions compatible with its own application.
+That choice belongs to the Nova-002 spike.
+
+### 17.9 Nova as an independent web application
+
+Suggested boundary: **`/nova/`**. The repository already serves `/studio/` as a
+static route and keeps `functions/` for the `api` directory, so `/nova/` follows
+the same convention. Confirm the route against Worker routing before Nova-002.
+
+Nova owns its application entry, component tree, editor state, styling scope
+and tests, and builds behind its own boundary where practical. It may share
+authentication and APIs with the TPI website.
+
+Nova must not become a second copy of StudioFlow, a second 16,000-line
+component, a rename of Notes, or an Electron port of GenOffice.
+
+### 17.10 Module boundaries
+
+These describe responsibilities only. Names may follow repository conventions,
+and no files are created by this section.
+
+- `nova-core`: identity, lifecycle, revisions, autosave, concurrency.
+- `nova-documents`: document schema, editor integration, document commands.
+- `nova-slides`: presentation model, slide and element operations, canvas adapter.
+- `nova-storage`: server persistence (§17.11).
+- `nova-assets`: asset references and private media handling (§17.16).
+- `nova-export` and `nova-import`: file-format adapters (§17.17).
+- `nova-permissions`: entitlement and role checks (§17.18).
+- `nova-studioflow-bridge`: the StudioFlow contract (§17.12).
+- `nova-education-bridge`: the Education Center contract (§10, §17.18).
+
+### 17.11 Persistence architecture
+
+Nova gets **intentional Nova storage**. Nova-specific tables are preferred over
+generalising or overloading `studio_notes`.
+
+- Notes is a single-user note model. Nova Documents and Slides have richer
+  structured content and different lifecycle needs.
+- Overloading `studio_notes` would make it an accidental universal document
+  database.
+- Nova still reuses Notes' owner-scoped, versioned API patterns.
+
+No migrations are written under 001C. Final SQL belongs to Nova-003.
+
+### 17.12 StudioFlow bridge
+
+Nova must not be added directly to the current local `ScenePanelItemKind`
+implementation as the long-term design. The bridge is a **reference contract**:
+
+```
+Nova item → Add to Production → StudioFlow production reference
+```
+
+StudioFlow receives a stable reference to the Nova item. It does not own the
+whole editor document.
+
+**Add to Production** targets:
+
+- Documents: scripts, show notes, research notes, teleprompter source and
+  production references;
+- Slides: webinar slides, livestream presentations and recording presentations.
+
+The bridge is not implemented under 001C.
+
+**Technical debt, recorded as a requirement:** StudioFlow production items live
+inside the very large `App.tsx` with no shared registry or plugin abstraction. A
+shared production-item contract must be introduced and scoped separately before
+Nova adds production item types. Nova integration must not worsen this.
+
+### 17.13 Document record and content
+
+Document metadata is kept separate from document content where that helps.
+
+**Document record (conceptual, not final SQL):** id, owner, type, title,
+collection/folder, status, version, created, updated, deleted, and template or
+source metadata.
+
+**Document content:** structured JSON, stored separately from the record. Revision
+snapshots are stored separately from current content. Attachments are referenced,
+not embedded. Import provenance is recorded as metadata.
+
+The Notes HTML precedent does not settle the physical storage.
+
+### 17.14 Slide storage and revisions
+
+Nova Slides persist the **presentation model**: deck metadata, slide order, slide
+properties, element data, speaker notes where supported, theme and template
+references, and asset references.
+
+Transient canvas state is **not** canonical presentation data. That covers current
+selection, drag guides, zoom and active handles. None of it is persisted unless a
+specific requirement makes that necessary.
+
+Revisions reuse the Notes principle: versioned writes with `expectedVersion`,
+conflict detection and bounded revision history. Nova improves on it. A conflict
+gets explicit handling, not a generic failed save.
+
+### 17.15 Assets and import / export
+
+**Assets.** Covers images, document attachments, slide images and, later, audio or
+video references. Nova reuses the existing TPI private R2 and media patterns where
+they fit. Binaries are never duplicated inside document JSON; documents and slides
+reference assets by id.
+
+**Import and export.** The editor model is separate from the file-format adapters:
+
+```
+Nova model ↕ DOCX adapter
+Nova model ↕ PPTX adapter
+Nova model → PDF export
+```
+
+DOCX and PPTX are **not** Nova's native storage formats.
+
+- *DOCX, initial Nova:* structured native documents, editor, save and PDF export.
+  Basic file export and import follow only when separately authorised.
+- *DOCX, advanced:* a possible GenOffice-derived evaluation of parsing,
+  round-trip fidelity and paragraph-patch save. Perfect Word fidelity is not a
+  prerequisite for initial Nova Edit.
+- *PPTX, initial Nova Slides:* native presentation model and editor.
+- *PPTX, advanced:* evaluate `pptx-engine`, `pptx-render` and `pptx-ops` for import,
+  rendering and patch-based save or export. Full PowerPoint fidelity is not a
+  prerequisite for the first working Nova Slides editor.
+
+### 17.16 GenOffice reuse boundary
+
+GenOffice is a valuable architectural reference and a possible source of reviewed
+code. Concepts that may inform Nova: TipTap / ProseMirror structured editing;
+model and render separation; patch-based Office file operations; render-tree
+architecture; journaled operations; centralised undo/redo routing; off-thread
+parsing; visible-thumbnail rendering; injected I/O boundaries.
+
+**Do not copy large GenOffice application files wholesale.**
+
+Package candidates for a later, separate evaluation: `packages/docx-engine`,
+`packages/pptx-engine`, `packages/pptx-render` and `packages/pptx-ops`. Reusing any
+of them requires a source compatibility audit, browser audit, Node API audit,
+dependency audit, licence and NOTICE audit, and tests inside TPI. None is reused
+under 001C.
+
+**Excluded from the Nova web architecture:** the Electron shell, main processes,
+preload/IPC bridges, native filesystem orchestration, updater, desktop packaging,
+native file associations, system-font enumeration architecture, and GenOffice's
+AI and agent system unless separately authorised.
+
+**`ee/` is excluded.** No TPI production reuse without a separate Enterprise
+agreement and explicit authorisation. Inspecting it to understand a concept is
+acceptable; copying it is not.
+
+### 17.17 Nova Edit and Nova Editorial Workspace separation
+
+**Nova Edit** is the streamlined Creator product. It exposes what production work
+needs: scripts, show notes, episode planning, research notes, presentation creation
+and webinar and livestream decks. It avoids professional editorial complexity.
+
+**Nova Editorial Workspace** is the advanced Contributor product. It adds professional
+formatting, research papers, articles, educational material, editorial review,
+comments and revisions where implemented, publication metadata, Education Center
+workflows and advanced presentation work.
+
+Both share **Nova Core and the same editor engines**. They diverge at the interface
+layer and in entitlements, not in the file format or the engine. No second
+independent editor engine is created.
+
+### 17.18 Entitlements, Education Center and testing
+
+**Feature gating.** The existing entitlement direction is preserved, and feature
+availability stays **false** until the products exist.
+
+| Entitlement | Surface |
+|---|---|
+| Creator / Founding Creator | Nova Edit |
+| Contributor / Founding Contributor | Nova Editorial Workspace |
+| Founding All-Access | both |
+
+**Education Center.** The bridges follow the access model in §12 and the workflow in
+§10, and respect the separation of entitlement from publishing authority (§10.1).
+Contributor entitlement does not equal Publisher authority.
+
+**Testing.** Nova requires automated tests from the start: unit tests, editor-model
+and serialisation tests, API tests, revision and conflict tests, browser tests,
+import and export fixture tests, Firefox Developer Edition acceptance and Chromium
+compatibility checks. Manual browser testing alone is not sufficient.
+
+**Firefox.** Firefox Developer Edition is the **authoritative** visual and browser
+acceptance environment. Any browser-dependent editor technology must work there.
+GenOffice's Chromium and Electron assumptions must not produce a Chromium-only
+editor.
+
+### 17.19 Implementation phases
+
+Each phase is small. Numbering may be adjusted to the directive conventions.
+
+| Phase | Scope |
+|---|---|
+| **Nova-002** | Technology compatibility spike: TipTap, Konva and react-konva, with browser and build proof in Firefox Developer Edition and Chromium. |
+| **Nova-003** | Nova Core storage and API foundation. |
+| **Nova-004** | Nova Edit Documents minimum editor. |
+| **Nova-005** | Document lifecycle: folders, revisions, attachments, trash, autosave. |
+| **Nova-006** | Nova Edit Slides minimum editor. |
+| **Nova-007** | Slide lifecycle, templates and assets. |
+| **Nova-008** | StudioFlow Add to Production contract. |
+| **Nova-009** | Nova Editorial Workspace expansion. |
+| **Nova-010** | Education Center integration. |
+
+Initial Nova does **not** require AI, PDF editing, perfect Word or PowerPoint
+fidelity, mail merge, 3D models, narration, spreadsheets or every GenOffice feature.
+It must establish a robust, professional editing foundation.
+
+### 17.20 Unresolved technical gates
+
+| Gate | Owner phase | Status |
+|---|---|---|
+| TipTap / ProseMirror compatibility, bundle size and schema | Nova-002 | Open |
+| Konva and React-Konva compatibility with the chosen React | Nova-002 | Open |
+| `/nova/` route confirmed against Worker routing | Nova-002 | Open |
+| Final Nova SQL schema and storage model | Nova-003 | Open |
+| Entitlement enforcement for Nova surfaces | before Nova-004 | Open |
+| StudioFlow production-item contract | before Nova-008 | Open |
+| DOCX and PPTX interoperability evaluation | after Nova-007 | Open |
+| GenOffice package reuse audit | before any reuse | Open |
+
+### 17.21 Documentation status
+
+TPI-NOVA-001C is documentation only. It records the architecture. It does not
+implement Nova, change StudioFlow, add a dependency, add a migration, or deploy
+anything.
