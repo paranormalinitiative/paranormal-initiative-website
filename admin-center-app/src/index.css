@@ -196,6 +196,12 @@ tbody tr { cursor: pointer; }
 .form-field select { display: block; width: 100%; min-height: 40px; margin: 0; border: 1px solid var(--input); border-radius: 10px; background: var(--tpi-bg-surface); color: var(--foreground); padding: 0 10px; font: inherit; font-size: .88rem; font-weight: 400; letter-spacing: normal; }
 .form-field select:focus { outline: 2px solid var(--tpi-accent); outline-offset: 1px; }
 .review-data-indicator { border-style: dashed; }
+/* Published badge derivatives are 256px RGB PNGs with a flattened background,
+   so they are clipped to a circle instead of showing as white squares. */
+.founding-badge-art { display: block; flex: none; border-radius: 50%; object-fit: cover; background: var(--tpi-bg-surface); }
+.founding-class-heading { display: flex; align-items: center; gap: 12px; }
+.founding-registry-number { display: flex; align-items: center; gap: 10px; }
+.founding-badge-identity { display: inline-flex; align-items: center; gap: 10px; }
 .detail-stack h4 { margin: 0 0 10px; }
 .activity-item, .audit-row, .moderation-row { border-bottom: 1px solid var(--border); }
 .activity-item { display: flex; align-items: flex-start; gap: 8px; padding: 9px 0; font-size: .82rem; line-height: 1.45; }

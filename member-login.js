@@ -1455,6 +1455,24 @@
     });
   }
 
+  // TPI-CREATOR-INCENTIVE-001B: Founding identity chip. The label, number and
+  // image all come from the server-resolved membership payload; the client only
+  // displays them. No capability is derived from this markup.
+  function renderFoundingBadgeIdentity(identity) {
+    const badge = identity && identity.badge;
+    if (!badge || !badge.asset || !badge.asset.png) return "";
+    const primary = (identity.memberships || []).find(row => row.state === "active" && row.classCode === badge.classCode);
+    const srcset = badge.asset.png2x ? ` srcset="${escapeHtml(badge.asset.png)} 1x, ${escapeHtml(badge.asset.png2x)} 2x"` : "";
+    return `
+      <div class="founding-badge-chip" data-founding-badge="${escapeHtml(badge.classCode || "")}">
+        <img class="founding-badge-chip-art" src="${escapeHtml(badge.asset.png)}"${srcset} width="48" height="48" alt="${escapeHtml(badge.alt || badge.label || "Founding Membership badge")}" loading="lazy" decoding="async">
+        <div class="founding-badge-chip-text">
+          <strong>${escapeHtml(badge.label || "Founding Member")}</strong>
+          ${primary ? `<span>${escapeHtml(primary.membershipNumber || "")}</span>` : ""}
+        </div>
+      </div>`;
+  }
+
   function renderDashboardProfile(user) {
     if (!user) return;
     updateDashboardToolVisibility(user);
@@ -1493,6 +1511,7 @@
           <h2>${escapeHtml(profileName)}</h2>
           <p class="public-profile-title">${escapeHtml(user.title || "Contributor")}</p>
           <p class="member-profile-role">${escapeHtml(getAccountAccessDetail(user.role))}</p>
+          ${renderFoundingBadgeIdentity(user.foundingMembership)}
         </div>
       </div>
       <div class="member-profile-facts">
@@ -1642,6 +1661,7 @@
             <p class="portal-kicker">${escapeHtml(contributionLevel.label)}</p>
             <h2>${escapeHtml(profileName)}</h2>
             ${profile.title ? `<p class="public-profile-title">${escapeHtml(profile.title)}</p>` : ""}
+            ${renderFoundingBadgeIdentity(data.foundingMembership)}
             ${renderContributionLevel(contributionLevel, "public-contribution-level")}
           </aside>
           <div class="public-profile-main">

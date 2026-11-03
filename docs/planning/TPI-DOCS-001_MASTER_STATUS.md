@@ -60,12 +60,12 @@ polish and they are not part of 001A.
   confirmation behavior, audit behavior, deep links, refresh persistence, data
   integrity, and production safety. Goal: *complete, consistent, secure, and
   flawless for normal administrative use.*
-- **Founding Membership Badge Integration & Community Display.** Official master
-  artwork is now version-controlled in `assets/founding-memberships/masters/`
-  with web derivatives in `assets/founding-memberships/web/`. Badge display on
-  the member profile, feed/member identity, Administration Center, and membership
-  surfaces must be implemented and verified before the Founding Membership
-  experience is considered completely finished.
+- **Founding Membership Badge Integration & Community Display.** **Partially
+  complete (001B):** masters are version-controlled, only derivatives are
+  published, and badges now render in the Administration Center (class cards,
+  registry, capability inspection), the member's own profile, and the public
+  contributor profile. **Remaining:** community feed author identity, which has
+  no per-author badge field in the feed projection.
 - **TPI Society / Leadership Badge System.** Gold, Silver, and Bronze masters are
   preserved in `assets/society-leadership/masters/` as a separate family from
   Founding Membership. The system itself is not implemented: qualification rules,

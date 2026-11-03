@@ -1,5 +1,22 @@
 # TPI Current Development Status
 
+## TPI-CREATOR-INCENTIVE-001B — Badge integration and production readiness (2026-11-03)
+
+Status: **IMPLEMENTED AND CERTIFIED LOCALLY. NOT DEPLOYED; MIGRATION 0058 STILL
+PENDING PRODUCTION.**
+
+- Founding badges are wired to the server-side class mapping and render in the
+  Administration Center (class cards, permanent registry, capability inspection),
+  the member's own profile, and the public contributor profile. All-Access shows
+  one purple badge, never two.
+- Badge masters remain in Git but are excluded from the published asset package
+  by `.assetsignore`; only optimized derivatives are deployed (≈2.36 MB published
+  instead of ≈10.3 MB of masters and unpublished Society artwork).
+- The owner's real assignment workflow is tested end to end with an existing
+  account username, no SQL and no database ids.
+- Remaining display work: community feed author identity (no per-author badge
+  field yet).
+
 ## TPI-CREATOR-INCENTIVE-001 — Founding Membership foundation (2026-11-02)
 
 Status: **IMPLEMENTED AND TESTED LOCAL/DEVELOPMENT ONLY. PRODUCTION NOT

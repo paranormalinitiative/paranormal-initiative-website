@@ -264,3 +264,41 @@ membership or leadership records; the API never accepts a badge from the client.
 Changing an image, CSS class, DOM element, or client state cannot grant a
 capability. Server-side records remain authoritative for membership, role,
 entitlement, leadership rank, administrative authority, and editorial capability.
+
+## 16. Badge display surfaces (implemented)
+
+`badgeForClass()` is the single server-side class → artwork mapping (label,
+colour, alt text, published derivative paths). It is used by the admin class
+cards, the permanent registry, capability inspection, `/me/entitlements`,
+`/auth/me`, the public contributor profile, and the assignment response. The
+client never supplies a badge.
+
+| Surface | State |
+|---|---|
+| Administration Center class cards / registry / inspection | Implemented |
+| Member's own profile | Implemented (identity chip: badge, label, permanent number) |
+| Public contributor profile | Implemented (identity chip) |
+| Community feed author identity | **Not implemented** — the feed projection carries no per-author badge field; recorded as remaining community work |
+
+All-Access renders exactly one purple badge; it is never shown as two badges.
+Suspended or revoked memberships resolve no active badge while keeping their
+permanent number and state.
+
+## 17. Publishing and packaging
+
+Badge masters stay in Git and are excluded from the published asset package by
+`.assetsignore`; only optimized `web/` derivatives are deployed (2,363,608 bytes)
+instead of the 8,552,727 bytes of masters plus the 1,769,855 bytes of unpublished
+Society derivatives. A derivative returns `200`; a master returns `404` locally
+and in the isolated environment. Society artwork is entirely unpublished until its
+feature exists.
+
+## 18. Production assignment workflow
+
+The owner assigns a real member from **Creators → Founding Memberships** by
+existing username, choosing the class and confirming. The server atomically
+issues the next permanent number, writes both capability rows for All-Access,
+records history and the admin audit entry, and returns the resolved badge. No
+SQL, UUID, or database id is required, and the account itself is not duplicated,
+renamed, or otherwise altered. A duplicate assignment returns
+`409 duplicate_assignment` with the existing number and consumes nothing.

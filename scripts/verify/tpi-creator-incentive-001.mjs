@@ -19,6 +19,7 @@ import {
   FEATURE_AVAILABILITY,
   LIFETIME_CAPACITY,
   MEMBERSHIP_CLASSES,
+  badgeForClass,
   capabilitiesForClass,
   describeCapabilities,
   incentiveEligibility,
@@ -28,6 +29,7 @@ import {
   nextSequenceFromSequences,
   parseMembershipNumber,
   primaryBadge,
+  publicMembershipIdentity,
 } from "../../lib/membership-entitlements.js";
 import {
   assertLocalOnlyConfig,
@@ -132,6 +134,37 @@ check("All-Access displays the All-Access identity, not two badges", primaryBadg
 check("Creator + Contributor without All-Access shows the Creator identity", primaryBadge(["FCT", "FC"])?.classCode === "FC");
 check("Contributor alone shows the Contributor identity", primaryBadge(["FCT"])?.classCode === "FCT");
 check("No membership shows no badge", primaryBadge([]) === null);
+
+section("Badge artwork: server-side class mapping");
+
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+const badgeArtExists = (assetPath) => {
+  const absolute = resolve(repoRoot, `.${assetPath}`);
+  if (!existsSync(absolute)) return false;
+  return readFileSync(absolute).subarray(0, 8).equals(PNG_SIGNATURE);
+};
+check("Founding Creator maps to the creator derivative", badgeForClass("FC").asset.png === "/assets/founding-memberships/web/founding-creator-256.png" && badgeForClass("FC").label === "Founding Creator", badgeForClass("FC").asset.png);
+check("Founding Contributor maps to the contributor derivative", badgeForClass("FCT").asset.png === "/assets/founding-memberships/web/founding-contributor-256.png", badgeForClass("FCT").asset.png);
+check("Founding All-Access maps to the all-access derivative", badgeForClass("FAA").asset.png === "/assets/founding-memberships/web/founding-all-access-256.png", badgeForClass("FAA").asset.png);
+check("an unknown class has no badge artwork", badgeForClass("XX") === null);
+check("badge alt text names the class", badgeForClass("FAA").alt === "Founding All-Access badge");
+check("All-Access keeps its own artwork when Creator is also held", primaryBadge(["FC", "FAA"]).asset.png.endsWith("founding-all-access-256.png"), primaryBadge(["FC", "FAA"]).asset.png);
+check("no published badge path points at a master file", MEMBERSHIP_CLASSES.every((entry) => !entry.badgeAsset.png.includes("/masters/") && !entry.badgeAsset.png2x.includes("/masters/")));
+for (const entry of MEMBERSHIP_CLASSES) {
+  check(`${entry.displayName} 256px derivative exists as a real PNG`, badgeArtExists(entry.badgeAsset.png), entry.badgeAsset.png);
+  check(`${entry.displayName} 512px derivative exists as a real PNG`, badgeArtExists(entry.badgeAsset.png2x));
+  check(`${entry.displayName} WebP derivative exists`, existsSync(resolve(repoRoot, `.${entry.badgeAsset.webp}`)));
+}
+
+section("Asset packaging: masters stay in Git, derivatives are published");
+
+const assetsIgnore = readFileSync(resolve(repoRoot, ".assetsignore"), "utf8");
+check("founding badge masters are excluded from the published package", /^assets\/founding-memberships\/masters\/$/m.test(assetsIgnore));
+check("society artwork is excluded until its feature exists", /^assets\/society-leadership\/$/m.test(assetsIgnore));
+check("founding badge derivatives are not excluded", !/^assets\/founding-memberships\/web\/?\**$/m.test(assetsIgnore));
+check("no society derivative is individually published", !/^!assets\/society-leadership/m.test(assetsIgnore));
+const trackedMasters = execFileSync("git", ["ls-files", "assets/founding-memberships/masters", "assets/society-leadership/masters"], { cwd: repoRoot, encoding: "utf8" }).trim().split("\n").filter(Boolean);
+check("all six badge masters remain version-controlled", trackedMasters.length === 6, trackedMasters.join(" | "));
 
 section("Numbering");
 
@@ -365,6 +398,14 @@ check("the next number after suspension is FC-004, never FC-002 again", fcClass.
 check("audit history records issuance and state change", sqlJson("SELECT COUNT(*) AS total FROM founding_membership_history WHERE membership_id=" + literal(secondIssue.membership.id) + ";")[0].total === 2);
 check("administrative audit log records the issuance", sqlJson("SELECT COUNT(*) AS total FROM admin_audit_logs WHERE action='founding_membership.issued';")[0].total >= 5);
 
+const suspendedIdentity = await publicMembershipIdentity(fakeEnv, "acct-creator-b");
+check("a suspended membership is not presented with an active badge", suspendedIdentity.badge === null, JSON.stringify(suspendedIdentity.badge));
+check(
+  "a suspended membership still reports its permanent number and state",
+  suspendedIdentity.memberships.some((row) => row.membershipNumber === "FC-002" && row.state === "suspended"),
+  JSON.stringify(suspendedIdentity.memberships),
+);
+
 const reactivated = await setFoundingMembershipState(fakeEnv, { membershipId: secondIssue.membership.id, state: "active", actor: { username: "owner", role: "owner" } });
 check("a suspended membership can be reactivated", reactivated.membership.state === "active");
 check(
@@ -457,6 +498,12 @@ check("no membership was created for the refused assignment", sqlJson("SELECT CO
 
 const registry = await listFoundingRegistry(fakeEnv, { classCode: "FCT", pageSize: 10 });
 check("the registry lists permanent numbers for a class", registry.memberships.length === 2 && registry.memberships.every((row) => /^FCT-0\d\d$/.test(row.membershipNumber)));
+check(
+  "registry rows carry the class badge and its published derivative",
+  registry.memberships.every((row) => row.badge?.classCode === "FCT" && row.badge.asset.png.endsWith("founding-contributor-256.png")),
+  JSON.stringify(registry.memberships[0]?.badge),
+);
+check("registry rows never carry another class's artwork", registry.memberships.every((row) => !row.badge.asset.png.includes("all-access")));
 
 section("Registry: transactional rollback");
 

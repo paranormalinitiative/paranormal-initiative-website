@@ -73,3 +73,15 @@ derivatives; it must not point at the 2.4 MB masters.
 Community-surface rollout (feed, comments, profile header) and the complete
 Administration Center quality audit are tracked roadmap items; see
 `docs/TPI-DEVELOPMENT/TPI-FOUNDING-MEMBERSHIP-REGISTRY.md`.
+
+## Publishing (production packaging)
+
+The masters are deliberately **not** published. `.assetsignore` excludes
+`assets/founding-memberships/masters/` from the deployed asset package while Git
+keeps the originals; only `web/` derivatives are served. Verified behaviour:
+a derivative returns `200`, a master returns `404` on the local and isolated
+Workers, and the production deploy uses the same ignore file (its asset
+directory is the repository root).
+
+Footprint: masters total 8,552,727 bytes in Git; the published founding
+derivatives total 2,363,608 bytes. Never point a display surface at `masters/`.

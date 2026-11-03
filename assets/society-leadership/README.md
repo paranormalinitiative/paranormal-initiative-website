@@ -78,3 +78,12 @@ membership/recognition displays, responsive/mobile use, and high-DPI display.
 
 Tracked as the roadmap item **TPI Society / Leadership Badge System**; see
 `docs/TPI-DEVELOPMENT/TPI-FOUNDING-MEMBERSHIP-REGISTRY.md`.
+
+## Publishing
+
+Nothing in this directory is published. `.assetsignore` excludes
+`assets/society-leadership/` from the deployed asset package, so the masters and
+derivatives stay in Git (1,205,829 bytes of masters, 1,769,855 bytes of
+derivatives) without shipping unbuilt artwork to production. Remove those ignore
+lines, keeping masters excluded, when a directive implements the Society /
+Leadership system.

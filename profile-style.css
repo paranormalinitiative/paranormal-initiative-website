@@ -35,3 +35,13 @@
 .profile-style-ring { display: grid; place-items: center; width: 60px; height: 60px; border: 2px solid var(--profile-highlight); border-radius: var(--radius-full); font-size: 12px; font-weight: 700; margin-bottom: 16px; }
 .profile-style-badge { display: inline-block; color: var(--profile-highlight); border: 1px solid color-mix(in srgb,var(--profile-highlight) 40%,transparent); border-radius: var(--radius-full); padding: 6px 12px; font-size: 12px; }
 @media(max-width:1050px) { .tpi-settings .profile-style-options { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+
+/* TPI-CREATOR-INCENTIVE-001B: Founding Membership identity chip (own profile and
+   public contributor profile). The artwork is a published 256px derivative,
+   clipped to a circle because the RGB PNG has a flattened background. */
+.founding-badge-chip { display: inline-flex; align-items: center; gap: 12px; margin-top: 14px; padding: 10px 14px; border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-surface); max-width: 100%; }
+.founding-badge-chip-art { display: block; flex: none; width: 48px; height: 48px; border-radius: var(--radius-full); object-fit: cover; }
+.founding-badge-chip-text { display: grid; gap: 2px; min-width: 0; }
+.founding-badge-chip-text strong { color: var(--text-primary); font-size: 14px; font-weight: 700; line-height: 1.25; }
+.founding-badge-chip-text span { color: var(--text-secondary); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+@media(max-width:640px) { .founding-badge-chip { width: 100%; } .founding-badge-chip-art { width: 40px; height: 40px; } }

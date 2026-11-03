@@ -5,6 +5,27 @@ The chronological production execution ledger for TPI-MASTER-001 is
 
 Statuses are evidence-based and refer to the available repository records, not to an assumption that every historical requirement is complete.
 
+## TPI-CREATOR-INCENTIVE-001B — Badge integration and production readiness
+
+Status: **COMPLETE, CERTIFIED — NOT DEPLOYED.**
+
+Founding badges now resolve from one server-side class mapping and render in the
+Administration Center class cards, permanent registry and capability inspection,
+on the member's own profile, and on the public contributor profile (one purple
+All-Access badge, never two). Badge masters stay in Git but are excluded from the
+published asset package; only optimized derivatives deploy, removing ≈10.3 MB of
+masters and unpublished Society artwork from the candidate. The owner's real
+assignment workflow (existing username, no SQL) is verified, duplicate issuance
+stays a `409` with no new number, and migration `0058` remains unapplied to
+production with a documented apply/verify/rollback-limitation plan.
+
+Evidence: model/registry 155/155, isolated API E2E 293/293, Firefox DE +
+Chromium 46/46, OPS-005 certified.
+
+Records: [directive record](TPI-CREATOR-INCENTIVE-001B.md) ·
+[registry specification](../TPI-FOUNDING-MEMBERSHIP-REGISTRY.md) ·
+[browser evidence](../../audits/TPI-CREATOR-INCENTIVE-001B/).
+
 ## TPI-CREATOR-INCENTIVE-001 — Founding Membership entitlements and dual access
 
 Status: **IMPLEMENTED, TESTED, CERTIFIED CANDIDATE PREPARED — LOCAL/DEVELOPMENT

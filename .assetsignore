@@ -25,6 +25,14 @@ functions/**
 migrations
 migrations/**
 assets/anabela-cardoso/papers/Prof_Hans_Bender_on_F_Jurgensons_anomalo.pdf
+# TPI-CREATOR-INCENTIVE-001B: badge masters stay in Git as authoritative
+# originals, but only the optimized web derivatives are published. The Society /
+# Leadership family is not displayed yet, so nothing under it is deployed until
+# that feature exists (remove these two lines then, derivatives only).
+assets/founding-memberships/masters/
+assets/founding-memberships/masters/**
+assets/society-leadership/
+assets/society-leadership/**
 CLOUDFLARE_PORTAL_SETUP.md
 CONTRIBUTOR_PORTAL_PLAN.md
 PAPER_EDITOR_ROADMAP.md

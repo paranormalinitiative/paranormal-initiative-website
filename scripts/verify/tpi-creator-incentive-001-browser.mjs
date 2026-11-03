@@ -99,6 +99,20 @@ async function runFirefox() {
     driver = await new Builder().forBrowser("firefox").setFirefoxOptions(options).setFirefoxService(service).build();
     await driver.manage().window().setRect({ width: 1440, height: 1000 });
 
+    // The public profile renders from an async fetch, so wait for the identity
+    // to settle instead of reading during the transition.
+    const waitForChipText = async (selector, matches) => {
+      await driver.wait(async () => {
+        const nodes = await driver.findElements(By.css(selector));
+        if (!nodes.length) return false;
+        const text = await nodes[0].getText().catch(() => "");
+        return matches(text);
+      }, 20000, "identity chip did not settle").catch(() => {});
+      const nodes = await driver.findElements(By.css(selector));
+      return nodes.length ? nodes[0].getText().catch(() => "") : "";
+    };
+
+
     await driver.get(`${baseUrl}/`);
     const loginResult = await driver.executeAsyncScript(loginScript, admin.username, admin.password);
     check("Firefox: local administrator signs in", loginResult?.status === 200, `status ${loginResult?.status}`);
@@ -115,6 +129,30 @@ async function runFirefox() {
     check("Firefox: capacity shows lifetime issuance and remaining numbers", /issued/.test(bodyText) && /left/.test(bodyText));
     check("Firefox: the permanent registry lists real issued numbers", /FC-00\d/.test(bodyText) && /FCT-00\d/.test(bodyText) && /FAA-00\d/.test(bodyText));
     check("Firefox: the local review data indicator is visible", /Local review data/i.test(bodyText) && /not production memberships/i.test(bodyText), bodyText.slice(0, 200));
+
+    // TPI-CREATOR-INCENTIVE-001B: server-mapped badge artwork in the admin UI.
+    const adminBadges = await driver.executeScript(`
+      const imgs = [...document.querySelectorAll(".founding-badge-art")];
+      return {
+        count: imgs.length,
+        loaded: imgs.filter((img) => img.naturalWidth > 0).length,
+        alts: imgs.map((img) => img.getAttribute("alt") || ""),
+        sources: imgs.map((img) => img.getAttribute("src") || ""),
+        registryRows: document.querySelectorAll(".founding-registry-number .founding-badge-art").length,
+        classCards: document.querySelectorAll(".metric-grid .founding-badge-art").length,
+        classCardsLoaded: [...document.querySelectorAll(".metric-grid .founding-badge-art")].filter((img) => img.naturalWidth > 0).length,
+      };
+    `);
+    // Registry rows below the fold are intentionally lazy; the class cards above
+    // the fold must already be decoded.
+    check("Firefox: the class cards render their published badge derivatives", adminBadges.classCards === 3 && adminBadges.classCardsLoaded === 3, JSON.stringify(adminBadges).slice(0, 240));
+    check(
+      "Firefox: badge alt text names the class",
+      ["Founding Creator badge", "Founding Contributor badge", "Founding All-Access badge"].every((alt) => adminBadges.alts.includes(alt)),
+      adminBadges.alts.slice(0, 6).join(" | "),
+    );
+    check("Firefox: the registry rows carry badge artwork beside the permanent number", adminBadges.registryRows >= 3, String(adminBadges.registryRows));
+    check("Firefox: no admin badge loads the master artwork", adminBadges.sources.every((src) => !src.includes("/masters/")));
 
     // TPI-CREATOR-INCENTIVE-001A: the class label must not run into its select.
     const fieldGeometry = await driver.executeScript(`
@@ -183,6 +221,15 @@ async function runFirefox() {
     check("Firefox: inspection shows the Contributor badge identity", /Founding Contributor/.test(inspection));
     check("Firefox: inspection shows Creator Incentive is not eligible for Contributor-only", /Not eligible/.test(inspection));
     check("Firefox: inspection states the financial policy is unresolved", /UNRESOLVED/.test(await driver.findElement(By.tagName("body")).getText()));
+    const inspectionBadge = await driver.executeScript(`
+      const img = document.querySelector(".founding-badge-identity img");
+      return img ? { src: img.getAttribute("src"), alt: img.getAttribute("alt"), loaded: img.naturalWidth } : null;
+    `);
+    check(
+      "Firefox: capability inspection shows the Contributor badge artwork",
+      inspectionBadge?.loaded > 0 && /founding-contributor-256\.png$/.test(inspectionBadge?.src || "") && /Founding Contributor badge/.test(inspectionBadge?.alt || ""),
+      JSON.stringify(inspectionBadge),
+    );
 
     const shot = await driver.takeScreenshot();
     writeFileSync(join(evidenceDir, "firefox-founding-memberships.png"), shot, "base64");
@@ -212,6 +259,54 @@ async function runFirefox() {
       fetch("/admin-panel", { credentials: "same-origin" }).then(response => done({ status: response.status })).catch(() => done({ status: 0 }));
     `);
     check("Firefox: the Administration Center HTML is refused to the member", pageAttempt?.status === 403, `status ${pageAttempt?.status}`);
+
+    // TPI-CREATOR-INCENTIVE-001B: the member-facing All-Access identity.
+    await driver.executeAsyncScript(`const done = arguments[arguments.length - 1]; fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }).then(() => done()).catch(() => done());`);
+    const allAccessLogin = await driver.executeAsyncScript(loginScript, review.allaccess?.username, review.allaccess?.password);
+    check("Firefox: the Founding All-Access member signs in normally", allAccessLogin?.status === 200, `status ${allAccessLogin?.status}`);
+    await driver.get(`${baseUrl}/member-profile.html`);
+    const profileChip = await waitForChipText("[data-dashboard-profile] .founding-badge-chip", (text) => /Founding All-Access/i.test(text) && /FAA-0\d\d/.test(text));
+    check("Firefox: the All-Access member sees one All-Access identity with its permanent number", /Founding All-Access/i.test(profileChip) && /FAA-0\d\d/.test(profileChip), profileChip.replace(/\n/g, " | "));
+    const profileBadge = await driver.executeScript(`
+      const img = document.querySelector("[data-dashboard-profile] .founding-badge-chip img");
+      if (!img) return null;
+      const box = img.getBoundingClientRect();
+      return { src: img.getAttribute("src"), alt: img.getAttribute("alt"), loaded: img.naturalWidth, rendered: [Math.round(box.width), Math.round(box.height)] };
+    `);
+    check(
+      "Firefox: the profile badge loads the published All-Access derivative with useful alt text",
+      profileBadge?.loaded > 0 && /founding-all-access-256\.png$/.test(profileBadge?.src || "") && /Founding All-Access badge/.test(profileBadge?.alt || ""),
+      JSON.stringify(profileBadge),
+    );
+    check(
+      "Firefox: the badge is rendered square at a derivative size, never stretched",
+      profileBadge?.rendered?.[0] === profileBadge?.rendered?.[1] && profileBadge.rendered[0] <= 64 && profileBadge.rendered[0] >= 24,
+      JSON.stringify(profileBadge?.rendered),
+    );
+    await driver.executeAsyncScript(`const done = arguments[arguments.length - 1]; fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }).then(() => done()).catch(() => done());`);
+
+    await driver.get(`${baseUrl}/contributor-profile.html?username=${encodeURIComponent(review.allaccess?.username || "tpi_review_allaccess")}`);
+    const publicChip = await waitForChipText(".public-profile-sidebar .founding-badge-chip", (text) => /Founding All-Access/i.test(text) && /FAA-0\d\d/.test(text));
+    check("Firefox: the public profile presents the All-Access identity and number", /Founding All-Access/i.test(publicChip) && /FAA-0\d\d/.test(publicChip), publicChip.replace(/\n/g, " | "));
+    const publicBadge = await driver.executeScript(`
+      const img = document.querySelector(".public-profile-sidebar .founding-badge-chip img");
+      return img ? { src: img.getAttribute("src"), loaded: img.naturalWidth } : null;
+    `);
+    check("Firefox: the public profile badge loads its derivative", publicBadge?.loaded > 0 && /founding-all-access-256\.png$/.test(publicBadge?.src || ""), JSON.stringify(publicBadge));
+
+    await driver.get(`${baseUrl}/contributor-profile.html?username=${encodeURIComponent(review.creator?.username || "tpi_review_creator")}`);
+    const creatorChip = await waitForChipText(".public-profile-sidebar .founding-badge-chip", (text) => /Founding Creator/i.test(text) && /FC-0\d\d/.test(text));
+    const creatorBadge = await driver.executeScript(`
+      const img = document.querySelector(".public-profile-sidebar .founding-badge-chip img");
+      return img ? { src: img.getAttribute("src"), loaded: img.naturalWidth } : null;
+    `);
+    check("Firefox: a Founding Creator profile shows the Creator identity, never All-Access", /Founding Creator/i.test(creatorChip) && !/Founding All-Access/i.test(creatorChip), creatorChip.replace(/\n/g, " | "));
+    check("Firefox: the Creator profile loads the Creator derivative", creatorBadge?.loaded > 0 && /founding-creator-256\.png$/.test(creatorBadge?.src || ""), JSON.stringify(creatorBadge));
+
+    await driver.get(`${baseUrl}/contributor-profile.html?username=${encodeURIComponent("local_member")}`);
+    await driver.wait(until.elementLocated(By.css(".public-profile-sidebar")), 20000);
+    const ordinaryChip = await driver.findElements(By.css(".public-profile-sidebar .founding-badge-chip"));
+    check("Firefox: an ordinary member's public profile shows no Founding badge", ordinaryChip.length === 0);
   } finally {
     if (driver) await driver.quit().catch(() => {});
     rmSync(profileDir, { recursive: true, force: true });
@@ -251,6 +346,11 @@ async function runChromium() {
     check("Chromium: the class label and dropdown do not collide", (chromiumGeometry?.gap ?? -1) >= 4 && chromiumGeometry?.display === "block", JSON.stringify(chromiumGeometry));
     check("Chromium: the local review data indicator renders", /Local review data/i.test(bodyText) && /not production memberships/i.test(bodyText));
     check("Chromium: no console errors on the membership view", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
+    const chromiumBadges = await page.evaluate(() => {
+      const imgs = [...document.querySelectorAll(".founding-badge-art")];
+      return { count: imgs.length, loaded: imgs.filter((img) => img.naturalWidth > 0).length };
+    });
+    check("Chromium: class and registry badge artwork loads", chromiumBadges.count >= 3 && chromiumBadges.loaded === chromiumBadges.count, JSON.stringify(chromiumBadges));
 
     await page.selectOption("select[aria-label='Founding Membership class']", "FC");
     await page.fill("input[placeholder='existing account username']", uiAccountUsername);
@@ -268,6 +368,26 @@ async function runChromium() {
 
     await page.screenshot({ path: join(evidenceDir, "chromium-founding-memberships.png") });
     console.log(`Evidence: ${join(evidenceDir, "chromium-founding-memberships.png")}`);
+
+    // TPI-CREATOR-INCENTIVE-001B: member-facing badge parity with Firefox.
+    // Reset the collector: the deliberate duplicate-issuance 409 above is an
+    // expected admin result, not a profile-page defect.
+    consoleErrors.length = 0;
+    await page.evaluate(async () => { await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" }); });
+    const allAccessStatus = await page.evaluate(async ({ username, password }) => {
+      const response = await fetch("/api/auth/login", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) });
+      return response.status;
+    }, { username: review.allaccess?.username, password: review.allaccess?.password });
+    check("Chromium: the All-Access member signs in", allAccessStatus === 200, `status ${allAccessStatus}`);
+    await page.goto(`${baseUrl}/member-profile.html`, { waitUntil: "domcontentloaded" });
+    await page.waitForSelector("[data-dashboard-profile] .founding-badge-chip img", { timeout: 20000 });
+    const chromiumChip = await page.locator("[data-dashboard-profile] .founding-badge-chip").innerText();
+    const chromiumBadgeImage = await page.evaluate(() => {
+      const img = document.querySelector("[data-dashboard-profile] .founding-badge-chip img");
+      return img ? { src: img.getAttribute("src"), alt: img.getAttribute("alt"), loaded: img.naturalWidth } : null;
+    });
+    check("Chromium: the profile badge matches Firefox", /Founding All-Access/.test(chromiumChip) && chromiumBadgeImage?.loaded > 0 && /founding-all-access-256\.png$/.test(chromiumBadgeImage?.src || ""), JSON.stringify(chromiumBadgeImage));
+    check("Chromium: no console errors on the member profile", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
   } finally {
     await browser.close().catch(() => {});
   }
