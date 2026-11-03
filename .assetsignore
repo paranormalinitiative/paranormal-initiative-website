@@ -18,6 +18,9 @@ admin-center-app/**
 # TPI-NOVA-002: isolated technology spike source. Never published as site assets.
 experiments
 experiments/**
+# TPI-NOVA-004: Nova application source. Only the built /nova/ assets publish.
+nova-app
+nova-app/**
 .DS_Store
 **/.DS_Store
 wrangler.jsonc

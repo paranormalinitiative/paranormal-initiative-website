@@ -1214,3 +1214,123 @@ migration or deployment occurred.
 - Education Center editorial workflow and Nova feature enablement policy.
 - Shared/team ownership. Nova items are single-owner until an explicit sharing
   model is approved.
+
+## 20. Nova Edit Documents minimum editor (TPI-NOVA-004)
+
+**Status:** COMPLETE — PASS in Firefox Developer Edition (authoritative) and
+Chromium against an isolated local Worker. Nothing was deployed, no production
+migration was applied and no entitlement policy changed.
+
+### 20.1 Application boundary
+
+Nova Edit is its own application, not a StudioFlow view:
+
+| Concern | Location |
+|---|---|
+| Source | `nova-app/` (React + TypeScript + Vite + TipTap), excluded from Worker assets by `.assetsignore` |
+| Published assets | `nova/` (committed build output, `base: "/nova/"`) |
+| Route | `/nova/` with hash routing: `#/documents`, `#/documents/:id` |
+| Worker | `worker.js` serves `/nova` and `/nova/*` through `cleanUrlAssetPath`, reusing the existing Studio access check behind a Nova-branded 403 gate |
+| Scripts | `npm run build:nova`, `npm run verify:nova-003`, `npm run verify:nova-004` |
+
+The editor surface is a `React.lazy` chunk, so the Nova shell stays small and
+TipTap is only fetched when a document is opened. Vendor code is split into
+react and tiptap chunks by the Vite `manualChunks` map.
+
+### 20.2 Documents editor features
+
+Documents support create, open, rename, save and delete-confirmation. Editing
+uses TipTap over the structured `nova-document v1` envelope: headings,
+bold/italic/underline, bulleted and numbered lists, blockquotes, horizontal
+rules, tables (insert, add row, add column, delete column, in-cell editing) and
+links, with undo/redo, an autosave indicator and a version readout. Trashed and
+archived documents open read-only with an explicit banner. HTML is never stored:
+the canonical content is the structured JSON document.
+
+### 20.3 Persistence, autosave and conflict behavior
+
+- Edits autosave after a short idle delay and on blur/title change; the
+  indicator reports `Saving…`, `Saved`, `Unsaved changes`, `Conflict` and
+  `Read-only`.
+- Saves send `expectedVersion`. On `409` the editor surfaces the conflict,
+  pauses saving, keeps the local body intact, fetches the newer server copy and
+  offers explicit reload-or-restore choices; it never overwrites the newer
+  version.
+- A local draft (`tpi:nova:draft:v1:<itemId>` in `localStorage`) protects typed
+  work between saves. It is Nova-namespaced, never shared with StudioFlow Notes,
+  and is cleared once the content reaches the server. After a reload the saved
+  server copy opens first, a recovery banner offers the draft, and accepting it
+  saves the draft as the next version.
+- Opening a stored document no longer reports false unsaved changes: an editor
+  mount that emits an update with unchanged content and title is ignored instead
+  of spending a document version on a no-op save.
+
+### 20.4 Folders, lifecycle and revisions
+
+The collection tree creates, renames, nests, selects and deletes folders; a
+document can be filed from the editor and re-filtered from the list. Archive,
+trash, restore and permanent delete follow the Nova-003 contracts, including the
+`DELETE PERMANENTLY` confirmation dialog that refuses a mismatched string. The
+revisions panel lists stored revisions and restores one as a new current version
+through the API, leaving the editor usable afterwards.
+
+### 20.5 Verification result
+
+`npm run verify:nova-004` (`scripts/verify/tpi-nova-004-editor.mjs`) copies the
+committed `nova/` build into a throwaway directory, generates an isolated
+Wrangler config, applies migrations to a temporary `--persist-to` state and runs
+the Worker on port 8792 with synthetic accounts seeded there only. It never
+contacts `http://127.0.0.1:8787/studio/` or `.local-dev/state/v3`.
+
+**134 checks — 134 passed, 0 failed.**
+
+| Section | Passed |
+|---|---|
+| Isolated environment | 4 |
+| Build artifacts | 10 |
+| Worker gate (`/nova/`, `/nova`, assets, signed-out 403) | 9 |
+| Structured storage and versioning (API) | 11 |
+| Collections and lifecycle (API) | 8 |
+| Firefox Developer Edition acceptance | 80 |
+| Responsive acceptance | 5 |
+| Chromium smoke | 7 |
+
+Firefox Developer Edition carried the authoritative acceptance: sign-in gate,
+shell, lazy Documents surface, folder create/rename/select, document create and
+routing, typing, heading, bold/italic/underline, both list types, blockquote,
+horizontal rule, the full table workflow, link selection/dialog/apply, undo,
+redo, autosave, stored JSON envelope and node types, HTML-free canonical content,
+reload persistence of text/marks/heading/lists/table/blockquote/rule, version
+increment, conflict preservation, local draft recovery, revision list and
+restore, folder move, archive/trash/restore, permanent delete confirmation and
+the console-error check. Chromium repeated the shell, editing, autosave, reload,
+title and tablet-width smoke path. Desktop (1280 px) and tablet (900 px) widths
+were checked for destructive horizontal overflow, and the editor remains usable
+at tablet width.
+
+### 20.6 Build output
+
+| Asset | Size | gzip |
+|---|---|---|
+| `nova/index.html` | 0.79 kB | 0.42 kB |
+| `index-*.css` | 18.44 kB | 4.32 kB |
+| `rolldown-runtime-*.js` | 0.59 kB | 0.36 kB |
+| `index-*.js` (shell) | 4.72 kB | 2.01 kB |
+| `DocumentsSurface-*.js` (lazy editor) | 37.26 kB | 9.97 kB |
+| `nova-vendor-react-*.js` | 218.75 kB | 68.27 kB |
+| `nova-vendor-tiptap-*.js` | 447.97 kB | 141.45 kB |
+
+`npm --prefix nova-app run typecheck` passes, `npm run build:nova` succeeds, and
+`npm run verify:nova-003` still reports 105/105, so Nova Core is unregressed.
+
+### 20.7 Deferred
+
+- Nova-004A icon/ribbon redesign; the toolbar keeps plain labelled controls.
+- Nova-005 document lifecycle expansion and professional editing depth.
+- Slides, Add to Production, StudioFlow handoff and Nova AI.
+- DOCX/PDF/Markdown/HTML import and export; Nova remains structured-JSON only.
+- Nova-specific entitlement policy; the existing Studio access check still gates
+  `/nova/` and `/api/nova/*`.
+- Production routing: `/nova/` is proven on an isolated Worker and the official
+  local Worker answers the Nova gate, but no production deployment or migration
+  has been performed.

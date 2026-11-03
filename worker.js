@@ -69,6 +69,19 @@ const STUDIO_ACCESS_HTML = STUDIO_COMING_SOON_HTML
     "Creator Studio is restricted to the owner, administrators, and accounts with an active Creator Studio entitlement."
   );
 
+// Nova Edit shares the temporary Creator Studio access check until Nova has
+// its own Contributor-facing entitlement policy. The gate page is Nova-branded
+// so the boundary never looks like a StudioFlow failure.
+const NOVA_ACCESS_HTML = STUDIO_ACCESS_HTML
+  .replaceAll("Creator Studio — Restricted Access", "Nova — Restricted Access")
+  .replace("<h1>Creator Studio</h1>", "<h1>Nova Edit</h1>")
+  .replace(
+    "Creator Studio is restricted to the owner, administrators, and accounts with an active Creator Studio entitlement.",
+    "Nova Edit is in active development and is available to the owner, administrators, and accounts with an active Creator Studio entitlement. Contributor-facing Nova access arrives in a later release."
+  )
+  .replaceAll("#59a9dc", "#4bb263")
+  .replaceAll("#6db8e8", "#8ce8b6");
+
 const ADMIN_GATE_HTML = MEMBER_GATE_HTML
   .replaceAll("ITC Visual Studio — Member Access", "Administration Center — Restricted Access")
   .replace(
@@ -196,6 +209,7 @@ async function serveAssets(request, env) {
 // this helper for protected surfaces such as Creator Studio.
 function cleanUrlAssetPath(pathname) {
   if (pathname === "/studio" || pathname === "/studio/") return "/studio/index.html";
+  if (pathname === "/nova" || pathname === "/nova/") return "/nova/index.html";
   if (pathname.endsWith("/")) return `${pathname}index.html`;
   if (!pathname.endsWith(".html") && !pathname.includes(".")) return `${pathname}.html`;
   return null;
@@ -323,6 +337,22 @@ export default {
       const hasStudioAccess = await hasCreatorStudioAccess(env, user);
       if (!hasStudioAccess) {
         return new Response(user ? STUDIO_ACCESS_HTML : STUDIO_COMING_SOON_HTML, {
+          status: 403,
+          headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
+        });
+      }
+      return servePageAsset(request, env);
+    }
+
+    // Nova Edit is a separate application from StudioFlow and is built into
+    // the committed /nova/ asset directory. It uses the same temporary access
+    // check as Creator Studio (recorded architecture debt); the gate applies to
+    // the entry document and to every direct asset request.
+    if (url.pathname === "/nova" || url.pathname.startsWith("/nova/")) {
+      const user = await getSessionUser(request, env);
+      const hasNovaAccess = await hasCreatorStudioAccess(env, user);
+      if (!hasNovaAccess) {
+        return new Response(NOVA_ACCESS_HTML, {
           status: 403,
           headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
         });
