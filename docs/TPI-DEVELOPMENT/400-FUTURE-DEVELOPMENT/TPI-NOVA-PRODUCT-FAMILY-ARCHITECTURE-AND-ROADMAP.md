@@ -13,6 +13,13 @@ The canonical development sequence lives in
 This record describes **what** Nova is; that record describes **when** each
 part is built.
 
+Which capability family owns which Nova surface — Nova Edit under Creator, the
+Nova Editorial Workspace, Nova Docs, and Nova Slides under Contributor, and the
+union of both for Creator + Contributor holders — is recorded in
+[TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md](TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md)
+(TPI-GOVERNANCE-003A). That policy does not activate any Nova product; Nova
+remains unbuilt and unavailable.
+
 ---
 
 ## 1. What Nova is

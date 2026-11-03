@@ -1,5 +1,48 @@
 # TPI Current Development Status
 
+## TPI-GOVERNANCE-003A — Core membership and professional access architecture (2026-11-03)
+
+Status: **DOCUMENTATION ONLY. NO APPLICATION, DATABASE, OR DEPLOYMENT CHANGE.**
+
+- The authoritative membership and professional-access model is now recorded in
+  [TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md).
+  It fixes the central rule that community membership, payment, professional
+  application access, Founding status, organizational role, achievement, honor,
+  and authority are separate concepts, and that one never silently replaces
+  another.
+- Layers are recorded as TPI account → community membership (Free/Paid) →
+  professional capability package (Creator / Contributor / Creator + Contributor)
+  → optional historical identity (Founding Creator / Founding Contributor /
+  Founding All-Access), resolved cumulatively server-side.
+- Absolutely preserved: purchasing Creator, Contributor, or both never creates a
+  Founding Membership; Founding memberships are conferred, not purchased, and are
+  complimentary lifetime memberships; each class remains capped at 50 with no
+  `FC-051`, `FCT-051`, or `FAA-051`.
+- Commercial items stay unresolved and are listed rather than guessed: paid-plan
+  marketing name, prices, combined-plan pricing, term options, trial policy,
+  premium-member feature list, billing provider, cancellation/refund policy, and
+  public commercial terms.
+- Moderator/Administrator architecture was intentionally excluded; it is the next
+  section, TPI-GOVERNANCE-003B.
+
+## TPI-CREATOR-INCENTIVE-001RA — Production acceptance and D1 reconciliation (2026-11-03)
+
+Status: **COMPLETE — OWNER ACCEPTED IN PRODUCTION. NO MUTATIONS.**
+
+- Release `rel-d5fca8ea960d-5007997d873d` (Worker `0568cce9-f286-4156-892e-70f87b2d4029`)
+  runs the Founding system in production: three classes, permanent numbering,
+  cumulative entitlements, server-side badges, Administration Center issuance.
+- Owner visual acceptance passed on the live Administration Center: three class
+  cards with green/blue/purple badges, 50 left each, 0 issued, next numbers
+  `FC-001`/`FCT-001`/`FAA-001`, empty registry, no local review data.
+- The 001R claim that migrations 0055–0057 were absent from production was
+  incorrect. All four `studio_note*` tables and seven note indexes exist in
+  `tpi_contributor_portal` (`f36b9161-b517-4634-9857-bef4147cefe3`). The apparent
+  gap was caused by a wrong `LIKE 'studioflow_note%'` pattern and by the
+  `d1_migrations` ledger recording only `0001`/`0002` because later migrations
+  were applied with `execute --file`. Classification B — no repair needed.
+- `FAA-001` remains unissued; the registry is empty and no number was consumed.
+
 ## TPI-CREATOR-INCENTIVE-001B — Badge integration and production readiness (2026-11-03)
 
 Status: **IMPLEMENTED AND CERTIFIED LOCALLY. NOT DEPLOYED; MIGRATION 0058 STILL

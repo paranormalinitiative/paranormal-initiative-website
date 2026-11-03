@@ -1,5 +1,42 @@
 # TPI-DOCS-001 — Master Documentation Status
 
+## TPI-GOVERNANCE-003A — Core Membership & Access Architecture — November 3, 2026
+
+Status: **DOCUMENTATION COMPLETE. NO APPLICATION, DATABASE, OR DEPLOYMENT CHANGE.**
+
+The authoritative model for Free membership, Paid membership, Creator and
+Contributor professional access, combined access, and the Founding classes is now
+recorded in
+[TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md](../TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md).
+It is the policy foundation for subscriptions, entitlements, professional
+applications, Education Center access, StudioFlow, Nova, achievements, profiles,
+honors, and Administration Center management.
+
+What is now policy:
+
+- Membership, payment, professional capability, Founding identity, organizational
+  role, achievement, honor, and authority are separate layers that coexist and
+  never silently replace one another.
+- Paid membership does not include StudioFlow or Nova; Creator and Contributor are
+  optional professional families, and Creator + Contributor resolves to the union
+  of both with no last-role-wins behavior.
+- Purchasing professional access never creates Founding status. Founding
+  memberships are conferred, complimentary, lifetime, capped at 50 per class, and
+  never recycled.
+- Access resolves server-side from the union of valid entitlement sources; a
+  cancelled paid plan never erases a Founding capability.
+
+Still open and deliberately unresolved: the paid-plan marketing name, all pricing,
+combined-plan packaging, term options, trial policy, the premium-member feature
+list, billing provider, cancellation/refund policy, and public commercial terms.
+
+Production state recorded at the same time: the Founding foundation from
+TPI-CREATOR-INCENTIVE-001/001B/001R is live and owner-accepted under 001RA, the
+registry is empty, and `FAA-001` remains unissued.
+
+The next governance section is **TPI-GOVERNANCE-003B — Operational Roles:
+Moderators & Administrators**; it is not defined here.
+
 ## TPI-CREATOR-INCENTIVE-001 — Founding Membership foundation — November 2, 2026
 
 Status: **IMPLEMENTED AND TESTED LOCALLY / DEVELOPMENT ONLY. PRODUCTION NOT

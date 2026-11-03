@@ -11,6 +11,13 @@ Implementation: `migrations/0058_founding_membership_entitlements.sql`,
 `lib/membership-entitlements.js`, `lib/founding-memberships.js`,
 `functions/api/[[path]].js`.
 
+Membership and professional-access policy — Free and Paid membership, the Creator
+and Contributor capability families, combined access, and the separation of
+membership, payment, capability, Founding status, role, and honor — is recorded in
+[TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md)
+(TPI-GOVERNANCE-003A). That document is policy; this one remains authoritative for
+classes, permanent numbers, assignment, lifecycle, entitlements, and badges.
+
 This document does not define Creator Incentive business rules. Amounts, payout
 values, qualification thresholds, point systems, revenue percentages, reward
 schedules, approval requirements, payout frequency, and accounting rules remain

@@ -25,6 +25,14 @@ Future Owner, Assistant Administrator, and Moderator roles remain planning items
 
 ## Membership entitlements and administrative permissions (recorded 2026-11-02)
 
+The policy model behind these controls — Free versus Paid membership, the Creator
+and Contributor capability families, combined access, and why membership, payment,
+capability, Founding status, role, and honor must remain separate — is recorded in
+[TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md)
+(TPI-GOVERNANCE-003A). Its security rule is unchanged from this document: no badge,
+label, client state, or visible control grants access; authorization is resolved
+server-side.
+
 Recorded by TPI-DOCS-ROADMAP-001 as planning, then **implemented locally by
 TPI-CREATOR-INCENTIVE-001**. The implemented model and its exact authorization
 behaviour are specified in

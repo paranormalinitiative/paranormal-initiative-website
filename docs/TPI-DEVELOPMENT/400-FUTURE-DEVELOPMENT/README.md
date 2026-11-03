@@ -21,7 +21,18 @@ missing.
 
 ## Deferred policy work
 
-Detailed Owner, Assistant Administrator, and Moderator permissions remain for a future owner-approved directive. This documentation set does not implement roles or grant access.
+The authoritative membership and professional-access model — Free and Paid
+membership, the Creator and Contributor capability families, combined access,
+Founding identities, cumulative access resolution, and the separation of
+membership, payment, capability, Founding status, role, and honor — is recorded in
+[TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md](TPI-MEMBERSHIP-AND-PROFESSIONAL-ACCESS-ARCHITECTURE.md)
+(TPI-GOVERNANCE-003A). It is policy only: no subscription, billing, or new
+entitlement behavior is implemented by it. Commercial terms remain owner
+decisions.
+
+Detailed Owner, Assistant Administrator, and Moderator permissions remain for a
+future owner-approved directive (TPI-GOVERNANCE-003B). This documentation set does
+not implement roles or grant access.
 
 ## TPI-STUDIOFLOW-126 future roadmap preservation
 
