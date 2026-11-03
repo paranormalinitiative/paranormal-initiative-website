@@ -21,3 +21,18 @@ The existing `/admin-panel` remains the production Administration Center and was
 The intended review path is an authenticated development account on the isolated development website. Todd should be able to open `/admin-center-preview/`, navigate the pages, inspect real development functionality, and approve or reject the change without sharing passwords, cookies, or tokens. Until the isolated backend and test accounts are implemented and verified, this is an approved requirement rather than an available acceptance environment.
 
 The existing `/admin-panel` remains the production Administration Center and must not be replaced by the preview during development work.
+
+## Operational staff management (future)
+
+The preserved roadmap item **TPI Administration Center — Complete Quality &
+Functional Audit** covers the eventual staff-facing work: a staff directory, role
+assignment and suspension, permission inspection, appointment notes, audit
+history, and role-state management. Future UI should show only the tools the signed-in
+account's resolved capabilities permit.
+
+Current production behavior is unchanged: `/admin-panel`, the protected admin
+pages, and every admin API require an owner-or-admin session, and there is no
+Moderator tier, staff directory, or role-assignment surface yet. The role model
+that this work must implement is
+[TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
+(TPI-GOVERNANCE-003B).

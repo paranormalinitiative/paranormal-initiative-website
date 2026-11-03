@@ -1,5 +1,31 @@
 # TPI Current Development Status
 
+## TPI-GOVERNANCE-003B — Operational roles and administrative authority (2026-11-03)
+
+Status: **DOCUMENTATION AND ASSET IMPORT ONLY. NO ROLE ASSIGNMENT, PERMISSION
+CHANGE, OR DEPLOYMENT.**
+
+- The operational staff architecture is recorded in
+  [TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md):
+  the Moderator family (Moderator, Senior Moderator, Lead Moderator), the
+  Administrator family (Administrator, Senior Administrator, Platform
+  Administrator), and a separate Owner/Founder authority that is not another
+  admin tier.
+- Operational roles are appointed, never purchased, earned from posting,
+  inherited from Founding status, or inferred from artwork. Free Members may hold
+  them; paid, Creator, Contributor, and Founding states simply coexist.
+- The historical **Assistant Administrator** term is preserved as an unresolved
+  role question instead of being erased.
+- Current implementation is recorded factually and separately: a single
+  `owner`/`admin` role value gates the admin routes and APIs; no Moderator tier,
+  capability table, staff directory, or role assignment exists.
+- Operational badge masters imported byte-identically to
+  `assets/operational-roles/masters/` (Administrator and Moderator, 1024×1024).
+  Both were delivered as `.png` files that are actually JPEG without alpha, and
+  the Moderator file has a **baked checkerboard matte**; the defects are recorded,
+  not repaired, and the masters are excluded from publishing.
+- Senior/Lead/Platform insignia remain undecided; no artwork was invented.
+
 ## TPI-GOVERNANCE-003A — Core membership and professional access architecture (2026-11-03)
 
 Status: **DOCUMENTATION ONLY. NO APPLICATION, DATABASE, OR DEPLOYMENT CHANGE.**

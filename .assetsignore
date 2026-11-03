@@ -33,6 +33,11 @@ assets/founding-memberships/masters/
 assets/founding-memberships/masters/**
 assets/society-leadership/
 assets/society-leadership/**
+# TPI-GOVERNANCE-003B: operational-role (Moderator/Administrator) masters stay in
+# Git but are not published. No display surface or derivative exists yet; add
+# derivatives and a narrower rule when the operational insignia feature is built.
+assets/operational-roles/masters/
+assets/operational-roles/masters/**
 CLOUDFLARE_PORTAL_SETUP.md
 CONTRIBUTOR_PORTAL_PLAN.md
 PAPER_EDITOR_ROADMAP.md

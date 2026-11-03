@@ -5,8 +5,10 @@ Status: **AUTHORITATIVE POLICY — DOCUMENTATION ONLY. NO APPLICATION, DATABASE,
 OR DEPLOYMENT CHANGE.**
 Authority: owner directive TPI-GOVERNANCE-003A
 Section: TPI-GOVERNANCE-003, section A (Core Membership & Access Architecture)
-Companion sections: TPI-GOVERNANCE-003B (operational roles — Moderators &
-Administrators) and the later Honors/Leadership section. Neither is defined here.
+Companion sections: TPI-GOVERNANCE-003B — operational roles (Moderators &
+Administrators), recorded in
+[TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
+— and the later Honors/Leadership section. Neither is defined here.
 
 This document is the policy foundation for subscriptions, entitlements,
 professional applications, Education Center access, StudioFlow, Nova,
@@ -449,6 +451,7 @@ accounting).
 | [`../008-ADMINISTRATION-CENTER.md`](../008-ADMINISTRATION-CENTER.md) | Administration Center surfaces that administer these layers |
 | [`../../planning/TPI-DOCS-001_MASTER_STATUS.md`](../../planning/TPI-DOCS-001_MASTER_STATUS.md) | Development sequence and current build state |
 | [`../TPI-CURRENT-DEVELOPMENT-STATUS.md`](../TPI-CURRENT-DEVELOPMENT-STATUS.md) | Newest verified change records |
+| [`TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md`](TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md) | Staff roles and authority that sit beside these membership layers |
 | [`../100-DIRECTIVES/DIRECTIVE-INDEX.md`](../100-DIRECTIVES/DIRECTIVE-INDEX.md) | Directive history |
 
 ## 40. Next section

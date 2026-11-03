@@ -1,5 +1,46 @@
 # TPI-DOCS-001 — Master Documentation Status
 
+## TPI-GOVERNANCE-003B — Operational Roles & Administrative Authority — November 3, 2026
+
+Status: **DOCUMENTATION AND ASSET IMPORT COMPLETE. NO ROLE ASSIGNMENT, PERMISSION
+CHANGE, OR DEPLOYMENT.**
+
+The operational staff architecture is recorded in
+[TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](../TPI-DEVELOPMENT/400-FUTURE-DEVELOPMENT/TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md).
+
+What is now policy:
+
+- Operational roles describe responsibility for operating and protecting TPI;
+  they are not memberships, subscriptions, honors, or organizational rank, and
+  they never overwrite another layer of the account.
+- The moderation family is Moderator / Senior Moderator / Lead Moderator; the
+  administration family is Administrator / Senior Administrator / Platform
+  Administrator; Owner/Founder authority is a separate, highest organizational
+  authority rather than another administrator tier.
+- Authority is appointed, server-side, capability-based, least-privilege, and
+  never derived from a badge, profile text, client state, payment tier, Founding
+  status, achievement, or medallion. Self-escalation is prohibited.
+- Service insignia are visual distinctions only; active authority and historical
+  service are separate states.
+
+Recorded current implementation: production still gates administration with a
+single `owner`/`admin` role value; no Moderator tier, capability table, staff
+directory, or role assignment exists yet.
+
+Assets: the Administrator and Moderator masters were imported byte-identically to
+`assets/operational-roles/masters/` and excluded from publishing. Both arrived as
+`.png` files that are actually JPEG without alpha, and the Moderator file has a
+baked checkerboard matte — recorded, not repaired. Senior/Lead/Platform insignia
+remain undecided.
+
+Still open: whether Senior Moderator and Lead Moderator are required, whether
+Assistant Administrator remains, the final permission matrix, appointment and
+removal authority, appeals policy, suspension and ban limits, public insignia
+design, and service-recognition rules.
+
+The next governance section is **TPI-GOVERNANCE-003C — Governance, Board &
+Executive Leadership Architecture**.
+
 ## TPI-GOVERNANCE-003A — Core Membership & Access Architecture — November 3, 2026
 
 Status: **DOCUMENTATION COMPLETE. NO APPLICATION, DATABASE, OR DEPLOYMENT CHANGE.**

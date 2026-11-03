@@ -30,9 +30,17 @@ membership, payment, capability, Founding status, role, and honor — is recorde
 entitlement behavior is implemented by it. Commercial terms remain owner
 decisions.
 
-Detailed Owner, Assistant Administrator, and Moderator permissions remain for a
-future owner-approved directive (TPI-GOVERNANCE-003B). This documentation set does
-not implement roles or grant access.
+The operational staff model — Moderator, Senior Moderator, Lead Moderator,
+Administrator, Senior Administrator, Platform Administrator, and the separate
+Owner/Founder authority, with least privilege, capability-based authorization,
+appointment records, and the prohibition on self-escalation — is recorded in
+[TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md](TPI-OPERATIONAL-ROLES-AND-ADMINISTRATIVE-AUTHORITY-ARCHITECTURE.md)
+(TPI-GOVERNANCE-003B). It is policy and asset provenance only: no role is assigned,
+no permission changes, and no staff tier exists yet.
+
+The operational badge masters (Moderator, Administrator) now live in
+[`../../../assets/operational-roles/`](../../../assets/operational-roles/), a family
+separate from the Founding and Society/Leadership artwork.
 
 ## TPI-STUDIOFLOW-126 future roadmap preservation
 
