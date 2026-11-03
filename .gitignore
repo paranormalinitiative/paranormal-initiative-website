@@ -12,3 +12,6 @@ data/
 
 # Local dev secrets
 .dev.vars
+
+# TPI-NOVA-002 spike build output
+experiments/nova-spike/dist/

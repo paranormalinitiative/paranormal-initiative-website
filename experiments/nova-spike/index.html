@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Nova Technology Compatibility Spike (TPI-NOVA-002)</title>
+    <script>
+      // Spike-only diagnostics: collect runtime errors for cross-browser comparison.
+      window.__novaErrors = [];
+      window.addEventListener("error", function (e) {
+        window.__novaErrors.push("error: " + (e.message || String(e.error)));
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        window.__novaErrors.push("rejection: " + String(e.reason));
+      });
+      (function () {
+        var original = console.error;
+        console.error = function () {
+          window.__novaErrors.push(
+            "console.error: " + Array.prototype.join.call(arguments, " "),
+          );
+          return original.apply(console, arguments);
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -859,9 +859,9 @@ It must establish a robust, professional editing foundation.
 
 | Gate | Owner phase | Status |
 |---|---|---|
-| TipTap / ProseMirror compatibility, bundle size and schema | Nova-002 | Open |
-| Konva and React-Konva compatibility with the chosen React | Nova-002 | Open |
-| `/nova/` route confirmed against Worker routing | Nova-002 | Open |
+| TipTap / ProseMirror compatibility, bundle size and schema | Nova-002 | Closed — PASS (§18.7) |
+| Konva and React-Konva compatibility with the chosen React | Nova-002 | Closed — PASS (§18.7) |
+| `/nova/` route confirmed against Worker routing | before Nova-004 | Open — the Nova-002 spike ran on a Vite dev/build output, not through the Worker (§18.8) |
 | Final Nova SQL schema and storage model | Nova-003 | Open |
 | Entitlement enforcement for Nova surfaces | before Nova-004 | Open |
 | StudioFlow production-item contract | before Nova-008 | Open |
@@ -873,3 +873,165 @@ It must establish a robust, professional editing foundation.
 TPI-NOVA-001C is documentation only. It records the architecture. It does not
 implement Nova, change StudioFlow, add a dependency, add a migration, or deploy
 anything.
+
+## 18. Technology compatibility spike results (TPI-NOVA-002)
+
+**Status:** COMPLETE — PASS. Isolated development spike. Nothing was deployed.
+
+### 18.1 Scope and isolation
+
+The spike lives in `experiments/nova-spike/` as a self-contained application with
+its own `package.json`, lockfile, TypeScript configuration and Vite build. It has
+no import of, or dependency on, the StudioFlow application, and it did not touch
+StudioFlow `App.tsx`, StudioFlow Notes, StudioFlow production behaviour, Worker
+authentication, D1 migrations, production APIs, Founding Memberships,
+Creator/Contributor entitlements or the Education Center.
+
+Because the root `wrangler.toml` Worker serves static assets from the repository
+root with `run_worker_first = true`, the spike directory is explicitly excluded
+from asset upload in `.assetsignore` (`experiments`, `experiments/**`), and its
+build output is gitignored. The spike could therefore not become part of any
+deployed Worker, and the official StudioFlow local environment on
+`http://127.0.0.1:8787/studio/` was left untouched. The spike was exercised on its
+own Vite dev server on port 5180.
+
+No GenOffice code was copied. No `extensions.ts`, `SlideCanvas.tsx`, renderer,
+DOCX, PPTX or `ee/` source was reused; the spike uses upstream TipTap, ProseMirror,
+Konva and React-Konva directly.
+
+### 18.2 Versions tested
+
+The spike chose versions appropriate for a new Nova application rather than
+inheriting StudioFlow's React 18.3.1 / Vite 5.4.11 / TypeScript 5.6.3 stack, which
+was not upgraded.
+
+| Component | Version |
+|---|---|
+| Node / npm | v25.9.0 / 11.12.1 |
+| React / React DOM | 19.3.1 / 19.3.1 |
+| TypeScript | 5.9.3 |
+| Vite | 8.3.5 |
+| `@vitejs/plugin-react` | 6.2.1 |
+| TipTap (core, pm, react, starter-kit, image, link, table) | 3.32.2 |
+| ProseMirror | as resolved by TipTap 3.32.2 |
+| Konva | 10.9.1 |
+| React-Konva | 19.3.2 |
+| Vitest / jsdom (dev only) | 3.2.4 / 29.1.1 |
+| Firefox Developer Edition | 160.0 (authoritative) |
+| Chromium (compatibility) | Playwright 1.64.1 build already present in the repository |
+
+### 18.3 Documents
+
+Implementations proven: paragraph, heading, bold, italic, bulleted list,
+numbered list, link, image node, table with header row, undo and redo.
+
+The canonical document source is structured JSON with a versioned envelope,
+`{ format: "nova-document", version: 1, doc }`, where `doc` is the ProseMirror
+document tree. HTML is only ever an editor-render output and is never stored,
+and no `document.execCommand` path exists. Formatting, list structure, table
+structure and marks survive save → reload; the reload path reconstructs the same
+document from JSON alone.
+
+Undo and redo are ProseMirror history transactions: selection plus `toggleBold`
+produced 14/14 bold text nodes, undo returned the document to its pre-command
+state, and redo restored the formatting.
+
+### 18.4 Slides
+
+Implementations proven: two-slide presentation, text, rectangle, image placeholder
+and per-slide background, with selection, drag, transformer resize, slide reorder,
+slide duplicate and slide delete.
+
+The presentation model is plain data — `{ format: "nova-presentation", version: 1,
+presentation }`, where `presentation.slides[].elements[]` carry only geometry and
+content. Selection, drag state, transformer attachment, guides and zoom live in
+React component state and are provably absent from the serialized output: the
+saved/reloaded presentation contains no view state. Canvas nodes are derived from
+the model on every render; dragging writes `x`/`y` back into the model (drag of
++50/+30 screen pixels at 0.5 scale produced model `x=180, y=240`) and a transformer
+resize wrote `w≈336, h≈207` into the model, so the model is never a copy of Konva's
+internal node state.
+
+### 18.5 Browser acceptance
+
+| Browser | Role | Result |
+|---|---|---|
+| Firefox Developer Edition 160.0 | Authoritative | 23/23 checks PASS, zero console errors |
+| Chromium (Playwright build) | Compatibility | 22/22 checks PASS, zero console errors |
+
+Both runs used real WebDriver/CDP input: typing, select-all and formatting, table
+row insertion, undo/redo, save/reload, canvas pixel assertions (480×270 stage,
+129,600 non-transparent pixels), click-select, drag, transformer resize, slide
+switch, duplicate, reorder, delete and presentation save/reload. Firefox (real
+window, `scripts/firefox-screenshot.mjs`) was also inspected visually: the
+document renders heading, bold, italic, link, both list types, the image
+placeholder and a two-column table; the slide surface renders background, text,
+rectangle and image placeholder correctly.
+
+Layout was confirmed at desktop (1280 px and 1009 px viewport) and tablet-like
+(820 px and 805 px viewport) widths with no horizontal page overflow. No responsive
+implementation was attempted.
+
+Three defects were found by these runs and fixed inside the spike: a React `key`
+warning caused by spreading a props object containing `key` into a Konva node, a
+selection step missing before transformer resize, and two incorrect test
+expectations. No defect required changing a library choice.
+
+### 18.6 Build, bundle and tests
+
+`npm install` completed cleanly (131 packages, later 39 for the jsdom test
+environment) with no peer-dependency errors, which also settles the React 19 /
+React-Konva 19.3.2 / Konva 10.9.1 peer combination. TypeScript typecheck is clean
+and the production build succeeds: 148 modules, one JavaScript chunk of
+1,018.62 kB minified (316.20 kB gzip), build time ≈180 ms.
+
+Attribution measured during the spike by splitting vendor chunks:
+
+| Group | Minified | Gzip |
+|---|---|---|
+| TipTap + ProseMirror | 470.26 kB | 148.02 kB |
+| Konva + React-Konva | 333.65 kB | 102.06 kB |
+| React + React DOM | 203.26 kB | 63.59 kB |
+| Spike application code | 9.99 kB | 3.52 kB |
+
+Vite warns that a chunk exceeds 500 kB. That warning is expected here because the
+spike deliberately imports both editor stacks into one page; it is not evidence
+that either stack is unusable.
+
+Eleven automated tests pass (`tests/document.test.ts` 5, `tests/slides.test.ts` 6):
+document JSON round trip, schema validity, editor command behaviour, presentation
+round trip, slide reorder, duplicate/delete and element update. Document command
+tests require a DOM environment (jsdom) because an unmounted TipTap editor has no
+ProseMirror view and therefore no history commands — a test-infrastructure detail,
+not a product constraint.
+
+### 18.7 Gate results
+
+| Gate | Requirement | Result |
+|---|---|---|
+| TipTap / ProseMirror | clean build, structured JSON, formatting round trip, undo/redo, Firefox PASS, Chromium PASS | **PASS** |
+| Konva | clean build, model separate from canvas, basic manipulation, JSON round trip, Firefox PASS, Chromium PASS | **PASS** |
+| React-Konva | works with the Nova-selected React without peer errors | **PASS** |
+| Overall Nova technology | both editor foundations viable without changing StudioFlow's React/Vite stack | **PASS** |
+
+### 18.8 Unresolved issues carried forward
+
+- **Single 1.0 MB chunk.** Nova Documents and Nova Slides must be separate routes
+  with dynamic imports and their own vendor chunks; the combined figure above is a
+  ceiling for a page that loads both, not the expected weight of either product
+  surface. Re-measure per surface in Nova-004 and Nova-006.
+- **Image elements are placeholders.** No asset pipeline, upload, R2 binding or
+  sizing rules were tested; that belongs with Nova storage.
+- **`/nova/` Worker routing is still unproven.** The spike ran on Vite output, so
+  the route must be confirmed against the real Worker before the first Nova
+  front-end release.
+- **Firefox Developer Edition 160.0 is a moving target.** Re-run the Firefox
+  acceptance script at each Nova milestone rather than assuming the result holds.
+- **No persistence, revisions, permissions, DOCX/PPTX or PDF work exists**, by
+  directive. Nova Core storage and API work is the next phase.
+
+### 18.9 Documentation status
+
+TPI-NOVA-002 is a development spike plus this record. It adds an isolated
+experiment and its evidence; it does not implement Nova, change StudioFlow, add a
+migration, add a production dependency or deploy anything.

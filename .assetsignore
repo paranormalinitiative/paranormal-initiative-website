@@ -15,6 +15,9 @@ node_modules
 node_modules/**
 admin-center-app
 admin-center-app/**
+# TPI-NOVA-002: isolated technology spike source. Never published as site assets.
+experiments
+experiments/**
 .DS_Store
 **/.DS_Store
 wrangler.jsonc
