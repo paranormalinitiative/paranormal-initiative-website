@@ -862,6 +862,7 @@ policy architecture comes first.
 | [`../TPI-CURRENT-DEVELOPMENT-STATUS.md`](../TPI-CURRENT-DEVELOPMENT-STATUS.md) | Newest verified change records |
 | [`../../planning/TPI-DOCS-001_MASTER_STATUS.md`](../../planning/TPI-DOCS-001_MASTER_STATUS.md) | Development sequence |
 | [`../100-DIRECTIVES/DIRECTIVE-INDEX.md`](../100-DIRECTIVES/DIRECTIVE-INDEX.md) | Directive history |
+| [`TPI-FUTURE-WORK-REGISTER.md`](TPI-FUTURE-WORK-REGISTER.md) | Consolidated roster of the future systems this record defers, including staff-tier finalization, oath implementation, badge cleanup, and the future help architecture |
 
 ## 81. Next section
 

@@ -44,3 +44,11 @@ equal application regardless of status, the working staff oath, and the rule tha
 service recognition never reactivates expired authority. A future staff directory or
 oath-acknowledgment surface is not designed or implemented here, and the audit
 roadmap item recorded above is unchanged.
+
+The future management areas this Center must eventually carry — membership and
+entitlement administration, Founding Membership administration, role management and
+permission inspection, staff history, honors and distinction management, audit
+records, and Community Standards enforcement tools — are indexed in
+[TPI-FUTURE-WORK-REGISTER.md](400-FUTURE-DEVELOPMENT/TPI-FUTURE-WORK-REGISTER.md)
+(TPI-GOVERNANCE-003B2). Nothing in that register is implemented or authorized to
+start.

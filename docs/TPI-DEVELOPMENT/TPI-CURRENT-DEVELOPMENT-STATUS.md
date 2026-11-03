@@ -1,5 +1,36 @@
 # TPI Current Development Status
 
+## TPI-GOVERNANCE-003B2 — Future-work reconciliation (2026-11-03)
+
+Status: **DOCUMENTATION ONLY. NO APPLICATION, DATABASE, ASSET, OR DEPLOYMENT
+CHANGE.**
+
+- Every major future system raised during 003A, 003B, and 003B1 is now indexed in
+  [TPI-FUTURE-WORK-REGISTER.md](400-FUTURE-DEVELOPMENT/TPI-FUTURE-WORK-REGISTER.md),
+  so none of it depends on memory: the 003C governance architecture, Full Platform
+  Authority, Gold/Silver/Bronze medallion policy, Board medallions, additional
+  artwork, staff-tier and Assistant Administrator finalization, oath implementation,
+  the complete Community Standards, the Community Help Center, the Internal Help
+  Desk, Mystic policy assistance, Honors & Distinctions, the Honors Wall,
+  achievements, education credentials, profile Primary Distinction, the
+  Administration Center audit, the Moderator badge derivative cleanup, and the
+  operational master release-packaging exclusion.
+- The register records the split that must survive implementation: public/member
+  policy (Community Standards, Help Center), internal/staff procedure (Internal Help
+  Desk, permission matrices, escalation, Administration Center guides), and
+  authoritative Markdown as the single source of truth.
+- It also records what the owner still owes: additional badge and medallion artwork,
+  and the landmark policy decisions (Silver/Bronze qualification, staff tier list,
+  Assistant Administrator status, Board and office definitions).
+- Nothing was built, authored, generated, repaired, or deployed. Unchanged behavior:
+  the admin gate is still an owner-or-admin session, the registry is still empty, and
+  no staff tier, standards page, help surface, or support knowledge source exists.
+- Next governance section: **TPI-GOVERNANCE-003C — Governance, Board & Executive
+  Leadership Architecture**. None of the deferred items block it, and the owner has
+  deferred starting 003C: current development priority is the **Nova product
+  family** (StudioFlow Nova Edit and the Nova Editorial Workspace), beginning
+  with architecture and repository investigation before any implementation.
+
 ## TPI-GOVERNANCE-003B1 — Constitutional values, staff oath, and help architecture (2026-11-03)
 
 Status: **DOCUMENTATION ONLY. NO ROLE ASSIGNMENT, PERMISSION CHANGE, OR

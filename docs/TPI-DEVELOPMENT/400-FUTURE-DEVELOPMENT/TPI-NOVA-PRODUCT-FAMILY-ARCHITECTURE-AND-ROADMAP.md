@@ -276,9 +276,9 @@ considered later, but it must never delay:
 
 ## 9. GenOffice as an architectural reference
 
-GenOffice (`genspark-ai/genoffice`) has been identified as a **potentially
-valuable architectural and component reference** for the future evaluation
-phase. It is a reference to evaluate, not a decision to adopt.
+GenOffice (`https://github.com/genspark-ai/genoffice`) has been identified as a
+**potentially valuable architectural and component reference** for the future
+evaluation phase. It is a reference to evaluate, not a decision to adopt.
 
 Relevant areas to evaluate later:
 
@@ -303,11 +303,21 @@ Relevant areas to evaluate later:
 - presentation model,
 - import / export.
 
+Also evaluate the shared foundation rather than the two apps separately:
+`packages/*`, editor architecture, rendering, undo/redo patterns, and testing
+patterns.
+
 Constraints:
 
 - GenOffice's main code is **Apache 2.0**; any reused or adapted code must
   preserve the applicable licensing and NOTICE requirements, and
   `THIRD-PARTY-NOTICES.md` must be updated before any code is merged.
+- The `ee/` directory is **not** Apache 2.0. Everything under `ee/` is covered
+  by the separate **GenOffice Enterprise License**; production use, hosted-
+  service use, or distribution of that Enterprise Software requires a valid
+  enterprise agreement. TPI must never reuse `ee/` code in production unless
+  separately licensed and explicitly authorized. Inspecting `ee/` to
+  understand a concept is acceptable; copying it is not.
 - Do **not** use GenOffice or Genspark trademarks or branding.
 - Do **not** assume the whole desktop/Electron product can be embedded in TPI.
   The evaluation must determine what is usable inside TPI's web architecture.

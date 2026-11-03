@@ -1,5 +1,10 @@
 # Future Development
 
+The consolidated index of every outstanding future system — governance, community,
+help, honors, and asset dependencies — is
+[TPI-FUTURE-WORK-REGISTER.md](TPI-FUTURE-WORK-REGISTER.md) (TPI-GOVERNANCE-003B2).
+Listing there records a commitment to remember the work, never permission to start it.
+
 This directory contains proposals and historical planning. It is not an
 operational release guide. Current commit, push, and deployment instructions
 are in `../TPI-LOCAL-TO-PRODUCTION-RUNBOOK.md`; StudioFlow source integration is
