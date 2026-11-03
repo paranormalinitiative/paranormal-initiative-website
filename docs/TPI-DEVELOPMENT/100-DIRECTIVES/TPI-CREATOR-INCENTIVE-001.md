@@ -339,3 +339,54 @@ Entitlement architecture (cumulative capabilities, All-Access union, permanent
 numbering, non-recycling, 50-per-class limits, audit history, server-side
 authorization, Nova hooks) is untouched. Creator Incentive financial policy
 remains **UNRESOLVED — OWNER DECISION REQUIRED**.
+
+## 26. Official badge artwork imported
+
+The three owner-supplied master badges were imported byte-for-byte into
+`assets/founding-memberships/masters/` on 2026-11-03:
+
+| Class | Master file | Badge identity |
+|---|---|---|
+| `FC` | `FoundingCreatorBadgeMaster.png` | Founding Creator |
+| `FCT` | `FoundingContributorBadgeMaster.png` | Founding Contributor |
+| `FAA` | `FoundingAllAcceessBadgeMaster.png` | Founding All-Access |
+
+The original spelling `FoundingAllAcceessBadgeMaster.png` is preserved; the
+owner's master file was neither renamed nor re-encoded. SHA-256 digests, the
+class mapping, and the reproduction recipe for web derivatives (`512`, `256`,
+`128` PNG and `512`/`256` WebP under `assets/founding-memberships/web/`) are
+recorded in `assets/founding-memberships/README.md`.
+
+Badges remain presentation only. `primaryBadge()` derives identity from the
+assigned class code, the API returns badge metadata from resolved membership
+rows, and no image or DOM change can grant a capability. Community display
+surfaces are not implemented yet (see 27).
+
+## 27. Permanent roadmap items recorded
+
+Two requirements are now recorded as future work and must stay visible in the
+development roadmap until completed:
+
+1. **TPI Administration Center — Complete Quality & Functional Audit.** The
+   Administration Center is becoming a critical operational system (community,
+   Creator, Contributor, Founding Membership, incentive, permission, moderation,
+   publishing, Nova, Education Center administration). A dedicated Admin Panel
+   directive must verify every navigation item, form, control, server-side
+   authorization path, account isolation boundary, responsive layout, Firefox
+   Developer Edition and Chrome behavior, visual consistency, accessibility,
+   error handling, loading/empty states, confirmation behavior, audit behavior,
+   deep links, refresh persistence, data integrity, and production safety, to
+   the standard "complete, consistent, secure, and flawless for normal
+   administrative use." It was **not** attempted under 001A.
+2. **Founding Membership Badge Integration & Community Display.** Master
+   artwork is imported and web derivatives exist; the member profile, feed/member
+   identity, Administration Center, and membership display surfaces must be
+   implemented and verified before the Founding Membership experience is
+   considered completely finished.
+
+## 28. 001A scope boundary
+
+001A delivered the field-spacing correction, the review-registry isolation
+proof, and the badge asset import with documentation. It did not implement
+community badge surfaces and did not perform the Administration Center audit;
+both remain roadmap items recorded above. Production was not deployed.

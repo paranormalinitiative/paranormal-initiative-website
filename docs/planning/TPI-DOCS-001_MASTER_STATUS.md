@@ -44,6 +44,29 @@ production step requires a dedicated release directive under OPS-005.
 6. **Nova Docs professional editor** — not started.
 7. **Education Center publishing workflow** — unchanged.
 
+### Recorded future quality requirements (must stay visible until complete)
+
+These two items are permanently tracked in the roadmap. They are not optional
+polish and they are not part of 001A.
+
+- **TPI Administration Center — Complete Quality & Functional Audit.** The
+  Administration Center is becoming a critical operational system for community,
+  Creator, Contributor, Founding Membership, Creator Incentive, permission,
+  moderation, publishing, and future Nova / Education Center administration. A
+  dedicated Admin Panel directive must verify every navigation item, form,
+  control, server-side authorization path, account-isolation boundary,
+  responsive layout, Firefox Developer Edition and Chrome behavior, visual
+  consistency, accessibility, error handling, loading and empty states,
+  confirmation behavior, audit behavior, deep links, refresh persistence, data
+  integrity, and production safety. Goal: *complete, consistent, secure, and
+  flawless for normal administrative use.*
+- **Founding Membership Badge Integration & Community Display.** Official master
+  artwork is now version-controlled in `assets/founding-memberships/masters/`
+  with web derivatives in `assets/founding-memberships/web/`. Badge display on
+  the member profile, feed/member identity, Administration Center, and membership
+  surfaces must be implemented and verified before the Founding Membership
+  experience is considered completely finished.
+
 ## TPI-DOCS-ROADMAP-001 — Authoritative roadmap update — November 2, 2026
 
 Documentation only. No application code, permission, membership, Education

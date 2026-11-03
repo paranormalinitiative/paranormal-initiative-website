@@ -184,3 +184,46 @@ reports `50 left / 0 issued` per class with next numbers `FC-001`, `FCT-001`, an
 In a local environment the Administration Center shows a single **Local review
 data** notice above the class cards. It is server-decided and cannot render in
 production.
+
+## 12. Badge assets
+
+Official master artwork is version-controlled under
+`assets/founding-memberships/masters/`, imported byte-for-byte from the owner's
+originals:
+
+| Class | Numbers | Badge identity | Master |
+|---|---|---|---|
+| `FC` | `FC-001`–`FC-050` | Founding Creator | `FoundingCreatorBadgeMaster.png` |
+| `FCT` | `FCT-001`–`FCT-050` | Founding Contributor | `FoundingContributorBadgeMaster.png` |
+| `FAA` | `FAA-001`–`FAA-050` | Founding All-Access | `FoundingAllAcceessBadgeMaster.png` |
+
+Masters are 1254×1254 PNG, preserved unchanged — including the owner's
+`Acceess` spelling — and must never be resized or overwritten. Web derivatives
+(`512`, `256`, `128` PNG; `512`, `256` WebP) live in
+`assets/founding-memberships/web/` and are regenerated from the masters; the
+recipe, digests, and surface guidance are in
+`assets/founding-memberships/README.md`.
+
+Badge presentation is separate from authorization. Identity is derived from the
+assigned class code on the server, and the API returns badge metadata from
+resolved membership rows. An image swap or DOM edit cannot grant a capability,
+issue a number, or change Creator Incentive eligibility.
+
+## 13. Recorded future requirements
+
+Two items are permanently recorded in the roadmap until completed:
+
+1. **TPI Administration Center — Complete Quality & Functional Audit** — a
+   dedicated directive covering every navigation item, administrative form,
+   control, server-side authorization path, account-isolation boundary,
+   responsive layout, Firefox Developer Edition and Chrome behavior, visual
+   consistency, accessibility, error handling, loading/empty states,
+   confirmation behavior, audit behavior, deep links, refresh persistence, data
+   integrity, and production safety. Target standard: complete, consistent,
+   secure, and flawless for normal administrative use.
+2. **Founding Membership Badge Integration & Community Display** — implement and
+   verify badge display on member profile, feed/member identity, Administration
+   Center, and membership surfaces using the imported derivatives.
+
+The Founding Membership experience is not "completely finished" until both are
+complete and the system is released through the guarded production workflow.

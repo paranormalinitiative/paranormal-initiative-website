@@ -34,6 +34,26 @@ server-decided **Local review data** notice in development only. Local fixtures
 in build output, and not reachable from production; a clean production registry
 starts at 50 left / 0 issued with next numbers `FC-001`, `FCT-001`, `FAA-001`.
 
+Official badge artwork is now version-controlled in
+`assets/founding-memberships/masters/` (masters preserved unchanged, including
+the owner's `FoundingAllAcceessBadgeMaster.png` spelling) with web derivatives in
+`assets/founding-memberships/web/`.
+
+### Recorded future quality requirements
+
+Both items stay in the roadmap until completed; neither is part of 001A.
+
+- **TPI Administration Center — Complete Quality & Functional Audit** — every
+  navigation item, form, control, authorization path, account isolation,
+  responsive layout, Firefox Developer Edition and Chrome parity, visual
+  consistency, accessibility, error/loading/empty states, confirmations, audit
+  behavior, deep links, refresh persistence, data integrity, and production
+  safety. Target: complete, consistent, secure, and flawless for normal
+  administrative use.
+- **Founding Membership Badge Integration & Community Display** — implement and
+  verify badge display on member profile, feed/member identity, Administration
+  Center, and membership surfaces using the imported derivatives.
+
 
 ## TPI-DOCS-ROADMAP-001 — Roadmap synchronization (2026-11-02)
 
