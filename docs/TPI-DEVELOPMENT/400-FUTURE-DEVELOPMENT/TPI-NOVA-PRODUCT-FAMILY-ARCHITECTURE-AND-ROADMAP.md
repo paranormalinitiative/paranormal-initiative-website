@@ -1035,3 +1035,182 @@ not a product constraint.
 TPI-NOVA-002 is a development spike plus this record. It adds an isolated
 experiment and its evidence; it does not implement Nova, change StudioFlow, add a
 migration, add a production dependency or deploy anything.
+
+## 19. Nova Core storage and API foundation (TPI-NOVA-003)
+
+**Status:** COMPLETE — PASS against the isolated local Worker. Nothing was
+deployed, no production migration was applied, and no product UI exists yet.
+
+### 19.1 Scope and isolation
+
+Nova Core is one owner-scoped persistence layer shared by Nova Edit and the Nova
+Editorial Workspace; product identity never forks storage. The implementation is
+`lib/nova.js` (handlers, routing, validation), `lib/nova-limits.js` (documented
+limits), one additive migration and one dispatch line in
+`functions/api/[[path]].js`. The Nova-002 spike remains untouched under
+`experiments/nova-spike/` and is still excluded from Worker assets.
+
+StudioFlow, StudioFlow Notes, the Education Center, entitlements, GenOffice code
+and every import/export path were left unchanged. There is no editor UI, no
+StudioFlow bridge and no Nova asset pipeline.
+
+### 19.2 Storage model
+
+Migration `migrations/0059_nova_core.sql` adds three tables. `studio_notes` is
+never overloaded.
+
+| Table | Responsibility |
+|---|---|
+| `nova_items` | Item identity and metadata: `id`, `owner_id`, `type`, `title`, `collection_id`, `status`, `format_version`, `content_json`, `content_bytes`, `version`, optional `template_key`/`source_kind`/`source_ref`, `trash_collection_id`, `created_at`, `updated_at`, `deleted_at` |
+| `nova_collections` | Owner-scoped nested folders: `id`, `owner_id`, `parent_id`, `name`, timestamps |
+| `nova_revisions` | Content snapshots: `id`, `item_id`, `owner_id`, `revision_number`, `title`, `format_version`, `content_json`, `content_bytes`, `restored_from_revision`, `created_at`, unique on `(item_id, revision_number)` |
+
+Constraints: `type` is restricted to the two Nova formats, `status` to
+`active`/`archived`/`trash`, versions and byte counts must be positive, and every
+row cascades from its owning contributor. Item deletions cascade to revisions.
+Collection deletion is deliberate: items are never deleted, only unfiled.
+
+Indexes: `idx_nova_collections_owner_parent`,
+`idx_nova_items_owner_status_updated`,
+`idx_nova_items_owner_type_status_updated`,
+`idx_nova_items_owner_collection_status`, `idx_nova_items_owner_title`,
+`idx_nova_revisions_item_number`, `idx_nova_revisions_owner_created`. No seed
+data and no fixture accounts exist in the migration.
+
+### 19.3 Content envelope rules
+
+Only the versioned structured envelopes from Nova-002 are accepted:
+
+- `{ format: "nova-document", version: 1, doc }`
+- `{ format: "nova-presentation", version: 1, presentation }`
+
+HTML is never canonical content and rendered Konva nodes are never stored; both
+surfaces serialize their own structured model into the envelope. The server
+derives the item `type` from the envelope `format`, so a client cannot create or
+retitle an item with a contradictory type; an existing item cannot change type.
+
+### 19.4 Two versions, never overloaded
+
+| Field | Meaning |
+|---|---|
+| `format_version` / envelope `version` | Shape of the structured content (`nova-document v1`) |
+| `version` | Record concurrency counter for optimistic writes |
+
+Every item mutation (`PATCH`, archive, trash, restore, permanent delete,
+revision restore) requires `expectedVersion`. The write is a conditional
+`UPDATE ... WHERE version = expected`, so a stale writer gets `409` with the
+current item and can never overwrite newer content. Metadata-only edits still
+bump the record version; they do not create a content revision.
+
+### 19.5 API namespace
+
+All routes live under `/api/nova/...`, are gated by the existing Studio access
+check (owner/admin, or an active Creator capability), and return
+`Cache-Control: private, no-store`. Mutations reject a mismatched `Origin`
+(`403 cross_origin_forbidden`). Ownership is always taken from the session; no
+request field can set `owner_id`, and another owner's ID returns `404` for fetch,
+update, lifecycle, revision and collection operations.
+
+| Method and path | Purpose |
+|---|---|
+| `GET /api/nova/items` | Owner listing; `type`, `status`, `collectionId` (or `unfiled`), `search`, `limit` |
+| `POST /api/nova/items` | Create with envelope, title, optional collection/template/source metadata |
+| `GET /api/nova/items/:id` | Fetch with content |
+| `PATCH /api/nova/items/:id` | Update content and/or title and/or collection |
+| `POST /api/nova/items/:id/archive` | Archive |
+| `POST /api/nova/items/:id/trash` | Move to Trash |
+| `POST /api/nova/items/:id/restore` | Restore from Trash or archive |
+| `POST /api/nova/items/:id/permanent-delete` | Irreversible delete, Trash only, requires `confirmation: "DELETE PERMANENTLY"` |
+| `GET /api/nova/items/:id/revisions` | Revision list, newest first, with snapshots |
+| `POST /api/nova/items/:id/revisions/:revisionId/restore` | Restore a snapshot as a new current version |
+| `GET /api/nova/collections` | Owner collection tree with active item counts |
+| `POST /api/nova/collections` | Create, optional `parentId` |
+| `PATCH /api/nova/collections/:id` | Rename and/or move |
+| `POST /api/nova/collections/:id/delete` | Safe delete |
+
+Listing is intentionally simple: indexed owner filters plus a `LIKE` title
+search. No full-text index, no tag/facet system and no editor endpoints exist.
+
+### 19.6 Collections
+
+Collections nest without depth limit, use the same cycle validation as Notes,
+and cannot reference another owner's parent (or any non-Nova folder). Deleting a
+collection never deletes content: its items return to Unfiled, child collections
+are re-parented under the deleted collection's parent (root when it had none),
+and Trash items keep their restoration target through `trash_collection_id`.
+
+### 19.7 Revisions
+
+A revision is written whenever content changes, at the record version that
+resulted from the change (`revision_number` = `version`). Retention is the latest
+**50** content versions per item; older rows are pruned on write. Restoring a
+revision writes a new current version, inserts a new revision that records
+`restored_from_revision`, and never rewrites historical rows — the unique
+`(item_id, revision_number)` constraint enforces that.
+
+### 19.8 Lifecycle
+
+`active → archived → active`, `active/archived → trash → active`, and
+`trash → permanent delete` only; restore from Trash always returns the item to
+active. Trashed items are read-only until
+restored. Restoring returns an item to the collection it was trashed from, or to
+Unfiled with a notice if that collection has since been deleted. Permanent
+deletion requires both Trash status and the exact confirmation string; one click
+cannot destroy content.
+
+### 19.9 Limits
+
+| Limit | Value | Reason |
+|---|---|---|
+| Document content | 512 KiB | Matches the existing StudioFlow Notes ceiling; rich-text JSON rarely approaches it |
+| Presentation content | 1 MiB | Slide geometry and node trees are heavier, still inside D1 row/string practicality |
+| Request body | 1 MiB + 16 KiB | Envelope plus metadata headroom above the largest content type |
+| Revision retention | 50 per item | Bounded growth; Notes retains 100 smaller HTML revisions |
+| Title / collection name | 200 / 120 characters | Presentation safety |
+| Listing page | 100 default, 200 maximum | Bounded responses |
+
+Errors are explicit: `413 nova_content_too_large`, `413 nova_request_too_large`,
+`400 invalid_nova_format`, `400 unsupported_nova_format_version`,
+`400 invalid_nova_shape`, `400 nova_content_required`,
+`400 expected_version_required`, `409 nova_item_conflict`,
+`409 nova_item_in_trash`, `409 nova_item_not_in_trash`, `400 confirmation_required`.
+A storage environment without the migration answers `503 nova_schema_unsupported`
+rather than granting access.
+
+### 19.10 Entitlement boundary
+
+Nova Core APIs reuse the existing Studio access gate. No membership class gained
+capability, no Nova flag became globally available, no production policy changed
+and both product surfaces share the same tables, so Creator → Nova Edit,
+Contributor → Nova Editorial Workspace, Founding variants and Founding All-Access
+require no duplicate storage. A Nova-specific enablement decision remains future
+work.
+
+### 19.11 Verification result
+
+`npm run verify:nova-003` (`scripts/verify/tpi-nova-003-foundation.mjs`) starts an
+isolated Worker on port 8791 against a throwaway `--persist-to` directory, seeds
+synthetic accounts there only, and applies all migrations including 0059.
+
+**105 assertions — 105 passed, 0 failed**, across schema (16), authentication and
+ownership (12), document lifecycle (11), validation (7), listing and filters (17),
+presentation lifecycle (8), collections (16), revisions (12) and isolation (2).
+Coverage includes CHECK/unique/cascade constraints, 401/403/404/409/413 paths,
+cross-origin rejection, client ownership override, both document and
+presentation CRUD with conflicts, nested collections with cycle rejection and
+safe delete, revision provenance plus retention pruning at 50, and the
+permanently-deleted item leaving no revisions.
+
+The official StudioFlow local environment (`http://127.0.0.1:8787/studio/`) and
+`.local-dev/state/v3` were not used, migrated or contacted. No production
+migration or deployment occurred.
+
+### 19.12 Deferred
+
+- Editor surfaces (TipTap documents, Konva slides) and their lazy-loaded routes.
+- `/nova/` production Worker routing remains unproven.
+- Nova asset linkage and upload/import/export pipelines (DOCX/PPTX/PDF).
+- StudioFlow handoff (Add to Production, teleprompter, slide assets).
+- Education Center editorial workflow and Nova feature enablement policy.
+- Shared/team ownership. Nova items are single-owner until an explicit sharing
+  model is approved.

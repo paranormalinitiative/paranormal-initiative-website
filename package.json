@@ -53,7 +53,8 @@
     "release:preflight": "node scripts/tpi-release.mjs preflight",
     "release:certify": "node scripts/tpi-release.mjs certify",
     "release:production": "node scripts/tpi-release.mjs deploy",
-    "verify:release-certification": "node scripts/verify/tpi-ops-005-certification.mjs"
+    "verify:release-certification": "node scripts/verify/tpi-ops-005-certification.mjs",
+    "verify:nova-003": "node scripts/verify/tpi-nova-003-foundation.mjs"
   },
   "devDependencies": {
     "playwright": "1.64.1",

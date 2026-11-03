@@ -4,6 +4,7 @@ import { scrapeNews } from "../../lib/news-scraper.js";
 import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
+import { handleNovaApi } from "../../lib/nova.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
@@ -217,6 +218,10 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/notes/attachments") return requireStudioAccess(request, env, user => handleUploadNoteAttachment(request, env, user));
     if (request.method === "GET" && path.match(/^\/notes\/attachments\/[^/]+$/)) return requireStudioAccess(request, env, user => handleGetNoteAttachment(path, env, user));
     if (request.method === "DELETE" && path.match(/^\/notes\/attachments\/[^/]+$/)) return requireStudioAccess(request, env, user => handleDeleteNoteAttachment(path, env, user));
+    // TPI-NOVA-003: Nova Core persistence. Nova Edit and the Nova Editorial
+    // Workspace share this one owner-scoped storage layer; handlers live in
+    // lib/nova.js and every route is gated by Studio access (never public).
+    if (path === "/nova" || path.startsWith("/nova/")) return requireStudioAccess(request, env, user => handleNovaApi(path, request, env, user));
     if (request.method === "GET" && path.startsWith("/media/")) return handleMediaRequest(path, env, request);
     if (request.method === "GET" && path === "/articles/reactions") return handleArticleReactions(request, env);
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
