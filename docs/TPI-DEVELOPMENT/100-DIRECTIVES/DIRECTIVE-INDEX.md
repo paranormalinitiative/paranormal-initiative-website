@@ -32,9 +32,12 @@ fail-closed fixture guards, and production read-only verification showing the
 new tables absent and `0058` still pending. Totals after 001A: 130/130, 285/285,
 28/28; recertified under OPS-005. The owner's three official badge masters were
 imported byte-for-byte into `assets/founding-memberships/masters/` with web
-derivatives alongside, and two future requirements were recorded permanently in
-the roadmap: **Administration Center — Complete Quality & Functional Audit** and
-**Founding Membership Badge Integration & Community Display**.
+derivatives alongside, and three future requirements were recorded permanently
+in the roadmap: **Administration Center — Complete Quality & Functional Audit**,
+**Founding Membership Badge Integration & Community Display**, and **TPI Society /
+Leadership Badge System**. The Gold/Silver/Bronze masters were imported as a
+separate family (`assets/society-leadership/`) with their qualification rules
+still **UNRESOLVED — OWNER DECISION REQUIRED**.
 
 Records: [directive completion record](TPI-CREATOR-INCENTIVE-001.md) ·
 [registry specification](../TPI-FOUNDING-MEMBERSHIP-REGISTRY.md) ·

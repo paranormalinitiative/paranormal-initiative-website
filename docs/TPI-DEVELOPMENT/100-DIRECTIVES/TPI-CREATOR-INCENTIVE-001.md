@@ -390,3 +390,52 @@ development roadmap until completed:
 proof, and the badge asset import with documentation. It did not implement
 community badge surfaces and did not perform the Administration Center audit;
 both remain roadmap items recorded above. Production was not deployed.
+
+## 29. Society / Leadership badge masters imported as a separate family
+
+Three further owner-supplied masters are now version-controlled, deliberately
+separate from Founding Membership:
+
+| Distinction | Owner original | Repo path |
+|---|---|---|
+| Gold | `/Users/toddknipple/Desktop/Gold Badge.png` | `assets/society-leadership/masters/Gold Badge.png` |
+| Silver | `/Users/toddknipple/Desktop/Silver Badge.png` | `assets/society-leadership/masters/Silver Badge.png` |
+| Bronze | `/Users/toddknipple/Desktop/Bronze Badge.png` | `assets/society-leadership/masters/Bronze Badge.png` |
+
+They are imported byte-for-byte with the owner's filenames, not resized,
+recolored, re-compressed, or renamed. Web derivatives (`512`, `256`, `128` PNG
+and `512`/`256` WebP) were generated separately under
+`assets/society-leadership/web/`, and the repository structure distinguishes the
+two families (`assets/founding-memberships/` vs `assets/society-leadership/`).
+
+Two properties of the supplied originals are documented rather than altered: the
+`.png` files contain JPEG data, and their transparency checkerboard is flattened
+into the pixels. Producing a matted or transparent production variant is an owner
+visual-identity decision, not an automatic edit.
+
+A person may hold a Founding Membership badge, a Society/Leadership badge, both,
+or neither; the two systems must never be merged into one rank.
+
+## 30. Society / Leadership policy remains unresolved
+
+Gold/Silver/Bronze qualification rules, assignment authority, audit history,
+profile and community display, leadership/advisory display, revocation and status
+handling, and the interaction with Founding Membership badges are **not defined
+and not implemented**: **UNRESOLVED — OWNER DECISION REQUIRED**. The assets are
+preserved and available; nothing is assigned, inferred from Founding Membership,
+or granted by artwork.
+
+## 31. Authority separation (both families)
+
+Server-side records remain authoritative for membership, role, entitlement,
+leadership rank, administrative authority, and editorial capability. Badge
+identity is resolved on the server from those records; the API never accepts a
+badge from the client. Changing an image, CSS class, DOM element, or client state
+cannot grant access.
+
+## 32. Third recorded roadmap item
+
+**TPI Society / Leadership Badge System** is recorded permanently alongside the
+Administration Center audit and the Founding Membership badge integration, and
+must stay visible until completed. The full system requires its own directive;
+001A did not implement it.

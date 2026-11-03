@@ -66,6 +66,13 @@ polish and they are not part of 001A.
   the member profile, feed/member identity, Administration Center, and membership
   surfaces must be implemented and verified before the Founding Membership
   experience is considered completely finished.
+- **TPI Society / Leadership Badge System.** Gold, Silver, and Bronze masters are
+  preserved in `assets/society-leadership/masters/` as a separate family from
+  Founding Membership. The system itself is not implemented: qualification rules,
+  assignment authority, audit history, profile/community/leadership display,
+  interaction with Founding Membership badges, revocation and status handling,
+  and server-side authority mapping all remain **UNRESOLVED — OWNER DECISION
+  REQUIRED**. Nothing may be assigned automatically until policy exists.
 
 ## TPI-DOCS-ROADMAP-001 — Authoritative roadmap update — November 2, 2026
 

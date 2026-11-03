@@ -6,6 +6,11 @@ capability, and authorization state always come from the server-side D1
 membership and entitlement records. No image, filename, or DOM element grants or
 implies a capability.
 
+This is one of two separate badge families. The TPI Society / Leadership badges
+(Gold, Silver, Bronze) live in `../society-leadership/` and are **not** Founding
+Membership identities. A member may eventually hold either, both, or neither; the
+families must never be merged into one rank.
+
 ## Class mapping
 
 | Class | Numbers | Badge identity | Master artwork | Web derivatives |

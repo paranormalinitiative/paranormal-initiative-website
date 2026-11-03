@@ -34,10 +34,12 @@ server-decided **Local review data** notice in development only. Local fixtures
 in build output, and not reachable from production; a clean production registry
 starts at 50 left / 0 issued with next numbers `FC-001`, `FCT-001`, `FAA-001`.
 
-Official badge artwork is now version-controlled in
+Official badge artwork is now version-controlled in two separate families:
 `assets/founding-memberships/masters/` (masters preserved unchanged, including
-the owner's `FoundingAllAcceessBadgeMaster.png` spelling) with web derivatives in
-`assets/founding-memberships/web/`.
+the owner's `FoundingAllAcceessBadgeMaster.png` spelling) and
+`assets/society-leadership/masters/` (`Gold Badge.png`, `Silver Badge.png`,
+`Bronze Badge.png`, preserved byte-for-byte). Both families have web derivatives;
+neither is assigned automatically.
 
 ### Recorded future quality requirements
 
@@ -53,6 +55,12 @@ Both items stay in the roadmap until completed; neither is part of 001A.
 - **Founding Membership Badge Integration & Community Display** — implement and
   verify badge display on member profile, feed/member identity, Administration
   Center, and membership surfaces using the imported derivatives.
+- **TPI Society / Leadership Badge System** — Gold/Silver/Bronze qualification
+  and assignment rules, assignment authority, audit history, profile and
+  community display, leadership/advisory display, interaction with Founding
+  Membership badges, revocation/status handling, and server-side authority
+  mapping. Policy is **UNRESOLVED — OWNER DECISION REQUIRED**; assets are
+  preserved but nothing is assigned.
 
 
 ## TPI-DOCS-ROADMAP-001 — Roadmap synchronization (2026-11-02)

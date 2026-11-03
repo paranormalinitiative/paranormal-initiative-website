@@ -227,3 +227,40 @@ Two items are permanently recorded in the roadmap until completed:
 
 The Founding Membership experience is not "completely finished" until both are
 complete and the system is released through the guarded production workflow.
+
+## 14. Society / Leadership badge assets (separate family)
+
+The owner supplied three further high-rank badge masters. They are **not**
+Founding Membership identities and must not be merged with `FC`/`FCT`/`FAA`:
+
+| Distinction | Master (owner original path) | Repo path |
+|---|---|---|
+| Gold | `/Users/toddknipple/Desktop/Gold Badge.png` | `assets/society-leadership/masters/Gold Badge.png` |
+| Silver | `/Users/toddknipple/Desktop/Silver Badge.png` | `assets/society-leadership/masters/Silver Badge.png` |
+| Bronze | `/Users/toddknipple/Desktop/Bronze Badge.png` | `assets/society-leadership/masters/Bronze Badge.png` |
+
+All six masters are version-controlled: the three Founding masters above and these
+three Society/Leadership masters. Lawful combinations are owner policy; a person
+may hold a Founding Membership badge, a Society/Leadership badge, both, or
+neither.
+
+Masters are preserved byte-for-byte with the owner's filenames (including spaces)
+and were not resized, re-encoded, recolored, or compressed in place. Two
+characteristics of the supplied files are documented rather than "fixed": they
+contain JPEG data despite the `.png` extension, and they carry a flattened
+transparency checkerboard in the pixels. Web derivatives (`512`, `256`, `128` PNG
+and `512`/`256` WebP) are generated from the masters with the format forced to
+PNG; the recipe is in `assets/society-leadership/README.md`.
+
+Gold/Silver/Bronze qualification, assignment authority, audit history, revocation
+and display are **not implemented and not defined**:
+**UNRESOLVED — OWNER DECISION REQUIRED**. The assets are preserved and available;
+nothing is assigned automatically.
+
+## 15. Badge authority separation
+
+For both families, badge identity is derived on the server from resolved
+membership or leadership records; the API never accepts a badge from the client.
+Changing an image, CSS class, DOM element, or client state cannot grant a
+capability. Server-side records remain authoritative for membership, role,
+entitlement, leadership rank, administrative authority, and editorial capability.
