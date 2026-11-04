@@ -3325,8 +3325,13 @@ async function handleCreateArticle(request, env, user) {
   const author = clean(data.author);
   const source = clean(data.source);
   const labels = clean(data.labels);
-  const existingArticle = await env.TPI_DB.prepare("SELECT status FROM articles WHERE id = ?").bind(id).first();
-  await env.TPI_DB.prepare(`
+  const existingArticle = await env.TPI_DB.prepare("SELECT status, created_by FROM articles WHERE id = ?").bind(id).first();
+  // An existing article may only be changed by the contributor who created it.
+  // Ownership is never transferred through this endpoint.
+  if (existingArticle && existingArticle.created_by !== user.id) {
+    return json({ error: "This article belongs to another contributor." }, 403);
+  }
+  const upsertResult = await env.TPI_DB.prepare(`
     INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     ON CONFLICT(id) DO UPDATE SET
@@ -3342,6 +3347,7 @@ async function handleCreateArticle(request, env, user) {
       labels = excluded.labels,
       status = excluded.status,
       updated_at = CURRENT_TIMESTAMP
+    WHERE articles.created_by = excluded.created_by
   `).bind(
     id,
     destination,
@@ -3357,6 +3363,11 @@ async function handleCreateArticle(request, env, user) {
     status,
     user.id
   ).run();
+  // The conditional WHERE above blocks a race where another account claims the
+  // id between the ownership check and the write.
+  if (existingArticle && !Number(upsertResult.meta?.changes || 0)) {
+    return json({ error: "This article belongs to another contributor." }, 403);
+  }
 
   if (status === "published" && existingArticle?.status !== "published") {
     await notifyActiveMembers(env, {

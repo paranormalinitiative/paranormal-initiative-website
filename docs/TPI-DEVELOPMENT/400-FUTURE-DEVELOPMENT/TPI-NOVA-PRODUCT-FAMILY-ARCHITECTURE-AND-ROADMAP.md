@@ -1414,3 +1414,24 @@ Review and View categories, and advanced table tools.
 
 Owner visual acceptance of this pass is pending. Local review URL:
 `http://127.0.0.1:8787/nova/`.
+
+### 21.10 TPI-NOVA-004R2 Content Editor safety baseline
+
+- **Ownership defect corrected.** `POST /api/articles` no longer lets a
+  Contributor overwrite another account's article by submitting its id. An
+  existing id may be changed only by its `created_by` owner, and `created_by`
+  is never reassigned. Regression coverage:
+  `scripts/verify/tpi-nova-004r2-article-ownership.mjs`.
+- **Destination validation (read-only).** All 18 Content Editor destination
+  values resolve to existing pages that load `includes.js`, and the card loader
+  matches by exact filename. No dead destination was found. Destinations were
+  not renamed.
+- **Template relationship.** Only the TPI Video template forces a destination
+  (`tpi-videos.html`, selector disabled). Other templates do not set or
+  recommend a destination or department.
+- **Publishing separation (future migration requirement).** Contributor access
+  does not automatically grant Education Center publishing authority. The Nova
+  Editorial Workspace must separate Contributor creation/submission, review or
+  editor authority, publishing authority and administrative authority. This is
+  recorded only; the legacy direct-publish behaviour remains until the controlled
+  migration phase.
