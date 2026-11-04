@@ -92,12 +92,32 @@ review.
 
 For normal work, open the affected route in Firefox Developer Edition, inspect the rendered page,
 console, and request activity, then run the smallest applicable local test.
-The local Worker is launchd-owned and may already be serving a staged asset
-copy. A source edit that affects served assets may require:
+The local Worker is launchd-owned and serves a staged copy of the application
+assets from `.local-dev/assets`. Ordinary served-asset edits no longer need a
+manual staging step or an owner restart: the local launcher watches the served
+application surfaces and incrementally re-stages a changed file, which the
+already-running Wrangler/workerd instance then serves. Reload the page.
 
-```sh
-node scripts/stage-local-assets.mjs
-```
+Served surfaces watched for automatic refresh: the root website files, plus
+`assets/`, `nova/`, `content-editor-nova/`, `studio/assets/`, and
+`admin-center-preview/`. A rebuilt bundle dropped into one of those directories
+is served after the next reload, without stopping the Worker. Rebuild the
+bundle from source; never hand-edit a generated bundle file.
+
+Staging rules that matter:
+
+- Any path containing a `node_modules` segment at any depth is excluded
+  (`node_modules/...`, `nova-app/node_modules/...`, and so on). This is a
+  general recursive rule, not a per-application exception.
+- `.git`, `.wrangler`, `.local-dev`, `nova-app/` source dependencies, and
+  `.DS_Store` files are never staged.
+- Local runtime state (`.local-dev/state/v3`, the local D1/R2 data) is never
+  copied into served assets.
+- A full re-stage remains available: `node scripts/stage-local-assets.mjs`.
+- The normal staged tree is about 760 files (~262 MB; 759 after the 006C
+  correction). Staging stops with `TPI_ASSET_LIMIT_EXCEEDED` above 4000 files
+  so an accidental dependency copy cannot reach Workerd again; raise
+  `TPI_LOCAL_ASSET_LIMIT` only for a deliberate, understood change.
 
 When the authoritative StudioFlow source changes, verify the full source-to-
 website reconciliation with:

@@ -13,6 +13,8 @@ import {
 } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { syncStagedPaths } from "./stage-local-assets.mjs";
+import { stageStudioAssets } from "./stage-local-studio-assets.mjs";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const configPath = resolve(repoRoot, "wrangler.local.toml");
@@ -30,6 +32,21 @@ const studioAssetWatchTargets = [
   { directory: resolve(repoRoot, "studio") },
   { directory: resolve(repoRoot, "studio/assets") },
 ];
+// TPI-LOCALDEV-006C: rebuilt application assets are promoted into the served
+// tree as they land, so ordinary local builds reach the running 8787 Worker
+// without an owner service restart. Refresh always applies the same exclusion
+// rules as full staging, so a promoted build can never copy installed
+// dependencies, local state, or repository internals into static assets.
+const servedAssetWatchTargets = [
+  { directory: resolve(repoRoot, "content-editor-nova"), relative: "content-editor-nova" },
+  { directory: resolve(repoRoot, "content-editor-nova/assets"), relative: "content-editor-nova" },
+  { directory: resolve(repoRoot, "nova"), relative: "nova" },
+  { directory: resolve(repoRoot, "nova/assets"), relative: "nova" },
+  { directory: resolve(repoRoot, "assets"), relative: "assets" },
+];
+// Root-level pages and hand-authored assets (for example paper-editor.html and
+// its script) are served directly, so a change there must refresh too.
+const rootServedAssetPattern = /\.(?:avif|css|gif|html|ico|jpe?g|js|json|mjs|mp3|mp4|pdf|png|svg|txt|wav|webm|webp|woff2?)$/i;
 
 function fail(message, code = 1) {
   console.error(message);
@@ -87,46 +104,67 @@ function writeWorkerState(state) {
   renameSync(temporaryPath, workerStatePath);
 }
 
-function watchStudioAssets() {
+function watchServedAssets() {
   const watchers = [];
   let debounceTimer = null;
-  let staging = false;
-  let queued = false;
+  let restageStudioBundle = false;
+  const pendingPaths = new Set();
 
-  const stageNow = () => {
-    if (staging) {
-      queued = true;
-      return;
-    }
-    staging = true;
-    const result = spawnSync(process.execPath, [resolve(repoRoot, "scripts/stage-local-studio-assets.mjs")], {
-      cwd: repoRoot,
-      env: { ...process.env },
-      encoding: "utf8",
-    });
-    if (result.status !== 0) {
-      console.error(`StudioFlow asset restaging failed: ${(result.stderr || result.stdout || "unknown error").trim()}`);
-    } else if (result.stdout) {
-      console.log(`Restaged StudioFlow assets: ${result.stdout.trim()}`);
-    }
-    staging = false;
-    if (queued) {
-      queued = false;
-      stageNow();
+  const refreshNow = () => {
+    const studioBundle = restageStudioBundle;
+    const paths = [...pendingPaths];
+    restageStudioBundle = false;
+    pendingPaths.clear();
+    try {
+      if (studioBundle) {
+        const result = stageStudioAssets({ repoRoot });
+        console.log(`Restaged StudioFlow assets: ${JSON.stringify(result)}`);
+      }
+      if (paths.length) {
+        const { synced } = syncStagedPaths({ repoRoot, relativePaths: paths });
+        if (synced.length) {
+          console.log(`Refreshed local assets: ${synced.map(item => `${item.path} (${item.action})`).join(", ")}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Local asset restaging failed: ${error instanceof Error ? error.message : "unknown error"}`);
     }
   };
 
-  const schedule = () => {
+  const schedule = ({ studio = false, path = null } = {}) => {
+    if (studio) restageStudioBundle = true;
+    if (path) pendingPaths.add(path);
     if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(stageNow, 300);
+    debounceTimer = setTimeout(refreshNow, 300);
   };
 
   for (const { directory } of studioAssetWatchTargets) {
     try {
-      watchers.push(watch(directory, { persistent: false }, () => schedule()));
+      watchers.push(watch(directory, { persistent: false }, () => schedule({ studio: true })));
     } catch (error) {
       console.error(`StudioFlow asset watcher could not monitor ${directory}: ${error instanceof Error ? error.message : "unknown error"}`);
     }
+  }
+
+  for (const { directory, relative } of servedAssetWatchTargets) {
+    if (!existsSync(directory)) continue;
+    try {
+      watchers.push(watch(directory, { persistent: false }, () => schedule({ path: relative })));
+    } catch (error) {
+      console.error(`Local asset watcher could not monitor ${directory}: ${error instanceof Error ? error.message : "unknown error"}`);
+    }
+  }
+
+  // `.local-dev` (and every other dot entry) is filtered out, so the staging
+  // writes this watcher causes can never trigger another refresh.
+  try {
+    watchers.push(watch(repoRoot, { persistent: false }, (_event, filename) => {
+      if (!filename || filename.startsWith(".")) return;
+      if (!rootServedAssetPattern.test(filename)) return;
+      schedule({ path: filename });
+    }));
+  } catch (error) {
+    console.error(`Root asset watcher could not monitor ${repoRoot}: ${error instanceof Error ? error.message : "unknown error"}`);
   }
 
   return () => {
@@ -414,7 +452,7 @@ async function startWorker() {
   let shuttingDown = false;
   let parentMonitor = null;
   let readinessMonitor = null;
-  const closeAssetWatcher = watchStudioAssets();
+  const closeAssetWatcher = watchServedAssets();
   let readinessSeen = false;
   let readinessCheckInFlight = false;
   const readinessDeadline = Date.now() + 30_000;

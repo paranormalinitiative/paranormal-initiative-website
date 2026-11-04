@@ -517,7 +517,16 @@ Owner acceptance remains for broader browser coverage: public/member workflows, 
 | Production preservation smoke | VERIFIED | `10/10` against `https://paranormalinitiative.com`; production version remained `7e357215-2579-4c60-b27e-dd572a5656fe` |
 | Development deployment | VERIFIED | Version `a6dded19-2f63-4a98-88c4-30ed3d02ca1b` on `theparanormalinitiative-dev` |
 | Owner-authenticated StudioFlow/Admin Center acceptance | NOT TESTED | No owner credentials or session used; anonymous protection is verified only |
-| Full local API E2E | BLOCKED | Existing Wrangler `spawn EBADF` runner issue |
+| Full local API E2E | BLOCKED | Existing Wrangler `spawn EBADF` runner issue (see superseding note below) |
+
+**Superseding note (TPI-LOCALDEV-006C, 2026-11-04):** the local `spawn EBADF`
+runner failure recorded in the rows above was traced to staged local assets
+that included nested `node_modules` directories (about 11,726 served files),
+not to a sandbox, esbuild, Node, or file-descriptor defect. Local staging now
+excludes any `node_modules` segment at any depth and refuses to stage more than
+4000 files, and the 8787 Worker starts and reloads normally with a 759-file
+staged tree. The historical rows keep their original wording as evidence of
+what was believed at the time; this note is the current explanation.
 
 ## TPI-STUDIOFLOW-122E.1 — Home Create layout verification
 

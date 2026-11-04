@@ -2681,6 +2681,16 @@ runtime-supported local compatibility date, and preventing automatic loading of
 the repository `.dev.vars` file. The OPS-007 record remains historical; current
 local runtime status is recorded below.
 
+**Superseding clarification (TPI-LOCALDEV-006C, 2026-11-04):** the `spawn EBADF`
+failure attributed to Wrangler/esbuild (and, in other records, to Node, file
+descriptors, or the sandbox) was not any of those. Local staging copied nested
+`node_modules` trees into `.local-dev/assets`, inflating the served static tree
+from the documented hundreds of files to about 11,726. Wrangler's and Workerd's
+asset handling failed against that tree and surfaced as `spawn EBADF`. With the
+recursive exclusion in place the staged tree is 759 files / 262 MB and the Worker
+starts and reloads normally. Earlier records keep their original wording as
+historical evidence; this clarification is the current explanation.
+
 ## TPI-OPS-008 local runtime startup repair
 
 OPS-008 is **COMPLETE / LOCAL HTTP VERIFIED**. The actual TPI Worker starts via
@@ -4754,3 +4764,52 @@ The focused harness now foregrounds the isolated browser and avoids targeting
 the owner's personal Chrome window. Continue with an interactive supported
 Chrome session for the native picker gate. Source remains
 `ded5a3d73c5838d56f3c5e1cb0a32534acdab44f`; production remains unchanged.
+
+## TPI-LOCALDEV-006C — local asset staging and automatic refresh — 2026-11-04
+
+006C is **COMPLETE / LOCAL VERIFIED**. The proven defect was staged static
+assets, not the runtime: `scripts/stage-local-assets.mjs` rejected
+`node_modules` only as a first path segment, so `nova-app/node_modules` and
+every other nested dependency tree were copied into `.local-dev/assets`. The
+served tree reached about **11,726 files**, and Wrangler/workerd failed against
+it with `spawn EBADF` before the Worker bound.
+
+The correction is a general recursive rule: any path containing a
+`node_modules` segment at any depth is excluded, together with `.git`,
+`.wrangler`, `.local-dev`, and `.DS_Store`. Legitimate built surfaces continue
+to stage: root website files, `assets/`, `nova/`, `content-editor-nova/`,
+`studio/assets/`, and `admin-center-preview/`.
+
+Measured result: **11,726 → 759 staged files (61 directories, 262 MB, zero
+`node_modules` paths, zero local-state files)**. The documented baselines were
+532 (OPS-008), 613 (OPS-004), and 765 (006B); 759 is that 765 minus six
+`.DS_Store` files now excluded.
+
+`scripts/verify/tpi-localdev-006c-staging.mjs` (13/13) proves nested dependency
+exclusion, legitimate nested asset staging, the `content-editor-nova/` bundle,
+state isolation, and that a real stage contains no `node_modules` path.
+Staging also enforces a defensive ceiling of 4000 files
+(`TPI_ASSET_LIMIT_EXCEEDED`, override `TPI_LOCAL_ASSET_LIMIT`) with actionable
+guidance, so an abnormal asset explosion cannot silently reach Workerd again.
+
+Automatic asset freshness: `scripts/local-dev.mjs` now watches the served
+surfaces and incrementally re-stages changed files (`syncStagedPaths`) instead
+of requiring a full restage or an owner restart. Proven twice on the real
+service: a root `style.css` marker and a `content-editor-nova/` probe file were
+staged within ~2 s, served over HTTP 200, then reverted, with the Workerd PID
+unchanged and the staged count back at 759. A third proof was the 004R4
+`paper-editor.js` fix itself, which reached the running Worker without a
+restart.
+
+Runtime after the fix: two foreground reloads on the real `.local-dev/state/v3`
+returned HTTP 200 with no `EBADF`, then the documented owner-control service
+restore (`TPI_LOCAL_OWNER_CONTROL=1 node scripts/local-dev-service.mjs start`)
+produced one supervisor, one Wrangler, and one workerd on `127.0.0.1:8787`, with
+no crash loop. The separate StudioFlow room server on `127.0.0.1:8788` was left
+untouched, and port 5192 remains retired. Local D1 (11,036 KB) and R2 (7,475
+files) were unchanged across all staging and refresh work.
+
+Node remains the existing `/opt/homebrew/bin/node` v25.9.0. The EOL Node 25
+runtime did not cause this defect; adopting the installed Node 24.15.0 Active
+LTS by pinning the service's Node path is recorded as a required follow-up
+rather than a global Node change.

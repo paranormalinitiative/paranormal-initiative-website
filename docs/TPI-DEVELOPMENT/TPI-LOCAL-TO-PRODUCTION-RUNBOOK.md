@@ -216,11 +216,19 @@ Then rerun the 38-check authentication suite. Automated E2E must never use
 Make only the changes required by the current directive. Preserve unrelated
 systems and use disposable Studios and synthetic media.
 
-If maintained local assets changed, restage them:
+If maintained local assets changed, the running local launcher re-stages the
+changed served files automatically (root website files and `assets/`, `nova/`,
+`content-editor-nova/`, `studio/assets/`, `admin-center-preview/`). No owner
+restart is required. A full re-stage is still available when needed:
 
 ```sh
 node scripts/stage-local-assets.mjs
 ```
+
+Staging excludes any path containing a `node_modules` segment at any depth and
+never copies `.local-dev` state. The normal tree is about 760 files; staging
+fails with `TPI_ASSET_LIMIT_EXCEEDED` above 4000 files so an accidental
+dependency copy cannot inflate the served tree and break Workerd startup.
 
 If authoritative StudioFlow React source changed, build and integrate it with:
 
