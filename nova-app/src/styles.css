@@ -738,3 +738,56 @@ a { color: var(--nova-mint); }
   .nova-editor-bar { flex-wrap: wrap; }
   .nova-save { order: 3; }
 }
+
+/* ---------- TPI-NOVA-004B: professional interface pass ---------- */
+
+.nova-tool svg,
+.nova-action svg,
+.nova-back svg,
+.nova-folder-glyph,
+.nova-folder-rename svg {
+  flex: 0 0 auto;
+  display: block;
+}
+.nova-tool { width: 30px; min-width: 30px; height: 30px; }
+.nova-tool:disabled { opacity: 0.4; }
+.nova-tool.is-active { box-shadow: inset 0 -2px 0 var(--nova-mint); }
+.nova-tool-group { border-right-color: var(--nova-line); }
+.nova-folder-glyph { width: 15px; height: 15px; font-size: inherit; color: var(--nova-text-muted); }
+.nova-back, .nova-action { display: inline-flex; align-items: center; gap: 6px; }
+.nova-action[aria-pressed="true"] { border-color: rgba(140, 232, 182, 0.45); color: var(--nova-mint); }
+
+/* Visible keyboard focus across every control in the editor chrome. */
+.nova-tool:focus-visible,
+.nova-button:focus-visible,
+.nova-back:focus-visible,
+.nova-icon-button:focus-visible,
+.nova-block-select:focus-visible,
+.nova-title-input:focus-visible,
+.nova-folder-select:focus-visible,
+.nova-folder-rename:focus-visible,
+.nova-folder-all:focus-visible,
+.nova-sidebar-action:focus-visible,
+.nova-doc-row:focus-visible,
+.nova-view-tab:focus-visible,
+.nova-topnav-link:focus-visible {
+  outline: 2px solid rgba(140, 232, 182, 0.75);
+  outline-offset: 2px;
+}
+
+/* Document canvas: a subdued workspace with a distinct, readable page surface. */
+.nova-canvas {
+  background: #202b25;
+  border-color: var(--nova-line);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.nova-prose {
+  max-width: 816px;
+  padding: 64px 72px 96px;
+}
+
+@media (max-width: 900px) {
+  .nova-toolbar { position: static; flex-wrap: wrap; overflow: visible; }
+  .nova-prose { max-width: none; padding: 28px 22px 56px; }
+}

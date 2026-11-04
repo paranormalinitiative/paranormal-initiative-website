@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { FolderPlus, Layers } from "lucide-react";
 import { NovaApiError, describeNovaError, novaApi } from "../lib/api";
 import type { NovaCollection, NovaItemSummary } from "../lib/types";
 import { AccessNotice } from "./AccessNotice";
@@ -164,7 +165,8 @@ export default function DocumentsSurface({ documentId, onNavigateDocument }: Pro
               data-testid="new-folder"
               onClick={() => openFolderDialog({ mode: "create" })}
             >
-              + New
+              <FolderPlus size={14} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+              <span>New</span>
             </button>
           </div>
           <button
@@ -173,7 +175,7 @@ export default function DocumentsSurface({ documentId, onNavigateDocument }: Pro
             data-testid="folder-all"
             onClick={() => selectFolder("all")}
           >
-            <span className="nova-folder-glyph" aria-hidden="true">≡</span>
+            <Layers className="nova-folder-glyph" size={15} strokeWidth={1.9} aria-hidden="true" focusable="false" />
             <span className="nova-folder-name">All documents</span>
           </button>
           <CollectionTree

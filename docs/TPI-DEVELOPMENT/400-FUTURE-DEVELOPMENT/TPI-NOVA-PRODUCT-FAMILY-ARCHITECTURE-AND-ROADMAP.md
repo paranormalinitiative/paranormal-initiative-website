@@ -1334,3 +1334,83 @@ at tablet width.
 - Production routing: `/nova/` is proven on an isolated Worker and the official
   local Worker answers the Nova gate, but no production deployment or migration
   has been performed.
+
+## 21. Nova Edit professional interface pass (TPI-NOVA-004B)
+
+**Status:** IMPLEMENTATION COMPLETE — AUTOMATED ACCEPTANCE PASSED — AWAITING OWNER
+VISUAL ACCEPTANCE. Presentation-only pass over the Nova-004 editor. No deployment,
+database, API contract, editor data model or StudioFlow change. Nova Slides is not
+started.
+
+### 21.1 Direction
+
+Nova Edit is presented as a TPI professional editor: dark TPI chrome, restrained
+green/mint Nova accents, a compact top bar (identity, title, save state), and a
+subdued workspace with a centred, readable page surface. The GenOffice Docs
+screenshot was used only as a density and hierarchy reference; no layout, colour,
+branding or pixel content was copied.
+
+### 21.2 Icon system
+
+- Library: `lucide-react`, pinned exactly to `1.67.0` in `nova-app/package.json`.
+- Every icon control has an accessible name (`aria-label` or visible text), a
+  `title` tooltip, native keyboard focus, and a visible `:focus-visible` ring.
+- Formatting controls (bold, italic, underline, bulleted and numbered lists,
+  quote, link) expose `aria-pressed` and reflect the active editor state.
+- Text labels remain where an icon alone would be ambiguous (Archive, Move to
+  Trash, Delete permanently, History).
+
+### 21.3 Ribbon and category structure
+
+The Home ribbon is the only editing ribbon. No category tabs are shown, and no empty decorative
+tabs were added.
+
+| Group | Controls |
+|---|---|
+| History | Undo, Redo |
+| Style | Paragraph / Heading 1–3 select |
+| Text | Bold, Italic, Underline |
+| Paragraph | Bulleted list, Numbered list, Quote |
+| Insert | Link (dialog), Table, Divider |
+| Table (contextual) | Add row, add column, delete row, delete column |
+
+Insert, Review and View categories are reserved for later phases, when they contain real features.
+
+### 21.4 Document canvas
+
+A subdued workspace surrounds a distinct page surface (816 px maximum, 72 px
+side margins on desktop). No pagination, headers, footers or print layout were
+added.
+
+### 21.5 Navigation and save state
+
+The left navigation uses icons for folders, the all-documents view, rename and
+new folder. The save state remains a compact status pill in the editor header,
+not a button.
+
+### 21.6 Responsive result
+
+At 900 px and narrower the toolbar wraps instead of scrolling horizontally and the
+page surface uses the full available width with reduced padding.
+
+### 21.7 Verification
+
+- `npm --prefix nova-app run typecheck`: pass.
+- `npm run build:nova`: pass. CSS 18.44 → 19.76 kB; the navigation chunk grew
+  37.26 → 46.37 kB because the lucide icons are bundled into it. React vendor and
+  TipTap vendor sizes are unchanged.
+- `npm run verify:nova-003`: 105/105.
+- `npm run verify:nova-004`: 134/134 (Firefox Developer Edition 80/80,
+  responsive 5/5, Chromium smoke 7/7).
+- `git diff --check`: clean.
+
+### 21.8 Remaining professional editor features (Nova-005)
+
+Fonts and font sizes, text colour and highlight, comments and tracked changes,
+headers and footers, page numbers and real pagination, images, export, templates,
+Review and View categories, and advanced table tools.
+
+### 21.9 Owner visual acceptance
+
+Owner visual acceptance of this pass is pending. Local review URL:
+`http://127.0.0.1:8787/nova/`.

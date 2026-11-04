@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
+import { ArrowLeft, Archive, History, Trash2, XCircle } from "lucide-react";
 import type { Editor, JSONContent } from "@tiptap/core";
 import { NovaApiError, describeNovaError, novaApi } from "../lib/api";
 import { clearDraft, readDraft, writeDraft, type NovaDraft } from "../lib/draft";
@@ -487,8 +488,9 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
     <div className="nova-workspace">
       <div className="nova-editor-main">
         <div className="nova-editor-bar">
-          <button type="button" className="nova-button nova-button-quiet" data-testid="back-to-list" onClick={handleBack}>
-            ← Documents
+          <button type="button" className="nova-button nova-button-quiet nova-back" data-testid="back-to-list" title="Back to documents" onClick={handleBack}>
+            <ArrowLeft size={16} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+            <span>Documents</span>
           </button>
           <input
             className="nova-title-input"
@@ -604,22 +606,26 @@ function DocumentWorkspace({ item, collections, onBack, onChanged }: WorkspacePr
 
           <span className="nova-spacer" />
 
-          <button type="button" className="nova-button nova-button-small" data-testid="toggle-revisions" onClick={() => setHistoryOpen(open => !open)}>
-            {historyOpen ? "Hide history" : "History"}
+          <button type="button" className="nova-button nova-button-small nova-action" data-testid="toggle-revisions" aria-pressed={historyOpen} title={historyOpen ? "Hide revision history" : "Show revision history"} onClick={() => setHistoryOpen(open => !open)}>
+            <History size={14} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+            <span>{historyOpen ? "Hide history" : "History"}</span>
           </button>
           {!readOnly ? (
             <>
-              <button type="button" className="nova-button nova-button-small" data-testid="archive-document" disabled={busy} onClick={() => void runAction("archive")}>
-                Archive
+              <button type="button" className="nova-button nova-button-small nova-action" data-testid="archive-document" title="Archive this document" disabled={busy} onClick={() => void runAction("archive")}>
+                <Archive size={14} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+                <span>Archive</span>
               </button>
-              <button type="button" className="nova-button nova-button-small nova-button-danger-quiet" data-testid="trash-document" disabled={busy} onClick={() => void runAction("trash")}>
-                Move to Trash
+              <button type="button" className="nova-button nova-button-small nova-button-danger-quiet nova-action" data-testid="trash-document" title="Move this document to Trash" disabled={busy} onClick={() => void runAction("trash")}>
+                <Trash2 size={14} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+                <span>Move to Trash</span>
               </button>
             </>
           ) : null}
           {serverItem.status === "trash" ? (
-            <button type="button" className="nova-button nova-button-small nova-button-danger-quiet" data-testid="permanent-delete" disabled={busy} onClick={() => { setDeleteConfirm(""); setDeleteOpen(true); }}>
-              Delete permanently
+            <button type="button" className="nova-button nova-button-small nova-button-danger-quiet nova-action" data-testid="permanent-delete" title="Permanently delete this document" disabled={busy} onClick={() => { setDeleteConfirm(""); setDeleteOpen(true); }}>
+              <XCircle size={14} strokeWidth={1.9} aria-hidden="true" focusable="false" />
+              <span>Delete permanently</span>
             </button>
           ) : null}
         </div>

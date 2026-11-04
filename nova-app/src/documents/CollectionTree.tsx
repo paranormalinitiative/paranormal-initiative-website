@@ -1,3 +1,4 @@
+import { Folder, Pencil } from "lucide-react";
 import type { NovaCollection } from "../lib/types";
 import { buildCollectionTree, type CollectionNode } from "../lib/tree";
 
@@ -27,7 +28,7 @@ function CollectionRow({ node, depth, selected, onSelect, onRename }: {
           onClick={() => onSelect(node.id)}
           title={node.name}
         >
-          <span className="nova-folder-glyph" aria-hidden="true">▸</span>
+          <Folder className="nova-folder-glyph" size={15} strokeWidth={1.9} aria-hidden="true" focusable="false" />
           <span className="nova-folder-name">{node.name}</span>
           <span className="nova-folder-count">{node.itemCount ?? 0}</span>
         </button>
@@ -39,7 +40,7 @@ function CollectionRow({ node, depth, selected, onSelect, onRename }: {
           title="Rename folder"
           onClick={() => onRename(node)}
         >
-          ✎
+          <Pencil size={14} strokeWidth={1.9} aria-hidden="true" focusable="false" />
         </button>
       </div>
       {node.children.length > 0 ? (
