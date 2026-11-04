@@ -116,7 +116,15 @@
                 <h3>Compose</h3>
                 <p id="editor-status">Draft ready</p>
             </div>
+            <div class="editor-mode-bar" role="group" aria-label="Editor mode">
+                <label for="editor-mode-select">Editor</label>
+                <select id="editor-mode-select" data-editor-mode>
+                    <option value="legacy" selected>Legacy editor</option>
+                    <option value="nova">Nova editor (development)</option>
+                </select>
+            </div>
             <div id="paper-editor-body" class="paper-editor-body" contenteditable="true" spellcheck="true"></div>
+            <div id="nova-content-editor" class="nova-content-editor" hidden></div>
             <textarea id="editor-html-view" class="paper-html-view" spellcheck="false"></textarea>
         </section>
 
@@ -383,5 +391,6 @@
 <script src="api-client.js?v=16"></script>
 <script src="legacy-contributions.js"></script>
 <script src="paper-editor.js?v=17"></script>
+<script src="content-editor-nova-convert.js"></script>
 </body>
 </html>

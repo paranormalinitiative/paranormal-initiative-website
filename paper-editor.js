@@ -788,8 +788,86 @@
   }
 
   function getDraftHtml() {
+    // Read the live document: preview and publish must see edits made after the
+    // Nova editor mounted, not only the document converted when it was opened.
+    if (novaMode.active && novaMode.handle) novaMode.doc = novaMode.handle.getDocument();
+    if (novaMode.active && novaMode.doc) return window.TPINovaConvert.novaDocToHtml(novaMode.doc);
     return activeView === "html" ? htmlView.value : editor.innerHTML;
   }
+
+  // Nova editor mode (development). The Nova document is the body source only
+  // while this mode is active; metadata, destination and publish code are shared
+  // and unchanged. Legacy mode is the default.
+  const novaMode = { active: false, doc: null, handle: null, loading: null };
+
+  // The Nova bundle is built into /content-editor-nova/ (see
+  // nova-app/vite.content-editor.config.ts). Its hashed asset names are read from
+  // the built page so a rebuild cannot leave the Content Editor pointing at stale files.
+  function loadNovaScripts() {
+    if (novaMode.loading) return novaMode.loading;
+    novaMode.loading = fetch("/content-editor-nova/content-editor.html", { cache: "no-cache" })
+      .then(response => {
+        if (!response.ok) throw new Error("Nova editor bundle is not built");
+        return response.text();
+      })
+      .then(html => {
+        const parsed = new DOMParser().parseFromString(html, "text/html");
+        const css = parsed.querySelector('link[rel="stylesheet"]');
+        const js = parsed.querySelector('script[type="module"]');
+        if (css) {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = css.getAttribute("href");
+          document.head.appendChild(link);
+        }
+        return new Promise((resolve, reject) => {
+          const module = document.createElement("script");
+          module.type = "module";
+          module.src = js.getAttribute("src");
+          module.onload = () => resolve();
+          module.onerror = () => reject(new Error("Nova editor bundle failed to load"));
+          document.body.appendChild(module);
+        });
+      })
+      .catch(error => {
+        novaMode.loading = null;
+        throw error;
+      });
+    return novaMode.loading;
+  }
+
+  async function setEditorMode(mode) {
+    const modeSelect = document.querySelector("[data-editor-mode]");
+    if (mode !== "nova") {
+      if (novaMode.handle) novaMode.doc = novaMode.handle.getDocument();
+      novaMode.active = false;
+      editor.hidden = false;
+      document.getElementById("nova-content-editor").hidden = true;
+      setStatus("Legacy editor");
+      return;
+    }
+    try {
+      if (!novaMode.handle) {
+        await loadNovaScripts();
+        const seed = window.TPINovaConvert.htmlToNovaDoc(editor.innerHTML);
+        novaMode.doc = seed.doc;
+        novaMode.handle = window.TPINovaContentEditor.mount(document.getElementById("nova-content-editor"), seed.doc);
+        if (seed.unsupported.length) setStatus(`Unsupported markup kept as text: ${seed.unsupported.join(", ")}`);
+      }
+      novaMode.active = true;
+      editor.hidden = true;
+      document.getElementById("nova-content-editor").hidden = false;
+      if (modeSelect) modeSelect.value = "nova";
+      setStatus("Nova editor");
+    } catch (error) {
+      setStatus(error.message || "Nova editor unavailable");
+      if (modeSelect) modeSelect.value = "legacy";
+    }
+  }
+
+  document.querySelector("[data-editor-mode]")?.addEventListener("change", event => {
+    setEditorMode(event.target.value);
+  });
 
   function buildArticleHtml() {
     return cleanHtml(getDraftHtml(), true).trim();

@@ -56,7 +56,8 @@
     "verify:release-certification": "node scripts/verify/tpi-ops-005-certification.mjs",
     "verify:nova-003": "node scripts/verify/tpi-nova-003-foundation.mjs",
     "verify:nova-004": "node scripts/verify/tpi-nova-004-editor.mjs",
-    "build:nova": "npm --prefix nova-app run build"
+    "build:nova": "npm --prefix nova-app run build",
+    "build:content-editor-nova": "npm --prefix nova-app run build:content-editor"
   },
   "devDependencies": {
     "playwright": "1.64.1",
