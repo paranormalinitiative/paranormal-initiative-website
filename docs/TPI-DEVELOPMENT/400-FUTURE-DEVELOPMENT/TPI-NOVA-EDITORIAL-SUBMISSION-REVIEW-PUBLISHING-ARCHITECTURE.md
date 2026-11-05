@@ -383,6 +383,14 @@ Implemented: Submit, Withdraw (before review start), and Resubmit for Contributo
 
 Not implemented: Editorial Review queue, Reviewer actions UI, Publisher UI, and retirement of legacy direct publication (R6E).
 
+## 16B. TPI-NOVA-004R6C3 — Final acceptance and milestone close
+
+Status: R6C is complete as the Contributor side of the editorial workflow and is local-only. Production has not received R6C.
+
+Accepted: the published-revision snapshot test (published legacy article, newer unpublished Nova edit, submission leaves `articles.status`, `body_html` and the public `article_html` snapshot unchanged, and the public page keeps the old text); the Firefox console review (zero errors); public regression on 8787; and fixture cleanup with a local-only, scoped procedure. The append-only event triggers were suspended only on the authoritative local DB and restored from the exact 0061 definitions, then verified. No schema or migration was added.
+
+Not implemented: the Editorial Review queue, Request Changes reviewer controls, the Approval UI and the Publisher UI. `tpi-videos.html` and its specialized publish path are unchanged.
+
 ## 17. TPI Video — out of scope
 
 TPI Video is **out of scope for the initial Education Center editorial workflow.** It keeps its own direct publishing path (`tpi_videos.status`, `/api/tpi-videos/*/publish`). It does not use the Nova document or the article workflow. A future directive may decide whether video publishing needs its own review system.

@@ -1,5 +1,18 @@
 # TPI Current Development Status
 
+## TPI-NOVA-004R6C3 — Final acceptance, fixture cleanup & milestone close (2026-11-05)
+
+Status: **COMPLETE — CONTRIBUTOR SUBMISSION, WITHDRAWAL, LOCKING & RESUBMISSION WORKFLOW IMPLEMENTED — READY FOR EDITORIAL REVIEW QUEUE.** R6C is local-only; production has not received R6C. Not implemented: the Editorial Review queue, Request Changes reviewer controls, the Approval UI and the Publisher UI. `tpi-videos.html` and its specialized publish path are unchanged.
+
+Acceptance evidence:
+
+- Firefox console review for the workflow driver: 11 PASS / 0 FAIL, zero console errors, uncaught exceptions, rejected promises or failed requests captured. This closes the R6C2 console gap.
+- Published-revision snapshot test: a published legacy article with a newer unpublished Nova edit was submitted for review. Status stayed `published`; `body_html` and the public `article_html` snapshot were unchanged; the public page still showed the old snapshot and excluded the newer edit; the Nova document kept the newer text. Submission did not republish.
+- Public regression on 8787: `/` 200, `/api/articles` 200, `published-article.html` 200, `education-center.html` 200. Public API payload excludes unpublished Nova text.
+- Fixture cleanup: the 16 synthetic R6C2/R6C3 articles, their submission rows and append-only events, 20 synthetic Nova items and the R6C2 acceptance contributor were removed in one transaction. The two append-only event triggers were suspended only on the authoritative local DB and recreated from the exact 0061 definitions, then verified. One pre-existing Nova item owned by `local-ops009-admin` was left in place because it is not a recorded fixture.
+- Post-cleanup baseline: contributors 20, articles 2, published 2, drafts 0, enrolled articles 0, submissions 0, events 0.
+- Real-article fingerprints: both real articles match the pre-R6C values for ID, title, `body_html`, `article_html`, destination, href, status, editorial status, type, `created_by` and `nova_item_id`. Body hashes `caa7ee940a60` and `8d3f28f290c8`.
+
 ## TPI-NOVA-004R6C2 — Contributor submission, withdrawal, locking & resubmission (2026-11-05)
 
 Status: **COMPLETE — CONTRIBUTOR SUBMISSION, WITHDRAWAL, LOCKING & RESUBMISSION WORKFLOW IMPLEMENTED — READY FOR EDITORIAL REVIEW QUEUE.** No Admin review queue, Reviewer UI or Publisher UI yet. Legacy direct Publish remains for unenrolled articles until R6E. Production untouched.

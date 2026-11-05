@@ -1498,6 +1498,10 @@ is untouched.
 
 Next: the contributor submission workflow, per the phase sequence in the 004R6A architecture record.
 
+### 21.15 TPI-NOVA-004R6C3 Final acceptance and milestone close
+
+R6C is complete as the Contributor side of the editorial workflow, local-only; production has not received R6C. Accepted: the published-revision snapshot test, zero Firefox console errors, public regression on 8787, and a scoped local-only fixture cleanup that restored the append-only event triggers from the exact 0061 definitions. Not implemented: the Editorial Review queue, Request Changes reviewer controls, the Approval UI and the Publisher UI.
+
 ### 21.14 TPI-NOVA-004R6C2 Contributor submission workflow (implemented)
 
 Contributors can now Submit for Review (legacy enrollment through draft to submitted), Withdraw before review starts, and Resubmit after changes are requested. The server pins the submitted Nova version, locks linked Nova items in submitted, in-review and approved states, and refuses crafted direct publication of enrolled articles. Published public snapshots are preserved during revision. TPI Video is excluded. Not yet built: the Editorial Review queue, Reviewer actions UI, Publisher UI and retirement of legacy direct publication (R6E).
