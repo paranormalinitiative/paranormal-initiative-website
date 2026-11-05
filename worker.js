@@ -240,11 +240,15 @@ async function servePageAsset(request, env) {
 // treated as editorial authority by this helper; it is only a separate reason
 // the existing shell stays available. Databases without the entitlement tables
 // default to deny.
+// TPI-NOVA-004R6E: EDITORIAL_PUBLISH is a separate capability, so a Publisher
+// who holds no review authority still needs the same shell to reach the
+// publication surface. Each editorial API route re-checks its own capability.
 async function hasAdministrationCenterAccess(env, user) {
   if (!user) return false;
   if (user.role === "owner" || user.role === "admin") return true;
   try {
-    return await memberHasCapability(env, user, CAPABILITY.EDITORIAL_REVIEW);
+    if (await memberHasCapability(env, user, CAPABILITY.EDITORIAL_REVIEW)) return true;
+    return await memberHasCapability(env, user, CAPABILITY.EDITORIAL_PUBLISH);
   } catch (error) {
     return false;
   }

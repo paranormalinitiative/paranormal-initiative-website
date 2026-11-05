@@ -1524,8 +1524,48 @@ after approval.
 
 `migrations/0062_editorial_capabilities.sql` widens the entitlement capability check
 so editorial capabilities can be granted. Review and approval never change
-`articles.status` or the public snapshot, so publishing remains R6E. Local-only;
+`articles.status` or the public snapshot; publishing is R6E. Local-only;
 production has not received R6D.
+
+### 21.18 TPI-NOVA-004R6E Authorized publication of approved Nova content (implemented)
+
+The Publisher side of the Nova Editorial Workspace now exists inside the same
+Administration Center Editorial workspace: an Approved Publication queue, a
+read-only exact-version preview and an explicit **Publish Approved Version**
+action. No new app, route or shell was added, and there is no `/nova-publisher/`.
+
+Publication requires `EDITORIAL_PUBLISH` from the entitlement ledger. Ordinary
+Admin, Contributor, Creator and `EDITORIAL_REVIEW` do not imply it; Reviewer and
+Publisher remain distinct capabilities. The Administration Center access gate now
+admits either editorial capability, so a Publisher-only account can reach the
+workspace without gaining review controls.
+
+Publication publishes the exact `approved_nova_version` recorded on the approved
+open submission. The server resolves that version from `nova_revisions` and renders
+the snapshot itself through `lib/nova-document-html.js`; the live Nova item is used
+only when its version equals the approved version exactly. A missing, shadowed or
+empty approved version fails closed with no fallback to the current document, and
+client-supplied `body_html`/`article_html` is refused `422 publication_payload_refused`.
+Separation of duties is enforced (`published_by != submitted_by`), drifted
+destination or article type is refused, and the current Nova version must still
+match the approved version.
+
+One atomic D1 batch replaces the public snapshot (`articles.status`, `body_html`,
+`article_html`), marks the approved submission `published` with `published_by` and
+`published_at`, and appends the `published` editorial event. Article identity, URL,
+owner, destination and type are preserved, and the old snapshot stays live until
+the batch commits, so the Education Center never loses the article. `editorial_status`
+remains `approved`; publication is reported separately to the Contributor as
+Published — Live in the Education Center, and no new revision cycle is opened.
+
+For enrolled articles the direct Admin status and update publication routes now
+return `409 editorial_workflow_publish_refused`, and every direct Publish control in
+the Nova Editorial Workspace is hidden. Legacy articles keep their administrative
+behavior and are not mass-enrolled; TPI Video keeps its specialized publish path.
+Publication writes at most one `education` notification, only when the article was
+not already published, excluding the submitter. No migration was added. Local-only;
+production has not received R6E. R6F covers the published-revision lifecycle and
+legacy direct-publish retirement.
 
 ### 21.14 TPI-NOVA-004R6C2 Contributor submission workflow (implemented)
 

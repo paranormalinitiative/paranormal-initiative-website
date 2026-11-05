@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { adminFetch, metricValue, type AdminAnalytics, type AdminArticleDetail, type AdminChannel, type AdminCommunityComment, type AdminCommunityCommentDetail, type AdminCommunityPostDetail, type AdminContributor, type AdminCreatorDetail, type AdminCreatorEntitlement, type AdminCreatorMembership, type AdminEventRecord, type AdminFoundingApplication, type AdminInvite, type AdminNotification, type AdminNotificationDetail, type AdminOverview, type AdminPublishedArticle, type AdminPublishedVideo, type AdminProviderStatus, type AdminReport, type AdminReportDetail, type AdminRestriction, type AdminRoleSummary, type AdminScraperRun, type AdminTeam, type AdminTeamClaim, type AdminTeamHistory, type AnalyticsPoint, type AnalyticsSeries, type ClassicComment, type EditorialAccess, type EditorialNovaDocument, type EditorialNovaNode, type EditorialQueueRow, type EditorialSubmissionDetail, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
+import { adminFetch, metricValue, type AdminAnalytics, type AdminArticleDetail, type AdminChannel, type AdminCommunityComment, type AdminCommunityCommentDetail, type AdminCommunityPostDetail, type AdminContributor, type AdminCreatorDetail, type AdminCreatorEntitlement, type AdminCreatorMembership, type AdminEventRecord, type AdminFoundingApplication, type AdminInvite, type AdminNotification, type AdminNotificationDetail, type AdminOverview, type AdminPublishedArticle, type AdminPublishedVideo, type AdminProviderStatus, type AdminReport, type AdminReportDetail, type AdminRestriction, type AdminRoleSummary, type AdminScraperRun, type AdminTeam, type AdminTeamClaim, type AdminTeamHistory, type AnalyticsPoint, type AnalyticsSeries, type ClassicComment, type EditorialAccess, type EditorialNovaDocument, type EditorialNovaNode, type EditorialPublicationDetail, type EditorialPublicationResult, type EditorialPublicationRow, type EditorialQueueRow, type EditorialSubmissionDetail, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
 
 type View = "overview" | "analytics" | "activity" | "members" | "roles" | "restrictions" | "community" | "community-content" | "reactions" | "comments" | "reports" | "moderation-history" | "creators" | "founding" | "founding-memberships" | "studio-access" | "channels" | "videos" | "education" | "contributors" | "editorial" | "teams" | "events" | "notifications" | "health" | "security" | "audit" | "settings";
 type NavItem = { id: View; label: string; icon: typeof LayoutDashboard };
@@ -31,15 +31,19 @@ function App() {
   // Center or only the Editorial Review section.
   const [access, setAccess] = useState<EditorialAccess | null>(null);
   useEffect(() => { let active = true; adminFetch<EditorialAccess>("/editorial/access").then((body) => { if (active) setAccess(body); }).catch(() => { if (active) setAccess({ role: "", editorialReview: false, editorialPublish: false, adminAccess: true }); }); return () => { active = false; }; }, []);
-  const reviewerOnly = Boolean(access?.editorialReview && !access?.adminAccess);
-  const visibleNavGroups = reviewerOnly ? [{ label: "Content & Publishing", items: flatNav.filter((item) => item.id === "editorial") }] : navGroups;
-  useEffect(() => { if (reviewerOnly) { setView("editorial"); setSidebarOpen(false); } }, [reviewerOnly]);
+  // TPI-NOVA-004R6E: EDITORIAL_PUBLISH is its own authority. A Publisher
+  // without the admin role sees only the Editorial section, exactly like a
+  // Reviewer without the admin role, and never inherits Review controls.
+  const editorialOnly = Boolean((access?.editorialReview || access?.editorialPublish) && !access?.adminAccess);
+  const editorialScopeLabel = access?.editorialReview && access?.editorialPublish ? "Editorial review & publication session" : access?.editorialPublish ? "Editorial publisher session" : "Editorial reviewer session";
+  const visibleNavGroups = editorialOnly ? [{ label: "Content & Publishing", items: flatNav.filter((item) => item.id === "editorial") }] : navGroups;
+  useEffect(() => { if (editorialOnly) { setView("editorial"); setSidebarOpen(false); } }, [editorialOnly]);
   const loadOverview = () => { setOverviewLoading(true); adminFetch<AdminOverview>(`/admin/overview?range=${range}`).then(setOverview).catch((error) => setNotice(error.message)).finally(() => setOverviewLoading(false)); };
-  useEffect(() => { if (!reviewerOnly) loadOverview(); }, [range, reviewerOnly]);
+  useEffect(() => { if (!editorialOnly) loadOverview(); }, [range, editorialOnly]);
   const selectView = (next: View) => { setView(next); setSidebarOpen(false); setNotice(""); try { window.history.replaceState(null, "", `#${next}`); } catch { /* history is optional */ } };
   const current = flatNav.find((item) => item.id === view) || flatNav[0];
   const implemented = new Set<View>(["overview", "analytics", "activity", "audit", "members", "community", "community-content", "reactions", "comments", "moderation-history", "contributors", "editorial", "teams", "health", "creators", "founding", "founding-memberships", "studio-access", "settings", "education", "videos", "events", "reports", "notifications", "channels", "roles", "restrictions"]);
-  const mobileItems: Array<{ id?: View; label: string; icon: typeof Home }> = (reviewerOnly ? [{ id: "editorial" as View, label: "Review", icon: FileCheck2 }] : [
+  const mobileItems: Array<{ id?: View; label: string; icon: typeof Home }> = (editorialOnly ? [{ id: "editorial" as View, label: "Editorial", icon: FileCheck2 }] : [
     { id: "overview", label: "Home", icon: Home },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "members", label: "Members", icon: Users },
@@ -48,12 +52,12 @@ function App() {
   return <div className="admin-preview-app">
     <aside className={`admin-preview-sidebar ${sidebarOpen ? "is-open" : ""}`}>
       <div className="admin-preview-brand"><a className="admin-preview-brand-logo" href="/member-home" aria-label="Return to Member Home"><img src="/assets/tpi-banner.png" alt="The Paranormal Initiative" /></a><div><strong>Administration Center</strong><small>Protected session</small></div><button className="mobile-close" onClick={() => setSidebarOpen(false)} aria-label="Close navigation"><X size={18} /></button></div>
-      <div className="admin-preview-scope"><ShieldCheck size={16} /><span>{reviewerOnly ? "Editorial reviewer session" : "Owner / admin session"}</span></div>
+      <div className="admin-preview-scope"><ShieldCheck size={16} /><span>{editorialOnly ? editorialScopeLabel : "Owner / admin session"}</span></div>
       <nav className="admin-preview-nav" aria-label="Administration navigation">{visibleNavGroups.map((group) => <div className="member-nav-section nav-group" key={group.label}><span className="member-nav-label nav-heading">{group.label}</span>{group.items.map((item, index) => <button key={`${group.label}-${item.label}-${index}`} className={view === item.id && !(item.id === "community" && index === 1) ? "member-nav-link nav-item active" : "member-nav-link nav-item"} aria-current={view === item.id ? "page" : undefined} onClick={() => selectView(item.id)}><item.icon className="nav-icon" size={16} /><span>{item.label}</span>{view === item.id && <ChevronRight className="nav-chevron" size={15} />}</button>)}</div>)}</nav>
       <div className="admin-preview-sidebar-foot"><a className="admin-return-link admin-return-sidebar" href="/member-home"><Home size={15} /> Return to Member Home</a><span>Canonical protected Administration Center</span></div>
     </aside>
     {sidebarOpen && <button className="sidebar-scrim" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
-    <main className="admin-preview-main"><header className="admin-preview-topbar"><button className="mobile-menu" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Menu size={20} /></button><div><p className="eyebrow">The Paranormal Initiative</p><h1>{current.label}</h1></div><div className="topbar-actions"><div className="topbar-status"><span className="status-dot" /> Protected session</div><a className="admin-return-link" href="/member-home"><Home size={15} /> <span>Return to Member Home</span></a></div></header>{notice && <div className="preview-notice" role="alert">{notice}</div>}{view === "overview" && <Dashboard overview={overview} loading={overviewLoading} range={range} onRange={setRange} onRefresh={loadOverview} onNavigate={selectView} />}{view === "analytics" && <Analytics range={range} onRange={setRange} onNotice={setNotice} />}{view === "activity" && <ActivityView onNotice={setNotice} />}{["audit", "moderation-history"].includes(view) && <Audit onNotice={setNotice} historyOnly={view === "moderation-history"} />}{view === "members" && <Members onNotice={setNotice} />}{view === "community" && <CommunityOverview overview={overview} onNavigate={selectView} />}{view === "community-content" && <CommunityPosts onNotice={setNotice} />}{view === "reactions" && <CommunityReactions overview={overview} />}{view === "comments" && <Comments onNotice={setNotice} />}{view === "contributors" && <Contributors onNotice={setNotice} />}{view === "editorial" && <EditorialReview onNotice={setNotice} />}{view === "teams" && <Teams onNotice={setNotice} />}{view === "health" && <PlatformHealth onNotice={setNotice} />}{view === "creators" && <CreatorDirectory onNotice={setNotice} />}{view === "founding" && <Founding50 onNotice={setNotice} />}{view === "founding-memberships" && <FoundingMemberships onNotice={setNotice} />}{view === "studio-access" && <StudioAccess onNotice={setNotice} />}{view === "settings" && <SettingsView onNotice={setNotice} />}{view === "education" && <PublishedEducation onNotice={setNotice} />}{view === "videos" && <PublishedVideos onNotice={setNotice} />}{view === "events" && <ApprovedEvents onNotice={setNotice} />}{view === "reports" && <Reports onNotice={setNotice} />}{view === "notifications" && <Notifications onNotice={setNotice} />}{view === "channels" && <Channels onNotice={setNotice} />}{view === "roles" && <Roles onNotice={setNotice} />}{view === "restrictions" && <Restrictions onNotice={setNotice} />}{!implemented.has(view) && <Capability view={view} overview={overview} />}</main>
+    <main className="admin-preview-main"><header className="admin-preview-topbar"><button className="mobile-menu" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Menu size={20} /></button><div><p className="eyebrow">The Paranormal Initiative</p><h1>{current.label}</h1></div><div className="topbar-actions"><div className="topbar-status"><span className="status-dot" /> Protected session</div><a className="admin-return-link" href="/member-home"><Home size={15} /> <span>Return to Member Home</span></a></div></header>{notice && <div className="preview-notice" role="alert">{notice}</div>}{view === "overview" && <Dashboard overview={overview} loading={overviewLoading} range={range} onRange={setRange} onRefresh={loadOverview} onNavigate={selectView} />}{view === "analytics" && <Analytics range={range} onRange={setRange} onNotice={setNotice} />}{view === "activity" && <ActivityView onNotice={setNotice} />}{["audit", "moderation-history"].includes(view) && <Audit onNotice={setNotice} historyOnly={view === "moderation-history"} />}{view === "members" && <Members onNotice={setNotice} />}{view === "community" && <CommunityOverview overview={overview} onNavigate={selectView} />}{view === "community-content" && <CommunityPosts onNotice={setNotice} />}{view === "reactions" && <CommunityReactions overview={overview} />}{view === "comments" && <Comments onNotice={setNotice} />}{view === "contributors" && <Contributors onNotice={setNotice} />}{view === "editorial" && <EditorialWorkspace access={access} onNotice={setNotice} />}{view === "teams" && <Teams onNotice={setNotice} />}{view === "health" && <PlatformHealth onNotice={setNotice} />}{view === "creators" && <CreatorDirectory onNotice={setNotice} />}{view === "founding" && <Founding50 onNotice={setNotice} />}{view === "founding-memberships" && <FoundingMemberships onNotice={setNotice} />}{view === "studio-access" && <StudioAccess onNotice={setNotice} />}{view === "settings" && <SettingsView onNotice={setNotice} />}{view === "education" && <PublishedEducation onNotice={setNotice} />}{view === "videos" && <PublishedVideos onNotice={setNotice} />}{view === "events" && <ApprovedEvents onNotice={setNotice} />}{view === "reports" && <Reports onNotice={setNotice} />}{view === "notifications" && <Notifications onNotice={setNotice} />}{view === "channels" && <Channels onNotice={setNotice} />}{view === "roles" && <Roles onNotice={setNotice} />}{view === "restrictions" && <Restrictions onNotice={setNotice} />}{!implemented.has(view) && <Capability view={view} overview={overview} />}</main>
     <nav className="admin-mobile-nav" aria-label="Mobile Administration navigation">{mobileItems.map((item) => item.id ? <button key={item.label} className={view === item.id ? "admin-mobile-nav-link active" : "admin-mobile-nav-link"} aria-current={view === item.id ? "page" : undefined} onClick={() => { if (item.id) selectView(item.id); }}><item.icon size={17} /><span>{item.label}</span></button> : <a key={item.label} className="admin-mobile-nav-link" href="/member-home"><item.icon size={17} /><span>Member Home</span></a>)}<button className="admin-mobile-nav-link" onClick={() => setSidebarOpen(true)} aria-label="Open full administration menu"><Menu size={17} /><span>Menu</span></button></nav>
   </div>;
 }
@@ -148,6 +152,127 @@ function editorialRenderBlock(node: EditorialNovaNode): string {
 function editorialNovaHtml(doc: EditorialNovaDocument | { doc?: EditorialNovaDocument } | null) {
   const node = (doc && "doc" in doc && doc.doc ? doc.doc : doc) as EditorialNovaDocument | null;
   return (node?.content || []).map(editorialRenderBlock).join("");
+}
+
+// TPI-NOVA-004R6E: review and publication are separate capabilities inside one
+// section. A Publisher without the admin role reaches /admin-panel through
+// their own capability, but must not receive Review controls merely because
+// they are here.
+function EditorialWorkspace({ access, onNotice }: { access: EditorialAccess | null; onNotice: (value: string) => void }) {
+  const canReview = Boolean(access?.editorialReview);
+  const canPublish = Boolean(access?.editorialPublish);
+  const [mode, setMode] = useState<"review" | "publish">(canReview ? "review" : "publish");
+  useEffect(() => { if (!canReview && canPublish) setMode("publish"); }, [canReview, canPublish]);
+  if (!canReview && !canPublish) {
+    return <section className="content-stack"><Card><CardHeader><CardTitle>Editorial authority required</CardTitle><CardDescription>This section requires EDITORIAL_REVIEW or EDITORIAL_PUBLISH. The administrative role alone does not grant either capability.</CardDescription></CardHeader><CardContent><p className="chart-footnote">Ask an owner to grant the editorial capability you need. Review actions never publish, and publication always requires EDITORIAL_PUBLISH.</p></CardContent></Card></section>;
+  }
+  return <>
+    {canReview && canPublish && <section className="content-stack"><div className="page-actions" role="tablist" aria-label="Editorial workspace"><Button variant={mode === "review" ? "default" : "outline"} aria-pressed={mode === "review"} onClick={() => setMode("review")}>Review Queue</Button><Button variant={mode === "publish" ? "default" : "outline"} aria-pressed={mode === "publish"} onClick={() => setMode("publish")}>Publication</Button></div></section>}
+    {mode === "publish" && canPublish ? <EditorialPublication onNotice={onNotice} /> : <EditorialReview onNotice={onNotice} />}
+  </>;
+}
+
+const publicationBlockedReasons: Record<string, string> = {
+  approved_version_unavailable: "The exact approved Nova version can no longer be reconstructed, so this article cannot be published.",
+  approved_document_empty: "The approved Nova version contains no publishable content.",
+  stale_version: "The Nova item has moved past the approved version. The Contributor must resubmit and be reviewed again.",
+  metadata_changed: "The article destination or type no longer matches the approved submission.",
+  submission_not_approved: "This article has no approved submission to publish.",
+  self_publication: "A Publisher cannot publish an article they submitted themselves.",
+  not_found: "The article or its approved submission could not be found.",
+};
+function publicationBlockedReason(code?: string | null) { return code ? publicationBlockedReasons[code] || `Publication is refused (${code}).` : ""; }
+
+// Publisher surface for TPI-NOVA-004R6E. It publishes the exact approved Nova
+// version the server pinned at approval time and never sends publication HTML;
+// the server derives the snapshot. Existing public content stays live until the
+// Publisher confirms, then the approved version replaces it atomically.
+function EditorialPublication({ onNotice }: { onNotice: (value: string) => void }) {
+  const [rows, setRows] = useState<EditorialPublicationRow[]>([]);
+  const [queueLoading, setQueueLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState("");
+  const [detail, setDetail] = useState<EditorialPublicationDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const loadQueue = () => {
+    setQueueLoading(true);
+    adminFetch<{ submissions: EditorialPublicationRow[] }>("/editorial/publications")
+      .then((body) => setRows(body.submissions || []))
+      .catch((error) => onNotice(error instanceof Error ? error.message : "The publication queue could not be loaded."))
+      .finally(() => setQueueLoading(false));
+  };
+  useEffect(() => { loadQueue(); }, []);
+
+  const openArticle = (articleId: string) => {
+    setSelectedId(articleId);
+    setConfirmed(false);
+    setDetailLoading(true);
+    adminFetch<EditorialPublicationDetail>(`/editorial/articles/${encodeURIComponent(articleId)}/publication`)
+      .then(setDetail)
+      .catch((error) => { setDetail(null); onNotice(error instanceof Error ? error.message : "The approved version could not be loaded."); })
+      .finally(() => setDetailLoading(false));
+  };
+  useEffect(() => { if (!selectedId && rows.length) openArticle(rows[0].articleId); }, [rows, selectedId]);
+
+  const publish = async () => {
+    if (!selectedId || busy || !confirmed) return;
+    setBusy(true);
+    try {
+      const result = await adminFetch<EditorialPublicationResult>(`/editorial/articles/${encodeURIComponent(selectedId)}/publish`, { method: "POST", body: JSON.stringify({}) });
+      if (!result.published) { onNotice("The article was not published. Reload the approved version and try again."); openArticle(selectedId); return; }
+      const title = detail?.article.title || result.articleId;
+      onNotice(`Published the approved Nova v${result.approvedNovaVersion ?? "?"} version of “${title}” to the Education Center.`);
+      setDetail(null);
+      setConfirmed(false);
+      setSelectedId("");
+      loadQueue();
+    } catch (error) { onNotice(error instanceof Error ? error.message : "Publication could not be completed."); }
+    finally { setBusy(false); }
+  };
+
+  const isLive = detail?.article.publicationStatus === "published";
+  const metadataChanged = Boolean(detail && (!detail.destinationMatches || !detail.articleTypeMatches));
+  const publishable = Boolean(detail?.publishable) && !metadataChanged && !detail?.pinned.unavailable;
+
+  return <section className="content-stack">
+    <div className="page-intro"><div><p className="eyebrow">Nova Editorial Workspace</p><h2>Approved Publication</h2><p>Publish the exact Nova version a reviewer approved. Review actions never publish; the public Education Center snapshot changes only when you confirm here.</p></div><div className="page-actions"><Button variant="outline" onClick={() => { loadQueue(); if (selectedId) openArticle(selectedId); }}><RefreshCw size={16} />Refresh</Button></div></div>
+    <div className="editorial-layout">
+      <Card><CardHeader><CardTitle>Awaiting publication</CardTitle><CardDescription>{queueLoading ? "Loading…" : `${rows.length} approved article${rows.length === 1 ? "" : "s"} ready for a Publisher`}</CardDescription></CardHeader><CardContent className="editorial-queue">{queueLoading ? <LoadingState label="Loading approved articles…" /> : rows.length ? rows.map((row) => <button key={row.submissionId} type="button" className={row.articleId === selectedId ? "editorial-queue-item is-active" : "editorial-queue-item"} aria-current={row.articleId === selectedId ? "true" : undefined} onClick={() => openArticle(row.articleId)}><div className="editorial-queue-head"><strong>{row.title}</strong><Badge variant={row.publicationStatus === "published" ? "outline" : "warning"}>{row.publicationStatus === "published" ? "Update approved" : "First publication"}</Badge></div><span>{editorialDestinationLabel(row.destination)} · {row.articleType || "—"}</span><span>{row.contributorName || row.contributorUsername || "—"} · Round {row.round} · Approved v{row.approvedNovaVersion ?? "—"}</span><span>Approved {editorialDate(row.approvedAt)}{row.approverName ? ` · ${row.approverName}` : ""}</span></button>) : <EmptyState label="No approved articles are awaiting publication." icon={<CheckCircle2 size={28} />} />}</CardContent></Card>
+      <div className="detail-stack">
+        {detailLoading && <Card><CardContent><LoadingState label="Loading the approved version…" /></CardContent></Card>}
+        {!detailLoading && !detail && <Card><CardContent><EmptyState label="Select an approved article to inspect and publish it." icon={<FileCheck2 size={28} />} /></CardContent></Card>}
+        {detail && <>
+          <Card><CardHeader><div className="detail-actions"><div><CardTitle>{detail.article.title}</CardTitle><CardDescription>{editorialDestinationLabel(detail.article.destination)} · {detail.article.articleType || "—"}</CardDescription></div><Badge variant={isLive ? "outline" : "warning"}>{isLive ? "Replaces a live snapshot" : "First publication"}</Badge></div></CardHeader><CardContent className="detail-stack"><div className="detail-facts">
+            <span><strong>Contributor</strong>{detail.article.contributorName || detail.article.contributorUsername || detail.article.authorName || "—"}</span>
+            <span><strong>Article type</strong>{detail.article.articleType || "—"}</span>
+            <span><strong>Destination</strong>{editorialDestinationLabel(detail.article.destination)}</span>
+            <span><strong>Public URL</strong>{detail.article.href || "—"}</span>
+            <span><strong>Round</strong>{detail.submission ? `Round ${detail.submission.round}` : "—"}</span>
+            <span><strong>Submitted Nova version</strong>{detail.submission ? `v${detail.submission.submittedNovaVersion}` : "—"}</span>
+            <span><strong>Approved version</strong>{detail.submission?.approvedNovaVersion != null ? `v${detail.submission.approvedNovaVersion}` : "—"}</span>
+            <span><strong>Approver</strong>{detail.submission?.approverName || "—"}</span>
+            <span><strong>Approved</strong>{editorialDate(detail.submission?.approvedAt)}</span>
+            <span><strong>Current public status</strong>{detail.article.publicationStatus}{detail.article.publishedAt ? ` · ${editorialDate(detail.article.publishedAt)}` : ""}</span>
+            <span><strong>Live snapshot size</strong>{detail.article.publicBodyBytes ? `${detail.article.publicBodyBytes.toLocaleString()} bytes` : "—"}</span>
+            <span><strong>Editorial status</strong>{editorialStatusLabel(detail.article.editorialStatus)}</span>
+          </div></CardContent></Card>
+          {metadataChanged && <Card><CardContent><div className="notice-panel"><Badge variant="warning">Metadata changed</Badge><p>The article destination or type no longer matches the approved submission, so publication is refused. The Contributor must resubmit before this round can be published.</p></div></CardContent></Card>}
+          {!publishable && !metadataChanged && <Card><CardContent><div className="notice-panel"><Badge variant="warning">Publication blocked</Badge><p>{publicationBlockedReason(detail.blocked?.code)}</p></div></CardContent></Card>}
+          <Card><CardHeader><CardTitle>Approved document</CardTitle><CardDescription>{detail.pinned.unavailable ? "The exact approved version could not be resolved." : `Read-only preview of the exact approved version (Nova v${detail.pinned.version ?? "?"}). This is the content that will be published.`}</CardDescription></CardHeader><CardContent>
+            {detail.pinned.unavailable ? <div className="notice-panel"><Badge variant="warning">Version unavailable</Badge><p>{publicationBlockedReason(detail.pinned.code || "approved_version_unavailable")}</p></div> : <div className="nova-review-surface" dangerouslySetInnerHTML={{ __html: editorialNovaHtml(detail.pinned.content) }} />}
+            {detail.currentNovaVersion != null && detail.pinned.version != null && detail.currentNovaVersion !== detail.pinned.version && <p className="chart-footnote">The Nova item is currently at v{detail.currentNovaVersion}. Publication still uses the approved v{detail.pinned.version} content only.</p>}
+          </CardContent></Card>
+          <Card><CardHeader><CardTitle>Publish Approved Version</CardTitle><CardDescription>{isLive ? "Confirming replaces the live Education Center snapshot atomically. The public URL does not change and the current article stays live until you confirm." : "Confirming publishes this approved version and makes the article publicly available."}</CardDescription></CardHeader><CardContent className="detail-stack">
+            <label className="form-field"><span><input type="checkbox" checked={confirmed} disabled={!publishable || busy} onChange={(event) => setConfirmed(event.target.checked)} /> I have reviewed this exact approved version — “{detail.article.title}” · {editorialDestinationLabel(detail.article.destination)} · Nova v{detail.pinned.version ?? "?"} — and want to {isLive ? "replace the current public snapshot" : "publish it"}.</span></label>
+            <div className="page-actions"><Button onClick={publish} disabled={!publishable || !confirmed || busy}>{busy ? "Publishing…" : "Publish Approved Version"}</Button></div>
+            <p className="chart-footnote">Publication records published_by and published_at on the approved submission, appends an editorial event, and never runs review actions. A Publisher may not publish their own submission.</p>
+          </CardContent></Card>
+        </>}
+      </div>
+    </div>
+  </section>;
 }
 
 function EditorialReview({ onNotice }: { onNotice: (value: string) => void }) {

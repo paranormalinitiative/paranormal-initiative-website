@@ -5,7 +5,8 @@ import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
 import { handleNovaApi, createNovaItemForOwner, updateNovaItemForOwner, getOwnedItem as getOwnedNovaItem, novaItemPayloadForArticle, validateNovaEnvelope } from "../../lib/nova.js";
-import { isNovaLocked, validateTransition, verifyNovaItemForSubmission, buildEvent, hasEditorialReview, hasEditorialPublish, requireEditorialReview, checkVersionCurrent, checkApprovalMatchesSubmission, detectReviewedMetadataChange } from "../../lib/editorial-workflow.js";
+import { isNovaLocked, validateTransition, verifyNovaItemForSubmission, buildEvent, hasEditorialReview, hasEditorialPublish, requireEditorialReview, requireEditorialPublish, checkVersionCurrent, checkApprovalMatchesSubmission, detectReviewedMetadataChange, validatePublication } from "../../lib/editorial-workflow.js";
+import { buildPublicationSnapshot, novaDocumentFromContent, novaDocHasPublishableContent } from "../../lib/nova-document-html.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
@@ -242,6 +243,13 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/editorial\/submissions\/[^/]+\/start-review$/)) return requireEditorial(request, env, (user, capabilities) => handleEditorialStartReview(path, env, user, capabilities));
     if (request.method === "POST" && path.match(/^\/editorial\/submissions\/[^/]+\/request-changes$/)) return requireEditorial(request, env, (user, capabilities) => handleEditorialRequestChanges(path, request, env, user, capabilities));
     if (request.method === "POST" && path.match(/^\/editorial\/submissions\/[^/]+\/approve$/)) return requireEditorial(request, env, (user, capabilities) => handleEditorialApprove(path, env, user, capabilities));
+    // TPI-NOVA-004R6E: the Publisher side of the same workspace. Every route
+    // requires EDITORIAL_PUBLISH, which the admin role, Contributor, Creator and
+    // EDITORIAL_REVIEW each fail to imply. Publication is the only action that
+    // changes the public Education Center snapshot.
+    if (request.method === "GET" && path === "/editorial/publications") return requirePublisher(request, env, () => handleEditorialPublications(env));
+    if (request.method === "GET" && path.match(/^\/editorial\/articles\/[^/]+\/publication$/)) return requirePublisher(request, env, user => handleEditorialPublication(path, env, user));
+    if (request.method === "POST" && path.match(/^\/editorial\/articles\/[^/]+\/publish$/)) return requirePublisher(request, env, (user, capabilities) => handleEditorialPublish(path, request, env, user, capabilities));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
     if (request.method === "GET" && path === "/link-preview") return handleLinkPreview(request, env);
     if (request.method === "GET" && path === "/feed") return handleCommunityFeed(request, env);
@@ -3492,6 +3500,15 @@ async function handleAdminArticleUpdate(path, request, env, actingUser) {
   if (!id) return json({ error: "Article id is required." }, 400);
   const current = await env.TPI_DB.prepare("SELECT * FROM articles WHERE id = ?").bind(id).first();
   if (!current) return json({ error: "Article was not found." }, 404);
+  // TPI-NOVA-004R6E: an enrolled article may only be published through the
+  // approved Publisher workflow. The legacy direct Admin write would otherwise
+  // bypass review and replace the public snapshot with unreviewed HTML.
+  if ((current.editorial_status || "legacy") !== "legacy") {
+    return json({
+      error: "This article is in the Nova editorial workflow. Its public content changes only through Administration Center → Editorial Review publication.",
+      code: "editorial_workflow_publish_refused"
+    }, 409);
+  }
   const data = await readJson(request);
   const expectedUpdatedAt = clean(data.expectedUpdatedAt);
   if (expectedUpdatedAt && expectedUpdatedAt !== current.updated_at) {
@@ -3533,12 +3550,21 @@ async function handleAdminArticleUpdate(path, request, env, actingUser) {
 async function handleAdminArticleStatus(path, request, env, actingUser) {
   const id = clean(decodeURIComponent(path.match(/^\/admin\/articles\/([^/]+)\/status$/)?.[1] || ""));
   if (!id) return json({ error: "Article id is required." }, 400);
-  const article = await env.TPI_DB.prepare("SELECT id, href, title, subtitle, article_type AS contributionType, author, status FROM articles WHERE id = ?").bind(id).first();
+  const article = await env.TPI_DB.prepare("SELECT id, href, title, subtitle, article_type AS contributionType, author, status, editorial_status AS editorialStatus FROM articles WHERE id = ?").bind(id).first();
   if (!article) return json({ error: "Article was not found." }, 404);
   const data = await readJson(request);
   const status = clean(data.status).toLowerCase();
   if (!["draft", "published"].includes(status)) return json({ error: "Article status must be draft or published." }, 400);
   if (status === article.status) return json({ article: { ...article, changed: false } });
+  // TPI-NOVA-004R6E: legacy direct status changes are preserved for legacy
+  // articles only. An enrolled article's public visibility is changed by the
+  // Publisher action, which is the only route that writes its snapshot.
+  if ((article.editorialStatus || "legacy") !== "legacy") {
+    return json({
+      error: "This article is in the Nova editorial workflow. Its publication state changes only through Administration Center → Editorial Review publication.",
+      code: "editorial_workflow_publish_refused"
+    }, 409);
+  }
   if (status === "published" && (!clean(article.title) || clean(article.title).toLowerCase().startsWith("untitled"))) {
     return json({ error: "A real title is required before publishing." }, 400);
   }
@@ -3596,6 +3622,7 @@ async function handleContributorArticles(env, user) {
     SELECT a.id AS id, a.editorial_status AS editorialStatus,
       (SELECT s.submitted_at FROM article_editorial_submissions s WHERE s.article_id = a.id ORDER BY s.created_at DESC LIMIT 1) AS submittedAt,
       (SELECT s.submitted_nova_version FROM article_editorial_submissions s WHERE s.article_id = a.id ORDER BY s.created_at DESC LIMIT 1) AS submittedNovaVersion,
+      (SELECT s.published_at FROM article_editorial_submissions s WHERE s.article_id = a.id AND s.published_at IS NOT NULL ORDER BY s.published_at DESC LIMIT 1) AS publishedAt,
       (SELECT e.note FROM article_editorial_events e WHERE e.article_id = a.id AND e.event_type = 'changes_requested' AND e.visible_to_contributor = 1 ORDER BY e.created_at DESC, e.rowid DESC LIMIT 1) AS reviewFeedback,
       (SELECT e.created_at FROM article_editorial_events e WHERE e.article_id = a.id AND e.event_type = 'changes_requested' AND e.visible_to_contributor = 1 ORDER BY e.created_at DESC, e.rowid DESC LIMIT 1) AS reviewFeedbackAt
     FROM articles a WHERE a.created_by = ?
@@ -3611,6 +3638,10 @@ async function handleContributorArticles(env, user) {
       editorialStatus: flow.editorialStatus || "legacy",
       submittedAt: flow.submittedAt || null,
       submittedNovaVersion: flow.submittedNovaVersion ?? null,
+      // TPI-NOVA-004R6E: publication is a separate axis from editorial_status.
+      // The Contributor sees when their approved version went live, while the
+      // editorial state stays 'approved' until R6F opens the next round.
+      publishedAt: flow.publishedAt || null,
       reviewFeedback: showFeedback ? flow.reviewFeedback || null : null,
       reviewFeedbackAt: showFeedback ? flow.reviewFeedbackAt || null : null,
       locked: isNovaLocked(flow.editorialStatus)
@@ -4154,6 +4185,305 @@ async function editorialReviewPayload(env, articleId) {
       approvedNovaVersion: submission.approved_nova_version,
       outcome: submission.outcome
     } : null
+  };
+}
+
+// TPI-NOVA-004R6E: the Publisher side of the Nova Editorial Workspace, inside
+// the same Administration Center. Every route below requires EDITORIAL_PUBLISH,
+// which the admin role, Contributor, Creator and EDITORIAL_REVIEW each fail to
+// imply. Publication is the only action in the whole editorial workflow that
+// changes the public Education Center snapshot, and it publishes the exact Nova
+// version that was approved — never the current working document.
+const PUBLISHER_REFUSALS = Object.freeze({
+  editorial_publish_required: "Editorial publication authority is required.",
+  self_publication_refused: "A Publisher cannot publish a submission they submitted.",
+  not_approved: "Publication requires an article in the approved editorial state.",
+  no_approved_submission: "Publication requires an approved submission round.",
+  stale_version: "The Nova document changed after approval, so the approved version can no longer be published.",
+  reviewed_metadata_changed: "The reviewed destination or article type changed after approval, so publication is refused.",
+  nova_item_unavailable: "The approved Nova document is no longer available.",
+  approved_version_unavailable: "The approved Nova version is no longer reconstructable, so publication is refused.",
+  approved_document_empty: "The approved Nova version has no publishable content.",
+  no_open_submission: "This article has no open submission to publish."
+});
+
+function publicationRefusal(refusal) {
+  // validatePublication reports the drifted reviewed fields as its detail, so a
+  // metadata refusal names them instead of hiding which reviewed value changed.
+  const fields = refusal.code === "reviewed_metadata_changed" && typeof refusal.detail === "string"
+    ? refusal.detail.split(",").map(field => field.trim()).filter(Boolean)
+    : undefined;
+  return json({
+    error: PUBLISHER_REFUSALS[refusal.code] || "This article cannot be published.",
+    code: refusal.code,
+    fields
+  }, refusal.status);
+}
+
+async function requirePublisher(request, env, handler) {
+  const user = await getSessionUser(request, env);
+  if (!user) return json({ error: "Editorial publication requires an authenticated account.", code: "auth_required" }, 401);
+  const capabilities = await contributorCapabilities(env, user);
+  const denied = requireEditorialPublish(capabilities);
+  if (denied) return json({ error: "Editorial publication authority is required.", code: denied.code }, denied.status);
+  return handler(user, capabilities);
+}
+
+function readPublicationArticle(env, articleId) {
+  return env.TPI_DB.prepare(`
+    SELECT a.id AS articleId, a.title AS title, a.subtitle AS subtitle, a.destination AS destination,
+      a.article_type AS articleType, a.author AS authorName, a.source AS source, a.labels AS labels,
+      a.href AS href, a.status AS publicationStatus, a.created_by AS contributorId,
+      a.nova_item_id AS novaItemId, a.editorial_status AS editorialStatus,
+      a.updated_at AS updatedAt, LENGTH(COALESCE(a.body_html, '')) AS publicBodyBytes,
+      c.display_name AS contributorName, c.username AS contributorUsername
+    FROM articles a LEFT JOIN contributors c ON c.id = a.created_by
+    WHERE a.id = ?
+  `).bind(articleId).first();
+}
+
+// Resolves the exact approved Nova version and the article's current Nova item in
+// one place so the Publisher queue, the read-only preview and the publish route
+// can never disagree about what would be published. Any gap fails closed: there
+// is no fallback to the current Nova document.
+async function resolveApprovedPublication(env, article, submission) {
+  if (!submission) return { ok: false, code: "no_open_submission" };
+  if (!Number.isInteger(submission.approved_nova_version)) return { ok: false, code: "no_approved_submission" };
+  const novaItemId = submission.nova_item_id || article.novaItemId;
+  const item = await env.TPI_DB.prepare("SELECT id, version, owner_id, deleted_at, status FROM nova_items WHERE id = ?").bind(novaItemId).first();
+  const verification = verifyNovaItemForSubmission({ novaItem: item, articleOwnerId: article.contributorId, articleNovaItemId: novaItemId });
+  if (!verification.ok) return { ok: false, code: verification.code === "nova_item_missing" ? "nova_item_unavailable" : verification.code };
+  const pinned = await readPinnedNovaDocument(env, novaItemId, submission.approved_nova_version);
+  if (!pinned.ok) return { ok: false, code: "approved_version_unavailable" };
+  const doc = novaDocumentFromContent(pinned.content);
+  if (!doc || !novaDocHasPublishableContent(doc)) return { ok: false, code: "approved_document_empty" };
+  return { ok: true, currentNovaVersion: verification.version, pinned, doc };
+}
+
+// Approved content awaiting publication. Only the open submission that actually
+// carries an approved version is listed, so an article that is merely approved
+// in state without an approved round cannot appear here.
+async function handleEditorialPublications(env) {
+  const { results } = await env.TPI_DB.prepare(`
+    SELECT a.id AS articleId, a.title AS title, a.destination AS destination,
+      a.article_type AS articleType, a.editorial_status AS editorialStatus,
+      a.status AS publicationStatus, a.updated_at AS publishedAt,
+      a.created_by AS contributorId, c.display_name AS contributorName,
+      c.username AS contributorUsername,
+      s.id AS submissionId, s.submitted_at AS submittedAt,
+      s.submitted_nova_version AS submittedNovaVersion,
+      s.approved_nova_version AS approvedNovaVersion,
+      s.approved_by AS approvedBy, s.approved_at AS approvedAt,
+      ab.display_name AS approverName,
+      (SELECT COUNT(*) FROM article_editorial_submissions r WHERE r.article_id = a.id AND r.rowid <= s.rowid) AS round
+    FROM articles a
+    JOIN article_editorial_submissions s ON s.article_id = a.id AND s.outcome = 'open' AND s.approved_nova_version IS NOT NULL
+    LEFT JOIN contributors c ON c.id = a.created_by
+    LEFT JOIN contributors ab ON ab.id = s.approved_by
+    WHERE a.editorial_status = 'approved'
+      AND COALESCE(a.article_type, '') != 'TPI Video'
+      AND COALESCE(a.destination, '') != 'tpi-videos.html'
+    ORDER BY s.approved_at ASC, a.title ASC
+  `).all();
+  return json({ submissions: results || [] }, 200, { "Cache-Control": "no-store" });
+}
+
+// Read-only Publisher detail. It returns the pinned approved document for the
+// existing exact-version renderer and never the article body, so the preview
+// cannot show anything other than what publication would write.
+async function handleEditorialPublication(path, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/editorial\/articles\//, "").replace(/\/publication$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  const article = await readPublicationArticle(env, articleId);
+  if (!article) return json({ error: "Article not found." }, 404);
+  if (editorialNotApplicable(article)) return json({ error: "TPI Video items are not part of the editorial workflow.", code: "editorial_workflow_not_applicable" }, 409);
+  const submission = await env.TPI_DB.prepare(`
+    SELECT s.*, (SELECT COUNT(*) FROM article_editorial_submissions r WHERE r.article_id = s.article_id AND r.rowid <= s.rowid) AS round,
+      ab.display_name AS approverName
+    FROM article_editorial_submissions s LEFT JOIN contributors ab ON ab.id = s.approved_by
+    WHERE s.article_id = ? AND s.outcome = 'open'
+    ORDER BY s.created_at DESC LIMIT 1
+  `).bind(articleId).first();
+  const resolved = await resolveApprovedPublication(env, article, submission);
+  const validation = validatePublication({
+    capabilities: await contributorCapabilities(env, user),
+    actorId: user.id,
+    submitterId: submission?.submitted_by,
+    editorialStatus: article.editorialStatus,
+    submission,
+    currentNovaVersion: resolved.ok ? resolved.currentNovaVersion : null,
+    destination: article.destination || "",
+    articleType: article.articleType || ""
+  });
+  const metadata = submission ? detectReviewedMetadataChange({ submission, destination: article.destination || "", articleType: article.articleType || "" }) : null;
+  // An approved version that can no longer be reconstructed is reported as such:
+  // the Publisher must see "unavailable", not a generic validation failure.
+  const validationFields = validation.code === "reviewed_metadata_changed" && typeof validation.detail === "string"
+    ? validation.detail.split(",").map(field => field.trim()).filter(Boolean)
+    : null;
+  const blocked = validation.ok
+    ? (resolved.ok ? null : { code: resolved.code, fields: null })
+    : { code: validation.code, fields: validationFields };
+  return json({
+    article: {
+      articleId: article.articleId,
+      title: article.title,
+      subtitle: article.subtitle,
+      destination: article.destination,
+      articleType: article.articleType,
+      authorName: article.authorName,
+      source: article.source,
+      labels: article.labels,
+      href: article.href,
+      editorialStatus: article.editorialStatus,
+      publicationStatus: article.publicationStatus || "draft",
+      publishedAt: article.publicationStatus === "published" ? article.updatedAt : null,
+      publicBodyBytes: Number(article.publicBodyBytes || 0),
+      contributorId: article.contributorId,
+      contributorName: article.contributorName,
+      contributorUsername: article.contributorUsername
+    },
+    submission: submission ? {
+      id: submission.id,
+      round: Number(submission.round || 1),
+      submittedBy: submission.submitted_by,
+      submittedAt: submission.submitted_at,
+      submittedNovaVersion: submission.submitted_nova_version,
+      submittedDestination: submission.submitted_destination,
+      submittedArticleType: submission.submitted_article_type,
+      approvedBy: submission.approved_by,
+      approvedAt: submission.approved_at,
+      approvedNovaVersion: submission.approved_nova_version,
+      approverName: submission.approverName || null
+    } : null,
+    pinned: resolved.ok
+      ? { version: resolved.pinned.version, title: resolved.pinned.title, formatVersion: resolved.pinned.formatVersion, content: resolved.pinned.content, source: resolved.pinned.source }
+      : { version: null, content: null, unavailable: true, code: resolved.code },
+    currentNovaVersion: resolved.ok ? resolved.currentNovaVersion : null,
+    destinationMatches: metadata ? !metadata.fields.includes("destination") : false,
+    articleTypeMatches: metadata ? !metadata.fields.includes("article_type") : false,
+    publishable: validation.ok && resolved.ok,
+    blocked
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+// The single publication action. The public snapshot is generated here from the
+// approved Nova version and written together with the submission metadata and
+// the publication event in one D1 batch, so no visible state can be half-written.
+async function handleEditorialPublish(path, request, env, user, capabilities) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/editorial\/articles\//, "").replace(/\/publish$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  // Publication HTML and publication state are server-derived. A request that
+  // tries to supply them is refused rather than partly honored.
+  const data = await readJson(request);
+  const refusedKeys = ["bodyHtml", "body_html", "articleHtml", "article_html", "status", "novaVersion", "approvedNovaVersion", "submittedNovaVersion", "publishedBy", "publishedAt"]
+    .filter(key => data && typeof data === "object" && Object.prototype.hasOwnProperty.call(data, key));
+  if (refusedKeys.length) {
+    return json({ error: "Publication HTML and publication state are generated by the server and cannot be supplied by the client.", code: "publication_payload_refused", fields: refusedKeys }, 422);
+  }
+  const article = await readPublicationArticle(env, articleId);
+  if (!article) return json({ error: "Article not found." }, 404);
+  if (editorialNotApplicable(article)) return json({ error: "TPI Video items are not part of the editorial workflow.", code: "editorial_workflow_not_applicable" }, 409);
+  const title = clean(article.title);
+  if (!title || /^untitled/i.test(title)) return json({ error: "A titled article is required before publication.", code: "title_required" }, 422);
+  // Checked before version resolution so the Publisher gets the real reason: an
+  // article still under review has no approved submission to publish yet.
+  if (article.editorialStatus !== "approved") return json({ error: PUBLISHER_REFUSALS.not_approved, code: "not_approved" }, 409);
+  const submission = await currentOpenSubmission(env, articleId);
+  if (!submission) return json({ error: PUBLISHER_REFUSALS.no_open_submission, code: "no_open_submission" }, 409);
+  const resolved = await resolveApprovedPublication(env, article, submission);
+  if (!resolved.ok) return json({ error: PUBLISHER_REFUSALS[resolved.code] || "The approved Nova version cannot be published.", code: resolved.code }, 409);
+  const destination = article.destination || "";
+  const articleType = article.articleType || "";
+  const validation = validatePublication({
+    capabilities,
+    actorId: user.id,
+    submitterId: submission.submitted_by,
+    editorialStatus: article.editorialStatus,
+    submission,
+    currentNovaVersion: resolved.currentNovaVersion,
+    destination,
+    articleType
+  });
+  if (!validation.ok) return publicationRefusal(validation);
+  // The snapshot is built from the approved document only. Metadata comes from
+  // the article row, which was just verified to still match the submission.
+  const snapshot = buildPublicationSnapshot({
+    doc: resolved.doc,
+    title,
+    subtitle: article.subtitle || "",
+    author: article.authorName || "",
+    articleType,
+    source: article.source || "",
+    labels: article.labels || "",
+    destination
+  });
+  const token = new Date().toISOString();
+  const claimed = env.TPI_DB.prepare(`
+    UPDATE article_editorial_submissions
+    SET published_by = ?, published_at = ?, outcome = 'published', updated_at = ?
+    WHERE id = ? AND outcome = 'open' AND approved_nova_version = ? AND approved_by IS NOT NULL
+      AND submitted_by != ? AND submitted_destination = ? AND submitted_article_type = ?
+      AND EXISTS (SELECT 1 FROM articles WHERE id = ? AND editorial_status = 'approved'
+        AND COALESCE(destination, '') = ? AND COALESCE(article_type, '') = ?)
+  `).bind(user.id, token, token, submission.id, submission.approved_nova_version, user.id, destination, articleType, articleId, destination, articleType);
+  const published = env.TPI_DB.prepare(`
+    UPDATE articles SET body_html = ?, article_html = ?, status = 'published', updated_at = CURRENT_TIMESTAMP
+    WHERE id = ? AND EXISTS (SELECT 1 FROM article_editorial_submissions WHERE id = ? AND published_at = ?)
+  `).bind(snapshot.bodyHtml, snapshot.articleHtml, articleId, submission.id, token);
+  const transition = { event: "published", from: "approved", to: "approved" };
+  const event = insertEditorialEventGuarded(
+    env,
+    buildEvent({ id: crypto.randomUUID(), articleId, submissionId: submission.id, actorId: user.id, transition, novaVersion: submission.approved_nova_version, createdAt: token }),
+    "EXISTS (SELECT 1 FROM article_editorial_submissions WHERE id = ? AND published_at = ?)",
+    [submission.id, token]
+  );
+  const results = await env.TPI_DB.batch([claimed, published, event]);
+  if (!Number(results?.[0]?.meta?.changes || 0) || !Number(results?.[1]?.meta?.changes || 0)) {
+    return json({ error: "This article could not be published. Refresh and try again.", code: "publication_state_conflict" }, 409);
+  }
+  // Notification semantics are unchanged from every existing publication path:
+  // one "education" notification, only when the article was not already public,
+  // and never to the Contributor who submitted it.
+  if (article.publicationStatus !== "published") {
+    try {
+      await notifyActiveMembers(env, {
+        title: `New educational content: ${title}`,
+        body: article.subtitle || `${articleType} by ${article.authorName || article.contributorName || article.contributorUsername || "a contributor"}`,
+        actionHref: article.href || "/education-center.html",
+        type: "education",
+        createdBy: user.id,
+        excludeContributorId: submission.submitted_by
+      });
+    } catch (error) {
+      // The publication is already committed; a notification failure must not
+      // report the publication as failed.
+    }
+  }
+  return json(await editorialPublicationPayload(env, articleId));
+}
+
+async function editorialPublicationPayload(env, articleId) {
+  const row = await env.TPI_DB.prepare(`
+    SELECT a.id AS articleId, a.status AS publicationStatus, a.editorial_status AS editorialStatus,
+      a.updated_at AS updatedAt, LENGTH(COALESCE(a.body_html, '')) AS publicationBodyBytes,
+      s.id AS submissionId, s.approved_nova_version AS approvedNovaVersion,
+      s.published_by AS publishedBy, s.published_at AS publishedAt
+    FROM articles a
+    LEFT JOIN article_editorial_submissions s ON s.article_id = a.id AND s.published_at IS NOT NULL
+    WHERE a.id = ?
+    ORDER BY s.published_at DESC LIMIT 1
+  `).bind(articleId).first();
+  return {
+    articleId,
+    editorialStatus: row?.editorialStatus || "legacy",
+    publicationStatus: row?.publicationStatus || "draft",
+    published: row?.publicationStatus === "published",
+    publishedAt: row?.publishedAt || null,
+    publicationBodyBytes: Number(row?.publicationBodyBytes || 0),
+    submissionId: row?.submissionId || null,
+    approvedNovaVersion: row?.approvedNovaVersion ?? null,
+    publishedBy: row?.publishedBy || null
   };
 }
 

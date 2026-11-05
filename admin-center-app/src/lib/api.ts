@@ -503,3 +503,79 @@ export type EditorialSubmissionDetail = {
   events: EditorialEvent[];
   pinned: { version: number | null; title?: string | null; formatVersion?: number; content: EditorialNovaDocument | { format?: string; version?: number; doc?: EditorialNovaDocument } | null; source?: string; unavailable?: boolean; code?: string };
 };
+
+// TPI-NOVA-004R6E: Publisher contract. Reading the queue and publishing both
+// require EDITORIAL_PUBLISH; the UI never infers it from the admin role, and the
+// publication body is generated on the server from the approved Nova version.
+export type EditorialPublicationRow = {
+  articleId: string;
+  title: string;
+  destination: string;
+  articleType: string;
+  editorialStatus: string;
+  publicationStatus?: string | null;
+  publishedAt?: string | null;
+  contributorId: string;
+  contributorName?: string | null;
+  contributorUsername?: string | null;
+  submissionId: string;
+  submittedAt: string;
+  submittedNovaVersion: number;
+  approvedNovaVersion: number | null;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  approverName?: string | null;
+  round: number;
+};
+
+export type EditorialPublicationDetail = {
+  article: {
+    articleId: string;
+    title: string;
+    subtitle?: string | null;
+    destination: string;
+    articleType: string;
+    authorName?: string | null;
+    source?: string | null;
+    labels?: string | null;
+    href?: string | null;
+    editorialStatus: string;
+    publicationStatus: string;
+    publishedAt?: string | null;
+    publicBodyBytes: number;
+    contributorId: string;
+    contributorName?: string | null;
+    contributorUsername?: string | null;
+  };
+  submission: {
+    id: string;
+    round: number;
+    submittedBy: string;
+    submittedAt: string;
+    submittedNovaVersion: number;
+    submittedDestination: string;
+    submittedArticleType: string;
+    approvedBy?: string | null;
+    approvedAt?: string | null;
+    approvedNovaVersion: number | null;
+    approverName?: string | null;
+  } | null;
+  pinned: { version: number | null; title?: string | null; formatVersion?: number; content: EditorialNovaDocument | { format?: string; version?: number; doc?: EditorialNovaDocument } | null; source?: string; unavailable?: boolean; code?: string };
+  currentNovaVersion: number | null;
+  destinationMatches: boolean;
+  articleTypeMatches: boolean;
+  publishable: boolean;
+  blocked: { code: string; fields?: string[] | null } | null;
+};
+
+export type EditorialPublicationResult = {
+  articleId: string;
+  editorialStatus: string;
+  publicationStatus: string;
+  published: boolean;
+  publishedAt?: string | null;
+  publicationBodyBytes: number;
+  submissionId: string | null;
+  approvedNovaVersion: number | null;
+  publishedBy: string | null;
+};

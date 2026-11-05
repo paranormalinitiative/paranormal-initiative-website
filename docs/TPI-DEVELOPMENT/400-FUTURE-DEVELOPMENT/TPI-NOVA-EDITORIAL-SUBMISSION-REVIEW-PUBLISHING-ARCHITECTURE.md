@@ -405,7 +405,26 @@ Delivered:
 - **Approval integrity:** approver ≠ submitter, reviewed metadata unchanged, no version drift, pinned version resolvable; records `approved_by`, `approved_at`, `approved_nova_version = submitted_nova_version` and an event. The Contributor state is Approved — Awaiting Publication, read-only, with no publish, withdraw, edit or resubmit.
 - **Non-publication:** `articles.status`, `body_html` and the public snapshot are untouched by review and approval. All transitions run in `lib/editorial-workflow.js`; handlers do not restate the rules.
 
-Not implemented: the Publisher UI, publication of an approved version, and retirement of legacy direct publishing (R6E).
+Not implemented at R6D: the Publisher UI, publication of an approved version, and retirement of legacy direct publishing. R6E implemented the Publisher side; legacy retirement remains R6F.
+
+## 16D. TPI-NOVA-004R6E — Authorized publication of approved Nova content implemented
+
+Status: implemented and locally accepted; production has not received R6E.
+
+Delivered:
+
+- **Publisher authority:** `EDITORIAL_PUBLISH` from the entitlement ledger, resolved by `requirePublisher`. Ordinary Admin, Contributor, Creator and `EDITORIAL_REVIEW` do not imply it. `worker.js` accepts either editorial capability for `/admin-panel` entry so a Publisher-only account can reach the Administration Center; Reviewer-only accounts still cannot publish and Publisher-only accounts still get no review controls.
+- **Surface:** the Approved Publication workspace inside the existing React Administration Center (no new app, route or shell, no `/nova-publisher/`). It lists `editorial_status='approved'` articles with a valid approved open submission and excludes TPI Video.
+- **Exact approved version:** publication resolves `approved_nova_version` and renders it from `nova_revisions`, using the live `nova_items` row only when its version equals the approved version exactly. Missing, shadowed, empty or unreconstructable versions fail closed; there is no fallback to the current document, no client-supplied HTML and no browser-local recovery copy. Changed current versions and drifted destination/article-type are refused.
+- **Server-generated snapshot:** `lib/nova-document-html.js` deterministically renders the approved document to `body_html`/public `article_html`, mirroring the browser converter. Requests that supply `body_html`, `article_html` or publication state are refused `422 publication_payload_refused`.
+- **Atomic replacement:** a single D1 batch sets `articles.status='published'`, the snapshot fields and `updated_at`, marks the approved submission `outcome='published'` with `published_by`/`published_at`, and appends the `published` event (`approved → approved`). Article id, href, owner, `created_by`, destination and article type are preserved; the previous snapshot stays live until the replacement commits, so there is no unpublish window.
+- **Editorial state:** `editorial_status` remains `approved`; no `published` editorial state exists. The Contributor sees Published — Live in the Education Center and a locked document, with no new revision cycle opened (R6F).
+- **Separation of duties:** `published_by != submitted_by`, enforced server-side (`403 self_publication_refused`). Reviewer and Publisher may coincide when both capabilities are legitimately held.
+- **Admin bypass:** for enrolled articles the Admin status and update routes return `409 editorial_workflow_publish_refused`; legacy articles keep their administrative behavior, are not mass-enrolled, and TPI Video keeps its specialized publish path. The Contributor direct-publish block from R6C is preserved, and every `[data-action="publish"]` control is now hidden for enrolled articles, including the settings drawer.
+- **Notifications:** at most one `education` notification per publication, only when the article was not already published, excluding the submitter. Review transitions do not notify, so publication is announced once.
+- **No schema change:** `0062_editorial_capabilities.sql` already provided `editorial_publish`.
+
+Verification: `scripts/verify/tpi-nova-004r6e-publish.mjs` 60 passed / 0 failed; Firefox Developer Edition authoritative workflow plus Chromium smoke 80 passed / 0 failed across disposable fixtures; real local articles fingerprint-identical before and after (`1eea9b37008c9d68`). Local-only; production untouched.
 
 ## 17. TPI Video — out of scope
 
@@ -447,7 +466,7 @@ Other pre-existing security work (not part of this architecture): the production
 - **R6B — Workflow foundation.** Add `EDITORIAL_REVIEW` and `EDITORIAL_PUBLISH` to `CAPABILITY`. Add the additive schema (§13). Write the server-side transition function with event and submission writes in one batch, and tests for every transition, self-approval refusal, withdrawal limits, and version mismatch. No UI. No public behaviour change.
 - **R6C — Contributor submission.** Submit, withdraw and resubmit routes and the Contributor UI. Nova lock on `submitted`/`in_review`/`approved`. Legacy import and bulk conversion (P7, P8) move to `draft`. Firefox Developer Edition acceptance.
 - **R6D — Review queue.** Queue, read-only Nova review, request changes, approve, in the Administration Center. Firefox Developer Edition acceptance.
-- **R6E — Publication.** The publish route with the §10 checklist, snapshot of `approved_nova_version`, audit and events. Constrain P1, P2 and the Content Editor publish button (P4). Firefox Developer Edition acceptance.
+- **R6E — Publication. Implemented.** The publish route with the §10 checklist, snapshot of `approved_nova_version`, audit and events. Constrains P1, P2 and the Content Editor publish button (P4) for enrolled articles; legacy behavior retained. Firefox Developer Edition acceptance passed.
 - **R6F — Revisions and retirement.** Published-article revision workflow (§9). Retire direct publish paths P1, P4, P6 and P9 for Nova-backed content. Constrain P3. Remove the `member-home.html` `published` fallback. Update the tests named in §1.9.
 
 Each phase is independently testable and gets a Firefox Developer Edition acceptance run before the next begins.

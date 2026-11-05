@@ -473,8 +473,16 @@ schema, transition engine). TPI-NOVA-004R6C2 has implemented Contributor submiss
 locking and resubmission, and TPI-NOVA-004R6C3 has accepted it (local-only; production not yet updated).
 TPI-NOVA-004R6D has implemented the Editorial Review Queue, reviewer actions (Start Review,
 Request Changes, Approve), Contributor-visible feedback and exact pinned-version review inside
-the existing Administration Center (local-only; publishing not implemented). The Publisher UI and
-retirement of legacy direct publishing remain future work (R6E).
+the existing Administration Center.
+TPI-NOVA-004R6E has implemented the Publisher side in the same Administration Center: an
+`EDITORIAL_PUBLISH`-gated approved-publication queue, read-only exact-version preview, and an
+atomic Publish Approved Version action that server-renders the approved Nova version and replaces
+the public Education Center snapshot. Enrolled articles can no longer be published through the
+direct Contributor or Admin routes; legacy articles keep their existing behavior and TPI Video
+keeps its specialized publish path. Both phases are local-only; production has not received them.
+
+The persisted published-revision lifecycle (opening the next round after publication) and the
+retirement of legacy direct publishing are the next Nova phase, R6F, and remain open work.
 
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**
 remains the next governance section, but it is not scheduled to begin until the

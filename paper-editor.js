@@ -945,7 +945,8 @@
     submitted: "Submitted for Review",
     in_review: "In Review",
     changes_requested: "Changes Requested",
-    approved: "Approved — Awaiting Publication"
+    approved: "Approved — Awaiting Publication",
+    published: "Published — Live in the Education Center"
   };
   const workflowState = { status: null, locked: false };
 
@@ -957,14 +958,22 @@
     // TPI Video keeps its specialized publish path and never shows article workflow controls.
     const isVideo = payload?.contributionType === "TPI Video" || payload?.destination === TPI_VIDEOS_DESTINATION;
     const isLinked = Boolean(novaLink.itemId) && !isVideo;
+    // TPI-NOVA-004R6E: publication is reported separately from editorial_status.
+    // An approved article whose snapshot is live says Published; the editorial
+    // state itself stays 'approved' until R6F opens the next revision round.
+    const isPublished = status !== "legacy" && String(payload?.status || "") === "published" && Boolean(payload?.publishedAt);
     const badge = document.querySelector("[data-workflow-status]");
     if (badge) {
-      badge.textContent = WORKFLOW_LABELS[status] || status;
+      badge.textContent = isPublished ? WORKFLOW_LABELS.published : (WORKFLOW_LABELS[status] || status);
       badge.hidden = !isLinked;
     }
+    // Every control with the same action must follow the same rule; the settings
+    // drawer carries its own Publish button, so a single querySelector would leave
+    // a direct publication path visible on an enrolled article.
     const show = (action, visible) => {
-      const button = document.querySelector(`[data-action="${action}"]`);
-      if (button) button.hidden = !visible;
+      document.querySelectorAll(`[data-action="${action}"]`).forEach((button) => {
+        button.hidden = !visible;
+      });
     };
     // TPI-NOVA-004R6D: the reviewer's feedback for this round, shown beside the
     // workflow controls. Only the note and its timestamp are rendered; reviewer

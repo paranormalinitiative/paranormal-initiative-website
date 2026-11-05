@@ -1,5 +1,30 @@
 # TPI Current Development Status
 
+## TPI-NOVA-004R6E — Authorized publication of approved Nova content (2026-11-05)
+
+Status: **COMPLETE — AUTHORIZED PUBLICATION OF APPROVED NOVA CONTENT IMPLEMENTED — EDUCATION CENTER SNAPSHOT PUBLISHING ENFORCED — READY FOR PUBLISHED-REVISION LIFECYCLE & LEGACY RETIREMENT.** R6E is local-only; production has not received R6E and was not deployed to.
+
+Delivered:
+
+- **Publisher authority.** Publication requires `EDITORIAL_PUBLISH` from an active `member_entitlements` row. `requireAdmin` is not a substitute. Admin, Contributor, Creator and `EDITORIAL_REVIEW` do not imply it, and the capabilities remain distinct. `worker.js` `hasAdministrationCenterAccess` previously admitted only `EDITORIAL_REVIEW`, so a Publisher-only account was refused at `/admin-panel`; it now accepts either editorial capability. No new app, route or shell was added: the Publisher surface is the Approved Publication workspace inside the existing React Administration Center.
+- **Routes.** `GET /api/editorial/publications` (approved queue), `GET /api/editorial/articles/:id/publication` (read-only exact approved version and publication facts), `POST /api/editorial/articles/:id/publish`. All three run through `requirePublisher` in `functions/api/[[path]].js`.
+- **Exact approved version.** Publication resolves `approved_nova_version` from the open approved submission and renders that version from `nova_revisions` (the live `nova_items` row only when its version equals the approved version exactly). A missing, shadowed, empty or unreconstructable approved version fails closed with `approved_version_unavailable` / `nova_item_unavailable` / `approved_document_empty`; there is no fallback to the current Nova document, no client HTML and no browser-local copy. `validatePublication` additionally refuses a changed current version (`stale_version`) and drifted reviewed metadata (`reviewed_metadata_changed`).
+- **Server-generated snapshot.** New `lib/nova-document-html.js` is a deterministic server renderer that mirrors the browser Nova converter. `body_html` and the public `article_html` are derived from the approved document. A crafted request carrying `body_html`, `article_html` or publication state is refused `422 publication_payload_refused`.
+- **Atomic publication.** One D1 batch updates `articles.status='published'`, `body_html`, `article_html` and `updated_at`; marks the approved submission `outcome='published'` with `published_by`/`published_at`; and appends the `published` editorial event (`approved → approved`). Article id, href, owner, `created_by`, destination and article type are preserved, and there is no unpublish window — the old public snapshot stays live until the single replacement commits.
+- **Editorial state.** `editorial_status` stays `approved`; no `published` editorial state was introduced. Publication is reported to the Contributor as **Published — Live in the Education Center** with the workflow badge and locked document, and no new revision cycle is unlocked (R6F).
+- **Separation of duties.** `published_by != submitted_by` is enforced server-side (`403 self_publication_refused`). Reviewer and Publisher may be the same person when both capabilities are legitimately held.
+- **Admin bypass constrained.** For `editorial_status != 'legacy'`, the Admin article status route and the Admin article update route return `409 editorial_workflow_publish_refused`. Legacy articles keep their existing administrative behavior, no legacy content was mass-enrolled, and TPI Video keeps its specialized publication path and remains excluded from the publication queue.
+- **Direct publication control.** The Nova Editorial Workspace still refuses direct publication of enrolled articles (R6C preserved). The settings drawer carried a second `[data-action="publish"]` button that the previous single-element toggle left visible; `applyWorkflowState` now hides every control with that action for enrolled articles.
+- **Notifications.** Publication writes at most one `education` notification, only when the article was not already published, and excludes the submitter. Review actions do not notify, so publication is not announced twice.
+- **No schema change.** `migrations/0062_editorial_capabilities.sql` already provided `editorial_publish`; R6E added no migration.
+
+Verification (observed, 2026-11-05, authoritative 8787 workerd):
+
+- `scripts/verify/tpi-nova-004r6e-publish.mjs`: **60 passed, 0 failed**, exit 0.
+- Firefox Developer Edition authoritative workflow plus Chromium compatibility smoke (disposable fixtures, real HTTP APIs, least-privilege accounts): **80 passed, 0 failed**. Covers the 15-step workflow (create → submit → review → request changes → edit → resubmit → approve → public unchanged → Publisher preview → Publish Approved Version → snapshot replaced → Contributor Published indication → history retained), the published-revision proof that the old body stays live until the Publisher action, and the Publisher-only Administration Center access.
+- Post-cleanup real-data protection: the two real local articles are byte-identical to the pre-test fingerprint `1eea9b37008c9d68`; fixture articles, Nova items, submissions, events, capability grants and publication notifications were removed, leaving 2 articles, 0 submissions, 0 events and 7 entitlements.
+- Regression: Nova 003 105/0; Nova 004 134/0; 004R2 0 failures; 004R4 13/0; 004R5 67/0; 006C 13/13; 004R6B 47/0; 004R6C 23/0; 004R6D 47/0; 004R6E 60/0; Nova typecheck exit 0; Nova Editorial Workspace build exit 0; Administration Center build exit 0; `node --check` exit 0; `git diff --check` exit 0.
+
 ## TPI-NOVA-004R6D — Editorial Review Queue, reviewer actions & changes requested (2026-11-05)
 
 Status: **COMPLETE — EDITORIAL REVIEW QUEUE, REQUEST CHANGES & APPROVAL WORKFLOW IMPLEMENTED — READY FOR AUTHORIZED PUBLICATION.** R6D is local-only; production has not received R6D. Publishing is still not implemented: approval records the reviewed version and never touches `articles.status` or the public snapshot. The Publisher UI is R6E. `tpi-videos.html` and its specialized publish path are unchanged.
