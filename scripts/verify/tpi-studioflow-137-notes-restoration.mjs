@@ -514,8 +514,10 @@ try {
   `).catch(() => false);
   if (enteredStudio) {
     await sleep(1500);
+    // TPI-NOVA-004R6D0: the rail tab presents as Nova Edit but keeps its
+    // `Notes` state key, so select it by the key instead of its visible label.
     const railOpened = await js(`
-      var tab = Array.from(document.querySelectorAll('.right-rail button, .right-rail .tab')).find(function (item) { return (item.textContent || '').trim() === 'Notes'; });
+      var tab = document.querySelector('.right-rail [data-studio-panel-tab="Notes"]');
       if (tab) tab.click();
       return Boolean(tab);
     `).catch(() => false);
