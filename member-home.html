@@ -3143,7 +3143,7 @@
             var articles = data.articles || data.papers || [];
             var drafts = 0, published = 0;
             articles.forEach(function(a) {
-                if (a.status === "published" || a.published) published++;
+                if (a.status === "published") published++;
                 else drafts++;
             });
             document.querySelector("[data-my-drafts]").textContent = String(drafts);

@@ -1,5 +1,9 @@
 # TPI Current Development Status
 
+## TPI-NOVA-004R6G — Member Home published fallback audit (2026-11-05)
+
+Status: **Member Home reads only the authoritative Contributor API.** Audit found `member-home.html` never read `tpiPublishedArticles`; its article data comes solely from `/api/contributors/me/articles`. The one remaining legacy check, `a.published`, was removed from the My Content count so it uses server `status` only. The API never returns `published`, so the count is unchanged. Remaining `tpiPublishedArticles` readers (`includes.js`, `member-login.js`, `published-article.js`, `search.js`, `paper-editor.js`) are outside Member Home and were not changed. No article was migrated, enrolled or modified. Production untouched.
+
 ## TPI-NOVA-004R6F — Published revision lifecycle & legacy workflow containment (2026-11-05)
 
 Status: **COMPLETE — PUBLISHED REVISION LIFECYCLE IMPLEMENTED — NEW EDUCATION CENTER CONTENT WORKFLOW-NATIVE — LEGACY DIRECT PUBLISH CONTAINED TO GRANDFATHERED CONTENT.** R6F is local-only; production has not received R6F and was not deployed to.
