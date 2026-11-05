@@ -4,7 +4,7 @@ import { scrapeNews } from "../../lib/news-scraper.js";
 import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
-import { handleNovaApi } from "../../lib/nova.js";
+import { handleNovaApi, createNovaItemForOwner, updateNovaItemForOwner, getOwnedItem as getOwnedNovaItem, novaItemPayloadForArticle, validateNovaEnvelope } from "../../lib/nova.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
@@ -227,6 +227,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "/articles/reactions") return requireMember(request, env, user => handleSetArticleReaction(request, env, user));
     if (request.method === "GET" && path === "/articles") return handleListArticles(request, env);
     if (request.method === "POST" && path === "/articles") return requireContributor(request, env, user => handleCreateArticle(request, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/nova$/)) return requireContributor(request, env, user => handleArticleNovaLink(path, request, env, user));
+    if (request.method === "GET" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItem(path, env, user));
+    if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItemUpdate(path, request, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
     if (request.method === "GET" && path === "/link-preview") return handleLinkPreview(request, env);
     if (request.method === "GET" && path === "/feed") return handleCommunityFeed(request, env);
@@ -3432,7 +3435,7 @@ async function handleAdminArticleDetail(path, env) {
     SELECT a.id, a.destination, a.href, a.title, a.subtitle,
            a.article_type AS contributionType, a.author, a.source,
            a.body_html AS bodyHtml, a.article_html AS articleHtml, a.labels,
-           a.status, a.created_at AS createdAt, a.updated_at AS updatedAt,
+           a.status, a.nova_item_id AS novaItemId, a.created_at AS createdAt, a.updated_at AS updatedAt,
            c.username AS authorUsername, c.display_name AS authorDisplayName
     FROM articles a
     LEFT JOIN contributors c ON c.id = a.created_by
@@ -3549,12 +3552,111 @@ async function handleListArticles(request, env) {
 
 async function handleContributorArticles(env, user) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, created_at AS createdAt, updated_at AS updatedAt
+    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, nova_item_id AS novaItemId, created_at AS createdAt, updated_at AS updatedAt
     FROM articles
     WHERE created_by = ?
     ORDER BY COALESCE(updated_at, created_at) DESC
   `).bind(user.username, user.id).all();
   return json({ articles: results });
+}
+
+// TPI-NOVA-004R5: attach a Nova working document to an article the caller owns.
+// The server creates the Nova item for the article owner, so the client never
+// supplies a Nova item id and a foreign item cannot be attached. An article keeps
+// at most one link; a repeated call returns the existing link without a duplicate.
+async function handleArticleNovaLink(path, request, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/nova$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  const article = await env.TPI_DB.prepare("SELECT id, title, created_by, nova_item_id, body_html, article_html FROM articles WHERE id = ?").bind(articleId).first();
+  if (!article) return json({ error: "Article not found." }, 404);
+  if (article.created_by !== user.id) return json({ error: "This article belongs to another contributor." }, 403);
+  if (article.nova_item_id) return json({ novaItemId: article.nova_item_id, linked: true });
+  // A legacy article is converted from its existing body. The client converts that body
+  // with the approved HTML-to-Nova converter (browser-only) and sends the document here.
+  // An empty document is refused when the stored article has text, so conversion can
+  // never silently produce a blank working copy.
+  let body = null;
+  try { body = await request.json(); } catch { body = null; }
+  const content = body && body.content ? body.content : null;
+  const storedText = `${article.body_html || ""} ${article.article_html || ""}`.replace(/<[^>]*>/g, " ").trim();
+  if (content) {
+    const check = validateNovaEnvelope(content);
+    if (!check.ok) return json({ error: check.error, code: check.code }, check.status);
+    if (storedText && !novaDocHasText(content.doc)) {
+      return json({ error: "The article text could not be converted. The article was not linked.", code: "nova_conversion_empty" }, 422);
+    }
+  } else if (storedText) {
+    return json({ error: "Convert this article from its body before linking it to Nova.", code: "nova_conversion_required" }, 422);
+  }
+  const created = await novaCreateDocument(env, user, { title: article.title, content });
+  if (!created) return json({ error: "Could not create the Nova document for this article.", code: "nova_create_failed" }, 500);
+  const linked = await env.TPI_DB.prepare("UPDATE articles SET nova_item_id = ? WHERE id = ? AND created_by = ? AND nova_item_id IS NULL")
+    .bind(created, articleId, user.id).run();
+  if (!Number(linked.meta?.changes || 0)) {
+    // Another request linked first; remove the Nova item this request created.
+    await novaPurgeDocument(env, created, user.id);
+    return json({ error: "This article was linked by another request. Refresh and try again.", code: "nova_link_conflict" }, 409);
+  }
+  return json({ novaItemId: created, linked: true }, 201);
+}
+
+// Resolves a linked article's Nova document for its owner. The article must be owned by
+// the caller and linked to a Nova item owned by the same caller; any mismatch is refused
+// and reveals nothing about the other account's item.
+async function resolveArticleNovaItem(path, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/nova\/item$/, "")));
+  if (!articleId) return { response: json({ error: "Article id is required." }, 400) };
+  const article = await env.TPI_DB.prepare("SELECT id, created_by, nova_item_id FROM articles WHERE id = ?").bind(articleId).first();
+  if (!article) return { response: json({ error: "Article not found." }, 404) };
+  if (article.created_by !== user.id) return { response: json({ error: "This article belongs to another contributor." }, 403) };
+  if (!article.nova_item_id) return { response: json({ error: "This article is not linked to a Nova document.", code: "nova_not_linked" }, 409) };
+  const item = await getOwnedNovaItem(env, article.nova_item_id, user.id);
+  if (!item) return { response: json({ error: "The linked Nova document is not available to this contributor.", code: "nova_item_not_found" }, 404) };
+  return { article, item };
+}
+
+async function handleArticleNovaItem(path, env, user) {
+  const resolved = await resolveArticleNovaItem(path, env, user);
+  if (resolved.response) return resolved.response;
+  return json({ item: novaItemPayloadForArticle(resolved.item) }, 200, { "Cache-Control": "no-store" });
+}
+
+// Autosave for a linked article. The write goes through Nova Core (expectedVersion,
+// 409 conflict, trash guard, revisions); the article body is not written here.
+async function handleArticleNovaItemUpdate(path, request, env, user) {
+  const resolved = await resolveArticleNovaItem(path, env, user);
+  if (resolved.response) return resolved.response;
+  let data;
+  try { data = await request.json(); } catch { return json({ error: "Invalid Nova document." }, 400); }
+  const response = await updateNovaItemForOwner(env, user, resolved.article.nova_item_id, data || {});
+  return response;
+}
+
+// Empty Nova document envelope (format version 1), matching lib/nova.js validation.
+const EMPTY_NOVA_CONTENT = Object.freeze({ format: "nova-document", version: 1, doc: { type: "doc", content: [{ type: "paragraph" }] } });
+
+// Creates an empty Nova document owned by `user` through the shared Nova Core create
+// path (no product entitlement gate; the Editorial Workspace is Contributor-gated).
+// True when a TipTap document contains any non-empty text node.
+function novaDocHasText(node) {
+  if (!node || typeof node !== "object") return false;
+  if (node.type === "text" && typeof node.text === "string" && node.text.trim()) return true;
+  return Array.isArray(node.content) && node.content.some(novaDocHasText);
+}
+
+async function novaCreateDocument(env, user, { title, content }) {
+  const response = await createNovaItemForOwner(env, user, { title: title || "Untitled document", content: content || EMPTY_NOVA_CONTENT });
+  if (!response || response.status !== 201) return null;
+  const data = await response.json();
+  return data?.item?.id || null;
+}
+
+// Removes a Nova document created by this request and never linked to an article.
+async function novaPurgeDocument(env, itemId, ownerId) {
+  await env.TPI_DB.batch([
+    env.TPI_DB.prepare("DELETE FROM nova_revisions WHERE item_id = ? AND owner_id = ?").bind(itemId, ownerId),
+    env.TPI_DB.prepare("DELETE FROM nova_items WHERE id = ? AND owner_id = ?").bind(itemId, ownerId)
+  ]);
 }
 
 async function handleDeleteArticle(path, env, user) {

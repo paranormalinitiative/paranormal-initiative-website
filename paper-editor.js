@@ -865,9 +865,143 @@
     }
   }
 
-  document.querySelector("[data-editor-mode]")?.addEventListener("change", event => {
-    setEditorMode(event.target.value);
+  document.querySelector("[data-editor-mode]")?.addEventListener("change", async event => {
+    if (event.target.value !== "nova") {
+      setEditorMode(event.target.value);
+      return;
+    }
+    if (novaLink.itemId) {
+      setEditorMode("nova");
+      return;
+    }
+    // A brand-new article gets its identity from the normal save first, then links to Nova.
+    const needsConfirm = Boolean(currentArticleId);
+    if (needsConfirm && !window.confirm("Convert this article to a Nova document? The original article body is not changed. Nova edits are saved to the Nova document.")) {
+      event.target.value = "legacy";
+      return;
+    }
+    try {
+      if (!currentArticleId) {
+        await saveDraft(false);
+        if (!currentArticleId) throw new Error("Save the article before opening it in Nova.");
+      }
+      await convertLegacyArticleToNova(currentArticleId);
+    } catch (error) {
+      event.target.value = "legacy";
+      setStatus(error.message || "Could not convert this article");
+    }
   });
+
+  document.getElementById("nova-content-editor")?.addEventListener("input", scheduleNovaAutosave);
+  document.getElementById("nova-content-editor")?.addEventListener("keyup", scheduleNovaAutosave);
+
+  // Nova-linked article persistence (TPI-NOVA-004R5). The article row stays the
+  // publication record; the linked Nova item is the working document. Autosave uses
+  // Nova Core expectedVersion, a stale save shows a conflict and keeps local content.
+  const novaLink = { itemId: null, version: null, conflict: false, saving: null, timer: null };
+
+  function novaDraftKey(itemId) {
+    return `tpi-nova-draft:${itemId}`;
+  }
+
+  function keepLocalNovaDraft() {
+    if (!novaLink.itemId || !novaMode.handle) return;
+    try {
+      localStorage.setItem(novaDraftKey(novaLink.itemId), JSON.stringify({
+        doc: novaMode.handle.getDocument(),
+        baseVersion: novaLink.version,
+        savedAt: new Date().toISOString()
+      }));
+    } catch (error) {
+      // Local recovery is best-effort; the conflict message still tells the user.
+    }
+  }
+
+  async function mountLinkedNovaDocument(item) {
+    await loadNovaScripts();
+    // The API returns the stored envelope { format, version, doc }; the editor takes the bare doc.
+    const doc = item.content && item.content.doc ? item.content.doc : item.content;
+    if (!novaMode.handle) {
+      novaMode.handle = window.TPINovaContentEditor.mount(document.getElementById("nova-content-editor"), doc);
+    } else {
+      novaMode.handle.setDocument(doc);
+    }
+    novaMode.doc = doc;
+    novaLink.itemId = item.id;
+    novaLink.version = item.version;
+    novaLink.conflict = false;
+    novaMode.active = true;
+    editor.hidden = true;
+    document.getElementById("nova-content-editor").hidden = false;
+    const modeSelect = document.querySelector("[data-editor-mode]");
+    if (modeSelect) modeSelect.value = "nova";
+  }
+
+  // Opens a linked article in Nova mode. Unlinked legacy articles are not converted here.
+  async function openLinkedNovaArticle(articleId) {
+    const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova/item`, { credentials: "same-origin", cache: "no-store" });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Nova document could not be opened");
+    await mountLinkedNovaDocument(data.item);
+    setStatus("Nova document loaded");
+  }
+
+  // Explicit conversion of a legacy article. The article body is not rewritten: the
+  // Nova document is seeded from it, and the link is stored only after success.
+  async function convertLegacyArticleToNova(articleId) {
+    // Convert the stored body (not the live compose field) so the Nova document is the
+    // article's own content. Unsupported markup is reported, not silently dropped.
+    const stored = await findEditorArticle(articleId);
+    if (!stored) throw new Error("Article could not be found");
+    const sourceHtml = stored.bodyHtml || "";
+    const converted = window.TPINovaConvert.htmlToNovaDoc(sourceHtml);
+    const unsupportedNotice = converted.unsupported.length
+      ? `Some markup was not converted (${converted.unsupported.join(", ")}). The original article is unchanged.`
+      : "";
+    const linkResponse = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: { format: "nova-document", version: 1, doc: converted.doc } })
+    });
+    const linkData = await linkResponse.json().catch(() => ({}));
+    if (!linkResponse.ok && linkResponse.status !== 409) throw new Error(linkData.error || "Could not convert this article");
+    await openLinkedNovaArticle(articleId);
+    if (unsupportedNotice) {
+      // Persist the notice: setStatus would revert it to "Draft ready" after 1.8s.
+      window.clearTimeout(setStatus.timer);
+      status.textContent = unsupportedNotice;
+    }
+  }
+
+  // Saves the live Nova document through Nova Core. Returns false on conflict or failure.
+  async function saveLinkedNovaDocument() {
+    if (!novaLink.itemId || novaLink.conflict || !novaMode.handle) return false;
+    const articleId = currentArticleId;
+    if (!articleId) return false;
+    const doc = novaMode.handle.getDocument();
+    const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova/item`, {
+      method: "PUT",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: { format: "nova-document", version: 1, doc }, expectedVersion: novaLink.version })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (response.status === 409) {
+      novaLink.conflict = true;
+      keepLocalNovaDraft();
+      setStatus("Another save changed this document. Your local copy is kept. Reload to review the newest version.");
+      return false;
+    }
+    if (!response.ok) {
+      setStatus(data.error || "Nova save failed");
+      return false;
+    }
+    novaLink.version = data.item.version;
+    try { localStorage.removeItem(novaDraftKey(novaLink.itemId)); } catch (error) { /* best-effort */ }
+    setStatus("Nova document saved");
+    return true;
+  }
 
   function buildArticleHtml() {
     return cleanHtml(getDraftHtml(), true).trim();
@@ -1861,6 +1995,11 @@ ${articleHtml}
   }
 
   async function saveDraft(isAutosave) {
+    if (novaMode.active && novaLink.itemId) {
+      // Linked Nova article: the Nova document is the working copy; the article body is not written.
+      await saveLinkedNovaDocument();
+      return;
+    }
     if (activeView === "html") syncHtmlToCompose();
     const record = { ...buildPublishedRecord(), status: "draft" };
     if (window.TPIApi && await window.TPIApi.isAvailable()) {
@@ -1890,6 +2029,16 @@ ${articleHtml}
     window.clearTimeout(autosaveTimer);
     autosaveTimer = window.setTimeout(() => {
       saveDraft(true);
+    }, 2500);
+  }
+
+  // Persists the local Nova copy as the user types so a conflict or reload keeps it.
+  function scheduleNovaAutosave() {
+    if (!novaMode.active || !novaLink.itemId) return;
+    keepLocalNovaDraft();
+    window.clearTimeout(novaLink.timer);
+    novaLink.timer = window.setTimeout(() => {
+      saveLinkedNovaDocument();
     }, 2500);
   }
 
@@ -2289,7 +2438,16 @@ ${articleHtml}
     }
 
     if (!article) return false;
+    currentArticleId = article.id;
     loadArticleIntoEditor(article);
+    if (article.novaItemId) {
+      // Linked article: open its Nova document. Never convert an unlinked legacy article here.
+      try {
+        await openLinkedNovaArticle(article.id);
+      } catch (error) {
+        setStatus(error.message || "Nova document could not be opened");
+      }
+    }
     return true;
   }
 

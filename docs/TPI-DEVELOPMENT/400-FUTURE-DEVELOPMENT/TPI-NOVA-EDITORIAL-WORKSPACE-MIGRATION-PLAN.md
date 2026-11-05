@@ -298,3 +298,63 @@ the mode switch. `nova-app` typecheck and the Content Editor build pass.
 
 **Permission rule (recorded, not implemented).** Contributor access does not
 automatically grant publishing authority.
+
+## 18. TPI-NOVA-004R5 — structured document persistence linked to existing articles
+
+Production has not received the 0059/0060 Nova Editorial Workspace persistence
+work under this milestone.
+
+**Foundation.** `0059_nova_core.sql` provides the Nova Core tables.
+`0060_article_nova_link.sql` adds nullable `articles.nova_item_id` with a
+partial unique index. Both are applied locally only. No schema work was added
+beyond these two migrations.
+
+**Option A.** One article links to one Nova document. The `articles` row remains
+the publication record. There is no cascade and no automatic unlinking. The
+server creates the Nova item and ignores any client-supplied `novaItemId`.
+Duplicate links return the existing item and never create a second one.
+
+**Access.** Contributors reach `POST /api/articles/:id/nova` and
+`GET|PUT /api/articles/:id/nova/item`. Standalone `/api/nova/*` stays gated by
+Creator Studio access. Article ownership is `created_by === user.id`.
+
+**Conversion.** HTML→Nova conversion runs in the browser through
+`TPINovaConvert.htmlToNovaDoc`. The server refuses empty documents when the
+stored article has text (`nova_conversion_empty`, 422) and refuses a
+non-empty legacy article without a conversion document
+(`nova_conversion_required`, 422). A new blank article is allowed.
+
+**Persistence and recovery.** Autosave uses `expectedVersion`. A stale save
+returns 409, the newer document is preserved, and the stale local content stays
+recoverable. Local recovery is keyed `tpi-nova-draft:<novaItemId>`. Revisions
+live in `nova_revisions`. Restore creates a new current version and leaves
+article metadata unchanged.
+
+**Lifecycle.** Archive and trash of a linked Nova item leave the article
+untouched. Article delete leaves the Nova item in place. Both are covered by
+the server verifier.
+
+**Publication.** The publish snapshot is produced client-side (`novaDocToHtml`)
+and written through the existing publish path. Ordinary Nova autosave never
+rewrites `body_html`. TPI Video stays on the legacy path.
+
+**Verified.** The server verifier passes 67/67. Firefox Developer Edition passes
+30 browser-observed checks (11 + 19) as a Contributor without Studio access,
+including standalone `/api/nova/*` 403, explicit conversion, the 422 refusals,
+unsupported-markup warning, autosave, reload, stale-save conflict, per-item
+recovery, live preview, publish snapshot, public rendering and TPI Video. Chromium
+passes 27 browser-observed checks (11 + 16), including duplicate-link prevention.
+Firefox remains authoritative.
+
+**Deferred Editorial Workspace UI.** Contributor-facing revision history interface
+and Contributor-facing archive/trash/restore interface. Nova Core lifecycle
+behaviour is already verified at the persistence/API layer; these are
+product-surface enhancements, not blockers for structured document persistence.
+
+Revision persistence is operational in Nova Core; Contributor-facing revision-history
+controls are deferred to a later Editorial Workspace milestone. Nova lifecycle
+separation is verified at the persistence/API layer. Contributor-facing
+archive/trash/restore controls are deferred.
+
+**Production has not received migrations 0059/0060 or the 004R5 application
+changes.**

@@ -4813,3 +4813,99 @@ Node remains the existing `/opt/homebrew/bin/node` v25.9.0. The EOL Node 25
 runtime did not cause this defect; adopting the installed Node 24.15.0 Active
 LTS by pinning the service's Node path is recorded as a required follow-up
 rather than a global Node change.
+
+## TPI-NOVA-004R5 — Nova structured document persistence linked to existing article records — 2026-11-04
+
+**Local schema.** Migration `0059_nova_core.sql` (Nova Core tables, applied
+locally) and `0060_article_nova_link.sql` (nullable `articles.nova_item_id` with
+a partial unique index, applied locally) are in place. No production migration
+was run. Production has not received the 0059/0060 Nova Editorial Workspace
+persistence work under this milestone.
+
+**Access.** Contributor access reaches `POST /api/articles/:id/nova` and
+`GET|PUT /api/articles/:id/nova/item`. Standalone `/api/nova/*` remains gated by
+Creator Studio access. Ownership is `created_by === user.id`. User B is rejected
+on convert, read, update and relink of User A's article.
+
+**Adapter.** One article links to one Nova document (Option A). The `articles`
+row stays the publication record. The server creates the Nova item and ignores
+any client-supplied `novaItemId`. A duplicate link returns the existing item
+(200) and never creates a second one. Nova Core helpers
+`createNovaItemForOwner` and `updateNovaItemForOwner` are shared by the
+standalone routes and the article adapter. `lib/nova.js` never writes to
+`articles`.
+
+**Conversion.** HTML→Nova conversion runs in the browser through
+`TPINovaConvert.htmlToNovaDoc`. The server validates the envelope and refuses an
+empty document when the stored article has text (422 `nova_conversion_empty`).
+A non-empty legacy article with no conversion document is refused (422
+`nova_conversion_required`). A new blank article is allowed. Unsupported markup
+is reported, not silently claimed as full fidelity.
+
+**Persistence.** Autosave uses `PUT .../nova/item` with `expectedVersion`. The
+version advances and reload returns the saved structured document. A stale
+version returns 409 with the newer document preserved, and the stale local
+content remains recoverable. There is no last-write-wins. The local recovery
+draft key is `tpi-nova-draft:<novaItemId>`, so it is scoped to one Nova item and
+therefore to one article. Revisions live in `nova_revisions`, not
+`admin_audit_logs`. Restore creates a new current version and leaves article
+metadata unchanged.
+
+**Lifecycle separation.** Archive and trash of a linked Nova item do not change
+article status, body, destination, href or `nova_item_id`. Article delete does
+not permanently delete the Nova item. There is no cascade and no automatic
+unlinking.
+
+**Publication.** The publish snapshot is produced client-side (`novaDocToHtml`)
+and written to `body_html`/`article_html` only through the existing publish
+path. Ordinary Nova autosave never rewrites the publication body. The server
+never writes `body_html` from Nova. `id`, `href`, `destination`, `article_type`,
+`author` and `created_by` are preserved. TPI Video stays on the legacy
+`tpi-videos.html` path with no Nova document.
+
+**Verification.**
+- Server verifier `scripts/verify/tpi-nova-004r5-persistence.mjs` on an isolated
+  port: 67 passed, 0 failed (includes the linked archive, trash and restore
+  scenario with a dual-entitled account, and article-delete separation).
+- Firefox Developer Edition (authoritative, isolated disposable profile) against
+  the live 8787 Worker as a Contributor without Studio access: 30 browser-observed
+  checks passed, 0 failed, in two runs (11 + 19). Covered: standalone
+  `/api/nova/items` returns 403; legacy article opens without auto-conversion;
+  explicit conversion through `TPINovaConvert.htmlToNovaDoc` creates one linked
+  item; unsupported-markup warning persists and the article body is unchanged;
+  422 `nova_conversion_required` and `nova_conversion_empty` refusals; new blank
+  article allowed; `expectedVersion` autosave; reload reopens the same item;
+  stale-save conflict shows the newer server version and keeps the local copy;
+  recovery is scoped per item; live preview shows the newest edits; publish
+  snapshot from Nova to `body_html`; publication metadata preserved; public
+  `/api/articles` and `published-article.html` render the edit; TPI Video remains
+  legacy with no Nova link. Firefox console: no page errors.
+- Chromium smoke (Chrome 157, Selenium, disposable profile): 27 browser-observed
+  checks passed, 0 failed, in two runs (11 + 16). Covered the same workflow,
+  including duplicate-link prevention (repeat link returns the same item, no new
+  Nova item). Firefox remains authoritative.
+- Regression on the current tree: Nova Core 003 105/105; 004R2 14/0; 004R4 13/0;
+  004R5 persistence verifier 67/0; 006C 13/13; `nova-app` typecheck exit 0;
+  Content Editor Nova build exit 0; `node --check` on changed JS exit 0;
+  `git diff --check` exit 0.
+
+**Existing data.** Both real published articles remain present with their
+original IDs, URLs, destinations, authorship and bodies, and with
+`nova_item_id = NULL`. Final fingerprint comparison against the 004R5E baseline:
+both articles match on title, `body_html`, `article_html` (NULL), destination,
+href, status, created_by, article_type and `nova_item_id`. Disposable articles and Nova items created by browser acceptance were
+removed by targeted deletes of their recorded IDs. Final local counts: articles
+2, published 2, drafts 0, linked 0, Nova items 0, revisions 0, contributors 20.
+
+**Deferred Editorial Workspace UI.** These are product-surface enhancements, not
+blockers for structured document persistence:
+- Contributor-facing revision history interface.
+- Contributor-facing archive/trash/restore interface.
+
+Revision persistence is operational in Nova Core; Contributor-facing revision-history
+controls are deferred to a later Editorial Workspace milestone. Nova lifecycle
+separation is verified at the persistence/API layer. Contributor-facing
+archive/trash/restore controls are deferred.
+
+**Production has not received migrations 0059/0060 or the 004R5 application
+changes.**

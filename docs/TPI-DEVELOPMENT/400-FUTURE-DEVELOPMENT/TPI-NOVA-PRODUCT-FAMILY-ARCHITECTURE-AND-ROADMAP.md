@@ -1435,3 +1435,37 @@ Owner visual acceptance of this pass is pending. Local review URL:
   editor authority, publishing authority and administrative authority. This is
   recorded only; the legacy direct-publish behaviour remains until the controlled
   migration phase.
+
+### 21.11 TPI-NOVA-004R5 structured document persistence linked to existing articles
+
+Production has not received the 0059/0060 Nova Editorial Workspace persistence
+work under this milestone.
+
+Nova documents persist locally through `0059_nova_core.sql`. A nullable
+`articles.nova_item_id` link (`0060_article_nova_link.sql`) connects an existing
+article to one Nova document (Option A). The article row remains the publication
+record; the Nova document is the working source. Contributors use article-scoped
+routes. Standalone `/api/nova/*` stays Creator Studio-gated. Conversion runs in
+the browser, and the server refuses empty conversions of non-empty legacy
+articles. Autosave uses `expectedVersion` with 409 on conflict and no
+last-write-wins. Recovery is keyed per Nova item. Revisions live in
+`nova_revisions`. Archive, trash and article delete keep the two records
+separate. Publication writes HTML through the existing path only.
+
+Verified: the server verifier passes 67/67. Firefox Developer Edition passes 30
+browser-observed checks (11 + 19) as a Contributor without Studio access,
+covering conversion, unsupported-markup reporting, empty-conversion refusals,
+autosave, reload, stale-save conflict, per-item recovery, live preview, publish
+snapshot, public rendering and TPI Video. Chromium passes 27 browser-observed
+checks (11 + 16), including duplicate-link prevention. Firefox remains
+authoritative.
+
+Deferred Editorial Workspace UI: Contributor-facing revision history and
+Contributor-facing archive/trash/restore controls. Revision persistence is
+operational in Nova Core; Contributor-facing revision-history controls are
+deferred to a later Editorial Workspace milestone. Nova lifecycle separation is
+verified at the persistence/API layer. Contributor-facing archive/trash/restore
+controls are deferred. These are product-surface enhancements, not blockers for
+structured document persistence.
+
+Production has not received migrations 0059/0060 or the 004R5 application changes.
