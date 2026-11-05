@@ -11,10 +11,12 @@
 // Exit status: 0 when every expected refusal happens, 1 otherwise.
 
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, readFileSync, appendFileSync, unlinkSync, renameSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
+  approvedStudioflowCommit,
   buildManifest,
   collectSourceIdentity,
   computeManifestDigest,
@@ -58,6 +60,7 @@ const repo = join(sandbox, "repo");
 const remote = join(sandbox, "remote.git");
 const candidateRoot = join(repo, ".local-dev", "release-candidate");
 
+const gitCwdFirst = (cwd, args) => git(args, cwd);
 function git(args, cwd = repo) {
   return execFileSync("git", ["-c", "user.email=ops005@tpi.invalid", "-c", "user.name=TPI OPS-005", ...args], { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 }
@@ -106,11 +109,33 @@ writeFile("scripts/tpi-release.mjs", "// fixture release entry\n");
 writeFile("scripts/deploy-production-guarded.mjs", "// fixture deploy guard\n");
 writeFile("scripts/release-certification.mjs", "// fixture certification library\n");
 writeFile("scripts/release-tier.mjs", "// fixture tier classifier\n");
-writeFile("scripts/studioflow-release-baseline.json", JSON.stringify({ productionSchemaRequirements: { requiredTables: ["studio_notes"] } }, null, 2) + "\n");
 writeFile("index.html", "<!doctype html><title>TPI</title>\n");
 writeFile("styles.css", ":root { --tpi: #222; }\n");
 writeFile("studio/index.html", "<!doctype html><title>Studio</title>\n");
 writeFile(".gitignore", ".local-dev/\n");
+
+// StudioFlow provenance fixture: an approved StudioFlow repository whose commit
+// produced the staged bundle, and a baseline pinning that commit and bundle.
+const sfFixture = join(sandbox, "studioflow-approved");
+mkdirSync(sfFixture, { recursive: true });
+execFileSync("git", ["init", "-q", sfFixture]);
+writeFileSync(join(sfFixture, "app.txt"), "approved\n");
+execFileSync("git", ["-C", sfFixture, "add", "-A"]);
+execFileSync("git", ["-c", "user.email=ops005@tpi.invalid", "-c", "user.name=TPI OPS-005", "-C", sfFixture, "commit", "-q", "-m", "approved"]);
+const sfApproved = execFileSync("git", ["-C", sfFixture, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+const sfJs = "console.log('approved bundle');\n";
+const sfCss = ".approved{color:#000}\n";
+writeFile("studio/assets/index-approved.js", sfJs);
+writeFile("studio/assets/index-approved.css", sfCss);
+writeFile("studio/index.html", '<script src="./assets/index-approved.js"></script><link href="./assets/index-approved.css">');
+writeFile("scripts/studioflow-release-baseline.json", JSON.stringify({
+  productionSchemaRequirements: { requiredTables: ["studio_notes"] },
+  source: { approvedCommit: sfApproved },
+  expectedAssets: {
+    javaScript: { name: "index-approved.js", sha256: createHash("sha256").update(sfJs).digest("hex") },
+    css: { name: "index-approved.css", sha256: createHash("sha256").update(sfCss).digest("hex") },
+  },
+}, null, 2) + "\n");
 
 const baseCommit = commit("fixture release base");
 console.log(`fixture repository: ${repo}\ntier base commit:   ${baseCommit}\n`);
@@ -127,7 +152,7 @@ function stageAndCertify() {
   for (const name of ["index.html", "styles.css"]) cpSync(join(repo, name), join(candidateRoot, "assets", name));
   mkdirSync(join(candidateRoot, "assets", "studio"), { recursive: true });
   cpSync(join(repo, "studio/index.html"), join(candidateRoot, "assets", "studio", "index.html"));
-  const source = collectSourceIdentity(repo, { branch: BRANCH, studioFlowRoot: repo });
+  const source = collectSourceIdentity(repo, { branch: BRANCH, studioFlowRoot: sfFixture });
   const manifest = buildManifest({
     candidateRoot,
     source,
@@ -140,7 +165,7 @@ function stageAndCertify() {
   writeCertification(candidateRoot, manifest);
   return manifest;
 }
-const verify = () => verifyCertification({ repoRoot: repo, candidateRoot, studioFlowRoot: repo });
+const verify = () => verifyCertification({ repoRoot: repo, candidateRoot, studioFlowRoot: sfFixture });
 
 let manifest = stageAndCertify();
 
@@ -166,7 +191,7 @@ record(
   const previous = process.env.STUDIOFLOW_ROOT;
   process.env.STUDIOFLOW_ROOT = repo;
   try {
-    expectAccepted("verification resolves the StudioFlow root the way certification did", () => verifyCertification({ repoRoot: repo, candidateRoot }));
+    expectAccepted("verification resolves the StudioFlow root the way certification did", () => verifyCertification({ repoRoot: repo, candidateRoot, studioFlowRoot: sfFixture }));
   } finally {
     if (previous === undefined) delete process.env.STUDIOFLOW_ROOT;
     else process.env.STUDIOFLOW_ROOT = previous;
@@ -380,6 +405,46 @@ record(`a change that also touches HTML escalates to Tier 2 (got ${htmlTier.leve
 
 const ambiguousTier = classifyReleaseTier({ repoRoot: repo, head, explicitBase: "0000000000000000000000000000000000000000" });
 record(`an unresolvable classification base escalates to Tier 1 (got ${ambiguousTier.level})`, ambiguousTier.level === 1 ? "PASS" : "FAIL", JSON.stringify(ambiguousTier.reasons));
+
+// ---------------------------------------------------------------------------
+// StudioFlow provenance (TPI-NOVA-004R6D0D). The certified StudioFlow source is
+// the baseline's approved commit, never the working copy's HEAD, and a staged
+// bundle that does not match the baseline must refuse the seal.
+// ---------------------------------------------------------------------------
+const approvedSfCommit = sfApproved;
+const baselineFile = join(repo, "scripts", "studioflow-release-baseline.json");
+const pristineBaseline = readFileSync(baselineFile, "utf8");
+const pristineStaged = { js: readFileSync(join(repo, "studio/assets/index-approved.js"), "utf8"), css: readFileSync(join(repo, "studio/assets/index-approved.css"), "utf8") };
+
+// A dirty, unrelated StudioFlow working copy whose HEAD is a different commit.
+writeFileSync(join(sfFixture, "app.txt"), "dirty unrelated work\n");
+execFileSync("git", ["-C", sfFixture, "add", "-A"]);
+execFileSync("git", ["-c", "user.email=ops005@tpi.invalid", "-c", "user.name=TPI OPS-005", "-C", sfFixture, "commit", "-q", "-m", "unrelated working copy"]);
+const unrelatedHead = execFileSync("git", ["-C", sfFixture, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+record("fixture working-copy HEAD differs from the approved commit", unrelatedHead !== approvedSfCommit ? "PASS" : "FAIL");
+
+const provenanceSource = collectSourceIdentity(repo, { branch: BRANCH, studioFlowRoot: sfFixture });
+record(
+  "certified provenance records the baseline approved commit, not the working-copy HEAD",
+  provenanceSource.studioflowCommit === approvedSfCommit && provenanceSource.studioflowWorkingTreeHead === unrelatedHead ? "PASS" : "FAIL",
+  `studioflowCommit=${provenanceSource.studioflowCommit} workingTreeHead=${provenanceSource.studioflowWorkingTreeHead}`,
+);
+
+expectRefusal("a staged JavaScript bundle that differs from the baseline is refused", "STUDIOFLOW_ASSET_MISMATCH", () => {
+  writeFileSync(join(repo, "studio/assets/index-approved.js"), "console.log('tampered');\n");
+  try { approvedStudioflowCommit(repo, sfFixture, gitCwdFirst); } finally { writeFileSync(join(repo, "studio/assets/index-approved.js"), pristineStaged.js); }
+});
+expectRefusal("a staged CSS bundle that differs from the baseline is refused", "STUDIOFLOW_ASSET_MISMATCH", () => {
+  writeFileSync(join(repo, "studio/assets/index-approved.css"), ".tampered{}\n");
+  try { approvedStudioflowCommit(repo, sfFixture, gitCwdFirst); } finally { writeFileSync(join(repo, "studio/assets/index-approved.css"), pristineStaged.css); }
+});
+expectRefusal("an approved commit absent from the StudioFlow repository is refused", "STUDIOFLOW_COMMIT_UNAVAILABLE", () => {
+  writeFileSync(baselineFile, pristineBaseline.replace(approvedSfCommit, "1111111111111111111111111111111111111111"));
+  try { approvedStudioflowCommit(repo, sfFixture, gitCwdFirst); } finally { writeFileSync(baselineFile, pristineBaseline); }
+});
+expectAccepted("matching baseline assets and approved commit are accepted", () => {
+  if (approvedStudioflowCommit(repo, sfFixture, gitCwdFirst) !== approvedSfCommit) throw new Error("approved commit not returned");
+});
 
 // ---------------------------------------------------------------------------
 rmSync(sandbox, { recursive: true, force: true });

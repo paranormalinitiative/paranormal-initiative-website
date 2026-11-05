@@ -138,6 +138,46 @@ export function hashFileList(repoRoot, paths) {
   return { files: present, missing, sha256: sha256(Buffer.from(present.map((entry) => `${entry.path}:${entry.sha256}`).join("\n"), "utf8")) };
 }
 
+function readStudioflowHead(studioflowRoot, gitRunner) {
+  try {
+    return existsSync(join(studioflowRoot, ".git")) ? gitRunner(studioflowRoot, ["rev-parse", "HEAD"]) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The StudioFlow commit that produced the staged bytes: the baseline's
+ * approvedCommit, accepted only when the staged JavaScript and CSS match the
+ * baseline's recorded names and SHA-256 and the commit exists in the StudioFlow
+ * repository. Refuses otherwise, so the seal can never name a source it cannot
+ * prove.
+ */
+export function approvedStudioflowCommit(repoRoot, studioflowRoot, gitRunner = git) {
+  const baselinePath = join(repoRoot, "scripts", "studioflow-release-baseline.json");
+  const baseline = JSON.parse(readFileSync(baselinePath, "utf8"));
+  const approved = String(baseline?.source?.approvedCommit || "");
+  if (!/^[0-9a-f]{40}$/.test(approved)) refuse("STUDIOFLOW_BASELINE_INVALID", "baseline source.approvedCommit must be a full 40-character commit");
+  const js = baseline.expectedAssets?.javaScript;
+  const css = baseline.expectedAssets?.css;
+  const stagedDirectory = join(repoRoot, "studio", "assets");
+  for (const [label, asset] of [["JavaScript", js], ["CSS", css]]) {
+    const staged = join(stagedDirectory, String(asset?.name || ""));
+    if (!asset?.name || !existsSync(staged)) refuse("STUDIOFLOW_ASSET_MISSING", `staged StudioFlow ${label} asset ${asset?.name || "(unnamed)"} is missing`);
+    if (sha256File(staged) !== asset.sha256) refuse("STUDIOFLOW_ASSET_MISMATCH", `staged StudioFlow ${label} asset ${asset.name} does not match the baseline sha256`, { asset: asset.name });
+  }
+  const entry = join(repoRoot, "studio", "index.html");
+  const html = existsSync(entry) ? readFileSync(entry, "utf8") : "";
+  if (!html.includes(js.name) || !html.includes(css.name)) refuse("STUDIOFLOW_ENTRY_MISMATCH", "studio/index.html does not reference the baseline JavaScript and CSS assets");
+  try {
+    const resolved = gitRunner(studioflowRoot, ["rev-parse", "--verify", `${approved}^{commit}`]);
+    if (resolved !== approved) throw new Error("resolved to a different commit");
+  } catch {
+    refuse("STUDIOFLOW_COMMIT_UNAVAILABLE", `approved StudioFlow commit ${approved} is not available in ${studioflowRoot}`, { approved });
+  }
+  return approved;
+}
+
 /** Everything the release must re-prove immediately before deploying. */
 export function collectSourceIdentity(repoRoot, { branch, studioFlowRoot, gitRunner = git } = {}) {
   const websiteCommit = gitRunner(repoRoot, ["rev-parse", "HEAD"]);
@@ -145,12 +185,11 @@ export function collectSourceIdentity(repoRoot, { branch, studioFlowRoot, gitRun
   const status = gitRunner(repoRoot, ["status", "--porcelain=v1", "--untracked-files=all"]);
   const remote = (gitRunner(repoRoot, ["ls-remote", "origin", `refs/heads/${currentBranch}`]).split(/\s+/)[0] || "");
   const studioflowRoot = studioFlowRoot || process.env.STUDIOFLOW_ROOT || "/Users/toddknipple/Documents/StudioFlow/web";
-  let studioflowCommit = null;
-  try {
-    studioflowCommit = existsSync(join(studioflowRoot, ".git")) ? gitRunner(studioflowRoot, ["rev-parse", "HEAD"]) : null;
-  } catch {
-    studioflowCommit = null;
-  }
+  // The certified StudioFlow source is the baseline's approved commit, the one
+  // that produced the staged bytes. The working copy's HEAD is only a diagnostic:
+  // that tree may be dirty or on another branch, so it cannot attest the bytes.
+  const studioflowWorkingTreeHead = readStudioflowHead(studioflowRoot, gitRunner);
+  const studioflowCommit = approvedStudioflowCommit(repoRoot, studioflowRoot, gitRunner);
   return {
     websiteCommit,
     branch: currentBranch,
@@ -159,6 +198,7 @@ export function collectSourceIdentity(repoRoot, { branch, studioFlowRoot, gitRun
     remoteCommit: remote,
     remoteParity: remote && remote === websiteCommit ? "exact" : remote ? "diverged" : "missing",
     studioflowCommit,
+    studioflowWorkingTreeHead,
     dependencyLock: hashFileList(repoRoot, DEPENDENCY_LOCK_FILES),
     // Always hash the resolved StudioFlow root. Verification passes no explicit
     // root, so gating this on the raw parameter made the two runs compare
