@@ -127,7 +127,26 @@
   };
 
   function getDestinationLabel() {
-    return destinationInput.options[destinationInput.selectedIndex].textContent.trim();
+    const option = destinationInput.options[destinationInput.selectedIndex];
+    return option ? option.textContent.trim() : "";
+  }
+
+  // Grandfathered records may carry a destination that predates the current list
+  // (for example the legacy local-ops011 article). Keep it representable so their
+  // publish dialog still resolves a label instead of leaving the select deselected.
+  function setDestinationValue(destination) {
+    if (!destination) return;
+    const known = Array.from(destinationInput.options).some(option => option.value === destination);
+    if (!known) {
+      const option = document.createElement("option");
+      option.value = destination;
+      option.textContent = destination
+        .replace(/\.html$/, "")
+        .replace(/[-_]+/g, " ")
+        .replace(/\b[a-z]/g, letter => letter.toUpperCase());
+      destinationInput.appendChild(option);
+    }
+    destinationInput.value = destination;
   }
 
   function getContributionType() {
@@ -961,10 +980,22 @@
     // TPI-NOVA-004R6E: publication is reported separately from editorial_status.
     // An approved article whose snapshot is live says Published; the editorial
     // state itself stays 'approved' until R6F opens the next revision round.
-    const isPublished = status !== "legacy" && String(payload?.status || "") === "published" && Boolean(payload?.publishedAt);
+    // TPI-NOVA-004R6F: publication (is the public snapshot live?) comes from the
+    // server's canonical publicationStatus, not from the editorial state, so a
+    // draft revision never reads as an unpublished article.
+    const isPublished = String(payload?.publicationStatus || "") === "published";
     const badge = document.querySelector("[data-workflow-status]");
     if (badge) {
-      badge.textContent = isPublished ? WORKFLOW_LABELS.published : (WORKFLOW_LABELS[status] || status);
+      // Workflow (where is the current editorial round?) is shown separately, so an
+      // open revision reads Published · Draft Revision.
+      const publicationText = isPublished ? "Published" : "Not published";
+      const workflowLabel = WORKFLOW_LABELS[status] || status;
+      const workflowText = status === "draft" && isPublished
+        ? "Draft Revision"
+        : status === "approved" && isPublished
+          ? "Approved"
+          : workflowLabel;
+      badge.textContent = isPublished ? `${publicationText} · ${workflowText}` : workflowLabel;
       badge.hidden = !isLinked;
     }
     // Every control with the same action must follow the same rule; the settings
@@ -999,6 +1030,9 @@
     show("workflow-submit", isLinked && (status === "legacy" || status === "draft"));
     show("workflow-resubmit", isLinked && status === "changes_requested");
     show("workflow-withdraw", isLinked && status === "submitted");
+    // TPI-NOVA-004R6F: the server decides eligibility (canStartRevision); the button
+    // only reflects it.
+    show("workflow-start-revision", isLinked && payload?.canStartRevision === true);
     // Enrolled articles never get the direct Publish action; the server refuses it too.
     show("publish", isVideo || !enrolled);
     if (novaMode.handle && novaMode.handle.setReadOnly) {
@@ -1057,6 +1091,27 @@
   document.querySelector('[data-action="workflow-submit"]')?.addEventListener("click", () => runWorkflowAction("submit"));
   document.querySelector('[data-action="workflow-resubmit"]')?.addEventListener("click", () => runWorkflowAction("resubmit"));
   document.querySelector('[data-action="workflow-withdraw"]')?.addEventListener("click", () => runWorkflowAction("withdraw"));
+
+  // TPI-NOVA-004R6F: opens the next revision of a published article. The public
+  // snapshot is not touched; only the Nova working document becomes editable.
+  document.querySelector('[data-action="workflow-start-revision"]')?.addEventListener("click", async () => {
+    const articleId = currentArticleId;
+    if (!articleId || !novaLink.itemId) return;
+    const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/revision/start`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({})
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setStatus(data.error || "The revision could not be started");
+      await refreshWorkflowState(articleId);
+      return;
+    }
+    setStatus("Draft revision started. The published version stays live until the new revision is approved and published.");
+    await refreshWorkflowState(articleId);
+  });
 
   // Opens a linked article in Nova mode. Unlinked legacy articles are not converted here.
   async function openLinkedNovaArticle(articleId) {
@@ -1883,7 +1938,7 @@ ${articleHtml}
     currentArticleId = article.id;
     titleInput.value = article.title || getCurrentUntitledTitle();
     subtitleInput.value = article.subtitle || "";
-    if (article.destination) destinationInput.value = article.destination;
+    if (article.destination) setDestinationValue(article.destination);
     if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
     updateVideoFieldsVisibility();
     if (article.author) authorInput.value = article.author;
@@ -2002,7 +2057,7 @@ ${articleHtml}
         setStatus("No legacy pages remain to convert");
         return;
       }
-      if (!window.confirm(`Convert ${legacyArticles.length} legacy page${legacyArticles.length === 1 ? "" : "s"} into published editable articles?`)) return;
+      if (!window.confirm(`Convert ${legacyArticles.length} legacy page${legacyArticles.length === 1 ? "" : "s"} into editable drafts? They are not published; each one must go through editorial review.`)) return;
 
       const useCloudflare = Boolean(window.TPIApi && await window.TPIApi.isAvailable());
       const localArticles = useCloudflare ? [] : getPublishedArticles();
@@ -2012,21 +2067,26 @@ ${articleHtml}
         setStatus(`Converting ${converted + 1} of ${legacyArticles.length}: ${legacyArticle.title}`);
         const record = await buildLegacyConversionRecord(legacyArticle);
         if (useCloudflare) {
+          // TPI-NOVA-004R6F: converted pages are created as drafts. Publication is an
+          // editorial workflow step, never a side effect of the historical import.
           await window.TPIApi.createArticle({
             ...record,
             articleHtml: record.fullHtml || "",
-            status: "published"
+            status: "draft"
           });
         } else {
+          // The offline mirror follows the same rule as the server so a converted
+          // page never reads as published in a static preview.
+          const draftRecord = { ...record, status: "draft" };
           const existingIndex = localArticles.findIndex(article => article.id === record.id);
-          if (existingIndex >= 0) localArticles[existingIndex] = record;
-          else localArticles.push(record);
+          if (existingIndex >= 0) localArticles[existingIndex] = draftRecord;
+          else localArticles.push(draftRecord);
         }
         converted += 1;
       }
 
       if (!useCloudflare) savePublishedArticles(localArticles);
-      setStatus(`Converted ${converted} legacy page${converted === 1 ? "" : "s"} into published articles`);
+      setStatus(`Converted ${converted} legacy page${converted === 1 ? "" : "s"} into draft articles`);
       await renderContentLibraryList();
     } catch (error) {
       setStatus(error.message || "Bulk legacy conversion failed");
@@ -2175,6 +2235,14 @@ ${articleHtml}
 
     if (isTpiVideoType()) {
       await publishTpiVideo();
+      return;
+    }
+
+    // TPI-NOVA-004R6F: only grandfathered legacy articles keep direct publication.
+    // New normal content is workflow-native, so its public snapshot changes only
+    // through editorial publication. The server enforces the same rule.
+    if (workflowState.status !== "legacy") {
+      setStatus("This article is in the editorial workflow. Save it and submit for review; publication happens after editorial approval.");
       return;
     }
 

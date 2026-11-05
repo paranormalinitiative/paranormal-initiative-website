@@ -481,8 +481,26 @@ the public Education Center snapshot. Enrolled articles can no longer be publish
 direct Contributor or Admin routes; legacy articles keep their existing behavior and TPI Video
 keeps its specialized publish path. Both phases are local-only; production has not received them.
 
-The persisted published-revision lifecycle (opening the next round after publication) and the
-retirement of legacy direct publishing are the next Nova phase, R6F, and remain open work.
+TPI-NOVA-004R6F has implemented the published-revision lifecycle — an owner-scoped Start New
+Revision that guards `approved → draft`, records a `revision_started` event and leaves the
+published snapshot live while the new round is edited, reviewed and republished on the same
+article id and URL — and has contained legacy direct publishing: new normal Education Center
+content is created workflow-native and refused server-side if it asks to be published, while
+existing `legacy` records stay grandfathered with their current compatibility. R6F is local-only;
+production has not received it.
+
+Remaining open Nova work:
+
+- **Full retirement of grandfather compatibility.** Not deleted: the legacy direct-publish path
+  remains available only to records that are still `editorial_status='legacy'`, and it can be
+  removed once those records are migrated. No mass migration is planned or performed.
+- **`member-home.html` `published` fallback removal**, which was not part of R6F.
+- **Nova revision retention review** beyond editorial pinning, if ordinary revision trimming ever
+  needs a different policy.
+- **Visual Nova Editorial Workspace migration** — adopting the standalone Nova visual system in
+  `/paper-editor.html`, then Documents, Nova document editing, integrated Education Center
+  metadata and workflow presentation, and finally Slides as a second workspace mode. Not started;
+  the old Content Editor presentation should not be extended further before it.
 
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**
 remains the next governance section, but it is not scheduled to begin until the

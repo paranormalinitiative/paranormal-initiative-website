@@ -5,7 +5,7 @@ import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
 import { handleNovaApi, createNovaItemForOwner, updateNovaItemForOwner, getOwnedItem as getOwnedNovaItem, novaItemPayloadForArticle, validateNovaEnvelope } from "../../lib/nova.js";
-import { isNovaLocked, validateTransition, verifyNovaItemForSubmission, buildEvent, hasEditorialReview, hasEditorialPublish, requireEditorialReview, requireEditorialPublish, checkVersionCurrent, checkApprovalMatchesSubmission, detectReviewedMetadataChange, validatePublication } from "../../lib/editorial-workflow.js";
+import { isNovaLocked, canStartRevision, validateTransition, verifyNovaItemForSubmission, buildEvent, hasEditorialReview, hasEditorialPublish, requireEditorialReview, requireEditorialPublish, checkVersionCurrent, checkApprovalMatchesSubmission, detectReviewedMetadataChange, validatePublication } from "../../lib/editorial-workflow.js";
 import { buildPublicationSnapshot, novaDocumentFromContent, novaDocHasPublishableContent } from "../../lib/nova-document-html.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
@@ -234,6 +234,7 @@ export async function onRequest(context) {
     if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItemUpdate(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/resubmit$/)) return requireContributor(request, env, user => handleArticleResubmission(path, env, user));
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission$/)) return requireContributor(request, env, user => handleArticleSubmission(path, env, user));
+  if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/revision\/start$/)) return requireContributor(request, env, user => handleStartRevision(path, env, user));
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/withdraw$/)) return requireContributor(request, env, user => handleArticleWithdrawal(path, env, user));
     // TPI-NOVA-004R6D: reviewer routes for the Editorial Review Queue. Every
     // route requires EDITORIAL_REVIEW; access is not derived from the admin role.
@@ -3360,6 +3361,12 @@ async function handleCreateArticle(request, env, user) {
   const source = clean(data.source);
   const labels = clean(data.labels);
   const existingArticle = await env.TPI_DB.prepare("SELECT status, created_by, editorial_status FROM articles WHERE id = ?").bind(id).first();
+  // TPI-NOVA-004R6F: a new normal article never begins as legacy direct-publish
+  // content. It is created as an editorial-workflow draft and cannot be published
+  // through this route; publication happens only through the review workflow.
+  if (!existingArticle && status === "published") {
+    return json({ error: "New articles enter the editorial workflow. Submit for review instead of publishing directly.", code: "editorial_workflow_publish_refused" }, 409);
+  }
   // An existing article may only be changed by the contributor who created it.
   // Ownership is never transferred through this endpoint.
   if (existingArticle && existingArticle.created_by !== user.id) {
@@ -3376,8 +3383,8 @@ async function handleCreateArticle(request, env, user) {
     }
   }
   const upsertResult = await env.TPI_DB.prepare(`
-    INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, editorial_status, created_by, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, CURRENT_TIMESTAMP)
     ON CONFLICT(id) DO UPDATE SET
       destination = excluded.destination,
       href = excluded.href,
@@ -3623,6 +3630,9 @@ async function handleContributorArticles(env, user) {
       (SELECT s.submitted_at FROM article_editorial_submissions s WHERE s.article_id = a.id ORDER BY s.created_at DESC LIMIT 1) AS submittedAt,
       (SELECT s.submitted_nova_version FROM article_editorial_submissions s WHERE s.article_id = a.id ORDER BY s.created_at DESC LIMIT 1) AS submittedNovaVersion,
       (SELECT s.published_at FROM article_editorial_submissions s WHERE s.article_id = a.id AND s.published_at IS NOT NULL ORDER BY s.published_at DESC LIMIT 1) AS publishedAt,
+      (SELECT s.approved_nova_version FROM article_editorial_submissions s WHERE s.article_id = a.id AND s.published_at IS NOT NULL ORDER BY s.published_at DESC LIMIT 1) AS publishedNovaVersion,
+      (SELECT COUNT(*) FROM article_editorial_submissions s WHERE s.article_id = a.id AND s.outcome = 'open') AS openSubmissions,
+      (SELECT n.version FROM nova_items n WHERE n.id = a.nova_item_id AND n.owner_id = a.created_by AND n.deleted_at IS NULL AND n.status <> 'deleted') AS currentNovaVersion,
       (SELECT e.note FROM article_editorial_events e WHERE e.article_id = a.id AND e.event_type = 'changes_requested' AND e.visible_to_contributor = 1 ORDER BY e.created_at DESC, e.rowid DESC LIMIT 1) AS reviewFeedback,
       (SELECT e.created_at FROM article_editorial_events e WHERE e.article_id = a.id AND e.event_type = 'changes_requested' AND e.visible_to_contributor = 1 ORDER BY e.created_at DESC, e.rowid DESC LIMIT 1) AS reviewFeedbackAt
     FROM articles a WHERE a.created_by = ?
@@ -3633,8 +3643,21 @@ async function handleContributorArticles(env, user) {
     // TPI-NOVA-004R6D: reviewer feedback is shown only while changes are requested.
     // Reviewer identity, permissions and other administrative metadata stay private.
     const showFeedback = flow.editorialStatus === "changes_requested";
+    // TPI-NOVA-004R6F: the same rule the start-revision operation enforces, so the
+    // UI never offers an action the server would refuse. The server re-checks it.
+    const revisionCheck = canStartRevision({
+      articleStatus: article.status,
+      editorialStatus: flow.editorialStatus,
+      publishedNovaVersion: flow.publishedNovaVersion == null ? null : Number(flow.publishedNovaVersion),
+      currentNovaVersion: flow.currentNovaVersion == null ? null : Number(flow.currentNovaVersion),
+      openSubmissions: Number(flow.openSubmissions || 0)
+    });
     return {
       ...article,
+      // Publication (public snapshot) and workflow (editorial_status) are separate.
+      publicationStatus: article.status === "published" ? "published" : "not_published",
+      publishedNovaVersion: flow.publishedNovaVersion ?? null,
+      canStartRevision: revisionCheck.ok === true,
       editorialStatus: flow.editorialStatus || "legacy",
       submittedAt: flow.submittedAt || null,
       submittedNovaVersion: flow.submittedNovaVersion ?? null,
@@ -3766,7 +3789,7 @@ async function handleDeleteArticle(path, env, user) {
 // its result in one D1 batch. The Nova version is read from the owned linked item,
 // never from the request body.
 async function loadOwnedArticleForWorkflow(env, articleId, user) {
-  const article = await env.TPI_DB.prepare("SELECT id, destination, article_type, created_by, nova_item_id, editorial_status FROM articles WHERE id = ?").bind(articleId).first();
+  const article = await env.TPI_DB.prepare("SELECT id, destination, article_type, created_by, nova_item_id, status, editorial_status FROM articles WHERE id = ?").bind(articleId).first();
   if (!article) return { response: json({ error: "Article not found." }, 404) };
   if (article.created_by !== user.id) return { response: json({ error: "This article belongs to another contributor." }, 403) };
   return { article };
@@ -3787,10 +3810,12 @@ function insertEditorialEvent(env, row) {
 }
 
 async function workflowPayload(env, articleId) {
-  const row = await env.TPI_DB.prepare("SELECT editorial_status FROM articles WHERE id = ?").bind(articleId).first();
+  const row = await env.TPI_DB.prepare("SELECT editorial_status, status FROM articles WHERE id = ?").bind(articleId).first();
   const submission = await env.TPI_DB.prepare("SELECT submitted_at, submitted_nova_version, outcome FROM article_editorial_submissions WHERE article_id = ? ORDER BY created_at DESC LIMIT 1").bind(articleId).first();
   return {
     editorialStatus: row?.editorial_status || "legacy",
+    // TPI-NOVA-004R6F: publication and workflow state stay separate dimensions.
+    publicationStatus: row?.status || "draft",
     locked: isNovaLocked(row?.editorial_status),
     submission: submission ? { submittedAt: submission.submitted_at, submittedNovaVersion: submission.submitted_nova_version, outcome: submission.outcome } : null
   };
@@ -3862,6 +3887,47 @@ async function handleArticleWithdrawal(path, env, user) {
     insertEditorialEvent(env, buildEvent({ id: crypto.randomUUID(), articleId, submissionId: submission.id, actorId: user.id, transition, novaVersion: submission.submitted_nova_version, createdAt: now }))
   ];
   await env.TPI_DB.batch(statements);
+  return json(await workflowPayload(env, articleId));
+}
+
+// TPI-NOVA-004R6F: Start New Revision. Owner-only, server-authoritative. Reopens
+// the linked Nova working document for a published article without touching the
+// public snapshot (status, body_html, article_html, URL, destination).
+async function handleStartRevision(path, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/revision\/start$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  const loaded = await loadOwnedArticleForWorkflow(env, articleId, user);
+  if (loaded.response) return loaded.response;
+  const { article } = loaded;
+  if (editorialNotApplicable(article)) return json({ error: "TPI Video items are not part of the editorial workflow.", code: "editorial_workflow_not_applicable" }, 409);
+  const capabilities = await contributorCapabilities(env, user);
+  const transition = validateTransition({ from: article.editorial_status, to: "draft", actorId: user.id, capabilities, isOwner: true });
+  if (!transition.ok || transition.event !== "revision_started") {
+    return json({ error: "A new revision can start only from an approved, published article.", code: "revision_refused" }, 409);
+  }
+  const latestPublished = await env.TPI_DB.prepare("SELECT id, approved_nova_version, published_at FROM article_editorial_submissions WHERE article_id = ? AND published_at IS NOT NULL ORDER BY published_at DESC LIMIT 1").bind(articleId).first();
+  const openRound = await currentOpenSubmission(env, articleId);
+  const novaItem = article.nova_item_id
+    ? await env.TPI_DB.prepare("SELECT id, owner_id, version, status, deleted_at FROM nova_items WHERE id = ? AND owner_id = ?").bind(article.nova_item_id, user.id).first()
+    : null;
+  const currentNovaVersion = novaItem && novaItem.deleted_at == null && novaItem.status !== "deleted" ? Number(novaItem.version) : null;
+  const eligibility = canStartRevision({
+    articleStatus: article.status,
+    editorialStatus: article.editorial_status,
+    publishedNovaVersion: latestPublished ? Number(latestPublished.approved_nova_version) : null,
+    currentNovaVersion,
+    openSubmissions: openRound ? 1 : 0
+  });
+  if (!eligibility.ok) return json({ error: "A new revision cannot start for this article right now.", code: eligibility.code }, eligibility.status);
+  const now = new Date().toISOString();
+  // Guarded UPDATE: the state and publication guards must still hold in the same
+  // batch, so a concurrent publish or review change refuses with no partial write.
+  const statements = [
+    env.TPI_DB.prepare("UPDATE articles SET editorial_status = 'draft', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'published' AND editorial_status = 'approved'").bind(articleId),
+    insertEditorialEventGuarded(env, buildEvent({ id: crypto.randomUUID(), articleId, submissionId: latestPublished.id, actorId: user.id, transition, novaVersion: latestPublished.approved_nova_version, createdAt: now }), "EXISTS (SELECT 1 FROM articles WHERE id = ? AND status = 'published' AND editorial_status = 'draft')", [articleId])
+  ];
+  const results = await env.TPI_DB.batch(statements);
+  if (!Number(results?.[0]?.meta?.changes || 0)) return json({ error: "The article changed before the revision could start. Refresh and try again.", code: "revision_state_conflict" }, 409);
   return json(await workflowPayload(env, articleId));
 }
 

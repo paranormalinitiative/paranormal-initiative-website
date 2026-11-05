@@ -1580,3 +1580,51 @@ This statement governs current user-facing naming. Earlier sections use the name
 - **Nova Core** is shared underlying technology used by Nova Edit and Nova Editorial Workspace. It is not a user-facing product and does not appear in ordinary navigation.
 - **`/nova/`** is temporary development and reference infrastructure. It is not member navigation, not the Contributor destination, and not a third permanent product. It is not deleted by this statement.
 - The legacy editor, where a user must still choose it during migration, is labelled Legacy Editor. It is not a separate permanent product.
+
+### 21.19 TPI-NOVA-004R6F Published revision lifecycle and legacy containment (implemented)
+
+The editorial loop now closes. After a Contributor's approved content is published
+(R6E), the Contributor can choose **Start New Revision**. That is the only action
+that reopens the working document: publication itself never unlocks editing. It is
+served by `POST /api/articles/:id/revision/start`, requires ownership, a published
+article, `editorial_status='approved'`, an approved submission that was actually
+published, a resolvable `approved_nova_version`, a Nova item still at that version
+and no later open round; approved-but-unpublished content is refused. The single
+`approved → draft` transition lives in `lib/editorial-workflow.js` behind a pure
+`canStartRevision()` predicate, and appends a `revision_started` event carrying the
+prior submission, prior approved version, previous and next state, actor and time.
+`migrations/0063_editorial_revision_started.sql` widens the event CHECK and
+recreates both append-only triggers; earlier events and rounds are untouched.
+
+Starting a revision changes nothing public. `articles.status`, `body_html`,
+`article_html`, the URL, destination, type and ownership all stay as published, so
+the Education Center keeps showing the last published version while the Contributor
+edits. Publication and workflow are displayed as separate dimensions — Publication
+**Published**, Workflow **Draft Revision** — from server-provided
+`publicationStatus`/`canStartRevision` rather than a browser inference.
+
+Resubmission reuses R6C: the new round pins the new Nova version and keeps the old
+rounds, review feedback and publication facts as history. R6D and R6E then handle it
+unchanged, and the Publisher action replaces the public snapshot atomically on the
+same article id and URL. Two complete publish → revise → republish cycles were
+proved on disposable data. The existing submission, approval, event and revision
+records were audited as sufficient publication history, so no new history table was
+added, and Nova revision retention now protects versions pinned by editorial
+submissions.
+
+New normal Education Center content is workflow-native: the create path defaults
+`editorial_status='draft'` and refuses `status:'published'` server-side
+(`409 editorial_workflow_publish_refused`), so Contributor direct publishing of new
+content is retired rather than merely hidden. Existing `legacy` records — both real
+local articles — are grandfathered and keep their current direct-publish
+compatibility until they are explicitly enrolled; nothing was mass-converted or
+enrolled, and enrolment remains one-way with no return to legacy. Legacy direct
+publish is contained, not deleted: full removal of the grandfather compatibility is
+deferred until the remaining legacy records are migrated. TPI Video is unchanged.
+Local-only; production has not received R6F.
+
+Next phase, not started: the visual Nova Editorial Workspace migration — adopt the
+standalone Nova visual system in `/paper-editor.html`, introduce the Documents
+workspace and Nova document editor as the primary experience, fold Education Center
+metadata and the editorial workflow into that UI, and then activate Slides as the
+second workspace mode.

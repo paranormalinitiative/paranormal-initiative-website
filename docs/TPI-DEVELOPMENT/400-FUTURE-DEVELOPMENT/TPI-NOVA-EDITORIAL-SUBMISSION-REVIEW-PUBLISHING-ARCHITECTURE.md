@@ -426,6 +426,25 @@ Delivered:
 
 Verification: `scripts/verify/tpi-nova-004r6e-publish.mjs` 60 passed / 0 failed; Firefox Developer Edition authoritative workflow plus Chromium smoke 80 passed / 0 failed across disposable fixtures; real local articles fingerprint-identical before and after (`1eea9b37008c9d68`). Local-only; production untouched.
 
+## 16E. TPI-NOVA-004R6F — Published revision lifecycle and legacy containment implemented
+
+Status: implemented and locally accepted; production has not received R6F.
+
+Delivered:
+
+- **Two dimensions preserved:** `articles.status` remains the public publication state and `articles.editorial_status` the workflow state. No `published` editorial state exists. A revision is `status='published'` + `editorial_status='draft'`.
+- **Explicit reopen:** `POST /api/articles/:id/revision/start` requires the owner Contributor, a published article, `editorial_status='approved'`, an open approved submission with `outcome='published'` and `published_at`, a resolvable `approved_nova_version`, and no later open round. Approved-but-unpublished content is refused (`revision_not_published`); publication never unlocks editing by itself.
+- **Guarded transition:** `lib/editorial-workflow.js` provides a pure `canStartRevision()` predicate and the single `approved → draft` transition, available only to this operation. It refuses when `nova_items.version` differs from the last published `approved_nova_version` (`revision_version_mismatch`) rather than reopening ambiguous content.
+- **Event and history:** `migrations/0063_editorial_revision_started.sql` rebuilds `article_editorial_events` so its CHECK accepts `revision_started` (both append-only triggers recreated). The event records actor, prior submission, prior approved Nova version, previous and next state and timestamp. Earlier `published` events, published submissions and rounds are untouched. The existing submission/approval/publication columns were audited as sufficient to identify the published submission, its version, approver, publisher and time, so no history table was added.
+- **Public snapshot stability:** revision start touches no `status`, `body_html`, `article_html`, URL, destination, article type or ownership. The published snapshot stays live for the whole cycle and is replaced only by the Publisher action on the newly approved version, in the same atomic batch.
+- **Cycle reuse:** the new round pins the new Nova version and reuses R6C, R6D and R6E without special-case duplication. Two complete publish → revise → republish cycles were proved on disposable data with no duplicate article, duplicate Nova item, lost round, lost feedback or changed ownership.
+- **Contributor presentation:** Publication (Published / Not Published) is displayed separately from Workflow (Draft Revision / Submitted / In Review / Changes Requested / Approved). `workflowPayload` additively returns `publicationStatus` and `canStartRevision`, and the badge is derived from server state.
+- **Workflow-native creation:** new normal articles default to `editorial_status='draft'`, and the create path refuses `status:'published'` with `409 editorial_workflow_publish_refused`. Contributor direct publishing of new content is retired; the refusal is server-side, not button hiding.
+- **Containment, not deletion:** the Admin status/update routes refuse publication for enrolled articles. Grandfathered `legacy` content keeps its existing direct-publish compatibility until explicit enrolment, which remains one-way (no return to legacy, no undo). Legacy import paths were audited and classified as historical migration compatibility; no generic import flag can bypass publication. Full removal of the grandfather compatibility is deferred until the remaining legacy records are migrated. TPI Video is untouched.
+- **Retention:** `lib/nova.js` protects Nova versions pinned by editorial submissions from ordinary revision trimming, so editorial history cannot lose the version it references.
+
+Verification: `scripts/verify/tpi-nova-004r6f-revision.mjs` 26 passed / 0 failed; Firefox Developer Edition authoritative lifecycle plus Chromium smoke 71 passed / 0 failed on disposable fixtures; real local articles fingerprint-identical before and after (`1eea9b37008c9d68`), both still `published` + `legacy`. Local-only; production untouched.
+
 ## 17. TPI Video — out of scope
 
 TPI Video is **out of scope for the initial Education Center editorial workflow.** It keeps its own direct publishing path (`tpi_videos.status`, `/api/tpi-videos/*/publish`). It does not use the Nova document or the article workflow. A future directive may decide whether video publishing needs its own review system.
@@ -439,7 +458,7 @@ Destinations are part of the approved record (§11). No destination value is rep
 - Legacy articles (no `nova_item_id`) keep `editorial_status='legacy'` and current behaviour. No mass migration.
 - A legacy article enters the workflow only through conversion to Nova (004R5 path), which leaves it `draft`.
 - Nova-backed drafts follow the full workflow.
-- Nova-backed published articles remain published. Any new revision follows §9.
+- Nova-backed published articles remain published. Any new revision follows §9 through Start New Revision (R6F, §16E), which keeps the article published and the public snapshot live.
 - `legacy` articles may remain published indefinitely. They are not forced through review.
 
 ## 20. Notifications
@@ -467,7 +486,7 @@ Other pre-existing security work (not part of this architecture): the production
 - **R6C — Contributor submission.** Submit, withdraw and resubmit routes and the Contributor UI. Nova lock on `submitted`/`in_review`/`approved`. Legacy import and bulk conversion (P7, P8) move to `draft`. Firefox Developer Edition acceptance.
 - **R6D — Review queue.** Queue, read-only Nova review, request changes, approve, in the Administration Center. Firefox Developer Edition acceptance.
 - **R6E — Publication. Implemented.** The publish route with the §10 checklist, snapshot of `approved_nova_version`, audit and events. Constrains P1, P2 and the Content Editor publish button (P4) for enrolled articles; legacy behavior retained. Firefox Developer Edition acceptance passed.
-- **R6F — Revisions and retirement.** Published-article revision workflow (§9). Retire direct publish paths P1, P4, P6 and P9 for Nova-backed content. Constrain P3. Remove the `member-home.html` `published` fallback. Update the tests named in §1.9.
+- **R6F — Revisions and retirement. Implemented.** Published-article revision workflow (§9) with the guarded `approved → draft` transition, `revision_started` event and live-snapshot preservation. New normal content is created workflow-native and Contributor direct publish is refused server-side for it; P1, P2 and the Content Editor publish control are constrained for enrolled articles. Grandfathered `legacy` content keeps direct-publish compatibility until explicitly enrolled, and one-way enrolment remains the only transition. Removing the `member-home.html` `published` fallback was not part of R6F and remains open.
 
 Each phase is independently testable and gets a Firefox Developer Edition acceptance run before the next begins.
 
