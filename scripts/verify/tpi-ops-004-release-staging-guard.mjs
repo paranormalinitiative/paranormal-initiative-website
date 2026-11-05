@@ -63,13 +63,14 @@ const guardFilter = (absolutePath) => {
   const base = parts.at(-1);
   if (excludedFiles.has(base) || base.startsWith(".env.")) return false;
   if (base.toLowerCase().endsWith(".md")) return false;
-  if (parts.some((part) => part === ".git" || part === ".wrangler")) return false;
+  if (parts.some((part) => part === ".git" || part === ".wrangler" || part === "node_modules")) return false;
   return true;
 };
 
 let copied = 0;
 let copiedBytes = 0;
 let leaked = 0;
+let dependencyFiles = 0;
 const walk = (directory) => {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const absolutePath = join(directory, entry.name);
@@ -79,6 +80,9 @@ const walk = (directory) => {
       copied += 1;
       copiedBytes += statSync(absolutePath).size;
       if (relative(repoRoot, absolutePath).split(sep)[0] === ".local-dev") leaked += 1;
+      // A dependency tree anywhere in the copy means a nested install slipped
+      // past the exclusion: it is never published and only inflates staging.
+      if (relative(repoRoot, absolutePath).split(sep).includes("node_modules")) dependencyFiles += 1;
     }
   }
 };
@@ -88,6 +92,12 @@ check(
   "no file from the disposable local runtime directory enters the staging copy",
   leaked === 0,
   `${leaked} .local-dev file(s) would be copied into the production staging directory`
+);
+
+check(
+  "no dependency tree enters the staging copy",
+  dependencyFiles === 0,
+  `${dependencyFiles} file(s) from a node_modules tree would be copied into the production staging directory`
 );
 
 // ---- 4. the copy set is the small published set, not the owner's state -----

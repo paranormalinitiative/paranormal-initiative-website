@@ -104,7 +104,14 @@ const filter = (source) => {
   if (excludedFiles.has(base) || base.startsWith(".env.")) return false;
   if (base.toLowerCase().endsWith(".md")) return false;
   if (unpublishedAssetPrefixes.some((prefix) => `${rel}${sep}`.startsWith(prefix))) return false;
-  if (parts.some((part) => part === ".git" || part === ".wrangler")) return false;
+  // `node_modules` is excluded at any depth, like `.git` and `.wrangler`. The
+  // top-level entry above only covers the root package; nested dependency trees
+  // (`nova-app/node_modules`, `experiments/nova-spike/node_modules`) escaped it
+  // and put ~11.2k staged files back into a copy that publishes neither: both
+  // parent directories are already fully ignored by `.assetsignore`. Excluding
+  // them changes no published byte and restores the published-asset-size bound
+  // the release staging guard enforces.
+  if (parts.some((part) => part === ".git" || part === ".wrangler" || part === "node_modules")) return false;
   return true;
 };
 
