@@ -1502,6 +1502,31 @@ Next: the contributor submission workflow, per the phase sequence in the 004R6A 
 
 R6C is complete as the Contributor side of the editorial workflow, local-only; production has not received R6C. Accepted: the published-revision snapshot test, zero Firefox console errors, public regression on 8787, and a scoped local-only fixture cleanup that restored the append-only event triggers from the exact 0061 definitions. Not implemented: the Editorial Review queue, Request Changes reviewer controls, the Approval UI and the Publisher UI.
 
+### 21.17 TPI-NOVA-004R6D Editorial Review Queue and reviewer actions (implemented)
+
+The reviewer side now exists as the Editorial Review section of the existing React
+Administration Center (`admin-center-app/`, served at `/admin-panel`): no new app,
+route or shell. The default queue holds `submitted` and `in_review` submissions and
+optionally filters Changes Requested and Approved; published rows, legacy articles
+and TPI Video are excluded. Review requires `EDITORIAL_REVIEW` from the entitlement
+ledger, never ordinary Admin or `requireAdmin`, and does not require
+`EDITORIAL_PUBLISH`.
+
+Reviewers inspect a read-only rendering of the exact pinned `submitted_nova_version`,
+start review (recording reviewer ownership for the round), request changes with a
+required note stored in `article_editorial_events`, or approve. One reviewer owns a
+round and cannot be silently replaced. Approval enforces approver ≠ submitter, no
+reviewed-metadata drift, no version drift, a resolvable pinned version, and records
+`approved_nova_version = submitted_nova_version`. Contributors see the feedback and
+timestamp beside the workflow controls while `changes_requested`, keep the R6C
+unlocked editor and Resubmit path, and see Approved — Awaiting Publication locked
+after approval.
+
+`migrations/0062_editorial_capabilities.sql` widens the entitlement capability check
+so editorial capabilities can be granted. Review and approval never change
+`articles.status` or the public snapshot, so publishing remains R6E. Local-only;
+production has not received R6D.
+
 ### 21.14 TPI-NOVA-004R6C2 Contributor submission workflow (implemented)
 
 Contributors can now Submit for Review (legacy enrollment through draft to submitted), Withdraw before review starts, and Resubmit after changes are requested. The server pins the submitted Nova version, locks linked Nova items in submitted, in-review and approved states, and refuses crafted direct publication of enrolled articles. Published public snapshots are preserved during revision. TPI Video is excluded. Not yet built: the Editorial Review queue, Reviewer actions UI, Publisher UI and retirement of legacy direct publication (R6E).

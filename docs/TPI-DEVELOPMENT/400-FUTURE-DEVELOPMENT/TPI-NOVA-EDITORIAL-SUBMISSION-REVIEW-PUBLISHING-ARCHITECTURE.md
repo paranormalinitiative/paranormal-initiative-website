@@ -369,7 +369,7 @@ Where it lives: inside the Nova Editorial Workspace and the Content Editor. Adds
 
 ## 16. Editorial UX (Administration Center)
 
-- Editorial review is a section of the existing Administration Center, not a new application. The Education Center article list in `admin-center-app/src/app.tsx` (~712) and the production `admin-panel.html` are the candidate homes. R6D picks one.
+- Editorial review is a section of the existing Administration Center, not a new application. The Education Center article list in `admin-center-app/src/app.tsx` (~712) and the production `admin-panel.html` are the candidate homes. R6D picks one. **Decided in R6D:** the React Administration Center (`admin-center-app/`, served at `/admin-panel`) is the home; the legacy `admin-panel.html`/`admin-center.js` surface is untouched.
 - **Queue:** `submitted` and `in_review` items with author, destination, article type and submitted version.
 - **Review:** read-only Nova preview of the submitted version, metadata and event history.
 - **Request changes:** requires a note. Visible to the Contributor. Stored in `article_editorial_events` only.
@@ -390,6 +390,22 @@ Status: R6C is complete as the Contributor side of the editorial workflow and is
 Accepted: the published-revision snapshot test (published legacy article, newer unpublished Nova edit, submission leaves `articles.status`, `body_html` and the public `article_html` snapshot unchanged, and the public page keeps the old text); the Firefox console review (zero errors); public regression on 8787; and fixture cleanup with a local-only, scoped procedure. The append-only event triggers were suspended only on the authoritative local DB and restored from the exact 0061 definitions, then verified. No schema or migration was added.
 
 Not implemented: the Editorial Review queue, Request Changes reviewer controls, the Approval UI and the Publisher UI. `tpi-videos.html` and its specialized publish path are unchanged.
+
+## 16C. TPI-NOVA-004R6D — Editorial Review Queue and reviewer actions implemented
+
+Status: implemented and locally accepted; production has not received R6D. Publishing is still not implemented.
+
+Delivered:
+
+- **Queue:** an Editorial Review section inside the existing React Administration Center (no new app, route or shell). Default queue is `submitted` + `in_review`; Changes Requested and Approved are optional filters. Published rows, legacy articles and TPI Video are excluded. Rows carry title, Contributor, article type, destination, submitted date/time, round, status and the submitted Nova version.
+- **Authority:** `EDITORIAL_REVIEW` only, resolved from an active `member_entitlements` row through `resolveMemberEntitlements`. `requireAdmin` is not a substitute, ordinary Admin is not equivalent, and `EDITORIAL_PUBLISH` is not required. `migrations/0062_editorial_capabilities.sql` widens the entitlement capability CHECK so editorial capabilities can be granted at all (0058 permitted only `creator`/`contributor`).
+- **Exact-version review:** the review surface renders the pinned `submitted_nova_version` read-only — newest `nova_revisions` row at or below the version, the live item only when `nova_items.version` equals it exactly, otherwise `submitted_version_unavailable`, which blocks approval. Reviewer notes never enter the document body.
+- **Transitions:** Start Review (`submitted → in_review`, records reviewer and `review_started_at`), Request Changes (`in_review → changes_requested`, note required), Approve (`in_review → approved`). One active reviewer per round; a second reviewer cannot silently take ownership (`review_owned_by_another_reviewer`). Reassignment is deferred. Withdrawal stays refused once review starts.
+- **Feedback:** `article_editorial_events.note` is the single feedback record. The Contributor sees the note and timestamp next to the workflow controls while `changes_requested`, with the editor unlocked, autosave active, Resubmit available and direct Publish unavailable (R6C unchanged).
+- **Approval integrity:** approver ≠ submitter, reviewed metadata unchanged, no version drift, pinned version resolvable; records `approved_by`, `approved_at`, `approved_nova_version = submitted_nova_version` and an event. The Contributor state is Approved — Awaiting Publication, read-only, with no publish, withdraw, edit or resubmit.
+- **Non-publication:** `articles.status`, `body_html` and the public snapshot are untouched by review and approval. All transitions run in `lib/editorial-workflow.js`; handlers do not restate the rules.
+
+Not implemented: the Publisher UI, publication of an approved version, and retirement of legacy direct publishing (R6E).
 
 ## 17. TPI Video — out of scope
 

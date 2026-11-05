@@ -50,6 +50,41 @@
             display: block;
             margin-top: 0.25rem;
         }
+        /* TPI-NOVA-004R6D: reviewer feedback for the current submission round.
+           Shown next to the workflow controls; the editorial workflow owns the
+           note, so it is never written into the article body. */
+        .workflow-status { align-self: center; color: #8d93a3; font-size: 0.8rem; }
+        .workflow-feedback {
+            margin: 0 0 1rem;
+            padding: 0.9rem 1.1rem;
+            border: 1px solid #3a4a5e;
+            border-left: 3px solid #d9a441;
+            border-radius: 8px;
+            background: #141a22;
+        }
+        .workflow-feedback[hidden] { display: none; }
+        .workflow-feedback .workflow-feedback-kicker {
+            display: block;
+            color: #d9a441;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+        .workflow-feedback .workflow-feedback-note {
+            margin: 0;
+            color: #c8cdd8;
+            font-size: 0.92rem;
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+        .workflow-feedback .workflow-feedback-time {
+            display: block;
+            margin-top: 0.5rem;
+            color: #5a6070;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
 <body class="paper-editor-page editor-locked">
@@ -73,6 +108,12 @@
             <button type="button" data-action="copy">Copy HTML</button>
             <button type="button" data-action="writing-guides">Writing Guides</button>
         </div>
+    </div>
+
+    <div class="workflow-feedback" data-workflow-feedback hidden>
+        <span class="workflow-feedback-kicker">Changes Requested</span>
+        <p class="workflow-feedback-note" data-workflow-feedback-note></p>
+        <span class="workflow-feedback-time" data-workflow-feedback-time></span>
     </div>
 
     <input id="editor-title" class="paper-title-input" type="text" value="Untitled Content" aria-label="Paper title" spellcheck="true">

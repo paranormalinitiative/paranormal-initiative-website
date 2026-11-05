@@ -1,5 +1,6 @@
 import { onRequest as handleApiRequest } from "./functions/api/[[path]].js";
 import { getSessionUser, hasCreatorStudioAccess } from "./lib/auth.js";
+import { CAPABILITY, memberHasCapability } from "./lib/membership-entitlements.js";
 import { scrapeAndUpdateEvents } from "./lib/event-scraper.js";
 import { scrapeNews } from "./lib/news-scraper.js";
 import { scrapeVideos } from "./lib/video-scraper.js";
@@ -232,6 +233,23 @@ async function servePageAsset(request, env) {
 // historical preview asset directory as its static package namespace, but
 // serve the same entry document and assets from the user-facing /admin-panel
 // route so development and production cannot drift into separate frontends.
+// TPI-NOVA-004R6D: an Editorial Reviewer who is not an owner or admin still
+// needs the Administration Center shell to reach the Editorial Review Queue.
+// The UI shows that reviewer only the review section, and every review API
+// route independently re-checks EDITORIAL_REVIEW. The admin role is never
+// treated as editorial authority by this helper; it is only a separate reason
+// the existing shell stays available. Databases without the entitlement tables
+// default to deny.
+async function hasAdministrationCenterAccess(env, user) {
+  if (!user) return false;
+  if (user.role === "owner" || user.role === "admin") return true;
+  try {
+    return await memberHasCapability(env, user, CAPABILITY.EDITORIAL_REVIEW);
+  } catch (error) {
+    return false;
+  }
+}
+
 async function serveCanonicalAdminCenter(request, env) {
   const sourceUrl = new URL(request.url);
   const targetPath = sourceUrl.pathname === "/admin-panel" ||
@@ -364,7 +382,7 @@ export default {
     // generated asset so an obscure URL is never treated as authorization.
     if (url.pathname === "/admin-center-preview" || url.pathname.startsWith("/admin-center-preview/")) {
       const user = await getSessionUser(request, env);
-      const hasAdminAccess = user && (user.role === "owner" || user.role === "admin");
+      const hasAdminAccess = await hasAdministrationCenterAccess(env, user);
       if (!hasAdminAccess) {
         return new Response(ADMIN_GATE_HTML, {
           status: 403,
@@ -384,7 +402,7 @@ export default {
       url.pathname.startsWith("/admin-panel/assets/");
     if (isCanonicalAdminCenter) {
       const user = await getSessionUser(request, env);
-      const hasAdminAccess = user && (user.role === "owner" || user.role === "admin");
+      const hasAdminAccess = await hasAdministrationCenterAccess(env, user);
       if (!hasAdminAccess) {
         return new Response(ADMIN_GATE_HTML, {
           status: 403,

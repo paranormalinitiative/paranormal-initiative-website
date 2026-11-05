@@ -1,5 +1,30 @@
 # TPI Current Development Status
 
+## TPI-NOVA-004R6D — Editorial Review Queue, reviewer actions & changes requested (2026-11-05)
+
+Status: **COMPLETE — EDITORIAL REVIEW QUEUE, REQUEST CHANGES & APPROVAL WORKFLOW IMPLEMENTED — READY FOR AUTHORIZED PUBLICATION.** R6D is local-only; production has not received R6D. Publishing is still not implemented: approval records the reviewed version and never touches `articles.status` or the public snapshot. The Publisher UI is R6E. `tpi-videos.html` and its specialized publish path are unchanged.
+
+Delivered:
+
+- The Editorial Review Queue is a section of the existing React Administration Center (`/admin-panel`), not a new app, route or shell. Default queue = `submitted` + `in_review`, with optional Changes Requested / Approved filters. Published historical rows, legacy articles and TPI Video are excluded.
+- Queue rows show title, Contributor, article type, destination, submitted date/time, round, status and the submitted Nova version, without exposing internal IDs as the primary UI.
+- Review panel: read-only rendering of the exact pinned `submitted_nova_version` (newest revision at or below the version; the live item only when its version equals it exactly; otherwise `submitted_version_unavailable` and approval is blocked), submitted metadata, submission history and prior reviewer feedback. The Contributor's Nova document is never editable from review.
+- Reviewer authority is `EDITORIAL_REVIEW` only, resolved from an active `member_entitlements` row. `requireAdmin` is not a substitute, ordinary Admin is not equivalent, and `EDITORIAL_PUBLISH` is not required.
+- Actions: Start Review (`submitted → in_review`), Request Changes (`in_review → changes_requested`, note required) and Approve (`in_review → approved`). Reviewer ownership is recorded and one reviewer owns a round; a second reviewer cannot silently take it over (`409 review_owned_by_another_reviewer`). Reassignment is deferred.
+- Feedback reuses `article_editorial_events.note`; no parallel feedback store was added. The Contributor sees Changes Requested with the reviewer note and timestamp next to the workflow controls, keeps the unlocked editor, autosave, Resubmit and no direct Publish (R6C preserved).
+- Approval enforces server-side: approver ≠ submitter, no metadata drift, no version drift, pinned version resolvable, and records `approved_by`, `approved_at` and `approved_nova_version = submitted_nova_version`. The Contributor state becomes Approved — Awaiting Publication and the document stays locked with no publish, withdraw, edit or resubmit.
+- All transitions run through `lib/editorial-workflow.js`; handlers do not duplicate transition rules. Reads and mutations require `EDITORIAL_REVIEW`; public APIs still never expose submitted unpublished content.
+- `migrations/0062_editorial_capabilities.sql` widens the `member_entitlements` capability CHECK (rebuild, since SQLite cannot widen in place) so `editorial_review`/`editorial_publish` can be granted through the entitlement ledger at all; 0058 allowed only `creator`/`contributor`.
+
+Verification (observed, 2026-11-05, authoritative 8787 workerd):
+
+- `scripts/verify/tpi-nova-004r6d-review.mjs`: **47 passed, 0 failed**, exit 0. It builds its ledger from the real 0058 + 0062 + 0061 migrations and covers the §32 list, including the ledger-only grant check.
+- Firefox Developer Edition human workflow (16 steps, disposable synthetic content): **39 passed, 0 failed**. Includes exact pinned render, reviewer ownership, feedback visibility, unlock/edit/autosave, resubmission as a new round with retained history, approval pinning the submitted version, and the locked approved state.
+- Chromium smoke: **13 passed, 0 failed**.
+- Public snapshot: `articles.status` stayed `draft` throughout review and approval; the public article API and `/education-center.html` never contained the submission.
+- Regression: Nova 003 105/0; Nova 004 134/0; 004R2 14/0; 004R4 13/0; 004R5 67/0; 004R6B 47/0; 004R6C 23/0; 006C 13/13; Nova typecheck exit 0; Admin Center build exit 0; `node --check` exit 0; `git diff --check` exit 0.
+- Fixture cleanup and real-data protection: the synthetic `r6d-*` contributors, sessions, entitlements, articles, Nova items, submissions and events were removed with the two append-only event triggers suspended and recreated from their exact stored definitions. Post-cleanup counts — contributors 20, articles 2, Nova items 1, submissions 0, events 0 — and both real-article digests (`d27d79670460fdc8`, `eeda6913548edbd8`) match the pre-test baseline.
+
 ## TPI-NOVA-004R6C3 — Final acceptance, fixture cleanup & milestone close (2026-11-05)
 
 Status: **COMPLETE — CONTRIBUTOR SUBMISSION, WITHDRAWAL, LOCKING & RESUBMISSION WORKFLOW IMPLEMENTED — READY FOR EDITORIAL REVIEW QUEUE.** R6C is local-only; production has not received R6C. Not implemented: the Editorial Review queue, Request Changes reviewer controls, the Approval UI and the Publisher UI. `tpi-videos.html` and its specialized publish path are unchanged.

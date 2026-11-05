@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { adminFetch, metricValue, type AdminAnalytics, type AdminArticleDetail, type AdminChannel, type AdminCommunityComment, type AdminCommunityCommentDetail, type AdminCommunityPostDetail, type AdminContributor, type AdminCreatorDetail, type AdminCreatorEntitlement, type AdminCreatorMembership, type AdminEventRecord, type AdminFoundingApplication, type AdminInvite, type AdminNotification, type AdminNotificationDetail, type AdminOverview, type AdminPublishedArticle, type AdminPublishedVideo, type AdminProviderStatus, type AdminReport, type AdminReportDetail, type AdminRestriction, type AdminRoleSummary, type AdminScraperRun, type AdminTeam, type AdminTeamClaim, type AdminTeamHistory, type AnalyticsPoint, type AnalyticsSeries, type ClassicComment, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
+import { adminFetch, metricValue, type AdminAnalytics, type AdminArticleDetail, type AdminChannel, type AdminCommunityComment, type AdminCommunityCommentDetail, type AdminCommunityPostDetail, type AdminContributor, type AdminCreatorDetail, type AdminCreatorEntitlement, type AdminCreatorMembership, type AdminEventRecord, type AdminFoundingApplication, type AdminInvite, type AdminNotification, type AdminNotificationDetail, type AdminOverview, type AdminPublishedArticle, type AdminPublishedVideo, type AdminProviderStatus, type AdminReport, type AdminReportDetail, type AdminRestriction, type AdminRoleSummary, type AdminScraperRun, type AdminTeam, type AdminTeamClaim, type AdminTeamHistory, type AnalyticsPoint, type AnalyticsSeries, type ClassicComment, type EditorialAccess, type EditorialNovaDocument, type EditorialNovaNode, type EditorialQueueRow, type EditorialSubmissionDetail, type CommunityPost, type Member, type MemberActivity } from "@/lib/api";
 
-type View = "overview" | "analytics" | "activity" | "members" | "roles" | "restrictions" | "community" | "community-content" | "reactions" | "comments" | "reports" | "moderation-history" | "creators" | "founding" | "founding-memberships" | "studio-access" | "channels" | "videos" | "education" | "contributors" | "teams" | "events" | "notifications" | "health" | "security" | "audit" | "settings";
+type View = "overview" | "analytics" | "activity" | "members" | "roles" | "restrictions" | "community" | "community-content" | "reactions" | "comments" | "reports" | "moderation-history" | "creators" | "founding" | "founding-memberships" | "studio-access" | "channels" | "videos" | "education" | "contributors" | "editorial" | "teams" | "events" | "notifications" | "health" | "security" | "audit" | "settings";
 type NavItem = { id: View; label: string; icon: typeof LayoutDashboard };
 type NavGroup = { label: string; items: NavItem[] };
 
@@ -17,7 +17,7 @@ const navGroups: NavGroup[] = [
   { label: "Members", items: [{ id: "members", label: "Member Directory", icon: Users }, { id: "roles", label: "Roles & Permissions", icon: ShieldCheck }, { id: "restrictions", label: "Account Restrictions", icon: SlidersHorizontal }] },
   { label: "Community", items: [{ id: "community", label: "Community Overview", icon: MessageSquare }, { id: "community-content", label: "Posts & Comments", icon: FileText }, { id: "reactions", label: "Reactions", icon: Heart }, { id: "reports", label: "Reports & Moderation", icon: CheckCircle2 }, { id: "moderation-history", label: "Moderation History", icon: FileCheck2 }] },
   { label: "Creators", items: [{ id: "creators", label: "Creator Directory", icon: Users }, { id: "founding", label: "Founding 50", icon: CheckCircle2 }, { id: "founding-memberships", label: "Founding Memberships", icon: ShieldCheck }, { id: "studio-access", label: "Creator Studio Access", icon: Video }, { id: "channels", label: "Creator Channels", icon: MoreHorizontal }] },
-  { label: "Content & Publishing", items: [{ id: "contributors", label: "Contributor Management", icon: FileText }, { id: "teams", label: "Paranormal Teams", icon: Users }, { id: "education", label: "Education Center", icon: BookOpen }, { id: "comments", label: "Article Comment Moderation", icon: CheckCircle2 }, { id: "videos", label: "TPI Videos", icon: Video }, { id: "events", label: "Events", icon: FileCheck2 }] },
+  { label: "Content & Publishing", items: [{ id: "contributors", label: "Contributor Management", icon: FileText }, { id: "editorial", label: "Editorial Review", icon: FileCheck2 }, { id: "teams", label: "Paranormal Teams", icon: Users }, { id: "education", label: "Education Center", icon: BookOpen }, { id: "comments", label: "Article Comment Moderation", icon: CheckCircle2 }, { id: "videos", label: "TPI Videos", icon: Video }, { id: "events", label: "Events", icon: FileCheck2 }] },
   { label: "System", items: [{ id: "notifications", label: "Notifications", icon: MessageSquare }, { id: "health", label: "Platform Health", icon: Gauge }, { id: "security", label: "Security", icon: ShieldCheck }, { id: "audit", label: "Audit Logs", icon: FileCheck2 }, { id: "settings", label: "System Settings", icon: Settings2 }] },
 ];
 const flatNav = navGroups.flatMap((group) => group.items);
@@ -26,26 +26,34 @@ function App() {
   // Deep links such as /admin-panel#founding-memberships are honored so existing
   // bookmarks and cross-panel links open the intended view instead of Overview.
   const [view, setView] = useState<View>(() => { const requested = typeof window === "undefined" ? "" : window.location.hash.replace(/^#/, ""); return flatNav.some((item) => item.id === requested) ? (requested as View) : "overview"; }); const [sidebarOpen, setSidebarOpen] = useState(false); const [notice, setNotice] = useState(""); const [range, setRange] = useState("30d"); const [overview, setOverview] = useState<AdminOverview | null>(null); const [overviewLoading, setOverviewLoading] = useState(true);
+  // TPI-NOVA-004R6D: an Editorial Reviewer does not need the admin role. The
+  // access probe decides whether this session sees the whole Administration
+  // Center or only the Editorial Review section.
+  const [access, setAccess] = useState<EditorialAccess | null>(null);
+  useEffect(() => { let active = true; adminFetch<EditorialAccess>("/editorial/access").then((body) => { if (active) setAccess(body); }).catch(() => { if (active) setAccess({ role: "", editorialReview: false, editorialPublish: false, adminAccess: true }); }); return () => { active = false; }; }, []);
+  const reviewerOnly = Boolean(access?.editorialReview && !access?.adminAccess);
+  const visibleNavGroups = reviewerOnly ? [{ label: "Content & Publishing", items: flatNav.filter((item) => item.id === "editorial") }] : navGroups;
+  useEffect(() => { if (reviewerOnly) { setView("editorial"); setSidebarOpen(false); } }, [reviewerOnly]);
   const loadOverview = () => { setOverviewLoading(true); adminFetch<AdminOverview>(`/admin/overview?range=${range}`).then(setOverview).catch((error) => setNotice(error.message)).finally(() => setOverviewLoading(false)); };
-  useEffect(loadOverview, [range]);
+  useEffect(() => { if (!reviewerOnly) loadOverview(); }, [range, reviewerOnly]);
   const selectView = (next: View) => { setView(next); setSidebarOpen(false); setNotice(""); try { window.history.replaceState(null, "", `#${next}`); } catch { /* history is optional */ } };
   const current = flatNav.find((item) => item.id === view) || flatNav[0];
-  const implemented = new Set<View>(["overview", "analytics", "activity", "audit", "members", "community", "community-content", "reactions", "comments", "moderation-history", "contributors", "teams", "health", "creators", "founding", "founding-memberships", "studio-access", "settings", "education", "videos", "events", "reports", "notifications", "channels", "roles", "restrictions"]);
-  const mobileItems: Array<{ id?: View; label: string; icon: typeof Home }> = [
+  const implemented = new Set<View>(["overview", "analytics", "activity", "audit", "members", "community", "community-content", "reactions", "comments", "moderation-history", "contributors", "editorial", "teams", "health", "creators", "founding", "founding-memberships", "studio-access", "settings", "education", "videos", "events", "reports", "notifications", "channels", "roles", "restrictions"]);
+  const mobileItems: Array<{ id?: View; label: string; icon: typeof Home }> = (reviewerOnly ? [{ id: "editorial" as View, label: "Review", icon: FileCheck2 }] : [
     { id: "overview", label: "Home", icon: Home },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "members", label: "Members", icon: Users },
     { label: "Main Site", icon: Home },
-  ];
+  ]);
   return <div className="admin-preview-app">
     <aside className={`admin-preview-sidebar ${sidebarOpen ? "is-open" : ""}`}>
       <div className="admin-preview-brand"><a className="admin-preview-brand-logo" href="/member-home" aria-label="Return to Member Home"><img src="/assets/tpi-banner.png" alt="The Paranormal Initiative" /></a><div><strong>Administration Center</strong><small>Protected session</small></div><button className="mobile-close" onClick={() => setSidebarOpen(false)} aria-label="Close navigation"><X size={18} /></button></div>
-      <div className="admin-preview-scope"><ShieldCheck size={16} /><span>Owner / admin session</span></div>
-      <nav className="admin-preview-nav" aria-label="Administration navigation">{navGroups.map((group) => <div className="member-nav-section nav-group" key={group.label}><span className="member-nav-label nav-heading">{group.label}</span>{group.items.map((item, index) => <button key={`${group.label}-${item.label}-${index}`} className={view === item.id && !(item.id === "community" && index === 1) ? "member-nav-link nav-item active" : "member-nav-link nav-item"} aria-current={view === item.id ? "page" : undefined} onClick={() => selectView(item.id)}><item.icon className="nav-icon" size={16} /><span>{item.label}</span>{view === item.id && <ChevronRight className="nav-chevron" size={15} />}</button>)}</div>)}</nav>
+      <div className="admin-preview-scope"><ShieldCheck size={16} /><span>{reviewerOnly ? "Editorial reviewer session" : "Owner / admin session"}</span></div>
+      <nav className="admin-preview-nav" aria-label="Administration navigation">{visibleNavGroups.map((group) => <div className="member-nav-section nav-group" key={group.label}><span className="member-nav-label nav-heading">{group.label}</span>{group.items.map((item, index) => <button key={`${group.label}-${item.label}-${index}`} className={view === item.id && !(item.id === "community" && index === 1) ? "member-nav-link nav-item active" : "member-nav-link nav-item"} aria-current={view === item.id ? "page" : undefined} onClick={() => selectView(item.id)}><item.icon className="nav-icon" size={16} /><span>{item.label}</span>{view === item.id && <ChevronRight className="nav-chevron" size={15} />}</button>)}</div>)}</nav>
       <div className="admin-preview-sidebar-foot"><a className="admin-return-link admin-return-sidebar" href="/member-home"><Home size={15} /> Return to Member Home</a><span>Canonical protected Administration Center</span></div>
     </aside>
     {sidebarOpen && <button className="sidebar-scrim" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" />}
-    <main className="admin-preview-main"><header className="admin-preview-topbar"><button className="mobile-menu" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Menu size={20} /></button><div><p className="eyebrow">The Paranormal Initiative</p><h1>{current.label}</h1></div><div className="topbar-actions"><div className="topbar-status"><span className="status-dot" /> Protected session</div><a className="admin-return-link" href="/member-home"><Home size={15} /> <span>Return to Member Home</span></a></div></header>{notice && <div className="preview-notice" role="alert">{notice}</div>}{view === "overview" && <Dashboard overview={overview} loading={overviewLoading} range={range} onRange={setRange} onRefresh={loadOverview} onNavigate={selectView} />}{view === "analytics" && <Analytics range={range} onRange={setRange} onNotice={setNotice} />}{view === "activity" && <ActivityView onNotice={setNotice} />}{["audit", "moderation-history"].includes(view) && <Audit onNotice={setNotice} historyOnly={view === "moderation-history"} />}{view === "members" && <Members onNotice={setNotice} />}{view === "community" && <CommunityOverview overview={overview} onNavigate={selectView} />}{view === "community-content" && <CommunityPosts onNotice={setNotice} />}{view === "reactions" && <CommunityReactions overview={overview} />}{view === "comments" && <Comments onNotice={setNotice} />}{view === "contributors" && <Contributors onNotice={setNotice} />}{view === "teams" && <Teams onNotice={setNotice} />}{view === "health" && <PlatformHealth onNotice={setNotice} />}{view === "creators" && <CreatorDirectory onNotice={setNotice} />}{view === "founding" && <Founding50 onNotice={setNotice} />}{view === "founding-memberships" && <FoundingMemberships onNotice={setNotice} />}{view === "studio-access" && <StudioAccess onNotice={setNotice} />}{view === "settings" && <SettingsView onNotice={setNotice} />}{view === "education" && <PublishedEducation onNotice={setNotice} />}{view === "videos" && <PublishedVideos onNotice={setNotice} />}{view === "events" && <ApprovedEvents onNotice={setNotice} />}{view === "reports" && <Reports onNotice={setNotice} />}{view === "notifications" && <Notifications onNotice={setNotice} />}{view === "channels" && <Channels onNotice={setNotice} />}{view === "roles" && <Roles onNotice={setNotice} />}{view === "restrictions" && <Restrictions onNotice={setNotice} />}{!implemented.has(view) && <Capability view={view} overview={overview} />}</main>
+    <main className="admin-preview-main"><header className="admin-preview-topbar"><button className="mobile-menu" onClick={() => setSidebarOpen(true)} aria-label="Open navigation"><Menu size={20} /></button><div><p className="eyebrow">The Paranormal Initiative</p><h1>{current.label}</h1></div><div className="topbar-actions"><div className="topbar-status"><span className="status-dot" /> Protected session</div><a className="admin-return-link" href="/member-home"><Home size={15} /> <span>Return to Member Home</span></a></div></header>{notice && <div className="preview-notice" role="alert">{notice}</div>}{view === "overview" && <Dashboard overview={overview} loading={overviewLoading} range={range} onRange={setRange} onRefresh={loadOverview} onNavigate={selectView} />}{view === "analytics" && <Analytics range={range} onRange={setRange} onNotice={setNotice} />}{view === "activity" && <ActivityView onNotice={setNotice} />}{["audit", "moderation-history"].includes(view) && <Audit onNotice={setNotice} historyOnly={view === "moderation-history"} />}{view === "members" && <Members onNotice={setNotice} />}{view === "community" && <CommunityOverview overview={overview} onNavigate={selectView} />}{view === "community-content" && <CommunityPosts onNotice={setNotice} />}{view === "reactions" && <CommunityReactions overview={overview} />}{view === "comments" && <Comments onNotice={setNotice} />}{view === "contributors" && <Contributors onNotice={setNotice} />}{view === "editorial" && <EditorialReview onNotice={setNotice} />}{view === "teams" && <Teams onNotice={setNotice} />}{view === "health" && <PlatformHealth onNotice={setNotice} />}{view === "creators" && <CreatorDirectory onNotice={setNotice} />}{view === "founding" && <Founding50 onNotice={setNotice} />}{view === "founding-memberships" && <FoundingMemberships onNotice={setNotice} />}{view === "studio-access" && <StudioAccess onNotice={setNotice} />}{view === "settings" && <SettingsView onNotice={setNotice} />}{view === "education" && <PublishedEducation onNotice={setNotice} />}{view === "videos" && <PublishedVideos onNotice={setNotice} />}{view === "events" && <ApprovedEvents onNotice={setNotice} />}{view === "reports" && <Reports onNotice={setNotice} />}{view === "notifications" && <Notifications onNotice={setNotice} />}{view === "channels" && <Channels onNotice={setNotice} />}{view === "roles" && <Roles onNotice={setNotice} />}{view === "restrictions" && <Restrictions onNotice={setNotice} />}{!implemented.has(view) && <Capability view={view} overview={overview} />}</main>
     <nav className="admin-mobile-nav" aria-label="Mobile Administration navigation">{mobileItems.map((item) => item.id ? <button key={item.label} className={view === item.id ? "admin-mobile-nav-link active" : "admin-mobile-nav-link"} aria-current={view === item.id ? "page" : undefined} onClick={() => { if (item.id) selectView(item.id); }}><item.icon size={17} /><span>{item.label}</span></button> : <a key={item.label} className="admin-mobile-nav-link" href="/member-home"><item.icon size={17} /><span>Member Home</span></a>)}<button className="admin-mobile-nav-link" onClick={() => setSidebarOpen(true)} aria-label="Open full administration menu"><Menu size={17} /><span>Menu</span></button></nav>
   </div>;
 }
@@ -53,6 +61,192 @@ function App() {
 function Dashboard({ overview, loading, range, onRange, onRefresh, onNavigate }: { overview: AdminOverview | null; loading: boolean; range: string; onRange: (value: string) => void; onRefresh: () => void; onNavigate: (view: View) => void }) {
   const cards: Array<[string, string, string, View]> = [["Members", metricValue(overview?.metrics || {}, "members", "total"), "All contributor accounts", "members"], ["Active members", metricValue(overview?.metrics || {}, "members", "active"), "Active contributor accounts", "members"], ["Pending creator applications", metricValue(overview?.metrics || {}, "pendingCreatorApplications", "total"), "Founding 50 / Creator Partnership review queue", "founding"], ["Content awaiting review", metricValue(overview?.metrics || {}, "pendingContent", "total"), "Draft Education Center records", "education"], ["Pending moderation", metricValue(overview?.metrics || {}, "pendingModeration", "total"), "Supported comment and report queues", "reports"], ["Community posts", metricValue(overview?.metrics || {}, "communityPosts", "visible"), "Visible Community Feed posts", "community-content"], ["Community comments", metricValue(overview?.metrics || {}, "communityComments", "visible"), "Visible Community Feed comments", "community-content"], ["Reactions", metricValue(overview?.metrics || {}, "communityReactions", "total"), "Community Feed reactions", "reactions"], ["Published videos", metricValue(overview?.metrics || {}, "videos", "published"), "Published TPI Videos", "videos"], ["Creator channels", metricValue(overview?.metrics || {}, "creatorChannels", "total"), "TPI video channels", "channels"], ["Education articles", metricValue(overview?.metrics || {}, "articles", "published"), "Published Education Center articles", "education"], ["Approved teams", metricValue(overview?.metrics || {}, "teams", "approved"), "Approved Paranormal Teams", "teams"], ["Open reports", reportQueueValue(overview?.metrics || {}), "Video + messenger metadata; protected resolution controls", "reports"], ["Unread notifications", metricValue(overview?.metrics || {}, "notifications", "unread"), "Internal delivery metadata", "notifications"], ["Founding 50 allocated", metricValue(overview?.metrics || {}, "founding50", "allocated"), "No awards are activated by this preview", "founding"]];
   return <section className="content-stack"><div className="page-intro"><div><p className="eyebrow">Authoritative D1 snapshot</p><h2>Operations at a glance</h2><p>Metrics are read from the existing admin API. Missing optional sources stay unavailable; no historical values are fabricated.</p></div><div className="page-actions"><select aria-label="Dashboard range" value={range} onChange={(event) => onRange(event.target.value)}><option value="today">Today</option><option value="7d">7 days</option><option value="30d">30 days</option><option value="90d">90 days</option></select><Button variant="outline" onClick={onRefresh}><RefreshCw size={16} />Refresh</Button></div></div><div className="metric-grid">{cards.map(([label, value, note, target]) => <button className="metric-button" key={label} onClick={() => onNavigate(target)}><Card><CardHeader><CardDescription>{label}</CardDescription><CardTitle className="metric-value">{loading ? "…" : value}</CardTitle></CardHeader><CardContent><span className="metric-note">{note}</span><ChevronRight size={15} /></CardContent></Card></button>)}</div><div className="two-column"><Card><CardHeader><CardTitle>Current boundaries</CardTitle><CardDescription>What this controlled preview can safely do.</CardDescription></CardHeader><CardContent className="status-list"><div><Badge variant="success">Live</Badge><span>Overview, member list/detail, community posts, classic comments, reports metadata, and audit logs</span></div><div><Badge variant="warning">Partial</Badge><span>Creator, publishing, events, settings, and team tools remain bounded integrations</span></div><div><Badge variant="warning">Limited</Badge><span>Reports expose safe metadata and protected status/review-audit controls; private evidence remains unavailable</span></div><div><Badge variant="success">Preserved</Badge><span>Owner/admin server gate, Creator Studio gate, `/live-video`, D1, and R2 boundaries</span></div></CardContent></Card><Card><CardHeader><CardTitle>Preview status</CardTitle><CardDescription>{overview?.range ? `${overview.range.start} through ${overview.range.end}` : "Waiting for the protected API"}</CardDescription></CardHeader><CardContent><p className="muted">{overview?.generatedAt ? `Generated ${new Date(overview.generatedAt).toLocaleString()}.` : loading ? "Loading protected data…" : "No overview response was returned."}</p><a className="inline-link" href="#audit" onClick={(event) => { event.preventDefault(); onNavigate("audit"); }}>Open audit activity <ChevronRight size={15} /></a></CardContent></Card></div></section>;
+}
+
+// TPI-NOVA-004R6D: the Editorial Review Queue is a section of the existing
+// Administration Center, not a separate administration product. Reviewing is
+// always read-only against the pinned submitted Nova version and never
+// publishes; authority comes from EDITORIAL_REVIEW on the server.
+const editorialQueueViews = [
+  { id: "active", label: "Active queue" },
+  { id: "changes_requested", label: "Changes Requested" },
+  { id: "approved", label: "Approved" },
+];
+
+const editorialStatusLabels: Record<string, string> = { draft: "Draft", submitted: "Submitted", in_review: "In Review", changes_requested: "Changes Requested", approved: "Approved — Awaiting Publication", legacy: "Legacy — not enrolled" };
+
+// Destination slugs map to the Education Center labels Contributors choose in
+// the Nova Editorial Workspace.
+const editorialDestinations: Record<string, string> = {
+  "education-area-investigation-science.html": "Investigation Science",
+  "education-area-evidence-science-analysis.html": "Evidence Science & Analysis",
+  "education-area-instrumentation-technology.html": "Instrumentation & Technology",
+  "education-area-environmental-research.html": "Environmental Research",
+  "education-area-evp-itc-research.html": "EVP / ITC Research",
+  "education-area-consciousness-human-experience.html": "Consciousness & Human Experience",
+  "education-area-ethics-professional-standards.html": "Ethics & Professional Standards",
+  "education-area-reporting-documentation.html": "Reporting & Documentation",
+  "education-area-education-community-development.html": "Community Development & Publication",
+  "education-area-technology-development-ai.html": "Technology Development",
+  "education-area-artificial-intelligence.html": "Artificial Intelligence",
+  "education-area-historical-cultural-research.html": "Historical & Cultural Research",
+  "investigation-development-series.html": "Investigation Development Series",
+  "ghostology-101.html": "Ghostology Reference",
+  "evp-itc-lessons.html": "EVP / ITC Research Notes",
+  "field-articles.html": "Field Articles",
+  "method-exercises.html": "Method Exercises",
+  "tpi-videos.html": "TPI Videos",
+};
+
+const editorialEventLabels: Record<string, string> = { submitted: "Submitted for review", review_started: "Review started", changes_requested: "Changes requested", approved: "Approved", withdrawn: "Withdrawn by Contributor", superseded: "Superseded by resubmission" };
+
+function editorialStatusLabel(value?: string | null) { return value ? editorialStatusLabels[value] || value : "—"; }
+function editorialDestinationLabel(value?: string | null) { return value ? editorialDestinations[value] || value : "—"; }
+function editorialEventLabel(value?: string | null) { return value ? editorialEventLabels[value] || value : "—"; }
+function editorialDate(value?: string | null) {
+  if (!value) return "—";
+  const normalized = /T|Z/.test(value) ? value : `${value.replace(" ", "T")}Z`;
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+}
+
+// Read-only renderer for the submitted Nova document. It mirrors the shared
+// Content Editor Nova converter: text is escaped and only known block types are
+// emitted, so Contributor content can never execute inside the review surface.
+function editorialEscapeText(value: string) { return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function editorialRenderInline(nodes?: EditorialNovaNode[]): string {
+  return (nodes || []).map((node) => {
+    if (node.type === "hardBreak") return "<br>";
+    let html = editorialEscapeText(node.text || "");
+    for (const mark of node.marks || []) {
+      if (mark.type === "bold") html = `<strong>${html}</strong>`;
+      else if (mark.type === "italic") html = `<em>${html}</em>`;
+      else if (mark.type === "underline") html = `<u>${html}</u>`;
+      else if (mark.type === "link" && mark.attrs?.href) html = `<a href="${editorialEscapeText(mark.attrs.href)}" rel="noopener noreferrer nofollow">${html}</a>`;
+    }
+    return html;
+  }).join("");
+}
+function editorialRenderBlock(node: EditorialNovaNode): string {
+  switch (node.type) {
+    case "paragraph": return `<p>${editorialRenderInline(node.content)}</p>`;
+    case "heading": return `<h${node.attrs?.level || 2}>${editorialRenderInline(node.content)}</h${node.attrs?.level || 2}>`;
+    case "bulletList": return `<ul>${(node.content || []).map(editorialRenderBlock).join("")}</ul>`;
+    case "orderedList": return `<ol>${(node.content || []).map(editorialRenderBlock).join("")}</ol>`;
+    case "listItem": return `<li>${(node.content || []).map(editorialRenderBlock).join("")}</li>`;
+    case "blockquote": return `<blockquote>${(node.content || []).map(editorialRenderBlock).join("")}</blockquote>`;
+    case "horizontalRule": return "<hr>";
+    case "table": return `<table>${(node.content || []).map(editorialRenderBlock).join("")}</table>`;
+    case "tableRow": return `<tr>${(node.content || []).map(editorialRenderBlock).join("")}</tr>`;
+    case "tableHeader": return `<th>${(node.content || []).map(editorialRenderBlock).join("")}</th>`;
+    case "tableCell": return `<td>${(node.content || []).map(editorialRenderBlock).join("")}</td>`;
+    default: return "";
+  }
+}
+// Pinned review content is stored as the full Nova content wrapper
+// ({ format, version, doc }); the document node is what renders.
+function editorialNovaHtml(doc: EditorialNovaDocument | { doc?: EditorialNovaDocument } | null) {
+  const node = (doc && "doc" in doc && doc.doc ? doc.doc : doc) as EditorialNovaDocument | null;
+  return (node?.content || []).map(editorialRenderBlock).join("");
+}
+
+function EditorialReview({ onNotice }: { onNotice: (value: string) => void }) {
+  const [queueFilter, setQueueFilter] = useState("active");
+  const [rows, setRows] = useState<EditorialQueueRow[]>([]);
+  const [queueLoading, setQueueLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState("");
+  const [detail, setDetail] = useState<EditorialSubmissionDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState("");
+
+  const loadQueue = (filter = queueFilter) => {
+    setQueueLoading(true);
+    adminFetch<{ submissions: EditorialQueueRow[] }>(`/editorial/queue?status=${encodeURIComponent(filter)}`)
+      .then((body) => setRows(body.submissions || []))
+      .catch((error) => onNotice(error instanceof Error ? error.message : "The review queue could not be loaded."))
+      .finally(() => setQueueLoading(false));
+  };
+  useEffect(() => { loadQueue(); }, [queueFilter]);
+
+  const openSubmission = (articleId: string) => {
+    setSelectedId(articleId);
+    setDetailLoading(true);
+    adminFetch<EditorialSubmissionDetail>(`/editorial/submissions/${encodeURIComponent(articleId)}`)
+      .then(setDetail)
+      .catch((error) => { setDetail(null); onNotice(error instanceof Error ? error.message : "The submission could not be loaded."); })
+      .finally(() => setDetailLoading(false));
+  };
+  useEffect(() => { if (!selectedId && rows.length) openSubmission(rows[0].articleId); }, [rows, selectedId]);
+
+  const runAction = async (action: "start-review" | "request-changes" | "approve") => {
+    if (!selectedId || busy) return;
+    const feedback = note.trim();
+    if (action === "request-changes" && !feedback) { onNotice("Review feedback is required when requesting changes."); return; }
+    setBusy(action);
+    try {
+      await adminFetch(`/editorial/submissions/${encodeURIComponent(selectedId)}/${action}`, { method: "POST", body: JSON.stringify(action === "request-changes" ? { note: feedback } : {}) });
+      setNote("");
+      onNotice("");
+      openSubmission(selectedId);
+      loadQueue();
+    } catch (error) { onNotice(error instanceof Error ? error.message : "The review action could not be completed."); }
+    finally { setBusy(""); }
+  };
+
+  const status = detail?.article.editorialStatus || "";
+  const current = detail?.currentSubmission || null;
+  const canStart = status === "submitted" && Boolean(current);
+  const canReview = status === "in_review" && Boolean(current);
+  const metadataDrift = Boolean(current && detail && (current.submittedDestination !== detail.article.destination || current.submittedArticleType !== detail.article.articleType));
+
+  return <section className="content-stack">
+    <div className="page-intro"><div><p className="eyebrow">Nova Editorial Workspace</p><h2>Editorial Review Queue</h2><p>Review submitted articles, request changes, or approve the exact submitted Nova version. Review actions never publish; publication remains a separate authorized step.</p></div><div className="page-actions"><select aria-label="Review queue filter" value={queueFilter} onChange={(event) => setQueueFilter(event.target.value)}>{editorialQueueViews.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}</select><Button variant="outline" onClick={() => { loadQueue(); if (selectedId) openSubmission(selectedId); }}><RefreshCw size={16} />Refresh</Button></div></div>
+    <div className="editorial-layout">
+      <Card><CardHeader><CardTitle>Submissions</CardTitle><CardDescription>{queueLoading ? "Loading…" : `${rows.length} submission${rows.length === 1 ? "" : "s"} in this queue`}</CardDescription></CardHeader><CardContent className="editorial-queue">{queueLoading ? <LoadingState label="Loading the review queue…" /> : rows.length ? rows.map((row) => <button key={row.submissionId} type="button" className={row.articleId === selectedId ? "editorial-queue-item is-active" : "editorial-queue-item"} aria-current={row.articleId === selectedId ? "true" : undefined} onClick={() => openSubmission(row.articleId)}><div className="editorial-queue-head"><strong>{row.title}</strong><Badge variant={row.editorialStatus === "in_review" ? "success" : "warning"}>{editorialStatusLabel(row.editorialStatus)}</Badge></div><span>{editorialDestinationLabel(row.destination)} · {row.articleType || "—"}</span><span>{row.contributorName || row.contributorUsername || row.authorName || "—"} · Round {row.round} · Nova v{row.submittedNovaVersion}</span><span>Submitted {editorialDate(row.submittedAt)}{row.reviewerName ? ` · Reviewer ${row.reviewerName}` : ""}</span></button>) : <EmptyState label="No submissions are waiting in this queue." icon={<FileCheck2 size={28} />} />}</CardContent></Card>
+      <div className="detail-stack">
+        {detailLoading && <Card><CardContent><LoadingState label="Loading submission…" /></CardContent></Card>}
+        {!detailLoading && !detail && <Card><CardContent><EmptyState label="Select a submission to review it." icon={<FileCheck2 size={28} />} /></CardContent></Card>}
+        {detail && <>
+          <Card><CardHeader><div className="detail-actions"><div><CardTitle>{detail.article.title}</CardTitle><CardDescription>{editorialDestinationLabel(detail.article.destination)} · {detail.article.articleType || "—"}</CardDescription></div><Badge variant={status === "approved" ? "success" : status === "changes_requested" ? "warning" : "outline"}>{editorialStatusLabel(status)}</Badge></div></CardHeader><CardContent className="detail-stack"><div className="detail-facts">
+            <span><strong>Contributor</strong>{detail.article.contributorName || detail.article.contributorUsername || detail.article.authorName || "—"}</span>
+            <span><strong>Article type</strong>{detail.article.articleType || "—"}</span>
+            <span><strong>Destination</strong>{editorialDestinationLabel(detail.article.destination)}</span>
+            <span><strong>Submitted</strong>{editorialDate(current?.submittedAt)}</span>
+            <span><strong>Round</strong>{current?.round ? `Round ${current.round}` : "—"}</span>
+            <span><strong>Submitted Nova version</strong>{current?.submittedNovaVersion != null ? `v${current.submittedNovaVersion}` : "—"}</span>
+            <span><strong>Reviewer</strong>{current?.reviewerName || (current?.reviewerId ? "Assigned" : "Not started")}</span>
+            <span><strong>Publication status</strong>{detail.article.publicationStatus || "unpublished"}</span>
+            <span><strong>Approved version</strong>{current?.approvedNovaVersion != null ? `v${current.approvedNovaVersion}` : "—"}</span>
+            <span><strong>Approved</strong>{current?.approvedAt ? `${editorialDate(current.approvedAt)}${current.approverName ? ` · ${current.approverName}` : ""}` : "—"}</span>
+          </div>
+          {metadataDrift && <div className="notice-panel"><Badge variant="warning">Metadata changed</Badge><p>The article destination or type no longer matches the reviewed submission, so approval is refused. The Contributor must resubmit before this round can be approved.</p></div>}
+          </CardContent></Card>
+          <Card><CardHeader><CardTitle>Submitted document</CardTitle><CardDescription>{detail.pinned.unavailable ? "The exact submitted version could not be resolved." : `Read-only preview of the pinned submitted version${detail.pinned.version ? ` (Nova v${detail.pinned.version})` : ""}${detail.pinned.source === "item" ? " · stored on the current item" : ""}.`}</CardDescription></CardHeader><CardContent>
+            {detail.pinned.unavailable ? <div className="notice-panel"><Badge variant="warning">Version unavailable</Badge><p>This submission's exact Nova version can no longer be resolved, so it cannot be approved. Request changes so the Contributor can resubmit a reviewable version.</p></div> : <div className="nova-review-surface" dangerouslySetInnerHTML={{ __html: editorialNovaHtml(detail.pinned.content) }} />}
+            <p className="chart-footnote">Reviewer feedback is recorded in the editorial workflow below and is never written into the article body.</p>
+          </CardContent></Card>
+          <Card><CardHeader><CardTitle>Review actions</CardTitle><CardDescription>{canStart ? "Start review to claim this round." : canReview ? "Request changes with feedback, or approve the submitted version." : "No reviewer action is available in this state."}</CardDescription></CardHeader><CardContent className="detail-stack">
+            {canReview && <label className="form-field">Reviewer feedback (required to request changes)<textarea rows={4} value={note} onChange={(event) => setNote(event.target.value)} placeholder="Explain what must change before this submission can be approved." /></label>}
+            <div className="page-actions">
+              {canStart && <Button onClick={() => runAction("start-review")} disabled={Boolean(busy)}>{busy === "start-review" ? "Starting…" : "Start Review"}</Button>}
+              {canReview && <Button variant="outline" onClick={() => runAction("request-changes")} disabled={Boolean(busy) || !note.trim()}>{busy === "request-changes" ? "Sending…" : "Request Changes"}</Button>}
+              {canReview && <Button onClick={() => runAction("approve")} disabled={Boolean(busy) || detail.pinned.unavailable || metadataDrift}>{busy === "approve" ? "Approving…" : "Approve"}</Button>}
+            </div>
+            <p className="chart-footnote">Approval records the exact submitted Nova version and does not publish. One reviewer owns a round; reassignment is not available in this phase.</p>
+          </CardContent></Card>
+          <Card><CardHeader><CardTitle>Submission history</CardTitle><CardDescription>Every round is retained. Earlier feedback stays historical and applies to its own round.</CardDescription></CardHeader><CardContent className="detail-stack">
+            {(detail.history || []).map((round) => <div className="editorial-history-row" key={round.id}>
+              <div className="detail-actions"><strong>Round {round.round}</strong><Badge variant="outline">{round.outcome}</Badge></div>
+              <span className="editorial-history-meta">Submitted {editorialDate(round.submittedAt)} · Nova v{round.submittedNovaVersion} · {editorialDestinationLabel(round.submittedDestination)} · {round.submittedArticleType || "—"}</span>
+              {(round.feedback || []).map((event) => <div className="editorial-feedback" key={event.id}><Badge variant="warning">Changes requested</Badge><p>{event.note || "No note recorded."}</p><time>{editorialDate(event.createdAt)}</time></div>)}
+            </div>)}
+          </CardContent></Card>
+          <Card><CardHeader><CardTitle>Workflow events</CardTitle><CardDescription>Append-only editorial record for this article.</CardDescription></CardHeader><CardContent className="audit-list">{(detail.events || []).map((event) => <div className="audit-row" key={event.id}><div><strong>{editorialEventLabel(event.eventType)}</strong><span>{event.note || `${event.fromState || "—"} → ${event.toState || "—"}`}</span></div><div><Badge variant="outline">{event.actorName || "system"}{event.novaVersion ? ` · v${event.novaVersion}` : ""}</Badge><time>{editorialDate(event.createdAt)}</time></div></div>)}</CardContent></Card>
+        </>}
+      </div>
+    </div>
+  </section>;
 }
 
 function reportQueueValue(metrics: AdminOverview["metrics"]) {

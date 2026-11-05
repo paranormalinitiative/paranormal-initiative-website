@@ -470,7 +470,10 @@ architecture-only, recorded in
 [`TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md`](TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
 TPI-NOVA-004R6B has implemented its server-side foundation (capabilities, additive
 schema, transition engine). TPI-NOVA-004R6C2 has implemented Contributor submission, withdrawal,
-locking and resubmission, and TPI-NOVA-004R6C3 has accepted it (local-only; production not yet updated). The Editorial Review queue, Reviewer UI, Publisher UI and
+locking and resubmission, and TPI-NOVA-004R6C3 has accepted it (local-only; production not yet updated).
+TPI-NOVA-004R6D has implemented the Editorial Review Queue, reviewer actions (Start Review,
+Request Changes, Approve), Contributor-visible feedback and exact pinned-version review inside
+the existing Administration Center (local-only; publishing not implemented). The Publisher UI and
 retirement of legacy direct publishing remain future work (R6E).
 
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**

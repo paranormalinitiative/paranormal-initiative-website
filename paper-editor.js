@@ -966,6 +966,26 @@
       const button = document.querySelector(`[data-action="${action}"]`);
       if (button) button.hidden = !visible;
     };
+    // TPI-NOVA-004R6D: the reviewer's feedback for this round, shown beside the
+    // workflow controls. Only the note and its timestamp are rendered; reviewer
+    // identity and administrative metadata stay inside the Administration Center.
+    const feedbackPanel = document.querySelector("[data-workflow-feedback]");
+    if (feedbackPanel) {
+      const note = typeof payload?.reviewFeedback === "string" ? payload.reviewFeedback.trim() : "";
+      const showFeedback = isLinked && status === "changes_requested" && Boolean(note);
+      feedbackPanel.hidden = !showFeedback;
+      if (showFeedback) {
+        const noteEl = feedbackPanel.querySelector("[data-workflow-feedback-note]");
+        const timeEl = feedbackPanel.querySelector("[data-workflow-feedback-time]");
+        if (noteEl) noteEl.textContent = note;
+        if (timeEl) {
+          const raw = payload?.reviewFeedbackAt;
+          const parsed = raw ? new Date(/T|Z/.test(raw) ? raw : String(raw).replace(" ", "T") + "Z") : null;
+          timeEl.textContent = parsed && !Number.isNaN(parsed.getTime()) ? `Requested ${parsed.toLocaleString()}` : "";
+          timeEl.hidden = !timeEl.textContent;
+        }
+      }
+    }
     const enrolled = status !== "legacy";
     show("workflow-submit", isLinked && (status === "legacy" || status === "draft"));
     show("workflow-resubmit", isLinked && status === "changes_requested");

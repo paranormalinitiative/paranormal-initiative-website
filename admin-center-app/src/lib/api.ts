@@ -419,3 +419,87 @@ export function metricValue(metrics: AdminOverview["metrics"], section: string, 
   if (metrics?.[section]?.unavailable) return "Unavailable";
   return typeof value === "number" ? value.toLocaleString() : value == null ? "—" : String(value);
 }
+
+// TPI-NOVA-004R6D: reviewer contract for the Editorial Review Queue. These
+// reads require EDITORIAL_REVIEW; the UI never derives review authority from the
+// admin role.
+export type EditorialAccess = { role: string; editorialReview: boolean; editorialPublish: boolean; adminAccess: boolean };
+
+export type EditorialNovaNode = { type: string; text?: string; attrs?: { level?: number; href?: string }; content?: EditorialNovaNode[]; marks?: Array<{ type: string; attrs?: { href?: string } }> };
+export type EditorialNovaDocument = { type: string; content?: EditorialNovaNode[] };
+
+export type EditorialQueueRow = {
+  articleId: string;
+  title: string;
+  destination: string;
+  articleType: string;
+  editorialStatus: string;
+  contributorId: string;
+  authorName?: string;
+  contributorName?: string | null;
+  contributorUsername?: string | null;
+  submissionId: string;
+  submittedAt: string;
+  submittedNovaVersion: number;
+  reviewerId?: string | null;
+  reviewStartedAt?: string | null;
+  reviewerName?: string | null;
+  round: number;
+};
+
+export type EditorialEvent = {
+  id: string;
+  submissionId: string;
+  actorId: string;
+  eventType: string;
+  fromState?: string | null;
+  toState?: string | null;
+  novaVersion?: number | null;
+  note?: string | null;
+  visibleToContributor: number;
+  createdAt: string;
+  actorName?: string | null;
+};
+
+export type EditorialSubmission = {
+  id: string;
+  submittedBy: string;
+  submittedAt: string;
+  submittedNovaVersion: number;
+  submittedDestination: string;
+  submittedArticleType: string;
+  reviewerId?: string | null;
+  reviewStartedAt?: string | null;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  approvedNovaVersion?: number | null;
+  outcome: string;
+  supersededBy?: string | null;
+  createdAt: string;
+  reviewerName?: string | null;
+  approverName?: string | null;
+  round?: number | null;
+  feedback?: EditorialEvent[];
+};
+
+export type EditorialSubmissionDetail = {
+  article: {
+    articleId: string;
+    title: string;
+    subtitle?: string | null;
+    destination: string;
+    articleType: string;
+    authorName?: string | null;
+    contributorId: string;
+    novaItemId?: string | null;
+    editorialStatus: string;
+    publicationStatus?: string | null;
+    updatedAt?: string | null;
+    contributorName?: string | null;
+    contributorUsername?: string | null;
+  };
+  currentSubmission: EditorialSubmission | null;
+  history: EditorialSubmission[];
+  events: EditorialEvent[];
+  pinned: { version: number | null; title?: string | null; formatVersion?: number; content: EditorialNovaDocument | { format?: string; version?: number; doc?: EditorialNovaDocument } | null; source?: string; unavailable?: boolean; code?: string };
+};

@@ -407,7 +407,10 @@
 
   function setupRoleGatedNav(user) {
     var role = String(user && user.role || "").toLowerCase();
-    var canUseAdminPanel = role === "owner" || role === "admin";
+    // TPI-NOVA-004R6D: an Editorial Reviewer reaches the Administration Center
+    // for the Editorial Review Queue. The flag is server-derived navigation
+    // only; every review API route re-checks EDITORIAL_REVIEW.
+    var canUseAdminPanel = role === "owner" || role === "admin" || Boolean(user && user.editorialReviewAccess === true);
     var canUseContentEditor = canUseAdminPanel || role === "contributor";
     var canUseCreatorStudio = Boolean(user && user.creatorStudioAccess);
     document.querySelectorAll("[data-admin-only]").forEach(function (element) {
