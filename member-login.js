@@ -767,7 +767,7 @@
               <p>${escapeHtml(article.subtitle || article.destination || "No subtitle provided.")}</p>
               ${article.href ? `<a href="${escapeHtml(article.href)}" target="_blank" rel="noopener noreferrer">Open contribution</a>` : ""}
             </article>
-          `).join("") : `<p class="access-note">No Content Editor contributions found for this member.</p>`}
+          `).join("") : `<p class="access-note">No Nova Editorial Workspace contributions found for this member.</p>`}
         </div>
       </section>
       <section class="admin-activity-section">

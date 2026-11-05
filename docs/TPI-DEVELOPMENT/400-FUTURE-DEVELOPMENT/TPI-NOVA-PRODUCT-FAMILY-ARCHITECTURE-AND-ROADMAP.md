@@ -1505,3 +1505,13 @@ R6C is complete as the Contributor side of the editorial workflow, local-only; p
 ### 21.14 TPI-NOVA-004R6C2 Contributor submission workflow (implemented)
 
 Contributors can now Submit for Review (legacy enrollment through draft to submitted), Withdraw before review starts, and Resubmit after changes are requested. The server pins the submitted Nova version, locks linked Nova items in submitted, in-review and approved states, and refuses crafted direct publication of enrolled articles. Published public snapshots are preserved during revision. TPI Video is excluded. Not yet built: the Editorial Review queue, Reviewer actions UI, Publisher UI and retirement of legacy direct publication (R6E).
+
+### 21.16 TPI-NOVA-004R6D0 Current naming statement
+
+This statement governs current user-facing naming. Earlier sections use the names that were current when they were written; they are not rewritten.
+
+- **Nova Editorial Workspace** is the Contributor/editorial product. It is the existing `/paper-editor.html` surface, formerly called Content Editor. The route and filename are unchanged. Member navigation labels it Nova Editorial Workspace.
+- **Nova Edit** is the Creator-facing product inside StudioFlow, the evolution of the StudioFlow Notes tab. The internal `Notes` state key is kept, so behavior and storage are unchanged.
+- **Nova Core** is shared underlying technology used by Nova Edit and Nova Editorial Workspace. It is not a user-facing product and does not appear in ordinary navigation.
+- **`/nova/`** is temporary development and reference infrastructure. It is not member navigation, not the Contributor destination, and not a third permanent product. It is not deleted by this statement.
+- The legacy editor, where a user must still choose it during migration, is labelled Legacy Editor. It is not a separate permanent product.

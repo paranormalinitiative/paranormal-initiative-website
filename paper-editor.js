@@ -425,9 +425,9 @@
 
   function getEditorAccessMessage(user) {
     if (user && !hasContributorAccess(user)) {
-      return "Content Editor access has not been enabled for this account yet. A Director or Admin can grant access from the Admin Panel.";
+      return "Nova Editorial Workspace access has not been enabled for this account yet. A Director or Admin can grant access from the Admin Panel.";
     }
-    return "Contributor access is required to open the Content Editor.";
+    return "Contributor access is required to open the Nova Editorial Workspace.";
   }
 
   function isEditorBlank() {
@@ -469,11 +469,11 @@
       <form class="editor-access-card" data-access-form="login">
         <p class="portal-kicker">Contributor Access</p>
         <h2>Sign In</h2>
-        <p>Use your contributor username and password to open the Content Editor. Free members can use the community; editor access is enabled by a Director or Admin while paid membership is being prepared.</p>
+        <p>Use your contributor username and password to open the Nova Editorial Workspace. Free members can use the community; editor access is enabled by a Director or Admin while paid membership is being prepared.</p>
         <label><span>Username</span><input name="username" type="text" autocomplete="username" required></label>
         <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
         <button type="submit">Open Editor</button>
-        <p class="access-note">A Director or Admin can grant Content Editor access to an approved member from the Admin Panel.</p>
+        <p class="access-note">A Director or Admin can grant Nova Editorial Workspace access to an approved member from the Admin Panel.</p>
       </form>
     `;
     document.body.appendChild(gate);
@@ -1831,7 +1831,7 @@ ${articleHtml}
             <div>
               <strong>${escapeHtml(article.title || "Untitled Content")}</strong>
           <span>${escapeHtml([article.legacy ? "Legacy Conversion" : article.contributionType || article.articleType, article.subtitle || article.destination || "Research paper", article.legacy ? article.contributionType : ""].filter(Boolean).join(" · "))}</span>
-          ${article.legacy ? `<em class="legacy-archive-note">Needs conversion - open it as-is or convert it into an editable Content Editor article.</em>` : ""}
+          ${article.legacy ? `<em class="legacy-archive-note">Needs conversion - open it as-is or convert it into an editable Nova Editorial Workspace article.</em>` : ""}
           ${!article.legacy && getLegacySourceTitle(article.source) ? `<em class="legacy-archive-note">Converted from legacy page: ${escapeHtml(getLegacySourceTitle(article.source))}</em>` : ""}
             </div>
             <div class="content-library-actions">

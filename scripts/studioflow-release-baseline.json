@@ -4,13 +4,13 @@
   "description": "Approved StudioFlow source identity and generated assets for the TPI-STUDIOFLOW-137 restoration of the complete Notes workspace. The workspace was approved under the TPI-STUDIOFLOW-122 family and then silently left the shipping bundle when the TPI-STUDIOFLOW-130 release baseline pinned a sibling source lineage that never contained it; this baseline restores it on the released lineage together with every TPI-STUDIOFLOW-131/132R/133/134/135 correction. Production deployment additionally requires the Notes schema migrations recorded in productionSchemaRequirements, which are not authorized by this baseline alone.",
   "source": {
     "repository": "/Users/toddknipple/Documents/StudioFlow/web",
-    "approvedCommit": "eefb7de9518809d98726062aee478a4111c921a5",
-    "previousApprovedCommit": "8aba8dd563574556b080234839c57e4d01cd0957"
+    "approvedCommit": "644045982b6dc8501f118ce453f90dc246a398d0",
+    "previousApprovedCommit": "eefb7de9518809d98726062aee478a4111c921a5"
   },
   "expectedAssets": {
     "javaScript": {
-      "name": "index-ChuELpxr.js",
-      "sha256": "7e7406463a7ba7ff52966e3aa0a001e0990f63d69d3febdbfe3fdedfe67a3e82"
+      "name": "index-B2nITjSa.js",
+      "sha256": "1f5d299158c7ba3846308d5ea83e771cf5fbe4c1a9ad1920f41d5a095ea04d26"
     },
     "css": {
       "name": "index-CxnemqTQ.css",
