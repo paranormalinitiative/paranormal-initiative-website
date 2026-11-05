@@ -377,6 +377,12 @@ Where it lives: inside the Nova Editorial Workspace and the Content Editor. Adds
 - **Publish:** shows the approved version and final destination, then requires `EDITORIAL_PUBLISH`. Publication writes the snapshot of the approved version (§10).
 - Admin oversight (audit, emergency unpublish) sits in the same section and is audited. It does not grant review or publish by role.
 
+## 16A. TPI-NOVA-004R6C2 — Contributor workflow implemented
+
+Implemented: Submit, Withdraw (before review start), and Resubmit for Contributors; server-side Nova locking for submitted, in-review and approved items; refusal of crafted direct publication for enrolled articles; version pinning to the server-resolved Nova version; published-snapshot preservation; TPI Video exclusion; read-only editor driven by server state.
+
+Not implemented: Editorial Review queue, Reviewer actions UI, Publisher UI, and retirement of legacy direct publication (R6E).
+
 ## 17. TPI Video — out of scope
 
 TPI Video is **out of scope for the initial Education Center editorial workflow.** It keeps its own direct publishing path (`tpi_videos.status`, `/api/tpi-videos/*/publish`). It does not use the Nova document or the article workflow. A future directive may decide whether video publishing needs its own review system.

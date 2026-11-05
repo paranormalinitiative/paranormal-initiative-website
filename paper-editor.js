@@ -937,12 +937,105 @@
     if (modeSelect) modeSelect.value = "nova";
   }
 
+  // TPI-NOVA-004R6C1: Contributor workflow controls. Server state is authoritative;
+  // buttons and the editor lock are derived from it, never from local recovery content.
+  const WORKFLOW_LABELS = {
+    legacy: "Legacy / Not in Review",
+    draft: "Draft",
+    submitted: "Submitted for Review",
+    in_review: "In Review",
+    changes_requested: "Changes Requested",
+    approved: "Approved — Awaiting Publication"
+  };
+  const workflowState = { status: null, locked: false };
+
+  function applyWorkflowState(payload) {
+    const status = payload?.editorialStatus || "legacy";
+    const locked = Boolean(payload?.locked);
+    workflowState.status = status;
+    workflowState.locked = locked;
+    // TPI Video keeps its specialized publish path and never shows article workflow controls.
+    const isVideo = payload?.contributionType === "TPI Video" || payload?.destination === TPI_VIDEOS_DESTINATION;
+    const isLinked = Boolean(novaLink.itemId) && !isVideo;
+    const badge = document.querySelector("[data-workflow-status]");
+    if (badge) {
+      badge.textContent = WORKFLOW_LABELS[status] || status;
+      badge.hidden = !isLinked;
+    }
+    const show = (action, visible) => {
+      const button = document.querySelector(`[data-action="${action}"]`);
+      if (button) button.hidden = !visible;
+    };
+    const enrolled = status !== "legacy";
+    show("workflow-submit", isLinked && (status === "legacy" || status === "draft"));
+    show("workflow-resubmit", isLinked && status === "changes_requested");
+    show("workflow-withdraw", isLinked && status === "submitted");
+    // Enrolled articles never get the direct Publish action; the server refuses it too.
+    show("publish", isVideo || !enrolled);
+    if (novaMode.handle && novaMode.handle.setReadOnly) {
+      novaMode.handle.setReadOnly(locked);
+    }
+    syncWorkflowConflictButtons();
+  }
+
+  // Submit/Resubmit stay disabled during a version conflict or while the server is unsure.
+  function syncWorkflowConflictButtons() {
+    const blocked = novaLink.conflict;
+    const submitBtn = document.querySelector('[data-action="workflow-submit"]');
+    const resubmitBtn = document.querySelector('[data-action="workflow-resubmit"]');
+    if (submitBtn) submitBtn.disabled = blocked;
+    if (resubmitBtn) resubmitBtn.disabled = blocked;
+  }
+
+  async function refreshWorkflowState(articleId) {
+    const response = await fetch(`/api/contributors/me/articles`, { credentials: "same-origin", cache: "no-store" });
+    if (!response.ok) return;
+    const data = await response.json().catch(() => ({}));
+    const article = (data.articles || []).find(item => item.id === articleId);
+    if (article) applyWorkflowState(article);
+  }
+
+  async function runWorkflowAction(action) {
+    const articleId = currentArticleId;
+    if (!articleId || !novaLink.itemId) return;
+    if (action !== "withdraw" && novaLink.conflict) {
+      setStatus("Resolve the save conflict before submitting.");
+      return;
+    }
+    // Flush any pending Nova edit so the pinned version is the one the user sees.
+    window.clearTimeout(novaLink.timer);
+    if (action !== "withdraw") {
+      const saved = await saveLinkedNovaDocument();
+      if (!saved) return;
+    }
+    const path = action === "withdraw" ? "submission/withdraw" : action === "resubmit" ? "submission/resubmit" : "submission";
+    const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/${path}`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({})
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setStatus(data.error || "Workflow action failed");
+      await refreshWorkflowState(articleId);
+      return;
+    }
+    setStatus(action === "withdraw" ? "Submission withdrawn" : "Submitted for review");
+    await refreshWorkflowState(articleId);
+  }
+
+  document.querySelector('[data-action="workflow-submit"]')?.addEventListener("click", () => runWorkflowAction("submit"));
+  document.querySelector('[data-action="workflow-resubmit"]')?.addEventListener("click", () => runWorkflowAction("resubmit"));
+  document.querySelector('[data-action="workflow-withdraw"]')?.addEventListener("click", () => runWorkflowAction("withdraw"));
+
   // Opens a linked article in Nova mode. Unlinked legacy articles are not converted here.
   async function openLinkedNovaArticle(articleId) {
     const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova/item`, { credentials: "same-origin", cache: "no-store" });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "Nova document could not be opened");
     await mountLinkedNovaDocument(data.item);
+    await refreshWorkflowState(articleId);
     setStatus("Nova document loaded");
   }
 
@@ -989,6 +1082,7 @@
     const data = await response.json().catch(() => ({}));
     if (response.status === 409) {
       novaLink.conflict = true;
+      syncWorkflowConflictButtons();
       keepLocalNovaDraft();
       setStatus("Another save changed this document. Your local copy is kept. Reload to review the newest version.");
       return false;
@@ -1762,6 +1856,7 @@ ${articleHtml}
     subtitleInput.value = article.subtitle || "";
     if (article.destination) destinationInput.value = article.destination;
     if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
+    updateVideoFieldsVisibility();
     if (article.author) authorInput.value = article.author;
     if (article.source) sourceInput.value = article.source;
     if (article.labels) labelsInput.value = article.labels;

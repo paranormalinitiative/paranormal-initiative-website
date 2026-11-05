@@ -16,9 +16,11 @@ export interface NovaEditorProps {
   onChange?: (doc: JSONContent) => void;
   /** Accessible label for the editing surface. */
   label?: string;
+  /** When true the document cannot be edited: TipTap is not editable and formatting controls are disabled. */
+  readOnly?: boolean;
 }
 
-export function NovaEditor({ content, onChange, label = "Document body" }: NovaEditorProps) {
+export function NovaEditor({ content, onChange, label = "Document body", readOnly = false }: NovaEditorProps) {
   const [linkOpen, setLinkOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [hasLink, setHasLink] = useState(false);
@@ -38,6 +40,11 @@ export function NovaEditor({ content, onChange, label = "Document body" }: NovaE
     },
     onUpdate: ({ editor: instance }) => onChangeRef.current?.(instance.getJSON())
   });
+
+  // Read-only is enforced by TipTap itself, not by CSS, so no edit transaction can apply.
+  useEffect(() => {
+    editor?.setEditable(!readOnly);
+  }, [editor, readOnly]);
 
   // Reload the document only when a different structured document is supplied.
   const lastLoadedRef = useRef<string>("");
@@ -68,7 +75,7 @@ export function NovaEditor({ content, onChange, label = "Document body" }: NovaE
   return (
     <div className="nova-shared-editor" data-testid="nova-shared-editor">
       {editor ? (
-        <EditorToolbar editor={editor} disabled={false} onRequestLink={() => openLinkDialog(editor)} />
+        <EditorToolbar editor={editor} disabled={readOnly} onRequestLink={() => openLinkDialog(editor)} />
       ) : null}
       <EditorContent editor={editor} data-testid="nova-editor-surface" />
       <LinkDialog

@@ -1497,3 +1497,7 @@ editorial approval, and retirement of the legacy direct-publish paths. Productio
 is untouched.
 
 Next: the contributor submission workflow, per the phase sequence in the 004R6A architecture record.
+
+### 21.14 TPI-NOVA-004R6C2 Contributor submission workflow (implemented)
+
+Contributors can now Submit for Review (legacy enrollment through draft to submitted), Withdraw before review starts, and Resubmit after changes are requested. The server pins the submitted Nova version, locks linked Nova items in submitted, in-review and approved states, and refuses crafted direct publication of enrolled articles. Published public snapshots are preserved during revision. TPI Video is excluded. Not yet built: the Editorial Review queue, Reviewer actions UI, Publisher UI and retirement of legacy direct publication (R6E).

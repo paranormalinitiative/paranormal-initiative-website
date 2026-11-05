@@ -11,6 +11,7 @@ import "./styles.css";
 export interface NovaContentEditorHandle {
   getDocument(): JSONContent | null;
   setDocument(doc: JSONContent): void;
+  setReadOnly(readOnly: boolean): void;
   unmount(): void;
 }
 
@@ -19,13 +20,17 @@ const EMPTY_DOC: JSONContent = { type: "doc", content: [{ type: "paragraph" }] }
 let root: Root | null = null;
 let currentDoc: JSONContent | null = null;
 let setExternalDoc: ((doc: JSONContent) => void) | null = null;
+let setExternalReadOnly: ((readOnly: boolean) => void) | null = null;
 
 function Host({ initial }: { initial: JSONContent }) {
   const [doc, setDoc] = useState<JSONContent>(initial);
+  const [readOnly, setReadOnly] = useState(false);
   setExternalDoc = setDoc;
+  setExternalReadOnly = setReadOnly;
   return (
     <NovaEditor
       content={doc}
+      readOnly={readOnly}
       onChange={next => {
         currentDoc = next;
       }}
@@ -44,14 +49,16 @@ export function mountNovaContentEditor(container: HTMLElement, initial: JSONCont
   );
   return {
     getDocument: () => currentDoc,
-    setDocument: doc => {
+      setDocument: doc => {
       currentDoc = doc;
       setExternalDoc?.(doc);
     },
+    setReadOnly: readOnly => setExternalReadOnly?.(readOnly),
     unmount: () => {
       root?.unmount();
       root = null;
       setExternalDoc = null;
+      setExternalReadOnly = null;
     }
   };
 }

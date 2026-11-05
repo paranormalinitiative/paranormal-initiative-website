@@ -5,6 +5,7 @@ import { scrapeVideos, PROVIDER_STATUS } from "../../lib/video-scraper.js";
 import { handleMemberLibrary, recordMemberUpload } from "../../lib/member-library.js";
 import { handlePersonalization, handleSiteTheme, handlePublicStyle, handleBlockedUsers } from "../../lib/member-settings.js";
 import { handleNovaApi, createNovaItemForOwner, updateNovaItemForOwner, getOwnedItem as getOwnedNovaItem, novaItemPayloadForArticle, validateNovaEnvelope } from "../../lib/nova.js";
+import { isNovaLocked, validateTransition, verifyNovaItemForSubmission, buildEvent } from "../../lib/editorial-workflow.js";
 import { validateThumbnailUrl, validateVideoSource } from "../../lib/video-providers.js";
 import { fetchExternalLinkPreview, isSafePreviewUrl } from "../../lib/link-preview.js";
 import { isLocalEnvironment, localFetch } from "../../lib/outbound-fetch.js";
@@ -230,6 +231,9 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/nova$/)) return requireContributor(request, env, user => handleArticleNovaLink(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItem(path, env, user));
     if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItemUpdate(path, request, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/resubmit$/)) return requireContributor(request, env, user => handleArticleResubmission(path, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission$/)) return requireContributor(request, env, user => handleArticleSubmission(path, env, user));
+    if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/withdraw$/)) return requireContributor(request, env, user => handleArticleWithdrawal(path, env, user));
     if (request.method === "DELETE" && path.startsWith("/articles/")) return requireContributor(request, env, user => handleDeleteArticle(path, env, user));
     if (request.method === "GET" && path === "/link-preview") return handleLinkPreview(request, env);
     if (request.method === "GET" && path === "/feed") return handleCommunityFeed(request, env);
@@ -3328,11 +3332,21 @@ async function handleCreateArticle(request, env, user) {
   const author = clean(data.author);
   const source = clean(data.source);
   const labels = clean(data.labels);
-  const existingArticle = await env.TPI_DB.prepare("SELECT status, created_by FROM articles WHERE id = ?").bind(id).first();
+  const existingArticle = await env.TPI_DB.prepare("SELECT status, created_by, editorial_status FROM articles WHERE id = ?").bind(id).first();
   // An existing article may only be changed by the contributor who created it.
   // Ownership is never transferred through this endpoint.
   if (existingArticle && existingArticle.created_by !== user.id) {
     return json({ error: "This article belongs to another contributor." }, 403);
+  }
+  // TPI-NOVA-004R6C: enrolled articles cannot be published or edited outside the
+  // editorial workflow. Legacy articles keep the existing direct-publish behavior.
+  if (existingArticle && existingArticle.editorial_status && existingArticle.editorial_status !== "legacy") {
+    if (status === "published") {
+      return json({ error: "This article is in the editorial workflow. Publication is handled by editorial review, not by direct publish.", code: "editorial_workflow_publish_refused" }, 409);
+    }
+    if (isNovaLocked(existingArticle.editorial_status)) {
+      return json({ error: "This article is locked while it is submitted for editorial review.", code: "editorial_locked" }, 409);
+    }
   }
   const upsertResult = await env.TPI_DB.prepare(`
     INSERT INTO articles (id, destination, href, title, subtitle, article_type, author, source, body_html, article_html, labels, status, created_by, updated_at)
@@ -3557,7 +3571,20 @@ async function handleContributorArticles(env, user) {
     WHERE created_by = ?
     ORDER BY COALESCE(updated_at, created_at) DESC
   `).bind(user.username, user.id).all();
-  return json({ articles: results });
+  // TPI-NOVA-004R6C: a Contributor-safe workflow read model. It carries the state
+  // and their own submission timing only; reviewer identity and notes stay private.
+  const { results: workflow } = await env.TPI_DB.prepare(`
+    SELECT a.id AS id, a.editorial_status AS editorialStatus,
+      (SELECT s.submitted_at FROM article_editorial_submissions s WHERE s.article_id = a.id AND s.outcome = 'open' ORDER BY s.created_at DESC LIMIT 1) AS submittedAt,
+      (SELECT s.submitted_nova_version FROM article_editorial_submissions s WHERE s.article_id = a.id AND s.outcome = 'open' ORDER BY s.created_at DESC LIMIT 1) AS submittedNovaVersion
+    FROM articles a WHERE a.created_by = ?
+  `).bind(user.id).all();
+  const byId = new Map(workflow.map(row => [row.id, row]));
+  const articles = results.map(article => {
+    const flow = byId.get(article.id) || {};
+    return { ...article, editorialStatus: flow.editorialStatus || "legacy", submittedAt: flow.submittedAt || null, submittedNovaVersion: flow.submittedNovaVersion ?? null, locked: isNovaLocked(flow.editorialStatus) };
+  });
+  return json({ articles });
 }
 
 // TPI-NOVA-004R5: attach a Nova working document to an article the caller owns.
@@ -3669,6 +3696,143 @@ async function handleDeleteArticle(path, env, user) {
   }
   await env.TPI_DB.prepare("DELETE FROM articles WHERE id = ?").bind(id).run();
   return json({ deleted: true, id });
+}
+
+// TPI-NOVA-004R6C: Contributor submission workflow. Transition rules live in
+// lib/editorial-workflow.js; these handlers load rows, call that module and persist
+// its result in one D1 batch. The Nova version is read from the owned linked item,
+// never from the request body.
+async function loadOwnedArticleForWorkflow(env, articleId, user) {
+  const article = await env.TPI_DB.prepare("SELECT id, destination, article_type, created_by, nova_item_id, editorial_status FROM articles WHERE id = ?").bind(articleId).first();
+  if (!article) return { response: json({ error: "Article not found." }, 404) };
+  if (article.created_by !== user.id) return { response: json({ error: "This article belongs to another contributor." }, 403) };
+  return { article };
+}
+
+async function currentOpenSubmission(env, articleId) {
+  return env.TPI_DB.prepare("SELECT * FROM article_editorial_submissions WHERE article_id = ? AND outcome = 'open' ORDER BY created_at DESC LIMIT 1").bind(articleId).first();
+}
+
+async function contributorCapabilities(env, user) {
+  const resolved = await resolveMemberEntitlements(env, user);
+  return resolved?.capabilities || [];
+}
+
+function insertEditorialEvent(env, row) {
+  return env.TPI_DB.prepare("INSERT INTO article_editorial_events (id, article_id, submission_id, actor_id, event_type, from_state, to_state, nova_version, note, visible_to_contributor, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(row.id, row.article_id, row.submission_id, row.actor_id, row.event_type, row.from_state, row.to_state, row.nova_version, row.note, row.visible_to_contributor, row.created_at);
+}
+
+async function workflowPayload(env, articleId) {
+  const row = await env.TPI_DB.prepare("SELECT editorial_status FROM articles WHERE id = ?").bind(articleId).first();
+  const submission = await env.TPI_DB.prepare("SELECT submitted_at, submitted_nova_version, outcome FROM article_editorial_submissions WHERE article_id = ? ORDER BY created_at DESC LIMIT 1").bind(articleId).first();
+  return {
+    editorialStatus: row?.editorial_status || "legacy",
+    locked: isNovaLocked(row?.editorial_status),
+    submission: submission ? { submittedAt: submission.submitted_at, submittedNovaVersion: submission.submitted_nova_version, outcome: submission.outcome } : null
+  };
+}
+
+async function handleArticleSubmission(path, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/submission$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  const loaded = await loadOwnedArticleForWorkflow(env, articleId, user);
+  if (loaded.response) return loaded.response;
+  const { article } = loaded;
+  // TPI Video keeps its specialized publish path and never enters the article editorial workflow.
+  if (article.article_type === "TPI Video" || article.destination === "tpi-videos.html") {
+    return json({ error: "TPI Video items use their specialized publish path and cannot be submitted for editorial review.", code: "editorial_workflow_not_applicable" }, 409);
+  }
+  const capabilities = await contributorCapabilities(env, user);
+
+  // Legacy enrollment: legacy -> draft -> submitted, recorded as two events.
+  const enrolling = article.editorial_status === "legacy";
+  const startState = enrolling ? "draft" : article.editorial_status;
+  const transition = validateTransition({ from: startState, to: "submitted", actorId: user.id, capabilities, isOwner: true });
+  if (!transition.ok) return json({ error: `This article cannot be submitted from its current state (${article.editorial_status}).`, code: transition.code }, transition.status);
+
+  // The Nova version is resolved server-side from the owned linked item.
+  const novaItem = article.nova_item_id
+    ? await env.TPI_DB.prepare("SELECT id, owner_id, version, status, deleted_at FROM nova_items WHERE id = ? AND owner_id = ?").bind(article.nova_item_id, user.id).first()
+    : null;
+  const nova = verifyNovaItemForSubmission({ novaItem, articleOwnerId: user.id, articleNovaItemId: article.nova_item_id });
+  if (!nova.ok) return json({ error: "The article's Nova document must be linked and usable before submission.", code: nova.code }, nova.status);
+
+  if (await currentOpenSubmission(env, articleId)) {
+    return json({ error: "This article already has an open submission.", code: "submission_already_open" }, 409);
+  }
+
+  const now = new Date().toISOString();
+  const submissionId = crypto.randomUUID();
+  const statements = [];
+  if (enrolling) {
+    statements.push(env.TPI_DB.prepare("UPDATE articles SET editorial_status = 'draft' WHERE id = ? AND editorial_status = 'legacy'").bind(articleId));
+    statements.push(insertEditorialEvent(env, buildEvent({ id: crypto.randomUUID(), articleId, actorId: user.id, transition: { event: "entered_workflow", from: "legacy", to: "draft" }, createdAt: now })));
+  }
+  statements.push(env.TPI_DB.prepare("UPDATE articles SET editorial_status = 'submitted', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND editorial_status = ?").bind(articleId, startState));
+  statements.push(env.TPI_DB.prepare("INSERT INTO article_editorial_submissions (id, article_id, nova_item_id, submitted_by, submitted_at, submitted_nova_version, submitted_destination, submitted_article_type, outcome, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?)")
+    .bind(submissionId, articleId, article.nova_item_id, user.id, now, nova.version, article.destination || "", article.article_type || "", now, now));
+  statements.push(insertEditorialEvent(env, buildEvent({ id: crypto.randomUUID(), articleId, submissionId, actorId: user.id, transition, novaVersion: nova.version, createdAt: now })));
+  await env.TPI_DB.batch(statements);
+
+  return json(await workflowPayload(env, articleId), 201);
+}
+
+async function handleArticleWithdrawal(path, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/submission\/withdraw$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  const loaded = await loadOwnedArticleForWorkflow(env, articleId, user);
+  if (loaded.response) return loaded.response;
+  const capabilities = await contributorCapabilities(env, user);
+  const transition = validateTransition({ from: loaded.article.editorial_status, to: "draft", actorId: user.id, capabilities, isOwner: true });
+  if (!transition.ok || transition.event !== "withdrawn") {
+    return json({ error: "Only a submission that has not started review can be withdrawn.", code: "withdrawal_refused" }, 409);
+  }
+  const submission = await currentOpenSubmission(env, articleId);
+  if (!submission) return json({ error: "No open submission to withdraw.", code: "no_open_submission" }, 409);
+  const now = new Date().toISOString();
+  // Guarded UPDATEs: if an in_review transition landed first, the state guard
+  // matches no row and the withdrawal is refused with no partial change.
+  const statements = [
+    env.TPI_DB.prepare("UPDATE articles SET editorial_status = 'draft', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND editorial_status = 'submitted'").bind(articleId),
+    env.TPI_DB.prepare("UPDATE article_editorial_submissions SET outcome = 'withdrawn', updated_at = ? WHERE id = ? AND outcome = 'open' AND review_started_at IS NULL").bind(now, submission.id),
+    insertEditorialEvent(env, buildEvent({ id: crypto.randomUUID(), articleId, submissionId: submission.id, actorId: user.id, transition, novaVersion: submission.submitted_nova_version, createdAt: now }))
+  ];
+  await env.TPI_DB.batch(statements);
+  return json(await workflowPayload(env, articleId));
+}
+
+async function handleArticleResubmission(path, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/submission\/resubmit$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  const loaded = await loadOwnedArticleForWorkflow(env, articleId, user);
+  if (loaded.response) return loaded.response;
+  const { article } = loaded;
+  const capabilities = await contributorCapabilities(env, user);
+  const transition = validateTransition({ from: article.editorial_status, to: "submitted", actorId: user.id, capabilities, isOwner: true });
+  if (!transition.ok || article.editorial_status !== "changes_requested") {
+    return json({ error: "Only an article with requested changes can be resubmitted.", code: "resubmission_refused" }, 409);
+  }
+  const novaItem = article.nova_item_id
+    ? await env.TPI_DB.prepare("SELECT id, owner_id, version, status, deleted_at FROM nova_items WHERE id = ? AND owner_id = ?").bind(article.nova_item_id, user.id).first()
+    : null;
+  const nova = verifyNovaItemForSubmission({ novaItem, articleOwnerId: user.id, articleNovaItemId: article.nova_item_id });
+  if (!nova.ok) return json({ error: "The article's Nova document must be linked and usable before resubmission.", code: nova.code }, nova.status);
+
+  const prior = await env.TPI_DB.prepare("SELECT id FROM article_editorial_submissions WHERE article_id = ? AND outcome = 'open' ORDER BY created_at DESC LIMIT 1").bind(articleId).first();
+  const now = new Date().toISOString();
+  const submissionId = crypto.randomUUID();
+  const statements = [
+    env.TPI_DB.prepare("UPDATE articles SET editorial_status = 'submitted', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND editorial_status = 'changes_requested'").bind(articleId),
+    env.TPI_DB.prepare("INSERT INTO article_editorial_submissions (id, article_id, nova_item_id, submitted_by, submitted_at, submitted_nova_version, submitted_destination, submitted_article_type, outcome, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?)")
+      .bind(submissionId, articleId, article.nova_item_id, user.id, now, nova.version, article.destination || "", article.article_type || "", now, now)
+  ];
+  if (prior) {
+    statements.push(env.TPI_DB.prepare("UPDATE article_editorial_submissions SET outcome = 'superseded', superseded_by = ?, updated_at = ? WHERE id = ? AND outcome = 'open'").bind(submissionId, now, prior.id));
+  }
+  statements.push(insertEditorialEvent(env, buildEvent({ id: crypto.randomUUID(), articleId, submissionId, actorId: user.id, transition, novaVersion: nova.version, createdAt: now })));
+  await env.TPI_DB.batch(statements);
+  return json(await workflowPayload(env, articleId), 201);
 }
 
 async function handleArticleReactions(request, env) {

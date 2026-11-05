@@ -469,8 +469,9 @@ TPI-NOVA-004R6A (editorial submission, review and publishing authority) is
 architecture-only, recorded in
 [`TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md`](TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
 TPI-NOVA-004R6B has implemented its server-side foundation (capabilities, additive
-schema, transition engine). Contributor submission, review UI and publish-workflow
-switchover remain future work; legacy direct publishing is still active.
+schema, transition engine). TPI-NOVA-004R6C2 has implemented Contributor submission, withdrawal,
+locking and resubmission. The Editorial Review queue, Reviewer UI, Publisher UI and
+retirement of legacy direct publishing remain future work (R6E).
 
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**
 remains the next governance section, but it is not scheduled to begin until the

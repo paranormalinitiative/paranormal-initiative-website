@@ -1,5 +1,32 @@
 # TPI Current Development Status
 
+## TPI-NOVA-004R6C2 — Contributor submission, withdrawal, locking & resubmission (2026-11-05)
+
+Status: **COMPLETE — CONTRIBUTOR SUBMISSION, WITHDRAWAL, LOCKING & RESUBMISSION WORKFLOW IMPLEMENTED — READY FOR EDITORIAL REVIEW QUEUE.** No Admin review queue, Reviewer UI or Publisher UI yet. Legacy direct Publish remains for unenrolled articles until R6E. Production untouched.
+
+Delivered:
+
+- Contributor actions in the Content Editor: Submit for Review (legacy → draft → submitted, recorded as two logical transitions), Withdraw Submission (`submitted` → `draft`, only before review starts), Resubmit for Review (`changes_requested` → `submitted`). Each pins the server-resolved Nova version. Resubmission supersedes the prior open round and inserts a new one; history is retained.
+- Locking: the server refuses Nova updates for linked items in `submitted`, `in_review` and `approved` (`409 nova_locked_for_review`). The React editor is set read-only from server state on load and reload.
+- Direct-publish bypass prevention: enrolled articles cannot be published through `POST /api/articles` (`409 editorial_workflow_publish_refused`). Legacy articles keep direct Publish.
+- Published snapshot preservation: submitting a revision of a published article does not change `articles.status`, `body_html` or the public page.
+- TPI Video is excluded: no workflow badge or Submit; the specialized Publish Video path is unchanged; submission is refused server-side (`409 editorial_workflow_not_applicable`).
+- Conflict state disables Submit/Resubmit; withdrawal after review start is refused and the UI refreshes to the server state.
+- The Contributor read model is additive (`editorialStatus`, `submittedAt`, `submittedNovaVersion`, `locked`). It carries no reviewer fields.
+
+Verification (observed, 2026-11-05, authoritative 8787 workerd, no restart):
+
+- Firefox Developer Edition, disposable fixture steps 5–17: 40 PASS, 0 FAIL. TPI Video step 20: 6 PASS, 0 FAIL.
+- Server/curl checks: crafted Nova PUT while submitted → 409 `nova_locked_for_review`; crafted `status=published` on enrolled article → refused; withdrawal after review start → 409 `withdrawal_refused`; published-snapshot revision keeps `body_html` hash and public page 200; legacy direct publish 200.
+- Chromium smoke: 13 PASS, 0 FAIL. Chromium did not directly test editor read-only state.
+- Regression: Nova 003 PASS; Nova 004 134/0; 004R2 14/0; 004R4 13/0; 004R5 67/0; 006C 13/13; 004R6B 47/0; 004R6C 23/0; Nova typecheck exit 0; `build:content-editor-nova` exit 0; `node --check` exit 0; `git diff --check` exit 0.
+
+Known gaps:
+
+- Firefox console capture was not wired into the driver, so no console evidence was recorded for step 21. This is not a pass.
+- Disposable enrolled articles, their Nova items, submission rows and append-only events cannot be deleted through normal paths: the FK rules and append-only triggers refuse it, by design. They were not removed by weakening those rules. Four disposable legacy articles were deleted through the normal delete route. Retained synthetic rows are labelled `R6C2`.
+- Real-article fingerprints match the pre-test values: `education-area-ethics-…` (body `caa7ee940a60`) and `local-ops011-article` (body `8d3f28f290c8`) remain `published`, `legacy`, with no Nova item and unchanged destinations.
+
 ## TPI-NOVA-004R6B — Editorial workflow foundation, capabilities & state-integrity engine (2026-11-05)
 
 Status: **COMPLETE — EDITORIAL WORKFLOW FOUNDATION, CAPABILITIES & STATE-INTEGRITY ENGINE IMPLEMENTED — READY FOR CONTRIBUTOR SUBMISSION WORKFLOW.** No UI, no public-route change, no direct-publish retirement, no production deployment.
