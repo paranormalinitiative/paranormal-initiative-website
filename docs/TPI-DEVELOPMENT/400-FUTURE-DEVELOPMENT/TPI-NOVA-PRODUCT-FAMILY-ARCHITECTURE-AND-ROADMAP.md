@@ -1476,3 +1476,24 @@ The editorial workflow architecture is recorded in
 [`TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md`](TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
 It is documentation only. No migrations, application changes or production work
 are included. Implementation is not complete.
+
+### 21.13 TPI-NOVA-004R6B editorial workflow foundation (server-side only)
+
+The foundation described in 21.12 now exists in the codebase, with no user-facing
+surface yet:
+
+- Capabilities `EDITORIAL_REVIEW` and `EDITORIAL_PUBLISH` (`lib/membership-entitlements.js`),
+  assignable independently and implied by no membership tier or legacy role.
+- Additive schema in `migrations/0061_article_editorial_workflow.sql`:
+  `articles.editorial_status` (default `legacy`), `article_editorial_submissions`,
+  and append-only `article_editorial_events`. `articles.status` still governs
+  publication visibility.
+- One transition engine, `lib/editorial-workflow.js`, that owns the legal
+transition matrix, authority checks, Nova ownership/version verification,
+approval-version equality, and reviewed-metadata-drift detection.
+
+Not yet built: contributor submission UI, admin review UI, publication through
+editorial approval, and retirement of the legacy direct-publish paths. Production
+is untouched.
+
+Next: the contributor submission workflow, per the phase sequence in the 004R6A architecture record.

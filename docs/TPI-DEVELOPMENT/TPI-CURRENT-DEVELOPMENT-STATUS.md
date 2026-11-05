@@ -1,5 +1,20 @@
 # TPI Current Development Status
 
+## TPI-NOVA-004R6B — Editorial workflow foundation, capabilities & state-integrity engine (2026-11-05)
+
+Status: **COMPLETE — EDITORIAL WORKFLOW FOUNDATION, CAPABILITIES & STATE-INTEGRITY ENGINE IMPLEMENTED — READY FOR CONTRIBUTOR SUBMISSION WORKFLOW.** No UI, no public-route change, no direct-publish retirement, no production deployment.
+
+Delivered:
+
+- Capabilities `EDITORIAL_REVIEW` and `EDITORIAL_PUBLISH` added to the existing `CAPABILITY` identifiers in `lib/membership-entitlements.js`. They are not in any membership set or legacy role mapping; Contributor, Creator, Admin and membership never imply editorial authority.
+- Additive migration `migrations/0061_article_editorial_workflow.sql`: `articles.editorial_status` (default `legacy`, CHECK over the six states), `article_editorial_submissions` (one row per review round), and append-only `article_editorial_events` (UPDATE/DELETE blocked by triggers). `articles.status` is unchanged. No cascades: deletes are refused while editorial history exists.
+- Centralized workflow engine `lib/editorial-workflow.js`: canonical states, the seven legal transitions (all others refused), owner/reviewer authority, self-review refusal, note requirement for changes, Nova ownership/active/version verification, stale-version checks, approval-version equality, reviewed destination/article_type change detection, and the `requireEditorialPublish` publication primitive.
+- Verifier `scripts/verify/tpi-nova-004r6b-workflow.mjs` (`npm run verify:nova-004r6b`): 47 passed, 0 failed. It applies the real 0061 migration to an in-memory SQLite database.
+- Authoritative local state (`.local-dev/state/v3`) received only the targeted 0061 migration after a pre-change backup (`.local-dev/backups/tpi-nova-004r6b-before-0061.sqlite`, SHA-256 in the matching `.sha256` file). Post-check: 2 articles (2 published, 0 draft) unchanged, all `editorial_status = legacy`, 20 contributors, submission and event tables empty. `/` and `/api/articles` return 200.
+- Production untouched. Direct publishing, Contributor UI and Content Editor behavior are unchanged.
+
+Regression: Nova Core 003 105/0; Nova 004 134/0; 004R2 14/0; 004R4 13/0; 004R5 67/0; 006C 13/0; R6B 47/0; Nova typecheck exit 0; Content Editor Nova build exit 0.
+
 ## TPI-NOVA-004R6A — Editorial submission, review & publishing authority architecture (2026-11-05)
 
 Status: **ARCHITECTURE COMPLETE. IMPLEMENTATION NOT STARTED. NO SCHEMA, MIGRATION, APPLICATION, OR DEPLOYMENT CHANGE.**

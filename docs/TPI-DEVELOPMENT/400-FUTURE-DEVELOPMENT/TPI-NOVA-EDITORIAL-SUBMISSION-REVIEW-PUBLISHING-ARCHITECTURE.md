@@ -8,7 +8,7 @@
 
 Baseline: branch `codex/tpi-development`, HEAD and `origin/codex/tpi-development` at `02a0acd0`. Migrations 0059 and 0060 and the 004R5 application changes have not reached production (roadmap §21.11).
 
-Next phase: **TPI-NOVA-004R6B — Workflow foundation** (see §22).
+Next phase: **TPI-NOVA-004R6B — Workflow foundation** (see §22). R6B is now implemented server-side: capabilities, `0061_article_editorial_workflow.sql`, and `lib/editorial-workflow.js`, verified by `npm run verify:nova-004r6b`. No UI or public-route change; direct publishing is unchanged.
 
 ## 0. Central rules
 

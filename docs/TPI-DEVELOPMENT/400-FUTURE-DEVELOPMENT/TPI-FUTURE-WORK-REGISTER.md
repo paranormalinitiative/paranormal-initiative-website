@@ -468,7 +468,9 @@ investigation before any implementation. See
 TPI-NOVA-004R6A (editorial submission, review and publishing authority) is
 architecture-only, recorded in
 [`TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md`](TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
-Implementation has not started.
+TPI-NOVA-004R6B has implemented its server-side foundation (capabilities, additive
+schema, transition engine). Contributor submission, review UI and publish-workflow
+switchover remain future work; legacy direct publishing is still active.
 
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**
 remains the next governance section, but it is not scheduled to begin until the
