@@ -1,5 +1,14 @@
 # TPI Current Development Status
 
+## TPI-NOVA-004R6A — Editorial submission, review & publishing authority architecture (2026-11-05)
+
+Status: **ARCHITECTURE COMPLETE. IMPLEMENTATION NOT STARTED. NO SCHEMA, MIGRATION, APPLICATION, OR DEPLOYMENT CHANGE.**
+
+- The architecture is defined in [TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md](400-FUTURE-DEVELOPMENT/TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
+- Editorial review, editorial publishing, and the Contributor submission workflow are **not implemented**. Current code still allows direct publication paths that R6 must retire or constrain.
+- Publication visibility (`articles.status`) and editorial workflow (`articles.editorial_status`) remain separate. Public articles keep the last approved snapshot while a new Nova revision is reviewed.
+- Next phase: **TPI-NOVA-004R6B** (workflow foundation).
+
 ## TPI-GOVERNANCE-003B2 — Future-work reconciliation (2026-11-03)
 
 Status: **DOCUMENTATION ONLY. NO APPLICATION, DATABASE, ASSET, OR DEPLOYMENT

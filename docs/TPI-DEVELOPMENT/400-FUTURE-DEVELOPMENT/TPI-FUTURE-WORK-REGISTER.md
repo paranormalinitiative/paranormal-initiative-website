@@ -465,6 +465,11 @@ Nova Docs and Nova Slides) — beginning with Nova architecture and repository
 investigation before any implementation. See
 [`TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md`](TPI-NOVA-PRODUCT-FAMILY-ARCHITECTURE-AND-ROADMAP.md).
 
+TPI-NOVA-004R6A (editorial submission, review and publishing authority) is
+architecture-only, recorded in
+[`TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md`](TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
+Implementation has not started.
+
 **TPI-GOVERNANCE-003C — Governance, Board & Executive Leadership Architecture**
 remains the next governance section, but it is not scheduled to begin until the
 Nova program is underway or the owner directs otherwise.

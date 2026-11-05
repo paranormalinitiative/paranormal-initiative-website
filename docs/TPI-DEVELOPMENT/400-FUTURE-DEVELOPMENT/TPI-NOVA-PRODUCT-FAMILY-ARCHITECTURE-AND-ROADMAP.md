@@ -1469,3 +1469,10 @@ controls are deferred. These are product-surface enhancements, not blockers for
 structured document persistence.
 
 Production has not received migrations 0059/0060 or the 004R5 application changes.
+
+### 21.12 TPI-NOVA-004R6A editorial submission, review and publishing authority (architecture only)
+
+The editorial workflow architecture is recorded in
+[`TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md`](TPI-NOVA-EDITORIAL-SUBMISSION-REVIEW-PUBLISHING-ARCHITECTURE.md).
+It is documentation only. No migrations, application changes or production work
+are included. Implementation is not complete.
