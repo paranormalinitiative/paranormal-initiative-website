@@ -26,12 +26,12 @@ const html = read("paper-editor.html");
 const js = read("paper-editor.js");
 
 check("Content Editor keeps the legacy editor as the default mode", () => {
-  assert.match(html, /<option value="legacy" selected>Legacy editor<\/option>/);
+  assert.match(html, /<option value="legacy" selected>Compatibility<\/option>/);
   assert.doesNotMatch(html, /<option value="nova" selected>/);
 });
 
 check("Nova mode is offered as a development option, not the default", () => {
-  assert.match(html, /<option value="nova">Nova editor \(development\)<\/option>/);
+  assert.match(html, /<option value="nova">Nova<\/option>/);
 });
 
 check("legacy body and Nova container both exist in the Compose pane", () => {

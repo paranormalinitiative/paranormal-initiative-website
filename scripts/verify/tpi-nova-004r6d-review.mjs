@@ -66,6 +66,7 @@ sqlite.exec(`
 sqlite.exec(readFileSync(resolve(repoRoot, "migrations/0058_founding_membership_entitlements.sql"), "utf8"));
 sqlite.exec(readFileSync(resolve(repoRoot, "migrations/0062_editorial_capabilities.sql"), "utf8"));
 sqlite.exec(readFileSync(resolve(repoRoot, "migrations/0061_article_editorial_workflow.sql"), "utf8"));
+sqlite.exec(readFileSync(resolve(repoRoot, "migrations/0064_article_publication_metadata.sql"), "utf8"));
 
 // Minimal D1 surface over node:sqlite, matching prepare().bind().first/all/run and batch().
 function d1() {

@@ -358,3 +358,45 @@ archive/trash/restore controls are deferred.
 
 **Production has not received migrations 0059/0060 or the 004R5 application
 changes.**
+
+## 19. TPI-NOVA-005A — Nova Editorial Workspace visual foundation (complete, local)
+
+**Product.** `/paper-editor.html` is now the **Nova Editorial Workspace** and is the
+flagship/master Nova product. `/nova/` remains a development and reference surface
+only; its routing and access are unchanged.
+
+**Documents foundation.** Documents Home; Nova-native editor with the shared toolbar
+and contained canvas; Education Center inspector; publication and workflow chips;
+Legacy Compatibility for pre-Nova articles.
+
+**Article metadata.** Migration `0064_article_publication_metadata.sql` adds nullable
+`affiliation`, `organization`, `correspondence` and `website` columns to articles.
+There is no backfill. The nine-field metadata set persists through the article API.
+
+**Save behaviour.** The editor tracks body and metadata dirty state separately. A
+no-op save does nothing. Metadata-only, body-only and combined saves are supported.
+Writes are serialised, and a stale `expectedVersion` returns a Conflict.
+
+**Workflow separation.** Contributor, Reviewer and Publisher are distinct authorities.
+Verified lifecycle: Submit, Submitted lock, Start Review, Request Changes, Changes
+Requested save, Resubmit, second review, Approve, Publish, Start New Revision.
+
+**Publication safety.** A working Nova Draft Revision does not replace the public
+snapshot until an authorised publication. The public route serves `articles.body_html`
+and `articles.article_html`, and the unpublished working document stays private.
+
+**Legacy compatibility.** Grandfathered legacy articles (`editorial_status = legacy`,
+no Nova item) remain usable inside Nova. They are not converted automatically; the
+user must choose Convert to Nova.
+
+**Slides.** Reserved. Not implemented.
+
+**Acceptance authority.** Temporary local Reviewer and Publisher grants were created
+for the acceptance run and then removed by exact ID. The product grant route was not
+changed.
+
+**Orphan.** Nova item `209fa2f1-8825-4766-a047-c7405cba7ad8` has no reliable
+provenance and is retained intentionally.
+
+**Not claimed by 005A.** Professional Documents, custom fonts, Slides, and any
+GenOffice embedding, port or fork are not complete.

@@ -59,6 +59,7 @@ for (const file of [
   "migrations/0062_editorial_capabilities.sql",
   "migrations/0061_article_editorial_workflow.sql",
   "migrations/0063_editorial_revision_started.sql",
+  "migrations/0064_article_publication_metadata.sql",
 ]) {
   sqlite.exec(readFileSync(resolve(repoRoot, file), "utf8"));
 }

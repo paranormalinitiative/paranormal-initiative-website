@@ -232,6 +232,7 @@ export async function onRequest(context) {
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/nova$/)) return requireContributor(request, env, user => handleArticleNovaLink(path, request, env, user));
     if (request.method === "GET" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItem(path, env, user));
     if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/nova\/item$/)) return requireContributor(request, env, user => handleArticleNovaItemUpdate(path, request, env, user));
+    if (request.method === "PUT" && path.match(/^\/articles\/[^/]+\/metadata$/)) return requireContributor(request, env, user => handleArticleMetadataUpdate(path, request, env, user));
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission\/resubmit$/)) return requireContributor(request, env, user => handleArticleResubmission(path, env, user));
     if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/submission$/)) return requireContributor(request, env, user => handleArticleSubmission(path, env, user));
   if (request.method === "POST" && path.match(/^\/articles\/[^/]+\/revision\/start$/)) return requireContributor(request, env, user => handleStartRevision(path, env, user));
@@ -3618,7 +3619,7 @@ async function handleListArticles(request, env) {
 
 async function handleContributorArticles(env, user) {
   const { results } = await env.TPI_DB.prepare(`
-    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, nova_item_id AS novaItemId, created_at AS createdAt, updated_at AS updatedAt
+    SELECT id, destination, href, title, subtitle, article_type AS contributionType, author, affiliation, organization, correspondence, website, ? AS authorUsername, source, body_html AS bodyHtml, article_html AS articleHtml, labels, status, nova_item_id AS novaItemId, created_at AS createdAt, updated_at AS updatedAt
     FROM articles
     WHERE created_by = ?
     ORDER BY COALESCE(updated_at, created_at) DESC
@@ -3743,6 +3744,44 @@ async function handleArticleNovaItemUpdate(path, request, env, user) {
   try { data = await request.json(); } catch { return json({ error: "Invalid Nova document." }, 400); }
   const response = await updateNovaItemForOwner(env, user, resolved.article.nova_item_id, data || {});
   return response;
+}
+
+// TPI-NOVA-005A6B: narrow metadata route. Only the Education Center article columns below
+// may change; body, status, editorial state, ownership and publication fields are refused.
+const ARTICLE_METADATA_FIELDS = Object.freeze(["title", "subtitle", "destination", "contributionType", "author", "affiliation", "organization", "correspondence", "website"]);
+const ARTICLE_METADATA_COLUMNS = Object.freeze({ title: "title", subtitle: "subtitle", destination: "destination", contributionType: "article_type", author: "author", affiliation: "affiliation", organization: "organization", correspondence: "correspondence", website: "website" });
+const ARTICLE_METADATA_MAX_LENGTH = Object.freeze({ title: 300, subtitle: 300, destination: 200, contributionType: 80, author: 200, affiliation: 300, organization: 300, correspondence: 320, website: 500 });
+
+async function handleArticleMetadataUpdate(path, request, env, user) {
+  const articleId = clean(decodeURIComponent(path.replace(/^\/articles\//, "").replace(/\/metadata$/, "")));
+  if (!articleId) return json({ error: "Article id is required." }, 400);
+  const loaded = await loadOwnedArticleForWorkflow(env, articleId, user);
+  if (loaded.response) return loaded.response;
+  const { article } = loaded;
+  if (!article.nova_item_id) return json({ error: "Only Nova-linked articles accept metadata through this route.", code: "nova_link_required" }, 409);
+  if (isNovaLocked(article.editorial_status)) {
+    return json({ error: "Metadata is locked while this article is submitted, in review or approved.", code: "workflow_locked" }, 409);
+  }
+  let data;
+  try { data = await request.json(); } catch { return json({ error: "Invalid metadata." }, 400); }
+  if (!data || typeof data !== "object" || Array.isArray(data)) return json({ error: "Invalid metadata." }, 400);
+  const refused = Object.keys(data).filter(key => !ARTICLE_METADATA_FIELDS.includes(key));
+  if (refused.length) return json({ error: "This route only accepts title, subtitle, destination, contributionType, author, affiliation, organization, correspondence and website.", code: "field_not_allowed", fields: refused }, 400);
+  const sets = [];
+  const values = [];
+  for (const key of ARTICLE_METADATA_FIELDS) {
+    if (!(key in data)) continue;
+    const value = typeof data[key] === "string" ? data[key].trim() : null;
+    if (value === null || value.length > ARTICLE_METADATA_MAX_LENGTH[key]) return json({ error: `${key} is invalid.`, code: "field_invalid" }, 400);
+    if (key === "title" && !value) return json({ error: "Title is required.", code: "field_invalid" }, 400);
+    sets.push(`${ARTICLE_METADATA_COLUMNS[key]} = ?`);
+    values.push(value);
+  }
+  if (!sets.length) return json({ error: "No metadata fields were provided.", code: "field_invalid" }, 400);
+  await env.TPI_DB.prepare(`UPDATE articles SET ${sets.join(", ")}, updated_at = ? WHERE id = ? AND created_by = ?`)
+    .bind(...values, new Date().toISOString(), articleId, user.id).run();
+  const row = await env.TPI_DB.prepare("SELECT id, title, subtitle, destination, article_type AS contributionType, author FROM articles WHERE id = ?").bind(articleId).first();
+  return json({ article: row });
 }
 
 // Empty Nova document envelope (format version 1), matching lib/nova.js validation.

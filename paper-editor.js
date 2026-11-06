@@ -315,8 +315,16 @@
     status.textContent = message;
     window.clearTimeout(setStatus.timer);
     setStatus.timer = window.setTimeout(() => {
-      status.textContent = "Draft ready";
+      status.textContent = setSaveStateLabel.current || "Saved";
     }, 1800);
+  }
+
+  // TPI-NOVA-005A2: the save-state label reflects real persistence only.
+  // "Saved" appears after a successful save response; "Conflict" and "Read-only" map to real states.
+  function setSaveStateLabel(state) {
+    const labels = { saving: "Saving…", saved: "Saved", conflict: "Conflict", readonly: "Read-only" };
+    setSaveStateLabel.current = labels[state] || labels.saved;
+    if (status) status.textContent = setSaveStateLabel.current;
   }
 
   function clamp(value, min, max) {
@@ -459,6 +467,8 @@
     document.body.classList.remove("editor-locked");
     document.body.classList.add("editor-authenticated");
     document.body.dataset.editorCopyAllowed = "true";
+    // Authorized and no article opened: show the Documents home (TPI-NOVA-005A2).
+    if (options.initializeDraft) showNovaHome();
     if (options.applyProfile !== false) applyContributorProfile(user);
     if (options.initializeDraft && isEditorBlank()) setDefaultDraftBody();
     if (options.focusEditor) focusEditorStart();
@@ -911,8 +921,21 @@
     }
   });
 
+  // TPI-NOVA-005A6C: the single visible compatibility action drives the same conversion path as the hidden mode select.
+  document.querySelector("[data-action=convert-to-nova]")?.addEventListener("click", () => {
+    const modeSelect = document.querySelector("[data-editor-mode]");
+    if (!modeSelect) return;
+    modeSelect.value = "nova";
+    modeSelect.dispatchEvent(new Event("change"));
+  });
+
   document.getElementById("nova-content-editor")?.addEventListener("input", scheduleNovaAutosave);
   document.getElementById("nova-content-editor")?.addEventListener("keyup", scheduleNovaAutosave);
+  // TPI-NOVA-005A6E: Education Center metadata edits persist through the same Nova save state.
+  [titleInput, subtitleInput, destinationInput, contributionTypeInput, authorInput, affiliationInput, organizationInput, correspondenceInput, websiteInput].forEach(input => {
+    input?.addEventListener("change", scheduleNovaAutosave);
+    input?.addEventListener("input", scheduleNovaAutosave);
+  });
 
   // Nova-linked article persistence (TPI-NOVA-004R5). The article row stays the
   // publication record; the linked Nova item is the working document. Autosave uses
@@ -946,12 +969,15 @@
       novaMode.handle.setDocument(doc);
     }
     novaMode.doc = doc;
+    // TPI-NOVA-005A6F: the server copy is the body baseline; only a real change makes a body write.
+    lastSavedBodyJson = JSON.stringify(doc);
     novaLink.itemId = item.id;
     novaLink.version = item.version;
     novaLink.conflict = false;
     novaMode.active = true;
     editor.hidden = true;
     document.getElementById("nova-content-editor").hidden = false;
+    document.body.classList.add("nova-document-open");
     const modeSelect = document.querySelector("[data-editor-mode]");
     if (modeSelect) modeSelect.value = "nova";
   }
@@ -984,19 +1010,23 @@
     // server's canonical publicationStatus, not from the editorial state, so a
     // draft revision never reads as an unpublished article.
     const isPublished = String(payload?.publicationStatus || "") === "published";
-    const badge = document.querySelector("[data-workflow-status]");
-    if (badge) {
-      // Workflow (where is the current editorial round?) is shown separately, so an
-      // open revision reads Published · Draft Revision.
-      const publicationText = isPublished ? "Published" : "Not published";
-      const workflowLabel = WORKFLOW_LABELS[status] || status;
+    // TPI-NOVA-005A2: publication and workflow are two separate chips, never one badge.
+    const publicationChip = document.querySelector("[data-publication-status]");
+    const workflowChip = document.querySelector("[data-workflow-status]");
+    if (publicationChip) {
+      publicationChip.textContent = isPublished ? "Published" : "Not Published";
+      publicationChip.className = `workflow-chip ${isPublished ? "is-published" : "is-unpublished"}`;
+      publicationChip.hidden = !isLinked;
+    }
+    if (workflowChip) {
+      // An open revision on a published article reads Draft Revision, not Draft.
+      // An approved version that is already live has no pending publication step.
       const workflowText = status === "draft" && isPublished
         ? "Draft Revision"
-        : status === "approved" && isPublished
-          ? "Approved"
-          : workflowLabel;
-      badge.textContent = isPublished ? `${publicationText} · ${workflowText}` : workflowLabel;
-      badge.hidden = !isLinked;
+        : (status === "approved" && !isPublished ? WORKFLOW_LABELS.approved : (NOVA_CHIP_LABELS[status] || WORKFLOW_LABELS[status] || status));
+      workflowChip.textContent = workflowText;
+      workflowChip.className = `workflow-chip is-${status}`;
+      workflowChip.hidden = !isLinked;
     }
     // Every control with the same action must follow the same rule; the settings
     // drawer carries its own Publish button, so a single querySelector would leave
@@ -1038,7 +1068,24 @@
     if (novaMode.handle && novaMode.handle.setReadOnly) {
       novaMode.handle.setReadOnly(locked);
     }
+    // TPI-NOVA-005A5: every Contributor-owned content and metadata field locks with the
+    // editor. Navigation and secondary utilities stay usable. The server still refuses edits.
+    setContentFieldsLocked(locked && isLinked);
     syncWorkflowConflictButtons();
+  }
+
+  const LOCKABLE_CONTENT_FIELD_IDS = [
+    "editor-title", "editor-subtitle", "editor-destination", "editor-contribution-type",
+    "editor-author", "editor-affiliation", "editor-organization", "editor-correspondence",
+    "editor-website", "editor-source", "editor-labels"
+  ];
+  function setContentFieldsLocked(locked) {
+    LOCKABLE_CONTENT_FIELD_IDS.forEach((id) => {
+      const field = document.getElementById(id);
+      if (!field) return;
+      field.disabled = Boolean(locked);
+      field.setAttribute("aria-readonly", locked ? "true" : "false");
+    });
   }
 
   // Submit/Resubmit stay disabled during a version conflict or while the server is unsure.
@@ -1063,6 +1110,12 @@
     if (!articleId || !novaLink.itemId) return;
     if (action !== "withdraw" && novaLink.conflict) {
       setStatus("Resolve the save conflict before submitting.");
+      return;
+    }
+    // TPI-NOVA-005A5: a placeholder title cannot go to review; the Publisher gate stays as well.
+    if (action !== "withdraw" && isUntitledTitle(titleInput.value)) {
+      setStatus("Give the document a title before submitting for review.");
+      titleInput.focus();
       return;
     }
     // Flush any pending Nova edit so the pinned version is the one the user sees.
@@ -1115,10 +1168,30 @@
 
   // Opens a linked article in Nova mode. Unlinked legacy articles are not converted here.
   async function openLinkedNovaArticle(articleId) {
+    // TPI-NOVA-005A6E: the metadata baseline belongs to the article being opened.
+    lastSavedMetadata = null;
     const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova/item`, { credentials: "same-origin", cache: "no-store" });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "Nova document could not be opened");
+    // The Nova save path writes to the article it was opened from.
+    currentArticleId = articleId;
     await mountLinkedNovaDocument(data.item);
+    // TPI-NOVA-005A6E: populate the inspector from the stored article (authoritative), then baseline it.
+    const stored = await findEditorArticle(articleId);
+    if (stored) {
+      titleInput.value = stored.title || getCurrentUntitledTitle();
+      subtitleInput.value = stored.subtitle || "";
+      if (stored.destination) setDestinationValue(stored.destination);
+      if (stored.contributionType || stored.articleType) contributionTypeInput.value = stored.contributionType || stored.articleType;
+      if (stored.author) authorInput.value = stored.author;
+      if (affiliationInput) affiliationInput.value = stored.affiliation || "";
+      if (organizationInput) organizationInput.value = stored.organization || "";
+      if (correspondenceInput) correspondenceInput.value = stored.correspondence || "";
+      if (websiteInput) websiteInput.value = stored.website || "";
+      updateVideoFieldsVisibility();
+    }
+    // Baseline = the values just loaded from the stored article, so only later edits are sent.
+    lastSavedMetadata = currentMetadataSnapshot();
     await refreshWorkflowState(articleId);
     setStatus("Nova document loaded");
   }
@@ -1145,18 +1218,39 @@
     if (!linkResponse.ok && linkResponse.status !== 409) throw new Error(linkData.error || "Could not convert this article");
     await openLinkedNovaArticle(articleId);
     if (unsupportedNotice) {
-      // Persist the notice: setStatus would revert it to "Draft ready" after 1.8s.
+      // Persist the notice: setStatus would otherwise overwrite it after 1.8s.
       window.clearTimeout(setStatus.timer);
       status.textContent = unsupportedNotice;
     }
   }
 
   // Saves the live Nova document through Nova Core. Returns false on conflict or failure.
-  async function saveLinkedNovaDocument() {
+  // TPI-NOVA-005A6E: one Nova save in flight at a time, so overlapping saves never send the same expectedVersion.
+  let novaSavePromise = null;
+  function saveLinkedNovaDocument() {
+    const next = (novaSavePromise || Promise.resolve()).catch(() => false).then(runLinkedNovaSave);
+    novaSavePromise = next;
+    return next;
+  }
+  async function runLinkedNovaSave() {
     if (!novaLink.itemId || novaLink.conflict || !novaMode.handle) return false;
     const articleId = currentArticleId;
     if (!articleId) return false;
     const doc = novaMode.handle.getDocument();
+    // TPI-NOVA-005A6F: body is written only when the document actually differs from the last saved copy.
+    const bodyJson = JSON.stringify(doc);
+    const bodyDirty = bodyJson !== lastSavedBodyJson;
+    // TPI-NOVA-005A6H: the save state is shown only when real work exists to persist.
+    const metadataDirty = metadataChangedSinceSave();
+    if (!bodyDirty && !metadataDirty) return true;
+    setSaveStateLabel("saving");
+    // TPI-NOVA-005A6B: metadata persists through the narrow route; Saved only after every required write succeeds.
+    const metadataOk = await saveArticleMetadata(articleId);
+    if (!metadataOk) return false;
+    if (!bodyDirty) {
+      setSaveStateLabel("saved");
+      return true;
+    }
     const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova/item`, {
       method: "PUT",
       credentials: "same-origin",
@@ -1168,6 +1262,7 @@
       novaLink.conflict = true;
       syncWorkflowConflictButtons();
       keepLocalNovaDraft();
+      setSaveStateLabel("conflict");
       setStatus("Another save changed this document. Your local copy is kept. Reload to review the newest version.");
       return false;
     }
@@ -1176,8 +1271,52 @@
       return false;
     }
     novaLink.version = data.item.version;
+    lastSavedBodyJson = bodyJson;
     try { localStorage.removeItem(novaDraftKey(novaLink.itemId)); } catch (error) { /* best-effort */ }
-    setStatus("Nova document saved");
+    setSaveStateLabel("saved");
+    return true;
+  }
+  let lastSavedBodyJson = null;
+
+  // Sends only the Education Center metadata fields that changed since the last save.
+  let lastSavedMetadata = null;
+  function currentMetadataSnapshot() {
+    return {
+      title: titleInput?.value?.trim() || "",
+      subtitle: subtitleInput?.value?.trim() || "",
+      destination: destinationInput?.value || "",
+      contributionType: contributionTypeInput?.value || "",
+      author: authorInput?.value?.trim() || "",
+      affiliation: affiliationInput?.value?.trim() || "",
+      organization: organizationInput?.value?.trim() || "",
+      correspondence: correspondenceInput?.value?.trim() || "",
+      website: websiteInput?.value?.trim() || ""
+    };
+  }
+  function metadataChangedSinceSave() {
+    const current = currentMetadataSnapshot();
+    if (!lastSavedMetadata) return false;
+    return Object.keys(current).some(key => current[key] !== lastSavedMetadata[key]);
+  }
+  async function saveArticleMetadata(articleId) {
+    const current = currentMetadataSnapshot();
+    if (!lastSavedMetadata) lastSavedMetadata = current;
+    const changed = Object.keys(current).filter(key => current[key] !== lastSavedMetadata[key]);
+    if (!changed.length) return true;
+    const body = Object.fromEntries(changed.map(key => [key, current[key]]));
+    const response = await fetch(`/api/articles/${encodeURIComponent(articleId)}/metadata`, {
+      method: "PUT",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setSaveStateLabel("conflict");
+      setStatus(data.error || "Metadata could not be saved.");
+      return false;
+    }
+    lastSavedMetadata = current;
     return true;
   }
 
@@ -1868,6 +2007,189 @@ ${articleHtml}
     }
   }
 
+  // TPI-NOVA-005A2: Nova Documents home. One data source (loadEditorArticles, which reads
+  // /api/contributors/me/articles); sidebar filters and counts are derived in memory.
+  const NOVA_FILTERS = {
+    all: () => true,
+    mine: () => true,
+    draft: a => a.editorialStatus === "draft",
+    submitted: a => a.editorialStatus === "submitted",
+    in_review: a => a.editorialStatus === "in_review",
+    changes_requested: a => a.editorialStatus === "changes_requested",
+    approved: a => a.editorialStatus === "approved",
+    published: a => a.publicationState === "published"
+  };
+  const NOVA_FILTER_TITLES = {
+    all: "Documents", mine: "My Content", draft: "Drafts", submitted: "Submitted",
+    in_review: "In Review", changes_requested: "Changes Requested", approved: "Approved", published: "Published"
+  };
+  const NOVA_CHIP_LABELS = {
+    draft: "Draft", submitted: "Submitted", in_review: "In Review",
+    changes_requested: "Changes Requested", approved: "Approved", draft_revision: "Draft Revision"
+  };
+  let novaHomeArticles = [];
+  let novaHomeFilter = "all";
+
+  // Derives the two independent dimensions shown on every row. Publication never
+  // implies workflow: a published article with a new revision is Published + Draft Revision.
+  function deriveNovaStates(article) {
+    const publicationState = article.status === "published" ? "published" : "unpublished";
+    let workflowState = article.editorialStatus || "legacy";
+    if (publicationState === "published" && workflowState === "draft") workflowState = "draft_revision";
+    return { publicationState, workflowState };
+  }
+
+  function novaPublicationLabel(publicationState) {
+    return publicationState === "published" ? "Published" : "Not Published";
+  }
+
+  function novaWorkflowLabel(workflowState) {
+    if (NOVA_CHIP_LABELS[workflowState]) return NOVA_CHIP_LABELS[workflowState];
+    return "Legacy";
+  }
+
+  function formatNovaTime(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "" : date.toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+  }
+
+  function isGrandfatheredLegacyArticle(article) {
+    return (article.editorialStatus || "legacy") === "legacy" && !article.novaItemId && article.contributionType !== "TPI Video";
+  }
+
+  async function renderNovaHome() {
+    const host = document.getElementById("nova-home-list");
+    if (!host) return;
+    const articles = await loadEditorArticles();
+    novaHomeArticles = articles.map(article => ({ ...article, ...deriveNovaStates(article) }));
+    updateNovaSidebarCounts();
+    renderNovaHomeList();
+  }
+
+  function updateNovaSidebarCounts() {
+    Object.keys(NOVA_FILTERS).forEach(key => {
+      const target = document.querySelector(`[data-nova-count="${key}"]`);
+      if (!target) return;
+      const count = novaHomeArticles.filter(NOVA_FILTERS[key]).length;
+      target.textContent = String(count);
+    });
+  }
+
+  function renderNovaHomeList() {
+    const host = document.getElementById("nova-home-list");
+    const title = document.getElementById("nova-home-title");
+    const note = document.getElementById("nova-home-note");
+    if (!host) return;
+    if (title) title.textContent = NOVA_FILTER_TITLES[novaHomeFilter] || "Documents";
+    const items = novaHomeArticles.filter(NOVA_FILTERS[novaHomeFilter] || NOVA_FILTERS.all);
+    if (note) note.textContent = `${items.length} ${items.length === 1 ? "document" : "documents"}`;
+    if (!items.length) {
+      host.innerHTML = `<p class="nova-home-empty">No documents here yet.</p>`;
+      return;
+    }
+    host.innerHTML = items.map(article => `
+      <button type="button" class="nova-doc-row" data-nova-open="${escapeHtml(article.id)}">
+        <span class="nova-doc-main">
+          <strong>${escapeHtml(article.title || "Untitled Content")}</strong>
+          <span class="nova-doc-meta">${escapeHtml([article.contributionType || article.articleType || "Article", article.destination || ""].filter(Boolean).join(" · "))}</span>
+        </span>
+        <span class="nova-doc-states">
+          <span class="nova-chip nova-chip-${article.publicationState === "published" ? "published" : "muted"}">${escapeHtml(novaPublicationLabel(article.publicationState))}</span>
+          <span class="nova-chip nova-chip-workflow-${escapeHtml(article.workflowState)}">${escapeHtml(novaWorkflowLabel(article.workflowState))}</span>
+        </span>
+        <span class="nova-doc-time">${escapeHtml(formatNovaTime(article.updatedAt) || "")}</span>
+      </button>
+    `).join("");
+  }
+
+  function setNovaHomeVisible(visible) {
+    const home = document.getElementById("nova-home");
+    const editor = document.getElementById("nova-editor-view");
+    if (home) home.hidden = !visible;
+    if (editor) editor.hidden = visible;
+    document.body.classList.toggle("nova-home-open", visible);
+    if (visible) document.body.classList.remove("nova-document-open");
+  }
+
+  function setNovaFilter(filter) {
+    novaHomeFilter = NOVA_FILTERS[filter] ? filter : "all";
+    document.querySelectorAll("[data-nova-filter]").forEach(button => {
+      button.classList.toggle("is-active", button.dataset.novaFilter === novaHomeFilter);
+    });
+    renderNovaHomeList();
+  }
+
+  async function showNovaHome() {
+    setNovaHomeVisible(true);
+    await renderNovaHome();
+  }
+
+  // Creates a workflow-native, unpublished editorial draft and links a Nova document.
+  // A client-generated ID makes retries idempotent: the server upserts the same row,
+  // so a failed link can be retried without creating a duplicate draft.
+  let pendingNovaDraft = null;
+  async function createNovaDocument() {
+    setStatus("Creating document…");
+    try {
+      if (!pendingNovaDraft) pendingNovaDraft = { id: crypto.randomUUID() };
+      const articleId = pendingNovaDraft.id;
+      await window.TPIApi.createArticle({
+        id: articleId,
+        title: "Untitled Content",
+        contributionType: "Research Paper",
+        destination: "research-papers.html",
+        status: "draft"
+      });
+      const linkResponse = await fetch(`/api/articles/${encodeURIComponent(articleId)}/nova`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: { format: "nova-document", version: 1, doc: { type: "doc", content: [{ type: "paragraph" }] } } })
+      });
+      const linkData = await linkResponse.json().catch(() => ({}));
+      if (!linkResponse.ok && linkResponse.status !== 409) throw new Error(linkData.error || "Nova document could not be created");
+      pendingNovaDraft = null;
+      document.getElementById("nova-home-error").hidden = true;
+      setNovaHomeVisible(false);
+      await editContentArticle(articleId);
+    } catch (error) {
+      setStatus(error.message || "Document could not be created");
+      showNovaHomeError(pendingNovaDraft
+        ? "The new draft was saved but could not be opened in Nova. Press New document again to retry without creating a duplicate."
+        : "The new document could not be created. Please try again.");
+    }
+  }
+
+  function showNovaHomeError(message) {
+    const box = document.getElementById("nova-home-error");
+    if (!box) return;
+    box.textContent = message;
+    box.hidden = false;
+  }
+
+  let novaWorkspaceBound = false;
+  function bindNovaWorkspaceShell() {
+    if (novaWorkspaceBound) return;
+    novaWorkspaceBound = true;
+    document.querySelectorAll("[data-nova-filter]").forEach(button => {
+      button.addEventListener("click", async () => {
+        await showNovaHome();
+        setNovaFilter(button.dataset.novaFilter);
+      });
+    });
+    document.querySelector('[data-action="nova-new-document"]')?.addEventListener("click", createNovaDocument);
+    document.querySelector('[data-action="nova-back-to-documents"]')?.addEventListener("click", () => showNovaHome());
+    document.getElementById("nova-home-list")?.addEventListener("click", async event => {
+      const row = event.target.closest("[data-nova-open]");
+      if (!row) return;
+      const article = novaHomeArticles.find(item => item.id === row.dataset.novaOpen);
+      if (!article) return;
+      setNovaHomeVisible(false);
+      await editContentArticle(article.id);
+    });
+  }
+
   async function renderContentLibraryList() {
     const host = document.getElementById("content-library-list");
     if (!host) return;
@@ -1936,12 +2258,22 @@ ${articleHtml}
 
   function loadArticleIntoEditor(article) {
     currentArticleId = article.id;
+    // Compatibility path only for grandfathered legacy records: not Nova-linked, not TPI Video.
+    const isGrandfatheredLegacy = (article.editorialStatus || "legacy") === "legacy" && !article.novaItemId && article.contributionType !== "TPI Video";
+    document.body.dataset.legacyCompat = isGrandfatheredLegacy ? "true" : "false";
+    document.getElementById("nova-editor-view")?.classList.toggle("is-nova-native", !isGrandfatheredLegacy);
+    document.querySelectorAll("[data-legacy-only]").forEach(el => { el.hidden = !isGrandfatheredLegacy; });
     titleInput.value = article.title || getCurrentUntitledTitle();
     subtitleInput.value = article.subtitle || "";
     if (article.destination) setDestinationValue(article.destination);
     if (article.contributionType || article.articleType) contributionTypeInput.value = article.contributionType || article.articleType;
     updateVideoFieldsVisibility();
     if (article.author) authorInput.value = article.author;
+    // TPI-NOVA-005A6E: article-specific values are authoritative once stored; never refilled from the profile here.
+    if (affiliationInput) affiliationInput.value = article.affiliation || "";
+    if (organizationInput) organizationInput.value = article.organization || "";
+    if (correspondenceInput) correspondenceInput.value = article.correspondence || "";
+    if (websiteInput) websiteInput.value = article.website || "";
     if (article.source) sourceInput.value = article.source;
     if (article.labels) labelsInput.value = article.labels;
     editor.innerHTML = article.bodyHtml || "<p><br></p>";
@@ -1956,7 +2288,14 @@ ${articleHtml}
       setStatus("Article could not be found");
       return;
     }
-    loadArticleIntoEditor(article);
+    if (article.novaItemId) {
+      // TPI-NOVA-005A4: a Nova-linked article opens its Nova document, which binds the
+      // save path, version and workflow state. The legacy body is not loaded over it.
+      await setEditorMode("nova");
+      await openLinkedNovaArticle(article.id);
+    } else {
+      loadArticleIntoEditor(article);
+    }
     document.getElementById("content-library-modal")?.remove();
   }
 
@@ -2553,6 +2892,7 @@ ${articleHtml}
     loadPostSettingsWidth();
     editor.innerHTML = "<p><br></p>";
     htmlView.value = cleanHtml(editor.innerHTML);
+    bindNovaWorkspaceShell();
     const articleLoaded = await loadArticleForEditing();
 
     if (window.TPIApi && await window.TPIApi.isAvailable()) {

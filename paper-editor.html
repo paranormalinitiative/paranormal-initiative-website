@@ -88,85 +88,146 @@
     </style>
 </head>
 <body class="paper-editor-page editor-locked">
-<div id="site-header"></div>
+<header class="nova-topbar">
+    <div class="nova-brand">
+        <span class="nova-brand-mark" aria-hidden="true">N</span>
+        <span class="nova-brand-text">
+            <strong>Nova</strong>
+            <span>Editorial Workspace</span>
+        </span>
+    </div>
+    <nav class="nova-topnav" aria-label="Workspace mode">
+        <button type="button" class="nova-mode is-active" aria-current="page">Documents</button>
+        <button type="button" class="nova-mode" disabled aria-disabled="true">Slides <span class="nova-mode-tag">Later</span></button>
+    </nav>
+    <a class="nova-back" href="member-home.html">Member Home</a>
+</header>
 
 <section class="paper-editor-shell">
-    <div class="paper-editor-topbar">
-        <div class="paper-editor-brand">Nova Editorial Workspace</div>
-        <div class="post-action-controls">
-            <button type="button" data-action="contributors">Contributors</button>
-            <button type="button" data-action="content-library">My Content</button>
-            <a class="portal-button portal-button-secondary" href="creator-videos.html">My Videos</a>
-            <button type="button" data-action="comment-moderation">Comments</button>
-            <button type="button" data-action="preview">Preview</button>
-            <button type="button" data-action="save-draft">Save Draft</button>
-            <span class="workflow-status" data-workflow-status hidden></span>
-            <button type="button" data-action="workflow-submit" hidden>Submit for Review</button>
-            <button type="button" data-action="workflow-resubmit" hidden>Resubmit for Review</button>
-            <button type="button" data-action="workflow-withdraw" hidden>Withdraw Submission</button>
-            <button type="button" data-action="workflow-start-revision" hidden>Start New Revision</button>
-            <button type="button" data-action="publish">Publish Article</button>
-            <button type="button" data-action="copy">Copy HTML</button>
-            <button type="button" data-action="writing-guides">Writing Guides</button>
-        </div>
-    </div>
-
     <div class="workflow-feedback" data-workflow-feedback hidden>
         <span class="workflow-feedback-kicker">Changes Requested</span>
         <p class="workflow-feedback-note" data-workflow-feedback-note></p>
-        <span class="workflow-feedback-time" data-workflow-feedback-time></span>
-    </div>
+        <span class="workflow-feedback-time" data-workflow-feedback-time></span>    </div>
 
-    <input id="editor-title" class="paper-title-input" type="text" value="Untitled Content" aria-label="Paper title" spellcheck="true">
+    <div class="nova-body">
+    <aside class="nova-sidebar" aria-label="Documents navigation">
 
-    <div class="editor-toolbar" aria-label="Editor toolbar">
-        <select id="editor-view-mode" aria-label="Editor view mode">
-            <option value="compose">Compose view</option>
-            <option value="html">HTML view</option>
-        </select>
-        <button type="button" data-command="undo" title="Undo">Undo</button>
-        <button type="button" data-command="redo" title="Redo">Redo</button>
-        <select id="editor-block-format" aria-label="Block format">
-            <option value="p">Paragraph</option>
-            <option value="h3">Heading</option>
-            <option value="blockquote">Quote</option>
-        </select>
-        <select id="editor-font-family" aria-label="Font family">
-            <option value="">Site Font</option>
-            <option value="Times New Roman" style="font-family:'Times New Roman',serif">Times New Roman</option>
-            <option value="Georgia" style="font-family:Georgia,serif">Georgia</option>
-            <option value="Arial" style="font-family:Arial,sans-serif">Arial</option>
-            <option value="Helvetica" style="font-family:Helvetica,Arial,sans-serif">Helvetica</option>
-            <option value="Verdana" style="font-family:Verdana,sans-serif">Verdana</option>
-            <option value="Courier New" style="font-family:'Courier New',monospace">Courier New</option>
-        </select>
-        <button type="button" data-command="bold" title="Bold"><strong>B</strong></button>
-        <button type="button" data-command="italic" title="Italic"><em>I</em></button>
-        <button type="button" data-command="strikeThrough" title="Strikethrough"><s>S</s></button>
-        <button type="button" data-block="blockquote" title="Quote">Quote</button>
-        <button type="button" data-command="justifyLeft" title="Left to right">LTR</button>
-        <button type="button" data-command="justifyRight" title="Right to left">RTL</button>
-        <button type="button" data-action="link" title="Insert link">Link</button>
-        <button type="button" data-action="image-menu" title="Insert image">Image</button>
-        <button type="button" data-action="video-menu" title="Insert video">Video</button>
-        <button type="button" data-action="audio-menu" title="Insert audio">Audio</button>
-        <button type="button" data-action="embed" title="Embed code">Embed</button>
-        <button type="button" data-action="author-note" title="Insert author note">Author Note</button>
-        <button type="button" data-action="spellcheck-toggle" title="Toggle spellcheck">Spellcheck On</button>
-        <button type="button" data-command="removeFormat" title="Clear formatting">Clear Format</button>
-    </div>
+        <button type="button" class="nova-new-document" data-action="nova-new-document">New document</button>
+        <div class="nova-nav-group">
+            <p class="nova-nav-title">Workspace</p>
+            <button type="button" class="nova-nav-item is-active" data-nova-filter="all">Documents <span data-nova-count="all"></span></button>
+            <button type="button" class="nova-nav-item" data-nova-filter="mine">My Content <span data-nova-count="mine"></span></button>
+        </div>
+        <div class="nova-nav-group">
+            <p class="nova-nav-title">Editorial</p>
+            <button type="button" class="nova-nav-item" data-nova-filter="draft">Drafts <span data-nova-count="draft"></span></button>
+            <button type="button" class="nova-nav-item" data-nova-filter="submitted">Submitted <span data-nova-count="submitted"></span></button>
+            <button type="button" class="nova-nav-item" data-nova-filter="in_review">In Review <span data-nova-count="in_review"></span></button>
+            <button type="button" class="nova-nav-item" data-nova-filter="changes_requested">Changes Requested <span data-nova-count="changes_requested"></span></button>
+            <button type="button" class="nova-nav-item" data-nova-filter="approved">Approved <span data-nova-count="approved"></span></button>
+            <button type="button" class="nova-nav-item" data-nova-filter="published">Published <span data-nova-count="published"></span></button>
+        </div>
+        <div class="nova-nav-group">
+            <p class="nova-nav-title">Later</p>
+            <button type="button" class="nova-nav-item" disabled aria-disabled="true">Slides</button>
+        </div>
+    </aside>
 
-    <div class="paper-editor-layout">
+    <section class="nova-home" id="nova-home" hidden aria-label="Documents">
+        <div class="nova-home-header">
+            <h2 id="nova-home-title">Documents</h2>
+            <p class="nova-home-note" id="nova-home-note"></p>
+        </div>
+        <div class="nova-home-error" id="nova-home-error" role="alert" hidden></div>
+        <div class="nova-home-list" id="nova-home-list"></div>
+    </section>
+
+    <div class="paper-editor-layout" id="nova-editor-view">
         <section class="editor-pane">
-            <div class="editor-pane-header">
-                <h3>Compose</h3>
-                <p id="editor-status">Draft ready</p>
+            <div class="nova-document-header">
+                <div class="nova-document-heading">
+                    <button type="button" class="nova-document-back" data-action="nova-back-to-documents">Documents</button>
+                    <input id="editor-title" class="paper-title-input" type="text" value="Untitled Content" aria-label="Paper title" spellcheck="true">
+                </div>
+                <div class="nova-document-status">
+                    <p id="editor-status" class="nova-save-state" aria-live="polite">Saved</p>
+                    <span class="workflow-chip" data-publication-status hidden></span>
+                    <span class="workflow-chip" data-workflow-status hidden></span>
+                    <button type="button" class="nova-document-action" data-action="workflow-submit" hidden>Submit for Review</button>
+                    <button type="button" class="nova-document-action" data-action="workflow-resubmit" hidden>Resubmit for Review</button>
+                    <button type="button" class="nova-document-action" data-action="workflow-withdraw" hidden>Withdraw Submission</button>
+                    <button type="button" class="nova-document-action" data-action="workflow-start-revision" hidden>Start New Revision</button>
+                    <button type="button" class="nova-document-action" data-action="save-draft">Save</button>
+                    <button type="button" class="nova-document-action" data-action="publish">Publish</button>
+                    <button type="button" class="nova-document-action" data-action="preview">Preview</button>
+                    <details class="nova-utility-menu nova-document-more">
+                        <summary>More</summary>
+                        <div class="nova-utility-panel">
+                            <button type="button" data-action="contributors">Contributors</button>
+                            <button type="button" data-action="content-library">My Content</button>
+                            <a class="portal-button portal-button-secondary" href="creator-videos.html">My Videos</a>
+                            <button type="button" data-action="comment-moderation">Comments</button>
+                            <button type="button" data-action="copy">Copy HTML</button>
+                            <button type="button" data-action="writing-guides">Writing Guides</button>
+                        </div>
+                    </details>
+                </div>
             </div>
-            <div class="editor-mode-bar" role="group" aria-label="Editor mode">
-                <label for="editor-mode-select">Editor</label>
-                <select id="editor-mode-select" data-editor-mode>
-                    <option value="legacy" selected>Legacy editor</option>
-                    <option value="nova">Nova editor (development)</option>
+            <div class="nova-compat-notice" data-legacy-only hidden>
+                <div class="nova-compat-text">
+                    <span class="nova-compat-kicker">Legacy Document</span>
+                    <p>This article uses the compatibility editor. Convert it to Nova to use the full professional Nova editing experience.</p>
+                </div>
+                <button type="button" class="nova-compat-convert" data-action="convert-to-nova">Convert to Nova</button>
+                <select id="editor-mode-select" data-editor-mode hidden tabindex="-1" aria-hidden="true">
+                    <option value="legacy" selected>Compatibility</option>
+                    <option value="nova">Nova</option>
+                </select>
+            </div>
+            <div class="editor-toolbar" role="toolbar" aria-label="Legacy editor toolbar" data-legacy-only hidden>
+                <div class="editor-toolbar-group" role="group" aria-label="History">
+                    <button type="button" data-command="undo" title="Undo" aria-label="Undo">&#8630;</button>
+                    <button type="button" data-command="redo" title="Redo" aria-label="Redo">&#8631;</button>
+                </div>
+                <div class="editor-toolbar-group" role="group" aria-label="Text">
+                    <select id="editor-block-format" aria-label="Paragraph style" title="Paragraph style">
+                        <option value="p">Paragraph</option>
+                        <option value="h3">Heading</option>
+                        <option value="blockquote">Quote</option>
+                    </select>
+                    <select id="editor-font-family" aria-label="Site font" title="Site font">
+                        <option value="">Site Font</option>
+                        <option value="Times New Roman" style="font-family:'Times New Roman',serif">Times New Roman</option>
+                        <option value="Georgia" style="font-family:Georgia,serif">Georgia</option>
+                        <option value="Arial" style="font-family:Arial,sans-serif">Arial</option>
+                        <option value="Helvetica" style="font-family:Helvetica,Arial,sans-serif">Helvetica</option>
+                        <option value="Verdana" style="font-family:Verdana,sans-serif">Verdana</option>
+                        <option value="Courier New" style="font-family:'Courier New',monospace">Courier New</option>
+                    </select>
+                    <button type="button" data-command="bold" title="Bold" aria-label="Bold"><strong>B</strong></button>
+                    <button type="button" data-command="italic" title="Italic" aria-label="Italic"><em>I</em></button>
+                    <button type="button" data-command="strikeThrough" title="Strikethrough" aria-label="Strikethrough"><s>S</s></button>
+                </div>
+                <div class="editor-toolbar-group" role="group" aria-label="Paragraph">
+                    <button type="button" data-block="blockquote" title="Quote">Quote</button>
+                    <button type="button" data-command="justifyLeft" title="Left to right" aria-label="Left to right">LTR</button>
+                    <button type="button" data-command="justifyRight" title="Right to left" aria-label="Right to left">RTL</button>
+                </div>
+                <div class="editor-toolbar-group" role="group" aria-label="Insert">
+                    <button type="button" data-action="link" title="Insert link">Link</button>
+                    <button type="button" data-action="image-menu" title="Insert image">Image</button>
+                    <button type="button" data-action="video-menu" title="Insert video">Video</button>
+                    <button type="button" data-action="audio-menu" title="Insert audio">Audio</button>
+                    <button type="button" data-action="embed" title="Embed code">Embed</button>
+                </div>
+                <div class="editor-toolbar-group" role="group" aria-label="Tools">
+                    <button type="button" data-action="author-note" title="Insert author note">Author Note</button>
+                    <button type="button" data-action="spellcheck-toggle" title="Toggle spellcheck">Spellcheck On</button>
+                    <button type="button" data-command="removeFormat" title="Clear formatting">Clear Format</button>
+                </div>
+                <select id="editor-view-mode" aria-label="Editor view mode" title="Editor view" hidden>
+                    <option value="compose">Compose view</option>
+                    <option value="html">HTML view</option>
                 </select>
             </div>
             <div id="paper-editor-body" class="paper-editor-body" contenteditable="true" spellcheck="true"></div>
@@ -176,8 +237,8 @@
 
         <div class="editor-resize-handle" role="separator" aria-label="Resize post settings panel" aria-orientation="vertical" tabindex="0"></div>
 
-        <aside class="post-settings-panel" aria-label="Post settings">
-            <h3>Post Settings</h3>
+        <aside class="post-settings-panel" aria-label="Education Center settings">
+            <h3>Education Center</h3>
             <label>
                 <span>Subtitle</span>
                 <input id="editor-subtitle" type="text" placeholder="Optional subtitle" spellcheck="true">
@@ -429,6 +490,7 @@
                 </article>
             </div>
         </div>
+    </div>
     </div>
 </section>
 

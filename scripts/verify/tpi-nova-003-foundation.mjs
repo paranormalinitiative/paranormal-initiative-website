@@ -58,6 +58,7 @@ function runWrangler(args) {
     cwd: repoRoot,
     env: wranglerEnv,
     encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
     stdio: ["ignore", "pipe", "pipe"]
   });
 }

@@ -5894,15 +5894,6 @@ body.feed-app-page .member-explore-item-shell {
     font-size: 12px;
 }
 
-.paper-editor-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    padding: 10px 0 14px;
-    border-bottom: 1px solid var(--border-subtle);
-}
-
 .paper-editor-brand {
     color: var(--accent);
     font-size: 12px;
@@ -8965,4 +8956,669 @@ a:hover {
     background: #f87171;
     box-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
     animation: livePulse 2s ease-in-out infinite;
+}
+
+/* TPI-NOVA-005A: Nova Editorial Workspace visual shell for /paper-editor.html.
+   Scoped to .paper-editor-page; tokens mirror nova-app/src/styles.css. */
+.paper-editor-page {
+    --nova-bg: #141b17;
+    --nova-panel: #1f2824;
+    --nova-panel-strong: #26312c;
+    --nova-border: #34433b;
+    --nova-accent: #4bb263;
+    --nova-mint: #8ce8b6;
+    --nova-text: #e8f0ea;
+    --nova-muted: #97a89e;
+    background: var(--nova-bg);
+    color: var(--nova-text);
+}
+
+.paper-editor-page .nova-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    height: 56px;
+    padding: 0 22px;
+    background: var(--nova-panel);
+    border-bottom: 1px solid var(--nova-border);
+}
+
+.paper-editor-page .nova-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.paper-editor-page .nova-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--nova-accent);
+    color: #0c120e;
+    font-weight: 800;
+}
+
+.paper-editor-page .nova-brand-text {
+    display: grid;
+    line-height: 1.15;
+}
+
+.paper-editor-page .nova-brand-text strong {
+    color: var(--nova-text);
+    font-size: 15px;
+}
+
+.paper-editor-page .nova-brand-text span {
+    color: var(--nova-muted);
+    font-size: 12px;
+}
+
+.paper-editor-page .nova-topnav {
+    display: flex;
+    gap: 6px;
+}
+
+.paper-editor-page .nova-mode {
+    min-height: 32px;
+    padding: 6px 12px;
+    background: transparent;
+    color: var(--nova-muted);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.paper-editor-page .nova-mode.is-active {
+    color: var(--nova-mint);
+    border-color: var(--nova-border);
+    background: var(--nova-panel-strong);
+}
+
+.paper-editor-page .nova-mode:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
+
+.paper-editor-page .nova-mode-tag {
+    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #2e3a33;
+    color: var(--nova-muted);
+    font-size: 11px;
+}
+
+.paper-editor-page .nova-back {
+    margin-left: auto;
+    color: var(--nova-mint);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.paper-editor-page .paper-editor-shell {
+    width: 100%;
+    max-width: none;
+    min-height: calc(100vh - 56px);
+    padding: 18px 22px;
+}
+
+.paper-editor-page .paper-editor-brand {
+    color: var(--nova-muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+}
+
+.paper-editor-page .post-action-controls button,
+.paper-editor-page .settings-action {
+    background: var(--nova-panel-strong);
+    color: var(--nova-text);
+    border: 1px solid var(--nova-border);
+    border-radius: 8px;
+}
+
+.paper-editor-page .post-action-controls button:hover,
+.paper-editor-page .settings-action:hover {
+    border-color: var(--nova-accent);
+}
+
+/* Legacy-only controls use the hidden attribute; loadArticleIntoEditor sets it from the grandfathered check. */
+.paper-editor-page [data-legacy-only][hidden] {
+    display: none !important;
+}
+
+.paper-editor-page .paper-editor-layout {
+    background: var(--nova-panel);
+    border: 1px solid var(--nova-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.paper-editor-page .editor-pane-header h3,
+.paper-editor-page .post-settings-panel h3 {
+    color: var(--nova-text);
+}
+
+.paper-editor-page .post-settings-panel {
+    background: var(--nova-panel);
+}
+
+.paper-editor-page .post-settings-panel span {
+    color: var(--nova-muted);
+}
+
+.paper-editor-page .post-settings-panel label,
+.paper-editor-page .editor-pane-header {
+    border-color: var(--nova-border);
+}
+
+/* TPI-NOVA-005A2: sidebar, Documents home, rows and workflow chips. */
+.paper-editor-page .nova-body {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    min-height: calc(100vh - 56px);
+}
+
+.paper-editor-page .nova-sidebar {
+    background: var(--nova-panel);
+    border-right: 1px solid var(--nova-border);
+    padding: 18px 12px;
+}
+
+.paper-editor-page .nova-sidebar-section {
+    margin-bottom: 18px;
+}
+
+.paper-editor-page .nova-sidebar-heading {
+    margin: 0 0 6px;
+    padding: 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nova-muted);
+}
+
+.paper-editor-page .nova-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--nova-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.paper-editor-page .nova-nav-item:hover,
+.paper-editor-page .nova-nav-item.is-active {
+    background: var(--nova-panel-strong);
+}
+
+.paper-editor-page .nova-nav-item[disabled] {
+    color: var(--nova-muted);
+    cursor: default;
+}
+
+.paper-editor-page .nova-nav-item span[data-nova-count] {
+    font-size: 12px;
+    color: var(--nova-muted);
+}
+
+.paper-editor-page .nova-new-document {
+    width: 100%;
+    margin-bottom: 18px;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--nova-accent);
+    color: #0d150f;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.paper-editor-page #nova-home,
+.paper-editor-page .nova-home {
+    padding: 24px 28px;
+}
+
+.paper-editor-page #nova-home[hidden],
+.paper-editor-page #nova-editor-view[hidden] {
+    display: none;
+}
+
+.paper-editor-page .nova-home-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.paper-editor-page .nova-home-header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.paper-editor-page .nova-home-note,
+.paper-editor-page .nova-home-empty,
+.paper-editor-page .nova-doc-time,
+.paper-editor-page .nova-doc-meta {
+    color: var(--nova-muted);
+    font-size: 13px;
+}
+
+.paper-editor-page .nova-home-error {
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border: 1px solid #b0623b;
+    border-radius: 8px;
+    background: rgba(176, 98, 59, 0.12);
+    color: #f0c9b3;
+}
+
+.paper-editor-page .nova-doc-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 150px;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border: 1px solid var(--nova-border);
+    border-radius: 10px;
+    background: var(--nova-panel);
+    color: var(--nova-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.paper-editor-page .nova-doc-row:hover {
+    border-color: var(--nova-accent);
+}
+
+.paper-editor-page .nova-doc-main {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.paper-editor-page .nova-doc-states {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.paper-editor-page .nova-chip {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--nova-border);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.paper-editor-page .nova-chip-muted {
+    color: var(--nova-muted);
+}
+
+.paper-editor-page .nova-chip-published {
+    color: var(--nova-mint);
+    border-color: var(--nova-accent);
+}
+
+.paper-editor-page .nova-chip-workflow-changes_requested {
+    color: #f0c9b3;
+    border-color: #b0623b;
+}
+
+.paper-editor-page .nova-chip-workflow-approved {
+    color: var(--nova-mint);
+}
+
+.paper-editor-page .nova-chip-workflow-draft_revision {
+    color: #d6e6dc;
+    border-style: dashed;
+}
+
+/* TPI-NOVA-005A2: the Documents home replaces the legacy editor chrome. */
+body.paper-editor-page.nova-home-open .editor-chrome,
+body.paper-editor-page.nova-home-open .workflow-feedback {
+    display: none;
+}
+
+/* TPI-NOVA-005A2: publication/workflow chips and the secondary utility menu. */
+.paper-editor-page .workflow-chip {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--nova-border);
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--nova-muted);
+}
+
+.paper-editor-page .workflow-chip.is-published {
+    color: var(--nova-mint);
+    border-color: var(--nova-accent);
+}
+
+.paper-editor-page .workflow-chip.is-changes_requested {
+    color: #f0c9b3;
+    border-color: #b0623b;
+}
+
+.paper-editor-page .nova-utility-menu {
+    position: relative;
+}
+
+.paper-editor-page .nova-utility-menu > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 6px 12px;
+    border: 1px solid var(--nova-border);
+    border-radius: 8px;
+    color: var(--nova-text);
+}
+
+.paper-editor-page .nova-utility-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+    padding: 8px;
+    background: var(--nova-panel-strong);
+    border: 1px solid var(--nova-border);
+    border-radius: 10px;
+}
+
+/* TPI-NOVA-005A6: three-region workspace (sidebar | editor | Education Center). */
+.paper-editor-page .nova-body {
+    grid-template-columns: 220px minmax(0, 1fr);
+    column-gap: 24px;
+    padding: 0 0 0 0;
+}
+
+.paper-editor-page .nova-body > .paper-editor-layout,
+.paper-editor-page .paper-editor-shell {
+    min-width: 0;
+}
+
+.paper-editor-page .paper-editor-layout {
+    grid-template-columns: minmax(0, 1fr) 16px minmax(300px, min(360px, 30%));
+    height: auto;
+    min-height: 640px;
+    overflow: visible;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+.paper-editor-page .editor-pane {
+    height: auto;
+    min-height: 640px;
+    padding: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    background: var(--nova-panel);
+    border: 1px solid var(--nova-border);
+    border-radius: 12px;
+    min-width: 0;
+}
+
+.paper-editor-page .editor-pane > .editor-pane-header h3 {
+    font-size: 15px;
+    margin: 0;
+}
+
+.paper-editor-page .editor-resize-handle {
+    width: 16px;
+    background: transparent;
+    border: 0;
+    cursor: default;
+    pointer-events: none;
+}
+
+.paper-editor-page .editor-resize-handle::before {
+    display: none;
+}
+
+.paper-editor-page .post-settings-panel {
+    height: auto;
+    min-height: 640px;
+    max-height: calc(100vh - 120px);
+    padding: 16px 16px 20px;
+    border: 1px solid var(--nova-border);
+    border-radius: 12px;
+    background: var(--nova-panel);
+    overflow-y: auto;
+}
+
+.paper-editor-page .post-settings-panel label {
+    padding: 12px 0;
+    gap: 6px;
+}
+
+/* Center document header: Documents back link, title, and save state with chips on the right. */
+.paper-editor-page .nova-document-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    padding: 14px 20px 10px;
+    border-bottom: 1px solid var(--nova-border);
+}
+
+.paper-editor-page .nova-document-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    flex: 1 1 360px;
+}
+
+.paper-editor-page .nova-document-back {
+    flex: 0 0 auto;
+    font-size: 13px;
+    padding: 5px 10px;
+    border: 1px solid var(--nova-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--nova-text-muted, var(--nova-text));
+    cursor: pointer;
+}
+
+.paper-editor-page .nova-document-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.paper-editor-page .nova-save-state {
+    margin: 0 4px 0 0;
+    font-size: 13px;
+    color: var(--nova-text-muted, var(--nova-text));
+}
+
+/* Nova-native documents: the Nova editor is the document surface, not a legacy "Compose" pane. */
+.paper-editor-page #nova-editor-view.is-nova-native .editor-pane-header {
+    display: none;
+}
+
+.paper-editor-page #nova-editor-view.is-nova-native .editor-toolbar,
+.paper-editor-page #nova-editor-view.is-nova-native [data-legacy-only] {
+    display: none !important;
+}
+
+/* TPI-NOVA-005A6C: header, compatibility notice, toolbar and canvas share one 20px inset and 12px rhythm. */
+.paper-editor-page .nova-document-action {
+    font-size: 13px;
+    padding: 6px 12px;
+    border: 1px solid var(--nova-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--nova-text);
+    cursor: pointer;
+}
+
+.paper-editor-page .nova-document-action[data-action="save-draft"] {
+    border-color: var(--nova-accent);
+}
+
+.paper-editor-page .nova-document-more summary {
+    list-style: none;
+    font-size: 13px;
+    padding: 6px 12px;
+    border: 1px solid var(--nova-border);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.paper-editor-page .nova-document-more .nova-utility-panel {
+    right: 0;
+    left: auto;
+}
+
+.paper-editor-page .nova-compat-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 12px 20px 0;
+    padding: 10px 14px;
+    border: 1px solid var(--nova-border);
+    border-radius: 10px;
+    background: var(--nova-panel-strong);
+}
+
+.paper-editor-page .nova-compat-text {
+    flex: 1 1 360px;
+    min-width: 0;
+}
+
+.paper-editor-page .nova-compat-kicker {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--nova-text);
+}
+
+.paper-editor-page .nova-compat-text p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--nova-text-muted, var(--nova-text));
+}
+
+.paper-editor-page .nova-compat-convert {
+    flex: 0 0 auto;
+    font-size: 13px;
+    padding: 6px 12px;
+    border: 1px solid var(--nova-accent);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--nova-text);
+    cursor: pointer;
+}
+
+.paper-editor-page .editor-toolbar-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    padding-right: 8px;
+    border-right: 1px solid var(--nova-border);
+}
+
+.paper-editor-page .editor-toolbar-group:last-of-type {
+    border-right: 0;
+}
+
+.paper-editor-page .paper-title-input {
+    flex: 1 1 260px;
+    min-width: 0;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    border: 0;
+    border-radius: 0;
+    padding: 4px 0;
+    background: transparent;
+    color: var(--nova-text);
+}
+
+.paper-editor-page .editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    margin: 12px 20px 0;
+    padding: 8px 10px;
+    border: 1px solid var(--nova-border);
+    border-radius: 10px;
+    background: var(--nova-panel-strong);
+}
+
+.paper-editor-page .editor-toolbar button,
+.paper-editor-page .editor-toolbar select {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+
+@media (max-width: 1180px) {
+    .paper-editor-page .paper-editor-layout {
+        grid-template-columns: minmax(0, 1fr) 16px minmax(260px, 300px);
+    }
+}
+
+@media (max-width: 900px) {
+    .paper-editor-page .paper-editor-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .paper-editor-page .nova-body {
+        grid-template-columns: 1fr;
+    }
+
+    .paper-editor-page .nova-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--nova-border);
+    }
+
+    .paper-editor-page .nova-doc-row {
+        grid-template-columns: 1fr;
+    }
+
+    .paper-editor-page .nova-topbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 10px 14px;
+        gap: 12px;
+    }
+
+    .paper-editor-page .paper-editor-shell {
+        padding: 12px 14px;
+    }
 }

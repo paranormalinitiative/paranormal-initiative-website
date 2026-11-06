@@ -82,6 +82,7 @@ function sqlString(value) {
 function runWrangler(args) {
   return spawnSync(wrangler, args, {
     cwd: repoRoot,
+    maxBuffer: 64 * 1024 * 1024,
     env: wranglerEnv,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"]
