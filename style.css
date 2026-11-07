@@ -9428,6 +9428,13 @@ body.paper-editor-page.nova-home-open .workflow-feedback {
   max-width: 48rem;
 }
 
+/* Normal text focus must not draw a full-canvas focus ring on the ProseMirror root. The caret, selection and keyboard editing are unaffected; controls keep their own focus-visible styles. */
+.paper-editor-page #nova-content-editor .ProseMirror:focus,
+.paper-editor-page #nova-content-editor .ProseMirror:focus-visible,
+.paper-editor-page #nova-content-editor .ProseMirror.ProseMirror-focused {
+  outline: none;
+}
+
 /* Center document header: Documents back link, title, and save state with chips on the right. */
 .paper-editor-page .nova-document-header {
     display: flex;
@@ -9445,6 +9452,18 @@ body.paper-editor-page.nova-home-open .workflow-feedback {
     gap: 14px;
     min-width: 0;
     flex: 1 1 360px;
+    max-width: 100%;
+}
+
+/* TPI-NOVA-005A15: long titles keep a readable minimum and never push the status group off the header. */
+.paper-editor-page .nova-document-header > .nova-document-heading {
+    flex: 1 1 420px;
+}
+
+.paper-editor-page .nova-document-header > .nova-document-status {
+    flex: 0 1 auto;
+    justify-content: flex-end;
+    max-width: 100%;
 }
 
 .paper-editor-page .nova-document-back {
@@ -9569,9 +9588,12 @@ body.paper-editor-page.nova-home-open .workflow-feedback {
 .paper-editor-page .paper-title-input {
     flex: 1 1 260px;
     min-width: 0;
+    width: 100%;
     margin: 0;
     font-size: 22px;
     font-weight: 600;
+    line-height: 1.25;
+    text-overflow: ellipsis;
     border: 0;
     border-radius: 0;
     padding: 4px 0;
