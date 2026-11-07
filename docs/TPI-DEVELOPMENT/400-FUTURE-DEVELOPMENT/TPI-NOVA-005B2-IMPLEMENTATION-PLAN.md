@@ -126,7 +126,7 @@ Prefer reuse of `TPI_MEDIA` and its key scheme. Do not create a new asset servic
 
 GenOffice inserts 50 fixed symbols as ordinary text (SOURCE-CONFIRMED in 005B0C, `ribbon-insert-tab.tsx` 63–114).
 
-**Recommendation: Option A, adapt the same fixed set as ordinary text.** No symbol node. Provenance: the table of 50 characters is a data list, so its origin is recorded in the attribution section (Section 14) before adoption. Option B (a separate TPI professional set) is not needed for 005B2.
+**Recommendation: Option A, adapt the same fixed set as ordinary text.** No symbol node. Provenance: the table of 50 characters is a data list, so its origin is recorded in the attribution section (Section 16) before adoption. Option B (a separate TPI professional set) is not needed for 005B2.
 
 ## 7. Page Break and Blank Page
 
