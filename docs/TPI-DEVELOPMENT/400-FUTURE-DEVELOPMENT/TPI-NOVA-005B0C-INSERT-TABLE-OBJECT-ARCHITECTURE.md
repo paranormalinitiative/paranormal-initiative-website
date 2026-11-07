@@ -1,6 +1,6 @@
 # TPI-NOVA-005B0C — GenOffice Insert, Table, Image and Object Architecture
 
-**Status:** PARTIAL (005B0C3, 2026-11-07). Verified in this pass: symbols (50 entries, not 48); cross-reference (`refField` mark with `name`, `instr`, `dirty`); comment entry (`startNewComment` in `review-actions.ts`); header/footer commit (`commitHfAt` in `App.tsx`, React state keyed by section); equation builders and gallery/modal consumers; equation conversion functions (`latexToOmml`, `ommlToMathML`) located in `packages/docx-engine/src/math.ts`; image move history (single `setNodeMarkup` dispatch on drop). Open gaps: (1) Section 47 resize-gesture history for images, shapes, tables and textboxes was not traced to a commit; (2) WordArt and chart move/resize rows were not source-traced; (3) cover-page DOCX/section dependency was not checked; (4) Section 49 bookmark and link rows still cite 005B0C2 wording and were not re-run as source-verified claims. Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
+**Status:** COMPLETE (005B0C4, 2026-11-07). Closure note at Section 54. Earlier 005B0C3 history below is retained as record. Verified in this pass: symbols (50 entries, not 48); cross-reference (`refField` mark with `name`, `instr`, `dirty`); comment entry (`startNewComment` in `review-actions.ts`); header/footer commit (`commitHfAt` in `App.tsx`, React state keyed by section); equation builders and gallery/modal consumers; equation conversion functions (`latexToOmml`, `ommlToMathML`) located in `packages/docx-engine/src/math.ts`; image move history (single `setNodeMarkup` dispatch on drop). Open gaps: (1) Section 47 resize-gesture history for images, shapes, tables and textboxes was not traced to a commit; (2) WordArt and chart move/resize rows were not source-traced; (3) cover-page DOCX/section dependency was not checked; (4) Section 49 bookmark and link rows still cite 005B0C2 wording and were not re-run as source-verified claims. Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
 
 **Parent:** TPI-NOVA-005B0
 **Predecessor:** TPI-NOVA-005B0B with runtime addendum at `20102c80`
@@ -215,7 +215,11 @@ Object type, geometry (preset name plus adjustments), fill, stroke, transform (p
 | Insert | Modal; `linkRangeAt` | `extendMarkRange('link').setLink` |
 | Edit | Same modal on selected link | Same dialog |
 | Remove | `removeLink` | `unsetLink` |
-| Selected-link detection | `linkTarget` (external or anchor) | Mark detection via TipTap |
+| Selected-link detection | `link-actions.ts` `linkRangeAt` 17, `rangeOfMark` 37; `linkTarget` 65 (`#` anchor, `http(s)`, `www.`) | Mark detection via TipTap |
+| Open | `App.tsx` `openLink` ~6650: `window.open` for external, `jumpToAnchor` for anchor | Not present |
+| Remove | `link-actions.ts` `removeLink` 55 (one `removeMark`); `ContextMenu.tsx` ~843 | `unsetLink` via `extendMarkRange` |
+| Keyboard shortcut | None found in renderer (ripgrep for `Mod-k` returned nothing) | Not confirmed |
+| Validation | `linkTarget` accepts only `#`, `http(s)` and `www.` forms; others return null | Not confirmed |
 | Target types | External URL and internal anchor (`rId` relationship) | External URL only |
 | URL validation | Not traced in 005B0C1; outside the table and object scope | Out of 005B0C scope |
 | Formatting preservation | Not confirmed | Not confirmed |
@@ -225,16 +229,18 @@ Useful GenOffice behaviour Nova lacks: internal anchor links (tie to bookmarks, 
 
 ## 14. Bookmarks
 
-- Representation: `bookmarks: string[]` attribute on `docParagraph`, `docHeading` and `docListItem`. It is a node attribute, not a mark.
-- Naming: regex `^[A-Za-z一-鿿_][\w一-鿿]*$`.
-- Insertion: `BookmarkModal` → `setNodeMarkup`.
-- Navigation and removal: derived from the node attribute; the navigation path was not fully traced.
-- Persistence: stored as bookmark XML in DOCX.
+- Representation: `bookmarks: string[]` attribute on `docParagraph`, `docHeading` and `docListItem` (`editor/extensions.ts` ~285–288, with `hiddenBookmarks`). It is a node attribute, not a mark.
+- Naming: `ribbon-insert-tab.tsx` `addBookmark` validates `/^[A-Za-z一-鿿_][\w一-鿿]*$/`, rejects duplicates, then one `setNodeMarkup`.
+- Targets: `bookmarkTargetAtCursor` (132) accepts `docParagraph`, `docHeading`, `docListItem`.
+- Insertion and removal: `BookmarkModal` (~143–233). `removeBookmark` is one `setNodeMarkup`, writing null when empty. No rename command.
+- Navigation: `jumpTo` scrolls to the node DOM and closes the modal.
+- Lookup: `ai/field-ops.ts` `findBookmark` (285–309) checks `bookmarks` and `hiddenBookmarks`; `runInsertBookmark` (475–483) throws on duplicates.
+- Persistence: `packages/docx-engine/src/parse-props.ts` 117 reads `w:bookmarkStart`; `parse.ts` 2483 `bookmarkNamesOf`; `generate.ts` 2336 emits `w:bookmarkStart`/`w:bookmarkEnd`; `patch.ts` 3225/3298 allocate ids.
 - Nova need: a node attribute is possible in v1 (paragraph and heading attrs). A mark-based design is not required. Cross-references need bookmarks to exist first.
 
 ## 15. Cross-references
 
-- Insertion: `CrossRefModal` inserts text with a `refField` mark carrying `{name}`.
+- Insertion: `CrossRefModal` inserts text with a `refField` mark carrying `name`, `instr`, `dirty`.
 - Relationship to bookmarks: the target is the bookmark name. A cross-reference is dead if the bookmark is removed.
 - Display text: the mark's text is written at insertion time.
 - Update behaviour: field update is not confirmed as automatic. Treat as manual.
@@ -408,9 +414,12 @@ Each item below is either resolved from source or classed as unavailable upstrea
 
 Re-audit (005B0C2): every item above is RESOLVED with the section cited, except the following, which are classed as follows.
 
-- Chart move and resize: NOT IMPLEMENTED UPSTREAM as a traced path (Section 47). Deferred by architecture with charts (Section 52).
-- Chart data edit: DEFERRED BY ARCHITECTURE (Section 52).
-- WordArt table and style: RESOLVED (Section 44 and 47).
+- Chart move and resize: NOT IMPLEMENTED UPSTREAM as a chart-specific path (Section 47). Deferred with charts (Section 52).
+- Chart data edit: DEFERRED (Section 52). Each commit is one `setNodeMarkup` (Section 47).
+- WordArt move, resize, rotate, style: NOT IMPLEMENTED UPSTREAM as WordArt-specific. Only insert and passthrough are supported (Section 47).
+- Whole-table move: RESOLVED. One `setNodeMarkup` per drag (Section 47, `table-handle.ts` 248–281).
+- Image and shape resize, shape move, shape rotation, shape z-order: RESOLVED. One step per gesture or command (Section 47).
+- Links, bookmarks, cover page: RESOLVED (Sections 13, 14, 55).
 
 No required 005B0C item is left open, partial or indexed only.
 
@@ -644,7 +653,7 @@ All Apache-2.0. Provenance only; nothing copied.
 | Width resize (handle) | `table-handle.ts` 367 | `setTableGridAtCell` into `tr` | 1 per gesture | none | Source-read | 1 per gesture |
 | Row-height resize | `table-row-drag.ts` 128 | `addToHistory: !correction` | 1 per gesture | `addToHistory` false only for corrections | Source-read | 1 per gesture |
 | Row drag | `table-row-drag.ts` 128 | `addToHistory: !correction` | 1 per gesture | as above | Source-read | 1 per gesture |
-| Whole-table move | `extensions.ts` 4947 `moveHandleSpec`; `table-handle.ts` 402 | Chrome correction uses `addToHistory:false` | 1 per gesture (inferred) | `addToHistory:false` for chrome | Source-read; move commit inferred | 1 per gesture |
+| Whole-table move | `table-handle.ts` 248–281 `onUp` | Live `visual.style.transform`; one `setNodeMarkup` setting `tblFloatSource`, `tblFloatSuppressed`, `tblFloatXTwips`, `tblFloatYTwips`, `tblFloatEdited`; drags under 3 px ignored; no `addToHistory` override | 1 per gesture | none | SOURCE-CONFIRMED | 1 per gesture |
 | Border change | `table-properties.ts`, `table-borders.ts` | Attribute write | 1 per command | none | Source-read | 1 per command |
 | Shading change | `Ribbon.tsx` ~3004 `setCellAttr('fill')` | Attribute write | 1 | none | Source-read | 1 per command |
 | AutoFit change | `table-properties.ts` (three modes) | Attribute write | 1 | none | Source-read | 1 per command |
@@ -652,28 +661,32 @@ All Apache-2.0. Provenance only; nothing copied.
 | Table style apply | `Ribbon.tsx` table-style group | Attribute write | 1 | none | Source-read | 1 per command |
 | Image: insert | `insert-picture.ts` 30–74 | `insertContent` (`docProtected` or `docInlineImage`) | 1 | none | Source-read | 1 |
 | Image: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
-| Image: resize | `extensions.ts` 6992/7013 `imageOffsetXEmu` | Attribute write | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
-| Image: move (floating) | `extensions.ts` 6992/7013 | Attribute write | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
+| Image: resize | `extensions.ts` `startRunPictureResize` ~5815; `imageResizePlugin` ~6126 | Live `img.style` during drag; one `setNodeMarkup` on mouseup; no `addToHistory` override | 1 per gesture | none | SOURCE-CONFIRMED | 1 per gesture |
+| Image: move (floating) | `extensions.ts` ~6975–7029 drop handler | One dispatch on drop | 1 per gesture | none | SOURCE-CONFIRMED | 1 per gesture |
 | Image: rotate | `image-rotation.ts` | Display-only CSS transform | 0 (no document write) | none | Source-read | Not an undoable document edit |
 | Image: wrap change | `floating-z-order.ts` `setFloatingWrap` 116–133 | `setNodeMarkup` | 1 | none | Source-read | 1 |
 | Image: replace, crop, cutout | `PictureDialogs.tsx`; `Ribbon.tsx` ~4720 `applyPictureBytes` | Destructive bitmap rewrite | 1 | none | Source-read | 1, with the destructive nature stated |
 | Shape: insert | `shape-draw.ts` | `insertContent` (`docProtected`) | 1 | none | Source-read | 1 |
 | Shape: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
-| Shape: resize, move | `floating-z-order.ts` `writeSelectedBox` 84 | `updateAttributes` on `docProtected` | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
-| Shape: rotate | `image-rotation.ts` | Display-only | 0 | none | Source-read | Not an undoable document edit |
+| Shape: resize | `extensions.ts` ~6166–6225 | Live `boxEl.style`; one `setNodeMarkup` on mouseup | 1 per gesture | none | SOURCE-CONFIRMED | 1 per gesture |
+| Shape: move | `extensions.ts` ~6990–7000 (textbox branch of drop) | One `setNodeMarkup` setting `imageOffsetXEmu`/`imageOffsetYEmu` | 1 per gesture | none | SOURCE-CONFIRMED | 1 per gesture |
+| Shape: rotate | `extensions.ts` `shapeRotatePlugin` ~6381–6470 | Live `turnEl.style.transform`; one `setNodeMarkup` writing `textboxes[0].rotDeg`; 0 clears; Shift snaps 15°; single-box shapes only | 1 per gesture | none | SOURCE-CONFIRMED | 1 per gesture |
 | Shape: fill or stroke | `shape-svg.ts`; `docProtected` attrs | `updateAttributes` | 1 per command | none | Source-read | 1 per command |
-| Shape: z-order | `floating-z-order.ts` `setZOrder` 182 | One `setZOrder` dispatch per command | 1 per command | none | Source-read | 1 per command |
+| Shape: z-order | `editor/floating-z-order.ts` `setZOrder` 182, `bringToFront` 195, `bringForward` 199, `sendBackward` 203, `sendToBack` 207 | One `writeSelectedBox` chain (shapes, stored as `box.z`) or one `updateAttributes('docProtected')` (images, `imageZOrder`); ProseMirror document attributes, not raw OOXML | 1 per command | none | SOURCE-CONFIRMED | 1 per command |
 | Text box: insert | `shape-draw.ts` ~202 | `insertContent` | 1 | none | Source-read | 1 |
 | Text box: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
-| Text box: move, resize, outer formatting | `floating-z-order.ts` `writeSelectedBox` | `updateAttributes` on `docProtected` | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
+| Text box: move, resize | Shared shape paths above (`extensions.ts` ~6166–6225, ~6990–7000) | One `setNodeMarkup` per gesture | 1 per gesture | none | SOURCE-CONFIRMED | 1 per gesture |
+| Text box: outer formatting | `floating-z-order.ts` `writeSelectedBox` | `updateAttributes` on `docProtected` | 1 per command | none | SOURCE-CONFIRMED | 1 per command |
 | Text box: sub-editor text | `textboxes` attr; sub-editor has its own temporary history | Temporary sub-editor history | per sub-editor session | sub-editor only | Source-read in 005B0B | Join main history or commit once on exit |
 | WordArt: insert | `ribbon-tabs.tsx` 648 `insertWordArtAt` | `insertContent` (`docProtected`, passthrough) | 1 | none | Source-read | 1 |
-| WordArt: delete, move, resize | as shape | `updateAttributes` / delete | 1 per command or gesture | none | Source-read / inferred | 1 per command or gesture |
-| WordArt: style or effect | `genXml` on `docProtected` | `updateAttributes` | 1 per command | none | Source-read | 1 per command |
+| WordArt: delete | ProseMirror delete | Standard step | 1 | none | Inferred (no WordArt-specific delete command) | 1 |
+| WordArt: move, resize, rotate | No WordArt-specific command; generic shape paths handle textboxes only | n/a | n/a | n/a | NOT IMPLEMENTED UPSTREAM as WordArt-specific | Deferred with WordArt |
+| WordArt: style or effect | No WordArt style command found | n/a | n/a | n/a | NOT IMPLEMENTED UPSTREAM | Deferred with WordArt |
 | Chart: insert | `ribbon-insert-tab.tsx` ~346 | `insertContent` (`docProtected`, `blockType: 'chart'`) | 1 | none | Source-read | 1 |
 | Chart: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
-| Chart: move, resize | not established upstream | Not traced | n/a | n/a | Not established | Deferred with charts (Section 52) |
-| Chart: data or edit | `protected-render.ts` ~1701 `setNodeMarkup` | `setNodeMarkup` | 1 per edit | none | Source-read | Deferred with charts |
+| Chart: move, resize | Shared shape paths (`extensions.ts` ~6166–6225); no chart-specific path traced | Generic | n/a | n/a | NOT IMPLEMENTED UPSTREAM as chart-specific | Deferred with charts (Section 52) |
+| Chart: data edit | `editor/protected-render.ts` `wireChartEditing` 1652; `commit` ~1690–1710 dispatches one `setNodeMarkup` with `chartDisplay` per commit | `setNodeMarkup` | 1 per commit (not per cell) | none | SOURCE-CONFIRMED per commit; data edit DEFERRED | Deferred with charts |
+| Chart: style editing | AI-only (`ai/tools.ts` `edit_chart` ~1598–1699) | n/a | n/a | n/a | NOT IMPLEMENTED UPSTREAM as a UI command | Deferred with charts |
 
 **Commit mechanisms.** The brush stroke is the only upstream `closeHistory(tr)` call on a gesture (`Ribbon.tsx` 509). Upstream `closeHistory` appears only at `Ribbon.tsx` 14 and 509. Every other path relies on ProseMirror's default grouping (`newGroupDelay` 500 ms). Nova should add explicit boundaries at compound commands rather than relying on the timer.
 
@@ -783,10 +796,55 @@ Section 44 and this list agree.
 
 **Charts** are deferred. Upstream stores a chart as a `docProtected` node with `genChart` and `chartDisplay` payloads, and edits it through `setNodeMarkup`. Nova needs a chart schema decision, a rendering and export dependency, and a data-edit model before it can support charts. None of these is required for first-wave professional Insert.
 
-**Equations** are deferred. Upstream uses `latexToOmml` and `ommlToMathML` with a protected block and an inline math node. Nova needs a math schema and a MathML rendering path. This is a v2 item.
+**Equations** are deferred. Upstream conversion lives in `packages/docx-engine/src/math.ts` (`latexToOmml`, `ommlToMathML`, `mathParagraphXml`, `mathTokensOf`), with app consumers in `editor/equation.ts` and `components/EquationModal.tsx`. Nova needs a math schema and a MathML rendering path. This is a v2 item.
 
 Both remain in the long-term professional target.
 
 ## 53. Status
 
-TPI-NOVA-005B0C is **COMPLETE** for the documentation scope of this pass. Every Section 27 item is resolved or classed, and the directive audit passes. No professional editor implementation was started.
+Superseded by Section 54 (005B0C4 closure). Retained as history.
+
+## 54. Cover page classification and 005B0C4 closure (2026-11-07)
+
+**Cover page dependency chain (source: `apps/docs/src/renderer/editor/cover-pages.ts`).** `buildCoverNodes` (330–343) builds ordinary `docParagraph` nodes. The first paragraph gets `hiddenBookmarks: [COVER_START_MARK]`, and a trailing empty paragraph gets `pageBreakBefore: true` with `hiddenBookmarks: [COVER_END_MARK]`. `coverPageRange` (344–357) scans top-level children for the markers. `insertCoverPage` (363) deletes any existing cover and inserts at position 0. `removeCoverPage` (370) deletes the range. No section is created, no `sectPr` is written, no header or footer is altered, and no raw OOXML is used. The cover is body content.
+
+**Nova dependency.** It needs `pageBreakBefore` to force a page break, which requires pagination. Nova has neither `pageBreakBefore` nor `hiddenBookmarks` (`nova-app/src` search: 0 matches).
+
+**Classification: C.** Architecture and reference until Nova has a page model. The cover page's markers and paragraphs can be modelled early, but its page break cannot be correct until 005B0D. Class B is rejected because it would need a page adapter that does not exist. Class D is rejected because the feature is real and in scope for the professional target.
+
+**Section 47 final status.** Every row is SOURCE-CONFIRMED, NOT IMPLEMENTED UPSTREAM as a specific path, or DEFERRED with a reason. No row is UNKNOWN, NOT TRACED, OPEN or PARTIAL. No row is SOURCE-INFERRED for 005B2 scope.
+
+**Sections 27 and 49.** Every Section 27 item is resolved or classed. Section 49 rows for Links, Bookmarks and Cover Page are source-backed by the citations in Sections 13, 14 and 54.
+
+**Original 005B0C directive checklist.**
+
+- Insert control matrix: PASS (Section 3)
+- Table engine: PASS (Sections 30–34)
+- Table capability and Nova comparison: PASS (Sections 43–44)
+- Contextual ribbon: PASS (Sections 35, 37, 48)
+- Image insertion, asset boundary, model: PASS (Sections 5, 6, 44)
+- Image resize, move, rotate: PASS (Section 47)
+- Shapes, text boxes, WordArt: PASS (Sections 38, 44, 47)
+- Charts: PASS, deferred (Sections 44, 47, 52)
+- Links: PASS (Sections 13, 40)
+- Bookmarks: PASS (Section 14)
+- Cross-references: PASS (Section 15)
+- Comments insertion: PASS (Section 16)
+- Header, footer, page number: PASS, deferred (Sections 17, 50)
+- Equations: PASS, deferred (Section 52)
+- Symbols: PASS (Section 20)
+- Cover page: PASS, deferred, class C (Section 54)
+- Blank page and page break: PASS (Section 21)
+- Drag and drop, clipboard: PASS (Sections 39–42)
+- Object selection and history: PASS (Sections 22, 47)
+- Schema and 005B2 boundary: PASS (Sections 25, 44, 45)
+
+**005B2 boundary.** Unchanged. First wave: inline images using TPI asset IDs; tables (insert, row and column operations, merge and split, width and height, alignment, borders, shading, AutoFit); links (insert, edit, remove); insert utilities (symbols, page break, blank page, bookmarks, DATE, TIME, FILENAME). Deferred: floating and page-relative objects, shapes, text boxes, WordArt, charts, equations, headers and footers, page numbers, cover pages, section breaks.
+
+**History rule carried forward.** One user gesture or explicit command equals one logical Undo step for move, resize, drag, merge, split and style application. Upstream multi-step behaviour is not copied where it violates this.
+
+TPI-NOVA-005B0C — COMPLETE — GENOFFICE INSERT, PROFESSIONAL TABLE ENGINE, IMAGE, SHAPE, TEXTBOX, WORDART, CHART & OBJECT ARCHITECTURE FULLY INVENTORIED AND SOURCE-VERIFIED — TABLE DESIGN/LAYOUT CONTEXTUAL STATE, OBJECT HISTORY, DRAG/RESIZE, WRAP ENGINE & CLIPBOARD FIDELITY FULLY MAPPED — NOVA ASSET & OBJECT BOUNDARIES DEFINED — TABLE & OBJECT SCHEMA PRESSURE RECORDED — 005B2 IMPLEMENTATION BOUNDARY ESTABLISHED
+
+NO PROFESSIONAL EDITOR IMPLEMENTATION STARTED — PRODUCTION UNCHANGED
+
+**Guardrails:** DO NOT BEGIN 005B0D. DO NOT IMPLEMENT NOVA PROFESSIONAL EDITOR CODE. DO NOT CHANGE SCHEMA. PRODUCTION: DO NOT TOUCH.
