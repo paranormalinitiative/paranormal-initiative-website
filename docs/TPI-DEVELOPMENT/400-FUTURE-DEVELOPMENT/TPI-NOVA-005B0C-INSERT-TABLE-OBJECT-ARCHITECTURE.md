@@ -26,7 +26,7 @@ These are treated as authoritative and not reopened:
 
 - Source was read from the scratch clone `/tmp/genoffice-005b0a` at the frozen SHA. That clone is outside this repository and is not committed.
 - Read in full or in the relevant windows: `ribbon-insert-tab.tsx`, the Insert helpers in `ribbon-tabs.tsx`, `insert-picture.ts`, `persistable-image.ts`, `image-drop.ts`, `image-rotation.ts`, `equation.ts`, `cover-pages.ts` exports, `page-break.ts` exports, `table-properties.ts`, `table-borders.ts`, the `docTable`/`docTableRow`/`docTableCell`/`docNestedTable` nodes in `extensions.ts`, and `shape-draw.ts`/`shape-svg.ts` in part.
-- Indexed by export list only, not fully traced: `table-ops.ts` internals, `table-sizing.ts`, `table-geometry.ts`, `table-handle.ts`, the drag plugins, `TablePropertiesDialog.tsx`, `TableDialogs.tsx`, `wrap-obstacles.ts`, `hf-float-edit.ts`, `field-codes.ts`, `trailing-table-exit.ts`, and the contextual Table Design/Layout ribbon. These are listed as open items in section 19, not as complete findings.
+- Source-read in 005B0C1 (Sections 27 and 30–42): `table-ops.ts`, `table-sizing.ts`, `table-geometry.ts`, `table-handle.ts`, the drag plugins, `TablePropertiesDialog.tsx`, `TableDialogs.tsx`, `wrap-obstacles.ts`, `hf-float-edit.ts`, `field-codes.ts`, `trailing-table-exit.ts`, and the contextual Table Design and Layout ribbons.
 - Browser runs were not performed for 005B0C (source-only). The 005B0B3 runtime check used a bundled Firefox 157 instead of Firefox Developer Edition 160, which failed to launch in the sandbox. That is a recorded deviation.
 
 ## 3. Insert capability matrix
@@ -80,14 +80,14 @@ Notes:
 | Nested tables | `docNestedTable` atom in a cell | `model` attr | Absent |
 | Selection | Cell, row, column, whole table; `allowTableNodeSelection` | ProseMirror cell selection; node selection | `allowTableNodeSelection: true` |
 | Insert / delete row and column | Toolbar contextual group | Table transaction | Add row, add column, delete row, delete column in toolbar |
-| Split / merge cells | Not confirmed in the modules indexed (`table-ops.ts` internals not fully read) | Open item | Absent |
+| Split / merge cells | Upstream: `mergeCells` and `splitCellsInto` (Section 30) | Adoption B | Standard TipTap table commands; no split-count dialog |
 | Row height, column width | `table-sizing.ts` (not fully read); `setTableAutoFit` writes `widthPx`, `colWidthsPct`, per-cell `colwidth` | Table and cell attrs | Resize disabled (`resizable: false`) |
 | Autofit | `contents` / `window` / `fixed` | `tblAutoFit` | Absent |
 | Table alignment and floating | `tblAlign`, `tblFloat*` | Table attrs | Absent |
 | Borders | `TABLE_BORDER_MENU`: bottom, top, left, right, none, all, outer, inner, insideH, insideV, tl2br, tr2bl. `setSelectionBorders` applies to selected cells; a caret applies to the whole table | `borders` attr | Default TipTap table styling |
 | Presets | `applyTablePreset`; `setTableLookOption` | Table attrs | Absent |
 | Header row and repeat | `toggleRepeatHeaderRows` | Row attr | Header row only |
-| Cell alignment | Not confirmed in indexed modules | Open item | Absent |
+| Cell alignment | Upstream: 3×3 cell alignment in Table Layout (Section 35) | Adoption B | Cell attribute |
 | Shading | `tblFill` at table level; cell shading not confirmed | Table attr | Absent |
 
 ### 4.3 Nova table comparison
@@ -112,7 +112,7 @@ Notes:
 
 Drop: `image-drop.ts` `insertImageFilesAtCoords` maps drop coordinates to a position and reuses the insertion path.
 
-Rotation: `image-rotation.ts` (`pictureTransformFns`, quarter-turn margins, `pictureLayerDecls`). Crop and cutout were not found in the indexed modules; treat as absent.
+Rotation: `image-rotation.ts` (`pictureTransformFns`, quarter-turn margins, `pictureLayerDecls`). Crop and cutout are destructive bitmap rewrites (`CropDialog`, `CutoutDialog`; Section 27).
 
 Replacement and a picture-specific contextual ribbon were not confirmed in the windows read; open item.
 
@@ -138,7 +138,7 @@ This is a design boundary only. No asset storage is implemented here.
 | Wrapping | `wrap`, `wrapDist*Emu` | Absent | v2 |
 | Inline vs floating | `wrap`, offsets `offsetXEmu` / `offsetYEmu` | Absent | v2 |
 | Crop | Not found | Absent | Not planned |
-| Alt text | Not confirmed in indexed attributes | Absent | v1 extension possible |
+| Alt text | Upstream: alt-text tab in `TablePropertiesDialog.tsx` (Section 34) | Absent in Nova | v1 extension possible |
 | Object identity | Not a stable ID; position-based | Absent | Requires asset ID |
 | Z-order | `layers` plus `floating-z-order.ts` | Absent | v2 |
 | Source | `dataUrl`, verbatim `xml` | Absent | Replace with asset ID (section 5.2) |
@@ -147,7 +147,7 @@ This is a design boundary only. No asset storage is implemented here.
 
 - `floating-z-order.ts`: `ImageWrap` modes include front, behind, topBottom, square-left and square-right. Tight and through are normalised to square. Functions: `boxWithZ`, `setFloatingWrap`, `bringToFront`, `bringForward`, `sendBackward`, `sendToBack`.
 - `wrap-group.ts`: `wrapGroupCss` for the CSS wrap grouping.
-- `wrap-obstacles.ts` (922 lines): computes obstacle geometry for text flow. Only its exports were indexed, not the body.
+- `wrap-obstacles.ts` (922 lines): computes obstacle geometry for text flow. The body is read in Section 36.
 - Positions: `offsetXEmu`, `offsetYEmu`, `relH`, `relV`, `posH`, `posV`. Page-relative, margin-relative and paragraph-relative positioning is implied by `relH`/`relV` values, but the full value set was not enumerated.
 - Inline versus floating: the `wrap` attribute distinguishes them. `docProtected` image blocks are a third case for body-level images.
 
@@ -217,7 +217,7 @@ Object type, geometry (preset name plus adjustments), fill, stroke, transform (p
 | Remove | `removeLink` | `unsetLink` |
 | Selected-link detection | `linkTarget` (external or anchor) | Mark detection via TipTap |
 | Target types | External URL and internal anchor (`rId` relationship) | External URL only |
-| URL validation | Not confirmed in the modules indexed | Not confirmed |
+| URL validation | Not traced in 005B0C1; outside the table and object scope | Out of 005B0C scope |
 | Formatting preservation | Not confirmed | Not confirmed |
 | Tooltip | `tooltip` attr | Absent |
 
@@ -381,22 +381,79 @@ No global schema strategy is chosen here. Full GenOffice model, Nova v2 and a hy
 
 Not implemented in this directive.
 
-## 27. Open items (not fully traced)
+## 27. Open items: resolution from source (005B0C1)
 
-- `table-ops.ts` internals: split and merge cells, cell alignment, exact row and column commands.
-- `table-sizing.ts`, `table-geometry.ts`, `table-handle.ts`: sizing internals, drag handles.
-- `table-column-drag.ts`, `table-row-drag.ts`: drag plugins.
-- `TablePropertiesDialog.tsx`, `TableDialogs.tsx`: dialogs.
-- Table Design and Layout contextual ribbon activation.
-- `wrap-obstacles.ts` body; `hf-float-edit.ts` body; `field-codes.ts` body; `trailing-table-exit.ts`.
-- Image replacement, picture contextual ribbon, crop.
-- Shape stroke, rotation and inner text.
-- Drag and drop of non-image files and objects.
-- Copy and paste fidelity for tables, images, links, shapes, text boxes.
+Each item below is either resolved from source or classed as unavailable upstream with the evidence cited. Section numbers refer to Sections 30–42 added in this pass.
 
-These need a follow-up source pass before any 005B2 implementation planning for those areas.
+| Item | Resolution |
+|---|---|
+| `table-ops.ts` internals | Resolved, Section 30. |
+| `table-sizing.ts`, `table-geometry.ts` | Resolved, Sections 31–32. |
+| `table-handle.ts`, drag plugins | Resolved, Section 33. |
+| `TablePropertiesDialog.tsx`, `TableDialogs.tsx` | Resolved, Section 34. |
+| Table Design / Layout ribbon activation | Resolved, Section 35. |
+| `wrap-obstacles.ts` body | Resolved, Section 36. |
+| `hf-float-edit.ts` | Resolved: header/footer floating picture move and resize. Window mousemove listeners; one commit on mouseup through an `HfPictureEdit` callback. History follows the caller, so it is not a separate history model. |
+| `field-codes.ts` | Resolved: Toggle Field Codes is a display-time decoration. It never dirties the document or the undo stack. |
+| `trailing-table-exit.ts` | Resolved: a ProseMirror plugin that gives caret exit from a trailing table (GapCursor/TextSelection). Track-changes ignore meta is set. No schema change. |
+| Image crop | Resolved: `CropDialog` (`PictureDialogs.tsx` ~264) returns a cropped data URL; `Ribbon.tsx` ~4720–4724 passes it to `applyPictureBytes`. Destructive pixel rewrite. No non-destructive crop attribute exists upstream. |
+| Cutout | Resolved: `CutoutDialog` also rewrites the bitmap as PNG. Destructive. |
+| Image replace | Resolved: no separate replace command; it goes through the same `applyPictureBytes` path as crop and cutout. |
+| Picture contextual ribbon | Resolved, Section 37. |
+| Shape stroke | Resolved: stroke is rendered from SVG path data (`shape-svg.ts` `shapePaths`, `shapeBackgroundImage`) with a border colour and stroke width. Section 38. |
+| Shape rotation | Resolved: `image-rotation.ts` converts DrawingML `rot`, `flipH`, `flipV` to CSS transforms (`pictureTransformFns`). Display-only output; the stored value is the DrawingML attribute. Section 38. |
+| Shape inner text | Resolved: text inside a shape is held in the `docProtected` node's `textboxes` attribute, not as ProseMirror content. Section 38. |
+| Drag and drop of non-image files | Resolved as unsupported in the editor. `App.tsx` `handleDrop` (~1360) accepts only image files through `imageFilesFromDataTransfer`; other files return false. Section 39. |
+| Copy and paste fidelity: tables, images, links, shapes, text boxes | Resolved, Sections 40–42. |
 
-## 28. Provenance
+No required 005B0C item remains indexed-only or untraced.
+
+## 30. Table operations (`table-ops.ts`)
+
+| Operation | Command | Transaction | Attributes changed | History |
+|---|---|---|---|---|
+| Insert row above/below, delete row | ProseMirror table commands via `table-ops.ts` | Standard table steps | Row nodes, `rowspan` of spanning cells | One step per command |
+| Insert/delete column | Column commands | Standard table steps | Cell count, `colwidth` | One step |
+| Merge cells | `mergeCells` (prosemirror-tables) | Standard merge step | `colspan`/`rowspan`; content concatenated | One step |
+| Split cells | `splitCellsInto(rows, cols, mergeFirst)` line 324 | Captures a merge transaction then splits | `colspan`/`rowspan` reset | One step |
+| Split table | Table split command | Standard split step | Table node count | One step |
+| Distribute rows | `distributeRowsEvenly` line 441 | `setNodeMarkup` per row | Row height | One step |
+| Distribute columns | `distributeSelectedColumns` (`table-sizing.ts` 193) | Grid rewrite | `colwidth` | One step |
+| Cell shading | `setCellAttr('fill', hex)` (`Ribbon.tsx` ~3004) | Attribute write | `fill` on cell | One step |
+
+**Schema assumptions:** standard prosemirror-tables cell and row nodes with `colspan`, `rowspan` and `colwidth`. No new node types. Limits: `MAX_TABLE_COLS` 63, `MAX_TABLE_ROWS` 200; split clamps to 50 and insert clamps to 100.
+
+**Nova today:** `Table.configure({resizable:false, allowTableNodeSelection:true})` with TableRow, TableHeader and TableCell. Merge and split are present in prosemirror-tables form, but there is no split-count dialog or distribute command.
+
+**Adoption class:** A for generic row and column commands; B for merge, split and distribute, adaptable with Nova commands.
+
+## 31. Table sizing (`table-sizing.ts`)
+
+- Storage units: column widths are `colwidth` in pixels on cells and `widthPx`/`widthPct`/`colWidthsPct` on the table. Floating position is stored in twips (`tblFloatXTwips`, `tblFloatYTwips`). Row height is written as `heightTwips`, with pixels converted at 15 twips per pixel.
+- Minimum column width is `MIN_TABLE_COLUMN_PX` 40. Row drag minimum is `MIN_ROW_PX` 4.
+- Setting a width writes `tblAutoFit: 'fixed'` and `tblAutoFitEdited: true` (`table-sizing.ts` 139–145).
+- Derived values such as the grid total are computed at layout time, not stored.
+
+## 32. Table AutoFit (`table-properties.ts` `setTableAutoFit`)
+
+Upstream has three distinct, persisted modes, listed in `TABLE_AUTO_FIT_OPTIONS` (`TablePropertiesDialog.tsx` 20–24):
+
+- **AutoFit Contents** (`contents`): clears `widthPx`, `widthPct` and `colWidthsPct`; the table sizes to its content.
+- **AutoFit Window** (`window`): clears `widthPx` and sets `widthPct` to 100.
+- **Fixed Column Width** (`fixed`): sets `widthPx` to the measured total and clears `widthPct`.
+
+The mode is persisted document state (`tblAutoFit`), not layout-only state. Dynamic recalculation happens in layout. Adoption class: B, using a Nova command that writes the same attribute.
+
+## 33. Table handles and drag
+
+- **Move handle:** floating tables only. Mouseup issues one `setNodeMarkup` that writes `tblFloatXTwips` and `tblFloatYTwips`. This is a single history step.
+- **Corner resize:** a preview during drag, then one commit transaction. A chrome correction uses `addToHistory:false`. Escape restores the original.
+- **Column drag** (`table-column-drag.ts`): one `setTableGridAtCell` on mouseup, so one history step.
+- **Row drag** (`table-row-drag.ts`): `setNodeMarkup` plus an `addToHistory:false` chrome correction, one history step. Minimum 4 px.
+- Hover and cursor behaviour is CSS and DOM measurement. Classification: column and row drag are C (layout-dependent DOM measurement); the commit path is B.
+
+**Desired Nova behaviour:** one completed drag gesture produces one undoable command. The source supports this for all four drag types above, so no scratch runtime test was needed.
+
 
 Licence for all: Apache-2.0 (upstream `LICENSE`). Provenance only; nothing copied. Blob SHAs are 8-character prefixes at the frozen SHA. Dates are last-touch commit dates.
 
@@ -430,6 +487,129 @@ Licence for all: Apache-2.0 (upstream `LICENSE`). Provenance only; nothing copie
 | `components/TablePropertiesDialog.tsx` | b39ab0e3 | 2026-09-27 | Table dialog (indexed) |
 | `components/TableDialogs.tsx` | 99e06562 | 2026-09-27 | Table dialogs (indexed) |
 | `components/EquationModal.tsx` | b9438f0e | 2026-08-17 | Equation modal |
+
+## 34. Table dialogs
+
+- **TablePropertiesDialog** tabs: table, row, column, cell and alt text. Table tab: width, alignment, indentation and AutoFit mode (via `setTableAutoFit`). Cell tab: cell margins and vertical alignment. OK commits the changed groups in one flow. No Word-style wrapping or positioning controls exist for tables beyond the floating move handle.
+- **Split Cells** (1–50 rows or columns, `splitCellsInto`), **Insert Cells** (1–100), **Delete Cells**, **Cell Margins**. Each maps to one command.
+- Dialog values are stored only in table and cell node attributes.
+
+## 35. Contextual ribbons: Table Design and Table Layout
+
+Both tabs activate through the same mechanism as Picture Format and Shape Format (`Ribbon.tsx` ~1066–1100). The active table is resolved from the selection:
+
+- Caret inside a table: Table tabs appear.
+- CellSelection, or multiple cells: resolved to the enclosing table.
+- NodeSelection of a table: resolved to that table.
+- Nested table: the innermost table is used.
+
+Table Layout controls: insert and delete row or column, merge (gated by `canMergeCells`), split table (gated by `canSplitTable`), cell size, AutoFit dropdown, distribute rows and columns, cell alignment (3×3), text direction, and repeat header (gated by `tableHeader.enabled`). Table Design controls: cell shading (`setCellAttr('fill')`) and border and style toggles. No sort or formula control exists upstream.
+
+State is read from the selection and the table and cell attributes. This is the state contract the future Nova selection layer must supply. Adoption class: B for controls backed by table attributes, A for selection handling.
+
+## 36. Wrap engine (`wrap-obstacles.ts`)
+
+- `syncWrapObstacles` (lines ~208–670) registers `ObstacleRect`s for floating objects, paragraph padding decorations (`data-obs-mode`, `data-obs-base`) and line floats (`float:side`).
+- Square, top-and-bottom and front or behind wrapping are all rendered through these obstacles.
+- The only ProseMirror write is the history meta at line 357, with `addToHistory:false`.
+- Classification: transient DOM and layout measurement. Not document schema. Wrap mode itself is stored on the floating object (`imageWrap`).
+
+## 37. Picture Format and Shape Format contextual tabs
+
+- Picture Format shows when an image block is selected (`Ribbon.tsx` ~1080–1095). It hands back to Header & Footer when a header or footer picture is selected.
+- Shape Format shows when a floating box is selected (`Ribbon.tsx` ~1100). Unlike Picture Format, it survives text editing inside the shape.
+- Crop and cutout are destructive bitmap rewrites (Section 27).
+
+## 38. Shape stroke, rotation and inner text
+
+- **Stroke:** rendered from SVG path data (`shape-svg.ts` `shapePaths`, `shapeBackgroundImage`). Border colour and stroke width are passed through; the default stroke width is 2.
+- **Rotation and flip:** `image-rotation.ts` `pictureTransformFns` converts DrawingML `rot`, `flipH` and `flipV` to CSS `rotate` and `scale` transforms. Display-only.
+- **Inner text:** held in the `docProtected` node's `textboxes` attribute (`shape-draw.ts` ~202; `convert.ts` 2789–3587), not as ProseMirror content.
+
+## 39. File drag and drop
+
+`App.tsx` `handleDrop` (~1360) accepts only image files through `imageFilesFromDataTransfer`; any other file returns false. Image drop is adoption class A.
+
+## 40. Clipboard: tables and images
+
+- `App.tsx` ~1305–1449 wires `transformPastedHTML: cleanPastedHtml`, `clipboardTextParser`, `transformPasted` and `handlePaste`.
+- `multi-select.ts` `copyRanges` (~297) uses `view.serializeForClipboard` and sets `text/html` and `text/plain`.
+- Tables round-trip through standard ProseMirror `colspan`, `rowspan` and `colwidth` attributes.
+- Images serialise `data-image-meta` (`extensions.ts` ~4495). Embedded data is duplicated into the copied HTML; no asset ID is retained.
+
+## 41. Clipboard: links and shapes
+
+- Links are the `link` mark (`marks.ts` 113–130) with an `href` attribute, kept through standard `a[href]` HTML serialisation.
+- Shapes and text boxes have no separate clipboard format. Their content lives in the `docProtected` node's `textboxes` attribute, so a shape copy depends on that attribute being serialised. Treat independent shape copy as unavailable upstream.
+
+## 42. External paste into tables
+
+No table-specific paste handler was found. Tabular text pasted into a table follows the standard `clipboardTextParser` path. Spreadsheet-style column detection is not implemented upstream, so it is recorded as unavailable, not partial.
+
+## 43. Table schema matrix (refined)
+
+| Attribute | Storage | Classification |
+|---|---|---|
+| Table width | `widthPx`, `widthPct` | v1 attribute extension possible |
+| AutoFit mode | `tblAutoFit`, `tblAutoFitEdited` | v1 attribute extension possible |
+| Alignment and indent | table attrs | v1 attribute extension possible |
+| Floating position | `tblFloatXTwips`, `tblFloatYTwips` | requires page model |
+| Row height | `heightTwips` | v1 attribute extension possible |
+| Column widths | `colwidth` on cells, `colWidthsPct` | supported now (standard cell attr) |
+| colspan, rowspan | standard cell attrs | supported now |
+| Vertical alignment | cell attr | supported now |
+| Cell margins | cell attr | v1 attribute extension possible |
+| Borders | table and cell border attrs | v1 attribute extension possible |
+| Shading | `fill` on cell | v1 attribute extension possible |
+| Repeat header | header row flag | requires page model (repeat across pages) |
+| Banding and table style | style metadata | schema v2 recommended |
+| Wrapping | floating object `imageWrap` | requires page model |
+| Nested tables | table in cell | supported now (standard PM), with layout-dependent width |
+
+## 44. Object schema matrix
+
+| Object | Persistent data | Asset reference | Layout state | Selection / UI state |
+|---|---|---|---|---|
+| Inline image | image attrs and `data-image-meta` | base64 data URL today (not a Nova asset ID) | inline sizing | NodeSelection, Picture Format tab |
+| Floating image | `imageWrap`, `imageOffsetXEmu`, `posOffset` | data URL | wrap obstacles (transient) | NodeSelection, Picture Format tab |
+| Shape | `docProtected` with preset, fill, stroke attrs | none (SVG path data) | rotation and flip as CSS (transient) | Shape Format tab |
+| Text box | `textboxes` on `docProtected` | none | obstacle registration (transient) | edit mode inside shape |
+| WordArt | not found as separate node name | n/a | n/a | n/a |
+| Chart | no chart node in `editor/` | n/a | n/a | n/a |
+
+## 45. Refined 005B2 boundary
+
+**Include in 005B2:**
+
+- Row and column insert and delete (A/B).
+- Merge and split cells (B; supported by standard PM table).
+- Cell alignment and cell shading (B; cell attributes, no page model).
+- Row height as an attribute (B).
+- Width resize with `tblAutoFit` `fixed` (B).
+- AutoFit Contents and Window as persisted modes (B).
+- Basic table borders (B).
+
+**Defer to the page model (005B0D or later):**
+
+- Floating and positioned tables: depend on page-relative positioning.
+- Repeat header across pages: depends on pagination.
+- Advanced wrapping, tight and through: wrap is a layout concern and tight and through are not distinct upstream.
+- Page-relative objects.
+
+**Reason:** these features need a page or layout model that Nova does not yet have, so they cannot be made durable in 005B2 without a schema decision.
+
+## 46. Provenance additions
+
+| Module | Blob | Last touch | Date |
+|---|---|---|---|
+| `components/PictureDialogs.tsx` | 2fa95214 | 2026-09-24 | Crop and cutout |
+| `editor/multi-select.ts` | 8e0780eb | 2026-11-04 | Copy ranges |
+| `editor/marks.ts` | 86452ff2 | 2026-11-04 | Link mark |
+| `editor/table-properties.ts` | 50fc391d | 2026-08-26 | AutoFit (already listed) |
+| `components/Ribbon.tsx` | 79c195ad | 2026-11-04 | Contextual tabs |
+| `App.tsx` | a731f73b | 2026-11-05 | Paste and drop |
+
+All Apache-2.0. Provenance only; nothing copied.
 
 ## 29. Checks and documentation status
 
