@@ -1,10 +1,10 @@
 # TPI-NOVA-005B0C — GenOffice Insert, Table, Image and Object Architecture
 
-**Status:** Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
+**Status:** COMPLETE for the documentation scope (005B0C2). Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
 
 **Parent:** TPI-NOVA-005B0
 **Predecessor:** TPI-NOVA-005B0B with runtime addendum at `20102c80`
-**TPI baseline:** `20102c80`
+**TPI baseline:** `7442a394` (005B0C1); this pass is 005B0C2
 **Frozen GenOffice SHA:** `d5ebe838d91373c54528795b50663d4f33947183`
 **Upstream licence:** Apache License 2.0 (`LICENSE`); Unicode License v3 for data files (`LICENSE-UNICODE.txt`). Provenance only. Nothing is copied.
 
@@ -406,7 +406,13 @@ Each item below is either resolved from source or classed as unavailable upstrea
 | Drag and drop of non-image files | Resolved as unsupported in the editor. `App.tsx` `handleDrop` (~1360) accepts only image files through `imageFilesFromDataTransfer`; other files return false. Section 39. |
 | Copy and paste fidelity: tables, images, links, shapes, text boxes | Resolved, Sections 40–42. |
 
-No required 005B0C item remains indexed-only or untraced.
+Re-audit (005B0C2): every item above is RESOLVED with the section cited, except the following, which are classed as follows.
+
+- Chart move and resize: NOT IMPLEMENTED UPSTREAM as a traced path (Section 47). Deferred by architecture with charts (Section 52).
+- Chart data edit: DEFERRED BY ARCHITECTURE (Section 52).
+- WordArt table and style: RESOLVED (Section 44 and 47).
+
+No required 005B0C item is left open, partial or indexed only.
 
 ## 30. Table operations (`table-ops.ts`)
 
@@ -574,8 +580,8 @@ No table-specific paste handler was found. Tabular text pasted into a table foll
 | Floating image | `imageWrap`, `imageOffsetXEmu`, `posOffset` | data URL | wrap obstacles (transient) | NodeSelection, Picture Format tab |
 | Shape | `docProtected` with preset, fill, stroke attrs | none (SVG path data) | rotation and flip as CSS (transient) | Shape Format tab |
 | Text box | `textboxes` on `docProtected` | none | obstacle registration (transient) | edit mode inside shape |
-| WordArt | not found as separate node name | n/a | n/a | n/a |
-| Chart | no chart node in `editor/` | n/a | n/a | n/a |
+| WordArt | Not a separate node. A top-level `docProtected` with `blockType: 'passthrough'`, `genXml`, and `textboxes[0].wordArtId` (`ribbon-tabs.tsx` 648 `insertWordArtAt`) | `wordArtId` (upstream id, not a Nova asset) | rendered from XML (transient) | Shape Format tab via the protected node |
+| Chart | `docProtected` with `blockType: 'chart'`, attrs `chartDisplay` and `genChart` (`extensions.ts` 3864, 3883); inserted by `ribbon-insert-tab.tsx` ~346; drawn by `drawChartSvg` (`protected-render.ts` 590) | `genChart` payload (embedded, not a Nova asset) | SVG drawn from the payload (transient) | Node selection; edits via `setNodeMarkup` (`protected-render.ts` ~1701) |
 
 ## 45. Refined 005B2 boundary
 
@@ -613,7 +619,174 @@ All Apache-2.0. Provenance only; nothing copied.
 
 ## 29. Checks and documentation status
 
-- Source-only: no GenOffice code copied, no packages added, no Nova product code, schema, assets, toolbar or CSS changed.
-- No EE source referenced as adoption material.
-- No screenshots or scratch clone committed.
-- Browser runs: none in 005B0C.
+- Scope: documentation only. The only file changed is this document. No Nova product code, schema, CSS, assets, APIs, database or migrations changed.
+- Upstream reference: frozen SHA `d5ebe838d91373c54528795b50663d4f33947183`, read from the scratch clone outside the repository. No GenOffice source copied. No `ee/` material referenced as adoption material.
+- Source-read: the modules cited in Sections 27 and 30–46, plus the object history and contextual state reads in Sections 47–48.
+- Source-inferred: where a row says "inferred", the behaviour follows from the code path but was not exercised at runtime.
+- Runtime tests: not required for this documentation pass. None were run.
+- Production: unchanged. No deployment.
+- No screenshots, scratch files or clone content committed.
+
+## 47. Object history matrix
+
+**Nova standard:** one user gesture or explicit command should normally produce one logical undo step. One drag, one resize gesture, one Merge Cells, one Split Cells and one table style application each make one undo. Where upstream differs, it is recorded as upstream behaviour, not as a requirement to copy.
+
+**Text in the textbox and shape sub-editor** keeps its own temporary history, which is destroyed on exit. Object-level changes (move, resize, wrap, fill) live in the main history. Nova must not copy the destroy-on-exit model blindly: sub-editor text should join main history, or be committed as one step on exit.
+
+| Object / operation | Source path and function | History mechanism | Undo steps | `addToHistory` / `closeHistory` | Source status | Nova target |
+|---|---|---|---|---|---|---|
+| Table: insert | `new-table.ts`, `ribbon-insert-tab.tsx` | Standard insert transaction | 1 | none | Source-read | 1 |
+| Table: delete | `table-ops.ts` | Standard delete step | 1 | none | Source-read | 1 |
+| Row / column insert, delete | `table-ops.ts` (Section 30) | Standard table steps | 1 each | none | Source-read | 1 each |
+| Merge cells | `table-ops.ts` `mergeCells` | Standard merge step | 1 | none | Source-read | 1 |
+| Split cells | `table-ops.ts` `splitCellsInto` 324 | Merge captured, then split | 1 | none | Source-read | 1 |
+| Width resize (column) | `table-column-drag.ts` 187; `table-sizing.ts` `setTableGridAtCell` 255 | Grid rewrite on mouseup | 1 per drag | none in this path | Source-read | 1 per gesture |
+| Width resize (handle) | `table-handle.ts` 367 | `setTableGridAtCell` into `tr` | 1 per gesture | none | Source-read | 1 per gesture |
+| Row-height resize | `table-row-drag.ts` 128 | `addToHistory: !correction` | 1 per gesture | `addToHistory` false only for corrections | Source-read | 1 per gesture |
+| Row drag | `table-row-drag.ts` 128 | `addToHistory: !correction` | 1 per gesture | as above | Source-read | 1 per gesture |
+| Whole-table move | `extensions.ts` 4947 `moveHandleSpec`; `table-handle.ts` 402 | Chrome correction uses `addToHistory:false` | 1 per gesture (inferred) | `addToHistory:false` for chrome | Source-read; move commit inferred | 1 per gesture |
+| Border change | `table-properties.ts`, `table-borders.ts` | Attribute write | 1 per command | none | Source-read | 1 per command |
+| Shading change | `Ribbon.tsx` ~3004 `setCellAttr('fill')` | Attribute write | 1 | none | Source-read | 1 per command |
+| AutoFit change | `table-properties.ts` (three modes) | Attribute write | 1 | none | Source-read | 1 per command |
+| Alignment change | `table-properties.ts` / cell attr | Attribute write | 1 | none | Source-read | 1 per command |
+| Table style apply | `Ribbon.tsx` table-style group | Attribute write | 1 | none | Source-read | 1 per command |
+| Image: insert | `insert-picture.ts` 30–74 | `insertContent` (`docProtected` or `docInlineImage`) | 1 | none | Source-read | 1 |
+| Image: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
+| Image: resize | `extensions.ts` 6992/7013 `imageOffsetXEmu` | Attribute write | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
+| Image: move (floating) | `extensions.ts` 6992/7013 | Attribute write | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
+| Image: rotate | `image-rotation.ts` | Display-only CSS transform | 0 (no document write) | none | Source-read | Not an undoable document edit |
+| Image: wrap change | `floating-z-order.ts` `setFloatingWrap` 116–133 | `setNodeMarkup` | 1 | none | Source-read | 1 |
+| Image: replace, crop, cutout | `PictureDialogs.tsx`; `Ribbon.tsx` ~4720 `applyPictureBytes` | Destructive bitmap rewrite | 1 | none | Source-read | 1, with the destructive nature stated |
+| Shape: insert | `shape-draw.ts` | `insertContent` (`docProtected`) | 1 | none | Source-read | 1 |
+| Shape: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
+| Shape: resize, move | `floating-z-order.ts` `writeSelectedBox` 84 | `updateAttributes` on `docProtected` | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
+| Shape: rotate | `image-rotation.ts` | Display-only | 0 | none | Source-read | Not an undoable document edit |
+| Shape: fill or stroke | `shape-svg.ts`; `docProtected` attrs | `updateAttributes` | 1 per command | none | Source-read | 1 per command |
+| Shape: z-order | `floating-z-order.ts` `setZOrder` 182 | One `setZOrder` dispatch per command | 1 per command | none | Source-read | 1 per command |
+| Text box: insert | `shape-draw.ts` ~202 | `insertContent` | 1 | none | Source-read | 1 |
+| Text box: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
+| Text box: move, resize, outer formatting | `floating-z-order.ts` `writeSelectedBox` | `updateAttributes` on `docProtected` | 1 per gesture (inferred) | none | Source-read; commit inferred | 1 per gesture |
+| Text box: sub-editor text | `textboxes` attr; sub-editor has its own temporary history | Temporary sub-editor history | per sub-editor session | sub-editor only | Source-read in 005B0B | Join main history or commit once on exit |
+| WordArt: insert | `ribbon-tabs.tsx` 648 `insertWordArtAt` | `insertContent` (`docProtected`, passthrough) | 1 | none | Source-read | 1 |
+| WordArt: delete, move, resize | as shape | `updateAttributes` / delete | 1 per command or gesture | none | Source-read / inferred | 1 per command or gesture |
+| WordArt: style or effect | `genXml` on `docProtected` | `updateAttributes` | 1 per command | none | Source-read | 1 per command |
+| Chart: insert | `ribbon-insert-tab.tsx` ~346 | `insertContent` (`docProtected`, `blockType: 'chart'`) | 1 | none | Source-read | 1 |
+| Chart: delete | ProseMirror delete | Standard step | 1 | none | Inferred | 1 |
+| Chart: move, resize | not established upstream | Not traced | n/a | n/a | Not established | Deferred with charts (Section 52) |
+| Chart: data or edit | `protected-render.ts` ~1701 `setNodeMarkup` | `setNodeMarkup` | 1 per edit | none | Source-read | Deferred with charts |
+
+**Commit mechanisms.** The brush stroke is the only upstream `closeHistory(tr)` call on a gesture (`Ribbon.tsx` 509). Upstream `closeHistory` appears only at `Ribbon.tsx` 14 and 509. Every other path relies on ProseMirror's default grouping (`newGroupDelay` 500 ms). Nova should add explicit boundaries at compound commands rather than relying on the timer.
+
+## 48. Per-control contextual state (Table Design and Table Layout)
+
+State is read from the selection and the table or cell attributes (Section 35). Only controls that exist upstream are listed.
+
+### Table Design
+
+| Control | State source | Command path | Attribute affected | Enable condition | Selection requirement |
+|---|---|---|---|---|---|
+| Border presets | Table border attrs | `table-borders.ts`, `table-properties.ts` | Cell or table border attrs | Table context | Caret in table, cell selection or whole table |
+| Border width, style, colour | Table border attrs | `table-borders.ts` | Border attrs | Table context | As above |
+| Cell shading | Cell `fill` attr | `setCellAttr('fill')` (`Ribbon.tsx` ~3004) | Cell `fill` | Cell or range selected | Cell selection or caret in cell |
+| Table style options | Table style metadata | `Ribbon.tsx` table-style group | Table style attrs | Table context | Table context |
+| Header row | Table header attrs (`tableHeader`) | Table properties | Header metadata | Table context | Table context |
+| Banded rows and columns | Table look attrs | Table properties | Look flags | Table context | Table context |
+| Total row, first and last column | Not confirmed upstream as separate controls | Not traced | n/a | n/a | n/a |
+
+### Table Layout
+
+| Control | State source | Command path | Attribute affected | Enable condition | Selection requirement |
+|---|---|---|---|---|---|
+| Select table, row, column, cell | Selection | ProseMirror selection commands | Selection only | Table context | Any cell |
+| Insert and delete row or column | Selection | `table-ops.ts` (Section 30) | Rows, cells, grid | Table context | Caret or cell selection |
+| Merge (`canMergeCells`) | Selection | `mergeCells` | `colspan`, `rowspan` | `canMergeCells` true | Multi-cell selection |
+| Split (`canSplitTable`) | Selection | `splitCellsInto` | `colspan`, `rowspan` | `canSplitTable` true | Caret or cell in merged cell |
+| Cell size (width, height) | Cell `colwidth`, row height | `table-sizing.ts` | `colwidth`, row height | Table context | Caret or cell selection |
+| AutoFit dropdown | Table `tblAutoFit` mode | `table-properties.ts` | AutoFit mode (three modes) | Table context | Table context |
+| Distribute rows and columns | Selection | `distributeRowsEvenly` 441; `distributeSelectedColumns` | Row height, `colwidth` | Table context | Cell selection or whole table |
+| Cell alignment (3×3) | Cell vertical and horizontal align | Cell attrs | Cell alignment | Table context | Cell selection or caret |
+| Text direction | Cell direction | Cell attrs | Text direction | Table context | Cell selection or caret |
+| Repeat header (`tableHeader.enabled`) | Header metadata | Table properties | Header metadata | `tableHeader.enabled` | Table context |
+| Cell margins | Table or cell margin attrs | Table properties | Margin attrs | Table context | Table context |
+
+### Selection contract (future Nova)
+
+| Selection state | Table Design | Table Layout |
+|---|---|---|
+| Caret inside one cell | Enabled; border and shading apply to the cell | Enabled; row and column commands apply to that cell's row and column |
+| Cell selection (multiple cells) | Enabled; apply to all selected cells | Merge enabled if rectangular; split enabled if a merged cell is included |
+| Row selection | Enabled; border applies to the row | Row insert and delete enabled; column commands disabled |
+| Column selection | Enabled; border applies to the column | Column insert and delete enabled; row commands disabled |
+| Whole table selection | Enabled; apply to all cells | Distribute and AutoFit enabled; cell-only controls apply to the whole table |
+| Merged cell | Enabled | Split enabled; merge disabled on a single merged cell |
+| Nested table | Enabled for the innermost table only | Same as its own table; outer table is not affected |
+| NodeSelection of a table | Enabled for that table | Enabled for that table |
+| NodeSelection of an image, shape, text box, chart or WordArt | Table tabs hidden | Table tabs hidden |
+
+This is architecture only. Adoption class B for controls backed by table attributes, A for selection handling.
+
+## 49. Directive audit
+
+Every original 005B0C area, with its section. PASS means the area is covered by an authoritative section.
+
+| Area | Result | Section |
+|---|---|---|
+| Insert control matrix | PASS | 3 |
+| Current Nova baseline | PASS | 3 |
+| Full table engine | PASS | 30–34 |
+| Table capability matrix | PASS | 43 |
+| Nova table model comparison | PASS | 43, 44 |
+| Contextual ribbon | PASS | 35, 37, 48 |
+| Image insertion | PASS | 47 |
+| Nova asset boundary | PASS | 44 |
+| Image model | PASS | 44 |
+| Inline and floating distinction | PASS | 44, 36 |
+| Wrapping and positioning | PASS | 36, 45 |
+| Image resize and move | PASS | 47 |
+| Shapes | PASS | 38, 47 |
+| Shape model | PASS | 44 |
+| Text boxes | PASS | 38, 47 |
+| WordArt | PASS | 44, 47 |
+| Charts | PASS, deferred | 44, 47, 52 |
+| Links | PASS | 3, 40 |
+| Bookmarks | PASS | 3 |
+| Cross-references | PASS | 3 |
+| Comments insertion | PASS | 3 |
+| Header, footer and page number insertion | PASS, deferred | 3, 14 |
+| Equations | PASS, deferred | 52 |
+| Symbols | PASS | 3 |
+| Cover page | PASS, deferred | 3, 14 |
+| Blank page and page break | PASS | 3 |
+| Drag and drop | PASS | 39 |
+| Clipboard fidelity | PASS | 40–42 |
+| Object selection | PASS | 35, 48 |
+| Object history | PASS | 47 |
+| Compatibility matrix | PASS | 43 |
+| Schema-pressure matrix | PASS | 43, 44 |
+| Responsive Insert requirements | PASS | 32 of 005B0A, 12 of 005B0B |
+| 005B2 boundary | PASS | 45 |
+| Provenance | PASS | 46 |
+
+## 50. Page-model deferrals
+
+These depend on 005B0D or a later page model and are not in 005B2: floating tables, positioned tables, repeat header across pages, advanced wrapping, page-relative images, page-relative shapes and text boxes, WordArt placement, headers and footers, page numbers, cover pages and section breaks.
+
+## 51. Object schema consistency
+
+- Persistent: asset ID or payload, geometry, size, rotation, wrap mode, anchor, fill and stroke, contained text or object payload.
+- Layout-derived: DOM rectangles, wrap obstacle geometry, runtime page coordinates.
+- UI-only: current selection, resize handles, hover state, drag state.
+
+Section 44 and this list agree.
+
+## 52. Charts and equations: deferral
+
+**Charts** are deferred. Upstream stores a chart as a `docProtected` node with `genChart` and `chartDisplay` payloads, and edits it through `setNodeMarkup`. Nova needs a chart schema decision, a rendering and export dependency, and a data-edit model before it can support charts. None of these is required for first-wave professional Insert.
+
+**Equations** are deferred. Upstream uses `latexToOmml` and `ommlToMathML` with a protected block and an inline math node. Nova needs a math schema and a MathML rendering path. This is a v2 item.
+
+Both remain in the long-term professional target.
+
+## 53. Status
+
+TPI-NOVA-005B0C is **COMPLETE** for the documentation scope of this pass. Every Section 27 item is resolved or classed, and the directive audit passes. No professional editor implementation was started.
