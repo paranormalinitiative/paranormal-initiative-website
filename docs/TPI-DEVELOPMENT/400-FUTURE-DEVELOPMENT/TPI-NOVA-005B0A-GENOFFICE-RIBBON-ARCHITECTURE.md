@@ -314,7 +314,7 @@ Package `packages/ui` is Apache-2.0. Its dependencies are `@genoffice/i18n`, `@g
 | `installScreenTips` | `screentip.ts` | `c01c82dc25` | `dfe2a6d9` 2026-09-27 | None | B | Reuse concept with Nova tooltip styles |
 | `useRedactLabelField` | `use-redact-label.ts` | `e54f59982b` | `8feee6ae` 2026-10-09 | None | C | Reference only; not in 005B0B scope |
 
-Docs ribbon icons are a separate set: `apps/docs/src/renderer/components/icons.tsx` (blob `66063d3092`, last touch `4b55db9e` 2026-11-04), a hand-authored SVG set described in its header as approximating Word's glyphs. The `packages/ui/src/icons.tsx` set (blob `a79128713a`) is not the ribbon set.
+Docs ribbon icons are a separate set: `apps/docs/src/renderer/components/icons.tsx` (blob `66063d3092`, last touch `4b55db9e` 2026-11-04), a hand-authored SVG set described in its header as approximating Word's glyphs. The `packages/ui/src/icons.tsx` set (blob `a79128713a`, last touch `f7555523` 2026-10-10) is not the ribbon set.
 
 Recommendation: import the package only after Nova adopts it as a dependency. Until then copy/adapt pure-data and hook files (`symbol-fonts`, `wordart-presets`, `scroll-window`, `ribbon-collapse`, `dropdown`, `color-picker`) under the adapted-file header policy in section 34. Wrap `shape-gallery` and replace its visuals. Reuse `popover-dismiss` logic only after removing the desktop probes.
 
@@ -382,13 +382,13 @@ The file is not classed C/D as a whole.
 
 | Asset | Type | Provenance | License evidence | Branded | Decision |
 |---|---|---|---|---|---|
-| `icon-editor.png` (44×44, blob `3a1ef27f…`) | PNG | Added in `9d37beaf` 2026-08-06 with no source | None | Unknown | **DO NOT REUSE** |
-| `icon-translate.png` (44×44, blob `85c74064…`) | PNG | Added in `9d37beaf` 2026-08-06 with no source | None | Unknown | **DO NOT REUSE** |
+| `assets/icon-editor.png` (44×44, blob `3a1ef27f…`) | PNG | Added in `9d37beaf` 2026-08-06 with no source | None | Unknown | **DO NOT REUSE** |
+| `assets/icon-translate.png` (44×44, blob `85c74064…`) | PNG | Added in `9d37beaf` 2026-08-06 with no source | None | Unknown | **DO NOT REUSE** |
 | `attach-icon.png` | PNG | Not a ribbon asset | n/a | n/a | Not in scope |
 | `components/icons.tsx` (blob `66063d3092`) | Inline SVG React | GenOffice-authored, header says approximating Word glyphs | Covered by GenOffice Apache-2.0 | Unbranded | C: redraw in Nova, do not copy the glyph set |
 | `components/table-icons.tsx` (blob `9dacae3b0b`, last touch `dfe2a6d9` 2026-09-27) | Inline SVG React | Same author origin | Apache-2.0 | Unbranded | C |
 
-The two PNG icons are imported at `ribbon-tabs.tsx:33–34`. Without evidence they are not reusable. No third-party icon package is in `apps/docs/package.json`.
+The two PNG icons live under `apps/docs/src/renderer/assets/` (not `components/`) and are imported at `ribbon-tabs.tsx:33–34`. Without evidence they are not reusable. No third-party icon package is in `apps/docs/package.json`.
 
 ## 31. CSS dependency map (`styles.css`, not copied)
 
@@ -436,5 +436,12 @@ OOXML-only (not reusable as-is): `generateTocFieldXml`, `generateCaptionXml`, `g
 The 005B0A1 completion standard items are each covered: `packages/ui` source read (23), `packages/docx-engine` source read and symbol matrix (24), Draw, Review and View full reads (25), File and host callbacks (26), IPC trace (27), AI boundary (28), References split (29), icon provenance (30), CSS map (31), responsive audit (32), final classification (33), attribution architecture (34). Section 21 is superseded by this list.
 
 TPI-NOVA-005B0A — COMPLETE — GENOFFICE DOCS SOURCE SNAPSHOT FROZEN — LICENSE & PROVENANCE BASELINE ESTABLISHED — RIBBON & CONTEXTUAL TAB ARCHITECTURE FULLY MAPPED — `@genoffice/ui`, DOCX, AI, IPC, ZOTERO, CSS & ICON DEPENDENCIES RESOLVED — NOVA ADAPTATION BOUNDARY DEFINED
+
+### 005B0A provenance corrections discovered during exhaustive 005B0B verification
+
+Exhaustive verification of all 005B0A provenance rows against frozen SHA `d5ebe838` found two documentation errors, corrected in place above. All blob SHAs and byte counts were already correct.
+
+- Section 30 gave the PNG icon paths as `components/icon-*.png`. The files are at `apps/docs/src/renderer/assets/icon-editor.png` and `assets/icon-translate.png`.
+- Section 23 (line 317) cited the `packages/ui/src/icons.tsx` blob without its last-touch value. It is `f7555523` 2026-10-10.
 
 NO PROFESSIONAL EDITOR IMPLEMENTATION STARTED — PRODUCTION UNCHANGED
