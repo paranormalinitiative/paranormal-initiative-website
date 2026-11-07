@@ -292,4 +292,149 @@ Ribbon behavior assumes these regions, and the editor page styles they style. Th
 
 ## 22. Status statement
 
-This is a **partial** first-pass inventory from the frozen SHA `d5ebe838d91373c54528795b50663d4f33947183`. It is not a completed 005B0A. Items still open: `packages/docx-engine` and `packages/ui` export-level reading (the classifications in sections 10–11 are by imported name only); per-tab state dependencies for Draw, Review and View were inferred from import lists and need confirmation; File/app-shell callbacks in `App.tsx` were not read; the A/B/C/D classes are provisional. No GenOffice source was imported into Nova. No professional editor implementation was started. Production was not changed.
+Sections 10–22 are the first-pass inventory. Sections 23–34 supersede them where they differ: the `@genoffice/ui` and `@genoffice/docx-engine` classifications in sections 10–11 and 15 were by imported name and are replaced by the per-export and per-symbol tables in sections 23–24. Draw, Review and View, File, IPC, AI, References, icons, CSS and responsive behavior are now source-read (sections 25–32). The A/B/C/D map is final in section 33. No GenOffice source was imported into Nova. No professional editor implementation was started. Production was not changed.
+
+## 23. `@genoffice/ui` per-export audit (frozen SHA `d5ebe838`)
+
+Package `packages/ui` is Apache-2.0. Its dependencies are `@genoffice/i18n`, `@genoffice/pptx-render`, `@genoffice/agent-core` and `@genoffice/ai-provider`. It is classified per export, not as a whole.
+
+| Export | Source file | Blob (short) | Last touch | Electron/native | Class | Decision |
+|---|---|---|---|---|---|---|
+| `ColorPicker` | `color-picker.tsx` | `5fc115f3f0` | `13328086` 2026-09-28 | None | A | Import or copy/adapt |
+| `Dropdown`, `DropdownOption` | `dropdown.tsx` | `f2cbf0e331` | `2cd8d48e` 2026-10-19 | None | A | Import or copy/adapt |
+| `useDismissablePopover` | `popover-dismiss.ts` | `70a2b1f454` | `da042b9e` 2026-11-04 | Probes `window.slidesApi`, `desktopApi`, `desktop`, `pdfApi`, `markdownApi`, `aiOfficeTabs` | B | Reuse logic; remove desktop probes |
+| `useRibbonCollapse` | `ribbon-collapse.tsx` | `dbd57f8bc1` | `4789b0d7` 2026-10-07 | None (localStorage) | A | Reuse logic |
+| `useScrollWindow` | `scroll-window.ts` | `e42b4f7972` | `36a509e8` 2026-10-30 | None | A | Reuse logic |
+| `ShapePreview`, `SHAPE_GALLERY_GROUPS`, `shapeClipCss` | `shape-gallery.tsx` | `5983009d01` | `9d37beaf` 2026-08-06 | None; imports `@genoffice/pptx-render/preset-geometry` (Apache-2.0, blob `368846466b`, last touch `efb9247a` 2026-09-22) | B | Wrap; replace visuals with Nova styles |
+| `WORDART_PRESETS`, `wordArtStrokePx`, `wordArtSolidColor`, `WordArtPreset`, `ArtSolidColor` | `wordart-presets.ts` | `3c8d26b443` | `9d37beaf` 2026-08-06 | None | A | Import data and helpers |
+| `isSymbolFontFamily`, `SymbolFontFamily` | `symbol-fonts.ts` | `a14794ee5f` | `d5558b6b` 2026-08-13 | None | A | Import |
+| `suggestFileName` | `ai-naming-client.ts` | `89f6568233` | `91eaac96` 2026-10-27 | Calls AI client | D | Exclude (AI) |
+| `aiPanelInitiallyOpen`, `applyAiPanelPrefs` | `ai-panel-prefs-store.ts` | `a1ad98b656` | `55ade14a` 2026-10-14 | None | D | Exclude (AI) |
+| `clampZoom`, `notchStep`, `ZoomWheelIntent` | `wheel-zoom.ts` (re-exported by `index.ts`) | `de49d3f641` | `476e5023` 2026-09-22 | None | A | Import; pure zoom math |
+| `installScreenTips` | `screentip.ts` | `c01c82dc25` | `dfe2a6d9` 2026-09-27 | None | B | Reuse concept with Nova tooltip styles |
+| `useRedactLabelField` | `use-redact-label.ts` | `e54f59982b` | `8feee6ae` 2026-10-09 | None | C | Reference only; not in 005B0B scope |
+
+Docs ribbon icons are a separate set: `apps/docs/src/renderer/components/icons.tsx` (blob `66063d3092`, last touch `4b55db9e` 2026-11-04), a hand-authored SVG set described in its header as approximating Word's glyphs. The `packages/ui/src/icons.tsx` set (blob `a79128713a`) is not the ribbon set.
+
+Recommendation: import the package only after Nova adopts it as a dependency. Until then copy/adapt pure-data and hook files (`symbol-fonts`, `wordart-presets`, `scroll-window`, `ribbon-collapse`, `dropdown`, `color-picker`) under the adapted-file header policy in section 34. Wrap `shape-gallery` and replace its visuals. Reuse `popover-dismiss` logic only after removing the desktop probes.
+
+## 24. `@genoffice/docx-engine` symbol matrix (frozen SHA `d5ebe838`)
+
+Package Apache-2.0. Runtime symbols were traced to source. Blob SHAs are short forms; all are runtime except the type-only group.
+
+| Symbol | Source (blob, last touch) | Class | Reuse decision |
+|---|---|---|---|
+| `mergeFieldInstruction` | `src/mail-merge.ts` (`d866bad83a`, `1c2fccb6` 2026-10-23) | OOXML | Replace with Nova merge-field logic |
+| `citationText`, `bibliographyLine` | `src/sources.ts` (`77cf66d427`, `d2fe8dda` 2026-08-02) | GENERIC | Adapt/copy after Nova citation schema is defined |
+| `generateTocFieldXml`, `TocEntry` | `src/generate.ts` (`896c4d27e6`, `4b55db9e` 2026-11-04) | OOXML | Defer until Nova document schema evolves |
+| `generateCaptionXml`, `generateIndexFieldXml` | `src/generate.ts` | OOXML | Defer |
+| `LINE_KINDS`, `buildLineParagraphXml` | `src/generate.ts` | OOXML | Replace with Nova schema logic |
+| `buildTextboxParagraphXml`, `buildShapeParagraphXml`, `buildWordArtParagraphXml` | `src/generate.ts` | OOXML | Defer; WordArt/shape insert needs Nova schema |
+| `Watermark`, `WatermarkSpec`, `PictureWatermarkSpec` | `src/watermark.ts` (`21d8270f0d`, `1a0fcec9` 2026-11-03) | TYPE | Type reuse only if the Nova model adopts the shape |
+| `CustomNumberingLevel` | `src/blank.ts` (`80b2c27f1a`, `cdca4008` 2026-11-02) | TYPE | Type reuse only |
+| `DocDefaults`, `Run`, `StyleInfo`, `TextboxDisplay`, `ChartDisplay`, `NewChart`, `Block`, `Line`, `Text`, `SourceInfo`, `TocEntry`, `CaptionXml`, `IndexFieldXml`, `TocFieldXml`, `ThemeColors`, `ThemeFonts`, `SectionSettings`, `TabStop` | `src/types.ts` (`cd3c69df24`, `4b55db9e` 2026-11-04) | TYPE / MODEL | Model shapes: replace with Nova schema types; do not import the GenOffice model |
+
+No imported symbol is GENERIC enough to reuse unchanged except `citationText` and `bibliographyLine`, which still depend on GenOffice source shape. Function-level decisions: none of the OOXML builders is reused directly. They are deferred until the Nova document schema is decided. Package-level classification is not used.
+
+## 25. Full-read findings: Draw, Review, View
+
+**Draw** (`ribbon-tabs.tsx` 1721–1951, `DrawTab`). Presentation only. Tools: `select`, `pen`, `highlighter`, `pencil`, `eraser` (`editor/ink.ts:15–16`). Presets: `editor/ink-presets.ts`, persisted to localStorage key `aidocs.inkPresets`. Ink state lives in App React state (`inkTool`, `inkPresets`, `inkActiveId`, `inkAnnotations`; `clearInks` at App.tsx:3366). Ink persists into DOCX through `buildInkImages` (`file-actions.ts:875`). Browser dependencies only; no Electron call in the overlay (`components/InkOverlay.tsx`). Classes: pen/highlighter/eraser engine = A (copy with pure logic, `editor/ink.ts`); presets = B (replace storage with Nova preference store); DOCX ink persistence = OOXML, defer; tab presentation = C (Nova styling).
+
+**Review** (`ribbon-tabs.tsx` 824–1388). Groups: Proofing, Language, Comments, Tracking, Compare, Protect. State splits three ways. (1) Comments: DOCX `CommentInfo` in App React state with a dirty flag, handled by `review-actions.ts` and `components/CommentsPanel.tsx`. (2) Revisions: ProseMirror TrackChanges marks (`editor/revisions.ts`, `editor/revision-view.ts`, `editor/revision-filters.ts`, `editor/story-revisions.ts`). (3) Display, balloon and filter preferences: App state plus localStorage. Compare is `editor/compare.ts` with `components/ComparePanel.tsx`. `TrackChangesOptionsDialog.tsx` edits options. The rewrite acknowledgment uses one `window.confirm` (`AI_REWRITE_ACK_KEY`), and the AI-linked controls (AI Comments, AI Revisions) are excluded. Classes: track-change marks = A/B (ProseMirror; a Nova schema decision); comments = B (needs Nova comment model); compare = B; AI controls = D. This is document-level Review, not TPI Editorial Workflow.
+
+**View** (`ribbon-tabs.tsx` 1389–1714). Views: Print, Web, Outline, Read Mode, Page Preview (App state `viewMode` App.tsx:971, `readMode` App.tsx:972; Read Mode drives `editor.setEditable` at App.tsx:2103). Zoom: `ZoomDialog.tsx` (112 lines, imports `wheel-zoom` only, no desktop call), out/in, 100%, Page Width/Whole Page/Multi Page via `zoomFit` (App.tsx:3458), `setZoom` (App.tsx:3454, 3522). Show: Ruler (`showRuler` App.tsx:964; `components/Ruler.tsx` 805 lines, uses `useMeasurement` and docx-engine `SectionSettings`/`TabStop` types), Gridlines (`showGrid` App.tsx:973), Nav Pane (`setShowNav` → `setLeftPane('nav')` App.tsx:967; `NavPane.tsx` imports `useDismissablePopover`, `editor/headings`, `editor/find`; thumbnails via `NavPageThumbs.tsx` using `pagination-cuts`). Dark Mode: `darkPage` App.tsx:847. Window: New Tab, Split (`splitView` App.tsx:974), Switch Tabs, which call `window.desktop.listDocsTabs/focusDocsTab/openNewTab` (desktop-only, drop). Page Preview: `PaginationPreview.tsx` (has its own export-PDF button, `exportPdf()` App.tsx:9195). Classes: zoom/view state = A/B (pure React state, browser-buildable); ruler/nav/thumbnails = B (depend on page model and `pagination-cuts`, which Nova does not yet have); Window/tab group = D (desktop shell); Page Preview = B (depends on pagination model); Print layout and page model = schema-bound, defer.
+
+## 26. File dropdown and host callbacks
+
+File dropdown (`Ribbon.tsx` ~2318–2360): Open (Ctrl+O → `onOpen`), Save (Ctrl+S → `onSave`), Save As (Ctrl+Shift+S → `onSaveAs`), Name with AI (`onNameWithAi`, App.tsx:7538; **D**), and convert items (`convertItems`, Ribbon.tsx:2285: PDF, HTML, Markdown, Images). Host wiring is in `file-actions.ts` and App.tsx: `saveDocx`/`saveDocxAs`/`saveDocxNew`/`saveDocxTo` (1171–1227), `openDocx`, `openDocxPath`, `confirmDocumentReplace`, `getRecentFiles`, `consumePendingOpenDocx`, `onOpenDocx`, `exportPdf`, `printPdfBuffer`, `saveMergedPdf`, `pickExportImagesTarget`, `writeExportImage`, `writeRecoveryCopy`, `saveImageAs`, `fetchImage`.
+
+Classification. Nova may want as document features (re-expressed through TPI storage/export): Save concept, Print, Export to PDF/HTML/Markdown/images, document properties. Desktop shell, not ported: native Open/Save dialogs, multi-document tabs, recent-file handling, native menus, window management, `writeRecoveryCopy` (Nova has autosave). Print/export pipelines are browser-buildable in part, but `printPdfBuffer` and `window.desktop.print` (`PrintDialog.tsx:166`) are desktop-only. The File tab is not purely Electron: its export and print actions have browser equivalents.
+
+## 27. Desktop, IPC and native call trace
+
+| Call | Site | Operation | Desktop dependency | Nova replacement |
+|---|---|---|---|---|
+| `window.desktop.pickImage` | `ribbon-tabs.tsx:444`, `Ribbon.tsx:1371`, `WatermarkDialog.tsx:213` | Native image picker | Yes | Browser `<input type="file">` to Nova asset upload |
+| `window.desktop.zoteroCommand` | `ribbon-references-tab.tsx:388` → `zotero-ipc.ts:40` | Zotero commands | Yes | Excluded with Zotero |
+| `window.desktop.listDocsTabs` / `focusDocsTab` / `openNewTab` | `ribbon-tabs.tsx` 1419, 1646, 1682 | Multi-document window | Yes | Drop; Nova is one document per route |
+| `window.desktop.print` | `PrintDialog.tsx:166` | Print | Yes | Browser `window.print` |
+| `document.execCommand` | `Ribbon.tsx:2236`, `ContextMenu.tsx:364` | Browser clipboard/edit | No (browser) | Replace with TipTap commands |
+| Spell APIs | `ContextMenu.tsx` 193–240 | Spellcheck suggestions | Yes (desktop spell bridge) | Browser spellcheck or defer |
+| `copyImageToClipboard` | `editor/extensions.ts:3725` | Clipboard image | Browser Clipboard API | Adapt |
+| `@genoffice/electron-utils/safe-external-url` | `editor/sanitize-markdown-html.ts:16` | External link policy | Electron package | Replace with Nova URL policy |
+| `window.confirm` | `ribbon-tabs.tsx` (AI rewrite ack) | Confirmation | No | Nova modal |
+| `ai:*` IPC | `docs-main.ts:4452–4747` | AI | Yes | **D** excluded |
+
+## 28. AI removal boundary
+
+AI-linked controls: Summarize (`Ribbon.tsx` ~3459), Polish (~3490), Tidy (~3527), Mind Map (~3555), all via host `onAiPreset` (App.tsx:8915). Name with AI (File). References: Editor (`ribbon-tabs.tsx` 919–922), Translate (955–978), AI Comments (1087), AI Revisions (1290). `runUiOps` from `../ai/ops` is used by `ParagraphDialog.tsx:181` and `ribbon-tabs.tsx:128`.
+
+Removal: all of the above are removed. Layout stays complete: the Home, Review and References groups keep their non-AI controls, and no ribbon group depends on an AI control for layout or state. The Translate control's paragraph-attribute path is the only one that needs a non-AI replacement, and it is excluded with Translate. The ribbon therefore stays structurally complete without AI.
+
+## 29. References split (`ribbon-references-tab.tsx`)
+
+The file is not classed C/D as a whole.
+
+- **Zotero-specific (excluded, class D):** `runZotero` (line 388) and its calls at 510–557 (`addEditCitation`, `addEditBibliography`, `refresh`, `setDocPrefs`, `removeCodes`), all through `window.desktop.zoteroCommand`.
+- **Generic professional reference features (class A/B, defer to schema):** TOC insert (575) and update (586); footnote/endnote (605, 616); citation (636–647) and bibliography (666) through the docx-engine `citationText`/`bibliographyLine` GENERIC functions; caption (677); index and cross-reference. Cross-reference is in `ribbon-insert-tab.tsx:1117` (blob `7307cf53ac`), not References.
+
+## 30. Icon provenance (ribbon assets)
+
+| Asset | Type | Provenance | License evidence | Branded | Decision |
+|---|---|---|---|---|---|
+| `icon-editor.png` (44×44, blob `3a1ef27f…`) | PNG | Added in `9d37beaf` 2026-08-06 with no source | None | Unknown | **DO NOT REUSE** |
+| `icon-translate.png` (44×44, blob `85c74064…`) | PNG | Added in `9d37beaf` 2026-08-06 with no source | None | Unknown | **DO NOT REUSE** |
+| `attach-icon.png` | PNG | Not a ribbon asset | n/a | n/a | Not in scope |
+| `components/icons.tsx` (blob `66063d3092`) | Inline SVG React | GenOffice-authored, header says approximating Word glyphs | Covered by GenOffice Apache-2.0 | Unbranded | C: redraw in Nova, do not copy the glyph set |
+| `components/table-icons.tsx` (blob `9dacae3b0b`, last touch `dfe2a6d9` 2026-09-27) | Inline SVG React | Same author origin | Apache-2.0 | Unbranded | C |
+
+The two PNG icons are imported at `ribbon-tabs.tsx:33–34`. Without evidence they are not reusable. No third-party icon package is in `apps/docs/package.json`.
+
+## 31. CSS dependency map (`styles.css`, not copied)
+
+| Region | Selectors and lines (approx.) | Role |
+|---|---|---|
+| Ribbon shell | `.ribbon-body` line 733, hard `height: 80px`, groups never shrink, horizontal overflow | Shell and overflow |
+| Compact band | `.ribbon-compact .ribbon-body` and `.ribbon-compact .table-ribbon-body` (about lines 857–1003), shorter fixed band | Compact mode |
+| Tabs, groups, large/small buttons | Ribbon-scoped rules in same range | Layout |
+| Active/disabled | Ribbon state modifiers | State |
+| Dropdowns, galleries, color palette | Ribbon-scoped gallery rules | Popovers |
+| Contextual tabs | Ribbon-scoped contextual rules | Contextual |
+| Tooltips | Screentip rules | Tooltips |
+| Responsive | `@media (max-width: 1280px)` at line 673 hides `.ribbon-mode-text` | Width |
+
+Extraction strategy: rewrite ribbon styling in Nova CSS from the region map above. Do not copy `styles.css`.
+
+## 32. Responsive and compact audit
+
+GenOffice has no JavaScript width-based responsiveness in the ribbon. Collapse and compact are user-toggled and persisted in localStorage (`ribbon-collapse.tsx`). Its only width rule is the 1280px media query. The `.ribbon-body` has a fixed 80px height and horizontal scroll, so it assumes a full application window.
+
+Nova center-pane implication: the Nova center pane is shared with the left workspace sidebar and right Education Center inspector. The fixed-height, horizontal-scroll ribbon will overflow or compress. The Nova center pane must have a practical minimum width or a responsive ribbon, which is a design constraint for 005B0B and later, not a solution here.
+
+## 33. Final A/B/C/D classification
+
+- **A (reusable UI or logic, Apache-2.0):** `color-picker`, `dropdown`, `ribbon-collapse`, `scroll-window`, `symbol-fonts`, `wordart-presets` data, `wheel-zoom` math, Draw pen/highlighter/eraser engine (`editor/ink.ts`), `ZoomDialog` logic.
+- **B (reuse behind Nova styling or after desktop removal):** `shape-gallery` (wrap), `popover-dismiss` (strip desktop probes), `screentip`, ribbon presets (`ink-presets`), comments and revision models (need Nova schema), Ruler, NavPane and thumbnails (need pagination model), Page Preview.
+- **C (architecture reference only):** GenOffice ribbon visual layout, `components/icons.tsx` glyphs, `use-redact-label`.
+- **D (exclude):** all AI controls and `ai:*` IPC; Zotero; desktop window tabs (`listDocsTabs`, `focusDocsTab`, `openNewTab`); native pickers and print; `window.desktop.*` callbacks; `icon-editor.png` and `icon-translate.png` (no provenance); `ee/`.
+
+Schema-bound operations (defer until the Nova document schema is set): TOC, captions, index, footnotes, WordArt/shape/textbox insert, DOCX ink persistence, print layout.
+
+OOXML-only (not reusable as-is): `generateTocFieldXml`, `generateCaptionXml`, `generateIndexFieldXml`, `buildLineParagraphXml`, `buildTextboxParagraphXml`, `buildShapeParagraphXml`, `buildWordArtParagraphXml`, `mergeFieldInstruction`.
+
+## 34. Attribution architecture (defined, not created)
+
+- `THIRD-PARTY-NOTICES.md` (new, at repo root, when source adoption begins): the root `NOTICE` already points to a generated `THIRD-PARTY-NOTICES.txt` from `tools/gen-third-party-notices.mjs`, which is not checked in. Nova should reconcile that name rather than add a competing file.
+- GenOffice attribution section: name the upstream repository, the frozen SHA `d5ebe838d91373c54528795b50663d4f33947183`, Apache-2.0, and the `NOTICE` text.
+- Frozen upstream SHA record: this document, section 2, is the authority.
+- Per-module provenance manifest: one entry per adopted file (source path, blob SHA, last touch, license, Nova destination).
+- Adapted-file header policy: each copied or adapted file keeps an Apache-2.0 header that cites the upstream path and frozen SHA, and states the modification.
+- Font licensing: Carlito, Liberation, Aptos GO and Century Gothic GO are OFL 1.1; Caladea, Cambria Math GO and Bookman Old Style GO are Apache-2.0 (per the upstream fonts README). Font files must carry their license texts when shipped.
+
+## 35. Status
+
+The 005B0A1 completion standard items are each covered: `packages/ui` source read (23), `packages/docx-engine` source read and symbol matrix (24), Draw, Review and View full reads (25), File and host callbacks (26), IPC trace (27), AI boundary (28), References split (29), icon provenance (30), CSS map (31), responsive audit (32), final classification (33), attribution architecture (34). Section 21 is superseded by this list.
+
+TPI-NOVA-005B0A — COMPLETE — GENOFFICE DOCS SOURCE SNAPSHOT FROZEN — LICENSE & PROVENANCE BASELINE ESTABLISHED — RIBBON & CONTEXTUAL TAB ARCHITECTURE FULLY MAPPED — `@genoffice/ui`, DOCX, AI, IPC, ZOTERO, CSS & ICON DEPENDENCIES RESOLVED — NOVA ADAPTATION BOUNDARY DEFINED
+
+NO PROFESSIONAL EDITOR IMPLEMENTATION STARTED — PRODUCTION UNCHANGED
