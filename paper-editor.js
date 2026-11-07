@@ -929,6 +929,14 @@
     modeSelect.dispatchEvent(new Event("change"));
   });
 
+  // TPI-NOVA-005A16B: the title input is ellipsized in narrow headers, so expose the
+  // full value through the standard title attribute (hover and accessible description).
+  const syncTitleTooltip = () => {
+    if (titleInput) titleInput.title = titleInput.value;
+  };
+  titleInput?.addEventListener("input", syncTitleTooltip);
+  titleInput?.addEventListener("change", syncTitleTooltip);
+  syncTitleTooltip();
   document.getElementById("nova-content-editor")?.addEventListener("input", scheduleNovaAutosave);
   document.getElementById("nova-content-editor")?.addEventListener("keyup", scheduleNovaAutosave);
   // TPI-NOVA-005A6E: Education Center metadata edits persist through the same Nova save state.
@@ -1180,6 +1188,7 @@
     const stored = await findEditorArticle(articleId);
     if (stored) {
       titleInput.value = stored.title || getCurrentUntitledTitle();
+      syncTitleTooltip();
       subtitleInput.value = stored.subtitle || "";
       if (stored.destination) setDestinationValue(stored.destination);
       if (stored.contributionType || stored.articleType) contributionTypeInput.value = stored.contributionType || stored.articleType;
