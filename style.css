@@ -9416,6 +9416,18 @@ body.paper-editor-page.nova-home-open .workflow-feedback {
     gap: 6px;
 }
 
+/* Nova-native document canvas: fill the centre pane (no 860px cap or centred inset) with a modest gutter, aligned with the header and toolbar. Scoped to the paper editor so standalone /nova/ is unchanged. */
+.paper-editor-page #nova-content-editor .nova-prose {
+  max-width: none;
+  margin: 0;
+  min-height: 62vh;
+  padding: 36px 20px 72px;
+}
+
+.paper-editor-page #nova-content-editor .nova-prose > * {
+  max-width: 48rem;
+}
+
 /* Center document header: Documents back link, title, and save state with chips on the right. */
 .paper-editor-page .nova-document-header {
     display: flex;
