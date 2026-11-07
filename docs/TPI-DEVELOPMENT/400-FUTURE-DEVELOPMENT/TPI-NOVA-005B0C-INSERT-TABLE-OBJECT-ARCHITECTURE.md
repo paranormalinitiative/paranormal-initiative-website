@@ -1,6 +1,6 @@
 # TPI-NOVA-005B0C — GenOffice Insert, Table, Image and Object Architecture
 
-**Status:** PARTIAL (005B0C2). Open gaps: (1) Section 49 PASS entries for links, bookmarks, cross-references, comments, header/footer, symbols and cover page were not re-traced against source in this pass; (2) the equation entry in Section 52 (`latexToOmml`, `ommlToMathML`) is not yet source-verified; (3) several Section 47 rows marked Source-read are inferred from the path and need a source read before they are relied on. Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
+**Status:** PARTIAL (005B0C3, 2026-11-07). Verified in this pass: symbols (50 entries, not 48); cross-reference (`refField` mark with `name`, `instr`, `dirty`); comment entry (`startNewComment` in `review-actions.ts`); header/footer commit (`commitHfAt` in `App.tsx`, React state keyed by section); equation builders and gallery/modal consumers; equation conversion functions (`latexToOmml`, `ommlToMathML`) located in `packages/docx-engine/src/math.ts`; image move history (single `setNodeMarkup` dispatch on drop). Open gaps: (1) Section 47 resize-gesture history for images, shapes, tables and textboxes was not traced to a commit; (2) WordArt and chart move/resize rows were not source-traced; (3) cover-page DOCX/section dependency was not checked; (4) Section 49 bookmark and link rows still cite 005B0C2 wording and were not re-run as source-verified claims. Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
 
 **Parent:** TPI-NOVA-005B0
 **Predecessor:** TPI-NOVA-005B0B with runtime addendum at `20102c80`
@@ -55,11 +55,11 @@ Classification: A = adopt pattern, B = adapt, C = defer, D = out of scope for No
 | Page Number | Presets via `hfPageNumberOnly` (`hf-dom`); format via sectPr `pgNumType` | Header/footer sub-editor, section | Menu | `pgNumType` | None | Absent | Requires page model | C |
 | Fields | `onInsertField`: DATE, TIME, PAGE, NUMPAGES, FILENAME (`field-codes.ts`) | Field node or mark | Menu | Field codes | None | Absent | v1 extension possible; page fields need page model | C |
 | Equation | `EquationGallery` / `EquationModal` (`BUILTIN_EQUATIONS`) → `equation.ts` `equationBlockJson` (`docProtected` passthrough) and `inlineEquationNodeJson` (`docInlineMath`) | Protected block, inline math node | Gallery, modal | `latexToOmml`, `ommlToMathML` | MathML for display | Absent | v2 | C |
-| Symbol | Not present. `SYMBOLS` list of 48 Unicode characters inserted as plain text. No symbol dialog | Text | Menu | None | None | Absent | v1 compatible | A (as plain text) |
+| Symbol | Not present. `SYMBOLS` list of 50 Unicode characters inserted as plain text. No symbol dialog | Text | Menu | None | None | Absent | v1 compatible | A (as plain text) |
 
 Notes:
 
-- Upstream Insert does not expose a symbol dialog. It is a fixed list of 48 characters inserted as text. Nova can match that without a schema change.
+- Upstream Insert does not expose a symbol dialog. It is a fixed list of 50 characters inserted as text. Nova can match that without a schema change.
 - Upstream Insert lines and passthrough objects store raw OOXML (`genXml`). That is a DOCX-fidelity choice, not a Nova storage model.
 
 ## 4. Table architecture
@@ -266,14 +266,14 @@ Useful GenOffice behaviour Nova lacks: internal anchor links (tie to bookmarks, 
 - UI: `EquationGallery` and `EquationModal` (`BUILTIN_EQUATIONS`).
 - Block equations: `equation.ts` `equationBlockJson` creates `docProtected` passthrough with `genXml` = `mathParagraphXml(omml)` and `formulaDisplay`.
 - Inline equations: `inlineEquationNodeJson` creates `docInlineMath` with attributes `omml`, `mathml`, `latex`, `text`.
-- Conversion: LaTeX to OMML through `latexToOmml`; OMML to MathML through `ommlToMathML`, both from `@genoffice/docx-engine`.
+- Conversion: LaTeX to OMML through `latexToOmml` (`packages/docx-engine/src/math.ts`, line 757, blob 7bbe75ed, last touched 36a509e8 on 2026-10-30); OMML to MathML through `ommlToMathML` (same file, line 60). Block wrapping is `mathParagraphXml` (line 767); token helper `mathTokensOf` (line 37). The app side is `editor/equation.ts` and `components/EquationModal.tsx`, which import from the package; the equation logic does not live in the app.
 - Persistence: OMML is stored in the node; DOCX export uses `mathParagraphXml`.
 - Browser portability: display uses MathML, which browsers render natively. The conversion path is pure JavaScript in the docx-engine package. Portable in principle; not run in a browser for 005B0C.
 - Classification: **C (defer).** Equations need a math node and a conversion dependency. Not in the first wave.
 
 ## 20. Symbols and special characters
 
-The frozen upstream Insert ribbon does not expose a symbol dialog. It has a fixed list of 48 Unicode characters (`SYMBOLS`) that are inserted as plain text. Nova can match that behaviour with no schema change.
+The frozen upstream Insert ribbon does not expose a symbol dialog. It has a fixed list of 50 Unicode characters (`SYMBOLS`, `ribbon-insert-tab.tsx` lines 63–114) inserted as plain text through `editor.chain().focus().insertContent(s).run()`. Nova can match that behaviour with no schema change.
 
 ## 21. Cover page, blank page and page break
 
