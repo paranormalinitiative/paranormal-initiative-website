@@ -84,9 +84,9 @@ Adoption classes: **A** browser-ready logic; **B** adaptable with Nova UI/storag
 |---|---|---|---|---|---|---|---|
 | Font family (combobox) | `Ribbon.tsx` 1596–1700 | Editable combobox with common and system sections (`fontFamiliesFor(lang)`, `useSystemFontFamilies`). Applied via `setTextStyle` → `chain().setMark('docTextStyle', patch)`. Inline completion on typing; ArrowUp/Down; Enter applies; Escape resets | `ribbon-format-state.ts` `fontFamily`, `fontEastAsia`, `fontLatin` | `docTextStyle` mark attrs `font`, `fontAscii`, `eastAsiaFont` | Fixed list in Nova | B |
 | East Asian font handling | `Ribbon.tsx` | Writes `font`, `fontAscii`, `eastAsiaFont` and clears `eaSlotEmpty`; Latin face writes only `fontAscii` | Separate Latin/EastAsia state | Same mark | Not present | C |
-| Symbol font | `font-list.ts` (not yet fully read) | Not confirmed | Not confirmed | Not confirmed | Not present | B (defer) |
+| Symbol font | `packages/ui/src/font-list.ts` (no symbol logic); symbol handling in `editor/marks.ts` 283–315 (`docSym`), `editor/convert.ts` 4104–4161, `font-check.ts` 65–96 (`symbolFontCovers`), `line-metrics.ts` 395–493 | Not a dropdown concept. A `w:sym` run is one glyph carried by a `docSym` mark (`font`, `char`). The glyph is drawn with the named symbol font only when the machine has it and covers the PUA code (probed by comparing against `.notdef`); otherwise the Unicode stand-in is shown. Bullet faces (Symbol, Segoe UI Symbol) get their own ascent metrics | Font-list candidates contain no symbol fonts; the symbol font is taken from the run, not the picker | `docSym` mark (`font`, `char`), inline in the document | Not present | B (defer; the symbol mark is a document-data concern, not a picker control) |
 | System font enumeration | `Ribbon.tsx` `useSystemFontFamilies` | Desktop/browser-dependent font list | None | Not stored | Not present | D for native; B for `queryLocalFonts` where supported |
-| Theme fonts | Not confirmed as a Home control | Font dialog carries theme-related fields | Not confirmed | Not confirmed | Not present | C (schema v2) |
+| Theme fonts | Design tab, not Home (`ribbon-design-tab.tsx` 217–337; section 20) | Font dialog carries theme-related fields | Not a Home control | Not a Home control | Not present | C (schema v2) |
 | Font size (combobox) | `Ribbon.tsx` 1720 `commitSize` via `parseFontSize` | Preset list from `font-sizes.ts` `fontSizeOptions`; typed values accepted | `ribbon-format-state.ts` `fontSizePt`, `fontSizeMixed` (`text-style-resolve.ts` 53) | `docTextStyle.sizeHalfPoints` | Nova stores point sizes | B |
 | Font size bounds | `font-sizes.ts` | Min 1 pt, max 1638 pt; `clampFontSize`; `parseFontSize`; `namedFontSizes` | n/a | Half-points | Nova bounded ranges to be confirmed | B |
 | Grow / shrink font | `Ribbon.tsx` 3863/3872; `applyFontStep` 1930–1975 | Steps through the UI-language size list via `stepFontSize`; 300 ms coalescing (`FONT_STEP_COALESCE_MS`) | Current size | `sizeHalfPoints` | Not present | B |
@@ -104,8 +104,8 @@ Adoption classes: **A** browser-ready logic; **B** adaptable with Nova UI/storag
 | Underline | `editor/marks.ts` `Mod-u`; `FontDialog` | Boolean mark only. No underline style or colour found in Home or the Font dialog | Yes: Underline extension configured; toolbar button | A | Keep as boolean. Double/dotted styles are a later, schema-dependent item (section 12) |
 | Strikethrough | `Ribbon.tsx` `markBtn` | `toggleMark('strike')` | Yes (StarterKit strike) | A | Keep |
 | Subscript / superscript | `Ribbon.tsx` 1986 `toggleVertAlign` | Writes `vertAlign` attr of `docTextStyle` | No | B | Add `vertAlign` to `docTextStyle` in 005B1 |
-| Text highlight | `Ribbon.tsx` via `setTextStyle` | `docTextStyle` highlight attr; uses `ribbon-color-palette.tsx` | No | B | Add in 005B1 (highlight colour set) |
-| Font colour | `Ribbon.tsx` via `setTextStyle` | `docTextStyle` `color` attr | No | B | Add in 005B1 with a bounded palette |
+| Text highlight | `Ribbon.tsx` via `setTextStyle`; `ribbon-color-palette.tsx` | `docTextStyle` highlight attr; palette emits `#RRGGBB` or null (see section 16.1) | No | B | Add in 005B1 with a bounded highlight set |
+| Font colour | `Ribbon.tsx` via `setTextStyle`; `ribbon-color-palette.tsx` | `docTextStyle` `color` attr; palette emits `#RRGGBB` or null (see section 16.1) | No | B | Add in 005B1 with a bounded palette |
 | Clear character formatting | `ribbon-tabs.tsx` `clearAllFormatting` 169 | `unsetAllMarks`, then paragraph reset | No dedicated control; default TipTap `unsetAllMarks` available | A | Add in 005B1 |
 | Change case | `Ribbon.tsx` 2222 `changeCase`; `editor/case-transform.ts` | Rewrites text (sentence, lower, upper, title, toggle; half/full width) | No | A | Later (text transform, no schema change) |
 | Hidden text, caps, small caps, position, kerning, scale, spacing | `components/FontDialog.tsx` Advanced tab | Dialog-only typography attrs | No | C | Later; schema v2 (section 14) |
@@ -191,7 +191,7 @@ Source: `shortcuts.ts` (195 lines). Mac notation is rewritten for Windows by `@g
 
 | Action | GenOffice | Browser conflict | Nova today | Phase |
 |---|---|---|---|---|
-| Undo / Redo | ⌘Z; ⇧⌘Z or ⌘Y | Browser history navigation is not triggered inside the editor | Yes (TipTap history) | Keep |
+| Undo / Redo | ⌘Z; ⇧⌘Z or ⌘Y (`shortcuts.ts` 53–54) | Browser history navigation is not triggered inside the editor | Yes: TipTap `UndoRedo` keymap `Mod-z`, `Shift-Mod-z`, `Mod-y` (`@tiptap/extensions`) | Keep (see section 16) |
 | Cut / Copy / Paste | ⌘X / ⌘C / ⌘V | None inside the editor | Yes | Keep |
 | Paste plain text | ⌥⇧⌘V | Test in the target browser | No | 005B1 only if no conflict |
 | Bold / Italic / Underline | ⌘B / ⌘I / ⌘U | None | Yes | Keep |
@@ -203,7 +203,7 @@ Source: `shortcuts.ts` (195 lines). Mac notation is rewritten for Windows by `@g
 | Align left / centre / right / justify | ⌘L / ⌘E / ⌘R / ⌘J | Browser default for ⌘L (address bar, Chrome) is not reached inside the editor | No | 005B1 |
 | Clear paragraph formatting | ⌃Q | None | No | 005B1 |
 | Heading styles / Normal | ⌥⌘0–3 | Browser reserves ⌥⌘ digit combinations in some browsers | Heading shortcuts via TipTap default | Keep; verify conflict |
-| List shortcuts | Tab demote; Shift+Tab promote | Tab moves focus outside the editor | Partial | 005B1 |
+| List shortcuts | Tab demote; Shift+Tab promote | Tab moves focus outside the editor | Partial: Nova lists nest through StarterKit, but Tab handling is not verified in the Nova source | 005B1 |
 | Page break / column break | ⌘Enter; ⇧⌘Enter | None | No | Later |
 | Non-breaking space / hyphen | ⇧⌘Space; ⇧⌘- | None | No | Later |
 
@@ -290,5 +290,136 @@ Nova v1 can represent bold, italic, underline (boolean), strike, headings 1–3,
 **Deferred to schema v2 or later:** paste merge and source modes, line and paragraph spacing, borders and shading, direction, multilevel numbering, style gallery and StyleDialog, Font Advanced tab, underline styles and colour, Format Painter, change case, Paste Special dialog.
 
 This boundary depends on the schema decision in 005B0. It must be confirmed once the schema decision is made.
+
+**Width.** The Nova centre pane is about 900 px. This is a responsive-layout requirement, not a reason to drop Home capabilities. 005B1 must use responsive groups, overflow menus, collapsing and compact controls (for example, a size combo that shrinks before it hides). Every professional Home capability listed above stays in scope; only the presentation adapts.
+
+**Status.** This boundary stands. It was re-checked against the matrix in section 13 and the findings in sections 16–21. No capability was added or removed.
+
+---
+
+## 22. Status
+
+TPI-NOVA-005B0B — COMPLETE — GENOFFICE HOME RIBBON, TYPOGRAPHY, CHARACTER FORMATTING, PARAGRAPH, LIST, STYLE, CLIPBOARD, HISTORY & SCREENTIP ARCHITECTURE FULLY INVENTORIED — ALL 005B0A PROVENANCE VERIFIED — CURRENT NOVA DOCUMENT & SHARED-EDITOR CAPABILITIES RECONCILED — NOVA PROFESSIONAL HOME CAPABILITY MATRIX DEFINED — 005B1 IMPLEMENTATION BOUNDARY ESTABLISHED
+
+NO PROFESSIONAL EDITOR IMPLEMENTATION STARTED — PRODUCTION UNCHANGED
+
+---
+
+## 16. Undo / redo (source-verified)
+
+**Mechanism.** Undo and redo use TipTap's `UndoRedo` extension from `@tiptap/extensions` (registered in `editor/extensions.ts`, lines 17, 7284, 7379). Its keymap is `Mod-z` (undo), `Shift-Mod-z` and `Mod-y` (redo). GenOffice's own shortcut table (`shortcuts.ts` 53–54) lists ⌘Z, ⇧⌘Z and ⌘Y. There is no separate application-level undo stack. History is the ProseMirror `prosemirror-history` plugin.
+
+**Ribbon path.** Undo and redo buttons go through the editor command set and the same history plugin as the keyboard. No ribbon control keeps its own undo list.
+
+**Grouping.** Typing and most edits group by the ProseMirror default `newGroupDelay` of 500 ms. Explicit boundaries are added where GenOffice needs them: `Ribbon.tsx` 503–509 calls `closeHistory(tr)` per brush stroke; autocorrect uses `closeHistory` and `undoAutocorrect`.
+
+**Bypass and supplement.**
+- `addToHistory=false` is used for caret bookkeeping, the AI draft and the streamed tail, so these never appear in undo.
+- `file-actions.ts` `resetEditorHistory` (303–309) re-registers the history plugin when a document is opened or reparsed, which clears prior history.
+- `editor/extensions.ts` 6724 groups an image-settle correction with the move that caused it, so one undo reverses both.
+- Font-size stepping is coalesced by `FONT_STEP_COALESCE_MS` (300 ms, `Ribbon.tsx` 770; `applyFontStep` about 1930–1975). The first click applies at once. Later clicks inside the window only advance the pending size, and one trailing apply runs. Undo therefore reverts a burst of clicks in one step.
+- Ribbon-tab Previous and Next Change buttons (`ribbon-tabs.tsx` about 1261 and 1272) navigate revisions. They are not undo.
+
+**Special operations.** Table, list-definition, formatting, image and style edits are ProseMirror transactions, so they share the same history. I found no host-level or separate undo stack for these in the Home path. Track-changes and header/footer history were not traced in this pass and are not used as evidence below.
+
+**Coalescing classification.**
+- Directly reusable concept: explicit `closeHistory` at user gestures (brush stroke, autocorrect) and `addToHistory=false` for non-user bookkeeping.
+- TipTap-native: the 500 ms `newGroupDelay` and the `Mod-z` keymap.
+- GenOffice-specific: the 300 ms font-step coalescer, and grouping an image-settle correction with its move.
+
+**Nova comparison.** Both Nova copies register TipTap's default history through `StarterKit`. Their toolbar calls `editor.chain().focus().undo()` and `.redo()`, gated on `editor.can()`. Nova has no coalescing, no explicit history boundaries and no host-level history. Keyboard shortcuts come from TipTap's defaults.
+
+**Future Nova command-layer implications.** Keep one history (ProseMirror). Add explicit history boundaries at compound user actions (brush, autocorrect equivalents). Mark non-user transactions with `addToHistory=false`. Coalesce repeated size or indent steps in the command layer, not in the ribbon. Confirm each shortcut with a narrow test before 005B1 ships.
+
+**Limitation.** No runtime test was run. Grouping timing is from source constants only.
+
+---
+
+## 17. Screentips (source-verified)
+
+**Implementation.** `packages/ui/src/screentip.ts` (198 lines) and `screentip.css` (30 lines). It is a singleton fixed-position tip driven by delegated listeners on `[data-tip]`. Attributes: `data-tip` (text), `data-tip-kbd` (shortcut hint), `data-tip-detail`, `data-tip-anchor`, `data-tip-place`. Timing: 500 ms show delay, 100 ms warm re-show, 5 s auto-hide. Focus shows the tip. Escape, blur, scroll and resize hide it. Accessibility: `aria-describedby` on the anchor and `role="tooltip"` on the tip.
+
+**Installation.** `installScreenTips()` is called from each app's `main.tsx`.
+
+**Dependencies.** DOM only. No React, no Electron probe, no shell state, no platform detection. The shortcut text is supplied by the caller as `data-tip-kbd`, so platform notation is handled upstream by `@genoffice/i18n` `macShortcutsToWin`.
+
+**Disabled controls.** The module does not special-case disabled controls. A disabled control shows whatever `data-tip` the caller provides.
+
+**Tests.** `packages/ui/tests/screentip-a11y.test.ts` and `apps/shell/tests/tab-lifecycle-and-tooltip.test.ts`.
+
+**Classification.** Reusable as-is: the DOM engine, timing, dismissal and ARIA wiring. Not reusable: the `data-tip` strings and shortcut strings, which are GenOffice content.
+
+**Nova recommendation.** Adapt the GenOffice module. It is framework-free, so it can be used as is or copied under a Nova wrapper. Each Nova control should supply a name, a short description where useful, its shortcut in `data-tip-kbd`, and a disabled explanation in `data-tip-detail` where the control is disabled. Keep the visual implementation Nova-owned if its styling must change. No implementation is started here.
+
+---
+
+## 18. Colour palette (source-verified)
+
+**Structure.** `apps/docs/src/renderer/components/ribbon-color-palette.tsx` (70 lines) wraps `ColorPicker` in `packages/ui/src/color-picker.tsx` (334 lines). It shows ten theme colours, each with tint and shade rows; a grid of standard colours; a list of recent colours; and a "More Colors" native `<input type="color">`.
+
+**No-color behaviour.** The Automatic button calls `onPick(null)`. Swatches emit uppercase `#RRGGBB`.
+
+**Selection.** Keyboard focus is tracked with `focusPos`. Cells use `role="gridcell"`, `aria-selected`, `aria-label` and `title`. Grids carry `aria-label`s.
+
+**Callers.** Font colour and highlight both use `setTextStyle` in `Ribbon.tsx`. The palette is reused for highlight with its own set.
+
+**Colour model.** GenOffice stores colours in the document as `w:color` hex values, `w:themeColor` with `w:themeTint` or `w:themeShade` (parsed in `packages/docx-engine` `parse-props.ts` 1087, 1194; `theme.ts` 148 `resolveThemeColor`), and highlight as a `w:highlight` string (`generate.ts` 3431, 3590). The palette writes only the hex form.
+
+**Schema implications for Nova.** Nova v1 has no colour attributes. A schema-v2 colour attribute needs at least `hex`. A theme reference (`themeColor` plus tint or shade) is needed only if Nova adopts document themes. Highlight should be a separate bounded set, not the colour attribute.
+
+---
+
+## 19. Direction, indentation and case transform (source-verified)
+
+**Direction (`direction.ts`, 232 lines).** Applies to `docParagraph`, `docHeading` and `docListItem`. Attributes: `bidi`, `bidiInherited`, `bidiInferred`, `align`. Automatic direction uses UAX#9 first-strong detection. `alignAttrFor` swaps left and right in RTL. `AutoDirectionExtension` flips direction on the first strong character typed, except during IME composition and block-level changes. The UI defaults to RTL for `ar` and `he`. Nova has no direction attribute, so it needs `bidi` and `align` in schema v2.
+
+**Indentation (`indent.ts`, 12 lines).** `stepHangingIndent` (Ctrl+T and Ctrl+Shift+T) moves in half-inch stops. `stepParagraphIndent` changes list level for list items and snaps paragraphs to half-inch stops. In list items, `indentLeft` changes by 720 twips per step through `updateAttributes('docParagraph', { indentLeft })` (`Ribbon.tsx` about 1918–1930). Storage is numeric twip attributes on paragraphs plus list level for list items. Nova has no indent attribute and no list-level command beyond the StarterKit nesting.
+
+**Case transform (`case-transform.ts`, 136 lines).** Modes: `upper`, `lower`, `title`, `sentence`, `toggle`, `halfWidth`, `fullWidth`. The width modes use NFKC for katakana and voiced pairs. `applyCase` rewrites text nodes and preserves marks. It is a no-op on a collapsed selection. The locale is not passed to `toUpperCase` or `toLowerCase`. Locale-specific casing (for example Turkish dotless i) is therefore not handled by this module; this is inferred from the call sites, not tested. Shift+F3 cycles the modes. Tests: `apps/docs/tests/case-transform.test.ts`. Nova has no case command. It can be added as a pure transform over text nodes, but its locale handling must be added deliberately.
+
+---
+
+## 20. Symbol fonts (source-verified)
+
+**Identification.** `packages/ui/src/font-list.ts` (168 lines) contains no symbol-font logic. It holds candidate lists, locale ordering, spelling-aware presence checks and system-font partitioning. Symbol handling is in the renderer.
+
+**Model.** A symbol run is a `docSym` mark (`editor/marks.ts` 283–315) with `font` and `char` attributes, rendered as `span[data-sym-char]`. The mark styles the span with its own font family only when that font is installed and covers the private-use code point.
+
+**Coverage check.** `font-check.ts` 65–96 (`symbolFontCovers`) measures the candidate glyph on canvas and compares it with a `.notdef` glyph for `\uE000`. If the glyph matches the tofu, the font does not cover the code point.
+
+**Editing.** `editor/convert.ts` ~4104–4125 (`symDisplayText`, `symRuns`) swaps private-use code points in for display and restores them on edit, so the stand-in text is never saved.
+
+**Bullets.** `line-metrics.ts` 395–493 sets the ascent and line height for symbol bullet faces.
+
+**Fallback.** If the named font is missing or does not cover the code point, the Unicode stand-in is shown with the normal font. Browser rendering depends on what the machine has installed.
+
+**Impact.**
+- Built-in font list: no effect. Symbol fonts are not in the list.
+- Custom fonts: none exist in the upstream code reviewed here.
+- Browser rendering: affected through the coverage probe and fallback.
+- Publication renderer: the symbol mark must be preserved in document JSON if Nova imports `w:sym`; this is a schema-v2 decision.
+- Document JSON: stores `font` and `char` on the symbol mark, not the stand-in glyph.
+
+**Nova.** Nova v1 has no symbol mark. Symbol support is deferred to schema v2 or later.
+
+**Theme fonts (not a Home control).** The theme-font picker is on the Design tab (`ribbon-design-tab.tsx` 217–337, `onThemeFonts`, preset `fonts.major` and `fonts.minor`). It sets document-wide heading and body fonts. It does not appear on Home and is out of 005B0B scope.
+
+**Font-family categories (from sections 1–21).** Ordinary fonts (named, Latin); system fonts (installed list, partitioned in `font-list.ts`); theme fonts (document-wide major and minor, Design tab); East Asian fonts (routed to `w:eastAsia` by `EAST_ASIAN_FONT_RE`, with `defaultEastAsiaFontFor` for zh, ja, ko and zh-TW); symbol fonts (per-run `docSym` mark); uploaded custom fonts (not present upstream). These are separate concerns and need separate schema fields.
+
+---
+
+## 21. Nova editor comparison (`documents/` vs `shared-editor/`)
+
+**Byte comparison.** `nova-app/src/documents/editorExtensions.ts` and `nova-app/src/shared-editor/editorExtensions.ts` are byte-identical (`cmp` exit 0). `documents/EditorToolbar.tsx` and `shared-editor/EditorToolbar.tsx` are byte-identical (`cmp` exit 0).
+
+**Imports.** `documents/DocumentEditor.tsx` imports the `documents/` pair. `content-editor-entry.tsx` imports `shared-editor/NovaEditor.tsx`, which uses the `shared-editor/` pair. Both copies are live.
+
+**Extensions (both).** StarterKit with headings 1–3, `codeBlock` off, `link` with `openOnClick` false, underline on; Table, TableRow, TableHeader, TableCell (non-resizable).
+
+**Toolbar (both).** History undo and redo; Style select; Bold, Italic, Underline; lists; quote; link; table; divider. No alignment, font, colour, highlight, indent, spacing, case, direction or paste-mode controls.
+
+**Differences.** None found in code, imports, commands or toolbar controls.
+
+**Conclusion.** Category C: duplicated and should converge. The two copies are identical, so either can serve as the authority for future work. `documents/` is the authority for the active document editor, because `DocumentEditor.tsx` imports it. Converge onto `documents/` in a later step, with `shared-editor/` importing it. No refactor is made here.
 
 
