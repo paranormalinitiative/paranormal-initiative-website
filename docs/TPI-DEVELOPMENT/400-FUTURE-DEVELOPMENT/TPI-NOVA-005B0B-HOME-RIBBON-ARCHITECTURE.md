@@ -140,7 +140,7 @@ Adoption classes: **A** browser-ready logic; **B** adaptable with Nova UI/storag
 | Numbering library and formats | `ListDialogs.tsx` `DefineNumberFormat`; `list-presets.ts` 291 | Format string per level | No | C | Later; schema v2 |
 | Restart / continue numbering | `ListDialogs.tsx` `SetNumberingValue` | Numbering value override | No | C | Later; schema v2 |
 | Multilevel lists | `ListDialogs.tsx` `DefineMultilevel`; `AdjustListIndents` | Level definitions with indents and formats | No (flat Nova lists only) | C | Schema v2 |
-| Nesting and level change | `Ribbon.tsx` `changeListLevel`; Tab | `ilvl` change | Partial: nested StarterKit lists | B | 005B1 |
+| Nesting and level change | `Ribbon.tsx` `changeListLevel`; Tab | `ilvl` change | Yes for nesting: StarterKit `sinkListItem`/`liftListItem` on Tab and Shift+Tab (TipTap-native). No level clamp or numbering-level model. | B | 005B1 |
 
 ---
 
@@ -203,7 +203,7 @@ Source: `shortcuts.ts` (195 lines). Mac notation is rewritten for Windows by `@g
 | Align left / centre / right / justify | ⌘L / ⌘E / ⌘R / ⌘J | Browser default for ⌘L (address bar, Chrome) is not reached inside the editor | No | 005B1 |
 | Clear paragraph formatting | ⌃Q | None | No | 005B1 |
 | Heading styles / Normal | ⌥⌘0–3 | Browser reserves ⌥⌘ digit combinations in some browsers | Heading shortcuts via TipTap default | Keep; verify conflict |
-| List shortcuts | Tab demote; Shift+Tab promote | Tab moves focus outside the editor | Partial: Nova lists nest through StarterKit, but Tab handling is not verified in the Nova source | 005B1 |
+| List shortcuts | Tab demote; Shift+Tab promote | Tab moves focus outside the editor | Yes, TipTap-native: StarterKit's list keymap maps Tab to `sinkListItem` and Shift+Tab to `liftListItem` (`@tiptap/extension-list` 3.32.2, `dist/index.js` 526–527 and 1338–1343). GenOffice uses a custom `changeLevel(±1)` keymap (`editor/extensions.ts` 1493–1494). Nova has no custom list Tab handler. | 005B1 (verify the Tab behaviour at the list level, not as focus movement) |
 | Page break / column break | ⌘Enter; ⇧⌘Enter | None | No | Later |
 | Non-breaking space / hyphen | ⇧⌘Space; ⇧⌘- | None | No | Later |
 
@@ -299,7 +299,9 @@ This boundary depends on the schema decision in 005B0. It must be confirmed once
 
 ## 22. Status
 
-TPI-NOVA-005B0B — COMPLETE — GENOFFICE HOME RIBBON, TYPOGRAPHY, CHARACTER FORMATTING, PARAGRAPH, LIST, STYLE, CLIPBOARD, HISTORY & SCREENTIP ARCHITECTURE FULLY INVENTORIED — ALL 005B0A PROVENANCE VERIFIED — CURRENT NOVA DOCUMENT & SHARED-EDITOR CAPABILITIES RECONCILED — NOVA PROFESSIONAL HOME CAPABILITY MATRIX DEFINED — 005B1 IMPLEMENTATION BOUNDARY ESTABLISHED
+**Status correction (2026-11-07).** Commit `a28b7eb9` marked this record COMPLETE prematurely. The track-changes and header/footer history trace was still open at that commit, and the list Tab/Shift+Tab row was still Partial. TPI-NOVA-005B0B2 completed the missing trace in section 16 (16.1–16.6) and resolved the list row in sections 7 and 13.
+
+TPI-NOVA-005B0B — COMPLETE — GENOFFICE HOME RIBBON, TYPOGRAPHY, CHARACTER FORMATTING, PARAGRAPH, LIST, STYLE, CLIPBOARD, HISTORY & SCREENTIP ARCHITECTURE FULLY INVENTORIED — TRACK-CHANGES & HEADER/FOOTER HISTORY VERIFIED — ALL 005B0A PROVENANCE VERIFIED — CURRENT NOVA DOCUMENT & SHARED-EDITOR CAPABILITIES RECONCILED — NOVA PROFESSIONAL HOME CAPABILITY MATRIX DEFINED — 005B1 IMPLEMENTATION BOUNDARY ESTABLISHED
 
 NO PROFESSIONAL EDITOR IMPLEMENTATION STARTED — PRODUCTION UNCHANGED
 
@@ -320,7 +322,7 @@ NO PROFESSIONAL EDITOR IMPLEMENTATION STARTED — PRODUCTION UNCHANGED
 - Font-size stepping is coalesced by `FONT_STEP_COALESCE_MS` (300 ms, `Ribbon.tsx` 770; `applyFontStep` about 1930–1975). The first click applies at once. Later clicks inside the window only advance the pending size, and one trailing apply runs. Undo therefore reverts a burst of clicks in one step.
 - Ribbon-tab Previous and Next Change buttons (`ribbon-tabs.tsx` about 1261 and 1272) navigate revisions. They are not undo.
 
-**Special operations.** Table, list-definition, formatting, image and style edits are ProseMirror transactions, so they share the same history. I found no host-level or separate undo stack for these in the Home path. Track-changes and header/footer history were not traced in this pass and are not used as evidence below.
+**Special operations.** Table, list-definition, formatting, image and style edits are ProseMirror transactions, so they share the same history. I found no host-level or separate undo stack for these in the Home path. Track-changes and header/footer history were traced in TPI-NOVA-005B0B2 (sections 16.1–16.5 below).
 
 **Coalescing classification.**
 - Directly reusable concept: explicit `closeHistory` at user gestures (brush stroke, autocorrect) and `addToHistory=false` for non-user bookkeeping.
@@ -331,7 +333,43 @@ NO PROFESSIONAL EDITOR IMPLEMENTATION STARTED — PRODUCTION UNCHANGED
 
 **Future Nova command-layer implications.** Keep one history (ProseMirror). Add explicit history boundaries at compound user actions (brush, autocorrect equivalents). Mark non-user transactions with `addToHistory=false`. Coalesce repeated size or indent steps in the command layer, not in the ribbon. Confirm each shortcut with a narrow test before 005B1 ships.
 
-**Limitation.** No runtime test was run. Grouping timing is from source constants only.
+### 16.1 Main editor
+The main body uses the single ProseMirror history described above. Undo and Redo are reached from the ribbon button, the keyboard (`App.tsx` 6430–6433) and the title-bar button (`App.tsx` 7824–7833). All three call `editor.chain().focus().undo()` or `.redo()` on the main editor. Undo state is read at `App.tsx` 7798 with `editor.can()`.
+
+### 16.2 Track Changes
+- **Typing and deletion are ordinary transactions.** The recorder is an `appendTransaction` in `editor/revisions.ts` (about 1219). It records typed text as `ins` marks and records deleted inline text as re-inserted `del` marks. Deleting your own insertion removes it outright. The recorder returns its transaction tagged with `trackIgnore` (`TRACK_IGNORE`, line 79) and does not set `addToHistory`. Its output therefore joins the same history stack as the user's edit by ProseMirror's default rules. This was not confirmed by a runtime test.
+- **Undo reverses the tracked operation.** It does not generate a new tracked revision. Undo restores the prior document state, including the revision marks that existed before the edit. The recorder skips transactions carrying `trackIgnore` or `history$`, so undo's own replay is not re-tracked.
+- **Revision marks are part of the document state.** They are in the history transaction and undo restores them. They are not separate history events.
+- **Track-changes on/off is not in history.** The toggle is React state mirrored into `TrackChangesExtension` storage (`App.tsx` 2116, `storage.enabled = trackChanges`). Toggling does not dispatch a transaction. Its options (author, move and formatting tracking) live in localStorage (`track-changes-options.ts` 176–187). `App.tsx` 1546–1554 writes them and dispatches an empty transaction with `addToHistory=false`.
+
+### 16.3 Accept and reject
+- **Accept or reject one revision** (`review-actions.ts` `handleRevision`, the `next` path around 357–378) calls `applyRevisions` (`editor/revisions.ts` 515). That function sets `trackIgnore` only. It does not set `addToHistory=false`, so the change is a normal undoable transaction, and it can be undone in the main editor.
+- **Accept All and Reject All** (`revisions.ts` 917 and 921) call `applyRevisions` once over the whole document. Source shows one `applyRevisions` call and no `addToHistory` or `closeHistory` around it, so it is expected to be one undoable transaction on the main editor. Not confirmed at runtime. The `all` path also calls `ctx.applyStoryRevisions(stories, action, true)` first (`review-actions.ts` 353), which is not in that history.
+- **Story revisions (footnotes, endnotes, header/footer parts, textboxes) are not in ProseMirror history.** `applyStoryRevisions` (`App.tsx` 1662) writes React state through `setFootnotes`, `setEndnotes`, `setNotesDirty` and `setSectionHfEdits`. Accept or reject on a story therefore has no undo entry. No host-level undo stack exists for story state (searched for `undoStack`, `hfUndo`, `storyUndo`, `useUndo`, `undoManager`, none found).
+- Accept/reject is therefore exact for the main body and not undoable for stories.
+
+### 16.4 Header and footer
+- **Ownership: D, hybrid.** The header/footer editor is a separate TipTap `Editor` instance (`editor/hf-editor.ts` `mountHfEditor`, line 626). Its extensions are `hfSubExtensions` (line 289), which include `UndoRedo` (`editor/extensions.ts` 7284). So it has its own per-editor ProseMirror history, which is class B. The committed result is host React state, which is class C. The combination is D.
+- **Editing and history.** Each header/footer editor keeps its own undo stack while open. Undo inside it reverts only its own edits. Destroying the editor on exit discards that stack.
+- **Commit.** On exit (focus leaving the strip, Escape, or the `HF_COMMIT_EVENT` window event) `close(commit)` runs (`hf-editor.ts` 694–706). It computes `changed()`, which compares the document JSON to the initial JSON, destroys the editor, and calls `onCommit` once with the whole `HeaderFooter` value. `App.tsx` `commitHfAt` (1622–1634) writes that value into `sectionHfEdits` with `hfTextCommit`. The whole part is replaced in one React state update. No incremental transactions reach the main document, the XML is not rebuilt at that step, and the commit adds no history entry on the main editor.
+- **Routing.** Clicking a ribbon command while the header editor is focused routes to it through `getActiveSubEditor()` (`editor/active-editor.ts`). Formatting, paragraph, font and indent commands use `getActiveSubEditor() ?? editor` (`App.tsx` 6219–6545). Undo and Redo do not use this routing: the ribbon and title-bar buttons always call `editor?.chain().focus().undo()` on the main editor, even while a header editor is active.
+
+### 16.5 Sub-editors and editor switching
+- **Active sub-editor.** `active-editor.ts` keeps one active sub-editor. It is set on focus, cleared when the main editor regains focus, and dropped on destroy. It is a routing pointer only and does not own history.
+- **Scenario 1: edit body, then header, return to body, press Undo.** Undo runs on the main editor's stack. It reverts the most recent body edit. The header commit is React state and is not on that stack, so it is not reverted by this Undo.
+- **Scenario 2: edit header, switch to body, Undo.** Undo is routed to the main editor, which is the only editor the ribbon and keyboard target. It reverts the previous body edit, not the header edit. The header's own undo stack is reachable only while the header editor is open and focused, and the keyboard `Mod-z` in that editor uses the header's `UndoRedo`.
+- **Result.** Undo is not editor-aware at the host. A header edit that has been committed cannot be undone from the body. A header's in-editor undo history does not survive commit, because the editor is destroyed on exit.
+- **Textboxes.** The same `getActiveSubEditor` routing applies to textboxes (`editor/selected-box.ts`, `selection-bar.ts`). Textboxes use `textboxSubExtensions`, which include `UndoRedo` (`extensions.ts` 7284). Their history follows the same pattern as headers.
+
+### 16.6 Nova implication
+The 005B1 command layer should choose one of these models:
+1. **Single history stack** (current Nova and the body of GenOffice). Simplest. Undo of a header or footer edit is then a host command, not an editor's own undo, so it must be recorded in the same stack.
+2. **Active-editor history** (GenOffice's header and textbox editors). Keeps undo local to each editor and discards it on exit, which loses the cross-editor undo that users expect.
+3. **Multiple editor histories with explicit boundaries.** Only if sub-editors persist across switches.
+
+Recommendation for Nova: keep one authoritative history (model 1). Route Undo and Redo to the command layer, not to the focused editor. Record story edits (header, footer, notes) as explicit commands in that history. Mark UI-only state (track-changes toggle, options, display filters) as non-history. Do not mirror GenOffice's per-editor destroy-on-exit history. This is architecture only, and no implementation is started.
+
+**Limitation.** No runtime test was run. Grouping timing is from source constants only. The header-to-body Undo result is from source routing and was not exercised in a browser.
 
 ---
 
