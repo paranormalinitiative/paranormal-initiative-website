@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { Editor } from "@tiptap/core";
 import type { Transaction } from "@tiptap/pm/state";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
@@ -20,14 +20,19 @@ import {
   Link,
   List,
   ListOrdered,
+  Merge,
   MessageSquare,
   Minus,
+  PaintBucket,
   Plus,
   Quote,
   Redo2,
+  Rows3,
   Scissors,
+  Split,
   Strikethrough,
   Table,
+  TableProperties,
   Type,
   Underline,
   Undo2,
@@ -36,6 +41,27 @@ import {
   type LucideIcon
 } from "lucide-react";
 import { InsertTools } from "./InsertTools";
+import {
+  addNovaColumn,
+  addNovaRow,
+  currentTable,
+  deleteNovaColumn,
+  deleteNovaRow,
+  inTable,
+  insertNovaTable,
+  mergeNovaCells,
+  setNovaCellFill,
+  setNovaCellHorizontalAlign,
+  setNovaCellVerticalAlign,
+  setNovaRowHeight,
+  setNovaTableAlignment,
+  setNovaTableAutoFit,
+  setNovaTableBorder,
+  setNovaTableStyle,
+  setNovaTableWidth,
+  splitNovaCell
+} from "./commands/tables";
+import { CELL_VERTICAL_ALIGNMENTS, TABLE_ALIGNMENTS, TABLE_AUTOFIT, TABLE_BORDER_STYLES, TABLE_STYLE_PRESETS } from "./tableAttributes";
 
 type RibbonTab = "Home" | "Insert" | "Draw" | "Design" | "Layout" | "References" | "Mailings" | "Review" | "View";
 
@@ -171,6 +197,17 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
   const [showStyles, setShowStyles] = useState(false);
   const [showNav, setShowNav] = useState(false);
   const [zoom, setZoom] = useState(100);
+  const [, refreshSelectionState] = useState(0);
+
+  useEffect(() => {
+    const refresh = () => refreshSelectionState(value => value + 1);
+    editor.on("selectionUpdate", refresh);
+    editor.on("transaction", refresh);
+    return () => {
+      editor.off("selectionUpdate", refresh);
+      editor.off("transaction", refresh);
+    };
+  }, [editor]);
 
   const applyTextStyle = (attrs: Record<string, string | null>) => {
     editor.chain().focus().setMark("tpiTextStyle", attrs).run();
@@ -183,6 +220,15 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
       : editor.isActive("heading", { level: 3 })
         ? "h3"
         : "p";
+  const tableContext = inTable(editor);
+  const table = currentTable(editor);
+  const tableStyle = String(table?.attrs.stylePreset || "plain");
+  const tableAutoFit = String(table?.attrs.autoFit || "window");
+  const tableAlignment = String(table?.attrs.alignment || "left");
+  const tableBorderStyle = String(table?.attrs.borderStyle || "solid");
+  const tableBorderWidth = String(table?.attrs.borderWidth || 1);
+  const tableBorderColor = String(table?.attrs.borderColor || "#33403a");
+  const cellFill = String(editor.getAttributes("tableCell").fill || editor.getAttributes("tableHeader").fill || "#202b25");
 
   const setBlock = (value: string) => {
     const chain = editor.chain().focus();
@@ -241,12 +287,12 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
       </RibbonGroup>
       <Divider />
       <RibbonGroup label="Document">
-        <RibbonButton label="Table" icon={Table} testId="toolbar-table" onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} disabled={disabled} />
+        <RibbonButton label="Table" icon={Table} testId="toolbar-table" onClick={() => insertNovaTable(editor)} disabled={disabled} />
         <RibbonButton label="Link" icon={Link} testId="toolbar-link" onClick={onRequestLink} disabled={disabled} />
         <div className="nova-ribbon-icon-row">
-          <RibbonButton label="Add row" icon={Plus} compact testId="toolbar-add-row" onClick={() => editor.chain().focus().addRowAfter().run()} disabled={disabled} />
-          <RibbonButton label="Add column" icon={Plus} compact testId="toolbar-add-column" onClick={() => editor.chain().focus().addColumnAfter().run()} disabled={disabled} />
-          <RibbonButton label="Delete column" icon={Minus} compact testId="toolbar-delete-column" onClick={() => editor.chain().focus().deleteColumn().run()} disabled={disabled} />
+          <RibbonButton label="Add row" icon={Plus} compact testId="toolbar-add-row" onClick={() => addNovaRow(editor)} disabled={disabled || !tableContext} />
+          <RibbonButton label="Add column" icon={Plus} compact testId="toolbar-add-column" onClick={() => addNovaColumn(editor)} disabled={disabled || !tableContext} />
+          <RibbonButton label="Delete column" icon={Minus} compact testId="toolbar-delete-column" onClick={() => deleteNovaColumn(editor)} disabled={disabled || !tableContext} />
         </div>
       </RibbonGroup>
     </div>
@@ -255,11 +301,14 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
   const renderInsert = () => (
     <div className="nova-ribbon-groups">
       <RibbonGroup label="Tables">
-        <RibbonButton label="Table" icon={Table} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} disabled={disabled} />
+        <RibbonButton label="Table" icon={Table} onClick={() => insertNovaTable(editor)} disabled={disabled} />
         <div className="nova-ribbon-icon-row">
-          <RibbonButton label="Add row" icon={Plus} compact onClick={() => editor.chain().focus().addRowAfter().run()} disabled={disabled} />
-          <RibbonButton label="Add column" icon={Plus} compact onClick={() => editor.chain().focus().addColumnAfter().run()} disabled={disabled} />
-          <RibbonButton label="Delete column" icon={Minus} compact onClick={() => editor.chain().focus().deleteColumn().run()} disabled={disabled} />
+          <RibbonButton label="Add row" icon={Plus} compact onClick={() => addNovaRow(editor)} disabled={disabled || !tableContext} />
+          <RibbonButton label="Add column" icon={Plus} compact onClick={() => addNovaColumn(editor)} disabled={disabled || !tableContext} />
+          <RibbonButton label="Delete row" icon={Minus} compact onClick={() => deleteNovaRow(editor)} disabled={disabled || !tableContext} />
+          <RibbonButton label="Delete column" icon={Minus} compact onClick={() => deleteNovaColumn(editor)} disabled={disabled || !tableContext} />
+          <RibbonButton label="Merge cells" icon={Merge} compact onClick={() => mergeNovaCells(editor)} disabled={disabled || !tableContext} />
+          <RibbonButton label="Split cell" icon={Split} compact onClick={() => splitNovaCell(editor)} disabled={disabled || !tableContext} />
         </div>
       </RibbonGroup>
       <Divider />
@@ -276,6 +325,80 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
     </div>
   );
 
+  const renderTableDesign = () => {
+    if (!tableContext) return <PlannedPanel tab="Design" available="Select a table cell to enable table design controls." />;
+    return (
+      <div className="nova-ribbon-groups">
+        <RibbonGroup label="Table Style">
+          <select className="nova-ribbon-select nova-ribbon-style" aria-label="Table style" value={tableStyle} disabled={disabled} onChange={event => setNovaTableStyle(editor, event.target.value as typeof TABLE_STYLE_PRESETS[number])}>
+            {TABLE_STYLE_PRESETS.map(style => <option key={style} value={style}>{style[0].toUpperCase() + style.slice(1)}</option>)}
+          </select>
+        </RibbonGroup>
+        <Divider />
+        <RibbonGroup label="Borders">
+          <select className="nova-ribbon-select" aria-label="Border style" value={tableBorderStyle} disabled={disabled} onChange={event => setNovaTableBorder(editor, event.target.value as typeof TABLE_BORDER_STYLES[number], Number(tableBorderWidth), tableBorderColor)}>
+            {TABLE_BORDER_STYLES.map(style => <option key={style} value={style}>{style[0].toUpperCase() + style.slice(1)}</option>)}
+          </select>
+          <select className="nova-ribbon-select" aria-label="Border width" value={tableBorderWidth} disabled={disabled} onChange={event => setNovaTableBorder(editor, tableBorderStyle as typeof TABLE_BORDER_STYLES[number], Number(event.target.value), tableBorderColor)}>
+            {[0, 1, 2, 3].map(width => <option key={width} value={width}>{width}px</option>)}
+          </select>
+          <label className="nova-ribbon-color" title="Border color"><TableProperties size={15} /><input type="color" aria-label="Border color" value={tableBorderColor} disabled={disabled} onChange={event => setNovaTableBorder(editor, tableBorderStyle as typeof TABLE_BORDER_STYLES[number], Number(tableBorderWidth), event.target.value)} /></label>
+        </RibbonGroup>
+        <Divider />
+        <RibbonGroup label="Shading">
+          <label className="nova-ribbon-color" title="Cell shading"><PaintBucket size={15} /><input type="color" aria-label="Cell shading" value={cellFill} disabled={disabled} onChange={event => setNovaCellFill(editor, event.target.value)} /></label>
+          <RibbonButton label="Clear shading" icon={Eraser} compact disabled={disabled} onClick={() => setNovaCellFill(editor, null)} />
+        </RibbonGroup>
+      </div>
+    );
+  };
+
+  const renderTableLayout = () => {
+    if (!tableContext) return <PlannedPanel tab="Layout" available="Select a table cell to enable table layout controls." />;
+    return (
+      <div className="nova-ribbon-groups">
+        <RibbonGroup label="Rows">
+          <RibbonButton label="Add row" icon={Rows3} onClick={() => addNovaRow(editor)} disabled={disabled} />
+          <RibbonButton label="Delete row" icon={Minus} onClick={() => deleteNovaRow(editor)} disabled={disabled} />
+          <select className="nova-ribbon-select" aria-label="Row height" disabled={disabled} defaultValue="auto" onChange={event => setNovaRowHeight(editor, event.target.value === "auto" ? null : Number(event.target.value))}>
+            <option value="auto">Auto height</option><option value="32">32px</option><option value="48">48px</option><option value="72">72px</option>
+          </select>
+        </RibbonGroup>
+        <Divider />
+        <RibbonGroup label="Columns">
+          <RibbonButton label="Add column" icon={Plus} onClick={() => addNovaColumn(editor)} disabled={disabled} />
+          <RibbonButton label="Delete column" icon={Minus} onClick={() => deleteNovaColumn(editor)} disabled={disabled} />
+        </RibbonGroup>
+        <Divider />
+        <RibbonGroup label="Merge">
+          <RibbonButton label="Merge cells" icon={Merge} onClick={() => mergeNovaCells(editor)} disabled={disabled} />
+          <RibbonButton label="Split cell" icon={Split} onClick={() => splitNovaCell(editor)} disabled={disabled} />
+        </RibbonGroup>
+        <Divider />
+        <RibbonGroup label="Cell alignment">
+          <select className="nova-ribbon-select" aria-label="Horizontal cell alignment" disabled={disabled} defaultValue="left" onChange={event => setNovaCellHorizontalAlign(editor, event.target.value as typeof TABLE_ALIGNMENTS[number])}>
+            {TABLE_ALIGNMENTS.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}
+          </select>
+          <select className="nova-ribbon-select" aria-label="Vertical cell alignment" disabled={disabled} defaultValue="top" onChange={event => setNovaCellVerticalAlign(editor, event.target.value as typeof CELL_VERTICAL_ALIGNMENTS[number])}>
+            {CELL_VERTICAL_ALIGNMENTS.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}
+          </select>
+        </RibbonGroup>
+        <Divider />
+        <RibbonGroup label="Table">
+          <select className="nova-ribbon-select" aria-label="AutoFit" value={tableAutoFit} disabled={disabled} onChange={event => setNovaTableAutoFit(editor, event.target.value as typeof TABLE_AUTOFIT[number])}>
+            {TABLE_AUTOFIT.map(value => <option key={value} value={value}>AutoFit {value[0].toUpperCase() + value.slice(1)}</option>)}
+          </select>
+          <select className="nova-ribbon-select" aria-label="Table alignment" value={tableAlignment} disabled={disabled} onChange={event => setNovaTableAlignment(editor, event.target.value as typeof TABLE_ALIGNMENTS[number])}>
+            {TABLE_ALIGNMENTS.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}
+          </select>
+          <select className="nova-ribbon-select" aria-label="Table width" disabled={disabled} defaultValue="window" onChange={event => setNovaTableWidth(editor, event.target.value)}>
+            <option value="window">Window width</option><option value="720">720px</option><option value="900">900px</option><option value="1200">1200px</option>
+          </select>
+        </RibbonGroup>
+      </div>
+    );
+  };
+
   const renderView = () => (
     <div className="nova-ribbon-groups">
       <RibbonGroup label="Show"><RibbonButton label="Navigation pane" icon={BookOpen} active={showNav} onClick={() => setShowNav(value => !value)} /><RibbonButton label="Styles pane" icon={LayoutDashboard} active={showStyles} onClick={() => setShowStyles(value => !value)} /></RibbonGroup>
@@ -286,8 +409,9 @@ export function GenOfficeRibbon({ editor, disabled, onRequestLink, documentTitle
   const renderTab = () => {
     if (tab === "Home") return renderHome();
     if (tab === "Insert") return renderInsert();
+    if (tab === "Design") return renderTableDesign();
     if (tab === "View") return renderView();
-    if (tab === "Layout") return <PlannedPanel tab={tab} available="Basic paragraph indentation and alignment are live on Home; page geometry is scheduled for the layout tranche." />;
+    if (tab === "Layout") return tableContext ? renderTableLayout() : <PlannedPanel tab={tab} available="Select a table cell to enable table layout controls. Basic paragraph indentation and alignment are live on Home." />;
     if (tab === "Review") return <PlannedPanel tab={tab} available="Read-only locks and publication review are live in the document workflow; comments and tracked changes are scheduled separately." />;
     return <PlannedPanel tab={tab} />;
   };

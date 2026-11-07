@@ -601,12 +601,18 @@ a { color: var(--nova-mint); }
 
 .nova-prose table {
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
   width: 100%;
   margin: 1.2em 0;
   font-family: var(--nova-font);
   font-size: 14px;
 }
+.nova-prose table[data-tpi-autofit="fixed"] { table-layout: fixed; }
+.nova-prose table[data-tpi-style="striped"] tbody tr:nth-child(even) td,
+.nova-prose table[data-tpi-style="striped"] tbody tr:nth-child(even) th { background: rgba(140, 232, 182, 0.08); }
+.nova-prose table[data-tpi-style="accent"] th { background: rgba(75, 178, 99, 0.24); color: var(--nova-text); }
+.nova-prose table[data-tpi-style="grid"] th,
+.nova-prose table[data-tpi-style="grid"] td { border-style: solid; border-width: 1px; border-color: var(--nova-line); }
 .nova-prose .tableWrapper { overflow-x: auto; margin: 1.2em 0; }
 .nova-prose th, .nova-prose td {
   border: 1px solid var(--nova-line);

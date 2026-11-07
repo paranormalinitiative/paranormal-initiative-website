@@ -9,11 +9,25 @@ import { spawn, spawnSync } from "node:child_process";
 import { mkdtempSync, mkdirSync, openSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
+import { createServer } from "node:net";
+
+function freePort() {
+  return new Promise((resolvePort, reject) => {
+    const server = createServer();
+    server.unref();
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const address = server.address();
+      const port = typeof address === "object" && address ? address.port : 0;
+      server.close(() => resolvePort(port));
+    });
+  });
+}
 
 const repoRoot = resolve(import.meta.dirname, "../..");
 const configPath = resolve(repoRoot, "wrangler.local.toml");
 const database = "tpi-local-foundation";
-const port = Number(process.env.TPI_NOVA_TEST_PORT || 8791);
+const port = Number(process.env.TPI_NOVA_TEST_PORT || (await freePort()));
 if (port === 8787) throw new Error("TPI-NOVA-003 verification must not use the official local environment on port 8787");
 const base = `http://127.0.0.1:${port}`;
 const wrangler = process.env.WRANGLER_BIN || "wrangler";

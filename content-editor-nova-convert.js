@@ -45,6 +45,58 @@
     return out;
   }
 
+  function dataNumber(node, name, min, max) {
+    const parsed = Number(node.getAttribute(name));
+    return Number.isFinite(parsed) ? Math.max(min, Math.min(max, Math.round(parsed))) : null;
+  }
+
+  function tableAttrsFromElement(node) {
+    const attrs = {};
+    const widthPx = dataNumber(node, "data-tpi-width-px", 40, 1600);
+    const widthPct = dataNumber(node, "data-tpi-width-pct", 10, 100);
+    const autoFit = safeEnum(node.getAttribute("data-tpi-autofit"), TABLE_AUTOFIT);
+    const alignment = safeEnum(node.getAttribute("data-tpi-alignment"), TABLE_ALIGNMENTS);
+    const indentLeft = dataNumber(node, "data-tpi-indent-left", 0, 288);
+    const stylePreset = safeEnum(node.getAttribute("data-tpi-style"), TABLE_STYLE_PRESETS);
+    const borderStyle = safeEnum(node.getAttribute("data-tpi-border-style"), TABLE_BORDER_STYLES);
+    const borderWidth = dataNumber(node, "data-tpi-border-width", 0, 6);
+    const borderColor = safeColor(node.getAttribute("data-tpi-border-color"));
+    if (widthPx != null) attrs.widthPx = widthPx;
+    if (widthPct != null) attrs.widthPct = widthPct;
+    if (autoFit) attrs.autoFit = autoFit;
+    if (alignment) attrs.alignment = alignment;
+    if (indentLeft != null) attrs.indentLeft = indentLeft;
+    if (stylePreset) attrs.stylePreset = stylePreset;
+    if (borderStyle) attrs.borderStyle = borderStyle;
+    if (borderWidth != null) attrs.borderWidth = borderWidth;
+    if (borderColor) attrs.borderColor = borderColor;
+    return attrs;
+  }
+
+  function tableRowAttrsFromElement(node) {
+    const heightPx = dataNumber(node, "data-tpi-height-px", 24, 640);
+    return heightPx == null ? {} : { heightPx };
+  }
+
+  function tableCellAttrsFromElement(node) {
+    const attrs = {};
+    const colspan = dataNumber(node, "colspan", 1, 63);
+    const rowspan = dataNumber(node, "rowspan", 1, 200);
+    const verticalAlign = safeEnum(node.getAttribute("data-tpi-vertical-align"), CELL_VERTICAL_ALIGNMENTS);
+    const fill = safeColor(node.getAttribute("data-tpi-fill"));
+    const borderStyle = safeEnum(node.getAttribute("data-tpi-cell-border-style"), TABLE_BORDER_STYLES);
+    const borderWidth = dataNumber(node, "data-tpi-cell-border-width", 0, 6);
+    const borderColor = safeColor(node.getAttribute("data-tpi-cell-border-color"));
+    if (colspan && colspan > 1) attrs.colspan = colspan;
+    if (rowspan && rowspan > 1) attrs.rowspan = rowspan;
+    if (verticalAlign) attrs.verticalAlign = verticalAlign;
+    if (fill) attrs.fill = fill;
+    if (borderStyle) attrs.borderStyle = borderStyle;
+    if (borderWidth != null) attrs.borderWidth = borderWidth;
+    if (borderColor) attrs.borderColor = borderColor;
+    return attrs;
+  }
+
   function blockFromElement(node, unsupported) {
     const tag = node.tagName;
     if (!SUPPORTED_TAGS.has(tag)) unsupported.add(tag.toLowerCase());
@@ -75,11 +127,14 @@
         const cells = [];
         for (const cell of tr.children) {
           const type = cell.tagName === "TH" ? "tableHeader" : "tableCell";
-          cells.push({ type, content: [{ type: "paragraph", content: inlineContent(cell, unsupported) }] });
+          const attrs = tableCellAttrsFromElement(cell);
+          cells.push({ type, ...(Object.keys(attrs).length ? { attrs } : {}), content: [{ type: "paragraph", content: inlineContent(cell, unsupported) }] });
         }
-        rows.push({ type: "tableRow", content: cells });
+        const attrs = tableRowAttrsFromElement(tr);
+        rows.push({ type: "tableRow", ...(Object.keys(attrs).length ? { attrs } : {}), content: cells });
       }
-      return { type: "table", content: rows };
+      const attrs = tableAttrsFromElement(node);
+      return { type: "table", ...(Object.keys(attrs).length ? { attrs } : {}), content: rows };
     }
     unsupported.add(tag.toLowerCase());
     return null;
@@ -153,6 +208,82 @@
     return styles.length ? ` style="${styles.join(";")}"` : "";
   }
 
+  const TABLE_AUTOFIT = new Set(["fixed", "contents", "window"]);
+  const TABLE_ALIGNMENTS = new Set(["left", "center", "right"]);
+  const TABLE_BORDER_STYLES = new Set(["none", "solid", "dashed", "dotted"]);
+  const TABLE_STYLE_PRESETS = new Set(["plain", "grid", "striped", "accent"]);
+  const CELL_VERTICAL_ALIGNMENTS = new Set(["top", "middle", "bottom"]);
+  const safeNumber = (value, min, max) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? Math.max(min, Math.min(max, Math.round(parsed))) : null;
+  };
+  const safeColor = value => /^#[0-9a-f]{6}$/i.test(String(value || "")) ? String(value).toLowerCase() : null;
+  const safeEnum = (value, values) => typeof value === "string" && values.has(value) ? value : null;
+
+  function tableAttributes(node) {
+    const attrs = node.attrs || {};
+    const widthPx = safeNumber(attrs.widthPx, 40, 1600);
+    const widthPct = safeNumber(attrs.widthPct, 10, 100);
+    const autoFit = safeEnum(attrs.autoFit, TABLE_AUTOFIT);
+    const alignment = safeEnum(attrs.alignment, TABLE_ALIGNMENTS);
+    const indentLeft = safeNumber(attrs.indentLeft, 0, 288) || 0;
+    const stylePreset = safeEnum(attrs.stylePreset, TABLE_STYLE_PRESETS);
+    const borderStyle = safeEnum(attrs.borderStyle, TABLE_BORDER_STYLES);
+    const borderWidth = safeNumber(attrs.borderWidth, 0, 6) ?? 1;
+    const borderColor = safeColor(attrs.borderColor);
+    const styles = [
+      widthPx ? `width:${widthPx}px` : widthPct ? `width:${widthPct}%` : "",
+      autoFit === "fixed" ? "table-layout:fixed" : autoFit === "contents" ? "table-layout:auto" : "",
+      alignment === "center" ? "margin-left:auto;margin-right:auto" : alignment === "right" ? "margin-left:auto;margin-right:0" : indentLeft ? `margin-left:${indentLeft}px` : "",
+      borderStyle && borderWidth > 0 ? `border-collapse:collapse;border-style:${borderStyle};border-width:${borderWidth}px;border-color:${borderColor || "#33403a"}` : ""
+    ].filter(Boolean);
+    const output = {};
+    if (widthPx) output["data-tpi-width-px"] = widthPx;
+    if (widthPct) output["data-tpi-width-pct"] = widthPct;
+    if (autoFit) output["data-tpi-autofit"] = autoFit;
+    if (alignment) output["data-tpi-alignment"] = alignment;
+    if (indentLeft) output["data-tpi-indent-left"] = indentLeft;
+    if (stylePreset) output["data-tpi-style"] = stylePreset;
+    if (borderStyle) output["data-tpi-border-style"] = borderStyle;
+    if (attrs.borderWidth != null) output["data-tpi-border-width"] = borderWidth;
+    if (borderColor) output["data-tpi-border-color"] = borderColor;
+    if (styles.length) output.style = styles.join(";");
+    return output;
+  }
+
+  function tableRowAttributes(node) {
+    const heightPx = safeNumber(node.attrs && node.attrs.heightPx, 24, 640);
+    return heightPx ? { "data-tpi-height-px": heightPx, style: `height:${heightPx}px` } : {};
+  }
+
+  function tableCellAttributes(node) {
+    const attrs = node.attrs || {};
+    const verticalAlign = safeEnum(attrs.verticalAlign, CELL_VERTICAL_ALIGNMENTS);
+    const fill = safeColor(attrs.fill);
+    const borderStyle = safeEnum(attrs.borderStyle, TABLE_BORDER_STYLES);
+    const borderWidth = safeNumber(attrs.borderWidth, 0, 6) ?? 1;
+    const borderColor = safeColor(attrs.borderColor);
+    const styles = [
+      verticalAlign ? `vertical-align:${verticalAlign}` : "",
+      fill ? `background-color:${fill}` : "",
+      borderStyle && borderWidth > 0 ? `border-style:${borderStyle};border-width:${borderWidth}px;border-color:${borderColor || "#33403a"}` : ""
+    ].filter(Boolean);
+    const output = {};
+    if (attrs.colspan > 1) output.colspan = safeNumber(attrs.colspan, 1, 63);
+    if (attrs.rowspan > 1) output.rowspan = safeNumber(attrs.rowspan, 1, 200);
+    if (verticalAlign) output["data-tpi-vertical-align"] = verticalAlign;
+    if (fill) output["data-tpi-fill"] = fill;
+    if (borderStyle) output["data-tpi-cell-border-style"] = borderStyle;
+    if (attrs.borderWidth != null) output["data-tpi-cell-border-width"] = borderWidth;
+    if (borderColor) output["data-tpi-cell-border-color"] = borderColor;
+    if (styles.length) output.style = styles.join(";");
+    return output;
+  }
+
+  function htmlAttributes(attributes) {
+    return Object.entries(attributes).map(([name, value]) => ` ${name}="${escapeText(value)}"`).join("");
+  }
+
   function fieldDisplayText(fieldType, format, ctx) {
     if (fieldType === "DATE") return ctx.now.toISOString().slice(0, 10);
     if (fieldType === "TIME") return ctx.now.toISOString().slice(11, 16) + " UTC";
@@ -202,10 +333,10 @@
       case "listItem": return `<li>${kids()}</li>`;
       case "blockquote": return `<blockquote>${kids()}</blockquote>`;
       case "horizontalRule": return "<hr>";
-      case "table": return `<table>${kids()}</table>`;
-      case "tableRow": return `<tr>${kids()}</tr>`;
-      case "tableHeader": return `<th>${kids()}</th>`;
-      case "tableCell": return `<td>${kids()}</td>`;
+      case "table": return `<table${htmlAttributes(tableAttributes(node))}>${kids()}</table>`;
+      case "tableRow": return `<tr${htmlAttributes(tableRowAttributes(node))}>${kids()}</tr>`;
+      case "tableHeader": return `<th${htmlAttributes(tableCellAttributes(node))}>${kids()}</th>`;
+      case "tableCell": return `<td${htmlAttributes(tableCellAttributes(node))}>${kids()}</td>`;
       default: return "";
     }
   }

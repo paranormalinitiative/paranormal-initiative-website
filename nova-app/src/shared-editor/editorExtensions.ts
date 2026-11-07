@@ -6,6 +6,14 @@ import { Extension } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { TpiBookmark, TpiField } from "./bookmarkFieldExtensions";
 import { TpiTextStyle } from "./ribbonExtensions";
+import {
+  tableAttributes,
+  tableCellAttributes,
+  tableCellHTMLAttributes,
+  tableHTMLAttributes,
+  tableRowAttributes,
+  tableRowHTMLAttributes
+} from "./tableAttributes";
 import { findBookmark } from "./commands/bookmarks";
 
 const MAX_INDENT = 288;
@@ -42,6 +50,46 @@ const blockLayoutAttributes = {
     renderHTML: () => ({})
   }
 };
+
+const NovaTable = Table.extend({
+  addAttributes() {
+    return { ...(this.parent?.() ?? {}), ...tableAttributes };
+  },
+  renderHTML(props) {
+    const htmlAttributes = { ...props.HTMLAttributes, ...tableHTMLAttributes(props.node.attrs) };
+    return this.parent?.({ ...props, HTMLAttributes: htmlAttributes }) ?? ["table", htmlAttributes, 0];
+  }
+});
+
+const NovaTableRow = TableRow.extend({
+  addAttributes() {
+    return { ...(this.parent?.() ?? {}), ...tableRowAttributes };
+  },
+  renderHTML(props) {
+    const htmlAttributes = { ...props.HTMLAttributes, ...tableRowHTMLAttributes(props.node.attrs) };
+    return this.parent?.({ ...props, HTMLAttributes: htmlAttributes }) ?? ["tr", htmlAttributes, 0];
+  }
+});
+
+const NovaTableCell = TableCell.extend({
+  addAttributes() {
+    return { ...(this.parent?.() ?? {}), ...tableCellAttributes };
+  },
+  renderHTML(props) {
+    const htmlAttributes = { ...props.HTMLAttributes, ...tableCellHTMLAttributes(props.node.attrs) };
+    return this.parent?.({ ...props, HTMLAttributes: htmlAttributes }) ?? ["td", htmlAttributes, 0];
+  }
+});
+
+const NovaTableHeader = TableHeader.extend({
+  addAttributes() {
+    return { ...(this.parent?.() ?? {}), ...tableCellAttributes };
+  },
+  renderHTML(props) {
+    const htmlAttributes = { ...props.HTMLAttributes, ...tableCellHTMLAttributes(props.node.attrs) };
+    return this.parent?.({ ...props, HTMLAttributes: htmlAttributes }) ?? ["th", htmlAttributes, 0];
+  }
+});
 
 // A click on an internal #bookmark link moves the caret to that bookmark inside
 // the editor. It never reaches the browser, so nothing is opened in a new window.
@@ -101,10 +149,10 @@ export const novaExtensions = [
       };
     }
   }).configure({ levels: [1, 2, 3] }),
-  Table.configure({ resizable: false, allowTableNodeSelection: true }),
-  TableRow,
-  TableHeader,
-  TableCell,
+  NovaTable.configure({ resizable: true, cellMinWidth: 40, allowTableNodeSelection: true }),
+  NovaTableRow,
+  NovaTableHeader,
+  NovaTableCell,
   TpiBookmark,
   TpiField,
   TpiTextStyle,
