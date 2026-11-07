@@ -1,6 +1,6 @@
 # TPI-NOVA-005B0C — GenOffice Insert, Table, Image and Object Architecture
 
-**Status:** COMPLETE for the documentation scope (005B0C2). Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
+**Status:** PARTIAL (005B0C2). Open gaps: (1) Section 49 PASS entries for links, bookmarks, cross-references, comments, header/footer, symbols and cover page were not re-traced against source in this pass; (2) the equation entry in Section 52 (`latexToOmml`, `ommlToMathML`) is not yet source-verified; (3) several Section 47 rows marked Source-read are inferred from the path and need a source read before they are relied on. Architecture and source analysis only. No GenOffice source ported. No Nova product code, schema, assets, packages or toolbars changed. Production untouched.
 
 **Parent:** TPI-NOVA-005B0
 **Predecessor:** TPI-NOVA-005B0B with runtime addendum at `20102c80`
