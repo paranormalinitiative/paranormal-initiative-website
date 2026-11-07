@@ -290,6 +290,6 @@ Ribbon behavior assumes these regions, and the editor page styles they style. Th
 - Creation of the attribution files (defined in section 4; not created here).
 - Any adoption decision on the contextual tab triggers.
 
-## 22. Completion statement
+## 22. Status statement
 
-The 005B0A inventory is documented above from the frozen SHA `d5ebe838d91373c54528795b50663d4f33947183`. No GenOffice source was imported into Nova. No professional editor implementation was started. Production was not changed.
+This is a **partial** first-pass inventory from the frozen SHA `d5ebe838d91373c54528795b50663d4f33947183`. It is not a completed 005B0A. Items still open: `packages/docx-engine` and `packages/ui` export-level reading (the classifications in sections 10–11 are by imported name only); per-tab state dependencies for Draw, Review and View were inferred from import lists and need confirmation; File/app-shell callbacks in `App.tsx` were not read; the A/B/C/D classes are provisional. No GenOffice source was imported into Nova. No professional editor implementation was started. Production was not changed.
